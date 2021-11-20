@@ -1,0 +1,2 @@
+RewriteEngine on
+RewriteRule ^([^.?]+)$ %{REQUEST_URI}.php [L]

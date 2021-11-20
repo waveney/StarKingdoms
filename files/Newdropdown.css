@@ -1,0 +1,598 @@
+/* Main - headers, footer and menus */
+
+.main-header {
+  position: sticky;
+  top:0;
+  z-index: 2000;
+  border-bottom: 1px solid #fff;
+  height: 80px;
+  background:  linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.2));
+  transition: all ease-in-out 0.4s;
+  color:white;
+}
+
+.main-header a, .main-header a:link, .main-header a:visited  {
+  color:white;
+}
+
+.main-header:hover, .fixedheader {
+  background: #fff;
+  box-shadow: 0 0 40px rgba(0,0,0,0.7);
+}
+
+.main-header:hover .PublicBar a {
+  color: #004668;
+}
+
+.main-header .header-logo {
+  padding: 10px 24px;
+  position: absolute;
+  display: block;
+  height: 54px;
+  max-width: calc(100% - 100px);
+}
+
+.main-header .header-logo.head-white-logo{
+  opacity: 1;
+  transition: all ease-in-out 0.4s;
+}
+.main-header .header-logo.head-coloured-logo{
+  transition: all ease-in-out 0.4s;
+  display: none;
+}
+.main-header:hover .header-logo.head-white-logo,
+.fixedheader .main-header-logo.head-white-logo{
+  opacity: 0;
+}
+.main-header:hover .header-logo.head-coloured-logo,
+.fixedheader .header-logo.head-coloured-logo{
+  opacity: 1;
+  display: block;
+}
+
+.main-header .FestDates {
+  display: inline-block;
+  position: absolute;
+  top:0;
+  left:320px;
+  margin: 7px 0 0 0;
+  padding:0;
+  text-align: center;
+  font-weight:700;
+}
+
+.fixedheader .FestDates, .fixedheader .SmallDates {
+  color: #004668;
+}
+
+.SmallDates {
+  display:none;
+  position: absolute;
+  top:60px;
+  left:92px;
+  margin:0;
+  padding:0;
+  text-align: center;
+  font-weight:700;
+}
+
+.headericon {
+  transition: all ease-in-out 0.4s;
+  max-height:20px;
+  filter: grayscale(100%);
+}
+
+.headericon:hover {
+  filter:none;
+  transform: scale(1.5);
+  background:white;
+  border:2px;
+}
+  
+.fixedheader .navigation .headericon:hover {
+  background:white;
+}
+
+.main-header #MenuBars {
+  width: 67%; 
+/*  height: 100%;  - Pollys Fix */
+  position: absolute;
+  right: 0;
+  float: right;
+  margin: 0;
+  padding:0;
+  border:0;
+  display: inline-block;
+}
+
+.PublicBar1 {
+  height: 80px;
+  line-height: 80px;
+}
+
+.PublicBar2 {
+  height: 40px;
+  line-height: 40px;
+}
+
+.PrivateBar {
+  height: 40px;
+  line-height: 40px;
+}
+
+.PrivateBar a {
+  background-color: dimgrey;
+}
+
+.MenuIcon {
+  position: absolute;  
+  right: 0;
+  width: 70px;
+  height: 48px;
+  padding-top:2px;
+  padding-bottom:18px;
+  margin:5px;
+  text-align:center;
+  background:white;
+  color:black;
+}
+
+.MenuIcon:hover {
+  background: #004668;
+  color:white;
+}
+
+.MenuMenuClose {
+  display:none;
+}
+
+.navigation {
+  width:100%;
+  text-align:right;
+  padding:0;
+}
+
+.main-header .fixedheader a  {
+  color: #004668;
+}
+
+.navigation a { 
+  position: relative;
+  display: inline-block;
+  text-align: center;
+  font-size: 15pt;
+  padding-left:10px;
+  padding-right:10px;
+  vertical-align:middle;
+  font-weight:600;
+}
+
+.fixedheader .navigation a:hover,
+.navigation a:hover {
+  background-color:#43a9b2;
+  color:white;
+  transition: all ease-in-out 0.4s;
+  transform-origin: top center;
+  perspective: 1000px
+}
+
+.navigation .dropdown-content a {
+  animation-name: menu-5;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes menu-5 {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  50% {
+    opacity: 1;
+  }
+  90% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.fixedheader .navigation a {
+  color: #004668;
+}
+
+.fixedheader .PrivateBar a {
+  color: white;
+}
+
+.navigation #MenuGetTicket {
+  background:rgba(255,255,255,0.3);
+  padding-left:20px;
+  padding-right:20px;
+}
+
+.fixedheader .navigation #MenuGetTicket {
+  background:rgba(2, 52, 76,0.1);
+}
+
+.navigation #MenuGetTicket:hover {
+  background:rgba(197, 31, 132,1);
+}
+
+.navigation #MenuDonate {
+  background:#b32d00;
+  padding-left:20px;
+  padding-right:20px;
+}
+
+.fixedheader .navigation #MenuDonate {
+  background:#b32d00;
+  color:white;
+}
+
+.navigation #MenuDonate:hover {
+  background:#ff531a;
+}
+
+
+.dropdown {
+  display: inline-block;
+  padding:0;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  width: 280px;
+  z-index: 2010;
+}
+
+.dropdown-content a {
+  line-height:20px; 
+  text-align:center;
+  font-size: 16pt;
+  display: block; 
+  background-color:white;
+  padding:12px;  
+  color:#43a9b2;
+/*  border:0.5px solid #43a9b2; /* works - do I want it? */ 
+}
+
+.dropdown-content a:hover {
+  background-color:#43a9b2;
+  color:white;
+}
+
+.main-header .dropdown-content a, 
+.main-header .dropdown-content a:link, 
+.main-header .dropdown-content a:visited  {
+  color:#43a9b2;
+}
+
+.main-header .dropdown-content a:hover  {
+  color:white;
+}
+
+.NotYet {
+  pointer-events: none;
+  cursor:default;
+  color:grey !important;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.active {
+  display: block;
+}
+
+.stick {
+  display: block;
+}
+
+/* sub Main */
+.PrivateBar .navigation, .PrivateBar .dropdown-content a:hover {
+  background-color:#ec038c;
+
+}
+
+.PrivateBar .navigation a:hover, .PrivateBar .dropdown-content {
+  background-color:#43a9b2;
+}
+
+.PrivateBar .MenuTesting, .MenuTesting a {
+  background:salmon ;
+  float:right;
+}
+
+/* Mobile menu stuff */
+
+#HoverContainer {
+  position: fixed;
+  top:76px;
+  right:-304px;
+  z-index:1950;
+  width:300px;
+  max-height: calc(100vh - 80px);
+  height:auto;
+  transition: margin-right 0.5s; 
+  display:none;
+}
+
+.Slide-Left {
+  margin-right:300px;
+}
+
+#HoverMenu {
+  background: black;
+  color: white;
+  max-height: calc(100vh - 80px);
+  height: 100%;
+  text-align:left;
+  transition: all ease-in-out 0.4s;
+  overflow-y:auto;
+  overflow-x:hidden;
+/*  transform: translateX(-300);  */
+}
+
+#HoverMenu:hover, #HoverMenu .hoverdown a {
+  background: black;
+  color: white;  
+}
+
+#HoverMenu .hoverdown {
+  width:100%;
+  font-size:18pt;
+  padding: 4px 10px 4px 10px;
+  color:white;
+}
+
+#HoverMenu .hoverdown-content {
+  display:none;
+  padding-left:20px;
+}
+
+.hoverdownarrow {
+  float:right;
+  padding-right:20px;
+  padding-left:20px;
+}
+
+.Flip {
+  transform: rotate(180deg);
+}
+
+#HoverMenu .hoverdown:hover,
+#HoverMenu .hoverdown a:hover {
+  background: dimgrey;
+  color: white;  
+}
+
+/* Banner Stuff */
+
+.NullBanner {
+  min-height:80px;
+  max-width:1560px;
+  position:absolute; 
+  top: 0;
+  background:black;
+}
+
+
+.WMFFbanner400 {
+  height:400px;
+  max-height:400px;
+  max-width:100%;
+  min-width:100%;
+  margin-top:-80px;
+  top: 0;
+  background:black;
+  object-fit:cover;
+  overflow:hidden;
+}
+
+
+.WMFFbanner600 {
+  height:600px;
+  width:1560px;
+  max-width:100%;
+  margin-top:-80px;
+  top: 0;
+  background:black;
+  object-fit:contain;
+  overflow:hidden;
+}
+
+.WMFFBannerText {
+  color: #fff;
+  margin: 30px 0 0;
+  width:100%;
+  max-width:1560px;
+  text-align:center; 
+  font-size: 44pt;
+  position: absolute;
+  top:130px;
+  font-weight: 400;
+  text-shadow: 0 0 15px black, 0 0 10px black ;
+  max-height:220px;
+/*  font-size: 5vw; */
+}
+
+/* Home Page - large banner */
+
+.WMFFbanner800 {
+  height:800px;
+  width:1560px;
+  max-width:100vw;
+  margin-top:-80px;
+  top: 0;
+  background:black;
+  object-fit:contain;
+  overflow:hidden;
+}
+
+.WMFFbanner800 .BanOverlay {
+  top:200px; /* was 260 */
+  text-align:center;
+  position: absolute;
+  max-width:90vw;
+  object-fit: contain;
+  left:50%;
+  transform: translateX(-50%); 
+}
+
+.WMFFbanner800 .BanOverlay img {
+  max-height:160px;
+  max-width:90vw;
+}
+
+
+.WMFFbanner800 .BanDates, .WMFFbanner800 .BanDates2 {
+  top:430px; /* Was 490 */
+  padding: 10px 20px;
+  position: absolute;
+  left:50%;
+  transform: translateX(-50%); 
+
+  background:white;
+  color:black;
+  text-align:center;
+  font-size:18pt;
+  font-weight:bold;
+}
+
+.BanDates2 .BanNotice {
+  font-size:16pt;
+  font-weight:normal;
+}
+
+.WMFFbanner800 .BanDates:hover {
+  background:rgba(197, 31, 132,1);
+  color:white;
+  transition: all ease-in-out 0.4s;
+}
+
+.WMFFbanner600 .BanOverlay {
+  top:120px; /* was 260 */
+  text-align:center;
+  position: absolute;
+  max-width:90vw;
+  object-fit: contain;
+  left:50%;
+  transform: translateX(-50%); 
+}
+
+.WMFFbanner600 .BanOverlay img {
+  max-height:160px;
+  max-width:90vw;
+}
+
+
+.WMFFbanner600 .BanDates, .WMFFbanner600 .BanDates2 {
+  top:230px; /* Was 490 */
+  padding: 10px 20px;
+  position: absolute;
+  left:50%;
+  transform: translateX(-50%); 
+
+  background:white;
+  color:black;
+  text-align:center;
+  font-size:18pt;
+  font-weight:bold;
+}
+
+.WMFFbanner600 .BanDates:hover {
+  background:rgba(197, 31, 132,1);
+  color:white;
+  transition: all ease-in-out 0.4s;
+}
+
+.WMFFbanner400 .BanOverlay {
+  top:75px; /* was 260 */
+  text-align:center;
+  position: absolute;
+  max-width:90vw;
+  object-fit: contain;
+  left:50%;
+  transform: translateX(-50%); 
+}
+
+.BanOverlay, .BanDates {
+  z-index: 900;
+}
+
+.WMFFbanner400 .BanOverlay img {
+  max-height:160px;
+  max-width:90vw;
+}
+
+
+.WMFFbanner400 .BanDates, .WMFFbanner400 .BanDates2 {
+  top:280px; /* Was 490 */
+  padding: 10px 20px;
+  position: absolute;
+  left:50%;
+  transform: translateX(-50%); 
+
+  background:white;
+  color:black;
+  text-align:center;
+  font-size:18pt;
+  font-weight:bold;
+}
+
+.WMFFbanner400 .BanDates:hover {
+  background:rgba(197, 31, 132,1);
+  color:white;
+  transition: all ease-in-out 0.4s;
+}
+
+
+.WMFFBannerDefault {
+  min-width:100%;
+  max-width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.TornBottomEdge {
+
+}
+
+.TornTopEdge {
+  margin-top:-35px;
+}
+
+/* Footer Stuff */
+.footer {
+  font-size:9pt;
+  padding: 0px 0px 100px 25px;
+  background:url(/images/icons/Flora.png) repeat-x bottom left;
+  background-color:#00344c ;
+  color:#FFFFFF;
+}
+
+.copyright{
+  width: 68%
+}
+
+.VersionBy{
+  width: 28%;
+  text-align: right;
+  display: inline-block;
+  float: right; 
+  padding-right:20px;
+}
+
+.BrianImg {
+  padding:5px;
+  background-color:#00344c ;  
+  max-width:800px;
+  width:100%;
+}
+
+
