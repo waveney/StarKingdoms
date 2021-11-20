@@ -162,7 +162,8 @@ function Get_User($who,&$newdata=0) {
     if ($newdata) $Save_User[$who] = $newdata;
     return $ret;
   }
-  $qry = "SELECT * FROM People WHERE Login='$who' OR Email='$who' OR UserId='$who'";
+  $qry = "SELECT * FROM People WHERE Login='$who' OR Email='$who' OR Id='$who'";
+
   $res = $db->query($qry);
 
   if (!$res || $res->num_rows == 0) return 0;
@@ -172,7 +173,7 @@ function Get_User($who,&$newdata=0) {
 }
 
 function Put_User(&$data,$Save_User=0) {
-  if (!$Save_User) $Save_User = Get_User($data['UserId'],$data);
+  if (!$Save_User) $Save_User = Get_User($data['id'],$data);
   Update_db('People',$Save_User,$data);
 }
 
@@ -243,8 +244,8 @@ $head_done = 0;
 $AdvancedHeaders = file_exists(dirname(__FILE__) . "/files/Newnavigation.php");
 
 function doextras($extras) {
-  global $FESTSYS;
-  $V=$FESTSYS['V'];
+  global $GAMESYS;
+  $V=$GAMESYS['V'];
   if ($extras) foreach ($extras as $e) {
     $suffix=pathinfo($e,PATHINFO_EXTENSION);
     if ($suffix == "js") {
@@ -260,18 +261,18 @@ function doextras($extras) {
 
 // If Banner is a simple image then treated as a basic banner image with title overlaid otherwise what is passed is used as is
 function dohead($title,$extras=[],$Banner='',$BannerOptions=' ') {
-  global $head_done,$FESTSYS,$CONF,$AdvancedHeaders;
+  global $head_done,$GAMESYS,$CONF,$AdvancedHeaders, $GAME;
 
   if ($head_done) return;
-  $V=$FESTSYS['V'];
+  $V=$GAMESYS['V'];
   $pfx="";
   if (isset($CONF['TitlePrefix'])) $pfx = $CONF['TitlePrefix'];
   echo "<html><head>";
-  echo "<title>$pfx " . $FESTSYS['FestName'] . " | $title</title>\n";
+  echo "<title>$pfx " . (isset($GAME['Name'])?$GAME['Name']:"Star Kingdoms" )  . " | $title</title>\n";
   if ($AdvancedHeaders) {
     include_once("files/Newheader.php");
   } else {
-    include_once("festfiles/header.php");
+    include_once("skfiles/header.php");
   }  
   if ($extras) doextras($extras);
   echo "</head><body>\n";
@@ -282,7 +283,7 @@ function dohead($title,$extras=[],$Banner='',$BannerOptions=' ') {
 
     if ($Banner) {
       if ($Banner == 1) {
-        echo "<div class=WMFFBanner400><img src=" . $FESTSYS['DefaultPageBanner'] . " class=WMFFBannerDefault>";
+        echo "<div class=WMFFBanner400><img src=" . $GAMESYS['DefaultPageBanner'] . " class=WMFFBannerDefault>";
         echo "<div class=WMFFBannerText>$title</div>";
         if (!strchr('T',$BannerOptions)) echo "<img src=/images/icons/torn-top.png class=TornTopEdge>";
         echo "</div>";

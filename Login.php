@@ -14,15 +14,18 @@ function Logon(&$use=0) {
   $Rem = 0;
   if (!$use) {
     $user = $_POST{'UserName'};
-    $pwd = $_POST{'password'};
+    $pwd = $_POST{'Password'};
     if (isset($_POST{'RememberMe'})) $Rem = $_POST{'RememberMe'};
     $ans = Get_User($user);
   }
+
+
+
   if ($use || $ans) { // using crypt rather than password_hash so it works on php 3.3
     if (!$use && $ans) {
-      if ($ans['password'] != $user['AccessKey']) {
+      if ($ans['AccessKey'] != $pwd) {
         $cry = crypt($pwd,'WM');
-        if ($cry != $ans['password']) {
+        if ($cry != $ans['Password']) {
           setcookie('SKC2','',-1,'/');
           return "Username/Password Error";
         }
@@ -36,7 +39,7 @@ function Logon(&$use=0) {
       $_COOKIE{'SKC2'} = $ans['Yale'];
       Put_User($ans);
       $USER=$ans;
-      $USERID = $USER{'UserId'};
+      $USERID = $USER{'id'};
       include_once ("Staff.php"); // no return wanted
       exit;
     }
@@ -83,9 +86,9 @@ function Set_Password($user,$msg='') {
  
     if ($msg) echo "<h2 class=ERR>$msg</h2>\n";
     echo "Min length is 6.<p>";
-    echo "<form method=post action=Login>";
+    echo "<form method=post action=Login.php>";
     echo "<div class=tablecont><table>";
-    echo "<tr><td>Password:<td><input type=password Name=password>\n";
+    echo "<tr><td>Password:<td><input type=password Name=Password>\n";
     echo fm_hidden('UserId',$user) . fm_hidden('AccessKey',$rand_hash);
     echo "<tr><td>Confirm:<td><input type=password Name=confirm>\n";
     $_POST{'RememberMe'} = 1;
@@ -123,9 +126,9 @@ function Login($errmsg='', $message='') {
   if ($errmsg) echo "<h2 class=ERR>$errmsg</h2>";
   if ($message) echo "<h2>$message</h2>";
 
-  echo "<form method=post action=Login>";
+  echo "<form method=post action=Login.php>";
   echo "<div class=tablecont><table class=simpletable><tr><td>User Name or Email:<td><input type=text Name=UserName>\n";
-  echo "<tr><td>Password:<td><input type=password Name=password>\n";
+  echo "<tr><td>Password:<td><input type=password Name=Password>\n";
   $_POST{'RememberMe'} = 1;
   echo "<tr><td>" . fm_checkbox("Remember Me",$_POST,'RememberMe');
   echo "</table></div>\n";
@@ -145,14 +148,14 @@ function NewPasswd() {
   if ($ans = Get_User($user) ) {
     if ($ans['AccessKey'] == $ans['AccessKey']) {
       if ($ans['ChangeSent']+36000 > time()) {
-        if ($_POST{'password'} == $_POST{'confirm'}) {
-          if (strlen($_POST{'password'}) > 5) { // using crypt rather than password_hash so it works on php 3.3
-            $hash = crypt($_POST{'password'},"WM");
-            $ans['password'] = $hash;
+        if ($_POST{'Password'} == $_POST{'confirm'}) {
+          if (strlen($_POST{'Password'}) > 5) { // using crypt rather than password_hash so it works on php 3.3
+            $hash = crypt($_POST{'Password'},"WM");
+            $ans['Password'] = $hash;
             $ans['Yale'] = rand_string(40);
             $USER = $ans;
             $USERID = $user;
-            setcookie('WMFF2',$ans['Yale'],($_POST{'RememberMe'} ? mktime(0,0,0,1,1,$CALYEAR+1) : 0 ),'/');
+            setcookie('SKC2',$ans['Yale'],($_POST{'RememberMe'} ? mktime(0,0,0,1,1,$CALYEAR+1) : 0 ),'/');
                   Put_User($ans);
                  include ("Staff.php"); // no return wanted
             exit;
