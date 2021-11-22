@@ -33,8 +33,11 @@ function table_fields($table) {
   if (isset($tables[$table])) return $tables[$table];
 
   $qry = "SELECT Column_Name, Data_type FROM information_schema.columns WHERE table_schema='" . $CONF['dbase'] ."' AND table_name='" . $table . "'";
+//var_dump($qry);
   $Flds = $db->query($qry);
+//var_dump($Flds);
   while ($Field = $Flds->fetch_array()) {
+//var_dump($Field);
     $tables[$table][$Field['Column_Name']] = $Field['Data_type'];
   }
   return $tables[$table];
@@ -115,7 +118,8 @@ function Insert_db($table, &$from, &$data=0, $proced=1) {
   $fcnt = 0;
   $Flds = table_fields($table);
   $indxname = (isset($TableIndexes[$table])?$TableIndexes[$table]:'id');
-//echo "Fields: "; var_dump($from);
+//echo "<p>Fields: "; var_dump($Flds);
+//echo "<p>From>: "; var_dump($from);
   foreach ($Flds as $fname=>$ftype) {
     if (isset($from[$fname]) && $from[$fname] != '' && $indxname!=$fname ) { 
       if ($fcnt++ > 0) { $newrec .= " , "; }
@@ -136,7 +140,7 @@ function Insert_db($table, &$from, &$data=0, $proced=1) {
       }
     }
   }
-//var_dump($newrec);
+//var_dump($newrec);exit;
   if ($proced) {
     $insert = $db->query($newrec);
     if ($insert) {

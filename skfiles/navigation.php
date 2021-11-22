@@ -3,6 +3,7 @@
   global $Access_Type,$USER,$YEAR;
   Set_User();
   $hpre = Feature('HeaderPreTools');
+
   if ($hpre) echo $hpre;
   if (isset($_COOKIE{'SKC2'})) {
     echo "<div class=Staff><div class=navigation>";

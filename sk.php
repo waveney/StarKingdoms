@@ -42,7 +42,7 @@ function Set_User() {
     $res=$db->query("SELECT * FROM People WHERE Yale='" . $_COOKIE{'SKC2'} . "'");
     if ($res) {
       $USER = $res->fetch_assoc();
-      $USERID = $USER['UserId'];
+      $USERID = $USER['id'];
       $db->query("UPDATE People SET LastAccess='" . time() . "' WHERE UserId=$USERID" );
 // Track suspicious things
       if (($USER['LogUse']) && (file_exists("LogFiles"))) {
@@ -71,21 +71,19 @@ function Access($level,$subtype=0,$thing=0) {
 
   switch  ($USER{'AccessLevel'}) {
 
-  case $Access_Type['Participant'] : 
+  case $Access_Type['Player'] : 
     if (!$subtype) return 1;
     if ($USER['Subtype'] == 'Other' && $subtype == 'Act') {}
     elseif ($USER{'Subtype'} != $subtype) return 0;
     return $thing == $USERID;
 
-  case $Access_Type['Upload'] :
-  case $Access_Type['Staff'] :
-  case $Access_Type['Steward'] :
+  case $Access_Type['Observer'] :
     if (!$subtype) return $USER{'AccessLevel'} >= $want;
     if (isset($USER[$subtype]) && $USER[$subtype]) return 1;
     return 0; 
 
 
-  case $Access_Type['Committee'] :
+  case $Access_Type['GM'] :
     if (!$subtype) return 1;
     if (isset($USER[$subtype]) && $USER[$subtype]) return 1;
     return 0;
@@ -162,7 +160,7 @@ function Get_User($who,&$newdata=0) {
     if ($newdata) $Save_User[$who] = $newdata;
     return $ret;
   }
-  $qry = "SELECT * FROM People WHERE Login='$who' OR Email='$who' OR Id='$who'";
+  $qry = "SELECT * FROM People WHERE Login='$who' OR Email='$who' OR id='$who'";
 
   $res = $db->query($qry);
 
@@ -184,26 +182,11 @@ function Error_Page ($message) {
 //  var_dump($USER);
 //  echo "$type<p>";
   switch ($type) {
-  case $Access_Type['Participant'] :
-    switch ( $USER{'Subtype'}) {
-    case 'Side' :
-    case 'Act' :
-    case 'Stall' :
-    case 'Sponsor' :
-    case 'Other' :
-    default:
-      include_once("index.php");
-      exit;
-    }
+  case $Access_Type['Player'] :
+    include_once("index.php");
+    exit;
 
-  case $Access_Type['Committee'] :
-  case $Access_Type['Steward'] :
-  case $Access_Type['Staff'] :
-  case $Access_Type['Upload'] :
-//    $ErrorMessage = $message;
-//    var_dump($message);
-    include_once('int/Staff.php');  // Should be good
-    exit;                        // Just in case
+  case $Access_Type['GM'] :
   case $Access_Type['SysAdmin'] :
   case $Access_Type['Internal'] :
     $ErrorMessage = "Something went very wrong... - $message";
@@ -216,13 +199,14 @@ function Error_Page ($message) {
 }
 
 function Get_Game($y=0) {
-  global $db,$GAME,$GAMESYS;
+  global $db,$GAME,$GAMESYS,$GAMEID;
   if (!$y) $y=$GAMESYS['CurGame'];
   $res = $db->query("SELECT * FROM Games WHERE Name='$y'");
   if ($res) return $res->fetch_assoc();
 }
 
 $GAME = Get_Game();
+$GAMEID = $GAME['id'];
 
 function First_Sent($stuff) {
   $onefifty=substr($stuff,0,150);
