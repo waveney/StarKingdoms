@@ -6,6 +6,8 @@
 
   dohead("Full Map");
   
+  $CatCols = ["white","grey", "yellow"];  
+  
   $typ='';
   if (isset($_REQUEST['Hex'])) $typ = 'Hex';
 
@@ -20,9 +22,10 @@
   fwrite($Dot,"graph {\n") ; //size=" . '"8,12!"' . "\n");
   foreach ($Nodes as $N) {
     if ($typ) {
-      fwrite($Dot,$N['Ref'] . " [shape=hexagon pos=\"" . $N['GridX'] . "," . $N['GridY'] . "!\" " . ($N['Category']?" style=filled fillcolor=grey":"") . "] ;\n");
+      fwrite($Dot,$N['Ref'] . " [shape=hexagon pos=\"" . ($N['GridX']+(5-$N['GridY'])/2) . "," . (9-$N['GridY']) . "!\" " . 
+       ($N['Category']?" style=filled fillcolor=" . $CatCols[$N['Category']] . "":"") . "] ;\n");
     } else {
-      fwrite($Dot,$N['Ref'] . ($N['Category']?" [style=filled fillcolor=grey]":"") . ";\n");
+      fwrite($Dot,$N['Ref'] . ($N['Category']?" [style=filled fillcolor=" . $CatCols[$N['Category']] . "]":"") . ";\n");
     }
   }
   
