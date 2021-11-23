@@ -1,5 +1,6 @@
 <?php
   include_once("sk.php");
+  include_once("GetPut.php");
   /* Remove any Participant overlay */
 
   A_Check('Player');
@@ -28,6 +29,9 @@
   }
 
   if (isset($ErrorMessage)) echo "<h2 class=ERR>$ErrorMessage</h2>";
+  
+  $Facts = Get_Faction_Names();
+  
 
 //echo php_ini_loaded_file() . "<P>";
 
@@ -55,15 +59,25 @@
       $txt .= "</ul>\n";
     }
     
-// *********************** TIMELINE ****************************************************
+// *********************** Maps ****************************************************
   if ($x = SKTable('Any','Maping')) {
     $txt .= $x;
     $txt .= "<ul>\n";
-    $txt .= "<li><a href=MapShow.php>Full Map Show</a>\n<p>";
+    $txt .= "<li><a href=MapShow.php>Full Map Show</a>\n";
     $txt .= "<li><a href=MapShow.php?Hex>Hex Map Show</a>\n<p>";
-    $txt .= "<li><a href=MapFull.php>Full Map Generate</a>\n<p>";
+
+    $txt .= "<li><form method=Post action=MapFull.php class=staffform>";
+      $txt .= "<input type=submit name=f value='Map Show for' id=staffformid>" . 
+                fm_select($Facts,0,'f',1," onchange=this.form.submit()") . "</form>\n";
+
+    $txt .= "<li><form method=Post action=MapFull.php?Hex class=staffform>";
+      $txt .= "<input type=submit name=f1 value='Hex Map for' id=staffformid>" . 
+                fm_select($Facts,0,'f1',1," onchange=this.form.submit()") . "</form>\n";
+
+    
+    $txt .= "<li><a href=MapFull.php>Full Map Generate</a>\n";
     $txt .= "<li><a href=MapFull.php?Hex>Hex Map Generate</a>\n<p>";
-    $txt .= "<li><a href=MapEdit.php>Map Edit Help</a><p>\n";
+    $txt .= "<li><a href=MapEdit.php>Map Edit</a><p>\n";
     $txt .= "<li><a href=MapValid.php>Map Validation</a>\n";
     if (Access('God')) {
       $txt .= "<li><a href=MapFromCSV.php>Map from CSV</a>\n";

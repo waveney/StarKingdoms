@@ -6,7 +6,7 @@
 
   dohead("Map From CSV");
 
-  global $db, $GAME;
+  global $db, $GAME, $GAMEID;
   
   $File = fopen("SK Master Sheet.csv",'r');
   if (!$File) { echo "Data would not open"; dotail(); };
@@ -28,22 +28,32 @@
         echo "Made node $sys<br>";
       }
       
-      $Sysid = $Nodes[$sys]['id'];
+//      $Sysref = $Nodes[$sys]['Ref'];
+
+//if ($sys== 'IKM') echo "<p>IKM:";
       
-      $Links = Get_Links($Sysid);
+      $Links = Get_Links($sys);
+
+//if ($sys== 'IKM') { var_dump($maxlinks, $Links);; echo "<br>"; }
       
       for ($i=1; $i<$maxlinks; $i++) {
+//if ($sys== 'IKM') echo "Doing $i<br>";
         if (!$line[$i] || !is_numeric($head[$i])) continue;
+//if ($sys== 'IKM') echo "Now checking...<br>";
         $dest = $line[$i];
-        if ($Links) foreach ($Links as $L) {
-          if ($L['System1Ref'] == $dest || $L['System2Ref'] == $dest) break 2;
+        if ($Links) {
+          foreach ($Links as $L) {
+            if ($L['System1Ref'] == $dest || $L['System2Ref'] == $dest) {
+              continue 2;
+            }
+          }
         }
         
-        $Lnk = ['System1Ref'=> $sys, 'System2Ref' => $dest, 'Level'=>$head[$i]];
+        $Lnk = ['GameId'=> $GAMEID, 'System1Ref'=> $sys, 'System2Ref' => $dest, 'Level'=>$head[$i]];
         $lid = Put_Link($Lnk);
-        $Lnk['id'] = $lid;
+//        $Lnk['id'] = $lid;
         
-        $Links[] = $Lnk;
+//        $Links[] = $Lnk;
         echo "Inserted Link $sys to $dest <br>";
         }
       }

@@ -17,6 +17,28 @@ function Put_Faction(&$now) {
   return Update_db('Factions',$Cur,$now);
 }
 
+function Get_Factions() {
+  global $db,$GAMEID;
+  $res = $db->query("SELECT * FROM Factions WHERE GameId=$GAMEID ORDER BY id ");
+  $F = [];
+  if ($res) {
+    while ($ans = $res->fetch_assoc()) { $F[$ans['id']] = $ans; }
+    }
+  return $F;  
+}
+
+function Get_Faction_Names() {
+  global $db,$GAMEID;
+  $res = $db->query("SELECT * FROM Factions WHERE GameId=$GAMEID ORDER BY id ");
+  $F = [];
+  if ($res) {
+    while ($ans = $res->fetch_assoc()) { $F[$ans['id']] = $ans['Name']; }
+    }
+  return $F;  
+}
+
+
+
 // Systems
 
 function Get_System($id) {
@@ -93,14 +115,25 @@ function Put_Link(&$now) {
     $Cur = Get_Faction($e);
     return Update_db('Links',$Cur,$now);
   } else {
+//var_dump($now); exit;
     return $now['id'] = Insert_db ('Links', $now );  
   }
 
 }
 
 function Get_Links($sysref) {
-  global $db;
-  $res = $db->query("SELECT * FROM Links WHERE System1Ref='$sysref' OR System2Ref='$sysref'");
+  global $db,$GAMEID;
+  $res = $db->query("SELECT * FROM Links WHERE GameId=$GAMEID AND (System1Ref='$sysref' OR System2Ref='$sysref')");
+  $links = [];
+  if ($res) {
+    while ($ans = $res->fetch_assoc()) { $links[] = $ans; };
+    }
+  return $links;
+}
+
+function Get_Links1end($sysref) {
+  global $db,$GAMEID;
+  $res = $db->query("SELECT * FROM Links WHERE GameId=$GAMEID AND System1Ref='$sysref'");
   $links = [];
   if ($res) {
     while ($ans = $res->fetch_assoc()) { $links[] = $ans; };
@@ -110,8 +143,8 @@ function Get_Links($sysref) {
 
 // Messy not right avoid if poss
 function Get_LinksAll($sysid) {
-  global $db,$GAME;
-  $res = $db->query("SELECT * FROM Links WHERE System1=$sysid OR System2=$sysid");
+  global $db,$GAMEID;
+  $res = $db->query("SELECT * FROM Links WHERE GameId=$GAMEID AND (System1=$sysid OR System2=$sysid)");
   $links = [];
   if ($res) {
     while ($ans = $res->fetch_assoc()) { $links[] = $ans; };
@@ -131,7 +164,7 @@ function Get_FactionLink($id) {
 
 function Get_FactionLinkFL($Fact, $Lid) {
   global $db;
-  $res = $db->query("SELECT * FROM FactionLink WHERE FactionId=$Fact AND LinkId=$id");
+  $res = $db->query("SELECT * FROM FactionLink WHERE FactionId=$Fact AND LinkId=$Lid");
   if ($res) return $res->fetch_assoc();
   return ['FactionId'=>$Fact, 'LinkId'=>$id];
 }
