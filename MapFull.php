@@ -4,7 +4,7 @@
   
   A_Check('GM');
 
-  dohead("Full Map");
+  dostaffhead("Full Map");
   
   $CatCols = ["white","grey", "yellow"];
   $HexLegPos = [[1,8],[1,7.5],[1,7],[1,6.5], [9,8],[9,7.5],[9,7],[9,6.5],[1,0],[1,0.5],[1,2],[1,1],[1,1.5],[9,2],[9,1.5],[9,1],[9,0.5],[9,0]];
@@ -22,11 +22,33 @@
   }
 
   function NodeLab($txt,$Prefix) {
-    $FSize = [14,14,14,14,14, 13,13,12,12, 11,11,10,10, 9,9,9,9, 8,8,8,8];
+    $FSize = [14,14,14,14,14, 13,13,12,12, 11,10,9,9, 8,8,7,7, 6,6,6,6];
     if (strlen($txt) > 20 ) $txt = substr($txt,0,20);
     $len = strlen($txt);
     $ret = ' label="';
     if ($Prefix) $ret .= "$Prefix\n";
+    if ($len > 8) {
+      $words = explode(' ',$txt); 
+      $numwrds = count($words);
+      if ($numwrds > 1) {
+        $sp = round(($len+1)/2);
+        $nxt = (($len&1)?1:-1);
+        $i = 1;
+        while ($sp > 0) {
+          if (substr($txt,$sp,1) == ' ') { 
+            $txt = substr($txt,0,$sp-1) . "\n" . substr($txt,$sp);
+            $len = max($sp,$len-$sp);
+            break;
+          } else {
+            $sp += $nxt*$i;
+            $nxt = - $nxt;
+            if ($i++ > 20 ) {
+              break;
+            }
+          }
+        }
+      }
+    }
     $ret .= $txt . '"';
     if ($len < 5) return $ret;
     return $ret . " fontsize=" . $FSize[$len] . " ";
@@ -43,6 +65,7 @@
   $Factions = Get_Factions(); 
   $Neb = 0;
   $ShownNodes = [];
+  $LinkSown = [];
   
   fwrite($Dot,"graph {\n") ; //size=" . '"8,12!"' . "\n");
   
@@ -50,11 +73,13 @@
   
   foreach ($Nodes as $N) {
     $NodeName = $N['Name']?$N['Name']:"";
+    $ShortName = $N['ShortName']?$N['ShortName']:$NodeName;
     if ($Faction) {
       if ($N['Control'] != $Faction) {
         $FS = Get_FactionSystemFS($Faction, $N['id']);
         if (!isset($FS['id'])) continue;
-        if ($FS['Name']) $NodeName = $FS['Name'];
+        if ($FS['Name']) $ShortName = $NodeName = $FS['Name'];
+        if ($FS['ShortName']) $ShortName = $FS['ShortName'];
       }
     }
     $atts = "";
@@ -72,7 +97,7 @@
     if ($typ) $atts .= " shape=box pos=\"" . ($N['GridX']+(5-$N['GridY'])/2) . "," . (9-$N['GridY']) . "!\"";
     $atts .= "  shape=box style=filled fillcolor=$Colour";
     if ($NodeName) {
-      $atts .= NodeLab($NodeName, ($Faction==0?$N['Ref']:""));
+      $atts .= NodeLab($ShortName, ($Faction==0?$N['Ref']:""));
     }
     if ($N['Nebulae']) { $atts .= " penwidth=" . (1+$N['Nebulae']*2); $Neb = 1; };
     
@@ -86,7 +111,43 @@
 //    }
   }
   
-  fwrite($Dot,"subgraph legend {\n");
+
+  if ($Faction) {
+    $ul = 1;
+    foreach($Nodes as $N) {
+      $from = $N['Ref'];
+      $Links = Get_Links($from);
+      if (!isset( $ShownNodes[$N['Ref']])) continue;
+
+      foreach ($Links as $L) {
+        if (isset($LinkShown[$L['id']])) continue;
+        
+        $Fl = Get_FactionLinkFL($Faction, $L['id']);
+        if (isset($Fl['id'])) {
+          fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=" . $Levels[$L['Level']]['Colour'] . " label=\"#" . $L['id'] . "\" ];\n");
+        } else {
+          fwrite($Dot,"Unk$ul [label=\"?\" shape=circle];\n");
+          fwrite($Dot,"$from -- Unk$ul [color=" . $Levels[$L['Level']]['Colour'] . " label=\"#" . $L['id'] . "\" ];\n");
+          $ul++;
+        }
+        $LinkShown[$L['id']]=1;
+      }
+    }
+  } else {
+    foreach($Nodes as $N) {
+      $from = $N['Ref'];
+      $Links = Get_Links1end($from);
+
+      foreach ($Links as $L) {
+        fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=" . $Levels[$L['Level']]['Colour'] . ($typ?"":(" label=\"#" . $L['id'] . "\"")) . "];\n");
+      }
+    }
+  }
+  
+  
+
+//  fwrite($Dot,"}\n");
+//  fwrite($Dot,"graph legend {\n");
   $ls=0;
   foreach ($Factions as $F) {
     if (isset($F['Seen'])) {
@@ -103,42 +164,9 @@
       fwrite($Dot,"Nebulae [shape=box style=filled fillcolor=white penwidth=3];\n");
     }
   };
-  fwrite($Dot,"}\n");
-  
 
-  if ($Faction) {
-    $ul = 1;
-    foreach($Nodes as $N) {
-      $from = $N['Ref'];
-      $Links = Get_Links($from);
-      if (!isset( $ShownNodes[$N['Ref']])) continue;
+  fwrite($Dot,"}\n");  
 
-      $nl = 1;
-      foreach ($Links as $L) {
-        $Fl = Get_FactionLinkFL($Faction, $L['id']);
-        if (isset($Fl['id'])) {
-          fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=" . $Levels[$L['Level']]['Colour'] . "];\n");
-        } else {
-          fwrite($Dot,"Unk$ul [label=\"?\" shape=circle];\n");
-          fwrite($Dot,"$from -- Unk$ul [color=" . $Levels[$L['Level']]['Colour'] . " label=\"#$nl\" ];\n");
-          $ul++;
-          $nl++;
-        }
-      }
-    }
-  } else {
-    foreach($Nodes as $N) {
-      $from = $N['Ref'];
-      $Links = Get_Links1end($from);
-
-      foreach ($Links as $L) {
-        fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=" . $Levels[$L['Level']]['Colour'] . "];\n");
-      }
-    }
-  }
-  
-  
-  fwrite($Dot,"}\n");
   fclose($Dot);
 //  echo "<H1>Dot File written</h1>";
   

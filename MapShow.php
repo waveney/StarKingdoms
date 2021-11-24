@@ -4,7 +4,7 @@
 
   A_Check('GM');
 
-  dohead("Show Full Map");
+  dostaffhead("Show Full Map");
 
   global $db, $GAME;
 

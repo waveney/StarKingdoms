@@ -7,7 +7,7 @@
 
   $host= "https://" . $_SERVER['HTTP_HOST'];
 
-  dohead("SK Pages", ["/js/jquery.typeahead.min.js", "/css/jquery.typeahead.min.css", "/js/Staff.js"]);
+  dostaffhead("SK Pages", ["/js/jquery.typeahead.min.js", "/css/jquery.typeahead.min.css", "/js/Staff.js"]);
 
   global $GAME;
 
@@ -102,9 +102,11 @@
 
 
 // *********************** Misc *****************************************************************
-  if ($x = SKTable('Misc','Misc')) {
+  if ($x = SKTable('Any','Systems')) {
     $txt .= $x;
     $txt .= "<ul>\n";
+    $txt .= "<li><a href=SysList.php>List Systems</a>\n";
+  
 //    $txt .= "<li><a href=StewardView>Stewarding Applications (old)</a>\n";
     $txt .= "<p>";
 
