@@ -12,11 +12,13 @@
 ?>
 
     <script src="/js/jquery-3.2.1.min.js"></script>
-    <link href="/files/themes.css" type="text/css" rel="stylesheet" />
-    <script src="/js/lightbox.js"></script>
-    <link href="/css/lightbox.css" rel="stylesheet" />
-    <script src="/js/responsiveslides.js"></script>
-    <link href="/css/responsiveslides.css" rel="stylesheet" />
+<?php    
+//    <link href="/files/themes.css" type="text/css" rel="stylesheet" />
+//    <script src="/js/lightbox.js"></script>
+//    <link href="/css/lightbox.css" rel="stylesheet" />
+//    <script src="/js/responsiveslides.js"></script>
+//    <link href="/css/responsiveslides.css" rel="stylesheet" />
+?>
     <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Montserrat%3A300%2C400%2C600%2C700' type='text/css' media='all' />
 <?php
   echo "<script src=/js/tablesort.js?V=$V></script>\n";

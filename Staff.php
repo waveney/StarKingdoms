@@ -113,6 +113,17 @@
     $txt .= "</ul>\n";
   }
 
+// *********************** Misc *****************************************************************
+  if ($x = SKTable('Any','Game')) {
+    $txt .= $x;
+    $txt .= "<ul>\n";
+    $txt .= "<li><a href=DTList.php>List District Types</a>\n";
+    $txt .= "<li><a href=PlanetTypes.php>Planet Types</a>\n";  
+//    $txt .= "<li><a href=StewardView>Stewarding Applications (old)</a>\n";
+    $txt .= "<p>";
+
+    $txt .= "</ul>\n";
+  }
 
 // *********************** GENERAL ADMIN *********************************************************
   if ($x = SKTable('Any','General Admin')) {

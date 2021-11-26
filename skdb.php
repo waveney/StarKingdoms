@@ -90,6 +90,7 @@ function Update_db($table,&$old,&$new,$proced=1) {
     }
   }
 
+//var_dump($old);
 //echo "$fcnt<p>";
   if ($proced && $fcnt) {
     $newrec .= " WHERE $indxname=" . $old[$indxname];
@@ -257,7 +258,7 @@ function set_ShowGame($last=0) { // Overrides default above if not set by a Y ar
 
 // Works for simple tables
 // Deletes = 0 none, 1=one, 2=many
-function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$Mstr='SN',$MstrNot='') {
+function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$Mstr='Name',$MstrNot='') {
   global $TableIndexes;
   include_once("DateTime.php");
   $Flds = table_fields($table);

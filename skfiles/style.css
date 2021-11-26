@@ -6,7 +6,7 @@ img
 body
     {
 /*  background-color:#c2eff4;*/
-  background-image:url(/images/icons/background.png);
+/*  background-image:url(/images/icons/background.png); */
     min-width:320px;
     width:responsive;
     height:100%;
