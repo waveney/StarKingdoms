@@ -52,6 +52,7 @@ function Update_db($table,&$old,&$new,$proced=1) {
 
   $Flds = table_fields($table);
   $indxname = (isset($TableIndexes[$table])?$TableIndexes[$table]:'id');
+//var_dump($indxname);  
   $newrec = "UPDATE $table SET ";
   $fcnt = 0;
 

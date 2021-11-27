@@ -31,8 +31,20 @@ function Get_Faction_Names() {
   global $db,$GAMEID;
   $res = $db->query("SELECT * FROM Factions WHERE GameId=$GAMEID ORDER BY id ");
   $F = [];
+  $F[0] = "None";
   if ($res) {
     while ($ans = $res->fetch_assoc()) { $F[$ans['id']] = $ans['Name']; }
+    }
+  return $F;  
+}
+
+function Get_Faction_Colours() {
+  global $db,$GAMEID;
+  $res = $db->query("SELECT * FROM Factions WHERE GameId=$GAMEID ORDER BY id ");
+  $F = [];
+  $F[0] = "white";
+  if ($res) {
+    while ($ans = $res->fetch_assoc()) { $F[$ans['id']] = $ans['MapColour']; }
     }
   return $F;  
 }
@@ -255,7 +267,7 @@ function Get_DistrictType($id) {
 
 function Put_DistrictType(&$now) {
   $e=$now['id'];
-  $Cur = Get_District($e);
+  $Cur = Get_DistrictType($e);
   return Update_db('DistrictTypes',$Cur,$now);
 }
 
@@ -313,7 +325,7 @@ function Get_PlanetType($id) {
 
 function Put_PlanetType(&$now) {
   $e=$now['id'];
-  $Cur = Get_Planet($e);
+  $Cur = Get_PlanetType($e);
   return Update_db('PlanetTypes',$Cur,$now);
 }
 
