@@ -30,7 +30,7 @@ function RealWorld(&$Data,$fld) {
       return sprintf("%0.2f x Sun",$val/3.83e26);          
       
     case 'OrbitalRadius' :
-      return sprintf("%0.2f x AU",$val/1.496e8);            
+      return sprintf("%0.2f AU",$val/1.496e8);            
     
     case 'Period' :
       if ($val > 4000) {
@@ -47,11 +47,11 @@ function RealWorld(&$Data,$fld) {
       return;
     
     case 'Gravity' :
-      return sprintf("%0.2f x Earth",$val/9.8);
+      return sprintf("%0.2f G",$val/9.8);
     
     case 'Distance' :
       if ($val > 2e6) {
-        return sprintf("%0.2f x AU",$val/1.496e8);      
+        return sprintf("%0.2f AU",$val/1.496e8);      
       } else {
         return sprintf("%0.2f x Radius of Stars",$val/($Data['Radius']+$Data['Radius2']));      
       }
@@ -61,7 +61,15 @@ function RealWorld(&$Data,$fld) {
     }
 }
   
+function RealHeat(&$N,&$P) {
+  $heat = $N['Luminosity']/(($P['OrbitalRadius']*1000)^2);
+  return sprintf("%0.2f Earth", $heat*(1.496e11^2)/3.83e26);
+}
 
+function RealHeatValue(&$N,&$P) {
+  $heat = $N['Luminosity']/(($P['OrbitalRadius']*1000)^2);
+  return $heat*(1.496e11^2)/3.83e26;
+}
 
 function Show_System(&$N,$Mode=0) {
   global $GAME,$GAMEID;
@@ -81,32 +89,33 @@ function Show_System(&$N,$Mode=0) {
   $Fact_Colours = Get_Faction_Colours();
   $Planets = Get_Planets($Sid);
   $PTNs = Get_PlanetTypeNames();
+  $PTD = Get_PlanetTypes();
   
   echo "<form method=post id=mainform enctype='multipart/form-data' action=SysEdit.php>";
   echo "<div class=tablecont><table width=90% border class=SideTable>\n";
   Register_AutoUpdate('System',$Sid);
   echo fm_hidden('id',$Sid);
   echo "<tr class=NotSide><td class=NotSide>Id:<td class=NotSide>$Sid<td class=NotSide>Game<td class=NotSide>$GAMEID" .
-       "<td class=NotSide>" . $GAME['Name'] . fm_text('Ref',$N,'Ref',1,"class=NotSide");
-  echo "<tr class=NotSide>" . fm_text('Grid X',$N,'GridX',1,"class=NotSide") . fm_text('Grid Y',$N,'GridY',1,"class=NotSide");
+       "<td class=NotSide>" . $GAME['Name'];
+  echo "<tr class=NotSide>" . fm_text('Grid X',$N,'GridX',1,"class=NotSide") . fm_text('Grid Y',$N,'GridY',1,"class=NotSide") . fm_text('Ref',$N,'Ref',1,"class=NotSide");
 //  echo "<tr class=NotCSide><td class=NotCSide>Control:<td class=NotCSide>" . fm_select($Facts,$N,'Control',1); // Known by TODO, Image
   echo "<tr>" . fm_radio('Control',$Facts ,$N,'Contol','',1,'colspan=6','',$Fact_Colours,0); 
   echo "<tr>" . fm_text('Name',$N,'Name',8);
-  echo "<tr>" . fm_text('Short Name',$N,'ShortName') . fm_text('Nebulae',$N,'Nebulae',1,"class=NotCSide");
+  echo "<tr>" . fm_text('Short Name',$N,'ShortName') . fm_text('Nebulae',$N,'Nebulae',1,"class=NotCSide"). fm_number('Category',$N,'Category',1,"class=NotSide") ;
   echo "<tr>" . fm_textarea('Description',$N,'Description',8,3);
   echo "<tr>" . fm_text('Type',$N,'Type',2,"class=NotCSide");
-  echo "<tr>" . fm_number('Radius',$N,'Radius',1,"class=NotCSide") . "Km = " . RealWorld($N,'Radius') 
-              . fm_number('Mass',$N,'Mass',1,"class=NotCSide") . "Kg = " . RealWorld($N,'Mass'); 
-  echo "<tr>" . fm_number('Temperature',$N,'Temperature',1,"class=NotCSide") . "K" 
-              . fm_number('Luminosity',$N,'Luminosity',1,"class=NotCSide") . "W = " . RealWorld($N,'Luminosity');
+  echo "<tr>" . fm_number('Radius',$N,'Radius',1,"class=NotCSide") . "<td>Km = " . RealWorld($N,'Radius') 
+              . fm_number('Mass',$N,'Mass',1,"class=NotCSide") . "<td>Kg = " . RealWorld($N,'Mass'); 
+  echo "<tr>" . fm_number('Temperature',$N,'Temperature',1,"class=NotCSide") . "<td>K" 
+              . fm_number('Luminosity',$N,'Luminosity',1,"class=NotCSide") . "<td>W = " . RealWorld($N,'Luminosity');
   if ($N['Type2']) {
     echo "<tr>" . fm_text('2nd Star Type',$N,'Type2',2,"class=NotCSide");
-    echo "<tr>" . fm_number('Radius',$N,'Radius2',1,"class=NotCSide") . "Km = " . RealWorld($N,'Radius2') 
-                .  fm_number('Mass',$N,'Mass2',1,"class=NotCSide") . "Kg = " . RealWorld($N,'Mass2');
-    echo "<tr>" . fm_number('Temperature2',$N,'Temperature2',1,"class=NotCSide") . "K" 
-                . fm_number('Luminosity',$N,'Luminosity2',1,"class=NotCSide") . "W - " . RealWorld($N,'Luminosity');
-    echo "<tr>" . fm_number('Distance',$N,'Distance',1,"class=NotCSide") . "Km = " . RealWorld($N,'Distance') 
-                . fm_number('Period',$N,'Period',1,"class=NotCSide") . "Hr = " . RealWorld($N,'Period');
+    echo "<tr>" . fm_number('Radius',$N,'Radius2',1,"class=NotCSide") . "<td>Km = " . RealWorld($N,'Radius2') 
+                .  fm_number('Mass',$N,'Mass2',1,"class=NotCSide") . "<td>Kg = " . RealWorld($N,'Mass2');
+    echo "<tr>" . fm_number('Temperature2',$N,'Temperature2',1,"class=NotCSide") . "<td>K" 
+                . fm_number('Luminosity',$N,'Luminosity2',1,"class=NotCSide") . "<td>W = " . RealWorld($N,'Luminosity');
+    echo "<tr>" . fm_number('Distance',$N,'Distance',1,"class=NotCSide") . "<td>Km = " . RealWorld($N,'Distance') 
+                . fm_number('Period',$N,'Period',1,"class=NotCSide") . "<td>Hr = " . RealWorld($N,'Period');
   } elseif ($Mode) {
     echo "<tr>" . fm_text('2nd Star Type',$N,'Type2',2,"class=NotCSide");  
   }
@@ -119,9 +128,10 @@ function Show_System(&$N,$Mode=0) {
   } else {
     echo "<h1>Planets</h1>";
     echo "<div class=tablecont><table width=90% border class=SideTable>\n";
+    echo "<tr><td>Name<td>Type<td>Heat<td>Habitable\n";
     foreach ($Planets as $P) {
       $Pid = $P['id'];
-      echo "<tr><td><a href=PlanEdit.php?id=$Pid>" . ($P['Name']?$P['Name']:$Pid) . "</a><td>" . $PTNs[$P['Type']];
+      echo "<tr><td><a href=PlanEdit.php?id=$Pid>" . ($P['Name']?$P['Name']:$Pid) . "</a><td>" . $PTNs[$P['Type']] . "<td>Heat: " . RealHeat($N,$P) . "<td>" . $PTD[$P['Type']]['Hospitable'];
       }
     echo "</table></div>\n";
   }
@@ -162,8 +172,14 @@ function Show_Planet(&$P,$Mode=0) {
   echo "<tr>" . fm_text('Short Name',$P,'ShortName');
   echo "<tr>" . fm_textarea('Description',$P,'Description',8,3);
   echo "<tr><td>Type:<td>" . fm_Select($PTNs,$P,'Type',1) . fm_number('Minerals',$P,'Minerals',1,"class=NotCSide");
-  echo "<tr>" . fm_number('Orbital Radius',$P,'OrbitalRadius',1,"class=NotCSide") . "KM" . fm_number('Period',$P,'Period',1,"class=NotCSide") . "Hr" 
-              . fm_number('Gravity',$P,'Gravity',1,"class=NotCSide") . "m/s<sup>2</sup>". fm_number('Radius',$P,'Radius',1,"class=NotCSide") . "KM";
+  
+  echo "<tr>" . fm_number('Orbital Radius',$P,'OrbitalRadius',1,"class=NotCSide") . "<td>Km = " . RealWorld($P,'OrbitalRadius') 
+              . fm_number('Period',$P,'Period',1,"class=NotCSide") . "<td>Hr = " . RealWorld($P,'Period');
+  echo "<tr>" . fm_number('Gravity',$P,'Gravity',1,"class=NotCSide") . "<td>m/s<sup>2</sup> = " . RealWorld($P,'Gravity')
+              . fm_number('Radius',$P,'Radius',1,"class=NotCSide") . "<td>Km = " . RealWorld($P,'Radius');
+      
+//  $heat = $N['Luminosity']/(($P['OrbitalRadius']*1000)^2);
+  echo "<tr><td>Heat:<td>" . RealHeat($N,$P); //sprintf("%0.2f", $heat) . "<td> = " . sprintf("%0.2f Earth", $heat*(1.496e11^2)/3.83e26);
   $NumDists = count($Ds);
   $dc=0;
   

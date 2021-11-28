@@ -25,17 +25,17 @@
     $N[$saveas] = $num+0;
   }
 
-  function Auto_Populate($N) {
+  function Auto_Populate(&$N) {
     $sid = $N['id'];
     $seed = time();
   
     $Html_Req = "https://donjon.bin.sh/scifi/system/index.cgi?seed=$seed&binary=Random&n-planets=Few&cmd=Create";
-    if (($seed&1) || (isset($N['Category']) && $N['Category'] )) $Html_Req .= "&force_terran=1";
+    if ((($seed%3 == 0)) || (isset($N['Category']) && $N['Category'] )) $Html_Req .= "&force_terran=1";
     
 //    echo "$Html_Req<p>";
     $html = file_get_contents($Html_Req);
     
-//echo htmlspecialchars($html); exit;
+// echo htmlspecialchars($html); // exit;
     
     $tabrows = explode("<tr", $html);
     array_shift($tabrows);
@@ -84,16 +84,19 @@ echo "No tds<p>";
           } else if (strstr($things['Title'],'Companion')) {
             $N['Type2'] = (isset($things['Type'])?$things['Type']:'Unknown Star');
             if (isset($things['Image'])) $N['Image2'] = $things['Image'];
-            PTrim($N,$things,'Radius'.'Radius2');
+            PTrim($N,$things,'Radius','Radius2');
             PTrim($N,$things,'Mass','Mass2');
             PTrim($N,$things,'Temperature','Temperature2');
             PTrim($N,$things,'Luminosity','Luminosity2');
             PTrim($N,$things,'Distance');
-            PTrim($N,$things,'Period');
+            PTrim($N,$things,'Period'); // Not always calculated by donjon
+            if (!isset($things['Period'])) {
+              $N['Period'] = ((2*pi()*sqrt(($N['Distance']*1000)^3/($N['Mass']*6.7e-11)))/60);
+            }
           } else { // Is a Planet
             $P['Name'] = $things['Title'];
-            $PlanTypeXlate = ['Terrestrial World'=>'Temperate Planet', 'Rock Planet'=>'Desolate Planet', 'Gas Giant'=>'Gas Giant', 'Asteroid Belt'=>'Asteroid Belt', 
-                              'Neptunian Planet'=>'Ice Giant', 'Jovian Planet'=>'Gas Giant', 'Chthonian Planet' => 'Molten Planet', 'Ice Planet'=>'Arctic Planet'];
+            $PlanTypeXlate = ['Terrestrial World'=>'Temperate Planet', 'Rock Planet'=>'Rock Planet', 'Gas Giant'=>'Gas Giant', 'Asteroid Belt'=>'Asteroid Belt', 
+                              'Neptunian Planet'=>'Ice Giant', 'Jovian Planet'=>'Gas Giant', 'Chthonian Planet' => 'Molten Planet', 'Ice Planet'=>'Ice Planet'];
           
             $pt = (isset($PlanTypeXlate[$things['Type']])? $PlanTypeXlate[$things['Type']] : 'Other Planet');
             if (isset($N2Ps[$pt])) {            
@@ -111,6 +114,18 @@ echo "No tds<p>";
             PTrim($P,$things,'Gravity');
             $P['Name'] = $things['Title'];
             $P['SystemId'] = $N['id'];
+            $P['Description'] = $things['Type'];
+
+            if ($things['Type'] == 'Terrestrial World') {
+              $heat = RealHeatValue($N,$P);
+//var_dump($heat);echo "<p>";
+              if ($heat < 0.5) { $P['Type'] = $N2Ps['Desolate Planet']; }
+              else if ($heat < 0.9) { $P['Type'] = $N2Ps['Arctic Planet']; }
+              else if ($heat < 1.5) { $P['Type'] = $N2Ps['Temperate Planet']; }
+              else if ($heat < 2.5) { $P['Type'] = $N2Ps['Desert Planet']; }
+              else { $P['Type'] = $N2Ps['Desolate Planet']; };
+            }
+
             Put_Planet($P);
                                     
             $P = $things = [];
@@ -120,7 +135,7 @@ echo "No tds<p>";
         $things = [];
         if (isset($tds[0])) {
           if (preg_match('/img src="(.*?)"/',$tds[0],$img)) {
-            $things['Image'] = $img[1];
+            $things['Image'] = "https://donjon.bin.sh" . $img[1];
           }
         }
         if (isset($tds[2])) {
@@ -142,9 +157,9 @@ echo "No tds<p>";
       }
    
     }
-  var_dump($N);
+//  var_dump($N);
   Put_System($N);
-  echo "System updated<p>";
+//  echo "System updated<p>";
   }
 
 // START HERE

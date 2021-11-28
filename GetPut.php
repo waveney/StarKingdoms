@@ -63,7 +63,7 @@ function Get_System($id) {
 function Put_System(&$now) {
   if (isset($now['id'])) {
     $e=$now['id'];
-    $Cur = Get_Faction($e);
+    $Cur = Get_System($e);
     return Update_db('Systems',$Cur,$now);
   } else {
     return $now['id'] = Insert_db ('Systems', $now );  
