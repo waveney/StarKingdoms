@@ -371,6 +371,11 @@ function dotail() {
   echo "</body></html>\n";
   exit;
 }
- 
+
+function Swap(&$a,&$b) {
+  $c = $a;
+  $a = $b;
+  $b = $c;
+}
 
 ?>

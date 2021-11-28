@@ -441,10 +441,8 @@ function ChunkSplit($txt,$maxlen,$maxchnks) {
 
 global $DDdata;
 $DDdata = [
-    'Insurance' => [ 'UseYear'=>1, 'AddState'=>1, 'tr'=>1, 'SetValue'=>1, 'cols'=>[2,2] ],
-    'RiskAssessment' => [ 'UseYear'=>1, 'AddState'=>1, 'Name' => 'Risk Assessment', 'tr'=>1, 'SetValue'=>1, 'cols'=>[2,2] ],
-    'StagePA'  => [ 'UseYear'=>0, 'AddState'=>0, 'Name'=>'PA requirements', 'tr'=>0, 'SetValue'=>'@@FILE@@', 'cols'=>[2,2], 'path'=>'PAspecs' ],
-    'Photo'    => [ 'UseYear'=>0, 'AddState'=>0, 'tr'=>0, 'SetValue'=>'URL', 'Extra'=>"acceptedFiles: 'image/*',", 'cols'=>[2,2], 'path'=>'images', 'Show'=>1 ], 
+    'Image'    => [ 'UseGame'=>1, 'AddState'=>0, 'tr'=>0, 'SetValue'=>'URL', 'Extra'=>"acceptedFiles: 'image/*',", 'cols'=>[4,1], 'path'=>'images', 'Show'=>1 ], 
+    'Image2'    => [ 'UseGame'=>1, 'AddState'=>0, 'tr'=>0, 'SetValue'=>'URL', 'Extra'=>"acceptedFiles: 'image/*',", 'cols'=>[4,1], 'path'=>'images', 'Show'=>1 ], 
     'NewPhoto' => [ 'UseYear'=>0, 'AddState'=>0, 'tr'=>0, 'SetValue'=>'URL','cols'=>[1,1], 'URL'=>'PhotoProcess.php', 'Replace'=>1, 
                  'Extra'=>"acceptedFiles: 'image/*',", 'Show'=>1],
     'NewImage' => [ 'UseYear'=>0, 'AddState'=>0, 'tr'=>0, 'SetValue'=>'URL','cols'=>[1,1], 'URL'=>'PhotoProcess.php', 'Replace'=>1, 
@@ -454,7 +452,8 @@ $DDdata = [
 
 //var_dump($DDdata); exit;
 function fm_DragonDrop($Call, $Type,$Cat,$id,&$Data,$Mode=0,$Mess='',$Cond=1,$tddata1='',$tdclass='',$hide=0) {
-  global $db,$InsuranceStates,$YEAR,$DDdata;
+//  global $db,$InsuranceStates,$YEAR,$DDdata;
+  global $db,$GAME,$GAMEID,$DDdata;
 
 //var_dump($Call, $Type,$Cat,$id,$Mode,$Mess,$Cond);
   $str = '';
@@ -468,7 +467,7 @@ function fm_DragonDrop($Call, $Type,$Cat,$id,&$Data,$Mode=0,$Mess='',$Cond=1,$td
     if ($DDd['tr']) {
       $str .= "<tr><td $tddata1 $hid>$Name:";
       if (!$Cond) {
-        $str .= "<td colspan=4>You will be able to upload your $Name here in $YEAR\n";
+//        $str .= "<td colspan=4>You will be able to upload your $Name here in $YEAR\n";
         return $str;
       }
     }
@@ -526,7 +525,7 @@ XXX;
   if (isset($DDd['path'])) {
     $pdir = $DDd['path'];
   } else {
-    $pdir = ($DDd['UseYear']?"$Type/$YEAR/$Cat":$Type);
+    $pdir = ($DDd['UseGame']?"$Type/$GAMEID/$Cat":$Type);
   }
   $path = "$pdir/$id";
   $files = glob("$path.*"); 
@@ -534,7 +533,7 @@ XXX;
   if ($Mode) {
     if ($DDd['AddState']) {
       $str .= "<td class='Result$Type $tdclass' $hid colspan=" . $DDd['cols'][0] . ">";
-      $str .= "<div class=NotCSide>" . fm_radio($Type,$InsuranceStates,$Data,$Type,'',0) . "</div>";
+//      $str .= "<div class=NotCSide>" . fm_radio($Type,$InsuranceStates,$Data,$Type,'',0) . "</div>";
     }
   } elseif ($DDd['AddState']) {
     $ddat = (isset($Data[$Type])?$Data[$Type]:'');
@@ -544,7 +543,7 @@ XXX;
     $str .= fm_hidden($Type,$ddat);   
   }
   
-  if ($files) {
+  if (0 && $files) {
     $Current = $files[0];
     $Cursfx = pathinfo($Current,PATHINFO_EXTENSION );
     $str .= "<td class='Result$Type $tdclass' $hid colspan=" . $DDd['cols'][1] . "><a href=ShowFile?l=$path.$Cursfx>View $Name file</a><br>";  

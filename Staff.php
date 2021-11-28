@@ -119,6 +119,7 @@
     $txt .= "<ul>\n";
     $txt .= "<li><a href=DTList.php>List District Types</a>\n";
     $txt .= "<li><a href=PlanetTypes.php>Planet Types</a>\n";  
+    $txt .= "<li><a href=PlanetStats.php>Planet Stats</a>\n";  
 //    $txt .= "<li><a href=StewardView>Stewarding Applications (old)</a>\n";
     $txt .= "<p>";
 

@@ -5,7 +5,7 @@
   
   A_Check('GM');
 
-  dostaffhead("Edit Planet");
+  dostaffhead("Edit Planet",["js/dropzone.js","css/dropzone.css" ]);
 
   global $db, $GAME;
 

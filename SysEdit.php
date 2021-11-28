@@ -5,7 +5,7 @@
   
   A_Check('GM');
 
-  dostaffhead("Edit System");
+  dostaffhead("Edit System",["js/dropzone.js","css/dropzone.css" ]);
 
   global $db, $GAME;
   
@@ -110,7 +110,7 @@ echo "No tds<p>";
             if (isset($things['Image'])) $P['Image'] = $things['Image'];
             PTrim($P,$things,'Orbital Radius','OrbitalRadius');
             PTrim($P,$things,'Period');
-            PTrim($P,$things,'Radius','Radius');
+            PTrim($P,$things,'Radius');
             PTrim($P,$things,'Gravity');
             $P['Name'] = $things['Title'];
             $P['SystemId'] = $N['id'];
@@ -158,6 +158,15 @@ echo "No tds<p>";
    
     }
 //  var_dump($N);
+  if (isset($N['Type2']) && $N['Mass2'] > $N['Mass']) {
+    Swap($N['Type'], $N['Type2']);
+    Swap($N['Radius'], $N['Radius2']);
+    Swap($N['Mass'], $N['Mass2']);
+    Swap($N['Temperature'], $N['Temperature2']);
+    Swap($N['Luminosity'], $N['Luminosity2']);    
+    Swap($N['Image'], $N['Image2']);
+  }
+
   Put_System($N);
 //  echo "System updated<p>";
   }
