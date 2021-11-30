@@ -22,3 +22,31 @@ core prog
   Player
   GM
   God
+  
+  
+  
+  =====================================
+
+Player actions turn 1:
+
+View Map
+Name System
+Name Planet 
+Name Link
+
+
+Player Interface
+ Map
+ Systems -> Planets/Asteroids -> Moons & places
+         -> Links
+ Own Places -> Home, Colonies, outpost, asteroids, sensors, stations
+ Techs -> Known, levels, description, Know about (std+extras)
+ Ships -> Fleets, Ships
+ Armies -> Army, unit
+ Agents -> Cell, indiv
+ Economy
+ Anomalies
+ Turns
+ Traits -> What, also level of automation
+ Projects
+ 

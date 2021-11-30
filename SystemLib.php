@@ -211,4 +211,20 @@ function Show_Planet(&$P,$Mode=0) {
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "</table></div></form>\n";
 }
+
+function NameFind(&$thing) {
+  if (isset($thing['ShortName']) && $thing['ShortName']) return $thing['ShortName'];
+  if (isset($thing['Name']) && $thing['Name']) return $thing['ShortName'];
+  return '';
+}
+
+function UniqueRef($sid) {
+  global $FACTION,$GAMEID;
+  $cid = str_split(sprintf('%d', $sid+54321));
+  if (isset($FACTION)) { $fid = str_split(sprintf('%d', $FACTION['id']+12345));
+  } else { $fid = str_split(substr(time() . "1",6,6)); }
+  
+  return $GAMEID . $cid[2] . $fid[2] . $cid[3] . $fid[3] . $cid[4] . $fid[4];
+}
+
 ?>

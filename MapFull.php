@@ -6,7 +6,7 @@
 
   dostaffhead("Full Map");
   
-  $CatCols = ["white","grey", "yellow"];
+  $CatCols = ["white","grey", "Yellow"];
   $HexLegPos = [[1,8],[1,7.5],[1,7],[1,6.5], [9,8],[9,7.5],[9,7],[9,6.5],[1,0],[1,0.5],[1,2],[1,1],[1,1.5],[9,2],[9,1.5],[9,1],[9,0.5],[9,0]];
 
   
@@ -94,12 +94,16 @@
       $Colour = "White";
     }
     
+    $BdrColour = "Black";
+    if ($Faction == 0 && $N['HistoricalControl']) $BdrColour = $Factions[$N['HistoricalControl']]['MapColour'];
+    
     if ($typ) $atts .= " shape=box pos=\"" . ($N['GridX']+(5-$N['GridY'])/2) . "," . (9-$N['GridY']) . "!\"";
-    $atts .= "  shape=box style=filled fillcolor=$Colour";
+    $atts .= "  shape=box style=filled fillcolor=$Colour color=$BdrColour";
     if ($NodeName) {
       $atts .= NodeLab($ShortName, ($Faction==0?$N['Ref']:""));
     }
-    if ($N['Nebulae']) { $atts .= " penwidth=" . (1+$N['Nebulae']*2); $Neb = 1; };
+    if ($N['Nebulae']) { $atts .= " penwidth=" . (2+$N['Nebulae']*2); $Neb = 1; }
+    else { $atts .= " penwidth=2"; }
     
     fwrite($Dot,$N['Ref'] . " [$atts ];\n");
     $ShownNodes[$N['Ref']]= 1;
@@ -159,11 +163,17 @@
   if ($Neb) {
     if ($typ) {
       fwrite($Dot,"Nebulae [shape=box style=filled fillcolor=white penwidth=3" . ($typ?" pos=\"" . $HexLegPos[$ls][0] . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");
-      $ls++;
     } else {
       fwrite($Dot,"Nebulae [shape=box style=filled fillcolor=white penwidth=3];\n");
     }
+    $ls++;
   };
+  
+  if (!$Faction) {
+    fwrite($Dot,"Historical [shape=box style=filled fillcolor=white penwidth=2 color=" . $F['MapColour'] . 
+          ($typ?" pos=\"" . $HexLegPos[$ls][0] . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");  
+    $ls++;  
+  }
 
   fwrite($Dot,"}\n");  
 
