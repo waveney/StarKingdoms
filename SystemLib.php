@@ -67,7 +67,7 @@ function RealHeat(&$N,&$P) {
 }
 
 function RealHeatValue(&$N,&$P) {
-  $heat = $N['Luminosity']/(($P['OrbitalRadius']*1000)^2);
+  $heat = ($N['Luminosity']+($N['Type2']?$N['Luminosity2']:0))/(($P['OrbitalRadius']*1000)^2);
   return $heat*(1.496e11^2)/3.83e26;
 }
 
@@ -122,10 +122,11 @@ function Show_System(&$N,$Mode=0) {
 //  echo $N['Image2'];
     echo "<tr>" . fm_number('Radius',$N,'Radius2',1,"class=NotCSide") . "<td>Km = " . RealWorld($N,'Radius2') ;
     echo "<tr>" . fm_number('Mass',$N,'Mass2',1,"class=NotCSide") . "<td>Kg = " . RealWorld($N,'Mass2');
-    echo "<tr>" . fm_number('Temperature2',$N,'Temperature2',1,"class=NotCSide") . "<td>K" ;
+    echo "<tr>" . fm_number('Temperature',$N,'Temperature2',1,"class=NotCSide") . "<td>K" ;
     echo "<tr>" . fm_number('Luminosity',$N,'Luminosity2',1,"class=NotCSide") . "<td>W = " . RealWorld($N,'Luminosity');
     echo "<tr>" . fm_number('Distance',$N,'Distance',1,"class=NotCSide") . "<td>Km = " . RealWorld($N,'Distance') ;
-    echo "<tr>" . fm_number('Period',$N,'Period',1,"class=NotCSide") . "<td>Hr = " . RealWorld($N,'Period');
+    echo "<tr>" . fm_number('Period',$N,'Period',1,"class=NotCSide") . "<td>Hr = " . RealWorld($N,'Period');  
+    if (Access('God')) echo "<td><a href=SysEdit.php?id=$Sid&ACTION=RECALC>Recalc</a>";
   } elseif ($Mode) {
     echo "<tr>" . fm_text('2nd Star Type',$N,'Type2',2,"class=NotCSide");  
   }
@@ -139,10 +140,12 @@ function Show_System(&$N,$Mode=0) {
     echo "<h1>Planets</h1>";
     echo "<div class=tablecont><table width=90% border class=SideTable>\n";
     echo "<tr><td>Name<td>Type<td>AU<td>Heat<td>Habitable\n";
+//    if (Access('God')) echo "<td>Orbital Number";
     foreach ($Planets as $P) {
       $Pid = $P['id'];
       echo "<tr><td><a href=PlanEdit.php?id=$Pid>" . ($P['Name']?$P['Name']:$Pid) . "</a><td>" . $PTNs[$P['Type']] . "<td>" . RealWorld($P,'OrbitalRadius')
            . "<td>Heat: " . RealHeat($N,$P) . "<td>" . $PTD[$P['Type']]['Hospitable'];
+//      if (Access('God')) echo "<td>" . sqrt($P['OrbitalRadius']**3/($N['Mass']));
       }
     echo "</table></div>\n";
   }
@@ -156,6 +159,7 @@ function Show_System(&$N,$Mode=0) {
     }
     echo "</form></center>";
   }
+  echo "<center><h2><a href=SurveyReport.php?id=$Sid>Survey Report</a></h2></center>";
 
 }
 
@@ -213,8 +217,10 @@ function Show_Planet(&$P,$Mode=0) {
 }
 
 function NameFind(&$thing) {
+//var_dump($thing);
+//return $thing['Name'];
   if (isset($thing['ShortName']) && $thing['ShortName']) return $thing['ShortName'];
-  if (isset($thing['Name']) && $thing['Name']) return $thing['ShortName'];
+  if (isset($thing['Name']) && $thing['Name']) return $thing['Name'];
   return '';
 }
 

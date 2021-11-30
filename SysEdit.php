@@ -28,12 +28,16 @@
   function Auto_Populate(&$N) {
     $sid = $N['id'];
     $seed = time();
-  
-    $Html_Req = "https://donjon.bin.sh/scifi/system/index.cgi?seed=$seed&binary=Random&n-planets=Few&cmd=Create";
-    if ((($seed%3 == 0)) || (isset($N['Category']) && $N['Category'] )) $Html_Req .= "&force_terran=1";
+ 
+    $attempt = 0;
+    do {
+      $seed += 123456;
+      $Html_Req = "https://donjon.bin.sh/scifi/system/index.cgi?seed=$seed&binary=Random&n-planets=Few&cmd=Create";
+      if ((($seed%3 == 0)) || (isset($N['Category']) && $N['Category'] )) $Html_Req .= "&force_terran=1";
     
 //    echo "$Html_Req<p>";
-    $html = file_get_contents($Html_Req);
+      $html = file_get_contents($Html_Req);
+    } while (strstr($html,'Red Dwarf') && $attempt++ < 5);
     
 // echo htmlspecialchars($html); // exit;
     
@@ -91,7 +95,7 @@ echo "No tds<p>";
             PTrim($N,$things,'Distance');
             PTrim($N,$things,'Period'); // Not always calculated by donjon
             if (!isset($things['Period'])) {
-              $N['Period'] = ((2*pi()*sqrt(($N['Distance']*1000)^3/($N['Mass']*6.7e-11)))/60);
+              $N['Period'] = ((2*pi()*sqrt(($N['Distance']*1000)^3/(($N['Mass']+ $N['Mass2'])*6.7e-11)))/3600);
             }
           } else { // Is a Planet
             $P['Name'] = $things['Title'];
@@ -124,6 +128,7 @@ echo "No tds<p>";
               else if ($heat < 1.5) { $P['Type'] = $N2Ps['Temperate Planet']; }
               else if ($heat < 2.5) { $P['Type'] = $N2Ps['Desert Planet']; }
               else { $P['Type'] = $N2Ps['Desolate Planet']; };
+              $P['Minerals'] = ($N['Category']?10:rand(1,10));
             }
 
             Put_Planet($P);
@@ -158,7 +163,7 @@ echo "No tds<p>";
    
     }
 //  var_dump($N);
-  if (isset($N['Type2']) && $N['Mass2'] > $N['Mass']) {
+  if (isset($N['Type2']) && strlen($N['Type2'] > 5) && $N['Mass2'] > $N['Mass']) {
     Swap($N['Type'], $N['Type2']);
     Swap($N['Radius'], $N['Radius2']);
     Swap($N['Mass'], $N['Mass2']);
@@ -199,6 +204,11 @@ echo "No tds<p>";
       
     case 'Delete Planets' :
       db_delete_cond('Planets',"SystemId=$Sysid");
+      break;
+      
+    case 'RECALC' :
+      $N['Period'] = ((2*pi()*sqrt(($N['Distance']*1000)^3/(($N['Mass']+ $N['Mass2'])*6.7e-11)))/3600);
+      Put_System($N);
       break;
       
     default: 
