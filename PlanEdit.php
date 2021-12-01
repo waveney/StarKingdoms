@@ -41,6 +41,10 @@
       dotail();
       break;
       
+    case 'Delete Moons':
+      db_delete_cond('Moons',"PlanetId=$Pid");
+      break;
+      
     case 'Add Editable Moon': // Habitable and Gas Giants ONLY coded for
       $heat = RealHeatValue($N,$P);
       if ($PTD[$P['Type']]['Hospitable']) {
@@ -96,26 +100,7 @@
       break;
     }
   }
+  Show_Planet($P,1,1);
   
-  
-  Show_Planet($P,1);
-  
-
-  echo "<center>" .
-       "<form method=post action=SysEdit.php>" . fm_hidden('id', $P['SystemId']) .
-       "<input type=submit name=NOACTION value='Back to System' class=Button> " .
-       "</form></center>";
-       
-  if (Access('God')) {
-    echo "<center>" .
-         "<form method=post action=PlanEdit.php>" . fm_hidden('id', $Pid);
-
-    if ($PTD[$P['Type']]['Hospitable'] || ($PTD[$P['Type']]['Name'] == 'Gas Giant')) {
-        echo "<input type=submit name=ACTION value='Add Editable Moon' class=Button> ";
-    }
-    
-    echo "<input type=submit name=ACTION value='Delete Planet' class=Button> " .
-         "<input type=submit name=ACTION value='Auto Populate' class=Button></form></center>";
-  }
   dotail();
 ?>

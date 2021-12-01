@@ -96,12 +96,12 @@
     echo "No planets or asteroids in the system";
   }
   
-  echo "<p>";
+  echo "<p><ul>";
   
   foreach ($Ps as $P) {
     $Mns = [];
     if ($P['Moons']) $Mns = Get_Moons($P['id']);
-    echo NameFind($P) . " is " . ($PTNs[$P['Type']] == 'Asteroid Belt'?" an ":($PTD[$P['Type']]['Hospitable']?" a <b>habitable ":" an uninhabitable ")) . 
+    echo "<li>" . NameFind($P) . " is " . ($PTNs[$P['Type']] == 'Asteroid Belt'?" an ":($PTD[$P['Type']]['Hospitable']?" a <b>habitable ":" an uninhabitable ")) . 
          PM_Type($PTD[$P['Type']],"Planet") . "</b>.  ";
     
     if ($PTD[$P['Type']]['Hospitable'] && $P['Minerals']) echo "It has a minerals rating of <b>" . $P['Minerals'] . "</b>.  ";
@@ -117,9 +117,9 @@
     // Districts
 
     if ($Mns) {
-      echo Plural($Mns,'',"  The moon of note is:", "  The moons of note are: ") . "<p>";
+      echo Plural($Mns,'',"  The moon of note is:", "  The moons of note are: ") . "<p><ul>";
       foreach ($Mns as $M) {
-        echo NameFind($M) . " is " . ($PTNs[$M['Type']] == 'Asteroid Belt'?" an ":($PTD[$P['Type']]['Hospitable']?" a <b>habitable ":" an uninhabitable ")) . 
+        echo "<li>" . NameFind($M) . " is " . ($PTNs[$M['Type']] == 'Asteroid Belt'?" an ":($PTD[$P['Type']]['Hospitable']?" a <b>habitable ":" an uninhabitable ")) . 
              PM_Type($PTD[$M['Type']],"Moon") . "</b>.  ";
     
         if ($PTD[$M['Type']]['Hospitable'] && $M['Minerals']) echo "It has a minerals rating of <b>" . $M['Minerals'] . "</b>.  ";
@@ -128,22 +128,18 @@
         if ($P['Radius']) echo ", it has a radius of " . sprintf('%0.2g', $M['Radius']) . " Km = " .  RealWorld($M,'Radius') .
                                " and gravity at " . sprintf('%0.2g', $M['Gravity']) . " m/s<sup>2</sup> = " .  RealWorld($M,'Gravity');
                                
-        if ($M['Description']) echo "<p>" . $Parsedown->text($M['Description']) . "<p>";
+        if ($M['Description']) echo "<p>" . $Parsedown->text($M['Description']);
         
         // Districts
       }
-      
+      echo "</ul><p>";
     }    
     echo "<p>";
   }
 
-  // Planets
+
   
-  // Moons
-  
-  
-  
-  echo "</div>";
+  echo "</ul></div>";
   
   if (Access('GM')) echo "<h2><a href=SysEdit.php?id=$Sid>Edit System</s></h2>";
   

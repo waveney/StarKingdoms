@@ -170,7 +170,7 @@ function Show_System(&$N,$Mode=0) {
 
 }
 
-function Show_Planet(&$P,$Mode=0) {
+function Show_Planet(&$P,$Mode=0,$Buts=0) {
   global $GAME,$GAMEID;
   $Pid = $P['id'];
   if ($Mode) {
@@ -244,7 +244,85 @@ function Show_Planet(&$P,$Mode=0) {
 
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "</table></div></form>\n";
+
+
+  if ($Buts) {
+    echo "<center>" .
+         "<form method=post action=SysEdit.php>" . fm_hidden('id', $P['SystemId']) .
+         "<input type=submit name=NOACTION value='Back to System' class=Button> " .
+         "</form></center>";
+       
+    if (Access('God')) {
+      echo "<center>" .
+           "<form method=post action=PlanEdit.php>" . fm_hidden('id', $Pid);
+
+      if ($PTD[$P['Type']]['Hospitable'] || ($PTD[$P['Type']]['Name'] == 'Gas Giant')) {
+          echo "<input type=submit name=ACTION value='Add Editable Moon' class=Button> ";
+      }
+    
+      echo "<input type=submit name=ACTION value='Delete Planet' class=Button> " .
+           "<input type=submit name=ACTION value='Delete Moons' class=Button></form></center>";
+    }
+  }
 }
+
+function Show_Moon(&$M,$Mode=0) {
+  global $GAME,$GAMEID;
+  $Mid = $M['id'];
+  if ($Mode) {
+    echo "<span class=NotSide>Fields marked are not visible to factions.</span>";
+    echo "  <span class=NotCSide>Marked are visible if set, but not changeable by factions.</span>";
+  }
+  
+  $Pid = $M['PlanetId'];
+  $P = Get_Planet($Pid);
+  $Facts = Get_Faction_Names();
+  $DTs = Get_DistrictTypeNames();
+  $Ds = Get_Districts($Mid);
+  $N = Get_System($P['SystemId']);
+  $PTNs = Get_PlanetTypeNames();
+  $PTD = Get_PlanetTypes();
+  
+  echo "<form method=post id=mainform enctype='multipart/form-data' action=MoonEdit.php>";
+  echo "<div class=tablecont><table width=90% border class=SideTable>\n";
+  Register_AutoUpdate('Moon',$Mid);
+  echo fm_hidden('id',$Mid);
+  echo "<tr class=NotSide><td class=NotSide>PlanetId:<td class=NotSide>$Pid<td class=NotSide>Game<td class=NotSide>$GAMEID" .
+       "<td class=NotSide>" . $GAME['Name'] . fm_text('System Ref',$N,'Ref',1,"class=NotSide");
+  echo "<tr><td class=NotSide>Moon Id:<td class=NotSide>$Mid";
+  echo "<tr>" . fm_text('Name',$M,'Name',8);  // TODO Image
+  echo "<tr>" . fm_text('Short Name',$M,'ShortName');
+  echo "<tr>" . fm_textarea('Description',$M,'Description',8,3);
+  echo "<tr><td>Type:<td>" . fm_Select($PTNs,$M,'Type',1) . fm_number('Minerals',$M,'Minerals',1,"class=NotCSide"); 
+  
+  echo "<tr>" . fm_number('Orbital Radius',$M,'OrbitalRadius',1,"class=NotCSide") . "<td>Km = " . RealWorld($P,'OrbitalRadius'); 
+  echo "<td rowspan=4 colspan=3>";
+//  if ($N['Image']) echo "<img src='" . $P['Image'] . "'>";
+  echo "<table><tr>";
+    echo fm_DragonDrop(1,'Image','Moon',$Mid,$M,$Mode,'',1,'','Moon');
+  echo "</table>";
+  
+  echo "<tr>" . fm_number('Period',$M,'Period',1,"class=NotCSide") . "<td>Hr = " . RealWorld($M,'Period');
+  echo "<tr>" . fm_number('Gravity',$M,'Gravity',1,"class=NotCSide") . "<td>m/s<sup>2</sup> = " . RealWorld($M,'Gravity');
+  echo "<tr>" . fm_number('Radius',$M,'Radius',1,"class=NotCSide") . "<td>Km = " . RealWorld($M,'Radius');
+      
+//  $heat = $N['Luminosity']/(($P['OrbitalRadius']*1000)^2);
+  
+  $NumDists = count($Ds);
+  $dc=0;
+  
+  foreach ($Ds as $D) {
+    $did = $D['id'];
+    if ($dc++%4 == 0)  echo "<tr>";
+    echo "<td>" . fm_Select($DTs, $D , 'Type', 1,'',"DistrictType-$did") . fm_number1('', $D,'Number', '','',"DistrictNumber-$did");
+    };
+
+  echo "<tr><td>Add District Type<td>" . fm_Select($DTs, NULL , 'Number', 1,'',"DistrictTypeAdd-$Pid");
+
+  if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
+  echo "</table></div></form>\n";
+}
+
 
 function NameFind(&$thing) {
 //var_dump($thing);
@@ -262,5 +340,7 @@ function UniqueRef($sid) {
   
   return $GAMEID . $cid[2] . $fid[2] . $cid[3] . $fid[3] . $cid[4] . $fid[4];
 }
+
+
 
 ?>
