@@ -118,16 +118,16 @@ echo "No tds<p>";
             PTrim($P,$things,'Gravity');
             $P['Name'] = $things['Title'];
             $P['SystemId'] = $N['id'];
-            $P['Description'] = $things['Type'];
+//            $P['Description'] = $things['Type']; // test code
 
             if ($things['Type'] == 'Terrestrial World') {
               $heat = RealHeatValue($N,$P);
 //var_dump($heat);echo "<p>";
-              if ($heat < 0.5) { $P['Type'] = $N2Ps['Desolate Planet']; }
-              else if ($heat < 0.9) { $P['Type'] = $N2Ps['Arctic Planet']; }
-              else if ($heat < 1.5) { $P['Type'] = $N2Ps['Temperate Planet']; }
-              else if ($heat < 2.5) { $P['Type'] = $N2Ps['Desert Planet']; }
-              else { $P['Type'] = $N2Ps['Desolate Planet']; };
+              if ($heat < 0.5) { $P['Type'] = $N2Ps['Desolate']; }
+              else if ($heat < 0.9) { $P['Type'] = $N2Ps['Arctic']; }
+              else if ($heat < 1.5) { $P['Type'] = $N2Ps['Temperate']; }
+              else if ($heat < 2.5) { $P['Type'] = $N2Ps['Desert']; }
+              else { $P['Type'] = $N2Ps['Desolate']; };
               $P['Minerals'] = ($N['Category']?10:rand(1,10));
             }
 

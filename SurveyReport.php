@@ -48,7 +48,7 @@
         sprintf("%0.0f K = ",$N['Temperature'])  . " and a luminosity of " .
         sprintf("%0.2g Km = ",$N['Luminosity'])  . RealWorld($N,'Luminosity') . ".<p>";
   if ($N['Type2']) {
-    echo "The companion star is a " . $N['Type'] . ", with a radius of " . 
+    echo "The companion star is a " . $N['Type2'] . ", with a radius of " . 
         sprintf("%0.2g Km = ",$N['Radius2'])  . RealWorld($N,'Radius2') . ", a mass of " .
         sprintf("%0.2g Kg = ",$N['Mass2'])  . RealWorld($N,'Mass2') . ", a temperature of " .
         sprintf("%0.0f K = ",$N['Temperature2'])  . " and a luminosity of " .
@@ -99,14 +99,41 @@
   echo "<p>";
   
   foreach ($Ps as $P) {
-    echo NameFind($P) . " is " . ($PTNs[$P['Type']] == 'Asteroid Belt'?" an ":($PTD[$P['Type']]['Hospitable']?" a <b>habitable ":" an uninhabitable ")) . $PTNs[$P['Type']] . "</b>.  ";
+    $Mns = [];
+    if ($P['Moons']) $Mns = Get_Moons($P['id']);
+    echo NameFind($P) . " is " . ($PTNs[$P['Type']] == 'Asteroid Belt'?" an ":($PTD[$P['Type']]['Hospitable']?" a <b>habitable ":" an uninhabitable ")) . 
+         PM_Type($PTD[$P['Type']],"Planet") . "</b>.  ";
     
     if ($PTD[$P['Type']]['Hospitable'] && $P['Minerals']) echo "It has a minerals rating of <b>" . $P['Minerals'] . "</b>.  ";
     echo "It's orbital radius is " . sprintf('%0.2g', $P['OrbitalRadius']) . " Km = " .  RealWorld($P,'OrbitalRadius') . 
-         ($P['Radius']?" ,":" and") . " a period of " . sprintf('%0.2g', $P['Period']) . " Km = " .  RealWorld($P,'Period');
+         ($P['Radius']?" ,":" and") . " a period of " . sprintf('%0.2g', $P['Period']) . " Hr = " .  RealWorld($P,'Period');
     if ($P['Radius']) echo ", it has a radius of " . sprintf('%0.2g', $P['Radius']) . " Km = " .  RealWorld($P,'Radius') .
                            " and gravity at " . sprintf('%0.2g', $P['Gravity']) . " m/s<sup>2</sup> = " .  RealWorld($P,'Gravity');
     
+    if ($P['Moons']) echo ".  It has " . Plural($P['Moons'],'',"a moon.", $P['Moons'] . " moons.");
+    
+    if ($P['Description']) echo "<p>" . $Parsedown->text($P['Description']) . "<p>";
+    
+    // Districts
+
+    if ($Mns) {
+      echo Plural($Mns,'',"  The moon of note is:", "  The moons of note are: ") . "<p>";
+      foreach ($Mns as $M) {
+        echo NameFind($M) . " is " . ($PTNs[$M['Type']] == 'Asteroid Belt'?" an ":($PTD[$P['Type']]['Hospitable']?" a <b>habitable ":" an uninhabitable ")) . 
+             PM_Type($PTD[$M['Type']],"Moon") . "</b>.  ";
+    
+        if ($PTD[$M['Type']]['Hospitable'] && $M['Minerals']) echo "It has a minerals rating of <b>" . $M['Minerals'] . "</b>.  ";
+        echo "It's orbital radius is " . sprintf('%0.2g', $M['OrbitalRadius']) . " Km = " .  RealWorld($M,'OrbitalRadius') . 
+             ($M['Radius']?" ,":" and") . " a period of " . sprintf('%0.2g', $M['Period']) . " Hr = " .  RealWorld($M,'Period');
+        if ($P['Radius']) echo ", it has a radius of " . sprintf('%0.2g', $M['Radius']) . " Km = " .  RealWorld($M,'Radius') .
+                               " and gravity at " . sprintf('%0.2g', $M['Gravity']) . " m/s<sup>2</sup> = " .  RealWorld($M,'Gravity');
+                               
+        if ($M['Description']) echo "<p>" . $Parsedown->text($M['Description']) . "<p>";
+        
+        // Districts
+      }
+      
+    }    
     echo "<p>";
   }
 

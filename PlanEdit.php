@@ -24,6 +24,13 @@
   $N = get_System($P['SystemId']);
   $Factions = Get_Factions();
   $Dists = Get_Districts($Pid);
+  $Mns = Get_Moons($Pid);
+  $MC = count($Mns);
+  $PTD = Get_PlanetTypes();
+  $PTs = Get_PlanetTypeNames();
+  $N2Ps = array_flip($PTs);
+
+
   
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
@@ -34,8 +41,56 @@
       dotail();
       break;
       
-    case 'Auto Populate' :
-    
+    case 'Add Editable Moon': // Habitable and Gas Giants ONLY coded for
+      $heat = RealHeatValue($N,$P);
+      if ($PTD[$P['Type']]['Hospitable']) {
+//var_dump($P);
+
+        $rad = 1000 + rand(0,max(3000,$P['Radius']/4));
+
+        $PMass = pi()*4/3*(($P['Radius']*1000)**3)* 6000 *$P['Gravity']/9.8;
+        $Orb = 3.8e5*($MC+1)*rand(1,20)/4;
+        $Peri = (2*pi()*sqrt(($Orb*1000)**3/($PMass*6.7e-11))/3600);
+        $MMass = pi()*4/3*(($rad*1000)**3)* 3000;
+        $Grav = 6.7e-11 * $MMass /($rad*1000)**2;
+        
+        $heat *= $MMass/$PMass;
+
+        if ($heat < 0.5) { $type = $N2Ps['Desolate']; }
+        else if ($heat < 0.9) { $type = $N2Ps['Arctic']; }
+        else if ($heat < 1.5) { $type = $N2Ps['Temperate']; }
+        else if ($heat < 2.5) { $type = $N2Ps['Desert']; }
+        else { $type = $N2Ps['Desolate']; };
+        $P['Minerals'] = rand(1,10);
+//echo "<br>PMass: $PMass MMass $MMass<p>";
+              
+      } else if ($PTD[$P['Type']]['Name'] == 'Gas Giant') {
+        $rad = rand(1500,4000);
+        $PMass = pi()*4/3*($P['Radius']*1000)**3 * 1300;
+        $Orb = 1e6*($MC+1)*rand(1,20)/4;
+        $Peri = (2*pi()*sqrt(($Orb*1000)**3/($PMass*6.7e-11))/3600);
+        $MMass = pi()*4/3*($rad*1000)**3* 3000;
+        $Grav = 6.7e-11 * $MMass /($rad*1000)**2;
+
+//        $heat *= $MMass/$PMass;
+
+        if ($heat < 0.5) { $type = $N2Ps['Desolate']; }
+        else if ($heat < 0.9) { $type = $N2Ps['Arctic']; }
+        else if ($heat < 1.5) { $type = $N2Ps['Temperate']; }
+        else if ($heat < 2.5) { $type = $N2Ps['Desert']; }
+        else { $type = $N2Ps['Desolate']; };
+        $P['Minerals'] = rand(1,10);
+//echo "<br>PMass: $PMass MMass $MMass<p>";
+
+      } else {
+        echo "Not allowed sorry<p>";
+        break;
+      }
+      
+      $M = ['PlanetId'=>$Pid, 'Name'=> ($P['Name'] . " moon " . number2roman($MC+1)), 'Radius' => $rad, 'OrbitalRadius' => $Orb, 'Period' => $Peri, 'Gravity'=> $Grav, 'Type' => $type];  // ADD TYPE
+      Put_Moon($M);
+      $P['Moons']++;
+      Put_Planet($P);
       break;
     default: 
       break;
@@ -53,8 +108,13 @@
        
   if (Access('God')) {
     echo "<center>" .
-         "<form method=post action=PlanEdit.php>" . fm_hidden('id', $Pid) .
-         "<input type=submit name=ACTION value='Delete Planet' class=Button> " .
+         "<form method=post action=PlanEdit.php>" . fm_hidden('id', $Pid);
+
+    if ($PTD[$P['Type']]['Hospitable'] || ($PTD[$P['Type']]['Name'] == 'Gas Giant')) {
+        echo "<input type=submit name=ACTION value='Add Editable Moon' class=Button> ";
+    }
+    
+    echo "<input type=submit name=ACTION value='Delete Planet' class=Button> " .
          "<input type=submit name=ACTION value='Auto Populate' class=Button></form></center>";
   }
   dotail();

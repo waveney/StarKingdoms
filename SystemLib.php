@@ -30,6 +30,9 @@ function RealWorld(&$Data,$fld) {
       return sprintf("%0.2f x Sun",$val/3.83e26);          
       
     case 'OrbitalRadius' :
+      if ($val < 1e7) {
+        return sprintf("%0.2f x Moon",$val/384400);             
+      }
       return sprintf("%0.2f AU",$val/1.496e8);            
     
     case 'Period' :
@@ -69,6 +72,10 @@ function RealHeat(&$N,&$P) {
 function RealHeatValue(&$N,&$P) {
   $heat = ($N['Luminosity']+($N['Type2']?$N['Luminosity2']:0))/(($P['OrbitalRadius']*1000)^2);
   return $heat*(1.496e11^2)/3.83e26;
+}
+
+function PM_Type(&$Dat,$PM) {
+  return $Dat['Name'] . ($Dat['Append']?" $PM":'');
 }
 
 function Show_System(&$N,$Mode=0) {
@@ -143,7 +150,7 @@ function Show_System(&$N,$Mode=0) {
 //    if (Access('God')) echo "<td>Orbital Number";
     foreach ($Planets as $P) {
       $Pid = $P['id'];
-      echo "<tr><td><a href=PlanEdit.php?id=$Pid>" . ($P['Name']?$P['Name']:$Pid) . "</a><td>" . $PTNs[$P['Type']] . "<td>" . RealWorld($P,'OrbitalRadius')
+      echo "<tr><td><a href=PlanEdit.php?id=$Pid>" . ($P['Name']?$P['Name']:$Pid) . "</a><td>" . PM_Type($PTD[$P['Type']], "Planet") . "<td>" . RealWorld($P,'OrbitalRadius')
            . "<td>Heat: " . RealHeat($N,$P) . "<td>" . $PTD[$P['Type']]['Hospitable'];
 //      if (Access('God')) echo "<td>" . sqrt($P['OrbitalRadius']**3/($N['Mass']));
       }
@@ -176,6 +183,8 @@ function Show_Planet(&$P,$Mode=0) {
   $Ds = Get_Districts($Pid);
   $N = Get_System($P['SystemId']);
   $PTNs = Get_PlanetTypeNames();
+  $PTD = Get_PlanetTypes();
+  $Mns = Get_Moons($Pid);
   
   echo "<form method=post id=mainform enctype='multipart/form-data' action=PlanEdit.php>";
   echo "<div class=tablecont><table width=90% border class=SideTable>\n";
@@ -187,6 +196,7 @@ function Show_Planet(&$P,$Mode=0) {
   echo "<tr>" . fm_text('Short Name',$P,'ShortName');
   echo "<tr>" . fm_textarea('Description',$P,'Description',8,3);
   echo "<tr><td>Type:<td>" . fm_Select($PTNs,$P,'Type',1) . fm_number('Minerals',$P,'Minerals',1,"class=NotCSide"); 
+  echo fm_number('Moons',$P,'Moons',1,"class=NotCSide");
   
   echo "<tr>" . fm_number('Orbital Radius',$P,'OrbitalRadius',1,"class=NotCSide") . "<td>Km = " . RealWorld($P,'OrbitalRadius'); 
   echo "<td rowspan=4 colspan=3>";
@@ -201,6 +211,26 @@ function Show_Planet(&$P,$Mode=0) {
       
 //  $heat = $N['Luminosity']/(($P['OrbitalRadius']*1000)^2);
   echo "<tr><td>Heat:<td>" . RealHeat($N,$P); //sprintf("%0.2f", $heat) . "<td> = " . sprintf("%0.2f Earth", $heat*(1.496e11^2)/3.83e26);
+
+  if ($Mns) {
+    echo "<tr><td>Editable Moons\n";
+    foreach ($Mns as $M) {
+      $Mid = $M['id'];
+      echo "<tr><td><a href=MoonEdit.php?id=$Mid>" . NameFind($M) . "<td colspan=6>";
+      echo " is " . ($PTNs[$M['Type']] == 'Asteroid Belt'?" an ":($PTD[$M['Type']]['Hospitable']?" a <b>habitable ":" an uninhabitable ")) . PM_Type($PTD[$M['Type']],"moon") . "</b>.  ";
+    
+      if ($PTD[$M['Type']]['Hospitable'] && $M['Minerals']) echo "It has a minerals rating of <b>" . $M['Minerals'] . "</b>.  ";
+      echo "Orbital radius: " . sprintf('%4g', $M['OrbitalRadius']) . " Km = " .  RealWorld($M,'OrbitalRadius') . 
+           ", Period: " . sprintf('%4g', $M['Period']) . " Hr = " .  RealWorld($M,'Period');
+      if ($P['Radius']) echo ", Radius " . sprintf('%4g', $M['Radius']) . " Km = " .  RealWorld($M,'Radius') .
+                             ", Gravity: " . sprintf('%4g', $M['Gravity']) . " m/s<sup>2</sup> = " .  RealWorld($M,'Gravity');
+                               
+//      if ($M['Description']) echo "<p>" . $Parsedown->text($M['Description']) . "<p>";
+      }
+    }
+
+
+  
   $NumDists = count($Ds);
   $dc=0;
   

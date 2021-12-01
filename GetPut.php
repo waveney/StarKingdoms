@@ -345,20 +345,36 @@ function Get_PlanetTypeNames() {
   return $Ts;
 }
 
-//  ???
+//  Moons
 
-function Get_Factionxxx($id) {
+function Get_Moon($id) {
   global $db;
-  $res = $db->query("SELECT * FROM Faction WHERE id=$id");
+  $res = $db->query("SELECT * FROM Moons WHERE id=$id");
   if ($res) return $res->fetch_assoc();
   return [];
 }
 
-function Put_Factionxxx(&$now) {
-  $e=$now['id'];
-  $Cur = Get_Faction($e);
-  return Update_db('Faction',$Cur,$now);
+function Put_Moon(&$now) {
+  if (isset($now['id'])) {
+    $e=$now['id'];
+    $Cur = Get_Moon($e);
+    return Update_db('Moons',$Cur,$now);
+  } else {
+    return $now['id'] = Insert_db ('Moons', $now );
+  }
 }
+
+
+function Get_Moons($Pid) {
+  global $db,$GAMEID;
+  $Ms = [];
+  $res = $db->query("SELECT * FROM Moons WHERE PlanetId=$Pid ORDER BY OrbitalRadius");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
+  return $Ms;
+}
+
+//  
+
 function Get_Factionxvx($id) {
   global $db;
   $res = $db->query("SELECT * FROM Faction WHERE id=$id");
