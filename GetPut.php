@@ -275,7 +275,7 @@ function Get_DistrictTypes() {
   global $db,$GAMEID;
   $Ts = [];
   $res = $db->query("SELECT * FROM DistrictTypes");
-  if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
   return $Ts;
 }
 
@@ -306,10 +306,18 @@ function Put_District(&$now) {
   }  
 }
 
-function Get_Districts($Pid) {
+function Get_DistrictsP($Pid) {
   global $db,$GAMEID;
   $Ts = [];
   $res = $db->query("SELECT * FROM Districts WHERE PlanetId=$Pid");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
+  return $Ts;
+}
+
+function Get_DistrictsM($Mid) {
+  global $db,$GAMEID;
+  $Ts = [];
+  $res = $db->query("SELECT * FROM Districts WHERE MoonId=$Mid");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
   return $Ts;
 }

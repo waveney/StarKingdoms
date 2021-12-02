@@ -23,7 +23,7 @@
   $P = Get_Planet($Pid);
   $N = get_System($P['SystemId']);
   $Factions = Get_Factions();
-  $Dists = Get_Districts($Pid);
+  $Dists = Get_DistrictsP($Pid);
   $Mns = Get_Moons($Pid);
   $MC = count($Mns);
   $PTD = Get_PlanetTypes();

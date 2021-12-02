@@ -7,7 +7,7 @@
   $type  = $_POST['D'];
 
 
-//var_dump($_POST);  
+var_dump($_POST);  
 // Special returns @x@ changes id to x, #x# sets feild to x, !x! important error message
   switch ($type) {
   case 'System' :
@@ -20,7 +20,7 @@
   case 'Moon' :
     switch ($field) {
     case (preg_match('/DistrictTypeAdd-(.*)/',$field,$mtch)?true:false):
-      $Ds = Get_Districts($id);
+      $Ds = ($type == 'Planet')?Get_DistrictsP($id):Get_DistrictsM($id);
       foreach ($Ds as $D) {
         if ($D['Type'] == $Value) {
           $D['Number']++;
@@ -29,6 +29,11 @@
         }
       }
       $N= ['Type'=>$Value,'PlanetId'=>$mtch[1],'Number'=>1];
+      if ($type == 'Planet') {
+         $N['PlanetId'] =$mtch[1];
+      } else {
+         $N['MoonId'] =$mtch[1];      
+      }
       echo 'FORCERELOAD54321:NOW' . Put_District($N);
       exit;
 

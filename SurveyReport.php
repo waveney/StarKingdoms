@@ -23,6 +23,9 @@
   }
 
   $Parsedown = new Parsedown();
+  $PTNs = Get_PlanetTypeNames();
+  $PTD = Get_PlanetTypes();
+  $DistTypes = Get_DistrictTypes();
   
   $N=Get_System($Sid);
   $Fs= Get_Factions();
@@ -30,7 +33,7 @@
   $pname = NameFind($N); // Need diff logic for player
   if (!$pname) $pname = $N['Ref'];
   
-  echo "<div class=SReport style='width:800;'><h1>Survey Report - $pname</h1>\n";
+  echo "<div class=SReport><h1>Survey Report - $pname</h1>\n";
   echo "UniqueRef is: " . UniqueRef($Sid) . "<p>";
   
   if ($N['Description']) echo $Parsedown->text($N['Description']) . "<p>";
@@ -41,7 +44,8 @@
   
   // Star (s)
   
- 
+  if ($N['Image']) echo "<img src=" . $N['Image'] . ">";
+  
   echo "The " . ($N['Type2']?"star":"principle star") . " is a " . $N['Type'] . ", with a radius of " . 
         sprintf("%0.2g Km = ",$N['Radius'])  . RealWorld($N,'Radius') . ", a mass of " .
         sprintf("%0.2g Kg = ",$N['Mass'])  . RealWorld($N,'Mass') . ", a temperature of " .
@@ -57,9 +61,6 @@
         sprintf("%0.2g Hr = ",$N['Period'])  . RealWorld($N,'Period') . ".<p>";
   }      
             
-  $PTNs = Get_PlanetTypeNames();
-  $PTD = Get_PlanetTypes();
-
   $Ps = Get_Planets($Sid);
   $Planets = $Asteroids = 0;
   foreach ($Ps as $P) {
@@ -96,12 +97,16 @@
     echo "No planets or asteroids in the system";
   }
   
-  echo "<p><ul>";
+  echo "<br clear=all><ul>";
   
   foreach ($Ps as $P) {
+    $Pid = $P['id'];
     $Mns = [];
-    if ($P['Moons']) $Mns = Get_Moons($P['id']);
-    echo "<li>" . NameFind($P) . " is " . ($PTNs[$P['Type']] == 'Asteroid Belt'?" an ":($PTD[$P['Type']]['Hospitable']?" a <b>habitable ":" an uninhabitable ")) . 
+    if ($P['Moons']) $Mns = Get_Moons($Pid);
+
+    echo "<li><span class=SRName>" . NameFind($P) . "</span>";
+    if ($P['Image']) echo "<img src=" . $P['Image'] . ">";
+    echo " Is " . ($PTNs[$P['Type']] == 'Asteroid Belt'?" an ":($PTD[$P['Type']]['Hospitable']?" a <b>habitable ":" an uninhabitable ")) . 
          PM_Type($PTD[$P['Type']],"Planet") . "</b>.  ";
     
     if ($PTD[$P['Type']]['Hospitable'] && $P['Minerals']) echo "It has a minerals rating of <b>" . $P['Minerals'] . "</b>.  ";
@@ -112,14 +117,29 @@
     
     if ($P['Moons']) echo ".  It has " . Plural($P['Moons'],'',"a moon.", $P['Moons'] . " moons.");
     
-    if ($P['Description']) echo "<p>" . $Parsedown->text($P['Description']) . "<p>";
+    if ($P['Description']) echo "<p>" . $Parsedown->text($P['Description']) ;
     
+    echo "<p>";
     // Districts
+    
+    $Ds = Get_DistrictsP($Pid);
+    if ($Ds) { // && 
+      echo "<p>Districts: ";
+      $dc = 0;
+      foreach ($Ds as $D) {
+        if ($dc++) echo ", ";
+        echo $DistTypes[$D['Type']]['Name'] . ": " . $D['Number'];
+      }
+      echo "<p>";
+    }
 
     if ($Mns) {
       echo Plural($Mns,'',"  The moon of note is:", "  The moons of note are: ") . "<p><ul>";
       foreach ($Mns as $M) {
-        echo "<li>" . NameFind($M) . " is " . ($PTNs[$M['Type']] == 'Asteroid Belt'?" an ":($PTD[$P['Type']]['Hospitable']?" a <b>habitable ":" an uninhabitable ")) . 
+        $Mid = $M['id'];
+        echo "<li><span class=SRName>" . NameFind($M) . "</span>";
+        if ($M['Image']) echo "<img src=" . $M['Image'] . ">";        
+        echo " Is " . ($PTNs[$M['Type']] == 'Asteroid Belt'?" an ":($PTD[$P['Type']]['Hospitable']?" a <b>habitable ":" an uninhabitable ")) . 
              PM_Type($PTD[$M['Type']],"Moon") . "</b>.  ";
     
         if ($PTD[$M['Type']]['Hospitable'] && $M['Minerals']) echo "It has a minerals rating of <b>" . $M['Minerals'] . "</b>.  ";
@@ -131,6 +151,17 @@
         if ($M['Description']) echo "<p>" . $Parsedown->text($M['Description']);
         
         // Districts
+        $Ds = Get_DistrictsM($Mid);
+        if ($Ds) { // && 
+          echo "<p>Districts: ";
+          $dc = 0;
+          foreach ($Ds as $D) {
+            if ($dc++) echo ", ";
+            echo $DistTypes[$D['Type']]['Name'] . ": " . $D['Number'];
+          }
+          echo "<p>";
+        }
+
       }
       echo "</ul><p>";
     }    
@@ -139,7 +170,12 @@
 
 
   
-  echo "</ul></div>";
+  echo "</ul>";
+  
+  // Links
+  // Images
+  
+  echo "</div>";
   
   if (Access('GM')) echo "<h2><a href=SysEdit.php?id=$Sid>Edit System</s></h2>";
   

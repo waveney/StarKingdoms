@@ -180,7 +180,7 @@ function Show_Planet(&$P,$Mode=0,$Buts=0) {
   
   $Facts = Get_Faction_Names();
   $DTs = Get_DistrictTypeNames();
-  $Ds = Get_Districts($Pid);
+  $Ds = Get_DistrictsP($Pid);
   $N = Get_System($P['SystemId']);
   $PTNs = Get_PlanetTypeNames();
   $PTD = Get_PlanetTypes();
@@ -278,7 +278,7 @@ function Show_Moon(&$M,$Mode=0) {
   $P = Get_Planet($Pid);
   $Facts = Get_Faction_Names();
   $DTs = Get_DistrictTypeNames();
-  $Ds = Get_Districts($Mid);
+  $Ds = Get_DistrictsM($Mid);
   $N = Get_System($P['SystemId']);
   $PTNs = Get_PlanetTypeNames();
   $PTD = Get_PlanetTypes();
@@ -317,7 +317,7 @@ function Show_Moon(&$M,$Mode=0) {
     echo "<td>" . fm_Select($DTs, $D , 'Type', 1,'',"DistrictType-$did") . fm_number1('', $D,'Number', '','',"DistrictNumber-$did");
     };
 
-  echo "<tr><td>Add District Type<td>" . fm_Select($DTs, NULL , 'Number', 1,'',"DistrictTypeAdd-$Pid");
+  echo "<tr><td>Add District Type<td>" . fm_Select($DTs, NULL , 'Number', 1,'',"DistrictTypeAdd-$Mid");
 
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "</table></div></form>\n";

@@ -26,7 +26,7 @@
   $Sid = $P['SystemId'];
   $N = get_System($Sid);
   $Factions = Get_Factions();
-  $Dists = Get_Districts($Pid);
+  $Dists = Get_DistrictsM($Mid);
   $Mns = Get_Moons($Pid);
   $MC = count($Mns);
   $PTD = Get_PlanetTypes();

@@ -1,0 +1,25 @@
+.SReport {
+  width:800;
+}
+
+.SRName {
+  font-size:20;
+}
+
+.SRImage {
+  width:120;
+  height:120;
+
+}
+
+.SReport img {
+  float:right;
+  width:120;
+  height:120;
+  padding: 10px;
+} 
+
+.SReport li {
+  clear:both;
+
+}
