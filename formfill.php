@@ -60,6 +60,13 @@ var_dump($_POST);
       exit;
     }
     
+  case 'Link' :
+    $N = Get_Link($id);
+    $N[$field] = $Value;
+    echo Put_Link($N);
+    exit;
+  
+    
   case 'District' :
     $N = Get_District($id);
     $N[$field] = $Value;

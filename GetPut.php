@@ -72,7 +72,7 @@ function Put_System(&$now) {
 
 function Get_SystemR($sysref) {
   global $db,$GAMEID;
-  $res = $db->query("SELECT * FROM Systems WHERE GameId=$GAMEID Ref='$sysref'");
+  $res = $db->query("SELECT * FROM Systems WHERE GameId=$GAMEID AND Ref='$sysref'");
   if ($res) return $res->fetch_assoc();
   return [];
 }
@@ -116,7 +116,7 @@ function Get_Planets($sysid) {
   return $Planets;
 }
 
-// Links
+/// Links
 
 function Get_Link($id) {
   global $db;
@@ -181,18 +181,27 @@ function Get_FactionLink($id) {
 function Get_FactionLinkFL($Fact, $Lid) {
   global $db;
   $res = $db->query("SELECT * FROM FactionLink WHERE FactionId=$Fact AND LinkId=$Lid");
-  if ($res) return $res->fetch_assoc();
-  return ['FactionId'=>$Fact, 'LinkId'=>$id];
+  if ($res) $ans = $res->fetch_assoc();
+  if ($ans) return $ans;
+  return ['FactionId'=>$Fact, 'LinkId'=>$Lid, 'Known'=>0];
 }
 
 function Put_FactionLink(&$now) {
-  if (isset($now[$id])) {
+  if (isset($now['id'])) {
     $e=$now['id'];
     $Cur = Get_Faction($e);
     return Update_db('FactionLink',$Cur,$now);
   } else {
     return $now['id'] = Insert_db ('FactionLink', $now );
   }
+}
+
+function Get_Factions4Link($Lid) {
+  global $db;
+  $FL = [];
+  $res = $db->query("SELECT * FROM FactionLink WHERE LinkId=$Lid");
+  if ($res) while ($ans = $res->fetch_assoc()) $FL[$ans['FactionId']] = $ans;
+  return $FL;
 }
 
 // FactionsSystems
@@ -221,6 +230,15 @@ function Put_FactionSystem(&$now) {
   }
 }
 
+function Get_Factions4Sys($id) {
+  global $db;
+  $FL = [];
+  $res = $db->query("SELECT * FROM FactionSystem WHERE SystemId=$id");
+  if ($res) while ($ans = $res->fetch_assoc()) $FL[$ans['FactionId']] = $ans;
+  return $FL;
+}
+
+
 // Faction Planet
 
 function Get_FactionPlanet($id) {
@@ -245,6 +263,16 @@ function Put_FactionPlanet(&$now) {
     return $now['id'] = Insert_db ('FactionPlanet', $now );
   }  
 }
+
+
+function Get_Factions4Plan($id) {
+  global $db;
+  $FL = [];
+  $res = $db->query("SELECT * FROM FactionPlanet WHERE PlanetId=$id");
+  if ($res) while ($ans = $res->fetch_assoc()) $FL[$ans['FactionId']] = $ans;
+  return $FL;
+}
+
 // ??
 
 function Get_LinkLevels() {

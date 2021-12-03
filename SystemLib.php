@@ -85,6 +85,7 @@ function Show_System(&$N,$Mode=0) {
     dotail();
   }
   $Sid = $N['id'];
+  $Ref = $N['Ref'];
   echo "<input  class=floatright type=Submit name='Update' value='Save Changes' form=mainform>";
 
   if ($Mode) {
@@ -92,11 +93,14 @@ function Show_System(&$N,$Mode=0) {
     echo "  <span class=NotCSide>Marked are visible if set, but not changeable by factions.</span>";
   }
   
-  $Facts = Get_Faction_Names();
+  $FactNames = Get_Faction_Names();
+  $Facts = Get_Factions();
   $Fact_Colours = Get_Faction_Colours();
   $Planets = Get_Planets($Sid);
   $PTNs = Get_PlanetTypeNames();
   $PTD = Get_PlanetTypes();
+  $LinkLevels = Get_LinkLevels();
+  $Ls = Get_Links($Ref);  
   
   echo "<form method=post id=mainform enctype='multipart/form-data' action=SysEdit.php>";
   echo "<div class=tablecont><table width=90% border class=SideTable>\n";
@@ -106,7 +110,7 @@ function Show_System(&$N,$Mode=0) {
        "<td class=NotSide>" . $GAME['Name'];
   echo "<tr class=NotSide>" . fm_text('Grid X',$N,'GridX',1,"class=NotSide") . fm_text('Grid Y',$N,'GridY',1,"class=NotSide") . fm_text('Ref',$N,'Ref',1,"class=NotSide");
 //  echo "<tr class=NotCSide><td class=NotCSide>Control:<td class=NotCSide>" . fm_select($Facts,$N,'Control',1); // Known by TODO, Image
-  echo "<tr>" . fm_radio('Control',$Facts ,$N,'Control','',1,'colspan=6','',$Fact_Colours,0); 
+  echo "<tr>" . fm_radio('Control',$FactNames ,$N,'Control','',1,'colspan=6','',$Fact_Colours,0); 
   echo "<tr>" . fm_text('Name',$N,'Name',8);
   echo "<tr>" . fm_text('Short Name',$N,'ShortName') . fm_text('Nebulae',$N,'Nebulae',1,"class=NotCSide"). fm_number('Category',$N,'Category',1,"class=NotSide") ;
   echo "<tr>" . fm_textarea('Description',$N,'Description',8,3);
@@ -156,6 +160,29 @@ function Show_System(&$N,$Mode=0) {
       }
     echo "</table></div>\n";
   }
+  
+  echo "<h2>Stargates</h2>";
+  echo "Go to link to update knowledge for now.<p>";
+  echo "<table border><tr><td>Link<td>To<td>Level";
+  foreach ($Facts as $F) echo "<td>" . $F['Name'];
+  echo "\n";
+  
+  foreach ($Ls as $L) {
+    $Lid = $L['id'];
+    $OSysRef = ($L['System1Ref']==$Ref? $L['System2Ref']:$L['System1Ref']);
+    $ON = Get_SystemR($OSysRef); 
+//var_dump($OSysRef, $ON);
+    $ONid = $ON['id'];
+    $Know = Get_Factions4Link($L['id']);
+    $OName = NameFind($ON);
+    
+    echo "<tr><td><a href=LinkEdit.php?id=$Lid>#$Lid</a><td><a href=SysEdit.php?id=$ONid>$OSysRef - $OName</a><td>" . $LinkLevels[$L['Level']]['Colour'];
+    foreach ($Facts as $F) echo "<td>" . (isset($Know[$F['id']])?"Yes " . NameFind($Know):"No");
+    echo "\n";
+    }
+  echo "</table>\n";
+
+  
   if (Access('God')) {
     echo "<center><form method=post action=SysEdit.php>" . fm_hidden('id', $Sid) .
          "<input type=submit name=ACTION value='Add Planet' class=Button> ";
@@ -166,7 +193,9 @@ function Show_System(&$N,$Mode=0) {
     }
     echo "</form></center>";
   }
-  echo "<center><h2><a href=SurveyReport.php?id=$Sid>Survey Report</a></h2></center>";
+  echo "<center><h2><a href=SurveyReport.php?id=$Sid>Survey Report</a>";
+  if (Access('God'))  echo ", <a href=SurveyReport.php?id=$Sid&F=1>Survey Report from Faction 1</a>"  ;
+  echo "</h2></center>";
 
 }
 
@@ -334,6 +363,9 @@ function NameFind(&$thing) {
 
 function UniqueRef($sid) {
   global $FACTION,$GAMEID;
+
+//debug_print_backtrace();  
+//  echo "Sid is $sid<p>";
   $cid = str_split(sprintf('%d', $sid+54321));
   if (isset($FACTION)) { $fid = str_split(sprintf('%d', $FACTION['id']+12345));
   } else { $fid = str_split(substr(time() . "1",6,6)); }
@@ -341,6 +373,8 @@ function UniqueRef($sid) {
   return $GAMEID . $cid[2] . $fid[2] . $cid[3] . $fid[3] . $cid[4] . $fid[4];
 }
 
-
+function ReportEnd($N) {
+  return UniqueRef($N['id']); // testing kluudge
+}
 
 ?>

@@ -8,7 +8,7 @@
 
   dostaffhead("Survey Report",["js/dropzone.js","css/dropzone.css" ]);
 
-  global $db, $GAME;
+  global $db, $GAME, $FACTION;
 
 // START HERE
 //  var_dump($_REQUEST);
@@ -16,22 +16,40 @@
     $Sid = $_REQUEST['N'];
   } else if (isset($_REQUEST['id'])) {
     $Sid = $_REQUEST['id'];
-  } else { 
-
+  } else {
     echo "<h2>No Systems Requested</h2>";
     dotail();
   }
+  
+  $SurveyLevel = 0;
+  if (Access('GM')) {
+    $SurveyLevel = 10;
+  } else {
+    if (isset($_REQUEST['F'])) {
+       $Fid = $_REQUEST['F'];
+       $FACTION = Get_faction($Fid);
+    }   
+    $SurveyLevel = 2; // Test
+  }
+  if (isset($_REQUEST['F'])) {
+    $Fid = $_REQUEST['F'];
+    $FACTION = Get_faction($Fid);
+  }
+
+  $SurveyLevel = 2; // Test purposes
 
   $Parsedown = new Parsedown();
   $PTNs = Get_PlanetTypeNames();
   $PTD = Get_PlanetTypes();
   $DistTypes = Get_DistrictTypes();
+  $LinkLevels = Get_LinkLevels();
   
   $N=Get_System($Sid);
+  $Ref = $N['Ref'];
   $Fs= Get_Factions();
   
   $pname = NameFind($N); // Need diff logic for player
-  if (!$pname) $pname = $N['Ref'];
+  if (!$pname) $pname = $Ref;
   
   echo "<div class=SReport><h1>Survey Report - $pname</h1>\n";
   echo "UniqueRef is: " . UniqueRef($Sid) . "<p>";
@@ -39,7 +57,7 @@
   if ($N['Description']) echo $Parsedown->text($N['Description']) . "<p>";
   
   if ($N['Control']) echo "Controlled by: " . "<span style='background:" . $Fs[$N['Control']]['MapColour'] . "; padding=2;'>" . $Fs[$N['Control']]['Name'] . "</span><p>";
-  if ($N['HistoricalControl']) echo "Historically controlled by: " . "<span style='background:" . $Fs[$N['HistoricalControl']]['MapColour'] . "; padding=2;'>" 
+  if ($SurveyLevel >= 10 && $N['HistoricalControl']) echo "Historically controlled by: " . "<span style='background:" . $Fs[$N['HistoricalControl']]['MapColour'] . "; padding=2;'>" 
       . $Fs[$N['HistoricalControl']]['Name'] . "</span><p>"; // GM only
   
   // Star (s)
@@ -52,6 +70,7 @@
         sprintf("%0.0f K = ",$N['Temperature'])  . " and a luminosity of " .
         sprintf("%0.2g Km = ",$N['Luminosity'])  . RealWorld($N,'Luminosity') . ".<p>";
   if ($N['Type2']) {
+    if ($N['Image2']) echo "<br clear=all><img src=" . $N['Image2'] . ">";
     echo "The companion star is a " . $N['Type2'] . ", with a radius of " . 
         sprintf("%0.2g Km = ",$N['Radius2'])  . RealWorld($N,'Radius2') . ", a mass of " .
         sprintf("%0.2g Kg = ",$N['Mass2'])  . RealWorld($N,'Mass2') . ", a temperature of " .
@@ -74,9 +93,9 @@
   if ($Planets) {
   
     if ($Planets>1) {
-      echo "It has $Planets planets";
+      echo "The system has $Planets planets";
     } else {
-      echo "It has a planet";
+      echo "The system has a planet";
     }
     
     if ($Asteroids) {
@@ -88,9 +107,9 @@
     }
   } elseif ($Asteroids) {
       if ($Asteroids > 1) {
-        echo "It has $Asteroids asteroid belts.";
+        echo "The system has $Asteroids asteroid belts.";
       } else {
-        echo "It has an asteroid belt.";
+        echo "The system has an asteroid belt.";
       }
   
   } else {
@@ -109,7 +128,7 @@
     echo " Is " . ($PTNs[$P['Type']] == 'Asteroid Belt'?" an ":($PTD[$P['Type']]['Hospitable']?" a <b>habitable ":" an uninhabitable ")) . 
          PM_Type($PTD[$P['Type']],"Planet") . "</b>.  ";
     
-    if ($PTD[$P['Type']]['Hospitable'] && $P['Minerals']) echo "It has a minerals rating of <b>" . $P['Minerals'] . "</b>.  ";
+    if ( $SurveyLevel > 2 && $PTD[$P['Type']]['Hospitable'] && $P['Minerals']) echo "It has a minerals rating of <b>" . $P['Minerals'] . "</b>.  ";
     echo "It's orbital radius is " . sprintf('%0.2g', $P['OrbitalRadius']) . " Km = " .  RealWorld($P,'OrbitalRadius') . 
          ($P['Radius']?" ,":" and") . " a period of " . sprintf('%0.2g', $P['Period']) . " Hr = " .  RealWorld($P,'Period');
     if ($P['Radius']) echo ", it has a radius of " . sprintf('%0.2g', $P['Radius']) . " Km = " .  RealWorld($P,'Radius') .
@@ -117,20 +136,22 @@
     
     if ($P['Moons']) echo ".  It has " . Plural($P['Moons'],'',"a moon.", $P['Moons'] . " moons.");
     
-    if ($P['Description']) echo "<p>" . $Parsedown->text($P['Description']) ;
+    if ($SurveyLevel > 2 && $P['Description']) echo "<p>" . $Parsedown->text($P['Description']) ;
     
     echo "<p>";
     // Districts
     
-    $Ds = Get_DistrictsP($Pid);
-    if ($Ds) { // && 
-      echo "<p>Districts: ";
-      $dc = 0;
-      foreach ($Ds as $D) {
-        if ($dc++) echo ", ";
-        echo $DistTypes[$D['Type']]['Name'] . ": " . $D['Number'];
+    if ($SurveyLevel > 5) {
+      $Ds = Get_DistrictsP($Pid);
+      if ($Ds) { // && 
+        echo "<p>Districts: ";
+        $dc = 0;
+        foreach ($Ds as $D) {
+          if ($dc++) echo ", ";
+          echo $DistTypes[$D['Type']]['Name'] . ": " . $D['Number'];
+        }
+        echo "<p>";
       }
-      echo "<p>";
     }
 
     if ($Mns) {
@@ -142,24 +163,27 @@
         echo " Is " . ($PTNs[$M['Type']] == 'Asteroid Belt'?" an ":($PTD[$P['Type']]['Hospitable']?" a <b>habitable ":" an uninhabitable ")) . 
              PM_Type($PTD[$M['Type']],"Moon") . "</b>.  ";
     
-        if ($PTD[$M['Type']]['Hospitable'] && $M['Minerals']) echo "It has a minerals rating of <b>" . $M['Minerals'] . "</b>.  ";
+        if ($SurveyLevel > 2 && $PTD[$M['Type']]['Hospitable'] && $M['Minerals']) echo "It has a minerals rating of <b>" . $M['Minerals'] . "</b>.  ";
         echo "It's orbital radius is " . sprintf('%0.2g', $M['OrbitalRadius']) . " Km = " .  RealWorld($M,'OrbitalRadius') . 
              ($M['Radius']?" ,":" and") . " a period of " . sprintf('%0.2g', $M['Period']) . " Hr = " .  RealWorld($M,'Period');
         if ($P['Radius']) echo ", it has a radius of " . sprintf('%0.2g', $M['Radius']) . " Km = " .  RealWorld($M,'Radius') .
                                " and gravity at " . sprintf('%0.2g', $M['Gravity']) . " m/s<sup>2</sup> = " .  RealWorld($M,'Gravity');
                                
-        if ($M['Description']) echo "<p>" . $Parsedown->text($M['Description']);
+        if ($SurveyLevel > 2 && $M['Description']) echo "<p>" . $Parsedown->text($M['Description']);
         
         // Districts
-        $Ds = Get_DistrictsM($Mid);
-        if ($Ds) { // && 
-          echo "<p>Districts: ";
-          $dc = 0;
-          foreach ($Ds as $D) {
-            if ($dc++) echo ", ";
-            echo $DistTypes[$D['Type']]['Name'] . ": " . $D['Number'];
+        if ($SurveyLevel > 5) {
+          $Ds = Get_DistrictsM($Mid);
+            
+          if ($Ds) { // && 
+            echo "<p>Districts: ";
+            $dc = 0;
+            foreach ($Ds as $D) {
+              if ($dc++) echo ", ";
+              echo $DistTypes[$D['Type']]['Name'] . ": " . $D['Number'];
+            }
+            echo "<p>";
           }
-          echo "<p>";
         }
 
       }
@@ -171,6 +195,34 @@
 
   
   echo "</ul>";
+  
+  $Ls = Get_Links($Ref);
+  echo "<BR CLEAR=ALL><h2>There are Stargates to:</h2>\n";
+  $GM = Access('GM');
+  
+  foreach ($Ls as $L) {
+    $OSysRef = ($L['System1Ref']==$Ref? $L['System2Ref']:$L['System1Ref']);
+    $ON = Get_SystemR($OSysRef); 
+    if ($SurveyLevel >= 10) {
+      $LinkKnow = ['Known'=>1];
+    } else if ($FACTION) {
+      $LinkKnow = Get_FactionLinkFL($Fid,$L['id']);
+    } else {
+      $LinkKnow = ['Known'=>0];
+    }
+    echo "<li>Link #" . $L['id'] . " ";
+
+//var_dump($LinkKnow);    
+    if (1 ||$LinkKnow['Known']) {
+      $name = NameFind($L);
+      if ($name) echo " ( $name ) ";
+      echo " to " . ReportEnd($ON) .  " level " . $LinkLevels[$L['Level']]['Colour'];
+    } else {
+      echo " to unknown location.  Level " .  $LinkLevels[$L['Level']]['Colour'];
+    }
+    
+  }
+ 
   
   // Links
   // Images
