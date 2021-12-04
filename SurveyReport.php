@@ -36,7 +36,7 @@
     $FACTION = Get_faction($Fid);
   }
 
-  $SurveyLevel = 2; // Test purposes
+//  $SurveyLevel = 2; // Test purposes
 
   $Parsedown = new Parsedown();
   $PTNs = Get_PlanetTypeNames();

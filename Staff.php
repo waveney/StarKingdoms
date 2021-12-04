@@ -9,7 +9,9 @@
 
   dostaffhead("SK Pages", ["/js/jquery.typeahead.min.js", "/css/jquery.typeahead.min.css", "/js/Staff.js"]);
 
-  global $GAME;
+
+  global $GAME, $Heads;
+  $Heads = [];
 
   function SKTable($Section,$Heading,$cols=1) {
     global $Heads;
@@ -106,8 +108,17 @@
     $txt .= $x;
     $txt .= "<ul>\n";
     $txt .= "<li><a href=SysList.php>List Systems</a>\n";
-  
-//    $txt .= "<li><a href=StewardView>Stewarding Applications (old)</a>\n";
+    $txt .= "<p>";
+
+    $txt .= "</ul>\n";
+  }
+
+// *********************** Misc *****************************************************************
+  if ($x = SKTable('Any','Factions')) {
+    $txt .= $x;
+    $txt .= "<ul>\n";
+    $txt .= "<li><a href=FactList.php>List Factions</a>\n";
+    $txt .= "<li><a href=AddFaction.php>Add Faction</a>\n";  
     $txt .= "<p>";
 
     $txt .= "</ul>\n";
@@ -120,7 +131,6 @@
     $txt .= "<li><a href=DTList.php>List District Types</a>\n";
     $txt .= "<li><a href=PlanetTypes.php>Planet Types</a>\n";  
     $txt .= "<li><a href=PlanetStats.php>Planet Stats</a>\n";  
-//    $txt .= "<li><a href=StewardView>Stewarding Applications (old)</a>\n";
     $txt .= "<p>";
 
     $txt .= "</ul>\n";

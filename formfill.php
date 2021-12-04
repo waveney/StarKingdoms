@@ -66,6 +66,16 @@ var_dump($_POST);
     echo Put_Link($N);
     exit;
   
+  case 'Faction' :
+    if ($field == 'LastActive') {
+      include_once("DateTime.php");
+      $Value = Date_BestGuess($Value);
+    }
+    $N = Get_Faction($id);
+    $N[$field] = $Value;
+    echo Put_Faction($N);
+    exit;
+  
     
   case 'District' :
     $N = Get_District($id);

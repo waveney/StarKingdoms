@@ -15,6 +15,8 @@
 
   if (isset($_REQUEST['f'])) {
     $Faction = $_REQUEST['f'];
+  } else   if (isset($_REQUEST['F'])) {
+    $Faction = $_REQUEST['F'];
   } else if (isset($_REQUEST['f1'])) {
     $Faction = $_REQUEST['f1'];
   } else {
