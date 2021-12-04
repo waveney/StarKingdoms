@@ -24,7 +24,7 @@
 
   $Cake = sprintf("%s:%d:%06d",'Player',$Access_Type['Player'],$Fid ); 
   $biscuit = openssl_encrypt($Cake,'aes-128-ctr','Quarterjack',0,'BrianMBispHarris');
-  setcookie('SKCD',$biscuit,0,'/');
+  setcookie('SKD',$biscuit,0,'/');
 
   $USER{'AccessLevel'} = $Access_Type['Player'];
   $USER{'UserId'} =  $Fid;

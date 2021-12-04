@@ -2,9 +2,18 @@
   include_once("sk.php");
   include_once("GetPut.php");
   
-  A_Check('GM');
-
+  if (Access('GM') ) {
+    A_Check('GM');
+  } else if (Access('Player')) {
+    if (!$FACTION) {
+      Error_Page("Sorry you need to be a GM or a Player to access this");
+    }
+ 
+ // var_dump($_REQUEST, $_COOKIE);  
+  }
   dostaffhead("Full Map");
+  
+  global $FACTION;
   
   $CatCols = ["white","grey", "Yellow"];
   $HexLegPos = [[1,8],[1,7.5],[1,7],[1,6.5], [9,8],[9,7.5],[9,7],[9,6.5],[1,0],[1,0.5],[1,2],[1,1],[1,1.5],[9,2],[9,1.5],[9,1],[9,0.5],[9,0]];
@@ -22,6 +31,8 @@
   } else {
     $Faction = 0;
   }
+  
+  if ($FACTION) $Faction = $FACTION['id'];
 
   function NodeLab($txt,$Prefix) {
     $FSize = [14,14,14,14,14, 13,13,12,12, 11,10,9,9, 8,8,7,7, 6,6,6,6];

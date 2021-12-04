@@ -23,7 +23,7 @@ $Months = ['','Jan','Feb','Mar','Apr','May','June','July','Aug','Sep','Oct','Nov
 date_default_timezone_set('GMT');
 
 function Set_User() {
-  global $db,$USER,$USERID,$AccessType,$YEAR,$CALYEAR;
+  global $db,$USER,$USERID,$AccessType,$YEAR,$CALYEAR,$FACTION;
   if (isset($USER)) return;
   $USER = array();
   $USERID = 0;
@@ -33,7 +33,8 @@ function Set_User() {
     $crumbs = explode(':',$Cake);
     $USER{'Subtype'} = $crumbs[0];
     $USER{'AccessLevel'} = $crumbs[1];
-    $USERID = $USER{'UserId'} = $crumbs[2];
+    $FACTIONID = $USER{'UserId'} = $crumbs[2];
+    $FACTION = Get_Faction($FACTIONID);
     if ($USERID) return;
     $USER = array();
     $USERID = 0;
@@ -183,7 +184,7 @@ function Error_Page ($message) {
 //  echo "$type<p>";
   switch ($type) {
   case $Access_Type['Player'] :
-    include_once("index.php");
+    include_once("Staff.php");
     exit;
 
   case $Access_Type['GM'] :
@@ -194,7 +195,7 @@ function Error_Page ($message) {
     exit;                        // Just in case
     
   default:
-    include_once("index.php"); 
+    include_once("Staff.php"); 
   }
 }
 
