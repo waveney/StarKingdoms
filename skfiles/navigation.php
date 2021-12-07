@@ -11,8 +11,8 @@
     echo "<a href=Player.php onmouseover=NoHoverSticky()>Faction Menu</a>";
   }
   if (isset($_COOKIE{'SKC2'})) {
-    echo "<a href=Staff.php onmouseover=NoHoverSticky()>Main Menu</a>";
-    echo "<a href='Login.php?ACTION=LOGOUT' onmouseover=NoHoverSticky()>Logout " . $USER['Login'] . "</a>\n";
+    echo "<a href=Staff.php onmouseover=NoHoverSticky()>GM Menu</a>";
+    echo "<a href='Login.php?ACTION=LOGOUT' onmouseover=NoHoverSticky()>Logout " . (isset($USER['Login'])?$USER['Login']:" ") . "</a>\n";
   }
   $host= "https://" . $_SERVER['HTTP_HOST'];
 

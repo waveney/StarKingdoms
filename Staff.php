@@ -3,7 +3,12 @@
   include_once("GetPut.php");
   /* Remove any Participant overlay */
 
-  A_Check('Player');
+  A_Check('GM');
+
+  if (isset($_COOKIE{'SKD'})) {
+    unset($_COOKIE{'SKD'});
+    setcookie('SKD','',1,'/');
+  }
 
   $host= "https://" . $_SERVER['HTTP_HOST'];
 

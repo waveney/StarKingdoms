@@ -33,7 +33,7 @@
     echo "<td><a href=FactionEdit.php?F=$Fid>" . $F['Name'] . "</a>";
     echo "<td>" . $F['Player'];
     echo "<td style='background:" . $F['MapColour'] . ";'>";
-    echo "<td>" . ($F['LastActive']? date('d/m/y H:i:s',$F['LastAccess']) :"Never");
+    echo "<td>" . (isset($F['LastActive']) && $F['LastActive']? date('d/m/y H:i:s',$F['LastActive']) :"Never");
   }
       
   echo "</tbody></table></div>\n";
