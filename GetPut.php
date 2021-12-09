@@ -216,12 +216,12 @@ function Get_FactionSystem($id) {
 function Get_FactionSystemFS($Fact, $id) {
   global $db;
   $res = $db->query("SELECT * FROM FactionSystem WHERE FactionId=$Fact AND SystemId=$id");
-  if ($res) return $res->fetch_assoc();
+  if ($res)  if ($ans=$res->fetch_assoc()) return $ans;
   return ['FactionId'=>$Fact, 'SystemId'=>$id];
 }
 
 function Put_FactionSystem(&$now) {
-  if (isset($now[$id])) {
+  if (isset($now['id'])) {
     $e=$now['id'];
     $Cur = Get_FactionSystem($e);
     return Update_db('FactionSystem',$Cur,$now);
@@ -255,7 +255,7 @@ function Get_FactionPlanetFS($Fact, $id) {
 }
 
 function Put_FactionPlanet(&$now) {
-  if (isset($now[$id])) {
+  if (isset($now['id'])) {
     $e=$now['id'];
     $Cur = Get_Faction($e);
     return Update_db('FactionPlanet',$Cur,$now);
@@ -411,18 +411,70 @@ function Get_Moons($Pid) {
 
 //  
 
-function Get_Factionxvx($id) {
+function Get_Thing($id) {
   global $db;
-  $res = $db->query("SELECT * FROM Faction WHERE id=$id");
+  $res = $db->query("SELECT * FROM Things WHERE id=$id");
   if ($res) return $res->fetch_assoc();
   return [];
 }
 
-function Put_Factionxvx(&$now) {
-  $e=$now['id'];
-  $Cur = Get_Faction($e);
-  return Update_db('Faction',$Cur,$now);
+function Put_Thing(&$now) {
+  global $db,$GAMEID;
+  if (isset($now['id'])) {
+    $e=$now['id'];
+    $Cur = Get_Thing($e);
+    return Update_db('Things',$Cur,$now);
+  } else {
+    $now['GameId'] = $GAMEID;
+    return $now['id'] = Insert_db ('Things', $now );
+  }
 }
+
+function Get_Things($Fact,$type=0) [
+  global $db,$GAMEID;
+  $Ts = [];
+  $res = $db->query("SELECT * FROM Things WHERE GameId=$GAMEID AND Whose=$Fact " . ($type?" AND Type=$type":""));
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
+  return $Ts;
+}
+
+function Get_ThingsSys($Sid,$type=0) [
+  global $db,$GAMEID;
+  $Ts = [];
+  $res = $db->query("SELECT * FROM Things WHERE GameId=$GAMEID AND SystemId=$Sid " . ($type?" AND Type=$type":""));
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
+  return $Ts;
+}
+
+// Modules
+
+function Get_Module($id) {
+  global $db;
+  $res = $db->query("SELECT * FROM Modules WHERE id=$id");
+  if ($res) return $res->fetch_assoc();
+  return [];
+}
+
+function Put_Module(&$now) {
+  global $db,$GAMEID;
+  if (isset($now['id'])) {
+    $e=$now['id'];
+    $Cur = Get_Module($e);
+    return Update_db('Modules',$Cur,$now);
+  } else {
+    return $now['id'] = Insert_db ('Modules', $now );
+  }
+}
+
+function Get_Modules($Thing) [
+  global $db,$GAMEID;
+  $Ms = [];
+  $res = $db->query("SELECT * FROM Modules WHERE ThingId=$Thing");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
+  return $Ms;
+}
+
+
 
 
 

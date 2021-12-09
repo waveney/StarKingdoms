@@ -20,4 +20,17 @@ function Player_Page() {
 
 }
 
+function Trait($Name) {
+  global $FACTION;
+  
+  if (!isset($FACTION)) return false;
+  if ($FACTION['Trait1'] == $Name || $FACTION['Trait2'] == $Name || $FACTION['Trait2'] == $Name) return true;
+  return false;
+}
+
+function Ships() {
+  global $FACTION;
+  
+  $
+
 ?>

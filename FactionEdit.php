@@ -26,12 +26,24 @@ function Show_Faction(&$F,$Mode) {
   
   echo "<tr>" . fm_text('Faction Name',$F,'Name') . "<td>Native BioSphere<td>" . fm_select($PTs,$F,'Biosphere',1);
   echo "<tr>" . fm_text('Player Name',$F,'Player');
-  echo "<tr>" . fm_textarea('Notes',$F,'Notes',8,3);
-  echo "<tr>" . fm_textarea('Features',$F,'Features',8,3);
-  echo "<tr>" . fm_textarea('GM_Notes',$F,'GM_Notes',8,3);  
+  echo "<tr>" . fm_number('Credits',$F,'Credits') . fm_number('Science Points', $F,'SciencePoints');
+  echo "<tr>" . fm_text("Trait 1 Name",$F,'Trait1'). "<td>Short name that is unique";
+  echo "<tr>" . fm_textarea('Description',$F,'Trait1Text',8,2);
+  echo "<tr>" . fm_text("Trait 2 Name",$F,'Trait2'). "<td>Short name that is unique";
+  echo "<tr>" . fm_textarea('Description',$F,'Trait2Text',8,2);
+  echo "<tr>" . fm_text("Trait 3 Name",$F,'Trait3'). "<td>Short name that is unique";
+  echo "<tr>" . fm_textarea('Description',$F,'Trait3Text',8,2);
+  
+  
+  
+  
+  
+  echo "<tr>" . fm_textarea('Notes',$F,'Notes',8,2);
+//  echo "<tr>" . fm_textarea('Features',$F,'Features',8,2);
+  echo "<tr>" . fm_textarea('GM_Notes',$F,'GM_Notes',8,2);  
   echo "<tr>" . fm_text('Map Colour',$F,'MapColour');
   echo "<tr>" . fm_date('Last Active',$F,'LastActive');
-  echo "<tr>" . fm_text('Access Key',$F,'AccessKey',3);
+  echo fm_text('Access Key',$F,'AccessKey',3);
   echo "<td><a href=Access.php?id=$Fid&Key=" . $F['AccessKey'] . ">Use</a>";
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "</table></div>\n";

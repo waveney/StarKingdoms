@@ -124,6 +124,12 @@
     $txt .= "<ul>\n";
     $txt .= "<li><a href=FactList.php>List Factions</a>\n";
     $txt .= "<li><a href=AddFaction.php>Add Faction</a>\n";  
+
+    $txt .= "<li><form method=Post action=PlayerMove.php class=staffform>";
+      $txt .= "<input type=submit name=F value='Player Move' id=staffformid>" . 
+                fm_select($Facts,0,'F',1," onchange=this.form.submit()") . "</form>\n";
+
+
     $txt .= "<p>";
 
     $txt .= "</ul>\n";
