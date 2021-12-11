@@ -314,7 +314,8 @@ function Trader_Insurance_Upload() {
 
 function Toggle(i) {
   var x = document.getElementById(i);
-  if (x.style.display === "none") {
+//debugger;
+  if (x.style.display === "none" || x.style.display === "") {
     x.style.display = "block";
   } else {
     x.style.display = "none";

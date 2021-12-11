@@ -46,7 +46,8 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1) {
   $Tid = $T['id'];
   $Parsedown = new Parsedown();
   
-  echo "<div class=TechDesc><h2 onclick=Toggle('TDesc$Tid')>" . $T['Name'];
+  $Class = ($T['Cat'] == 0?"TechDesc":"SuppTech");
+  echo "<div class=$Class><h2 onclick=Toggle('TDesc$Tid')>" . $T['Name'];
   if ($Fact && $T['Cat']==0 && isset($FactTechs[$T['id']]) ) echo " - at Level " . $FactTechs[$T['id']];
   if ($Fact) {
     if ($T['Cat']>0 && isset($FactTechs[$T['id']]) ) {

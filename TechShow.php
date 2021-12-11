@@ -14,7 +14,7 @@
   }
 
   dostaffhead("Technologies");
-  $CTs = Get_CoreTechs();
+  $CTs = Get_CoreTechsByName();
   $CTNs = [];
   $CTNs[0] = '';
   foreach ($CTs as $TT) $CTNs[$TT['id']] = $TT['Name'];
@@ -30,17 +30,27 @@
   
   if ($FACTION) $Fid = $FACTION['id'];
 
-  $Techs = Get_Techs($Fid);
+  $Techs = Get_TechsByCore($Fid);
+//var_dump($Techs); exit;
+
   $TechFacts = [];
   if ($Fid) {
     $TechFacts = Get_Faction_Techs($Fid);
   }
   
   echo "<h2>Technologies</h2>\n";
-  echo "Click on name to expand definition\n<p>";
+  echo "Click on name to Toggle showing the definition and examples\n<p>";
   
-  foreach ($Techs as $T) {
-    Show_Tech($T,$CTNs,$FACTION,$TechFacts,0);
+  foreach ($CTs as $CT) {
+    Show_Tech($CT,$CTNs,$FACTION,$TechFacts,0);
+    
+    foreach ($Techs as $T) {
+//      echo "Checking "  . $T['Name'] . " Against " . $CT['Name']
+      if ($T['Cat']>0 && ($T['PreReqTech'] == $CT['id'])) {
+//        echo "Found " . $T['Name'] . "<br>";
+        Show_Tech($T,$CTNs,$FACTION,$TechFacts,0);
+      }
+    }
   }
   
   echo "<p>";
