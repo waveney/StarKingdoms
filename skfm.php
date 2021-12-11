@@ -101,6 +101,17 @@ function fm_number1($Name,&$data=0,$field,$extra1='',$extra2='',$field2='') {
   return $str . " $ADDALL>\n";
 }
 
+function fm_number0($Name,&$data=0,$field,$extra1='',$extra2='',$field2='') {
+  global $ADDALL,$AutoADD;
+  if ($field2 == '') $field2=$field;
+  $str = '';
+  if ($Name) $str .= "$Name: ";
+  $str .= help($field) . "<input type=number name=$field2 id=$field2 $extra2";
+  if ($data) if (isset($data[$field])) $str .= " value=\"" . htmlspec($data[$field]) . "\"";
+  if ($AutoADD) $str .=  " oninput=AutoInput('$field2') ";
+  return $str . " $ADDALL>\n";
+}
+
 function fm_number($Name,&$data=0,$field,$extra1='',$extra2='',$field2='') {
   global $ADDALL,$AutoADD;
   if ($field2 == '') $field2=$field;

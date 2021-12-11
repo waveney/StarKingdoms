@@ -568,11 +568,11 @@ function Get_TechsByCore($Fact=0) {
   global $db,$GAMEID;
   $Ms = [];
   if ($Fact == 0) {
-    $res = $db->query("SELECT * FROM Technologies ORDER BY PreReqTech, PreReqLevel");
+    $res = $db->query("SELECT * FROM Technologies ORDER BY PreReqTech, PreReqLevel, Name");
     if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
     return $Ms;
   } else {
-    $res = $db->query("SELECT t.* FROM Technologies t, FactionTechs ft WHERE (t.Cat<2 OR (t.Cat=3 AND ft.Tech_Id=t.id)) ORDER BY PreReqTech, PreReqLevel");
+    $res = $db->query("SELECT DISTINCT t.* FROM Technologies t, FactionTechs ft WHERE (t.Cat<2 OR (t.Cat=3 AND ft.Faction_Id=$Fact AND ft.Tech_Id=t.id)) ORDER BY t.PreReqTech, t.PreReqLevel, t.Name");
     if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
     return $Ms;    
   }
@@ -606,6 +606,13 @@ function Get_Faction_Tech($id) {
   return [];
 }
 
+function Get_Faction_TechFT($Fid,$Tid) {
+  global $db;
+  $res = $db->query("SELECT * FROM FactionTechs WHERE Faction_Id=$Fid AND Tech_Id=$Tid");
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
+  return ['Tech_Id'=>$Tid, 'Faction_Id'=> $Fid, 'Level' => 0];
+}
+
 function Put_Faction_Tech(&$now) {
   global $db,$GAMEID;
   if (isset($now['id'])) {
@@ -621,7 +628,7 @@ function Get_Faction_Techs($Fact) {
   global $db,$GAMEID;
   $Ms = [];
   $res = $db->query("SELECT * FROM  FactionTechs ft WHERE Faction_Id=$Fact");
-  if ($res) while ($ans = $res->fetch_assoc()) $Ms[$and['Tech_Id']] = $ans;
+  if ($res) while ($ans = $res->fetch_assoc()) $Ms[$ans['Tech_Id']] = $ans;
   return $Ms;
 }
 

@@ -133,6 +133,10 @@
       $txt .= "<input type=submit name=F value='List Technologies' id=staffformid>" . 
                 fm_select($Facts,0,'F',1," onchange=this.form.submit()") . "</form>\n";
     
+    $txt .= "<li><form method=Post action=TechShow.php?SETUP class=staffform>";
+      $txt .= "<input type=submit name=F value='Setup Technologies' id=staffformid>" . 
+                fm_select($Facts,0,'F',1," onchange=this.form.submit()") . "</form>\n";
+    
     $txt .= "<p>";
 
     $txt .= "</ul>\n";

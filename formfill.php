@@ -72,6 +72,17 @@ var_dump($_POST);
     echo Put_Tech($N);
     exit;
   
+  case 'FactTech' :
+    if (preg_match('/Tech(\d*)/',$field,$mtch)?true:false) {
+      $N = Get_Faction_TechFT($id,$mtch[1]);
+      $N['Level'] = $Value;
+      echo Put_Faction_Tech($N);
+      exit;
+    }
+    echo "Unknown... $field";
+    exit;
+   
+  
   case 'Faction' :
     if ($field == 'LastActive') {
       include_once("DateTime.php");

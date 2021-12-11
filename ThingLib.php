@@ -41,23 +41,36 @@ function ModValue($id) {
 }
 
 
-function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1) {
+function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0) {
   global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$ShipTypes,$Tech_Cats,$CivMil;
   $Tid = $T['id'];
   $Parsedown = new Parsedown();
-  
+
   $Class = ($T['Cat'] == 0?"TechDesc":"SuppTech");
   echo "<div class=$Class><h2 onclick=Toggle('TDesc$Tid')>" . $T['Name'];
-  if ($Fact && $T['Cat']==0 && isset($FactTechs[$T['id']]) ) echo " - at Level " . $FactTechs[$T['id']];
-  if ($Fact) {
-    if ($T['Cat']>0 && isset($FactTechs[$T['id']]) ) {
-      echo " - Known";
-    } else if (!isset($FactTechs[$T['PreReqTech']]) || ($FactTechs[$T['PreReqTech']['Level']]<$T['PreReqLevel'] ) ) {
-      echo " - Not yet allowed";
+  echo "<div class=TechLevel>";
+
+  if ($Fact && $T['Cat']==0 && isset($FactTechs[$T['id']]) ) echo " ( at Level " . $FactTechs[$T['id']]['Level'] . " )";
+  if ($Fact && $T['Cat']>0) {
+    if (isset($FactTechs[$T['id']]) ) {
+      echo " ( Known )";
+    } else if (!isset($FactTechs[$T['PreReqTech']]) || ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) {
+      echo " <span class=NotAllow>( Not yet allowed )</span>";
+    } else {
+      echo " <span class=Allow>( Allowed )</span>";
     }
   }
   
-  echo "</h2>";
+  echo "</div></h2>";
+  
+  if ($Setup) {
+    if ($T['Cat'] == 0) {
+      echo fm_number0("Levels",$FactTechs[$Tid],'Level','','',"Tech$Tid");
+    } else {
+      echo fm_checkbox("Have",$FactTechs[$Tid],'Level','',"Tech$Tid");
+    }
+  }
+ 
   switch ($T['Cat']) {
   case 0:
     echo "Core Technology<br>";
