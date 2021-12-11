@@ -29,7 +29,10 @@
   $CTNs[0] = '';
   foreach ($CTs as $TT) $CTNs[$TT['id']] = $TT['Name'];
 
-  if (isset($_REQUEST['SHOW'])) Show_Tech($T,$CTNs);
+  if (isset($_REQUEST['SHOW'])) {
+    Show_Tech($T,$CTNs);
+    echo " <p>";
+  }
 //var_dump($T);
 
   echo "<form method=post id=mainform enctype='multipart/form-data' action=TechEdit.php>";

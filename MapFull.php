@@ -2,6 +2,8 @@
   include_once("sk.php");
   include_once("GetPut.php");
   
+  global $FACTION;
+  
   if (Access('GM') ) {
     A_Check('GM');
   } else if (Access('Player')) {
@@ -12,8 +14,6 @@
  // var_dump($_REQUEST, $_COOKIE);  
   }
   dostaffhead("Full Map");
-  
-  global $FACTION;
   
   $CatCols = ["white","grey", "Yellow"];
   $HexLegPos = [[1,8],[1,7.5],[1,7],[1,6.5], [9,8],[9,7.5],[9,7],[9,6.5],[1,0],[1,0.5],[1,2],[1,1],[1,1.5],[9,2],[9,1.5],[9,1],[9,0.5],[9,0]];

@@ -554,11 +554,11 @@ function Get_Techs($Fact=0) {
   global $db,$GAMEID;
   $Ms = [];
   if ($Fact == 0) {
-    $res = $db->query("SELECT * FROM Technologies");
+    $res = $db->query("SELECT * FROM Technologies ORDER BY id");
     if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
     return $Ms;
   } else {
-    $res = $db->query("SELECT t.* FROM Technologies t, FactionTechs ft WHERE (t.Cat<2 OR (t.Cat=3 AND ft.Tech_Id=t.id))");
+    $res = $db->query("SELECT t.* FROM Technologies t, FactionTechs ft WHERE (t.Cat<2 OR (t.Cat=3 AND ft.Tech_Id=t.id)) ORDER BY t.id");
     if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
     return $Ms;    
   }
@@ -567,7 +567,7 @@ function Get_Techs($Fact=0) {
 function Get_CoreTechs() {
   global $db,$GAMEID;
   $Ms = [];
-  $res = $db->query("SELECT * FROM Technologies WHERE Cat=0");
+  $res = $db->query("SELECT * FROM Technologies WHERE Cat=0 ORDER BY id");
   if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
   return $Ms;
 }

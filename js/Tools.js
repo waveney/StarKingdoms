@@ -312,7 +312,14 @@ function Trader_Insurance_Upload() {
   document.getElementById('InsuranceButton').click();
 }
 
-
+function Toggle(i) {
+  var x = document.getElementById(i);
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
 
 var LoadStack = [];
 

@@ -28,7 +28,7 @@
     $coln = 0;
     echo "<div class=tablecont><table id=indextable border width=100% style='min-width:1400px'>\n";
     echo "<thead><tr>";
-    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'n')>id</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>id</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Cat</a>\n";
     echo "<th colspan=2><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Field</a>\n";
@@ -49,7 +49,7 @@
       echo fm_number1("",$T,'Slots','','',"Slots$i");
       echo fm_number1("",$T,'MinThingLevel',"",'',"MinThingLevel$i");
       echo "<td>" . fm_select($CivMil,$T,'CivMil',0,'',"CivMil$i");
-//      echo fm_hidden("Description$i",$T['Description']);
+      echo fm_hidden("Description$i",$T['Description']);
       }   
 
   $T = ['PreReqLevel'=>0,'Slots'=>0,'MinThingLevel'=>0];

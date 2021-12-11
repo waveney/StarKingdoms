@@ -41,14 +41,21 @@ function ModValue($id) {
 }
 
 
-function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0) {
+function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1) {
   global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$ShipTypes,$Tech_Cats,$CivMil;
-  
+  $Tid = $T['id'];
   $Parsedown = new Parsedown();
   
-  echo "<div class=TechDesc><h2>" . $T['Name'];
+  echo "<div class=TechDesc><h2 onclick=Toggle('TDesc$Tid')>" . $T['Name'];
   if ($Fact && $T['Cat']==0 && isset($FactTechs[$T['id']]) ) echo " - at Level " . $FactTechs[$T['id']];
-  if ($Fact && $T['Cat']>0 && isset($FactTechs[$T['id']]) ) echo " - Known";
+  if ($Fact) {
+    if ($T['Cat']>0 && isset($FactTechs[$T['id']]) ) {
+      echo " - Known";
+    } else if (!isset($FactTechs[$T['PreReqTech']]) || ($FactTechs[$T['PreReqTech']['Level']]<$T['PreReqLevel'] ) ) {
+      echo " - Not yet allowed";
+    }
+  }
+  
   echo "</h2>";
   switch ($T['Cat']) {
   case 0:
@@ -66,8 +73,10 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0) {
   if ($T['CivMil']) echo "<b>" . $CivMil[$T['CivMil']] . " ships</b>";
   echo "<br>";
   
+  if (!$Descs) echo "<div id=TDesc$Tid hidden>";
   if ($T['Description']) echo  $Parsedown->text($T['Description']);
-  
+
+  if (!$Descs) echo "</div>";  
   echo "</div><p>";
 
 }

@@ -147,7 +147,7 @@
     $txt .= "<li><a href=PlanetStats.php>Planet Stats</a>\n";  
     $txt .= "<p>";
 
-    $txt .= "<li><a href=TechShoW.php>List Technologies</a>\n";
+    $txt .= "<li><a href=TechShow.php>List Technologies</a>\n";
     $txt .= "<li><a href=TechList.php>Edit Technologies</a>\n";
     $txt .= "<li><a href=ModuleList.php>List Module Types</a>\n";
     $txt .= "<li><a href=ModFormulae.php>List Module Formulas</a>\n";
