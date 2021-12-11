@@ -317,6 +317,7 @@ function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$M
           }
         }
       }
+//var_dump($t);
       Insert_db($table,$t);
     }
     return 1;

@@ -129,7 +129,10 @@
       $txt .= "<input type=submit name=F value='Player Move' id=staffformid>" . 
                 fm_select($Facts,0,'F',1," onchange=this.form.submit()") . "</form>\n";
 
-
+    $txt .= "<li><form method=Post action=TechShow.php class=staffform>";
+      $txt .= "<input type=submit name=F value='List Technologies' id=staffformid>" . 
+                fm_select($Facts,0,'F',1," onchange=this.form.submit()") . "</form>\n";
+    
     $txt .= "<p>";
 
     $txt .= "</ul>\n";
@@ -144,6 +147,10 @@
     $txt .= "<li><a href=PlanetStats.php>Planet Stats</a>\n";  
     $txt .= "<p>";
 
+    $txt .= "<li><a href=TechShoW.php>List Technologies</a>\n";
+    $txt .= "<li><a href=TechList.php>Edit Technologies</a>\n";
+    $txt .= "<li><a href=ModuleList.php>List Module Types</a>\n";
+    $txt .= "<li><a href=ModFormulae.php>List Module Formulas</a>\n";
     $txt .= "</ul>\n";
   }
 

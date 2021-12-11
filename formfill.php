@@ -66,6 +66,12 @@ var_dump($_POST);
     echo Put_Link($N);
     exit;
   
+  case 'Tech' :
+    $N = Get_Tech($id);
+    $N[$field] = $Value;
+    echo Put_Tech($N);
+    exit;
+  
   case 'Faction' :
     if ($field == 'LastActive') {
       include_once("DateTime.php");

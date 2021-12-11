@@ -430,7 +430,7 @@ function Put_Thing(&$now) {
   }
 }
 
-function Get_Things($Fact,$type=0) [
+function Get_Things($Fact,$type=0) {
   global $db,$GAMEID;
   $Ts = [];
   $res = $db->query("SELECT * FROM Things WHERE GameId=$GAMEID AND Whose=$Fact " . ($type?" AND Type=$type":""));
@@ -438,7 +438,7 @@ function Get_Things($Fact,$type=0) [
   return $Ts;
 }
 
-function Get_ThingsSys($Sid,$type=0) [
+function Get_ThingsSys($Sid,$type=0) {
   global $db,$GAMEID;
   $Ts = [];
   $res = $db->query("SELECT * FROM Things WHERE GameId=$GAMEID AND SystemId=$Sid " . ($type?" AND Type=$type":""));
@@ -466,7 +466,7 @@ function Put_Module(&$now) {
   }
 }
 
-function Get_Modules($Thing) [
+function Get_Modules($Thing) {
   global $db,$GAMEID;
   $Ms = [];
   $res = $db->query("SELECT * FROM Modules WHERE ThingId=$Thing");
@@ -474,7 +474,131 @@ function Get_Modules($Thing) [
   return $Ms;
 }
 
+// Module Types
 
+function Get_ModuleType($id) {
+  global $db;
+  $res = $db->query("SELECT * FROM ModuleTypes WHERE id=$id");
+  if ($res) return $res->fetch_assoc();
+  return [];
+}
+
+function Put_ModuleType(&$now) {
+  global $db,$GAMEID;
+  if (isset($now['id'])) {
+    $e=$now['id'];
+    $Cur = Get_ModuleType($e);
+    return Update_db('ModuleTypes',$Cur,$now);
+  } else {
+    return $now['id'] = Insert_db ('ModuleTypes', $now );
+  }
+}
+
+function Get_ModuleTypes() {
+  global $db,$GAMEID;
+  $Ms = [];
+  $res = $db->query("SELECT * FROM ModuleTypes");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
+  return $Ms;
+}
+
+// Module Formulae Types
+
+function Get_ModFormula($id) {
+  global $db;
+  $res = $db->query("SELECT * FROM ModFormulae WHERE id=$id");
+  if ($res) return $res->fetch_assoc();
+  return [];
+}
+
+function Put_ModFormula(&$now) {
+  global $db,$GAMEID;
+  if (isset($now['id'])) {
+    $e=$now['id'];
+    $Cur = Get_ModFormula($e);
+    return Update_db('ModFormulae',$Cur,$now);
+  } else {
+    return $now['id'] = Insert_db ('ModFormulae', $now );
+  }
+}
+
+function Get_ModFormulaes() {
+  global $db,$GAMEID;
+  $Ms = [];
+  $res = $db->query("SELECT * FROM ModFormulae");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
+  return $Ms;
+}
+
+// Technologies
+
+function Get_Tech($id) {
+  global $db;
+  $res = $db->query("SELECT * FROM Technologies WHERE id=$id");
+  if ($res) return $res->fetch_assoc();
+  return [];
+}
+
+function Put_Tech(&$now) {
+  global $db,$GAMEID;
+  if (isset($now['id'])) {
+    $e=$now['id'];
+    $Cur = Get_Tech($e);
+    return Update_db('Technologies',$Cur,$now);
+  } else {
+    return $now['id'] = Insert_db ('Technologies', $now );
+  }
+}
+
+function Get_Techs($Fact=0) {
+  global $db,$GAMEID;
+  $Ms = [];
+  if ($Fact == 0) {
+    $res = $db->query("SELECT * FROM Technologies");
+    if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
+    return $Ms;
+  } else {
+    $res = $db->query("SELECT t.* FROM Technologies t, FactionTechs ft WHERE (t.Cat<2 OR (t.Cat=3 AND ft.Tech_Id=t.id))");
+    if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
+    return $Ms;    
+  }
+}
+
+function Get_CoreTechs() {
+  global $db,$GAMEID;
+  $Ms = [];
+  $res = $db->query("SELECT * FROM Technologies WHERE Cat=0");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
+  return $Ms;
+}
+
+// Faction Techs
+
+function Get_Faction_Tech($id) {
+  global $db;
+  $res = $db->query("SELECT * FROM FactionTechs WHERE id=$id");
+  if ($res) return $res->fetch_assoc();
+  return [];
+}
+
+function Put_Faction_Tech(&$now) {
+  global $db,$GAMEID;
+  if (isset($now['id'])) {
+    $e=$now['id'];
+    $Cur = Get_Faction_Tech($e);
+    return Update_db('FactionTechs',$Cur,$now);
+  } else {
+    return $now['id'] = Insert_db ('FactionTechs', $now );
+  }
+}
+
+function Get_Faction_Techs($Fact) {
+  global $db,$GAMEID;
+  $Ms = [];
+  $res = $db->query("SELECT * FROM  FactionTechs ft WHERE Faction_Id=$Fact");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ms[$and['Tech_Id']] = $ans;
+  return $Ms;
+}
 
 
 

@@ -170,7 +170,7 @@ function fm_select2(&$Options,$Curr,$field,$blank=0,$selopt='',$field2='',$Max=0
     if ($Curr == 0) $str .= " selected";
     $str .= "></option>";
   }
-  foreach ($Options as $key => $val) {
+  if ($Options) foreach ($Options as $key => $val) {
     if ($Max && !Access('SysAdmin') && $key>=$Max && $Curr!=$key) continue;
     $str .= "<option value=$key";
     if ($Curr == $key) $str .= " selected";
