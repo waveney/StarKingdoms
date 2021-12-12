@@ -14,7 +14,7 @@
 
 .SReport img {
   float:right;
-  width:120;
+  min-width:120;
   height:120;
   padding: 10px;
 } 

@@ -52,8 +52,9 @@
 
     $PTs = Get_PlanetTypeNames();
     $N2Ps = array_flip($PTs);
+    $PTD = Get_PlanetTypes();
 
-//var_dump($N2Ps);exit;    
+//var_dump($PTD);exit;
     $state = 0;
     foreach ($tabrows as $tab) {
 
@@ -95,21 +96,21 @@ echo "No tds<p>";
             PTrim($N,$things,'Distance');
             PTrim($N,$things,'Period'); // Not always calculated by donjon
             if (!isset($things['Period'])) {
-              $N['Period'] = ((2*pi()*sqrt(($N['Distance']*1000)^3/(($N['Mass']+ $N['Mass2'])*6.7e-11)))/3600);
+              $N['Period'] = ((2*pi()*sqrt(($N['Distance']*1000)**3/(($N['Mass']+ $N['Mass2'])*6.7e-11)))/3600);
             }
           } else { // Is a Planet
             $P['Name'] = $things['Title'];
-            $PlanTypeXlate = ['Terrestrial World'=>'Temperate Planet', 'Rock Planet'=>'Rock Planet', 'Gas Giant'=>'Gas Giant', 'Asteroid Belt'=>'Asteroid Belt', 
-                              'Neptunian Planet'=>'Ice Giant', 'Jovian Planet'=>'Gas Giant', 'Chthonian Planet' => 'Molten Planet', 'Ice Planet'=>'Ice Planet'];
+            $PlanTypeXlate = ['Terrestrial World'=>'Temperate', 'Rock Planet'=>'Rock', 'Gas Giant'=>'Gas', 'Asteroid Belt'=>'Asteroid Belt', 
+                              'Neptunian Planet'=>'Ice Giant', 'Jovian Planet'=>'Gas Giant', 'Chthonian Planet' => 'Molten', 'Ice Planet'=>'Ice'];
           
             $pt = (isset($PlanTypeXlate[$things['Type']])? $PlanTypeXlate[$things['Type']] : 'Other Planet');
             if (isset($N2Ps[$pt])) {            
               $P['Type'] = $N2Ps[$pt];
-              if ($pt == 'Other Planet') $P['Name'] = $things['Type'];
+              if ($pt == 'Other Planet') $P['Name'] .= $things['Type'];
             } else {
               echo "Unrecognised planet type $pt - using Other";
               $P['Type'] = $N2Ps['Other Planet'];
-              $P['Name'] = $things['Type'];
+              $P['Name'] .= $things['Type'];
             }
             if (isset($things['Image'])) $P['Image'] = $things['Image'];
             PTrim($P,$things,'Orbital Radius','OrbitalRadius');
@@ -131,6 +132,13 @@ echo "No tds<p>";
               $P['Minerals'] = ($N['Category']?10:rand(1,10));
             }
 
+            if (isset($P['Gravity']) && isset($P['Period']) && $P['Period']) {
+              $P['Moons'] = (($P['OrbitalRadius']/1.496e8)**2 * $P['Gravity'] * $PTD[$P['Type']]['MoonFactor'])/($P['Period']/100);
+            }
+            if (!isset($P['Gravity']) || $P['Gravity']==0) {
+              $P['Gravity'] = 6 + rand(1,100)/20;
+            }
+            
             Put_Planet($P);
                                     
             $P = $things = [];
@@ -207,9 +215,19 @@ echo "No tds<p>";
       break;
       
     case 'RECALC' :
-      $N['Period'] = ((2*pi()*sqrt(($N['Distance']*1000)^3/(($N['Mass']+ $N['Mass2'])*6.7e-11)))/3600);
+      $N['Period'] = ((2*pi()*sqrt(($N['Distance']*1000)**3/(($N['Mass']+ $N['Mass2'])*6.7e-11)))/3600);
       Put_System($N);
       break;
+      
+    case 'Redo Moons' :
+      $Planets = Get_Planets($Sysid);
+      $PTD = Get_PlanetTypes();
+      foreach ($Planets as $P) {
+        if (isset($P['Gravity']) && isset($P['Period']) && $P['Period']) {
+          $P['Moons'] = (($P['OrbitalRadius']/1.496e8)**2 * $P['Gravity'] * $PTD[$P['Type']]['MoonFactor'])/($P['Period']/100);
+        }
+        Put_Planet($P);
+      }  
       
     default: 
       break;

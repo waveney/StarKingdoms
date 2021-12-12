@@ -36,7 +36,7 @@ function RealWorld(&$Data,$fld) {
       return sprintf("%0.2f AU",$val/1.496e8);            
     
     case 'Period' :
-      if ($val > 4000) {
+      if ($val > 8000) {
         return sprintf("%0.2f Years",$val/8760);            
       } elseif ($val > 50) {
         return sprintf("%0.2f Days",$val/24);                    
@@ -177,7 +177,7 @@ function Show_System(&$N,$Mode=0) {
     $OName = NameFind($ON);
     
     echo "<tr><td><a href=LinkEdit.php?id=$Lid>#$Lid</a><td><a href=SysEdit.php?id=$ONid>$OSysRef - $OName</a><td>" . $LinkLevels[$L['Level']]['Colour'];
-    foreach ($Facts as $F) echo "<td>" . (isset($Know[$F['id']])?"Yes " . NameFind($Know):"No");
+    foreach ($Facts as $F) echo "<td>" . (isset($Know[$F['id']]) && $Know[$F['id']]['Known']?"Yes " . NameFind($Know):"No");
     echo "\n";
     }
   echo "</table>\n";
@@ -191,6 +191,7 @@ function Show_System(&$N,$Mode=0) {
     } elseif ($Mode) {
       echo "<input type=submit name=ACTION value='Delete Planets' class=Button>";    
     }
+    echo "<input type=submit name=ACTION value='Redo Moons' class=Button>";    
     echo "</form></center>";
   }
   echo "<center><h2><a href=SurveyReport.php?id=$Sid>Survey Report</a>";

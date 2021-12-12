@@ -36,8 +36,9 @@
     case 'Toggle' :
       $Fid = $_REQUEST['F'];
       if (isset($Know[$Fid])) {
-        $FL = $Known[$Fid];
-        $FL['Known'] = 1 - $FL['Known'];
+        $FL = $Know[$Fid];
+        $FL['Known'] = ($FL['Known']?0:1);
+        $Know[$Fid] = $FL;
         Put_FactionLink($FL);      
       } else {
         $FL = ['LinkId'=>$Lid, 'FactionId'=>$Fid, 'Known'=>1 ];
@@ -57,7 +58,7 @@
   echo "<tr><td><b>Known by</b>";
   
   foreach ($Factions as $F) {
-    echo "<tr><td>" . $F['Name'] . "<td><a href=LinkEdit.php?ACTION=Toggle&L=$Lid&F=" . $F['id'] . ">" . (isset($Know[$F['id']])?"Yes " . NameFind($Know):"No") . "</a>";
+    echo "<tr><td>" . $F['Name'] . "<td><a href=LinkEdit.php?ACTION=Toggle&L=$Lid&F=" . $F['id'] . ">" . (isset($Know[$F['id']]) && $Know[$F['id']]['Known']?"Yes " . NameFind($Know):"No") . "</a>";
     echo "\n";
   }
   

@@ -177,7 +177,7 @@ function fm_select2(&$Options,$Curr,$field,$blank=0,$selopt='',$field2='',$Max=0
   if ($AutoADD) $str .= " oninput=AutoInput('$field2') ";
   $str .= ">";
   if ($blank) {
-    $str .= "<option value=''";
+    $str .= "<option value=0";
     if ($Curr == 0) $str .= " selected";
     $str .= "></option>";
   }

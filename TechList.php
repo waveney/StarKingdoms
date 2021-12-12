@@ -18,6 +18,7 @@
   $CTNs[0] = '';
   foreach ($CTs as $T) $CTNs[$T['id']] = $T['Name'];
 
+  $MFN = ModFormulaes();
 //var_dump($CTNs);
   
   echo "<h1>Technologies</h1>";
@@ -37,6 +38,7 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Slots</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Min Level</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Civ Mil</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Formula</a>\n";
     echo "</thead><tbody>";
 
     foreach($Ts as $T) {
@@ -49,6 +51,7 @@
       echo fm_number1("",$T,'Slots','','',"Slots$i");
       echo fm_number1("",$T,'MinThingLevel',"",'',"MinThingLevel$i");
       echo "<td>" . fm_select($CivMil,$T,'CivMil',0,'',"CivMil$i");
+      echo "<td>" . fm_select($MFN,$T,'Formula',1,'',"Formula$i");
       echo fm_hidden("Description$i",$T['Description']);
       }   
 
@@ -61,6 +64,7 @@
       echo fm_number1("",$T,'Slots','','',"Slots0");
       echo fm_number1("",$T,'MinThingLevel','',"","MinThingLevel0");
       echo "<td>" . fm_select($CivMil,$T,'CivMil',0,'',"CivMil0");
+      echo "<td>" . fm_select($MFN,$T,'Formula',1,'',"Formula0");
   echo "</tbody></table></div>\n";
 
   echo "<h2><input type=submit name=Update value=Update></h2>";

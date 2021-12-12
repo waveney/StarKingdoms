@@ -18,6 +18,12 @@
 // var_dump($MFs); var_dump($MFN);
   }   
 
+  $CTs = Get_CoreTechsByName();
+  $CTNs = [];
+  $CTNs[0] = '';
+  foreach ($CTs as $TT) $CTNs[$TT['id']] = $TT['Name'];
+
+
   echo "<h1>Module Fomulas</h1>";
   echo "<form method=post action=ModFormulae.php>";
 
@@ -42,7 +48,8 @@
       echo fm_number1("",$M,'Num1x','','',"Num1x$i");
       echo fm_number1("",$M,'Num2x','','',"Num2x$i");
       echo fm_number1("",$M,'Num3x','','',"Num3x$i");
-      echo fm_number1("",$M,'BaseTech','','',"BaseTech$i"); // Will be select later
+      echo "<td>" . fm_select($CTNs,$M,'BaseTech',0,'',"BaseTech0");
+//      echo fm_number1("",$M,'BaseTech','','',"BaseTech$i"); // Will be select later
       }   
 
 
@@ -52,7 +59,8 @@
   echo fm_number1("",$M,'Num1x','','',"Num1x0");
   echo fm_number1("",$M,'Num2x','','',"Num2x0");
   echo fm_number1("",$M,'Num3x','','',"Num3x0");
-  echo fm_number1("",$M,'BaseTech','','',"BaseTech0");     
+  echo "<td>" . fm_select($CTNs,$M,'BaseTech',0,'',"BaseTech0");
+//  echo fm_number1("",$M,'BaseTech','','',"BaseTech0");     
 
   echo "</tbody></table></div>\n";
 

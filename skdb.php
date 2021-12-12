@@ -93,6 +93,7 @@ function Update_db($table,&$old,&$new,$proced=1) {
 
 //var_dump($old);
 //echo "$fcnt<p>";
+//debug_print_backtrace();
   if ($proced && $fcnt) {
     $newrec .= " WHERE $indxname=" . $old[$indxname];
 //var_dump($newrec);

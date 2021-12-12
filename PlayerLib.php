@@ -10,9 +10,10 @@ function Player_Page() {
   
   echo "<h1>Player Actions</h1>\n";
   echo "<div class=Player>";
-  echo "The only current action is:";
+  echo "The only current actions are:";
   echo "<ul>";
   echo "<li><a href=MapFull.php?PLAYER>Faction Map</a>\n";
+  echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";  
   echo "</ul>";
   echo "</div>";
   
@@ -20,7 +21,7 @@ function Player_Page() {
 
 }
 
-function Trait($Name) {
+function TraitQ($Name) {
   global $FACTION;
   
   if (!isset($FACTION)) return false;
@@ -31,6 +32,6 @@ function Trait($Name) {
 function Ships() {
   global $FACTION;
   
-  $
+}
 
 ?>

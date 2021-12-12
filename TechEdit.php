@@ -29,6 +29,7 @@
   $CTNs[0] = '';
   foreach ($CTs as $TT) $CTNs[$TT['id']] = $TT['Name'];
 
+  $MFN = ModFormulaes();
   if (isset($_REQUEST['SHOW'])) {
     Show_Tech($T,$CTNs);
     echo " <p>";
@@ -43,6 +44,7 @@
   echo "<tr><td>Id:$Tid<td>" .  fm_select($Tech_Cats,$T,'Cat') . fm_text("Name",$T,'Name',2);
   echo "<tr><td>Feild:<td>" . fm_select($Fields,$T,'Field') . "<td>Pre Req Tech:" . fm_select($CTNs,$T,'PreReqTech') . fm_number1('Module Slots',$T,'PreReqLevel');
   echo "<tr>" . fm_number("Min Thing Level",$T,'MinThingLevel') . "<td>Civ /Mil:<td>" . fm_select($CivMil,$T,'CivMil');
+  echo "<td>" . fm_select($MFN,$T,'Formula',1);
   echo "<tr>" . fm_textarea('Description',$T,'Description',8,20);
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "</tbody></table></div>\n";

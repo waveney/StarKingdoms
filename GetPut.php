@@ -632,5 +632,34 @@ function Get_Faction_Techs($Fact) {
   return $Ms;
 }
 
+// Thing Types
+
+function Get_ThingType($id) {
+  global $db;
+  $res = $db->query("SELECT * FROM ThingTypes WHERE id=$id");
+  if ($res) return $res->fetch_assoc();
+  return [];
+}
+
+function Put_ThingType(&$now) {
+  global $db,$GAMEID;
+  if (isset($now['id'])) {
+    $e=$now['id'];
+    $Cur = Get_ThingType($e);
+    return Update_db('ThingTypes',$Cur,$now);
+  } else {
+    return $now['id'] = Insert_db ('ThingTypes', $now );
+  }
+}
+
+function Get_ThingTypes() {
+  global $db,$GAMEID;
+  $Ms = [];
+  $res = $db->query("SELECT * FROM  ThingTypes ");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ms[$ans['id']] = $ans;
+  return $Ms;
+}
+
+
 
 
