@@ -1,5 +1,9 @@
 <?php
 
+$SurveyLevels = [0=>'Blind',1=>'No Sensors', 2=>'Minimal Scan', 3=>'A bit better', 4=>'Full Scan no control', 5=>'Full Scan under control', 10=>'GM Only'];
+global $SurveyLevels;
+
+
 // System common code
 
 function RealWorld(&$Data,$fld) {
@@ -134,7 +138,7 @@ function Show_System(&$N,$Mode=0) {
     echo "<tr>" . fm_number('Radius',$N,'Radius2',1,"class=NotCSide") . "<td>Km = " . RealWorld($N,'Radius2') ;
     echo "<tr>" . fm_number('Mass',$N,'Mass2',1,"class=NotCSide") . "<td>Kg = " . RealWorld($N,'Mass2');
     echo "<tr>" . fm_number('Temperature',$N,'Temperature2',1,"class=NotCSide") . "<td>K" ;
-    echo "<tr>" . fm_number('Luminosity',$N,'Luminosity2',1,"class=NotCSide") . "<td>W = " . RealWorld($N,'Luminosity');
+    echo "<tr>" . fm_number('Luminosity',$N,'Luminosity2',1,"class=NotCSide") . "<td>W = " . RealWorld($N,'Luminosity2');
     echo "<tr>" . fm_number('Distance',$N,'Distance',1,"class=NotCSide") . "<td>Km = " . RealWorld($N,'Distance') ;
     echo "<tr>" . fm_number('Period',$N,'Period',1,"class=NotCSide") . "<td>Hr = " . RealWorld($N,'Period');  
     if (Access('God')) echo "<td><a href=SysEdit.php?id=$Sid&ACTION=RECALC>Recalc</a>";
@@ -143,6 +147,8 @@ function Show_System(&$N,$Mode=0) {
   }
 
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
+  echo "<tr>" . fm_textarea('Notes',$N,'Notes',8,3);
+  
   echo "</table></div>\n";
   
   if (!$Planets && $Mode==0) {
@@ -238,10 +244,10 @@ function Show_Planet(&$P,$Mode=0,$Buts=0) {
   echo "<tr>" . fm_number('Period',$P,'Period',1,"class=NotCSide") . "<td>Hr = " . RealWorld($P,'Period');
   echo "<tr>" . fm_number('Gravity',$P,'Gravity',1,"class=NotCSide") . "<td>m/s<sup>2</sup> = " . RealWorld($P,'Gravity');
   echo "<tr>" . fm_number('Radius',$P,'Radius',1,"class=NotCSide") . "<td>Km = " . RealWorld($P,'Radius');
-      
+
 //  $heat = $N['Luminosity']/(($P['OrbitalRadius']*1000)^2);
   echo "<tr><td>Heat:<td>" . RealHeat($N,$P); //sprintf("%0.2f", $heat) . "<td> = " . sprintf("%0.2f Earth", $heat*(1.496e11^2)/3.83e26);
-
+  if (Access('God')) echo "<td><a href=PlanEdit.php?id=$Pid&ACTION=RECALC>Recalc</a>";      
   if ($Mns) {
     echo "<tr><td>Editable Moons\n";
     foreach ($Mns as $M) {
@@ -325,7 +331,7 @@ function Show_Moon(&$M,$Mode=0) {
   echo "<tr>" . fm_textarea('Description',$M,'Description',8,3);
   echo "<tr><td>Type:<td>" . fm_Select($PTNs,$M,'Type',1) . fm_number('Minerals',$M,'Minerals',1,"class=NotCSide"); 
   
-  echo "<tr>" . fm_number('Orbital Radius',$M,'OrbitalRadius',1,"class=NotCSide") . "<td>Km = " . RealWorld($P,'OrbitalRadius'); 
+  echo "<tr>" . fm_number('Orbital Radius',$M,'OrbitalRadius',1,"class=NotCSide") . "<td>Km = " . RealWorld($M,'OrbitalRadius'); 
   echo "<td rowspan=4 colspan=3>";
 //  if ($N['Image']) echo "<img src='" . $P['Image'] . "'>";
   echo "<table><tr>";
@@ -375,7 +381,7 @@ function UniqueRef($sid) {
 }
 
 function ReportEnd($N) {
-  return UniqueRef($N['id']); // testing kluudge
+  return $N['Ref'];//  UniqueRef($N['id']); // testing kluudge
 }
 
 ?>

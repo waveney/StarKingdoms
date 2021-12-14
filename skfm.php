@@ -564,8 +564,10 @@ XXX;
 }
 
 function Plural(&$n,$t0='',$t1='',$t2='') {
-  if ($n == 0) return $t0;
-  if ($n == 1) return $t1;
+  if (is_array($n)) { $m = count($n); }
+  else { $m = $n; };
+  if ($m == 0) return $t0;
+  if ($m == 1) return $t1;
   return $t2;
 }
 

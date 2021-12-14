@@ -18,8 +18,12 @@
     $Ps = Get_Planets($Sid);
     foreach ($Ps as $P) {
       $pt = $P['Type'];
-      if (!isset($PTD[$pt]['Count'])) $PTD[$pt]['Count']=0;
+      if (!isset($PTD[$pt]['Count'])) { 
+        $PTD[$pt]['Count']=0;
+        $PTD[$pt]['Where']='';
+      }
       $PTD[$pt]['Count']++;
+      $PTD[$pt]['Where'] .= ' <a href=SysEdit.php?R=' . $N['Ref'] . ">" . $N['Ref'] . "</a> ";
       $Ms = Get_Moons($P['id']);
       foreach ($Ms as $M) {
         $pt = $M['Type'];
@@ -27,14 +31,17 @@
         $PTD[$pt]['MCount']++;
         }
       }
-    if (!$Ps) $unpop++;
+    if (!$Ps) { 
+      $unpop++;
+      echo "Unpopulated system:  <a href=SysEdit.php?R=" . $N['Ref'] . ">" . $N['Ref'] . "</a><p> ";
+      }
     }
   
-  echo "<table border=1><tr><td>Type<td>Number Planets<td>Number Moons<td>Hospitable\n";
+  echo "<table border=1><tr><td>Type<td>Number Planets<td>Number Moons<td>Hospitable<td>Where\n";
   foreach($PTD as $PT) {
     if (!isset($PT['Count'])) $PT['Count']=0;
     if (!isset($PT['MCount'])) $PT['MCount']=0;
-    echo "<tr><td>" . $PT['Name'] . "<td>" . $PT['Count'] . "<td>" . $PT['MCount'] . "<td>" . $PT['Hospitable'];
+    echo "<tr><td>" . $PT['Name'] . "<td>" . $PT['Count'] . "<td>" . $PT['MCount'] . "<td>" . $PT['Hospitable'] . "<td>" . (isset($PT['Where'])?$PT['Where']:"");
   }
   echo "<tr><td>Unpopulated<td>$unpop<td>\n";
   echo "</table>";

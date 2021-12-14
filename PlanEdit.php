@@ -41,6 +41,11 @@
       dotail();
       break;
       
+    case 'RECALC':
+      $P['Period'] = ((2*pi()*sqrt(($P['OrbitalRadius']*1000)**3/(($N['Mass']+ $N['Mass2'])*6.7e-11)))/3600);
+      Put_Planet($P);
+      break;
+      
     case 'Delete Moons':
       db_delete_cond('Moons',"PlanetId=$Pid");
       break;

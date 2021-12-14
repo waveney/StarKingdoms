@@ -32,7 +32,7 @@
     $sid = $N['id'];
     $Name = $Ref = $N['Ref'];
     $Cont = $N['Control'];
-    $Ctrl = ($Cont?"<a href=FactEdit.php?F=$Cont>" . $Factions[$Cont]['Name'] . "</a>":"");
+    $Ctrl = ($Cont?"<a href=FactionEdit.php?F=$Cont>" . $Factions[$Cont]['Name'] . "</a>":"");
     if ($N['Name']) $Name = $N['Name'];
     if ($N['ShortName']) $Name = $N['ShortName'];
     if (strlen($Name)> 20) $Name = substr($Name,0,20);

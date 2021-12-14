@@ -220,6 +220,15 @@ function Get_FactionSystemFS($Fact, $id) {
   return ['FactionId'=>$Fact, 'SystemId'=>$id];
 }
 
+function Get_FactionSystemFRef($Fact, $ref) {
+  global $db;
+  $res = $db->query("SELECT * FROM FactionSystem WHERE FactionId=$Fact AND Ref='$ref'");
+  if ($res)  if ($ans=$res->fetch_assoc()) return $ans;
+  $N = Get_SystemR($ref);
+  if ($N) return ['FactionId'=>$Fact, 'SystemId'=>$N['id']];
+  echo "Unknown System Reference $ref<p>";
+}
+
 function Put_FactionSystem(&$now) {
   if (isset($now['id'])) {
     $e=$now['id'];

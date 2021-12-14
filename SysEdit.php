@@ -190,13 +190,16 @@ echo "No tds<p>";
     $Sysid = $_REQUEST['N'];
   } else if (isset($_REQUEST['id'])) {
     $Sysid = $_REQUEST['id'];
+  } else if (isset($_REQUEST['R'])) {
+    $N = Get_SystemR($_REQUEST['R']);
+    $Sysid = $N['id'];
   } else { 
 
     echo "<h2>No Systems Requested</h2>";
     dotail();
   }
 
-  $N = Get_System($Sysid);
+  if (!isset($N)) $N = Get_System($Sysid);
   $Factions = Get_Factions();
   
   if (isset($_REQUEST['ACTION'])) {
