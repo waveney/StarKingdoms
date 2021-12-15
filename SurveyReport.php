@@ -74,10 +74,16 @@
   $Fs= Get_Factions();
   
   $pname = NameFind($N); // Need diff logic for player
-  if (!$pname) $pname = $Ref;
+  if ($pname) {
+    $pname .= " ( $Ref ) ";
+  } else {
+    $pname = $Ref;
+  }
   
   echo "<div class=SReport><h1>Survey Report - $pname</h1>\n";
   if ($SurveyLevel >= 10) echo "UniqueRef is: " . UniqueRef($Sid) . "<p>";
+
+  if ($SurveyLevel > 0) {
   
   if ($N['Description']) echo $Parsedown->text($N['Description']) . "<p>";
   
@@ -89,7 +95,7 @@
   
   if ($N['Image']) echo "<img src=" . $N['Image'] . ">";
   
-  echo "The " . ($N['Type2']?"star":"principle star") . " is a " . $N['Type'];
+  echo "The " . ($N['Type2']?"principle star":"star") . " is a " . $N['Type'];
   
   if ($SurveyLevel >= 3) echo ", with a radius of " . 
         sprintf("%0.2g Km = ",$N['Radius'])  . RealWorld($N,'Radius') . ", a mass of " .
@@ -258,6 +264,28 @@
     
   }
  
+  } else { // BLIND
+    echo "You are caught in a Nebula and have no idea what is here.<p>";
+  
+    $Ls = Get_Links($Ref);
+    $GM = Access('GM');
+  
+    foreach ($Ls as $L) {
+      $OSysRef = ($L['System1Ref']==$Ref? $L['System2Ref']:$L['System1Ref']);
+      $ON = Get_SystemR($OSysRef); 
+      if ($SurveyLevel >= 10) {
+      } else if ($FACTION) {
+        $LinkKnow = Get_FactionLinkFL($Fid,$L['id']);
+        if (!$LinkKnow['Known']) continue;
+      } else {
+        continue;
+      }
+      echo "You know of Link #" . $L['id'] . " ";
+      $name = NameFind($L);
+      if ($name) echo " ( $name ) ";
+      echo " to " . ReportEnd($ON) .  " level " . $LinkLevels[$L['Level']]['Colour'];
+    }
+  }
   
   // Links
   // Images

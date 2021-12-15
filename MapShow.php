@@ -11,7 +11,7 @@
   $typ='';
   if (isset($_REQUEST['Hex'])) $typ = 'Hex';
 
-  echo "<img src=cache/Fullmap34764576272$typ.png width=100%>";
+  echo "<img src=cache/Fullmap0$typ.png>";
 
   dotail();
 ?>
