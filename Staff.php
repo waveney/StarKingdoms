@@ -159,6 +159,7 @@
     $txt .= "<li><a href=ModFormulae.php>List Module Formulas</a>\n";
     $txt .= "<p>";
     $txt .= "<li><a href=ThingTypes.php>Thing Types</a>\n";          
+    $txt .= "<li><a href=ThingList.php>Thing list</a>\n";          
     $txt .= "</ul>\n";
   }
 

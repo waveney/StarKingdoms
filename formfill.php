@@ -28,18 +28,15 @@ var_dump($_POST);
           exit;
         }
       }
-      $N= ['Type'=>$Value,'PlanetId'=>$mtch[1],'Number'=>1];
-      if ($type == 'Planet') {
-         $N['PlanetId'] =$mtch[1];
-      } else {
-         $N['MoonId'] =$mtch[1];      
-      }
+      $N= ['Type'=>$Value,'HostId'=>$mtch[1],'Number'=>1];
+      $N['HostType'] = ($type == 'Planet'?0:1);
       echo 'FORCERELOAD54321:NOW' . Put_District($N);
       exit;
 
     case (preg_match('/District(\w*)-(\d*)/',$field,$mtch)?true:false):
       $N = Get_District($mtch[2]);
-      if ($Value || $mtch[1] != 'Type') { 
+//var_dump($N,$Value,$mtch);
+      if ($Value && $mtch[1] != 'Type') { 
         $N[$mtch[1]] = $Value;     
         echo Put_District($N);
       } else { 

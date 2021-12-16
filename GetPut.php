@@ -346,7 +346,7 @@ function Put_District(&$now) {
 function Get_DistrictsP($Pid) {
   global $db,$GAMEID;
   $Ts = [];
-  $res = $db->query("SELECT * FROM Districts WHERE PlanetId=$Pid");
+  $res = $db->query("SELECT * FROM Districts WHERE HostType=0 AND HostId=$Pid");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
   return $Ts;
 }
@@ -354,7 +354,15 @@ function Get_DistrictsP($Pid) {
 function Get_DistrictsM($Mid) {
   global $db,$GAMEID;
   $Ts = [];
-  $res = $db->query("SELECT * FROM Districts WHERE MoonId=$Mid");
+  $res = $db->query("SELECT * FROM Districts WHERE HostType=1 AND HostId=$Mid");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
+  return $Ts;
+}
+
+function Get_DistrictsT($Tid) {
+  global $db,$GAMEID;
+  $Ts = [];
+  $res = $db->query("SELECT * FROM Districts WHERE HostType=2 AND HostId=$Tid");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
   return $Ts;
 }
@@ -443,6 +451,14 @@ function Get_Things($Fact,$type=0) {
   global $db,$GAMEID;
   $Ts = [];
   $res = $db->query("SELECT * FROM Things WHERE GameId=$GAMEID AND Whose=$Fact " . ($type?" AND Type=$type":""));
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
+  return $Ts;
+}
+
+function Get_AllThings() {
+  global $db,$GAMEID;
+  $Ts = [];
+  $res = $db->query("SELECT * FROM Things WHERE GameId=$GAMEID");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
   return $Ts;
 }

@@ -48,7 +48,7 @@
       echo fm_number1("",$M,'Num1x','','',"Num1x$i");
       echo fm_number1("",$M,'Num2x','','',"Num2x$i");
       echo fm_number1("",$M,'Num3x','','',"Num3x$i");
-      echo "<td>" . fm_select($CTNs,$M,'BaseTech',0,'',"BaseTech0");
+      echo "<td>" . fm_select($CTNs,$M,'BaseTech',0,'',"BaseTech$i");
 //      echo fm_number1("",$M,'BaseTech','','',"BaseTech$i"); // Will be select later
       }   
 

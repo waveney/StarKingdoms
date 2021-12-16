@@ -4,13 +4,14 @@ include_once("sk.php");
 include_once("GetPut.php");
 include_once("vendor/erusev/parsedown/Parsedown.php");
   
-global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$ShipTypes,$Tech_Cats,$CivMil;
+global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$ShipTypes,$Tech_Cats,$CivMil,$BuildState;
 
 $ModuleCats = ['Undefined','Civilian Ship','Support Ship','Military Ship','Army','Other'];
 $Fields = ['Engineering','Physics','Xenology'];
 $ShipTypes = ['Military','Support','Civilian'];
 $Tech_Cats = ['Core','Supp','Non Std'];
 $CivMil = ['','Civilian','Military'];
+$BuildState = ['','Building','Launching','Built'];
 
 $ModFormulaes = [];
 $ModValues = [];
@@ -92,6 +93,39 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0) {
 
   if (!$Descs) echo "</div>";  
   echo "</div><p>";
+
+}
+
+function Tech_Names(&$Techs) {
+  $TNs = [];
+  foreach($Techs as $T) $TNs[$T['id']] = $T['Name'];
+  return $TNs;
+}
+
+
+function Thing_Type_Names() {
+  $tts = Get_ThingTypes();
+  $tns = [];
+  foreach ($tts as $t) $tns[$t['id']] = $t['Name'];
+  return $tns;
+}
+
+function Show_Thing(&$t) {
+  $tid = $t['id'];
+  
+  $ttn = Thing_Type_Names();
+  echo "<form method=post id=mainform enctype='multipart/form-data' action=ThingEdit.php>";
+  echo "<div class=tablecont><table width=90% border class=SideTable>\n";
+  Register_AutoUpdate('Thing',$tid);
+  echo fm_hidden('id',$tid);
+  
+  echo "<tr class=NotSide><td class=NotSide>Id:<td class=NotSide>$tid<td class=NotSide>Game<td class=NotSide>$GAMEID<td class=NotSide>" . $GAME['Name'];
+  echo "<tr><td>Type:<td>" . fm_select($ttn,$t,'Type',1);
+  
+  
+  
+  
+   . fm_number("SubType", $t,'SubType'); // need to make that easier
 
 }
 
