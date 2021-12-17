@@ -69,6 +69,38 @@ var_dump($_POST);
     echo Put_Tech($N);
     exit;
   
+  case 'Thing' : // Will need some complex handling for districts, modules and subtype
+    switch ($field) {
+    case (preg_match('/DistrictTypeAdd-(.*)/',$field,$mtch)?true:false):
+      $Ds = Get_DistrictsT($id);
+      foreach ($Ds as $D) {
+        if ($D['Type'] == $Value) {
+          $D['Number']++;
+          echo 'FORCERELOAD54321:NOW' . Put_District($D);
+          exit;
+        }
+      }
+      $N= ['Type'=>$Value,'HostId'=>$mtch[1],'Number'=>1,'HostType' => 2];
+      echo 'FORCERELOAD54321:NOW' . Put_District($N);
+      exit;
+
+    case (preg_match('/District(\w*)-(\d*)/',$field,$mtch)?true:false):
+      $N = Get_District($mtch[2]);
+      if ($Value && $mtch[1] != 'Type') { 
+        $N[$mtch[1]] = $Value;     
+        echo Put_District($N);
+      } else { 
+        echo 'FORCERELOAD54321:NOW' . db_delete('Districts',$mtch[2]);
+      }
+      exit;
+    }
+    
+    $N = Get_Thing($id);
+    $N[$field] = $Value;
+    if ($field == 'Type') echo 'FORCERELOAD54321:NOW';
+    echo Put_Thing($N);
+    exit;
+  
   case 'FactTech' :
     if (preg_match('/Tech(\d*)/',$field,$mtch)?true:false) {
       $N = Get_Faction_TechFT($id,$mtch[1]);

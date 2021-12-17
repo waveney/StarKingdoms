@@ -5,6 +5,7 @@ include_once("GetPut.php");
 include_once("vendor/erusev/parsedown/Parsedown.php");
   
 global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$ShipTypes,$Tech_Cats,$CivMil,$BuildState;
+global $THING_HAS_DISTRICTS,$THING_HAS_MODULES;
 
 $ModuleCats = ['Undefined','Civilian Ship','Support Ship','Military Ship','Army','Other'];
 $Fields = ['Engineering','Physics','Xenology'];
@@ -15,6 +16,10 @@ $BuildState = ['','Building','Launching','Built'];
 
 $ModFormulaes = [];
 $ModValues = [];
+
+$THING_HAS_DISTRICTS =1;
+$THING_HAS_MODULES = 2;
+
 
 function ModFormulaes() {
   global $ModFormulaes;
@@ -110,23 +115,100 @@ function Thing_Type_Names() {
   return $tns;
 }
 
+function Thing_Type_Props() {
+  $tts = Get_ThingTypes();
+  $tns = [];
+  foreach ($tts as $t) $tns[$t['id']] = $t['Properties'];
+  return $tns;
+}
+
+function Within_Sys_Locs(&$N) {
+  include_once("SystemLib.php");
+  $L[1] = 'Deep space';
+  $Ps = Get_Planets($N['id']);
+  $PTD = Get_PlanetTypes();
+  
+  if ($Ps) {
+    $pi = $mi = 1;
+    foreach ($Ps as $P) {
+      $PName = PM_Type($PTD[$P['Type']],"Planet") . " - " . NameFind($P);
+      $L[100 +$pi] = "Orbiting $PName";
+      $L[200 +$pi] = "On $PName";
+      $Ms = Get_Moons($P['id']);
+      if ($Ms) {
+        foreach ($Ms as $M) {
+          $MName = PM_Type($PTD[$M['Type']],"Moon") . " - " . NameFind($M);
+          $L[300 +$mi] = "Orbiting $MName";
+          $L[400 +$mi] = "On $MName";
+          $mi++;
+        }
+      }
+      $pi++;
+    }
+  }
+  $LKs = Get_Links($N['Ref']);
+  $Li = 1;
+  foreach($LKs as $lk) $L[500+$Li++] = "At stargate to link " . $lk['id'];
+/*  
+  $Anoms = Get_Anomolies($N['Ref']);
+  $Ai = 1;
+  foreach($Anoms as $Anom) $L[600+$Ai++] = "At " . $Anoms['Name'];  
+  */
+  return $L;
+}
+
 function Show_Thing(&$t) {
+  global $THING_HAS_DISTRICTS,$THING_HAS_MODULES,$GAMEID,$GAME;
   $tid = $t['id'];
   
   $ttn = Thing_Type_Names();
+  $FactNames = Get_Faction_Names();
+  $Fact_Colours = Get_Faction_Colours();
+  $ThingProps = Thing_Type_Props();
+  $N = Get_System($t['SystemId']);
+  $Syslocs = Within_Sys_Locs($N);
+  $Systems = Get_SystemRefs();
+    
   echo "<form method=post id=mainform enctype='multipart/form-data' action=ThingEdit.php>";
   echo "<div class=tablecont><table width=90% border class=SideTable>\n";
   Register_AutoUpdate('Thing',$tid);
   echo fm_hidden('id',$tid);
   
   echo "<tr class=NotSide><td class=NotSide>Id:<td class=NotSide>$tid<td class=NotSide>Game<td class=NotSide>$GAMEID<td class=NotSide>" . $GAME['Name'];
-  echo "<tr><td>Type:<td>" . fm_select($ttn,$t,'Type',1);
-  
-  
-  
-  
-   . fm_number("SubType", $t,'SubType'); // need to make that easier
+  echo "<tr><td>Type:<td>" . fm_select($ttn,$t,'Type',1) . fm_number("SubType", $t,'SubType'); // need to make that easier
+  echo fm_number("Level",$t,'Level');
+  echo "<tr><td>System:<td>" . fm_select($Systems,$t,'SystemId') . "<td>" . fm_select($Syslocs,$t,'WithinSysLoc');
+  echo "<tr>" . fm_text('Name',$t,'Name',2);
+  echo "<tr>" . fm_number('Build Project',$t,'ProjectId'). "<td>No meaning yet";
+  echo "<tr>" . fm_radio('Whose',$FactNames ,$t,'Whose','',1,'colspan=6','',$Fact_Colours,0); 
+  echo "<tr>" . fm_textarea("Description\n(For others)",$t,'Description',8,3);
+  echo "<tr>" . fm_textarea('Notes',$t,'Notes',8,3);
+  echo "<tr>" . fm_textarea('GM_Notes',$t,'GM_Notes',8,3);
+  if ($ThingProps[$t['Type']] & $THING_HAS_DISTRICTS) {
+    $DTs = Get_DistrictTypeNames();
+    $Ds = Get_DistrictsT($tid);
 
+    $NumDists = count($Ds);
+    $dc=0;
+  
+    foreach ($Ds as $D) {
+      $did = $D['id'];
+      if ($dc++%4 == 0)  echo "<tr><td>Districts:";
+      echo "<td>" . fm_Select($DTs, $D , 'Type', 1,'',"DistrictType-$did") . fm_number1('', $D,'Number', '','',"DistrictNumber-$did");
+      };
+
+    echo "<tr><td>Add District Type<td>" . fm_Select($DTs, NULL , 'Number', 1,'',"DistrictTypeAdd-$tid");
+    echo fm_number("Max Districts",$t,'MaxDistricts');
+  }
+  if ($ThingProps[$t['Type']] & $THING_HAS_MODULES) {
+    echo "<tr><td>Modules to be done\n";
+ // TODO 
+ // Max modules, current count, what 
+  }
+  if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
+  echo "</table></div>\n";
+
+  echo "<h2><a href=ThingList.php>Back to Thing list</a></h2>";
 }
 
 ?>

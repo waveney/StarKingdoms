@@ -87,6 +87,16 @@ function Get_Systems() {
   return $Systms;
 }
 
+function Get_SystemRefs() {
+  global $db,$GAMEID;
+  $res = $db->query("SELECT id,Ref FROM Systems WHERE GameId=$GAMEID ORDER BY Ref");
+  $Systms = [];
+  if ($res) {
+    while ($ans = $res->fetch_assoc()) { $Systms[$ans['id']] = $ans['Ref']; }
+    }
+  return $Systms;
+}
+
 // Planets
 
 function Get_Planet($id) {

@@ -9,7 +9,7 @@
 
   global $db, $GAME,$BuildState;
 
-  $Systems = Get_Systems();
+  $Systems = Get_SystemRefs();
   $Factions = Get_Factions();
   $Things = Get_AllThings();
   $ThingTypes = Thing_Type_Names();
@@ -32,7 +32,7 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Location</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Whose</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>BuildState</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Project</a>\n";
 //  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Location</a>\n";
 
   echo "</thead><tbody>";
@@ -40,19 +40,28 @@
   foreach($Things as $T) {
     $tid = $T['id'];
     $Name = $T['Name'];
-    $who = $N['Whose'];
+    $who = $T['Whose'];
+    $Ref = $Systems[$T['SystemId']];
+    if ($T['WithinSysLoc'] == 1) {
+      $Loc = "Deep Space";
+    } else {
+      $N = Get_System($T['SystemId']);
+      $Locs = Within_Sys_Locs($N);
+      $Loc = $Locs[$T['WithinSysLoc']];
+    }
+    
     echo "<tr><td><a href=ThingEdit.php?id=$tid>$tid</a>";
-    echo "<td>" . $ThingTypes[$t['Type']] . "<td>" . $t['SubType'] . "<td>" . $t['Level'];
-    echo "<td>" . $Systems[$t['SystemId']]['Ref'] .  "<td>" . $t['Location'];
+    echo "<td>" . $ThingTypes[$T['Type']] . "<td>" . $T['SubType'] . "<td>" . $T['Level'];
+    echo "<td><a href=ThingsAt.php?id=$Ref>$Ref</a><td>$Loc";
     echo "<td><a href=ThingEdit.php?id=$tid>$Name</a>";
-    echo "<td>" . ($who? $Factions[$t['Whose']]['Name'] : "");
-    echo "<td>" . $BuildState[$t['BuildState']];
+    echo "<td>" . ($who? $Factions[$T['Whose']]['Name'] : "");
+    echo "<td>" . $T['ProjectId'];
 
   }
       
   echo "</tbody></table></div>\n";
   
-  echo "<h2><a href=ThingEdit.php?NEW>New Thing</a></h2>";
+  echo "<h2><a href=ThingEdit.php?ACTION=NEW>New Thing</a></h2>";
 
   dotail();
 ?>
