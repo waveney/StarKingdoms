@@ -26,6 +26,7 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Nebulae</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Survey Report</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Things</a>\n";
   echo "</thead><tbody>";
 
   foreach($Systems as $N) {
@@ -42,6 +43,7 @@
     echo "<td>$Name";
     echo "<td>$Neb";
     echo "<td><a href=SurveyReport.php?id=$sid>Survey Report</a>"; // Generic 
+    echo "<td><a href=ThingList.php?AT=$Ref>$Ref</a>\n";
   }
       
   echo "</tbody></table></div>\n";

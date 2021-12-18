@@ -13,6 +13,7 @@ function New_Thing(&$t) {
   echo "<form method=post action=ThingEdit.php>";
   echo "<table><tr><td>Type:<td>" . fm_select($ttn,$t,'Type');
   echo "<tr>" . fm_text("Name",$t,'Name');
+  echo "<tr>" . fm_number("Level",$t,'Level');
   echo "<tr>" . fm_radio('Whose',$FactNames ,$t,'Whose','',1,'colspan=6','',$Fact_Colours,0); 
   echo "<tr><td>System:<td>" . fm_select($Systems,$t,'SystemId');
   echo "<tr><td><td><input type=submit name=ACTION value=Create>\n";
@@ -31,23 +32,25 @@ function New_Thing(&$t) {
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
      case 'NEW' :
-       $t = [];
+       $t = ['Level'=>1];
        New_Thing($t);
-     
+       break;
+       
      case 'Create' :
-       if (!isset($_POST['Name'])) {
-         echo "No Name Given";
-         New_Thing($_POST);
-       }
        if (!isset($_POST['SystemId'])) {
          echo "No System Given";
          New_Thing($_POST);
        }
        $_POST['GameId'] = $GAMEID;
        $tid = Insert_db_post('Things',$t);
-       
-     break;
+       break;
      
+     case 'DELETE' :
+       $tid = $_REQUEST['id'];
+       db_delete('Things',$tid);
+       echo "<h1>Deleted</h1>";
+       echo "<h2><a href=ThingList.php>Back to Thing list</a></h2>";
+       dotail();
             
     default: 
       break;
@@ -65,7 +68,7 @@ function New_Thing(&$t) {
 
   
   Show_Thing($t);
-  
+  echo "<br><p><br><p><h2><a href=ThingEdit.php?ACTION=DELETE&id=$tid>Delete Thing</a></h2>";
   
   
   dotail();

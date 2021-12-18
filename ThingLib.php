@@ -5,11 +5,11 @@ include_once("GetPut.php");
 include_once("vendor/erusev/parsedown/Parsedown.php");
   
 global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$ShipTypes,$Tech_Cats,$CivMil,$BuildState;
-global $THING_HAS_DISTRICTS,$THING_HAS_MODULES;
+global $THING_HAS_DISTRICTS,$THING_HAS_MODULES,$THING_HAS_SUBTYPES,$THING_HAS_SHIPMODULES;
 
-$ModuleCats = ['Undefined','Civilian Ship','Support Ship','Military Ship','Army','Other'];
+$ModuleCats = ['Ship','Civilian Ship','Support Ship','Military Ship','Army','Other'];
 $Fields = ['Engineering','Physics','Xenology'];
-$ShipTypes = ['Military','Support','Civilian'];
+$ShipTypes = ['','Military','Support','Civilian'];
 $Tech_Cats = ['Core','Supp','Non Std'];
 $CivMil = ['','Civilian','Military'];
 $BuildState = ['','Building','Launching','Built'];
@@ -19,7 +19,8 @@ $ModValues = [];
 
 $THING_HAS_DISTRICTS =1;
 $THING_HAS_MODULES = 2;
-
+$THING_HAS_SUBTYPES = 4;
+$THING_HAS_SHIPMODULES = 4;
 
 function ModFormulaes() {
   global $ModFormulaes;
@@ -58,7 +59,7 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0) {
 
   if ($Fact && $T['Cat']==0 && isset($FactTechs[$T['id']]) ) echo " ( at Level " . $FactTechs[$T['id']]['Level'] . " )";
   if ($Fact && $T['Cat']>0) {
-    if (isset($FactTechs[$T['id']]) ) {
+    if (isset($FactTechs[$T['id']]) && $FactTechs[$Tid]['Level'] ) {
       echo " ( Known )";
     } else if (!isset($FactTechs[$T['PreReqTech']]) || ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) {
       echo " <span class=NotAllow>( Not yet allowed )</span>";
@@ -157,8 +158,47 @@ function Within_Sys_Locs(&$N) {
   return $L;
 }
 
+function Get_Valid_Modules(&$t) {
+  global $THING_HAS_DISTRICTS,$THING_HAS_MODULES,$THING_HAS_SUBTYPES,$THING_HAS_SHIPMODULES,$ModuleCats;
+  $MTs = Get_ModuleTypes();
+  $VMT = [];
+  $ThingProps = Thing_Type_Props();
+  foreach ($MTs as $M) {
+    if ($ModuleCats[$M['CivMil']] == 'Army') {
+      if ($M['Name'] != 'Army') continue;
+    } else if ($ThingProps[$t['Type']] & $THING_HAS_SHIPMODULES) {
+      if ($ModuleCats[$M['CivMil']] == 'Military Ship' && $t['SubType'] == 3) continue;
+      if ($ModuleCats[$M['CivMil']] == 'Civilian Ship' && $t['SubType'] == 1) continue;
+    }
+    
+    $l = Has_Tech($t['Whose'],$M['BasedOn']);
+    if (!$l) continue;
+    if ($M['MinShipLevel'] > $t['Level']) continue;
+    $VMT[$M['id']] = $M['Name'];
+  }
+  
+  return $VMT;
+// Validate every module type for technology and Thing type, subtype and level
+}
+
+
+function Max_Modules(&$t) {
+  global $THING_HAS_DISTRICTS,$THING_HAS_MODULES,$THING_HAS_SUBTYPES;
+  $ThingProps = Thing_Type_Props();
+  if ($ThingProps[$t['Type']] & $THING_HAS_MODULES) {
+    $v = [0,4,12,24,40,60,84,112,144,180,220][$t['Level']];
+    if ($ThingProps[$t['Type']] & $THING_HAS_SUBTYPES) {
+      if ($t['SubType'] == 2) $v = $v*3/4;
+      }
+    if (Has_Tech($t['Whose'], 'Compact Ship Design') && $t['Level'] > 1) $v += $t['Level'];
+    return $v;
+  }
+  return 0;
+}
+
+
 function Show_Thing(&$t) {
-  global $THING_HAS_DISTRICTS,$THING_HAS_MODULES,$GAMEID,$GAME;
+  global $THING_HAS_DISTRICTS,$THING_HAS_MODULES,$GAMEID,$GAME,$ShipTypes;
   $tid = $t['id'];
   
   $ttn = Thing_Type_Names();
@@ -168,6 +208,7 @@ function Show_Thing(&$t) {
   $N = Get_System($t['SystemId']);
   $Syslocs = Within_Sys_Locs($N);
   $Systems = Get_SystemRefs();
+  $t['MaxModules'] = Max_Modules($t);
     
   echo "<form method=post id=mainform enctype='multipart/form-data' action=ThingEdit.php>";
   echo "<div class=tablecont><table width=90% border class=SideTable>\n";
@@ -175,7 +216,7 @@ function Show_Thing(&$t) {
   echo fm_hidden('id',$tid);
   
   echo "<tr class=NotSide><td class=NotSide>Id:<td class=NotSide>$tid<td class=NotSide>Game<td class=NotSide>$GAMEID<td class=NotSide>" . $GAME['Name'];
-  echo "<tr><td>Type:<td>" . fm_select($ttn,$t,'Type',1) . fm_number("SubType", $t,'SubType'); // need to make that easier
+  echo "<tr><td>Type:<td>" . fm_select($ttn,$t,'Type',1) . "<td>If Ship: " . fm_select($ShipTypes,$t,'SubType'); // need to make that easier
   echo fm_number("Level",$t,'Level');
   echo "<tr><td>System:<td>" . fm_select($Systems,$t,'SystemId') . "<td>" . fm_select($Syslocs,$t,'WithinSysLoc');
   echo "<tr>" . fm_text('Name',$t,'Name',2);
@@ -183,25 +224,58 @@ function Show_Thing(&$t) {
   echo "<tr>" . fm_radio('Whose',$FactNames ,$t,'Whose','',1,'colspan=6','',$Fact_Colours,0); 
   echo "<tr>" . fm_textarea("Description\n(For others)",$t,'Description',8,3);
   echo "<tr>" . fm_textarea('Notes',$t,'Notes',8,3);
-  echo "<tr>" . fm_textarea('GM_Notes',$t,'GM_Notes',8,3);
+  echo "<tr>" . fm_textarea('GM Notes',$t,'GM_Notes',8,3,'class=NotSide');
   if ($ThingProps[$t['Type']] & $THING_HAS_DISTRICTS) {
     $DTs = Get_DistrictTypeNames();
     $Ds = Get_DistrictsT($tid);
 
     $NumDists = count($Ds);
     $dc=0;
+    $totdisc = 0;
   
     foreach ($Ds as $D) {
       $did = $D['id'];
-      if ($dc++%4 == 0)  echo "<tr><td>Districts:";
+      if (($dc++)%2 == 0)  echo "<tr><td>Districts:";
       echo "<td>" . fm_Select($DTs, $D , 'Type', 1,'',"DistrictType-$did") . fm_number1('', $D,'Number', '','',"DistrictNumber-$did");
+      $totdisc += $D['Number'];      
       };
 
     echo "<tr><td>Add District Type<td>" . fm_Select($DTs, NULL , 'Number', 1,'',"DistrictTypeAdd-$tid");
     echo fm_number("Max Districts",$t,'MaxDistricts');
+    if ($totdisc > $t['MaxDistricts']) echo "<td class=Err>TOO MANY DISTRICTS\n";
   }
   if ($ThingProps[$t['Type']] & $THING_HAS_MODULES) {
-    echo "<tr><td>Modules to be done\n";
+//    echo "<tr><td>Modules to be done\n";
+    $DTs = Get_ModuleTypes();
+//    $MTNs = [];
+//    foreach($DTs as $M) $MTNs[$M['id']] = $M['Name'];
+    $MTNs = Get_Valid_Modules($t);
+    $Ds = Get_Modules($tid);
+
+    $NumMods = count($Ds);
+    $dc=0;
+    $totmodc = 0;
+    $BadMods = 0;
+  
+    foreach ($Ds as $D) {
+      $did = $D['id'];
+      if (($dc++)%2 == 0)  echo "<tr><td>Modules:";
+      echo "<td>" . fm_Select($MTNs, $D , 'Type', 1,'',"ModuleType-$did") . fm_number1('', $D,'Number', '','',"ModuleNumber-$did");
+      if (!isset($MTNs[$D['Type']])) $BadMods += $D['Number'];
+      $totmodc += $D['Number'] * $DTs[$D['Type']]['SpaceUsed'];
+      };
+
+    echo "<tr><td>Add Module Type<td>" . fm_Select($MTNs, NULL , 'Number', 1,'',"ModuleTypeAdd-$tid");
+    echo fm_number("Max Modules",$t,'MaxModules');
+    if ($totmodc > $t['MaxModules']) {
+      echo "<td class=Err>TOO MANY MODULES\n";
+    } elseif ($BadMods) {
+      echo "<td class=Err>$BadMods INVALID MODULES\n";
+    } else {
+      echo "<td>Used: $totmodc";
+    }
+
+
  // TODO 
  // Max modules, current count, what 
   }

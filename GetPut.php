@@ -473,6 +473,14 @@ function Get_AllThings() {
   return $Ts;
 }
 
+function Get_AllThingsAt($id) {
+  global $db,$GAMEID;
+  $Ts = [];
+  $res = $db->query("SELECT * FROM Things WHERE GameId=$GAMEID AND SystemId=$id");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
+  return $Ts;
+}
+
 function Get_ThingsSys($Sid,$type=0) {
   global $db,$GAMEID;
   $Ts = [];
@@ -693,6 +701,19 @@ function Get_ThingTypes() {
   $res = $db->query("SELECT * FROM  ThingTypes ");
   if ($res) while ($ans = $res->fetch_assoc()) $Ms[$ans['id']] = $ans;
   return $Ms;
+}
+
+function Has_Tech($fid,$name) {
+  global $db,$GAMEID;
+  if (is_numeric($name)) {
+    $res = $db->query("SELECT * FROM  FactionTechs WHERE Faction_Id=$fid AND Tech_Id=$name ");
+  } else {
+    $res = $db->query("SELECT ft.Level FROM  FactionTechs ft, Technologies t WHERE ft.Faction_Id=$fid AND ft.Tech_Id=t.id AND t.Name='$name' ");
+  }
+  if ($res) while ($ans = $res->fetch_assoc()) {
+    return $ans['Level'];
+  }
+  return 0;
 }
 
 

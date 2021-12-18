@@ -88,16 +88,39 @@ var_dump($_POST);
       $N = Get_District($mtch[2]);
       if ($Value && $mtch[1] != 'Type') { 
         $N[$mtch[1]] = $Value;     
-        echo Put_District($N);
+        echo 'FORCERELOAD54321:NOW' . Put_District($N);
       } else { 
         echo 'FORCERELOAD54321:NOW' . db_delete('Districts',$mtch[2]);
       }
       exit;
+    case (preg_match('/ModuleTypeAdd-(.*)/',$field,$mtch)?true:false):
+      $Ds = Get_Module($id);
+      foreach ($Ds as $D) {
+        if ($D['Type'] == $Value) {
+          $D['Number']++;
+          echo 'FORCERELOAD54321:NOW' . Put_Module($D);
+          exit;
+        }
+      }
+      $N= ['Type'=>$Value,'ThingId'=>$mtch[1],'Number'=>1];
+      echo 'FORCERELOAD54321:NOW' . Put_Module($N);
+      exit;
+
+    case (preg_match('/Module(\w*)-(\d*)/',$field,$mtch)?true:false):
+      $N = Get_Module($mtch[2]);
+      if ($Value && $mtch[1] != 'Type') { 
+        $N[$mtch[1]] = $Value;     
+        echo 'FORCERELOAD54321:NOW' . Put_Module($N);
+      } else { 
+        echo 'FORCERELOAD54321:NOW' . db_delete('Modules',$mtch[2]);
+      }
+      exit;
+
     }
     
     $N = Get_Thing($id);
     $N[$field] = $Value;
-    if ($field == 'Type') echo 'FORCERELOAD54321:NOW';
+    if ($field == 'Type' || $field == 'Level'|| $field == 'SubType') echo 'FORCERELOAD54321:NOW';
     echo Put_Thing($N);
     exit;
   

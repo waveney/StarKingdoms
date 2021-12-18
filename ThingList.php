@@ -7,19 +7,33 @@
 
   dostaffhead("List Things");
 
-  global $db, $GAME,$BuildState;
+  global $db, $GAME,$BuildState,$ShipTypes;
 
   $Systems = Get_SystemRefs();
   $Factions = Get_Factions();
-  $Things = Get_AllThings();
+  
+  if (isset($_REQUEST['AT'])) {
+    $Sids = array_flip($Systems);
+    if (isset($Sids[$_REQUEST['AT']])) {
+      $Things = Get_AllThingsAt($Sids[$_REQUEST['AT']]);
+      $xtra = " at " . $_REQUEST['AT'];
+    } else {
+      echo "<h2>No Location " .  $_REQUEST['AT'] . "</h2>";
+      dotail();
+    }
+  } else {
+    $Things = Get_AllThings();
+    $xtra = '';
+  }
   $ThingTypes = Thing_Type_Names();
   
-  if (!$Systems) {
+  if (!$Things) {
     echo "<h2>No Things found</h2>";
+    echo "<h2><a href=ThingEdit.php?ACTION=NEW>New Thing</a></h2>";
     dotail();
   }
   
-  echo "<h1>Things</h1>";
+  echo "<h1>Things $xtra</h1>";
   
   $coln = 0;
   echo "<div class=tablecont><table id=indextable border width=100% style='min-width:1400px'>\n";
@@ -51,8 +65,8 @@
     }
     
     echo "<tr><td><a href=ThingEdit.php?id=$tid>$tid</a>";
-    echo "<td>" . $ThingTypes[$T['Type']] . "<td>" . $T['SubType'] . "<td>" . $T['Level'];
-    echo "<td><a href=ThingsAt.php?id=$Ref>$Ref</a><td>$Loc";
+    echo "<td>" . $ThingTypes[$T['Type']] . "<td>" . $ShipTypes[$T['SubType']] . "<td>" . $T['Level'];
+    echo "<td><a href=ThingList.php?AT=$Ref>$Ref</a><td>$Loc";
     echo "<td><a href=ThingEdit.php?id=$tid>$Name</a>";
     echo "<td>" . ($who? $Factions[$T['Whose']]['Name'] : "");
     echo "<td>" . $T['ProjectId'];
