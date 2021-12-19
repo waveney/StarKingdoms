@@ -8,6 +8,7 @@
   dostaffhead("List Module Types");
 
   global $db, $GAME, $ModuleCats;
+  $DefWep = ['','Defence','Weapon'];
 
   $MTs = Get_ModuleTypes();
   if (UpdateMany('ModuleTypes','Put_ModuleType',$MTs,0))    $MTs = Get_ModuleTypes();
@@ -27,8 +28,9 @@
     echo "<thead><tr>";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'n')>id</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
-    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Desc</a>\n";
+//    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Desc</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>CMA</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Wep / Def</a>\n";    
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Based on</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Space</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Min Ship Lvl</a>\n";
@@ -40,8 +42,9 @@
     foreach($MTs as $MT) {
       $i = $MT['id'];
       echo "<tr><td>$i" . fm_text1("",$MT,'Name',1,'','',"Name$i");
-      echo "<td>" . fm_basictextarea($MT,'Description',1,2,'',"Description$i");
+//      echo "<td>" . fm_basictextarea($MT,'Description',1,2,'',"Description$i");
       echo "<td>" . fm_select($ModuleCats,$MT,'CivMil',1,'',"CivMil$i");
+      echo "<td>" . fm_select($DefWep,$MT,'DefWep',0,'',"DefWep$i");
       echo "<td>" . fm_select($TechNames,$MT,'BasedOn',1,'',"BasedOn$i");
       echo fm_number1("",$MT,'SpaceUsed','','',"SpaceUsed$i");
       echo fm_number1("",$MT,'MinShipLevel','','',"MinShipLevel$i");
@@ -52,8 +55,9 @@
 
   $MT = [];
   echo "<tr><td><td><input type=text name=Name0 >";
-  echo "<td>" . fm_basictextarea($MT,'Description',1,2,'',"Description0");
+//  echo "<td>" . fm_basictextarea($MT,'Description',1,2,'',"Description0");
   echo "<td>" . fm_select($ModuleCats,$MT,'CivMil',1,'',"CivMil0");
+  echo "<td>" . fm_select($DefWep,$MT,'DefWep',0,'',"DefWep0");
   echo "<td>" . fm_select($TechNames,$MT,'BasedOn',1,'',"BasedOn0");
   echo fm_number1("",$MT,'SpaceUsed','','',"SpaceUsed0");
   echo fm_number1("",$MT,'MinShipLevel','','',"MinShipLevel0");

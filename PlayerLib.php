@@ -21,12 +21,18 @@ function Player_Page() {
 
 }
 
-function TraitQ($Name) {
+function Has_Trait($Name,$fid=0) {
   global $FACTION;
   
-  if (!isset($FACTION)) return false;
-  if ($FACTION['Trait1'] == $Name || $FACTION['Trait2'] == $Name || $FACTION['Trait2'] == $Name) return true;
+  if ($fid == 0) {
+    if (!isset($FACTION)) return false;
+    if ($FACTION['Trait1'] == $Name || $FACTION['Trait2'] == $Name || $FACTION['Trait2'] == $Name) return true;
+    return false;
+  }
+  $Fact = Get_Faction($fid);
+  if ($Fact['Trait1'] == $Name || $Fact['Trait2'] == $Name || $Fact['Trait2'] == $Name) return true;
   return false;
+  
 }
 
 function Ships() {

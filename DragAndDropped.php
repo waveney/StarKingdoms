@@ -38,6 +38,11 @@ case 'Planet':
   $Put = 'Put_Planet';
   break;
 
+case 'Thing':
+  $Data = Get_Thing($id);
+  $Put = 'Put_Thing';
+  break;
+
 case 'Moon':
   $Data = Get_Moon($id);
   $Put = 'Put_Moon';

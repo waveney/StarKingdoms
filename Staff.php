@@ -41,6 +41,12 @@
   
 
 //echo php_ini_loaded_file() . "<P>";
+  echo "<div class=floatright><h2>";
+  echo "Turn : <a href=Staff.php?Y=0>Setup</a>";
+  if ($GAME['Turn']) for($turn=1; $turn <= $GAME['Turn']; $turn++) {
+    echo ", <a href=Staff.php?Y=$turn>$turn</a>";
+  }
+  echo "</h2></div>";
 
   echo "<h2>SK Pages - " . (isset($GAME['Name'])?$GAME['Name']:"Star Kingdoms" ) . "</h2>\n";
   

@@ -23,7 +23,7 @@ function New_Thing(&$t) {
 
   A_Check('GM');
 
-  dostaffhead("Edit and Create Things");
+  dostaffhead("Edit and Create Things",["js/dropzone.js","css/dropzone.css" ]);
 
   global $db, $GAME, $GAMEID,$BuildState;
   
@@ -51,7 +51,29 @@ function New_Thing(&$t) {
        echo "<h1>Deleted</h1>";
        echo "<h2><a href=ThingList.php>Back to Thing list</a></h2>";
        dotail();
-            
+       
+     case 'Duplicate' :
+       $otid = $tid = $_REQUEST['id'];
+       $t = Get_Thing($tid);
+       unset($t['id']);
+       $t['id'] = $tid = Insert_db('Things',$t);
+       $Discs = Get_DistrictsT($otid);
+       if ($Discs) {
+         foreach ($Discs as $D) {
+           $D['HostId'] = $tid;
+           unset($D['id']);
+           Insert_db('Districts',$D);
+         }
+       }
+       $Mods = Get_Modules($otid);
+       if ($Mods) {
+         foreach ($Mods as $M) {
+           $M['ThingId'] = $tid;
+           unset($M['id']);
+           Insert_db('Modules',$M);
+         }
+       }
+           
     default: 
       break;
     }

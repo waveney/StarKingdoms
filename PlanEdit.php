@@ -70,7 +70,7 @@
         else if ($heat < 1.5) { $type = $N2Ps['Temperate']; }
         else if ($heat < 2.5) { $type = $N2Ps['Desert']; }
         else { $type = $N2Ps['Desolate']; };
-        $P['Minerals'] = rand(1,10);
+        $P['Minerals'] = rand(5,15);
 //echo "<br>PMass: $PMass MMass $MMass<p>";
               
       } else if ($PTD[$P['Type']]['Name'] == 'Gas Giant') {
@@ -88,7 +88,7 @@
         else if ($heat < 1.5) { $type = $N2Ps['Temperate']; }
         else if ($heat < 2.5) { $type = $N2Ps['Desert']; }
         else { $type = $N2Ps['Desolate']; };
-        $P['Minerals'] = rand(1,10);
+        $P['Minerals'] = rand(5,15);
 //echo "<br>PMass: $PMass MMass $MMass<p>";
 
       } else {

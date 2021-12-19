@@ -3,16 +3,17 @@
 include_once("sk.php");
 include_once("GetPut.php");
 include_once("vendor/erusev/parsedown/Parsedown.php");
-  
+include_once("PlayerLib.php");  
+
 global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$ShipTypes,$Tech_Cats,$CivMil,$BuildState;
-global $THING_HAS_DISTRICTS,$THING_HAS_MODULES,$THING_HAS_SUBTYPES,$THING_HAS_SHIPMODULES;
+global $THING_HAS_DISTRICTS,$THING_HAS_MODULES,$THING_HAS_SUBTYPES,$THING_HAS_SHIPMODULES,$THING_HAS_GADGETS;
 
 $ModuleCats = ['Ship','Civilian Ship','Support Ship','Military Ship','Army','Other'];
 $Fields = ['Engineering','Physics','Xenology'];
 $ShipTypes = ['','Military','Support','Civilian'];
 $Tech_Cats = ['Core','Supp','Non Std'];
 $CivMil = ['','Civilian','Military'];
-$BuildState = ['','Building','Launching','Built'];
+$BuildState = ['Planning','Building','Launching','Built'];
 
 $ModFormulaes = [];
 $ModValues = [];
@@ -20,7 +21,8 @@ $ModValues = [];
 $THING_HAS_DISTRICTS =1;
 $THING_HAS_MODULES = 2;
 $THING_HAS_SUBTYPES = 4;
-$THING_HAS_SHIPMODULES = 4;
+$THING_HAS_SHIPMODULES = 8;
+$THING_HAS_GADGETS = 16;
 
 function ModFormulaes() {
   global $ModFormulaes;
@@ -43,8 +45,33 @@ function Reset_ModFormulaes() {
   $ModValues = [];
 }
 
-function ModValue($id) {
+function Mod_Value($fid,$modtypeid) {
+//echo "Mod Value of $fid, $modtypeid<p>";
+  $mt = Get_ModuleType($modtypeid);
+  $mf = Get_ModFormula($mt['Formula']);
+  if ($mf['Num2x']) {
+    $tl = Has_Tech($fid,$mt['BasedOn']);
+    $v = ($mf['Num1x'] + $tl) * $mf['Num2x'];
+  } else {
+    $v = 0;
+  }
+  $v = $v + $mf['Num3x'];
+//echo "Is $v<p>";
+  return $v;
+}
 
+function Mod_ValueSimple($tl,$modtypeid) {
+//echo "Mod Value of $fid, $modtypeid<p>";
+  $mt = Get_ModuleType($modtypeid);
+  $mf = Get_ModFormula($mt['Formula']);
+  if ($mf['Num2x']) {
+    $v = ($mf['Num1x'] + $tl) * $mf['Num2x'];
+  } else {
+    $v = 0;
+  }
+  $v = $v + $mf['Num3x'];
+//echo "Is $v<p>";
+  return $v;
 }
 
 
@@ -167,8 +194,10 @@ function Get_Valid_Modules(&$t) {
     if ($ModuleCats[$M['CivMil']] == 'Army') {
       if ($M['Name'] != 'Army') continue;
     } else if ($ThingProps[$t['Type']] & $THING_HAS_SHIPMODULES) {
-      if ($ModuleCats[$M['CivMil']] == 'Military Ship' && $t['SubType'] == 3) continue;
-      if ($ModuleCats[$M['CivMil']] == 'Civilian Ship' && $t['SubType'] == 1) continue;
+      if (isset($t['SubType'])) {
+        if ($ModuleCats[$M['CivMil']] == 'Military Ship' && $t['SubType'] == 3) continue;
+        if ($ModuleCats[$M['CivMil']] == 'Civilian Ship' && $t['SubType'] == 1) continue;
+      }
     }
     
     $l = Has_Tech($t['Whose'],$M['BasedOn']);
@@ -191,14 +220,65 @@ function Max_Modules(&$t) {
       if ($t['SubType'] == 2) $v = $v*3/4;
       }
     if (Has_Tech($t['Whose'], 'Compact Ship Design') && $t['Level'] > 1) $v += $t['Level'];
+    if ($t['Level'] > 2 && Has_Trait('Really Big',$t['Whose'])) $v += $t['Level']*$t['Level'];
     return $v;
   }
   return 0;
 }
 
+function Calc_Health(&$t) {
+  $Health = 5*$t['Level'];
+  $Ms = Get_Modules($t['id']);
+  $Mts = Get_ModuleTypes();
+  $Techs = Get_Techs();
+  foreach ($Mts as $mt) if ($mt['DefWep'] == 1 ) {
+    foreach ($Ms as $M) if ($Mts[$M['Type']]['Name'] == $mt['Name']) {
+      $based = $Mts[$M['Type']]['BasedOn'];
+      if ($l = Has_Tech($t['Whose'],$based)) {
+        if ($Techs[$based]['Cat'] == 1) {
+          $l = Has_Tech($t['Whose'],$Techs[$based]['PreReqTech']);
+        }
+        $Mhlth = $M['Number'] * Mod_ValueSimple($l,$M['Type']);
+        $Health += $Mhlth;
+      }
+    }
+  }
+    
+  return $Health;
+}
+
+function Calc_Damage(&$t) { // Needs extending to round N 
+
+  $Dam = 0;
+  $Ms = Get_Modules($t['id']);
+  $Mts = Get_ModuleTypes();
+  $Techs = Get_Techs();
+  foreach ($Mts as $mt) if ($mt['DefWep'] == 2 ) {
+    foreach ($Ms as $M) if ($Mts[$M['Type']]['Name'] == $mt['Name']) {
+      $based = $Mts[$M['Type']]['BasedOn'];
+      if ($l = Has_Tech($t['Whose'],$based)) {
+        if ($Techs[$based]['Cat'] == 1) {
+          $l = Has_Tech($t['Whose'],$Techs[$based]['PreReqTech']);
+        }
+        $dam = $M['Number'] * Mod_ValueSimple($l,$M['Type']);
+        $Dam += $dam;
+      }
+    }
+  }
+    
+  return $Dam;
+}
+
+
+function Thing_Finished($tid) {
+  $t = Get_Thing($tid);
+  $t['Buildstate'] = 3;
+  $t['CurHealth'] = $t['OrigHealth'];
+  Put_Thing($t);
+}
 
 function Show_Thing(&$t) {
-  global $THING_HAS_DISTRICTS,$THING_HAS_MODULES,$GAMEID,$GAME,$ShipTypes;
+  global $THING_HAS_DISTRICTS,$THING_HAS_GADGETS,$THING_HAS_MODULES,$GAMEID,$GAME,$ShipTypes,$BuildState;
   $tid = $t['id'];
   
   $ttn = Thing_Type_Names();
@@ -209,6 +289,7 @@ function Show_Thing(&$t) {
   $Syslocs = Within_Sys_Locs($N);
   $Systems = Get_SystemRefs();
   $t['MaxModules'] = Max_Modules($t);
+  if  ($ThingProps[$t['Type']] & $THING_HAS_MODULES) $t['OrigHealth'] = Calc_Health($t);
     
   echo "<form method=post id=mainform enctype='multipart/form-data' action=ThingEdit.php>";
   echo "<div class=tablecont><table width=90% border class=SideTable>\n";
@@ -218,13 +299,24 @@ function Show_Thing(&$t) {
   echo "<tr class=NotSide><td class=NotSide>Id:<td class=NotSide>$tid<td class=NotSide>Game<td class=NotSide>$GAMEID<td class=NotSide>" . $GAME['Name'];
   echo "<tr><td>Type:<td>" . fm_select($ttn,$t,'Type',1) . "<td>If Ship: " . fm_select($ShipTypes,$t,'SubType'); // need to make that easier
   echo fm_number("Level",$t,'Level');
+
   echo "<tr><td>System:<td>" . fm_select($Systems,$t,'SystemId') . "<td>" . fm_select($Syslocs,$t,'WithinSysLoc');
+  echo "<td rowspan=3 colspan=3><table><tr>";
+    echo fm_DragonDrop(1,'Image','Thing',$tid,$t,1,'',1,'','Thing');
+  echo "</table>";
+
   echo "<tr>" . fm_text('Name',$t,'Name',2);
-  echo "<tr>" . fm_number('Build Project',$t,'ProjectId'). "<td>No meaning yet";
+  echo "<tr><td>Build State:" . fm_select($BuildState,$t,'Buildstate'); 
+  if ($t['Buildstate'] == 1) echo fm_number('Build Project',$t,'ProjectId');
   echo "<tr>" . fm_radio('Whose',$FactNames ,$t,'Whose','',1,'colspan=6','',$Fact_Colours,0); 
+  if  ($ThingProps[$t['Type']] & $THING_HAS_GADGETS) echo "<tr>" . fm_textarea("Gadgets",$t,'Gadgets',8,3);
   echo "<tr>" . fm_textarea("Description\n(For others)",$t,'Description',8,3);
   echo "<tr>" . fm_textarea('Notes',$t,'Notes',8,3);
   echo "<tr>" . fm_textarea('GM Notes',$t,'GM_Notes',8,3,'class=NotSide');
+  if  ($ThingProps[$t['Type']] & $THING_HAS_MODULES) {
+    echo "<tr>" . fm_number('Orig Health',$t,'OrigHealth') . fm_number('Cur Health',$t,'CurHealth');
+    echo "<td>Basic Dam: " . Calc_Damage($t);
+  }
   if ($ThingProps[$t['Type']] & $THING_HAS_DISTRICTS) {
     $DTs = Get_DistrictTypeNames();
     $Ds = Get_DistrictsT($tid);
@@ -232,21 +324,26 @@ function Show_Thing(&$t) {
     $NumDists = count($Ds);
     $dc=0;
     $totdisc = 0;
-  
+
+    if ($NumDists) echo "<tr><td rowspan=" . ceil(($NumDists+2)/2) . ">Districts:";
+      
     foreach ($Ds as $D) {
       $did = $D['id'];
-      if (($dc++)%2 == 0)  echo "<tr><td>Districts:";
+      if (($dc++)%2 == 0)  echo "<tr>";
       echo "<td>" . fm_Select($DTs, $D , 'Type', 1,'',"DistrictType-$did") . fm_number1('', $D,'Number', '','',"DistrictNumber-$did");
       $totdisc += $D['Number'];      
       };
 
     echo "<tr><td>Add District Type<td>" . fm_Select($DTs, NULL , 'Number', 1,'',"DistrictTypeAdd-$tid");
     echo fm_number("Max Districts",$t,'MaxDistricts');
+    if (!isset($t['MaxDistricts'])) $t['MaxDistricts'] = 0;
     if ($totdisc > $t['MaxDistricts']) echo "<td class=Err>TOO MANY DISTRICTS\n";
   }
   if ($ThingProps[$t['Type']] & $THING_HAS_MODULES) {
 //    echo "<tr><td>Modules to be done\n";
-    $DTs = Get_ModuleTypes();
+    $MTs = Get_ModuleTypes();
+
+//var_dump($MTs);
 //    $MTNs = [];
 //    foreach($DTs as $M) $MTNs[$M['id']] = $M['Name'];
     $MTNs = Get_Valid_Modules($t);
@@ -256,13 +353,17 @@ function Show_Thing(&$t) {
     $dc=0;
     $totmodc = 0;
     $BadMods = 0;
+    
+    if ($NumMods) echo "<tr><td rowspan=" . ceil(($NumMods+2)/2) . ">Modules:";
   
     foreach ($Ds as $D) {
       $did = $D['id'];
-      if (($dc++)%2 == 0)  echo "<tr><td>Modules:";
+      if (($dc++)%2 == 0)  echo "<tr>";
       echo "<td>" . fm_Select($MTNs, $D , 'Type', 1,'',"ModuleType-$did") . fm_number1('', $D,'Number', '','',"ModuleNumber-$did");
       if (!isset($MTNs[$D['Type']])) $BadMods += $D['Number'];
-      $totmodc += $D['Number'] * $DTs[$D['Type']]['SpaceUsed'];
+      $totmodc += $D['Number'] * $MTs[$D['Type']]['SpaceUsed'];
+//var_dump($MTs[$D['Type']]);
+//echo " ($totmodc) " . $MTs[$D['Type']]['SpaceUsed'];
       };
 
     echo "<tr><td>Add Module Type<td>" . fm_Select($MTNs, NULL , 'Number', 1,'',"ModuleTypeAdd-$tid");
@@ -282,7 +383,7 @@ function Show_Thing(&$t) {
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
   echo "</table></div>\n";
 
-  echo "<h2><a href=ThingList.php>Back to Thing list</a></h2>";
+  echo "<h2><a href=ThingList.php>Back to Thing list</a> &nbsp; <input type=submit name=ACTION value=Duplicate></h2>";
 }
 
 ?>

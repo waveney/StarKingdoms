@@ -540,8 +540,8 @@ function Put_ModuleType(&$now) {
 function Get_ModuleTypes() {
   global $db,$GAMEID;
   $Ms = [];
-  $res = $db->query("SELECT * FROM ModuleTypes");
-  if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
+  $res = $db->query("SELECT * FROM ModuleTypes ORDER BY id");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ms[$ans['id']] = $ans;
   return $Ms;
 }
 
@@ -598,11 +598,11 @@ function Get_Techs($Fact=0) {
   $Ms = [];
   if ($Fact == 0) {
     $res = $db->query("SELECT * FROM Technologies ORDER BY id");
-    if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
+    if ($res) while ($ans = $res->fetch_assoc()) $Ms[$ans['id']] = $ans;
     return $Ms;
   } else {
     $res = $db->query("SELECT t.* FROM Technologies t, FactionTechs ft WHERE (t.Cat<2 OR (t.Cat=3 AND ft.Tech_Id=t.id)) ORDER BY t.id");
-    if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
+    if ($res) while ($ans = $res->fetch_assoc()) $Ms[$ans['id']] = $ans;
     return $Ms;    
   }
 }
@@ -705,15 +705,29 @@ function Get_ThingTypes() {
 
 function Has_Tech($fid,$name) {
   global $db,$GAMEID;
+//echo "Has_Tech called with $fid, $name<p>";
   if (is_numeric($name)) {
     $res = $db->query("SELECT * FROM  FactionTechs WHERE Faction_Id=$fid AND Tech_Id=$name ");
   } else {
     $res = $db->query("SELECT ft.Level FROM  FactionTechs ft, Technologies t WHERE ft.Faction_Id=$fid AND ft.Tech_Id=t.id AND t.Name='$name' ");
   }
   if ($res) while ($ans = $res->fetch_assoc()) {
+//echo "Result will be " . $ans['Level'] . "<p>";
     return $ans['Level'];
   }
+//echo "Result is 0<p>";
   return 0;
+}
+
+function Put_Game($now) {
+  global $db,$GAMEID;
+  if (isset($now['id'])) {
+    $e=$now['id'];
+    $Cur = Get_Game($e);
+    return Update_db('Games',$Cur,$now);
+  } else {
+    return $now['id'] = Insert_db ('Games', $now );  
+  }
 }
 
 

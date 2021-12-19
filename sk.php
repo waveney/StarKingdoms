@@ -202,7 +202,7 @@ function Error_Page ($message) {
 function Get_Game($y=0) {
   global $db,$GAME,$GAMESYS,$GAMEID;
   if (!$y) $y=$GAMESYS['CurGame'];
-  $res = $db->query("SELECT * FROM Games WHERE Name='$y'");
+  $res = $db->query("SELECT * FROM Games WHERE id='$y'");
   if ($res) return $res->fetch_assoc();
 }
 

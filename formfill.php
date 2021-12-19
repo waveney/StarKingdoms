@@ -94,7 +94,7 @@ var_dump($_POST);
       }
       exit;
     case (preg_match('/ModuleTypeAdd-(.*)/',$field,$mtch)?true:false):
-      $Ds = Get_Module($id);
+      $Ds = Get_Modules($id);
       foreach ($Ds as $D) {
         if ($D['Type'] == $Value) {
           $D['Number']++;
@@ -152,6 +152,13 @@ var_dump($_POST);
     echo Put_District($N);
     exit;
   
+  case 'Game' :
+    $N = Get_Game($id);
+    $N[$field] = $Value;
+    echo Put_Game($N);
+    exit;
+  
+
   default:
     echo "Not setup $type for Auto Edit";
     break;
