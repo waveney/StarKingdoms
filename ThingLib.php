@@ -23,6 +23,7 @@ $THING_HAS_MODULES = 2;
 $THING_HAS_SUBTYPES = 4;
 $THING_HAS_SHIPMODULES = 8;
 $THING_HAS_GADGETS = 16;
+$THING_HAS_ARMYMODULES = 32;
 
 function ModFormulaes() {
   global $ModFormulaes;
@@ -61,7 +62,7 @@ function Mod_Value($fid,$modtypeid) {
 }
 
 function Mod_ValueSimple($tl,$modtypeid) {
-//echo "Mod Value of $fid, $modtypeid<p>";
+//echo "Mod Value of $tl, $modtypeid<p>";
   $mt = Get_ModuleType($modtypeid);
   $mf = Get_ModFormula($mt['Formula']);
   if ($mf['Num2x']) {
@@ -186,18 +187,24 @@ function Within_Sys_Locs(&$N) {
 }
 
 function Get_Valid_Modules(&$t) {
-  global $THING_HAS_DISTRICTS,$THING_HAS_MODULES,$THING_HAS_SUBTYPES,$THING_HAS_SHIPMODULES,$ModuleCats;
+  global $THING_HAS_DISTRICTS,$THING_HAS_MODULES,$THING_HAS_SUBTYPES,$THING_HAS_SHIPMODULES,$THING_HAS_ARMYMODULES,$ModuleCats;
   $MTs = Get_ModuleTypes();
   $VMT = [];
   $ThingProps = Thing_Type_Props();
   foreach ($MTs as $M) {
     if ($ModuleCats[$M['CivMil']] == 'Army') {
-      if ($M['Name'] != 'Army') continue;
-    } else if ($ThingProps[$t['Type']] & $THING_HAS_SHIPMODULES) {
-      if (isset($t['SubType'])) {
-        if ($ModuleCats[$M['CivMil']] == 'Military Ship' && $t['SubType'] == 3) continue;
-        if ($ModuleCats[$M['CivMil']] == 'Civilian Ship' && $t['SubType'] == 1) continue;
+      if (($ThingProps[$t['Type']] & $THING_HAS_ARMYMODULES) == 0) continue;
+    } else if ($M['CivMil'] < 4) {
+       if ($ThingProps[$t['Type']] & $THING_HAS_SHIPMODULES) { 
+        if (isset($t['SubType']) && $t['SubType']) {
+          if ($ModuleCats[$M['CivMil']] == 'Military Ship' && $t['SubType'] == 3) continue;
+          if ($ModuleCats[$M['CivMil']] == 'Civilian Ship' && $t['SubType'] == 1) continue;
+        }
+      } else {
+        continue;
       }
+    } else {
+      continue;
     }
     
     $l = Has_Tech($t['Whose'],$M['BasedOn']);
@@ -207,7 +214,6 @@ function Get_Valid_Modules(&$t) {
   }
   
   return $VMT;
-// Validate every module type for technology and Thing type, subtype and level
 }
 
 
@@ -307,7 +313,7 @@ function Show_Thing(&$t) {
 
   echo "<tr>" . fm_text('Name',$t,'Name',2);
   echo "<tr><td>Build State:" . fm_select($BuildState,$t,'Buildstate'); 
-  if ($t['Buildstate'] == 1) echo fm_number('Build Project',$t,'ProjectId');
+  if (isset($t['Buildstate']) && $t['Buildstate'] == 1) echo fm_number('Build Project',$t,'ProjectId');
   echo "<tr>" . fm_radio('Whose',$FactNames ,$t,'Whose','',1,'colspan=6','',$Fact_Colours,0); 
   if  ($ThingProps[$t['Type']] & $THING_HAS_GADGETS) echo "<tr>" . fm_textarea("Gadgets",$t,'Gadgets',8,3);
   echo "<tr>" . fm_textarea("Description\n(For others)",$t,'Description',8,3);
