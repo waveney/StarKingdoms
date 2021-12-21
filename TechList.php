@@ -55,7 +55,7 @@
       echo fm_hidden("Description$i",$T['Description']);
       }   
 
-  $T = ['PreReqLevel'=>0,'Slots'=>0,'MinThingLevel'=>0];
+  $T = ['PreReqLevel'=>0,'Slots'=>0,'MinThingLevel'=>0, 'Cat'=>2];
   echo "<tr><td><td>" . fm_select($Tech_Cats,$T,'Cat',0,'',"Cat0");
   echo fm_text1("",$T,'Name',2,'','',"Name0");
       echo "<td>" . fm_select($Fields,$T,'Field',1,'',"Field0");

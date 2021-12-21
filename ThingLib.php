@@ -13,7 +13,7 @@ $Fields = ['Engineering','Physics','Xenology'];
 $ShipTypes = ['','Military','Support','Civilian'];
 $Tech_Cats = ['Core','Supp','Non Std'];
 $CivMil = ['','Civilian','Military'];
-$BuildState = ['Planning','Building','Launching','Built'];
+$BuildState = ['Planning','Building','Shakedown','Complete'];
 
 $ModFormulaes = [];
 $ModValues = [];
@@ -316,9 +316,11 @@ function Show_Thing(&$t) {
   if (isset($t['Buildstate']) && $t['Buildstate'] == 1) echo fm_number('Build Project',$t,'ProjectId');
   echo "<tr>" . fm_radio('Whose',$FactNames ,$t,'Whose','',1,'colspan=6','',$Fact_Colours,0); 
   if  ($ThingProps[$t['Type']] & $THING_HAS_GADGETS) echo "<tr>" . fm_textarea("Gadgets",$t,'Gadgets',8,3);
-  echo "<tr>" . fm_textarea("Description\n(For others)",$t,'Description',8,3);
-  echo "<tr>" . fm_textarea('Notes',$t,'Notes',8,3);
-  echo "<tr>" . fm_textarea('GM Notes',$t,'GM_Notes',8,3,'class=NotSide');
+  echo "<tr>" . fm_textarea("Description\n(For others)",$t,'Description',8,2);
+  echo "<tr>" . fm_textarea('Notes',$t,'Notes',8,2);
+  echo "<tr>" . fm_textarea('Named Crew',$t,'NamedCrew',8,2);
+  echo "<tr>" . fm_textarea('GM Notes',$t,'GM_Notes',8,2,'class=NotSide');
+  echo "<tr>" . fm_textarea('History',$t,'History',8,2);
   if  ($ThingProps[$t['Type']] & $THING_HAS_MODULES) {
     echo "<tr>" . fm_number('Orig Health',$t,'OrigHealth') . fm_number('Cur Health',$t,'CurHealth');
     echo "<td>Basic Dam: " . Calc_Damage($t);

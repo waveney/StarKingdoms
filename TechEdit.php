@@ -42,7 +42,7 @@
   echo fm_hidden('id',$Tid);
 
   echo "<tr><td>Id:$Tid<td>" .  fm_select($Tech_Cats,$T,'Cat') . fm_text("Name",$T,'Name',2);
-  echo "<tr><td>Feild:<td>" . fm_select($Fields,$T,'Field') . "<td>Pre Req Tech:" . fm_select($CTNs,$T,'PreReqTech') . fm_number1('Module Slots',$T,'PreReqLevel');
+  echo "<tr><td>Feild:<td>" . fm_select($Fields,$T,'Field') . "<td>Pre Req Tech:" . fm_select($CTNs,$T,'PreReqTech') . fm_number1('Pre Req Level',$T,'PreReqLevel');
   echo "<tr>" . fm_number("Min Thing Level",$T,'MinThingLevel') . "<td>Civ /Mil:<td>" . fm_select($CivMil,$T,'CivMil');
   echo "<td>" . fm_select($MFN,$T,'Formula',1);
   echo "<tr>" . fm_textarea('Description',$T,'Description',8,20);
@@ -51,6 +51,7 @@
 
   echo "<h2><input type=submit name=Update value=Update> <input type=submit name=SHOW value=SHOW></h2>";
   echo "</form></div>";
+  echo "<H2><a href=TechList.php>Back to Tech List</a></h2>";
   dotail();
 ?>
 

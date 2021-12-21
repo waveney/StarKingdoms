@@ -4,16 +4,57 @@
 include_once("sk.php");
 include_once("GetPut.php");
 
+$PlayerState = ['Setup', 'Turn Planning' , 'Turn Submitted', 'Turn Being Processed'];
+global $PlayerState;
+
 function Player_Page() {
-  global $FACTION;
+  global $FACTION,$PlayerState;
   dostaffhead("Player Actions");
   
   echo "<h1>Player Actions</h1>\n";
+  
+  echo "<h2>Player state: " . $PlayerState[$FACTION['TurnState']] . "</h2>";
   echo "<div class=Player>";
   echo "The only current actions are:";
+  
+  switch ($PlayerState[$FACTION['TurnState']]) {
+  case 'Setup':
+    echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";    
+    echo "<li><a href=Setup.php>Setup</a>\n";
+    echo "<li><a href=ThingSetup.php?T=Ships>Setup Ships</a>\n";    
+    echo "<li><a href=ThingSetup.php?T=Army>Setup Armys</a>\n";    
+    echo "<li><a href=ThingSetup.php?T=Agent>Setup Agents</a>\n";    
+    break;
+  
+  
+  case 'Turn Planning':
+    echo "<li><a href=MapFull.php?PLAYER>Faction Map</a>\n";
+    echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";
+    echo "<li>Worlds with projects";
+    echo "<li>Things";
+    echo "<li>Economy";
+    echo "<li>Turn Text";
+    echo "<li><a href=Submit.php>Submit Turn</a>\n";  // Need validation for cash and warnings on unused things
+    break;
+      
+  case 'Turn Submitted':
+    echo "<li><a href=MapFull.php?PLAYER>Faction Map</a>\n";
+    echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";  
+      
+    break;
+      
+  case 'Turn Being Processed':
+    echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";
+    
+    break;  
+
+  }
+  
+  
   echo "<ul>";
-  echo "<li><a href=MapFull.php?PLAYER>Faction Map</a>\n";
-  echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";  
+
+
+
   echo "</ul>";
   echo "</div>";
   

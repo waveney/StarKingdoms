@@ -120,6 +120,11 @@
     $txt .= "<ul>\n";
     $txt .= "<li><a href=SysList.php>List Systems</a>\n";
     $txt .= "<p>";
+    $txt .= "<li><a href=DTList.php>List District Types</a>\n";
+    $txt .= "<li><a href=PlanetTypes.php>Planet Types</a>\n";  
+    $txt .= "<li><a href=PlanetStats.php>Planet Stats</a>\n";  
+    $txt .= "<p>";
+
 
     $txt .= "</ul>\n";
   }
@@ -144,7 +149,10 @@
                 fm_select($Facts,0,'F',1," onchange=this.form.submit()") . "</form>\n";
     
     $txt .= "<li><a href=SurveyRequest.php>Survey Request</a>\n";    
-
+    $txt .= "<li><form method=Post action=FactionName.php class=staffform>";
+      $txt .= "<input type=submit name=F value='Name Things' id=staffformid>" . 
+                fm_select($Facts,0,'F',1," onchange=this.form.submit()") . "</form>\n";
+    
     $txt .= "<p>";
 
     $txt .= "</ul>\n";
@@ -154,11 +162,6 @@
   if ($x = SKTable('Any','Game')) {
     $txt .= $x;
     $txt .= "<ul>\n";
-    $txt .= "<li><a href=DTList.php>List District Types</a>\n";
-    $txt .= "<li><a href=PlanetTypes.php>Planet Types</a>\n";  
-    $txt .= "<li><a href=PlanetStats.php>Planet Stats</a>\n";  
-    $txt .= "<p>";
-
     $txt .= "<li><a href=TechShow.php>List Technologies</a>\n";
     $txt .= "<li><a href=TechList.php>Edit Technologies</a>\n";
     $txt .= "<li><a href=ModuleList.php>List Module Types</a>\n";
@@ -166,7 +169,10 @@
     $txt .= "<p>";
     $txt .= "<li><a href=ThingTypes.php>Thing Types</a>\n";          
     $txt .= "<li><a href=ThingList.php>Thing list</a>\n";          
-    $txt .= "<li><a href=ThingEdit.php?ACTION=NEW>New Thing</a>\n";
+    $txt .= "<li><a href=ThingEdit.php?ACTION=NEW>New Thing</a>";
+    $txt .= "<p>\n";
+
+    $txt .= "<li><a href=DeepSpace.php>Deep Space Projects</a>\n";          
     $txt .= "</ul>\n";
   }
 

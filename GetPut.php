@@ -730,6 +730,34 @@ function Put_Game($now) {
   }
 }
 
+// Deep Space Projects
+
+function Get_DeepSpace($id) {
+  global $db;
+  $res = $db->query("SELECT * FROM DeepSpaceProjects WHERE id=$id");
+  if ($res) return $res->fetch_assoc();
+  return [];
+}
+
+function Put_DeepSpace(&$now) {
+  global $db,$GAMEID;
+  if (isset($now['id'])) {
+    $e=$now['id'];
+    $Cur = Get_DeepSpace($e);
+    return Update_db('ThingTypes',$Cur,$now);
+  } else {
+    return $now['id'] = Insert_db ('DeepSpaceProjects', $now );
+  }
+}
+
+function Get_DeepSpaces() {
+  global $db,$GAMEID;
+  $Ms = [];
+  $res = $db->query("SELECT * FROM  DeepSpaceProjects ");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ms[$ans['id']] = $ans;
+  return $Ms;
+}
+
 
 
 
