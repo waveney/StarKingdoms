@@ -5,10 +5,19 @@
   include_once("PlayerLib.php");
   
   A_Check('GM');
-  
+
+function SKLog($text) {
+  global $Sand,$USER;
+  $Sand['ActivityLog'] .= date("Y-m-d H:i:s - ") . $USER['Login'] . " - " . $text . "<br>\n";  // Who?
+}
+
+function Not_BeingProcessed() {
+  // No actions needed
+}
+
 function StartTurnProcess() {
   // Lock players out
-  $Facts - Get_Factions();
+  $Facts = Get_Factions();
   foreach ($Facts as $F) {
     $F['TurnState'] = 3;
     Put_Faction($F);
@@ -16,21 +25,44 @@ function StartTurnProcess() {
   echo "<br>All Factions marked as Turn Processing<p>\n";
 }
 
+function CashTransfers() {
+  echo "Cash Transfers are currently Manual<p>";
+}
+
+function PayForStargates() {
+  echo "Pay For Stargates are currently Manual<p>";
+}
+
 function StartProjects() {
-  /// Pay upfront costs
+  echo "Start Projects are currently Manual<p>";
+}
+
+
+function Colonisation() {
+  echo "Colonisation are currently Manual<p>";
+}
+
+
+function DeepSpaceConstruction() {
+  echo "Deep Space Construction	 are currently Manual<p>";
 }
 
 function StartAnomaly() {
+  echo "Anomaly Studies are currently Manual<p>";
+}
 
+function AgentsStartMissions() {
+  echo "Agents Start Missions	are currently Manual<p>";
 }
 
 function Economy() {
   // Transfer all monies and tolls, work out economies and generate income for each faction.
   // Blockades, theft and new things affect - this needs to be done BEFORE projects complete
+  echo "The Economy is currently Manual<p>";
 }  
 
 function LoadTroops() {
-
+  echo "Load Troops	is currently Manual<p>";
 }
 
 function Movements() {
@@ -70,7 +102,10 @@ function Movements() {
         Put_FactionSystem($FS2);
       }
       echo "<p>";
-  
+     
+     }
+     
+   }
   
    // Log movement into history
 
@@ -82,54 +117,163 @@ function Meetups() {
   // if (more than 1 has "control" then there is a bundle
   // if only 1 and has control and system controlled then there is a bundle
   // ships, agents ...
-
+  echo "Meetups is currently Manual<p>";
 }
 
 function SpaceCombat() {
-
+  echo "Space Combat is currently Manual<p>";
 }
 
 function OrbitalBombardment() {
-
+  echo "Orbital Bombardment is currently Manual<p>";
 }
 
 function GroundCombat() {
-
+  echo "Ground Combat is currently Manual<p>";
 }
 
 
 function ProjectProgress() {
   // Mark progress on all things, if finished change state appropriately 
-  
+  echo "Project Progress is currently Manual<p>";  
 }
 
 
-function Espionage() {
-
+function EspionageMissionsComplete() {
+  echo "Espionage Missions Complete	 is currently Manual<p>";
 }
 
 
 function ProjectsComplete() {
-
+  echo "Projects Complete is currently Manual<p>";  
 }
 
 function GenerateTurns() {
-
+  echo "Generate Turns is currently Manual<p>";
 }
 
 function FinishTurnProcess() {
-  // Change faction state
+  // Change faction state update turn number
 
   $Facts - Get_Factions();
   foreach ($Facts as $F) {
     $F['TurnState'] = 1;
     Put_Faction($F);
   }
+  
+  
   echo "<br>All Factions marked as Turn Processing<p>\n";
 
+// TODO Turn number
 
   // TODO Send messages to discord ??
 }
 
+function Do_Turn() {
+  global $Sand;  // If you need to add something, replace a spare if poss, then nothing breaks
+  $Stages = ['Not Being Processed',  'Spare', 'Spare', 'Spare','Start Turn Process', 'Spare', 'Spare', 'Cash Transfers', 'Spare', 'Spare', 
+             'Pay For Stargates', 'Spare', 'Spare', 'Start Projects', 'Spare',  'Spare',
+             'Spare', 'Colonisation', 'Spare', 'Spare', 'Deep Space Construction', 'Spare', 'Spare',
+             'Start Anomaly', 'Spare', 'Spare', 'Agents Start Missions', 'Spare', 'Spare', 'Economy', 'Spare', 'Spare', 'Load Troops', 'Spare', 'Spare',
+             'Movements', 'Spare', 'Spare', 'Meetups', 'Spare', 'Spare', 'Spare', 
+             'Space Combat', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Spare', 'Spare', 'Project Progress', 'Spare',
+             'Espionage Missions Complete', 'Spare', 'Spare', 'Spare', 'Projects Complete', 'Spare', 
+             'Spare', 'Spare', 'Generate Turns', 'Spare', 'Spare', 'Spare', 'Finish Turn Process'];
+  $Sand = Get_TurnNumber();
+// var_dump($Sand);
+
+  // Display progress chart
+  // At each stage BEGIN TRANSACTION at end COMMIT TRANSACTION ??
+  dostaffhead("Turn Processing");
+  echo "<H1>Turn Processing</h1>";
+  
+  if (isset($_REQUEST['ACTION']) && isset($_REQUEST['S'])) {
+    $S = $_REQUEST['S'];
+    switch ($_REQUEST['ACTION']) {
+    case 'Process':
+      $act = $Stages[$S];
+      $act = preg_replace('/ /','',$act);
+      echo "Would call $act<p>";
+      if (!is_callable($act)) {
+        echo "$act not yet written<p>";
+        break;
+      }
+      SKLog("Doing " . $Stages[$S]);      
+      $act(); 
+      $Sand['Progress'] |= 1<<$S;
+              
+      break;
+    case 'Skip':
+      if (isset($Stages[$S] )) {
+        echo "<b>" . $Stages[$S] . " Skipped<b>";
+        SKLog("Skipped " . $Stages[$S]);
+        $Sand['Progress'] |= 1<<$S;
+      } else {
+        echo "Off the end of the turn";
+      }
+      break;
+    case 'Revert':
+      if (isset($Stages[$S] )) {
+        echo "<b>" . $Stages[$S] . " Reverted<b>";
+        SKLog("Reverted " . $Stages[$S]);
+        $Sand['Progress'] &= ~(1<<$S);
+      } else {
+        echo "Off the end of the turn";
+      }
+      break;    
+      
+      break;
+    }  
+  }
+  
+  echo "<table border>";
+  echo "<tr><th>#<td>Mask<td>Stage<th>State<th>Commands\n";
+  $Stage = 0;
+  $Prog = 1;
+  $NextStage = -1;
+  
+  foreach ($Stages as $sta) {
+    if ($sta != 'Spare') {
+      echo "<tr><td>$Stage<td>" . dechex($Prog) . "<td>" . $sta . "<td>";
+      
+      if ($Sand['Progress'] & $Prog) {
+        echo "Completed<td><a href=TurnActions.php?ACTION=Revert&S=$Stage>Revert</a>";
+      } else if ($NextStage < 0) {
+        $NextStage = $Stage;
+        echo "Ready to do<td><a href=TurnActions.php?ACTION=Process&S=$Stage>Process</a> &nbsp &nbsp; <a href=TurnActions.php?ACTION=Skip&S=$Stage>Skip</a>";
+      } else {
+        echo "Not yet<td><a href=TurnActions.php?ACTION=Process&S=$Stage>Do now</a> ";
+      }
+    }
+    $Stage ++;
+    $Prog*=2;
+  }
+  echo "</table>";
+  
+  echo "<center><h2><a href=TurnActions.php?ACTION=Process&S=$NextStage>Do Next Stage</a></h2></center><br><p><br><p>\n";
+  
+  if ($Sand['id']) {
+    echo "<h2>Turn Detail (for bug fixing)</h2>";
+    echo "<table border><form method=post action=TurnActions.php?ACTION=FIX>";
+    Register_AutoUpdate('Turn',$Sand['id']);
+    echo fm_hidden('id',$Sand['id']);
+    echo "<tr>" . fm_number("Turn Number",$Sand,'TurnNumber');
+    echo "<tr>" . fm_hex("Progress",$Sand,'Progress');
+    echo "<tr>" . fm_textarea("Log",$Sand,'ActivityLog',8,5);
+    if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
+    echo "</table></form><p>\n";
+  }  
+   
+
+
+// var_dump($Sand);
+  Put_Turn($Sand);  // Probably redundant
+}
+
+
+// Start Here
+  Do_Turn();
+
   dotail();
+  
 ?>

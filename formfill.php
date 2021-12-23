@@ -158,6 +158,11 @@ var_dump($_POST);
     echo Put_Game($N);
     exit;
   
+  case 'Turn' :
+    $N = Get_Turn($id);
+    $N[$field] = ($field == 'Progress')?hexdec($Value):$Value;
+    echo Put_Turn($N);
+    exit;
 
   default:
     echo "Not setup $type for Auto Edit";

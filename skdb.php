@@ -124,6 +124,10 @@ function Insert_db($table, &$from, &$data=0, $proced=1) {
 //echo "<p>Fields: "; var_dump($Flds);
 //echo "<p>From>: "; var_dump($from);
   foreach ($Flds as $fname=>$ftype) {
+/* echo "<br> $fname $ftype <br>";
+if (isset($from[$fname])) echo "T1 (" . $from[$fname] . ") ";
+if ($from[$fname] != '') echo "T2 ";
+if ($indxname!=$fname) echo "T3 "; */
     if (isset($from[$fname]) && $from[$fname] != '' && $indxname!=$fname ) { 
       if ($fcnt++ > 0) { $newrec .= " , "; }
       if ($ftype == 'text') {
@@ -143,7 +147,7 @@ function Insert_db($table, &$from, &$data=0, $proced=1) {
       }
     }
   }
-//var_dump($newrec);exit;
+//var_dump($from,$newrec);exit;
   if ($proced) {
     $insert = $db->query($newrec);
     if ($insert) {

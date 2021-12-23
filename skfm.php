@@ -123,6 +123,17 @@ function fm_number($Name,&$data=0,$field,$extra1='',$extra2='',$field2='') {
   return $str . " $ADDALL>\n";
 }
 
+function fm_hex($Name,&$data=0,$field,$extra1='',$extra2='',$field2='') {
+  global $ADDALL,$AutoADD;
+  if ($field2 == '') $field2=$field;
+  $str = "<td $extra1>";
+  if ($Name) $str .= "$Name: ";
+  $str .= help($field) . "<td $extra1><input type=text name=$field id=$field $extra2";
+  if ($data) if (isset($data[$field])) $str .= " value=\"" . dechex($data[$field]) . "\"";
+  if ($AutoADD) $str .=  " oninput=AutoInput('$field2') ";
+  return $str . " $ADDALL>\n";
+}
+
 function fm_nontext($Name,&$data,$field,$cols=1,$extra='') {
   global $ADDALL,$AutoADD;
   $str = "<td $extra>$Name:" . help($field) . "<td colspan=$cols $extra>";

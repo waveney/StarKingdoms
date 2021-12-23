@@ -7,7 +7,7 @@
 function Get_Faction($id) {
   global $db;
   $res = $db->query("SELECT * FROM Factions WHERE id=$id");
-  if ($res) return $res->fetch_assoc();
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
   return [];
 }
 
@@ -56,7 +56,7 @@ function Get_Faction_Colours() {
 function Get_System($id) {
   global $db;
   $res = $db->query("SELECT * FROM Systems WHERE id=$id");
-  if ($res) return $res->fetch_assoc();
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
   return [];
 }
 
@@ -102,7 +102,7 @@ function Get_SystemRefs() {
 function Get_Planet($id) {
   global $db;
   $res = $db->query("SELECT * FROM Planets WHERE id=$id");
-  if ($res) return $res->fetch_assoc();
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
   return [];
 }
 
@@ -131,7 +131,7 @@ function Get_Planets($sysid) {
 function Get_Link($id) {
   global $db;
   $res = $db->query("SELECT * FROM Links WHERE id=$id");
-  if ($res) return $res->fetch_assoc();
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
   return [];
 }
 
@@ -184,7 +184,7 @@ function Get_LinksAll($sysid) {
 function Get_FactionLink($id) {
   global $db;
   $res = $db->query("SELECT * FROM FactionLink WHERE id=$id");
-  if ($res) return $res->fetch_assoc();
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
   return [];
 }
 
@@ -219,7 +219,7 @@ function Get_Factions4Link($Lid) {
 function Get_FactionSystem($id) {
   global $db;
   $res = $db->query("SELECT * FROM FactionSystem WHERE id=$id");
-  if ($res) return $res->fetch_assoc();
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
   return [];
 }
 
@@ -263,20 +263,21 @@ function Get_Factions4Sys($id) {
 function Get_FactionPlanet($id) {
   global $db;
   $res = $db->query("SELECT * FROM FactionPlanet WHERE id=$id");
-  if ($res) return $res->fetch_assoc();
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
+  return [];
 }
 
 function Get_FactionPlanetFS($Fact, $id) {
   global $db;
-  $res = $db->query("SELECT * FROM FactionSystem WHERE FactionId=$Fact AND Planet=$id");
-  if ($res) return $res->fetch_assoc();
+  $res = $db->query("SELECT * FROM FactionPlanet WHERE FactionId=$Fact AND Planet=$id");
+  if ($res) return $ans = $res->fetch_assoc();
   return ['FactionId'=>$Fact, 'Planet'=>$id];
 }
 
 function Put_FactionPlanet(&$now) {
   if (isset($now['id'])) {
     $e=$now['id'];
-    $Cur = Get_Faction($e);
+    $Cur = Get_FactionPlanet($e);
     return Update_db('FactionPlanet',$Cur,$now);
   } else {
     return $now['id'] = Insert_db ('FactionPlanet', $now );
@@ -308,7 +309,7 @@ function Get_LinkLevels() {
 function Get_DistrictType($id) {
   global $db;
   $res = $db->query("SELECT * FROM DistrictTypes WHERE id=$id");
-  if ($res) return $res->fetch_assoc();
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
   return [];
 }
 
@@ -339,7 +340,7 @@ function Get_DistrictTypeNames() {
 function Get_District($id) {
   global $db;
   $res = $db->query("SELECT * FROM Districts WHERE id=$id");
-  if ($res) return $res->fetch_assoc();
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
   return [];
 }
 
@@ -382,7 +383,7 @@ function Get_DistrictsT($Tid) {
 function Get_PlanetType($id) {
   global $db;
   $res = $db->query("SELECT * FROM PlanetTypes WHERE id=$id");
-  if ($res) return $res->fetch_assoc();
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
   return [];
 }
 
@@ -413,7 +414,7 @@ function Get_PlanetTypeNames() {
 function Get_Moon($id) {
   global $db;
   $res = $db->query("SELECT * FROM Moons WHERE id=$id");
-  if ($res) return $res->fetch_assoc();
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
   return [];
 }
 
@@ -441,7 +442,7 @@ function Get_Moons($Pid) {
 function Get_Thing($id) {
   global $db;
   $res = $db->query("SELECT * FROM Things WHERE id=$id");
-  if ($res) return $res->fetch_assoc();
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
   return [];
 }
 
@@ -494,7 +495,7 @@ function Get_ThingsSys($Sid,$type=0) {
 function Get_Module($id) {
   global $db;
   $res = $db->query("SELECT * FROM Modules WHERE id=$id");
-  if ($res) return $res->fetch_assoc();
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
   return [];
 }
 
@@ -522,7 +523,7 @@ function Get_Modules($Thing) {
 function Get_ModuleType($id) {
   global $db;
   $res = $db->query("SELECT * FROM ModuleTypes WHERE id=$id");
-  if ($res) return $res->fetch_assoc();
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
   return [];
 }
 
@@ -550,7 +551,7 @@ function Get_ModuleTypes() {
 function Get_ModFormula($id) {
   global $db;
   $res = $db->query("SELECT * FROM ModFormulae WHERE id=$id");
-  if ($res) return $res->fetch_assoc();
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
   return [];
 }
 
@@ -578,7 +579,7 @@ function Get_ModFormulaes() {
 function Get_Tech($id) {
   global $db;
   $res = $db->query("SELECT * FROM Technologies WHERE id=$id");
-  if ($res) return $res->fetch_assoc();
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
   return [];
 }
 
@@ -645,7 +646,7 @@ function Get_CoreTechsByName() {
 function Get_Faction_Tech($id) {
   global $db;
   $res = $db->query("SELECT * FROM FactionTechs WHERE id=$id");
-  if ($res) return $res->fetch_assoc();
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
   return [];
 }
 
@@ -680,7 +681,7 @@ function Get_Faction_Techs($Fact) {
 function Get_ThingType($id) {
   global $db;
   $res = $db->query("SELECT * FROM ThingTypes WHERE id=$id");
-  if ($res) return $res->fetch_assoc();
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
   return [];
 }
 
@@ -735,7 +736,7 @@ function Put_Game($now) {
 function Get_DeepSpace($id) {
   global $db;
   $res = $db->query("SELECT * FROM DeepSpaceProjects WHERE id=$id");
-  if ($res) return $res->fetch_assoc();
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
   return [];
 }
 
@@ -758,6 +759,57 @@ function Get_DeepSpaces() {
   return $Ms;
 }
 
+function Get_FactionMoon($id) {
+  global $db;
+  $res = $db->query("SELECT * FROM FactionMoon WHERE id=$id");
+  if ($res) return $res->fetch_assoc();
+}
 
+function Get_FactionMoonFS($Fact, $id) {
+  global $db;
+  $res = $db->query("SELECT * FROM FactionMoon WHERE FactionId=$Fact AND Moon=$id");
+  if ($res) return $ans = $res->fetch_assoc();
+  return ['FactionId'=>$Fact, 'Moon'=>$id];
+}
+
+function Put_FactionMoon(&$now) {
+  if (isset($now['id'])) {
+    $e=$now['id'];
+    $Cur = Get_FactionMoon($e);
+    return Update_db('FactionMoon',$Cur,$now);
+  } else {
+    return $now['id'] = Insert_db ('FactionMoon', $now );
+  }  
+}
+
+/// Turns
+
+function Get_Turn($id) {
+  global $db,$GAME,$GAMEID;
+  $res = $db->query("SELECT * FROM Turns WHERE id=$id");
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
+  return ['GameId'=>$GAMEID, 'Progress'=>0, 'ActivityLog'=>'', 'TurnNumber'=>$GAME['Turn']];
+}
+
+function Get_TurnNumber($id=0) {
+  global $db,$GAME,$GAMEID;
+  if ($id ==0) $id =$GAME['Turn'];
+  $res = $db->query("SELECT * FROM Turns WHERE GameId=$GAMEID AND TurnNumber=$id");
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
+  return ['GameId'=>$GAMEID, 'Progress'=>0, 'ActivityLog'=>'', 'TurnNumber'=>$GAME['Turn'] ];
+}
+
+
+function Put_Turn(&$now) {
+  global $db,$GAMEID;
+  if (isset($now['id'])) {
+    $e=$now['id'];
+    $Cur = Get_Turn($e);
+    return Update_db('Turns',$Cur,$now);
+  } else {
+var_dump($now);
+    return $now['id'] = Insert_db ('Turns', $now );
+  }
+}
 
 

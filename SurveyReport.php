@@ -74,7 +74,22 @@
   $Fs= Get_Factions();
   
   $pname = NameFind($N); // Need diff logic for player
-  if ($pname) {
+  if ($Fid) {
+    $FS = Get_FactionSystemFS($Fid, $Sid);
+    if (strlen($FS['Name']) > 1) {
+      $Fname = NameFind($FS);
+      
+      if ($pname != $Fname) {
+        if (strlen($pname) > 1) {
+          $pname = $Fname . " ( $pname | $Ref ) ";
+        } else {
+          $pname = $Fname . " ( $Ref ) ";        
+        }
+      } else {
+        $pname .= " ( $Ref ) ";   
+      }
+    }
+  } else if ($pname) {
     $pname .= " ( $Ref ) ";
   } else {
     $pname = $Ref;
@@ -161,7 +176,23 @@
       $Mns = [];
       if ($P['Moons']) $Mns = Get_Moons($Pid);
 
-      echo "<li><span class=SRName>" . NameFind($P) . "</span>";
+      $pname = NameFind($P); // Need diff logic for player
+      if ($Fid) {
+        $FP = Get_FactionPlanetFS($Fid, $Pid);
+        if (isset($FP['Name']) && strlen($FP['Name']) > 1) {
+          $Fname = NameFind($FP);
+      
+          if ($pname != $Fname) {
+            if (strlen($pname) > 1) {
+              $pname = $Fname . " ( $pname ) ";
+            } else {
+              $pname = $Fname;        
+            }
+          }    
+        }
+      } 
+
+      echo "<li><span class=SRName>" . $pname . "</span>";
       if ($P['Image']) echo "<img src=" . $P['Image'] . ">";
       if ($SurveyLevel >= 4) echo " Is " . ($PTNs[$P['Type']] == 'Asteroid Belt'?" an ":($PTD[$P['Type']]['Hospitable']?" a <b>habitable ":" an uninhabitable "));
       echo PM_Type($PTD[$P['Type']],"Planet") . "</b>.  ";
@@ -198,7 +229,24 @@
         echo Plural($Mns,'',"  The moon of note is:", "  The moons of note are: ") . "<p><ul>";
         foreach ($Mns as $M) {
           $Mid = $M['id'];
-          echo "<li><span class=SRName>" . NameFind($M) . "</span>";
+
+          $pname = NameFind($P); // Need diff logic for player
+          if ($Fid) {
+            $FP = Get_FactionMoonFS($Fid, $Mid);
+            if (isset($FP['Name']) && strlen($FP['Name']) > 1) {
+              $Fname = NameFind($FP);
+      
+              if ($pname != $Fname) {
+                if (strlen($pname) > 1) {
+                  $pname = $Fname . " ( $pname ) ";
+                } else {
+                  $pname = $Fname;        
+                }
+              }    
+            }
+          } 
+
+          echo "<li><span class=SRName>" . $pname . "</span>";
           if ($M['Image']) echo "<img src=" . $M['Image'] . ">";        
           if ($SurveyLevel >= 4) echo " Is " . ($PTNs[$M['Type']] == 'Asteroid Belt'?" an ":($PTD[$M['Type']]['Hospitable']?" a <b>habitable ":" an uninhabitable "));
           echo PM_Type($PTD[$M['Type']],"Moon") . "</b>.  ";

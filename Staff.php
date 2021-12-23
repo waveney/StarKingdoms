@@ -98,21 +98,6 @@
     $txt .= "</ul><p>\n";
   }
 
-// *********************** Users  **************************************************************
-  if ($x = SKTable('Any','Users')) {
-    $txt .= $x;
-    $txt .= "<ul>\n";
-    $txt .= "<li><a href=Login.php?ACTION=NEWPASSWD>New Password</a>\n";
-    if (Access('GM')) {
-      $txt .= "<li><a href=AddUser.php>Add User</a>";
-      $txt .= "<li><a href=ListUsers.php?FULL>List All Users</a>";
-    } else {
-      $txt .= "<li><a href=ListUsers.php>List Group Users</a>";    
-    }
-    $txt .= "</ul><p>\n";
-  }
-
-
 
 // *********************** Misc *****************************************************************
   if ($x = SKTable('Any','Systems')) {
@@ -123,6 +108,17 @@
     $txt .= "<li><a href=DTList.php>List District Types</a>\n";
     $txt .= "<li><a href=PlanetTypes.php>Planet Types</a>\n";  
     $txt .= "<li><a href=PlanetStats.php>Planet Stats</a>\n";  
+    $txt .= "<p>";
+
+
+    $txt .= "</ul>\n";
+  }
+
+// *********************** Misc *****************************************************************
+  if ($x = SKTable('Any','Turns')) {
+    $txt .= $x;
+    $txt .= "<ul>\n";
+    $txt .= "<li><a href=TurnActions.php>Turn Actions</a>\n";
     $txt .= "<p>";
 
 
@@ -175,6 +171,22 @@
     $txt .= "<li><a href=DeepSpace.php>Deep Space Projects</a>\n";          
     $txt .= "</ul>\n";
   }
+
+// *********************** Users  **************************************************************
+  if ($x = SKTable('Any','Users')) {
+    $txt .= $x;
+    $txt .= "<ul>\n";
+    $txt .= "<li><a href=Login.php?ACTION=NEWPASSWD>New Password</a>\n";
+    if (Access('GM')) {
+      $txt .= "<li><a href=AddUser.php>Add User</a>";
+      $txt .= "<li><a href=ListUsers.php?FULL>List All Users</a>";
+    } else {
+      $txt .= "<li><a href=ListUsers.php>List Group Users</a>";    
+    }
+    $txt .= "</ul><p>\n";
+  }
+
+
 
 // *********************** GENERAL ADMIN *********************************************************
   if ($x = SKTable('Any','General Admin')) {
