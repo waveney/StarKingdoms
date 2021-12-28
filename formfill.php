@@ -81,7 +81,7 @@ var_dump($_POST);
         }
       }
       $N= ['Type'=>$Value,'HostId'=>$mtch[1],'Number'=>1,'HostType' => 2];
-      echo 'FORCERELOAD54321:NOW' . Put_District($N);
+      echo 'FORCELOADCHANGE54321:NOW' . Put_District($N);
       exit;
 
     case (preg_match('/District(\w*)-(\d*)/',$field,$mtch)?true:false):
@@ -103,7 +103,7 @@ var_dump($_POST);
         }
       }
       $N= ['Type'=>$Value,'ThingId'=>$mtch[1],'Number'=>1];
-      echo 'FORCERELOAD54321:NOW' . Put_Module($N);
+      echo 'FORCELOADCHANGE54321:NOW' . Put_Module($N);
       exit;
 
     case (preg_match('/Module(\w*)-(\d*)/',$field,$mtch)?true:false):
@@ -120,7 +120,7 @@ var_dump($_POST);
     
     $N = Get_Thing($id);
     $N[$field] = $Value;
-    if ($field == 'Type' || $field == 'Level'|| $field == 'SubType') echo 'FORCERELOAD54321:NOW';
+    if ($field == 'Type' || $field == 'Level'|| $field == 'SubType') echo 'FORCELOADCHANGE54321:NOW';
     echo Put_Thing($N);
     exit;
   

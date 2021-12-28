@@ -73,7 +73,7 @@
   $Ref = $N['Ref'];
   $Fs= Get_Factions();
   
-  $pname = NameFind($N); // Need diff logic for player
+  $pname = NameFind($N);
   if ($Fid) {
     $FS = Get_FactionSystemFS($Fid, $Sid);
     if (strlen($FS['Name']) > 1) {

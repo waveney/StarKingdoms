@@ -271,10 +271,13 @@ function AutoInput(f) {
       document.getElementById(m[2]).src = m[3];
     } else if (m = data.match(/^\s*!(.*)!/)) $('#ErrorMessage').html( m[1] );
 
-    if (data.match(/FORCERELOAD54321:NOW/)) window.location.reload();
-    
     var dbg = document.getElementById('Debug');
     if (dbg) $('#Debug').html( data) ;  
+    if (data.match(/FORCRELOAD54321:NOW/)) window.location.reload();
+    if (data.match(/FORCELOADCHANGE54321:NOW/)) {
+      var Location = window.location.href + "?id=" + refval;
+      window.location.href = Location;
+    }
   });
 }
 

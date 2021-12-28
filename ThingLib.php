@@ -118,7 +118,7 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0) {
     break;
   }
   
-  if ($T['Slots']) echo "Uses " . $T['Slots'] . " module slots.  ";
+  if ($T['Slots']) echo "Uses " . $T['Slots'] . " module " . Plural($T['Slots'],"","slot","slots") . "  ";
   if ($T['CivMil']) echo "<b>" . $CivMil[$T['CivMil']] . " ships</b>";
   echo "<br>";
   
@@ -154,6 +154,7 @@ function Thing_Type_Props() {
 function Within_Sys_Locs(&$N) {
   include_once("SystemLib.php");
   $L[1] = 'Deep space';
+//  $L[2] = 'On board ship';
   $Ps = Get_Planets($N['id']);
   $PTD = Get_PlanetTypes();
   
@@ -293,10 +294,24 @@ function Show_Thing(&$t) {
   $ThingProps = Thing_Type_Props();
   $N = Get_System($t['SystemId']);
   $Syslocs = Within_Sys_Locs($N);
+  if ($t['SystemId'] == $t['NewSystemId']) {
+    $NewSyslocs = $Syslocs;
+  } elseif ($t['NewSystemId']) {
+    $NN = Get_System($t['NewSystemId']);
+    $NewSyslocs = Within_Sys_Locs($NN);
+  } else {
+    $NewSyslocs = [];
+  }
   $Systems = Get_SystemRefs();
   $t['MaxModules'] = Max_Modules($t);
   if  ($ThingProps[$t['Type']] & $THING_HAS_MODULES) $t['OrigHealth'] = Calc_Health($t);
-    
+  
+  $Links = Get_Links($N['Ref']);
+  $SelLinks = [''];
+  foreach ($Links as $L) $SelLinks[$L['id']] = ( "#" . $L['id'] . " to " . (($L['System1Ref'] == $N['Ref'])?$L['System2Ref']: $L['System1Ref'] ));
+
+  echo "Note Movement does not yet work for armies moving by ship.<p>\n";
+
   echo "<form method=post id=mainform enctype='multipart/form-data' action=ThingEdit.php>";
   echo "<div class=tablecont><table width=90% border class=SideTable>\n";
   Register_AutoUpdate('Thing',$tid);
@@ -306,14 +321,23 @@ function Show_Thing(&$t) {
   echo "<tr><td>Type:<td>" . fm_select($ttn,$t,'Type',1) . "<td>If Ship: " . fm_select($ShipTypes,$t,'SubType'); // need to make that easier
   echo fm_number("Level",$t,'Level');
 
-  echo "<tr><td>System:<td>" . fm_select($Systems,$t,'SystemId') . "<td>" . fm_select($Syslocs,$t,'WithinSysLoc');
-  echo "<td rowspan=3 colspan=3><table><tr>";
+  echo "<tr>" . fm_text('Name',$t,'Name',2);
+  echo "<td rowspan=4 colspan=4><table><tr>";
     echo fm_DragonDrop(1,'Image','Thing',$tid,$t,1,'',1,'','Thing');
   echo "</table>";
 
-  echo "<tr>" . fm_text('Name',$t,'Name',2);
+
   echo "<tr><td>Build State:" . fm_select($BuildState,$t,'Buildstate'); 
-  if (isset($t['Buildstate']) && $t['Buildstate'] == 1) echo fm_number('Build Project',$t,'ProjectId');
+  if (isset($t['Buildstate']) && $t['Buildstate'] == 1) {
+    echo fm_number('Build Project',$t,'ProjectId');
+  } else {
+    echo "<td>Taking Link:<td>" . fm_select($SelLinks,$t,'LinkId');
+  }
+
+  echo "<tr><td>System:<td>" . fm_select($Systems,$t,'SystemId') . "<td>" . fm_select($Syslocs,$t,'WithinSysLoc');
+  echo "<tr><td>New System:<td>" . fm_select($Systems,$t,'NewSystemId') . "<td>" . fm_select($NewSyslocs,$t,'NewLocation');
+
+
   echo "<tr>" . fm_radio('Whose',$FactNames ,$t,'Whose','',1,'colspan=6','',$Fact_Colours,0); 
   if  ($ThingProps[$t['Type']] & $THING_HAS_GADGETS) echo "<tr>" . fm_textarea("Gadgets",$t,'Gadgets',8,3);
   echo "<tr>" . fm_textarea("Description\n(For others)",$t,'Description',8,2);
@@ -392,6 +416,12 @@ function Show_Thing(&$t) {
   echo "</table></div>\n";
 
   echo "<h2><a href=ThingList.php>Back to Thing list</a> &nbsp; <input type=submit name=ACTION value=Duplicate></h2>";
+}
+
+function Scanners(&$T) {
+  $mods = Get_ModulesType(4,$T['id']);
+  if ($mods) return $mods['Number'] * ($mods['Level']+1);
+  return 0;
 }
 
 ?>

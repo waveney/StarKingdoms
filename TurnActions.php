@@ -15,6 +15,12 @@ function Not_BeingProcessed() {
   // No actions needed
 }
 
+function CheckTurnsReady() {
+  echo "Check Turns Ready are currently Manual<p>";
+}
+
+
+
 function StartTurnProcess() {
   // Lock players out
   $Facts = Get_Factions();
@@ -66,30 +72,38 @@ function LoadTroops() {
 }
 
 function Movements() {
-  // Foreach thing, do moves, do payments, generate list of new survey reports & levels, update "knowns" 
+  global $GAME;
+  // Foreach thing, do moves, generate list of new survey reports & levels, update "knowns" 
   
+  $LinkLevels = Get_LinkLevels();
   $Things = Get_AllThings();
   foreach ($Things as $T) {
-    if ($T['LinkId'] ) {
+    if ($T['LinkId'] && $T['NewSystemId'] != $T['SystemId'] ) {
       $Lid = $T['LinkId']; 
       
       $L = Get_Link($Lid);
-      
+
+      $Fid = $L['Whose'];
       $SR1 = Get_SystemR($L['System1Ref']);
       $SR2 = Get_SystemR($L['System2Ref']);
       
       $FL = Get_FactionLinkFL($Fid,$Lid);
-      $FL['Known'] = 1;
-      Put_FactionLink($FL);
+      if (!isset($FL['Known']) || !$FL['Known']) {
+        $FL['Known'] = 1;
+        Put_FactionLink($FL);
+      }
       
       $FS1 = Get_FactionSystemFS($Fid,$SR1['id']);
+      $ScanLevel = Scanners($T);
 
       if (isset($FS1['ScanLevel'])) { 
         echo "Already seen system " . $L['System1Ref'] . " at level " . $FS1['ScanLevel'];
       } else {
-        $FS1['ScanLevel'] = 1;
+        $FS1['ScanLevel'] = $ScanLevel;
         echo "System " . $L['System1Ref'] . " is new give a survey report";
         Put_FactionSystem($FS1);
+        $add = ['FactionId'=>$Fid, 'TurnNumber'=>$GAME['Turn'], 'SystemId'=>$L['System1Ref'], 'ScanLevel'=> $ScanLevel ];
+        Insert_db('ScansDue', $add);
       }
       echo "<p>";
         
@@ -97,18 +111,86 @@ function Movements() {
       if (isset($FS2['ScanLevel'])) { 
         echo "Already seen system " . $L['System2Ref'] . " at level " . $FS2['ScanLevel'];
       } else {
-        $FS2['ScanLevel'] = 1;
+        $FS2['ScanLevel'] = $ScanLevel;
         echo "System " . $L['System2Ref'] . " is new give a survey report";
         Put_FactionSystem($FS2);
+        $add = ['FactionId'=>$Fid, 'TurnNumber'=>$GAME['Turn'], 'SystemId'=>$L['System2Ref'], 'ScanLevel'=> $ScanLevel ];
+        Insert_db('ScansDue', $add);
       }
       echo "<p>";
-     
-     }
-     
-   }
-  
-   // Log movement into history
+      
+      if ($T['SystemId'] == $SR1['id']) {
+        $Sid = $T['NewSystemId'] = $SR2['id'];
+        $Ref = $SR2['Ref']; // Names...
+        $N = $SR2;
+      } else {
+        $Sid = $T['NewSystemId'] = $SR1['id']; 
+        $Ref = $SR1['Ref'];
+        $N = $SR1;
+      }
+      
+      $pname = NameFind($N);
+      if ($Fid) {
+        $FS = Get_FactionSystemFS($Fid, $Sid);
+        if (strlen($FS['Name']) > 1) {
+          $Fname = NameFind($FS);
+      
+          if ($pname != $Fname) {
+            if (strlen($pname) > 1) {
+              $pname = $Fname . " ( $pname | $Ref ) ";
+            } else {
+              $pname = $Fname . " ( $Ref ) ";        
+            }
+          } else {
+            $pname .= " ( $Ref ) ";   
+          }
+        }
+      } else if ($pname) {
+        $pname .= " ( $Ref ) ";
+      } else {
+        $pname = $Ref;
+      }
 
+      $EndLocs = Within_Sys_Locs($T['NewSystemId']);
+      $T['SystemId'] = $T['NewSystemId'];
+      $T['WithinSysLoc'] = $T['NewLocation'];
+      SKLog("Moved to $pname along " . $LinkLevels[$L['Level']]['Colour']. " link #$Lid to " . $EndLocs[$T['NewLocation']]); 
+      $T['LinkId'] = 0;
+      Put_Thing($T);
+    } else if ( $T['WithinSysLoc'] != $T['NewLocation'] ) {
+      $T['WithinSysLoc'] = $T['NewLocation'];
+      $N = Get_System($T['SystemId']);
+      $Sid = $T['SystemId'];
+
+      $pname = NameFind($N);
+      if ($Fid) {
+        $FS = Get_FactionSystemFS($Fid, $Sid);
+        if (strlen($FS['Name']) > 1) {
+          $Fname = NameFind($FS);
+      
+          if ($pname != $Fname) {
+            if (strlen($pname) > 1) {
+              $pname = $Fname . " ( $pname | $Ref ) ";
+            } else {
+              $pname = $Fname . " ( $Ref ) ";        
+            }
+          } else {
+            $pname .= " ( $Ref ) ";   
+          }
+        }
+      } else if ($pname) {
+        $pname .= " ( $Ref ) ";
+      } else {
+        $pname = $Ref;
+      }
+
+      $EndLocs = Within_Sys_Locs($N);
+      SKLog("Moved to " . $EndLocs[$T['NewLocation']] . " within $pname"); 
+      Put_Thing($T);
+    }        
+    
+  }
+   // Log movement into history
 }
 
 
@@ -152,6 +234,14 @@ function GenerateTurns() {
   echo "Generate Turns is currently Manual<p>";
 }
 
+function TidyUpMovements() {
+  global $db,$GAMEID;
+  
+  $res = $db->query("UPDATE Things SET LinkId=0 WHERE LinkId>0 AND GameId=$GAMEID");
+  
+  echo "Movements Tidied Up<p>";  
+}
+
 function FinishTurnProcess() {
   // Change faction state update turn number
 
@@ -171,14 +261,14 @@ function FinishTurnProcess() {
 
 function Do_Turn() {
   global $Sand;  // If you need to add something, replace a spare if poss, then nothing breaks
-  $Stages = ['Not Being Processed',  'Spare', 'Spare', 'Spare','Start Turn Process', 'Spare', 'Spare', 'Cash Transfers', 'Spare', 'Spare', 
+  $Stages = ['Not Being Processed',  'Check Turns Ready', 'Spare', 'Spare','Start Turn Process', 'Spare', 'Spare', 'Cash Transfers', 'Spare', 'Spare', 
              'Pay For Stargates', 'Spare', 'Spare', 'Start Projects', 'Spare',  'Spare',
              'Spare', 'Colonisation', 'Spare', 'Spare', 'Deep Space Construction', 'Spare', 'Spare',
              'Start Anomaly', 'Spare', 'Spare', 'Agents Start Missions', 'Spare', 'Spare', 'Economy', 'Spare', 'Spare', 'Load Troops', 'Spare', 'Spare',
              'Movements', 'Spare', 'Spare', 'Meetups', 'Spare', 'Spare', 'Spare', 
              'Space Combat', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Spare', 'Spare', 'Project Progress', 'Spare',
              'Espionage Missions Complete', 'Spare', 'Spare', 'Spare', 'Projects Complete', 'Spare', 
-             'Spare', 'Spare', 'Generate Turns', 'Spare', 'Spare', 'Spare', 'Finish Turn Process'];
+             'Spare', 'Spare', 'Generate Turns', 'Spare', 'Tidy Up Movements', 'Spare', 'Finish Turn Process'];
   $Sand = Get_TurnNumber();
 // var_dump($Sand);
 

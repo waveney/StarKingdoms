@@ -8,6 +8,7 @@ function New_Thing(&$t) {
   $FactNames = Get_Faction_Names();
   $Fact_Colours = Get_Faction_Colours();
   $Systems = Get_SystemRefs();
+  if (!isset($t['Whose'])) $t['Whose'] = 0;
 
   echo "<h1>Create Thing:</h1>";
   echo "<form method=post action=ThingEdit.php>";
@@ -42,7 +43,9 @@ function New_Thing(&$t) {
          New_Thing($_POST);
        }
        $_POST['GameId'] = $GAMEID;
+       $_POST['NewSystemId'] = $_POST['SystemId']
        $tid = Insert_db_post('Things',$t);
+       $t['id'] = $tid;
        break;
      
      case 'DELETE' :

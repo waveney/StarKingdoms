@@ -518,6 +518,14 @@ function Get_Modules($Thing) {
   return $Ms;
 }
 
+function Get_ModulesType($Thing,$Type) {
+  global $db,$GAMEID;
+  $Ms = [];
+  $res = $db->query("SELECT * FROM Modules WHERE ThingId=$Thing AND Type=$Type");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
+  return $Ms;
+}
+
 // Module Types
 
 function Get_ModuleType($id) {
