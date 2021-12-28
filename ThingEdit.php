@@ -43,7 +43,7 @@ function New_Thing(&$t) {
          New_Thing($_POST);
        }
        $_POST['GameId'] = $GAMEID;
-       $_POST['NewSystemId'] = $_POST['SystemId']
+       $_POST['NewSystemId'] = $_POST['SystemId'];
        $tid = Insert_db_post('Things',$t);
        $t['id'] = $tid;
        break;

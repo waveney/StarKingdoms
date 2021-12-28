@@ -88,6 +88,10 @@
       } else {
         $pname .= " ( $Ref ) ";   
       }
+    } else if ($pname) {
+      $pname .= " ( $Ref ) ";
+    } else {
+      $pname = $Ref;
     }
   } else if ($pname) {
     $pname .= " ( $Ref ) ";

@@ -3,12 +3,21 @@
   include_once("GetPut.php");
   include_once("ThingLib.php");
   include_once("PlayerLib.php");
+  include_once("SystemLib.php");
   
   A_Check('GM');
 
 function SKLog($text) {
   global $Sand,$USER;
   $Sand['ActivityLog'] .= date("Y-m-d H:i:s - ") . $USER['Login'] . " - " . $text . "<br>\n";  // Who?
+}
+
+function TurnLog($Fid,$text,&$T=0) {
+  global $GAME;
+  $LF = fopen("Turns/" . $GAME['id'] . "/" . $GAME['Turn'] . "/$Fid.txt", "a+");
+  fwrite($LF,"$text\n");
+  if ($T) $T['History'] .= "Turn#" . $GAME['Turn'] . ": " . $text . "\n";
+  fclose($LF);
 }
 
 function Not_BeingProcessed() {
@@ -29,6 +38,7 @@ function StartTurnProcess() {
     Put_Faction($F);
   }
   echo "<br>All Factions marked as Turn Processing<p>\n";
+  $LF = mkdir("Turns/" . $GAMEID . "/" . $GAME['Turn'],0777,true);
 }
 
 function CashTransfers() {
@@ -72,22 +82,25 @@ function LoadTroops() {
 }
 
 function Movements() {
-  global $GAME;
+  global $GAME,$GAMEID;
   // Foreach thing, do moves, generate list of new survey reports & levels, update "knowns" 
-  
+
+  if (!file_exists("Turns/" . $GAMEID . "/" . $GAME['Turn'])) $LF = mkdir("Turns/" . $GAMEID . "/" . $GAME['Turn'],0777,true);  
   $LinkLevels = Get_LinkLevels();
   $Things = Get_AllThings();
   foreach ($Things as $T) {
     if ($T['LinkId'] && $T['NewSystemId'] != $T['SystemId'] ) {
+echo "Moving " . $T['Name'] . "<br>";
       $Lid = $T['LinkId']; 
       
       $L = Get_Link($Lid);
 
-      $Fid = $L['Whose'];
+      $Fid = $T['Whose'];
       $SR1 = Get_SystemR($L['System1Ref']);
       $SR2 = Get_SystemR($L['System2Ref']);
       
       $FL = Get_FactionLinkFL($Fid,$Lid);
+//var_dump($FL);
       if (!isset($FL['Known']) || !$FL['Known']) {
         $FL['Known'] = 1;
         Put_FactionLink($FL);
@@ -95,6 +108,7 @@ function Movements() {
       
       $FS1 = Get_FactionSystemFS($Fid,$SR1['id']);
       $ScanLevel = Scanners($T);
+//echo "Scan is $ScanLevel<br>";
 
       if (isset($FS1['ScanLevel'])) { 
         echo "Already seen system " . $L['System1Ref'] . " at level " . $FS1['ScanLevel'];
@@ -102,7 +116,8 @@ function Movements() {
         $FS1['ScanLevel'] = $ScanLevel;
         echo "System " . $L['System1Ref'] . " is new give a survey report";
         Put_FactionSystem($FS1);
-        $add = ['FactionId'=>$Fid, 'TurnNumber'=>$GAME['Turn'], 'SystemId'=>$L['System1Ref'], 'ScanLevel'=> $ScanLevel ];
+        $add = ['FactionId'=>$Fid, 'TurnNumber'=>$GAME['Turn'], 'SystemRef'=>$L['System1Ref'], 'ScanLevel'=> $ScanLevel ];
+//var_dump($add);
         Insert_db('ScansDue', $add);
       }
       echo "<p>";
@@ -114,7 +129,8 @@ function Movements() {
         $FS2['ScanLevel'] = $ScanLevel;
         echo "System " . $L['System2Ref'] . " is new give a survey report";
         Put_FactionSystem($FS2);
-        $add = ['FactionId'=>$Fid, 'TurnNumber'=>$GAME['Turn'], 'SystemId'=>$L['System2Ref'], 'ScanLevel'=> $ScanLevel ];
+        $add = ['FactionId'=>$Fid, 'TurnNumber'=>$GAME['Turn'], 'SystemRef'=>$L['System2Ref'], 'ScanLevel'=> $ScanLevel ];
+//var_dump($add);
         Insert_db('ScansDue', $add);
       }
       echo "<p>";
@@ -128,13 +144,12 @@ function Movements() {
         $Ref = $SR1['Ref'];
         $N = $SR1;
       }
-      
+
       $pname = NameFind($N);
       if ($Fid) {
         $FS = Get_FactionSystemFS($Fid, $Sid);
         if (strlen($FS['Name']) > 1) {
           $Fname = NameFind($FS);
-      
           if ($pname != $Fname) {
             if (strlen($pname) > 1) {
               $pname = $Fname . " ( $pname | $Ref ) ";
@@ -144,6 +159,10 @@ function Movements() {
           } else {
             $pname .= " ( $Ref ) ";   
           }
+        } else if ($pname) {
+          $pname .= " ( $Ref ) ";
+        } else {
+          $pname = $Ref;
         }
       } else if ($pname) {
         $pname .= " ( $Ref ) ";
@@ -151,16 +170,19 @@ function Movements() {
         $pname = $Ref;
       }
 
-      $EndLocs = Within_Sys_Locs($T['NewSystemId']);
+//      $N = Get_System($T['NewSystemId']);
+      $EndLocs = Within_Sys_Locs($N);
       $T['SystemId'] = $T['NewSystemId'];
       $T['WithinSysLoc'] = $T['NewLocation'];
-      SKLog("Moved to $pname along " . $LinkLevels[$L['Level']]['Colour']. " link #$Lid to " . $EndLocs[$T['NewLocation']]); 
+//      SKLog("Moved to $pname along " . $LinkLevels[$L['Level']]['Colour']. " link #$Lid to " . $EndLocs[$T['NewLocation']]); 
+      TurnLog($Fid,$T['Name'] . " moved to $pname along " . $LinkLevels[$L['Level']]['Colour']. " link #$Lid to " . $EndLocs[$T['NewLocation']],$T); 
       $T['LinkId'] = 0;
       Put_Thing($T);
     } else if ( $T['WithinSysLoc'] != $T['NewLocation'] ) {
       $T['WithinSysLoc'] = $T['NewLocation'];
       $N = Get_System($T['SystemId']);
       $Sid = $T['SystemId'];
+      $Fid = $T['Whose'];
 
       $pname = NameFind($N);
       if ($Fid) {
@@ -177,7 +199,12 @@ function Movements() {
           } else {
             $pname .= " ( $Ref ) ";   
           }
+        } else if ($pname) {
+          $pname .= " ( $Ref ) ";
+        } else {
+          $pname = $Ref;
         }
+
       } else if ($pname) {
         $pname .= " ( $Ref ) ";
       } else {
@@ -185,12 +212,12 @@ function Movements() {
       }
 
       $EndLocs = Within_Sys_Locs($N);
-      SKLog("Moved to " . $EndLocs[$T['NewLocation']] . " within $pname"); 
+//      SKLog("Moved to " . $EndLocs[$T['NewLocation']] . " within $pname"); 
+      TurnLog($Fid,$T['Name'] . " moved to " . $EndLocs[$T['NewLocation']] .  " within $pname",$T); 
       Put_Thing($T);
     }        
     
   }
-   // Log movement into history
 }
 
 

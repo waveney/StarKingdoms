@@ -153,8 +153,10 @@ function Thing_Type_Props() {
 
 function Within_Sys_Locs(&$N) {
   include_once("SystemLib.php");
+  $L[0] = "";
   $L[1] = 'Deep space';
 //  $L[2] = 'On board ship';
+if (!isset($N['id'])) { var_dump($N); exit; }
   $Ps = Get_Planets($N['id']);
   $PTD = Get_PlanetTypes();
   
@@ -331,11 +333,11 @@ function Show_Thing(&$t) {
   if (isset($t['Buildstate']) && $t['Buildstate'] == 1) {
     echo fm_number('Build Project',$t,'ProjectId');
   } else {
-    echo "<td>Taking Link:<td>" . fm_select($SelLinks,$t,'LinkId');
+    echo "<td>Taking Link:<td>" . fm_select($SelLinks,$t,'LinkId') . "Update this normally";
   }
 
   echo "<tr><td>System:<td>" . fm_select($Systems,$t,'SystemId') . "<td>" . fm_select($Syslocs,$t,'WithinSysLoc');
-  echo "<tr><td>New System:<td>" . fm_select($Systems,$t,'NewSystemId') . "<td>" . fm_select($NewSyslocs,$t,'NewLocation');
+  echo "<tr><td>New System:<td>" . fm_select($Systems,$t,'NewSystemId',1) . "This is derived data<td>" . fm_select($NewSyslocs,$t,'NewLocation');
 
 
   echo "<tr>" . fm_radio('Whose',$FactNames ,$t,'Whose','',1,'colspan=6','',$Fact_Colours,0); 

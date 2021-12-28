@@ -275,7 +275,7 @@ function AutoInput(f) {
     if (dbg) $('#Debug').html( data) ;  
     if (data.match(/FORCRELOAD54321:NOW/)) window.location.reload();
     if (data.match(/FORCELOADCHANGE54321:NOW/)) {
-      var Location = window.location.href + "?id=" + refval;
+      var Location = window.location.pathname + "?id=" + refval;  //  window.location.hostname
       window.location.href = Location;
     }
   });

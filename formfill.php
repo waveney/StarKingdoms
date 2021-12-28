@@ -120,7 +120,18 @@ var_dump($_POST);
     
     $N = Get_Thing($id);
     $N[$field] = $Value;
-    if ($field == 'Type' || $field == 'Level'|| $field == 'SubType') echo 'FORCELOADCHANGE54321:NOW';
+    if ($field == 'LinkId') {
+      $L = Get_Link($Value);
+      $SYS1 = Get_SystemR($L['System1Ref']);
+      $SYS2 = Get_SystemR($L['System2Ref']);      
+      if ($N['SystemId'] == $SYS1['id']) {
+        $N['NewSystemId'] = $SYS2['id'];
+      } else {
+        $N['NewSystemId'] = $SYS1['id'];
+      }
+      $N['NewLocation'] = 1;
+    }
+    if ($field == 'Type' || $field == 'Level'|| $field == 'SubType' || $field == 'LinkId') echo 'FORCELOADCHANGE54321:NOW';
     echo Put_Thing($N);
     exit;
   
