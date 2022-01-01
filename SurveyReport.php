@@ -317,7 +317,11 @@
   }
  
   } else { // BLIND
-    echo "You are caught in a Nebula and have no idea what is here.<p>";
+    if ($N['Nebulae']) {
+      echo "You are caught in a Nebula and have no idea what is here.<p>";
+    } else {
+      echo "You have arrived somewhere new without sensors.  You have no idea what is here.<p>";
+    }
   
     $Ls = Get_Links($Ref);
     $GM = Access('GM');

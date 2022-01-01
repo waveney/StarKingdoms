@@ -727,6 +727,8 @@ function Has_Tech($fid,$name) {
   return 0;
 }
 
+// Get Game in sk.php
+
 function Put_Game($now) {
   global $db,$GAMEID;
   if (isset($now['id'])) {
@@ -814,9 +816,87 @@ function Put_Turn(&$now) {
     $Cur = Get_Turn($e);
     return Update_db('Turns',$Cur,$now);
   } else {
-var_dump($now);
     return $now['id'] = Insert_db ('Turns', $now );
   }
 }
+
+// Projects
+
+function Get_Project($id) {
+  global $db;
+  $res = $db->query("SELECT * FROM Projects WHERE id=$id");
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
+  return [];
+}
+
+function Put_Project(&$now) {
+  global $db,$GAMEID;
+  if (isset($now['id'])) {
+    $e=$now['id'];
+    $Cur = Get_Project($e);
+    return Update_db('Projects',$Cur,$now);
+  } else {
+    return $now['id'] = Insert_db ('Projects', $now );
+  }
+}
+
+
+// Project Types
+function Get_ProjectType($id) {
+  global $db;
+  $res = $db->query("SELECT * FROM ProjectTypes WHERE id=$id");
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
+  return [];
+}
+
+function Get_ProjectTypes() {
+  global $db;
+  $Ts = [];
+  $res = $db->query("SELECT * FROM ProjectTypes");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
+  return $Ts;
+}
+
+function Put_ProjectType(&$now) {
+  global $db,$GAMEID;
+  if (isset($now['id'])) {
+    $e=$now['id'];
+    $Cur = Get_ProjectType($e);
+    return Update_db('Projects',$Cur,$now);
+  } else {
+    return $now['id'] = Insert_db ('ProjectTypes', $now );
+  }
+}
+
+// Project Homes
+
+function Get_ProjectHome($id) {
+  global $db;
+  $res = $db->query("SELECT * FROM ProjectHome WHERE id=$id");
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
+  return [];
+}
+
+function Get_ProjectHomes($who) {
+  global $db,$GAMEID;
+  $Ts = [];
+  $res = $db->query("SELECT * FROM ProjectHomes WHERE Whose=$who");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
+  return $Ts;
+}
+
+function Put_ProjectHome(&$now) {
+  global $db,$GAMEID;
+  if (isset($now['id'])) {
+    $e=$now['id'];
+    $Cur = Get_ProjectHome($e);
+    return Update_db('Projects',$Cur,$now);
+  } else {
+    return $now['id'] = Insert_db ('ProjectHomes', $now );
+  }
+}
+
+
+
 
 

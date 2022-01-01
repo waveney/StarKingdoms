@@ -100,7 +100,6 @@ echo "Moving " . $T['Name'] . "<br>";
       $SR2 = Get_SystemR($L['System2Ref']);
       
       $FL = Get_FactionLinkFL($Fid,$Lid);
-//var_dump($FL);
       if (!isset($FL['Known']) || !$FL['Known']) {
         $FL['Known'] = 1;
         Put_FactionLink($FL);
@@ -108,7 +107,6 @@ echo "Moving " . $T['Name'] . "<br>";
       
       $FS1 = Get_FactionSystemFS($Fid,$SR1['id']);
       $ScanLevel = Scanners($T);
-//echo "Scan is $ScanLevel<br>";
 
       if (isset($FS1['ScanLevel'])) { 
         echo "Already seen system " . $L['System1Ref'] . " at level " . $FS1['ScanLevel'];
@@ -117,7 +115,6 @@ echo "Moving " . $T['Name'] . "<br>";
         echo "System " . $L['System1Ref'] . " is new give a survey report";
         Put_FactionSystem($FS1);
         $add = ['FactionId'=>$Fid, 'TurnNumber'=>$GAME['Turn'], 'SystemRef'=>$L['System1Ref'], 'ScanLevel'=> $ScanLevel ];
-//var_dump($add);
         Insert_db('ScansDue', $add);
       }
       echo "<p>";
@@ -130,7 +127,6 @@ echo "Moving " . $T['Name'] . "<br>";
         echo "System " . $L['System2Ref'] . " is new give a survey report";
         Put_FactionSystem($FS2);
         $add = ['FactionId'=>$Fid, 'TurnNumber'=>$GAME['Turn'], 'SystemRef'=>$L['System2Ref'], 'ScanLevel'=> $ScanLevel ];
-//var_dump($add);
         Insert_db('ScansDue', $add);
       }
       echo "<p>";
@@ -249,7 +245,7 @@ function ProjectProgress() {
 
 
 function EspionageMissionsComplete() {
-  echo "Espionage Missions Complete	 is currently Manual<p>";
+  echo "Espionage Missions Complete	is currently Manual<p>";
 }
 
 
@@ -264,7 +260,7 @@ function GenerateTurns() {
 function TidyUpMovements() {
   global $db,$GAMEID;
   
-  $res = $db->query("UPDATE Things SET LinkId=0 WHERE LinkId>0 AND GameId=$GAMEID");
+  $res = $db->query("UPDATE Things SET LinkId=0 WHERE LinkId>0 AND GameId=$GAMEID"); // Might be redundant now
   
   echo "Movements Tidied Up<p>";  
 }

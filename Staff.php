@@ -172,6 +172,21 @@
     $txt .= "</ul>\n";
   }
 
+// *********************** Misc *****************************************************************
+  if ($x = SKTable('Any','Projects')) {
+    $txt .= $x;
+    $txt .= "<ul>\n";
+    $txt .= "<li><a href=ProjList.php>List Projects</a><p>\n";
+    $txt .= "<li><a href=ProjTypes.php>List Project Types</a>\n";
+    $txt .= "<li><a href=ProjHomes.php>List Project Homes</a><p>\n";
+
+    $txt .= "<li><a href=RebuildHomes.php>Rebuild Project Homes</a>\n";
+    $txt .= "<p>";
+
+
+    $txt .= "</ul>\n";
+  }
+
 // *********************** Users  **************************************************************
   if ($x = SKTable('Any','Users')) {
     $txt .= $x;

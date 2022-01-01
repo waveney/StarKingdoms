@@ -281,6 +281,7 @@ function Show_Planet(&$P,$Mode=0,$Buts=0) {
     };
 
   echo "<tr><td>Add District Type<td>" . fm_Select($DTs, NULL , 'Number', 1,'',"DistrictTypeAdd-$Pid");
+  echo fm_number(($P['ProjHome']?"<a href=ProjHome.php?id=" . $P['ProjHome'] . ">Project Home</a>":"Project Home"),$P,'ProjHome');
 
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "</table></div></form>\n";
@@ -358,6 +359,7 @@ function Show_Moon(&$M,$Mode=0) {
     };
 
   echo "<tr><td>Add District Type<td>" . fm_Select($DTs, NULL , 'Number', 1,'',"DistrictTypeAdd-$Mid");
+  echo fm_number(($M['ProjHome']?"<a href=ProjHome.php?id=" . $M['ProjHome'] . ">Project Home</a>":"Project Home"),$M,'ProjHome');
 
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "</table></div></form>\n";
