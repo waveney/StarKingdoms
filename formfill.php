@@ -102,6 +102,11 @@ var_dump($_POST);
           exit;
         }
       }
+      if ($Value == 3) {
+        $T = Get_Thing($id);
+        $T['HasDeepSpace'] = 1;
+        Put_Thing($id);
+      }
       $N= ['Type'=>$Value,'ThingId'=>$mtch[1],'Number'=>1];
       echo 'FORCELOADCHANGE54321:NOW' . Put_Module($N);
       exit;
@@ -111,7 +116,12 @@ var_dump($_POST);
       if ($Value && $mtch[1] != 'Type') { 
         $N[$mtch[1]] = $Value;     
         echo 'FORCERELOAD54321:NOW' . Put_Module($N);
-      } else { 
+      } else {
+        if ($N['Type'] == 3) {
+          $T = Get_Thing($id);
+          $T['HasDeepSpace'] = 0;
+          Put_Thing($id);
+        }
         echo 'FORCERELOAD54321:NOW' . db_delete('Modules',$mtch[2]);
       }
       exit;

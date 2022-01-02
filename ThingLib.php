@@ -404,6 +404,7 @@ function Show_Thing(&$t) {
 
     echo "<tr><td>Add Module Type<td>" . fm_Select($MTNs, NULL , 'Number', 1,'',"ModuleTypeAdd-$tid");
     echo fm_number("Max Modules",$t,'MaxModules');
+    echo fm_number1("Deep Space",$t,'HasDeepSpace');
     if ($totmodc > $t['MaxModules']) {
       echo "<td class=Err>TOO MANY MODULES\n";
     } elseif ($BadMods) {

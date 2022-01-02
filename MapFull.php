@@ -113,7 +113,7 @@
     if ($typ) $atts .= " shape=box pos=\"" . ($N['GridX']+(5-$N['GridY'])/2) . "," . (9-$N['GridY']) . "!\"";
     $atts .= "  shape=box style=filled fillcolor=$Colour color=$BdrColour";
     if ($NodeName) {
-      $atts .= NodeLab($ShortName, ($Faction==0?$N['Ref']:""));
+      $atts .= NodeLab($ShortName, $N['Ref']); //($Faction==0?$N['Ref']:""));
     }
     if ($N['Nebulae']) { $atts .= " penwidth=" . (2+$N['Nebulae']*2); $Neb = 1; }
     else { $atts .= " penwidth=2"; }

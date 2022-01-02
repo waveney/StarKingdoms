@@ -290,7 +290,7 @@
   echo "</ul>";
   
   $Ls = Get_Links($Ref);
-  echo "<BR CLEAR=ALL><h2>There are Stargates to:</h2>\n";
+  echo "<BR CLEAR=ALL><h2>There are Stargates to:</h2><ul>\n";
   $GM = Access('GM');
   
   foreach ($Ls as $L) {
@@ -315,6 +315,7 @@
     }
     
   }
+  echo "</ul><p>\n";
  
   } else { // BLIND
     if ($N['Nebulae']) {
@@ -348,7 +349,7 @@
   
   echo "</div>";
   
-  if (Access('GM')) echo "<h2><a href=SysEdit.php?id=$Sid>Edit System</s></h2>";
+  if (Access('GM')) echo "<p><h2><a href=SysEdit.php?id=$Sid>Edit System</s></h2>";
   
   dotail();
   

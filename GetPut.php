@@ -881,7 +881,7 @@ function Get_ProjectHomes($who) {
   global $db,$GAMEID;
   $Ts = [];
   $res = $db->query("SELECT * FROM ProjectHomes WHERE Whose=$who");
-  if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
   return $Ts;
 }
 
