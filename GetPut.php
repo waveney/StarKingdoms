@@ -356,7 +356,7 @@ function Put_District(&$now) {
 function Get_DistrictsP($Pid) {
   global $db,$GAMEID;
   $Ts = [];
-  $res = $db->query("SELECT * FROM Districts WHERE HostType=0 AND HostId=$Pid");
+  $res = $db->query("SELECT * FROM Districts WHERE HostType=0 AND HostId=$Pid ORDER BY Type");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
   return $Ts;
 }
@@ -364,7 +364,7 @@ function Get_DistrictsP($Pid) {
 function Get_DistrictsM($Mid) {
   global $db,$GAMEID;
   $Ts = [];
-  $res = $db->query("SELECT * FROM Districts WHERE HostType=1 AND HostId=$Mid");
+  $res = $db->query("SELECT * FROM Districts WHERE HostType=1 AND HostId=$Mid ORDER BY Type");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
   return $Ts;
 }
@@ -372,7 +372,7 @@ function Get_DistrictsM($Mid) {
 function Get_DistrictsT($Tid) {
   global $db,$GAMEID;
   $Ts = [];
-  $res = $db->query("SELECT * FROM Districts WHERE HostType=2 AND HostId=$Tid");
+  $res = $db->query("SELECT * FROM Districts WHERE HostType=2 AND HostId=$Tid ORDER BY Type");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
   return $Ts;
 }
@@ -840,6 +840,14 @@ function Put_Project(&$now) {
   }
 }
 
+function Get_Projects($home) {
+  global $db;
+  $Ts = [];
+  $res = $db->query("SELECT * FROM ProjectTypes WHERE Home=$home ORDER BY TurnStart");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
+  return $Ts;
+}
+
 
 // Project Types
 function Get_ProjectType($id) {
@@ -893,6 +901,34 @@ function Put_ProjectHome(&$now) {
     return Update_db('Projects',$Cur,$now);
   } else {
     return $now['id'] = Insert_db ('ProjectHomes', $now );
+  }
+}
+
+// Project Turns
+
+function Get_ProjectTurn($id) {
+  global $db;
+  $res = $db->query("SELECT * FROM ProjectTurn WHERE id=$id");
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
+  return [];
+}
+
+function Get_ProjectTurns($Proj) {
+  global $db,$GAMEID;
+  $Ts = [];
+  $res = $db->query("SELECT * FROM ProjectTurns WHERE ProjectId=$proj ORDER BY TurnNumber");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
+  return $Ts;
+}
+
+function Put_ProjectTurn(&$now) {
+  global $db,$GAMEID;
+  if (isset($now['id'])) {
+    $e=$now['id'];
+    $Cur = Get_ProjectTurn($e);
+    return Update_db('ProjectTurn',$Cur,$now);
+  } else {
+    return $now['id'] = Insert_db ('ProjectTurn', $now );
   }
 }
 

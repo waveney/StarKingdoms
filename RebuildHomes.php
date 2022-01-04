@@ -31,6 +31,7 @@
       $Planets = Get_Planets($N['id']);
       if ($Planets) {
         foreach ($Planets as &$P) {
+          $doneP = 0;
           if ($P['ProjHome']) {
             $PHi = $P['ProjHome'];
 //echo "PHI is $PHi<p>";
@@ -44,14 +45,18 @@
                   $H['ThingId'] = $P['id'];
                   Put_ProjectHome($H);
                 }
-                continue 2;
+                $doneP = 1;
+                break;
               }
             }
-            $H = ['ThingType'=> 1, 'ThingId'=> $P['id'], 'Inuse'=>1, 'Whose'=>$N['Control']];
-            $H['id'] = Put_ProjectHome($H);
-            $KnownHomes[$H['id']] = $H;
-            $P['ProjHome'] = $H['id'];
-            Put_Planet($P);
+            
+            if (!$doneP) {
+              $H = ['ThingType'=> 1, 'ThingId'=> $P['id'], 'Inuse'=>1, 'Whose'=>$N['Control']];
+              $H['id'] = Put_ProjectHome($H);
+              $KnownHomes[$H['id']] = $H;
+              $P['ProjHome'] = $H['id'];
+              Put_Planet($P);
+            }
           } else {
             $Dists = Get_DistrictsP($P['id']);
             $Homeless = 1;
@@ -76,9 +81,13 @@
               }
             }
           }
+//echo "Getting Moons of " . $P['Name'] . $P['id'] . "<p>";
           $Mns = Get_Moons($P['id']);
+//var_dump($Mns);
           if ($Mns) {
+//echo "Checking moons of " . $P['Name'] . "<p>";
             foreach ($Mns as &$M) {
+//echo "Q";
               if ($M['ProjHome']) {
                 $MHi = $M['ProjHome'];
                 foreach ($KnownHomes as &$H) {
@@ -100,6 +109,7 @@
                 
               } else {
                 $Dists = Get_DistrictsM($M['id']);
+var_dump($Dists);
                 $Homeless = 1;
                 if ($Dists) {
                   foreach ($KnownHomes as &$H) {
