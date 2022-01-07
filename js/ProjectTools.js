@@ -1,5 +1,21 @@
-function ToggleGroup(id) {
-  $(".Group" + id).toggle();
+var Dis;
+
+function Get_DistData() {
+  if (!Dis) Dis = JSON.parse(atob(document.getElementById('DistData')));
+}
+
+function Toggle(id) {
+  $("." + id).toggle();
+}
+
+function ToggleHome(id) {
+debugger;
+  Get_DistData();
+  
+//  for (Hi in Dis) {
+//    for (Di in Dis[Hi]) {
+//    } 
+//  }
 }
 
 function RushChange(Turn,Projn,Homeindx,Distindx,MaxRush) {
