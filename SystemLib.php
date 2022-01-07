@@ -257,7 +257,8 @@ function Show_Planet(&$P,$Mode=0,$Buts=0) {
     foreach ($Mns as $M) {
       $Mid = $M['id'];
       echo "<tr><td><a href=MoonEdit.php?id=$Mid>" . NameFind($M) . "<td colspan=6>";
-      echo " is " . ($PTNs[$M['Type']] == 'Asteroid Belt'?" an ":($PTD[$M['Type']]['Hospitable']?" a <b>habitable ":" an uninhabitable ")) . PM_Type($PTD[$M['Type']],"moon") . "</b>.  ";
+      echo " is " . ($PTNs[$M['Type']] == 'Asteroid Belt'?" an ":($PTD[$M['Type']]['Hospitable']?" a <b>habitable ":" an uninhabitable ")) .
+           PM_Type($PTD[$M['Type']],"moon") . "</b>.  ";
     
       if ($PTD[$M['Type']]['Hospitable'] && $M['Minerals']) echo "It has a minerals rating of <b>" . $M['Minerals'] . "</b>.  ";
       echo "Orbital radius: " . sprintf('%4g', $M['OrbitalRadius']) . " Km = " .  RealWorld($M,'OrbitalRadius') . 

@@ -23,7 +23,31 @@
     $Faction = &$FACTION;
   }
 
-  dostaffhead("Display Projects for faction");
+  dostaffhead("Display Projects for faction",["js/ProjectTools.js"]);
+  
+  if (isset($_REQUEST['ACTION'])) {
+    switch ($_REQUEST['ACTION']) {
+      case 'NEW': 
+        $Ptype = $_REQUEST['p'];
+        $Turn = $_REQUEST['t'];
+        $Hi = $_REQUEST['Hi'];
+        $Di = $_REQUEST['Di'];
+        $Sel = $_REQUEST['Sel'];
+        $Level = $_REQUEST['L'];
+        $Name = base64_decode($_REQUEST['Name']);
+        $pc = Proj_Costs($Level);
+        $OldPro = Get_ProjectAT($Hi, $Di, $Turn);
+        $Pro = ['FactionId'=>$Fid, 'Type'=>$Ptype, 'Level'=> $Level, 'Home'=>$Hi, 'Progress'=>0, 'Status'=>0, 'TurnStart'=>$Turn, 'DistType'=>$Sel, 'Name'=>$Name];
+
+        if (isset($OldPro['id'])) {
+          $Pro['id'] = $OldPro['id'];          
+        }
+
+        Put_Project($Pro);
+      break;
+      
+    }
+  }
   
   echo "<h1>Display Projects</h1>";
  
@@ -35,10 +59,11 @@
        "Switch to: <button class=BigSwitch id=BespokeM1 onclick=Remove_Bespoke()>10 Turns</button></div>" .
        "</div>";
 
-  echo "Click on Place to Expand/Contract<P>";
-  echo "Click on History top right to see more than 1 turn back<p>\n";
-  echo "Click on [S] buttons to start/change projects<p>\n";
-  echo "Click up/down or write number to rush projects<p>\n";
+  echo "Click on Place to Expand/Contract<br>";
+  echo "Click on History top right to see more than 1 turn back<br>\n";
+  echo "Click on [S] buttons to start/change projects<br>\n";
+  echo "Click up/down or write number to rush projects<br>\n";
+  echo "Click on the Distict type or Construction to expand/contract that area<p><p>";
   
   $Homes = Get_ProjectHomes($Fid);
   $DistTypes = Get_DistrictTypes();
@@ -50,6 +75,8 @@
 //  $Turns = [][];
   
 // Stage 1 Scan the data
+
+// var_dump($Homes);exit;
   
   $PHx = 1;
   $Dis = [];
@@ -85,9 +112,10 @@
       if ($D['Type'] > 0 && (($DistTypes[$D['Type']]['Props'] &2) == 0)) continue;
       if ($D['Type'] < 0 && $PH['Type'] != $Faction['Biosphere'] && Has_Tech($Fid,3)<2 ) continue;
       $Di = $D['id'];
-      $Headline2[] = "<th class=PHStart id=PHDist$Hi:$Di>[S]<th class=PHName>" . ($D['Type'] > 0 ? $DistTypes[$D['Type']]['Name'] : 'Construction') .
-        "<th class=PHLevel id=PHLevel$Hi:$Di>Level<th class=PHCost id=PHCost$Hi:$Di>Cost<th class=PHRush id=PHRush$Hi:$Di>Rush" .
-        "<th class=PHProg id=PHProg$Hi:$Di>Prog<th class=PHStatus id=PHStatus$Hi:$Di>Status";
+      $Headline2[] = "<th class='PHStart Group$Di' id=PHDist$Hi:$Di>[S]<th class=PHName><button type=button onclick=ToggleGroup($Di)>" . 
+        ($D['Type'] > 0 ? $DistTypes[$D['Type']]['Name'] : 'Construction') . "</button>" .
+        "<th class='PHLevel Group$Di'id=PHLevel$Hi:$Di>Level<th class='PHCost Group$Di' id=PHCost$Hi:$Di>Cost<th class='PHRush Group$Di' id=PHRush$Hi:$Di>Rush" .
+        "<th class='PHProg Group$Di' id=PHProg$Hi:$Di>Prog<th class='PHStatus Group$Di' id=PHStatus$Hi:$Di>Status";
      
       $Dis[$Hi][] = $Di;
       }
@@ -95,12 +123,17 @@
 //var_dump($Dis);exit;
     
     $Projs = Get_Projects($Hi);
+//var_dump($Projs); echo "<p>";
+
     foreach ($Projs as &$P) {
+//var_dump($P); echo "<P>";
       $TurnStuff = Get_ProjectTurns($P['id']);
+//
+//var_dump($TurnStuff); echo "<br>";
       $Pro = [];
       $Pro['id'] = $P['id'];
       $Pro['Type'] = $P['Type'];
-      $Pro['Name'] = $ProjTypes[$P['Type']]['Name'];
+      $Pro['Name'] = $P['Name']; // $ProjTypes[$P['Type']]['Name'];
       $Pro['Level'] = $P['Level'];
       if ($ProjTypes[$P['Type']]['StandardCosts']) {
         $Dat = Proj_Costs($P['Level']);
@@ -116,41 +149,46 @@
       $Pro['MaxRush'] = Has_Tech($Fid,$ProjTypes[$P['Type']]['BasedOn']);
       if ($PH['Type'] != $Faction['Biosphere']) $Pro['MaxRush'] = max(0,$Pro['MaxRush']-1);
       $Pro['Status'] = 'Started';
-      $Pro['TotProg'] = 0;
+      $TotProg = 0;
       
-      
+//var_dump($Pro);      
       $TSi = 0;
-      for ($t = $P['TurnStart']; $t <= $P['TurnEnd']; $t++) {
+      for ($t = $P['TurnStart']; $t <= ($P['TurnEnd']?$P['TurnEnd']:$P['TurnStart']+50); $t++) {
 
-        $Rush = 0;
+        $Pro['Rush'] = $Rush = 0;
         if (isset($TurnStuff[$TSi])) {
           if ($TurnStuff[$TSi]['TurnNumber'] == $t) {
             $Rush = $Pro['Rush'] = $TurnStuff[$TSi]['Rush'];
             $TSi ++;
           }
         }
-        $Prog = max($Pro['Acts'],$Pro['MaxRush'] + $Rush);
-        if ($Pro['TotProg'] || $Prog >= $Pro['Acts'] ) {
-          $Pro['TotProg'] += $Prog;
-          if ($Pro['TotProg'] >= $Pro['Acts']) {
-            $Pro['Progress'] = "$Prog/" . $Pro['Acts'];
+        $Prog = min($Pro['Acts'],$Pro['MaxRush'] + $Rush);
+        if ($TotProg || $Prog >= $Pro['Acts'] ) {
+          $TotProg += $Prog;
+          if ($TotProg >= $Pro['Acts']) {
+            $Pro['Progress'] = $Pro['Acts'] . "/" . $Pro['Acts'];
             $Pro['Status'] = 'Complete';
           } else {
-            $Pro['Progress'] = "$Prog/" . $Pro['Acts'];
+            $Pro['Progress'] = "$TotProg/" . $Pro['Acts'];
             $Pro['Status'] = 'Ongoing';
           }
         } else {
-            $Pro['Progress'] = "$Prog/" . $Pro['Acts'];
+            $TotProg += $Prog;
+            $Pro['Progress'] = "$TotProg/" . $Pro['Acts'];
             $Pro['Status'] = 'Started';
+
         }
         
-        $Proj[$t][$Hi][$Di] = $Pro;        
+        $Proj[$t][$Hi][$Di] = $Pro;
+        $Pro['Cost'] = 0;
+        if ($Pro['Status'] == 'Complete') break;
       }
     }
   }
 
 //var_dump($Homes);
-
+//var_dump($Proj);
+//var_dump($Dis);
 
 /*    
     echo "<th id=PHH$PHx><button class=ProjHome id=PHome$PHx>" . $PH['Name'] . "</button>";
@@ -184,6 +222,7 @@
   echo "<table border>";
   
 
+
   echo "<tr><td>Turn#";
   foreach ($Headline2 as $Hl) echo $Hl;
   for($Turn=0; $Turn<($GAME['Turn']+10); $Turn++) { // 50 for real code
@@ -202,36 +241,56 @@
       
     echo "<tr class=$RowClass><td>$Turn";
 
-    foreach ($Homes as $H) {
+    foreach ($Homes as &$H) {
 
       if (isset($H['Skip'])) continue;
       if (!isset($H['id'])) continue;
+//echo "Doing an H "; var_dump($H); 
+
       $Hi = $H['id'];
 //var_dump("Dis",$Dis[$Hi]);
       if (isset($Dis[$Hi])) foreach($Dis[$Hi] as $Di) {
+      
+//echo "Doing $Hi - $Di<br>";
         // TODO ids need setting...
-        echo "<td id=ProjS$Turn:$Hi:$Di><button class=PHStart id=xx action=ProjNew.php?t=$Turn&Hi=$Hi&Di=$Di>[S]"; // Need Warning
+      // TODO Warning
+      
+        echo "<td id=ProjS$Turn:$Hi:$Di class='PHStart Group$Di'>";
+        if ($Turn >= $GAME['Turn']) {
+          echo "<button type=submit class=PHStart id=Start:STurn:$Hi:$Di formaction=ProjNew.php?t=$Turn&Hi=$Hi&Di=$Di>[S]"; 
+        } else {
+          echo "[S]";
+        }
         if (isset($Proj[$Turn][$Hi][$Di]['Type'])) {
+          $PN = $Proj[$Turn][$Hi][$Di]['id'];
           echo "<td id=ProjN$Turn:$Hi:$Di class=PHName><a href=ProjEdit.php?id=" . $Proj[$Turn][$Hi][$Di]['id'] . ">" . $Proj[$Turn][$Hi][$Di]['Name'] . "</a>";
-          echo "<td id=ProjL$Turn:$Hi:$Di class=PHLevel>" . $Proj[$Turn][$Hi][$Di]['Level'];
-          echo "<td id=ProjC$Turn:$Hi:$Di class=PHCost>" . $Proj[$Turn][$Hi][$Di]['Cost'];
-          echo "<td id=ProjR$Turn:$Hi:$Di class=PHRush>" . (($Turn < $GAME['Turn'])?$Proj[$Turn][$Hi][$Di]['Rush'] : 
-               "<input type=number id=Rush$x:$y name=Rush$x:$y onchange... min=0 max=" . $Proj[$Turn][$Hi][$Di]['MaxRush'] );
-          echo "<td id=ProjP$Turn:$Hi:$Di class=PHProg>" . $Proj[$Turn][$Hi][$Di]['Progress'];
-          echo "<td id=ProjT$Turn:$Hi:$Di class=PHStatus>" . $Proj[$Turn][$Hi][$Di]['Status'] . "";
+          echo "<td id=ProjL$Turn:$Hi:$Di class='PHLevel Group$Di'>" . $Proj[$Turn][$Hi][$Di]['Level'];
+          echo "<td id=ProjC$Turn:$Hi:$Di class='PHCost Group$Di'>" . $Proj[$Turn][$Hi][$Di]['Cost'];
+          echo "<td id=ProjR$Turn:$Hi:$Di class='PHRush Group$Di'>" . (($Turn < $GAME['Turn'])?$Proj[$Turn][$Hi][$Di]['Rush'] : 
+               "<input type=number id=Rush$Turn:$PN name=Rush$Turn:$PN oninput=RushChange($Turn,$PN,$Hi,$Di," . 
+               $Proj[$Turn][$Hi][$Di]['MaxRush'] . ") value=" . $Proj[$Turn][$Hi][$Di]['Rush'] .
+               " min=0 max=" . $Proj[$Turn][$Hi][$Di]['MaxRush'] .">" );
+          echo "<td id=ProjP$Turn:$Hi:$Di class='PHProg Group$Di'>" . $Proj[$Turn][$Hi][$Di]['Progress'];
+          echo "<td id=ProjT$Turn:$Hi:$Di class='PHStatus Group$Di'>" . $Proj[$Turn][$Hi][$Di]['Status'] . "";
         } else {
           echo "<td id=ProjN$Turn:$Hi:$Di class=PHName>";
-          echo "<td id=ProjL$Turn:$Hi:$Di class=PHLevel>";
-          echo "<td id=ProjC$Turn:$Hi:$Di class=PHCost>";
-          echo "<td id=ProjR$Turn:$Hi:$Di class=PHRush>";
-          echo "<td id=ProjP$Turn:$Hi:$Di class=PHProg>";
-          echo "<td id=ProjT$Turn:$Hi:$Di class=PHStatus>";
+          echo "<td id=ProjL$Turn:$Hi:$Di class='PHLevel Group$Di'>";
+          echo "<td id=ProjC$Turn:$Hi:$Di class='PHCost Group$Di'>";
+          echo "<td id=ProjR$Turn:$Hi:$Di class='PHRush Group$Di'>";
+          echo "<td id=ProjP$Turn:$Hi:$Di class='PHProg Group$Di'>";
+          echo "<td id=ProjT$Turn:$Hi:$Di class='PHStatus Group$Di'>";
         }
       }
+//      break;
     }
   }
   echo "</table></form>";    
     
+  echo "<table border>";
+  if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
+  echo "</table>";
+
+  
   dotail();
         
   

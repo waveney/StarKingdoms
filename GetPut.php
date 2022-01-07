@@ -829,6 +829,16 @@ function Get_Project($id) {
   return [];
 }
 
+function Get_ProjectAt($Home,$Dist,$Start) {
+  global $db;
+  if ($Dist==0 || $Dist>5) return [];
+  $Cat = [-1=>1,1=>64,2=>4,3=>2,4=>8,5=>1][$Dist]; // Convert from Distict numbers to category mask in project types
+  $res = $db->query("SELECT p.* FROM Projects p ProjectTypes t WHERE p.Home=$Home AND p.TurnStart=$Start AND t.id=p.Type AND t.Category=$Cat");
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
+  return [];
+}
+
+
 function Put_Project(&$now) {
   global $db,$GAMEID;
   if (isset($now['id'])) {
@@ -843,7 +853,7 @@ function Put_Project(&$now) {
 function Get_Projects($home) {
   global $db;
   $Ts = [];
-  $res = $db->query("SELECT * FROM ProjectTypes WHERE Home=$home ORDER BY TurnStart");
+  $res = $db->query("SELECT * FROM Projects WHERE Home=$home ORDER BY TurnStart");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
   return $Ts;
 }
@@ -870,7 +880,7 @@ function Put_ProjectType(&$now) {
   if (isset($now['id'])) {
     $e=$now['id'];
     $Cur = Get_ProjectType($e);
-    return Update_db('Projects',$Cur,$now);
+    return Update_db('ProjectTypes',$Cur,$now);
   } else {
     return $now['id'] = Insert_db ('ProjectTypes', $now );
   }
@@ -898,7 +908,7 @@ function Put_ProjectHome(&$now) {
   if (isset($now['id'])) {
     $e=$now['id'];
     $Cur = Get_ProjectHome($e);
-    return Update_db('Projects',$Cur,$now);
+    return Update_db('ProjectsHomes',$Cur,$now);
   } else {
     return $now['id'] = Insert_db ('ProjectHomes', $now );
   }
@@ -913,11 +923,18 @@ function Get_ProjectTurn($id) {
   return [];
 }
 
+function Get_ProjectTurnPT($pid,$Turn) {
+  global $db;
+  $res = $db->query("SELECT * FROM ProjectTurn WHERE ProjectId=$pid AND TurnNumber=$Turn");
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
+  return ['ProjectId'=>$pid, 'TurnNumber'=>$Turn ];
+}
+
 function Get_ProjectTurns($Proj) {
   global $db,$GAMEID;
   $Ts = [];
-  $res = $db->query("SELECT * FROM ProjectTurns WHERE ProjectId=$proj ORDER BY TurnNumber");
-  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
+  $res = $db->query("SELECT * FROM ProjectTurn WHERE ProjectId=$Proj ORDER BY TurnNumber");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
   return $Ts;
 }
 

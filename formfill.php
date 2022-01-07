@@ -184,6 +184,18 @@ var_dump($_POST);
     $N[$field] = ($field == 'Progress')?hexdec($Value):$Value;
     echo Put_Turn($N);
     exit;
+    
+  case 'Projects' :
+    // id is Fid
+    if (preg_match('/Rush(\d*):(\d*)/',$field,$mtch)?true:false) {
+      $Turn = $mtch[1];
+      $Proj = $mtch[2];
+      $N = Get_ProjectTurnPT($Proj,$Turn);
+      $N['Rush'] = $Value;
+//       echo 'FORCELOADCHANGE54321:NOW' . 
+      Put_ProjectTurn($N);
+    }
+    exit;
 
   default:
     echo "Not setup $type for Auto Edit";
