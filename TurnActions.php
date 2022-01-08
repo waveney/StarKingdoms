@@ -268,14 +268,14 @@ function TidyUpMovements() {
 function FinishTurnProcess() {
   // Change faction state update turn number
 
-  $Facts - Get_Factions();
+  $Facts = Get_Factions();
   foreach ($Facts as $F) {
     $F['TurnState'] = 1;
     Put_Faction($F);
   }
   
   
-  echo "<br>All Factions marked as Turn Processing<p>\n";
+  echo "<br>All Factions marked as Turn Planning<p>\n";
 
 // TODO Turn number
 

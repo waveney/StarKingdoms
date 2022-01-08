@@ -198,7 +198,7 @@ function Get_FactionLinkFL($Fact, $Lid) {
 function Put_FactionLink(&$now) {
   if (isset($now['id'])) {
     $e=$now['id'];
-    $Cur = Get_Faction($e);
+    $Cur = Get_FactionLink($e);
     return Update_db('FactionLink',$Cur,$now);
   } else {
     return $now['id'] = Insert_db ('FactionLink', $now );

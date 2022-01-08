@@ -30,6 +30,8 @@
 
   $Factions = Get_Factions();
   $Know = Get_Factions4Link($Lid);
+
+//var_dump($Know);
   
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {

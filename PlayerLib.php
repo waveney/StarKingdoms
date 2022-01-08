@@ -34,7 +34,7 @@ function Player_Page() {
     echo "<li>Things";
     echo "<li>Economy";
     echo "<li>Turn Text";
-    echo "<li><a href=Submit.php>Submit Turn</a>\n";  // Need validation for cash and warnings on unused things
+    echo "<li>Submit Turn</a>\n";  // Need validation for cash and warnings on unused things
     break;
       
   case 'Turn Submitted':
