@@ -949,6 +949,23 @@ function Put_ProjectTurn(&$now) {
   }
 }
 
+// People
+
+function Get_Person($id) {
+  global $db;
+  $res = $db->query("SELECT * FROM People WHERE id=$id");
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
+  return [];
+}
+
+function Get_People() {
+  global $db,$GAMEID;
+  $Ts = [];
+  $res = $db->query("SELECT * FROM People ");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
+  return $Ts;
+}
+
 
 
 
