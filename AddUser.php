@@ -8,6 +8,9 @@
 
   Set_User_Help();
 
+
+//var_dump($_REQUEST);
+
   echo "<h2>Add/Edit Fest Con Users</h2>\n";
   echo "<form method=post action='AddUser.php'>\n";
   if (isset($_POST{'UserId'})) { /* Response to update button */
@@ -18,12 +21,13 @@
         switch ($_POST{'ACTION'}) {
         case 'Set Password' :
           $hash = crypt($_POST{'NewPass'},"WM");
-          $User['password'] = $hash;
+          $User['Password'] = $hash;
+
           $a = Put_User($User);
           break;
         case 'Remove Access' :
           $User['AccessLevel'] = 0;
-          $User['password'] = 'impossible2guess'; // that is not a valid password
+          $User['Password'] = 'impossible2guess'; // that is not a valid password
           $User['WMFFemail'] = '';
           $User['Roll'] = 'No Access' . date(' j/m/Y');
           $User['Contacts'] = 0;

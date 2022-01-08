@@ -1,12 +1,7 @@
 <?php
 
 // If table's index is 'id' it does not need to be listed here
-$TableIndexes = array(  'Sides'=>'SideId', 'SideYear'=>'syId', 'FestUsers'=>'UserId', 'Venues'=>'VenueId', 'Events'=>'EventId', 
-                        'Bugs'=>'BugId', 'BigEvent'=>'BigEid', 'DanceTypes'=>'TypeId', 
-                        'Directory'=>'DirId', 'Documents'=>'DocId', 'EventTypes'=>'ETypeNo',
-                        'MusicTypes'=>'TypeId','TimeLine'=>'TLid', 'BandMembers'=>'BandMemId', 'ActYear'=>'ActId',
-                        'TradeLocs'=>'TLocId','Trade'=>'Tid','TradeYear'=>'TYid','VolYear'=>'VYid'
-                        );
+$TableIndexes = array( );
 
 function db_open () {
   global $db,$CONF;
