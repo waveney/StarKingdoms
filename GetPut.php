@@ -966,6 +966,33 @@ function Get_People() {
   return $Ts;
 }
 
+// Faction Faction Knowledge
+
+function Get_FactionFaction($id) {
+  global $db;
+  $res = $db->query("SELECT * FROM FactionFaction WHERE id=$id");
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
+  return [];
+}
+
+function Get_FactionFactions($who) {
+  global $db,$GAMEID;
+  $Ts = [];
+  $res = $db->query("SELECT * FROM FactionFaction WHERE FactionId1=$who");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['FactionId2']] = $ans;
+  return $Ts;
+}
+
+function Put_FactionFaction(&$now) {
+  global $db,$GAMEID;
+  if (isset($now['id'])) {
+    $e=$now['id'];
+    $Cur = Get_FactionFaction($e);
+    return Update_db('FactionFaction',$Cur,$now);
+  } else {
+    return $now['id'] = Insert_db ('FactionFaction', $now );
+  }
+}
 
 
 

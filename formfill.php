@@ -196,6 +196,19 @@ var_dump($_POST);
       Put_ProjectTurn($N);
     }
     exit;
+    
+  case 'FFaction' :
+    if (preg_match('/Know(\d*):(\d*)/',$field,$mtch)?true:false) {
+    
+      if ($Value) {
+        $FF = ['FactionId1'=> $mtch[1], 'FactionId2'=> $mtch[2]];
+        return Put_FactionFaction($FF); 
+      } else {
+        return db_delete_cond('FactionFaction', "FactionId1=" . $mtch[1] . " AND FactionId2=" . $mtch[2]);
+      }
+    }
+    exit;
+    
 
   default:
     echo "Not setup $type for Auto Edit";

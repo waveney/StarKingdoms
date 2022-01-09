@@ -30,11 +30,14 @@
   $Homes = Get_ProjectHomes($Fid);
   $DistTypes = Get_DistrictTypes();
   $ProjTypes = Get_ProjectTypes();
-    
+
+  $Di = $_REQUEST['Di'];
+  $Hi = $_REQUEST['Hi'];
+      
   $PHx = 1;
   $Dis = [];
   foreach ($Homes as &$H) {
-    $Hi = $H['id'];
+    $Hix = $H['id'];
     switch ($H['ThingType']) {
     case 1: // Planet
       $PH = Get_Planet($H['ThingId']);
@@ -61,25 +64,23 @@
     foreach ($Dists as &$D) {
       if ($D['Type'] > 0 && (($DistTypes[$D['Type']]['Props'] &2) == 0)) continue;
       if ($D['Type'] < 0 && $PH['Type'] != $Faction['Biosphere'] && Has_Tech($Fid,3)<2 ) continue;
-      $Di = $D['id'];
-      $Headline2[] = "<th class=PHStart id=PHDist$Hi:$Di>[S]<th class=PHName>" . ($D['Type'] > 0 ? $DistTypes[$D['Type']]['Name'] : 'Construction') .
-        "<th class=PHLevel id=PHLevel$Hi:$Di>Level<th class=PHCost id=PHCost$Hi:$Di>Cost<th class=PHRush id=PHRush$Hi:$Di>Rush" .
-        "<th class=PHProg id=PHProg$Hi:$Di>Prog<th class=PHStatus id=PHStatus$Hi:$Di>Status";
+      $Dix = $D['id'];
      
-      $Dis[$Hi][] = $Di;
+      if ($Hi == $Hix && $Di == $Dix) break 2;  // $D is now the relevant one
+      $Dis[$Hix][] = $Dix;
       }
       
-    $HDists[$Hi] = $Dists;
+    $HDists[$Hix] = $Dists;
     }
     
   $Turn = $_REQUEST['t'];
-  $Hi = $_REQUEST['Hi'];
-  $Di = $_REQUEST['Di'];
-    
+
   $Stage = (isset($_REQUEST['STAGE'])? $_REQUEST['STAGE'] : 0);
+  
   $Where =  ($D['Type'] > 0 ? $DistTypes[$D['Type']]['Name'] : 'Construction');
-  $CDists = $HDists[$Hi];
-    
+
+
+// echo "ZZ: $Where<p>";    
     
 // var_dump($CDists);
 
@@ -130,7 +131,38 @@
     break;
       
   case 'Academic':
+  
+    echo "<h2>Research Core Technology</h2>";
+      $FactTechs = Get_Faction_Techs($Fid);
+      $CTs = Get_CoreTechsByName();
+      foreach ($CTs as $TT) {
+        $Lvl = $FactTechs[$TT['id']]['Level']+1;
+        $pc = Proj_Costs($Lvl);
+        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=5&t=$Turn&Hi=$Hi&Di=$Di&Sel=0" .
+                "&Name=" . base64_encode("Research " . $TT['Name'] . " $Lvl"). "&L=$Lvl'>" .      
+                "Research " . $TT['Name'] . " $Lvl; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
+        }
+ 
+    echo "<h2>Research Supplimental Technology</h2>";
+      $Techs = Get_TechsByCore($Fid);
+      foreach ($Techs as $T) {
+        if ($T['Cat'] == 0 || isset($FactTechs[$T['id']]) ) continue;
+        if (!isset($FactTechs[$T['PreReqTech']]) ) continue;
+        if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
+        $Lvl = $T['PreReqLevel'];
+        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=6&t=$Turn&Hi=$Hi&Di=$Di&Sel=0" .
+                "&Name=" . base64_encode("Research " . $T['Name'] . " $Lvl"). "&L=$Lvl'>" .      
+                "Research " . $T['Name'] . " $Lvl; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+      }
+   
+    echo "<h2>Share Technology</h2>";
+      echo "This is manual at present<p>";
     
+    echo "<h2>Analyse</h2>";
+      echo "These projects will be defined by a GM<p>";
+      
+    
+    echo "<h2>Decipher Alien Language</h2>";      
       break;
       
       

@@ -131,6 +131,7 @@
     $txt .= "<ul>\n";
     $txt .= "<li><a href=FactList.php>List Factions</a>\n";
     $txt .= "<li><a href=AddFaction.php>Add Faction</a>\n";  
+    $txt .= "<li><a href=FactionFaction.php>Faction knows faction?</a>\n";  
 
     $txt .= "<li><form method=Post action=PlayerMove.php class=staffform>";
       $txt .= "<input type=submit name=F value='Player Move' id=staffformid>" . 
