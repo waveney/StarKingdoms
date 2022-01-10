@@ -142,7 +142,7 @@
                 fm_select($Facts,0,'F',1," onchange=this.form.submit()") . "</form>\n";
     
     $txt .= "<li><form method=Post action=TechShow.php?SETUP class=staffform>";
-      $txt .= "<input type=submit name=F value='Setup Technologies' id=staffformid>" . 
+      $txt .= "<input type=submit name=F value='Edit Technologies' id=staffformid>" . 
                 fm_select($Facts,0,'F',1," onchange=this.form.submit()") . "</form>\n";
     
     $txt .= "<li><a href=SurveyRequest.php>Survey Request</a>\n";    
