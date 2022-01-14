@@ -197,6 +197,13 @@ var_dump($_POST);
     }
     exit;
     
+   case 'Project' : // Note this is for ProjEdit, see above for per turn rushing
+    $N = Get_Project($id);
+    $N[$field] = $Value;
+    echo Put_Project($N);
+    exit;
+  
+
   case 'FFaction' :
     if (preg_match('/Know(\d*):(\d*)/',$field,$mtch)?true:false) {
     
@@ -209,6 +216,7 @@ var_dump($_POST);
     }
     exit;
     
+   
 
   default:
     echo "Not setup $type for Auto Edit";

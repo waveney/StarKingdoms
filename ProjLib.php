@@ -10,5 +10,8 @@ function Rush_Cost($who) {
   return 75; // will change with traits
 }
 
+global $Project_Status;
+$Project_Status = [0=>'Live',1=>'Finished',2=>'Cancelled'];
+
 
 ?>

@@ -22,7 +22,7 @@ function RushChange(Turn,Projn,Homeindx,Distindx,MaxRush) {
 debugger;
   AutoInput('Rush' + Turn + ':' + Projn);
   var costthis = document.getElementById("ProjC" + Turn + ':' + Homeindx + ':' + Distindx).innerHTML;
-  if (costthis) { 
+  if (costthis && costthis > 0) { 
     var Acts = document.getElementById("ProjP" + Turn + ':' + Homeindx +':' + Distindx).innerHTML;  
     var XofY = Acts.match(/(\d*)\/(\d*)/);
     var ProjActs = Number(XofY[2]);

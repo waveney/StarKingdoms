@@ -69,6 +69,7 @@
   $DistTypes = Get_DistrictTypes();
   $ProjTypes = Get_ProjectTypes();
   
+//var_dump($ProjTypes);exit;
 
   $Headline1 = '';
   $Headline2 = [];
@@ -107,8 +108,8 @@
     
     $Headline1 .= "<th id=PHH$PHx><button class=ProjHome id=PHome$Hi onclick=ToggleHomes($Hi)>" . $PH['Name'] . "</button>";
     
-
-    foreach ($Dists as &$D) {
+    $District_Type = [];
+    foreach ($Dists as $D) {
       if ($D['Type'] > 0 && (($DistTypes[$D['Type']]['Props'] &2) == 0)) continue;
       if ($D['Type'] < 0 && $PH['Type'] != $Faction['Biosphere'] && Has_Tech($Fid,3)<2 ) continue;
       $Di = $D['id'];
@@ -118,7 +119,8 @@
         "<th class='PHRush Group$Di Home$Hi' id=PHRush$Hi:$Di>Rush" .
         "<th class='PHProg Group$Di Home$Hi' id=PHProg$Hi:$Di>Prog<th class='PHStatus Group$Di Home$Hi' id=PHStatus$Hi:$Di>Status";
      
-      $Dis[$Hi][] = $Di;
+      $District_Type[$D['Type']] = $D['Number'];
+      $Dis[$Hi][] = $D;
       }
 
 //var_dump($Dis);exit;
@@ -147,42 +149,67 @@
         // TODO 
       }
       
-      $Pro['MaxRush'] = Has_Tech($Fid,$ProjTypes[$P['Type']]['BasedOn']);
-      if ($PH['Type'] != $Faction['Biosphere']) $Pro['MaxRush'] = max(0,$Pro['MaxRush']-1);
-      $Pro['Status'] = 'Started';
-      $TotProg = 0;
+      $PPtype = $ProjTypes[$P['Type']];
+      $PCat = $PPtype['Category'];
       
-//var_dump($Pro);      
-      $TSi = 0;
-      for ($t = $P['TurnStart']; $t <= ($P['TurnEnd']?$P['TurnEnd']:$P['TurnStart']+50); $t++) {
-
-        $Pro['Rush'] = $Rush = 0;
-        if (isset($TurnStuff[$TSi])) {
-          if ($TurnStuff[$TSi]['TurnNumber'] == $t) {
-            $Rush = $Pro['Rush'] = $TurnStuff[$TSi]['Rush'];
-            $TSi ++;
-          }
+      $WantedDT = -10;
+      if ($PCat & 1) { $WantedDT = 5; }// Academic
+      else if ($PCat & 2) { $WantedDT = 3; } // Shipyard
+      else if ($PCat & 4) { $WantedDT = 2; } // Military      
+      else if ($PCat & 8) { $WantedDT = 4; } // Intelligence
+      else if ($PCat & 16) { $WantedDT = -1; } // Construction
+      else if ($PCat & 32) { $WantedDT = 100; } // Deep Space       
+      else if ($PCat & 64) { $WantedDT = 101; } // Intelligence
+      
+      $Di = -10;
+      foreach ($Dis[$Hi] as $Dix) {
+        if ($Dix['Type'] == $WantedDT) {
+          $Di = $Dix['id'];
+          break;
         }
-        $Prog = min($Pro['Acts'],$Pro['MaxRush'] + $Rush);
-        if ($TotProg || $Prog >= $Pro['Acts'] ) {
-          $TotProg += $Prog;
-          if ($TotProg >= $Pro['Acts']) {
-            $Pro['Progress'] = $Pro['Acts'] . "/" . $Pro['Acts'];
-            $Pro['Status'] = 'Complete';
-          } else {
-            $Pro['Progress'] = "$TotProg/" . $Pro['Acts'];
-            $Pro['Status'] = 'Ongoing';
+      }
+      
+      if ($Di == -10) {
+        echo "Faulty project " . $P['id'];
+      } else {
+      
+        $Pro['MaxRush'] =  (($ProjTypes[$P['Type']]['BasedOn'])? Has_Tech($Fid,$ProjTypes[$P['Type']]['BasedOn']) : (isset ($District_Type[5]) ?$District_Type[5]:0));
+        if ($PH['Type'] != $Faction['Biosphere']) $Pro['MaxRush'] = max(0,$Pro['MaxRush']-1);
+        $Pro['Status'] = 'Started';
+        $TotProg = 0;
+      
+//var_dump($Pro, $ProjTypes[$P['Type']]);  echo "<p>";    
+        $TSi = 0;
+        for ($t = $P['TurnStart']; $t <= ($P['TurnEnd']?$P['TurnEnd']:$P['TurnStart']+50); $t++) {
+
+          $Pro['Rush'] = $Rush = 0;
+          if (isset($TurnStuff[$TSi])) {
+            if ($TurnStuff[$TSi]['TurnNumber'] == $t) {
+              $Rush = $Pro['Rush'] = $TurnStuff[$TSi]['Rush'];
+              $TSi ++;
+            }
           }
-        } else {
+          $Prog = min($Pro['Acts'],$Pro['MaxRush'] + $Rush);
+          if ($TotProg || $Prog >= $Pro['Acts'] ) {
             $TotProg += $Prog;
-            $Pro['Progress'] = "$TotProg/" . $Pro['Acts'];
-            $Pro['Status'] = 'Started';
+            if ($TotProg >= $Pro['Acts']) {
+              $Pro['Progress'] = $Pro['Acts'] . "/" . $Pro['Acts'];
+              $Pro['Status'] = 'Complete';
+            } else {
+              $Pro['Progress'] = "$TotProg/" . $Pro['Acts'];
+              $Pro['Status'] = 'Ongoing';
+            }
+          } else {
+              $TotProg += $Prog;
+              $Pro['Progress'] = "$TotProg/" . $Pro['Acts'];
+              $Pro['Status'] = 'Started';
 
-        }
+          }
         
-        $Proj[$t][$Hi][$Di] = $Pro;
-        $Pro['Cost'] = 0;
-        if ($Pro['Status'] == 'Complete') break;
+          $Proj[$t][$Hi][$Di] = $Pro;
+          $Pro['Cost'] = 0;
+          if ($Pro['Status'] == 'Complete') break;
+        }
       }
     }
   }
@@ -254,8 +281,8 @@
 
       $Hi = $H['id'];
 //var_dump("Dis",$Dis[$Hi]);
-      if (isset($Dis[$Hi])) foreach($Dis[$Hi] as $Di) {
-      
+      if (isset($Dis[$Hi])) foreach($Dis[$Hi] as $Dix) {
+        $Di = $Dix['id'];
 //echo "Doing $Hi - $Di<br>";
         // TODO ids need setting...
       // TODO Warning

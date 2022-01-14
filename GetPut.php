@@ -481,10 +481,10 @@ function Get_AllThingsAt($id) {
   return $Ts;
 }
 
-function Get_ThingsSys($Sid,$type=0) {
+function Get_ThingsSys($Sid,$type=0,$Fid=0) {
   global $db,$GAMEID;
   $Ts = [];
-  $res = $db->query("SELECT * FROM Things WHERE GameId=$GAMEID AND SystemId=$Sid " . ($type?" AND Type=$type":""));
+  $res = $db->query("SELECT * FROM Things WHERE GameId=$GAMEID AND SystemId=$Sid " . ($type?" AND Type=$type":"") . ($Fid?" AND Whose=$Fid":""));
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
   return $Ts;
 }
@@ -871,7 +871,7 @@ function Get_ProjectTypes() {
   global $db;
   $Ts = [];
   $res = $db->query("SELECT * FROM ProjectTypes");
-  if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
   return $Ts;
 }
 
@@ -890,7 +890,7 @@ function Put_ProjectType(&$now) {
 
 function Get_ProjectHome($id) {
   global $db;
-  $res = $db->query("SELECT * FROM ProjectHome WHERE id=$id");
+  $res = $db->query("SELECT * FROM ProjectHomes WHERE id=$id");
   if ($res) if ($ans = $res->fetch_assoc()) return $ans;
   return [];
 }

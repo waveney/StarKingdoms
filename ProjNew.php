@@ -42,10 +42,13 @@
     case 1: // Planet
       $PH = Get_Planet($H['ThingId']);
       $Dists = Get_DistrictsP($H['ThingId']);
+      $Sid = $PH['SystemId'];
       break;
     case 2: // Moon
       $PH = Get_Moon($H['ThingId']);
       $Dists = Get_DistrictsM($H['ThingId']);
+      $Plan = Get_Planet($PH['PlanetId']);
+      $Sid = $Plan['SystemId'];
       break;
     case 3: // Thing
       $PH = Get_Thing($H['ThingId']);
@@ -54,6 +57,7 @@
         $H['Skip'] = 1;
         continue 2;  // Remove things without districts
       }
+      $Sid = $PH['SystemId'];
       break;
     }
     
@@ -87,7 +91,10 @@
   echo "<form method=post action=ProjNew.php>";
   echo fm_hidden('t',$Turn) . fm_hidden('Hi',$Hi) . fm_hidden('Di',$Di);
   
+// echo "Doinfg $Where<p>";
   switch ($Where) {
+
+ 
   case 'Construction':
     echo "<h2>Select Construction Project:</h2><p>";
       $DTs = Get_DistrictTypes();
@@ -151,8 +158,8 @@
         if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
         $Lvl = $T['PreReqLevel'];
         echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=6&t=$Turn&Hi=$Hi&Di=$Di&Sel=0" .
-                "&Name=" . base64_encode("Research " . $T['Name'] . " $Lvl"). "&L=$Lvl'>" .      
-                "Research " . $T['Name'] . " $Lvl; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+                "&Name=" . base64_encode("Research " . $T['Name']) . "&L=$Lvl'>" .      
+                "Research " . $T['Name'] . "; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
       }
    
     echo "<h2>Share Technology</h2>";
@@ -162,19 +169,141 @@
       echo "These projects will be defined by a GM<p>";
       
     
-    echo "<h2>Decipher Alien Language</h2>";      
+    echo "<h2>Decipher Alien Language</h2>"; 
+    echo "Not in this game<p>";     
       break;
       
       
   case 'Shipyard':
+      echo "<h2>Build a Ship</h2>";
+      echo "Not yet<p>";
+      echo "<button class=projtype type=submit formaction='ProjShip.php?ACTION=NEW&id=$Fid&p=10&t=$Turn&Hi=$Hi&Di=$Di'>Build a new ship</button><p>";
+    
+    
+      echo "<h2>Refit, Repair and Decommision Ships</h2>";
+      echo "Not yet";
+      $Ships = Get_ThingsSys($Sid,$type=1,$Fid);
+      if ($Ships) {
+    
+      }
+    
+    
+      echo "<h2>Research Ship Construction</h2><p>";
+        $OldPc = Has_Tech($Fid,7);
+        $Lvl = $OldPc+1;
+        $pc = Proj_Costs($Lvl);
+        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=13&t=$Turn&Hi=$Hi&Di=$Di&Sel=0" .
+                "&Name=" . base64_encode("Research Ship Construction $Lvl"). "&L=$Lvl'>" .      
+                "Research Ship Construction $Lvl; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
+    
+      $Rbuts = [];
+      $FactTechs = Get_Faction_Techs($Fid);
+      $Techs = Get_TechsByCore($Fid);
+      foreach ($Techs as $T) {
+        if ($T['Cat'] == 0 || isset($FactTechs[$T['id']]) ) continue;
+        if (!isset($FactTechs[$T['PreReqTech']])) continue;
+        if ($T['PreReqTech']!=7) continue;
+        if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
+
+        $Lvl = $T['PreReqLevel'];
+        $Rbuts[] = "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=14&t=$Turn&Hi=$Hi&Di=$Di&Sel=0" .
+                "&Name=" . base64_encode("Research " . $T['Name']) . "&L=$Lvl'>" .      
+                "Research " . $T['Name'] . "; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+      }
+   
+     if ($Rbuts) {
+       echo "<h2>Research Supplimental Ship Technology</h2>";
+       foreach ($Rbuts as $rb) echo $rb;
+     }
+ 
+
     
       break;
       
   case 'Military':
+      echo "<h2>Train an Army</h2>";
+      echo "Not yet<p>";
+      echo "<button class=projtype type=submit formaction='ProjArmy.php?ACTION=NEW&id=$Fid&p=15&t=$Turn&Hi=$Hi&Di=$Di'>Train a new army</button><p>";
+    
+    
+      echo "<h2>Re-equip and Reinforce Army</h2>";
+      echo "Not yet";
+      $Armies = Get_ThingsSys($Sid,$type=2,$Fid);
+      if ($Armies) {
+    
+      }
+    
+    
+      echo "<h2>Research Military Organisation</h2><p>";
+        $OldPc = Has_Tech($Fid,8);
+        $Lvl = $OldPc+1;
+        $pc = Proj_Costs($Lvl);
+        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=17&t=$Turn&Hi=$Hi&Di=$Di&Sel=0" .
+                "&Name=" . base64_encode("Research Military Organisation $Lvl"). "&L=$Lvl'>" .      
+                "Research Military Organisation $Lvl; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
+    
+      $Rbuts = [];
+      $FactTechs = Get_Faction_Techs($Fid);
+      $Techs = Get_TechsByCore($Fid);
+      foreach ($Techs as $T) {
+        if ($T['Cat'] == 0 || isset($FactTechs[$T['id']]) ) continue;
+        if (!isset($FactTechs[$T['PreReqTech']])) continue;
+        if ($T['PreReqTech']!=8) continue;
+        if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
+
+        $Lvl = $T['PreReqLevel'];
+        $Rbuts[] = "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=18&t=$Turn&Hi=$Hi&Di=$Di&Sel=0" .
+                "&Name=" . base64_encode("Research " . $T['Name']) . "&L=$Lvl'>" .      
+                "Research " . $T['Name'] . "; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+      }
+   
+     if ($Rbuts) {
+       echo "<h2>Research Supplimental Army Technology</h2>";
+       foreach ($Rbuts as $rb) echo $rb;
+     }
+ 
+
+
     
       break;
       
-  case 'Inteligence':
+  case 'Intelligence':
+      echo "<h2>Train an Agent</h2>";
+      echo "Not yet<p>";
+      echo "<button class=projtype type=submit formaction='ProjAgent.php?ACTION=NEW&id=$Fid&p=19&t=$Turn&Hi=$Hi&Di=$Di'>Train an agent</button><p>";
+    
+    
+   
+      echo "<h2>Research Intelligence Operations</h2><p>";
+        $OldPc = Has_Tech($Fid,4);
+        $Lvl = $OldPc+1;
+        $pc = Proj_Costs($Lvl);
+        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=20&t=$Turn&Hi=$Hi&Di=$Di&Sel=0" .
+                "&Name=" . base64_encode("Research Intelligence Operations $Lvl"). "&L=$Lvl'>" .      
+                "Research Intelligence Operations $Lvl; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
+    
+      $Rbuts = [];
+      $FactTechs = Get_Faction_Techs($Fid);
+      $Techs = Get_TechsByCore($Fid);
+      foreach ($Techs as $T) {
+        if ($T['Cat'] == 0 || isset($FactTechs[$T['id']]) ) continue;
+        if (!isset($FactTechs[$T['PreReqTech']])) continue;
+        if ($T['PreReqTech']!=4) continue;
+        if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
+
+        $Lvl = $T['PreReqLevel'];
+        $Rbuts[] = "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=21&t=$Turn&Hi=$Hi&Di=$Di&Sel=0" .
+                "&Name=" . base64_encode("Research " . $T['Name']) . "&L=$Lvl'>" .      
+                "Research " . $T['Name'] . "; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+      }
+   
+     if ($Rbuts) {
+       echo "<h2>Research Supplimental Intelligence Technology</h2>";
+       foreach ($Rbuts as $rb) echo $rb;
+     }
+ 
+
+
     
       break;
     }
