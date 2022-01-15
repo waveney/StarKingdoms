@@ -229,7 +229,7 @@ function Get_FactionSystemFS($Fact, $id) {
   return ['FactionId'=>$Fact, 'SystemId'=>$id];
 }
 
-function Get_FactionSystemFRef($Fact, $ref) {
+function Get_FactionSystemFRef($Fact, $ref) { // DUFF CODE TODO no ref value
   global $db;
   $res = $db->query("SELECT * FROM FactionSystem WHERE FactionId=$Fact AND Ref='$ref'");
   if ($res)  if ($ans=$res->fetch_assoc()) return $ans;
