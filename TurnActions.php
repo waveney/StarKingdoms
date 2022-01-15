@@ -50,7 +50,19 @@ function PayForStargates() {
 }
 
 function StartProjects() {
-  echo "Start Projects are currently Manual<p>";
+//  echo "Start Projects are currently Manual<p>";
+// Find all projects with 0 progress due to start this turn
+// Pay costs, Status = Started  
+
+  $ProjTypes = Get_ProjectTypes();
+  $Projects = Get_Projects_Cond("Progress=0 AND Status=0 AND TurnStart=" . $GAME['Turn']);
+  foreach ($Projects as $P) {
+    $PT = $ProjectTypes[$P['Type']];
+    if ($PT['StandardCosts']) {
+      $pc = Proj_Costs($Lvl);
+      $
+  
+  
 }
 
 

@@ -11,7 +11,7 @@ function Rush_Cost($who) {
 }
 
 global $Project_Status;
-$Project_Status = [0=>'Live',1=>'Finished',2=>'Cancelled'];
+$Project_Status = [0=>'Live',1=>'Started', 2=>'Finished',3=>'Cancelled'];
 
 
 ?>

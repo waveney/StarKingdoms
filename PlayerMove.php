@@ -9,6 +9,20 @@
 // var_dump($_REQUEST);
 
 
+// Check for double ended links from FS2, while at FS1 ommiting Lid
+function Check_System($Fid,&$FS1,&$FS2,$Lid) {
+return;
+  $Ls = Get_Links($FS2['Ref']);
+  foreach ($Ls as $L) {
+    if ($L['id'] == $Lid) continue;
+    $FL = Get_FactionLinkFL($Fid,$Lid);
+    if ($FL['Known']) continue;
+//    $FarSys = Get_System($
+  }
+}
+
+// START HERE
+
 
   if (isset($_REQUEST['f'])) {
     $Fid = $_REQUEST['f'];
@@ -63,6 +77,8 @@
         echo "System " . $L['System2Ref'] . " is new give a survey report";
         Put_FactionSystem($FS2);
       }
+      Check_System($Fid,$FS1,$FS2,$Lid);
+      Check_System($Fid,$FS2,$FS1,$Lid);
       echo "<p>";
         
       echo "Done";

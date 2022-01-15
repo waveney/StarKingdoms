@@ -69,7 +69,12 @@
 
 // echo "<h1>Faction $Faction</h1>";
   global $db, $GAME;
-
+  
+  $RedoMap = 1;
+  
+  while ($RedoMap) {
+  $RedoMap = 0;
+  
   $Dot = fopen("cache/Fullmap$Faction$typ.dot","w");
   if (!$Dot) { echo "Could not create dot file<p>"; dotail(); };
   
@@ -79,6 +84,7 @@
   $Neb = 0;
   $ShownNodes = [];
   $LinkSown = [];
+  $UnknownLink = [];
   
   fwrite($Dot,"graph {\n") ; //size=" . '"8,12!"' . "\n");
   
@@ -142,12 +148,21 @@
         $Fl = Get_FactionLinkFL($Faction, $L['id']);
         if (isset($Fl['id'])) {
           fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=" . $Levels[$L['Level']]['Colour'] . " label=\"#" . $L['id'] . "\" ];\n");
+          $LinkShown[$L['id']]=1;
         } else {
-          fwrite($Dot,"Unk$ul [label=\"?\" shape=circle];\n");
-          fwrite($Dot,"$from -- Unk$ul [color=" . $Levels[$L['Level']]['Colour'] . " label=\"#" . $L['id'] . "\" ];\n");
+          $rand = "B$ul";  // This kludge at least allows both ends to be displayed
+          fwrite($Dot,"Unk$ul$rand [label=\"?\" shape=circle];\n");
+          fwrite($Dot,"$from -- Unk$ul$rand [color=" . $Levels[$L['Level']]['Colour'] . " label=\"#" . $L['id'] . "\" ];\n");
           $ul++;
+          if (isset($UnknownLink[$L['id']])) {
+            $RedoMap = 1;
+            $Fl['Known'] = 1;
+            Put_FactionLink($Fl);
+          } else {
+            $UnknownLink[$L['id']] = 1;
+          }
         }
-        $LinkShown[$L['id']]=1;
+ //       $LinkShown[$L['id']]=1;
       }
     }
   } else {
@@ -195,6 +210,9 @@
   fwrite($Dot,"}\n");  
 
   fclose($Dot);
+  
+  } // Redo Loop
+  
 //  echo "<H1>Dot File written</h1>";
   
   if ($typ) {  
@@ -205,7 +223,8 @@
   }
 
 //  echo "<h2>dot run</h2>";
-  echo "<img src=cache/Fullmap$Faction$typ.png maxwidth=100%>";
+  $Rand = rand(1,100000);
+  echo "<img src=cache/Fullmap$Faction$typ.png?$Rand maxwidth=100%>";
   
   dotail();
 ?>

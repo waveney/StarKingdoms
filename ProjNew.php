@@ -113,7 +113,7 @@
           $Lvl++;
           $pc = Proj_Costs($Lvl);
           echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=1&t=$Turn&Hi=$Hi&Di=$Di&Sel=" . $DT['id'] . 
-                "&Name=" . base64_encode("Build " . $DT['Name'] . " District $Lvl"). "&L=$Lvl'>" .
+                "&Name=" . base64_encode("Build " . $DT['Name'] . " District $Lvl") . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
                 "Build " . $DT['Name'] . " District $Lvl; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";        
         
         }
@@ -124,7 +124,7 @@
     echo "<h2>Construct Warp Gate</h2>";
       $pc = Proj_Costs(4);
       echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=3&t=$Turn&Hi=$Hi&Di=$Di&Sel=0" .
-                "&Name=" . base64_encode("Build Warp Gate"). "&L=$Lvl'>" .
+                "&Name=" . base64_encode("Build Warp Gate"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
                 "Build Warp Gate; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
     
     echo "<h2>Research Planetary Construction</h2><p>";
@@ -132,7 +132,7 @@
       $Lvl = $OldPc+1;
       $pc = Proj_Costs($Lvl);
       echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=4&t=$Turn&Hi=$Hi&Di=$Di&Sel=0" .
-                "&Name=" . base64_encode("Research Planetary Construction $Lvl"). "&L=$Lvl'>" .      
+                "&Name=" . base64_encode("Research Planetary Construction $Lvl"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .      
                 "Research Planetary Construction $Lvl; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
     
     break;
@@ -146,7 +146,7 @@
         $Lvl = $FactTechs[$TT['id']]['Level']+1;
         $pc = Proj_Costs($Lvl);
         echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=5&t=$Turn&Hi=$Hi&Di=$Di&Sel=0" .
-                "&Name=" . base64_encode("Research " . $TT['Name'] . " $Lvl"). "&L=$Lvl'>" .      
+                "&Name=" . base64_encode("Research " . $TT['Name'] . " $Lvl"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .      
                 "Research " . $TT['Name'] . " $Lvl; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
         }
  
@@ -158,7 +158,7 @@
         if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
         $Lvl = $T['PreReqLevel'];
         echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=6&t=$Turn&Hi=$Hi&Di=$Di&Sel=0" .
-                "&Name=" . base64_encode("Research " . $T['Name']) . "&L=$Lvl'>" .      
+                "&Name=" . base64_encode("Research " . $T['Name']) . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
                 "Research " . $T['Name'] . "; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
       }
    
@@ -193,7 +193,7 @@
         $Lvl = $OldPc+1;
         $pc = Proj_Costs($Lvl);
         echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=13&t=$Turn&Hi=$Hi&Di=$Di&Sel=0" .
-                "&Name=" . base64_encode("Research Ship Construction $Lvl"). "&L=$Lvl'>" .      
+                "&Name=" . base64_encode("Research Ship Construction $Lvl"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .  
                 "Research Ship Construction $Lvl; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
     
       $Rbuts = [];
@@ -207,7 +207,7 @@
 
         $Lvl = $T['PreReqLevel'];
         $Rbuts[] = "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=14&t=$Turn&Hi=$Hi&Di=$Di&Sel=0" .
-                "&Name=" . base64_encode("Research " . $T['Name']) . "&L=$Lvl'>" .      
+                "&Name=" . base64_encode("Research " . $T['Name']) . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
                 "Research " . $T['Name'] . "; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
       }
    
@@ -239,7 +239,7 @@
         $Lvl = $OldPc+1;
         $pc = Proj_Costs($Lvl);
         echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=17&t=$Turn&Hi=$Hi&Di=$Di&Sel=0" .
-                "&Name=" . base64_encode("Research Military Organisation $Lvl"). "&L=$Lvl'>" .      
+                "&Name=" . base64_encode("Research Military Organisation $Lvl"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
                 "Research Military Organisation $Lvl; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
     
       $Rbuts = [];
@@ -253,7 +253,7 @@
 
         $Lvl = $T['PreReqLevel'];
         $Rbuts[] = "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=18&t=$Turn&Hi=$Hi&Di=$Di&Sel=0" .
-                "&Name=" . base64_encode("Research " . $T['Name']) . "&L=$Lvl'>" .      
+                "&Name=" . base64_encode("Research " . $T['Name']) . "&L=$Lvl'&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
                 "Research " . $T['Name'] . "; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
       }
    
@@ -279,7 +279,7 @@
         $Lvl = $OldPc+1;
         $pc = Proj_Costs($Lvl);
         echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=20&t=$Turn&Hi=$Hi&Di=$Di&Sel=0" .
-                "&Name=" . base64_encode("Research Intelligence Operations $Lvl"). "&L=$Lvl'>" .      
+                "&Name=" . base64_encode("Research Intelligence Operations $Lvl"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
                 "Research Intelligence Operations $Lvl; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
     
       $Rbuts = [];
@@ -293,7 +293,7 @@
 
         $Lvl = $T['PreReqLevel'];
         $Rbuts[] = "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=21&t=$Turn&Hi=$Hi&Di=$Di&Sel=0" .
-                "&Name=" . base64_encode("Research " . $T['Name']) . "&L=$Lvl'>" .      
+                "&Name=" . base64_encode("Research " . $T['Name']) . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
                 "Research " . $T['Name'] . "; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
       }
    

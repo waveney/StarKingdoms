@@ -858,6 +858,14 @@ function Get_Projects($home) {
   return $Ts;
 }
 
+function Get_Projects_Cond($Cond) {
+  global $db;
+  $Ts = [];
+  $res = $db->query("SELECT * FROM Projects WHERE $Cond ORDER BY FactionId");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
+  return $Ts;
+}
+
 
 // Project Types
 function Get_ProjectType($id) {
