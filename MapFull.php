@@ -141,6 +141,7 @@
       $from = $N['Ref'];
       $Links = Get_Links($from);
       if (!isset( $ShownNodes[$N['Ref']])) continue;
+      $Neb = $N['Nebulae'];
 
       foreach ($Links as $L) {
         if (isset($LinkShown[$L['id']])) continue;
@@ -150,6 +151,7 @@
           fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=" . $Levels[$L['Level']]['Colour'] . " label=\"#" . $L['id'] . "\" ];\n");
           $LinkShown[$L['id']]=1;
         } else {
+          if ($Neb && $Fl['NebScanned'] < $Neb) continue;
           $rand = "B$ul";  // This kludge at least allows both ends to be displayed
           fwrite($Dot,"Unk$ul$rand [label=\"?\" shape=circle];\n");
           fwrite($Dot,"$from -- Unk$ul$rand [color=" . $Levels[$L['Level']]['Colour'] . " label=\"#" . $L['id'] . "\" ];\n");
