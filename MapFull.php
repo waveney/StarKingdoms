@@ -81,7 +81,7 @@
   $Nodes = Get_Systems(); 
   $Levels = Get_LinkLevels();
   $Factions = Get_Factions(); 
-  $Neb = 0;
+  $NebF = 0;
   $ShownNodes = [];
   $LinkSown = [];
   $UnknownLink = [];
@@ -121,7 +121,7 @@
     if ($NodeName) {
       $atts .= NodeLab($ShortName, $N['Ref']); //($Faction==0?$N['Ref']:""));
     }
-    if ($N['Nebulae']) { $atts .= " penwidth=" . (2+$N['Nebulae']*2); $Neb = 1; }
+    if ($N['Nebulae']) { $atts .= " penwidth=" . (2+$N['Nebulae']*2); $NebF = 1; }
     else { $atts .= " penwidth=2"; }
     
     fwrite($Dot,$N['Ref'] . " [$atts ];\n");
@@ -146,23 +146,19 @@
       $Links = Get_Links($from);
       if (!isset( $ShownNodes[$N['Ref']])) continue;
       $Neb = $N['Nebulae'];
-
       foreach ($Links as $L) {
         if (isset($LinkShown[$L['id']])) continue;
-        
         $Fl = Get_FactionLinkFL($Faction, $L['id']);
         if (isset($Fl['id'])) {
           fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=" . $Levels[$L['Level']]['Colour'] . " label=\"#" . $L['id'] . "\" ];\n");
           $LinkShown[$L['id']]=1;
         } else {
           if ($Neb && $Fl['NebScanned'] < $Neb) continue;
-          
 //          $To = ($L['System1Ref'] == $from ? $L['System2Ref'] : $L['System1Ref']);
 //          $if = Get_FactionSystemFRef($Faction,$To);
 
 //if ($from == 'DDE') { var_dump($if); echo "<br>"; }
           if (isset($if['ScanLevel']) && $if['ScanLevel']==0) continue;
-          
           $rand = "B$ul";  // This kludge at least allows both ends to be displayed
           fwrite($Dot,"Unk$ul$rand [label=\"?\" shape=circle];\n");
           fwrite($Dot,"$from -- Unk$ul$rand [color=" . $Levels[$L['Level']]['Colour'] . " label=\"#" . $L['id'] . "\" ];\n");
@@ -202,7 +198,7 @@
     }
   }
   
-  if ($Neb) {
+  if ($NebF) {
     if ($typ) {
       fwrite($Dot,"Nebulae [shape=box style=filled fillcolor=white penwidth=3" . ($typ?" pos=\"" . $HexLegPos[$ls][0] . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");
     } else {

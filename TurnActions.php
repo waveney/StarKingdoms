@@ -8,17 +8,23 @@
   
   A_Check('GM');
 
-function SKLog($text) {
+// For logging turn processing events that need following up or long term record keeping, set e to echo to GM
+function SKLog($text,$e=0) {
   global $Sand,$USER;
   $Sand['ActivityLog'] .= date("Y-m-d H:i:s - ") . $USER['Login'] . " - " . $text . "<br>\n";  // Who?
+  if ($e) echo $text . "<br>\n";
 }
 
+// Log to the turn text, and optionally aa history record of T
 function TurnLog($Fid,$text,&$T=0) {
-  global $GAME;
-  $LF = fopen("Turns/" . $GAME['id'] . "/" . $GAME['Turn'] . "/$Fid.txt", "a+");
-  fwrite($LF,"$text\n");
+  global $GAME,$GAMEID;
+  static $LF = [];
+  if (!isset($LF[$Fid])) {
+     if (!file_exists("Turns/$GAMEID/" . $GAME['Turn'])) mkdir("Turns/" . $GAMEID . "/" . $GAME['Turn'],0777,true);
+     $LF[$Fid] = fopen("Turns/$GAMEID/" . $GAME['Turn'] . "/$Fid.txt", "a+");
+  }
+  fwrite($LF[$Fid],"$text\n");
   if ($T) $T['History'] .= "Turn#" . $GAME['Turn'] . ": " . $text . "\n";
-  fclose($LF);
 }
 
 function Not_BeingProcessed() {
@@ -32,6 +38,7 @@ function CheckTurnsReady() {
 
 
 function StartTurnProcess() {
+  global $GAME,$GAMEID;
   // Lock players out
   $Facts = Get_Factions();
   foreach ($Facts as $F) {
@@ -39,7 +46,7 @@ function StartTurnProcess() {
     Put_Faction($F);
   }
   echo "<br>All Factions marked as Turn Processing<p>\n";
-  $LF = mkdir("Turns/" . $GAMEID . "/" . $GAME['Turn'],0777,true);
+  $LF = mkdir("Turns/$GAMEID/" . $GAME['Turn'],0777,true);
 }
 
 function CashTransfers() {
@@ -427,7 +434,7 @@ function ProjectsComplete() {
           TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");
           break;
         } else {
-          echo "Project to " . $P['Name'] . " already have level " . $CTech['Level'] . "<p>";
+          SKLog( "Project to " . $P['Name'] . " already have level " . $CTech['Level'] . " See <a href=ProjEdit.php?id=" . $P['id'] . ">Project</a>", 1);
           TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");
           break;          
         }
@@ -437,7 +444,7 @@ function ProjectsComplete() {
         TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");
         break;
       } else {
-        echo "Project to " . $P['Name'] . " already have<p>";
+        SKLog( "Project to " . $P['Name'] . " already have". " See <a href=ProjEdit.php?id=" . $P['id'] . ">Project</a>", 1);
         TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");
       }
       break;
@@ -462,8 +469,7 @@ function ProjectsComplete() {
     case 'Deep Space Sensors':
     case 'Build Advanced Asteroid Mining Facility':
     default:
-      echo "A project to " . $PT['Name'] . " has completed, this is not automated yet.<br>";
-      echo "<a href=ProjEdit.php?id=" . $P['id'] . ">Project</a><p>\n";
+      SKLog("A project to " . $PT['Name'] . " has completed, this is not automated yet.  See <a href=ProjEdit.php?id=" . $P['id'] . ">Project</a>",1);
     }
   }
   
@@ -508,6 +514,14 @@ function Do_Turn() {
              'Space Combat', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Spare', 'Spare', 'Project Progress', 'Spare',
              'Espionage Missions Complete', 'Spare', 'Spare', 'Spare', 'Projects Complete', 'Spare', 
              'Spare', 'Spare', 'Generate Turns', 'Spare', 'Tidy Up Movements', 'Spare', 'Finish Turn Process'];
+  $Coded =  [1,0,0,0,1,0,0,0,0,0,
+             0,0,0,1,0,0,
+             0,0,0,0,0,0,0,
+             0,0,0,0,0,0,0,0,0,0,0,0,
+             1,0,0,0,0,0,0,
+             0,0,0,0,0,0,0,1,0,
+             0,0,0,0,1,0,
+             0,0,0,0,1,0,1];
   $Sand = Get_TurnNumber();
 // var_dump($Sand);
 
@@ -556,14 +570,14 @@ function Do_Turn() {
   }
   
   echo "<table border>";
-  echo "<tr><th>#<td>Mask<td>Stage<th>State<th>Commands\n";
+  echo "<tr><th>#<td>Mask<td>Coded<td>Stage<th>State<th>Commands\n";
   $Stage = 0;
   $Prog = 1;
   $NextStage = -1;
   
   foreach ($Stages as $sta) {
     if ($sta != 'Spare') {
-      echo "<tr><td>$Stage<td>" . dechex($Prog) . "<td>" . $sta . "<td>";
+      echo "<tr><td>$Stage<td>" . dechex($Prog) . "<td>" . $Coded[$Stage] . "<td>" . $sta . "<td>";
       
       if ($Sand['Progress'] & $Prog) {
         echo "Completed<td><a href=TurnActions.php?ACTION=Revert&S=$Stage>Revert</a>";
