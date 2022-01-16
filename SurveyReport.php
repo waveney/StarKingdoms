@@ -58,7 +58,7 @@
   
   if (isset($_REQUEST['M']) && $Fid ) {
     $FS = Get_FactionSystemFS($Fid,$Sid);
-    $FS['ScanLevel'] = (!isset($FS['ScanLevel']) ? $SurveyLevel : ($FS['ScanLevel'] < $SurveyLevel ? $FS['ScanLevel']: $SurveyLevel));
+    if (isset($_REQUEST['L'])) $FS['ScanLevel'] = (!isset($FS['ScanLevel']) ? $SurveyLevel : ($FS['ScanLevel'] < $SurveyLevel ? $FS['ScanLevel']: $SurveyLevel));
     Put_FactionSystem($FS);
   }
   

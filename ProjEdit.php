@@ -33,7 +33,12 @@
 
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
-      
+      case 'Delete': 
+        db_delete('Projects',$Prid);
+        echo "<h1>Deleted</h1>";
+        echo "<h2><a href=ProjDisp.php?id=$Fid>Back to Project Display</a> , <a href=ProjList.php?F=$Fid>Back to Project List</a></h2>\n";
+        dotail();
+        exit;
     }
   }
 
@@ -50,6 +55,8 @@
   $FactionNames = Get_Faction_Names();
   $ProjTypes = Get_ProjectTypes();
   $DistTypeN = Get_DistrictTypeNames();
+  $Techs = Get_Techs();
+  $TechNames = Tech_Names($Techs);
   $ProjTypeNames = [];
   foreach ($ProjTypes as $PT) $ProjTypeNames[$PT['id']] = $PT['Name'];
   
@@ -93,12 +100,13 @@
     echo "<tr>" . fm_number('Level',$P,'Level') . "<td>Status<td>" . fm_select($Project_Status,$P,'Status');
     echo "<tr>" . fm_number("Turn Start",$P,'TurnStart') . fm_number('Turn Ended', $P, 'TurnEnd');
     echo "<tr>" . fm_number("Where",$P,'Home') . "<td>" . $PH['Name'] . " in " . NameFind($System);
-    echo "<tr>" . fm_number("Progress",$P,'Progress'); 
+    echo "<tr>" . fm_number('Cost',$P,'Costs') . fm_number('Prog Needed', $P,'ProgNeeded');
+    echo "<tr>" . fm_number("Progress",$P,'Progress') . fm_number('Last Updated',$P,'LastUpdate'); 
     if ($P['ThingId']) {
       $Thing = Get_Thing($P['ThingId']);
       echo fm_number('Thing',$P,'ThingId') . "<td><a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . $Thing['Name'] . "</a>"; 
-    } else if ($P['DistType']) {
-      echo "<td>" . fm_select($DistTypeN,$P,'DistType');
+    } else if (1 || $P['DistType']) {
+      echo "<td>" . ($P['Type'] == 1 ? fm_select($DistTypeN,$P,'DistType') : fm_select($TechNames, $P, 'DistType') );
     }
     echo "<tr>" . fm_textarea('Notes',$P,'Notes',8,2);
   
@@ -110,12 +118,13 @@
     echo "<tr>" . (($when > 0)?fm_number("Turn Start",$P,'TurnStart'): "<td>Started Turn" . $P['TurnStart']);
     if ($when <0) echo "<td>Finished Turn" . $P['TurnEnd'];
     echo "<tr><td>Where:<td>" . $PH['Name'] . " in " . NameFind($System);
+    echo "<tr><td>Cost:<td>" . $P['Costs'] . "<td>Progress needed:<td>" . $P['ProgNeeded'];
     echo "<tr><td>Progress:<td>" . $P['Progress']; 
     if ($P['ThingId']) {
       $Thing = Get_Thing($P['ThingId']);
       echo "<td><a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . $Thing['Name'] . "</a>"; // May need Tweek for player edit
     } else if ($P['DistType']) {
-      echo "<td>" . ($DistTypeN[$P['DistType']]);
+      echo "<td>" . ($P['Type'] == 1 ? ($DistTypeN[$P['DistType']]) : $TechNames[$P['DistType']] );
     }
     echo "<tr>" . fm_textarea('Notes',$P,'Notes',8,2);
   }
@@ -125,8 +134,12 @@
   echo "</table><h2>";
   if ($when >=0) echo "<input type=submit name=ACTION value=Cancel> ";
   if ($when > 0 || Access('GM') )  echo "<input type=submit name=ACTION value=Delete> ";
+//  if ($when == 0 || Access('GM') )  echo "<input type=submit name=ACTION value=Suspend> ";
+//  if ($P['Status'] == 4)  echo "<input type=submit name=ACTION value=Resume> ";
   echo "</h2>";
   echo "</form>";
+  
+  echo "<h2><a href=ProjDisp.php?id=$Fid>Back to Project Display</a> , <a href=ProjList.php?F=$Fid>Back to Project List</a></h2>\n";
   
   dotail();
 ?>

@@ -7,11 +7,12 @@ function Proj_Costs($lvl) {
 }
 
 function Rush_Cost($who) {
-  return 75; // will change with traits
+  if (Has_Trait('Bike-Shedders', $who)) return 100;
+  return 75; 
 }
 
 global $Project_Status;
-$Project_Status = [0=>'Live',1=>'Started', 2=>'Finished',3=>'Cancelled'];
+$Project_Status = [0=>'Live',1=>'Started', 2=>'Finished',3=>'Cancelled', 4=>'On Hold', 5=>'Not Started'];
 
 
 ?>

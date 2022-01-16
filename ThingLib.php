@@ -131,7 +131,7 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0) {
 }
 
 function Tech_Names(&$Techs) {
-  $TNs = [];
+  $TNs = [0=>''];
   foreach($Techs as $T) $TNs[$T['id']] = $T['Name'];
   return $TNs;
 }

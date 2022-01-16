@@ -81,4 +81,23 @@ function Ships() {
   
 }
 
+function Spend_Credit($Who,$Amount,$Why) { // Ammount is negative to gain credits
+  $Fact = Get_Faction($Who);
+  $StartC = $Fact['Credits'];
+  $CR = ['Whose'=>$Who, 'StartCredits'=>$StartC, 'Amount'=>$Amount, 'What'=>$Why];
+  if ($StartC-$Amount < 0) {
+    $CR['Status'] = 0;
+    Put_CreditLog($CR);
+    return 0;
+  } else {
+    $Fact['Credits'] -= $Amount;
+    Put_Faction($Fact);
+    $CR['Status'] = 1;  
+    $CR['EndCredits'] = $Fact['Credits'];
+    Put_CreditLog($CR);
+    return 1;
+  }
+}
+
+
 ?>

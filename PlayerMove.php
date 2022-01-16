@@ -73,7 +73,7 @@ return;
       if (isset($FS2['ScanLevel'])) { 
         echo "Already seen system " . $L['System2Ref'] . " at level " . $FS2['ScanLevel'];
       } else {
-        $FS2['ScanLevel'] = 1;
+        $FS2['ScanLevel'] = 0;
         echo "System " . $L['System2Ref'] . " is new give a survey report";
         Put_FactionSystem($FS2);
       }

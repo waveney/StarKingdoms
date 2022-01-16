@@ -357,7 +357,7 @@ function Get_DistrictsP($Pid) {
   global $db,$GAMEID;
   $Ts = [];
   $res = $db->query("SELECT * FROM Districts WHERE HostType=0 AND HostId=$Pid ORDER BY Type");
-  if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['Type']] = $ans;
   return $Ts;
 }
 
@@ -365,7 +365,7 @@ function Get_DistrictsM($Mid) {
   global $db,$GAMEID;
   $Ts = [];
   $res = $db->query("SELECT * FROM Districts WHERE HostType=1 AND HostId=$Mid ORDER BY Type");
-  if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['Type']] = $ans;
   return $Ts;
 }
 
@@ -373,7 +373,7 @@ function Get_DistrictsT($Tid) {
   global $db,$GAMEID;
   $Ts = [];
   $res = $db->query("SELECT * FROM Districts WHERE HostType=2 AND HostId=$Tid ORDER BY Type");
-  if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['Type']] = $ans;
   return $Ts;
 }
 
@@ -623,7 +623,8 @@ function Get_TechsByCore($Fact=0) {
     if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
     return $Ms;
   } else {
-    $res = $db->query("SELECT DISTINCT t.* FROM Technologies t, FactionTechs ft WHERE (t.Cat<2 OR (t.Cat=3 AND ft.Faction_Id=$Fact AND ft.Tech_Id=t.id)) ORDER BY t.PreReqTech, t.PreReqLevel, t.Name");
+    $res = $db->query("SELECT DISTINCT t.* FROM Technologies t, FactionTechs ft WHERE " .
+           "(t.Cat<2 OR (t.Cat=3 AND ft.Faction_Id=$Fact AND ft.Tech_Id=t.id)) ORDER BY t.PreReqTech, t.PreReqLevel, t.Name");
     if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
     return $Ms;    
   }
@@ -1001,6 +1002,25 @@ function Put_FactionFaction(&$now) {
     return $now['id'] = Insert_db ('FactionFaction', $now );
   }
 }
+
+function Get_CreditLog($id) {
+  global $db;
+  $res = $db->query("SELECT * FROM CreditLog WHERE id=$id");
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
+  return [];
+}
+
+function Put_CreditLog(&$now) {
+  global $db,$GAMEID;
+  if (isset($now['id'])) {
+    $e=$now['id'];
+    $Cur = Get_CreditLog($e);
+    return Update_db('CreditLog',$Cur,$now);
+  } else {
+    return $now['id'] = Insert_db ('CreditLog', $now );
+  }
+}
+
 
 
 

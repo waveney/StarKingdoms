@@ -149,6 +149,10 @@
     $txt .= "<li><form method=Post action=FactionName.php class=staffform>";
       $txt .= "<input type=submit name=F value='Name Things' id=staffformid>" . 
                 fm_select($Facts,0,'F',1," onchange=this.form.submit()") . "</form>\n";
+
+    $txt .= "<li><form method=Post action=ProjDisp.php class=staffform>";
+      $txt .= "<input type=submit name=F value='Projects' id=staffformid>" . 
+                fm_select($Facts,0,'F',1," onchange=this.form.submit()") . "</form>\n";
     
     $txt .= "<p>";
 

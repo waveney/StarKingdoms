@@ -60,20 +60,21 @@
       $Sid = $PH['SystemId'];
       break;
     }
-    
     //TODO Construction and Districts... 
 
     $Dists[] = ['HostType'=>-1, 'HostId' => $PH['id'], 'Type'=> -1, 'Number'=>0, 'id'=>-1];  
-
     foreach ($Dists as &$D) {
       if ($D['Type'] > 0 && (($DistTypes[$D['Type']]['Props'] &2) == 0)) continue;
       if ($D['Type'] < 0 && $PH['Type'] != $Faction['Biosphere'] && Has_Tech($Fid,3)<2 ) continue;
       $Dix = $D['id'];
      
-      if ($Hi == $Hix && $Di == $Dix) break 2;  // $D is now the relevant one
+      if ($Hi == $Hix && $Di == $Dix) {
+        $HDists[$Hix] = $Dists;      
+        break 2;  // $D is now the relevant one
+      }
       $Dis[$Hix][] = $Dix;
       }
-      
+
     $HDists[$Hix] = $Dists;
     }
     
@@ -86,7 +87,7 @@
 
 // echo "ZZ: $Where<p>";    
     
-// var_dump($CDists);
+// var_dump($HDists);
 
   echo "<form method=post action=ProjNew.php>";
   echo fm_hidden('t',$Turn) . fm_hidden('Hi',$Hi) . fm_hidden('Di',$Di);
@@ -105,7 +106,7 @@
           
           $Lvl = 0;
           
-          foreach ($CDists as $D) if ($D['Type'] == $DT['id']) {
+          foreach ($HDists[$Hi] as $D) if ($D['Type'] == $DT['id']) {
             $Lvl = $D['Number'];
             break;
           }
@@ -131,7 +132,7 @@
       $OldPc = Has_Tech($Fid,3);
       $Lvl = $OldPc+1;
       $pc = Proj_Costs($Lvl);
-      echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=4&t=$Turn&Hi=$Hi&Di=$Di&Sel=0" .
+      echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=4&t=$Turn&Hi=$Hi&Di=$Di&Sel=3" .
                 "&Name=" . base64_encode("Research Planetary Construction $Lvl"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .      
                 "Research Planetary Construction $Lvl; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
     
@@ -145,7 +146,7 @@
       foreach ($CTs as $TT) {
         $Lvl = $FactTechs[$TT['id']]['Level']+1;
         $pc = Proj_Costs($Lvl);
-        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=5&t=$Turn&Hi=$Hi&Di=$Di&Sel=0" .
+        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=5&t=$Turn&Hi=$Hi&Di=$Di&Sel=" . $TT['id'] .
                 "&Name=" . base64_encode("Research " . $TT['Name'] . " $Lvl"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .      
                 "Research " . $TT['Name'] . " $Lvl; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
         }
@@ -157,7 +158,7 @@
         if (!isset($FactTechs[$T['PreReqTech']]) ) continue;
         if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
         $Lvl = $T['PreReqLevel'];
-        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=6&t=$Turn&Hi=$Hi&Di=$Di&Sel=0" .
+        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=6&t=$Turn&Hi=$Hi&Di=$Di&Sel=" . $T['id'] .
                 "&Name=" . base64_encode("Research " . $T['Name']) . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
                 "Research " . $T['Name'] . "; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
       }
@@ -192,7 +193,7 @@
         $OldPc = Has_Tech($Fid,7);
         $Lvl = $OldPc+1;
         $pc = Proj_Costs($Lvl);
-        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=13&t=$Turn&Hi=$Hi&Di=$Di&Sel=0" .
+        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=13&t=$Turn&Hi=$Hi&Di=$Di&Sel=7" .
                 "&Name=" . base64_encode("Research Ship Construction $Lvl"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .  
                 "Research Ship Construction $Lvl; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
     
@@ -206,7 +207,7 @@
         if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
 
         $Lvl = $T['PreReqLevel'];
-        $Rbuts[] = "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=14&t=$Turn&Hi=$Hi&Di=$Di&Sel=0" .
+        $Rbuts[] = "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=14&t=$Turn&Hi=$Hi&Di=$Di&Sel=" . $T['id'] .
                 "&Name=" . base64_encode("Research " . $T['Name']) . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
                 "Research " . $T['Name'] . "; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
       }
@@ -238,7 +239,7 @@
         $OldPc = Has_Tech($Fid,8);
         $Lvl = $OldPc+1;
         $pc = Proj_Costs($Lvl);
-        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=17&t=$Turn&Hi=$Hi&Di=$Di&Sel=0" .
+        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=17&t=$Turn&Hi=$Hi&Di=$Di&Sel=8" .
                 "&Name=" . base64_encode("Research Military Organisation $Lvl"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
                 "Research Military Organisation $Lvl; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
     
@@ -252,7 +253,7 @@
         if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
 
         $Lvl = $T['PreReqLevel'];
-        $Rbuts[] = "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=18&t=$Turn&Hi=$Hi&Di=$Di&Sel=0" .
+        $Rbuts[] = "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=18&t=$Turn&Hi=$Hi&Di=$Di&Sel=" . $T['id'] .
                 "&Name=" . base64_encode("Research " . $T['Name']) . "&L=$Lvl'&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
                 "Research " . $T['Name'] . "; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
       }
@@ -278,7 +279,7 @@
         $OldPc = Has_Tech($Fid,4);
         $Lvl = $OldPc+1;
         $pc = Proj_Costs($Lvl);
-        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=20&t=$Turn&Hi=$Hi&Di=$Di&Sel=0" .
+        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=20&t=$Turn&Hi=$Hi&Di=$Di&Sel=4" .
                 "&Name=" . base64_encode("Research Intelligence Operations $Lvl"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
                 "Research Intelligence Operations $Lvl; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
     
@@ -292,7 +293,7 @@
         if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
 
         $Lvl = $T['PreReqLevel'];
-        $Rbuts[] = "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=21&t=$Turn&Hi=$Hi&Di=$Di&Sel=0" .
+        $Rbuts[] = "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=21&t=$Turn&Hi=$Hi&Di=$Di&Sel=" . $T['id'] .
                 "&Name=" . base64_encode("Research " . $T['Name']) . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
                 "Research " . $T['Name'] . "; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
       }

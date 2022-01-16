@@ -13,8 +13,14 @@
   
   if (Access('GM') ) {
     A_Check('GM');
-    $Fid = $_REQUEST['id'];
-    $Faction = Get_Faction($Fid);
+    if (isset( $_REQUEST['id'])) {
+      $Fid = $_REQUEST['id'];
+    } else if (isset( $_REQUEST['F'])) {
+      $Fid = $_REQUEST['F'];
+    } else if (isset( $_REQUEST['f'])) {
+      $Fid = $_REQUEST['f'];
+    }
+    if ($Fid) $Faction = Get_Faction($Fid);
   } else if (Access('Player')) {
     if (!$FACTION) {
       Error_Page("Sorry you need to be a GM or a Player to access this");
@@ -34,10 +40,13 @@
         $Di = $_REQUEST['Di'];
         $Sel = $_REQUEST['Sel'];
         $Level = $_REQUEST['L'];
+        $Costs = $_REQUEST['C'];
+        $ProgN = $_REQUEST['PN'];
         $Name = base64_decode($_REQUEST['Name']);
         $pc = Proj_Costs($Level);
         $OldPro = Get_ProjectAT($Hi, $Di, $Turn);
-        $Pro = ['FactionId'=>$Fid, 'Type'=>$Ptype, 'Level'=> $Level, 'Home'=>$Hi, 'Progress'=>0, 'Status'=>0, 'TurnStart'=>$Turn, 'DistType'=>$Sel, 'Name'=>$Name];
+        $Pro = ['FactionId'=>$Fid, 'Type'=>$Ptype, 'Level'=> $Level, 'Home'=>$Hi, 'Progress'=>0, 'Status'=>0, 'TurnStart'=>$Turn, 'DistType'=>$Sel, 'Name'=>$Name,
+                'Costs' => $Costs, 'ProgNeeded' => $ProgN];
 
         if (isset($OldPro['id'])) {
           $Pro['id'] = $OldPro['id'];          
@@ -138,16 +147,8 @@
       $Pro['Type'] = $P['Type'];
       $Pro['Name'] = $P['Name']; // $ProjTypes[$P['Type']]['Name'];
       $Pro['Level'] = $P['Level'];
-      if ($ProjTypes[$P['Type']]['StandardCosts']) {
-        $Dat = Proj_Costs($P['Level']);
-        $Pro['Cost'] = $Dat[1];
-        $Pro['Acts'] = $Dat[0];
-      } else if ($ProjTypes[$P['Type']]['Cost']) {
-        $Pro['Cost'] = $ProjTypes[$P['Type']]['Cost'];
-        $Pro['Acts'] = $ProjTypes[$P['Type']]['CompTarget'];
-      } else { 
-        // TODO 
-      }
+      $Pro['Cost'] = $P['Costs'];
+      $Pro['Acts'] = $P['ProgNeeded'];
       
       $PPtype = $ProjTypes[$P['Type']];
       $PCat = $PPtype['Category'];
