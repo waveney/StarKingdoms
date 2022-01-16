@@ -114,18 +114,23 @@
   
   if ($N['Image']) echo "<img src=" . $N['Image'] . ">";
   
-  echo "The " . ($N['Type2']?"principle star":"star") . " is a " . $N['Type'];
+  echo "The " . ($N['Type2']?"principle star":"star");
+  if ($N['StarName']) echo " ( " . $N['StarName'] . " ) " ;  
+  echo " is a " . $N['Type'] . ".<br>";
   
-  if ($SurveyLevel >= 3) echo ", with a radius of " . 
+  if ($SurveyLevel >= 3) echo "It has a radius of " . 
         sprintf("%0.2g Km = ",$N['Radius'])  . RealWorld($N,'Radius') . ", a mass of " .
         sprintf("%0.2g Kg = ",$N['Mass'])  . RealWorld($N,'Mass') . ", a temperature of " .
         sprintf("%0.0f K = ",$N['Temperature'])  . " and a luminosity of " .
         sprintf("%0.2g Km = ",$N['Luminosity'])  . RealWorld($N,'Luminosity') . ".<p>";
+        
   if ($N['Type2']) {
     if ($N['Image2']) echo "<br clear=all><img src=" . $N['Image2'] . ">";
-    echo "The companion star is a " . $N['Type2'];
-    
-    if ($SurveyLevel >= 3) echo ", with a radius of " . 
+    echo "The companion star ";
+    if ($N['StarName2']) echo " ( " . $N['StarName2'] . " ) " ;      
+    echo " is a " . $N['Type2']  . ".<br>";
+
+    if ($SurveyLevel >= 3) echo "It has a radius of " . 
         sprintf("%0.2g Km = ",$N['Radius2'])  . RealWorld($N,'Radius2') . ", a mass of " .
         sprintf("%0.2g Kg = ",$N['Mass2'])  . RealWorld($N,'Mass2') . ", a temperature of " .
         sprintf("%0.0f K = ",$N['Temperature2'])  . " and a luminosity of " .

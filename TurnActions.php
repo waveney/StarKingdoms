@@ -426,8 +426,9 @@ function ProjectsComplete() {
           TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");
           break;
         } else {
-           // Already have?
-           
+          echo "Project to " . $P['Name'] . " already have level " . $CTech['Level'] . "<p>";
+          TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");
+          break;          
         }
       } else if ($CTech['Level'] == 0) { // Supp
         $CTech['Level'] = 1;
@@ -435,7 +436,8 @@ function ProjectsComplete() {
         TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");
         break;
       } else {
-      // Allready have?
+        echo "Project to " . $P['Name'] . " already have<p>";
+        TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");
       }
       break;
       
