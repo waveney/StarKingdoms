@@ -16,7 +16,7 @@
     $MT = Get_ModuleType($MTid);
   } else if (isset($_REQUEST['NEW'])) { 
     $MT = [];
-  } else
+  } else {
     echo "<h2>No Systems Requested</h2>";
     dotail();
   }

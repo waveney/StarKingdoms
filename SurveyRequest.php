@@ -18,7 +18,7 @@
   echo "<tr><td>Faction:<td>" . fm_Select($Facts,$Z,'F');
   echo "<tr>" . fm_text("System",$Z,'R');
   echo "<tr><td>Level<td>" . fm_Select($SurveyLevels,$Z,'V');
-  echo "<tr><td><td>" . fm_checkbox("Mark as Known? ",$Z,'M') . fm_checkbox("Record Scan Level? ",$Z,'M') 
+  echo "<tr><td><td>" . fm_checkbox("Mark as Known? ",$Z,'M') . fm_checkbox(" Record Scan Level? ",$Z,'M') ;
   echo "</table>";
   echo "<tr><td><input type=submit value=Survey></form>\n";
   

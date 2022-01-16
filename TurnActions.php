@@ -402,8 +402,9 @@ function ProjectsComplete() {
           TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");         
           break 2;
         }
+      }
       $D = ['HostType'=>$H['ThingType'], 'HostId'=>$PH['id'], 'Type'=>$P['DistType'], 'Number'=>1];
-      Put_District(&D);
+      Put_District($D);
       TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");
       break;
       
