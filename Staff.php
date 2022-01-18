@@ -160,6 +160,18 @@
   }
 
 // *********************** Misc *****************************************************************
+  if ($x = SKTable('Any','Things')) {
+    $txt .= $x;
+    $txt .= "<ul>\n";
+    $txt .= "<li><form method=Post action=PThingList.php class=staffform>";
+      $txt .= "<input type=submit name=F value='Thing List' id=staffformid>" . 
+                fm_select($Facts,0,'F',1," onchange=this.form.submit()") . "</form>\n";
+    
+
+    $txt .= "</ul>\n";
+  }
+
+// *********************** Misc *****************************************************************
   if ($x = SKTable('Any','Game')) {
     $txt .= $x;
     $txt .= "<ul>\n";

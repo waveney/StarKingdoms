@@ -6,24 +6,26 @@ include_once("vendor/erusev/parsedown/Parsedown.php");
 include_once("PlayerLib.php");  
 
 global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$ShipTypes,$Tech_Cats,$CivMil,$BuildState;
-global $THING_HAS_DISTRICTS,$THING_HAS_MODULES,$THING_HAS_SUBTYPES,$THING_HAS_SHIPMODULES,$THING_HAS_GADGETS;
 
 $ModuleCats = ['Ship','Civilian Ship','Support Ship','Military Ship','Army','Other'];
 $Fields = ['Engineering','Physics','Xenology'];
 $ShipTypes = ['','Military','Support','Civilian'];
 $Tech_Cats = ['Core','Supp','Non Std'];
 $CivMil = ['','Civilian','Military'];
-$BuildState = ['Planning','Building','Shakedown','Complete'];
+$BuildState = ['Planning','Building','Shakedown','Complete','Ex'];
 
 $ModFormulaes = [];
 $ModValues = [];
 
-$THING_HAS_DISTRICTS =1;
-$THING_HAS_MODULES = 2;
-$THING_HAS_SUBTYPES = 4;
-$THING_HAS_SHIPMODULES = 8;
-$THING_HAS_GADGETS = 16;
-$THING_HAS_ARMYMODULES = 32;
+define('THING_HAS_DISTRICTS',1);
+define('THING_HAS_MODULES',2);
+define('THING_HAS_SUBTYPES',4);
+define('THING_HAS_SHIPMODULES',8);
+define('THING_HAS_GADGETS',16);
+define('THING_HAS_ARMYMODULES',32);
+define('THING_HAS_MILSHIPMODS',64);
+define('THING_HAS_CIVSHIPMODS',128);
+define('THING_CAN_MOVE',256);
 
 function ModFormulaes() {
   global $ModFormulaes;
@@ -190,15 +192,15 @@ if (!isset($N['id'])) { var_dump($N); exit; }
 }
 
 function Get_Valid_Modules(&$t) {
-  global $THING_HAS_DISTRICTS,$THING_HAS_MODULES,$THING_HAS_SUBTYPES,$THING_HAS_SHIPMODULES,$THING_HAS_ARMYMODULES,$ModuleCats;
+  global $ModuleCats;
   $MTs = Get_ModuleTypes();
   $VMT = [];
   $ThingProps = Thing_Type_Props();
   foreach ($MTs as $M) {
     if ($ModuleCats[$M['CivMil']] == 'Army') {
-      if (($ThingProps[$t['Type']] & $THING_HAS_ARMYMODULES) == 0) continue;
+      if (($ThingProps[$t['Type']] & THING_HAS_ARMYMODULES) == 0) continue;
     } else if ($M['CivMil'] < 4) {
-       if ($ThingProps[$t['Type']] & $THING_HAS_SHIPMODULES) { 
+       if ($ThingProps[$t['Type']] & THING_HAS_SHIPMODULES) { 
         if (isset($t['SubType']) && $t['SubType']) {
           if ($ModuleCats[$M['CivMil']] == 'Military Ship' && $t['SubType'] == 3) continue;
           if ($ModuleCats[$M['CivMil']] == 'Civilian Ship' && $t['SubType'] == 1) continue;
@@ -221,11 +223,10 @@ function Get_Valid_Modules(&$t) {
 
 
 function Max_Modules(&$t) {
-  global $THING_HAS_DISTRICTS,$THING_HAS_MODULES,$THING_HAS_SUBTYPES;
   $ThingProps = Thing_Type_Props();
-  if ($ThingProps[$t['Type']] & $THING_HAS_MODULES) {
+  if ($ThingProps[$t['Type']] & THING_HAS_MODULES) {
     $v = [0,4,12,24,40,60,84,112,144,180,220][$t['Level']];
-    if ($ThingProps[$t['Type']] & $THING_HAS_SUBTYPES) {
+    if ($ThingProps[$t['Type']] & THING_HAS_SUBTYPES) {
       if ($t['SubType'] == 2) $v = $v*3/4;
       }
     if (Has_Tech($t['Whose'], 'Compact Ship Design') && $t['Level'] > 1) $v += $t['Level'];
@@ -287,15 +288,21 @@ function Thing_Finished($tid) {
 }
 
 function Show_Thing(&$t) {
-  global $THING_HAS_DISTRICTS,$THING_HAS_GADGETS,$THING_HAS_MODULES,$GAMEID,$GAME,$ShipTypes,$BuildState;
+  global $ShipTypes,$BuildState,$GAME,$GAMEID;
+  global $Project_Status;
   $tid = $t['id'];
+  
+  $GM = Access('GM');
   
   $ttn = Thing_Type_Names();
   $FactNames = Get_Faction_Names();
   $Fact_Colours = Get_Faction_Colours();
   $ThingProps = Thing_Type_Props();
+  $tprops = $ThingProps[$t['Type']];
   $N = Get_System($t['SystemId']);
   $Syslocs = Within_Sys_Locs($N);
+  $LinkTypes = Get_LinkLevels();
+  
   if ($t['SystemId'] == $t['NewSystemId']) {
     $NewSyslocs = $Syslocs;
   } elseif ($t['NewSystemId']) {
@@ -306,11 +313,55 @@ function Show_Thing(&$t) {
   }
   $Systems = Get_SystemRefs();
   $t['MaxModules'] = Max_Modules($t);
-  if  ($ThingProps[$t['Type']] & $THING_HAS_MODULES) $t['OrigHealth'] = Calc_Health($t);
+  if  ($tprops & THING_HAS_MODULES) $t['OrigHealth'] = Calc_Health($t);
   
   $Links = Get_Links($N['Ref']);
   $SelLinks = [''];
-  foreach ($Links as $L) $SelLinks[$L['id']] = ( "#" . $L['id'] . " to " . (($L['System1Ref'] == $N['Ref'])?$L['System2Ref']: $L['System1Ref'] ));
+  $SelCols = [''];
+  if ($GM) {
+    foreach ($Links as $L) {
+      $SelLinks[$L['id']] = "#" . $L['id'] . " to " . (($L['System1Ref'] == $N['Ref'])?$L['System2Ref']: $L['System1Ref'] );
+      $SelCols[$L['id']] = $LinkTypes[$L['Level']]['Colour'];
+    }
+  } else {
+    $NearNeb = $N['Nebulae'];
+    $NS = Get_FactionSystem($Fid,$N['id']);
+
+    foreach ($Links as $L) {
+      $LinkText = "Unknowm";
+      $FL = Get_FactionLink($Fid,$L['id']);
+      $FarSysRef =  (($L['System1Ref'] == $N['Ref'])?$L['System2Ref']: $L['System1Ref'] );
+      $FSN = Get_SystemR($FarSysRef);
+      $FarNeb = $FSN['Nebulae'];
+      $FS = Get_FactionSystem($Fid,$FSN['id']);
+
+      if ($FL['known']) {
+        $LinkText = $FarSysRef;
+      } else if ($NearNeb == 0) {
+        if (isset($FS['id'])) {
+          if ($FarNeb == 0) {
+            $LinkText = $FarSysRef;
+          } else if ($FS['NebScanned'] >= $FarWeb) {
+            $LinkText = $FarSysRef;
+          } else {
+            $LinkText = '?';
+          }
+        } else {
+          $LinkText = '?';
+        }
+      } else if ($NS['NebScanned'] >= $NearWeb) { // In a Neb...
+        if (isset($FS['id'])) {
+          $LinkText = $FarSysRef;
+        } else {
+          $LinkText = '?';
+        }
+      } else { 
+        continue; // Can't see that link
+      }
+      $SelLinks[$L['id']] = $LinkText;
+      $SelCols[$L['id']] = $LinkTypes[$L['Level']]['Colour'];
+    }
+  }
 
   echo "Note Movement does not yet work for armies moving by ship.<p>\n";
 
@@ -319,39 +370,93 @@ function Show_Thing(&$t) {
   Register_AutoUpdate('Thing',$tid);
   echo fm_hidden('id',$tid);
   
-  echo "<tr class=NotSide><td class=NotSide>Id:<td class=NotSide>$tid<td class=NotSide>Game<td class=NotSide>$GAMEID<td class=NotSide>" . $GAME['Name'];
-  echo "<tr><td>Type:<td>" . fm_select($ttn,$t,'Type',1) . "<td>If Ship: " . fm_select($ShipTypes,$t,'SubType'); // need to make that easier
-  echo fm_number("Level",$t,'Level');
-
+  if ($GM) {
+    echo "<tr class=NotSide><td class=NotSide>Id:<td class=NotSide>$tid<td class=NotSide>Game<td class=NotSide>$GAMEID<td class=NotSide>" . $GAME['Name'];
+    echo "<tr><td>Type:<td>" . fm_select($ttn,$t,'Type',1); // . "<td>If Ship: " . fm_select($ShipTypes,$t,'SubType'); // need to make that easier
+    echo fm_number("Level",$t,'Level');
+  } else {
+    echo "<tr><td>Type: " . $ttn[$t['Type']] . "<td>Level: " . $t['Level'];
+  }
   echo "<tr>" . fm_text('Name',$t,'Name',2);
   echo "<td rowspan=4 colspan=4><table><tr>";
     echo fm_DragonDrop(1,'Image','Thing',$tid,$t,1,'',1,'','Thing');
   echo "</table>";
 
+  if ($GM) {
+    echo "<tr><td>Build State:" . fm_select($BuildState,$t,'Buildstate'); 
+    if (isset($t['Buildstate']) && $t['Buildstate'] <= 1) {
+      echo fm_number('Build Project',$t,'ProjectId');
+      if ($t['ProjectId']) {
+        $Proj = Get_Project($t['ProjectId']);
+        echo "Status: " . $Project_Status[$Proj['Status']];
+        if ($Proj['TurnStart']) echo " Start Turn: " . $Proj['TurnStart'];
+        if ($Proj['TurnEnd']) echo " End Turn: " . $Proj['TurnEnd'];
+      }
+      
+    } else {
+      if ($tprops & THING_CAN_MOVE) echo "<td>Taking Link:<td>" . fm_select($SelLinks,$t,'LinkId',0," style=color:" . $SelCols[$t['LinkId']] ,'',0,$SelCols) . 
+        "Update this normally";
+    }
 
-  echo "<tr><td>Build State:" . fm_select($BuildState,$t,'Buildstate'); 
-  if (isset($t['Buildstate']) && $t['Buildstate'] == 1) {
-    echo fm_number('Build Project',$t,'ProjectId');
+    echo "<tr><td>System:<td>" . fm_select($Systems,$t,'SystemId');
+    echo "<td>" . fm_select($Syslocs,$t,'WithinSysLoc');
+    if ($tprops & THING_CAN_MOVE) {
+      echo "<tr><td>New System:<td>" . fm_select($Systems,$t,'NewSystemId',1) . "This is derived data<td>" . fm_select($NewSyslocs,$t,'NewLocation');
+    }
+    echo "<tr>" . fm_radio('Whose',$FactNames ,$t,'Whose','',1,'colspan=6','',$Fact_Colours,0); 
   } else {
-    echo "<td>Taking Link:<td>" . fm_select($SelLinks,$t,'LinkId') . "Update this normally";
+    echo "<tr><td>Build State:" . $BuildState[$t['Buildstate']]; 
+    if (isset($t['Buildstate']) && $t['Buildstate'] <= 1) {
+      if ($t['ProjectId']) {
+        echo "<tr><td>See <a href=ProjEdit.php?id=" . $t['ProjectId'] . ">Project</a>";
+        echo "Status: " . $Project_Status[$Proj['Status']];
+        if ($Proj['TurnStart']) echo " Start Turn: " . $Proj['TurnStart'];
+        if ($Proj['TurnEnd']) echo " End Turn: " . $Proj['TurnEnd'];
+      }
+      
+    } else {
+      if ($tprops & THING_CAN_MOVE) {
+        switch ($t['Buildstate']) {
+        
+        case 0: // Plan
+        case 1: // Build
+        case 4: // Ex thing
+          break; // Can't move
+        case 2: // Shakedown - In sys only
+          echo "Where in the system should it go? " . fm_select($Syslocs,$t,'WithinSysLoc');
+          break;
+        case 3: //
+           echo "<td>Taking Link:<td>" . fm_select($SelLinks,$t,'LinkId',0," style=color:" . $SelCols[$t['LinkId']] ,'',0,$SelCols);
+           if (!strchr($SelLinks[$t['LinkId']],'?') {
+             echo "<td>" . fm_select($NewSyslocs,$t,'NewLocation');
+           }
+        }
+      } else { //Static, can specify where before start
+        if (($t['Buildstate'] == 0)) {
+          echo "Where in the system is it to be built? " . fm_select($Syslocs,$t,'WithinSysLoc');
+        }
+      }
+    }
+
+    echo "<tr><td>System:<td>" . fm_select($Systems,$t,'SystemId') . "<td>" . fm_select($Syslocs,$t,'WithinSysLoc');
+    if ($tprops & THING_CAN_MOVE) {
+      echo "<tr><td>New System:<td>" . fm_select($Systems,$t,'NewSystemId',1) . "This is derived data<td>" . fm_select($NewSyslocs,$t,'NewLocation');
+    }
+
+
   }
 
-  echo "<tr><td>System:<td>" . fm_select($Systems,$t,'SystemId') . "<td>" . fm_select($Syslocs,$t,'WithinSysLoc');
-  echo "<tr><td>New System:<td>" . fm_select($Systems,$t,'NewSystemId',1) . "This is derived data<td>" . fm_select($NewSyslocs,$t,'NewLocation');
-
-
-  echo "<tr>" . fm_radio('Whose',$FactNames ,$t,'Whose','',1,'colspan=6','',$Fact_Colours,0); 
-  if  ($ThingProps[$t['Type']] & $THING_HAS_GADGETS) echo "<tr>" . fm_textarea("Gadgets",$t,'Gadgets',8,3);
+  if  ($tprops & THING_HAS_GADGETS) echo "<tr>" . fm_textarea("Gadgets",$t,'Gadgets',8,3);
   echo "<tr>" . fm_textarea("Description\n(For others)",$t,'Description',8,2);
   echo "<tr>" . fm_textarea('Notes',$t,'Notes',8,2);
   echo "<tr>" . fm_textarea('Named Crew',$t,'NamedCrew',8,2);
-  echo "<tr>" . fm_textarea('GM Notes',$t,'GM_Notes',8,2,'class=NotSide');
+  if ($GM) echo "<tr>" . fm_textarea('GM Notes',$t,'GM_Notes',8,2,'class=NotSide');
   echo "<tr>" . fm_textarea('History',$t,'History',8,2);
-  if  ($ThingProps[$t['Type']] & $THING_HAS_MODULES) {
+  if  ($tprops & THING_HAS_MODULES) {
     echo "<tr>" . fm_number('Orig Health',$t,'OrigHealth') . fm_number('Cur Health',$t,'CurHealth');
     echo "<td>Basic Dam: " . Calc_Damage($t);
   }
-  if ($ThingProps[$t['Type']] & $THING_HAS_DISTRICTS) {
+  if ($tprops & THING_HAS_DISTRICTS) {
     $DTs = Get_DistrictTypeNames();
     $Ds = Get_DistrictsT($tid);
 
@@ -375,7 +480,7 @@ function Show_Thing(&$t) {
     if (!isset($t['MaxDistricts'])) $t['MaxDistricts'] = 0;
     if ($totdisc > $t['MaxDistricts']) echo "<td class=Err>TOO MANY DISTRICTS\n";
   }
-  if ($ThingProps[$t['Type']] & $THING_HAS_MODULES) {
+  if ($tprops & THING_HAS_MODULES) {
 //    echo "<tr><td>Modules to be done\n";
     $MTs = Get_ModuleTypes();
 
@@ -428,5 +533,7 @@ function Scanners(&$T) {
   if ($mods) return $mods['Number'] * ($mods['Level']+1);
   return 0;
 }
+
+//  &#8373; = Credit symbol
 
 ?>

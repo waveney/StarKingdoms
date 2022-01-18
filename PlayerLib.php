@@ -99,5 +99,9 @@ function Spend_Credit($Who,$Amount,$Why) { // Ammount is negative to gain credit
   }
 }
 
+function Link_Cost($Fid,$LinkLevel,$ShipLevel) {
+  if ($LinkLevel == 1) return '';
+  
+}
 
 ?>

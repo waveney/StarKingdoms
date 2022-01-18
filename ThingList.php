@@ -54,6 +54,7 @@
   foreach($Things as $T) {
     $tid = $T['id'];
     $Name = $T['Name'];
+    if (!$Name) $Name = "Unknown Thing $tid";
     $who = $T['Whose'];
     $Ref = $Systems[$T['SystemId']];
     if ($T['WithinSysLoc'] == 1) {

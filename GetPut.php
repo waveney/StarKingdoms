@@ -489,6 +489,15 @@ function Get_ThingsSys($Sid,$type=0,$Fid=0) {
   return $Ts;
 }
 
+function Get_Things_Cond($Fact,$Cond) {
+  global $db,$GAMEID;
+  $Ts = [];
+  $res = $db->query("SELECT * FROM Things WHERE Whose=$Fact AND $Cond ");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
+  return $Ts;
+}
+
+
 // Modules
 
 function Get_Module($id) {

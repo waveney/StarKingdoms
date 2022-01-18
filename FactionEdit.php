@@ -28,7 +28,7 @@ function Show_Faction(&$F,$Mode) {
   echo "<tr>" . fm_text('Faction Name',$F,'Name',2) . "<td>Native BioSphere<td>" . fm_select($PTs,$F,'Biosphere',1);
   echo "<tr>" . fm_text('Player Name',$F,'Player',2);
   echo "<td>" . fm_select($PlayerState,$F,'TurnState');
-  echo "<tr>" . fm_number('Credits',$F,'Credits') . fm_number('Physics Points', $F,'PhysicsSP');
+  echo "<tr>" . fm_number('Credits &cedi;',$F,'Credits') . fm_number('Physics Points', $F,'PhysicsSP');
   echo "<tr>" . fm_number('Engineering Points', $F,'EngineeringSP') . fm_number('Xenology Points', $F,'XenologySP');
   echo "<tr>" . fm_text("Trait 1 Name",$F,'Trait1'). "<td>Short name that is unique";
   echo "<tr>" . fm_textarea('Description',$F,'Trait1Text',8,2);

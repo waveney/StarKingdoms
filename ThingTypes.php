@@ -14,6 +14,8 @@
   if (UpdateMany('ThingTypes','Put_ThingType',$Ts,1))    $Ts = Get_ThingTypes();
 
   echo "<h1>Thing Types</h1>";
+  
+ echo "Props 1=Districts, 2=Modules, 4=not used, 8=Ship, 16=Gadgets, 32=Army, 64=Mil, 128=Civil, 256=Can Move<br>\n";
   echo "<form method=post action=ThingTypes.php>";
 
   
@@ -41,4 +43,3 @@
   echo "</form></div>";
   dotail();
 ?>
-

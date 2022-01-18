@@ -3,6 +3,7 @@
 
   echo "<meta name=description content='Star Kingdoms Software'>\n";
   echo "<meta name=keywords content=''>\n";
+  echo '<meta charset="UTF-16">';
 
   $V = $GAMESYS['V'];
 //  if (isset($FESTSYS['Analytics'])) echo "<script>" . $FESTSYS['Analytics'] . "</script>";

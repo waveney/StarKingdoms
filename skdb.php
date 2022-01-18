@@ -203,7 +203,7 @@ $GAME = $GAMESYS['CurGame'];  //$GAME can be overridden
 include_once("Version.php");
 $GAMESYS['V'] = $CALYEAR . ".$VERSION";
 
-function Feature($Name,$default='') {  // Return value of feature if set from FESTSYS
+function Feature($Name,$default='') {  // Return value of feature if set from GAMESYS
   static $Features;
   global $GAMESYS;
   if (!$Features) {
@@ -221,9 +221,9 @@ function Feature($Name,$default='') {  // Return value of feature if set from FE
   return $default;
 }
 
-function GameFeature($Name,$default='') {  // Return value of feature if set from FESTSYS
+function GameFeature($Name,$default='') {  // Return value of feature if set from GAMESYS
   static $Features;
-  global $YEARDATA;
+  global $GAMEDATA;
   if (!$Features) {
     $Features = [];
     foreach (explode("\n",$GAMEDATA['GameFeatures']) as $i=>$feat) {

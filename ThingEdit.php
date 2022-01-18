@@ -22,7 +22,12 @@ function New_Thing(&$t) {
   dotail();
 }
 
-  A_Check('GM');
+  if (Access('GM')) {
+    A_Check('GM');
+    
+  } else {
+    
+  }
 
   dostaffhead("Edit and Create Things",["js/dropzone.js","css/dropzone.css" ]);
 
@@ -93,7 +98,7 @@ function New_Thing(&$t) {
 
   
   Show_Thing($t);
-  echo "<br><p><br><p><h2><a href=ThingEdit.php?ACTION=DELETE&id=$tid>Delete Thing</a></h2>";
+  if (Access('GM')) echo "<br><p><br><p><h2><a href=ThingEdit.php?ACTION=DELETE&id=$tid>Delete Thing</a></h2>";
   
   
   dotail();

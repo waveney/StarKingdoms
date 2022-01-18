@@ -11,7 +11,7 @@
 // For logging turn processing events that need following up or long term record keeping, set e to echo to GM
 function SKLog($text,$e=0) {
   global $Sand,$USER;
-  $Sand['ActivityLog'] .= date("Y-m-d H:i:s - ") . $USER['Login'] . " - " . $text . "<br>\n";  // Who?
+  $Sand['ActivityLog'] .= date("Y-m-d H:i:s - ") . $USER['Login'] . " - " . $text . "\n";  // Who?
   if ($e) echo $text . "<br>\n";
 }
 
@@ -70,7 +70,7 @@ function StartProjects() {
     $Cost = $P['Costs'];
     if (Spend_Credit($P['FactionId'],$Cost,'Starting: ' . $P['Name'])) {
       $P['Status'] = 1; // Started
-      TurnLog($P['FactionId'],'Starting ' . $P['Name']);
+      TurnLog($P['FactionId'],'Starting ' . $P['Name'] . " Cost: &#8373;$Cost");
     } else {
       $P['Status'] = 5; // Not Started
       TurnLog($P['FactionId'],'Not starting as not enough Credits: ' . $P['Name']);
@@ -367,6 +367,19 @@ function EspionageMissionsComplete() {
   echo "Espionage Missions Complete	is currently Manual<p>";
 }
 
+function FinishShakedowns() {
+  // Move anything in shakedown to completed
+  
+  $Things = Get_Things_Cond("AND BuildState=2");
+  foreach($Things as $T) {
+    $T['BuildState'] = 3;
+    TurnLog($T['FactionId'],$T['Name'] . " has finished it's Shakedown and is now ready for operations.");
+    Put_Thing($T);
+  }
+  
+  echo "Shakdowns finished<br>";
+}
+
 
 function ProjectsComplete() {
 //  echo "Projects Complete is currently Manual<p>";  
@@ -512,7 +525,7 @@ function Do_Turn() {
              'Start Anomaly', 'Spare', 'Spare', 'Agents Start Missions', 'Spare', 'Spare', 'Economy', 'Spare', 'Spare', 'Load Troops', 'Spare', 'Spare',
              'Movements', 'Spare', 'Spare', 'Meetups', 'Spare', 'Spare', 'Spare', 
              'Space Combat', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Spare', 'Spare', 'Project Progress', 'Spare',
-             'Espionage Missions Complete', 'Spare', 'Spare', 'Spare', 'Projects Complete', 'Spare', 
+             'Espionage Missions Complete', 'Spare', 'Finish Shakedowns', 'Spare', 'Projects Complete', 'Spare', 
              'Spare', 'Spare', 'Generate Turns', 'Spare', 'Tidy Up Movements', 'Spare', 'Finish Turn Process'];
   $Coded =  [1,0,0,0,1,0,0,0,0,0,
              0,0,0,1,0,0,
@@ -520,7 +533,7 @@ function Do_Turn() {
              0,0,0,0,0,0,0,0,0,0,0,0,
              1,0,0,0,0,0,0,
              0,0,0,0,0,0,0,1,0,
-             0,0,0,0,1,0,
+             0,0,1,0,1,0,
              0,0,0,0,1,0,1];
   $Sand = Get_TurnNumber();
 // var_dump($Sand);
@@ -594,6 +607,7 @@ function Do_Turn() {
   echo "</table>";
   
   echo "<center><h2><a href=TurnActions.php?ACTION=Process&S=$NextStage>Do Next Stage</a></h2></center><br><p><br><p>\n";
+  $Parsedown = new Parsedown(); // To hande logs in time
   
   if ($Sand['id']) {
     echo "<h2>Turn Detail (for bug fixing)</h2>";
