@@ -6,8 +6,7 @@
   $id    = $_POST['I'];
   $type  = $_POST['D'];
 
-
-var_dump($_POST);  
+//var_dump($_POST);  
 // Special returns @x@ changes id to x, #x# sets feild to x, !x! important error message
   switch ($type) {
   case 'System' :
@@ -127,7 +126,7 @@ var_dump($_POST);
       exit;
 
     }
-    
+
     $N = Get_Thing($id);
     $N[$field] = $Value;
     if ($field == 'LinkId') {
@@ -141,7 +140,11 @@ var_dump($_POST);
       }
       $N['NewLocation'] = 1;
     }
-    if ($field == 'Type' || $field == 'Level'|| $field == 'SubType' || $field == 'LinkId') echo 'FORCELOADCHANGE54321:NOW';
+    if ($field == 'Type' || $field == 'Level') {
+      echo 'FORCELOADCHANGE54321:NOW';
+    } else if ( $field == 'LinkId') {
+      echo 'FORCERELOAD54321:NOW';
+    }
     echo Put_Thing($N);
     exit;
   

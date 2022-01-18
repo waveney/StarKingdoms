@@ -22,6 +22,8 @@ function New_Thing(&$t) {
   dotail();
 }
 
+  $Force = (isset($_REQUEST['FORCE'])?1:0);
+  
   if (Access('GM')) {
     A_Check('GM');
     
@@ -96,8 +98,9 @@ function New_Thing(&$t) {
     dotail();
   }
 
+
   
-  Show_Thing($t);
+  Show_Thing($t,$Force);
   if (Access('GM')) echo "<br><p><br><p><h2><a href=ThingEdit.php?ACTION=DELETE&id=$tid>Delete Thing</a></h2>";
   
   

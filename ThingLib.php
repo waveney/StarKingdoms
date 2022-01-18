@@ -287,12 +287,17 @@ function Thing_Finished($tid) {
   Put_Thing($t);
 }
 
-function Show_Thing(&$t) {
+function Show_Thing(&$t,$Force=0) {
   global $ShipTypes,$BuildState,$GAME,$GAMEID;
   global $Project_Status;
   $tid = $t['id'];
   
-  $GM = Access('GM');
+  if ($Force) {
+    $GM = 0;
+    $Fid = $t['Whose'];
+  } else {
+    $GM = Access('GM');
+  }
   
   $ttn = Thing_Type_Names();
   $FactNames = Get_Faction_Names();
@@ -325,7 +330,7 @@ function Show_Thing(&$t) {
     }
   } else {
     $NearNeb = $N['Nebulae'];
-    $NS = Get_FactionSystem($Fid,$N['id']);
+    $NS = Get_FactionSystemFS($Fid,$N['id']);
 
     foreach ($Links as $L) {
       $LinkText = "Unknowm";
@@ -333,9 +338,9 @@ function Show_Thing(&$t) {
       $FarSysRef =  (($L['System1Ref'] == $N['Ref'])?$L['System2Ref']: $L['System1Ref'] );
       $FSN = Get_SystemR($FarSysRef);
       $FarNeb = $FSN['Nebulae'];
-      $FS = Get_FactionSystem($Fid,$FSN['id']);
-
-      if ($FL['known']) {
+      $FS = Get_FactionSystemFS($Fid,$FSN['id']);
+//echo "<p>doing link " . $L['id'] . " to $FarSysRef ". $FSN['id'] ; var_dump($FS);
+      if (isset($FL['known']) && $FL['known']) {
         $LinkText = $FarSysRef;
       } else if ($NearNeb == 0) {
         if (isset($FS['id'])) {
@@ -358,10 +363,12 @@ function Show_Thing(&$t) {
       } else { 
         continue; // Can't see that link
       }
-      $SelLinks[$L['id']] = $LinkText;
+      $SelLinks[$L['id']] = "#" . $L['id'] . " to " . $LinkText;
       $SelCols[$L['id']] = $LinkTypes[$L['Level']]['Colour'];
     }
   }
+
+//var_dump($SelLinks);
 
   echo "Note Movement does not yet work for armies moving by ship.<p>\n";
 
@@ -405,7 +412,7 @@ function Show_Thing(&$t) {
     }
     echo "<tr>" . fm_radio('Whose',$FactNames ,$t,'Whose','',1,'colspan=6','',$Fact_Colours,0); 
   } else {
-    echo "<tr><td>Build State:" . $BuildState[$t['Buildstate']]; 
+    echo "<tr><td>Build State:<td>" . $BuildState[$t['Buildstate']]; 
     if (isset($t['Buildstate']) && $t['Buildstate'] <= 1) {
       if ($t['ProjectId']) {
         echo "<tr><td>See <a href=ProjEdit.php?id=" . $t['ProjectId'] . ">Project</a>";
@@ -415,6 +422,8 @@ function Show_Thing(&$t) {
       }
       
     } else {
+      echo "<tr><td>Current System:<td>" . $N['Ref'] . "<td>" . $Syslocs[$t['WithinSysLoc']];
+
       if ($tprops & THING_CAN_MOVE) {
         switch ($t['Buildstate']) {
         
@@ -423,27 +432,25 @@ function Show_Thing(&$t) {
         case 4: // Ex thing
           break; // Can't move
         case 2: // Shakedown - In sys only
-          echo "Where in the system should it go? " . fm_select($Syslocs,$t,'WithinSysLoc');
+          echo "<tr><td>Where in the system should it go? " . fm_select($Syslocs,$t,'WithinSysLoc');
           break;
         case 3: //
-           echo "<td>Taking Link:<td>" . fm_select($SelLinks,$t,'LinkId',0," style=color:" . $SelCols[$t['LinkId']] ,'',0,$SelCols);
-           if (!strchr($SelLinks[$t['LinkId']],'?') {
-             echo "<td>" . fm_select($NewSyslocs,$t,'NewLocation');
+           echo "<tr><td>Taking Link:<td>" . fm_select($SelLinks,$t,'LinkId',0," style=color:" . $SelCols[$t['LinkId']] ,'',0,$SelCols);
+           if ($t['LinkId'] && !strpos($SelLinks[$t['LinkId']],'?')) {
+             echo "<td>To:" . fm_select($NewSyslocs,$t,'NewLocation');
            }
         }
       } else { //Static, can specify where before start
         if (($t['Buildstate'] == 0)) {
-          echo "Where in the system is it to be built? " . fm_select($Syslocs,$t,'WithinSysLoc');
+          echo "<tr><td>Where in the system is it to be built? " . fm_select($Syslocs,$t,'WithinSysLoc');
         }
       }
     }
 
-    echo "<tr><td>System:<td>" . fm_select($Systems,$t,'SystemId') . "<td>" . fm_select($Syslocs,$t,'WithinSysLoc');
-    if ($tprops & THING_CAN_MOVE) {
-      echo "<tr><td>New System:<td>" . fm_select($Systems,$t,'NewSystemId',1) . "This is derived data<td>" . fm_select($NewSyslocs,$t,'NewLocation');
-    }
 
-
+//    if ($tprops & THING_CAN_MOVE) {
+//      echo "<tr><td>New System:<td>" . fm_select($Systems,$t,'NewSystemId',1) . "This is derived data<td>" . fm_select($NewSyslocs,$t,'NewLocation');
+//    }
   }
 
   if  ($tprops & THING_HAS_GADGETS) echo "<tr>" . fm_textarea("Gadgets",$t,'Gadgets',8,3);

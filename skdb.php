@@ -323,7 +323,5 @@ function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$M
     return 1;
   } 
 }
-
-
 ?>
 

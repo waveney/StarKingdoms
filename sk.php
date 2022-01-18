@@ -4,7 +4,6 @@
 
   include_once("skdb.php");
   include_once("skfm.php");
-
 $BUTTON = 0;
 
 if (isset($_REQUEST{'Y'})) $YEAR = $_REQUEST{'Y'};
