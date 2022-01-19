@@ -257,14 +257,14 @@ function Calc_Health(&$t) {
   return $Health;
 }
 
-function Calc_Damage(&$t) { // Needs extending to round N 
+function Calc_Damage(&$t) { // Needs extending to round N TODO Allow for module levels 
 
   $Dam = 0;
   $Ms = Get_Modules($t['id']);
   $Mts = Get_ModuleTypes();
   $Techs = Get_Techs();
   foreach ($Mts as $mt) if ($mt['DefWep'] == 2 ) {
-    foreach ($Ms as $M) if ($Mts[$M['Type']]['Name'] == $mt['Name']) {
+    foreach ($Ms as $M) if ($Mts[$M['Type']]['Name'] == $mt['Name']) {  // TODO lovelly code just WRONG
       $based = $Mts[$M['Type']]['BasedOn'];
       if ($l = Has_Tech($t['Whose'],$based)) {
         if ($Techs[$based]['Cat'] == 1) {
@@ -460,8 +460,12 @@ function Show_Thing(&$t,$Force=0) {
   if ($GM) echo "<tr>" . fm_textarea('GM Notes',$t,'GM_Notes',8,2,'class=NotSide');
   echo "<tr>" . fm_textarea('History',$t,'History',8,2);
   if  ($tprops & THING_HAS_MODULES) {
-    echo "<tr>" . fm_number('Orig Health',$t,'OrigHealth') . fm_number('Cur Health',$t,'CurHealth');
-    echo "<td>Basic Dam: " . Calc_Damage($t);
+    if ($GM) {
+      echo "<tr>" . fm_number('Orig Health',$t,'OrigHealth') . fm_number('Cur Health',$t,'CurHealth');
+    } else {
+      echo "<tr><td>Original Health: " . $t['OrigHealth'] . "<td>Current Health: " . $t['CurHealth'];
+    }
+    echo "<td>Basic Damage: " . Calc_Damage($t);
   }
   if ($tprops & THING_HAS_DISTRICTS) {
     $DTs = Get_DistrictTypeNames();
@@ -471,21 +475,38 @@ function Show_Thing(&$t,$Force=0) {
     $dc=0;
     $totdisc = 0;
 
-    if ($NumDists) echo "<tr><td rowspan=" . ceil(($NumDists+2)/2) . ">Districts:";
+    if ($GM) {
+      if ($NumDists) echo "<tr><td rowspan=" . ceil(($NumDists+2)/2) . ">Districts:";
       
-    foreach ($Ds as $D) {
-      $did = $D['id'];
-      if (($dc++)%2 == 0)  echo "<tr>";
-      echo "<td>" . fm_Select($DTs, $D , 'Type', 1,'',"DistrictType-$did") . fm_number1('', $D,'Number', '','',"DistrictNumber-$did");
-      $totdisc += $D['Number'];      
+      foreach ($Ds as $D) {
+        $did = $D['id'];
+        if (($dc++)%2 == 0)  echo "<tr>";
+        echo "<td>" . fm_Select($DTs, $D , 'Type', 1,'',"DistrictType-$did") . fm_number1('', $D,'Number', '','',"DistrictNumber-$did");
+        $totdisc += $D['Number'];      
       };
 
-    echo "<tr><td>Add District Type<td>" . fm_Select($DTs, NULL , 'Number', 1,'',"DistrictTypeAdd-$tid");
-    echo fm_number("Max Districts",$t,'MaxDistricts');
-    echo fm_number(($t['ProjHome']?"<a href=ProjHome.php?id=" . $t['ProjHome'] . ">Project Home</a>":"Project Home"),$t,'ProjHome');
 
-    if (!isset($t['MaxDistricts'])) $t['MaxDistricts'] = 0;
-    if ($totdisc > $t['MaxDistricts']) echo "<td class=Err>TOO MANY DISTRICTS\n";
+      echo "<tr><td>Add District Type<td>" . fm_Select($DTs, NULL , 'Number', 1,'',"DistrictTypeAdd-$tid");
+      echo fm_number("Max Districts",$t,'MaxDistricts');
+      echo fm_number(($t['ProjHome']?"<a href=ProjHome.php?id=" . $t['ProjHome'] . ">Project Home</a>":"Project Home"),$t,'ProjHome');
+
+      if (!isset($t['MaxDistricts'])) $t['MaxDistricts'] = 0;
+      if ($totdisc > $t['MaxDistricts']) echo "<td class=Err>TOO MANY DISTRICTS\n";
+    } else {
+      if ($NumDists) echo "<tr><td rowspan=" . ceil(($NumDists+4)/4) . ">Districts:";
+      
+      foreach ($Ds as $D) {
+        $did = $D['id'];
+        if (($dc++)%4 == 0)  echo "<tr>";
+        echo "<td>" . $DTs[$D['Type']] . ": " . $D['Number'];
+        $totdisc += $D['Number'];      
+      };
+
+      if (($dc++)%4 == 0)  echo "<tr>";
+      echo "<td>Max Districts: " . $t['MaxDistricts'];
+      if (($dc++)%4 == 0)  echo "<tr>"; 
+      if ($t['ProjHome']) echo "<td><a href=ProjDisp.php?H=" . $t['ProjHome'] . ">Projects here</a>";
+    }
   }
   if ($tprops & THING_HAS_MODULES) {
 //    echo "<tr><td>Modules to be done\n";
@@ -502,29 +523,53 @@ function Show_Thing(&$t,$Force=0) {
     $totmodc = 0;
     $BadMods = 0;
     
-    if ($NumMods) echo "<tr><td rowspan=" . ceil(($NumMods+2)/2) . ">Modules:";
+    if ($GM) { // TODO Allow for setting module levels 
+      if ($NumMods) echo "<tr><td rowspan=" . ceil(($NumMods+2)/2) . ">Modules:";
   
-    foreach ($Ds as $D) {
-      $did = $D['id'];
-      if (($dc++)%2 == 0)  echo "<tr>";
-      echo "<td>" . fm_Select($MTNs, $D , 'Type', 1,'',"ModuleType-$did") . fm_number1('', $D,'Number', '','',"ModuleNumber-$did");
-      if (!isset($MTNs[$D['Type']])) $BadMods += $D['Number'];
-      $totmodc += $D['Number'] * $MTs[$D['Type']]['SpaceUsed'];
-//var_dump($MTs[$D['Type']]);
-//echo " ($totmodc) " . $MTs[$D['Type']]['SpaceUsed'];
-      };
+      foreach ($Ds as $D) {
+        $did = $D['id'];
+        if (($dc++)%2 == 0)  echo "<tr>";
+        echo "<td>" . fm_Select($MTNs, $D , 'Type', 1,'',"ModuleType-$did")
+                    . fm_number1('Level', $D,'Level', '', ' maxlength=2 size=2 class=Thin ',"ModuleLevel-$did") 
+                    . fm_number0('', $D,'Number', '',' maxlength=2 size=2 class=Thin ',"ModuleNumber-$did");
+        if (!isset($MTNs[$D['Type']])) $BadMods += $D['Number'];
+        $totmodc += $D['Number'] * $MTs[$D['Type']]['SpaceUsed'];
+        };
 
-    echo "<tr><td>Add Module Type<td>" . fm_Select($MTNs, NULL , 'Number', 1,'',"ModuleTypeAdd-$tid");
-    echo fm_number("Max Modules",$t,'MaxModules');
-    echo fm_number1("Deep Space",$t,'HasDeepSpace');
-    if ($totmodc > $t['MaxModules']) {
-      echo "<td class=Err>TOO MANY MODULES\n";
-    } elseif ($BadMods) {
-      echo "<td class=Err>$BadMods INVALID MODULES\n";
+      echo "<tr><td>Add Module Type<td>" . fm_Select($MTNs, NULL , 'Number', 1,'',"ModuleTypeAdd-$tid");
+      echo fm_number("Max Modules",$t,'MaxModules');
+      echo fm_number1("Deep Space",$t,'HasDeepSpace');
+      if ($totmodc > $t['MaxModules']) {
+        echo "<td class=Err>TOO MANY MODULES\n";
+      } elseif ($BadMods) {
+        echo "<td class=Err>$BadMods INVALID MODULES\n";
+      } else {
+        echo "<td>Used: $totmodc";
+      }
     } else {
-      echo "<td>Used: $totmodc";
-    }
+      if ($NumMods) echo "<tr><td rowspan=" . ceil(($NumMods+4)/4) . ">Modules:";
+  
+      foreach ($Ds as $D) {
+        $did = $D['id'];
+        if (($dc++)%4 == 0)  echo "<tr>";
+        echo "<td>" . fm_Select($MTNs, $D , 'Type', 1,'',"ModuleType-$did") . fm_number1('', $D,'Number', '','',"ModuleNumber-$did");
+        if (!isset($MTNs[$D['Type']])) $BadMods += $D['Number'];
+        $totmodc += $D['Number'] * $MTs[$D['Type']]['SpaceUsed'];
+        };
 
+      echo "<tr><td>Add Module Type<td>" . fm_Select($MTNs, NULL , 'Number', 1,'',"ModuleTypeAdd-$tid");
+      echo fm_number("Max Modules",$t,'MaxModules');
+      echo fm_number1("Deep Space",$t,'HasDeepSpace');
+      if ($totmodc > $t['MaxModules']) {
+        echo "<td class=Err>TOO MANY MODULES\n";
+      } elseif ($BadMods) {
+        echo "<td class=Err>$BadMods INVALID MODULES\n";
+      } else {
+        echo "<td>Used: $totmodc";
+      }
+    
+    
+    }
 
  // TODO 
  // Max modules, current count, what 
@@ -532,7 +577,11 @@ function Show_Thing(&$t,$Force=0) {
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
   echo "</table></div>\n";
 
-  echo "<h2><a href=ThingList.php>Back to Thing list</a> &nbsp; <input type=submit name=ACTION value=Duplicate></h2>";
+  if ($GM) {
+    echo "<h2><a href=ThingList.php>Back to Thing list</a> &nbsp; <input type=submit name=ACTION value=Duplicate></h2>";
+  } else {
+    echo "<h2><a href=PThingList.php?id=$Fid>Back to Thing list</a></h2>";
+  }
 }
 
 function Scanners(&$T) {

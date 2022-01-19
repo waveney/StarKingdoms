@@ -112,11 +112,14 @@
 
     case (preg_match('/Module(\w*)-(\d*)/',$field,$mtch)?true:false):
       $N = Get_Module($mtch[2]);
-      if ($Value && $mtch[1] != 'Type') { 
+      if ($Value && $mtch[1] == 'Type') { 
         $N[$mtch[1]] = $Value;     
         echo 'FORCERELOAD54321:NOW' . Put_Module($N);
-      } else {
-        if ($N['Type'] == 3) {
+      } else if ($Value >=0 ) { 
+        $N[$mtch[1]] = $Value;     
+        echo Put_Module($N);
+      } else { // Number to -1 to delete
+       if ($N['Type'] == 3) {
           $T = Get_Thing($id);
           $T['HasDeepSpace'] = 0;
           Put_Thing($id);
