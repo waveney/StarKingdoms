@@ -104,27 +104,30 @@
       if ($Value == 3) {
         $T = Get_Thing($id);
         $T['HasDeepSpace'] = 1;
-        Put_Thing($id);
+        Put_Thing($T);
       }
       $N= ['Type'=>$Value,'ThingId'=>$mtch[1],'Number'=>1];
       echo 'FORCELOADCHANGE54321:NOW' . Put_Module($N);
       exit;
 
     case (preg_match('/Module(\w*)-(\d*)/',$field,$mtch)?true:false):
+//echo "In right place "; var_dump($mtch);
       $N = Get_Module($mtch[2]);
-      if ($Value && $mtch[1] == 'Type') { 
-        $N[$mtch[1]] = $Value;     
+      if ($Value && ($mtch[1] == 'Type')) { 
+        $N[$mtch[1]] = $Value;   
         echo 'FORCERELOAD54321:NOW' . Put_Module($N);
-      } else if ($Value >=0 ) { 
-        $N[$mtch[1]] = $Value;     
-        echo Put_Module($N);
-      } else { // Number to -1 to delete
+      } else if ($mtch[1] == 'Remove') { 
        if ($N['Type'] == 3) {
           $T = Get_Thing($id);
           $T['HasDeepSpace'] = 0;
-          Put_Thing($id);
+          Put_Thing($T);
         }
-        echo 'FORCERELOAD54321:NOW' . db_delete('Modules',$mtch[2]);
+//echo "About to delete: "; var_dump( $mtch);
+        echo 'FORCELOADCHANGE54321:NOW' . db_delete('Modules',$mtch[2]);
+      } else { 
+        $N[$mtch[1]] = $Value;     
+//var_dump($N);
+        echo Put_Module($N);
       }
       exit;
 

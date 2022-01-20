@@ -34,7 +34,7 @@
     $FACTION = Get_Faction($Fid);
   }
 
-  $Techs = Get_TechsByCore($Fid);
+
 //var_dump($Techs); exit;
 
   $TechFacts = [];
@@ -43,6 +43,7 @@
   }
   
   $Setup = isset($_REQUEST['SETUP']);
+  $Techs = Get_TechsByCore($Fid,($Setup?1:0));
 //var_dump ($TechFacts);
 //var_dump($FACTION);
  

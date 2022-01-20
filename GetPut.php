@@ -451,6 +451,10 @@ function Put_Thing(&$now) {
     $e=$now['id'];
     $Cur = Get_Thing($e);
     return Update_db('Things',$Cur,$now);
+  } else if (empty($now)){
+echo "Puting Nothing!<p>";
+debug_print_backtrace();
+exit;    
   } else {
     $now['GameId'] = $GAMEID;
     return $now['id'] = Insert_db ('Things', $now );
@@ -624,10 +628,10 @@ function Get_Techs($Fact=0) {
   }
 }
 
-function Get_TechsByCore($Fact=0) {
+function Get_TechsByCore($Fact=0,$All=0) {
   global $db,$GAMEID;
   $Ms = [];
-  if ($Fact == 0) {
+  if ($Fact == 0 || $All) {
     $res = $db->query("SELECT * FROM Technologies ORDER BY PreReqTech, PreReqLevel, Name");
     if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
     return $Ms;
@@ -721,7 +725,7 @@ function Get_ThingTypes() {
   return $Ms;
 }
 
-function Has_Tech($fid,$name) {
+function Has_Tech($fid,$name) {// name can be id
   global $db,$GAMEID;
 //echo "Has_Tech called with $fid, $name<p>";
   if (is_numeric($name)) {

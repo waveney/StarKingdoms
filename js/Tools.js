@@ -274,10 +274,17 @@ function AutoInput(f) {
     var dbg = document.getElementById('Debug');
     if (dbg) $('#Debug').html( data) ;  
     if (data.match(/FORCERELOAD54321/m)) {
-      window.location.reload();
+      setTimeout(function(){
+//        var Location = window.location.pathname + "?id=" + refval;  //  window.location.hostname
+//        window.location.href = Location;
+
+        window.location.reload();
+        }, 20000);
     } else if (data.match(/FORCELOADCHANGE54321/m)) {
-      var Location = window.location.pathname + "?id=" + refval;  //  window.location.hostname
-      window.location.href = Location;
+      setTimeout(function(){
+        var Location = window.location.pathname + "?id=" + refval;  //  window.location.hostname
+        window.location.href = Location;
+        }, 20000);
     }
   });
 }

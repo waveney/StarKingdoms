@@ -31,6 +31,7 @@ function New_Thing(&$t) {
     
   }
 
+
   dostaffhead("Edit and Create Things",["js/dropzone.js","css/dropzone.css" ]);
 
   global $db, $GAME, $GAMEID,$BuildState;
@@ -57,7 +58,21 @@ function New_Thing(&$t) {
      
      case 'DELETE' :
        $tid = $_REQUEST['id'];
+       $Discs = Get_DistrictsT($tid);
+       if ($Discs) {
+         foreach ($Discs as $D) {
+           db_delete('Districts',$D['id']);
+         }
+       }
+       $Mods = Get_DistrictsT($tid);
+       if ($Mods) {
+         foreach ($Mods as $M) {
+           db_delete('Modules',$M['id']);
+         }
+       }
+
        db_delete('Things',$tid);
+
        echo "<h1>Deleted</h1>";
        echo "<h2><a href=ThingList.php>Back to Thing list</a></h2>";
        dotail();
@@ -83,7 +98,8 @@ function New_Thing(&$t) {
            Insert_db('Modules',$M);
          }
        }
-           
+    
+    case 'None' :
     default: 
       break;
     }
@@ -98,10 +114,17 @@ function New_Thing(&$t) {
     dotail();
   }
 
+  echo "<br>";
 
-  
+  if ($Force) {
+    $GM = 0;
+    $Fid = $t['Whose'];
+  } else {
+    $GM = Access('GM');
+  }
+    
   Show_Thing($t,$Force);
-  if (Access('GM')) echo "<br><p><br><p><h2><a href=ThingEdit.php?ACTION=DELETE&id=$tid>Delete Thing</a></h2>";
+  if ($GM) echo "<br><p><br><p><h2><a href=ThingEdit.php?ACTION=DELETE&id=$tid>Delete Thing</a></h2>";
   
   
   dotail();

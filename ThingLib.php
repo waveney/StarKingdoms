@@ -113,9 +113,9 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0) {
     echo "Core Technology<br>";
     break;
   case 2:
-    echo "Non Standard supplimentary Tech<br>";
+    echo " <span class=blue>Non Standard supplimentary Tech</span><br>";
   case 1:
-    echo "Requires " . $CTNs[$T['PreReqTech']] . " at level " . $T['PreReqLevel'] . "<br>";
+    echo " Requires " . $CTNs[$T['PreReqTech']] . " at level " . $T['PreReqLevel'] . "<br>";
     if ($T['MinThingLevel']) echo "Size Limitation - Requires at least level " . $T['MinThingLevel'] . " ship<br>";
     break;
   }
@@ -257,28 +257,33 @@ function Calc_Health(&$t) {
   return $Health;
 }
 
-function Calc_Damage(&$t) { // Needs extending to round N TODO Allow for module levels 
+function Calc_Damage(&$t) { 
 
   $Dam = 0;
   $Ms = Get_Modules($t['id']);
   $Mts = Get_ModuleTypes();
-  $Techs = Get_Techs();
+
   foreach ($Mts as $mt) if ($mt['DefWep'] == 2 ) {
-    foreach ($Ms as $M) if ($Mts[$M['Type']]['Name'] == $mt['Name']) {  // TODO lovelly code just WRONG
-      $based = $Mts[$M['Type']]['BasedOn'];
-      if ($l = Has_Tech($t['Whose'],$based)) {
-        if ($Techs[$based]['Cat'] == 1) {
-          $l = Has_Tech($t['Whose'],$Techs[$based]['PreReqTech']);
-        }
-        $dam = $M['Number'] * Mod_ValueSimple($l,$M['Type']);
-        $Dam += $dam;
-      }
+    foreach ($Ms as $M) if ($Mts[$M['Type']]['Name'] == $mt['Name']) { 
+      $dam = $M['Number'] * Mod_ValueSimple($M['Level'],$M['Type']);
+      $Dam += $dam;
     }
   }
     
   return $Dam;
 }
 
+function Calc_TechLevel($Fid,$MType) {
+  $Mts = Get_ModuleTypes();
+  $Techs = Get_Techs();
+  $based = $Mts[$MType]['BasedOn'];
+  if ($l = Has_Tech($Fid,$based)) {
+    if ($Techs[$based]['Cat'] == 1) {
+      $l = Has_Tech($Fid,$Techs[$based]['PreReqTech']);
+    }
+  }
+  return $l;
+}
 
 function Thing_Finished($tid) {
   $t = Get_Thing($tid);
@@ -530,8 +535,9 @@ function Show_Thing(&$t,$Force=0) {
         $did = $D['id'];
         if (($dc++)%2 == 0)  echo "<tr>";
         echo "<td>" . fm_Select($MTNs, $D , 'Type', 1,'',"ModuleType-$did")
-                    . fm_number1('Level', $D,'Level', '', ' maxlength=2 size=2 class=Thin ',"ModuleLevel-$did") 
-                    . fm_number0('', $D,'Number', '',' maxlength=2 size=2 class=Thin ',"ModuleNumber-$did");
+                    . fm_number1('Level', $D,'Level', '', '',"ModuleLevel-$did") 
+                    . fm_number0('', $D,'Number', '','',"ModuleNumber-$did") 
+                    . "<button id=ModuleRemove-$did onclick=AutoInput('ModuleRemove-$did')>R</button>";
         if (!isset($MTNs[$D['Type']])) $BadMods += $D['Number'];
         $totmodc += $D['Number'] * $MTs[$D['Type']]['SpaceUsed'];
         };
@@ -544,31 +550,34 @@ function Show_Thing(&$t,$Force=0) {
       } elseif ($BadMods) {
         echo "<td class=Err>$BadMods INVALID MODULES\n";
       } else {
-        echo "<td>Used: $totmodc";
+        echo "<td>Module space used: $totmodc";
       }
     } else {
       if ($NumMods) echo "<tr><td rowspan=" . ceil(($NumMods+4)/4) . ">Modules:";
   
+      $MTs = Get_ModuleTypes();
       foreach ($Ds as $D) {
         $did = $D['id'];
         if (($dc++)%4 == 0)  echo "<tr>";
-        echo "<td>" . fm_Select($MTNs, $D , 'Type', 1,'',"ModuleType-$did") . fm_number1('', $D,'Number', '','',"ModuleNumber-$did");
+        echo "<td>" . $MTNs[$D['Type']] . "(Level " . $D['Level'] . "): " . $D['Number'];
+        
+        $CLvl = Calc_TechLevel($Fid,$D['Type']);
+        if ($CLvl != $D['Level']) {
+          echo ". <span class=Blue> Note you have Level: $CLvl </span>";
+        }
         if (!isset($MTNs[$D['Type']])) $BadMods += $D['Number'];
         $totmodc += $D['Number'] * $MTs[$D['Type']]['SpaceUsed'];
         };
 
-      echo "<tr><td>Add Module Type<td>" . fm_Select($MTNs, NULL , 'Number', 1,'',"ModuleTypeAdd-$tid");
-      echo fm_number("Max Modules",$t,'MaxModules');
-      echo fm_number1("Deep Space",$t,'HasDeepSpace');
+      echo "<tr><td>Max Modules: " . $t['MaxModules'];
+//      echo fm_number1("Deep Space",$t,'HasDeepSpace');
       if ($totmodc > $t['MaxModules']) {
         echo "<td class=Err>TOO MANY MODULES\n";
       } elseif ($BadMods) {
         echo "<td class=Err>$BadMods INVALID MODULES\n";
       } else {
-        echo "<td>Used: $totmodc";
+        echo "<td>Module space used: $totmodc";
       }
-    
-    
     }
 
  // TODO 
