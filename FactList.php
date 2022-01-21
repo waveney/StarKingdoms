@@ -7,8 +7,8 @@
 
   dostaffhead("List Factions");
 
-  global $db, $GAME,$PlayerState;
-
+  global $db, $GAME;
+  global $PlayerState,$PlayerStates,$PlayerStateColours;
   $Factions = Get_Factions();
   
   if (!$Factions) {
@@ -36,7 +36,7 @@
     echo "<td>" . $F['Player'];
     echo "<td style='background:" . $F['MapColour'] . ";'>";
     echo "<td>" . (isset($F['LastActive']) && $F['LastActive']? date('d/m/y H:i:s',$F['LastActive']) :"Never");
-    echo "<td>" . $PlayerState[$F['TurnState']];
+    echo "<td <span style='background:" . $PlayerStateColours[$F['TurnState']] . "'>"  . $PlayerState[$F['TurnState']];
   }
       
   echo "</tbody></table></div>\n";

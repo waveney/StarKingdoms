@@ -463,12 +463,24 @@ function ProjectsComplete() {
       break;
       
     case 'Rebuild and Repair':  
+    case 'Refit and Repair': 
+      if ($P['ThingId']) {
+        $T = Get_Things($P['ThingId']);
+        RefitRepair($T);
+        TurnLog($P['FactionId'], $T['Name'] . " has been " . $PT['Name'] . "ed");        
+      }
+      if ($P['ThingId2']) {
+        $T = Get_Things($P['ThingId2']);
+        RefitRepair($T);
+        TurnLog($P['FactionId'], $T['Name'] . " has been " . $PT['Name'] . "ed");        
+      }
+      break;
+    
     case 'Construct Warp Gate':
     case 'Share Technology':
     case 'Analyse':
     case 'Decipher Alien Language':
     case 'Construct Ship':
-    case 'Refit and Repair':
     case 'Decommission Ship':
     case 'Train Army':
     case 'Re-equip and Reinforce':

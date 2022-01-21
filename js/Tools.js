@@ -279,12 +279,12 @@ function AutoInput(f) {
 //        window.location.href = Location;
 
         window.location.reload();
-        }, 20000);
+        }, 1000);
     } else if (data.match(/FORCELOADCHANGE54321/m)) {
       setTimeout(function(){
         var Location = window.location.pathname + "?id=" + refval;  //  window.location.hostname
         window.location.href = Location;
-        }, 20000);
+        }, 1000);
     }
   });
 }

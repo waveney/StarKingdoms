@@ -599,6 +599,23 @@ function Scanners(&$T) {
   return 0;
 }
 
+function RefitRepair(&ST) {
+// Refit
+  $tid = $T['id'];
+  $Mods = Get_Modules($tid); 
+  if ($Mods) {
+    foreach ($Mods as $M) {
+      $Lvl = Calc_TechLevel($Fid,$M['Type']);
+      $M['Level'] = $Lvl;
+      Put_Module($M);
+    }
+  }
+// Repair
+  $Health = Calc_Health($T) {
+  $T['CurHealth'] = $T['OrigHealth'] = $Health;
+  Put_Thing($T);
+}
+
 //  &#8373; = Credit symbol
 
 ?>

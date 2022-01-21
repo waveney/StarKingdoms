@@ -118,6 +118,7 @@
   if ($x = SKTable('Any','Turns')) {
     $txt .= $x;
     $txt .= "<ul>\n";
+ //   $txt .= "<li><a href=PlayerStates.php>Player States</a>\n";
     $txt .= "<li><a href=TurnActions.php>Turn Actions</a>\n";
     $txt .= "<p>";
 

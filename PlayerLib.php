@@ -5,18 +5,22 @@ include_once("sk.php");
 include_once("GetPut.php");
 
 $PlayerState = ['Setup', 'Turn Planning' , 'Turn Submitted', 'Turn Being Processed'];
-global $PlayerState;
+$PlayerStateColours = ['Orange','lightblue','LightGreen','Red'];
+$PlayerStates = array_flip($PlayerState);
+global $PlayerState,$PlayerStates;
 
 function Player_Page() {
-  global $FACTION,$PlayerState;
+  global $FACTION,$PlayerState,$PlayerStates,$PlayerStateColours;
   dostaffhead("Player Actions");
   
+//var_dump($PlayerState,$FACTION);
   echo "<h1>Player Actions</h1>\n";
   
-  echo "<h2>Player state: " . $PlayerState[$FACTION['TurnState']] . "</h2>";
+  echo "<h2>Player state: <span style='background:" . $PlayerStateColours[$FACTION['TurnState']] . "'>" . $PlayerState[$FACTION['TurnState']] . "</span></h2>";
   echo "<div class=Player>";
   echo "The only current actions are:";
-  
+  echo "<ul>";
+    
   switch ($PlayerState[$FACTION['TurnState']]) {
   case 'Setup':
     echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";    
@@ -31,16 +35,17 @@ function Player_Page() {
     echo "<li><a href=MapFull.php?PLAYER>Faction Map</a>\n";
     echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";
     echo "<li>Worlds with projects";
-    echo "<li>Things";
+    echo "<li>Things (Ships, Armies, Agents, Space stations etc)";
     echo "<li>Economy";
     echo "<li>Turn Text";
+//    echo "<li><a href=Player.php?ACTION=Submit>Submit Turn</a>\n";        
     echo "<li>Submit Turn</a>\n";  // Need validation for cash and warnings on unused things
     break;
       
   case 'Turn Submitted':
     echo "<li><a href=MapFull.php?PLAYER>Faction Map</a>\n";
     echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";  
-      
+    echo "<li><a href=Player.php?ACTION=Unsub>Cancel Submission</a>\n";        
     break;
       
   case 'Turn Being Processed':
@@ -51,7 +56,7 @@ function Player_Page() {
   }
   
   
-  echo "<ul>";
+
 
 
 
