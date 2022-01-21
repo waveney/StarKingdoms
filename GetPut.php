@@ -1016,6 +1016,8 @@ function Put_FactionFaction(&$now) {
   }
 }
 
+// Credit Log
+
 function Get_CreditLog($id) {
   global $db;
   $res = $db->query("SELECT * FROM CreditLog WHERE id=$id");
@@ -1034,6 +1036,69 @@ function Put_CreditLog(&$now) {
   }
 }
 
+function Get_CreditLogs($who,$From=0,$To=10000) {
+  global $db,$GAMEID;
+  $Ts = [];
+  $res = $db->query("SELECT * FROM CreditLog WHERE Whose=$who AND Turn>=$From AND Turn<=$To");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
+  return $Ts;
+}
+
+
+//  Get_FactionTurn($Fid,$Turn);
+
+function Get_FactionTurn($id) {
+  global $db;
+  $res = $db->query("SELECT * FROM FactionTurn WHERE id=$id");
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
+  return [];
+}
+
+function Get_FactionTurnFT($Fid,$Turn) {
+  global $db;
+  $res = $db->query("SELECT * FROM FactionTurn WHERE FactionId=$Fid AND Turn=$Turn");
+  if ($res && ($ans = $res->fetch_assoc())) return $ans;
+  return ['FactionId'=>$Fid,'Turn'=>$Turn];
+}
+
+function Put_FactionTurn(&$now) {
+  global $db,$GAMEID;
+  if (isset($now['id'])) {
+    $e=$now['id'];
+    $Cur = Get_FactionTurn($e);
+    return Update_db('FactionTurn',$Cur,$now);
+  } else {
+    return $now['id'] = Insert_db ('FactionTurn', $now );
+  }
+}
+
+
+// Banking
+function Get_Banking($id) {
+  global $db;
+  $res = $db->query("SELECT * FROM Banking WHERE id=$id");
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
+  return [];
+}
+
+function Get_BankingFT($Fid,$Turn) {
+  global $db;
+  $Ts = [];
+  $res = $db->query("SELECT * FROM Banking WHERE FactionId=$Fid AND (StartTurn=$Turn OR ( StartTurn<$Turn AND EndTurn >= $Turn ))");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
+  return $Ts;
+}
+
+function Put_Banking(&$now) {
+  global $db,$GAMEID;
+  if (isset($now['id'])) {
+    $e=$now['id'];
+    $Cur = Get_Banking($e);
+    return Update_db('Banking',$Cur,$now);
+  } else {
+    return $now['id'] = Insert_db ('Banking', $now );
+  }
+}
 
 
 

@@ -29,10 +29,22 @@ function TurnLog($Fid,$text,&$T=0) {
 
 function Not_BeingProcessed() {
   // No actions needed
+  return true;
 }
 
 function CheckTurnsReady() {
-  echo "Check Turns Ready are currently Manual<p>";
+  $Facts = Get_Factions();
+  $AllOK = 1;
+  foreach ($Facts as $F) {
+    if ($F['TurnState'] != 2) {
+      echo $F['Name'] . " has not submitted a turn.<br>\n";
+      $AllOK = 0;
+    }
+  }
+  if ($AllOK) return;
+  echo "To proceed you must mark them as submitted<p>\n";
+  return false;
+
 }
 
 
@@ -47,14 +59,17 @@ function StartTurnProcess() {
   }
   echo "<br>All Factions marked as Turn Processing<p>\n";
   $LF = mkdir("Turns/$GAMEID/" . $GAME['Turn'],0777,true);
+  return true;
 }
 
 function CashTransfers() {
   echo "Cash Transfers are currently Manual<p>";
+  return true;
 }
 
 function PayForStargates() {
   echo "Pay For Stargates are currently Manual<p>";
+  return true;
 }
 
 function StartProjects() {
@@ -77,35 +92,41 @@ function StartProjects() {
     }
     Put_Project($P);
   }
-  
+  return true;  
 }
 
 
 function Colonisation() {
   echo "Colonisation are currently Manual<p>";
+  return true;
 }
 
 
 function DeepSpaceConstruction() {
   echo "Deep Space Construction	 are currently Manual<p>";
+  return true;
 }
 
 function StartAnomaly() {
   echo "Anomaly Studies are currently Manual<p>";
+  return true;
 }
 
 function AgentsStartMissions() {
   echo "Agents Start Missions	are currently Manual<p>";
+  return true;
 }
 
 function Economy() {
   // Transfer all monies and tolls, work out economies and generate income for each faction.
   // Blockades, theft and new things affect - this needs to be done BEFORE projects complete
   echo "The Economy is currently Manual<p>";
+  return true;
 }  
 
 function LoadTroops() {
   echo "Load Troops	is currently Manual<p>";
+  return true;
 }
 
 function Movements() {
@@ -241,6 +262,7 @@ echo "Moving " . $T['Name'] . "<br>";
     }        
     
   }
+  return true;
 }
 
 
@@ -250,18 +272,22 @@ function Meetups() {
   // if only 1 and has control and system controlled then there is a bundle
   // ships, agents ...
   echo "Meetups is currently Manual<p>";
+  return true;
 }
 
 function SpaceCombat() {
   echo "Space Combat is currently Manual<p>";
+  return true;
 }
 
 function OrbitalBombardment() {
   echo "Orbital Bombardment is currently Manual<p>";
+  return true;
 }
 
 function GroundCombat() {
   echo "Ground Combat is currently Manual<p>";
+  return true;
 }
 
 
@@ -360,6 +386,7 @@ function ProjectProgress() {
     Put_Project($P); // Note completeion is handled later in the turn sequence
   }
   
+  return true;
 }
 
 
@@ -378,6 +405,7 @@ function FinishShakedowns() {
   }
   
   echo "Shakdowns finished<br>";
+  return true;
 }
 
 
@@ -498,10 +526,12 @@ function ProjectsComplete() {
     }
   }
   
+  return true;
 }
 
 function GenerateTurns() {
   echo "Generate Turns is currently Manual<p>";
+  return true;
 }
 
 function TidyUpMovements() {
@@ -510,9 +540,11 @@ function TidyUpMovements() {
   $res = $db->query("UPDATE Things SET LinkId=0 WHERE LinkId>0 AND GameId=$GAMEID"); // Might be redundant now
   
   echo "Movements Tidied Up<p>";  
+  return true;
 }
 
 function FinishTurnProcess() {
+  global $GAME;
   // Change faction state update turn number
 
   $Facts = Get_Factions();
@@ -524,9 +556,14 @@ function FinishTurnProcess() {
   
   echo "<br>All Factions marked as Turn Planning<p>\n";
 
-// TODO Turn number
+  $GAME['Turn'] ++;
+  Put_Game($GAME);
+  
+  echo "Turn number incremented<p>\n";
+  
 
   // TODO Send messages to discord ??
+  return true;
 }
 
 function Do_Turn() {
@@ -567,9 +604,12 @@ function Do_Turn() {
         break;
       }
       SKLog("Doing " . $Stages[$S]);      
-      $act(); 
-      $Sand['Progress'] |= 1<<$S;
-              
+      $Result = $act(); 
+      if ($Result) {
+        $Sand['Progress'] |= 1<<$S;
+      } else {
+        echo "Processing cancelled<p>\n";
+      }
       break;
     case 'Skip':
       if (isset($Stages[$S] )) {

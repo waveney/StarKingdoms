@@ -52,3 +52,41 @@
   width=50;
 }
 
+.creditlog tr {
+width: 100%;
+display: inline-table;
+table-layout: fixed;
+ background:lightgrey;
+}
+
+.creditlog table{
+ height:200px; 
+ display: table;
+ border: 2px solid black;
+ background:lightgrey;
+}
+
+.creditlog tbody{
+  overflow-y: scroll;      
+  height: 150px;
+
+  position: absolute;
+}
+
+.creditlog .CLTurn {
+  width:50px;
+}
+
+.creditlog .CLCredit {
+  width:100px;
+}
+
+.creditlog .CLWhat {
+
+}
+
+.CLWrap {
+ height:200px; 
+ display: block; 
+}
+

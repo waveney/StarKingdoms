@@ -13,11 +13,16 @@
   
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
-      case 'Submit' :
+      case 'Submit' :  // TODO add checking of turn
         $FACTION['TurnState'] = $PlayerStates['Turn Submitted'];
         Put_Faction($FACTION);   
         break;
-        
+
+      case 'SubmitForce' :  // Yes to submit unfinished
+        $FACTION['TurnState'] = $PlayerStates['Turn Submitted'];
+        Put_Faction($FACTION);   
+        break;
+          
       case 'Unsub' :
         if ($FACTION['TurnState'] == $PlayerStates['Turn Submitted']) {
           $FACTION['TurnState'] = (($GAME['Turn'] == 0)? $PlayerStates['Setup']: $PlayerStates['Turn Planning']);
