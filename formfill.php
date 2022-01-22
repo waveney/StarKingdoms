@@ -225,7 +225,19 @@
     }
     exit;
     
-   
+  case 'Banking':
+    $N = Get_Banking($id);
+    $N[$field] = $Value;
+    echo Put_Banking($N);
+    exit;
+  
+ 
+   case 'FactionTurn':
+    $N = Get_FactionTurn($id);
+    $N[$field] = $Value;
+    echo Put_FactionTurn($N);
+    exit;
+  
 
   default:
     echo "Not setup $type for Auto Edit";

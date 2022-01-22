@@ -99,10 +99,12 @@
 //var_dump($Banks);
 
   if ($Banks) {
-    echo "<table border><tr><td>Recipient<td>Amount<td>Your Ref<td>Start Turn<td>End Turn\n";
+    echo "Cancel will stop the transfer.  To edit it click Your Reference.<br>";
+    echo "<table border><tr><td>Recipient<td>Amount<td>Your Reference<td>Start Turn<td>End Turn\n";
     if ($Turn >= $GAME['Turn']) echo "<td>Actions\n";
     foreach ($Banks as $B) {
-      echo "<tr><td>" . $FactList[$B['Recipient']] . "<td>" . $B['Amount'] . "<td>" . $B['YourRef'];
+      echo "<tr><td>" . $FactList[$B['Recipient']] . "<td>" . $B['Amount'];
+      echo "<td><a href=BankEdit.php?id=" . $B['id'] . ">" . $B['YourRef'] . "</a>";
       echo "<td>" . $B['StartTurn'];
       echo "<td>" . ($B['EndTurn']? $B['EndTurn']: $B['StartTurn']);
       if ($Turn >= $GAME['Turn']) echo "<td><input type=submit name=DELETE" . $B['id'] . " value=Cancel >";
@@ -119,7 +121,7 @@
   echo "<tr>" . fm_number('Amount',$_REQUEST,'Amount');
   echo "<tr>" . fm_number('Start Turn', $_REQUEST,'StartTurn'); 
   echo "<tr>" . fm_number('End Turn', $_REQUEST,'EndTurn') . "<td>Leave blank for a one off payment";
-  echo "<tr>" . fm_text('Your Ref',$_REQUEST,'YourRef') . "<td>Will be seen by both parties";
+  echo "<tr>" . fm_text('Your Reference',$_REQUEST,'YourRef') . "<td>Will be seen by both parties";
   echo "<tr><td><td><input type=submit name=ACTION value='Setup'>\n";
   echo "</table><p>\n";
   
