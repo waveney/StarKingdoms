@@ -40,27 +40,38 @@
     echo "<h2>No Systems Requested</h2>";
     dotail();
   }
-
-  if (isset($_REQUEST['V'])) {
-    $SurveyLevel = $_REQUEST['V'];
-  } else if (Access('GM')) {
-    $SurveyLevel = 10;
-  } else {
-    $SurveyLevel = 2;
-  }
-
-  if (isset($_REQUEST['F'])) {
-    $Fid = $_REQUEST['F'];
-    $FACTION = Get_faction($Fid);
-  } else {
-    $Fid = 0;
-  }
   
-  if (isset($_REQUEST['M']) && $Fid ) {
-    $FS = Get_FactionSystemFS($Fid,$Sid);
-    if (isset($_REQUEST['L'])) $FS['ScanLevel'] = (!isset($FS['ScanLevel']) ? $SurveyLevel : ($FS['ScanLevel'] < $SurveyLevel ? $FS['ScanLevel']: $SurveyLevel));
-    Put_FactionSystem($FS);
-  }
+  if (Access('Player')) {
+    $Fid = $FACTION['id'];
+    $FS = Get_FactionSystemFS($Fid,$Sid); 
+    if (empty($FS['id'])) {
+      echo "<h1>Unknown system</h1>\n";
+      dotail();
+    }
+    $SurveyLevel = $FS['ScanLevel'];
+
+  } else { // GM access
+    if (isset($_REQUEST['V'])) {
+      $SurveyLevel = $_REQUEST['V'];
+    } else if (Access('GM')) {
+      $SurveyLevel = 10;
+    } else {
+      $SurveyLevel = 2;
+    }
+
+    if (isset($_REQUEST['F'])) {
+      $Fid = $_REQUEST['F'];
+      $FACTION = Get_faction($Fid);
+    } else {
+      $Fid = 0;
+    }
+  
+    if (isset($_REQUEST['M']) && $Fid ) {
+      $FS = Get_FactionSystemFS($Fid,$Sid);
+      if (isset($_REQUEST['L'])) $FS['ScanLevel'] = (!isset($FS['ScanLevel']) ? $SurveyLevel : ($FS['ScanLevel'] < $SurveyLevel ? $FS['ScanLevel']: $SurveyLevel));
+      Put_FactionSystem($FS);
+    }
+  } 
   
   
   $Parsedown = new Parsedown();

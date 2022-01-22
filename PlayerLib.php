@@ -37,10 +37,10 @@ function Player_Page() {
     echo "<li>Worlds with projects";
     echo "<li>Things (Ships, Armies, Agents, Space stations etc)";
     echo "<li>Economy";
-    echo "<li><a href=Banking.php>Banking</a> Sending credits to others and statements";
+    echo "<li>" . (Access('GM')? "<a href=Banking.php>Banking</a>" : "Banking") . " Sending credits to others and statements";
     echo "<li>Turn Text";
-//    echo "<li><a href=Player.php?ACTION=Submit>Submit Turn</a>\n";        
-    echo "<li>Submit Turn</a>\n";  // Need validation for cash and warnings on unused things
+    echo "<li>" . (Access('GM')? "<a href=Player.php?ACTION=Submit>Submit Turn</a>" : "Submit Turn") . "\n";        
+
     break;
       
   case 'Turn Submitted':

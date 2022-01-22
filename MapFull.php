@@ -86,7 +86,7 @@
   $LinkSown = [];
   $UnknownLink = [];
   
-  fwrite($Dot,"graph {\n") ; //size=" . '"8,12!"' . "\n");
+  fwrite($Dot,"graph skmap {\n") ; //size=" . '"8,12!"' . "\n");
   
 //  if (!$typ) fwrite($Dot, "[size=\"10,20!\"];\n");
   
@@ -123,6 +123,12 @@
     }
     if ($N['Nebulae']) { $atts .= " penwidth=" . (2+$N['Nebulae']*2); $NebF = 1; }
     else { $atts .= " penwidth=2"; }
+   
+    if ($Faction) {
+      $atts .= " href=\"/SurveyReport.php?R=" . $N['Ref'] . '" ';
+    } else {
+      $atts .= " href=\"/SysEdit.php?N=" . $N['id'] . '" ';
+    }
     
     fwrite($Dot,$N['Ref'] . " [$atts ];\n");
     $ShownNodes[$N['Ref']]= 1;
@@ -226,14 +232,24 @@
   
   if ($typ) {  
     exec("fdp -Tpng -n cache/Fullmap$Faction$typ.dot > cache/Fullmap$Faction$typ.png");
+    exec("fdp -Tcmapx -n cache/Fullmap$Faction$typ.dot > cache/Fullmap$Faction$typ.map");    
+//    exec("fdp -Timap -n cache/Fullmap$Faction$typ.dot > cache/Fullmap$Faction$typ.imap");
+//    exec("fdp -Tsvg -n cache/Fullmap$Faction$typ.dot > cache/Fullmap$Faction$typ.svg");
   } else {
     exec("unflatten cache/Fullmap$Faction$typ.dot > cache/f.dot");
+//    exec("dot -Tsvg cache/f.dot > cache/Fullmap$Faction.svg");
     exec("dot -Tpng cache/f.dot > cache/Fullmap$Faction.png");
+    exec("dot -Tcmapx cache/f.dot > cache/Fullmap$Faction.map");
   }
 
 //  echo "<h2>dot run</h2>";
   $Rand = rand(1,100000);
-  echo "<img src=cache/Fullmap$Faction$typ.png?$Rand maxwidth=100%>";
+  echo "<img src=cache/Fullmap$Faction$typ.png?$Rand maxwidth=100% usemap='#skmap'>";
+  readfile("cache/Fullmap$Faction$typ.map");
+  
+//  echo "<object type='image/svg+xml' data=cache/Fullmap$Faction$typ.svg?$Rand maxwidth=100%></object>";
+//  echo "<svg type='image/svg+xml' data=cache/Fullmap$Faction$typ.svg?$Rand maxwidth=100%></svg>";
+
   
   dotail();
 ?>
