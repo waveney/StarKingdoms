@@ -19,9 +19,6 @@
   $HexLegPos = [[1,8],[1,7.5],[1,7],[1,6.5], [9,8],[9,7.5],[9,7],[9,6.5], [1,0],[1,0.5],[1,1],[1,1.5], [9,0],[9,0.5],[9,1.5],[9,2]];
 
   
-  $typ='';
-  if (isset($_REQUEST['Hex'])) $typ = 'Hex';
-
   if (isset($_REQUEST['f'])) {
     $Faction = $_REQUEST['f'];
   } else   if (isset($_REQUEST['F'])) {
@@ -33,6 +30,18 @@
   }
   
   if ($FACTION) $Faction = $FACTION['id'];
+
+  $typ='';
+  if (isset($_REQUEST['Hex'])) {
+    if (Access('Player')) {
+      if (Has_Tech($Faction,'Astro-Navigation')) {
+        echo "Found Hex...";
+        $typ = 'Hex';
+      }
+    } else $typ = 'Hex';
+  }
+
+
 
   function NodeLab($txt,$Prefix='') {
     $FSize = [14,14,14,14,14, 13,13,12,12, 11,10,9,9, 8,8,7,7, 6,6,6,6];

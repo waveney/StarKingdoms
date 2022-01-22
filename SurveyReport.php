@@ -71,7 +71,7 @@
       if (isset($_REQUEST['L'])) $FS['ScanLevel'] = (!isset($FS['ScanLevel']) ? $SurveyLevel : ($FS['ScanLevel'] < $SurveyLevel ? $FS['ScanLevel']: $SurveyLevel));
       Put_FactionSystem($FS);
     }
-  } 
+  }
   
   
   $Parsedown = new Parsedown();
