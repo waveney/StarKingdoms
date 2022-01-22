@@ -27,7 +27,7 @@ function TurnLog($Fid,$text,&$T=0) {
   if ($T) $T['History'] .= "Turn#" . $GAME['Turn'] . ": " . $text . "\n";
 }
 
-function Not_BeingProcessed() {
+function NotBeingProcessed() {
   // No actions needed
   return true;
 }
@@ -37,7 +37,7 @@ function CheckTurnsReady() {
   $AllOK = 1;
   foreach ($Facts as $F) {
     if ($F['TurnState'] != 2) {
-      echo $F['Name'] . " has not submitted a turn.<br>\n";
+      echo "<a href=FactionEdit.php?id=" . $F['id'] . ">" . $F['Name'] . "</a> has not submitted a turn.<br>\n";
       $AllOK = 0;
     }
   }
@@ -63,7 +63,30 @@ function StartTurnProcess() {
 }
 
 function CashTransfers() {
-  echo "Cash Transfers are currently Manual<p>";
+  global $GAME;
+  
+  $Facts = Get_Factions();
+  $Facts[-1]['Name'] = "Other";
+  $Bs = Get_BankingFT(0,$GAME['Turn']);
+  
+  foreach($Bs as $B) {
+    if (Spend_Credit($B['FactionId'],$B['Amount'],$B['What'])) {
+      TurnLog($B['FactionId'],"Transfered " . $B['Amount'] . " for " . $B['What'] . " to " . $Facts[$B['Recipient']]['Name']);
+
+      if ($B['Recipient'] > 0) {
+        Spend_Credit($B['Recipient'], - $B['Amount'],$B['What']);
+        TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " transfered " . $B['Amount'] . " to you for " . $B['What'] );
+      }
+      SKLog('Cash transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . ' of ' . $B['Amount'] . ' for ' . $B['What'],1);     
+    } else {
+      TurnLog($B['FactionId'],"Failed to transfer " . $B['Amount'] . " for " . $B['What'] . " to " . $Facts[$B['Recipient']]['Name'] . 
+               " you only have " . $Facts[$B['FactionId']]['Credits']);
+      if ($B['Recipient'] > 0) TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " Failed to transfer " . $B['Amount'] . " for " . $B['What'] );
+      SKLog('Cash transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . ' of ' . $B['Amount'] . ' for ' . $B['What'] .  ' Bounced',1);
+    }
+  }
+  
+  echo "All Cash trasfered complete.<br>\n";
   return true;
 }
 
@@ -576,7 +599,7 @@ function Do_Turn() {
              'Space Combat', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Spare', 'Spare', 'Project Progress', 'Spare',
              'Espionage Missions Complete', 'Spare', 'Finish Shakedowns', 'Spare', 'Projects Complete', 'Spare', 
              'Spare', 'Spare', 'Generate Turns', 'Spare', 'Tidy Up Movements', 'Spare', 'Finish Turn Process'];
-  $Coded =  [1,0,0,0,1,0,0,0,0,0,
+  $Coded =  [1,1,0,0,1,0,0,1,0,0,
              0,0,0,1,0,0,
              0,0,0,0,0,0,0,
              0,0,0,0,0,0,0,0,0,0,0,0,
@@ -661,7 +684,7 @@ function Do_Turn() {
   echo "<center><h2><a href=TurnActions.php?ACTION=Process&S=$NextStage>Do Next Stage</a></h2></center><br><p><br><p>\n";
   $Parsedown = new Parsedown(); // To hande logs in time
   
-  if ($Sand['id']) {
+  if (!empty($Sand['id'])) {
     echo "<h2>Turn Detail (for bug fixing)</h2>";
     echo "<table border><form method=post action=TurnActions.php?ACTION=FIX>";
     Register_AutoUpdate('Turn',$Sand['id']);

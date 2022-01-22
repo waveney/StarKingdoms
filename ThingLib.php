@@ -599,7 +599,7 @@ function Scanners(&$T) {
   return 0;
 }
 
-function RefitRepair(&ST) {
+function RefitRepair(&$T) {
 // Refit
   $tid = $T['id'];
   $Mods = Get_Modules($tid); 
@@ -611,7 +611,7 @@ function RefitRepair(&ST) {
     }
   }
 // Repair
-  $Health = Calc_Health($T) {
+  $Health = Calc_Health($T);
   $T['CurHealth'] = $T['OrigHealth'] = $Health;
   Put_Thing($T);
 }

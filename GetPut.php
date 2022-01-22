@@ -1084,7 +1084,7 @@ function Get_Banking($id) {
 function Get_BankingFT($Fid,$Turn) {
   global $db;
   $Ts = [];
-  $res = $db->query("SELECT * FROM Banking WHERE FactionId=$Fid AND (StartTurn=$Turn OR ( StartTurn<$Turn AND EndTurn >= $Turn ))");
+  $res = $db->query("SELECT * FROM Banking WHERE " . ($Fid? " FactionId=$Fid AND ": "") . "(StartTurn=$Turn OR ( StartTurn<$Turn AND EndTurn >= $Turn ))");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
   return $Ts;
 }
