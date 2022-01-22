@@ -105,6 +105,7 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0) {
       echo fm_number0("Levels",$FactTechs[$Tid],'Level','','',"Tech$Tid");
     } else {
       echo fm_checkbox("Have",$FactTechs[$Tid],'Level','',"Tech$Tid");
+      if ($T['Cat'] == 2) echo fm_checkbox("Know about",$FactTechs[$Tid],'Level','',"Know$Tid");
     }
   }
  

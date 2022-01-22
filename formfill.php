@@ -160,7 +160,16 @@
       $N['Level'] = $Value;
       echo Put_Faction_Tech($N);
       exit;
-    }
+    } else if (preg_match('/Know(\d*)/',$field,$mtch)?true:false) {
+      $N = Get_Faction_TechFT($id,$mtch[1]);
+      if ($Value) {
+        $N['Level'] = 0;
+        echo Put_Faction_Tech($N);
+      } else if ($N['id']) {
+        db_delete('FactionTechs',$mtch[1]);
+      }
+      exit;
+    } 
     echo "Unknown... $field";
     exit;
    

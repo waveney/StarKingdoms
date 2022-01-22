@@ -599,14 +599,14 @@ function Do_Turn() {
              'Space Combat', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Spare', 'Spare', 'Project Progress', 'Spare',
              'Espionage Missions Complete', 'Spare', 'Finish Shakedowns', 'Spare', 'Projects Complete', 'Spare', 
              'Spare', 'Spare', 'Generate Turns', 'Spare', 'Tidy Up Movements', 'Spare', 'Finish Turn Process'];
-  $Coded =  [1,1,0,0,1,0,0,1,0,0,
-             0,0,0,1,0,0,
-             0,0,0,0,0,0,0,
-             0,0,0,0,0,0,0,0,0,0,0,0,
-             1,0,0,0,0,0,0,
-             0,0,0,0,0,0,0,1,0,
-             0,0,1,0,1,0,
-             0,0,0,0,1,0,1];
+  $Coded =  ['-','Coded','No','No','Coded','No','No','Coded','No','No',
+             'No','No','No','Partial','No','No',
+             'No','No','No','No','No','No','No',
+             'No','No','No','No','No','No','No','No','No','No','No','No',
+             'Partial','No','No','No','No','No','No',
+             'No','No','No','No','No','No','No','Coded?','No',
+             'No','No','Coded','No','Partial','No',
+             'No','No','No','No','Coded','No','Coded?'];
   $Sand = Get_TurnNumber();
 // var_dump($Sand);
 
@@ -658,7 +658,7 @@ function Do_Turn() {
   }
   
   echo "<table border>";
-  echo "<tr><th>#<td>Mask<td>Coded<td>Stage<th>State<th>Commands\n";
+  echo "<tr><th>#<td>Mask<td>Automation<td>Stage<th>State<th>Commands\n";
   $Stage = 0;
   $Prog = 1;
   $NextStage = -1;

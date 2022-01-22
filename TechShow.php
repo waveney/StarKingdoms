@@ -46,6 +46,7 @@
   $Techs = Get_TechsByCore($Fid,($Setup?1:0));
 //var_dump ($TechFacts);
 //var_dump($FACTION);
+//var_dump($Techs);exit;
  
   echo "<h2>Technologies</h2>\n";
   echo "Click on technologies name to Toggle showing the definition and examples\n<p>";
