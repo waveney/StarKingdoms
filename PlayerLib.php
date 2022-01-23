@@ -13,6 +13,8 @@ function Player_Page() {
   global $FACTION,$PlayerState,$PlayerStates,$PlayerStateColours;
   dostaffhead("Player Actions");
   
+  $GM = Access('GM');
+
 //var_dump($PlayerState,$FACTION);
   echo "<h1>Player Actions</h1>\n";
   
@@ -38,9 +40,9 @@ function Player_Page() {
     echo "<li>Worlds with projects";
     echo "<li>Things (Ships, Armies, Agents, Space stations etc)";
     echo "<li>Economy";
-    echo "<li>" . (Access('GM')? "<a href=Banking.php>Banking</a>" : "Banking") . " Sending credits to others and statements";
+    echo "<li>" . ($GM? "<a href=Banking.php>Banking</a>" : "Banking") . " Sending credits to others and statements";
     echo "<li>Turn Text";
-    echo "<li>" . (Access('GM')? "<a href=Player.php?ACTION=Submit>Submit Turn</a>" : "Submit Turn") . "\n";        
+    echo "<li>" . ($GM? "<a href=Player.php?ACTION=Submit>Submit Turn</a>" : "Submit Turn") . "\n";        
 
     break;
       

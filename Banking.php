@@ -93,7 +93,7 @@
   
    
   
-  echo "<h2>Bank transfers for this coming turn:</h2>\n";
+  echo "<h2>Bank transfers for this turn:</h2>\n";
   $Banks = Get_BankingFT($Fid,$Turn);
 
 //var_dump($Banks);

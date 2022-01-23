@@ -11,10 +11,11 @@
       Error_Page("Sorry you need to be a GM or a Player to access this");
     }
  
- // var_dump($_REQUEST, $_COOKIE);  
+
   }
   dostaffhead("Full Map");
-  
+ //var_dump($_REQUEST, $_COOKIE);  
+   
   $CatCols = ["white","grey", "Yellow"];
   $HexLegPos = [[1,8],[1,7.5],[1,7],[1,6.5], [9,8],[9,7.5],[9,7],[9,6.5], [1,0],[1,0.5],[1,1],[1,1.5], [9,0],[9,0.5],[9,1.5],[9,2]];
 
@@ -33,15 +34,20 @@
 
   $typ='';
   if (isset($_REQUEST['Hex'])) {
-    if (Access('Player')) {
+    if (Access('GM')) {
+      $typ = 'Hex';   
+    } elseif (Access('Player')) {
       if (Has_Tech($Faction,'Astral Mapping')) {
         echo "Found Hex...";
         $typ = 'Hex';
       }
-    } else $typ = 'Hex';
+    } else {
+      $typ = 'Hex';
+    }
   }
 
 
+//var_dump($typ);exit;
 
   function NodeLab($txt,$Prefix='') {
     $FSize = [14,14,14,14,14, 13,13,12,12, 11,10,9,9, 8,8,7,7, 6,6,6,6];
@@ -247,8 +253,8 @@
   } else {
     exec("unflatten cache/Fullmap$Faction$typ.dot > cache/f.dot");
 //    exec("dot -Tsvg cache/f.dot > cache/Fullmap$Faction.svg");
-    exec("dot -Tpng cache/f.dot > cache/Fullmap$Faction.png");
-    exec("dot -Tcmapx cache/f.dot > cache/Fullmap$Faction.map");
+    exec("dot -Tpng cache/f.dot > cache/Fullmap$Faction$typ.png");
+    exec("dot -Tcmapx cache/f.dot > cache/Fullmap$Faction$typ.map");
   }
 
 //  echo "<h2>dot run</h2>";

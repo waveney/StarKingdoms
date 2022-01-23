@@ -4,7 +4,7 @@
   include_once("SystemLib.php");
   include_once("vendor/erusev/parsedown/Parsedown.php");
   
-  A_Check('GM'); // For now, will be player version
+//  A_Check('GM'); // For now, will be player version
 
   dostaffhead("Survey Report",["js/dropzone.js","css/dropzone.css" ]);
 
@@ -251,7 +251,7 @@
         foreach ($Mns as $M) {
           $Mid = $M['id'];
 
-          $pname = NameFind($P); // Need diff logic for player
+          $pname = NameFind($M); // Need diff logic for player
           if ($Fid) {
             $FP = Get_FactionMoonFS($Fid, $Mid);
             if (isset($FP['Name']) && strlen($FP['Name']) > 1) {
