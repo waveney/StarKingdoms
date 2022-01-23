@@ -9,7 +9,7 @@
 
   $FACTION['LastActive'] = time();
   
-  Put_Faction($FACTION);
+  if (!Access('GM')) Put_Faction($FACTION);
   
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {

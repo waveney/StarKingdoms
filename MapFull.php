@@ -34,7 +34,7 @@
   $typ='';
   if (isset($_REQUEST['Hex'])) {
     if (Access('Player')) {
-      if (Has_Tech($Faction,'Astro-Navigation')) {
+      if (Has_Tech($Faction,'Astral Mapping')) {
         echo "Found Hex...";
         $typ = 'Hex';
       }

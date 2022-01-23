@@ -33,7 +33,7 @@ function Player_Page() {
   
   case 'Turn Planning':
     echo "<li><a href=MapFull.php>Faction Map</a>\n";
-    if (Has_Tech($FACTION['id'],'Astro-Navigation')) echo "<li><a href=MapFull.php?Hex>Faction Map</a> - with spatial location of nodes\n";
+    if (Has_Tech($FACTION['id'],'Astral Mapping')) echo "<li><a href=MapFull.php?Hex>Faction Map</a> - with spatial location of nodes\n";
     echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";
     echo "<li>Worlds with projects";
     echo "<li>Things (Ships, Armies, Agents, Space stations etc)";

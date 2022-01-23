@@ -41,14 +41,15 @@
     dotail();
   }
   
-  if (Access('Player')) {
+  if (!empty($FACTION)) { // Player mode
+    $ScanSurveyXlate = [0=>0, 1=>1, 2=>5];
     $Fid = $FACTION['id'];
     $FS = Get_FactionSystemFS($Fid,$Sid); 
     if (empty($FS['id'])) {
       echo "<h1>Unknown system</h1>\n";
       dotail();
     }
-    $SurveyLevel = $FS['ScanLevel'];
+    $SurveyLevel = (isset($ScanSurveyXlate[$FS['ScanLevel']]) ? $ScanSurveyXlate[$FS['ScanLevel']] : 0);
 
   } else { // GM access
     if (isset($_REQUEST['V'])) {
@@ -87,7 +88,7 @@
   $pname = NameFind($N);
   if ($Fid) {
     $FS = Get_FactionSystemFS($Fid, $Sid);
-    if (strlen($FS['Name']) > 1) {
+    if (!empty($FS['Name']) > 1) {
       $Fname = NameFind($FS);
       
       if ($pname != $Fname) {
@@ -111,7 +112,7 @@
   }
   
   echo "<div class=SReport><h1>Survey Report - $pname</h1>\n";
-  if ($SurveyLevel >= 10) echo "UniqueRef is: " . UniqueRef($Sid) . "<p>";
+  if ($GM && $SurveyLevel >= 10) echo "UniqueRef is: " . UniqueRef($Sid) . "<p>";
 
   if ($SurveyLevel > 0) {
   
@@ -304,34 +305,36 @@
 
   
   echo "</ul>";
+  }
   
-  $Ls = Get_Links($Ref);
-  echo "<BR CLEAR=ALL><h2>There are Stargates to:</h2><ul>\n";
-  $GM = Access('GM');
+  if ($SurveyLevel > 1) {
+    $Ls = Get_Links($Ref);
+    echo "<BR CLEAR=ALL><h2>There are Stargates to:</h2><ul>\n";
+    $GM = Access('GM');
   
-  foreach ($Ls as $L) {
-    $OSysRef = ($L['System1Ref']==$Ref? $L['System2Ref']:$L['System1Ref']);
-    $ON = Get_SystemR($OSysRef); 
-    if ($SurveyLevel >= 10) {
-      $LinkKnow = ['Known'=>1];
-    } else if ($FACTION) {
-      $LinkKnow = Get_FactionLinkFL($Fid,$L['id']);
-    } else {
-      $LinkKnow = ['Known'=>0];
-    }
-    echo "<li>Link #" . $L['id'] . " ";
+    foreach ($Ls as $L) {
+      $OSysRef = ($L['System1Ref']==$Ref? $L['System2Ref']:$L['System1Ref']);
+      $ON = Get_SystemR($OSysRef); 
+      if ($SurveyLevel >= 10) {
+        $LinkKnow = ['Known'=>1];
+      } else if ($FACTION) {
+        $LinkKnow = Get_FactionLinkFL($Fid,$L['id']);
+      } else {
+        $LinkKnow = ['Known'=>0];
+      }
+      echo "<li>Link #" . $L['id'] . " ";
 
 //var_dump($LinkKnow);    
-    if ($LinkKnow['Known']) {
-      $name = NameFind($L);
-      if ($name) echo " ( $name ) ";
-      echo " to " . ReportEnd($ON) .  " level " . $LinkLevels[$L['Level']]['Colour'];
-    } else {
-      echo " to an unknown location.  Level " .  $LinkLevels[$L['Level']]['Colour'];
-    }
+      if ($LinkKnow['Known']) {
+        $name = NameFind($L);
+        if ($name) echo " ( $name ) ";
+        echo " to " . ReportEnd($ON) .  " level " . $LinkLevels[$L['Level']]['Colour'];
+      } else {
+        echo " to an unknown location.  Level " .  $LinkLevels[$L['Level']]['Colour'];
+      }
     
-  }
-  echo "</ul><p>\n";
+    }
+    echo "</ul><p>\n";
  
   } else { // BLIND
     if ($N['Nebulae']) {

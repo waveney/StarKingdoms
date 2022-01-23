@@ -10,7 +10,7 @@
   $FACTION['LastActive'] = time();
   $Fid = $FACTION['id'];
   
-  Put_Faction($FACTION);
+  if (!Access('GM')) Put_Faction($FACTION);
 
   $Turn = $GAME['Turn'];
   $LookBack = 2;
