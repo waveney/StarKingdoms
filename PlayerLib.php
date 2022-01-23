@@ -15,6 +15,11 @@ function Player_Page() {
   
   $GM = Access('GM');
 
+  $FACTION['LastActive'] = time();
+  
+  if (!$GM) Put_Faction($FACTION);
+  
+
 //var_dump($PlayerState,$FACTION);
   echo "<h1>Player Actions</h1>\n";
   

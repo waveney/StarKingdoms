@@ -178,7 +178,7 @@
   case 'Shipyard':
       echo "<h2>Build a Ship</h2>";
       echo "Not yet<p>";
-      echo "<button class=projtype type=submit formaction='ProjShip.php?ACTION=NEW&id=$Fid&p=10&t=$Turn&Hi=$Hi&Di=$Di'>Build a new ship</button><p>";
+      echo "<button class=projtype type=submit formaction='ProjSetup.php?t=Ship&ACTION=NEW&id=$Fid&p=10&t=$Turn&Hi=$Hi&Di=$Di'>Build a new ship</button><p>";
     
     
       echo "<h2>Refit, Repair and Decommision Ships</h2>";

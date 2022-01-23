@@ -412,7 +412,6 @@ function ProjectProgress() {
   return true;
 }
 
-
 function EspionageMissionsComplete() {
   echo "Espionage Missions Complete	is currently Manual<p>";
 }
@@ -552,6 +551,11 @@ function ProjectsComplete() {
   return true;
 }
 
+function CounterEspionage() {
+  echo "Counter Espionage is currently Manual<p>";
+  return true;
+}
+
 function GenerateTurns() {
   echo "Generate Turns is currently Manual<p>";
   return true;
@@ -591,22 +595,24 @@ function FinishTurnProcess() {
 
 function Do_Turn() {
   global $Sand;  // If you need to add something, replace a spare if poss, then nothing breaks
-  $Stages = ['Not Being Processed',  'Check Turns Ready', 'Spare', 'Spare','Start Turn Process', 'Spare', 'Spare', 'Cash Transfers', 'Spare', 'Spare', 
-             'Pay For Stargates', 'Spare', 'Spare', 'Start Projects', 'Spare',  'Spare',
-             'Spare', 'Colonisation', 'Spare', 'Spare', 'Deep Space Construction', 'Spare', 'Spare',
-             'Start Anomaly', 'Spare', 'Spare', 'Agents Start Missions', 'Spare', 'Spare', 'Economy', 'Spare', 'Spare', 'Load Troops', 'Spare', 'Spare',
-             'Movements', 'Spare', 'Spare', 'Meetups', 'Spare', 'Spare', 'Spare', 
-             'Space Combat', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Spare', 'Spare', 'Project Progress', 'Spare',
-             'Espionage Missions Complete', 'Spare', 'Finish Shakedowns', 'Spare', 'Projects Complete', 'Spare', 
-             'Spare', 'Spare', 'Generate Turns', 'Spare', 'Tidy Up Movements', 'Spare', 'Finish Turn Process'];
-  $Coded =  ['-','Coded','No','No','Coded','No','No','Coded','No','No',
-             'No','No','No','Partial','No','No',
-             'No','No','No','No','No','No','No',
-             'No','No','No','No','No','No','No','No','No','No','No','No',
-             'Partial','No','No','No','No','No','No',
-             'No','No','No','No','No','No','No','Coded?','No',
-             'No','No','Coded','No','Partial','No',
-             'No','No','No','No','Coded','No','Coded?'];
+  $Stages = ['Not Being Processed',  'Check Turns Ready', 'Spare', 'Spare','Start Turn Process', 'Spare', 'Spare', 'Cash Transfers', 
+             'Spare', 'Spare' /*Pay For Stargates?'*/, 'Spare', 'Spare', 'Start Projects', 'Spare', 'Spare', 'Colonisation', 
+             'Spare', 'Spare', 'Deep Space Construction', 'Spare', 'Spare', 'Start Anomaly', 'Spare', 'Spare', 
+             'Agents Start Missions', 'Spare', 'Spare', 'Economy', 'Spare', 'Spare', 'Load Troops', 'Spare', 
+             
+             'Spare','Movements', 'Spare', 'Spare', 'Meetups', 'Spare', 'Spare', 'Spare', 
+             'Space Combat', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Spare', 'Spare', 'Project Progress', 
+             'Spare','Espionage Missions Complete', 'Spare', 'Counter Espionage','Spare', 'Finish Shakedowns', 'Spare', 'Projects Complete', 
+             'Spare', 'Spare', 'Spare', 'Generate Turns', 'Spare', 'Tidy Up Movements', 'Spare', 'Finish Turn Process'];
+  $Coded =  ['N/A','Coded','No','No','Coded','No','No','Coded',
+             'No','No','No','No','Partial','No','No','No',
+             'No','No','No','No','No','No','No','No',
+             'No','No','No','No','No','No','No','No',
+             
+             'No','Coded','No','No','No','No','No','No',
+             'No','No','No','No','No','No','No','Coded',
+             'No','No','No','No','No','Coded','No','Partial',
+             'No','No','No','No','No','Coded','No','Coded?'];
   $Sand = Get_TurnNumber();
 // var_dump($Sand);
 
@@ -694,9 +700,7 @@ function Do_Turn() {
     echo "<tr>" . fm_textarea("Log",$Sand,'ActivityLog',8,5);
     if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
     echo "</table></form><p>\n";
-  }  
-   
-
+  }
 
 // var_dump($Sand);
   Put_Turn($Sand);  // Probably redundant
@@ -707,5 +711,5 @@ function Do_Turn() {
   Do_Turn();
 
   dotail();
-  
+
 ?>
