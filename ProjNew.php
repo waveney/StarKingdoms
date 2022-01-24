@@ -224,7 +224,7 @@
   case 'Military':
       echo "<h2>Train an Army</h2>";
       echo "Not yet<p>";
-      echo "<button class=projtype type=submit formaction='ProjArmy.php?ACTION=NEW&id=$Fid&p=15&t=$Turn&Hi=$Hi&Di=$Di'>Train a new army</button><p>";
+      echo "<button class=projtype type=submit formaction='ProjSetup.php?t=Army&ACTION=NEW&id=$Fid&p=15&t=$Turn&Hi=$Hi&Di=$Di'>Train a new army</button><p>";
     
     
       echo "<h2>Re-equip and Reinforce Army</h2>";
@@ -271,7 +271,7 @@
   case 'Intelligence':
       echo "<h2>Train an Agent</h2>";
       echo "Not yet<p>";
-      echo "<button class=projtype type=submit formaction='ProjAgent.php?ACTION=NEW&id=$Fid&p=19&t=$Turn&Hi=$Hi&Di=$Di'>Train an agent</button><p>";
+      echo "<button class=projtype type=submit formaction='ProjSetup.php?t=Agent&ACTION=NEW&id=$Fid&p=19&t=$Turn&Hi=$Hi&Di=$Di'>Train an agent</button><p>";
     
     
    

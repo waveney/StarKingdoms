@@ -71,7 +71,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$ShipTypes,$Tech_Cats,$CivMi
 //    echo "<td>" . $ShipTypes[$T['SubType']];
     echo "<td>" . $T['Level'];
     echo "<td>" . $T['Orders'];
-    echo "<td>" . $BuildState[$T['Buildstate']];
+    echo "<td>" . $BuildState[$T['BuildState']];
     echo "<td>" . $Systems[$T['SystemId']];
     echo "<td>" . (isset($Systems[$T['NewSystemId']]) ? $Systems[$T['NewSystemId']] :"") ;
   }
@@ -82,6 +82,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$ShipTypes,$Tech_Cats,$CivMi
   /* Logistics Info */
   echo "To follow<p>";
 
+  echo "<h2><a href=ThingPlan.php?F=$Fid>Plan a new thing</a></h2>\n";
 
   dotail();  
 ?>

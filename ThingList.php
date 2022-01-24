@@ -52,6 +52,7 @@
   echo "</thead><tbody>";
 
   foreach($Things as $T) {
+    if ($T['Type'] == 0) continue;
     $tid = $T['id'];
     $Name = $T['Name'];
     if (!$Name) $Name = "Unknown Thing $tid";
@@ -66,6 +67,7 @@
     }
     
     echo "<tr><td><a href=ThingEdit.php?id=$tid>$tid</a>";
+
     echo "<td>" . $ThingTypes[$T['Type']] . "<td>" . $ShipTypes[$T['SubType']] . "<td>" . $T['Level'];
     echo "<td><a href=ThingList.php?AT=$Ref>$Ref</a><td>$Loc";
     echo "<td><a href=ThingEdit.php?id=$tid>$Name</a>";

@@ -451,10 +451,6 @@ function Put_Thing(&$now) {
     $e=$now['id'];
     $Cur = Get_Thing($e);
     return Update_db('Things',$Cur,$now);
-  } else if (empty($now)){
-echo "Puting Nothing!<p>";
-debug_print_backtrace();
-exit;    
   } else {
     $now['GameId'] = $GAMEID;
     return $now['id'] = Insert_db ('Things', $now );

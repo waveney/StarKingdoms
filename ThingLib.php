@@ -288,7 +288,7 @@ function Calc_TechLevel($Fid,$MType) {
 
 function Thing_Finished($tid) {
   $t = Get_Thing($tid);
-  $t['Buildstate'] = 3;
+  $t['BuildState'] = 3;
   $t['CurHealth'] = $t['OrigHealth'];
   Put_Thing($t);
 }
@@ -396,8 +396,8 @@ function Show_Thing(&$t,$Force=0) {
   echo "</table>";
 
   if ($GM) {
-    echo "<tr><td>Build State:" . fm_select($BuildState,$t,'Buildstate'); 
-    if (isset($t['Buildstate']) && $t['Buildstate'] <= 1) {
+    echo "<tr><td>Build State:" . fm_select($BuildState,$t,'BuildState'); 
+    if (isset($t['BuildState']) && $t['BuildState'] <= 1) {
       echo fm_number('Build Project',$t,'ProjectId');
       if ($t['ProjectId']) {
         $Proj = Get_Project($t['ProjectId']);
@@ -418,8 +418,8 @@ function Show_Thing(&$t,$Force=0) {
     }
     echo "<tr>" . fm_radio('Whose',$FactNames ,$t,'Whose','',1,'colspan=6','',$Fact_Colours,0); 
   } else {
-    echo "<tr><td>Build State:<td>" . $BuildState[$t['Buildstate']]; 
-    if (isset($t['Buildstate']) && $t['Buildstate'] <= 1) {
+    echo "<tr><td>Build State:<td>" . $BuildState[$t['BuildState']]; 
+    if (isset($t['BuildState']) && $t['BuildState'] <= 1) {
       if ($t['ProjectId']) {
         echo "<tr><td>See <a href=ProjEdit.php?id=" . $t['ProjectId'] . ">Project</a>";
         echo "Status: " . $Project_Status[$Proj['Status']];
@@ -431,7 +431,7 @@ function Show_Thing(&$t,$Force=0) {
       echo "<tr><td>Current System:<td>" . $N['Ref'] . "<td>" . $Syslocs[$t['WithinSysLoc']];
 
       if ($tprops & THING_CAN_MOVE) {
-        switch ($t['Buildstate']) {
+        switch ($t['BuildState']) {
         
         case 0: // Plan
         case 1: // Build
@@ -447,7 +447,7 @@ function Show_Thing(&$t,$Force=0) {
            }
         }
       } else { //Static, can specify where before start
-        if (($t['Buildstate'] == 0)) {
+        if (($t['BuildState'] == 0)) {
           echo "<tr><td>Where in the system is it to be built? " . fm_select($Syslocs,$t,'WithinSysLoc');
         }
       }

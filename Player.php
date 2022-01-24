@@ -7,10 +7,6 @@
 
   A_Check('Player');
 
-  $FACTION['LastActive'] = time();
-  
-  if (!Access('GM')) Put_Faction($FACTION);
-  
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
       case 'Submit' :  // TODO add checking of turn

@@ -25,6 +25,7 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>id</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Properties</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Gate</a>\n";
     echo "</thead><tbody>";
 
     foreach($Ts as $T) {
@@ -32,11 +33,13 @@
       echo "<tr><td><a href=TechEdit.php?id=$i>$i</a>";
       echo fm_text1("",$T,'Name',1,'','',"Name$i");
       echo fm_number1('',$T,'Properties','','',"Properties$i");
+      echo fm_text1("",$T,'Gate',1,'','',"Gate$i");
       }   
 
   $T = [];
   echo "<tr><td>" . fm_text1("",$T,'Name',1,'','',"Name0");
       echo fm_number1('',$T,'Properties','','',"Properties0");
+      echo fm_text1("",$T,'Gate',1,'','',"Gate0");
   echo "</tbody></table></div>\n";
 
   echo "<h2><input type=submit name=Update value=Update></h2>";
