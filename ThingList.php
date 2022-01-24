@@ -40,7 +40,7 @@
   echo "<thead><tr>";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Id</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Type</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>SubType</a>\n";
+//  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>SubType</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Level</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>System</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Location</a>\n";
@@ -68,7 +68,7 @@
     
     echo "<tr><td><a href=ThingEdit.php?id=$tid>$tid</a>";
 
-    echo "<td>" . $ThingTypes[$T['Type']] . "<td>" . $ShipTypes[$T['SubType']] . "<td>" . $T['Level'];
+    echo "<td>" . $ThingTypes[$T['Type']] . /* "<td>" . $ShipTypes[$T['SubType']] .*/ "<td>" . $T['Level'];
     echo "<td><a href=ThingList.php?AT=$Ref>$Ref</a><td>$Loc";
     echo "<td><a href=ThingEdit.php?id=$tid>$Name</a>";
     echo "<td>" . ($who? $Factions[$T['Whose']]['Name'] : "");

@@ -17,7 +17,7 @@ function Player_Page() {
 
   $FACTION['LastActive'] = time();
   
-  if (!$GM) Put_Faction($FACTION);
+  if (!$GM || $FACTION['NPC']) Put_Faction($FACTION);
   
 
 //var_dump($PlayerState,$FACTION);
@@ -63,11 +63,6 @@ function Player_Page() {
     break;  
 
   }
-  
-  
-
-
-
 
   echo "</ul>";
   echo "</div>";

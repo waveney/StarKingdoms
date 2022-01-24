@@ -47,6 +47,7 @@
       } else {
         $T['id'] = $Tid;
         $T['Name'] = "Copy of " . $T['Name'];
+        $T['NewSystemId'] = $T['SystemId'] = 0;
         Put_Thing($T);
       }
       $Exist = 1; 
