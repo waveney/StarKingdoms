@@ -64,3 +64,14 @@ debugger;
     document.getElementById("ProjT" + stuff).innerHTML = ''; 
   }
 }
+
+function ModuleCheck() { // May be redundant
+debugger;
+  var max_modules = Number(document.getElementById("MaxModules").innerHTML);
+  
+  var highestMod = documnetgetElementById('HighestModule').value;
+  var tot = 0;
+  for (var mi=1, mi<= highestMod, mi++) {
+    var c =  Number(document.getElementById("MaxModules").innerHTML); 
+  }
+}

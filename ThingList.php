@@ -34,6 +34,7 @@
   }
   
   echo "<h1>Things $xtra</h1>";
+  echo "Clicking on the id takes you to GM level edit access, clickinging on Planning takes you to player level Plan access<br>\n";
   
   $coln = 0;
   echo "<div class=tablecont><table id=indextable border width=100% style='min-width:1400px'>\n";
@@ -47,7 +48,7 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Whose</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Project</a>\n";
-//  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Location</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Build State</a>\n";
 
   echo "</thead><tbody>";
 
@@ -57,9 +58,12 @@
     $Name = $T['Name'];
     if (!$Name) $Name = "Unknown Thing $tid";
     $who = $T['Whose'];
-    $Ref = $Systems[$T['SystemId']];
+    $Ref = empty($Systems[$T['SystemId']]) ? "" : $Systems[$T['SystemId']];
     if ($T['WithinSysLoc'] == 1) {
       $Loc = "Deep Space";
+    } else if (empty($T['SystemId'])) {
+      $Ref = '';
+      $Loc = '';
     } else {
       $N = Get_System($T['SystemId']);
       $Locs = Within_Sys_Locs($N);
@@ -73,6 +77,7 @@
     echo "<td><a href=ThingEdit.php?id=$tid>$Name</a>";
     echo "<td>" . ($who? $Factions[$T['Whose']]['Name'] : "");
     echo "<td>" . $T['ProjectId'];
+    echo "<td>" . ($T['BuildState']? $BuildState[$T['BuildState']] : "<a href=ThingPlan.php?F=" . $T['Whose'] . "&id=$tid>Planning</a>" );
 
   }
       

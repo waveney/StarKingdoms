@@ -252,7 +252,7 @@ function Set_ColBlobs(Blobs,MaxBlob) {
   }
 }
 
-function AutoInput(f) {
+function AutoInput(f,after) {
 //  debugger;
   var newval = document.getElementById(f).value;
   var id = f;
@@ -279,12 +279,14 @@ function AutoInput(f) {
 //        window.location.href = Location;
 
         window.location.reload();
-        }, 1000);
+        }, 100);
     } else if (data.match(/FORCELOADCHANGE54321/m)) {
       setTimeout(function(){
         var Location = window.location.pathname + "?id=" + refval;  //  window.location.hostname
         window.location.href = Location;
-        }, 1000);
+        }, 100);
+    } else if (data.match(/CALLxxAFTER/m)) {
+      after();
     }
   });
 }

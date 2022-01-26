@@ -159,7 +159,7 @@ function Within_Sys_Locs(&$N) {
   $L[0] = "";
   $L[1] = 'Deep space';
 //  $L[2] = 'On board ship';
-if (!isset($N['id'])) { var_dump($N); exit; }
+  if (!isset($N['id'])) return $L;
   $Ps = Get_Planets($N['id']);
   $PTD = Get_PlanetTypes();
   
@@ -197,38 +197,35 @@ function Get_Valid_Modules(&$t) {
   $MTs = Get_ModuleTypes();
   $VMT = [];
   $ThingProps = Thing_Type_Props();
+  $tprop = (empty($ThingProps[$t['Type']] )?0: $ThingProps[$t['Type']] ) ;
   foreach ($MTs as $M) {
     if ($ModuleCats[$M['CivMil']] == 'Army') {
-      if (($ThingProps[$t['Type']] & THING_HAS_ARMYMODULES) == 0) continue;
-    } else if ($M['CivMil'] < 4) {
-       if ($ThingProps[$t['Type']] & THING_HAS_SHIPMODULES) { 
-        if (isset($t['SubType']) && $t['SubType']) {
-          if ($ModuleCats[$M['CivMil']] == 'Military Ship' && $t['SubType'] == 3) continue;
-          if ($ModuleCats[$M['CivMil']] == 'Civilian Ship' && $t['SubType'] == 1) continue;
-        }
+      if (($tprop & THING_HAS_ARMYMODULES) == 0) continue;
+    } else if ($M['CivMil'] <= 4) {
+      if ($tprop & THING_HAS_SHIPMODULES) { 
+        if ($ModuleCats[$M['CivMil']] == 'Military Ship' && ($tprop & THING_HAS_MILSHIPMODS) ==0 ) continue;
+        if ($ModuleCats[$M['CivMil']] == 'Civilian Ship' && ($tprop & THING_HAS_CIVSHIPMODS) ==0) continue;
       } else {
         continue;
       }
     } else {
       continue;
     }
-    
     $l = Has_Tech($t['Whose'],$M['BasedOn']);
     if (!$l) continue;
     if ($M['MinShipLevel'] > $t['Level']) continue;
     $VMT[$M['id']] = $M['Name'];
   }
-  
   return $VMT;
 }
 
 
 function Max_Modules(&$t) {
   $ThingProps = Thing_Type_Props();
-  if ($ThingProps[$t['Type']] & THING_HAS_MODULES) {
+  if (!empty($ThingProps[$t['Type']]) && ($ThingProps[$t['Type']] & THING_HAS_MODULES)) {
     $v = [0,4,12,24,40,60,84,112,144,180,220][$t['Level']];
     if ($ThingProps[$t['Type']] & THING_HAS_SUBTYPES) {
-      if ($t['SubType'] == 2) $v = $v*3/4;
+      if ($t['Type'] == 2) $v = $v*3/4;
       }
     if (Has_Tech($t['Whose'], 'Compact Ship Design') && $t['Level'] > 1) $v += $t['Level'];
     if ($t['Level'] > 2 && Has_Trait('Really Big',$t['Whose'])) $v += $t['Level']*$t['Level'];
@@ -325,58 +322,62 @@ function Show_Thing(&$t,$Force=0) {
   $Systems = Get_SystemRefs();
   $t['MaxModules'] = Max_Modules($t);
   if  ($tprops & THING_HAS_MODULES) $t['OrigHealth'] = Calc_Health($t);
-  
-  $Links = Get_Links($N['Ref']);
-  $SelLinks = [''];
-  $SelCols = [''];
-  if ($GM) {
-    foreach ($Links as $L) {
-      $SelLinks[$L['id']] = "#" . $L['id'] . " to " . (($L['System1Ref'] == $N['Ref'])?$L['System2Ref']: $L['System1Ref'] );
-      $SelCols[$L['id']] = $LinkTypes[$L['Level']]['Colour'];
-    }
-  } else {
-    $NearNeb = $N['Nebulae'];
-    $NS = Get_FactionSystemFS($Fid,$N['id']);
 
-    foreach ($Links as $L) {
-      $LinkText = "Unknowm";
-      $FL = Get_FactionLink($Fid,$L['id']);
-      $FarSysRef =  (($L['System1Ref'] == $N['Ref'])?$L['System2Ref']: $L['System1Ref'] );
-      $FSN = Get_SystemR($FarSysRef);
-      $FarNeb = $FSN['Nebulae'];
-      $FS = Get_FactionSystemFS($Fid,$FSN['id']);
+  if ($t['BuildState'] == 3) { // Complete Only
+    $Links = (empty($N['Ref']) ? [] : Get_Links($N['Ref']));
+    $SelLinks = [''];
+    $SelCols = [''];
+    if ($GM) {
+      foreach ($Links as $L) {
+        $SelLinks[$L['id']] = "#" . $L['id'] . " to " . (($L['System1Ref'] == $N['Ref'])?$L['System2Ref']: $L['System1Ref'] );
+        $SelCols[$L['id']] = $LinkTypes[$L['Level']]['Colour'];
+      }
+    } else {
+      $NearNeb = $N['Nebulae'];
+      $NS = Get_FactionSystemFS($Fid,$N['id']);
+
+      foreach ($Links as $L) {
+        $LinkText = "Unknowm";
+        $FL = Get_FactionLink($Fid,$L['id']);
+        $FarSysRef =  (($L['System1Ref'] == $N['Ref'])?$L['System2Ref']: $L['System1Ref'] );
+        $FSN = Get_SystemR($FarSysRef);
+        $FarNeb = $FSN['Nebulae'];
+        $FS = Get_FactionSystemFS($Fid,$FSN['id']);
 //echo "<p>doing link " . $L['id'] . " to $FarSysRef ". $FSN['id'] ; var_dump($FS);
-      if (isset($FL['known']) && $FL['known']) {
-        $LinkText = $FarSysRef;
-      } else if ($NearNeb == 0) {
-        if (isset($FS['id'])) {
-          if ($FarNeb == 0) {
-            $LinkText = $FarSysRef;
-          } else if ($FS['NebScanned'] >= $FarWeb) {
+        if (isset($FL['known']) && $FL['known']) {
+          $LinkText = $FarSysRef;
+        } else if ($NearNeb == 0) {
+          if (isset($FS['id'])) {
+            if ($FarNeb == 0) {
+              $LinkText = $FarSysRef;
+            } else if ($FS['NebScanned'] >= $FarWeb) {
+              $LinkText = $FarSysRef;
+            } else {
+              $LinkText = '?';
+            }
+          } else {
+            $LinkText = '?';
+          }
+        } else if ($NS['NebScanned'] >= $NearWeb) { // In a Neb...
+          if (isset($FS['id'])) {
             $LinkText = $FarSysRef;
           } else {
             $LinkText = '?';
           }
-        } else {
-          $LinkText = '?';
+        } else { 
+          continue; // Can't see that link
         }
-      } else if ($NS['NebScanned'] >= $NearWeb) { // In a Neb...
-        if (isset($FS['id'])) {
-          $LinkText = $FarSysRef;
-        } else {
-          $LinkText = '?';
-        }
-      } else { 
-        continue; // Can't see that link
+        $SelLinks[$L['id']] = "#" . $L['id'] . " to " . $LinkText;
+        $SelCols[$L['id']] = $LinkTypes[$L['Level']]['Colour'];
       }
-      $SelLinks[$L['id']] = "#" . $L['id'] . " to " . $LinkText;
-      $SelCols[$L['id']] = $LinkTypes[$L['Level']]['Colour'];
     }
   }
 
 //var_dump($SelLinks);
 
   echo "Note Movement does not yet work for armies moving by ship.<p>\n";
+  
+  if ($t['BuildState'] == 0) echo "Note the Tech level of this will be recorded when it is built<br>";
 
   echo "<form method=post id=mainform enctype='multipart/form-data' action=ThingEdit.php>";
   echo "<div class=tablecont><table width=90% border class=SideTable>\n";
@@ -411,7 +412,7 @@ function Show_Thing(&$t,$Force=0) {
         "Update this normally";
     }
 
-    echo "<tr><td>System:<td>" . fm_select($Systems,$t,'SystemId');
+    echo "<tr><td>System:<td>" . fm_select($Systems,$t,'SystemId',1);
     echo "<td>" . fm_select($Syslocs,$t,'WithinSysLoc');
     if ($tprops & THING_CAN_MOVE) {
       echo "<tr><td>New System:<td>" . fm_select($Systems,$t,'NewSystemId',1) . "This is derived data<td>" . fm_select($NewSyslocs,$t,'NewLocation');
@@ -469,7 +470,7 @@ function Show_Thing(&$t,$Force=0) {
     if ($GM) {
       echo "<tr>" . fm_number('Orig Health',$t,'OrigHealth') . fm_number('Cur Health',$t,'CurHealth');
     } else {
-      echo "<tr><td>Original Health: " . $t['OrigHealth'] . "<td>Current Health: " . $t['CurHealth'];
+      echo "<tr><td>Original Health: " . $t['OrigHealth'] . ($t['BuildState']? "<td>Current Health: " . $t['CurHealth'] : "");
     }
     echo "<td>Basic Damage: " . Calc_Damage($t);
   }
@@ -560,10 +561,10 @@ function Show_Thing(&$t,$Force=0) {
       foreach ($Ds as $D) {
         $did = $D['id'];
         if (($dc++)%4 == 0)  echo "<tr>";
-        echo "<td>" . $MTNs[$D['Type']] . "(Level " . $D['Level'] . "): " . $D['Number'];
+        echo "<td>" . $MTNs[$D['Type']] . ($t['BuildState']? ("(Level " . $D['Level'] . "): ")  : ": ") . $D['Number'];
         
         $CLvl = Calc_TechLevel($Fid,$D['Type']);
-        if ($CLvl != $D['Level']) {
+        if ($CLvl != $D['Level'] && $t['BuildState'] != 0 ) {
           echo ". <span class=Blue> Note you have Level: $CLvl </span>";
         }
         if (!isset($MTNs[$D['Type']])) $BadMods += $D['Number'];
@@ -618,5 +619,97 @@ function RefitRepair(&$T) {
 }
 
 //  &#8373; = Credit symbol
+
+function LogsticalSupport($Fid) {  // Note this sets the Economic rating of all PHs
+  $PHomes = Get_ProjectHomes($Fid);
+  
+  $Logistics = [0,0,0];
+
+
+  
+  $ThingTypes = Get_ThingTypes();
+  $DistTypes = Get_DistrictTypes();
+  
+  foreach($PHomes as $H) {
+    $PH['Economy'] = 0;
+    $Commerce = 0;
+    $Hi = $H['id'];
+    switch ($H['ThingType']) {
+    case 1: // Planet
+      $PH = Get_Planet($H['ThingId']);
+      $Dists = Get_DistrictsP($H['ThingId']);
+      $EndAct = 'Put_Planet';
+      break;
+    case 2: // Moon
+      $PH = Get_Moon($H['ThingId']);
+      $Dists = Get_DistrictsM($H['ThingId']);
+      $EndAct = 'Put_Moon';
+      break;
+    case 3: // Thing
+      $PH = Get_Thing($H['ThingId']); // Filter for economic things - outposts, ast mines etc??
+      $Dists = Get_DistrictsT($H['ThingId']);
+      if (!$Dists) {
+        $H['Skip'] = 1;
+        Put_Thing($PH);
+        continue 2;  // Remove things without districts
+      }
+      $EndAct = 'Put_Thing';
+      break;
+    }
+    
+    $Prime = 0;
+    $District_Type = [];
+    foreach ($Dists as $D) {
+      if ($DistTypes[$D['Type']]['Props'] &1) {
+        if (Has_Trait('No customers',$Fid) && $DistTypes[$D['Type']]['Name'] == 'Commerce') {
+        } else {
+          $Prime++;
+        }
+      }
+      switch ($DistTypes[$D['Type']]['Name']) {
+      case 'Commerce' :
+        $Commerce+=$D['Number'];
+        break;
+      case 'Military' :
+        $Logistics[1]+= $D['Number'];
+        break;
+      case 'Shipyard' :
+        $Logistics[0]+= $D['Number'];
+        break;
+      case 'Intelligence' :
+        $Logistics[2]+= $D['Number'];
+        break;
+      default:
+        break;
+      }
+    }
+    
+    $PH['Economy'] = $Prime * $Commerce*2 + (isset($PH['Minerals'])?(min($PH['Minerals'], $Commerce)):0);
+    $EndAct($PH);
+  }
+        
+  if (Has_Tech($Fid,'Naval Logistics')) $Logistics[0]*=2;
+  if (Has_Tech($Fid,'Army Logistics')) $Logistics[1]*=2;
+  if (Has_Tech($Fid,'Intelligence Logistics')) $Logistics[3]*=2;
+  return $Logistics;  
+}
+
+/*
+  $Outposts = $AsteroidMines = $AdvancedMines = 0;
+      switch ($ThingTypes[$PH['Type']]['Name']) {
+        case 'Outpost':
+          $Outposts++;
+          continue 3;
+        case 'Asteroid Mine':
+          $AsteroidMines++;
+          continue 3;
+        case 'Advanced Asteroid Mine':
+          $AdvancedMines++;
+          continue 3;
+        case 
+      
+
+*/
+
 
 ?>

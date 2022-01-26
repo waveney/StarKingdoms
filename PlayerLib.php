@@ -19,9 +19,12 @@ function Player_Page() {
   
   if (!$GM || $FACTION['NPC']) Put_Faction($FACTION);
   
-
+  echo "You can always get back here by clicking on 'Faction Menu' on the bar above.<br>\n";
+  
 //var_dump($PlayerState,$FACTION);
   echo "<h1>Player Actions</h1>\n";
+  
+
   
   echo "<h2>Player state: <span style='background:" . $PlayerStateColours[$FACTION['TurnState']] . "'>" . $PlayerState[$FACTION['TurnState']] . "</span></h2>";
   echo "<div class=Player>";
@@ -43,7 +46,8 @@ function Player_Page() {
     if (Has_Tech($FACTION['id'],'Astral Mapping')) echo "<li><a href=MapFull.php?Hex>Faction Map</a> - with spatial location of nodes\n";
     echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";
     echo "<li>Worlds with projects";
-    echo "<li>Things (Ships, Armies, Agents, Space stations etc)";
+    echo "<li>" . ($GM? "<a href=PThingList.php>List of Things</a>" : "List of Things") . " List of Things (Ships, Armies, Agents, Space stations etc)";
+    echo "<li>" . ($GM? "<a href=ThingPlan.php>Plan a Thing</a>" : "Plan a Things") . " Planning Things (Ships, Armies, Agents, Space stations etc)";
     echo "<li>Economy";
     echo "<li>" . ($GM? "<a href=Banking.php>Banking</a>" : "Banking") . " Sending credits to others and statements";
     echo "<li>Turn Text";

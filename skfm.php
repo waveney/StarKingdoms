@@ -24,6 +24,7 @@ function htmlspec($data) {
 
 $ADDALL = '';
 $AutoADD = 0;
+$AutoAfter = '';
 
 function fm_addall($txt) {
   global $ADDALL;
@@ -31,31 +32,31 @@ function fm_addall($txt) {
 }
 
 function fm_textinput($field,$value='',$extra='') {
-  global $ADDALL,$AutoADD;
+  global $ADDALL,$AutoADD,$AutoAfter;
   $str = "<input type=text name=$field id=$field $extra $ADDALL";
-  if ($AutoADD) $str .=  " oninput=AutoInput('$field') ";
+  if ($AutoADD) $str .=  " oninput=AutoInput('$field',$AutoAfter) ";
   if ($value) $str .= " value=\"" . htmlspec($value) . '"';
   return $str  .">";
 }
 
 function fm_smalltext($Name,$field,$value,$chars=4,$extra='') {
-  global $ADDALL,$AutoADD;
+  global $ADDALL,$AutoADD,$AutoAfter;
   $str = "$Name " . help($field) . "<input type=text name=$field id=$field $extra size=$chars $ADDALL";
-  if ($AutoADD) $str .=  " oninput=AutoInput('$field') ";
+  if ($AutoADD) $str .=  " oninput=AutoInput('$field',$AutoAfter) ";
   $str .= " value=\"" . htmlspec($value) . '"';
   return $str  .">";
 }
 
 function fm_smalltext2($Name,&$data,$field,$chars=4,$extra='') {
-  global $ADDALL,$AutoADD;
+  global $ADDALL,$AutoADD,$AutoAfter;
   $str = "$Name " . help($field) . "<input type=text name=$field id=$field $extra size=$chars $ADDALL";
-  if ($AutoADD) $str .=  " oninput=AutoInput('$field') ";
+  if ($AutoADD) $str .=  " oninput=AutoInput('$field',$AutoAfter) ";
   if (isset($data[$field])) $str .= " value=\"" . htmlspec($data[$field]) . '"';
   return $str  .">";
 }
 
 function fm_text($Name,&$data,$field,$cols=1,$extra1='',$extra2='',$field2='',$extra3='') {
-  global $ADDALL,$AutoADD;
+  global $ADDALL,$AutoADD,$AutoAfter;
   if ($field2 == '') $field2=$field;
   if ($extra3 == '') $extra3 = $extra1;
   $str = "<td $extra3>$Name" . ($Name?':':'') . help($field) . "<td colspan=$cols $extra1><input type=text name=$field2 id=$field2 $extra2 size=" . $cols*16; 
@@ -65,7 +66,7 @@ function fm_text($Name,&$data,$field,$cols=1,$extra1='',$extra2='',$field2='',$e
 }
 
 function fm_text1($Name,&$data,$field,$cols=1,$extra1='',$extra2='',$field2='') {
-  global $ADDALL,$AutoADD;
+  global $ADDALL,$AutoADD,$AutoAfter;
   if ($field2 == '') $field2=$field;
   $str = "<td colspan=$cols $extra1>$Name" . ($Name?':':'') . help($field) . "<input type=text name=$field2 id=$field2 $extra2 size=" . $cols*16; 
   if (isset($data[$field])) $str .= " value=\"" . htmlspec($data[$field]) ."\"";
@@ -74,7 +75,7 @@ function fm_text1($Name,&$data,$field,$cols=1,$extra1='',$extra2='',$field2='') 
 }
 
 function fm_text0($Name,&$data,$field,$cols=1,$extra1='',$extra2='',$field2='') {
-  global $ADDALL,$AutoADD;
+  global $ADDALL,$AutoADD,$AutoAfter;
   if ($field2 == '') $field2=$field;
   $str = $Name . ($Name?':':'') . help($field) . "<input type=text name=$field2 id=$field2 $extra2 size=" . $cols*16; 
   if (isset($data[$field])) $str .= " value=\"" . htmlspec($data[$field]) ."\"";
@@ -83,15 +84,15 @@ function fm_text0($Name,&$data,$field,$cols=1,$extra1='',$extra2='',$field2='') 
 }
 
 function fm_simpletext($Name,&$data=0,$field,$extra='') {
-  global $ADDALL,$AutoADD;
+  global $ADDALL,$AutoADD,$AutoAfter;
   $str = "$Name: " . help($field) . "<input type=text name=$field  id=$field $extra";
   if ($data) if (isset($data[$field])) $str .= " value=\"" . htmlspec($data[$field]) . "\"";
-  if ($AutoADD) $str .=  " oninput=AutoInput('$field') ";
+  if ($AutoADD) $str .=  " oninput=AutoInput('$field',$AutoAfter) ";
   return $str . " $ADDALL>\n";
 }
 
 function fm_number1($Name,&$data=0,$field,$extra1='',$extra2='',$field2='') {
-  global $ADDALL,$AutoADD;
+  global $ADDALL,$AutoADD,$AutoAfter;
   if ($field2 == '') $field2=$field;
   $str = "<td $extra1>";
   if ($Name) $str .= "$Name: ";
@@ -102,7 +103,7 @@ function fm_number1($Name,&$data=0,$field,$extra1='',$extra2='',$field2='') {
 }
 
 function fm_number0($Name,&$data=0,$field,$extra1='',$extra2='',$field2='') {
-  global $ADDALL,$AutoADD;
+  global $ADDALL,$AutoADD,$AutoAfter;
   if ($field2 == '') $field2=$field;
   $str = '';
   if ($Name) $str .= "$Name: ";
@@ -113,18 +114,18 @@ function fm_number0($Name,&$data=0,$field,$extra1='',$extra2='',$field2='') {
 }
 
 function fm_number($Name,&$data=0,$field,$extra1='',$extra2='',$field2='') {
-  global $ADDALL,$AutoADD;
+  global $ADDALL,$AutoADD,$AutoAfter;
   if ($field2 == '') $field2=$field;
   $str = "<td $extra1>";
   if ($Name) $str .= "$Name: ";
-  $str .= help($field) . "<td $extra1><input type=number name=$field id=$field $extra2";
+  $str .= help($field) . "<td $extra1><input type=number name=$field2 id=$field2 $extra2";
   if ($data) if (isset($data[$field])) $str .= " value=\"" . htmlspec($data[$field]) . "\"";
   if ($AutoADD) $str .=  " oninput=AutoInput('$field2') ";
   return $str . " $ADDALL>\n";
 }
 
 function fm_hex($Name,&$data=0,$field,$extra1='',$extra2='',$field2='') {
-  global $ADDALL,$AutoADD;
+  global $ADDALL,$AutoADD,$AutoAfter;
   if ($field2 == '') $field2=$field;
   $str = "<td $extra1>";
   if ($Name) $str .= "$Name: ";
@@ -135,25 +136,25 @@ function fm_hex($Name,&$data=0,$field,$extra1='',$extra2='',$field2='') {
 }
 
 function fm_nontext($Name,&$data,$field,$cols=1,$extra='') {
-  global $ADDALL,$AutoADD;
+  global $ADDALL,$AutoADD,$AutoAfter;
   $str = "<td $extra>$Name:" . help($field) . "<td colspan=$cols $extra>";
   return $str . (isset($data[$field]) ? htmlspec($data[$field]) : '');
 }
 
 function fm_time($Name,&$data,$field,$cols=1,$extra='') {
-  global $ADDALL,$AutoADD;
+  global $ADDALL,$AutoADD,$AutoAfter;
   return "<td>$Name:" . help($field) . "<td colspan=$cols><input type=time name=$field  id=$field $extra size=" . $cols*16 .
-        ($AutoADD? " oninput=AutoInput('$field') " : "") . 
+        ($AutoADD? " oninput=AutoInput('$field',$AutoAfter) " : "") . 
         " value=\"" . $data[$field] ."\" $ADDALL>";
 }
 
 function fm_hidden($field,$value,$extra='') {
-  global $ADDALL,$AutoADD;
+  global $ADDALL,$AutoADD,$AutoAfter;
   return "<input type=hidden name=$field id=$field $extra value=\"" . htmlspec($value) ."\">";
 }
 
 function fm_textarea($Name,&$data,$field,$cols=1,$rows=1,$extra1='',$extra2='',$field2='') {
-  global $ADDALL,$AutoADD;
+  global $ADDALL,$AutoADD,$AutoAfter;
   if ($field2 == '') $field2=$field;
   $str = "<td $extra1>$Name:" . help($field) . "<td colspan=$cols $extra1><textarea name=$field2 id=$field2 $ADDALL ";
   if ($AutoADD) $str .= " oninput=AutoInput('$field2') ";
@@ -162,7 +163,7 @@ function fm_textarea($Name,&$data,$field,$cols=1,$rows=1,$extra1='',$extra2='',$
 }
 
 function fm_basictextarea(&$data,$field,$cols=1,$rows=1,$extra1='',$field2='') {
-  global $ADDALL,$AutoADD;
+  global $ADDALL,$AutoADD,$AutoAfter;
   if ($field2 == '') $field2=$field;
   $str = "<textarea name=$field2 id=$field2 $ADDALL $extra1 rows=$rows cols=" .$cols*20;
   if ($AutoADD) $str .= " oninput=AutoInput('$field2') ";
@@ -171,7 +172,7 @@ function fm_basictextarea(&$data,$field,$cols=1,$rows=1,$extra1='',$field2='') {
 }
 
 function fm_checkbox($Desc,&$data,$field,$extra='',$field2='',$split=0,$extra2='') {
-  global $ADDALL,$AutoADD;
+  global $ADDALL,$AutoADD,$AutoAfter;
   if ($field2 == '') $field2=$field;
   if (isset($data[$field])) if ($data[$field]) {
     return ($Desc?"<label for=$field2>$Desc:</label>":'') . help($field) . ($split?"<td $extra2>":"") . "<input type=checkbox $ADDALL " . 
@@ -182,7 +183,7 @@ function fm_checkbox($Desc,&$data,$field,$extra='',$field2='',$split=0,$extra2='
 }
 
 function fm_select2(&$Options,$Curr,$field,$blank=0,$selopt='',$field2='',$Max=0, &$optclass=0) {
-  global $ADDALL,$AutoADD;
+  global $ADDALL,$AutoADD,$AutoAfter;
   if ($field2 == '') $field2=$field;
   $str = "<select name=$field2 $selopt id=$field2 $ADDALL ";
   if ($AutoADD) $str .= " oninput=AutoInput('$field2') ";
@@ -213,7 +214,7 @@ function fm_select(&$Options,$data,$field,$blank=0,$selopt='',$field2='',$Max=0,
 }
 
 function fm_radio($Desc,&$defn,&$data,$field,$extra='',$tabs=1,$extra2='',$field2='',$colours=0,$multi=0,$extra3='',$extra4='') {
-  global $ADDALL,$AutoADD;
+  global $ADDALL,$AutoADD,$AutoAfter;
   if ($field2 == '') $field2=$field;
   $str = "";
   if ($tabs) $str .= "<td $extra>"; 
@@ -248,7 +249,7 @@ function fm_radio($Desc,&$defn,&$data,$field,$extra='',$tabs=1,$extra2='',$field
 }
 
 function fm_date($Name,&$data,$field,$extra1='',$extra2='',$field2='') {
-  global $ADDALL,$AutoADD;
+  global $ADDALL,$AutoADD,$AutoAfter;
   if ($field2 == '') $field2=$field;
   $str = "<td $extra1>$Name" . ($Name?':':'') . help($field) . "<td $extra1><input type=text name=$field2 id=$field2 $extra2 size=16"; 
   if (isset($data[$field]) && $data[$field]) $str .= " value=\"" . ($data[$field]?date('j M Y H:i',$data[$field]):'') . "\"";
@@ -257,7 +258,7 @@ function fm_date($Name,&$data,$field,$extra1='',$extra2='',$field2='') {
 }
 
 function fm_date1($Name,&$data,$field,$extra1='',$extra2='',$field2='') {
-  global $ADDALL,$AutoADD;
+  global $ADDALL,$AutoADD,$AutoAfter;
   if ($field2 == '') $field2=$field;
   $str = "<td $extra1>$Name" . ($Name?':':'') . help($field) . "<input type=text name=$field2 id=$field2 $extra2 size=16"; 
   if (isset($data[$field]) && $data[$field]) $str .= " value=\"" . ($data[$field]?date('j M Y H:i',$data[$field]):'') ."\"";
@@ -266,7 +267,7 @@ function fm_date1($Name,&$data,$field,$extra1='',$extra2='',$field2='') {
 }
 
 function fm_date0($Name,&$data,$field,$extra1='',$extra2='',$field2='') {
-  global $ADDALL,$AutoADD;
+  global $ADDALL,$AutoADD,$AutoAfter;
   if ($field2 == '') $field2=$field;
   $str = $Name . ($Name?':':'') . help($field) . "<input type=text name=$field2 id=$field2 $extra2 size=16"; 
   if (isset($data[$field]) && $data[$field]) $str .= " value=\"" . ($data[$field]?date('j M Y H:i',$data[$field]):'') ."\"";
@@ -275,7 +276,7 @@ function fm_date0($Name,&$data,$field,$extra1='',$extra2='',$field2='') {
 }
 
 function fm_pence($desc,&$data,$field,$extra1='',$extra2='',$field2='') {
-  global $ADDALL,$AutoADD;
+  global $ADDALL,$AutoADD,$AutoAfter;
   if ($field2 == '') $field2=$field;
   $str = "<td $extra1>$desc" . ($desc?':':'') . help($field) . "<td $extra1>&pound;<input type=text name=$field2 id=$field2 $extra2 "; 
   if (isset($data[$field])) $str .= " value=\"" . $data[$field]/100 ."\"";
@@ -284,7 +285,7 @@ function fm_pence($desc,&$data,$field,$extra1='',$extra2='',$field2='') {
 }
 
 function fm_pence1($desc,&$data,$field,$extra1='',$extra2='',$field2='') {
-  global $ADDALL,$AutoADD;
+  global $ADDALL,$AutoADD,$AutoAfter;
   if ($field2 == '') $field2=$field;
   $str = "<td $extra1>$desc" . ($desc?':':'') . help($field) . "&pound;<input type=text name=$field2 id=$field2 $extra2 "; 
   if (isset($data[$field])) $str .= " value=\"" . $data[$field]/100 ."\"";
@@ -427,7 +428,7 @@ function DurationFormat($mins) { // Show N mins as N <=90, x hr ymins
 }
 
 function Register_AutoUpdate($type,$ref) {
-  global $AutoADD;
+  global $AutoADD,$AutoAfter;
   echo fm_hidden('AutoType',$type);
   echo fm_hidden('AutoRef',$ref);
   $AutoADD = 1;

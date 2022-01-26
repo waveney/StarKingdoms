@@ -169,6 +169,7 @@
                 fm_select($Facts,0,'F',1," onchange=this.form.submit()") . "</form>\n";
     
 
+    $txt .= "<li><a href=TidyThings.php>Tidy up</a>  - Call this once a turn to remove unused temp entries\n";
     $txt .= "</ul>\n";
   }
 

@@ -92,7 +92,7 @@
         echo 'FORCERELOAD54321:NOW' . db_delete('Districts',$mtch[2]);
       }
       exit;
-    case (preg_match('/ModuleTypeAdd-(.*)/',$field,$mtch)?true:false):
+    case (preg_match('/ModuleTypeAdd-(.*)/',$field,$mtch)?true:false): // GM type add module
       $Ds = Get_Modules($id);
       foreach ($Ds as $D) {
         if ($D['Type'] == $Value) {
@@ -108,6 +108,16 @@
       }
       $N= ['Type'=>$Value,'ThingId'=>$mtch[1],'Number'=>1];
       echo 'FORCELOADCHANGE54321:NOW' . Put_Module($N);
+      exit;
+    case (preg_match('/ModuleAddType-(.*)/',$field,$mtch)?true:false): // Player type add module
+      if ($Value == 3) {
+        $T = Get_Thing($id);
+        $T['HasDeepSpace'] = 1;
+        Put_Thing($T);
+      }
+      $N= ['Type'=>$mtch[1],'ThingId'=>$id, 'Number'=>$Value];
+      echo 'FORCELOADCHANGE54321:NOW' . Put_Module($N);
+       
       exit;
 
     case (preg_match('/Module(\w*)-(\d*)/',$field,$mtch)?true:false):
@@ -127,7 +137,7 @@
       } else { 
         $N[$mtch[1]] = $Value;     
 //var_dump($N);
-        echo Put_Module($N);
+        echo 'FORCELOADCHANGE54321:NOW' . Put_Module($N);
       }
       exit;
 
