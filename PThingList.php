@@ -63,7 +63,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$ShipTypes,$Tech_Cats,$CivMi
     $Name = $ThingTypes[$T['Type']]['Name'];
     if (!$Name) $Name = "Unknown Thing $Tid";
     
-    echo "<tr><td><a href=ThingEdit.php?id=$Tid&FORCE>" . $T['Name'] . "</a>";
+    echo "<tr><td><a href=" . ($T['BuildState']? "ThingEdit.php" : "ThingPlan.php") . "?id=$Tid&FORCE>" . $T['Name'] . "</a>";
     echo "<td>" . $T['Class'];
     echo "<td>" . $Name;
     echo "<td>" . $T['Level'];

@@ -10,13 +10,19 @@
   
   global $FACTION,$GAME;
   
+  $Fid = 0;
   if (Access('Player')) {
     if (!$FACTION) {
-      Error_Page("Sorry you need to be a GM or a Player to access this");
+      if (!Access('GM')) {
+        Error_Page("Sorry you need to be a GM or a Player to access this");
+      } else {
+      }
+    } else {
+      $Fid = $FACTION['id'];
+      $Faction = &$FACTION;
     }
-    $Fid = $FACTION['id'];
-    $Faction = &$FACTION;
-  } else if (Access('GM') ) {
+  }
+  if ($Fid == 0 && Access('GM') ) {
     A_Check('GM');
     if (isset( $_REQUEST['F'])) {
       $Fid = $_REQUEST['F'];
@@ -73,6 +79,7 @@
   }
   $ThingProps = Thing_Type_Props();
   $tprops = (empty($T['Type'])? 0: $ThingProps[$T['Type']]);
+  $Valid = 1;
 
 // var_dump($ThingTypeNames);exit;  
   echo "<h1>Plan a Thing</h1>";
@@ -102,6 +109,7 @@
   echo "<tr><td>Planning a:<td>" . fm_select($ThingTypeNames, $T,'Type');
   echo "<tr>" . fm_number('Level',$T,'Level','','min=1 max=10');
   echo "<tr>" . fm_text('Name',$T,'Name') . "<td>This is needed";
+  if (empty($T['Name'])) $Valid = 0;
   echo "<tr>" . fm_text('Class',$T,'Class') . "<td>This is optional";  
   if ($tprops & THING_HAS_MODULES) {
   echo "<tr><td>Maximum Modules<td id=MaxModules>" . $T['MaxModules'];
@@ -137,6 +145,7 @@
       } else if (isset($MMs[$Mti])) {
         echo "<tr>" . fm_number($Mtype['Name'],$MMs[$Mti],'Number','','',"ModuleNumber-" . $MMs[$Mti]['id']);
         echo "<td class=Err>This module is not allowed here\n";
+        $Valid = 0;
         $totmodc += $MMs[$Mti]['Number'] * $MTs[$Mti]['SpaceUsed'];
       }
     }
@@ -144,11 +153,18 @@
     echo "<tr><td>Total Modules:";
     fm_hidden('HighestModule',$Mti);
     echo "<td id=CurrentModules" . ($totmodc > $T['MaxModules'] ? " class=ERR":"") . ">$totmodc\n";
+    if ($totmodc > $T['MaxModules'] ) $Valid = 0;
     $T['OrigHealth'] = Calc_Health($T);
     echo "<tr><td>Health/Hull<td>" . $T['OrigHealth'];
     $BaseDam = Calc_Damage($T);
     if ($tprops & (THING_HAS_ARMYMODULES | THING_HAS_MILSHIPMODS )) echo "<tr><td>Basic Damage<td>$BaseDam<td>Before special weapons etc";
   }
+  if (!$Valid) echo "<tr><td class=Err>Warning:<td class=Err>This is not yet valid\n";
+  if ($T['DesignValid'] != $Valid) {
+    $T['DesignValid'] = $Valid;
+    Put_Thing($T);
+  }
+
 
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";    
   echo "</table></form>";

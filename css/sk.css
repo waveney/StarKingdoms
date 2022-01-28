@@ -90,3 +90,49 @@ table-layout: fixed;
  display: block; 
 }
 
+table td .GreyProject {
+  background-color:lightgrey;
+}  
+
+table td .GreenProject {
+  background-color:lightgreen;
+}
+
+.PHStart {
+  border-left: 3px solid black;
+  text-align:center;
+}
+
+.PHStatus {
+  border-right: 3px solid black;
+  text-align:center;
+}
+
+.PHStartButton {
+  padding-left:2;
+  padding-right:2;
+  font-size:14pt;
+}
+
+.ProjHome {
+  font-weight:bold;
+  background-color:lime;
+}
+
+.ProjHome.Homehidden {
+  background-color:red;
+  color:white;
+}
+
+.PHCost {
+  text-align:right;
+}
+
+.PHLevel {
+  text-align:center;
+}
+
+.PHTurn {
+  background-color:LemonChiffon;
+  text-align:right;
+}

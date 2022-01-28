@@ -78,32 +78,9 @@ function New_Thing(&$t) {
        dotail();
        
      case 'Duplicate' :
-       $otid = $tid = $_REQUEST['id'];
-
-       $t = Get_Thing($tid);
-       unset($t['id']);
-       $t['id'] = $tid = Insert_db('Things',$t);
-       $Discs = Get_DistrictsT($otid);
-       $Fid = $t['Whose'];
-       
-       if ($Discs) {
-         foreach ($Discs as $D) {
-           $D['HostId'] = $tid;
-           unset($D['id']);
-           Insert_db('Districts',$D);
-         }
-       }
-       $Mods = Get_Modules($otid); 
-       if ($Mods) {
-         foreach ($Mods as $M) {
-           $M['ThingId'] = $tid;
-           $Lvl = Calc_TechLevel($Fid,$M['Type']);
-           unset($M['id']);
-           $M['Level'] = $Lvl;
-           Insert_db('Modules',$M);
-         }
-       }
-    
+       $t = Thing_Duplicate($_REQUEST['id']);
+       break;
+           
     case 'None' :
     default: 
       break;

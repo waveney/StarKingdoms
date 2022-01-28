@@ -24,6 +24,52 @@
   }
 
   dostaffhead("New Projects for faction");
+
+  if (isset($_REQUEST['ACTION'])) {
+    switch ($_REQUEST['ACTION']) {
+      case 'NEWSHIP': 
+      case 'NEWARMY': 
+      case 'NEWAGENT': 
+        $Ptype = $_REQUEST['p'];
+        $Turn = $_REQUEST['t'];
+        $Hi = $_REQUEST['Hi'];
+        $Di = $_REQUEST['Di'];
+        
+        if ($_REQUEST['ACTION'] == 'NEWSHIP') {
+          $Things = Get_Things_Cond($Fid, 'DesignValid=1 AND ( Type=1 OR Type=2 OR Type=3 )');
+        } else if ($_REQUEST['ACTION'] == 'NEWARMY') {
+          $Things = Get_Things_Cond($Fid, 'DesignValid=1 AND Type=4');
+        } else if ($_REQUEST['ACTION'] == 'NEWAGENT') {
+          $Things = Get_Things_Cond($Fid, 'DesignValid=1 AND Type=5');
+        } 
+        
+        if (!$Things) {
+          echo "<h2>Sorry you do not have any plans for these - go to <a href=ThingPlan.php?F=$Fid>Thing Planning</a> first</h2>";
+          break;
+        }
+        
+        $NameList = [];
+        foreach ($Things as $T) { 
+          $pc = Proj_Costs($T['Level']);        
+          $NameList[$T['id']] = $T['Name'] . (empty($T['Class'])?'': ", a " . $T['Class']) . " ( Level " . $T['Level'] . " ); " .
+            "Cost: " . $pc[1] .  " Needs " . $pc[0] . " progress'>";
+          }
+        
+        echo "<h2>Select a deign to make</h2>";
+        echo "If it is in planning, you are build that, if already built then it will be a copy.<br>";
+        
+        echo "<form method=post action=ProjDisp.php?ACTION=NEW&id=$Fid&p=$Ptype&t=$Turn&Hi=$Hi&Di=$Di>";
+        echo fm_select($NameList,$_REQUEST,'ThingId',1," onchange=this.form.submit()") . "\n<br>";
+        echo "<h2><a href=ProjDisp.php?id=$Fid>Cancel</a></h2>\n";
+        dotail();
+        
+      break;
+      
+    }
+  }
+  
+
+
   
   echo "<h1>New Project</h1>";
  
@@ -110,7 +156,7 @@
             $Lvl = $D['Number'];
             break;
           }
-          
+// TODO bug if you already have that level in the pipeline - Add check to Turns Ready          
           $Lvl++;
           $pc = Proj_Costs($Lvl);
           echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=1&t=$Turn&Hi=$Hi&Di=$Di&Sel=" . $DT['id'] . 
@@ -120,7 +166,7 @@
         }
       }
       
-    echo "<h2>Rebuild and reapir</h2>Not yet selectable<p>";
+    echo "<h2>Rebuild and repair</h2>Not yet selectable<p>";
       
     echo "<h2>Construct Warp Gate</h2>";
       $pc = Proj_Costs(4);
@@ -177,8 +223,9 @@
       
   case 'Shipyard':
       echo "<h2>Build a Ship</h2>";
-      echo "Not yet<p>";
-      echo "<button class=projtype type=submit formaction='ProjSetup.php?t=Ship&ACTION=NEW&id=$Fid&p=10&t=$Turn&Hi=$Hi&Di=$Di'>Build a new ship</button><p>";
+//      echo "Not yet<p>";
+      echo "This action is to build an already designed ship.  If you want a new design please go to <a href=ThingPlan.php>The Thing Planning Tool</a> first.<p>\n";
+      echo "<button class=projtype type=submit formaction='ProjNew.php?ACTION=NEWSHIP&id=$Fid&p=10&t=$Turn&Hi=$Hi&Di=$Di'>Build a new ship</button><p>";
     
     
       echo "<h2>Refit, Repair and Decommision Ships</h2>";
@@ -223,8 +270,9 @@
       
   case 'Military':
       echo "<h2>Train an Army</h2>";
-      echo "Not yet<p>";
-      echo "<button class=projtype type=submit formaction='ProjSetup.php?t=Army&ACTION=NEW&id=$Fid&p=15&t=$Turn&Hi=$Hi&Di=$Di'>Train a new army</button><p>";
+//      echo "Not yet<p>";
+      echo "This action is to build an already designed Army.  If you want a new design please go to <a href=ThingPlan.php>The Thing Planning Tool</a> first.<p>\n";
+      echo "<button class=projtype type=submit formaction='ProjNew.php?ACTION=NEWARMY&id=$Fid&p=15&t=$Turn&Hi=$Hi&Di=$Di'>Train a new army</button><p>";
     
     
       echo "<h2>Re-equip and Reinforce Army</h2>";
@@ -270,8 +318,9 @@
       
   case 'Intelligence':
       echo "<h2>Train an Agent</h2>";
-      echo "Not yet<p>";
-      echo "<button class=projtype type=submit formaction='ProjSetup.php?t=Agent&ACTION=NEW&id=$Fid&p=19&t=$Turn&Hi=$Hi&Di=$Di'>Train an agent</button><p>";
+//      echo "Not yet<p>";
+      echo "This action is to build an already designed Agent.  If you want a new design please go to <a href=ThingPlan.php>The Thing Planning Tool</a> first.<p>\n";
+      echo "<button class=projtype type=submit formaction='ProjNew.php?ACTION=NEWAGENT&id=$Fid&p=19&t=$Turn&Hi=$Hi&Di=$Di'>Train an agent</button><p>";
     
     
    

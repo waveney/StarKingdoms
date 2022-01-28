@@ -106,9 +106,50 @@ function StartProjects() {
   foreach ($Projects as $P) {
     $PT = $ProjTypes[$P['Type']];
     $Cost = $P['Costs'];
+    if ($ProjTypes[$P['Type']]['Props'] & 2) { // Has a thing
+      $Where = Where_Is_Home($P['Home']);
+      $Tid = $P['ThingId'];
+      if ($Tid) {
+        $T = Get_Thing($Tid);
+        if (!$T['DesignValid']) {
+          $P['Status'] = 5; // Not Started
+          TurnLog($P['FactionId'],'Not starting as design invalid: ' . $P['Name']);
+          Put_Project($P);
+          continue;      
+        }
+        if ($T['SystemId'] != 0 && $T['SystemId'] != $Where[0]) {
+          $P['Status'] = 5; // Not Started
+          TurnLog($P['FactionId'],'Not starting as not in same system: ' . $P['Name']);
+          Put_Project($P);
+          continue;     
+        }
+      } // TODO 2nd thing for repair - Checks are wrong
+      if ($ProjTypes[$P['Type']]['Props'] & 4) { // Has can have a 2nd thing
+        $Tid2 = $P['ThingId2'];
+        if ($Tid2) {
+          $T2 = Get_Thing($Tid2);
+          if ($T2['SystemId'] != 0 && $T2['SystemId'] != $Where[0]) {
+            $P['Status'] = 5; // Not Started
+            TurnLog($P['FactionId'],'Not starting as not in same system: ' . $P['Name']);
+            Put_Project($P);
+            continue;     
+          }
+        }
+      } 
+    }
     if (Spend_Credit($P['FactionId'],$Cost,'Starting: ' . $P['Name'])) {
       $P['Status'] = 1; // Started
       TurnLog($P['FactionId'],'Starting ' . $P['Name'] . " Cost: &#8373;$Cost");
+      if ($ProjTypes[$P['Type']]['Props'] & 2) { // Has a thing      
+        if ($Tid) {
+          $T['BuildState'] = 1; // Building
+          $T['SystemId'] = $Where[0];
+          $T['WithinSysLoc'] = $Where[1];
+        } else {
+          $T = ['Whose'=>$Fid, 'Type'=>$P['ThingType'], 'BuildState'=>1, 'SystemId' => $Where[0],  'WithinSysLoc' => $Where[1] ];
+        
+        }
+      }
     } else {
       $P['Status'] = 5; // Not Started
       TurnLog($P['FactionId'],'Not starting as not enough Credits: ' . $P['Name']);
@@ -466,14 +507,14 @@ function ProjectsComplete() {
           break;
         }
       foreach($Dists as $D) {
-        if ($D['Type'] == $P['DistType']) {
+        if ($D['Type'] == $P['ThingType']) {
           $D['Number']++;
           Put_District($D);
           TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");         
           break 2;
         }
       }
-      $D = ['HostType'=>$H['ThingType'], 'HostId'=>$PH['id'], 'Type'=>$P['DistType'], 'Number'=>1];
+      $D = ['HostType'=>$H['ThingType'], 'HostId'=>$PH['id'], 'Type'=>$P['ThingType'], 'Number'=>1];
       Put_District($D);
       TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");
       break;
@@ -487,7 +528,7 @@ function ProjectsComplete() {
     case 'Research Supplemental Army Tech':
     case 'Research Intelligence Operations':
     case 'Research Supplemental Intelligence Tech':
-      $Tid = $P['DistType'];
+      $Tid = $P['ThingType'];
       $CTech = Get_Faction_TechFT($Fid,$Tid);
       $Tech = Get_Tech($Tid);
       if ($Tech['Cat'] == 0) { // Core

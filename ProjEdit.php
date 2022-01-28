@@ -105,8 +105,8 @@
     if ($P['ThingId']) {
       $Thing = Get_Thing($P['ThingId']);
       echo fm_number('Thing',$P,'ThingId') . "<td><a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . $Thing['Name'] . "</a>"; 
-    } else if (1 || $P['DistType']) {
-      echo "<td>" . ($P['Type'] == 1 ? fm_select($DistTypeN,$P,'DistType') : fm_select($TechNames, $P, 'DistType') );
+    } else if (1 || $P['ThingType']) {
+      echo "<td>" . ($P['Type'] == 1 ? fm_select($DistTypeN,$P,'ThingType') : fm_select($TechNames, $P, 'ThingType') );
     }
     echo "<tr>" . fm_textarea('Notes',$P,'Notes',8,2);
   
@@ -123,8 +123,8 @@
     if ($P['ThingId']) {
       $Thing = Get_Thing($P['ThingId']);
       echo "<td><a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . $Thing['Name'] . "</a>"; // May need Tweek for player edit
-    } else if ($P['DistType']) {
-      echo "<td>" . ($P['Type'] == 1 ? ($DistTypeN[$P['DistType']]) : $TechNames[$P['DistType']] );
+    } else if ($P['ThingType']) {
+      echo "<td>" . ($P['Type'] == 1 ? ($DistTypeN[$P['ThingType']]) : $TechNames[$P['ThingType']] );
     }
     echo "<tr>" . fm_textarea('Notes',$P,'Notes',8,2);
   }

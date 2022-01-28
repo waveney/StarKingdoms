@@ -1,21 +1,47 @@
 var Dis;
 
 function Get_DistData() {
-  if (!Dis) Dis = JSON.parse(atob(document.getElementById('DistData')));
+  if (!Dis) Dis = JSON.parse(atob(document.getElementById('DistData').value));
+  return Dis;
 }
 
 function Toggle(id) {
   $("." + id).toggle();
 }
 
-function ToggleHome(id) {
+function TxoggleHome(id) {
 debugger;
-  Get_DistData();
+//  var x = Get_DistData();
+
+//  var HostId = x[id][0]['HostId'];
+  $(".Home" + id).toggle();
+  x = 1;
+  x = 2;
   
 //  for (Hi in Dis) {
 //    for (Di in Dis[Hi]) {
 //    } 
 //  }
+}
+
+function ToggleAllBut(id) {
+  var x = Get_DistData();
+  for (var h in x) {
+    if (h != id) $(".Home" + h).toggle();
+  }
+}
+
+function ToggleHome(id) {
+debugger;
+  var HomeBut = document.getElementById('PHome'+id);
+  x =1;
+  if (HomeBut.classList.contains('Homehidden')) {
+    $('.Home' + id).toggle(true);
+    HomeBut.classList.remove('Homehidden');
+  } else {
+    $('.Home' + id).toggle(false);
+    HomeBut.classList.add('Homehidden');
+  }
 }
 
 function RushChange(Turn,Projn,Homeindx,Distindx,MaxRush) {
@@ -65,13 +91,30 @@ debugger;
   }
 }
 
+/*
 function ModuleCheck() { // May be redundant
 debugger;
   var max_modules = Number(document.getElementById("MaxModules").innerHTML);
   
   var highestMod = documnetgetElementById('HighestModule').value;
   var tot = 0;
-  for (var mi=1, mi<= highestMod, mi++) {
+  for (var mi=1, mi <= highestMod, mi++) {
     var c =  Number(document.getElementById("MaxModules").innerHTML); 
   }
 }
+*/
+
+function Add_Bespoke() {
+  $('.ProfButton').addClass('BespokeBorder');
+  $('.ProfSmallButton').addClass('BespokeBorder');
+  $('.Bespoke').toggle();
+  $('.ProjHide').toggle();
+}
+
+function Remove_Bespoke() {
+  $('.BespokeBorder').removeClass('BespokeBorder');
+  $('.Bespoke').toggle();
+  $('.ProjHide').toggle();
+}
+
+

@@ -154,7 +154,7 @@ function Thing_Type_Props() {
   return $tns;
 }
 
-function Within_Sys_Locs(&$N) {
+function Within_Sys_Locs(&$N,$PM=0) {// $PM +ve = Planet Number, -ve = Moon Number
   include_once("SystemLib.php");
   $L[0] = "";
   $L[1] = 'Deep space';
@@ -166,12 +166,14 @@ function Within_Sys_Locs(&$N) {
   if ($Ps) {
     $pi = $mi = 1;
     foreach ($Ps as $P) {
+      if ($PM == $P['id']) return 200+$pi;
       $PName = PM_Type($PTD[$P['Type']],"Planet") . " - " . NameFind($P);
       $L[100 +$pi] = "Orbiting $PName";
       $L[200 +$pi] = "On $PName";
       $Ms = Get_Moons($P['id']);
       if ($Ms) {
         foreach ($Ms as $M) {
+          if ($PM == -$M['id']) return 400+$mi;
           $MName = PM_Type($PTD[$M['Type']],"Moon") . " - " . NameFind($M);
           $L[300 +$mi] = "Orbiting $MName";
           $L[400 +$mi] = "On $MName";
@@ -181,6 +183,7 @@ function Within_Sys_Locs(&$N) {
       $pi++;
     }
   }
+  if ($PM) return 0;
   $LKs = Get_Links($N['Ref']);
   $Li = 1;
   foreach($LKs as $lk) $L[500+$Li++] = "At stargate to link " . $lk['id'];
@@ -711,5 +714,33 @@ function LogsticalSupport($Fid) {  // Note this sets the Economic rating of all 
 
 */
 
+function Thing_Duplicate($otid) {
+  $t = Get_Thing($otid);
+  unset($t['id']);
+  $t['Name'] = "Copy of " . $t['Name'];
+  $t['id'] = $tid = Insert_db('Things',$t);
+  $Discs = Get_DistrictsT($otid);
+  $t['SystemId'] = 0;
+  $Fid = $t['Whose'];
+       
+  if ($Discs) {
+    foreach ($Discs as $D) {
+      $D['HostId'] = $tid;
+      unset($D['id']);
+      Insert_db('Districts',$D);
+    }
+  }
+  $Mods = Get_Modules($otid); 
+  if ($Mods) {
+    foreach ($Mods as $M) {
+      $M['ThingId'] = $tid;
+      $Lvl = Calc_TechLevel($Fid,$M['Type']);
+      unset($M['id']);
+      $M['Level'] = $Lvl;
+      Insert_db('Modules',$M);
+    }
+  }
+  return $t;
+}
 
 ?>

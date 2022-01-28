@@ -14,5 +14,27 @@ function Rush_Cost($who) {
 global $Project_Status;
 $Project_Status = [0=>'Live',1=>'Started', 2=>'Finished',3=>'Cancelled', 4=>'On Hold', 5=>'Not Started'];
 
+function  Where_Is_Home($PH) {
+  $Home = Get_ProjectHome($PH);
+  switch ($Home['ThingType']) {
+  case '0': // Planet 
+    $P = Get_Planet($Home['ThingId']);
+    $N['id'] = $P['SystemId'];
+    $loc = Within_Sys_Locs($N,$P['id']);
+    return [$P['SystemId'],$loc];
+  case '1': // Moon
+    $M = Get_Moon($Home['ThingId']);
+    $P = Get_Planet($M['PlanetId']);
+    $N['id'] = $P['SystemId'];
+    $loc = Within_Sys_Locs($N,- $M['id']);
+    return [$P['SystemId'],$loc];
+  case '2': // Thing
+    $T = Get_Thing($Home['ThingId']);
+    if ($T['BuildState'] > 0 && $T['BuildState'] < 5) return [$T['SystemId'],$T['WithinSysLoc']];
+    return 0;
+  }
+}
+
+
 
 ?>
