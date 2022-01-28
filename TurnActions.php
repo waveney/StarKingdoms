@@ -108,6 +108,7 @@ function StartProjects() {
     $Cost = $P['Costs'];
     if ($ProjTypes[$P['Type']]['Props'] & 2) { // Has a thing
       $Where = Where_Is_Home($P['Home']);
+      
       $Tid = $P['ThingId'];
       if ($Tid) {
         $T = Get_Thing($Tid);
@@ -145,8 +146,9 @@ function StartProjects() {
           $T['BuildState'] = 1; // Building
           $T['SystemId'] = $Where[0];
           $T['WithinSysLoc'] = $Where[1];
+          $T['CurHealth'] = $T['OrigHealth'];
         } else {
-          $T = ['Whose'=>$Fid, 'Type'=>$P['ThingType'], 'BuildState'=>1, 'SystemId' => $Where[0],  'WithinSysLoc' => $Where[1] ];
+          $T = ['Whose'=>$Fid, 'Type'=>$P['ThingType'], 'BuildState'=>1, 'SystemId' => $Where[0],  'WithinSysLoc' => $Where[1]];
         
         }
       }
@@ -611,6 +613,10 @@ function TidyUpMovements() {
   return true;
 }
 
+function RecalcProjectHomes() {
+  Recalc_Project_Homes('SKLog'); // in ThingLib - this is to add new project homes that have been created by colonisation etc.
+}
+
 function FinishTurnProcess() {
   global $GAME;
   // Change faction state update turn number
@@ -644,7 +650,7 @@ function Do_Turn() {
              'Spare','Movements', 'Spare', 'Spare', 'Meetups', 'Spare', 'Spare', 'Spare', 
              'Space Combat', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Spare', 'Spare', 'Project Progress', 
              'Spare','Espionage Missions Complete', 'Spare', 'Counter Espionage','Spare', 'Finish Shakedowns', 'Spare', 'Projects Complete', 
-             'Spare', 'Spare', 'Spare', 'Generate Turns', 'Spare', 'Tidy Up Movements', 'Spare', 'Finish Turn Process'];
+             'Spare', 'Spare', 'Spare', 'Generate Turns', 'Spare', 'Tidy Up Movements', 'Recalc Project Homes', 'Finish Turn Process'];
   $Coded =  ['N/A','Coded','No','No','Coded','No','No','Coded',
              'No','No','No','No','Partial','No','No','No',
              'No','No','No','No','No','No','No','No',
@@ -653,7 +659,7 @@ function Do_Turn() {
              'No','Coded','No','No','No','No','No','No',
              'No','No','No','No','No','No','No','Coded',
              'No','No','No','No','No','Coded','No','Partial',
-             'No','No','No','No','No','Coded','No','Coded?'];
+             'No','No','No','No','No','Coded','Coded','Coded?'];
   $Sand = Get_TurnNumber();
 // var_dump($Sand);
 
