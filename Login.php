@@ -118,6 +118,8 @@ function Limited() {
 function Login($errmsg='', $message='') {
   global $db,$USER,$AccessType;
   Set_User();
+//debug_print_backtrace();exit;
+
   if (isset($USER)  && $USER && $USER{'AccessLevel'} > $AccessType['Participant']) include_once ("Staff.php");
 
 

@@ -5,7 +5,7 @@ include_once("sk.php");
 include_once("GetPut.php");
 
 $PlayerState = ['Setup', 'Turn Planning' , 'Turn Submitted', 'Turn Being Processed'];
-$PlayerStateColours = ['Orange','lightblue','LightGreen','Red'];
+$PlayerStateColours = ['Orange','lightblue','LightGreen','pink'];
 $PlayerStates = array_flip($PlayerState);
 global $PlayerState,$PlayerStates;
 

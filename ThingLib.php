@@ -111,12 +111,12 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0) {
  
   switch ($T['Cat']) {
   case 0:
-    echo "Core Technology<br>";
+    echo "Core Technology.  Field: <b>" . $Fields[$T['Field']] . "</b><br>";
     break;
   case 2:
     echo " <span class=blue>Non Standard supplimentary Tech</span><br>";
   case 1:
-    echo " Requires " . $CTNs[$T['PreReqTech']] . " at level " . $T['PreReqLevel'] . "<br>";
+    echo " Requires " . $CTNs[$T['PreReqTech']] . " at level " . $T['PreReqLevel'] . ".  Field: <b>" . $Fields[$T['Field']] . "</b><br>";
     if ($T['MinThingLevel']) echo "Size Limitation - Requires at least level " . $T['MinThingLevel'] . " ship<br>";
     break;
   }

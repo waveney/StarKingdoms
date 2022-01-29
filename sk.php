@@ -35,8 +35,8 @@ function Set_User() {
     $FACTIONID = $USER{'UserId'} = $crumbs[2];
     $FACTION = Get_Faction($FACTIONID);
     if ($USERID) return;
-    $USER = array();
-    $USERID = 0;
+//    $USER = array();
+    $USERID = - $FACTIONID;
   }
   if (isset($_COOKIE{'SKC2'})) {
     $res=$db->query("SELECT * FROM People WHERE Yale='" . $_COOKIE{'SKC2'} . "'");
