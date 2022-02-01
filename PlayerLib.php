@@ -45,6 +45,7 @@ function Player_Page() {
     echo "<li><a href=MapFull.php>Faction Map</a>\n";
     if (Has_Tech($FACTION['id'],'Astral Mapping')) echo "<li><a href=MapFull.php?Hex>Faction Map</a> - with spatial location of nodes\n";
     echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";
+    echo "<li>" . ($GM? "<a href=WhatCanIC.php>What can I See?</a>" : "What can I See?") . "\n";
     echo "<li>Worlds with projects";
     echo "<li>" . ($GM? "<a href=PThingList.php>List of Things</a>" : "List of Things") . " List of Things (Ships, Armies, Agents, Space stations etc)";
     echo "<li>" . ($GM? "<a href=ThingPlan.php>Plan a Thing</a>" : "Plan a Things") . " Planning Things (Ships, Armies, Agents, Space stations etc)";

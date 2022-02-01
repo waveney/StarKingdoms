@@ -149,8 +149,9 @@ function StartProjects() {
           $T['CurHealth'] = $T['OrigHealth'];
         } else {
           $T = ['Whose'=>$Fid, 'Type'=>$P['ThingType'], 'BuildState'=>1, 'SystemId' => $Where[0],  'WithinSysLoc' => $Where[1]];
-        
         }
+        Calc_Scanners($T);
+        Put_Thing($T);
       }
     } else {
       $P['Status'] = 5; // Not Started
@@ -206,7 +207,10 @@ function Movements() {
     if ($T['LinkId'] && $T['NewSystemId'] != $T['SystemId'] ) {
 echo "Moving " . $T['Name'] . "<br>";
       $Lid = $T['LinkId']; 
-      
+
+      $ShipScanLevel = Scanners($T);
+      $ShipNebScanLevel = NebScanners($T);
+            
       $L = Get_Link($Lid);
 
       $Fid = $T['Whose'];
@@ -220,7 +224,12 @@ echo "Moving " . $T['Name'] . "<br>";
       }
       
       $FS1 = Get_FactionSystemFS($Fid,$SR1['id']);
-      $ScanLevel = Scanners($T);
+
+      if ($SR1['Nebulae'] ) // TODO RUBBISH - Need to sort out the two different scan scales - Scanners/NebScan tell us scanning capability
+        $ScanLevel = ($NebShipScanLevel>=($SR1['Nebulae']*2)?$NebShipScanLevel/2:0;
+      } else {
+        $ScanLevel = ($ShipScanLevel>0?2:0);
+      }
 
       if (isset($FS1['ScanLevel'])) { 
         echo "Already seen system " . $L['System1Ref'] . " at level " . $FS1['ScanLevel'];

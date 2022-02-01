@@ -476,7 +476,7 @@ function Get_AllThings() {
 function Get_AllThingsAt($id) {
   global $db,$GAMEID;
   $Ts = [];
-  $res = $db->query("SELECT * FROM Things WHERE GameId=$GAMEID AND SystemId=$id");
+  $res = $db->query("SELECT * FROM Things WHERE GameId=$GAMEID AND SystemId=$id ORDER By Whose");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
   return $Ts;
 }
@@ -721,17 +721,21 @@ function Get_ThingTypes() {
   return $Ms;
 }
 
-function Has_Tech($fid,$name) {// name can be id
+function Has_Tech($fid,$name,$Base=0) {// name can be id
   global $db,$GAMEID;
 //echo "Has_Tech called with $fid, $name<p>";
   if (is_numeric($name)) {
-    $res = $db->query("SELECT * FROM  FactionTechs WHERE Faction_Id=$fid AND Tech_Id=$name ");
+    $res = $db->query("SELECT Level,Tech_Id FROM  FactionTechs WHERE Faction_Id=$fid AND Tech_Id=$name ");
   } else {
-    $res = $db->query("SELECT ft.Level FROM  FactionTechs ft, Technologies t WHERE ft.Faction_Id=$fid AND ft.Tech_Id=t.id AND t.Name='$name' ");
+    $res = $db->query("SELECT ft.Level,ft.Tech_Id FROM  FactionTechs ft, Technologies t WHERE ft.Faction_Id=$fid AND ft.Tech_Id=t.id AND t.Name='$name' ");
   }
   if ($res) while ($ans = $res->fetch_assoc()) {
-//echo "Result will be " . $ans['Level'] . "<p>";
-    return $ans['Level'];
+    $Blvl = $ans['Level'];
+    if ($Base) return $Blvl;
+    $tec = Get_Tech($ans['Tech_Id']);
+    if ($tec['Cat'] == 0) return $Blvl;
+    $Blvl = Has_Tech($fid,$tec['PreReqTech'],1);
+    return $Blvl;
   }
 //echo "Result is 0<p>";
   return 0;

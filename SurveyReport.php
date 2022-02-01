@@ -2,6 +2,7 @@
   include_once("sk.php");
   include_once("GetPut.php");
   include_once("SystemLib.php");
+  include_once("ThingLib.php");
   include_once("vendor/erusev/parsedown/Parsedown.php");
   
 //  A_Check('GM'); // For now, will be player version
@@ -22,6 +23,7 @@
 */
 
 // START HERE
+  $GM = Access('GM');
 //  var_dump($_REQUEST);
   if (isset($_REQUEST['N'])) {
     $Sid = $_REQUEST['N'];
@@ -367,6 +369,9 @@
   // Images
   
   echo "</div>";
+  
+  SeeInSystem($Sid,EyesInSystem($Fid,$Sid),0);
+ 
   
   if (Access('GM')) echo "<p><h2><a href=SysEdit.php?id=$Sid>Edit System</s></h2>";
   

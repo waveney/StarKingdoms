@@ -19,7 +19,7 @@ $ModValues = [];
 
 define('THING_HAS_DISTRICTS',1);
 define('THING_HAS_MODULES',2);
-define('THING_HAS_SUBTYPES',4);
+define('THING_HAS_LEVELS',4);
 define('THING_HAS_SHIPMODULES',8);
 define('THING_HAS_GADGETS',16);
 define('THING_HAS_ARMYMODULES',32);
@@ -224,14 +224,16 @@ function Get_Valid_Modules(&$t) {
 
 
 function Max_Modules(&$t) {
-  $ThingProps = Thing_Type_Props();
-  if (!empty($ThingProps[$t['Type']]) && ($ThingProps[$t['Type']] & THING_HAS_MODULES)) {
+  $ThingTypes = Get_ThingTypes();
+  $TTs = $ThingTypes[$t['Type']];
+  if (!empty($TTs['Props']) && ($TTs['Props'] & THING_HAS_MODULES)) {
     $v = [0,4,12,24,40,60,84,112,144,180,220][$t['Level']];
-    if ($ThingProps[$t['Type']] & THING_HAS_SUBTYPES) {
+    if ($TTs['Props'] & THING_HAS_SUBTYPES) {
       if ($t['Type'] == 2) $v = $v*3/4;
       }
     if (Has_Tech($t['Whose'], 'Compact Ship Design') && $t['Level'] > 1) $v += $t['Level'];
     if ($t['Level'] > 2 && Has_Trait('Really Big',$t['Whose'])) $v += $t['Level']*$t['Level'];
+    if ($TTs['Name'] == 'Satellite Defences') $v += Has_Tech($t['Whose'],7); 
     return $v;
   }
   return 0;
@@ -395,6 +397,7 @@ function Show_Thing(&$t,$Force=0) {
     echo "<tr><td>Type: " . $ttn[$t['Type']] . "<td>Level: " . $t['Level'];
   }
   echo "<tr>" . fm_text('Name',$t,'Name',2);
+  echo "<tr>" . fm_text('Class',$t,'Class',2);
   echo "<td rowspan=4 colspan=4><table><tr>";
     echo fm_DragonDrop(1,'Image','Thing',$tid,$t,1,'',1,'','Thing');
   echo "</table>";
@@ -411,8 +414,11 @@ function Show_Thing(&$t,$Force=0) {
       }
       
     } else {
-      if ($tprops & THING_CAN_MOVE) echo "<td>Taking Link:<td>" . fm_select($SelLinks,$t,'LinkId',0," style=color:" . $SelCols[$t['LinkId']] ,'',0,$SelCols) . 
-        "Update this normally";
+      if (! empty($t['SystemId'])) {
+        if (!isset($t['LinkId']) || !isset($SelCols[$t['LinkId']])) $t['LinkId'] = 0;
+        if ($tprops & THING_CAN_MOVE) echo "<td>Taking Link:<td>" . fm_select($SelLinks,$t,'LinkId',0," style=color:" . $SelCols[$t['LinkId']] ,'',0,$SelCols) . 
+            "Update this normally";
+      }
     }
 
     echo "<tr><td>System:<td>" . fm_select($Systems,$t,'SystemId',1);
@@ -532,6 +538,7 @@ function Show_Thing(&$t,$Force=0) {
     $dc=0;
     $totmodc = 0;
     $BadMods = 0;
+    $T['Sensors'] = $T['SensorLevel'] = $D['NebSensors'] = 0;
     
     if ($GM) { // TODO Allow for setting module levels 
       if ($NumMods) echo "<tr><td rowspan=" . ceil(($NumMods+2)/2) . ">Modules:";
@@ -545,8 +552,12 @@ function Show_Thing(&$t,$Force=0) {
                     . "<button id=ModuleRemove-$did onclick=AutoInput('ModuleRemove-$did')>R</button>";
         if (!isset($MTNs[$D['Type']])) $BadMods += $D['Number'];
         $totmodc += $D['Number'] * $MTs[$D['Type']]['SpaceUsed'];
-        };
-
+        
+        if ($D['Type'] == 4) { 
+          $T['Sensors'] = $D['Number'];
+          $T['SensorLevel'] = D['Level'];
+        } else if ($D['Type'] == 9) $D['NebSensors'] = $D['Number'];
+      }
       echo "<tr><td>Add Module Type<td>" . fm_Select($MTNs, NULL , 'Number', 1,'',"ModuleTypeAdd-$tid");
       echo fm_number("Max Modules",$t,'MaxModules');
       echo fm_number1("Deep Space",$t,'HasDeepSpace');
@@ -588,6 +599,10 @@ function Show_Thing(&$t,$Force=0) {
  // TODO 
  // Max modules, current count, what 
   }
+  
+  if ($GM) {
+    echo "<tr>" . fm_number('Sensors',$T,'Sensors') . fm_number('Sens Level',$T,'SensorLevel') . fm_number('Neb Sensors', $T,'NebSensors');
+  }
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
   echo "</table></div>\n";
 
@@ -599,9 +614,27 @@ function Show_Thing(&$t,$Force=0) {
 }
 
 function Scanners(&$T) {
+  return $T['Sensors'] * $T['SensorLevel'];
+  
   $mods = Get_ModulesType(4,$T['id']);
   if ($mods) return $mods['Number'] * ($mods['Level']+1);
   return 0;
+}
+
+function NebScanners(&$T) {
+  return $T['NebSensors'] * $T['SensorLevel'];
+  
+  $mods = Get_ModulesType(9,$T['id']);
+  if ($mods) return $mods['Number'] * ($mods['Level']+1);
+  return 0;
+}
+
+function Calc_Scanners(&$T) {
+  $mods = Get_ModulesType(4,$T['id']);
+  $nebs = Get_ModulesType(9,$T['id']);
+  $T['Sensors'] = ($mods?$mods['Number']:0);
+  $T['SensorLevel'] = ($mods?$mods['Level']:0);
+  $T['NebSensors'] = ($nebs?$nebs['Number']:0);
 }
 
 function RefitRepair(&$T) {
@@ -691,9 +724,9 @@ function LogsticalSupport($Fid) {  // Note this sets the Economic rating of all 
     $EndAct($PH);
   }
         
-  if (Has_Tech($Fid,'Naval Logistics')) $Logistics[0]*=2;
-  if (Has_Tech($Fid,'Army Logistics')) $Logistics[1]*=2;
-  if (Has_Tech($Fid,'Intelligence Logistics')) $Logistics[3]*=2;
+  if ($ln = Has_Tech($Fid,'Naval Logistics')) $Logistics[0] += 2*$ln;
+  if ($ln = Has_Tech($Fid,'Army Logistics')) $Logistics[1]  += 2*$ln;
+  if ($ln = Has_Tech($Fid,'Intelligence Logistics')) $Logistics[3] += 2*$ln;
   return $Logistics;  
 }
 
@@ -928,4 +961,50 @@ function Recalc_Project_Homes($Logf=0) {
   echo "Project Homes Rebuilt<p>";
 }
 
+function EyesInSystem($Fid,$Sid) { // Eyes 1 = in space, 2= sens, 4= neb sens, 8=ground
+//var_dump($Fid,$Sid);
+  $Eyes = 0;
+  $ThingTypes = Get_ThingTypes();
+  $MyThings = Get_Things_Cond($Fid," SystemId=$Sid AND (BuildState=2 OR BuildState=3)");
+
+  foreach ($MyThings as $T) {
+    $Eyes |= $ThingTypes[$T['Type']]['Eyes'];
+    if ($T['Sensors']) $Eyes |= 2;
+    if ($T['NebSensors']) $Eyes != 4;
+  }
+  return $Eyes;
+}
+
+function SeeInSystem($Sid,$Eyes,$heading=0) {
+//var_dump($Sid,$Eyes);
+  if (Access('GM')) $Eyes = 15;
+    if (!$Eyes) return;
+    $Things = Get_AllThingsAt($Sid);
+    if (!$Things) return;
+    $ThingTypes = Get_ThingTypes();
+  
+    $Factions = Get_Factions();
+    
+// var_dump ($Things); echo "XX<p>";   
+    $N = Get_System($Sid);
+    if ($heading) {
+       echo "<h2>System " . $N['Ref'] . "</h2>"; // TODO Add name...
+    } else {
+       echo "<h2>In the System</h2>";
+    }
+    $LastWhose = 0;
+    foreach ($Things as $T) {
+//var_dump($T); echo "<p>";
+      if (($ThingTypes[$T['Type']]['SeenBy'] & $Eyes) == 0 ) continue;
+      if ($LastWhose && $LastWhose!= $T['Whose']) echo "<P>";
+      echo (Access('GM')?( "<a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a>") : $T['Name'] ) . " a ";
+      if ($ThingTypes[$T['Type']]['Properties'] & THING_HAS_LEVELS) echo " level " . $T['Level'];
+      if ($T['Class']) echo " " . $T['Class'] . " class ";
+      if ($T['Whose']) echo " " . $Factions[$T['Whose']]['Name'];
+      echo " " . $ThingTypes[$T['Type']]['Name'];
+      if (!empty($T['Image'])) echo " <img valign=top src=" . $T['Image'] . " height=100> ";
+      echo "<br clear=all>\n";
+      $LastWhose = $T['Whose'];
+    };
+}
 ?>

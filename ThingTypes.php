@@ -15,7 +15,9 @@
 
   echo "<h1>Thing Types</h1>";
   
- echo "Props 1=Districts, 2=Modules, 4=not used, 8=Ship, 16=Gadgets, 32=Army, 64=Mil, 128=Civil, 256=Can Move<br>\n";
+  echo "Props 1=Districts, 2=Modules, 4=Leveled, 8=Ship, 16=Gadgets, 32=Army, 64=Mil, 128=Civil, 256=Can Move<br>\n";
+  echo "Eyes:  1 = in space, 2= sens, 4= neb sens, 8=ground<br>\n";
+  echo "SeenBy: What Eyes can see this<br>\n";
   echo "<form method=post action=ThingTypes.php>";
 
   
@@ -26,6 +28,8 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Properties</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Gate</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Eyes</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>SeenBy</a>\n";
     echo "</thead><tbody>";
 
     foreach($Ts as $T) {
@@ -34,12 +38,16 @@
       echo fm_text1("",$T,'Name',1,'','',"Name$i");
       echo fm_number1('',$T,'Properties','','',"Properties$i");
       echo fm_text1("",$T,'Gate',1,'','',"Gate$i");
+      echo fm_number1('',$T,'Eyes','','',"Eyes$i");
+      echo fm_number1('',$T,'SeenBy','','',"SeenBy$i");
       }   
 
   $T = [];
   echo "<tr><td>" . fm_text1("",$T,'Name',1,'','',"Name0");
       echo fm_number1('',$T,'Properties','','',"Properties0");
       echo fm_text1("",$T,'Gate',1,'','',"Gate0");
+      echo fm_number1('',$T,'Eyes','','',"Eyes0");
+      echo fm_number1('',$T,'SeenBy','','',"SeenBy0");
   echo "</tbody></table></div>\n";
 
   echo "<h2><input type=submit name=Update value=Update></h2>";

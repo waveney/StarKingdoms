@@ -169,9 +169,13 @@
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";    
   echo "</table></form>";
   
-  echo "<h2>Once planned, go to where you want to make it and select an appropriate project</h2>";
-  echo "You can customise by adding crew names, notes and gadgets by selecting the thing while it is being made or used later.<p>\n"
-  
+  if ($Valid) {
+    echo "<h2>Once planned, go to where you want to make it and select an appropriate project</h2>";
+    echo "You can customise by adding crew names, notes and gadgets by selecting the thing while it is being made or used later.<p>\n";
+  } else {
+    echo "<h2 class=Err>Warning.  If you try and make this. The action will fail</h2>\n";
+  }
+  dotail();
   // type, Level
   
   // Name and class 

@@ -4,6 +4,7 @@
   include_once("ThingLib.php");
 
 function New_Thing(&$t) {
+  global $BuildState;
   $ttn = Thing_Type_Names();
   $FactNames = Get_Faction_Names();
   $Fact_Colours = Get_Faction_Colours();
@@ -17,6 +18,7 @@ function New_Thing(&$t) {
   echo "<tr>" . fm_number("Level",$t,'Level');
   echo "<tr>" . fm_radio('Whose',$FactNames ,$t,'Whose','',1,'colspan=6','',$Fact_Colours,0); 
   echo "<tr><td>System:<td>" . fm_select($Systems,$t,'SystemId');
+  echo "<tr><td>BuildState:<td>" . fm_select($BuildState,$t,'BuildState');
   echo "<tr><td><td><input type=submit name=ACTION value=Create>\n";
   echo "</table></form>";
   dotail();
@@ -41,7 +43,7 @@ function New_Thing(&$t) {
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
      case 'NEW' :
-       $t = ['Level'=>1];
+       $t = ['Level'=>1, 'BuildState'=>3, 'LinkId'=>0];
        New_Thing($t);
        break;
        
@@ -79,6 +81,7 @@ function New_Thing(&$t) {
        
      case 'Duplicate' :
        $t = Thing_Duplicate($_REQUEST['id']);
+       $tid = $t['id'];
        break;
            
     case 'None' :
@@ -106,7 +109,7 @@ function New_Thing(&$t) {
   }
     
   Show_Thing($t,$Force);
-  if ($GM) echo "<br><p><br><p><h2><a href=ThingEdit.php?ACTION=DELETE&id=$tid>Delete Thing</a></h2>";
+  if ($GM && !empty($tid) ) echo "<br><p><br><p><h2><a href=ThingEdit.php?ACTION=DELETE&id=$tid>Delete Thing</a></h2>";
   
   
   dotail();

@@ -86,13 +86,17 @@
   global $db, $GAME;
   
   $RedoMap = 1;
-  
-  while ($RedoMap) {
-  $RedoMap = 0;
-  
-  $Dot = fopen("cache/Fullmap$Faction$typ.dot","w");
+  $Dot = fopen("cache/Fullmap$Faction$typ.dot","w+");
   if (!$Dot) { echo "Could not create dot file<p>"; dotail(); };
+
+
+  while ($RedoMap) {
+  ftruncate($Dot,0);  // Needed for redoing logic
   
+ // echo "AA";
+  
+  $RedoMap = 0;
+    
   $Nodes = Get_Systems(); 
   $Levels = Get_LinkLevels();
   $Factions = Get_Factions(); 
@@ -102,7 +106,7 @@
   $UnknownLink = [];
   
   fwrite($Dot,"graph skmap {\n") ; //size=" . '"8,12!"' . "\n");
-  
+//  echo "BB";
 //  if (!$typ) fwrite($Dot, "[size=\"10,20!\"];\n");
   
   foreach ($Nodes as $N) {
@@ -170,7 +174,7 @@
       foreach ($Links as $L) {
         if (isset($LinkShown[$L['id']])) continue;
         $Fl = Get_FactionLinkFL($Faction, $L['id']);
-        if (isset($Fl['id'])) {
+        if (isset($Fl['id']) && $Fl['Known']) {
           fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=" . $Levels[$L['Level']]['Colour'] . " label=\"#" . $L['id'] . "\" ];\n");
           $LinkShown[$L['id']]=1;
         } else {
@@ -179,7 +183,7 @@
 //          $if = Get_FactionSystemFRef($Faction,$To);
 
 //if ($from == 'DDE') { var_dump($if); echo "<br>"; }
-          if (isset($if['ScanLevel']) && $if['ScanLevel']==0) continue;
+          if (isset($if['ScanLevel']) && $if['ScanLevel']<2) continue;
           $rand = "B$ul";  // This kludge at least allows both ends to be displayed
           fwrite($Dot,"Unk$ul$rand [label=\"?\" shape=circle];\n");
           fwrite($Dot,"$from -- Unk$ul$rand [color=" . $Levels[$L['Level']]['Colour'] . " label=\"#" . $L['id'] . "\" ];\n");
@@ -237,12 +241,11 @@
     $ls++;  
   }
 
-  fwrite($Dot,"}\n");  
+  fwrite($Dot,"}\n"); 
+  } // Redo Loop
 
   fclose($Dot);
-  
-  } // Redo Loop
-  
+    
 //  echo "<H1>Dot File written</h1>";
   
   if ($typ) {  
