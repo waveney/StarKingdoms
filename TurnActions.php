@@ -50,7 +50,7 @@ function CheckTurnsReady() {
 
 
 function StartTurnProcess() {
-  global $GAME,$GAMEID;
+  global $GAME,$GAMEID,$db;
   // Lock players out
   $Facts = Get_Factions();
   foreach ($Facts as $F) {
@@ -59,6 +59,18 @@ function StartTurnProcess() {
   }
   echo "<br>All Factions marked as Turn Processing<p>\n";
   $LF = mkdir("Turns/$GAMEID/" . $GAME['Turn'],0777,true);
+  return true;
+}
+
+function SaveAllLocations() {  
+  // Copy location of everything
+  $Things = Get_AllThings();
+  foreach ($Things as $T) {
+    if ($T['BuildState'] == 0) continue;
+    $S = ['ThingId'=>$T['id'], 'SystemId'=>$T['SystemId'], 'Turn' => $GAME['Turn'],'BuildState'=> $T['BuildState'], 'CurHealth'=>$T['CurHealth'], 'Game'=>$GAMEID];
+    Insert_db('LocationSave',$S);
+  }
+  
   return true;
 }
 
@@ -103,7 +115,10 @@ function StartProjects() {
 
   $ProjTypes = Get_ProjectTypes();
   $Projects = Get_Projects_Cond("Progress=0 AND Status=0 AND Costs!=0 AND TurnStart=" . $GAME['Turn']);
+//var_dump("Projects",$Projects);
+
   foreach ($Projects as $P) {
+  var_dump("Project",$P);
     $PT = $ProjTypes[$P['Type']];
     $Cost = $P['Costs'];
     if ($ProjTypes[$P['Type']]['Props'] & 2) { // Has a thing
@@ -119,6 +134,7 @@ function StartProjects() {
           continue;      
         }
         if ($T['SystemId'] != 0 && $T['SystemId'] != $Where[0]) {
+//var_dump($Where,$T);
           $P['Status'] = 5; // Not Started
           TurnLog($P['FactionId'],'Not starting as not in same system: ' . $P['Name']);
           Put_Project($P);
@@ -225,8 +241,8 @@ echo "Moving " . $T['Name'] . "<br>";
       
       $FS1 = Get_FactionSystemFS($Fid,$SR1['id']);
 
-      if ($SR1['Nebulae'] ) // TODO RUBBISH - Need to sort out the two different scan scales - Scanners/NebScan tell us scanning capability
-        $ScanLevel = ($NebShipScanLevel>=($SR1['Nebulae']*2)?$NebShipScanLevel/2:0;
+      if ($SR1['Nebulae'] ) { // TODO RUBBISH - Need to sort out the two different scan scales - Scanners/NebScan tell us scanning capability
+        $ScanLevel = ($NebShipScanLevel>=($SR1['Nebulae']*2)?$NebShipScanLevel/2:0);
       } else {
         $ScanLevel = ($ShipScanLevel>0?2:0);
       }
@@ -578,15 +594,29 @@ function ProjectsComplete() {
       }
       break;
     
+    case 'Construct Ship':
+      $T = Get_Things($P['ThingId']);
+      $T['BuildState'] = 2; // Shakkedown
+      TurnLog($P['FactionId'], $T['Name'] . " has been lanched");              
+      Calc_Scanners($T);
+      Put_Thing($T);
+      break;
+
+    case 'Train Army':
+    case 'Train Agent':
+      $T = Get_Things($P['ThingId']);
+      $T['BuildState'] = 3; // Complete
+      TurnLog($P['FactionId'], $T['Name'] . " has been completed");              
+      Put_Thing($T);
+      break;
+     
+        
     case 'Construct Warp Gate':
     case 'Share Technology':
     case 'Analyse':
     case 'Decipher Alien Language':
-    case 'Construct Ship':
     case 'Decommission Ship':
-    case 'Train Army':
     case 'Re-equip and Reinforce':
-    case 'Train Agent':
     case 'Build Outpost':
     case 'Build Asteroid Mining Facility':
     case 'Build Minefield':
@@ -651,8 +681,8 @@ function FinishTurnProcess() {
 
 function Do_Turn() {
   global $Sand;  // If you need to add something, replace a spare if poss, then nothing breaks
-  $Stages = ['Not Being Processed',  'Check Turns Ready', 'Spare', 'Spare','Start Turn Process', 'Spare', 'Spare', 'Cash Transfers', 
-             'Spare', 'Spare' /*Pay For Stargates?'*/, 'Spare', 'Spare', 'Start Projects', 'Spare', 'Spare', 'Colonisation', 
+  $Stages = ['Not Being Processed',  'Check Turns Ready', 'Spare', 'Spare','Start Turn Process', 'Save All Locations', 'Spare', 'Cash Transfers', 
+             'Spare', 'Pay For Stargates?', 'Spare', 'Spare', 'Start Projects', 'Spare', 'Spare', 'Colonisation', 
              'Spare', 'Spare', 'Deep Space Construction', 'Spare', 'Spare', 'Start Anomaly', 'Spare', 'Spare', 
              'Agents Start Missions', 'Spare', 'Spare', 'Economy', 'Spare', 'Spare', 'Load Troops', 'Spare', 
              
@@ -660,7 +690,7 @@ function Do_Turn() {
              'Space Combat', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Spare', 'Spare', 'Project Progress', 
              'Spare','Espionage Missions Complete', 'Spare', 'Counter Espionage','Spare', 'Finish Shakedowns', 'Spare', 'Projects Complete', 
              'Spare', 'Spare', 'Spare', 'Generate Turns', 'Spare', 'Tidy Up Movements', 'Recalc Project Homes', 'Finish Turn Process'];
-  $Coded =  ['N/A','Coded','No','No','Coded','No','No','Coded',
+  $Coded =  ['N/A','Coded','No','No','Coded','Coded','No','Coded',
              'No','No','No','No','Partial','No','No','No',
              'No','No','No','No','No','No','No','No',
              'No','No','No','No','No','No','No','No',
@@ -714,6 +744,14 @@ function Do_Turn() {
         echo "Off the end of the turn";
       }
       break;    
+    case 'RevertAll':
+      if (isset($Stages[$S] )) {
+        SKLog("Reverted All");
+        $Sand['Progress'] = 0;
+      } else {
+        echo "Off the end of the turn";
+      }
+      break;    
       
       break;
     }  
@@ -743,11 +781,12 @@ function Do_Turn() {
   }
   echo "</table>";
   
-  echo "<center><h2><a href=TurnActions.php?ACTION=Process&S=$NextStage>Do Next Stage</a></h2></center><br><p><br><p>\n";
+  echo "<center><h2><a href=TurnActions.php?ACTION=Process&S=$NextStage>Do Next Stage</a></h2></center>\n";
+  if (Access('God')) echo "<center><h2><a href=TurnActions.php?ACTION=RevertAll&S=$NextStage>Revert All</a></h2></center>\n";
   $Parsedown = new Parsedown(); // To hande logs in time
   
   if (!empty($Sand['id'])) {
-    echo "<h2>Turn Detail (for bug fixing)</h2>";
+    echo "<br><p><br><p><h2>Turn Detail (for bug fixing)</h2>";
     echo "<table border><form method=post action=TurnActions.php?ACTION=FIX>";
     Register_AutoUpdate('Turn',$Sand['id']);
     echo fm_hidden('id',$Sand['id']);

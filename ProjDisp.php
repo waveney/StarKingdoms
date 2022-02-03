@@ -61,7 +61,7 @@
 
         $OldPro = Get_ProjectAT($Hi, $Di, $Turn);
         $Pro = ['FactionId'=>$Fid, 'Type'=>$Ptype, 'Level'=> $Level, 'Home'=>$Hi, 'Progress'=>0, 'Status'=>0, 'TurnStart'=>$Turn, 'Name'=>$Name,
-                'Costs' => $Costs, 'ProgNeeded' => $ProgN];
+                'Costs' => $Costs, 'ProgNeeded' => $ProgN, 'BuildState'=>0];
         if (isset($Sel)) $Pro['ThingType'] = $Sel;
         if (isset($TthingId)) $Pro['ThingId'] = $TthingId;
         if (isset($TthingId2)) $Pro['ThingId2'] = $TthingId2;

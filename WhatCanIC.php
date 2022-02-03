@@ -43,16 +43,16 @@
 
   foreach ($MyHomes as $H) {
     switch ($H['ThingType']) {
-    case 0: 
+    case 1: 
       $P = Get_Planet($H['ThingId']);
       $Sid = $P['SystemId'];
       break;
-    case 1:
+    case 2:
       $M = Get_Moon($H['ThingId']);
       if ($M) $P = Get_Planet($M['PlanetId']);
       if (!empty($P)) $Sid = $P['SystemId'];
       break;
-    case 2: // Thing - already done
+    case 3: // Thing - already done
       continue 2;
     }
     if (!$Sid) continue;

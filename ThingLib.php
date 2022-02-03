@@ -154,7 +154,7 @@ function Thing_Type_Props() {
   return $tns;
 }
 
-function Within_Sys_Locs(&$N,$PM=0) {// $PM +ve = Planet Number, -ve = Moon Number
+function Within_Sys_Locs(&$N,$PM=0,$Boarding=0) {// $PM +ve = Planet Number, -ve = Moon Number
   include_once("SystemLib.php");
   $L[0] = "";
   $L[1] = 'Deep space';
@@ -187,6 +187,15 @@ function Within_Sys_Locs(&$N,$PM=0) {// $PM +ve = Planet Number, -ve = Moon Numb
   $LKs = Get_Links($N['Ref']);
   $Li = 1;
   foreach($LKs as $lk) $L[500+$Li++] = "At stargate to link " . $lk['id'];
+  
+  if ($Boarding) {
+    $Things = Get_ThingsAt($N['id']);
+    $ThingTypes = Get_ThingTypes();
+    
+    foreach ($Things as $T) {
+      if (($ThingTypes[$T['Type']]['Properties'] & THING_HAS_DISTRICTS) || $T['CargoSpace'] >0) $L[1000+$T['id']] = "On " . $T['Name'];
+    }
+  }
 /*  
   $Anoms = Get_Anomolies($N['Ref']);
   $Ai = 1;
@@ -226,11 +235,9 @@ function Get_Valid_Modules(&$t) {
 function Max_Modules(&$t) {
   $ThingTypes = Get_ThingTypes();
   $TTs = $ThingTypes[$t['Type']];
-  if (!empty($TTs['Props']) && ($TTs['Props'] & THING_HAS_MODULES)) {
+  if (!empty($TTs['Properties']) && ($TTs['Properties'] & THING_HAS_MODULES)) {
     $v = [0,4,12,24,40,60,84,112,144,180,220][$t['Level']];
-    if ($TTs['Props'] & THING_HAS_SUBTYPES) {
-      if ($t['Type'] == 2) $v = $v*3/4;
-      }
+    if ($t['Type'] == 2) $v = $v*3/4; // Support Ship
     if (Has_Tech($t['Whose'], 'Compact Ship Design') && $t['Level'] > 1) $v += $t['Level'];
     if ($t['Level'] > 2 && Has_Trait('Really Big',$t['Whose'])) $v += $t['Level']*$t['Level'];
     if ($TTs['Name'] == 'Satellite Defences') $v += Has_Tech($t['Whose'],7); 
@@ -363,7 +370,7 @@ function Show_Thing(&$t,$Force=0) {
           } else {
             $LinkText = '?';
           }
-        } else if ($NS['NebScanned'] >= $NearWeb) { // In a Neb...
+        } else if ($NS['NebScanned'] >= $NearNeb) { // In a Neb...
           if (isset($FS['id'])) {
             $LinkText = $FarSysRef;
           } else {
@@ -451,9 +458,15 @@ function Show_Thing(&$t,$Force=0) {
           echo "<tr><td>Where in the system should it go? " . fm_select($Syslocs,$t,'WithinSysLoc');
           break;
         case 3: //
-           echo "<tr><td>Taking Link:<td>" . fm_select($SelLinks,$t,'LinkId',0," style=color:" . $SelCols[$t['LinkId']] ,'',0,$SelCols);
-           if ($t['LinkId'] && !strpos($SelLinks[$t['LinkId']],'?')) {
-             echo "<td>To:" . fm_select($NewSyslocs,$t,'NewLocation');
+//        var_dump($SelLinks);
+//           if (empty($SelCols[$t['LinkId']])) $t['LinkId'] = 0;
+           if (count($SelLinks) > 1) {
+             echo "<tr><td>Taking Link:<td>" . fm_select($SelLinks,$t,'LinkId',0," style=color:" . $SelCols[$t['LinkId']] ,'',0,$SelCols);
+             if ($t['LinkId'] && !strpos($SelLinks[$t['LinkId']],'?')) {
+               echo "<td>To:" . fm_select($NewSyslocs,$t,'NewLocation');
+             }
+           } else {
+             echo "<tr><td>Row Not Used\n";
            }
         }
       } else { //Static, can specify where before start
@@ -538,7 +551,7 @@ function Show_Thing(&$t,$Force=0) {
     $dc=0;
     $totmodc = 0;
     $BadMods = 0;
-    $T['Sensors'] = $T['SensorLevel'] = $D['NebSensors'] = 0;
+//    $T['Sensors'] = $T['SensorLevel'] = $T['NebSensors'] = 0;
     
     if ($GM) { // TODO Allow for setting module levels 
       if ($NumMods) echo "<tr><td rowspan=" . ceil(($NumMods+2)/2) . ">Modules:";
@@ -560,7 +573,10 @@ function Show_Thing(&$t,$Force=0) {
       }
       echo "<tr><td>Add Module Type<td>" . fm_Select($MTNs, NULL , 'Number', 1,'',"ModuleTypeAdd-$tid");
       echo fm_number("Max Modules",$t,'MaxModules');
-      echo fm_number1("Deep Space",$t,'HasDeepSpace');
+      if ($tprops & THING_HAS_CIVSHIPMODS) {
+        echo fm_number1("Deep Space",$t,'HasDeepSpace');
+        echo fm_number1("Cargo Space",$t,'CargoSpace');
+      }
       if ($totmodc > $t['MaxModules']) {
         echo "<td class=Err>TOO MANY MODULES\n";
       } elseif ($BadMods) {
@@ -585,14 +601,16 @@ function Show_Thing(&$t,$Force=0) {
         $totmodc += $D['Number'] * $MTs[$D['Type']]['SpaceUsed'];
         };
 
-      echo "<tr><td>Max Modules: " . $t['MaxModules'];
-//      echo fm_number1("Deep Space",$t,'HasDeepSpace');
       if ($totmodc > $t['MaxModules']) {
-        echo "<td class=Err>TOO MANY MODULES\n";
-      } elseif ($BadMods) {
-        echo "<td class=Err>$BadMods INVALID MODULES\n";
-      } else {
-        echo "<td>Module space used: $totmodc";
+        echo "<tr><td>Max Modules: " . $t['MaxModules'];
+//      echo fm_number1("Deep Space",$t,'HasDeepSpace');
+        if ($totmodc > $t['MaxModules']) {
+          echo "<td class=Err>TOO MANY MODULES\n";
+        } elseif ($BadMods) {
+          echo "<td class=Err>$BadMods INVALID MODULES\n";
+        } else {
+          echo "<td>Module space used: $totmodc";
+        }
       }
     }
 
@@ -600,7 +618,7 @@ function Show_Thing(&$t,$Force=0) {
  // Max modules, current count, what 
   }
   
-  if ($GM) {
+  if ($GM && ($tprops & THING_HAS_CIVSHIPMODS)) {
     echo "<tr>" . fm_number('Sensors',$T,'Sensors') . fm_number('Sens Level',$T,'SensorLevel') . fm_number('Neb Sensors', $T,'NebSensors');
   }
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
@@ -632,9 +650,16 @@ function NebScanners(&$T) {
 function Calc_Scanners(&$T) {
   $mods = Get_ModulesType(4,$T['id']);
   $nebs = Get_ModulesType(9,$T['id']);
+  $Cargo = Get_ModulesType(8,$T['id']);
   $T['Sensors'] = ($mods?$mods['Number']:0);
   $T['SensorLevel'] = ($mods?$mods['Level']:0);
   $T['NebSensors'] = ($nebs?$nebs['Number']:0);
+  $T['CargoSpace'] = ($Cargo?$Cargo['Number']*$Cargo['Level']:0);
+  if ($Deep = Get_ModulesTypes(3,$T['id'])) {
+    $T['HasDeepSpace'] = $Deep['Number']*$Deep['Level'];
+  }else {
+    $T['HasDeepSpace'] = 0;
+  }
 }
 
 function RefitRepair(&$T) {
@@ -754,6 +779,8 @@ function Thing_Duplicate($otid) {
   $t['id'] = $tid = Insert_db('Things',$t);
   $Discs = Get_DistrictsT($otid);
   $t['SystemId'] = 0;
+  $t['LinkId'] = 0;
+  $t['WithinSysLoc'] = 0;
   $Fid = $t['Whose'];
        
   if ($Discs) {
@@ -975,7 +1002,7 @@ function EyesInSystem($Fid,$Sid) { // Eyes 1 = in space, 2= sens, 4= neb sens, 8
   return $Eyes;
 }
 
-function SeeInSystem($Sid,$Eyes,$heading=0) {
+function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1) {
 //var_dump($Sid,$Eyes);
   if (Access('GM')) $Eyes = 15;
     if (!$Eyes) return;
@@ -990,7 +1017,7 @@ function SeeInSystem($Sid,$Eyes,$heading=0) {
     if ($heading) {
        echo "<h2>System " . $N['Ref'] . "</h2>"; // TODO Add name...
     } else {
-       echo "<h2>In the System</h2>";
+       echo "<h2>In the System is:</h2>";
     }
     $LastWhose = 0;
     foreach ($Things as $T) {
@@ -1002,7 +1029,7 @@ function SeeInSystem($Sid,$Eyes,$heading=0) {
       if ($T['Class']) echo " " . $T['Class'] . " class ";
       if ($T['Whose']) echo " " . $Factions[$T['Whose']]['Name'];
       echo " " . $ThingTypes[$T['Type']]['Name'];
-      if (!empty($T['Image'])) echo " <img valign=top src=" . $T['Image'] . " height=100> ";
+      if ($Images && !empty($T['Image'])) echo " <img valign=top src=" . $T['Image'] . " height=100> ";
       echo "<br clear=all>\n";
       $LastWhose = $T['Whose'];
     };
