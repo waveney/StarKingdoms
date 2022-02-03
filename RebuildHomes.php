@@ -7,6 +7,7 @@
   include_once("ThingLib.php");
   include_once("PlayerLib.php");
   include_once("SystemLib.php");
+  include_once("HomesLib.php");
   
   A_Check('GM');
   

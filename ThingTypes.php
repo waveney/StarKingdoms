@@ -15,7 +15,7 @@
 
   echo "<h1>Thing Types</h1>";
   
-  echo "Props 1=Districts, 2=Modules, 4=Leveled, 8=Ship, 16=Gadgets, 32=Army, 64=Mil, 128=Civil, 256=Can Move<br>\n";
+  echo "Props 1=Districts, 2=Modules, 4=Leveled, 8=Ship, 16=Gadgets, 32=Army, 64=Mil, 128=Civil, 256=Normal Move, 512=Army Move<br>\n";
   echo "Eyes:  1 = in space, 2= sens, 4= neb sens, 8=ground 1, 16 ground 2 etc<br>\n"; // TODO no ground differntion yet 
   echo "SeenBy: What Eyes can see this<br>\n";
   echo "<form method=post action=ThingTypes.php>";

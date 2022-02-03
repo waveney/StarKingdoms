@@ -653,6 +653,7 @@ function TidyUpMovements() {
 }
 
 function RecalcProjectHomes() {
+  include_once("HomesLib.php");
   Recalc_Project_Homes('SKLog'); // in ThingLib - this is to add new project homes that have been created by colonisation etc.
 }
 

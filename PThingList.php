@@ -22,6 +22,8 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$ShipTypes,$Tech_Cats,$CivMi
       $Fid = $_REQUEST['F'];
     } else if (isset( $_REQUEST['f'])) {
       $Fid = $_REQUEST['f'];
+    } else if (isset( $_REQUEST['id'])) {
+      $Fid = $_REQUEST['id'];
     }
     if (isset($Fid)) $Faction = Get_Faction($Fid);
   }

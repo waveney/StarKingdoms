@@ -26,6 +26,7 @@ define('THING_HAS_ARMYMODULES',32);
 define('THING_HAS_MILSHIPMODS',64);
 define('THING_HAS_CIVSHIPMODS',128);
 define('THING_CAN_MOVE',256);
+define('THING_CAN_BETRANSPORTED',512);
 
 function ModFormulaes() {
   global $ModFormulaes;
@@ -154,10 +155,10 @@ function Thing_Type_Props() {
   return $tns;
 }
 
-function Within_Sys_Locs(&$N,$PM=0,$Boarding=0) {// $PM +ve = Planet Number, -ve = Moon Number
+function Within_Sys_Locs(&$N,$PM=0,$Boarding=0,$Restrict=0) {// $PM +ve = Planet Number, -ve = Moon Number, restrict 1=ON, 2space only
   include_once("SystemLib.php");
   $L[0] = "";
-  $L[1] = 'Deep space';
+  if ($Restrict !=1) $L[1] = 'Deep space';
 //  $L[2] = 'On board ship';
   if (!isset($N['id'])) return $L;
   $Ps = Get_Planets($N['id']);
@@ -168,15 +169,15 @@ function Within_Sys_Locs(&$N,$PM=0,$Boarding=0) {// $PM +ve = Planet Number, -ve
     foreach ($Ps as $P) {
       if ($PM == $P['id']) return 200+$pi;
       $PName = PM_Type($PTD[$P['Type']],"Planet") . " - " . NameFind($P);
-      $L[100 +$pi] = "Orbiting $PName";
-      $L[200 +$pi] = "On $PName";
+      if ($Restrict !=1) $L[100 +$pi] = "Orbiting $PName";
+      if ($Restrict == 0 || ($Restrict == 2 && $PTD[$P['Type']]['Hospitable'])) $L[200 +$pi] = "On $PName";
       $Ms = Get_Moons($P['id']);
       if ($Ms) {
         foreach ($Ms as $M) {
           if ($PM == -$M['id']) return 400+$mi;
           $MName = PM_Type($PTD[$M['Type']],"Moon") . " - " . NameFind($M);
-          $L[300 +$mi] = "Orbiting $MName";
-          $L[400 +$mi] = "On $MName";
+          if ($Restrict !=1) $L[300 +$mi] = "Orbiting $MName";
+          if ($Restrict == 0 || ($Restrict == 2 && $PTD[$M['Type']]['Hospitable'])) $L[400 +$mi] = "On $MName";
           $mi++;
         }
       }
@@ -186,7 +187,7 @@ function Within_Sys_Locs(&$N,$PM=0,$Boarding=0) {// $PM +ve = Planet Number, -ve
   if ($PM) return 0;
   $LKs = Get_Links($N['Ref']);
   $Li = 1;
-  foreach($LKs as $lk) $L[500+$Li++] = "At stargate to link " . $lk['id'];
+  if ($Restrict !=1) foreach($LKs as $lk) $L[500+$Li++] = "At stargate to link " . $lk['id'];
   
   if ($Boarding) {
     $Things = Get_ThingsAt($N['id']);
@@ -425,6 +426,7 @@ function Show_Thing(&$t,$Force=0) {
         if (!isset($t['LinkId']) || !isset($SelCols[$t['LinkId']])) $t['LinkId'] = 0;
         if ($tprops & THING_CAN_MOVE) echo "<td>Taking Link:<td>" . fm_select($SelLinks,$t,'LinkId',0," style=color:" . $SelCols[$t['LinkId']] ,'',0,$SelCols) . 
             "Update this normally";
+        if ($tprops & THING_CAN_BETRANSPORTED) echo "<td>No mechanism<td>to move armies yet";  // TODO transport armies
       }
     }
 
@@ -469,6 +471,8 @@ function Show_Thing(&$t,$Force=0) {
              echo "<tr><td>Row Not Used\n";
            }
         }
+      } else if ($tprops & THING_CAN_BETRANSPORTED) {
+        echo "<tr><td>Transport of armies<td>not yet written\n"; // TODO move armies
       } else { //Static, can specify where before start
         if (($t['BuildState'] == 0)) {
           echo "<tr><td>Where in the system is it to be built? " . fm_select($Syslocs,$t,'WithinSysLoc');
@@ -624,7 +628,7 @@ function Show_Thing(&$t,$Force=0) {
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
   echo "</table></div>\n";
 
-  if ($GM) {
+  if ($GM || empty($Fid)) {
     echo "<h2><a href=ThingList.php>Back to Thing list</a> &nbsp; <input type=submit name=ACTION value=Duplicate></h2>";
   } else {
     echo "<h2><a href=PThingList.php?id=$Fid>Back to Thing list</a></h2>";
@@ -755,23 +759,6 @@ function LogsticalSupport($Fid) {  // Note this sets the Economic rating of all 
   return $Logistics;  
 }
 
-/*
-  $Outposts = $AsteroidMines = $AdvancedMines = 0;
-      switch ($ThingTypes[$PH['Type']]['Name']) {
-        case 'Outpost':
-          $Outposts++;
-          continue 3;
-        case 'Asteroid Mine':
-          $AsteroidMines++;
-          continue 3;
-        case 'Advanced Asteroid Mine':
-          $AdvancedMines++;
-          continue 3;
-        case 
-      
-
-*/
-
 function Thing_Duplicate($otid) {
   $t = Get_Thing($otid);
   unset($t['id']);
@@ -801,191 +788,6 @@ function Thing_Duplicate($otid) {
     }
   }
   return $t;
-}
-
-function Recalc_Project_Homes($Logf=0) {
-  echo "<h1>Rebuild Project homes database</h1>";
-  $Facts = Get_Factions();
-
-  $KnownHomes = [];
-    
-  foreach($Facts as $F) {
-    $Homes = Get_ProjectHomes($F['id']);
-    if ($Homes) $KnownHomes = array_merge($KnownHomes,$Homes);
-  }
-
-//var_dump($KnownHomes); exit;  
-  $Systems = Get_Systems();
-  foreach ($Systems as &$N) {
-    if ($N['Control']) {
-      echo "Checking " . $N['Ref'] . "<br>\n";
-      
-      $Planets = Get_Planets($N['id']);
-      if ($Planets) {
-        foreach ($Planets as &$P) {
-          $doneP = 0;
-          if ($P['ProjHome']) {
-            $PHi = $P['ProjHome'];
-//echo "PHI is $PHi<p>";
-            foreach ($KnownHomes as &$H) {
-//var_dump($H);
-//if (!isset($H['id'])) { echo "<P>"; var_dump($H);exit;}
-              if ($H['id'] == $PHi) {
-                $H['Inuse'] = 1;
-                if ($H['ThingType'] != 1 || $H['ThingId'] != $P['id']) {
-                  $H['ThingType'] = 1;
-                  $H['ThingId'] = $P['id'];
-                  Put_ProjectHome($H);
-                }
-                $doneP = 1;
-                break;
-              }
-            }
-            
-            if (!$doneP) {
-              $H = ['ThingType'=> 1, 'ThingId'=> $P['id'], 'Inuse'=>1, 'Whose'=>$N['Control']];
-              $H['id'] = Put_ProjectHome($H);
-              $KnownHomes[$H['id']] = $H;
-              $P['ProjHome'] = $H['id'];
-              Put_Planet($P);
-            }
-          } else {
-            $Dists = Get_DistrictsP($P['id']);
-            $Homeless = 1;
-            if ($Dists) {
-              foreach ($KnownHomes as &$H) {
-                if ($H['ThingType'] == 1 && $H['ThingId'] == $P['id']) {
-                  $Homeless = 0;
-                  if ($H['Whose'] == $N['Control']) {
-                    $H['Inuse'] = 1;
-                  } else {
-                    echo "GM question - <a href=ProjHome.php?id=" . $H['id'] . " who should control project home " . $H['id'] . " is it a planet?</a><P>";
-                  }
-                  break;
-                }
-              }
-              if ($Homeless) {
-                $H = ['ThingType'=>1, 'ThingId'=>$P['id'], 'Whose'=>$N['Control'], 'Inuse'=>1];
-                $H['id'] = Put_ProjectHome($H);
-                $KnownHomes[] = $H;
-                $P['ProjHome'] = $H['id'];
-                Put_Planet($P);
-              }
-            }
-          }
-//echo "Getting Moons of " . $P['Name'] . $P['id'] . "<p>";
-          $Mns = Get_Moons($P['id']);
-//var_dump($Mns);
-          if ($Mns) {
-//echo "Checking moons of " . $P['Name'] . "<p>";
-            foreach ($Mns as &$M) {
-//echo "Q";
-              if ($M['ProjHome']) {
-                $MHi = $M['ProjHome'];
-                foreach ($KnownHomes as &$H) {
-                  if ($H['id'] == $MHi) {
-                    $H['Inuse'] = 1;
-                    if ($H['ThingType'] != 2 || $H['ThingId'] != $M['id']) {
-                      $H['ThingType'] = 1;
-                      $H['ThingId'] = $M['id'];
-                      Put_ProjectHome($H);
-                    }
-                    continue 2;
-                  }
-                }
-                $H = ['ThingType'=> 2, 'ThingId'=> $M['id'], 'Inuse'=>1, 'Whose'=>$N['Control']];
-                $H['id'] = Put_ProjectHome($H);
-                $KnownHomes[] = $H;
-                $M['ProjHome'] = $H['id'];
-                Put_Moon($M);
-                
-              } else {
-                $Dists = Get_DistrictsM($M['id']);
-//var_dump($Dists);
-                $Homeless = 1;
-                if ($Dists) {
-                  foreach ($KnownHomes as &$H) {
-                    if ($H['ThingType'] == 2 && $H['ThingId'] == $M['id']) {
-                      $Homeless = 0;
-                      if ($H['Whose'] == $N['Control']) {
-                        $H['Inuse'] = 1;
-                      } else {
-                        echo "GM question - <a href=ProjHome.php?id=" . $H['id'] . " who should control project home " . $H['id'] . " is it a moon?</a><P>";
-                      }
-                      break;
-                    }
-                  }
-                  if ($Homeless) {
-                    $H = ['ThingType'=>2, 'ThingId'=>$M['id'], 'Whose'=>$N['Control'], 'Inuse'=>1];
-                    $H['id'] = Put_ProjectHome($H);
-                    $KnownHomes[] = $H;
-                    $M['ProjHome'] = $H['id'];
-                    Put_Moon($M);
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  
-  $ThingTypes = Get_ThingTypes();
-  
-  $Things = Get_AllThings();
-  foreach ($Things as &$T) {
-    if ($T['HasDeepSpace'] || ($ThingTypes[$T['Type']]['Properties'] & 1) || ($ThingTypes[$T['Type']]['Properties'] & 16) ) {
-      $THi = $T['ProjHome'];
-      if ($THi) {
-        foreach ($KnownHomes as &$H) {
-          if ($H['id'] == $THi) {
-            $H['Inuse'] = 1;
-            if ($H['ThingType'] != 3 || $H['ThingId'] != $T['id']) {
-              $H['ThingType'] = 3;
-              $H['ThingId'] = $T['id'];
-              Put_ProjectHome($H);
-            }
-            continue 2;
-          }
-        }
-        $H = ['ThingType'=> 3, 'ThingId'=> $T['id'], 'Inuse'=>1, 'Whose'=>$T['Whose']];
-        $H['id'] = Put_ProjectHome($H);
-        $KnownHomes[$H['id']] = $H;
-        $T['ProjHome'] = $H['id'];
-        Put_Thing($T);
-      } else {
-        $Homeless = 1;
-        foreach ($KnownHomes as &$H) {
-          if ($H['ThingType'] == 3 && $H['ThingId'] == $P['id']) {
-            $Homeless = 0;
-            if ($H['Whose'] == $N['Control']) {
-              $H['Inuse'] = 1;
-            } else {
-              echo "GM question - <a href=ProjHome.php?id=" . $H['id'] . " who should control project home " . $H['id'] . " is it a thing?</a><P>";
-            }
-            break;
-          }
-        }
-        if ($Homeless) {
-          $H = ['ThingType'=>3, 'ThingId'=>$T['id'], 'Whose'=>$T['Whose'], 'Inuse'=>1];
-          $H['id'] = Put_ProjectHome($H);
-          $KnownHomes[] = $H;
-          $T['ProjHome'] = $H['id'];
-          Put_Thing($T);
-          }
-        }
-      }
-    }  
-
- 
-  // Remove unused entries
-  foreach ($KnownHomes as &$H) {
-    if (isset($H['Inuse']) && $H['Inuse']) continue;
-    db_delete('ProjectHomes',$H['id']);
-  }
-  
-  echo "Project Homes Rebuilt<p>";
 }
 
 function EyesInSystem($Fid,$Sid) { // Eyes 1 = in space, 2= sens, 4= neb sens, 8=ground
