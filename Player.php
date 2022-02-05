@@ -30,6 +30,9 @@
         break;
     }
   }
+
+  dostaffhead("Player Actions");
+  echo "You can always get back here by clicking on 'Faction Menu' on the bar above.<br>\n";
   
   Player_Page();
   dotail();  

@@ -158,7 +158,7 @@
     }
     if ($field == 'Type' || $field == 'Level') {
       echo 'FORCELOADCHANGE54321:NOW';
-    } else if ( $field == 'LinkId') {
+    } else if ( $field == 'LinkId' || ($field == 'Name' && strlen($Value) < 2)) {
       echo 'FORCERELOAD54321:NOW';
     }
     echo Put_Thing($N);
@@ -255,6 +255,12 @@
     $N = Get_FactionTurn($id);
     $N[$field] = $Value;
     echo Put_FactionTurn($N);
+    exit;
+  
+   case 'ProjectHome':
+    $N = Get_ProjectHome($id);
+    $N[$field] = $Value;
+    echo Put_ProjectHome($N);
     exit;
   
 

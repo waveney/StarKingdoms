@@ -234,6 +234,7 @@ function Get_Valid_Modules(&$t) {
 
 
 function Max_Modules(&$t) {
+  if (empty($t['Type'])) return 0;
   $ThingTypes = Get_ThingTypes();
   $TTs = $ThingTypes[$t['Type']];
   if (!empty($TTs['Properties']) && ($TTs['Properties'] & THING_HAS_MODULES)) {

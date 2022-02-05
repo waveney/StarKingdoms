@@ -14,20 +14,28 @@ function Rush_Cost($who) {
 global $Project_Status;
 $Project_Status = [0=>'Live',1=>'Started', 2=>'Finished',3=>'Cancelled', 4=>'On Hold', 5=>'Not Started'];
 
-function  Where_Is_Home($PH) {
+function  Where_Is_Home($PH,$Set=0) {
   $Home = Get_ProjectHome($PH);
-var_dump("Home",$Home);echo "<p>";
+// var_dump("Home",$Home);echo "<p>";
   switch ($Home['ThingType']) {
   case '1': // Planet 
+    if (!$Set) return [$Home['SystemId'],$Home['WithinSysLoc']];
     $P = Get_Planet($Home['ThingId']);
     $N['id'] = $P['SystemId'];
     $loc = Within_Sys_Locs($N,$P['id']);
+    $Home['SystemId'] = $P['SystemId'];
+    $Home['WithinSysLoc'] = $loc;
+    Put_ProjectHome($Home);
     return [$P['SystemId'],$loc];
   case '2': // Moon
+    if (!$Set) return [$Home['SystemId'],$Home['WithinSysLoc']];
     $M = Get_Moon($Home['ThingId']);
     $P = Get_Planet($M['PlanetId']);
     $N['id'] = $P['SystemId'];
     $loc = Within_Sys_Locs($N,- $M['id']);
+    $Home['SystemId'] = $P['SystemId'];
+    $Home['WithinSysLoc'] = $loc;
+    Put_ProjectHome($Home);
     return [$P['SystemId'],$loc];
   case '3': // Thing
     $T = Get_Thing($Home['ThingId']);

@@ -71,7 +71,7 @@
 // var_dump($T);  
  
   $ThingTypes = Get_ThingTypes();
-  $ThingTypeNames = [];
+  $ThingTypeNames = [''];
   foreach ($ThingTypes as $Ti=>$TT) {
     if ($TT['Name'] && ($T['Type'] == $Ti || eval("return " . $TT['Gate'] . ";" ))) {
       $ThingTypeNames[$Ti] = $TT['Name'];
@@ -95,7 +95,7 @@
       if (!empty($ThingTypeNames[$TT['Type']])) $FList[$TT['id']] = $TT['Name'] . " a level " . $TT['Level'] . " " . $ThingTypeNames[$TT['Type']];
     }
     echo fm_select($FList,null,'Design',1,' onchange=this.form.submit()'); 
-    echo "<br>If it is in planning, it will open, otherwise it will copy the design.<p>\n";
+    echo "<br>If it is in planning, it will be selected, otherwise it will copy the design.<p>\n";
     
     echo "<h2>Or design from scratch</h2>";
   }
@@ -108,7 +108,7 @@
   echo "<table border>";
   echo "<tr><td>Planning a:<td>" . fm_select($ThingTypeNames, $T,'Type');
   echo "<tr>" . fm_number('Level',$T,'Level','','min=1 max=10');
-  echo "<tr>" . fm_text('Name',$T,'Name') . "<td>This is needed";
+  echo "<tr>" . fm_text('Name',$T,'Name') . "<td" . (empty($T['Name'])? " class=Err" : "") . ">This is needed";
   if (empty($T['Name'])) $Valid = 0;
   echo "<tr>" . fm_text('Class',$T,'Class') . "<td>This is optional";  
   if ($tprops & THING_HAS_MODULES) {
@@ -159,8 +159,8 @@
     $BaseDam = Calc_Damage($T);
     if ($tprops & (THING_HAS_ARMYMODULES | THING_HAS_MILSHIPMODS )) echo "<tr><td>Basic Damage<td>$BaseDam<td>Before special weapons etc";
   }
-  if (!$Valid) echo "<tr><td class=Err>Warning:<td class=Err>This is not yet valid\n";
-  if ($T['DesignValid'] != $Valid) {
+//  if (!$Valid) echo "<tr><td class=Err>Warning:<td class=Err>This is not yet valid\n";
+  if (isset($T['DesignValid']) && $T['DesignValid'] != $Valid) {
     $T['DesignValid'] = $Valid;
     Put_Thing($T);
   }
@@ -171,7 +171,7 @@
   
   if ($Valid) {
     echo "<h2>Once planned, go to where you want to make it and select an appropriate project</h2>";
-    echo "You can customise by adding crew names, notes and gadgets by selecting the thing while it is being made or used later.<p>\n";
+    echo "You can customise by adding crew names, an images, notes and gadgets by selecting the thing while it is being made or used later.<p>\n";
   } else {
     echo "<h2 class=Err>Warning.  If you try and make this. The action will fail</h2>\n";
   }

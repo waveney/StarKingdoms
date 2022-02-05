@@ -917,10 +917,10 @@ function Get_ProjectHome($id) {
   return [];
 }
 
-function Get_ProjectHomes($who) {
+function Get_ProjectHomes($who=0) {
   global $db,$GAMEID;
   $Ts = [];
-  $res = $db->query("SELECT * FROM ProjectHomes WHERE Whose=$who");
+  $res = $db->query("SELECT * FROM ProjectHomes" . ($who?" WHERE Whose=$who":""));
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
   return $Ts;
 }
@@ -930,7 +930,7 @@ function Put_ProjectHome(&$now) {
   if (isset($now['id'])) {
     $e=$now['id'];
     $Cur = Get_ProjectHome($e);
-    return Update_db('ProjectsHomes',$Cur,$now);
+    return Update_db('ProjectHomes',$Cur,$now);
   } else {
     return $now['id'] = Insert_db ('ProjectHomes', $now );
   }

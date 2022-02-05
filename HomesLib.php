@@ -1,5 +1,10 @@
 <?php
 
+$HomeTypes = ['','Planet','Moon','Thing'];
+global $HomeTypes;
+
+include_once("ProjLib.php");
+
 function Recalc_Project_Homes($Logf=0) {
   echo "<h1>Rebuild Project homes database</h1>";
   $Facts = Get_Factions();
@@ -32,7 +37,12 @@ function Recalc_Project_Homes($Logf=0) {
                 if ($H['ThingType'] != 1 || $H['ThingId'] != $P['id']) {
                   $H['ThingType'] = 1;
                   $H['ThingId'] = $P['id'];
+                  $loc = Within_Sys_Locs($N,$P['id']);
+                  $H['SystemId'] = $P['SystemId'];
+                  $H['WithinSysLoc'] = $loc;
                   Put_ProjectHome($H);
+                } else {
+                  Where_Is_Home($PHi,1);
                 }
                 $doneP = 1;
                 break;
@@ -41,6 +51,9 @@ function Recalc_Project_Homes($Logf=0) {
             
             if (!$doneP) {
               $H = ['ThingType'=> 1, 'ThingId'=> $P['id'], 'Inuse'=>1, 'Whose'=>$N['Control']];
+              $loc = Within_Sys_Locs($N,$P['id']);
+              $H['SystemId'] = $P['SystemId'];
+              $H['WithinSysLoc'] = $loc;
               $H['id'] = Put_ProjectHome($H);
               $KnownHomes[$H['id']] = $H;
               $P['ProjHome'] = $H['id'];
@@ -63,6 +76,9 @@ function Recalc_Project_Homes($Logf=0) {
               }
               if ($Homeless) {
                 $H = ['ThingType'=>1, 'ThingId'=>$P['id'], 'Whose'=>$N['Control'], 'Inuse'=>1];
+                $loc = Within_Sys_Locs($N,$P['id']);
+                $H['SystemId'] = $P['SystemId'];
+                $H['WithinSysLoc'] = $loc;
                 $H['id'] = Put_ProjectHome($H);
                 $KnownHomes[] = $H;
                 $P['ProjHome'] = $H['id'];
@@ -85,7 +101,12 @@ function Recalc_Project_Homes($Logf=0) {
                     if ($H['ThingType'] != 2 || $H['ThingId'] != $M['id']) {
                       $H['ThingType'] = 1;
                       $H['ThingId'] = $M['id'];
+                      $loc = Within_Sys_Locs($N,- $M['id']);
+                      $H['SystemId'] = $P['SystemId'];
+                      $H['WithinSysLoc'] = $loc;
                       Put_ProjectHome($H);
+                    } else {
+                      Where_Is_Home($H['id'],1);
                     }
                     continue 2;
                   }
@@ -114,6 +135,9 @@ function Recalc_Project_Homes($Logf=0) {
                   }
                   if ($Homeless) {
                     $H = ['ThingType'=>2, 'ThingId'=>$M['id'], 'Whose'=>$N['Control'], 'Inuse'=>1];
+                    $loc = Within_Sys_Locs($N,- $M['id']);
+                    $H['SystemId'] = $P['SystemId'];
+                    $H['WithinSysLoc'] = $loc;
                     $H['id'] = Put_ProjectHome($H);
                     $KnownHomes[] = $H;
                     $M['ProjHome'] = $H['id'];
@@ -132,6 +156,12 @@ function Recalc_Project_Homes($Logf=0) {
   
   $Things = Get_AllThings();
   foreach ($Things as &$T) {
+    if ($T['Type'] == 0) {
+      db_delete('Things',$T['id']);
+      echo "Deleted entry Null Thing " . $T['id'] . "<br>";
+      continue;
+    }
+ 
     if ($T['HasDeepSpace'] || ($ThingTypes[$T['Type']]['Properties'] & 1) || ($ThingTypes[$T['Type']]['Properties'] & 16) ) {
       $THi = $T['ProjHome'];
       if ($THi) {
@@ -141,6 +171,8 @@ function Recalc_Project_Homes($Logf=0) {
             if ($H['ThingType'] != 3 || $H['ThingId'] != $T['id']) {
               $H['ThingType'] = 3;
               $H['ThingId'] = $T['id'];
+              $H['SystemId'] = $T['SystemId'];
+              $H['WithinSysLoc'] = $T['WithinSysLoc'];
               Put_ProjectHome($H);
             }
             continue 2;
@@ -165,7 +197,7 @@ function Recalc_Project_Homes($Logf=0) {
           }
         }
         if ($Homeless) {
-          $H = ['ThingType'=>3, 'ThingId'=>$T['id'], 'Whose'=>$T['Whose'], 'Inuse'=>1];
+          $H = ['ThingType'=>3, 'ThingId'=>$T['id'], 'Whose'=>$T['Whose'], 'Inuse'=>1, 'SystemId' => $T['SystemId'], 'WithinSysLoc' => $T['WithinSysLoc']];
           $H['id'] = Put_ProjectHome($H);
           $KnownHomes[] = $H;
           $T['ProjHome'] = $H['id'];
@@ -184,5 +216,21 @@ function Recalc_Project_Homes($Logf=0) {
   
   echo "Project Homes Rebuilt<p>";
 }
+
+function Show_Home($Hid) {
+  $H = Get_ProjectHome($Hid);
+  echo "<form method=post action=ProjHomes.php>";
+  Register_Autoupdate("ProectHome",$Hid);
+  fm_hidden('id',$Hid);
+  echo "<table border>\n";
+  echo "<tr><td>Id: $Hid>";
+  echo "<tr><td>Homee type:<td>" . fm_select($HomeTypes,$H,'ThingType');
+  echo "<tr>" . fm-Number('Id of thing', $H,'ThingId');
+  echo "<tr>" . fm_number('Economy',$H,'Economy') . "<td>Not used yet\n";
+  echo "<tr><td>Within System Location:>" . fm_select() . "<td>For Planets and Moons only\n";
+  echo "</table><p>";
+}
+
+
 
 ?>

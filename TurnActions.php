@@ -27,11 +27,6 @@ function TurnLog($Fid,$text,&$T=0) {
   if ($T) $T['History'] .= "Turn#" . $GAME['Turn'] . ": " . $text . "\n";
 }
 
-function NotBeingProcessed() {
-  // No actions needed
-  return true;
-}
-
 function CheckTurnsReady() {
   $Facts = Get_Factions();
   $AllOK = 1;
@@ -107,6 +102,12 @@ function PayForStargates() {
   return true;
 }
 
+function ScientificBreakthroughs() {
+  echo "Scientific Breakthroughs is currently Manual<p>";
+  return true;
+
+}
+
 function StartProjects() {
   global $GAME;
 //  echo "Start Projects are currently Manual<p>";
@@ -166,6 +167,7 @@ function StartProjects() {
         } else {
           $T = ['Whose'=>$Fid, 'Type'=>$P['ThingType'], 'BuildState'=>1, 'SystemId' => $Where[0],  'WithinSysLoc' => $Where[1]];
         }
+        $T['ProjectId'] = $P['id'];
         Calc_Scanners($T);
         Put_Thing($T);
       }
@@ -682,8 +684,8 @@ function FinishTurnProcess() {
 
 function Do_Turn() {
   global $Sand;  // If you need to add something, replace a spare if poss, then nothing breaks
-  $Stages = ['Not Being Processed',  'Check Turns Ready', 'Spare', 'Spare','Start Turn Process', 'Save All Locations', 'Spare', 'Cash Transfers', 
-             'Spare', 'Pay For Stargates?', 'Spare', 'Spare', 'Start Projects', 'Spare', 'Spare', 'Colonisation', 
+  $Stages = ['Check Turns Ready', 'Spare', 'Spare','Start Turn Process', 'Save All Locations', 'Spare', 'Cash Transfers', 'Spare',
+             'Spare', 'Pay For Stargates?', 'Spare', 'Scientific Breakthroughs', 'Start Projects', 'Spare', 'Spare', 'Colonisation', 
              'Spare', 'Spare', 'Deep Space Construction', 'Spare', 'Spare', 'Start Anomaly', 'Spare', 'Spare', 
              'Agents Start Missions', 'Spare', 'Spare', 'Economy', 'Spare', 'Spare', 'Load Troops', 'Spare', 
              
@@ -691,7 +693,7 @@ function Do_Turn() {
              'Space Combat', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Spare', 'Spare', 'Project Progress', 
              'Spare','Espionage Missions Complete', 'Spare', 'Counter Espionage','Spare', 'Finish Shakedowns', 'Spare', 'Projects Complete', 
              'Spare', 'Spare', 'Spare', 'Generate Turns', 'Spare', 'Tidy Up Movements', 'Recalc Project Homes', 'Finish Turn Process'];
-  $Coded =  ['N/A','Coded','No','No','Coded','Coded','No','Coded',
+  $Coded =  ['Coded','No','No','Coded','Coded','No','Coded', 'No',
              'No','No','No','No','Partial','No','No','No',
              'No','No','No','No','No','No','No','No',
              'No','No','No','No','No','No','No','No',

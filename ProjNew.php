@@ -11,16 +11,24 @@
   
   global $FACTION;
   
+  if (Access('Player')) {
+    if (!$FACTION) {
+      if (!Access('GM') ) Error_Page("Sorry you need to be a GM or a Player to access this");
+    } else {
+      $Fid = $FACTION['id'];
+      $Faction = &$FACTION;
+    }
+  } 
   if (Access('GM') ) {
     A_Check('GM');
-    $Fid = $_REQUEST['id'];
-    $Faction = Get_Faction($Fid);
-  } else if (Access('Player')) {
-    if (!$FACTION) {
-      Error_Page("Sorry you need to be a GM or a Player to access this");
+    if (isset( $_REQUEST['F'])) {
+      $Fid = $_REQUEST['F'];
+    } else if (isset( $_REQUEST['f'])) {
+      $Fid = $_REQUEST['f'];
+    } else if (isset( $_REQUEST['id'])) {
+      $Fid = $_REQUEST['id'];
     }
-    $Fid = $FACTION['id'];
-    $Faction = &$FACTION;
+    if (isset($Fid)) $Faction = Get_Faction($Fid);
   }
 
   dostaffhead("New Projects for faction");
@@ -34,6 +42,7 @@
         $Turn = $_REQUEST['t'];
         $Hi = $_REQUEST['Hi'];
         $Di = $_REQUEST['Di'];
+        $Place = base64_decode($_REQUEST['pl']);
         
         if ($_REQUEST['ACTION'] == 'NEWSHIP') {
           $Things = Get_Things_Cond($Fid, 'DesignValid=1 AND ( Type=1 OR Type=2 OR Type=3 )');
@@ -51,7 +60,7 @@
         $NameList = [];
         foreach ($Things as $T) { 
           $pc = Proj_Costs($T['Level']);        
-          $NameList[$T['id']] = $T['Name'] . (empty($T['Class'])?'': ", a " . $T['Class']) . " ( Level " . $T['Level'] . " ); " .
+          $NameList[$T['id']] = $T['Name'] . (empty($T['Class'])?'': ", a " . $T['Class']) . " ( Level " . $T['Level'] . " ); $Place;" .
             "Cost: " . $pc[1] .  " Needs " . $pc[0] . " progress'>";
           }
         
@@ -129,7 +138,9 @@
   $Stage = (isset($_REQUEST['STAGE'])? $_REQUEST['STAGE'] : 0);
   
   $Where =  ($D['Type'] > 0 ? $DistTypes[$D['Type']]['Name'] : 'Construction');
-
+  
+  $Place = " on " . $PH['Name'];
+  $pl = "&pl=" . base64_encode($Place);
 
 // echo "ZZ: $Where<p>";    
     
@@ -160,8 +171,8 @@
           $Lvl++;
           $pc = Proj_Costs($Lvl);
           echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=1&t=$Turn&Hi=$Hi&Di=$Di&Sel=" . $DT['id'] . 
-                "&Name=" . base64_encode("Build " . $DT['Name'] . " District $Lvl") . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Build " . $DT['Name'] . " District $Lvl; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";        
+                "&Name=" . base64_encode("Build " . $DT['Name'] . " District $Lvl$Place") . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
+                "Build " . $DT['Name'] . " District $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";        
         
         }
       }
@@ -171,16 +182,16 @@
     echo "<h2>Construct Warp Gate</h2>";
       $pc = Proj_Costs(4);
       echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=3&t=$Turn&Hi=$Hi&Di=$Di&Sel=0" .
-                "&Name=" . base64_encode("Build Warp Gate"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Build Warp Gate; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+                "&Name=" . base64_encode("Build Warp Gate$Place"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
+                "Build Warp Gate $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
     
     echo "<h2>Research Planetary Construction</h2><p>";
       $OldPc = Has_Tech($Fid,3);
       $Lvl = $OldPc+1;
       $pc = Proj_Costs($Lvl);
       echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=4&t=$Turn&Hi=$Hi&Di=$Di&Sel=3" .
-                "&Name=" . base64_encode("Research Planetary Construction $Lvl"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .      
-                "Research Planetary Construction $Lvl; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
+                "&Name=" . base64_encode("Research Planetary Construction $Lvl$Place"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .      
+                "Research Planetary Construction $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
     
     break;
       
@@ -193,8 +204,8 @@
         $Lvl = $FactTechs[$TT['id']]['Level']+1;
         $pc = Proj_Costs($Lvl);
         echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=5&t=$Turn&Hi=$Hi&Di=$Di&Sel=" . $TT['id'] .
-                "&Name=" . base64_encode("Research " . $TT['Name'] . " $Lvl"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .      
-                "Research " . $TT['Name'] . " $Lvl; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
+                "&Name=" . base64_encode("Research " . $TT['Name'] . " $Lvl$Place"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .      
+                "Research " . $TT['Name'] . " $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
         }
  
     echo "<h2>Research Supplimental Technology</h2>";
@@ -205,8 +216,8 @@
         if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
         $Lvl = $T['PreReqLevel'];
         echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=6&t=$Turn&Hi=$Hi&Di=$Di&Sel=" . $T['id'] .
-                "&Name=" . base64_encode("Research " . $T['Name']) . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Research " . $T['Name'] . "; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+                "&Name=" . base64_encode("Research " . $T['Name'] . $Place) . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
+                "Research " . $T['Name'] . "; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
       }
    
     echo "<h2>Share Technology</h2>";
@@ -225,7 +236,7 @@
       echo "<h2>Build a Ship</h2>";
 //      echo "Not yet<p>";
       echo "This action is to build an already designed ship.  If you want a new design please go to <a href=ThingPlan.php>The Thing Planning Tool</a> first.<p>\n";
-      echo "<button class=projtype type=submit formaction='ProjNew.php?ACTION=NEWSHIP&id=$Fid&p=10&t=$Turn&Hi=$Hi&Di=$Di'>Build a new ship</button><p>";
+      echo "<button class=projtype type=submit formaction='ProjNew.php?ACTION=NEWSHIP&id=$Fid&p=10&t=$Turn&Hi=$Hi&Di=$Di$pl'>Build a new ship$Place</button><p>";
     
     
       echo "<h2>Refit, Repair and Decommision Ships</h2>";
@@ -241,8 +252,8 @@
         $Lvl = $OldPc+1;
         $pc = Proj_Costs($Lvl);
         echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=13&t=$Turn&Hi=$Hi&Di=$Di&Sel=7" .
-                "&Name=" . base64_encode("Research Ship Construction $Lvl"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .  
-                "Research Ship Construction $Lvl; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
+                "&Name=" . base64_encode("Research Ship Construction $Lvl$Place"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .  
+                "Research Ship Construction $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
     
       $Rbuts = [];
       $FactTechs = Get_Faction_Techs($Fid);
@@ -255,8 +266,8 @@
 
         $Lvl = $T['PreReqLevel'];
         $Rbuts[] = "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=14&t=$Turn&Hi=$Hi&Di=$Di&Sel=" . $T['id'] .
-                "&Name=" . base64_encode("Research " . $T['Name']) . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Research " . $T['Name'] . "; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+                "&Name=" . base64_encode("Research " . $T['Name'] . $Place) . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
+                "Research " . $T['Name'] . "; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
       }
    
      if ($Rbuts) {
@@ -272,7 +283,7 @@
       echo "<h2>Train an Army</h2>";
 //      echo "Not yet<p>";
       echo "This action is to build an already designed Army.  If you want a new design please go to <a href=ThingPlan.php>The Thing Planning Tool</a> first.<p>\n";
-      echo "<button class=projtype type=submit formaction='ProjNew.php?ACTION=NEWARMY&id=$Fid&p=15&t=$Turn&Hi=$Hi&Di=$Di'>Train a new army</button><p>";
+      echo "<button class=projtype type=submit formaction='ProjNew.php?ACTION=NEWARMY&id=$Fid&p=15&t=$Turn&Hi=$Hi&Di=$Di$pl'>Train a new army$Place</button><p>";
     
     
       echo "<h2>Re-equip and Reinforce Army</h2>";
@@ -288,8 +299,8 @@
         $Lvl = $OldPc+1;
         $pc = Proj_Costs($Lvl);
         echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=17&t=$Turn&Hi=$Hi&Di=$Di&Sel=8" .
-                "&Name=" . base64_encode("Research Military Organisation $Lvl"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Research Military Organisation $Lvl; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
+                "&Name=" . base64_encode("Research Military Organisation $Lvl$Place"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
+                "Research Military Organisation $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
     
       $Rbuts = [];
       $FactTechs = Get_Faction_Techs($Fid);
@@ -302,8 +313,8 @@
 
         $Lvl = $T['PreReqLevel'];
         $Rbuts[] = "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=18&t=$Turn&Hi=$Hi&Di=$Di&Sel=" . $T['id'] .
-                "&Name=" . base64_encode("Research " . $T['Name']) . "&L=$Lvl'&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Research " . $T['Name'] . "; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+                "&Name=" . base64_encode("Research " . $T['Name'] .  $Place) . "&L=$Lvl'&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
+                "Research " . $T['Name'] . "; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
       }
    
      if ($Rbuts) {
@@ -320,7 +331,7 @@
       echo "<h2>Train an Agent</h2>";
 //      echo "Not yet<p>";
       echo "This action is to build an already designed Agent.  If you want a new design please go to <a href=ThingPlan.php>The Thing Planning Tool</a> first.<p>\n";
-      echo "<button class=projtype type=submit formaction='ProjNew.php?ACTION=NEWAGENT&id=$Fid&p=19&t=$Turn&Hi=$Hi&Di=$Di'>Train an agent</button><p>";
+      echo "<button class=projtype type=submit formaction='ProjNew.php?ACTION=NEWAGENT&id=$Fid&p=19&t=$Turn&Hi=$Hi&Di=$Di$pl'>Train an agent$Place</button><p>";
     
     
    
@@ -329,8 +340,8 @@
         $Lvl = $OldPc+1;
         $pc = Proj_Costs($Lvl);
         echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=20&t=$Turn&Hi=$Hi&Di=$Di&Sel=4" .
-                "&Name=" . base64_encode("Research Intelligence Operations $Lvl"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Research Intelligence Operations $Lvl; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
+                "&Name=" . base64_encode("Research Intelligence Operations $Lvl$Place"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
+                "Research Intelligence Operations $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
     
       $Rbuts = [];
       $FactTechs = Get_Faction_Techs($Fid);
@@ -343,8 +354,8 @@
 
         $Lvl = $T['PreReqLevel'];
         $Rbuts[] = "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=21&t=$Turn&Hi=$Hi&Di=$Di&Sel=" . $T['id'] .
-                "&Name=" . base64_encode("Research " . $T['Name']) . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Research " . $T['Name'] . "; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+                "&Name=" . base64_encode("Research " . $T['Name'] . $Place) . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
+                "Research " . $T['Name'] . "; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
       }
    
      if ($Rbuts) {
@@ -360,7 +371,4 @@
   echo "</form>";  
 
   dotail();
-        
-  
-
 ?>

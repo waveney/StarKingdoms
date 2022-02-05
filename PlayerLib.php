@@ -11,15 +11,14 @@ global $PlayerState,$PlayerStates;
 
 function Player_Page() {
   global $FACTION,$PlayerState,$PlayerStates,$PlayerStateColours;
-  dostaffhead("Player Actions");
-  
+
+
+  dostaffhead("Things",["js/ProjectTools.js"]);  
   $GM = Access('GM');
 
   $FACTION['LastActive'] = time();
   
   if (!$GM || $FACTION['NPC']) Put_Faction($FACTION);
-  
-  echo "You can always get back here by clicking on 'Faction Menu' on the bar above.<br>\n";
   
 //var_dump($PlayerState,$FACTION);
   echo "<h1>Player Actions</h1>\n";
@@ -46,14 +45,13 @@ function Player_Page() {
     if (Has_Tech($FACTION['id'],'Astral Mapping')) echo "<li><a href=MapFull.php?Hex>Faction Map</a> - with spatial location of nodes\n";
     echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";
     echo "<li>" . ($GM? "<a href=WhatCanIC.php>What can I See?</a>" : "What can I See?") . "\n";
-    echo "<li>Worlds with projects";
+    echo "<li>" . ($GM? "<a href=ProjDisp.php>Worlds and Things with Projects</a>" : "Worlds and Things with Projects") . "\n";
     echo "<li>" . ($GM? "<a href=PThingList.php>List of Things</a>" : "List of Things") . " List of Things (Ships, Armies, Agents, Space stations etc)";
     echo "<li>" . ($GM? "<a href=ThingPlan.php>Plan a Thing</a>" : "Plan a Things") . " Planning Things (Ships, Armies, Agents, Space stations etc)";
     echo "<li>Economy";
     echo "<li>" . ($GM? "<a href=Banking.php>Banking</a>" : "Banking") . " Sending credits to others and statements";
-    echo "<li>Turn Text";
-    echo "<li>" . ($GM? "<a href=Player.php?ACTION=Submit>Submit Turn</a>" : "Submit Turn") . "\n";        
-
+    echo "<li><a href=PlayerTurnTxt.php>Turn Actions Text</a> Logs of all automated actions";
+    echo "<li>" . ($GM? "<a href=Player.php?ACTION=Submit>Submit Turn</a>" : "Submit Turn") . "\n";
     break;
       
   case 'Turn Submitted':
