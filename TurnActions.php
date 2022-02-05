@@ -78,18 +78,19 @@ function CashTransfers() {
   
   foreach($Bs as $B) {
     if (Spend_Credit($B['FactionId'],$B['Amount'],$B['What'])) {
-      TurnLog($B['FactionId'],"Transfered " . $B['Amount'] . " for " . $B['What'] . " to " . $Facts[$B['Recipient']]['Name']);
+      TurnLog($B['FactionId'],"Transfered  &#8373;" . $B['Amount'] . " for " . $B['What'] . " to " . $Facts[$B['Recipient']]['Name']);
 
       if ($B['Recipient'] > 0) {
         Spend_Credit($B['Recipient'], - $B['Amount'],$B['What']);
-        TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " transfered " . $B['Amount'] . " to you for " . $B['What'] );
+        TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " transfered  &#8373;" . $B['Amount'] . " to you for " . $B['What'] );
       }
       SKLog('Cash transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . ' of ' . $B['Amount'] . ' for ' . $B['What'],1);     
     } else {
-      TurnLog($B['FactionId'],"Failed to transfer " . $B['Amount'] . " for " . $B['What'] . " to " . $Facts[$B['Recipient']]['Name'] . 
+      TurnLog($B['FactionId'],"Failed to transfer  &#8373;" . $B['Amount'] . " for " . $B['What'] . " to " . $Facts[$B['Recipient']]['Name'] . 
                " you only have " . $Facts[$B['FactionId']]['Credits']);
-      if ($B['Recipient'] > 0) TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " Failed to transfer " . $B['Amount'] . " for " . $B['What'] );
-      SKLog('Cash transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . ' of ' . $B['Amount'] . ' for ' . $B['What'] .  ' Bounced',1);
+      if ($B['Recipient'] > 0) TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " Failed to transfer  &#8373;" . $B['Amount'] . " for " . $B['What'] );
+      SKLog('Cash transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . 
+            ' of  &#8373;' . $B['Amount'] . ' for ' . $B['What'] .  ' Bounced',1);
     }
   }
   
@@ -174,6 +175,16 @@ function StartProjects() {
     } else {
       $P['Status'] = 5; // Not Started
       TurnLog($P['FactionId'],'Not starting as not enough Credits: ' . $P['Name']);
+    }
+    // Is there a project already running there?  If so put it on hold
+    $OPs = Get_Projects_Cond(" Home=$home AND Status=1 ");
+    foreach ($OPs as $OP) {
+      if ($OP['id'] == $P['id']) continue;
+      if ($ProjTypes[$OP['Type']]['Category'] == $ProjectTypes[$P['Type']]['Category']) { // Put old project on hold
+        $OP['Status'] = 4;
+        Put_Project($OP);
+        TurnLog($P['FactionId'],'Project ' . $OP['Name'] . " has been put on hold, having made " . $OP['Progress'] . "/" . $OP['ProgNeeded'] . "progress");
+      }
     }
     Put_Project($P);
   }
@@ -465,8 +476,8 @@ function ProjectProgress() {
     if (isset($TurnStuff['Rush'])) {
       $Rush = min($TurnStuff['Rush'],$Acts,$P['ProgNeeded']-$P['Progress']-$Acts);
       if ($Rush) {
-        if (Spend_Credit($P['FactionId'],Rush_Cost($P['FactionId'])*$Rush, 'Rushing ' . $P['Name'] . " By $Rush")) {
-          TurnLog($P['FactionId'],'Rushing ' . $P['Name'] . " by $Rush");
+        if (Spend_Credit($P['FactionId'],$Rc = (Rush_Cost($P['FactionId'])*$Rush), 'Rushing ' . $P['Name'] . " By $Rush")) {
+          TurnLog($P['FactionId'],'Rushing ' . $P['Name'] . " by $Rush  Cost: &#8373; $Rc");
         } else {
           TurnLog($P['FactionId'],'Not enough Credits to Rush: ' . $P['Name']);
         }
@@ -475,6 +486,7 @@ function ProjectProgress() {
 
 //echo "Acts . $Acts<br>";        
     $P['Progress'] = min($P['ProgNeeded'], $P['Progress']+$Acts+$Rush);
+    TurnLog($P['FactionId'],"Progressing " . $P['Name'] . " by " . ($Acts+$Rush));
     $P['LastUpdate'] = $GAME['Turn'];
     Put_Project($P); // Note completeion is handled later in the turn sequence
   }
@@ -585,19 +597,19 @@ function ProjectsComplete() {
     case 'Rebuild and Repair':  
     case 'Refit and Repair': 
       if ($P['ThingId']) {
-        $T = Get_Things($P['ThingId']);
+        $T = Get_Thing($P['ThingId']);
         RefitRepair($T);
         TurnLog($P['FactionId'], $T['Name'] . " has been " . $PT['Name'] . "ed");        
       }
       if ($P['ThingId2']) {
-        $T = Get_Things($P['ThingId2']);
+        $T = Get_Thing($P['ThingId2']);
         RefitRepair($T);
         TurnLog($P['FactionId'], $T['Name'] . " has been " . $PT['Name'] . "ed");        
       }
       break;
     
     case 'Construct Ship':
-      $T = Get_Things($P['ThingId']);
+      $T = Get_Thing($P['ThingId']);
       $T['BuildState'] = 2; // Shakkedown
       TurnLog($P['FactionId'], $T['Name'] . " has been lanched");              
       Calc_Scanners($T);
@@ -606,7 +618,7 @@ function ProjectsComplete() {
 
     case 'Train Army':
     case 'Train Agent':
-      $T = Get_Things($P['ThingId']);
+      $T = Get_Thing($P['ThingId']);
       $T['BuildState'] = 3; // Complete
       TurnLog($P['FactionId'], $T['Name'] . " has been completed");              
       Put_Thing($T);

@@ -10,7 +10,10 @@
   include_once("ProjLib.php");
   
   global $FACTION;
-  
+/*  
+var_dump($_REQUEST);
+exit;
+*/
   $HomeColours = ['#ff99ff', '#ccffff', '#ccffcc', '#ffffcc', '#ffcccc', '#e6ccff', '#cce6ff', '#ffd9b3', '#ecc6c6', '#ecc6d6', '#d6b3ff', '#d1e0e0', '#d6ff99' ];
   
   
@@ -211,6 +214,19 @@
       
 //var_dump($Pro, $ProjTypes[$P['Type']]);  echo "<p>";    
         $TSi = 0;
+        // Is there an existing project where this is going?
+        if (isset($Proj[$P['TurnStart']][$Hi][$Di]['id'])) {
+          $What = $Proj[$P['TurnStart']][$Hi][$Di]['id'];
+          for ($t = $P['TurnStart']; $t <= $P['TurnStart']+50; $t++) {
+            if (isset($Proj[$t][$Hi][$Di]) && $Proj[$t][$Hi][$Di]['id'] == $What) {
+              $Proj[$t][$Hi][$Di] = [];
+            } else {
+              break;
+            }
+          }
+        }   
+
+
         for ($t = $P['TurnStart']; $t <= ($P['TurnEnd']?$P['TurnEnd']:$P['TurnStart']+50); $t++) {
 
           $Pro['Rush'] = $Rush = 0;
@@ -241,6 +257,8 @@
           $Pro['Cost'] = 0;
           if ($Pro['Status'] == 'Complete') break;
         }
+        
+
       }
     }
   $PHx++;
@@ -323,10 +341,13 @@
         echo "<td $BG id=ProjS$Turn:$Hi:$Di class='PHStart Group$Di Home$Hi' hidden>";
         if ($Turn >= $GAME['Turn']) {
           $Warn = '';
-          if (isset($Proj[$Turn - 1 ][$Hi][$Di]['Status']) && ($Proj[$Turn - 1 ][$Hi][$Di]['Status'] == 'Started' || $Proj[$Turn-1][$Hi][$Di]['Status'] == 'Ongoing')) {
-            $Warn = "onclick=\"return confirm('Do you want to abandon " . $Proj[$Turn-1][$Hi][$Di]['Name'] . '?\'"';
-          }
-          echo "<button type=submit class=PHStartButton id=Start:STurn:$Hi:$Di $Warn formaction=ProjNew.php?t=$Turn&Hi=$Hi&Di=$Di><b>+</b>"; 
+          if (isset($Proj[$Turn - 1 ][$Hi][$Di]['Status']) && ($Proj[$Turn - 1 ][$Hi][$Di]['Status'] == 'Started' || $Proj[$Turn - 1][$Hi][$Di]['Status'] == 'Ongoing')) {
+ //           $Warn = "onclick=\"return confirm('Do you want to abandon " . $Proj[$Turn-1][$Hi][$Di]['Name'] . '?\'"';
+              $Action = "onclick='return NewProjectCheck($Turn,$Hi,$Di)' formaction=ProjNew.php?t=$Turn&Hi=$Hi&Di=$Di";
+          } else {
+            $Action = "formaction=ProjNew.php?t=$Turn&Hi=$Hi&Di=$Di";
+          } 
+          echo "<button type=submit class=PHStartButton id=Start:STurn:$Hi:$Di $Action ><b>+</b>"; 
         }
         if (isset($Proj[$Turn][$Hi][$Di]['Type'])) {
           $PN = $Proj[$Turn][$Hi][$Di]['id'];

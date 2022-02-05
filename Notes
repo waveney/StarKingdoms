@@ -1,52 +1,41 @@
-Map notes
+Done
+* Research techs
+* Build Districts
+* Build Ships/Armies/ (Agents?)
+* Move Ships (currently crude)
+* A couple of Traits
+* Auto progress from build/launch/Shakedown/use of Ships
+* Project display and managing
+* What Can I see 
+* Credit transfers
+* Introduce "Things" - Ships, Armies, Agents, stations, warp gates, outposts, embassies, asteroid mines etc.
+* Personisation of things (Crew, image etc)
 
-core prog
-  edit map
-  print node map
-    Player
-    GM
-  print physical map
-    GM
-  validate map
-  
-  Faction edit
-  Troop/Ship edit
-  Where are ships
-  
-  Economy
-  Technologies
-  
-  Users access with big long code - like ff code
-  
-  Observer ?
-  Player
-  GM
-  God
-  
-  
-  
-  =====================================
-
-Player actions turn 1:
-
-View Map
-Name System
-Name Planet 
-Name Link
+Not Done
+* Economy (Most)
+* Move Armies, move agents
+* Agents - not ready
+* Projects not listed above eg Deep space
+* No intelligence operations
+* Most Traits
+* Analyse Projects
+* Load from the original spreadsheets
+* Science points (collection or use)
+* Combat
+* Colonisation
+* Move Ships (better)
+* Damaged ships (after Warp Gate)
+* Embassies
 
 
-Player Interface
- Map
- Systems -> Planets/Asteroids -> Moons & places
-         -> Links
- Own Places -> Home, Colonies, outpost, asteroids, sensors, stations
- Techs -> Known, levels, description, Know about (std+extras)
- Ships -> Fleets, Ships
- Armies -> Army, unit
- Agents -> Cell, indiv
- Economy
- Anomalies
- Turns
- Traits -> What, also level of automation
- Projects
- 
+Known Faults
+* Cancelling projects - junk left
+  Put underlying project on hold
+  Action to restart always an option from [+]
+  
+* Where are things in system - messy in some cases
+* Move ships and survey levels muddle
+* Nebulae
+
+
+

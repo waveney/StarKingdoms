@@ -117,4 +117,13 @@ function Remove_Bespoke() {
   $('.ProjHide').toggle();
 }
 
+function NewProjectCheck(Turn,Hi,Di) {
+debugger;
+  var stuff = Turn + ':' + Hi + ":" + Di;
+  var CanPro = document.getElementById("ProjN" + stuff).innerText;
+  if (!confirm("Do you want to cancel " + CanPro + "?")) return false;
+//  return true;
+  window.location.pathname = "ProjNew.php?t=" + Turn + "&Hi=" + Hi + "&Di=" + Di;
+}
+
 
