@@ -8,7 +8,7 @@
   dostaffhead("Thing Types");
 
   global $db, $GAME, $ModuleCats;
-  global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$ShipTypes,$Tech_Cats,$CivMil;
+  global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil;
 
   $Ts = Get_ThingTypes();
   if (UpdateMany('ThingTypes','Put_ThingType',$Ts,1))    $Ts = Get_ThingTypes();

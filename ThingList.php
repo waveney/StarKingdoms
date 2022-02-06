@@ -7,7 +7,7 @@
 
   dostaffhead("List Things");
 
-  global $db, $GAME,$BuildState,$ShipTypes;
+  global $db, $GAME,$BuildState;
 
   $Systems = Get_SystemRefs();
   $Factions = Get_Factions();
@@ -72,7 +72,7 @@
     
     echo "<tr><td><a href=ThingEdit.php?id=$tid>$tid</a>";
 
-    echo "<td>" . $ThingTypes[$T['Type']] . /* "<td>" . $ShipTypes[$T['SubType']] .*/ "<td>" . $T['Level'];
+    echo "<td>" . $ThingTypes[$T['Type']] . "<td>" . $T['Level'];
     echo "<td><a href=ThingList.php?AT=$Ref>$Ref</a><td>$Loc";
     echo "<td><a href=ThingEdit.php?id=$tid>$Name</a>";
     echo "<td>" . ($who? $Factions[$T['Whose']]['Name'] : "");

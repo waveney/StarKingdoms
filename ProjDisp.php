@@ -218,7 +218,7 @@ exit;
         if (isset($Proj[$P['TurnStart']][$Hi][$Di]['id'])) {
           $What = $Proj[$P['TurnStart']][$Hi][$Di]['id'];
           for ($t = $P['TurnStart']; $t <= $P['TurnStart']+50; $t++) {
-            if (isset($Proj[$t][$Hi][$Di]) && $Proj[$t][$Hi][$Di]['id'] == $What) {
+            if (isset($Proj[$t][$Hi][$Di]['id']) && $Proj[$t][$Hi][$Di]['id'] == $What) {
               $Proj[$t][$Hi][$Di] = [];
             } else {
               break;

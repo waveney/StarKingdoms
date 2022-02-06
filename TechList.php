@@ -8,7 +8,7 @@
   dostaffhead("List Technoiologies");
 
   global $db, $GAME, $ModuleCats;
-  global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$ShipTypes,$Tech_Cats,$CivMil;
+  global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil;
 
   $Ts = Get_Techs();
   if (UpdateMany('Technologies','Put_Tech',$Ts,1))    $Ts = Get_Techs();

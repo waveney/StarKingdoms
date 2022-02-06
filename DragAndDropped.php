@@ -48,6 +48,11 @@ case 'Moon':
   $Put = 'Put_Moon';
   break;
 
+case 'Faction':
+  $Data = Get_Faction($id);
+  $Put = 'Put_Faction';
+  break;
+
 default:
   echo fm_DragonDrop(0,$Type,$Cat,$id,$Data,$Mode,"Unknown Data Category $Cat",1,'',$Class);
   exit;

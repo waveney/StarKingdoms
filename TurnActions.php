@@ -170,7 +170,10 @@ function StartProjects() {
         }
         $T['ProjectId'] = $P['id'];
         Calc_Scanners($T);
-        Put_Thing($T);
+//        Put_Thing($T);
+        
+        // Level of modules
+        RefitRepair($T); //Not this saves it
       }
     } else {
       $P['Status'] = 5; // Not Started
@@ -181,8 +184,16 @@ function StartProjects() {
     foreach ($OPs as $OP) {
       if ($OP['id'] == $P['id']) continue;
       if ($ProjTypes[$OP['Type']]['Category'] == $ProjectTypes[$P['Type']]['Category']) { // Put old project on hold
-        $OP['Status'] = 4;
+        $OP['Status'] = 5;  //5 = Cancelled , 4= On Hold
         Put_Project($OP);
+        $OTid = $OP['ThingId'];
+        if ($OTid) {
+          $OT = Get_Thing($OTid);
+          if ($OT['BuildState'] == 1) { // Building
+            $OT['BuildState'] = 5; // Abandoned
+            Put_Thing($OT);
+          }
+        }
         TurnLog($P['FactionId'],'Project ' . $OP['Name'] . " has been put on hold, having made " . $OP['Progress'] . "/" . $OP['ProgNeeded'] . "progress");
       }
     }

@@ -5,14 +5,13 @@ include_once("GetPut.php");
 include_once("vendor/erusev/parsedown/Parsedown.php");
 include_once("PlayerLib.php");  
 
-global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$ShipTypes,$Tech_Cats,$CivMil,$BuildState;
+global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState;
 
 $ModuleCats = ['Ship','Civilian Ship','Support Ship','Military Ship','Army','Other'];
 $Fields = ['Engineering','Physics','Xenology'];
-$ShipTypes = ['','Military','Support','Civilian'];
 $Tech_Cats = ['Core','Supp','Non Std'];
 $CivMil = ['','Civilian','Military'];
-$BuildState = ['Planning','Building','Shakedown','Complete','Ex'];
+$BuildState = ['Planning','Building','Shakedown','Complete','Ex','Abandonded'];
 
 $ModFormulaes = [];
 $ModValues = [];
@@ -80,7 +79,7 @@ function Mod_ValueSimple($tl,$modtypeid) {
 
 
 function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0) {
-  global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$ShipTypes,$Tech_Cats,$CivMil;
+  global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil;
   $Tid = $T['id'];
   $Parsedown = new Parsedown();
 
@@ -305,7 +304,8 @@ function Thing_Finished($tid) {
 }
 
 function Show_Thing(&$t,$Force=0) {
-  global $ShipTypes,$BuildState,$GAME,$GAMEID;
+  include_once("ProjLib.php");
+  global $BuildState,$GAME,$GAMEID;
   global $Project_Status;
   $tid = $t['id'];
   
@@ -400,23 +400,24 @@ function Show_Thing(&$t,$Force=0) {
   
   if ($GM) {
     echo "<tr class=NotSide><td class=NotSide>Id:<td class=NotSide>$tid<td class=NotSide>Game<td class=NotSide>$GAMEID<td class=NotSide>" . $GAME['Name'];
-    echo "<tr><td>Type:<td>" . fm_select($ttn,$t,'Type',1); // . "<td>If Ship: " . fm_select($ShipTypes,$t,'SubType'); // need to make that easier
+    echo "<tr><td>Type:<td>" . fm_select($ttn,$t,'Type',1); 
     echo fm_number("Level",$t,'Level');
   } else {
     echo "<tr><td>Type: " . $ttn[$t['Type']] . "<td>Level: " . $t['Level'];
   }
   echo "<tr>" . fm_text('Name',$t,'Name',2);
-  echo "<tr>" . fm_text('Class',$t,'Class',2);
+
   echo "<td rowspan=4 colspan=4><table><tr>";
     echo fm_DragonDrop(1,'Image','Thing',$tid,$t,1,'',1,'','Thing');
   echo "</table>";
-
+  echo "<tr>" . fm_text('Class',$t,'Class',2);
   if ($GM) {
     echo "<tr><td>Build State:" . fm_select($BuildState,$t,'BuildState'); 
     if (isset($t['BuildState']) && $t['BuildState'] <= 1) {
       echo fm_number('Build Project',$t,'ProjectId');
       if ($t['ProjectId']) {
         $Proj = Get_Project($t['ProjectId']);
+//var_dump($Proj,"<br>", $Project_Status);
         echo "Status: " . $Project_Status[$Proj['Status']];
         if ($Proj['TurnStart']) echo " Start Turn: " . $Proj['TurnStart'];
         if ($Proj['TurnEnd']) echo " End Turn: " . $Proj['TurnEnd'];
@@ -440,7 +441,8 @@ function Show_Thing(&$t,$Force=0) {
   } else {
     echo "<tr><td>Build State:<td>" . $BuildState[$t['BuildState']]; 
     if (isset($t['BuildState']) && $t['BuildState'] <= 1) {
-      if ($t['ProjectId']) {
+      if (!empty($t['ProjectId'])) {
+        $Proj = Get_Project($t['ProjectId']);
         echo "<tr><td>See <a href=ProjEdit.php?id=" . $t['ProjectId'] . ">Project</a>";
         echo "Status: " . $Project_Status[$Proj['Status']];
         if ($Proj['TurnStart']) echo " Start Turn: " . $Proj['TurnStart'];

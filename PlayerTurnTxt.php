@@ -20,7 +20,7 @@
   if (isset($_REQUEST['Turn'])) {
     $Turn = $_REQUEST['Turn'];
   } else {
-    $Turn = $GAME['Turn'];
+    $Turn = $GAME['Turn'] - 1; // Default is last turn
   }
 
   if (isset($FACTION)) {

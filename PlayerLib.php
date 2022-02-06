@@ -52,6 +52,7 @@ function Player_Page() {
     echo "<li>" . ($GM? "<a href=Banking.php>Banking</a>" : "Banking") . " Sending credits to others and statements";
     echo "<li><a href=PlayerTurnTxt.php>Turn Actions Text</a> Logs of all automated actions";
     echo "<li>" . ($GM? "<a href=Player.php?ACTION=Submit>Submit Turn</a>" : "Submit Turn") . "\n";
+    echo "<li>" . ($GM? "<a href=FactionEdit.php>Faction Information</a>" : "Faction Information") . " Mostly read only once set up.\n";
     break;
       
   case 'Turn Submitted':
@@ -67,6 +68,8 @@ function Player_Page() {
 
   }
 
+  echo "<p><li><a href=UserGuide.php>User Guide</a>\n";
+  
   echo "</ul>";
   echo "</div>";
   

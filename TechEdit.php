@@ -8,7 +8,7 @@
   dostaffhead("Edit Technoiology");
 
   global $db, $GAME, $ModuleCats;
-  global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$ShipTypes,$Tech_Cats,$CivMil;
+  global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil;
 
 //  var_dump($_REQUEST);
   if (isset($_REQUEST['P'])) {

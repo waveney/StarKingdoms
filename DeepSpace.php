@@ -7,7 +7,7 @@
 
   dostaffhead("List Deep Space Prrojects");
 
-  global $db, $GAME,$BuildState,$ShipTypes;
+  global $db, $GAME,$BuildState;
 
   $Projs = Get_DeepSpaces();
 
