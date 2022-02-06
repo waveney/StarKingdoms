@@ -9,12 +9,32 @@ $PlayerStateColours = ['Orange','lightblue','LightGreen','pink'];
 $PlayerStates = array_flip($PlayerState);
 global $PlayerState,$PlayerStates;
 
+
+function FactionFeature($Name,$default='') {  // Return value of feature if set from GAMESYS
+  static $Features;
+  global $FACTION;
+  if (!$Features) {
+    $Features = [];
+    foreach (explode("\n",$FACTION['Features']) as $i=>$feat) {
+      $Dat = explode(":",$feat,4);
+      if ($Dat[0] && isset($Dat[1])) {
+        $Features[$Dat[0]] = trim($Dat[1]);
+      } elseif ($Dat[0] && isset($Dat[4])) {
+        $Features[$Dat[0]] = trim($Dat[4]);
+      }
+    }
+  }
+  if (isset($Features[$Name])) return $Features[$Name];
+  return $default;
+}
+
 function Player_Page() {
-  global $FACTION,$PlayerState,$PlayerStates,$PlayerStateColours;
+  global $FACTION,$PlayerState,$PlayerStates,$PlayerStateColours,$GAME;
 
 
   dostaffhead("Things",["js/ProjectTools.js"]);  
   $GM = Access('GM');
+  $FF = FactionFeature('AllowActions',$GM);  // Eventually change GM to 1
 
   $FACTION['LastActive'] = time();
   
@@ -25,7 +45,8 @@ function Player_Page() {
   
 
   
-  echo "<h2>Player state: <span style='background:" . $PlayerStateColours[$FACTION['TurnState']] . "'>" . $PlayerState[$FACTION['TurnState']] . "</span></h2>";
+  echo "<h2>Player state: <span style='background:" . $PlayerStateColours[$FACTION['TurnState']] . "'>" . $PlayerState[$FACTION['TurnState']] . "</span> Turn:" .
+       $GAME['Turn'] . "</h2>";
   echo "<div class=Player>";
   echo "The only current actions are:";
   echo "<ul>";
@@ -44,15 +65,15 @@ function Player_Page() {
     echo "<li><a href=MapFull.php>Faction Map</a>\n";
     if (Has_Tech($FACTION['id'],'Astral Mapping')) echo "<li><a href=MapFull.php?Hex>Faction Map</a> - with spatial location of nodes\n";
     echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";
-    echo "<li>" . ($GM? "<a href=WhatCanIC.php>What can I See?</a>" : "What can I See?") . "\n";
-    echo "<li>" . ($GM? "<a href=ProjDisp.php>Worlds and Things with Projects</a>" : "Worlds and Things with Projects") . "\n";
-    echo "<li>" . ($GM? "<a href=PThingList.php>List of Things</a>" : "List of Things") . " List of Things (Ships, Armies, Agents, Space stations etc)";
-    echo "<li>" . ($GM? "<a href=ThingPlan.php>Plan a Thing</a>" : "Plan a Things") . " Planning Things (Ships, Armies, Agents, Space stations etc)";
+    echo "<li>" . ($FF? "<a href=WhatCanIC.php>What can I See?</a>" : "What can I See?") . "\n";
+    echo "<li>" . ($FF? "<a href=ProjDisp.php>Worlds and Things with Projects</a>" : "Worlds and Things with Projects") . "\n";
+    echo "<li>" . ($FF? "<a href=PThingList.php>List of Things</a>" : "List of Things") . " List of Things (Ships, Armies, Agents, Space stations etc)";
+    echo "<li>" . ($FF? "<a href=ThingPlan.php>Plan a Thing</a>" : "Plan a Things") . " Planning Things (Ships, Armies, Agents, Space stations etc)";
     echo "<li>Economy";
-    echo "<li>" . ($GM? "<a href=Banking.php>Banking</a>" : "Banking") . " Sending credits to others and statements";
+    echo "<li>" . ($FF? "<a href=Banking.php>Banking</a>" : "Banking") . " Sending credits to others and statements";
     echo "<li><a href=PlayerTurnTxt.php>Turn Actions Text</a> Logs of all automated actions";
-    echo "<li>" . ($GM? "<a href=Player.php?ACTION=Submit>Submit Turn</a>" : "Submit Turn") . "\n";
-    echo "<li>" . ($GM? "<a href=FactionEdit.php>Faction Information</a>" : "Faction Information") . " Mostly read only once set up.\n";
+    echo "<li>" . ($FF? "<a href=Player.php?ACTION=Submit>Submit Turn</a>" : "Submit Turn") . "\n";
+    echo "<li>" . ($FF? "<a href=FactionEdit.php>Faction Information</a>" : "Faction Information") . " Mostly read only once set up.\n";
     break;
       
   case 'Turn Submitted':
@@ -118,5 +139,8 @@ function Link_Cost($Fid,$LinkLevel,$ShipLevel) {
   if ($LinkLevel == 1) return '';
   
 }
+
+
+
 
 ?>

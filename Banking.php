@@ -100,7 +100,7 @@
 
   if ($Banks) {
     echo "Cancel will stop the transfer.  To edit it click Your Reference.<br>";
-    echo "<table border><tr><td>Recipient<td>Amount<td>Your Reference<td>Start Turn<td>End Turn\n";
+    echo "<table border><tr><td>Recipient<td>Amount<td>Your Reference<td>Start Turn<td>Last Turn\n";
     if ($Turn >= $GAME['Turn']) echo "<td>Actions\n";
     foreach ($Banks as $B) {
       echo "<tr><td>" . $FactList[$B['Recipient']] . "<td>" . $B['Amount'];
@@ -120,7 +120,7 @@
   echo "<tr><td>To:<td>" . fm_select($FactList,$_REQUEST,'Recipient') . "<td>Select <b>Other</b> for RP actions";
   echo "<tr>" . fm_number('Amount',$_REQUEST,'Amount');
   echo "<tr>" . fm_number('Start Turn', $_REQUEST,'StartTurn'); 
-  echo "<tr>" . fm_number('End Turn', $_REQUEST,'EndTurn') . "<td>Leave blank for a one off payment";
+  echo "<tr>" . fm_number('Last Turn', $_REQUEST,'EndTurn') . "<td>Leave blank for a one off payment";
   echo "<tr>" . fm_text('Your Reference',$_REQUEST,'YourRef') . "<td>Will be seen by both parties";
   echo "<tr><td><td><input type=submit name=ACTION value='Setup'>\n";
   echo "</table><p>\n";

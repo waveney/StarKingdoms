@@ -675,7 +675,7 @@ function RefitRepair(&$T) {
   $Mods = Get_Modules($tid); 
   if ($Mods) {
     foreach ($Mods as $M) {
-      $Lvl = Calc_TechLevel($Fid,$M['Type']);
+      $Lvl = Calc_TechLevel($T['Whose'],$M['Type']);
       $M['Level'] = $Lvl;
       Put_Module($M);
     }

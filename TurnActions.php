@@ -180,10 +180,11 @@ function StartProjects() {
       TurnLog($P['FactionId'],'Not starting as not enough Credits: ' . $P['Name']);
     }
     // Is there a project already running there?  If so put it on hold
+    $home = $P['Home'];
     $OPs = Get_Projects_Cond(" Home=$home AND Status=1 ");
     foreach ($OPs as $OP) {
       if ($OP['id'] == $P['id']) continue;
-      if ($ProjTypes[$OP['Type']]['Category'] == $ProjectTypes[$P['Type']]['Category']) { // Put old project on hold
+      if ($ProjTypes[$OP['Type']]['Category'] == $ProjTypes[$P['Type']]['Category']) { // Put old project on hold
         $OP['Status'] = 5;  //5 = Cancelled , 4= On Hold
         Put_Project($OP);
         $OTid = $OP['ThingId'];

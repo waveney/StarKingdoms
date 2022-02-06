@@ -72,8 +72,9 @@ function Show_Faction(&$F,$Mode) {
   echo "<tr>" . fm_textarea('Description',$F,'Trait3Text',8,2);
   
   echo "<tr>" . fm_textarea('Notes',$F,'Notes',8,2);
-//  if ($GM) echo "<tr>" . fm_textarea('Features',$F,'Features',8,2);
+
   if ($GM) {
+    echo "<tr>" . fm_textarea('Features',$F,'Features',8,2);
     echo "<tr>" . fm_textarea('GM_Notes',$F,'GM_Notes',8,2);  
     echo "<tr>" . fm_text('Map Colour',$F,'MapColour');
     echo "<tr>" . fm_date('Last Active',$F,'LastActive');

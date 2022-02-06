@@ -10,6 +10,7 @@ Done
 * Credit transfers
 * Introduce "Things" - Ships, Armies, Agents, stations, warp gates, outposts, embassies, asteroid mines etc.
 * Personisation of things (Crew, image etc)
+* User Guide (Partial)
 
 Not Done
 * Economy (Most)
@@ -26,13 +27,18 @@ Not Done
 * Move Ships (better)
 * Damaged ships (after Warp Gate)
 * Embassies
-* User Guide (Partial)
-* Player access to faction page
+* Turn Submission Validation 
+* Anomolies
+
 
 Known Faults
 * Where are things in system - messy in some cases
 * Move ships and survey levels muddle
 * Nebulae
 * Cancelling projects & part done things
-* Project Edit from Faction menu
+* 
+
+Upgrade data for :
+ThingTypes
+
 
