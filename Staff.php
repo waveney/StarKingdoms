@@ -109,8 +109,8 @@
     $txt .= "<li><a href=PlanetTypes.php>Planet Types</a>\n";  
     $txt .= "<li><a href=PlanetStats.php>Planet Stats</a>\n";  
     $txt .= "<p>";
-
-
+    $txt .= "<li><a href=WorldList.php>List Worlds and colonies</a>\n";  
+    $txt .= "<li><a href=WorldMake.php>Rebuild list of Worlds and colonies</a>\n";  
     $txt .= "</ul>\n";
   }
 

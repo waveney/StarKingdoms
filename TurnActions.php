@@ -528,7 +528,7 @@ function FinishShakedowns() {
 function ProjectsComplete() {
 //  echo "Projects Complete is currently Manual<p>";  
 
-  global $GAME;
+  global $GAME,$GAMEID;
 
   $ProjTypes = Get_ProjectTypes();
   $Projects = Get_Projects_Cond("Status=1 AND Progress=ProgNeeded");
@@ -567,7 +567,7 @@ function ProjectsComplete() {
           break 2;
         }
       }
-      $D = ['HostType'=>$H['ThingType'], 'HostId'=>$PH['id'], 'Type'=>$P['ThingType'], 'Number'=>1];
+      $D = ['HostType'=>$H['ThingType'], 'HostId'=>$PH['id'], 'Type'=>$P['ThingType'], 'Number'=>1, 'GameId' => $GAMEID];
       Put_District($D);
       TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");
       break;

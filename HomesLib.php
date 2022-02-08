@@ -218,19 +218,90 @@ function Recalc_Project_Homes($Logf=0) {
 }
 
 function Show_Home($Hid) {
+  global $HomeTypes;
   $H = Get_ProjectHome($Hid);
   echo "<form method=post action=ProjHomes.php>";
-  Register_Autoupdate("ProectHome",$Hid);
+  Register_Autoupdate("ProjectHome",$Hid);
   fm_hidden('id',$Hid);
   echo "<table border>\n";
-  echo "<tr><td>Id: $Hid>";
-  echo "<tr><td>Homee type:<td>" . fm_select($HomeTypes,$H,'ThingType');
-  echo "<tr>" . fm-Number('Id of thing', $H,'ThingId');
+  echo "<tr><td>Id: $Hid";
+  echo "<tr><td>Home type:<td>" . fm_select($HomeTypes,$H,'ThingType');
+  echo "<tr>" . fm_number('Id of thing', $H,'ThingId');
   echo "<tr>" . fm_number('Economy',$H,'Economy') . "<td>Not used yet\n";
-  echo "<tr><td>Within System Location:>" . fm_select() . "<td>For Planets and Moons only\n";
+  if ($H['ThingType'] != 3) {
+    $Systems = Get_Systems();
+    $SysNames = [0=>''];
+    foreach($Systems as $N) {
+      $SysNames[$N['id']] = $N['Ref'];
+      if ($N['id'] == $H['SystemId']) $SysLocs = Within_Sys_Locs($N);
+    }
+    echo "<tr><td>System:<td>" . fm_select($SysNames,$H,'SystemId') . "<td>Refresh after changing to get within sys locs right\n";
+    echo "<tr><td>Where:<td>" . fm_select($SysLocs, $H,'WithinSysLoc');
+  }
+  if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
   echo "</table><p>";
 }
 
-
+function Recalc_Worlds() {
+  // Get all districts
+  // Work out list of things that have them
+  // Go through each world 
+    // does it exist?  If so check minerals level and check its home numbber
+    // If not create it
+  // Any worldd without districts is removed
+  $Dists = Get_DistrictsAll();
+  $Worlds = Get_Worlds();
+  $Facts = Get_Factions();
+  $Homes = Get_ProjectHomes();
+  $TTypes = Get_ThingTypes();
+  
+  foreach ($Homes as $H) {
+    foreach ($Worlds as $Wi=>$W) {
+      if ($W['ThingType'] == $H['ThingType'] && $W['ThingId'] == $H['ThingId']) {
+        $Worlds[$Wi]['Done'] = 1;
+        continue 2;
+      }
+    }
+    // New World
+    switch ($H['ThingType']) {
+      case 1: // Planet
+        $P = Get_Planet($H['ThingId']);
+        $Sys = Get_System($P['SystemId']);
+        $Fid = $Sys['Control'];
+        $Minerals = $P['Minerals'];
+        $ThisBio = $P['Type'];
+        break;
+      case 2: // Moon
+        $M = Get_Moon($H['ThingId']);
+        $P = Get_Planet($M['PlanetId']);
+        $Sys = Get_System($P['SystemId']);
+        $Fid = $Sys['Control'];
+        $Minerals = $M['Minerals'];
+        $ThisBio = $M['Type'];
+        break;
+      case 3: // Thing 
+        $T = Get_Thing($H['ThingId']);
+        if (($TTypes[$T['Type']]['Properties'] & THING_HAS_DISTRICTS) == 0) continue 2;
+        $Fid = $T['Whose'];
+        $Minerals = 0;
+        $ThisBio = -1;
+        break;
+    }
+    $Bio = $Facts[$Fid]['Biosphere'];      
+    // Find Project Home
+    
+    $W = ['FactionId' => $Fid, 'Home' => $H['id'], 'Minerals' => $Minerals, 'RelOrder' => ($Bio == $ThisBio ? 100:80), 
+          'ThingType' => $H['ThingType'], 'ThingId'=>$H['ThingId'], 'Done'=>1 ];
+    Put_World($W);
+  }
+  
+  foreach ($Worlds as $W) {
+    if (empty($W['Done'])) {
+      echo "World " . $W['id'] . " is not used - Delete?<br>\n";
+    }
+  }
+  
+  echo "Worlds recalculted<p>\n";
+}
 
 ?>

@@ -5,6 +5,8 @@
   $Value = $_POST['V'];
   $id    = $_POST['I'];
   $type  = $_POST['D'];
+  
+  global $GAME,$GAMEID;
 
 //var_dump($_POST);  
 // Special returns @x@ changes id to x, #x# sets feild to x, !x! important error message
@@ -28,7 +30,7 @@
         }
       }
       $N= ['Type'=>$Value,'HostId'=>$mtch[1],'Number'=>1];
-      $N['HostType'] = ($type == 'Planet'?0:1);
+      $N['HostType'] = ($type == 'Planet'?1:2);
       echo 'FORCERELOAD54321:NOW' . Put_District($N);
       exit;
 
@@ -79,7 +81,7 @@
           exit;
         }
       }
-      $N= ['Type'=>$Value,'HostId'=>$mtch[1],'Number'=>1,'HostType' => 2];
+      $N= ['Type'=>$Value,'HostId'=>$mtch[1],'Number'=>1,'HostType' => 3, 'GameId' => $GAMEID ];
       echo 'FORCELOADCHANGE54321:NOW' . Put_District($N);
       exit;
 
@@ -231,6 +233,12 @@
     echo Put_Project($N);
     exit;
   
+   case 'ProjectHome' : // Note this is for ProjEdit, see above for per turn rushing
+    $N = Get_ProjectHome($id);
+    $N[$field] = $Value;
+    echo Put_ProjectHome($N);
+    exit;
+ 
 
   case 'FFaction' :
     if (preg_match('/Know(\d*):(\d*)/',$field,$mtch)?true:false) {

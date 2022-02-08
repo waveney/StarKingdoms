@@ -11,7 +11,9 @@
   $typ='';
   if (isset($_REQUEST['Hex'])) $typ = 'Hex';
 
-  echo "<img src=cache/Fullmap0$typ.png>";
+  $Rand = rand(1,100000);
+  echo "<img src=cache/Fullmap0$typ.png?$Rand maxwidth=100% usemap='#skmap'>";
+  readfile("cache/Fullmap0$typ.map");
 
   dotail();
 ?>

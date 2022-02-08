@@ -53,14 +53,18 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Orders</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>State</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Where</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Using Link</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Moving to</a>\n";
-
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Actions</a>\n";
   echo "</thead><tbody>";
   
   $Logistics = [0,0,0]; // Ship, Army, Intelligence
+  $LinkTypes = Get_LinkLevels();
   
   foreach ($Things as $T) {
     if (empty($T['Type'])) continue;
+    $Props = $ThingTypes[$T['Type']]['Properties'];
+    
     $Tid = $T['id'];
     $Name = $ThingTypes[$T['Type']]['Name'];
     if (!$Name) $Name = "Unknown Thing $Tid";
@@ -72,12 +76,28 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
     echo "<td>" . $T['Orders'];
     echo "<td>" . $BuildState[$T['BuildState']];
     echo "<td>" . (empty($T['SystemId']) ?'': $Systems[$T['SystemId']]);
-    echo "<td>" . (isset($Systems[$T['NewSystemId']]) ? $Systems[$T['NewSystemId']] :"") ;
+    if ($Props & THING_CAN_MOVE) {
+      if ($T['LinkId']) {
+        $L = Get_Link($T['LinkId']);
+        echo "<td style=color:" . $LinkTypes[$L['Level']]['Colour'] . " >#" . $T['LinkId'];
+        if ($T['NewSystemId']) {
+          echo "<td>" . $Systems[$T['NewSystemId']];
+        } else {
+          echo "<td> ? ";
+        }
+      } else {
+        echo "<td><td>";
+      }
+      echo "<td><a href=PMoveThing.php?id=" . $T['id'] . ">Move</a>";
+    } else {
+      echo "<td><td><td>";
+    }
+ //   echo "<td>" . (isset($Systems[$T['NewSystemId']]) ? $Systems[$T['NewSystemId']] :"") ;
     
     if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
-      if ($ThingTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES) $Logistics[1] += $T['Level'];
-      if ($ThingTypes[$T['Type']]['Properties'] & THING_HAS_GADGETS) $Logistics[2] += $T['Level'];
-      if ($ThingTypes[$T['Type']]['Properties'] & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $T['Level'];
+      if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $T['Level'];
+      if ($Props & THING_HAS_GADGETS) $Logistics[2] += $T['Level'];
+      if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $T['Level'];
     };
     
   }

@@ -356,7 +356,7 @@ function Put_District(&$now) {
 function Get_DistrictsP($Pid) {
   global $db,$GAMEID;
   $Ts = [];
-  $res = $db->query("SELECT * FROM Districts WHERE HostType=0 AND HostId=$Pid ORDER BY Type");
+  $res = $db->query("SELECT * FROM Districts WHERE HostType=1 AND HostId=$Pid ORDER BY Type");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['Type']] = $ans;
   return $Ts;
 }
@@ -364,7 +364,7 @@ function Get_DistrictsP($Pid) {
 function Get_DistrictsM($Mid) {
   global $db,$GAMEID;
   $Ts = [];
-  $res = $db->query("SELECT * FROM Districts WHERE HostType=1 AND HostId=$Mid ORDER BY Type");
+  $res = $db->query("SELECT * FROM Districts WHERE HostType=2 AND HostId=$Mid ORDER BY Type");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['Type']] = $ans;
   return $Ts;
 }
@@ -372,10 +372,27 @@ function Get_DistrictsM($Mid) {
 function Get_DistrictsT($Tid) {
   global $db,$GAMEID;
   $Ts = [];
-  $res = $db->query("SELECT * FROM Districts WHERE HostType=2 AND HostId=$Tid ORDER BY Type");
+  $res = $db->query("SELECT * FROM Districts WHERE HostType=3 AND HostId=$Tid ORDER BY Type");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['Type']] = $ans;
   return $Ts;
 }
+
+function Get_DistrictsH($Hid) {
+  global $db,$GAMEID;
+  $Ts = [];
+  $res = $db->query("SELECT D.* FROM Districts D, ProjectHomes H WHERE D.HostType=H.ThingType AND H.id=$Hid AND D.HostId=H.ThingId ORDER BY Type");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['Type']] = $ans;
+  return $Ts;
+}
+
+function Get_DistrictsAll() {
+  global $db,$GAMEID;
+  $Ts = [];
+  $res = $db->query("SELECT * FROM Districts WHERE GameId=$GAMEID ORDER BY HostId");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['Type']] = $ans;
+  return $Ts;
+}
+
 
 //  Planet Types
 
@@ -1098,6 +1115,34 @@ function Put_Banking(&$now) {
   } else {
     return $now['id'] = Insert_db ('Banking', $now );
   }
+}
+
+
+// Worlds
+function Get_World($id) {
+  global $db;
+  $res = $db->query("SELECT * FROM Worlds WHERE id=$id");
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
+  return [];
+}
+
+function Put_World(&$now) {
+  global $db,$GAMEID;
+  if (isset($now['id'])) {
+    $e=$now['id'];
+    $Cur = Get_World($e);
+    return Update_db('Worlds',$Cur,$now);
+  } else {
+    return $now['id'] = Insert_db ('Worlds', $now );
+  }
+}
+
+function Get_Worlds($Fid=0) {
+  global $db;
+  $Ts = [];
+  $res = $db->query("SELECT * FROM Worlds " . ($Fid?" WHERE FactionId=$Fid ":" ") . " ORDER By FactionId, RelOrder");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
+  return $Ts;
 }
 
 
