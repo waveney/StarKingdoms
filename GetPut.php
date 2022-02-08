@@ -1140,7 +1140,7 @@ function Put_World(&$now) {
 function Get_Worlds($Fid=0) {
   global $db;
   $Ts = [];
-  $res = $db->query("SELECT * FROM Worlds " . ($Fid?" WHERE FactionId=$Fid ":" ") . " ORDER By FactionId, RelOrder");
+  $res = $db->query("SELECT * FROM Worlds " . ($Fid?" WHERE FactionId=$Fid ":" ") . " ORDER By FactionId, RelOrder DESC");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
   return $Ts;
 }

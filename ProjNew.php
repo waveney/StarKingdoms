@@ -177,7 +177,7 @@
         }
       }
       
-    echo "<h2>Rebuild and repair</h2>Not yet selectable<p>";
+    echo "<h2>Rebuild and repair</h2>Manual at present<p>";
       
     echo "<h2>Construct Warp Gate</h2>";
       $pc = Proj_Costs(4);
@@ -234,12 +234,12 @@
       
   case 'Shipyard':
       echo "<h2>Build a Ship</h2>";
-//      echo "Not yet<p>";
+
       echo "This action is to build an already designed ship.  If you want a new design please go to <a href=ThingPlan.php>The Thing Planning Tool</a> first.<p>\n";
       echo "<button class=projtype type=submit formaction='ProjNew.php?ACTION=NEWSHIP&id=$Fid&p=10&t=$Turn&Hi=$Hi&Di=$Di$pl'>Build a new ship$Place</button><p>";
     
     
-      echo "<h2>Refit, Repair and Decommision Ships</h2>";
+      echo "<h2>Refit and Repair</h2>";
       echo "Not yet";
       $Ships = Get_ThingsSys($Sid,$type=1,$Fid);
       if ($Ships) {
@@ -274,9 +274,7 @@
        echo "<h2>Research Supplimental Ship Technology</h2>";
        foreach ($Rbuts as $rb) echo $rb;
      }
- 
 
-    
       break;
       
   case 'Military':
@@ -292,7 +290,6 @@
       if ($Armies) {
     
       }
-    
     
       echo "<h2>Research Military Organisation</h2><p>";
         $OldPc = Has_Tech($Fid,8);
@@ -321,10 +318,6 @@
        echo "<h2>Research Supplimental Army Technology</h2>";
        foreach ($Rbuts as $rb) echo $rb;
      }
- 
-
-
-    
       break;
       
   case 'Intelligence':
