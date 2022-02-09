@@ -271,6 +271,31 @@
     echo Put_ProjectHome($N);
     exit;
   
+   case 'Worlds':
+    if ((preg_match('/(\w*):(\d*):(\d*)/',$field,$mtch)?true:false)) {
+      switch ($mtch[2]) {
+      case 1: // Planet
+        $N = Get_Planet($mtch[3]);
+        $N[$mtch[1]] = $Value;
+        return Put_Planet($N);
+      case 1: // Moon
+        $N = Get_Moon($mtch[3]);
+        $N[$mtch[1]] = $Value;
+        return Put_Moon($N);
+      case 1: // Planet
+        $N = Get_Thing($mtch[3]);
+        $N[$mtch[1]] = $Value;
+        return Put_Thing($N);
+      }
+      echo "ERROR";
+      var_dump($_REQUEST);
+      exit;
+    }
+    $N = Get_World($id);
+    $N[$field] = $Value;
+    echo Put_World($N);
+    exit;
+  
 
   default:
     echo "Not setup $type for Auto Edit";

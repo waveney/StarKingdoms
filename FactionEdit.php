@@ -40,6 +40,8 @@ function Show_Faction(&$F,$Mode) {
   $GM = Access('GM');
   $Setup = 0;
   
+  $ReadOnly = (($F['TurnState'] != 0) && !$GM)? " readonly " : "";// Readonly when out of setup
+  
   echo "<form method=post id=mainform enctype='multipart/form-data' action=FactionEdit.php>";
   echo "<div class=tablecont><table width=90% border class=SideTable>\n";
   Register_AutoUpdate('Faction',$Fid);
@@ -64,11 +66,11 @@ function Show_Faction(&$F,$Mode) {
     echo "<tr><td>Engineering Points<td>" . $F['EngineeringSP'];
     echo "<tr><td>Xenology Points<td>" . $F['XenologySP'];
   }  
-  echo "<tr>" . fm_text("Trait 1 Name",$F,'Trait1'). "<td>Short name that is unique";
+  echo "<tr>" . fm_text("Trait 1 Name",$F,'Trait1',1,'',$ReadOnly). "<td>Short name that is unique";
   echo "<tr>" . fm_textarea('Description',$F,'Trait1Text',8,2);
-  echo "<tr>" . fm_text("Trait 2 Name",$F,'Trait2'). "<td>Short name that is unique";
+  echo "<tr>" . fm_text("Trait 2 Name",$F,'Trait2',1,'',$ReadOnly). "<td>Short name that is unique";
   echo "<tr>" . fm_textarea('Description',$F,'Trait2Text',8,2);
-  echo "<tr>" . fm_text("Trait 3 Name",$F,'Trait3'). "<td>Short name that is unique";
+  echo "<tr>" . fm_text("Trait 3 Name",$F,'Trait3',1,'',$ReadOnly). "<td>Short name that is unique";
   echo "<tr>" . fm_textarea('Description',$F,'Trait3Text',8,2);
   
   echo "<tr>" . fm_textarea('Notes',$F,'Notes',8,2);

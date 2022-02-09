@@ -1,4 +1,4 @@
- <?php
+<?php
   include_once("sk.php");
   include_once("GetPut.php");
   include_once("ThingLib.php");
