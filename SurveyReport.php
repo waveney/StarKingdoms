@@ -44,14 +44,14 @@
   }
   
   if (!empty($FACTION)) { // Player mode
-    $ScanSurveyXlate = [0=>0, 1=>1, 2=>5];
+//    $ScanSurveyXlate = [0=>0, 1=>1, 2=>3, 3=>5];
     $Fid = $FACTION['id'];
     $FS = Get_FactionSystemFS($Fid,$Sid); 
     if (empty($FS['id'])) {
       echo "<h1>Unknown system</h1>\n";
       dotail();
     }
-    $SurveyLevel = (isset($ScanSurveyXlate[$FS['ScanLevel']]) ? $ScanSurveyXlate[$FS['ScanLevel']] : 0);
+    $SurveyLevel = $FS['ScanLevel'];  // (isset($ScanSurveyXlate[$FS['ScanLevel']]) ? $ScanSurveyXlate[$FS['ScanLevel']] : 0);
 
   } else { // GM access
     if (isset($_REQUEST['V'])) {
@@ -121,8 +121,8 @@
   if ($N['Description']) echo $Parsedown->text($N['Description']) . "<p>";
   
   if ($N['Control']) echo "Controlled by: " . "<span style='background:" . $Fs[$N['Control']]['MapColour'] . "; padding=2;'>" . $Fs[$N['Control']]['Name'] . "</span><p>";
-  if ($SurveyLevel >= 10 && $N['HistoricalControl']) echo "Historically controlled by: " . "<span style='background:" . $Fs[$N['HistoricalControl']]['MapColour'] . "; padding=2;'>" 
-      . $Fs[$N['HistoricalControl']]['Name'] . "</span><p>"; // GM only
+  if ($GM && $SurveyLevel >= 10 && $N['HistoricalControl']) echo "Historically controlled by: " . "<span style='background:" . $Fs[$N['HistoricalControl']]['MapColour'] . 
+      "; padding=2;'>" . $Fs[$N['HistoricalControl']]['Name'] . "</span><p>"; // GM only
   
   // Star (s)
   

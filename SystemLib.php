@@ -2,7 +2,7 @@
 
 /* $SurveyLevels = [0=>'Blind',1=>'No Sensors', 2=>'Minimal Scan', 3=>'A bit better', 4=>'Most Things', 5=>'Full Scan no control', 
                  6=>'Full Scan under control', 10=>'GM Only']; */
- $SurveyLevels = [0=>'Blind', 1=>'No Sensors', 5=>'Full Scan', 10=>'GM Only'];
+ $SurveyLevels = [0=>'Blind', 1=>'No Sensors', 3=>'Unable to Scan', 5=>'Full Scan', 10=>'GM Only'];
 
 
 global $SurveyLevels;
