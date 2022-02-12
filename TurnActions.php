@@ -226,10 +226,56 @@ function AgentsStartMissions() {
 }
 
 function Economy() {
-  // Transfer all monies and tolls, work out economies and generate income for each faction.
+  global $db,$GAMEID;
+  // TWork out economies and generate income for each faction.
   // Blockades, theft and new things affect - this needs to be done BEFORE projects complete
   echo "The Economy is currently Manual<p>";
   return true;
+  // For each faction recalc Economic rating of Each world
+  // Add Outpost and Ast mining, Embassy income
+  // Work out logistic penalties
+  // Do main sums and present ansers, update records
+  
+  $Facts = Get_Factions();
+  $TTypes = Get_ThingTypes();
+  
+  foreach ($Facts as $F) {
+    $Fid = $F['id'];
+    $Worlds = Get_Worlds($F);
+    $EconVal = 0;
+    $OutPosts = $AstMines = $Embassies = $OtherEmbs = 0;
+    foreach ($Worlds as $W) {
+      $H = Get_ProjectHome($W['Home']);
+      $EconVal += Recalc_Economic_Rating($W,$H,$F);
+    }
+    $Things = Get_Things($Fid);
+    foreach ($Things as $T) {
+      switch ($TTypes[$T['Type']]['Name']) {
+      case "Outpost":
+        $OutPosts ++;
+        break;
+      
+      case "Asteroid Mine":
+        $AstMines ++;
+        break;
+      
+      case "Embassy":
+        $Embassies ++;
+        break;
+      
+      default:
+        continue 2;
+      }
+    }
+
+    $OtherTs = Get_Things_Cond(0,"Type=17 AND OtherFaction=$Fid");
+    foreach($OtherTs as $OT) {
+      $OtherEmbs++;
+    }
+    
+//    Income = 10*(Econval +extras -Logisitical enalty)
+    // Foriegn embassies
+  }
 }  
 
 function LoadTroops() {

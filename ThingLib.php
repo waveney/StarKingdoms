@@ -240,7 +240,7 @@ function Max_Modules(&$t) {
     $v = [0,4,12,24,40,60,84,112,144,180,220][$t['Level']];
     if ($t['Type'] == 2) $v = $v*3/4; // Support Ship
     if (Has_Tech($t['Whose'], 'Compact Ship Design') && $t['Level'] > 1) $v += $t['Level'];
-    if ($t['Level'] > 2 && Has_Trait('Really Big',$t['Whose'])) $v += $t['Level']*$t['Level'];
+    if ($t['Level'] > 2 && Has_Trait($t['Whose'],'Really Big')) $v += $t['Level']*$t['Level'];
     if ($TTs['Name'] == 'Satellite Defences') $v += Has_Tech($t['Whose'],7); 
     return $v;
   }
@@ -729,7 +729,7 @@ function LogsticalSupport($Fid) {  // Note this sets the Economic rating of all 
     $District_Type = [];
     foreach ($Dists as $D) {
       if ($DistTypes[$D['Type']]['Props'] &1) {
-        if (Has_Trait('No customers',$Fid) && $DistTypes[$D['Type']]['Name'] == 'Commerce') {
+        if (Has_Trait($Fid,'No customers') && $DistTypes[$D['Type']]['Name'] == 'Commerce') {
         } else {
           $Prime++;
         }

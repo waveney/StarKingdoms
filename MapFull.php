@@ -112,18 +112,23 @@
   foreach ($Nodes as $N) {
     $NodeName = $N['Name']?$N['Name']:"";
     $ShortName = $N['ShortName']?$N['ShortName']:$NodeName;
+    $Hide = 0;
     if ($Faction) {
       if ($N['Control'] != $Faction) {
         $FS = Get_FactionSystemFS($Faction, $N['id']);
         if (!isset($FS['id'])) continue;
-        if ($FS['Name']) $ShortName = $NodeName = $FS['Name'];
-        if ($FS['ShortName']) $ShortName = $FS['ShortName'];
+        if ($FS['ScanLevel'] > 1) {
+          if ($FS['Name']) $ShortName = $NodeName = $FS['Name'];
+          if ($FS['ShortName']) $ShortName = $FS['ShortName'];
+        } else {
+          $Hide = 1;
+        }
       }
     }
     $atts = "";
 
     $Colour = "white";
-    if ($N['Control']) {
+    if ($N['Control'] && !$Hide) {
       $Colour = $Factions[$N['Control']]['MapColour'];
       $Factions[$N['Control']]['Seen']=1;
     } else if ($N['Category']) {
@@ -132,6 +137,7 @@
       $Colour = "White";
     }
     
+    if ($Hide) $NodeName = '';
     $BdrColour = "Black";
     if ($Faction == 0 && $N['HistoricalControl']) $BdrColour = $Factions[$N['HistoricalControl']]['MapColour'];
     

@@ -66,7 +66,7 @@ function Player_Page() {
     if (Has_Tech($FACTION['id'],'Astral Mapping')) echo "<li><a href=MapFull.php?Hex>Faction Map</a> - with spatial location of nodes\n";
     echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";
     echo "<li>" . ($FF? "<a href=WhatCanIC.php>What can I See?</a>" : "What can I See?") . "\n";
-    echo "<li>" . ($FF? "<a href=WorldList.php>Worlds and Colonies</a>" : "Worlds and Colonies") . " - High Level info only\n";  
+    echo "<li>" . ($FF? "<a href=WorldList.php>Worlds and Colonies</a>" : "Worlds and Colonies") . " - High Level info only<p>\n";  
     echo "<li>" . ($FF? "<a href=ProjDisp.php>Worlds and Things with Projects</a>" : "Worlds and Things with Projects") . "\n";
     echo "<li>" . ($FF? "<a href=PThingList.php>List of Things</a>" : "List of Things") . " List of Things (Ships, Armies, Agents, Space stations etc)";
     echo "<li>" . ($FF? "<a href=ThingPlan.php>Plan a Thing</a>" : "Plan a Things") . " Planning Things (Ships, Armies, Agents, Space stations etc)";
@@ -99,7 +99,7 @@ function Player_Page() {
 
 }
 
-function Has_Trait($Name,$fid=0) {
+function Has_Trait($fid,$Name) {
   global $FACTION;
   
   if ($fid == 0) {

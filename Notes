@@ -26,7 +26,7 @@ Not Done
 * Colonisation
 * Move Ships (better)
 * Damaged ships (after Warp Gate)
-* Embassies
+* Embassies - need double record keeping
 * Turn Submission Validation 
 * Anomolies
 
@@ -37,6 +37,33 @@ Known Faults
 * Nebulae
 * Link ids and targets on movement orders
 * List of scans due - needs use and maintaining
+
+Has_Tech for projects - use turn number
+Distict count for projects use world data
+Redo forward projections 
+  - tech
+  - finance
+  - districts
+  - things
+  - logistics
+Projects complete - in future
+  - tech
+  - finance
+  - districts
+  - things
+  - logistics
+New projects - use projected values
+  - tech
+  - core techs
+  - finance
+  - districts
+  - things
+  - logistics
+  
+effect of changing when a project completes on a projection 
+effects of cancelling on projection
+
+
 
 Upgrade data for :
 ThingTypes

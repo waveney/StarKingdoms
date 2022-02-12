@@ -7,7 +7,7 @@ function Proj_Costs($lvl) {
 }
 
 function Rush_Cost($who) {
-  if (Has_Trait('Bike-Shedders', $who)) return 100;
+  if (Has_Trait($who,'Bike-Shedders')) return 100;
   return 75; 
 }
 

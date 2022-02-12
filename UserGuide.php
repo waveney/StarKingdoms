@@ -41,6 +41,13 @@ If you know of non-standard technologies they will also appear.<p>
 <h2>What Can I See?</h2>
 For each system where you have eyes/cameras - what they can see.<p>
 
+<h2>Worlds and Colonies</h2>
+List of your worlds  and their economies.<p>
+
+You can name your worlds and add a text description.<p>
+
+The Relative importance controls the order of display in the project list below (or will do).<P>
+
 <h2>Worlds and Things with projects</h2>
 To manage construction, and district based projects.  And in the near future Deep Space construction.<p>
 
@@ -74,6 +81,15 @@ You can also see all credits in and out for as far back as you want to.<p>
 
 <h2>Turn Actions Text</h2>
 Access to automatically generated text for all turns covereying everything done automatically by the system. to see back to previous turns click appropriate turn top right.<p>
+
+<h2>Submit Turn</h2>
+Guess what that does?<p>
+
+In the future it will include checking for errors and ommisions<p>
+
+Once submitted, you can't do much, but can revert to Turn planning as long as you do it before the GMs start turn processing.<p>
+<h2>Faction Information</h2>
+Name, total credits, traits, a picture, science points.<P>
 
 
 <h2>Why can't I do that?</h2>

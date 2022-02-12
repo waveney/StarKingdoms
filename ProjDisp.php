@@ -207,8 +207,6 @@ exit;
         echo "Faulty project " . $P['id'];
       } else {
       
-        $Pro['MaxRush'] =  (($ProjTypes[$P['Type']]['BasedOn'])? Has_Tech($Fid,$ProjTypes[$P['Type']]['BasedOn']) : (isset ($District_Type[5]) ?$District_Type[5]:0));
-        if ($PH['Type'] != $Faction['Biosphere']) $Pro['MaxRush'] = max(0,$Pro['MaxRush']-1);
         $Pro['Status'] = 'Started';
         $TotProg = 0;
       
@@ -230,6 +228,12 @@ exit;
         for ($t = $P['TurnStart']; $t <= ($P['TurnEnd']?$P['TurnEnd']:$P['TurnStart']+50); $t++) {
 
           $Pro['Rush'] = $Rush = 0;
+          $Pro['MaxRush'] =  (($ProjTypes[$P['Type']]['BasedOn'])? Has_Tech($Fid,$ProjTypes[$P['Type']]['BasedOn'],$t) : 
+             (isset ($District_Type[5]) ?$District_Type[5]:0));
+          if ($PH['Type'] != $Faction['Biosphere']) $Pro['MaxRush'] = max(0,$Pro['MaxRush']-1);
+
+
+
           if (isset($TurnStuff[$TSi])) {
             if ($TurnStuff[$TSi]['TurnNumber'] == $t) {
               $Rush = $Pro['Rush'] = $TurnStuff[$TSi]['Rush'];

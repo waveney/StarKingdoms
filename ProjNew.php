@@ -158,7 +158,7 @@
       $DTs = Get_DistrictTypes();
       $DNames = [];
       foreach ($DTs as $DT) {
-        if ($DT['BasedOn'] == 0 || Has_tech($Fid,$DT['BasedOn'])) {
+        if ($DT['BasedOn'] == 0 || Has_tech($Fid,$DT['BasedOn'], $Turn)) {
           $DNames[$DT['id']] = $DT['Name'];
           
           $Lvl = 0;
@@ -186,7 +186,7 @@
                 "Build Warp Gate $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
     
     echo "<h2>Research Planetary Construction</h2><p>";
-      $OldPc = Has_Tech($Fid,3);
+      $OldPc = Has_Tech($Fid,3, $Turn);
       $Lvl = $OldPc+1;
       $pc = Proj_Costs($Lvl);
       echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=4&t=$Turn&Hi=$Hi&Di=$Di&Sel=3" .
@@ -198,7 +198,7 @@
   case 'Academic':
   
     echo "<h2>Research Core Technology</h2>";
-      $FactTechs = Get_Faction_Techs($Fid);
+      $FactTechs = Get_Faction_Techs($Fid, $Turn);
       $CTs = Get_CoreTechsByName();
       foreach ($CTs as $TT) {
         $Lvl = $FactTechs[$TT['id']]['Level']+1;
@@ -256,7 +256,7 @@
                 "Research Ship Construction $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
     
       $Rbuts = [];
-      $FactTechs = Get_Faction_Techs($Fid);
+      $FactTechs = Get_Faction_Techs($Fid, $Turn);
       $Techs = Get_TechsByCore($Fid);
       foreach ($Techs as $T) {
         if ($T['Cat'] == 0 || isset($FactTechs[$T['id']]) ) continue;
@@ -292,7 +292,7 @@
       }
     
       echo "<h2>Research Military Organisation</h2><p>";
-        $OldPc = Has_Tech($Fid,8);
+        $OldPc = Has_Tech($Fid,8, $Turn);
         $Lvl = $OldPc+1;
         $pc = Proj_Costs($Lvl);
         echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=17&t=$Turn&Hi=$Hi&Di=$Di&Sel=8" .
@@ -329,7 +329,7 @@
     
    
       echo "<h2>Research Intelligence Operations</h2><p>";
-        $OldPc = Has_Tech($Fid,4);
+        $OldPc = Has_Tech($Fid,4, $Turn);
         $Lvl = $OldPc+1;
         $pc = Proj_Costs($Lvl);
         echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=20&t=$Turn&Hi=$Hi&Di=$Di&Sel=4" .
@@ -337,7 +337,7 @@
                 "Research Intelligence Operations $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
     
       $Rbuts = [];
-      $FactTechs = Get_Faction_Techs($Fid);
+      $FactTechs = Get_Faction_Techs($Fid, $Turn);
       $Techs = Get_TechsByCore($Fid);
       foreach ($Techs as $T) {
         if ($T['Cat'] == 0 || isset($FactTechs[$T['id']]) ) continue;

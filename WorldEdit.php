@@ -84,7 +84,7 @@
       if ($D['Type'] == 1) $NumCom = $D['Number'];
       if ($DTs[$D['Type']]['Props'] & 1) $NumPrime += $D['Number'];
     }
-    $Econ = (Has_Trait('No customers',$Fid)?($NumPrime - $NumCom):$NumPrime)*$NumCom*2 + min($W['Minerals'],$NumPrime);
+    $Econ = (Has_Trait($Fid,'No customers')?($NumPrime - $NumCom):$NumPrime)*$NumCom*2 + min($W['Minerals'],$NumPrime);
     $H['Economy'] = $Econ;
     Put_ProjectHome($H);
   } else {

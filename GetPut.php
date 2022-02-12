@@ -509,7 +509,7 @@ function Get_ThingsSys($Sid,$type=0,$Fid=0) {
 function Get_Things_Cond($Fact,$Cond) {
   global $db,$GAMEID;
   $Ts = [];
-  $res = $db->query("SELECT * FROM Things WHERE Whose=$Fact AND $Cond ");
+  $res = $db->query("SELECT * FROM Things WHERE " . ($Fact? " Whose=$Fact AND $Cond " : $Cond));
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
   return $Ts;
 }
@@ -641,7 +641,7 @@ function Get_Techs($Fact=0) {
   }
 }
 
-function Get_TechsByCore($Fact=0,$All=0) {
+function Get_TechsByCore($Fact=0, $All=0) {
   global $db,$GAMEID;
   $Ms = [];
   if ($Fact == 0 || $All) {
@@ -678,13 +678,13 @@ function Get_CoreTechsByName() {
 // Faction Techs
 
 function Get_Faction_Tech($id) {
-  global $db;
+  global $db; 
   $res = $db->query("SELECT * FROM FactionTechs WHERE id=$id");
   if ($res) if ($ans = $res->fetch_assoc()) return $ans;
   return [];
 }
 
-function Get_Faction_TechFT($Fid,$Tid) {
+function Get_Faction_TechFT($Fid,$Tid, $Turn=0) {
   global $db;
   $res = $db->query("SELECT * FROM FactionTechs WHERE Faction_Id=$Fid AND Tech_Id=$Tid");
   if ($res) if ($ans = $res->fetch_assoc()) return $ans;
@@ -702,13 +702,27 @@ function Put_Faction_Tech(&$now) {
   }
 }
 
-function Get_Faction_Techs($Fact) {
+function Get_Faction_Techs($Fact,$Turn=0) {
   global $db,$GAMEID;
   $Ms = [];
-  $res = $db->query("SELECT * FROM  FactionTechs ft WHERE Faction_Id=$Fact");
-  if ($res) while ($ans = $res->fetch_assoc()) $Ms[$ans['Tech_Id']] = $ans;
+  if ($Turn == 0) {
+   $res = $db->query("SELECT * FROM  FactionTechs WHERE Faction_Id=$Fact");
+    if ($res) while ($ans = $res->fetch_assoc()) $Ms[$ans['Tech_Id']] = $ans;
+    return $Ms;
+  } 
+  $res = $db->query("SELECT * FROM  FactionTechs WHERE Faction_Id=$Fact AND StartTurn<=$Turn ");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ms[$ans['Tech_Id']] = $ans;  
+  
+  foreach ($Ms as $M) {
+    if ($M['Tech_Id'] < 100) {
+      $tid = $M['Tech_Id'];
+      $res = $db->query("SELECT * FROM  FactionTechLevels WHERE Faction_Id=$Fact AND Tech_Id=$tid AND StartTurn<=$Turn ORDER BY StartTurn");
+      if ($res) while ($ans = $res->fetch_assoc()) $Ms[$tid]['Level'] = $ans['Level'];
+    }
+  }
   return $Ms;
-}
+}// . ($Turn? " AND StartTurn>=$Turn " : ""
+
 
 // Thing Types
 
@@ -738,7 +752,7 @@ function Get_ThingTypes() {
   return $Ms;
 }
 
-function Has_Tech($fid,$name,$Base=0) {// name can be id
+function OLD_Has_Tech($fid,$name,$Base=0,$Turn=0) {// name can be id
   global $db,$GAMEID;
 //echo "Has_Tech called with $fid, $name<p>";
   if (is_numeric($name)) {
@@ -756,6 +770,46 @@ function Has_Tech($fid,$name,$Base=0) {// name can be id
   }
 //echo "Result is 0<p>";
   return 0;
+}
+
+function Has_Tech($fid,$name,$turn=0) { // Turn==0 = now
+  global $db,$GAME;
+  if (is_numeric($name)) {
+    $Tech = Get_Tech($name);
+  } else {
+    $res = $db->query("SELECT * FROM Technologies WHERE Name='$name'");
+    if (!$res || !($Tech = $res->fetch_assoc())) return 0;
+    $name= $Tech['id'];
+  }
+  
+  if ($Tech['Cat'] ==0) {
+    $lvl = 0;
+
+    $res = $db->query("SELECT Level FROM  FactionTechs WHERE Faction_Id=$fid AND Tech_Id=$name ");
+    if ($res && ($ans = $res->fetch_assoc())) $lvl = $ans['Level'];
+
+    if ($turn != 0) {
+      $res = $db->query("SELECT Level FROM FactionTechLevels WHERE Faction_Id=$fid AND Tech_Id=$name AND StartTurn > " . $GAME['Turn'] . " AND StartTurn <= Turn");
+      if ($res && ($ans = $res->fetch_assoc())) $lvl = $ans['Level'];
+    }
+    return $lvl;
+  }
+  
+  // Supp Tech
+  $res = $db->query("SELECT Level FROM  FactionTechs WHERE Faction_Id=$fid AND Tech_Id=$name AND StartTurn>=$turn");
+  if (!$res || !($ans = $res->fetch_assoc())) return 0; // Don'y have it
+  
+  $lvl = 0;
+  $Based = $Tech['PreReqTech'];
+
+  $res = $db->query("SELECT Level FROM  FactionTechs WHERE Faction_Id=$fid AND Tech_Id=$Based ");
+  if ($res && ($ans = $res->fetch_assoc())) $lvl = $ans['Level'];
+
+  if ($turn != 0) {
+    $res = $db->query("SELECT Level FROM FactionTechLevels WHERE Faction_Id=$fid AND Tech_Id=$Based AND StartTurn > " . $GAME['Turn'] . " AND StartTurn <= Turn");
+    if ($res && ($ans = $res->fetch_assoc())) $lvl = $ans['Level'];
+  }
+  return $lvl;
 }
 
 // Get Game in sk.php
