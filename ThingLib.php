@@ -26,6 +26,7 @@ define('THING_HAS_MILSHIPMODS',64);
 define('THING_HAS_CIVSHIPMODS',128);
 define('THING_CAN_MOVE',256);
 define('THING_CAN_BETRANSPORTED',512);
+define('THING_HAS_2_FACTIONS',1024);
 
 function ModFormulaes() {
   global $ModFormulaes;
@@ -495,6 +496,7 @@ function Show_Thing(&$t,$Force=0) {
   echo "<tr>" . fm_textarea('Named Crew',$t,'NamedCrew',8,2);
   if ($GM) echo "<tr>" . fm_textarea('GM Notes',$t,'GM_Notes',8,2,'class=NotSide');
   echo "<tr>" . fm_textarea('History',$t,'History',8,2);
+  if ($tprops & THING_HAS_2_FACTIONS) echo "<tr>" . fm_radio('Other Faction',$FactNames ,$t,'OtherFaction','',1,'colspan=6','',$Fact_Colours,0); 
   if  ($tprops & THING_HAS_MODULES) {
     if ($GM) {
       echo "<tr>" . fm_number('Orig Health',$t,'OrigHealth') . fm_number('Cur Health',$t,'CurHealth');
@@ -809,7 +811,7 @@ function EyesInSystem($Fid,$Sid) { // Eyes 1 = in space, 2= sens, 4= neb sens, 8
 
 function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1) {
 //var_dump($Sid,$Eyes);
-  if (Access('GM')) $Eyes = 15;
+//  if (Access('GM')) $Eyes = 15;
     if (!$Eyes) return;
     $Things = Get_AllThingsAt($Sid);
     if (!$Things) return;

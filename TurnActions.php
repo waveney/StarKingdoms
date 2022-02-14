@@ -5,7 +5,8 @@
   include_once("PlayerLib.php");
   include_once("SystemLib.php");
   include_once("ProjLib.php");
-  
+  include_once("HomesLib.php");
+    
   A_Check('GM');
 
 // For logging turn processing events that need following up or long term record keeping, set e to echo to GM
@@ -229,8 +230,8 @@ function Economy() {
   global $db,$GAMEID;
   // TWork out economies and generate income for each faction.
   // Blockades, theft and new things affect - this needs to be done BEFORE projects complete
-  echo "The Economy is currently Manual<p>";
-  return true;
+//  echo "The Economy is currently Manual<p>";
+//  return true;
   // For each faction recalc Economic rating of Each world
   // Add Outpost and Ast mining, Embassy income
   // Work out logistic penalties
@@ -241,15 +242,28 @@ function Economy() {
   
   foreach ($Facts as $F) {
     $Fid = $F['id'];
-    $Worlds = Get_Worlds($F);
+    $Worlds = Get_Worlds($Fid);
     $EconVal = 0;
+    $EccTxt = "\nEconomy:\n";
     $OutPosts = $AstMines = $Embassies = $OtherEmbs = 0;
     foreach ($Worlds as $W) {
       $H = Get_ProjectHome($W['Home']);
-      $EconVal += Recalc_Economic_Rating($W,$H,$F);
+      $PH = Project_Home_Thing($H);
+      $Name = $PH['Name'];
+      $ECon = $H['Economy'] = Recalc_Economic_Rating($H,$W,$Fid);
+      $ECon = ceil(($ECon - $H['Devastation'])*$H['EconomyFactor']/100);
+      
+      $EccTxt .= "$Name: $ECon " . ($H['Devastation']? " after devastation effect of -" . $H['Devastation'] : "");
+      if ($H['EconomyFactor'] < 100) {
+        $EccTxt .= " - at " . $H['EconomyFactor'] . "%\n";
+      } else if ($H['EconomyFactor'] > 100) {
+        $EccTxt .= " - at " . $H['EconomyFactor'] . "%\n";
+      }
+      $EconVal += $ECon;
     }
     $Things = Get_Things($Fid);
     foreach ($Things as $T) {
+      if (empty($TTypes[$T['Type']])) continue;
       switch ($TTypes[$T['Type']]['Name']) {
       case "Outpost":
         $OutPosts ++;
@@ -273,10 +287,58 @@ function Economy() {
       $OtherEmbs++;
     }
     
-//    Income = 10*(Econval +extras -Logisitical enalty)
-    // Foriegn embassies
+    if ($OutPosts) {
+      $EccTxt .= "Plus $OutPosts Outposts worth 1 each\n";
+      $EconVal += $OutPosts;
+    }
+    if ($AstMines) {
+      $AstVal = Has_Tech($Fid,'Deep Space Construction');
+      if (Has_Tech($Fid,'Advanced Asteroid Mining')) $AstVal*=2;
+      $EccTxt .= "Plus $AstMines Asteroid Mines worth $AstVal each\n";
+      $EconVal += $AstMines*$AstVal;
+    }
+    if ($Embassies) {
+      $EccTxt .= "Plus $Embassies of your Embassies worth 1 each\n";
+      $EconVal += $Embassies;    
+    }
+    if ($OtherEmbs) {
+      $EccTxt .= "Plus $OtherEmbs of other Embassies worth 1 each\n";
+      $EconVal += $OtherEmbs;    
+    }
+    
+    $Logistics = [0,0,0]; // Ship, Army, Intelligence  
+    foreach ($Things as $T) {
+      if (empty($T['Type'])) continue;
+      $Props = $TTypes[$T['Type']]['Properties'];
+      if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
+        if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $T['Level'];
+        if ($Props & THING_HAS_GADGETS) $Logistics[2] += $T['Level'];
+        if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $T['Level'];
+      };
+    }
+
+  
+    $LogAvail = LogsticalSupport($Fid);
+    $LogCats = ['Ships','Armies','Agents'];
+    
+    foreach ($LogCats as $i => $n) {
+      if ($Logistics[$i]) {
+        $pen = min(0,$LogAvail[0]-$Logistics[0]);
+        if ($pen < 0) {
+          $EconVal += $pen;
+          $EccTxt .= "Logistical penalty of $pen for $n\n";
+        }
+      }
+    }
+    
+    $EccTxt .= "Total Economy is $EconVal worth " . $EconVal*10;
+    Spend_Credit($Fid, -$EconVal*10, "Turn Income");
+    TurnLog($Fid,$EccTxt);
+    echo "Done Economy for " . $F['Name'] . "<br>";
+    
   }
-}  
+  return true;
+}
 
 function LoadTroops() {
   echo "Load Troops	is currently Manual<p>";
@@ -452,6 +514,12 @@ function GroundCombat() {
   return true;
 }
 
+
+function Devastation() {
+  echo "Devastation is currently Manual<p>";
+  return true;
+
+}
 
 function ProjectProgress() {
   // Mark progress on all things, if finished change state appropriately 
@@ -760,13 +828,13 @@ function Do_Turn() {
              'Agents Start Missions', 'Spare', 'Spare', 'Economy', 'Spare', 'Spare', 'Load Troops', 'Spare', 
              
              'Spare','Movements', 'Spare', 'Spare', 'Meetups', 'Spare', 'Spare', 'Spare', 
-             'Space Combat', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Spare', 'Spare', 'Project Progress', 
+             'Space Combat', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Devastation', 'Spare', 'Project Progress', 
              'Spare','Espionage Missions Complete', 'Spare', 'Counter Espionage','Spare', 'Finish Shakedowns', 'Spare', 'Projects Complete', 
              'Spare', 'Spare', 'Spare', 'Generate Turns', 'Spare', 'Tidy Up Movements', 'Recalc Project Homes', 'Finish Turn Process'];
   $Coded =  ['Coded','No','No','Coded','Coded','No','Coded', 'No',
              'No','No','No','No','Partial','No','No','No',
              'No','No','No','No','No','No','No','No',
-             'No','No','No','No','No','No','No','No',
+             'No','No','No','Coded','No','No','No','No',
              
              'No','Coded','No','No','No','No','No','No',
              'No','No','No','No','No','No','No','Coded',

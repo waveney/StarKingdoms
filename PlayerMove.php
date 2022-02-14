@@ -63,9 +63,7 @@ return;
       if (isset($FS1['ScanLevel'])) { 
         echo "Already seen system " . $L['System1Ref'] . " at level " . $FS1['ScanLevel'];
       } else {
-        $FS1['ScanLevel'] = 1;
         echo "System " . $L['System1Ref'] . " is new give a survey report";
-        Put_FactionSystem($FS1);
       }
       echo "<p>";
         
@@ -73,9 +71,7 @@ return;
       if (isset($FS2['ScanLevel'])) { 
         echo "Already seen system " . $L['System2Ref'] . " at level " . $FS2['ScanLevel'];
       } else {
-        $FS2['ScanLevel'] = 0;
         echo "System " . $L['System2Ref'] . " is new give a survey report";
-        Put_FactionSystem($FS2);
       }
       Check_System($Fid,$FS1,$FS2,$Lid);
       Check_System($Fid,$FS2,$FS1,$Lid);

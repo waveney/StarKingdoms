@@ -36,9 +36,16 @@
       case 'Delete': 
         db_delete('Projects',$Prid);
         echo "<h1>Deleted</h1>";
-        echo "<h2><a href=ProjDisp.php?id=$Fid>Back to Project Display</a> , <a href=ProjList.php?F=$Fid>Back to Project List</a></h2>\n";
+        echo "<h2><a href=ProjDisp.php>Back to Project Display</a> , <a href=ProjList.php?F=$Fid>Back to Project List</a></h2>\n";
         dotail();
         exit;
+      case 'Cancel':
+        $P['Status'] = 3;
+        Put_Project($P);
+        echo "<h1>Cancelled</h1>";
+        echo "<h2><a href=ProjDisp.php>Back to Project Display</a> , <a href=ProjList.php?F=$Fid>Back to Project List</a></h2>\n";
+        dotail();
+        exit;       
     }
   }
 

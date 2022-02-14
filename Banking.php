@@ -77,7 +77,7 @@
   $FTid = $FT['id'];
   if ($Turn >= $GAME['Turn']) Register_Autoupdate('FactionTurn',$FTid);
   echo fm_hidden('Turn',$Turn);
-  echo "Current credits: " . $FACTION['Credits'] . "<br>\n";
+  echo "<h2>Current credits: " . $FACTION['Credits'] . "</h2>\n";
   
   if ($Turn > 1) echo "<input type=Submit Name=ACTION Value='Prev Turn'>";
   echo "<input type=Submit Name=ACTION Value='Current Turn'>";
@@ -86,8 +86,9 @@
   echo "<h2>Recent transactions - Look back <input type=number size=3 style='width:30px;' min=0 name=LookBack id=LookBack value=$LookBack  onchange=this.form.submit() > Turns</h2>";
   $Creds = Get_CreditLogs($Fid,max($Turn-$LookBack,0),$Turn);
   echo "<div class=CLwrap><table class=CreditLog>";
-  echo "<thead><tr><td class=CLTurn>Turn<td class=CLCredit>Start<td class=CLCredit>Amount<td class=CLCredit>end<td class=CLWhat>What</thead>\n<tbody>";
-  foreach ($Creds as $C) echo "<tr><td class=CLTurn>" . $C['Turn'] . "<td class=CLCredit>" . $C['StartCredits'] . "<td class=CLCredit>" . $C['Amount'] . 
+  echo "<thead><tr><td class=CLTurn>Turn<td class=CLCredit>Start<td class=CLCredit>Credit<td class=CLCredit>Debit<td class=CLCredit>end<td class=CLWhat>What</thead>\n<tbody>";
+  foreach ($Creds as $C) echo "<tr><td class=CLTurn>" . $C['Turn'] . "<td class=CLCredit>" . $C['StartCredits'] . "<td class=CLCredit>" . 
+                       ($C['Amount']<0 ? -$C['Amount'] . "<td class=CLCredit>" : "<td class=CLCredit>" . $C['Amount']) . 
                       "<td class=CLCredit>" . $C['EndCredits'] . "<td class=CLWhat>" . $C['What'] . "\n";
   echo "</tbody></table></div>\n";
   
@@ -99,19 +100,21 @@
 //var_dump($Banks);
 
   if ($Banks) {
-    echo "Cancel will stop the transfer.  To edit it click Your Reference.<br>";
-    echo "<table border><tr><td>Recipient<td>Amount<td>Your Reference<td>Start Turn<td>Last Turn\n";
+    if ($Turn >= $GAME['Turn']) echo "Cancel will stop the transfer.  To edit it click Your Reference.<br>";
+    echo "<table border><tr><td>Recipient<td>Ammount<td>Your Reference<td>Start Turn<td>Last Turn\n";
     if ($Turn >= $GAME['Turn']) echo "<td>Actions\n";
     foreach ($Banks as $B) {
-      echo "<tr><td>" . $FactList[$B['Recipient']] . "<td>" . $B['Amount'];
+      echo "<tr><td>" . $FactList[$B['Recipient']] . "<td>" . $B['Amount'] ;
       echo "<td><a href=BankEdit.php?id=" . $B['id'] . ">" . $B['YourRef'] . "</a>";
       echo "<td>" . $B['StartTurn'];
       echo "<td>" . ($B['EndTurn']? $B['EndTurn']: $B['StartTurn']);
       if ($Turn >= $GAME['Turn']) echo "<td><input type=submit name=DELETE" . $B['id'] . " value=Cancel >";
     }
     echo "</table><p>\n";
+  } else if ($Turn >= $GAME['Turn'])  {
+    echo "None have been set up for turn $Turn.<p>\n";
   } else {
-    echo "None have been setup.<p>\n";
+    echo "None were set up on turn $Turn.<p>\n";
   }
   
   if (empty($_REQUEST['StartTurn'])) $_REQUEST['StartTurn'] = $Turn;

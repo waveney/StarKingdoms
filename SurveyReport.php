@@ -24,7 +24,7 @@
 
 // START HERE
   $GM = Access('GM');
-//  var_dump($_REQUEST);
+//var_dump($_REQUEST);
   if (isset($_REQUEST['N'])) {
     $Sid = $_REQUEST['N'];
     $N=Get_System($Sid);
@@ -116,7 +116,7 @@
   echo "<div class=SReport><h1>Survey Report - $pname</h1>\n";
   if ($GM && $SurveyLevel >= 10) echo "UniqueRef is: " . UniqueRef($Sid) . "<p>";
 
-  if ($SurveyLevel > 0) {
+  if ($SurveyLevel > 2) {
   
   if ($N['Description']) echo $Parsedown->text($N['Description']) . "<p>";
   
@@ -370,7 +370,7 @@
   
   echo "</div>";
   
-  SeeInSystem($Sid,EyesInSystem($Fid,$Sid),0);
+  if ($GM) SeeInSystem($Sid,EyesInSystem($Fid,$Sid),0); // TODO temp fix to prevent leakage before ready
  
   
   if (Access('GM')) echo "<p><h2><a href=SysEdit.php?id=$Sid>Edit System</s></h2>";

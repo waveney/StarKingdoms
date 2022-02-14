@@ -121,7 +121,7 @@
  //   $txt .= "<li><a href=PlayerStates.php>Player States</a>\n";
     $txt .= "<li><a href=TurnActions.php>Turn Actions</a>\n";
     $txt .= "<p>";
-
+    $txt .= "<li><a href=PayFaction.php>Pay Faction</a>\n";
 
     $txt .= "</ul>\n";
   }

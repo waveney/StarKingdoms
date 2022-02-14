@@ -13,7 +13,7 @@ Done
 * User Guide (Partial)
 
 Not Done
-* Economy (Most)
+* Economy (All but GMs payments)
 * Move Armies, move agents
 * Agents - not ready
 * Projects not listed above eg Deep space
@@ -68,4 +68,37 @@ effects of cancelling on projection
 Upgrade data for :
 ThingTypes
 Economy
+
+
+formfill.php:      $Ds = ($type == 'Planet')?Get_DistrictsP($id):Get_DistrictsM($id);
+formfill.php:      $N = Get_District($mtch[2]);
+formfill.php:      $Ds = Get_DistrictsT($id);
+formfill.php:      $N = Get_District($mtch[2]);
+formfill.php:    $N = Get_District($id);
+HomesLib.php:  $Dists = Get_DistrictsAll();
+ProjDisp.php:      $Dists = Get_DistrictsP($H['ThingId']);
+ProjDisp.php:      $Dists = Get_DistrictsM($H['ThingId']);
+ProjDisp.php:      $Dists = Get_DistrictsT($H['ThingId']);
+ProjEdit.php:      $Dists = Get_DistrictsP($H['ThingId']);
+ProjEdit.php:      $Dists = Get_DistrictsM($H['ThingId']);
+ProjEdit.php:      $Dists = Get_DistrictsT($H['ThingId']);
+ProjLib.php:          $Dists = Get_DistrictsP($H['ThingId']);
+ProjLib.php:          $Dists = Get_DistrictsM($H['ThingId']);
+ProjLib.php:          $Dists = Get_DistrictsT($H['ThingId']);
+ProjNew.php:      $Dists = Get_DistrictsP($H['ThingId']);
+ProjNew.php:      $Dists = Get_DistrictsM($H['ThingId']);
+ProjNew.php:      $Dists = Get_DistrictsT($H['ThingId']);
+SurveyReport.php:        $Ds = Get_DistrictsP($Pid);
+SurveyReport.php:            $Ds = Get_DistrictsM($Mid);
+SystemLib.php:  $Ds = Get_DistrictsP($Pid);
+SystemLib.php:  $Ds = Get_DistrictsM($Mid);
+ThingEdit.php:       $Discs = Get_DistrictsT($tid);
+ThingEdit.php:       $Mods = Get_DistrictsT($tid);
+ThingLib.php:    $Ds = Get_DistrictsT($tid);
+ThingLib.php:      $Dists = Get_DistrictsP($H['ThingId']);
+ThingLib.php:      $Dists = Get_DistrictsM($H['ThingId']);
+ThingLib.php:      $Dists = Get_DistrictsT($H['ThingId']);
+ThingLib.php:  $Discs = Get_DistrictsT($otid);
+WorldEdit.php:  $Dists = Get_DistrictsH($H['id']);
+
 

@@ -47,6 +47,8 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Home id</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Whose</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Economy</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Devastation</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Economy Modifier</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Projects</a>\n";
   echo "</thead><tbody>";
 
@@ -57,6 +59,8 @@
     echo "<td><a href=" . (['','PlanEdit.php','MoonEdit.php','ThingEdit.php'][$H['ThingType']]) . "?id=" . $H['ThingId'] . ">" . $H['ThingId'] . "</a>";
     echo "<td>" . $Factions[$H['Whose']]['Name'];
     echo "<td>" . $H['Economy'];
+    echo "<td>" . $H['Devastation'];
+    echo "<td>" . $H['EconomyFactor'];
     echo "<td><a href=ProjDisp.php?id=" . $H['Whose'] . ">Projects</a>\n";
   }
       

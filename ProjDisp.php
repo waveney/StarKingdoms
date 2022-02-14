@@ -171,6 +171,7 @@ exit;
 //var_dump($Projs); echo "<p>";
 
     foreach ($Projs as &$P) {
+      if ($P['Status'] > 2 ) continue; // Cancelled, On Hold or Could not start
 //var_dump($P); echo "<P>";
       $TurnStuff = Get_ProjectTurns($P['id']);
 //
@@ -246,6 +247,7 @@ exit;
             if ($TotProg >= $Pro['Acts']) {
               $Pro['Progress'] = $Pro['Acts'] . "/" . $Pro['Acts'];
               $Pro['Status'] = 'Complete';
+// TODO Future              Project_Finished($P,$t);
             } else {
               $Pro['Progress'] = "$TotProg/" . $Pro['Acts'];
               $Pro['Status'] = 'Ongoing';

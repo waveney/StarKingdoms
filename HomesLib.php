@@ -6,6 +6,7 @@ global $HomeTypes;
 include_once("ProjLib.php");
 
 function Recalc_Project_Homes($Logf=0) {
+  global $GAME;
   echo "<h1>Rebuild Project homes database</h1>";
   $Facts = Get_Factions();
 
@@ -60,7 +61,7 @@ function Recalc_Project_Homes($Logf=0) {
               Put_Planet($P);
             }
           } else {
-            $Dists = Get_DistrictsP($P['id']);
+            $Dists = Get_DistrictsP($P['id'],$GAME['Turn']+100);
             $Homeless = 1;
             if ($Dists) {
               foreach ($KnownHomes as &$H) {
@@ -118,7 +119,7 @@ function Recalc_Project_Homes($Logf=0) {
                 Put_Moon($M);
                 
               } else {
-                $Dists = Get_DistrictsM($M['id']);
+                $Dists = Get_DistrictsM($M['id'],$GAME['Turn']+100);
 //var_dump($Dists);
                 $Homeless = 1;
                 if ($Dists) {
@@ -227,7 +228,9 @@ function Show_Home($Hid) {
   echo "<tr><td>Id: $Hid";
   echo "<tr><td>Home type:<td>" . fm_select($HomeTypes,$H,'ThingType');
   echo "<tr>" . fm_number('Id of thing', $H,'ThingId');
-  echo "<tr>" . fm_number('Economy',$H,'Economy') . "<td>Not used yet\n";
+  echo "<tr>" . fm_number('Economy',$H,'Economy');
+  echo "<tr>" . fm_number('Devastation',$H,'Devastation');
+  echo "<tr>" . fm_number('Economy % Modifier',$H,'EconomyFactor') . "<td>For example during an invasion\n";
   if ($H['ThingType'] != 3) {
     $Systems = Get_Systems();
     $SysNames = [0=>''];
@@ -303,5 +306,34 @@ function Recalc_Worlds() {
   
   echo "Worlds recalculted<p>\n";
 }
+
+function Recalc_Economic_Rating(&$H,&$W,$Fid,$Turn=0) {
+  $Dists = Get_DistrictsH($H['id'],$Turn);
+  $DTs = Get_DistrictTypes();
+
+  $NumCom = 0;
+  $NumPrime = 0;
+  if (!$Dists) return 0;
+  foreach ($Dists as $D) {
+    if ($D['Type'] == 1) $NumCom = $D['Number'];
+    if ($DTs[$D['Type']]['Props'] & 1) $NumPrime += $D['Number'];
+  }
+  return (Has_Trait($Fid,'No customers')?($NumPrime - $NumCom):$NumPrime)*$NumCom*2 + min($W['Minerals'],$NumPrime);  
+}
+
+function Project_Home_Thing(&$H) {
+  switch ($H['ThingType']) {
+    case 1: // Planet
+      return Get_Planet($H['ThingId']);
+          
+    case 2: // Moon
+      return Get_Moon($H['ThingId']);
+    
+    case 3: // Thing
+      return Get_Thing($H['ThingId']);
+    
+  }
+}
+
 
 ?>

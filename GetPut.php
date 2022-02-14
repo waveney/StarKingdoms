@@ -353,42 +353,48 @@ function Put_District(&$now) {
   }  
 }
 
-function Get_DistrictsP($Pid) {
-  global $db,$GAMEID;
+function Get_DistrictsP($Pid,$Turn=0) {
+  global $db,$GAMEID,$GAME;
   $Ts = [];
+//  $res = $db->query("SELECT * FROM Districts WHERE HostType=1 AND HostId=$Pid AND TurnStart<=" . ($Turn? $Turn : $GAME['Turn']) . "ORDER BY Type, TurnStart");
   $res = $db->query("SELECT * FROM Districts WHERE HostType=1 AND HostId=$Pid ORDER BY Type");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['Type']] = $ans;
   return $Ts;
 }
 
-function Get_DistrictsM($Mid) {
-  global $db,$GAMEID;
+function Get_DistrictsM($Mid,$Turn=0) {
+  global $db,$GAMEID,$GAME;
   $Ts = [];
+//  $res = $db->query("SELECT * FROM Districts WHERE HostType=2 AND HostId=$Mid AND TurnStart<=" . ($Turn? $Turn : $GAME['Turn']) . "ORDER BY Type, TurnStart");
   $res = $db->query("SELECT * FROM Districts WHERE HostType=2 AND HostId=$Mid ORDER BY Type");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['Type']] = $ans;
   return $Ts;
 }
 
-function Get_DistrictsT($Tid) {
-  global $db,$GAMEID;
+function Get_DistrictsT($Tid,$Turn=0) {
+  global $db,$GAMEID,$GAME;
   $Ts = [];
+//  $res = $db->query("SELECT * FROM Districts WHERE HostType=3 AND HostId=$Tid AND TurnStart<=" . ($Turn? $Turn : $GAME['Turn']) . "ORDER BY Type, TurnStart");
   $res = $db->query("SELECT * FROM Districts WHERE HostType=3 AND HostId=$Tid ORDER BY Type");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['Type']] = $ans;
   return $Ts;
 }
 
-function Get_DistrictsH($Hid) {
-  global $db,$GAMEID;
+function Get_DistrictsH($Hid,$Turn=0) {
+  global $db,$GAMEID,$GAME;
   $Ts = [];
-  $res = $db->query("SELECT D.* FROM Districts D, ProjectHomes H WHERE D.HostType=H.ThingType AND H.id=$Hid AND D.HostId=H.ThingId ORDER BY Type");
+/*  $res = $db->query("SELECT D.* FROM Districts D, ProjectHomes H WHERE D.HostType=H.ThingType AND H.id=$Hid AND D.HostId=H.ThingId " . 
+                    " AND TurnStart<=" . ($Turn? $Turn : $GAME['Turn']) . "ORDER BY Type, TurnStart");*/
+  $res = $db->query("SELECT D.* FROM Districts D, ProjectHomes H WHERE D.HostType=H.ThingType AND H.id=$Hid AND D.HostId=H.ThingId " . 
+                    "ORDER BY Type");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['Type']] = $ans;
   return $Ts;
 }
 
-function Get_DistrictsAll() {
+function Get_DistrictsAll($Turn=0) {
   global $db,$GAMEID;
   $Ts = [];
-  $res = $db->query("SELECT * FROM Districts WHERE GameId=$GAMEID ORDER BY HostId");
+  $res = $db->query("SELECT * FROM Districts WHERE GameId=$GAMEID ORDER BY HostId, Type, TurnStart");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['Type']] = $ans;
   return $Ts;
 }
@@ -1110,7 +1116,7 @@ function Put_CreditLog(&$now) {
 function Get_CreditLogs($who,$From=0,$To=10000) {
   global $db,$GAMEID;
   $Ts = [];
-  $res = $db->query("SELECT * FROM CreditLog WHERE Whose=$who AND Turn>=$From AND Turn<=$To");
+  $res = $db->query("SELECT * FROM CreditLog WHERE Whose=$who AND Turn>=$From AND Turn<=$To ORDER BY id DESC");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
   return $Ts;
 }
@@ -1200,5 +1206,23 @@ function Get_Worlds($Fid=0) {
 }
 
 
+// Future Tech
+function Get_FutureTech($Fid,$tid,$lvl) {
+  global $db;
+  $res = $db->query("SELECT * FROM FutureTechLevels WHERE FactionId=$Fid AND Tech_Id=$tid AND Level=$lvl");
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
+  return ['FactionId'=>$Fid,'Tech_Id'=>$tid,'Level'=>$lvl];
+}
+
+function Put_FutureTech(&$now) {
+  global $db,$GAMEID;
+  if (isset($now['id'])) {
+    $e=$now['id'];
+    $Cur = Get_FutureTech($e);
+    return Update_db('FutureTechLevels',$Cur,$now);
+  } else {
+    return $now['id'] = Insert_db ('FutureTechLevels', $now );
+  }
+}
 
 

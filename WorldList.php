@@ -45,6 +45,8 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Minerals</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Current<br>Economy</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Devastation</a>\n";
+  if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Economy<br>Modifier</a>\n";
   if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Whose</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Relative<br>Importance</a>\n";
 
@@ -78,8 +80,8 @@
     $H = Get_ProjectHome($W['Home']);
     
     
-    echo "<td>$type<td><a href=WorldEdit.php?id=" . $W['id'] . ">$Name</a><td>" . $W['Minerals'] . "<td>" . $H['Economy'];
-    if ($GM) echo "<td>" . $Facts[$W['FactionId']]['Name'];
+    echo "<td>$type<td><a href=WorldEdit.php?id=" . $W['id'] . ">$Name</a><td>" . $W['Minerals'] . "<td>" . $H['Economy'] . "<td>" . $H['Devastation'];
+    if ($GM) echo "<td>" . $H['EconomyFactor'] . "<td>" . $Facts[$W['FactionId']]['Name'];
     echo "<td>" . $W['RelOrder'] . "\n";
   }
   echo "</table></div>\n";

@@ -119,9 +119,10 @@ function Ships() {
 }
 
 function Spend_Credit($Who,$Amount,$Why) { // Ammount is negative to gain credits
+  global $GAME;
   $Fact = Get_Faction($Who);
   $StartC = $Fact['Credits'];
-  $CR = ['Whose'=>$Who, 'StartCredits'=>$StartC, 'Amount'=>$Amount, 'What'=>$Why];
+  $CR = ['Whose'=>$Who, 'StartCredits'=>$StartC, 'Amount'=>$Amount, 'What'=>$Why, 'Turn'=>$GAME['Turn']];
   if ($StartC-$Amount < 0) {
     $CR['Status'] = 0;
     Put_CreditLog($CR);

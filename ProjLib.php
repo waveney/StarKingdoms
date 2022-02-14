@@ -12,7 +12,7 @@ function Rush_Cost($who) {
 }
 
 global $Project_Status;
-$Project_Status = [0=>'Live',1=>'Started', 2=>'Finished',3=>'Cancelled', 4=>'On Hold', 5=>'Not Started'];
+$Project_Status = [0=>'Planned',1=>'Started', 2=>'Finished',3=>'Cancelled', 4=>'On Hold', 5=>'Not Started'];
 
 function  Where_Is_Home($PH,$Set=0) {
   $Home = Get_ProjectHome($PH);
@@ -44,6 +44,100 @@ function  Where_Is_Home($PH,$Set=0) {
   }
 }
 
+function Project_Finished(&$P,$Turn) {  // CODE ON HOLD
+  global $GAME,$GAMEID;
+  $ProjTypes = Get_ProjectTypes();
+  switch ($ProjTypes[$P['Type']]['Name']) {
+    case 'Construction':
+      $H = Get_ProjectHome($P['Home']);
+      switch ($H['ThingType']) {
+        case 1: // Planet
+          $PH = Get_Planet($H['ThingId']);
+          $Dists = Get_DistrictsP($H['ThingId']);
+          break;
+        case 2: // Moon
+          $PH = Get_Moon($H['ThingId']);
+          $Dists = Get_DistrictsM($H['ThingId']);
+          break;
+        case 3: // Thing
+          $PH = Get_Thing($H['ThingId']);
+          $Dists = Get_DistrictsT($H['ThingId']);
+          break;
+        }
+// TODO how to forward project these?
+      foreach($Dists as $D) {
+        if ($D['Type'] == $P['ThingType']) {
+          $D['Number']++;
+          Put_District($D);
+          TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");         
+          break 2;
+        }
+      }
+      $D = ['HostType'=>$H['ThingType'], 'HostId'=>$PH['id'], 'Type'=>$P['ThingType'], 'Number'=>1, 'GameId' => $GAMEID];
+      Put_District($D);
+      break;
+      
+    case 'Research Planetary Construction':
+    case 'Research Core Technology':
+    case 'Research Supplemental Technology':
+    case 'Research Ship Construction':
+    case 'Research Supplemental ship Tech':
+    case 'Research Military Organisation':
+    case 'Research Supplemental Army Tech':
+    case 'Research Intelligence Operations':
+    case 'Research Supplemental Intelligence Tech':
+      $Tid = $P['ThingType'];
+      $CTech = Get_Faction_TechFT($Fid,$Tid);
+      $Tech = Get_Tech($Tid);
+      if ($Tech['Cat'] == 0) { // Core
+        if ($CTech['Level'] < $P['Level']) {
+          $N = Get_FutureTech($P['Whose'], $Tid, $P['Level']);
+          $N['StartTurn'] = $Turn;
+          Put_FutureTech($N);
+          break;
+        }
+      } else if ($CTech['Level'] == 0) { // Supp
+        $CTech['Level'] = 1;
+        $CTech['StartTurn'] = $Turn;
+        Put_Faction_Tech($CTech);
+        break;
+      }
+      break;
+      
+    case 'Train Army':
+    case 'Train Agent':
+    case 'Construct Ship':
+      $T = Get_Thing($P['ThingId']);
+      if ($T['BuildState'] < 2) { // Planing/building
+        $T['TurnBuilt'] = $Turn;
+        Put_Thing($T);
+      }
+      break;
+        
+    case 'Construct Warp Gate':
+    case 'Decommission Ship':
+    case 'Build Outpost':
+    case 'Build Asteroid Mining Facility':
+    case 'Build Minefield':
+    case 'Build Orbital Shipyard':
+    case 'Build Space Station':
+    case 'Extend Space Station':
+    case 'Deep Space Sensors':
+    case 'Build Advanced Asteroid Mining Facility':
+      // TODO these are not coded for yet
+
+    case 'Re-equip and Reinforce':
+    case 'Share Technology':
+    case 'Analyse':
+    case 'Decipher Alien Language':
+    case 'Rebuild and Repair':  
+    case 'Refit and Repair': 
+    default:
+      break;  // No action
+    
+
+    }
+}
 
 
 ?>
