@@ -136,3 +136,8 @@ table td .GreenProject {
   background-color:LemonChiffon;
   text-align:right;
 }
+
+button.projtype  {
+  background-color:lightblue;
+  padding:3px;
+}

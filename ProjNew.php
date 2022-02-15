@@ -36,8 +36,11 @@
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
       case 'NEWSHIP': 
+        $Limit = Has_Tech($Fid,'Ship Construction');
       case 'NEWARMY': 
+        if ($_REQUEST['ACTION'] == 'NEWARMY') $Limit = Has_Tech($Fid,'Military Organisation');
       case 'NEWAGENT': 
+         if ($_REQUEST['ACTION'] == 'NEWAGENT') $Limit = Has_Tech($Fid,'Intelligence Operations');
         $Ptype = $_REQUEST['p'];
         $Turn = $_REQUEST['t'];
         $Hi = $_REQUEST['Hi'];
@@ -58,17 +61,22 @@
         }
         
         $NameList = [];
-        foreach ($Things as $T) { 
+        foreach ($Things as $T) {
+          if ($T['Level'] > $Limit) continue;
           $pc = Proj_Costs($T['Level']);        
           $NameList[$T['id']] = $T['Name'] . (empty($T['Class'])?'': ", a " . $T['Class']) . " ( Level " . $T['Level'] . " ); $Place;" .
             "Cost: " . $pc[1] .  " Needs " . $pc[0] . " progress'>";
           }
         
-        echo "<h2>Select a deign to make</h2>";
-        echo "If it is in planning, you are build that, if already built then it will be a copy.<br>";
+        if ($NameList) {
+          echo "<h2>Select a deign to make</h2>";
+          echo "If it is in planning, you are build that, if already built then it will be a copy.<br>";
         
-        echo "<form method=post action=ProjDisp.php?ACTION=NEW&id=$Fid&p=$Ptype&t=$Turn&Hi=$Hi&Di=$Di>";
-        echo fm_select($NameList,$_REQUEST,'ThingId',1," onchange=this.form.submit()") . "\n<br>";
+          echo "<form method=post action=ProjDisp.php?ACTION=NEW&id=$Fid&p=$Ptype&t=$Turn&Hi=$Hi&Di=$Di>";
+          echo fm_select($NameList,$_REQUEST,'ThingId',1," onchange=this.form.submit()") . "\n<br>";
+        } else {
+          echo "<h2>Sorry you do not have any plans for these - go to <a href=ThingPlan.php?F=$Fid>Thing Planning</a> first</h2>";
+        }
         echo "<h2><a href=ProjDisp.php?id=$Fid>Cancel</a></h2>\n";
         dotail();
         
@@ -144,7 +152,7 @@
 
 // echo "ZZ: $Where<p>";    
     
-// var_dump($HDists);
+//var_dump($HDists);
 
   echo "<form method=post action=ProjNew.php>";
   echo fm_hidden('t',$Turn) . fm_hidden('Hi',$Hi) . fm_hidden('Di',$Di);
@@ -157,16 +165,22 @@
     echo "<h2>Select Construction Project:</h2><p>";
       $DTs = Get_DistrictTypes();
       $DNames = [];
+//var_dump($HDists[$Hi]);
       foreach ($DTs as $DT) {
-        if ($DT['BasedOn'] == 0 || Has_tech($Fid,$DT['BasedOn'], $Turn)) {
+        if (eval("return " . $DT['Gate'] . ";" )) { // ($DT['BasedOn'] == 0 || Has_tech($Fid,$DT['BasedOn'], $Turn)) {
           $DNames[$DT['id']] = $DT['Name'];
           
           $Lvl = 0;
           
-          foreach ($HDists[$Hi] as $D) if ($D['Type'] == $DT['id']) {
-            $Lvl = $D['Number'];
-            break;
+          foreach ($HDists[$Hi] as $D) {
+//echo "<br>Checking "; var_dump($D);
+            if ($D['Type'] == $DT['id']) {
+              $Lvl = $D['Number'];
+              break;
+            }
           }
+          
+ //echo "Have $Lvl of " . $DT['Name'] . "<P>";
 // TODO bug if you already have that level in the pipeline - Add check to Turns Ready          
           $Lvl++;
           $pc = Proj_Costs($Lvl);

@@ -65,7 +65,7 @@ function Player_Page() {
     echo "<li><a href=MapFull.php>Faction Map</a>\n";
     if (Has_Tech($FACTION['id'],'Astral Mapping')) echo "<li><a href=MapFull.php?Hex>Faction Map</a> - with spatial location of nodes\n";
     echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";
-    echo "<li>" . ($FF? "<a href=WhatCanIC.php>What can I See?</a>" : "What can I See?") . "\n";
+    echo "<li>" . ($FF? "<a href=WhatCanIC.php>What Things can I See?</a>" : "What Things can I See?") . "\n";
     echo "<li>" . ($FF? "<a href=WorldList.php>Worlds and Colonies</a>" : "Worlds and Colonies") . " - High Level info only<p>\n";  
     echo "<li>" . ($FF? "<a href=ProjDisp.php>Worlds and Things with Projects</a>" : "Worlds and Things with Projects") . "\n";
     echo "<li>" . ($FF? "<a href=PThingList.php>List of Things</a>" : "List of Things") . " List of Things (Ships, Armies, Agents, Space stations etc)";
@@ -101,16 +101,14 @@ function Player_Page() {
 
 function Has_Trait($fid,$Name) {
   global $FACTION;
-  
   if ($fid == 0) {
     if (!isset($FACTION)) return false;
-    if ($FACTION['Trait1'] == $Name || $FACTION['Trait2'] == $Name || $FACTION['Trait2'] == $Name) return true;
+    if ($FACTION['Trait1'] == $Name || $FACTION['Trait2'] == $Name || $FACTION['Trait3'] == $Name) return true;
     return false;
   }
   $Fact = Get_Faction($fid);
-  if ($Fact['Trait1'] == $Name || $Fact['Trait2'] == $Name || $Fact['Trait2'] == $Name) return true;
-  return false;
-  
+  if ($Fact['Trait1'] == $Name || $Fact['Trait2'] == $Name || $Fact['Trait3'] == $Name) return true;
+  return false; 
 }
 
 function Ships() {

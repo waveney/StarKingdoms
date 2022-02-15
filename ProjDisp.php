@@ -39,6 +39,8 @@ exit;
   
   dostaffhead("Display Projects for faction",["js/ProjectTools.js"]);
   
+  $OpenHi = $OpenDi = -99;
+  
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
       case 'NEW': 
@@ -76,6 +78,8 @@ exit;
           $Pro['id'] = $OldPro['id'];          
         }
 
+        $OpenHi = $Hi;
+        $OpenDi = $Di;
         Put_Project($Pro);
       break;
       
@@ -142,24 +146,27 @@ exit;
     
     //TODO Construction and Districts... 
 
-    $Dists[] = ['HostType'=>-1, 'HostId' => $PH['id'], 'Type'=> -1, 'Number'=>0, 'id'=>-1];
+    $Dists[] = ['HostType'=>-1, 'HostId' => $PH['id'], 'Type'=> -1, 'Number'=>0, 'id'=>-$PH['id']];
     $back = "style='background:" . $HomeColours[$PHx-1] . ";'";
     $Headline1 .= "<th id=PHH$PHx $back><button type=button class=ProjHome id=PHome$Hi onclick=ToggleHome($Hi)>" . $PH['Name'] . "</button>";
     if ($FirstHome == 0) $FirstHome=$Hi;
     
     $District_Type = [];
     foreach ($Dists as $D) {
+
+      
       if ($D['Type'] > 0 && (($DistTypes[$D['Type']]['Props'] &2) == 0)) continue;
       if ($D['Type'] < 0 && $PH['Type'] != $Faction['Biosphere'] && Has_Tech($Fid,3)<2 ) continue;
       $Di = $D['id'];
-      $Headline2[] = "<th class='PHStart Group$Di Home$Hi' id=PHDist$Hi:$Di $back hidden><b>+</b>" .
+      $Hide = ($Hi == $OpenHi && $Di == $OpenDi? "" : "hidden");
+      $Headline2[] = "<th class='PHStart Group$Di Home$Hi' id=PHDist$Hi:$Di $back $Hide><b>+</b>" .
         "<th $back class='PHName  Home$Hi'><button type=button onclick=Toggle('Group$Di')>" . 
         ($D['Type'] > 0 ? $DistTypes[$D['Type']]['Name'] : 'Construction') . "</button>" .
-        "<th $back class='PHLevel Group$Di Home$Hi'id=PHLevel$Hi:$Di hidden>Lvl" .
-        "<th $back class='PHCost Group$Di Home$Hi' id=PHCost$Hi:$Di hidden>Cost" .
-        "<th $back class='PHRush Group$Di Home$Hi' id=PHRush$Hi:$Di hidden>Rush" .
-        "<th $back class='PHProg Group$Di Home$Hi' id=PHProg$Hi:$Di hidden>Prog" .
-        "<th $back class='PHStatus Group$Di Home$Hi' id=PHStatus$Hi:$Di hidden>Status";
+        "<th $back class='PHLevel Group$Di Home$Hi'id=PHLevel$Hi:$Di $Hide>Lvl" .
+        "<th $back class='PHCost Group$Di Home$Hi' id=PHCost$Hi:$Di $Hide>Cost" .
+        "<th $back class='PHRush Group$Di Home$Hi' id=PHRush$Hi:$Di $Hide>Rush" .
+        "<th $back class='PHProg Group$Di Home$Hi' id=PHProg$Hi:$Di $Hide>Prog" .
+        "<th $back class='PHStatus Group$Di Home$Hi' id=PHStatus$Hi:$Di $Hide>Status";
      
       $District_Type[$D['Type']] = $D['Number'];
       $Dis[$Hi][] = $D;
@@ -340,11 +347,12 @@ exit;
       $Hi = $H['id'];
       if (isset($Dis[$Hi])) foreach($Dis[$Hi] as $Dix) {
         $Di = $Dix['id'];
+        $Hide = ($Hi == $OpenHi && $Di == $OpenDi? "" : "hidden");
 //echo "Doing $Hi - $Di<br>";
         // TODO ids need setting...
       // TODO Warning
       
-        echo "<td $BG id=ProjS$Turn:$Hi:$Di class='PHStart Group$Di Home$Hi' hidden>";
+        echo "<td $BG id=ProjS$Turn:$Hi:$Di class='PHStart Group$Di Home$Hi' $Hide>";
         if ($Turn >= $GAME['Turn']) {
           $Warn = '';
           if (isset($Proj[$Turn - 1 ][$Hi][$Di]['Status']) && ($Proj[$Turn - 1 ][$Hi][$Di]['Status'] == 'Started' || $Proj[$Turn - 1][$Hi][$Di]['Status'] == 'Ongoing')) {
@@ -359,24 +367,24 @@ exit;
           $PN = $Proj[$Turn][$Hi][$Di]['id'];
           echo "<td $BG id=ProjN$Turn:$Hi:$Di class='PHName Home$Hi'><a href=ProjEdit.php?id=" . $Proj[$Turn][$Hi][$Di]['id'] . ">" . 
                 $Proj[$Turn][$Hi][$Di]['Name'] . "</a>";
-          echo "<td $BG id=ProjL$Turn:$Hi:$Di class='PHLevel Group$Di Home$Hi' hidden>" . $Proj[$Turn][$Hi][$Di]['Level'];
-          echo "<td $BG id=ProjC$Turn:$Hi:$Di class='PHCost Group$Di Home$Hi' hidden>" . $Proj[$Turn][$Hi][$Di]['Cost'];
-          echo "<td $BG id=ProjR$Turn:$Hi:$Di class='PHRush Group$Di Home$Hi' hidden>" . (($Turn < $GAME['Turn'])?$Proj[$Turn][$Hi][$Di]['Rush'] : 
+          echo "<td $BG id=ProjL$Turn:$Hi:$Di class='PHLevel Group$Di Home$Hi' $Hide>" . $Proj[$Turn][$Hi][$Di]['Level'];
+          echo "<td $BG id=ProjC$Turn:$Hi:$Di class='PHCost Group$Di Home$Hi' $Hide>" . $Proj[$Turn][$Hi][$Di]['Cost'];
+          echo "<td $BG id=ProjR$Turn:$Hi:$Di class='PHRush Group$Di Home$Hi' $Hide>" . (($Turn < $GAME['Turn'])?$Proj[$Turn][$Hi][$Di]['Rush'] : 
                "<input type=number id=Rush$Turn:$PN name=Rush$Turn:$PN oninput=RushChange($Turn,$PN,$Hi,$Di," . 
                $Proj[$Turn][$Hi][$Di]['MaxRush'] . ") value=" . $Proj[$Turn][$Hi][$Di]['Rush'] .
                " min=0 max=" . $Proj[$Turn][$Hi][$Di]['MaxRush'] .">" );
-          echo "<td $BG id=ProjP$Turn:$Hi:$Di class='PHProg Group$Di Home$Hi' hidden>" . $Proj[$Turn][$Hi][$Di]['Progress'];
-          echo "<td $BG id=ProjT$Turn:$Hi:$Di class='PHStatus Group$Di Home$Hi' hidden>" . $Proj[$Turn][$Hi][$Di]['Status'] . "";
+          echo "<td $BG id=ProjP$Turn:$Hi:$Di class='PHProg Group$Di Home$Hi' $Hide>" . $Proj[$Turn][$Hi][$Di]['Progress'];
+          echo "<td $BG id=ProjT$Turn:$Hi:$Di class='PHStatus Group$Di Home$Hi' $Hide>" . $Proj[$Turn][$Hi][$Di]['Status'] . "";
           
           $TotCost += $Proj[$Turn][$Hi][$Di]['Cost'] + $Proj[$Turn][$Hi][$Di]['Rush']*Rush_Cost($Fid);
           
         } else {
           echo "<td $BG id=ProjN$Turn:$Hi:$Di class='PHName Home$Hi'>";
-          echo "<td $BG id=ProjL$Turn:$Hi:$Di class='PHLevel Group$Di Home$Hi' hidden>";
-          echo "<td $BG id=ProjC$Turn:$Hi:$Di class='PHCost Group$Di Home$Hi' hidden>";
-          echo "<td $BG id=ProjR$Turn:$Hi:$Di class='PHRush Group$Di Home$Hi' hidden>";
-          echo "<td $BG id=ProjP$Turn:$Hi:$Di class='PHProg Group$Di Home$Hi' hidden>";
-          echo "<td $BG id=ProjT$Turn:$Hi:$Di class='PHStatus Group$Di Home$Hi' hidden>";
+          echo "<td $BG id=ProjL$Turn:$Hi:$Di class='PHLevel Group$Di Home$Hi' $Hide>";
+          echo "<td $BG id=ProjC$Turn:$Hi:$Di class='PHCost Group$Di Home$Hi' $Hide>";
+          echo "<td $BG id=ProjR$Turn:$Hi:$Di class='PHRush Group$Di Home$Hi' $Hide>";
+          echo "<td $BG id=ProjP$Turn:$Hi:$Di class='PHProg Group$Di Home$Hi' $Hide>";
+          echo "<td $BG id=ProjT$Turn:$Hi:$Di class='PHStatus Group$Di Home$Hi' $Hide>";
         }
       }
 //      break;

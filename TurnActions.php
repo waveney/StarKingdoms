@@ -416,7 +416,7 @@ echo "Moving " . $T['Name'] . "<br>";
       $pname = NameFind($N);
       if ($Fid) {
         $FS = Get_FactionSystemFS($Fid, $Sid);
-        if (strlen($FS['Name']) > 1) {
+        if (!empty($FS['Name'])) {
           $Fname = NameFind($FS);
           if ($pname != $Fname) {
             if (strlen($pname) > 1) {
@@ -455,7 +455,7 @@ echo "Moving " . $T['Name'] . "<br>";
       $pname = NameFind($N);
       if ($Fid) {
         $FS = Get_FactionSystemFS($Fid, $Sid);
-        if (strlen($FS['Name']) > 1) {
+        if (!empty(strlen($FS['Name'])S) {
           $Fname = NameFind($FS);
       
           if ($pname != $Fname) {
