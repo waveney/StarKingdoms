@@ -2,7 +2,7 @@ Done
 * Research techs
 * Build Districts
 * Build Ships/Armies/ (Agents?)
-* Move Ships (currently crude)
+* Move Ships 
 * A couple of Traits
 * Auto progress from build/launch/Shakedown/use of Ships
 * Project display and managing
@@ -24,12 +24,10 @@ Not Done
 * Science points (collection or use)
 * Combat
 * Colonisation
-* Move Ships (better)
 * Damaged ships (after Warp Gate)
-* Embassies - need double record keeping
 * Turn Submission Validation 
 * Anomolies
-
+* Survey report levels auttomated setting
 
 Known Faults
 * Where are things in system - messy in some cases

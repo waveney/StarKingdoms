@@ -69,11 +69,11 @@ function Player_Page() {
     echo "<li>" . ($FF? "<a href=WorldList.php>Worlds and Colonies</a>" : "Worlds and Colonies") . " - High Level info only<p>\n";  
     echo "<li>" . ($FF? "<a href=ProjDisp.php>Worlds and Things with Projects</a>" : "Worlds and Things with Projects") . "\n";
     echo "<li>" . ($FF? "<a href=PThingList.php>List of Things</a>" : "List of Things") . " List of Things (Ships, Armies, Agents, Space stations etc)";
-    echo "<li>" . ($FF? "<a href=ThingPlan.php>Plan a Thing</a>" : "Plan a Things") . " Planning Things (Ships, Armies, Agents, Space stations etc)";
+    echo "<li>" . ($FF? "<a href=ThingPlan.php>Plan a Thing</a>" : "Plan a Things") . " Planning Things (Ships, Armies, Agents, Space stations etc)<P>";
     echo "<li>Economy";
-    echo "<li>" . ($FF? "<a href=Banking.php>Banking</a>" : "Banking") . " Sending credits to others and statements";
+    echo "<li>" . ($FF? "<a href=Banking.php>Banking</a>" : "Banking") . " Sending credits to others and statements<p>";
     echo "<li><a href=PlayerTurnTxt.php>Turn Actions Text</a> Logs of all automated actions";
-    echo "<li>" . ($FF? "<a href=Player.php?ACTION=Submit>Submit Turn</a>" : "Submit Turn") . "\n";
+    echo "<li>" . ($FF? "<a href=Player.php?ACTION=Submit>Submit Turn</a>" : "Submit Turn") . "<p>\n";
     echo "<li>" . ($FF? "<a href=FactionEdit.php>Faction Information</a>" : "Faction Information") . " Mostly read only once set up.\n";
     break;
       

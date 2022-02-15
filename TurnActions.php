@@ -786,7 +786,7 @@ function GenerateTurns() {
 function TidyUpMovements() {
   global $db,$GAMEID;
   
-  $res = $db->query("UPDATE Things SET LinkId=0 WHERE LinkId>0 AND GameId=$GAMEID"); // Might be redundant now
+  $res = $db->query("UPDATE Things SET LinkId=0 WHERE LinkId>0 AND GameId=$GAMEID"); 
   
   echo "Movements Tidied Up<p>";  
   return true;

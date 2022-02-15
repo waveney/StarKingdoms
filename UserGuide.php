@@ -66,13 +66,15 @@ Everything you own from ships, armies, warp gates, Embassies etc.<p>
 
 Click on the name to change names, crew, gadgets, notes, description, add an image if you like.<p>
 
-Click on the <b>Move</b> to have that thing move in your next turn. (Not Written Yet)<p>
+Click on the <b>Move</b> to have that thing move in your next turn.  It shows a mini map - click on the link you want<p>
+
+Movement only works for Ships at the moment.<p>
 
 <h2>Plan a Thing</h2>
 Design a Ship/Army/Agent/Space station etc.  You can design illegal things, you just won't be able to make them.<p>
 
 <h2>Economy</h2>
-Not Written<P>
+Player interface to this is not written yet<P>
 
 <h2>Banking</h2>
 Transfer credits to another player or for RP actions.  You can do one off transfers and standing orders - No direct debits.<p>
