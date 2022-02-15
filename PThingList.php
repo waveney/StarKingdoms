@@ -30,6 +30,58 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
 
   dostaffhead("Things",["js/ProjectTools.js"]);
   
+  if (isset($_REQUEST['ACTION'])) {
+    switch ($_REQUEST['ACTION']) {
+    case 'MOVE':
+      $Tid = $_REQUEST['T'];
+      $Lid = $_REQUEST['L'];
+      $T = Get_Thing($Tid);
+      $N = Get_System($T['SystemId']);
+      
+      $L = Get_Link($Lid);
+      $SYS1 = Get_SystemR($L['System1Ref']);
+      $SYS2 = Get_SystemR($L['System2Ref']);      
+      if ($T['SystemId'] == $SYS1['id']) {
+        $T['NewSystemId'] = $SYS2['id'];
+        $FSN = $SYS2;
+      } else {
+        $T['NewSystemId'] = $SYS1['id'];
+        $FSN = $SYS1;
+      }
+      $T['NewLocation'] = 1;
+
+      $NearNeb = $N['Nebulae'];      
+
+      $Known = 1;
+      // Handle link knowledge - KLUDGE 
+      $FL = Get_FactionLink($Fid,$Lid);
+      $FarNeb = $FSN['Nebulae'];
+      $FS = Get_FactionSystemFS($Fid,$FSN['id']);
+
+      if (isset($FL['known']) && $FL['known']) {
+      } else if ($NearNeb == 0) {
+          if (isset($FS['id'])) {
+            if ($FarNeb != 0 && $FS['NebScanned'] < $FarWeb) {
+              $Known = 0;
+            }
+          } else {
+              $Known = 0;
+          }
+      } else if ($NS['NebScanned'] >= $NearNeb) { // In a Neb...
+          if (!isset($FS['id'])) {
+              $Known = 0;
+          }
+      } else { 
+        $Known = 0;
+      }
+      
+      $T['TargetKnown'] = $Known;
+      $T['LinkId'] = $Lid;
+      Put_Thing($T);
+      break;
+    }
+  }
+  
 /* Select types 
   Name, Class, What, sub cat, where, move, Level, Action
   */
@@ -69,18 +121,18 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
     $Name = $ThingTypes[$T['Type']]['Name'];
     if (!$Name) $Name = "Unknown Thing $Tid";
     
-    echo "<tr><td><a href=" . ($T['BuildState']? "ThingEdit.php" : "ThingPlan.php") . "?id=$Tid&FORCE>" . $T['Name'] . "</a>";
+    echo "<tr><td><a href=" . ($T['BuildState']? "ThingEdit.php" : "ThingPlan.php") . "?id=$Tid&FORCE>" . ($T['Name'] ? $T['Name'] : "Nameless" ) . "</a>";
     echo "<td>" . $T['Class'];
     echo "<td>" . $Name;
     echo "<td>" . $T['Level'];
     echo "<td>" . $T['Orders'];
     echo "<td>" . $BuildState[$T['BuildState']];
     echo "<td>" . (empty($T['SystemId']) ?'': $Systems[$T['SystemId']]);
-    if ($Props & THING_CAN_MOVE) {
+    if (($Props & THING_CAN_MOVE) && ($T['BuildState'] == 2 || $T['BuildState'] == 3)) {
       if ($T['LinkId']) {
         $L = Get_Link($T['LinkId']);
-        echo "<td style=color:" . $LinkTypes[$L['Level']]['Colour'] . " >#" . $T['LinkId'];
-        if ($T['NewSystemId']) {
+        echo "<td style=color:" . $LinkTypes[$L['Level']]['Colour'] . " >Link #" . $T['LinkId'];
+        if ($T['NewSystemId'] && $T['TargetKnown']) {
           echo "<td>" . $Systems[$T['NewSystemId']];
         } else {
           echo "<td> ? ";

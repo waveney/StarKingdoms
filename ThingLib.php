@@ -304,41 +304,18 @@ function Thing_Finished($tid) {
   Put_Thing($t);
 }
 
-function Show_Thing(&$t,$Force=0) {
-  include_once("ProjLib.php");
-  global $BuildState,$GAME,$GAMEID;
-  global $Project_Status;
-  $tid = $t['id'];
-  
+
+function Moves_4_Thing(&$T, $Force=0, &$N=0) {
   if ($Force) {
     $GM = 0;
-    $Fid = $t['Whose'];
   } else {
-    $GM = Access('GM');
+    $GM = Access('GM');    
   }
-  
-  $ttn = Thing_Type_Names();
-  $FactNames = Get_Faction_Names();
-  $Fact_Colours = Get_Faction_Colours();
-  $ThingProps = Thing_Type_Props();
-  $tprops = $ThingProps[$t['Type']];
-  $N = Get_System($t['SystemId']);
-  $Syslocs = Within_Sys_Locs($N);
+//var_dump($T);exit;
+  $Fid = $T['Whose'];
+  if (!$N) $N = Get_System($T['SystemId']);
   $LinkTypes = Get_LinkLevels();
-  
-  if ($t['SystemId'] == $t['NewSystemId']) {
-    $NewSyslocs = $Syslocs;
-  } elseif ($t['NewSystemId']) {
-    $NN = Get_System($t['NewSystemId']);
-    $NewSyslocs = Within_Sys_Locs($NN);
-  } else {
-    $NewSyslocs = [];
-  }
-  $Systems = Get_SystemRefs();
-  $t['MaxModules'] = Max_Modules($t);
-  if  ($tprops & THING_HAS_MODULES) $t['OrigHealth'] = Calc_Health($t);
 
-  if ($t['BuildState'] == 3) { // Complete Only
     $Links = (empty($N['Ref']) ? [] : Get_Links($N['Ref']));
     $SelLinks = [''];
     $SelCols = [''];
@@ -386,9 +363,51 @@ function Show_Thing(&$t,$Force=0) {
         $SelCols[$L['id']] = $LinkTypes[$L['Level']]['Colour'];
       }
     }
+  return [$Links, $SelLinks, $SelCols ];
+}
+
+function Show_Thing(&$t,$Force=0) {
+  include_once("ProjLib.php");
+  global $BuildState,$GAME,$GAMEID;
+  global $Project_Status;
+  $tid = $t['id'];
+  
+  if ($Force) {
+    $GM = 0;
+    $Fid = $t['Whose'];
+  } else {
+    $GM = Access('GM');
+  }
+  
+  $ttn = Thing_Type_Names();
+  $FactNames = Get_Faction_Names();
+  $Fact_Colours = Get_Faction_Colours();
+  $ThingProps = Thing_Type_Props();
+  $tprops = $ThingProps[$t['Type']];
+  $N = Get_System($t['SystemId']);
+  $Syslocs = Within_Sys_Locs($N);
+  $LinkTypes = Get_LinkLevels();
+  
+  if ($t['SystemId'] == $t['NewSystemId']) {
+    $NewSyslocs = $Syslocs;
+  } elseif ($t['NewSystemId']) {
+    $NN = Get_System($t['NewSystemId']);
+    $NewSyslocs = Within_Sys_Locs($NN);
+  } else {
+    $NewSyslocs = [];
+  }
+  $Systems = Get_SystemRefs();
+  $t['MaxModules'] = Max_Modules($t);
+  if  ($tprops & THING_HAS_MODULES) $t['OrigHealth'] = Calc_Health($t);
+
+  if ($t['BuildState'] == 3) { // Complete Only
+    $res =     Moves_4_Thing($t,$Force,$N);
+ //var_dump($res);exit;
+    [$Links, $SelLinks, $SelCols ] = $res;
+
   }
 
-//var_dump($SelLinks);
+//var_dump($SelLinks);exit;
 
   echo "Note Movement does not yet work for armies moving by ship.<p>\n";
   
@@ -437,6 +456,7 @@ function Show_Thing(&$t,$Force=0) {
     echo "<td>" . fm_select($Syslocs,$t,'WithinSysLoc');
     if ($tprops & THING_CAN_MOVE) {
       echo "<tr><td>New System:<td>" . fm_select($Systems,$t,'NewSystemId',1) . "This is derived data<td>" . fm_select($NewSyslocs,$t,'NewLocation');
+      echo fm_number('Target Known',$t,'TargetKnown');
     }
     echo "<tr>" . fm_radio('Whose',$FactNames ,$t,'Whose','',1,'colspan=6','',$Fact_Colours,0); 
   } else {
@@ -495,7 +515,7 @@ function Show_Thing(&$t,$Force=0) {
   echo "<tr>" . fm_textarea('Notes',$t,'Notes',8,2);
   echo "<tr>" . fm_textarea('Named Crew',$t,'NamedCrew',8,2);
   if ($GM) echo "<tr>" . fm_textarea('GM Notes',$t,'GM_Notes',8,2,'class=NotSide');
-  echo "<tr>" . fm_textarea('History',$t,'History',8,2);
+  echo "<tr>" . fm_textarea('History',$t,'History',8,2,'','','',($GM?'':'Readonly'));
   if ($tprops & THING_HAS_2_FACTIONS) echo "<tr>" . fm_radio('Other Faction',$FactNames ,$t,'OtherFaction','',1,'colspan=6','',$Fact_Colours,0); 
   if  ($tprops & THING_HAS_MODULES) {
     if ($GM) {

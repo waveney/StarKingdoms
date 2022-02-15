@@ -153,10 +153,10 @@ function fm_hidden($field,$value,$extra='') {
   return "<input type=hidden name=$field id=$field $extra value=\"" . htmlspec($value) ."\">";
 }
 
-function fm_textarea($Name,&$data,$field,$cols=1,$rows=1,$extra1='',$extra2='',$field2='') {
+function fm_textarea($Name,&$data,$field,$cols=1,$rows=1,$extra1='',$extra2='',$field2='',$extra3='') {
   global $ADDALL,$AutoADD,$AutoAfter;
   if ($field2 == '') $field2=$field;
-  $str = "<td $extra1>$Name:" . help($field) . "<td colspan=$cols $extra1><textarea name=$field2 id=$field2 $ADDALL ";
+  $str = "<td $extra1>$Name:" . help($field) . "<td colspan=$cols $extra1><textarea name=$field2 $extra3 id=$field2 $ADDALL ";
   if ($AutoADD) $str .= " oninput=AutoInput('$field2') ";
   $str .= " $extra2 rows=$rows>" ;
   return $str . (isset($data[$field])?        htmlspec($data[$field]) : '' ) . "</textarea>\n";

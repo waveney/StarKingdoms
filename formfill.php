@@ -153,10 +153,38 @@
       $SYS2 = Get_SystemR($L['System2Ref']);      
       if ($N['SystemId'] == $SYS1['id']) {
         $N['NewSystemId'] = $SYS2['id'];
+        $FSN = $SYS2;
       } else {
         $N['NewSystemId'] = $SYS1['id'];
+        $FSN = $SYS1;
       }
       $N['NewLocation'] = 1;
+
+      $NearNeb = $N['Nebulae'];      
+      $Fid = $N['Whose'];
+      $Known = 1;
+      // Handle link knowledge - KLUDGE 
+      $FL = Get_FactionLink($Fid,$L['id']);
+      $FarNeb = $FSN['Nebulae'];
+      $FS = Get_FactionSystemFS($Fid,$FSN['id']);
+
+      if (isset($FL['known']) && $FL['known']) {
+      } else if ($NearNeb == 0) {
+          if (isset($FS['id'])) {
+            if ($FarNeb != 0 && $FS['NebScanned'] < $FarWeb) {
+              $Known = 0;
+            }
+          } else {
+              $Known = 0;
+          }
+        } else if ($NS['NebScanned'] >= $NearNeb) { // In a Neb...
+          if (!isset($FS['id'])) {
+              $Known = 0;
+          }
+        } else { 
+          continue; // Can't see that link
+        }
+      $N['TargetKnown'] = $Known; 
     }
     if ($field == 'Type' || $field == 'Level') {
       echo 'FORCELOADCHANGE54321:NOW';
