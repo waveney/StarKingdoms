@@ -8,7 +8,7 @@ include_once("HomesLib.php");
 
 
 // Faction
-
+/*
 get all homes, worlds, financeial data, projects
 
 turn by turn until no future projects

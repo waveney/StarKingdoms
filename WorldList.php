@@ -48,7 +48,7 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Devastation</a>\n";
   if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Economy<br>Modifier</a>\n";
   if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Whose</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Relative<br>Importance</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Priority<br>Importance</a>\n";
 
   echo "</thead><tbody>";
 

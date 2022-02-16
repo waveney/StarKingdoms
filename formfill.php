@@ -182,7 +182,7 @@
               $Known = 0;
           }
         } else { 
-          continue; // Can't see that link
+          echo "Error!"; exit;// Can't see that link
         }
       $N['TargetKnown'] = $Known; 
     }

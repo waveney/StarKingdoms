@@ -57,7 +57,7 @@ function Show_Faction(&$F,$Mode) {
   echo "<tr>" . fm_text('Player Name',$F,'Player',2);
   echo "<tr><td>Player State:<td>" . (($GM)? fm_select($PlayerState,$F,'TurnState'): $PlayerState[$F['TurnState']]);
   if ($GM) {
-    echo "<td>" . fm_checkbox("NPC: ",$F,'NPC');
+    echo "<td>" . fm_checkbox("NPC",$F,'NPC');
     echo "<tr>" . fm_number('Credits',$F,'Credits') . fm_number('Physics Points', $F,'PhysicsSP');
     echo "<tr>" . fm_number('Engineering Points', $F,'EngineeringSP') . fm_number('Xenology Points', $F,'XenologySP');
   } else {
@@ -95,7 +95,7 @@ function Show_Faction(&$F,$Mode) {
     echo "</form></center>";
   }
   
-  echo "<h2><a href=MapFull.php?F=$Fid>Faction Map</a></h2>";
+//  echo "<h2><a href=MapFull.php?F=$Fid>Faction Map</a></h2>";
 }
 
 // START HERE

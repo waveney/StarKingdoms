@@ -455,7 +455,7 @@ echo "Moving " . $T['Name'] . "<br>";
       $pname = NameFind($N);
       if ($Fid) {
         $FS = Get_FactionSystemFS($Fid, $Sid);
-        if (!empty(strlen($FS['Name'])S) {
+        if (!empty(strlen($FS['Name']))) {
           $Fname = NameFind($FS);
       
           if ($pname != $Fname) {
@@ -624,6 +624,11 @@ function EspionageMissionsComplete() {
   echo "Espionage Missions Complete	is currently Manual<p>";
 }
 
+function CounterEspionage() {
+  echo "Counter Espionage is currently Manual<p>";
+  return true;
+}
+
 function FinishShakedowns() {
   // Move anything in shakedown to completed
   
@@ -773,8 +778,8 @@ function ProjectsComplete() {
   return true;
 }
 
-function CounterEspionage() {
-  echo "Counter Espionage is currently Manual<p>";
+function SurveyReports() {
+  echo "Survey Reports is currently Manual<p>";
   return true;
 }
 
@@ -830,13 +835,13 @@ function Do_Turn() {
              'Spare','Movements', 'Spare', 'Spare', 'Meetups', 'Spare', 'Spare', 'Spare', 
              'Space Combat', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Devastation', 'Spare', 'Project Progress', 
              'Spare','Espionage Missions Complete', 'Spare', 'Counter Espionage','Spare', 'Finish Shakedowns', 'Spare', 'Projects Complete', 
-             'Spare', 'Spare', 'Spare', 'Generate Turns', 'Spare', 'Tidy Up Movements', 'Recalc Project Homes', 'Finish Turn Process'];
+             'Survey Reports', 'Spare', 'Spare', 'Generate Turns', 'Spare', 'Tidy Up Movements', 'Recalc Project Homes', 'Finish Turn Process'];
   $Coded =  ['Coded','No','No','Coded','Coded','No','Coded', 'No',
              'No','No','No','No','Partial','No','No','No',
              'No','No','No','No','No','No','No','No',
              'No','No','No','Coded','No','No','No','No',
              
-             'No','Coded','No','No','No','No','No','No',
+             'No','Coded for Ships only','No','No','No','No','No','No',
              'No','No','No','No','No','No','No','Coded',
              'No','No','No','No','No','Coded','No','Partial',
              'No','No','No','No','No','Coded','Coded','Coded?'];
