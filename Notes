@@ -105,4 +105,7 @@ ThingLib.php:      $Dists = Get_DistrictsT($H['ThingId']);
 ThingLib.php:  $Discs = Get_DistrictsT($otid);
 WorldEdit.php:  $Dists = Get_DistrictsH($H['id']);
 
+API Key: AIzaSyAgnUmCi4cS9JCEUYD6LsT6fRfc46H8Qf4
+
+https://docs.google.com/spreadsheets/d/181ISkhyn218Q6-3bYfZLFYXf7q7f2uPh8GqP6MlHIQ4/edit?usp=sharing
 
