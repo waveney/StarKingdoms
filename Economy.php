@@ -114,7 +114,7 @@
     
     foreach ($LogCats as $i => $n) {
       if ($Logistics[$i]) {
-        $pen = min(0,$LogAvail[0]-$Logistics[0]);
+        $pen = min(0,$LogAvail[$i]-$Logistics[$i]);
         if ($pen < 0) {
           $EconVal += $pen;
           $EccTxt .= "Logistical penalty of $pen for <br>$n\n";

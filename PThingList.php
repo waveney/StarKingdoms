@@ -37,7 +37,8 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
       $Lid = $_REQUEST['L'];
       $T = Get_Thing($Tid);
       $N = Get_System($T['SystemId']);
-      
+      $NS = Get_FactionSystemFS($Fid,$T['SystemId']);
+            
       $L = Get_Link($Lid);
       $SYS1 = Get_SystemR($L['System1Ref']);
       $SYS2 = Get_SystemR($L['System2Ref']);      
@@ -171,7 +172,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
   echo "<tr><td>Category<td>Logistical Support<td>Logistics needed<td>Logistics Penalty\n";
   foreach ($LogCats as $i => $n) {
     if ($Logistics[$i]) {
-      $pen = min(0,$LogAvail[0]-$Logistics[0]);
+      $pen = min(0,$LogAvail[$i]-$Logistics[$i]);
       echo "<tr><td>$n<td>" . $LogAvail[$i] . "<td>" . $Logistics[$i] . "<td " . ($pen < 0? " class=Err":'') . ">$pen" ;
     }
   }

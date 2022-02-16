@@ -357,12 +357,13 @@ function Moves_4_Thing(&$T, $Force=0, &$N=0) {
             $LinkText = '?';
           }
         } else { 
-          continue; // Can't see that link
+          $LinkText = '?';
         }
         $SelLinks[$L['id']] = "#" . $L['id'] . " to " . $LinkText;
         $SelCols[$L['id']] = $LinkTypes[$L['Level']]['Colour'];
       }
     }
+// var_dump($Links,"<br>",$SelLinks,"<p>");
   return [$Links, $SelLinks, $SelCols ];
 }
 

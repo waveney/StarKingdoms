@@ -152,7 +152,7 @@ function Get_Links($sysref) {
   $res = $db->query("SELECT * FROM Links WHERE GameId=$GAMEID AND (System1Ref='$sysref' OR System2Ref='$sysref')");
   $links = [];
   if ($res) {
-    while ($ans = $res->fetch_assoc()) { $links[] = $ans; };
+    while ($ans = $res->fetch_assoc()) { $links[$ans['id']] = $ans; };
     }
   return $links;
 }
