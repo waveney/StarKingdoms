@@ -31,7 +31,7 @@
         $BankRec = ['FactionId'=>$Fid, 'Recipient'=>$_REQUEST['Recipient'], 'Amount'=>$_REQUEST['Amount'], 
                     'StartTurn'=> $_REQUEST['StartTurn'], 'EndTurn' => (empty( $_REQUEST['EndTurn'])? $_REQUEST['StartTurn'] : $_REQUEST['EndTurn']), 
                     'YourRef' => $_REQUEST['YourRef']];
-                    
+        if (empty($BankRec['YourRef'])) $BankRec['YourRef'] = "Unspecified";
         Put_Banking($BankRec);
         $_REQUEST['Recipient'] = '';
         $_REQUEST['Amount'] = '';
@@ -101,7 +101,7 @@
 
   if ($Banks) {
     if ($Turn >= $GAME['Turn']) echo "Cancel will stop the transfer.  To edit it click Your Reference.<br>";
-    echo "<table border><tr><td>Recipient<td>Ammount<td>Your Reference<td>Start Turn<td>Last Turn\n";
+    echo "<table border><tr><td>Recipient<td>Amount<td>Your Reference<td>Start Turn<td>Last Turn\n";
     if ($Turn >= $GAME['Turn']) echo "<td>Actions\n";
     foreach ($Banks as $B) {
       echo "<tr><td>" . $FactList[$B['Recipient']] . "<td>" . $B['Amount'] ;
@@ -116,9 +116,21 @@
   } else {
     echo "None were set up on turn $Turn.<p>\n";
   }
+  echo "</form>";
   
   if (empty($_REQUEST['StartTurn'])) $_REQUEST['StartTurn'] = $Turn;
-  echo "<h2>Setup Transfer</h2>";
+  echo "<form method=post action=Banking.php>\n";
+  echo "<h2>Setup One Off Transfer On Next Turn</h2>";
+  echo "<table border>";
+  echo fm_hidden('StartTurn',$GAME['Turn']);
+  echo "<tr><td>To:<td>" . fm_select($FactList,$_REQUEST,'Recipient') . "<td>Select <b>Other</b> for RP actions";
+  echo "<tr>" . fm_number('Amount',$_REQUEST,'Amount');
+  echo "<tr>" . fm_text('Your Reference',$_REQUEST,'YourRef') . "<td>Will be seen by both parties";
+  echo "<tr><td><td><input type=submit name=ACTION value='Setup'>\n";
+  echo "</table></form>";
+
+  echo "<form method=post action=Banking.php>\n";
+  echo "<h2>Setup Ongoing or Future Transfer</h2>";
   echo "<table border>";
   echo "<tr><td>To:<td>" . fm_select($FactList,$_REQUEST,'Recipient') . "<td>Select <b>Other</b> for RP actions";
   echo "<tr>" . fm_number('Amount',$_REQUEST,'Amount');
@@ -126,7 +138,7 @@
   echo "<tr>" . fm_number('Last Turn', $_REQUEST,'EndTurn') . "<td>Leave blank for a one off payment";
   echo "<tr>" . fm_text('Your Reference',$_REQUEST,'YourRef') . "<td>Will be seen by both parties";
   echo "<tr><td><td><input type=submit name=ACTION value='Setup'>\n";
-  echo "</table><p>\n";
+  echo "</table></form>";
   
 /*    
   echo "table border>";
@@ -141,6 +153,7 @@
   echo "</table<p>\n";
 
 */  
+  echo "<form method=post action=Banking.php>\n";
   echo "<h2>Other expected income</h2>\n";
   echo "What do expect from others, and amount - may stop annoying nag messages that you have overspent in your plans. No other effect. These are not checked<p>";
   echo "<table border>";

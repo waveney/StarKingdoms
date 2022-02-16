@@ -34,7 +34,7 @@
     if ($T['BuildState'] < 2 || $T['BuildState']> 3) continue; // Ignore things not in use
     $Sid = $T['SystemId'];
     if (!$Sid) continue;
-// echo "Adding " .$T['Name'] . " " .$T['id'] . " " . $T['SystemId'] . "<br>";
+ //echo "Adding " .$T['Name'] . " " .$T['id'] . " " . $T['SystemId'] . "<br>";
     $Eyes = EyesInSystem($Fid,$Sid);
     $Places[$Sid] = (empty($Places[$Sid])? $Eyes : ($Places[$Sid] | $Eyes));
   }
@@ -63,7 +63,7 @@
 // Now have list of places to search
 
   foreach ($Places as $Sid=>$Eyes ) {
-    SeeInSystem($Sid,$Eyes,1);
+    SeeInSystem($Sid,$Eyes,1,1,$Fid);
 /*
     $Things = Get_AllThingsAt($Sid);
 // var_dump ($Things); echo "XX<p>";   

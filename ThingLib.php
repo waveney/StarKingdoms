@@ -580,7 +580,7 @@ function Show_Thing(&$t,$Force=0) {
     $dc=0;
     $totmodc = 0;
     $BadMods = 0;
-//    $T['Sensors'] = $T['SensorLevel'] = $T['NebSensors'] = 0;
+//    $t['Sensors'] = $t['SensorLevel'] = $t['NebSensors'] = 0;
     
     if ($GM) { // TODO Allow for setting module levels 
       if ($NumMods) echo "<tr><td rowspan=" . ceil(($NumMods+2)/2) . ">Modules:";
@@ -596,8 +596,8 @@ function Show_Thing(&$t,$Force=0) {
         $totmodc += $D['Number'] * $MTs[$D['Type']]['SpaceUsed'];
         
         if ($D['Type'] == 4) { 
-          $T['Sensors'] = $D['Number'];
-          $T['SensorLevel'] = D['Level'];
+          $t['Sensors'] = $D['Number'];
+          $t['SensorLevel'] = $D['Level'];
         } else if ($D['Type'] == 9) $D['NebSensors'] = $D['Number'];
       }
       echo "<tr><td>Add Module Type<td>" . fm_Select($MTNs, NULL , 'Number', 1,'',"ModuleTypeAdd-$tid");
@@ -618,9 +618,10 @@ function Show_Thing(&$t,$Force=0) {
   
       $MTs = Get_ModuleTypes();
       foreach ($Ds as $D) {
+//        if ($D['Number'] == 0) continue;
         $did = $D['id'];
         if (($dc++)%4 == 0)  echo "<tr>";
-        echo "<td>" . $MTNs[$D['Type']] . ($t['BuildState']? ("(Level " . $D['Level'] . "): ")  : ": ") . $D['Number'];
+        echo "<td><b>" . $D['Number']. "</b> of " . $MTNs[$D['Type']] . ($t['BuildState']? (" (Level " . $D['Level'] . ") ") :"") ;
         
         $CLvl = Calc_TechLevel($Fid,$D['Type']);
         if ($CLvl != $D['Level'] && $t['BuildState'] != 0 ) {
@@ -648,7 +649,7 @@ function Show_Thing(&$t,$Force=0) {
   }
   
   if ($GM && ($tprops & THING_HAS_CIVSHIPMODS)) {
-    echo "<tr>" . fm_number('Sensors',$T,'Sensors') . fm_number('Sens Level',$T,'SensorLevel') . fm_number('Neb Sensors', $T,'NebSensors');
+    echo "<tr>" . fm_number('Sensors',$t,'Sensors') . fm_number('Sens Level',$t,'SensorLevel') . fm_number('Neb Sensors', $t,'NebSensors');
   }
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
   echo "</table></div>\n";
@@ -658,6 +659,7 @@ function Show_Thing(&$t,$Force=0) {
   } else {
     echo "<h2><a href=PThingList.php?id=$Fid>Back to Thing list</a></h2>";
   }
+  Put_Thing($t);
 }
 
 function Scanners(&$T) {
@@ -821,6 +823,7 @@ function EyesInSystem($Fid,$Sid) { // Eyes 1 = in space, 2= sens, 4= neb sens, 8
   $ThingTypes = Get_ThingTypes();
   $MyThings = Get_Things_Cond($Fid," SystemId=$Sid AND (BuildState=2 OR BuildState=3)");
 
+//var_dump($MyThings);
   foreach ($MyThings as $T) {
     $Eyes |= $ThingTypes[$T['Type']]['Eyes'];
     if ($T['Sensors']) $Eyes |= 2;
@@ -829,7 +832,7 @@ function EyesInSystem($Fid,$Sid) { // Eyes 1 = in space, 2= sens, 4= neb sens, 8
   return $Eyes;
 }
 
-function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1) {
+function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0) {
 //var_dump($Sid,$Eyes);
 //  if (Access('GM')) $Eyes = 15;
     if (!$Eyes) return;
@@ -839,7 +842,7 @@ function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1) {
   
     $Factions = Get_Factions();
     
-// var_dump ($Things); echo "XX<p>";   
+//if ($Sid == 58) var_dump ($Things); echo "XX<p>";   
     $N = Get_System($Sid);
     if ($heading) {
        echo "<h2>System " . $N['Ref'] . "</h2>"; // TODO Add name...
@@ -849,9 +852,10 @@ function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1) {
     $LastWhose = 0;
     foreach ($Things as $T) {
 //var_dump($T); echo "<p>";
-      if (($ThingTypes[$T['Type']]['SeenBy'] & $Eyes) == 0 ) continue;
+// if ( $Sid == 58) echo $T['Name'] . " - " . $ThingTypes[$T['Type']]['SeenBy'] . " - " . $Eyes . "<p>";
+      if (($T['Whose'] != $Fid) && (($ThingTypes[$T['Type']]['SeenBy'] & $Eyes) == 0 )) continue;
       if ($LastWhose && $LastWhose!= $T['Whose']) echo "<P>";
-      echo (Access('GM')?( "<a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a>") : $T['Name'] ) . " a ";
+      echo ((/*Access('GM') ||*/ $Fid == $T['Whose'])?( "<a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a>") : $T['Name'] ) . " a ";
       if ($ThingTypes[$T['Type']]['Properties'] & THING_HAS_LEVELS) echo " level " . $T['Level'];
       if ($T['Class']) echo " " . $T['Class'] . " class ";
       if ($T['Whose']) echo " " . $Factions[$T['Whose']]['Name'];

@@ -146,6 +146,7 @@ function Node_Show($Fid,$Tid, $Lid, $N) {
     $OtherRef = ($L['System1Ref'] == $ThisRef? $L['System2Ref'] :$L['System1Ref'] );
     $ON = Get_SystemR($OtherRef);
     if (strchr($SelLinks[$Lid],'?')) {
+//      if ($T['Type'] == 5) continue;
       fwrite($Dot,"$OtherRef [label=\"?\" shape=circle href=\"/PThingList.php?ACTION=MOVE&T=$Tid&L=$Lid\" ] ");    
     } else {
       Node_Show($Fid,$Tid, $Lid, $ON);

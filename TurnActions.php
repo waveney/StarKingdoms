@@ -54,11 +54,14 @@ function StartTurnProcess() {
     Put_Faction($F);
   }
   echo "<br>All Factions marked as Turn Processing<p>\n";
-  $LF = mkdir("Turns/$GAMEID/" . $GAME['Turn'],0777,true);
+  if (!file_exists("Turns/$GAMEID/" . $GAME['Turn'])) {
+    $LF = mkdir("Turns/$GAMEID/" . $GAME['Turn'],0777,true);
+  }
   return true;
 }
 
 function SaveAllLocations() {  
+  global $GAME,$GAMEID;
   // Copy location of everything
   $Things = Get_AllThings();
   foreach ($Things as $T) {
@@ -78,20 +81,20 @@ function CashTransfers() {
   $Bs = Get_BankingFT(0,$GAME['Turn']);
   
   foreach($Bs as $B) {
-    if (Spend_Credit($B['FactionId'],$B['Amount'],$B['What'])) {
-      TurnLog($B['FactionId'],"Transfered  &#8373;" . $B['Amount'] . " for " . $B['What'] . " to " . $Facts[$B['Recipient']]['Name']);
+    if (Spend_Credit($B['FactionId'],$B['Amount'],$B['YourRef'])) {
+      TurnLog($B['FactionId'],"Transfered  &#8373;" . $B['Amount'] . " for " . $B['YourRef'] . " to " . $Facts[$B['Recipient']]['Name']);
 
       if ($B['Recipient'] > 0) {
-        Spend_Credit($B['Recipient'], - $B['Amount'],$B['What']);
-        TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " transfered  &#8373;" . $B['Amount'] . " to you for " . $B['What'] );
+        Spend_Credit($B['Recipient'], - $B['Amount'],$B['YourRef']);
+        TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " transfered  &#8373;" . $B['Amount'] . " to you for " . $B['YourRef'] );
       }
-      SKLog('Cash transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . ' of ' . $B['Amount'] . ' for ' . $B['What'],1);     
+      SKLog('Cash transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . ' of ' . $B['Amount'] . ' for ' . $B['YourRef'],1);     
     } else {
-      TurnLog($B['FactionId'],"Failed to transfer  &#8373;" . $B['Amount'] . " for " . $B['What'] . " to " . $Facts[$B['Recipient']]['Name'] . 
+      TurnLog($B['FactionId'],"Failed to transfer  &#8373;" . $B['Amount'] . " for " . $B['YourRef'] . " to " . $Facts[$B['Recipient']]['Name'] . 
                " you only have " . $Facts[$B['FactionId']]['Credits']);
-      if ($B['Recipient'] > 0) TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " Failed to transfer  &#8373;" . $B['Amount'] . " for " . $B['What'] );
+      if ($B['Recipient'] > 0) TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " Failed to transfer  &#8373;" . $B['Amount'] . " for " . $B['YourRef'] );
       SKLog('Cash transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . 
-            ' of  &#8373;' . $B['Amount'] . ' for ' . $B['What'] .  ' Bounced',1);
+            ' of  &#8373;' . $B['Amount'] . ' for ' . $B['YourRef'] .  ' Bounced',1);
     }
   }
   
@@ -118,7 +121,9 @@ function StartProjects() {
 
   $ProjTypes = Get_ProjectTypes();
   $Projects = Get_Projects_Cond("Progress=0 AND Status=0 AND Costs!=0 AND TurnStart=" . $GAME['Turn']);
+  $TTypes = Get_ThingTypes();
 //var_dump("Projects",$Projects);
+
 
   foreach ($Projects as $P) {
   var_dump("Project",$P);
@@ -174,7 +179,15 @@ function StartProjects() {
 //        Put_Thing($T);
         
         // Level of modules
-        RefitRepair($T); //Not this saves it
+        RefitRepair($T); //Note this saves it
+        if ($TTypes[$T['Type']]['Properties'] & THING_HAS_MODULES ) {
+          $Mods = Get_Modules($Tid);
+          foreach($Mods as $M) {
+            if ($M['Number'] == 0) {
+              db_delete('Modules',$M['id']);
+            }
+          }
+        }
       }
     } else {
       $P['Status'] = 5; // Not Started
@@ -345,14 +358,18 @@ function LoadTroops() {
   return true;
 }
 
-function Movements() {
+function Movements($Agents=0) {
   global $GAME,$GAMEID;
   // Foreach thing, do moves, generate list of new survey reports & levels, update "knowns" 
 
   if (!file_exists("Turns/" . $GAMEID . "/" . $GAME['Turn'])) $LF = mkdir("Turns/" . $GAMEID . "/" . $GAME['Turn'],0777,true);  
   $LinkLevels = Get_LinkLevels();
   $Things = Get_AllThings();
+  $Facts = Get_Factions();
+  
   foreach ($Things as $T) {
+    if ($T['Type'] == 5 && $Agents == 0) continue;
+    
     if ($T['LinkId'] && $T['NewSystemId'] != $T['SystemId'] ) {
 echo "Moving " . $T['Name'] . "<br>";
       $Lid = $T['LinkId']; 
@@ -368,8 +385,14 @@ echo "Moving " . $T['Name'] . "<br>";
       
       $FL = Get_FactionLinkFL($Fid,$Lid);
       if (!isset($FL['Known']) || !$FL['Known']) {
-        $FL['Known'] = 1;
-        Put_FactionLink($FL);
+        if ($T['Type'] == 5) {
+          SKLog( "Agent " . $T['Name'] . " of " . $Facts[$Fid]['Name'] . " could not move along " . $LinkLevels[$L['Level']]['Colour']. " link #$Lid as that is unknown", 1);
+          TurnLog($Fid,$T['Name'] . " could not move along " . $LinkLevels[$L['Level']]['Colour']. " link #$Lid as that is unknown", $T); 
+          continue;
+        } else {
+          $FL['Known'] = 1;
+          Put_FactionLink($FL);
+        }
       }
       
       $FS1 = Get_FactionSystemFS($Fid,$SR1['id']);
@@ -489,6 +512,10 @@ echo "Moving " . $T['Name'] . "<br>";
   return true;
 }
 
+function AgentsMove() {
+  Movements(1);
+  return true;
+}
 
 function Meetups() {
   // For each system get all things.  If more than 1 faction, note location flag for that system
@@ -622,6 +649,7 @@ function ProjectProgress() {
 
 function EspionageMissionsComplete() {
   echo "Espionage Missions Complete	is currently Manual<p>";
+  return true;
 }
 
 function CounterEspionage() {
@@ -632,7 +660,7 @@ function CounterEspionage() {
 function FinishShakedowns() {
   // Move anything in shakedown to completed
   
-  $Things = Get_Things_Cond("AND BuildState=2");
+  $Things = Get_Things_Cond(0,"AND BuildState=2");
   foreach($Things as $T) {
     $T['BuildState'] = 3;
     TurnLog($T['FactionId'],$T['Name'] . " has finished it's Shakedown and is now ready for operations.");
@@ -741,7 +769,7 @@ function ProjectsComplete() {
     
     case 'Construct Ship':
       $T = Get_Thing($P['ThingId']);
-      $T['BuildState'] = 2; // Shakkedown
+      $T['BuildState'] = 2; // Shakedown
       TurnLog($P['FactionId'], $T['Name'] . " has been lanched");              
       Calc_Scanners($T);
       Put_Thing($T);
@@ -800,6 +828,7 @@ function TidyUpMovements() {
 function RecalcProjectHomes() {
   include_once("HomesLib.php");
   Recalc_Project_Homes('SKLog'); // in ThingLib - this is to add new project homes that have been created by colonisation etc.
+  return true;
 }
 
 function FinishTurnProcess() {
@@ -828,11 +857,11 @@ function FinishTurnProcess() {
 function Do_Turn() {
   global $Sand;  // If you need to add something, replace a spare if poss, then nothing breaks
   $Stages = ['Check Turns Ready', 'Spare', 'Spare','Start Turn Process', 'Save All Locations', 'Spare', 'Cash Transfers', 'Spare',
-             'Spare', 'Pay For Stargates?', 'Spare', 'Scientific Breakthroughs', 'Start Projects', 'Spare', 'Spare', 'Colonisation', 
+             'Spare', 'Pay For Stargates', 'Spare', 'Scientific Breakthroughs', 'Start Projects', 'Spare', 'Spare', 'Colonisation', 
              'Spare', 'Spare', 'Deep Space Construction', 'Spare', 'Spare', 'Start Anomaly', 'Spare', 'Spare', 
              'Agents Start Missions', 'Spare', 'Spare', 'Economy', 'Spare', 'Spare', 'Load Troops', 'Spare', 
              
-             'Spare','Movements', 'Spare', 'Spare', 'Meetups', 'Spare', 'Spare', 'Spare', 
+             'Spare','Movements', 'Agents Move', 'Spare', 'Meetups', 'Spare', 'Spare', 'Spare', 
              'Space Combat', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Devastation', 'Spare', 'Project Progress', 
              'Spare','Espionage Missions Complete', 'Spare', 'Counter Espionage','Spare', 'Finish Shakedowns', 'Spare', 'Projects Complete', 
              'Survey Reports', 'Spare', 'Spare', 'Generate Turns', 'Spare', 'Tidy Up Movements', 'Recalc Project Homes', 'Finish Turn Process'];

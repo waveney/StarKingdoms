@@ -78,6 +78,12 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
       $T['TargetKnown'] = $Known;
       $T['LinkId'] = $Lid;
       Put_Thing($T);
+      if ($L['Level']>1 && ($Who = GameFeature('LinkOwner',0))) {
+        $LinkTypes = Get_LinkLevels();
+        $LOwner = Get_Faction($Who);
+        echo "<h2>You are taking a <span style='color:" . $LinkTypes[$L['Level']]['Colour'] . "'>" . $LinkTypes[$L['Level']]['Colour'] .
+             "</span> link do you need to pay " . $LOwner['Name'] . " for this?</h2>\n";
+      }
       break;
     }
   }

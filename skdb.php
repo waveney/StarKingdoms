@@ -223,10 +223,10 @@ function Feature($Name,$default='') {  // Return value of feature if set from GA
 
 function GameFeature($Name,$default='') {  // Return value of feature if set from GAMESYS
   static $Features;
-  global $GAMEDATA;
+  global $GAME;
   if (!$Features) {
     $Features = [];
-    foreach (explode("\n",$GAMEDATA['GameFeatures']) as $i=>$feat) {
+    foreach (explode("\n",$GAME['Features']) as $i=>$feat) {
       $Dat = explode(":",$feat,4);
       if ($Dat[0] && isset($Dat[1])) {
         $Features[$Dat[0]] = trim($Dat[1]);
