@@ -118,7 +118,8 @@
         Put_Thing($T);
       }
       $N= ['Type'=>$mtch[1],'ThingId'=>$id, 'Number'=>$Value];
-      echo 'FORCELOADCHANGE54321:NOW' . Put_Module($N);
+      //echo 'FORCELOADCHANGE54321:NOW' . 
+      echo Put_Module($N);
        
       exit;
 
@@ -135,11 +136,13 @@
           Put_Thing($T);
         }
 //echo "About to delete: "; var_dump( $mtch);
-        echo 'FORCELOADCHANGE54321:NOW' . db_delete('Modules',$mtch[2]);
+      //  echo 'FORCELOADCHANGE54321:NOW' . 
+        echo db_delete('Modules',$mtch[2]);
       } else { 
         $N[$mtch[1]] = $Value;     
 //var_dump($N);
-        echo 'FORCELOADCHANGE54321:NOW' . Put_Module($N);
+        //echo 'FORCELOADCHANGE54321:NOW' . 
+        echo Put_Module($N);
       }
       exit;
 
@@ -186,9 +189,9 @@
         }
       $N['TargetKnown'] = $Known; 
     }
-    if ($field == 'Type' || $field == 'Level') {
+    if ($field == 'Type' ) { // || $field == 'Level') {
       echo 'FORCELOADCHANGE54321:NOW';
-    } else if ( $field == 'LinkId' || ($field == 'Name' && strlen($Value) < 2)) {
+    } else if ( $field == 'LinkId' ) {  //|| ($field == 'Name' && strlen($Value) < 2)) {
       echo 'FORCERELOAD54321:NOW';
     }
     echo Put_Thing($N);
