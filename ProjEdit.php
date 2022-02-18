@@ -99,6 +99,7 @@
   echo "<form method=post action=ProjEdit.php><table border>";
   Register_Autoupdate("Project",$Prid);
   echo fm_hidden('id',$Prid);
+  $PProps = $ProjTypes[$P['Type']]['Props'];
   
   if (Access('GM')) {
     echo "<tr><td>Project Id:<td>$Prid<td>For<td>" . fm_select($FactionNames,$P,'FactionId');
@@ -109,9 +110,14 @@
     echo "<tr>" . fm_number("Where",$P,'Home') . "<td>" . $PH['Name'] . " in " . NameFind($System);
     echo "<tr>" . fm_number('Cost',$P,'Costs') . fm_number('Prog Needed', $P,'ProgNeeded');
     echo "<tr>" . fm_number("Progress",$P,'Progress') . fm_number('Last Updated',$P,'LastUpdate'); 
-    if ($P['ThingId']) {
-      $Thing = Get_Thing($P['ThingId']);
-      echo fm_number('Thing',$P,'ThingId') . "<td><a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . $Thing['Name'] . "</a>"; 
+    if ($PProps &2) {
+      if ($P['ThingId']) {
+        $Thing = Get_Thing($P['ThingId']);
+        echo fm_number('Thing',$P,'ThingId') . "<td><a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . $Thing['Name'] . "</a>"; 
+      } else {
+        echo fm_number('Thing',$P,'ThingId');
+      }
+      
     } else if (1 || $P['ThingType']) {
       echo "<td>" . ($P['Type'] == 1 ? fm_select($DistTypeN,$P,'ThingType') : fm_select($TechNames, $P, 'ThingType') );
     }
@@ -127,7 +133,7 @@
     echo "<tr><td>Where:<td>" . $PH['Name'] . " in " . NameFind($System);
     echo "<tr><td>Cost:<td>" . $P['Costs'] . "<td>Progress needed:<td>" . $P['ProgNeeded'];
     echo "<tr><td>Progress:<td>" . $P['Progress']; 
-    if ($P['ThingId']) {
+    if ($P['ThingId'] ) {
       $Thing = Get_Thing($P['ThingId']);
       echo "<td><a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . $Thing['Name'] . "</a>"; // May need Tweek for player edit
     } else if ($P['ThingType']) {

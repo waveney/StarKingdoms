@@ -157,6 +157,7 @@
     
     $txt .= "<p>";
 
+    if (Access('God')) $txt .= "<li><a href=Import.php>Import</a>\n";
     $txt .= "</ul>\n";
   }
 
