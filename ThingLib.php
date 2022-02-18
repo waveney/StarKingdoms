@@ -447,8 +447,9 @@ function Show_Thing(&$t,$Force=0) {
     } else {
       if (! empty($t['SystemId'])) {
         if (!isset($t['LinkId']) || !isset($SelCols[$t['LinkId']])) $t['LinkId'] = 0;
-        if ($tprops & THING_CAN_MOVE) echo "<td>Taking Link:<td>" . fm_select($SelLinks,$t,'LinkId',0," style=color:" . $SelCols[$t['LinkId']] ,'',0,$SelCols) . 
-            "Update this normally";
+        if (($tprops & THING_CAN_MOVE) && !empty($SelCols[$t['LinkId']]) ) {
+          echo "<td>Taking Link:<td>" . fm_select($SelLinks,$t,'LinkId',0," style=color:" . $SelCols[$t['LinkId']] ,'',0,$SelCols) . "Update this normally";
+        }
         if ($tprops & THING_CAN_BETRANSPORTED) echo "<td>No mechanism<td>to move armies yet";  // TODO transport armies
       }
     }
@@ -655,7 +656,7 @@ function Show_Thing(&$t,$Force=0) {
   }
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
   echo "</table></div>\n";
-  if ($GM) echo "<input type=submit name=ACTION value=REFIT>\n";
+  if ($GM) echo "<input type=submit name=ACTION value=Refit>\n";
   if ($GM || empty($Fid)) {
     echo "<h2><a href=ThingList.php>Back to Thing list</a> &nbsp; <input type=submit name=ACTION value=Duplicate></h2>";
   } else {
