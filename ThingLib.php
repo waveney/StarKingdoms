@@ -512,6 +512,7 @@ function Show_Thing(&$t,$Force=0) {
   }
 
   if  ($tprops & THING_HAS_GADGETS) echo "<tr>" . fm_textarea("Gadgets",$t,'Gadgets',8,3);
+  echo "<tr>" . fm_text("Orders",$t,'Orders',2);
   echo "<tr>" . fm_textarea("Description\n(For others)",$t,'Description',8,2);
   echo "<tr>" . fm_textarea('Notes',$t,'Notes',8,2);
   echo "<tr>" . fm_textarea('Named Crew',$t,'NamedCrew',8,2);

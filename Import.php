@@ -205,7 +205,7 @@ $SheetIds = ['Faction'=> 0, 'Setup'=> 1104884901, 'Main'=>1067465833, 'Colony1'=
         if ($T['Name'] == $Tname) { echo "Already Loaded "; continue 2;}
       }
       $Type = 1;
-      switch ($R[3]) {
+      switch ($R[2]) {
         case 'Military':
           $Type =1;
           break;
