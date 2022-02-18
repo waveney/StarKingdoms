@@ -201,6 +201,7 @@ $SheetIds = ['Faction'=> 0, 'Setup'=> 1104884901, 'Main'=>1067465833, 'Colony1'=
       if (empty($R[2])) { echo ""; continue; };
 
       $Tname = $R[0];
+      if (empty($Tname)) $Tname = "Unknown Ship $row";
       foreach($Things as $T) {
         if ($T['Name'] == $Tname) { echo "Already Loaded "; continue 2;}
       }
@@ -286,6 +287,7 @@ $SheetIds = ['Faction'=> 0, 'Setup'=> 1104884901, 'Main'=>1067465833, 'Colony1'=
       if (empty($R[2])) { echo ""; continue; };
 
       $Tname = $R[0];
+      if (empty($Tname)) $Tname = "Unknown Army $row";
       foreach($Things as $T) {
         if ($T['Name'] == $Tname) { echo "Already Loaded $Tname"; continue 2;}
       }
@@ -351,6 +353,7 @@ $SheetIds = ['Faction'=> 0, 'Setup'=> 1104884901, 'Main'=>1067465833, 'Colony1'=
       if (empty($R[2])) { echo ""; continue; };
 
       $Tname = $R[0];
+      if (empty($Tname)) $Tname = "Unknown Agent $row";
       foreach($Things as $T) {
         if ($T['Name'] == $Tname) { echo "Already Loaded $Tname"; continue 2;}
       }
