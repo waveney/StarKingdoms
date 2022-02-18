@@ -401,11 +401,13 @@ function Show_Thing(&$t,$Force=0) {
   $t['MaxModules'] = Max_Modules($t);
   if  ($tprops & THING_HAS_MODULES) $t['OrigHealth'] = Calc_Health($t);
 
-  if ($t['BuildState'] == 3) { // Complete Only
+  if (($t['BuildState'] == 3) && ($tprops & THING_CAN_MOVE)) { // Complete Only
     $res =     Moves_4_Thing($t,$Force,$N);
- //var_dump($res);exit;
+//var_dump($res);exit;
     [$Links, $SelLinks, $SelCols ] = $res;
 
+  } else {
+    $Links = $SelLinks = $SelCols = [];
   }
 
 //var_dump($SelLinks);exit;
@@ -446,8 +448,11 @@ function Show_Thing(&$t,$Force=0) {
       
     } else {
       if (! empty($t['SystemId'])) {
-        if (!isset($t['LinkId']) || !isset($SelCols[$t['LinkId']])) $t['LinkId'] = 0;
-        if (($tprops & THING_CAN_MOVE) && !empty($SelCols[$t['LinkId']]) ) {
+        if (!isset($t['LinkId']) || !isset($SelCols[$t['LinkId']])) { 
+          $t['LinkId'] = 0;
+          $SelCols[0] = "white";
+        }
+        if (($tprops & THING_CAN_MOVE) && isset($SelCols[$t['LinkId']]) ) {
           echo "<td>Taking Link:<td>" . fm_select($SelLinks,$t,'LinkId',0," style=color:" . $SelCols[$t['LinkId']] ,'',0,$SelCols) . "Update this normally";
         }
         if ($tprops & THING_CAN_BETRANSPORTED) echo "<td>No mechanism<td>to move armies yet";  // TODO transport armies
