@@ -83,6 +83,13 @@ function New_Thing(&$t) {
        $t = Thing_Duplicate($_REQUEST['id']);
        $tid = $t['id'];
        break;
+       
+     case 'Refit' :
+       $tid = $_REQUEST['id'];
+       $t = Get_Thing($tid);
+       Calc_Scanners($t);
+       RefitRepair($t);
+       break;     
            
     case 'None' :
     default: 
