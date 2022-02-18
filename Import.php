@@ -383,13 +383,13 @@ $SheetIds = ['Faction'=> 0, 'Setup'=> 1104884901, 'Main'=>1067465833, 'Colony1'=
         if ($Sys) $Loc = $Sys['id'];
       }
       $T = ['GameId'=>$GAME['id'], 'Type'=>5, 'Level'=>$R[2], 'SystemId'=>$Loc, 'Name'=>$Tname, 'Class'=>$R[1], 'Whose'=>$Fid, 'Notes'=>(empty($R[13])?'':$R[13]), 
-            'Gadgets'=> $R[3], 'BuildState'=>$BuildState ];
+            'Gadgets'=> $R[3], 'BuildState'=>$BuildState, 'Orders'=> $R[8] ];
 
       $Tid = Put_Thing($T);
       if ($Loc == 0 && ($BuildState > 0 || $BuildState <4)) {
         echo "Agent <a href=ThingEdit.php?id=$Tid>$Tname</a> has an unknown location<br>\n";
       }
-      echo "Imported Army <a href=ThingEdit.php?id=$Tid>$Tname</a><p>";
+      echo "Imported Agent <a href=ThingEdit.php?id=$Tid>$Tname</a><p>";
     }
     break;
     

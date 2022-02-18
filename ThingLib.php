@@ -390,7 +390,7 @@ function Show_Thing(&$t,$Force=0) {
   $Syslocs = Within_Sys_Locs($N);
   $LinkTypes = Get_LinkLevels();
   
-  if ($t['SystemId'] == $t['NewSystemId']) {
+  if ($t['SystemId'] == $t['NewSystemId'] || $t['NewSystemId'] == 0) {
     $NewSyslocs = $Syslocs;
   } elseif ($t['NewSystemId']) {
     $NN = Get_System($t['NewSystemId']);
