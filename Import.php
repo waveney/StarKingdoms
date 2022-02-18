@@ -209,12 +209,14 @@ $SheetIds = ['Faction'=> 0, 'Setup'=> 1104884901, 'Main'=>1067465833, 'Colony1'=
         case 'Military':
           $Type =1;
           break;
-        case 'Civilan':
+        case 'Civilian':
           $Type = 3;
           break;
         case 'Support':
           $Type = 2;
       }
+
+// var_dump($R,$Type);
 
       $BuildState = 0;
       switch ($R[12]) {
@@ -272,7 +274,7 @@ $SheetIds = ['Faction'=> 0, 'Setup'=> 1104884901, 'Main'=>1067465833, 'Colony1'=
 
       Calc_Scanners($T);
       RefitRepair($T);
-      echo "Imported ship $Tname<p>";
+      echo "Imported ship <a href=ThingEdit.php?id=$Tid>$Tname</a><p>";
     }
     break;
   
@@ -336,7 +338,7 @@ $SheetIds = ['Faction'=> 0, 'Setup'=> 1104884901, 'Main'=>1067465833, 'Colony1'=
 
       Calc_Scanners($T);
       RefitRepair($T);
-      echo "Imported Army $Tname<p>";
+      echo "Imported Army <a href=ThingEdit.php?id=$Tid>$Tname</a><p>";
     }
     break;
   
@@ -384,7 +386,7 @@ $SheetIds = ['Faction'=> 0, 'Setup'=> 1104884901, 'Main'=>1067465833, 'Colony1'=
       if ($Loc == 0 && ($BuildState > 0 || $BuildState <4)) {
         echo "Agent <a href=ThingEdit.php?id=$Tid>$Tname</a> has an unknown location<br>\n";
       }
-      echo "Imported Army $Tname<p>";
+      echo "Imported Army <a href=ThingEdit.php?id=$Tid>$Tname</a><p>";
     }
     break;
     
