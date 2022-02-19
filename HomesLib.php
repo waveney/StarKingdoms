@@ -163,7 +163,7 @@ function Recalc_Project_Homes($Logf=0) {
       continue;
     }
  
-    if ($T['HasDeepSpace'] || ($ThingTypes[$T['Type']]['Properties'] & 1) || ($ThingTypes[$T['Type']]['Properties'] & 16) ) {
+    if ($T['HasDeepSpace'] || ($ThingTypes[$T['Type']]['Properties'] & THING_HAS_DISTRICTS) || ($ThingTypes[$T['Type']]['Properties'] & THING_HAS_GADETS ) ) {
       $THi = $T['ProjHome'];
       if ($THi) {
         foreach ($KnownHomes as &$H) {
@@ -180,7 +180,7 @@ function Recalc_Project_Homes($Logf=0) {
           }
         }
         $H = ['ThingType'=> 3, 'ThingId'=> $T['id'], 'Inuse'=>1, 'Whose'=>$T['Whose']];
-        $H['id'] = Put_ProjectHome($H);
+        Put_ProjectHome($H);
         $KnownHomes[$H['id']] = $H;
         $T['ProjHome'] = $H['id'];
         Put_Thing($T);

@@ -94,7 +94,8 @@
   $DistTypes = Get_DistrictTypes();
   $ProjTypes = Get_ProjectTypes();
 
-  $Di = $_REQUEST['Di'];
+  $DiCall = $_REQUEST['Di'];
+  $Di = abs($DiCall);
   $Hi = $_REQUEST['Hi'];
       
   $PHx = 1;
@@ -125,13 +126,13 @@
     }
     //TODO Construction and Districts... 
 
-    $Dists[] = ['HostType'=>-1, 'HostId' => $PH['id'], 'Type'=> -1, 'Number'=>0, 'id'=>-1];  
+    $Dists[] = ['HostType'=>-1, 'HostId' => $PH['id'], 'Type'=> -1, 'Number'=>0, 'id'=>-$PH['id']  
     foreach ($Dists as &$D) {
       if ($D['Type'] > 0 && (($DistTypes[$D['Type']]['Props'] &2) == 0)) continue;
       if ($D['Type'] < 0 && $PH['Type'] != $Faction['Biosphere'] && Has_Tech($Fid,3)<2 ) continue;
       $Dix = $D['id'];
      
-      if ($Hi == $Hix && $Di == $Dix) {
+      if (($Hi == $Hix) && ($DiCall == $Dix)) {
         $HDists[$Hix] = $Dists;      
         break 2;  // $D is now the relevant one
       }

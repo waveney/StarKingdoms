@@ -115,8 +115,10 @@ $SheetIds = ['Faction'=> 0, 'Setup'=> 1104884901, 'Main'=>1067465833, 'Colony1'=
     foreach ($Dtypes as $D) {
       if (empty($Dists[$D[1]])) {
         $ND = ['HostType'=>$H['ThingType'], 'HostId'=>$H['ThingId'], 'Type'=>$D[1], 'GameId'=>$GAME['id'], 'Number'=>$rows[$D[2]+$Turn-1][1]];
-        Put_District($ND);
-        echo "Created " . $D[0] . " districts " . $ND['Number'] . "<br>";
+        if ($ND['Number']) {
+          Put_District($ND);
+          echo "Created " . $D[0] . " districts " . $ND['Number'] . "<br>";
+        }
       } else {
         $OD = $Dists[$D[1]];
         $OD['Number'] = $rows[$D[2]+$Turn-1][1];
@@ -126,8 +128,10 @@ $SheetIds = ['Faction'=> 0, 'Setup'=> 1104884901, 'Main'=>1067465833, 'Colony1'=
     }
     if (empty($Dists[1])) {
         $ND = ['HostType'=>$H['ThingType'], 'HostId'=>$H['ThingId'], 'Type'=>1, 'GameId'=>$GAME['id'], 'Number'=>$rows[$Commerce[0]+$Turn-1][$Commerce[1]]];
-        Put_District($ND);
-        echo "Created Commerce districts " . $ND['Number'] . "<br>";
+        if ($ND['Number']) {
+          Put_District($ND);
+          echo "Created Commerce districts " . $ND['Number'] . "<br>";
+        }
       } else {
         $OD = $Dists[1];
         $OD['Number'] = $rows[$Commerce[0]+$Turn-1][$Commerce[1]];
@@ -179,7 +183,7 @@ $SheetIds = ['Faction'=> 0, 'Setup'=> 1104884901, 'Main'=>1067465833, 'Colony1'=
           echo "Project $ProName setup needs <a href=ProjEdit.php?id=$pid>editing</a> for type and things<br>\n";       
         }
         if (!empty($R[8])) {
-          $pt = ['ProjectId'=>$pid, 'TurnNumber'=>$tturn, 'Rush'=>$R[8]];
+          $pt = ['ProjectId'=>$pid, 'TurnNumber'=>$tturn, 'Rush'=>$R[9]];
           Put_ProjectTurn($pt);
         }
       }
