@@ -57,8 +57,8 @@
         db_delete('Things',$Tid);
         $Tid = $T['id'];
       } else {
-        $T['id'] = $Tid;
-        $T['Name'] = "Copy of " . $T['Name'];
+        $T = Thing_Duplicate($_REQUEST['Design']);
+        $Tid = $T['id'];
         $T['BuildState'] = $T['NewSystemId'] = $T['SystemId'] = 0;
         Put_Thing($T);
       }

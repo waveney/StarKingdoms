@@ -152,7 +152,7 @@
   echo "</h2>";
   echo "</form>";
   
-  echo "<h2><a href=ProjDisp.php?id=$Fid>Back to Project Display</a> , <a href=ProjList.php?F=$Fid>Back to Project List</a></h2>\n";
+  echo "<h2><a href=ProjDisp.php>Goto to Project Display</a> , <a href=ProjList.php?F=$Fid>Goto to Project List</a></h2>\n";
   
   dotail();
 ?>

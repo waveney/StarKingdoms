@@ -16,7 +16,7 @@ exit;
 */
   $HomeColours = ['#ff99ff', '#ccffff', '#ccffcc', '#ffffcc', '#ffcccc', '#e6ccff', '#cce6ff', '#ffd9b3', '#ecc6c6', '#ecc6d6', '#d6b3ff', '#d1e0e0', '#d6ff99' ];
   
-  
+  $GM = Access('GM');  
   if (Access('Player')) {
     if (!$FACTION) {
       if (!Access('GM') ) Error_Page("Sorry you need to be a GM or a Player to access this");
@@ -25,8 +25,7 @@ exit;
       $Faction = &$FACTION;
     }
   } 
-  if (Access('GM') ) {
-    A_Check('GM');
+  if ($GM) {
     if (isset( $_REQUEST['F'])) {
       $Fid = $_REQUEST['F'];
     } else if (isset( $_REQUEST['f'])) {
@@ -36,6 +35,8 @@ exit;
     }
     if (isset($Fid)) $Faction = Get_Faction($Fid);
   }
+  
+  $GM = Access('GM');
   
   dostaffhead("Display Projects for faction",["js/ProjectTools.js"]);
   
