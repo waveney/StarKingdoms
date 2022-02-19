@@ -34,7 +34,7 @@ function Player_Page() {
 
   dostaffhead("Things",["js/ProjectTools.js"]);  
   $GM = Access('GM');
-  $FF = FactionFeature('AllowActions',$GM);  // Eventually change GM to 1
+  $FF = 1; //FactionFeature('AllowActions',$GM);  // Eventually change GM to 1
 
   $FACTION['LastActive'] = time();
   

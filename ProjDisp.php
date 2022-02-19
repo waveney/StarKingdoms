@@ -249,6 +249,9 @@ exit;
             }
           }
           $Prog = min($Pro['Acts'],$Pro['MaxRush'] + $Rush);
+          if ($t == $GAME['Turn'] -1) { 
+            $Prog = $P['Progress'];
+          }
           if ($TotProg || $Prog >= $Pro['Acts'] ) {
             $TotProg += $Prog;
             if ($TotProg >= $Pro['Acts']) {
@@ -372,7 +375,7 @@ exit;
           echo "<td $BG id=ProjR$Turn:$Hi:$Di class='PHRush Group$Di Home$Hi' $Hide>" . (($Turn < $GAME['Turn'])?$Proj[$Turn][$Hi][$Di]['Rush'] : 
                "<input type=number id=Rush$Turn:$PN name=Rush$Turn:$PN oninput=RushChange($Turn,$PN,$Hi,$Di," . 
                $Proj[$Turn][$Hi][$Di]['MaxRush'] . ") value=" . $Proj[$Turn][$Hi][$Di]['Rush'] .
-               " min=0 max=" . $Proj[$Turn][$Hi][$Di]['MaxRush'] .">" );
+               " min=0 max=" . ($Proj[$Turn][$Hi][$Di]['MaxRush'] + ($GM)?2:0) .">" );
           echo "<td $BG id=ProjP$Turn:$Hi:$Di class='PHProg Group$Di Home$Hi' $Hide>" . $Proj[$Turn][$Hi][$Di]['Progress'];
           echo "<td $BG id=ProjT$Turn:$Hi:$Di class='PHStatus Group$Di Home$Hi' $Hide>" . $Proj[$Turn][$Hi][$Di]['Status'] . "";
           
