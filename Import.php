@@ -158,9 +158,9 @@ $SheetIds = ['Faction'=> 0, 'Setup'=> 1104884901, 'Main'=>1067465833, 'Colony1'=
         $ProLvl = $rows[$DT[2]+$StartTurn][3];
         preg_match("/(\d*)\/(\d*)/", $rows[$DT[2]+$Turn-1][6],$match);
         
-        
+        $pc = Proj_Costs($ProLvl);
         $Pro = ['FactionId'=>$Fid, 'Type'=>30, 'Level'=>$ProLvl, 'Name'=>$ProName, 'TurnStart'=>$StartTurn, 'Home'=>$Hid, 'Status'=>1, 'ProgNeeded'=>$match[2],
-                'Progress'=>$match[1]];
+                'Progress'=>$match[1] , 'Costs'=>$pc[1]];
         $pid = Put_Project($Pro);
         echo "Project $ProName setup needs <a href=ProjEdit.php?id=$pid>editing</a> for type and things<br>\n";
       } else {
