@@ -131,6 +131,7 @@ exit;
 
 // var_dump($Homes);exit;
   
+  $PlanCon = Has_Tech($Fid,3);
   $PHx = 1;
   $Dis = [];
   $FirstHome = 0;
@@ -167,12 +168,12 @@ exit;
 
       
       if ($D['Type'] > 0 && (($DistTypes[$D['Type']]['Props'] &2) == 0)) continue;
-      if ($D['Type'] < 0 && $PH['Type'] != $Faction['Biosphere'] && Has_Tech($Fid,3)<2 ) continue;
+      if ($D['Type'] < 0 && $PH['Type'] != $Faction['Biosphere'] && $PlanCon<2 ) continue;
       $Di = $D['id'];
       $Hide = ($Hi == $OpenHi && $Di == $OpenDi? "" : "hidden");
       $Headline2[] = "<th class='PHStart Group$Di Home$Hi' id=PHDist$Hi:$Di $back $Hide><b>+</b>" .
         "<th $back class='PHName  Home$Hi'><button type=button onclick=Toggle('Group$Di')>" . 
-        ($D['Type'] > 0 ? $DistTypes[$D['Type']]['Name'] : 'Construction') . "</button>" .
+        ($D['Type'] > 0 ? ($DistTypes[$D['Type']]['Name']  . "&nbsp;-&nbsp;" .$D['Number'] ): "Construction&nbsp;-&nbsp;$PlanCon") . "</button>" .
         "<th $back class='PHLevel Group$Di Home$Hi'id=PHLevel$Hi:$Di $Hide>Lvl" .
         "<th $back class='PHCost Group$Di Home$Hi' id=PHCost$Hi:$Di $Hide>Cost" .
         "<th $back class='PHRush Group$Di Home$Hi' id=PHRush$Hi:$Di $Hide>Rush" .

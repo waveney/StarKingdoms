@@ -51,7 +51,7 @@ function Player_Page() {
   echo "The only current actions are:";
   echo "<ul>";
 
-  echo "<p><li><a href=UserGuide.php>User Guide</a>\n";
+  echo "<p><li><a href=UserGuide.php>User Guide</a><p>\n";
       
   switch ($PlayerState[$FACTION['TurnState']]) {
   case 'Setup':
@@ -66,7 +66,7 @@ function Player_Page() {
   case 'Turn Planning':
     echo "<li><a href=MapFull.php>Faction Map</a>\n";
     if (Has_Tech($FACTION['id'],'Astral Mapping')) echo "<li><a href=MapFull.php?Hex>Faction Map</a> - with spatial location of nodes\n";
-    echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";
+    echo "<li><a href=TechShow.php?PLAYER>Technologies</a><p>\n";
     echo "<li><a href=WhatCanIC.php>What Things can I See?</a>\n";
     echo "<li><a href=WorldList.php>Worlds and Colonies</a> - High Level info only<p>\n";  
     echo "<li><a href=ProjDisp.php>Projects</a>\n";
