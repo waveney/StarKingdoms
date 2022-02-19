@@ -116,7 +116,7 @@ function New_Thing(&$t) {
   }
     
   Show_Thing($t,$Force);
-  if ($GM && !empty($tid) ) echo "<br><p><br><p><h2><a href=ThingEdit.php?ACTION=DELETE&id=$tid>Delete Thing</a></h2>";
+  if (($GM && !empty($tid)) || ($t['BuildState'] == 0)) echo "<br><p><br><p><h2><a href=ThingEdit.php?ACTION=DELETE&id=$tid>Delete Thing</a></h2>";
   
   
   dotail();

@@ -29,14 +29,32 @@ function TurnLog($Fid,$text,&$T=0) {
 }
 
 function CheckTurnsReady() {
-  $Facts = Get_Factions();
+  global $PlayerStates,$PlayerState, $PlayerStateColours;
+  $Factions = Get_Factions();
   $AllOK = 1;
-  foreach ($Facts as $F) {
+  $coln = 0;
+  
+  echo "<div class=tablecont><table id=indextable border width=100% style='min-width:1400px'>\n";
+  echo "<thead><tr>";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Faction</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Who</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Last Active</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>State</a>\n";
+
+  echo "</thead><tbody>";
+
+  foreach($Factions as $F) {
+    $Fid = $F['id'];
+    echo "<tr><td><a href=FactionEdit.php?F=$Fid>" . $F['Name'] . "</a>";
+    echo "<td>" . $F['Player'];
+    echo "<td style='background:" . $F['MapColour'] . ";'>"
+         . (isset($F['LastActive']) && $F['LastActive']? date('d/m/y H:i:s',$F['LastActive']) :"Never");
+    echo "<td <span style='background:" . $PlayerStateColours[$F['TurnState']] . "'>"  . $PlayerState[$F['TurnState']];
     if ($F['TurnState'] != 2) {
-      echo "<a href=FactionEdit.php?id=" . $F['id'] . ">" . $F['Name'] . "</a> has not submitted a turn.<br>\n";
       $AllOK = 0;
     }
   }
+  echo "</table></div>\n";
   if ($AllOK) return;
   echo "To proceed you must mark them as submitted<p>\n";
   return false;
@@ -126,7 +144,7 @@ function StartProjects() {
 
 
   foreach ($Projects as $P) {
-  var_dump("Project",$P);
+//  var_dump("Project",$P);
     $PT = $ProjTypes[$P['Type']];
     $Cost = $P['Costs'];
     if ($ProjTypes[$P['Type']]['Props'] & 2) { // Has a thing
@@ -331,7 +349,7 @@ function Economy() {
     }
 
   
-    $LogAvail = LogsticalSupport($Fid);
+    $LogAvail = LogisticalSupport($Fid);
     $LogCats = ['Ships','Armies','Agents'];
     
     foreach ($LogCats as $i => $n) {
@@ -798,6 +816,8 @@ function ProjectsComplete() {
     case 'Extend Space Station':
     case 'Deep Space Sensors':
     case 'Build Advanced Asteroid Mining Facility':
+    case 'Unknown' :
+    case 'Grow Modules' :
     default:
       SKLog("A project to " . $PT['Name'] . " has completed, this is not automated yet.  See <a href=ProjEdit.php?id=" . $P['id'] . ">Project</a>",1);
     }

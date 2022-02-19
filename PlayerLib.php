@@ -50,7 +50,9 @@ function Player_Page() {
   echo "<div class=Player>";
   echo "The only current actions are:";
   echo "<ul>";
-    
+
+  echo "<p><li><a href=UserGuide.php>User Guide</a>\n";
+      
   switch ($PlayerState[$FACTION['TurnState']]) {
   case 'Setup':
     echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";    
@@ -65,16 +67,16 @@ function Player_Page() {
     echo "<li><a href=MapFull.php>Faction Map</a>\n";
     if (Has_Tech($FACTION['id'],'Astral Mapping')) echo "<li><a href=MapFull.php?Hex>Faction Map</a> - with spatial location of nodes\n";
     echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";
-    echo "<li>" . ($FF? "<a href=WhatCanIC.php>What Things can I See?</a>" : "What Things can I See?") . "\n";
-    echo "<li>" . ($FF? "<a href=WorldList.php>Worlds and Colonies</a>" : "Worlds and Colonies") . " - High Level info only<p>\n";  
-    echo "<li>" . ($FF? "<a href=ProjDisp.php>Projects</a>" : "Projects") . "\n";
-    echo "<li>" . ($FF? "<a href=PThingList.php>List of Things</a>" : "List of Things") . " List of Things (Ships, Armies, Agents, Space stations etc)";
-    echo "<li>" . ($FF? "<a href=ThingPlan.php>Plan a Thing</a>" : "Plan a Things") . " Planning Things (Ships, Armies, Agents, Space stations etc)<P>";
+    echo "<li><a href=WhatCanIC.php>What Things can I See?</a>\n";
+    echo "<li><a href=WorldList.php>Worlds and Colonies</a> - High Level info only<p>\n";  
+    echo "<li><a href=ProjDisp.php>Projects</a>\n";
+    echo "<li><a href=PThingList.php>List of Things</a> - List of Things (Ships, Armies, Agents, Space stations etc)";
+    echo "<li><a href=ThingPlan.php>Plan a Thing</a> - Planning Things (Ships, Armies, Agents, Space stations etc)<P>";
     echo "<li>Economy";
-    echo "<li>" . ($FF? "<a href=Banking.php>Banking</a>" : "Banking") . " Sending credits to others and statements<p>";
-    echo "<li><a href=PlayerTurnTxt.php>Turn Actions Text</a> Logs of all automated actions";
-    echo "<li>" . ($FF? "<a href=Player.php?ACTION=Submit>Submit Turn</a>" : "Submit Turn") . "<p>\n";
-    echo "<li>" . ($FF? "<a href=FactionEdit.php>Faction Information</a>" : "Faction Information") . " Mostly read only once set up.\n";
+    echo "<li><a href=Banking.php>Banking</a> - Sending credits to others and statements<p>";
+    echo "<li><a href=PlayerTurnTxt.php>Turn Actions Text</a>";
+    echo "<li><a href=Player.php?ACTION=Submit>Submit Turn</a><p>\n";
+    echo "<li><a href=FactionEdit.php>Faction Information</a> - Mostly read only once set up.\n";
     break;
       
   case 'Turn Submitted':
@@ -90,8 +92,6 @@ function Player_Page() {
 
   }
 
-  echo "<p><li><a href=UserGuide.php>User Guide</a>\n";
-  
   echo "</ul>";
   echo "</div>";
   

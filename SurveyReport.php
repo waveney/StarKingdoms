@@ -217,7 +217,11 @@
 
       echo "<li><span class=SRName>" . $pname . "</span>";
       if ($P['Image']) echo "<img src=" . $P['Image'] . ">";
-      if ($SurveyLevel >= 4) echo " Is " . ($PTNs[$P['Type']] == 'Asteroid Belt'?" an ":($PTD[$P['Type']]['Hospitable']?" a <b>habitable ":" an uninhabitable "));
+      if ($SurveyLevel >= 4) {
+        echo " Is " . ($PTNs[$P['Type']] == 'Asteroid Belt'?" an ":($PTD[$P['Type']]['Hospitable']?" a <b>habitable ":" an uninhabitable "));
+      } else {
+        echo "<br>";
+      }
       echo PM_Type($PTD[$P['Type']],"Planet") . "</b>.  ";
     
       if ( $SurveyLevel >= 5 && $PTD[$P['Type']]['Hospitable'] && $P['Minerals']) echo "It has a minerals rating of <b>" . $P['Minerals'] . "</b>.  ";
@@ -271,7 +275,12 @@
 
           echo "<li><span class=SRName>" . $pname . "</span>";
           if ($M['Image']) echo "<img src=" . $M['Image'] . ">";        
-          if ($SurveyLevel >= 4) echo " Is " . ($PTNs[$M['Type']] == 'Asteroid Belt'?" an ":($PTD[$M['Type']]['Hospitable']?" a <b>habitable ":" an uninhabitable "));
+          if ($SurveyLevel >= 4) {
+            echo " Is " . ($PTNs[$M['Type']] == 'Asteroid Belt'?" an ":($PTD[$M['Type']]['Hospitable']?" a <b>habitable ":" an uninhabitable "));
+          } else {
+            echo "<br>";
+          }
+
           echo PM_Type($PTD[$M['Type']],"Moon") . "</b>.  ";
     
           if ( $SurveyLevel >= 5 && $PTD[$M['Type']]['Hospitable'] && $M['Minerals']) echo "It has a minerals rating of <b>" . $M['Minerals'] . "</b>.  ";
@@ -280,7 +289,8 @@
                  ($M['Radius']?" ,":" and") . " a period of " . sprintf('%0.2g', $M['Period']) . " Hr = " .  RealWorld($M,'Period');
             if ($M['Radius']) echo ", it has a radius of " . sprintf('%0.2g', $M['Radius']) . " Km = " .  RealWorld($M,'Radius') .
                                  " and gravity at " . sprintf('%0.2g', $M['Gravity']) . " m/s<sup>2</sup> = " .  RealWorld($M,'Gravity');
-          }                     
+          }
+
           if ($SurveyLevel > 4 && $M['Description']) echo "<p>" . $Parsedown->text($M['Description']);
         
           // Districts

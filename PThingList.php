@@ -110,11 +110,13 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Type</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Level</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Orders</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Health</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>State</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Where</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Actions</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Using Link</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Moving to</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Actions</a>\n";
+
   echo "</thead><tbody>";
   
   $Logistics = [0,0,0]; // Ship, Army, Intelligence
@@ -133,9 +135,11 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
     echo "<td>" . $Name;
     echo "<td>" . $T['Level'];
     echo "<td>" . $T['Orders'];
+    echo "<td><center>" . $T['CurHealth'] . ' / ' . $T['OrigHealth'];
     echo "<td>" . $BuildState[$T['BuildState']];
     echo "<td>" . (empty($T['SystemId']) ?'': $Systems[$T['SystemId']]);
     if (($Props & THING_CAN_MOVE) && ($T['BuildState'] == 2 || $T['BuildState'] == 3)) {
+      echo "<td><a href=PMoveThing.php?id=" . $T['id'] . ">Move</a>";
       if ($T['LinkId']) {
         $L = Get_Link($T['LinkId']);
         echo "<td style=color:" . $LinkTypes[$L['Level']]['Colour'] . " >Link #" . $T['LinkId'];
@@ -147,7 +151,6 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
       } else {
         echo "<td><td>";
       }
-      echo "<td><a href=PMoveThing.php?id=" . $T['id'] . ">Move</a>";
     } else {
       echo "<td><td><td>";
     }
@@ -164,7 +167,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
   echo "</table></div>\n";
   echo "<h1>Logistics</h1>";
   
-  $LogAvail = LogsticalSupport($Fid);
+  $LogAvail = LogisticalSupport($Fid);
   
   $LogCats = ['Ships','Armies','Agents'];
   

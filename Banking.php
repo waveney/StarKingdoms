@@ -12,6 +12,9 @@
   
   if (!Access('GM')) Put_Faction($FACTION);
 
+  $Factions = Get_Factions();
+  $Facts = Get_FactionFactions($Fid);
+
   $Turn = $GAME['Turn'];
   $LookBack = 2;
   if (isset($_REQUEST['LookBack'])) $LookBack = $_REQUEST['LookBack'];
@@ -27,7 +30,7 @@
       case 'Current Turn' :
         $Turn = $GAME['Turn'];    
         break;
-      case 'Setup' :
+      case 'Transfer on Turn' :
         $BankRec = ['FactionId'=>$Fid, 'Recipient'=>$_REQUEST['Recipient'], 'Amount'=>$_REQUEST['Amount'], 
                     'StartTurn'=> $_REQUEST['StartTurn'], 'EndTurn' => (empty( $_REQUEST['EndTurn'])? $_REQUEST['StartTurn'] : $_REQUEST['EndTurn']), 
                     'YourRef' => $_REQUEST['YourRef']];
@@ -38,6 +41,22 @@
         $_REQUEST['StartTurn'] = '';
         $_REQUEST['EndTurn'] = '';
         $_REQUEST['YourRef'] = '';
+        break;
+      case 'Transfer Now' :
+        dostaffhead("Banking");
+        $B = ['FactionId'=>$Fid, 'Recipient'=>$_REQUEST['Recipient'], 'Amount'=>$_REQUEST['Amount'], 
+                    'StartTurn'=> $_REQUEST['StartTurn'], 'EndTurn' => (empty( $_REQUEST['EndTurn'])? $_REQUEST['StartTurn'] : $_REQUEST['EndTurn']), 
+                    'YourRef' => $_REQUEST['YourRef']];
+        if (empty($BankRec['YourRef'])) $BankRec['YourRef'] = "Unspecified";
+        
+        if (Spend_Credit($Fid,$B['Amount'],$B['YourRef'])) {
+          echo "<h2>Transfered  &#8373;" . $B['Amount'] . " for " . $B['YourRef'] . " to " . $Factions[$B['Recipient']]['Name'] . "</h2>";
+          if ($B['Recipient'] > 0) {
+            Spend_Credit($B['Recipient'], - $B['Amount'],$B['YourRef']);
+          }
+        } else {
+          echo "<h2 class=Err>Transfer failed you only have&#8373;" . $Factions[$Fid]['Credits'] . "</h2>\n";
+        }
         break;
     }
   } else {
@@ -61,8 +80,6 @@
   
   dostaffhead("Banking");
   
-  $Factions = Get_Factions();
-  $Facts = Get_FactionFactions($Fid);
   $FactList = [];
   $FactList[-1] = "Other";
   foreach ($Facts as $Fi=>$F) {
@@ -120,13 +137,14 @@
   
   if (empty($_REQUEST['StartTurn'])) $_REQUEST['StartTurn'] = $Turn;
   echo "<form method=post action=Banking.php>\n";
-  echo "<h2>Setup One Off Transfer On Next Turn</h2>";
+  echo "<h2>Setup One Off Transfer</h2>";
   echo "<table border>";
   echo fm_hidden('StartTurn',$GAME['Turn']);
   echo "<tr><td>To:<td>" . fm_select($FactList,$_REQUEST,'Recipient') . "<td>Select <b>Other</b> for RP actions";
   echo "<tr>" . fm_number('Amount',$_REQUEST,'Amount');
   echo "<tr>" . fm_text('Your Reference',$_REQUEST,'YourRef') . "<td>Will be seen by both parties";
-  echo "<tr><td><td><input type=submit name=ACTION value='Setup'>\n";
+  echo "<tr><td><td><input type=submit name=ACTION value='Transfer Now'>\n";
+    echo "  <td><input type=submit name=ACTION value='Transfer on Turn'>\n";
   echo "</table></form>";
 
   echo "<form method=post action=Banking.php>\n";

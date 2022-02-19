@@ -80,6 +80,10 @@
   $ThingProps = Thing_Type_Props();
   $tprops = (empty($T['Type'])? 0: $ThingProps[$T['Type']]);
   $Valid = 1;
+  RefitRepair($T,0);
+  Calc_Health($T);
+  Calc_Damage($T);
+  Calc_Scanners($T);
 
 // var_dump($ThingTypeNames);exit;  
   echo "<h1>Plan a Thing</h1>";
@@ -155,7 +159,7 @@
         }
       }
 
-      echo "<tr><td><td><td><tr><td>Total Modules slots:";
+      echo "<tr><td><td><td><tr><td>Modules slots used:";
       fm_hidden('HighestModule',$Mti);
       echo "<td id=CurrentModules" . ($totmodc > $T['MaxModules'] ? " class=ERR":"") . ">$totmodc\n";
       if ($totmodc > $T['MaxModules'] ) $Valid = 0;

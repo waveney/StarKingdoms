@@ -16,6 +16,7 @@ exit;
 */
   $HomeColours = ['#ff99ff', '#ccffff', '#ccffcc', '#ffffcc', '#ffcccc', '#e6ccff', '#cce6ff', '#ffd9b3', '#ecc6c6', '#ecc6d6', '#d6b3ff', '#d1e0e0', '#d6ff99' ];
   
+  $Fid = 0;
   $GM = Access('GM');  
   if (Access('Player')) {
     if (!$FACTION) {
@@ -25,13 +26,22 @@ exit;
       $Faction = &$FACTION;
     }
   } 
-  if ($GM) {
+  if ($GM && !$Fid) {
     if (isset( $_REQUEST['F'])) {
       $Fid = $_REQUEST['F'];
     } else if (isset( $_REQUEST['f'])) {
       $Fid = $_REQUEST['f'];
     } else if (isset( $_REQUEST['id'])) {
       $Fid = $_REQUEST['id'];
+    }
+    if (!$Fid) {
+      dostaffhead("Faction needed");
+      echo "<h1>For What faction?</h1>";
+      echo "<form method=post action=ProjDisp.php>";
+      $Facts = Get_Faction_Names();
+      echo fm_select($Facts,$_REQUEST,'F');
+      echo "<input type=submit value=Submit>";
+      dotail();
     }
     if (isset($Fid)) $Faction = Get_Faction($Fid);
   }

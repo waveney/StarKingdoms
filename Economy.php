@@ -109,7 +109,7 @@
     }
 
   
-    $LogAvail = LogsticalSupport($Fid);
+    $LogAvail = LogisticalSupport($Fid);
     $LogCats = ['Ships','Armies','Agents'];
     
     foreach ($LogCats as $i => $n) {

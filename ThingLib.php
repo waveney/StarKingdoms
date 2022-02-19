@@ -402,7 +402,7 @@ function Show_Thing(&$t,$Force=0) {
   $t['MaxModules'] = Max_Modules($t);
   if  ($tprops & THING_HAS_MODULES) $t['OrigHealth'] = Calc_Health($t);
 
-  if (($t['BuildState'] == 3) && ($tprops & THING_CAN_MOVE)) { // Complete Only
+  if (($t['BuildState'] == 3) && ($tprops & THING_CAN_MOVE) && ($t['CurHealth'] > 0)) { // Complete Only
     $res =     Moves_4_Thing($t,$Force,$N);
 //var_dump($res);exit;
     [$Links, $SelLinks, $SelCols ] = $res;
@@ -664,7 +664,7 @@ function Show_Thing(&$t,$Force=0) {
   echo "</table></div>\n";
   if ($GM) echo "<input type=submit name=ACTION value=Refit>\n";
   if ($GM || empty($Fid)) {
-    echo "<h2><a href=ThingList.php>Back to Thing list</a> &nbsp; <input type=submit name=ACTION value=Duplicate></h2>";
+    if (Access('God')) echo "<h2><a href=ThingList.php>Back to Thing list</a> &nbsp; <input type=submit name=ACTION value=Duplicate></h2>";
   } else {
     echo "<h2><a href=PThingList.php?id=$Fid>Back to Thing list</a></h2>";
   }
@@ -702,7 +702,7 @@ function Calc_Scanners(&$T) {
   }
 }
 
-function RefitRepair(&$T) {
+function RefitRepair(&$T,$Save=1) {
 // Refit
   $tid = $T['id'];
   $Mods = Get_Modules($tid); 
@@ -716,18 +716,16 @@ function RefitRepair(&$T) {
 // Repair
   $Health = Calc_Health($T);
   $T['CurHealth'] = $T['OrigHealth'] = $Health;
-  Put_Thing($T);
+  if ($Save) Put_Thing($T);
 }
 
 //  &#8373; = Credit symbol
 
-function LogsticalSupport($Fid) {  // Note this sets the Economic rating of all PHs
+function LogisticalSupport($Fid) {  // Note this sets the Economic rating of all PHs
   $PHomes = Get_ProjectHomes($Fid);
   
   $Logistics = [0,0,0];
 
-
-  
   $ThingTypes = Get_ThingTypes();
   $DistTypes = Get_DistrictTypes();
   
@@ -772,13 +770,13 @@ function LogsticalSupport($Fid) {  // Note this sets the Economic rating of all 
         $Commerce+=$D['Number'];
         break;
       case 'Military' :
-        $Logistics[1]+= $D['Number'];
+        $Logistics[1]+= $D['Number']*3;
         break;
       case 'Shipyard' :
-        $Logistics[0]+= $D['Number'];
+        $Logistics[0]+= $D['Number']*3;
         break;
       case 'Intelligence' :
-        $Logistics[2]+= $D['Number'];
+        $Logistics[2]+= $D['Number']*3;
         break;
       default:
         break;
@@ -788,10 +786,12 @@ function LogsticalSupport($Fid) {  // Note this sets the Economic rating of all 
     $PH['Economy'] = $Prime * $Commerce*2 + (isset($PH['Minerals'])?(min($PH['Minerals'], $Commerce)):0);
     $EndAct($PH);
   }
-        
+
+//var_dump($Logistics); echo "<br>";
   if ($ln = Has_Tech($Fid,'Naval Logistics')) $Logistics[0] += 2*$ln;
   if ($ln = Has_Tech($Fid,'Army Logistics')) $Logistics[1]  += 2*$ln;
   if ($ln = Has_Tech($Fid,'Intelligence Logistics')) $Logistics[3] += 2*$ln;
+//var_dump($Logistics);
   return $Logistics;  
 }
 
@@ -867,7 +867,7 @@ function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0) {
       echo ((/*Access('GM') ||*/ $Fid == $T['Whose'])?( "<a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a>") : $T['Name'] ) . " a ";
       if ($ThingTypes[$T['Type']]['Properties'] & THING_HAS_LEVELS) echo " level " . $T['Level'];
       if ($T['Class']) echo " " . $T['Class'] . " class ";
-      if ($T['Whose']) echo " " . $Factions[$T['Whose']]['Name'];
+      if ($T['Whose']) echo " <span style='background:" . $Factions[$T['Whose']]['MapColour'] . "'>" . $Factions[$T['Whose']]['Name'] . "</span>";
       echo " " . $ThingTypes[$T['Type']]['Name'];
       if ($Images && !empty($T['Image'])) echo " <img valign=top src=" . $T['Image'] . " height=100> ";
       echo "<br clear=all>\n";
