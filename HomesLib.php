@@ -61,7 +61,7 @@ function Recalc_Project_Homes($Logf=0) {
               Put_Planet($P);
             }
           } else {
-            $Dists = Get_DistrictsP($P['id'],$GAME['Turn']+100);
+            $Dists = Get_DistrictsP($P['id']);
             $Homeless = 1;
             if ($Dists) {
               foreach ($KnownHomes as &$H) {
@@ -119,7 +119,7 @@ function Recalc_Project_Homes($Logf=0) {
                 Put_Moon($M);
                 
               } else {
-                $Dists = Get_DistrictsM($M['id'],$GAME['Turn']+100);
+                $Dists = Get_DistrictsM($M['id']);
 //var_dump($Dists);
                 $Homeless = 1;
                 if ($Dists) {
