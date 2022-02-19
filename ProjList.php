@@ -29,6 +29,9 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Who</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Status</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Start Turn</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Cost</a>\n";  
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Progress</a>\n";  
   echo "</thead><tbody>";
 
   foreach($Projects as $P) {
@@ -37,6 +40,9 @@
     echo "<td><a href=ProjEdit.php?id=$pid>" . $P['Name'] . "</a>";
     echo "<td>" . $Factions[$P['FactionId']]['Name'];
     echo "<td>" . $Project_Status[$P['Status']];
+    echo "<td>" . $P['TurnStart'];
+    echo "<td>" . $P['Costs'];
+    echo "<td>" . $P['Progress'] . "/" . $P['ProgNeeded'];
   }
       
   echo "</tbody></table></div>\n";

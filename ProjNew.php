@@ -184,6 +184,7 @@
 // TODO bug if you already have that level in the pipeline - Add check to Turns Ready          
           $Lvl++;
           $pc = Proj_Costs($Lvl);
+          if (Has_Trait($Fid,"On the Shoulders of Giants") && $Lvl>1 ) $pc = Proj_Costs($Lvl-1);
           echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=1&t=$Turn&Hi=$Hi&Di=$Di&Sel=" . $DT['id'] . 
                 "&Name=" . base64_encode("Build " . $DT['Name'] . " District $Lvl$Place") . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
                 "Build " . $DT['Name'] . " District $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";        

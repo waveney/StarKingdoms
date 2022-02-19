@@ -174,7 +174,7 @@ $SheetIds = ['Faction'=> 0, 'Setup'=> 1104884901, 'Main'=>1067465833, 'Colony1'=
           $ProName = $R[2];
           $pc = Proj_Costs($ProLvl);        
           $Pro = ['FactionId'=>$Fid, 'Type'=>30, 'Level'=>$ProLvl, 'Name'=>$R[2], 'TurnStart'=>$tturn, 'Home'=>$Hid, 'Status'=>0, 'ProgNeeded'=>$pc[0],
-                'Cost'=>$pc[1]];
+                'Costs'=>$pc[1]];
           $pid = Put_Project($Pro);
           echo "Project $ProName setup needs <a href=ProjEdit.php?id=$pid>editing</a> for type and things<br>\n";       
         }
