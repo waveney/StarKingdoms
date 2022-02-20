@@ -669,7 +669,8 @@ function Show_Thing(&$t,$Force=0) {
   }
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
   echo "</table></div>\n";
-  if ($GM) echo "<input type=submit name=ACTION value=Refit>\n";
+  if ($GM) echo "<input type=submit name=ACTION value='GM Refit'> <input type=submit name=ACTION value='Destroy Thing (Leave debris)'>" .
+       " <input type=submit name=ACTION value='Remove Thing (No debris)'>\n";
   if ($GM || empty($Fid)) {
     if (Access('God')) echo "<h2><a href=ThingList.php>Back to Thing list</a> &nbsp; <input type=submit name=ACTION value=Duplicate></h2>";
   } else {

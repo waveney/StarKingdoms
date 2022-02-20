@@ -90,7 +90,21 @@ function New_Thing(&$t) {
        Calc_Scanners($t);
        RefitRepair($t);
        break;     
-           
+     
+     case 'Destroy Thing (Leave debris)':
+       $t = Get_Thing($_REQUEST['id']);
+       $t['BuildState'] = 4;  // Ex
+       Put_Thing($t);
+       break;
+
+     case 'Remove Thing (No debris)':
+       $t = Get_Thing($_REQUEST['id']);
+       $t['BuildState'] = 4;  // Ex
+       $t['SystemId'] = 0;
+       Put_Thing($t);
+       break;
+
+       
     case 'None' :
     default: 
       break;
