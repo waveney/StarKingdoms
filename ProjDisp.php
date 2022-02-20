@@ -202,6 +202,7 @@ exit;
       $Pro['Level'] = $P['Level'];
       $Pro['Cost'] = $P['Costs'];
       $Pro['Acts'] = $P['ProgNeeded'];
+      $Pro['GMOverride'] = $P['GMOverride'];
       
       $PPtype = $ProjTypes[$P['Type']];
       $PCat = $PPtype['Category'];
@@ -247,16 +248,11 @@ exit;
         for ($t = $P['TurnStart']; $t <= ($P['TurnEnd']?$P['TurnEnd']:$P['TurnStart']+50); $t++) {
 
           $Pro['Rush'] = $Rush = 0;
-          if (isset($_REQUEST['GMOVERRIDE'])) {
-             $Pro['MaxRush'] = 20;
-          } else {
-            $Pro['MaxRush'] = ( ($ProjTypes[$P['Type']]['Category'] & 16) ? $PlanCon : $District_Type[$WantedDT]);
+          $Pro['MaxRush'] = ( ($ProjTypes[$P['Type']]['Category'] & 16) ? $PlanCon : $District_Type[$WantedDT]);
             
 /*            $Pro['MaxRush'] =  (($ProjTypes[$P['Type']]['BasedOn'])? Has_Tech($Fid,$ProjTypes[$P['Type']]['BasedOn'],$t) : 
                (isset ($District_Type[5]) ?$District_Type[5]:0)); */
-            if (($P['Type'] == 1) && ($PH['Type'] != $Faction['Biosphere'])) $Pro['MaxRush'] = max(0,$Pro['MaxRush']-1);
-          }
-
+          if (($P['Type'] == 1) && ($PH['Type'] != $Faction['Biosphere'])) $Pro['MaxRush'] = max(0,$Pro['MaxRush']-1);
 
           if (isset($TurnStuff[$TSi])) {
             if ($TurnStuff[$TSi]['TurnNumber'] == $t) {
@@ -265,6 +261,7 @@ exit;
             }
           }
           $Prog = min($Pro['Acts'],$Pro['MaxRush'] + $Rush);
+//          if ($P['GMOverride']) $Pro['MaxRush'] = 20;
           if ($t == $GAME['Turn'] -1) { 
             $Prog = $P['Progress'];
           }
@@ -392,7 +389,7 @@ exit;
           echo "<td $BG id=ProjR$Turn:$Hi:$Di class='PHRush Group$Di Home$Hi' $Hide>" . (($Turn < $GAME['Turn'])?$Proj[$Turn][$Hi][$Di]['Rush'] : 
                "<input type=number id=Rush$Turn:$PN name=Rush$Turn:$PN oninput=RushChange($Turn,$PN,$Hi,$Di," . 
                $Proj[$Turn][$Hi][$Di]['MaxRush'] . ") value=" . $Proj[$Turn][$Hi][$Di]['Rush'] .
-               " min=0 max=" . $Proj[$Turn][$Hi][$Di]['MaxRush'] .">" );
+               " min=0 max=" . ($Proj[$Turn][$Hi][$Di]['GMOverride']?20:$Proj[$Turn][$Hi][$Di]['MaxRush']) .">" );
           echo "<td $BG id=ProjP$Turn:$Hi:$Di class='PHProg Group$Di Home$Hi' $Hide>" . $Proj[$Turn][$Hi][$Di]['Progress'];
           echo "<td $BG id=ProjT$Turn:$Hi:$Di class='PHStatus Group$Di Home$Hi' $Hide>" . $Proj[$Turn][$Hi][$Di]['Status'] . "";
           
