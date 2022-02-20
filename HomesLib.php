@@ -70,7 +70,7 @@ function Recalc_Project_Homes($Logf=0) {
                   if ($H['Whose'] == $N['Control']) {
                     $H['Inuse'] = 1;
                   } else {
-                    echo "GM question - <a href=ProjHome.php?id=" . $H['id'] . " who should control project home " . $H['id'] . " is it a planet?</a><P>";
+                    echo "GM question - <a href=ProjHomes.php?id=" . $H['id'] . " who should control project home " . $H['id'] . " is it a planet?</a><P>";
                   }
                   break;
                 }
@@ -129,7 +129,7 @@ function Recalc_Project_Homes($Logf=0) {
                       if ($H['Whose'] == $N['Control']) {
                         $H['Inuse'] = 1;
                       } else {
-                        echo "GM question - <a href=ProjHome.php?id=" . $H['id'] . " who should control project home " . $H['id'] . " is it a moon?</a><P>";
+                        echo "GM question - <a href=ProjHomes.php?id=" . $H['id'] . " who should control project home " . $H['id'] . " is it a moon?</a><P>";
                       }
                       break;
                     }
@@ -192,7 +192,7 @@ function Recalc_Project_Homes($Logf=0) {
             if ($H['Whose'] == $N['Control']) {
               $H['Inuse'] = 1;
             } else {
-              echo "GM question - <a href=ProjHome.php?id=" . $H['id'] . " who should control project home " . $H['id'] . " is it a thing?</a><P>";
+              echo "GM question - <a href=ProjHomes.php?id=" . $H['id'] . " who should control project home " . $H['id'] . " is it a thing?</a><P>";
             }
             break;
           }

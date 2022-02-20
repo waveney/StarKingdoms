@@ -72,7 +72,11 @@
   echo "<tr>" . fm_textarea('Description',$WH,'Description',8,3,'','', "Description:" . $W['ThingType'] . ":" . $W['ThingId']);
   echo "<tr><td>Minerals<td>" . $W['Minerals'];
   echo "<tr>" . fm_number("Relative Importance", $W, 'RelOrder');
-
+/*
+  if ($GM) {
+    echo "<tr>" . fm_number('Devastation',$W,'Devastation');
+    echo "<tr>" . fm_number('Economy Factor
+*/
   $NumCom = 0;
   $NumPrime = 0;
   if ($NumDists) {

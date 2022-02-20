@@ -555,7 +555,7 @@ function Show_Thing(&$t,$Force=0) {
 
       echo "<tr><td>Add District Type<td>" . fm_Select($DTs, NULL , 'Number', 1,'',"DistrictTypeAdd-$tid");
       echo fm_number("Max Districts",$t,'MaxDistricts');
-      echo fm_number(($t['ProjHome']?"<a href=ProjHome.php?id=" . $t['ProjHome'] . ">Project Home</a>":"Project Home"),$t,'ProjHome');
+      echo fm_number(($t['ProjHome']?"<a href=ProjHomes.php?id=" . $t['ProjHome'] . ">Project Home</a>":"Project Home"),$t,'ProjHome');
 
       if (!isset($t['MaxDistricts'])) $t['MaxDistricts'] = 0;
       if ($totdisc > $t['MaxDistricts']) echo "<td class=Err>TOO MANY DISTRICTS\n";
