@@ -9,21 +9,6 @@ function Toggle(id) {
   $("." + id).toggle();
 }
 
-function TxoggleHome(id) {
-debugger;
-//  var x = Get_DistData();
-
-//  var HostId = x[id][0]['HostId'];
-  $(".Home" + id).toggle();
-  x = 1;
-  x = 2;
-  
-//  for (Hi in Dis) {
-//    for (Di in Dis[Hi]) {
-//    } 
-//  }
-}
-
 function ToggleAllBut(id) {
   var x = Get_DistData();
   for (var h in x) {

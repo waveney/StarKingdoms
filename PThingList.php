@@ -130,7 +130,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
     $Name = $ThingTypes[$T['Type']]['Name'];
     if (!$Name) $Name = "Unknown Thing $Tid";
     
-    echo "<tr><td><a href=" . ($T['BuildState']? "ThingEdit.php" : "ThingPlan.php") . "?id=$Tid&FORCE>" . ($T['Name'] ? $T['Name'] : "Nameless" ) . "</a>";
+    echo "<tr><td><a href=" . ($T['BuildState']? "ThingEdit.php" : "ThingPlan.php") . "?id=$Tid>" . ($T['Name'] ? $T['Name'] : "Nameless" ) . "</a>";
     echo "<td>" . $T['Class'];
     echo "<td>" . $Name;
     echo "<td>" . $T['Level'];
@@ -138,7 +138,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
     echo "<td><center>" . $T['CurHealth'] . ' / ' . $T['OrigHealth'];
     echo "<td>" . $BuildState[$T['BuildState']];
     echo "<td>" . (empty($T['SystemId']) ?'': $Systems[$T['SystemId']]);
-    if (($Props & THING_CAN_MOVE) && ($T['BuildState'] == 2 || $T['BuildState'] == 3)) {
+    if (($Props & THING_CAN_MOVE) && ( $T['BuildState'] == 3)) {
       echo "<td><a href=PMoveThing.php?id=" . $T['id'] . ">Move</a>";
       if ($T['LinkId']) {
         $L = Get_Link($T['LinkId']);

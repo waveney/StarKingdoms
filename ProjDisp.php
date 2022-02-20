@@ -329,9 +329,10 @@ exit;
   Register_AutoUpdate('Projects',$Fid);
   echo fm_hidden('id',$Fid);
 
-  echo "<table border>";
-  echo $Headline1;
+  echo "<table border style='width:auto;height:50px;'>";
+  echo "<h2>Worlds:</h2> $Headline1";
   echo "</table>";
+  echo "<h2>Projects</h2>";
   echo "<table border>";
   
 
