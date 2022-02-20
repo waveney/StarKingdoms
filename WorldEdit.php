@@ -78,7 +78,7 @@
     echo "<tr>" . fm_number('Economy Factor
 */
   $NumCom = 0;
-  $NumPrime = 0;
+  $NumPrime = $Mines = 0;
   if ($NumDists) {
     if ($NumDists) echo "<tr><td rowspan=" . ($NumDists+1) . ">Districts:";
     foreach ($Dists as $D) {
@@ -87,8 +87,10 @@
       $totdisc += $D['Number'];
       if ($D['Type'] == 1) $NumCom = $D['Number'];
       if ($DTs[$D['Type']]['Props'] & 1) $NumPrime += $D['Number'];
+      if ($DTs[$D['Type']]['Props'] & 4) $Mines += $D['Number'];
     }
-    $Econ = (Has_Trait($Fid,'No customers')?($NumPrime - $NumCom):$NumPrime)*$NumCom*2 + min($W['Minerals'],$NumPrime);
+
+    $Econ = (Has_Trait($Fid,'No customers')?($NumPrime - $NumCom):$NumPrime)*$NumCom*2 + min($W['Minerals'],$NumPrime) + min($W['Minerals'],$Mines*2);
     $H['Economy'] = $Econ;
     Put_ProjectHome($H);
   } else {
