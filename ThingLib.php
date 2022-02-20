@@ -637,8 +637,8 @@ function Show_Thing(&$t,$Force=0) {
 //        if ($D['Number'] == 0) continue;
         $did = $D['id'];
         if (($dc++)%4 == 0)  echo "<tr>";
-        echo "<td><b>" . $D['Number']. "</b> of " . $MTNs[$D['Type']] . ($t['BuildState']? (" (Level " . $D['Level'] . ") ") :"") ;
-        
+        echo "<td><b>" . $D['Number']. "</b> of " . (isset($MTNs[$D['Type']]) ?$MTNs[$D['Type']] : 'Unknown Modules')  . ($t['BuildState']? (" (Level " . $D['Level'] . ") ") :"") ;
+                
         $CLvl = Calc_TechLevel($Fid,$D['Type']);
         if ($CLvl != $D['Level'] && $t['BuildState'] != 0 ) {
           echo ". <span class=Blue> Note you have Level: $CLvl </span>";
