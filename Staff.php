@@ -122,6 +122,8 @@
     $txt .= "<li><a href=TurnActions.php>Turn Actions</a>\n";
     $txt .= "<p>";
     $txt .= "<li><a href=PayFaction.php>Pay Faction</a>\n";
+    $txt .= "<p>";
+    $txt .= "<li><a href=UserGuide.php>User Guide</a>\n";
 
     $txt .= "</ul>\n";
   }

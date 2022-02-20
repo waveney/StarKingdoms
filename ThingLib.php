@@ -412,6 +412,13 @@ function Show_Thing(&$t,$Force=0) {
   }
 
 //var_dump($SelLinks);exit;
+  if ($Links && ($ll = $Links[$t['LinkId']]['Level']) >1 && ($Who = GameFeature('LinkOwner',0)) && $Who != $Fid) {
+    $LOwner = Get_Faction($Who);
+    echo "<h2>You are taking a <span style='color:" . $LinkTypes[$ll]['Colour'] . "'>" . $LinkTypes[$ll]['Colour'] .
+         "</span> link do you need to pay " . $LOwner['Name'] . " for this?</h2>\n";
+  }
+
+
 
   echo "Note Movement does not yet work for armies moving by ship.<p>\n";
   
@@ -756,7 +763,7 @@ function LogisticalSupport($Fid) {  // Note this sets the Economic rating of all
       break;
     }
     
-    $Prime = 0;
+    $Prime = $Mine = 0;
     $District_Type = [];
     foreach ($Dists as $D) {
       if ($DistTypes[$D['Type']]['Props'] &1) {
@@ -778,12 +785,16 @@ function LogisticalSupport($Fid) {  // Note this sets the Economic rating of all
       case 'Intelligence' :
         $Logistics[2]+= $D['Number']*3;
         break;
+      case 'Mining':
+        $Mine += $D['Number'];
+        break;
       default:
         break;
       }
     }
     
-    $PH['Economy'] = $Prime * $Commerce*2 + (isset($PH['Minerals'])?(min($PH['Minerals'], $Commerce)):0);
+    $PH['Economy'] = $Prime * $Commerce*2 + (isset($PH['Minerals'])?(min($PH['Minerals'], $Commerce)):0) + 
+       ((isset($PH['Minerals']) && $Mine)?(min($PH['Minerals'], $Mine*2)):0);
     $EndAct($PH);
   }
 
@@ -863,7 +874,9 @@ function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0) {
 //var_dump($T); echo "<p>";
 // if ( $Sid == 58) echo $T['Name'] . " - " . $ThingTypes[$T['Type']]['SeenBy'] . " - " . $Eyes . "<p>";
       if (($T['Whose'] != $Fid) && (($ThingTypes[$T['Type']]['SeenBy'] & $Eyes) == 0 )) continue;
+      if ($T['BuildState'] < 2 || $T['BuildState'] > 4) continue; // Building or abandoned
       if ($LastWhose && $LastWhose!= $T['Whose']) echo "<P>";
+      if ($T['BuildState'] == 4) echo "The remains of: ";
       echo ((/*Access('GM') ||*/ $Fid == $T['Whose'])?( "<a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a>") : $T['Name'] ) . " a ";
       if ($ThingTypes[$T['Type']]['Properties'] & THING_HAS_LEVELS) echo " level " . $T['Level'];
       if ($T['Class']) echo " " . $T['Class'] . " class ";

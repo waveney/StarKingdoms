@@ -14,7 +14,7 @@
 
   $coln = 0;
   
-  echo "Properties 1 = Prime, 2= Do projects<p>\n";
+  echo "Properties 1 = Prime, 2= Do projects, 4=Mining Income<p>\n";
   
   echo "<form method=post action=DTList.php>";
   echo "<div class=tablecont><table id=indextable border>\n";

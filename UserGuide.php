@@ -8,12 +8,15 @@
   dostaffhead("User Guide");
   
 ?>
+<div style=max-width:800>
 <H1>User Guide - Players</h1>
 
 <h2>Basic Principles</h2>
 Players don't need to login.  Once you have followed your faction's link a session cookie is used to identify you.<p>
 
 There is far more than I describe here, but this is what you can do now/near term.<p>
+
+Anywhere there is a table, you can click on a column to stop by that column.  Click again tosort the other way.<p>
 
 <h2>Player States</h2>
 There are four states:
@@ -61,14 +64,18 @@ Click on a [+] button to start/change a project in that location on that turn.<p
 
 To rush a project change the rush number (or click up/down).<p>
 
+The display sometimes gets confused. If that happens go to your Faction Menu and select Projects again.<P>
+
+Note: This does not <b>YET</b> handle techs, districts etc changing over the period you are planning projects.<p>
+
 <h2>List of Things</h2>
-Everything you own from ships, armies, warp gates, Embassies etc.<p>
+Everything you own from Ships, Armies, Warp Gates, Embassies etc.<p>
 
 Click on the name to change names, crew, gadgets, notes, description, add an image if you like.<p>
 
 Click on the <b>Move</b> to have that thing move in your next turn.  It shows a mini map - click on the link you want<p>
 
-Movement only works for Ships at the moment.<p>
+Movement only works for Ships and Agents at the moment.<p>
 
 <h2>Plan a Thing</h2>
 Design a Ship/Army/Agent/Space station etc.  You can design illegal things, you just won't be able to make them.<p>
@@ -93,11 +100,12 @@ Once submitted, you can't do much, but can revert to Turn planning as long as yo
 <h2>Faction Information</h2>
 Name, total credits, traits, a picture, science points.<P>
 
+If a trait is automated in the system it will indicate that it is automated, for all other cases you need to do the RP yourself and tell GMs if it affects underlying mechanics.<p>
 
 <h2>Why can't I do that?</h2>
 Ask, I may not have realised you want to do it.<p>
 
-Warning I have a terrible record of saying no, then doing it a few hours later.<p>
+Warning - I have a terrible record of saying no, then doing it a few hours later.<p>
 
 <h1>User Guide - GM</h1>
 GM's do need to log in.  They have lots more features, and can also act as Players as well.<p>
@@ -107,11 +115,11 @@ It is hypothetically possible for a player in one game to be a GM in another (no
 Mostly to be written<p>
 
 <h1>Technical bits - if you are interested</h1>
-Mostly written in php, some javascript, some css.  About 40 tables at time of writting of this paragraph.<p>
+Mostly written in php (14K lines), some javascript (1300 lines), some css.  About 42 tables at time of writting of this paragraph.<p>
 
 Graphics by GraphViz.<p>
 Uses the star system generator at <a href=https://donjon.bin.sh/scifi/system/index.cgi>https://donjon.bin.sh/scifi/system/index.cgi</a> to initially populate the map.<p>
-
+</div>
 <?php
   dotail();
 ?>
