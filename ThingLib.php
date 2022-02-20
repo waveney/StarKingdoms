@@ -412,7 +412,7 @@ function Show_Thing(&$t,$Force=0) {
   }
 
 //var_dump($SelLinks);exit;
-  if ($Links && ($ll = $Links[$t['LinkId']]['Level']) >1 && ($Who = GameFeature('LinkOwner',0)) && $Who != $Fid) {
+  if ($Links && ($t['LinkId']) && ($ll = $Links[$t['LinkId']]['Level']) >1 && ($Who = GameFeature('LinkOwner',0)) && $Who != $Fid) {
     $LOwner = Get_Faction($Who);
     echo "<h2>You are taking a <span style='color:" . $LinkTypes[$ll]['Colour'] . "'>" . $LinkTypes[$ll]['Colour'] .
          "</span> link do you need to pay " . $LOwner['Name'] . " for this?</h2>\n";
@@ -670,7 +670,7 @@ function Show_Thing(&$t,$Force=0) {
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
   echo "</table></div>\n";
   if ($GM) echo "<input type=submit name=ACTION value='GM Refit'> <input type=submit name=ACTION value='Destroy Thing (Leave debris)'>" .
-       " <input type=submit name=ACTION value='Remove Thing (No debris)'>\n";
+       " <input type=submit name=ACTION value='Remove Thing (No debris)'>  <input type=submit name=ACTION value='Warp Out'>\n";
   if ($GM || empty($Fid)) {
     if (Access('God')) echo "<h2><a href=ThingList.php>Back to Thing list</a> &nbsp; <input type=submit name=ACTION value=Duplicate></h2>";
   } else {

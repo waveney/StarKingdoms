@@ -84,7 +84,7 @@ function New_Thing(&$t) {
        $tid = $t['id'];
        break;
        
-     case 'Refit' :
+     case 'GM Refit' :
        $tid = $_REQUEST['id'];
        $t = Get_Thing($tid);
        Calc_Scanners($t);
@@ -104,6 +104,45 @@ function New_Thing(&$t) {
        Put_Thing($t);
        break;
 
+     case 'Warp Out':
+       $t = Get_Thing($_REQUEST['id']);
+       $Gates = Get_Things_Cond($t['Whose'],' Type=15'); // Warp Gates
+       if ($Gates) {
+         if (isset($Gates[1])) { // Multiple Gates
+           $GLocs = [];
+           foreach ($Gates as $G) {
+             $N = Get_System($G['SystemId']);
+             $GLocs[$G['id']] = $N['Ref'];
+           }
+           echo "<h2>Please Choose which gate:</h2>";
+           echo "<form method=post action=ThingEdit.php>";
+           echo fm_hidden('id', $t['id']);
+           echo fm_select($GLocs,$_REQUEST,'G');
+           echo "<input type=submit name=ACTION value='Select Gate'>";
+           echo "</form>";
+           dotail();
+         } else {
+           $t['SystemId'] = $Gates[0]['SystemId'];
+           $t['WithinSysLoc'] = $Gates[0]['WithinSysLoc'];
+           $t['CurHealth'] = $t['Link_id'] = 0;
+           Put_Thing($t);
+           break;
+         }
+       } else {
+         echo "<h2 class=Err>No Warp Gates...</h2>\n";
+       }
+       break;
+       
+     case 'Select Gate':
+       $t = Get_Thing($_REQUEST['id']);
+       $Gate = Get_Thing($_REQUEST['G']);
+       $t['SystemId'] = $Gate['SystemId'];
+       $t['WithinSysLoc'] = $Gate['WithinSysLoc'];
+       $t['CurHealth'] = $t['Link_id'] = 0;
+       Put_Thing($t);
+       break;
+
+       
        
     case 'None' :
     default: 
@@ -112,6 +151,7 @@ function New_Thing(&$t) {
   }
 
   if (isset($t)) {
+    $tid = $t['id'];
   } else if (isset($_REQUEST['id'])) {
     $tid = $_REQUEST['id'];
     $t = Get_Thing($tid);
