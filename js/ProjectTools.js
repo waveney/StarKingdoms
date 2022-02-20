@@ -21,7 +21,7 @@ debugger;
   var HomeBut = document.getElementById('PHome'+id);
   x =1;
   if (HomeBut.classList.contains('Homehidden')) {
-    $('.Home' + id).toggle(true);
+    $('.PHName.Home' + id).toggle(true);
     HomeBut.classList.remove('Homehidden');
   } else {
     $('.Home' + id).toggle(false);
