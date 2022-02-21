@@ -113,7 +113,8 @@ exit;
   echo "Click on <button type=submit class=PHStart id=StartExample formaction=''>+</button> buttons to start/change projects<br>\n";
   echo "Click up/down or write number to rush projects<br>\n";
 
-  echo "Note the cost totals are on the far right<p>";
+  echo "Note the cost totals are on the far right<br>
+  The credits left on current turn is a rough guide only - it does not take account of other expenditure.<p>";
   
   echo "Currently this display is for construction and district based projects only.<br>\n";
   
@@ -329,7 +330,7 @@ exit;
   echo "<table border style='width:auto;height:50px;'>";
   echo "<h2>Worlds:</h2> $Headline1";
   echo "</table>";
-  echo "<h2>Projects</h2>";
+  echo "<h2>Projects:</h2>";
   echo "<table border>";
   
 
@@ -407,7 +408,17 @@ exit;
 //      break;
     }
     
-    echo "<td id=TotCost$Turn class=PHTurn>$TotCost<td class=PHTurn>?";
+    echo "<td id=TotCost$Turn class=PHTurn>$TotCost<td class=PHTurn>";
+    if ($Turn == $GAME['Turn']) {
+      $Left = $FACTION['Credits'] - $TotCost;
+      if ($Left >=0 ) { 
+        echo $Left;
+      } else {
+        echo "<span class=Red>$Left</span>";
+      }
+    } else {
+      echo "?";
+    }
   }
   echo "</table></form>";    
   

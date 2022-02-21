@@ -412,7 +412,7 @@ function Show_Thing(&$t,$Force=0) {
   }
 
 //var_dump($SelLinks);exit;
-  if ($Links && ($t['LinkId']) && ($ll = $Links[$t['LinkId']]['Level']) >1 && ($Who = GameFeature('LinkOwner',0)) && $Who != $Fid) {
+  if ($Links && ($t['LinkId']) && ($ll = $Links[$t['LinkId']]['Level']) >1 && ($Who = GameFeature('LinkOwner',0)) && $Who != $t['Whose']) {
     $LOwner = Get_Faction($Who);
     echo "<h2>You are taking a <span style='color:" . $LinkTypes[$ll]['Colour'] . "'>" . $LinkTypes[$ll]['Colour'] .
          "</span> link do you need to pay " . $LOwner['Name'] . " for this?</h2>\n";
@@ -876,11 +876,11 @@ function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0) {
     foreach ($Things as $T) {
 //var_dump($T); echo "<p>";
 // if ( $Sid == 58) echo $T['Name'] . " - " . $ThingTypes[$T['Type']]['SeenBy'] . " - " . $Eyes . "<p>";
-      if (($T['Whose'] != $Fid) && (($ThingTypes[$T['Type']]['SeenBy'] & $Eyes) == 0 )) continue;
+      if ($Fid >=0 && ($T['Whose'] != $Fid) && (($ThingTypes[$T['Type']]['SeenBy'] & $Eyes) == 0 )) continue;
       if ($T['BuildState'] < 2 || $T['BuildState'] > 4) continue; // Building or abandoned
       if ($LastWhose && $LastWhose!= $T['Whose']) echo "<P>";
       if ($T['BuildState'] == 4) echo "The remains of: ";
-      echo ((/*Access('GM') ||*/ $Fid == $T['Whose'])?( "<a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a>") : $T['Name'] ) . " a ";
+      echo ((($Fid < 0) || ($Fid == $T['Whose']))?( "<a href=ThingEdit.php?id=" . $T['id'] . ">" . (empty($T['Name'])?"Unnamed":$T['Name']) . "</a>") : $T['Name'] ) . " a ";
       if ($ThingTypes[$T['Type']]['Properties'] & THING_HAS_LEVELS) echo " level " . $T['Level'];
       if ($T['Class']) echo " " . $T['Class'] . " class ";
       if ($T['Whose']) echo " <span style='background:" . $Factions[$T['Whose']]['MapColour'] . "'>" . $Factions[$T['Whose']]['Name'] . "</span>";
