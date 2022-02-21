@@ -541,6 +541,7 @@ function Meetups() {
   // if only 1 and has control and system controlled then there is a bundle
   // ships, agents ...
 //  echo "Meetups is currently Manual<p>";
+  $_REQUEST['TurnP'] = 1; // Makes Meetings think its part of turn processing
   include_once("Meetings.php");
 
   return true;
@@ -948,7 +949,10 @@ function Do_Turn() {
       } else {
         echo "Off the end of the turn";
       }
-      break;    
+      break;
+    case 'StageDone':
+      $S = $_REQUEST['S'];
+      $Sand['Progress'] |= 1<<$S;
       
       break;
     }  

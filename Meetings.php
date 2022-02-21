@@ -26,6 +26,9 @@
   $Homes = Get_ProjectHomes();
   $TTypes = Get_ThingTypes();
   
+  $TurnP = 0;
+  if (isset($_REQUEST['TurnP'])) $TurnP = "&TurnP=1";
+  
   foreach($Homes as $H) {
     switch ($H['ThingType']) {
     case 1: // Planet
@@ -85,13 +88,15 @@
       }
     }
     if ($NumF > 1) {
-      echo "System: <a href=Meetings.php?ACTION=Check&S=$Sid>" . $N['Ref'] . "</a> has ";
+      echo "System: <a href=Meetings.php?ACTION=Check&S=$Sid$TurnP>" . $N['Ref'] . "</a> has ";
       foreach($Fs as $F) echo $F['Name'] . " , ";
       echo "<br>";
     }   
   }
   
   echo "<P>Scan Finished<p>";
+  
+  if ($TurnP) echo "<h2><a href=TurnActions.php?ACTION=StageDone&S=36>Back To Turn Processing</a></h2>";
   
   dotail();
   
