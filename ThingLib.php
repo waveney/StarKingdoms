@@ -640,7 +640,7 @@ function Show_Thing(&$t,$Force=0) {
         echo "<td><b>" . $D['Number']. "</b> of " . (isset($MTNs[$D['Type']]) ?$MTNs[$D['Type']] : 'Unknown Modules')  . ($t['BuildState']? (" (Level " . $D['Level'] . ") ") :"") ;
                 
         $CLvl = Calc_TechLevel($Fid,$D['Type']);
-        if ($CLvl != $D['Level'] && $t['BuildState'] != 0 ) {
+        if ($CLvl < $D['Level'] && $t['BuildState'] != 0 ) {
           echo ". <span class=Blue> Note you have Level: $CLvl </span>";
         }
         if (!isset($MTNs[$D['Type']])) $BadMods += $D['Number'];
@@ -855,6 +855,7 @@ function EyesInSystem($Fid,$Sid) { // Eyes 1 = in space, 2= sens, 4= neb sens, 8
 }
 
 function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0) {
+  include_once("SystemLib.php");
 //var_dump($Sid,$Eyes);
 //  if (Access('GM')) $Eyes = 15;
     if (!$Eyes) return;
@@ -867,7 +868,7 @@ function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0) {
 //if ($Sid == 58) var_dump ($Things); echo "XX<p>";   
     $N = Get_System($Sid);
     if ($heading) {
-       echo "<h2>System " . $N['Ref'] . "</h2>"; // TODO Add name...
+       echo "<h2>System " . System_Name($N,$Fid) . "</h2>"; 
     } else {
        echo "<h2>In the System is:</h2>";
     }

@@ -393,4 +393,35 @@ function ReportEnd($N) {
   return $N['Ref'];//  UniqueRef($N['id']); // testing kluudge
 }
 
+function System_Name(&$N,$Fid=0) {
+  $pname = NameFind($N);
+  $Ref = $N['Ref'];
+  if ($Fid) {
+    $FS = Get_FactionSystemFS($Fid, $N['id']);
+    if (!empty($FS['Name']) > 1) {
+      $Fname = NameFind($FS);
+      
+      if ($pname != $Fname) {
+        if (strlen($pname) > 1) {
+          $pname = $Fname . " ( $pname | $Ref ) ";
+        } else {
+          $pname = $Fname . " ( $Ref ) ";        
+        }
+      } else {
+        $pname .= " ( $Ref ) ";   
+      }
+    } else if ($pname) {
+      $pname .= " ( $Ref ) ";
+    } else {
+      $pname = $Ref;
+    }
+  } else if ($pname) {
+    $pname .= " ( $Ref ) ";
+  } else {
+    $pname = $Ref;
+  }
+  return $pname;
+}
+
+
 ?>

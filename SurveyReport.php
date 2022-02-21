@@ -86,7 +86,9 @@
   $N=Get_System($Sid);
   $Ref = $N['Ref'];
   $Fs= Get_Factions();
-  
+ 
+  $System = System_Name($N,$Fid);
+/*
   $pname = NameFind($N);
   if ($Fid) {
     $FS = Get_FactionSystemFS($Fid, $Sid);
@@ -112,7 +114,7 @@
   } else {
     $pname = $Ref;
   }
-  
+*/ 
   echo "<div class=SReport><h1>Survey Report - $pname</h1>\n";
   if ($GM && $SurveyLevel >= 10) echo "UniqueRef is: " . UniqueRef($Sid) . "<p>";
 
