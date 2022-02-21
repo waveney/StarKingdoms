@@ -38,7 +38,7 @@ function Player_Page() {
 
   $FACTION['LastActive'] = time();
   
-  if (!$GM || $FACTION['NPC']) Put_Faction($FACTION);
+  if (!$GM || $FACTION['NPC'] ) Put_Faction($FACTION);
   
 //var_dump($PlayerState,$FACTION);
   echo "<h1>Player Actions: " . $FACTION['Name'] . "</h1>\n";

@@ -20,24 +20,8 @@ $Access_Type = array_flip($Access_Levels);
 $Months = ['','Jan','Feb','Mar','Apr','May','June','July','Aug','Sep','Oct','Nov','Dec'];
 
 date_default_timezone_set('GMT');
-
-function Set_User() {
+function Check_Login() {
   global $db,$USER,$USERID,$AccessType,$YEAR,$CALYEAR,$FACTION;
-  if (isset($USER)) return;
-  $USER = array();
-  $USERID = 0;
-  if (isset($_COOKIE{'SKD'})) {
-    $biscuit = $_COOKIE{'SKD'};
-    $Cake = openssl_decrypt($biscuit,'aes-128-ctr','Quarterjack',0,'BrianMBispHarris');
-    $crumbs = explode(':',$Cake);
-    $USER{'Subtype'} = $crumbs[0];
-    $USER{'AccessLevel'} = $crumbs[1];
-    $FACTIONID = $USER{'UserId'} = $crumbs[2];
-    $FACTION = Get_Faction($FACTIONID);
-    if ($USERID) return;
-//    $USER = array();
-    $USERID = - $FACTIONID;
-  }
   if (isset($_COOKIE{'SKC2'})) {
     $res=$db->query("SELECT * FROM People WHERE Yale='" . $_COOKIE{'SKC2'} . "'");
     if ($res) {
@@ -58,6 +42,26 @@ function Set_User() {
       }
     }
   } 
+}
+
+function Set_User() {
+  global $db,$USER,$USERID,$AccessType,$YEAR,$CALYEAR,$FACTION;
+  if (isset($USER)) return;
+  $USER = array();
+  $USERID = 0;
+  if (isset($_COOKIE{'SKD'})) {
+    $biscuit = $_COOKIE{'SKD'};
+    $Cake = openssl_decrypt($biscuit,'aes-128-ctr','Quarterjack',0,'BrianMBispHarris');
+    $crumbs = explode(':',$Cake);
+    $USER{'Subtype'} = $crumbs[0];
+    $USER{'AccessLevel'} = $crumbs[1];
+    $FACTIONID = $USER{'UserId'} = $crumbs[2];
+    $FACTION = Get_Faction($FACTIONID);
+    if ($USERID) return;
+//    $USER = array();
+    $USERID = - $FACTIONID;
+  }
+  Check_Login();
 }
 
 function Access($level,$subtype=0,$thing=0) {

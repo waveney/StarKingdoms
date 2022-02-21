@@ -20,19 +20,6 @@
 
   dostaffhead("Meetups");
   
-  if (isset($_REQUEST['ACTION'])) {
-    switch ($_REQUEST['ACTION']) {
-    case 'Check':
-      $Sid = $_REQUEST['S'];
-      $N = Get_System($Sid);
-      SeeInSystem($Sid,31,1,0,-1);
-      
-      echo "<h1>Checking</h1>";
-      
-      break;
-    }
-  }
-  
   $Systems = Get_Systems();
   $Facts = Get_Factions();
   
@@ -53,10 +40,10 @@
     case 3:// Thing - do later
       continue 2;
     }
-    $Sys[$Sid][$H['Whose']] = 8;
+    $Sys[$Sid][$H['Whose']] = 1024;
   }
   
-  echo "Checked Homes<p>";
+//  echo "Checked Homes<p>";
   
   $Things = Get_AllThings();
   foreach ($Things as $T){
@@ -70,7 +57,22 @@
     }
   }
   
-  echo "Checked Things<p>";
+  
+  if (isset($_REQUEST['ACTION'])) {
+    switch ($_REQUEST['ACTION']) {
+    case 'Check':
+      $Sid = $_REQUEST['S'];
+      $N = Get_System($Sid);
+      SeeInSystem($Sid,31,1,0,-1);
+      
+ //     foreach($Facts as $Fid=>$F) {      
+ //       if ($
+      break;
+    }
+  }
+  echo "<h1>Checking</h1>";
+
+//  echo "Checked Things<p>";
   
   foreach ($Systems as $N) {
     $Sid = $N['id'];

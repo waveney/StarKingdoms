@@ -30,7 +30,7 @@
   $USER{'AccessLevel'} = $Access_Type['Player'];
   $USER{'UserId'} =  $Fid;
 
-
+  Check_Login();
   Player_Page();
 
   dotail();

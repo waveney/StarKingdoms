@@ -540,7 +540,9 @@ function Meetups() {
   // if (more than 1 has "control" then there is a bundle
   // if only 1 and has control and system controlled then there is a bundle
   // ships, agents ...
-  echo "Meetups is currently Manual<p>";
+//  echo "Meetups is currently Manual<p>";
+  include_once("Meetings.php");
+
   return true;
 }
 
