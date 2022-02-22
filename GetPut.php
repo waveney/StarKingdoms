@@ -512,7 +512,7 @@ function Get_ThingsSys($Sid,$type=0,$Fid=0) {
   return $Ts;
 }
 
-function Get_Things_Cond($Fact,$Cond) {
+function Get_Things_Cond($Fact=0,$Cond) {
   global $db,$GAMEID;
   $Ts = [];
   $res = $db->query("SELECT * FROM Things WHERE " . ($Fact? " Whose=$Fact AND $Cond " : $Cond));

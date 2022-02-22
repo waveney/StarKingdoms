@@ -834,6 +834,11 @@ function SurveyReports() {
   return true;
 }
 
+function MilitiaRecovery() {
+  echo "Militia Recovery is currently Manual<p>";
+  return true;
+}
+
 function GenerateTurns() {
   echo "Generate Turns is currently Manual<p>";
   return true;
@@ -887,7 +892,7 @@ function Do_Turn() {
              'Spare','Movements', 'Agents Move', 'Spare', 'Meetups', 'Spare', 'Spare', 'Spare', 
              'Space Combat', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Devastation', 'Spare', 'Project Progress', 
              'Spare','Espionage Missions Complete', 'Spare', 'Counter Espionage','Spare', 'Finish Shakedowns', 'Spare', 'Projects Complete', 
-             'Survey Reports', 'Spare', 'Spare', 'Generate Turns', 'Spare', 'Tidy Up Movements', 'Recalc Project Homes', 'Finish Turn Process'];
+             'Survey Reports', 'Militia Recovery', 'Spare', 'Generate Turns', 'Spare', 'Tidy Up Movements', 'Recalc Project Homes', 'Finish Turn Process'];
   $Coded =  ['Coded','No','No','Coded','Coded','No','Coded', 'No',
              'No','No','No','No','Partial','No','No','No',
              'No','No','No','No','No','No','No','No',

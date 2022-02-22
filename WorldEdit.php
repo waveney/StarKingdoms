@@ -34,6 +34,7 @@
   $PlanetTypes = Get_PlanetTypes();
   $Fid = $W['FactionId'];
   
+  
     switch ($W['ThingType']) {
       case 1: //Planet
         $WH = $P = Get_Planet($W['ThingId']);
@@ -57,6 +58,16 @@
     }
     
   $DTs = Get_DistrictTypes();
+  
+  if (isset($_REQUEST['ACTION'])) {
+    switch ($_REQUEST['ACTION']) {
+     case 'Militia' :
+       Update_Militia($W,$Dists);
+       echo "<h2>Militia Updated</h2>";
+       break;
+     }
+  }
+
 
   $NumDists = count($Dists);
   $dc=0;
@@ -99,6 +110,8 @@
   if (!empty($WH['MaxDistricts'])) echo "<td>Max Districts: " . $WH['MaxDistricts'];
   echo "<tr><td>Economy:<td>" . $H['Economy'];
   echo "</table>";
+  
+  if (Access('GM')) echo "<h2><a href=WorldEdit.php?ACTION=Militia&id=$Wid>Update Militia</a></h2>";
   
   dotail();
 ?>

@@ -272,6 +272,7 @@ function Calc_Health(&$t) {
 
 function Calc_Damage(&$t) { 
 
+  if ($t['Type'] ==20) return 8; // Militia
   $Dam = 0;
   $Ms = Get_Modules($t['id']);
   $Mts = Get_ModuleTypes();
@@ -432,9 +433,10 @@ function Show_Thing(&$t,$Force=0) {
   if ($GM) {
     echo "<tr class=NotSide><td class=NotSide>Id:<td class=NotSide>$tid<td class=NotSide>Game<td class=NotSide>$GAMEID<td class=NotSide>" . $GAME['Name'];
     echo "<tr><td>Type:<td>" . fm_select($ttn,$t,'Type',1); 
-    echo fm_number("Level",$t,'Level');
+    if ($tprops & THING_HAS_LEVELS) echo fm_number("Level",$t,'Level');
   } else {
-    echo "<tr><td>Type: " . $ttn[$t['Type']] . "<td>Level: " . $t['Level'];
+    echo "<tr><td>Type: " . $ttn[$t['Type']];
+    if ($tprops & THING_HAS_LEVELS) "<td>Level: " . $t['Level'];
   }
   echo "<tr>" . fm_text('Name',$t,'Name',2);
 
@@ -526,14 +528,14 @@ function Show_Thing(&$t,$Force=0) {
   }
 
   if  ($tprops & THING_HAS_GADGETS) echo "<tr>" . fm_textarea("Gadgets",$t,'Gadgets',8,3);
-  echo "<tr>" . fm_text("Orders",$t,'Orders',2);
+  if  ($tprops & THING_HAS_LEVELS) echo "<tr>" . fm_text("Orders",$t,'Orders',2);
   echo "<tr>" . fm_textarea("Description\n(For others)",$t,'Description',8,2);
   echo "<tr>" . fm_textarea('Notes',$t,'Notes',8,2);
   echo "<tr>" . fm_textarea('Named Crew',$t,'NamedCrew',8,2);
   if ($GM) echo "<tr>" . fm_textarea('GM Notes',$t,'GM_Notes',8,2,'class=NotSide');
   echo "<tr>" . fm_textarea('History',$t,'History',8,2,'','','',($GM?'':'Readonly'));
   if ($tprops & THING_HAS_2_FACTIONS) echo "<tr>" . fm_radio('Other Faction',$FactNames ,$t,'OtherFaction','',1,'colspan=6','',$Fact_Colours,0); 
-  if  ($tprops & THING_HAS_MODULES) {
+  if  ($tprops & (THING_HAS_MODULES | THING_HAS_ARMYMODULES)) {
     if ($GM) {
       echo "<tr>" . fm_number('Orig Health',$t,'OrigHealth') . fm_number('Cur Health',$t,'CurHealth');
     } else {
@@ -890,4 +892,50 @@ function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0) {
       $LastWhose = $T['Whose'];
     };
 }
+
+function Update_Militia(&$W,&$Dists) {
+  switch ($W['ThingType']) {
+    case 1: // Planet
+      $P = Get_Planet($W['ThingId']);
+      $Mname = $P['Name'];
+      $Sys = $P['SystemId'];
+      $N = Get_System($Sys);
+      $loc = Within_Sys_Locs($N,$W['ThingId'],0,1);
+      break;
+    case 2: // Moon
+      $M = Get_Moon($W['ThingId']);
+      $Mname = $M['Name'];
+      $P = Get_Planet($M['PlanetId']);
+      $Sys = $P['SystemId'];
+      $N = Get_System($Sys);
+      $loc = Within_Sys_Locs($N,-$W['ThingId'],0,1);
+      break;
+    case 3: // Thing TODO
+      echo "Not yet available";
+      return;
+  }
+  
+  $Mils = Get_Things_COND(0,"Type=20 AND SystemId=$Sys AND WithinSysLoc=$loc ");
+  
+  $Dcount = 0;
+  foreach($Dists as $D) $Dcount += ($D['Number'] * ($D['Type'] ==2?2:1));
+  
+  if (count($Mils) == $Dcount) {
+    echo "<h2>Militia already setup</h2>";
+  } else {
+    $MNames = [];
+    foreach ($Mils as $Ml) $MNames[$Ml['Name']] = 1;
+    $M = ['Type'=>20, 'CurHealth'=>40, 'OrigHealth'=>40, 'Whose'=>$W['FactionId'], 'SystemId'=>$Sys, 'WithinSysLoc'=>$loc, 'BuildState'=>3 ];
+    $Mn = 1;
+    for ($Mnum = count($Mils); $Mnum <= $Dcount; $Mnum++) {
+      while (isset($MNames["Militia $Mname $Mn"])) $Mn++;
+      $MNames["Militia $Mname $Mn"] = 1;
+      $M['Name'] = "Militia $Mname $Mn";
+      unset($M['id']);
+      Put_Thing($M);
+      echo $M['Name'] . " created<br>";
+    }
+  }
+}
+
 ?>
