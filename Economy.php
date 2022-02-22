@@ -3,18 +3,48 @@
   include_once("GetPut.php");
   include_once("ThingLib.php");
   include_once("PlayerLib.php");
+  include_once("HomesLib.php");  
   
   dostaffhead("Move Things",["js/dropzone.js","css/dropzone.css" ]);
 
-  global $FACTION, $GAME, $GAMEID;
+  global $FACTION, $GAME, $GAMEID, $db;
   $Fid = $FACTION['id'];
-  
+  $Spend = 0;
   echo "<h1>Economy for this coming turn</h1>\n";
   
-  echo "<h2>Current Credits: " . $FACTION['Credits'] . "</h2>";
+  echo "<h2>Current Credits: &#8373;" . $FACTION['Credits'] . "</h2>";
   
   echo "<h2>Projected Expentiture</h2>";
   
+  $Facts = Get_Factions();
+  $Facts[-1]['Name'] = "Other";
+  $Bs = Get_BankingFT($Fid,$GAME['Turn']);
+  
+  foreach($Bs as $B) {
+    $Spend += $B['Amount'];
+    echo "Sending &#8373; " . $B['Amount'] . " for " . $B['YourRef'] . " to " . $Facts[$B['Recipient']]['Name'] . "<br>";
+  }
+
+  echo "<P>";
+  
+  $Projects =  Get_Projects_Cond(" FactionId=$Fid AND TurnStart=" . $GAME['Turn'] . " AND Costs!=0");
+  
+  foreach($Projects as $P) {
+    $Spend += $P['Costs'];
+    echo "Starting " . $P['Name'] . " costs &#8373; " . $P['Costs'] . "<br>";
+  }
+  
+  echo "<P>";
+  
+  $res = $db->query("SELECT pt.* FROM ProjectTurn pt, Projects p WHERE pt.TurnNumber=". $GAME['Turn'] . " AND pt.ProjectId=p.id AND p.FactionId=$Fid AND pt.Rush>0");
+  if ($res) {
+    while ($PT = $res->fetch_assoc()) {
+      $P = Get_Project($PT['ProjectId']);
+      echo "Spendng &#8373; " . (Rush_Cost($Fid) * $PT['Rush']) . " to rush " . $P['Name'] . " by " . $PT['Rush'] . "<br>";
+    }
+  }
+  
+/*  
   Current Credits
   
   Projected expenditure on projects and rushing
@@ -22,7 +52,7 @@
   Payments (to players & arachni)
 
   Expected remaining
-  
+*/  
   echo "<h2>Projected Income</h2>\n";
 
   $TTypes = Get_ThingTypes();
@@ -36,14 +66,14 @@
       $Name = $PH['Name'];
       $ECon = $H['Economy'] = Recalc_Economic_Rating($H,$W,$Fid);
       
-      echo "$Name: Economic Value: " $ECon . "<br>";
+      echo "$Name: Economic Value: $ECon <br>";
       if ($H['Devastation']) {
         $ECon = $ECon - $H['Devastation'];
-        echo "It has devastation reducing it to: " $ECon . "<br>\n";
+        echo "It has devastation reducing it to: $ECon <br>\n";
       }
       if ($H['EconomyFactor'] < 100) {
         $ECon = ceil($ECon*$H['EconomyFactor']/100);
-        echo "It also is operating at only " $H['EconomyFactor'] . "% so you have a rating of $ECon<br>\n";
+        echo "It also is operating at only " . $H['EconomyFactor'] . "% so you have a rating of $ECon<br>\n";
       } else if ($H['EconomyFactor'] > 100) {
         $ECon = ceil($ECon*$H['EconomyFactor']/100);
         echo "It is currently operating at " . $H['EconomyFactor'] . "% so you have a rating of $ECon<br>\n";
@@ -117,25 +147,16 @@
         $pen = min(0,$LogAvail[$i]-$Logistics[$i]);
         if ($pen < 0) {
           $EconVal += $pen;
-          $EccTxt .= "Logistical penalty of $pen for <br>$n\n";
+          echo "Logistical penalty of $pen for: $n\n";
         }
       }
     }
     
-    echo "<p>Total Economy is $EconVal worth " . $EconVal*10 . "<p>\n";
+    echo "<p>Total Economy is $EconVal worth &#8373; " . $EconVal*10 . "<p>\n";
 
-  logistics
-  
-  Waffle change
-  
-  Total Income  
-  
-  
-
-  
-  Expected End credits
- 
+  $Final =  $FACTION['Credits'] - $Spend + $EconVal*10;
+  echo "<h2>Expected End Credits is &#8373;" . ($Final < 0? "<span class=Red>$Final</span>":$Final) .  "</h2>";
   
   dotail();
   
-?>https://www.bbc.co.uk/news/uk-wales-60393814
+?>

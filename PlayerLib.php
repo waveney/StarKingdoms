@@ -72,7 +72,7 @@ function Player_Page() {
     echo "<li><a href=ProjDisp.php>Projects</a>\n";
     echo "<li><a href=PThingList.php>List of Things</a> - List of Things (Ships, Armies, Agents, Space stations etc)";
     echo "<li><a href=ThingPlan.php>Plan a Thing</a> - Planning Things (Ships, Armies, Agents, Space stations etc)<P>";
-    echo "<li>Economy";
+    echo "<li><a href=Economy.php>Economy</a>";
     echo "<li><a href=Banking.php>Banking</a> - Sending credits to others and statements<p>";
     echo "<li><a href=PlayerTurnTxt.php>Turn Actions Text</a>";
     echo "<li><a href=Player.php?ACTION=Submit>Submit Turn</a><p>\n";
