@@ -919,15 +919,19 @@ function Update_Militia(&$W,&$Dists) {
   
   $Dcount = 0;
   foreach($Dists as $D) $Dcount += ($D['Number'] * ($D['Type'] ==2?2:1));
-  
-  if (count($Mils) == $Dcount) {
-    echo "<h2>Militia already setup</h2>";
+
+  if (count($Mils) >= $Dcount) {
+    if (count($Mils) > $Dcount) {
+      echo "<h2 class=Err>Too many setup...</h2>";
+    } else {
+      echo "<h2>Militia already setup</h2>";
+    }
   } else {
     $MNames = [];
     foreach ($Mils as $Ml) $MNames[$Ml['Name']] = 1;
     $M = ['Type'=>20, 'CurHealth'=>40, 'OrigHealth'=>40, 'Whose'=>$W['FactionId'], 'SystemId'=>$Sys, 'WithinSysLoc'=>$loc, 'BuildState'=>3 ];
     $Mn = 1;
-    for ($Mnum = count($Mils); $Mnum <= $Dcount; $Mnum++) {
+    for ($Mnum = count($Mils); $Mnum < $Dcount; $Mnum++) {
       while (isset($MNames["Militia $Mname $Mn"])) $Mn++;
       $MNames["Militia $Mname $Mn"] = 1;
       $M['Name'] = "Militia $Mname $Mn";
