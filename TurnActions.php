@@ -6,7 +6,8 @@
   include_once("SystemLib.php");
   include_once("ProjLib.php");
   include_once("HomesLib.php");
-    
+  include_once("BattleLib.php");
+      
   A_Check('GM');
 
 // For logging turn processing events that need following up or long term record keeping, set e to echo to GM
@@ -563,8 +564,45 @@ function GroundCombat() {
 }
 
 
+function DevastationSelection() {
+  echo "<h2>Please mark those worlds with combat on</h2>";
+  $_REQUEST['CONFLICT'] = 1; // Makes WorldList think its part of turn processing
+  include_once("WorldList.php");
+//  echo "Devastation Selectionis currently Manual<p>";
+  return true;
+
+}
+
 function Devastation() {
-  echo "Devastation is currently Manual<p>";
+  $Worlds = Get_Worlds();
+  foreach ($Worlds as $W) {
+    $H = Get_ProjectHome($W['Home']);
+    if ($W['Conflict']) {
+      $H['EconomyFactor'] = 50;
+      $H['Devastation']++;
+      
+      $Dists = Get_DistrictsH($H['id']);
+      $Dcount = 0;
+      foreach ($Dists as $D) $Dcount += $D['Number'];
+      
+      if ($H['Devastation'] > $Dcount) { // Lose districts...
+        $LogT = Devastate($H,$W,$Dists,1);
+        TurnLog($Fid,$LogT);
+        SKLog($LogT,1);      
+      }
+      Put_ProjectHome($H);    
+    } else { // Recovery?
+      if ($H['EconomyFactor'] != 100) {
+        $H['EconomyFactor'] = 100;
+        Put_ProjectHome($H);
+      }
+//      $Things = Get_Things_Cond(0,"CurHealth != OrigHealth AND SystemId=$Sys AND WithinSysLoc=$Loc)
+    }
+  }
+
+// Look for Militia to recover
+
+  echo "Devastation is Complete<p>";
   return true;
 
 }
@@ -834,7 +872,7 @@ function SurveyReports() {
   return true;
 }
 
-function MilitiaRecovery() {
+function MilitiaArmyRecovery() {
   echo "Militia Recovery is currently Manual<p>";
   return true;
 }
@@ -890,16 +928,17 @@ function Do_Turn() {
              'Agents Start Missions', 'Spare', 'Spare', 'Economy', 'Spare', 'Spare', 'Load Troops', 'Spare', 
              
              'Spare','Movements', 'Agents Move', 'Spare', 'Meetups', 'Spare', 'Spare', 'Spare', 
-             'Space Combat', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Devastation', 'Spare', 'Project Progress', 
+             'Space Combat', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Devastation Selection', 'Devastation', 'Project Progress', 
              'Spare','Espionage Missions Complete', 'Spare', 'Counter Espionage','Spare', 'Finish Shakedowns', 'Spare', 'Projects Complete', 
-             'Survey Reports', 'Militia Recovery', 'Spare', 'Generate Turns', 'Spare', 'Tidy Up Movements', 'Recalc Project Homes', 'Finish Turn Process'];
+             'Survey Reports', 'Militia Army Recovery', 'Spare', 'Generate Turns', 'Spare', 'Tidy Up Movements', 'Recalc Project Homes', 'Finish Turn Process'];
+
   $Coded =  ['Coded','No','No','Coded','Coded','No','Coded', 'No',
              'No','No','No','No','Partial','No','No','No',
              'No','No','No','No','No','No','No','No',
              'No','No','No','Coded','No','No','No','No',
              
-             'No','Coded for Ships only','No','No','No','No','No','No',
-             'No','No','No','No','No','No','No','Coded',
+             'No','Coded for Ships & Agents only','No','No','Coded','No','No', 'No',
+             'No','No','No','No','No','Coded','No','Coded',
              'No','No','No','No','No','Coded','No','Partial',
              'No','No','No','No','No','Coded','Coded','Coded?'];
   $Sand = Get_TurnNumber();

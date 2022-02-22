@@ -8,7 +8,7 @@
   $Fid = 0;
   $xtra = '';
   if (Access('Player')) {
-    if (!$FACTION) {
+    if (!isset($FACTION)) {
       if (!Access('GM') ) Error_Page("Sorry you need to be a GM or a Player to access this");
     } else {
       $Fid = $FACTION['id'];
@@ -34,7 +34,10 @@
   $TTypes = Get_ThingTypes();
   $Facts = Get_Factions();
   
+  $Conflict = '';
+  if (isset($_REQUEST['CONFLICT'])) $Conflict = 1;
   echo "<h1>Worlds $xtra</h1>";
+  Register_AutoUpdate('Worlds',0);
   echo "Click on the name to see districts, change the relative importance<p>\n";
   
   $coln = 0;
@@ -49,7 +52,7 @@
   if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Economy<br>Modifier</a>\n";
   if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Whose</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Priority<br>Importance</a>\n";
-
+  if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Conflict?</a>\n";
   echo "</thead><tbody>";
 
   foreach ($Worlds as $W) {
@@ -83,8 +86,12 @@
     echo "<td>$type<td><a href=WorldEdit.php?id=" . $W['id'] . ">$Name</a><td>" . $W['Minerals'] . "<td>" . $H['Economy'] . "<td>" . $H['Devastation'];
     if ($GM) echo "<td>" . $H['EconomyFactor'] . "<td>" . $Facts[$W['FactionId']]['Name'];
     echo "<td>" . $W['RelOrder'] . "\n";
+    if ($GM) echo "<td>" . fm_checkbox("Conflict?", $W, 'Conflict','',"Conflict:99:" . $W['id']);
   }
   echo "</table></div>\n";
+  
+  
+  if ($Conflict) echo "<h2><a href=TurnActions.php?ACTION=StageDone&S=45>Back To Turn Processing</a></h2>";
   
   dotail();
 ?>

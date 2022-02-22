@@ -309,14 +309,19 @@
         $N = Get_Planet($mtch[3]);
         $N[$mtch[1]] = $Value;
         return Put_Planet($N);
-      case 1: // Moon
+      case 2: // Moon
         $N = Get_Moon($mtch[3]);
         $N[$mtch[1]] = $Value;
         return Put_Moon($N);
-      case 1: // Planet
+      case 3: // Planet
         $N = Get_Thing($mtch[3]);
         $N[$mtch[1]] = $Value;
         return Put_Thing($N);
+      case 99: // Worlds
+        $N = Get_World($mtch[3]);
+        $N[$mtch[1]] = $Value;
+        return Put_World($N);
+
       }
       echo "ERROR";
       var_dump($_REQUEST);
