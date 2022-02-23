@@ -87,7 +87,7 @@
   $Ref = $N['Ref'];
   $Fs= Get_Factions();
  
-  $System = System_Name($N,$Fid);
+  $pname = System_Name($N,$Fid);
 /*
   $pname = NameFind($N);
   if ($Fid) {

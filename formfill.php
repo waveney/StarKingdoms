@@ -332,6 +332,15 @@
     echo Put_World($N);
     exit;
   
+  case 'ScansDue':
+//       var_dump($_REQUEST);
+    if ((preg_match('/(\w*):(\d*)/',$field,$mtch)?true:false)) {
+      $N = Gen_Get('ScansDue',$mtch[2]);
+      $N[$mtch[1]] = $Value;
+var_dump($N);
+      echo Gen_Put('ScansDue',$N);
+    }
+    exit;
 
   default:
     echo "Not setup $type for Auto Edit";

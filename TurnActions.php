@@ -382,6 +382,8 @@ function Movements($Agents=0) {
   // Foreach thing, do moves, generate list of new survey reports & levels, update "knowns" 
 
   if (!file_exists("Turns/" . $GAMEID . "/" . $GAME['Turn'])) $LF = mkdir("Turns/" . $GAMEID . "/" . $GAME['Turn'],0777,true);  
+  
+//  $PotS = fopen("Turns/" . $GAMEID . "/" . $GAME['Turn'] . "/ScansDue", "a+");
   $LinkLevels = Get_LinkLevels();
   $Things = Get_AllThings();
   $Facts = Get_Factions();
@@ -402,6 +404,9 @@ echo "Moving " . $T['Name'] . "<br>";
       $SR1 = Get_SystemR($L['System1Ref']);
       $SR2 = Get_SystemR($L['System2Ref']);
       
+      $SP = ['FactionId'=>$Fid, 'Sys'=> ($SR1['id'] == $T['SystemId']?$SR2['id']:$SR1['id']), 'Scan'=>($ShipScanLevel?5:1), 'Neb'=>$ShipNebScanLevel, 'Turn'=>$GAME['Turn']];
+      Insert_db('ScansDue', $SP);
+/*   
       $FL = Get_FactionLinkFL($Fid,$Lid);
       if (!isset($FL['Known']) || !$FL['Known']) {
         if ($T['Type'] == 5) {
@@ -444,6 +449,7 @@ echo "Moving " . $T['Name'] . "<br>";
         Insert_db('ScansDue', $add);
       }
       echo "<p>";
+ */
       
       if ($T['SystemId'] == $SR1['id']) {
         $Sid = $T['NewSystemId'] = $SR2['id'];
@@ -455,31 +461,8 @@ echo "Moving " . $T['Name'] . "<br>";
         $N = $SR1;
       }
 
-      $pname = NameFind($N);
-      if ($Fid) {
-        $FS = Get_FactionSystemFS($Fid, $Sid);
-        if (!empty($FS['Name'])) {
-          $Fname = NameFind($FS);
-          if ($pname != $Fname) {
-            if (strlen($pname) > 1) {
-              $pname = $Fname . " ( $pname | $Ref ) ";
-            } else {
-              $pname = $Fname . " ( $Ref ) ";        
-            }
-          } else {
-            $pname .= " ( $Ref ) ";   
-          }
-        } else if ($pname) {
-          $pname .= " ( $Ref ) ";
-        } else {
-          $pname = $Ref;
-        }
-      } else if ($pname) {
-        $pname .= " ( $Ref ) ";
-      } else {
-        $pname = $Ref;
-      }
-
+      $pname = System_Name($N,$Fid);
+      
 //      $N = Get_System($T['NewSystemId']);
       $EndLocs = Within_Sys_Locs($N);
       $T['SystemId'] = $T['NewSystemId'];
@@ -494,32 +477,7 @@ echo "Moving " . $T['Name'] . "<br>";
       $Sid = $T['SystemId'];
       $Fid = $T['Whose'];
 
-      $pname = NameFind($N);
-      if ($Fid) {
-        $FS = Get_FactionSystemFS($Fid, $Sid);
-        if (!empty(strlen($FS['Name']))) {
-          $Fname = NameFind($FS);
-      
-          if ($pname != $Fname) {
-            if (strlen($pname) > 1) {
-              $pname = $Fname . " ( $pname | $Ref ) ";
-            } else {
-              $pname = $Fname . " ( $Ref ) ";        
-            }
-          } else {
-            $pname .= " ( $Ref ) ";   
-          }
-        } else if ($pname) {
-          $pname .= " ( $Ref ) ";
-        } else {
-          $pname = $Ref;
-        }
-
-      } else if ($pname) {
-        $pname .= " ( $Ref ) ";
-      } else {
-        $pname = $Ref;
-      }
+      $pname = System_Name($N,$Fid);
 
       $EndLocs = Within_Sys_Locs($N);
 //      SKLog("Moved to " . $EndLocs[$T['NewLocation']] . " within $pname"); 
@@ -867,8 +825,71 @@ function ProjectsComplete() {
   return true;
 }
 
-function SurveyReports() {
-  echo "Survey Reports is currently Manual<p>";
+function CheckSurveyReports() {
+  global $GAME, $SurveyLevels;
+
+//  Go throuh Scans file - sort by Fid - each link, is it higher scan level than currently scanned?  If so find highest scan level attempted and show menu
+//  GMs can de-tune to allow for conflict etc  Enable scan data - save scans to log?
+  $Scans = Gen_Get_Cond('ScansDue'," Turn=" . $GAME['Turn'] . " ORDER BY FactionId,Sys");
+  
+  $Facts = Get_Factions();
+  $Started = 0;
+  foreach($Scans as $S) {
+
+    $Fid = $S['FactionId'];
+    $FS = Get_FactionSystem($Fid,$S['Sys']);
+    
+//var_dump($FS);
+    if ($FS['ScanLevel'] >= $S['Scan']) continue;
+    if (!$Started) {
+      echo "<h2>Please review these scans, mark lower as needed</h2>\n";
+      echo "<table border><tr><td>Faction<td>Where<td>Scan Level\n";
+  if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
+      Register_AutoUpdate('ScansDue',0);
+      $ScanLvls = 
+      $Started = 1;
+    }
+    $Sid = $S['id'];
+    $N = Get_System($S['Sys']);
+    echo "<tr><td>" . $Facts[$Fid]['Name'] . "<td>" . $N['Ref'] . "<td>" . fm_radio('',$SurveyLevels,$S,'Scan','',0,'',"Scan:$Sid");
+  }
+  if ($Started) {
+    echo "</table>\n";
+    echo "<h2><a href=TurnActions.php?ACTION=StageDone&S=56>When Happy click here</a></h2>";
+    dotail();
+  }
+  return true;
+}
+
+
+function GiveSurveyReports() {
+  global $GAME;
+  $Scans = Gen_Get_Cond('ScansDue'," Turn=" . $GAME['Turn'] . " ORDER BY FactionId,Sys");
+  
+  $Facts = Get_Factions();
+  $Started = 0;
+  foreach($Scans as $S) {
+
+    $Fid = $S['FactionId'];
+    $FS = Get_FactionSystemFS($Fid,$S['Sys']);
+
+    
+    if ($FS['ScanLevel'] >= $S['Scan']) continue;
+    $Sys = $S['Sys'];
+    $N = Get_System($Sys);
+    $New = !isset($FS['id']);
+    $FS['ScanLevel'] = $S['Scan'];
+    Put_FactionSystem($FS);
+    
+    if ($New) {
+      TurnLog($Fid, "<h3>You are due an improved survey report for <a href=SurveyReport.php?N=$Sys>" . System_Name($N,$Fid) . "</a></h3>");
+    } else {
+      TurnLog($Fid, "<h3>You are have surveyed <a href=SurveyReport.php?N=$Sys>" . System_Name($N,$Fid) . "</a></h3>");    
+    }    
+  }
+
+
+//  echo "Give Survey Reports is currently Manual<p>";
   return true;
 }
 
@@ -930,7 +951,7 @@ function Do_Turn() {
              'Spare','Movements', 'Agents Move', 'Spare', 'Meetups', 'Spare', 'Spare', 'Spare', 
              'Space Combat', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Devastation Selection', 'Devastation', 'Project Progress', 
              'Spare','Espionage Missions Complete', 'Spare', 'Counter Espionage','Spare', 'Finish Shakedowns', 'Spare', 'Projects Complete', 
-             'Survey Reports', 'Militia Army Recovery', 'Spare', 'Generate Turns', 'Spare', 'Tidy Up Movements', 'Recalc Project Homes', 'Finish Turn Process'];
+             'Check Survey Reports', 'Give Survey Reports', 'Militia Army Recovery', 'Generate Turns', 'Spare', 'Tidy Up Movements', 'Recalc Project Homes', 'Finish Turn Process'];
 
   $Coded =  ['Coded','No','No','Coded','Coded','No','Coded', 'No',
              'No','No','No','No','Partial','No','No','No',
@@ -940,7 +961,7 @@ function Do_Turn() {
              'No','Coded for Ships & Agents only','No','No','Coded','No','No', 'No',
              'No','No','No','No','No','Coded','No','Coded',
              'No','No','No','No','No','Coded','No','Partial',
-             'No','No','No','No','No','Coded','Coded','Coded?'];
+             'Codes','No','No','No','No','Coded','Coded','Coded?'];
   $Sand = Get_TurnNumber();
 // var_dump($Sand);
 

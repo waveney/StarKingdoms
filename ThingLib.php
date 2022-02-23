@@ -413,6 +413,9 @@ function Show_Thing(&$t,$Force=0) {
   }
 
 //var_dump($SelLinks);exit;
+  if ($Links && $t['LinkId'] && !isset($Links[$t['LinkId']]['Level'])) {
+    var_dump($t); echo "<p>"; var_dump($Links); echo "<p>";
+  }
   if ($Links && ($t['LinkId']) && ($ll = $Links[$t['LinkId']]['Level']) >1 && ($Who = GameFeature('LinkOwner',0)) && $Who != $t['Whose']) {
     $LOwner = Get_Faction($Who);
     echo "<h2>You are taking a <span style='color:" . $LinkTypes[$ll]['Colour'] . "'>" . $LinkTypes[$ll]['Colour'] .
@@ -683,18 +686,10 @@ function Show_Thing(&$t,$Force=0) {
 
 function Scanners(&$T) {
   return $T['Sensors'] * $T['SensorLevel'];
-  
-  $mods = Get_ModulesType(4,$T['id']);
-  if ($mods) return $mods['Number'] * ($mods['Level']+1);
-  return 0;
 }
 
 function NebScanners(&$T) {
   return $T['NebSensors'] * $T['SensorLevel'];
-  
-  $mods = Get_ModulesType(9,$T['id']);
-  if ($mods) return $mods['Number'] * ($mods['Level']+1);
-  return 0;
 }
 
 function Calc_Scanners(&$T) {
