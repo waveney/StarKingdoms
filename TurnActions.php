@@ -377,6 +377,41 @@ function LoadTroops() {
   return true;
 }
 
+function MoveCheck() {  // Show all movements to allow for blocking
+  global $GAME,$GAMEID;
+  $LinkLevels = Get_LinkLevels();
+  $Things = Get_AllThings();
+  $Facts = Get_Factions();
+  
+  echo "<h2>These movements are planned - to stop one, tick the stop box and say why</h2>";
+  echo "<form method=Post action=TurnActions.php?ACTION=Complete>" . fm_hidden('S',32);
+  echo "<table border><tr><td>Who<td>What<td>From<td>Link<td>To<td>Stop<td>Why Stopping\n";
+  foreach ($Things as $T) {
+    if ($T['LinkId'] && $T['NewSystemId'] != $T['SystemId'] ) {
+      $Tid = $T['id'];
+      $Lid = $T['LinkId']; 
+            
+      $L = Get_Link($Lid);
+
+      $Fid = $T['Whose'];
+      $SR1 = Get_SystemR($L['System1Ref']);
+      $SR2 = Get_SystemR($L['System2Ref']);
+      
+      echo "<tr><td>" . $Facts[$Fid]['Name'] . "<td><a href=ThingEdit.php?id=$Tid>" . $T['Name']  . "<td>";
+      if ($T['SystemId'] == $SR1['id']) {
+         echo $L['System1Ref'] . "<td style=color:" . $LinkLevels[$L['Level']]['Colour'] . ";>#$Lid<td>" . $L['System2Ref'];
+      } else {
+         echo $L['System2Ref'] . "<td style=color:" . $LinkLevels[$L['Level']]['Colour'] . ";>#$Lid<td>" . $L['System1Ref'];      
+      }
+      echo "<td>" . fm_checkbox('',$_REQUEST,"Prevent$Tid") . fm_text1('', $_REQUEST,"Reason$Tid");
+    }
+  }
+  echo "</table><input type=submit value='Click to Proceed'></form>\n";
+  dotail();
+
+}
+
+
 function Movements($Agents=0) {
   global $GAME,$GAMEID;
   // Foreach thing, do moves, generate list of new survey reports & levels, update "knowns" 
@@ -389,10 +424,20 @@ function Movements($Agents=0) {
   $Facts = Get_Factions();
   
   foreach ($Things as $T) {
-    if ($T['Type'] == 5 && $Agents == 0) continue;
+//    if ($T['Type'] == 5 && $Agents == 0) continue;
+    $Tid = $T['id'];
+    
+    if (isset($_REQUEST["Prevent$Tid"]) && $_REQUEST["Prevent$Tid"] ) {
+      TurnLog($Fid,$T['Name'] . " was <b>unable to take link</b> <span style=color:" . $LinkLevels[$L['Level']]['Colour'] . ">#$Lid </span> beause of " . 
+        (isset($_REQUEST["Reason$Tid"])? $_REQUEST["Reason$Tid"]:"Unknown reasons"), $T);       
+      continue;
+    }
     
     if ($T['LinkId'] && $T['NewSystemId'] != $T['SystemId'] ) {
 echo "Moving " . $T['Name'] . "<br>";
+
+      
+      
       $Lid = $T['LinkId']; 
 
       $ShipScanLevel = Scanners($T);
@@ -406,50 +451,6 @@ echo "Moving " . $T['Name'] . "<br>";
       
       $SP = ['FactionId'=>$Fid, 'Sys'=> ($SR1['id'] == $T['SystemId']?$SR2['id']:$SR1['id']), 'Scan'=>($ShipScanLevel?5:1), 'Neb'=>$ShipNebScanLevel, 'Turn'=>$GAME['Turn']];
       Insert_db('ScansDue', $SP);
-/*   
-      $FL = Get_FactionLinkFL($Fid,$Lid);
-      if (!isset($FL['Known']) || !$FL['Known']) {
-        if ($T['Type'] == 5) {
-          SKLog( "Agent " . $T['Name'] . " of " . $Facts[$Fid]['Name'] . " could not move along " . $LinkLevels[$L['Level']]['Colour']. " link #$Lid as that is unknown", 1);
-          TurnLog($Fid,$T['Name'] . " could not move along " . $LinkLevels[$L['Level']]['Colour']. " link #$Lid as that is unknown", $T); 
-          continue;
-        } else {
-          $FL['Known'] = 1;
-          Put_FactionLink($FL);
-        }
-      }
-      
-      $FS1 = Get_FactionSystemFS($Fid,$SR1['id']);
-
-      if ($SR1['Nebulae'] ) { // TODO RUBBISH - Need to sort out the two different scan scales - Scanners/NebScan tell us scanning capability
-        $ScanLevel = ($NebShipScanLevel>=($SR1['Nebulae']*2)?$NebShipScanLevel/2:0);
-      } else {
-        $ScanLevel = ($ShipScanLevel>0?2:0);
-      }
-
-      if (isset($FS1['ScanLevel'])) { 
-        echo "Already seen system " . $L['System1Ref'] . " at level " . $FS1['ScanLevel'];
-      } else {
-        $FS1['ScanLevel'] = $ScanLevel;
-        echo "System " . $L['System1Ref'] . " is new give a survey report";
-        Put_FactionSystem($FS1);
-        $add = ['FactionId'=>$Fid, 'TurnNumber'=>$GAME['Turn'], 'SystemRef'=>$L['System1Ref'], 'ScanLevel'=> $ScanLevel ];
-        Insert_db('ScansDue', $add);
-      }
-      echo "<p>";
-        
-      $FS2 = Get_FactionSystemFS($Fid,$SR2['id']);
-      if (isset($FS2['ScanLevel'])) { 
-        echo "Already seen system " . $L['System2Ref'] . " at level " . $FS2['ScanLevel'];
-      } else {
-        $FS2['ScanLevel'] = $ScanLevel;
-        echo "System " . $L['System2Ref'] . " is new give a survey report";
-        Put_FactionSystem($FS2);
-        $add = ['FactionId'=>$Fid, 'TurnNumber'=>$GAME['Turn'], 'SystemRef'=>$L['System2Ref'], 'ScanLevel'=> $ScanLevel ];
-        Insert_db('ScansDue', $add);
-      }
-      echo "<p>";
- */
       
       if ($T['SystemId'] == $SR1['id']) {
         $Sid = $T['NewSystemId'] = $SR2['id'];
@@ -948,7 +949,7 @@ function Do_Turn() {
              'Spare', 'Spare', 'Deep Space Construction', 'Spare', 'Spare', 'Start Anomaly', 'Spare', 'Spare', 
              'Agents Start Missions', 'Spare', 'Spare', 'Economy', 'Spare', 'Spare', 'Load Troops', 'Spare', 
              
-             'Spare','Movements', 'Agents Move', 'Spare', 'Meetups', 'Spare', 'Spare', 'Spare', 
+             'Move Check','Movements', 'Agents Move', 'Spare', 'Meetups', 'Spare', 'Spare', 'Spare', 
              'Space Combat', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Devastation Selection', 'Devastation', 'Project Progress', 
              'Spare','Espionage Missions Complete', 'Spare', 'Counter Espionage','Spare', 'Finish Shakedowns', 'Spare', 'Projects Complete', 
              'Check Survey Reports', 'Give Survey Reports', 'Militia Army Recovery', 'Generate Turns', 'Spare', 'Tidy Up Movements', 'Recalc Project Homes', 'Finish Turn Process'];
@@ -961,7 +962,7 @@ function Do_Turn() {
              'No','Coded for Ships & Agents only','No','No','Coded','No','No', 'No',
              'No','No','No','No','No','Coded','No','Coded',
              'No','No','No','No','No','Coded','No','Partial',
-             'Codes','No','No','No','No','Coded','Coded','Coded?'];
+             'Partial (not nebula)','Partial','No','No','No','Coded','Coded','Coded?'];
   $Sand = Get_TurnNumber();
 // var_dump($Sand);
 
@@ -973,6 +974,10 @@ function Do_Turn() {
   if (isset($_REQUEST['ACTION']) && isset($_REQUEST['S'])) {
     $S = $_REQUEST['S'];
     switch ($_REQUEST['ACTION']) {
+    case 'Complete':
+      SKLog("Completed " . $Stages[$S]);
+      $Sand['Progress'] |= 1<<$S;    
+      $S++; // Deliberate drop through    
     case 'Process':
       $act = $Stages[$S];
       $act = preg_replace('/ /','',$act);
