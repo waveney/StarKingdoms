@@ -262,6 +262,11 @@ function Recalc_Worlds() {
   foreach ($Homes as $H) {
     foreach ($Worlds as $Wi=>$W) {
       if ($W['ThingType'] == $H['ThingType'] && $W['ThingId'] == $H['ThingId']) {
+        $Minerals = (($TTypes[$T['Type']]['Properties'] & THING_HAS_MINERALS)?10: 0);
+        if ($Minerals != $W['Minerals']) {
+          $W['Minerals'] = $Minerals;
+          Put_World($W);
+        }        
         $Worlds[$Wi]['Done'] = 1;
         continue 2;
       }
