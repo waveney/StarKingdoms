@@ -174,6 +174,7 @@
     
 
     $txt .= "<li><a href=TidyThings.php>Tidy up</a>  - Call this once a turn to remove unused temp entries\n";
+    $txt .= "<li><a href=SetAllSpeeds.php>Set All Speeds</a> - Bug Fix";
     $txt .= "</ul>\n";
   }
 

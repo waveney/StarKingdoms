@@ -50,7 +50,7 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Whose</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Project</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Build State</a>\n";
-
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Speed</a>\n";
   echo "</thead><tbody>";
 
   foreach($Things as $T) {
@@ -80,6 +80,7 @@
     echo "<td>" . ($who? $Factions[$T['Whose']]['Name'] : "");
     echo "<td>" . $T['ProjectId'];
     echo "<td>" . ($T['BuildState']? $BuildState[$T['BuildState']] : "<a href=ThingPlan.php?F=" . $T['Whose'] . "&id=$tid>Planning</a>" );
+    echo "<td>" . $T['Speed'];
 
   }
       

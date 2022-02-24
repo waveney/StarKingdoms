@@ -623,7 +623,7 @@ function Show_Thing(&$t,$Force=0) {
         } else if ($D['Type'] == 9) $D['NebSensors'] = $D['Number'];
       }
       echo "<tr><td>Add Module Type<td>" . fm_Select($MTNs, NULL , 'Number', 1,'',"ModuleTypeAdd-$tid");
-      echo fm_number("Max Modules",$t,'MaxModules');
+      echo fm_number1("Max Modules",$t,'MaxModules');
       if ($tprops & THING_HAS_CIVSHIPMODS) {
         echo fm_number1("Deep Space",$t,'HasDeepSpace');
         echo fm_number1("Cargo Space",$t,'CargoSpace');
@@ -635,6 +635,7 @@ function Show_Thing(&$t,$Force=0) {
       } else {
         echo "<td>Module space used: $totmodc";
       }
+      echo "<td>Speed: " . sprintf('%0.2f',$t['Speed']);
     } else {
       if ($NumMods) echo "<tr><td rowspan=" . ceil(($NumMods+4)/4) . ">Modules:";
   
@@ -664,10 +665,11 @@ function Show_Thing(&$t,$Force=0) {
           echo "<td>Module space used: $totmodc";
         }
       }
+      echo "<td>Speed: " . sprintf('%0.2f',$t['Speed']);
     }
 
  // TODO 
- // Max modules, current count, what 
+ // Max modules, current count, what e
   }
   
   if ($GM && ($tprops & THING_HAS_CIVSHIPMODS)) {
@@ -710,11 +712,19 @@ function Calc_Scanners(&$T) {
 
 function RefitRepair(&$T,$Save=1) {
 // Refit
+  $TTypes = Get_ThingTypes();
   $tid = $T['id'];
+//  $Engines = (($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE)? 1:0);
+  $Elvl = 1;
+  $Engines = 0;
   $Mods = Get_Modules($tid); 
   if ($Mods) {
     foreach ($Mods as $M) {
       $Lvl = Calc_TechLevel($T['Whose'],$M['Type']);
+      if ($M['Type'] == 5) { 
+        $Engines = $M['Number'];
+        $Elvl = $Lvl;
+      }
       $M['Level'] = $Lvl;
       Put_Module($M);
     }
@@ -722,6 +732,7 @@ function RefitRepair(&$T,$Save=1) {
 // Repair
   $Health = Calc_Health($T);
   $T['CurHealth'] = $T['OrigHealth'] = $Health;
+  $T['Speed'] = $Engines*$Elvl/$T['Level'] +1;
   if ($Save) Put_Thing($T);
 }
 
