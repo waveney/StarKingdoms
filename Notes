@@ -2,7 +2,7 @@ Done
 * Research techs
 * Build Districts
 * Build Ships/Armies/ (Agents?)
-* Move Ships 
+* Move Ships, Agents
 * A couple of Traits
 * Auto progress from build/launch/Shakedown/use of Ships
 * Project display and managing
@@ -11,16 +11,15 @@ Done
 * Introduce "Things" - Ships, Armies, Agents, stations, warp gates, outposts, embassies, asteroid mines etc.
 * Personisation of things (Crew, image etc)
 * User Guide (Partial)
-* Economy
+* Economy (Partial)
 
 Not Done
-* Move Armies, move agents
+* Move Armies
 * Agents - not ready
 * Projects not listed above eg Deep space
 * No intelligence operations
 * Most Traits
 * Analyse Projects
-* Load from the original spreadsheets
 * Science points (collection or use)
 * Combat
 * Colonisation
@@ -31,13 +30,11 @@ Not Done
 * Militia recovery
 
 Imeadiate todo list
-* Rush override for GMs -better, not good enough yet
 * Player Editing Names
 * Check Health 0 = no movement
 * Coexist/control/compilcated 
 * Agent Orders?
 * Survey reports - reorder
-* Survey reports - automate delivery
 
 
 Known Faults

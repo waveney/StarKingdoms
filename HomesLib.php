@@ -163,7 +163,7 @@ function Recalc_Project_Homes($Logf=0) {
       continue;
     }
  
-    if ($T['HasDeepSpace'] || ($ThingTypes[$T['Type']]['Properties'] & THING_HAS_DISTRICTS) || ($ThingTypes[$T['Type']]['Properties'] & THING_HAS_GADETS ) ) {
+    if ($T['HasDeepSpace'] || ($ThingTypes[$T['Type']]['Properties'] & THING_HAS_DISTRICTS) || ($ThingTypes[$T['Type']]['Properties'] & THING_HAS_GADGETS ) ) {
       $THi = $T['ProjHome'];
       if ($THi) {
         foreach ($KnownHomes as &$H) {
@@ -246,6 +246,7 @@ function Show_Home($Hid) {
 }
 
 function Recalc_Worlds() {
+  include_once("ThingLib.php");
   // Get all districts
   // Work out list of things that have them
   // Go through each world 
@@ -286,7 +287,7 @@ function Recalc_Worlds() {
         $T = Get_Thing($H['ThingId']);
         if (($TTypes[$T['Type']]['Properties'] & THING_HAS_DISTRICTS) == 0) continue 2;
         $Fid = $T['Whose'];
-        $Minerals = 0;
+        $Minerals = (($TTypes[$T['Type']]['Properties'] & THING_HAS_MINERALS)?10: 0);
         $ThisBio = -1;
         break;
     }

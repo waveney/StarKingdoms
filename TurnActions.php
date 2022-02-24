@@ -377,16 +377,17 @@ function LoadTroops() {
   return true;
 }
 
-function MoveCheck() {  // Show all movements to allow for blocking
+function MoveCheck($Agents=0) {  // Show all movements to allow for blocking
   global $GAME,$GAMEID;
   $LinkLevels = Get_LinkLevels();
   $Things = Get_AllThings();
   $Facts = Get_Factions();
   
   echo "<h2>These movements are planned - to stop one, tick the stop box and say why</h2>";
-  echo "<form method=Post action=TurnActions.php?ACTION=Complete>" . fm_hidden('S',32);
+  echo "<form method=Post action=TurnActions.php?ACTION=Complete>" . fm_hidden('S',($Agents?34:32));
   echo "<table border><tr><td>Who<td>What<td>From<td>Link<td>To<td>Stop<td>Why Stopping\n";
   foreach ($Things as $T) {
+    if ($T['Type'] == 5 && $Agents == 0) continue;
     if ($T['LinkId'] && $T['NewSystemId'] != $T['SystemId'] ) {
       $Tid = $T['id'];
       $Lid = $T['LinkId']; 
@@ -424,10 +425,13 @@ function Movements($Agents=0) {
   $Facts = Get_Factions();
   
   foreach ($Things as $T) {
-//    if ($T['Type'] == 5 && $Agents == 0) continue;
+    if ($T['Type'] == 5 && $Agents == 0) continue;
     $Tid = $T['id'];
+    $Fid = $T['Whose'];
     
     if (isset($_REQUEST["Prevent$Tid"]) && $_REQUEST["Prevent$Tid"] ) {
+      $Lid = $T['LinkId']; 
+      $L = Get_Link($Lid);
       TurnLog($Fid,$T['Name'] . " was <b>unable to take link</b> <span style=color:" . $LinkLevels[$L['Level']]['Colour'] . ">#$Lid </span> beause of " . 
         (isset($_REQUEST["Reason$Tid"])? $_REQUEST["Reason$Tid"]:"Unknown reasons"), $T);       
       continue;
@@ -445,7 +449,7 @@ echo "Moving " . $T['Name'] . "<br>";
             
       $L = Get_Link($Lid);
 
-      $Fid = $T['Whose'];
+
       $SR1 = Get_SystemR($L['System1Ref']);
       $SR2 = Get_SystemR($L['System2Ref']);
       
@@ -487,6 +491,11 @@ echo "Moving " . $T['Name'] . "<br>";
     }        
     
   }
+  return true;
+}
+
+function CheckAgentsMove() {
+  MoveCheck(1);
   return true;
 }
 
@@ -885,7 +894,7 @@ function GiveSurveyReports() {
     if ($New) {
       TurnLog($Fid, "<h3>You are due an improved survey report for <a href=SurveyReport.php?N=$Sys>" . System_Name($N,$Fid) . "</a></h3>");
     } else {
-      TurnLog($Fid, "<h3>You are have surveyed <a href=SurveyReport.php?N=$Sys>" . System_Name($N,$Fid) . "</a></h3>");    
+      TurnLog($Fid, "<h3>You are have new survey report for <a href=SurveyReport.php?N=$Sys>" . System_Name($N,$Fid) . "</a></h3>");    
     }    
   }
 
@@ -949,7 +958,7 @@ function Do_Turn() {
              'Spare', 'Spare', 'Deep Space Construction', 'Spare', 'Spare', 'Start Anomaly', 'Spare', 'Spare', 
              'Agents Start Missions', 'Spare', 'Spare', 'Economy', 'Spare', 'Spare', 'Load Troops', 'Spare', 
              
-             'Move Check','Movements', 'Agents Move', 'Spare', 'Meetups', 'Spare', 'Spare', 'Spare', 
+             'Move Check','Movements', 'Check Agents Move', 'Agents Move', 'Meetups', 'Spare', 'Spare', 'Spare', 
              'Space Combat', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Devastation Selection', 'Devastation', 'Project Progress', 
              'Spare','Espionage Missions Complete', 'Spare', 'Counter Espionage','Spare', 'Finish Shakedowns', 'Spare', 'Projects Complete', 
              'Check Survey Reports', 'Give Survey Reports', 'Militia Army Recovery', 'Generate Turns', 'Spare', 'Tidy Up Movements', 'Recalc Project Homes', 'Finish Turn Process'];
@@ -959,10 +968,10 @@ function Do_Turn() {
              'No','No','No','No','No','No','No','No',
              'No','No','No','Coded','No','No','No','No',
              
-             'No','Coded for Ships & Agents only','No','No','Coded','No','No', 'No',
+             'Coded','Coded for Ships & Agents only','Coded','Coded','Coded','No','No', 'No',
              'No','No','No','No','No','Coded','No','Coded',
              'No','No','No','No','No','Coded','No','Partial',
-             'Partial (not nebula)','Partial','No','No','No','Coded','Coded','Coded?'];
+             'Partial (not nebula)','Coded','No','No','No','Coded','Coded','Coded?'];
   $Sand = Get_TurnNumber();
 // var_dump($Sand);
 

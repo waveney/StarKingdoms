@@ -33,6 +33,7 @@
   $Dists = Get_DistrictsH($H['id']);
   $PlanetTypes = Get_PlanetTypes();
   $Fid = $W['FactionId'];
+  $TTypes = Get_ThingTypes();
   
   
     switch ($W['ThingType']) {

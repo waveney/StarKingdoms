@@ -39,7 +39,7 @@
         echo "<h2><a href=ProjDisp.php>Back to Project Display</a> , <a href=ProjList.php?F=$Fid>Back to Project List</a></h2>\n";
         dotail();
         exit;
-      case 'Cancel':
+      case 'Abandon Project':
         $P['Status'] = 3;
         Put_Project($P);
         echo "<h1>Cancelled</h1>";
@@ -146,7 +146,8 @@
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   
   echo "</table><h2>";
-  if ($when >=0) echo "<input type=submit name=ACTION value=Cancel> ";
+  echo "<input type=submit Name=Ignore value=Ignore hidden>";
+  if ($when >=0) echo "<input type=submit name=ACTION value='Abandon Project'> ";
   if ($when > 0 || Access('GM') )  echo "<input type=submit name=ACTION value=Delete> ";
 //  if ($when == 0 || Access('GM') )  echo "<input type=submit name=ACTION value=Suspend> ";
 //  if ($P['Status'] == 4)  echo "<input type=submit name=ACTION value=Resume> ";

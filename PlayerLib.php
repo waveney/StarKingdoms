@@ -7,7 +7,10 @@ include_once("GetPut.php");
 $PlayerState = ['Setup', 'Turn Planning' , 'Turn Submitted', 'Turn Being Processed'];
 $PlayerStateColours = ['Orange','lightblue','LightGreen','pink'];
 $PlayerStates = array_flip($PlayerState);
-global $PlayerState,$PlayerStates;
+
+$Currencies = ['Credits','Physics Science Points','Engineering Science Points','Xenology Science Points','General Science Points'];
+
+global $PlayerState,$PlayerStates,$Currencies;
 
 
 function FactionFeature($Name,$default='') {  // Return value of feature if set from GAMESYS

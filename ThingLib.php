@@ -27,6 +27,7 @@ define('THING_HAS_CIVSHIPMODS',128);
 define('THING_CAN_MOVE',256);
 define('THING_CAN_BETRANSPORTED',512);
 define('THING_HAS_2_FACTIONS',1024);
+define('THING_HAS_MINERALS',2048);
 
 function ModFormulaes() {
   global $ModFormulaes;

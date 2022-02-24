@@ -3,14 +3,15 @@
   global $FACTION,$GAMEID,$USER,$GAME;
   include_once("GetPut.php");
   include_once("PlayerLib.php");
-  global $PlayerState,$PlayerStates;
+  global $PlayerState,$PlayerStates,$Currencies;
 
   A_Check('Player');
 
   $FACTION['LastActive'] = time();
   $Fid = $FACTION['id'];
   
-  if (!Access('GM')) Put_Faction($FACTION);
+  $GM = Access('GM');
+  if (!$GM) Put_Faction($FACTION);
 
   $Factions = Get_Factions();
   $Facts = Get_FactionFactions($Fid);
@@ -33,7 +34,8 @@
       case 'Transfer on Turn' :
         $BankRec = ['FactionId'=>$Fid, 'Recipient'=>$_REQUEST['Recipient'], 'Amount'=>$_REQUEST['Amount'], 
                     'StartTurn'=> $_REQUEST['StartTurn'], 'EndTurn' => (empty( $_REQUEST['EndTurn'])? $_REQUEST['StartTurn'] : $_REQUEST['EndTurn']), 
-                    'YourRef' => $_REQUEST['YourRef']];
+                    'YourRef' => $_REQUEST['YourRef'],'What'=>(isset($_REQUEST['What'])?$_REQUEST['What']:0) ];
+        
         if (empty($BankRec['YourRef'])) $BankRec['YourRef'] = "Unspecified";
         Put_Banking($BankRec);
         $_REQUEST['Recipient'] = '';
@@ -151,6 +153,7 @@
   echo "<h2>Setup Ongoing or Future Transfer</h2>";
   echo "<table border>";
   echo "<tr><td>To:<td>" . fm_select($FactList,$_REQUEST,'Recipient') . "<td>Select <b>Other</b> for RP actions";
+  if ($GM) echo "<tr>" . fm_radio($Currencies,$_REQUEST,'What');
   echo "<tr>" . fm_number('Amount',$_REQUEST,'Amount');
   echo "<tr>" . fm_number('Start Turn', $_REQUEST,'StartTurn'); 
   echo "<tr>" . fm_number('Last Turn', $_REQUEST,'EndTurn') . "<td>Leave blank for a one off payment";
