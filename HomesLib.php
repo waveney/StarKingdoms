@@ -262,11 +262,38 @@ function Recalc_Worlds() {
   foreach ($Homes as $H) {
     foreach ($Worlds as $Wi=>$W) {
       if ($W['ThingType'] == $H['ThingType'] && $W['ThingId'] == $H['ThingId']) {
-        $Minerals = (($TTypes[$T['Type']]['Properties'] & THING_HAS_MINERALS)?10: 0);
-        if ($Minerals != $W['Minerals']) {
-          $W['Minerals'] = $Minerals;
-          Put_World($W);
-        }        
+      switch ($H['ThingType']) {
+        case 1: // Planet
+          $P = Get_Planet($H['ThingId']);
+          $Sys = Get_System($P['SystemId']);
+          $Fid = $Sys['Control'];
+          $Minerals = $P['Minerals'];
+          $ThisBio = $P['Type'];
+          break;
+        case 2: // Moon
+          $M = Get_Moon($H['ThingId']);
+          $P = Get_Planet($M['PlanetId']);
+          $Sys = Get_System($P['SystemId']);
+          $Fid = $Sys['Control'];
+          $Minerals = $M['Minerals'];
+          $ThisBio = $M['Type'];
+          break;
+        case 3: // Thing 
+          $T = Get_Thing($H['ThingId']);
+          if (($TTypes[$T['Type']]['Properties'] & THING_HAS_DISTRICTS) == 0) continue 2;
+          $Fid = $T['Whose'];
+          $Minerals = (($TTypes[$T['Type']]['Properties'] & THING_HAS_MINERALS)?10: 0);
+          $ThisBio = -1;
+          break;
+        }
+        $Bio = $Facts[$Fid]['Biosphere'];      
+    // Find Project Home
+    
+        $W['Home'] = $H['id'];
+        $W['Minerals'] = $Minerals;
+ 
+        Put_World($W);
+
         $Worlds[$Wi]['Done'] = 1;
         continue 2;
       }
