@@ -17,7 +17,7 @@
   $TTypes = Get_ThingTypes();
   $Things = Get_AllThings(0);
   foreach($Things as $T) {
-    if (($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE) && !($TTypes[$T['Type']]['Properties'] & THING_HAS_GADGETS)) {
+    if ($T['CurHealth'] == $T['OrigHealth'] && ($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE) && !($TTypes[$T['Type']]['Properties'] & THING_HAS_GADGETS)) {
       RefitRepair($T);
     }
   }
