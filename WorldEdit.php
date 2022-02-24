@@ -94,16 +94,10 @@
   if ($NumDists) {
     if ($NumDists) echo "<tr><td rowspan=" . ($NumDists+1) . ">Districts:";
     foreach ($Dists as $D) {
-      $did = $D['id'];
       echo "<tr><td>" . $DTs[$D['Type']]['Name'] . ": " . $D['Number'];
-      $totdisc += $D['Number'];
-      if ($D['Type'] == 1) $NumCom = $D['Number'];
-      if ($DTs[$D['Type']]['Props'] & 1) $NumPrime += $D['Number'];
-      if ($DTs[$D['Type']]['Props'] & 4) $Mines += $D['Number'];
     }
 
-    $Econ = (Has_Trait($Fid,'No customers')?($NumPrime - $NumCom):$NumPrime)*$NumCom*2 + min($W['Minerals'],$NumPrime) + min($W['Minerals'],$Mines*2);
-    $H['Economy'] = $Econ;
+    $H['Economy'] = Recalc_Economic_Rating($H,$W,$Fid);
     Put_ProjectHome($H);
   } else {
     echo "<tr><td>No Districts currently\n";

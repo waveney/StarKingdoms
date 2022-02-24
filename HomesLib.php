@@ -344,14 +344,15 @@ function Recalc_Economic_Rating(&$H,&$W,$Fid,$Turn=0) {
   $Dists = Get_DistrictsH($H['id'],$Turn);
   $DTs = Get_DistrictTypes();
 
+  $NumPrime = $Mines = 0;
   $NumCom = 0;
-  $NumPrime = 0;
   if (!$Dists) return 0;
   foreach ($Dists as $D) {
     if ($D['Type'] == 1) $NumCom = $D['Number'];
     if ($DTs[$D['Type']]['Props'] & 1) $NumPrime += $D['Number'];
+    if ($DTs[$D['Type']]['Props'] & 4) $Mines += $D['Number'];
   }
-  return (Has_Trait($Fid,'No customers')?($NumPrime - $NumCom):$NumPrime)*$NumCom*2 + min($W['Minerals'],$NumPrime);  
+  return (Has_Trait($Fid,'No customers')?($NumPrime - $NumCom):$NumPrime)*$NumCom*2  + min($W['Minerals'],$NumPrime) + min($W['Minerals'],$Mines*2);
 }
 
 function Project_Home_Thing(&$H) {
