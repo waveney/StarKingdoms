@@ -635,7 +635,7 @@ function Show_Thing(&$t,$Force=0) {
       } else {
         echo "<td>Module space used: $totmodc";
       }
-      echo "<td>Speed: " . sprintf('%0.2f',$t['Speed']);
+      echo "<td>Speed: " . sprintf('%0.3g',$t['Speed']);
     } else {
       if ($NumMods) echo "<tr><td rowspan=" . ceil(($NumMods+4)/4) . ">Modules:";
   
@@ -665,7 +665,7 @@ function Show_Thing(&$t,$Force=0) {
           echo "<td>Module space used: $totmodc";
         }
       }
-      echo "<td>Speed: " . sprintf('%0.2f',$t['Speed']);
+      echo "<td>Speed: " . sprintf('%0.3g',$t['Speed']);
     }
 
  // TODO 

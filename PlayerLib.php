@@ -138,6 +138,39 @@ function Spend_Credit($Who,$Amount,$Why) { // Ammount is negative to gain credit
   }
 }
 
+function Gain_Science($Who,$What,$Amount,$Why) { // Ammount is negative to gain credits
+  global $GAME;
+  $Fact = Get_Faction($Who);
+  switch ($What) {
+  case 1: 
+    $Fact['PhysicsSP'] += $Amount;
+    break;
+  case 2: 
+    $Fact['EngineeringSP'] += $Amount;
+    break;
+  case 3: 
+    $Fact['XenologySP'] += $Amount;
+    break;
+  case 4: // Random
+    for($sp =1; $sp <= $Amount; $sp++) {
+      switch (rand(1,3)) {
+      case 1: 
+        $Fact['PhysicsSP'] ++;
+        break;
+      case 2: 
+        $Fact['EngineeringSP'] ++;
+        break;
+      case 3: 
+        $Fact['XenologySP'] ++;
+        break;
+      }
+    }
+  }
+  
+  var_dump($Fact);
+  Put_Faction($Fact);
+}
+
 function Link_Cost($Fid,$LinkLevel,$ShipLevel) {
   if ($LinkLevel == 1) return '';
   

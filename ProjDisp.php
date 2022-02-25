@@ -203,6 +203,7 @@ exit;
       $Pro['Level'] = $P['Level'];
       $Pro['Cost'] = $P['Costs'];
       $Pro['Acts'] = $P['ProgNeeded'];
+//      $Pro['Prog'] = $P['Progress'];
       $Pro['GMOverride'] = $P['GMOverride'];
       
       $PPtype = $ProjTypes[$P['Type']];
@@ -263,7 +264,7 @@ exit;
           }
           $Prog = min($Pro['Acts'],$Pro['MaxRush'] + $Rush);
 //          if ($P['GMOverride']) $Pro['MaxRush'] = 20;
-          if ($t == $GAME['Turn'] -1) { 
+          if ($t == $GAME['Turn']) { 
             $Prog = $P['Progress'];
           }
           if ($TotProg || $Prog >= $Pro['Acts'] ) {

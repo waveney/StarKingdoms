@@ -80,7 +80,7 @@
     echo "<td>" . ($who? $Factions[$T['Whose']]['Name'] : "");
     echo "<td>" . $T['ProjectId'];
     echo "<td>" . ($T['BuildState']? $BuildState[$T['BuildState']] : "<a href=ThingPlan.php?F=" . $T['Whose'] . "&id=$tid>Planning</a>" );
-    echo "<td>" . $T['Speed'];
+    echo "<td>" . sprintf('%0.3g',$T['Speed']);
 
   }
       

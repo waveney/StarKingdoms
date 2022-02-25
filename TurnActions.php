@@ -100,20 +100,25 @@ function CashTransfers() {
   $Bs = Get_BankingFT(0,$GAME['Turn']);
   
   foreach($Bs as $B) {
-    if (Spend_Credit($B['FactionId'],$B['Amount'],$B['YourRef'])) {
-      TurnLog($B['FactionId'],"Transfered  &#8373;" . $B['Amount'] . " for " . $B['YourRef'] . " to " . $Facts[$B['Recipient']]['Name']);
+    if ($B['What'] == 0) {
+      if (Spend_Credit($B['FactionId'],$B['Amount'],$B['YourRef'])) {
+        TurnLog($B['FactionId'],"Transfered  &#8373;" . $B['Amount'] . " for " . $B['YourRef'] . " to " . $Facts[$B['Recipient']]['Name']);
 
-      if ($B['Recipient'] > 0) {
-        Spend_Credit($B['Recipient'], - $B['Amount'],$B['YourRef']);
-        TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " transfered  &#8373;" . $B['Amount'] . " to you for " . $B['YourRef'] );
+        if ($B['Recipient'] > 0) {
+          Spend_Credit($B['Recipient'], - $B['Amount'],$B['YourRef']);
+          TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " transfered  &#8373;" . $B['Amount'] . " to you for " . $B['YourRef'] );
+        }
+        SKLog('Cash transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . ' of ' . $B['Amount'] . ' for ' . $B['YourRef'],1);     
+      } else {
+        TurnLog($B['FactionId'],"Failed to transfer  &#8373;" . $B['Amount'] . " for " . $B['YourRef'] . " to " . $Facts[$B['Recipient']]['Name'] . 
+                 " you only have " . $Facts[$B['FactionId']]['Credits']);
+        if ($B['Recipient'] > 0) TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " Failed to transfer  &#8373;" . $B['Amount'] . " for " . $B['YourRef'] );
+        SKLog('Cash transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . 
+              ' of  &#8373;' . $B['Amount'] . ' for ' . $B['YourRef'] .  ' Bounced',1);
       }
-      SKLog('Cash transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . ' of ' . $B['Amount'] . ' for ' . $B['YourRef'],1);     
     } else {
-      TurnLog($B['FactionId'],"Failed to transfer  &#8373;" . $B['Amount'] . " for " . $B['YourRef'] . " to " . $Facts[$B['Recipient']]['Name'] . 
-               " you only have " . $Facts[$B['FactionId']]['Credits']);
-      if ($B['Recipient'] > 0) TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " Failed to transfer  &#8373;" . $B['Amount'] . " for " . $B['YourRef'] );
-      SKLog('Cash transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . 
-            ' of  &#8373;' . $B['Amount'] . ' for ' . $B['YourRef'] .  ' Bounced',1);
+      Gain_Science($B['FactionId'],$B['What'],$B['Amount'],$B['YourRef']);
+      TurnLog($B['FactionId'],"Gained " . $B['Amount'] . " Science points for " . $B['YourRef']);    
     }
   }
   

@@ -19,9 +19,9 @@
         Spend_Credit($_REQUEST['F'],- $_REQUEST['C'],$_REQUEST['R']);
         echo "<h1>" . $Facts[$_REQUEST['F']] . " has been paid " . $_REQUEST['C'] . "</h1>";
       } else {
-// TODO Scinec      
+        Gain_Science($_REQUEST['F'],$_REQUEST['What'], $_REQUEST['C'],$_REQUEST['R']);
+        echo  "<h1>" . $Facts[$_REQUEST['F']] . " have gained " . $_REQUEST['C'] . " Science Points</h1>";
       }
-      dotail();
       break;
       
       
@@ -32,7 +32,6 @@
                     
       Put_Banking($BankRec);
       echo "<h1>" . $Facts[$_REQUEST['F']] . " Will been paid " . $_REQUEST['C'] . "Next Turn</h1>";
-      dotail();
 
       break;
             
