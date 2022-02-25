@@ -383,4 +383,10 @@ function Swap(&$a,&$b) {
   $b = $c;
 }
 
+// Short term log of everything
+$req_dump = print_r($_REQUEST, TRUE);
+$fp = fopen('cache/request.log', 'a');
+fwrite($fp, $req_dump);
+fclose($fp);
+
 ?>
