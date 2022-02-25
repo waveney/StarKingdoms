@@ -122,7 +122,8 @@
     $txt .= "<li><a href=TurnActions.php>Turn Actions</a>\n";
     $txt .= "<li><a href=Meetings.php>Systems with multiple Factions</a>\n";
     $txt .= "<p>";
-    $txt .= "<li><a href=PayFaction.php>Pay Faction</a>\n";
+    $txt .= "<li><a href=PayFaction.php>Pay Faction (Credit/SP)</a>\n";
+    $txt .= "<li><a href=Payments.php>See Payments (Credit/SP)</a>\n";
     $txt .= "<p>";
     $txt .= "<li><a href=UserGuide.php>User Guide</a>\n";
 

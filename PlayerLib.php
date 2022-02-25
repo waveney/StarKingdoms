@@ -46,17 +46,18 @@ function Player_Page() {
 //var_dump($PlayerState,$FACTION);
   echo "<h1>Player Actions: " . $FACTION['Name'] . "</h1>\n";
   
-
+  $TState = $PlayerState[$FACTION['TurnState']] ;
   
-  echo "<h2>Player state: <span style='background:" . $PlayerStateColours[$FACTION['TurnState']] . "'>" . $PlayerState[$FACTION['TurnState']] . "</span> Turn:" .
+  echo "<h2>Player state: <span style='background:" . $PlayerStateColours[$FACTION['TurnState']] . "'>$TState</span> Turn:" .
        $GAME['Turn'] . "</h2>";
   echo "<div class=Player>";
   echo "The only current actions are:";
   echo "<ul>";
 
   echo "<p><li><a href=UserGuide.php>User Guide</a><p>\n";
-      
-  switch ($PlayerState[$FACTION['TurnState']]) {
+  
+  if (isset($_REQUEST['SEEALL'])) $TState = 'Turn Planning';
+  switch ($TState) {
   case 'Setup':
     echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";    
     echo "<li><a href=Setup.php>Setup</a>\n";
@@ -86,11 +87,14 @@ function Player_Page() {
     echo "<li><a href=MapFull.php?PLAYER>Faction Map</a>\n";
     echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";  
     echo "<li><a href=Player.php?ACTION=Unsub>Cancel Submission</a>\n";        
+
+    if ($GM) echo "<p><li><a href=Player.php?SEEALL>(GM) See All Actions</a>\n";
     break;
       
   case 'Turn Being Processed':
     echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";
     
+    if ($GM) echo "<p><li><a href=Player.php?SEEALL>(GM) See All Actions</a>\n";
     break;  
 
   }

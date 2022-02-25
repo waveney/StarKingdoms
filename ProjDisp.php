@@ -265,7 +265,7 @@ exit;
           $Prog = min($Pro['Acts'],$Pro['MaxRush'] + $Rush);
 //          if ($P['GMOverride']) $Pro['MaxRush'] = 20;
           if ($t == $GAME['Turn']) { 
-            $TotProg = $Prog = $P['Progress'];
+            $TotProg = $P['Progress'];
           }
           if ($TotProg || $Prog >= $Pro['Acts'] ) {
             $TotProg += $Prog;

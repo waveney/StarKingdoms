@@ -267,7 +267,7 @@ function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$M
   $TimeFlds = explode(',',$Timeflds);
   $indxname = (isset($TableIndexes[$table])?$TableIndexes[$table]:'id');
 
-//var_dump($_POST);
+//var_dump($_REQUEST);
 //return;
   if (isset($_POST{'Update'})) {
     if ($data) foreach($data as $t) {
@@ -303,7 +303,7 @@ function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$M
         }
       }
     }
-    if ($_POST[$Mstr . "0"] != $MstrNot) {
+    if (isset($_POST[$Mstr . "0"] ) && $_POST[$Mstr . "0"] != $MstrNot) {
       $t = array();
       foreach ($Flds as $fld=>$ftyp) {
         if ($fld == $indxname) continue;
