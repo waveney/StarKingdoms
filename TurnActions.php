@@ -325,8 +325,8 @@ function Economy() {
     }
     
     if ($OutPosts) {
-      $EccTxt .= "Plus $OutPosts Outposts worth 1 each\n";
-      $EconVal += $OutPosts;
+      $EccTxt .= "Plus $OutPosts Outposts worth 2 each\n";
+      $EconVal += $OutPosts*2;
     }
     if ($AstMines) {
       $AstVal = Has_Tech($Fid,'Deep Space Construction');
