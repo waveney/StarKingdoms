@@ -445,8 +445,6 @@ function ShipMovements($Agents=0) {
     if ($T['LinkId'] && $T['NewSystemId'] != $T['SystemId'] ) {
 echo "Moving " . $T['Name'] . "<br>";
 
-      
-      
       $Lid = $T['LinkId']; 
 
       $ShipScanLevel = Scanners($T);
@@ -454,12 +452,8 @@ echo "Moving " . $T['Name'] . "<br>";
             
       $L = Get_Link($Lid);
 
-
       $SR1 = Get_SystemR($L['System1Ref']);
       $SR2 = Get_SystemR($L['System2Ref']);
-      
-      $SP = ['FactionId'=>$Fid, 'Sys'=> ($SR1['id'] == $T['SystemId']?$SR2['id']:$SR1['id']), 'Scan'=>($ShipScanLevel?5:1), 'Neb'=>$ShipNebScanLevel, 'Turn'=>$GAME['Turn']];
-      Insert_db('ScansDue', $SP);
       
       if ($T['SystemId'] == $SR1['id']) {
         $Sid = $T['NewSystemId'] = $SR2['id'];
@@ -471,6 +465,12 @@ echo "Moving " . $T['Name'] . "<br>";
         $N = $SR1;
       }
 
+      $FS = Get_FactionSystemFS($Fid,$Sid);
+      if (!isset($FS['id'] || $FS['Scan'] < ($ShipScanLevel?5:1))) { // TODO Nebula
+        $SP = ['FactionId'=>$Fid, 'Sys'=> $Sid, 'Scan'=>($ShipScanLevel?5:1), 'Neb'=>$ShipNebScanLevel, 'Turn'=>$GAME['Turn']];
+        Insert_db('ScansDue', $SP);
+      } 
+      
       $pname = System_Name($N,$Fid);
       
 //      $N = Get_System($T['NewSystemId']);
@@ -846,28 +846,31 @@ function CheckSurveyReports() {
 
 //  Go throuh Scans file - sort by Fid - each link, is it higher scan level than currently scanned?  If so find highest scan level attempted and show menu
 //  GMs can de-tune to allow for conflict etc  Enable scan data - save scans to log?
-  $Scans = Gen_Get_Cond('ScansDue'," Turn=" . $GAME['Turn'] . " ORDER BY FactionId,Sys");
+  $Scans = Gen_Get_Cond('ScansDue'," Turn=" . $GAME['Turn'] . " ORDER BY FactionId,Sys,Scan DESC");
   
   $Facts = Get_Factions();
   $Started = 0;
+  $LastSys = 0;
   foreach($Scans as $S) {
 
     $Fid = $S['FactionId'];
-    $FS = Get_FactionSystem($Fid,$S['Sys']);
+    $Sid = $S['Sys'];
+    if ($LastSys == $Sid) continue;
+    $FS = Get_FactionSystemFS($Fid,$Sid);
     
 //var_dump($FS);
     if ($FS['ScanLevel'] >= $S['Scan']) continue;
     if (!$Started) {
       echo "<h2>Please review these scans, mark lower as needed</h2>\n";
       echo "<table border><tr><td>Faction<td>Where<td>Scan Level\n";
-  if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
+      if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
       Register_AutoUpdate('ScansDue',0);
-      $ScanLvls = 
       $Started = 1;
     }
-    $Sid = $S['id'];
+
     $N = Get_System($S['Sys']);
     echo "<tr><td>" . $Facts[$Fid]['Name'] . "<td>" . $N['Ref'] . "<td>" . fm_radio('',$SurveyLevels,$S,'Scan','',0,'',"Scan:$Sid");
+    $LastSys = $Sid;
   }
   if ($Started) {
     echo "</table>\n";
