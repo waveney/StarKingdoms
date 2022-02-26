@@ -90,6 +90,7 @@ function Show_Faction(&$F,$Mode) {
   echo "</table></div>\n";
   
   if (Access('God')) {
+    echo "<input type=submit name=nothing value=nothing hidden>";
     echo "<center><form method=post action=FactionEdit.php>" . fm_hidden('id', $Fid) .
          "<input type=submit name=ACTION value='New Key' class=Button onclick=\"return confirm('Are you sure?')\" >";
     echo "</form></center>";

@@ -348,7 +348,7 @@ function Economy() {
       if (empty($T['Type'])) continue;
       $Props = $TTypes[$T['Type']]['Properties'];
       if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
-        if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $T['Level'];
+        if ($Props & THING_CAN_BETRANSPORTED) $Logistics[1] += $T['Level'];
         if ($Props & THING_HAS_GADGETS) $Logistics[2] += $T['Level'];
         if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $T['Level'];
       };

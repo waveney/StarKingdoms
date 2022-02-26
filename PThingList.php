@@ -157,7 +157,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
  //   echo "<td>" . (isset($Systems[$T['NewSystemId']]) ? $Systems[$T['NewSystemId']] :"") ;
     
     if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
-      if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $T['Level'];
+      if ($Props & THING_CAN_BETRANSPORTED) $Logistics[1] += $T['Level'];
       if ($Props & THING_HAS_GADGETS) $Logistics[2] += $T['Level'];
       if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $T['Level'];
     };

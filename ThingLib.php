@@ -214,7 +214,7 @@ function Get_Valid_Modules(&$t) {
   $tprop = (empty($ThingProps[$t['Type']] )?0: $ThingProps[$t['Type']] ) ;
   foreach ($MTs as $M) {
     if ($ModuleCats[$M['CivMil']] == 'Army') {
-      if (($tprop & THING_HAS_ARMYMODULES) == 0) continue;
+      if (($tprop & THING_CAN_BETRANSPORTED) == 0) continue; // Armies
     } else if ($M['CivMil'] <= 4) {
       if ($tprop & THING_HAS_SHIPMODULES) { 
         if ($ModuleCats[$M['CivMil']] == 'Military Ship' && ($tprop & THING_HAS_MILSHIPMODS) ==0 ) continue;

@@ -97,11 +97,12 @@
       echo "<tr><td>" . $DTs[$D['Type']]['Name'] . ": " . $D['Number'];
     }
 
-    $H['Economy'] = Recalc_Economic_Rating($H,$W,$Fid);
-    Put_ProjectHome($H);
   } else {
     echo "<tr><td>No Districts currently\n";
   }
+  $H['Economy'] = Recalc_Economic_Rating($H,$W,$Fid);
+  Put_ProjectHome($H);
+
   if (!empty($WH['MaxDistricts'])) echo "<td>Max Districts: " . $WH['MaxDistricts'];
   echo "<tr><td>Economy:<td>" . $H['Economy'];
   echo "</table>";
