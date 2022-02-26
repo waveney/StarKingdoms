@@ -117,10 +117,17 @@
         $T['HasDeepSpace'] = 1;
         Put_Thing($T);
       }
-      $N= ['Type'=>$mtch[1],'ThingId'=>$id, 'Number'=>$Value];
+      $Ns = Get_ModulesType($id,$mtch[1]);
+//var_dump($Ns);
+      if ($Ns) {
+        $N = $Ns[0];
+        $N['Number'] = $Value;
+      } else {
+        $N= ['Type'=>$mtch[1],'ThingId'=>$id, 'Number'=>$Value];
+      }
       //echo 'FORCELOADCHANGE54321:NOW' . 
       echo Put_Module($N);
-       
+//      echo "REPLACE_ID_WITH:ModuleNumber-$mid ";
       exit;
 
     case (preg_match('/Module(\w*)-(\d*)/',$field,$mtch)?true:false):

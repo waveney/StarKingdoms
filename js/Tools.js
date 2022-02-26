@@ -253,7 +253,7 @@ function Set_ColBlobs(Blobs,MaxBlob) {
 }
 
 function AutoInput(f,after) {
-//  debugger;
+  debugger;
   var newval = document.getElementById(f).value;
   var id = f;
   if (document.getElementById(f).newid ) id = document.getElementById(f).newid;
@@ -286,7 +286,9 @@ function AutoInput(f,after) {
         window.location.href = Location;
         }, 100);
     } else if (data.match(/CALLxxAFTER/m)) {
-      after();
+      after(f);
+    } else if (m=data.match(/\nREPLACE_ID_WITH:(.*) /m)) {
+     if (document.getElementById(f)) document.getElementById(f).id = m[1];    
     }
   });
 }
