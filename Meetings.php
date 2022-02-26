@@ -26,7 +26,7 @@
   $Homes = Get_ProjectHomes();
   $TTypes = Get_ThingTypes();
   
-  $TurnP = 0;
+  $TurnP = '';
   if (isset($_REQUEST['TurnP'])) $TurnP = "&TurnP=1";
   
   foreach($Homes as $H) {
