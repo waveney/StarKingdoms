@@ -382,7 +382,7 @@ function LoadTroops() {
   return true;
 }
 
-function MoveCheck($Agents=0) {  // Show all movements to allow for blocking
+function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
   global $GAME,$GAMEID;
   $LinkLevels = Get_LinkLevels();
   $Things = Get_AllThings();
@@ -418,7 +418,7 @@ function MoveCheck($Agents=0) {  // Show all movements to allow for blocking
 }
 
 
-function Movements($Agents=0) {
+function ShipMovements($Agents=0) {
   global $GAME,$GAMEID;
   // Foreach thing, do moves, generate list of new survey reports & levels, update "knowns" 
 
@@ -499,13 +499,13 @@ echo "Moving " . $T['Name'] . "<br>";
   return true;
 }
 
-function CheckAgentsMove() {
-  MoveCheck(1);
+function AgentsMoveCheck() {
+  ShipMoveCheck(1);
   return true;
 }
 
-function AgentsMove() {
-  Movements(1);
+function AgentsMovement() {
+  ShipMovements(1);
   return true;
 }
 
@@ -964,7 +964,7 @@ function Do_Turn() {
              'Spare', 'Spare', 'Deep Space Construction', 'Spare', 'Spare', 'Start Anomaly', 'Spare', 'Spare', 
              'Agents Start Missions', 'Spare', 'Spare', 'Economy', 'Spare', 'Spare', 'Load Troops', 'Spare', 
              
-             'Move Check','Movements', 'Check Agents Move', 'Agents Move', 'Meetups', 'Spare', 'Spare', 'Spare', 
+             'Ship Move Check','Ship Movements', 'Agents Move Check', 'Agents Movements', 'Meetups', 'Spare', 'Spare', 'Spare', 
              'Space Combat', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Devastation Selection', 'Devastation', 'Project Progress', 
              'Spare','Espionage Missions Complete', 'Spare', 'Counter Espionage','Spare', 'Finish Shakedowns', 'Spare', 'Projects Complete', 
              'Check Survey Reports', 'Give Survey Reports', 'Militia Army Recovery', 'Generate Turns', 'Spare', 'Tidy Up Movements', 'Recalc Project Homes', 'Finish Turn Process'];
@@ -974,8 +974,8 @@ function Do_Turn() {
              'No','No','No','No','No','No','No','No',
              'No','No','No','Coded','No','No','No','No',
              
-             'Coded','Coded for Ships & Agents only','Coded','Coded','Coded','No','No', 'No',
-             'No','No','No','No','No','Coded','No','Coded',
+             'Coded','Coded','Coded','Coded','Coded','No','No', 'No',
+             'No','No','No','No','No','Coded','Coded','Coded',
              'No','No','No','No','No','Coded','No','Partial',
              'Partial (not nebula)','Coded','No','No','No','Coded','Coded','Coded?'];
   $Sand = Get_TurnNumber();

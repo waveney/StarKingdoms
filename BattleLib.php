@@ -24,19 +24,24 @@ function Devastate(&$H,&$W,&$Dists,$Numb=1) {
     $Dcount = 0;
     foreach ($Dists as $D) $Dcount += $D['Number'];
   
-var_dump($Dcount);
-    $Hit = rand(1,$Dcount);
-    $DFind = 0;
-    foreach ($Dists as $D) {
-      $DFind += $D['Number'];
-      if ($DFind >= $Hit) break;
-    }
-var_dump($D);
-    $D['Number']--;
-    Put_District($D);
-    $Txt .= "A " . $DTypes[$D['Type']]['Name'] . " has be destroyed.<br>";
-    if ($D['Number']<1) {
-      $Txt .= "This causes bad things...<br>";  
+    if ($Dcount) {
+//var_dump($Dcount);
+      $Hit = rand(1,$Dcount);
+      $DFind = 0;
+      foreach ($Dists as $D) {
+        $DFind += $D['Number'];
+        if ($DFind >= $Hit) break;
+      }
+//var_dump($D);
+      $D['Number']--;
+      Put_District($D);
+      $Txt .= "A " . $DTypes[$D['Type']]['Name'] . " has be destroyed.<br>";
+      if ($D['Number']<1) {
+        $Txt .= "This causes bad things...<br>";  
+      }
+    } else {
+      $Txt .= "There are no districts left to be destroyed.<br>";
+      break;
     }
   }
   return $Txt;
