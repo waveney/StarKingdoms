@@ -478,10 +478,10 @@ echo "Moving " . $T['Name'] . "<br>";
       $T['SystemId'] = $T['NewSystemId'];
       $T['WithinSysLoc'] = $T['NewLocation'];
 //      SKLog("Moved to $pname along " . $LinkLevels[$L['Level']]['Colour']. " link #$Lid to " . $EndLocs[$T['NewLocation']]); 
-      TurnLog($Fid,$T['Name'] . " moved to $pname along " . $LinkLevels[$L['Level']]['Colour']. " link #$Lid to " . $EndLocs[$T['NewLocation']],$T); 
+      TurnLog($Fid,$T['Name'] . " moved to $pname along " . $LinkLevels[$L['Level']]['Colour']. " link #$Lid" . ($T['NewLocation'] > 2?( " to " . $EndLocs[$T['NewLocation']]): ""),$T); 
       $T['LinkId'] = 0;
       Put_Thing($T);
-    } else if ( $T['WithinSysLoc'] != $T['NewLocation'] && $T['NewLocation']>0) {
+    } else if ( $T['WithinSysLoc'] != $T['NewLocation'] && $T['NewLocation']>1) {
       $T['WithinSysLoc'] = $T['NewLocation'];
       $N = Get_System($T['SystemId']);
       $Sid = $T['SystemId'];

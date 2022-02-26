@@ -295,6 +295,12 @@ function Recalc_Worlds() {
         Put_World($W);
 
         $Worlds[$Wi]['Done'] = 1;
+        $Recalc = Recalc_Economic_Rating($H,$W,$Fid);
+        if ($H['Economy'] != $Recalc) {
+          $H['Economy'] = $Recalc;
+          Put_ProjectHome($H);
+        }
+
         continue 2;
       }
     }
@@ -329,6 +335,12 @@ function Recalc_Worlds() {
     $W = ['FactionId' => $Fid, 'Home' => $H['id'], 'Minerals' => $Minerals, 'RelOrder' => ($Bio == $ThisBio ? 100:80), 
           'ThingType' => $H['ThingType'], 'ThingId'=>$H['ThingId'], 'Done'=>1 ];
     Put_World($W);
+    
+    $Recalc = Recalc_Economic_Rating($H,$W,$Fid);
+    if ($H['Economy'] != $Recalc) {
+      $H['Economy'] = $Recalc;
+      Put_ProjectHome($H);
+    }
   }
   
   foreach ($Worlds as $W) {

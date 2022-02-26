@@ -56,6 +56,7 @@
   echo "</thead><tbody>";
 
   foreach ($Worlds as $W) {
+
     echo "<tr>";
     if ($GM) echo "<td><a href=WorldEdit.php?id=" . $W['id'] . ">" . $W['id'] . "</a>";
     switch ($W['ThingType']) {
@@ -82,7 +83,12 @@
     
     $H = Get_ProjectHome($W['Home']);
     
+    $Recalc = Recalc_Economic_Rating($H,$W,$Fid);
     
+    if ($Recalc != $H['Economy']) {
+      echo "ECONOMY ERROR - SHOULD BE $Recalc ";
+    }
+        
     echo "<td>$type<td><a href=WorldEdit.php?id=" . $W['id'] . ">$Name</a><td>" . $W['Minerals'] . "<td>" . $H['Economy'] . "<td>" . $H['Devastation'];
     if ($GM) echo "<td>" . $H['EconomyFactor'] . "<td>" . $Facts[$W['FactionId']]['Name'];
     echo "<td>" . $W['RelOrder'] . "\n";
