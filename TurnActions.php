@@ -692,7 +692,8 @@ function CounterEspionage() {
 function FinishShakedowns() {
   // Move anything in shakedown to completed
   
-  $Things = Get_Things_Cond(0,"AND BuildState=2");
+  $Things = Get_Things_Cond(0," BuildState=2 ");
+
   foreach($Things as $T) {
     $T['BuildState'] = 3;
     TurnLog($T['FactionId'],$T['Name'] . " has finished it's Shakedown and is now ready for operations.");
