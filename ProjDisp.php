@@ -126,6 +126,14 @@ exit;
 
   $Headline1 = '';
   $Headline2 = [];
+  $SkipProgress = 0;
+  
+  if (Access('GM')) {
+    $TurnData = Get_TurnNumber();
+    if ($TurnData['Progress'] & 1<<47) {
+      $SkipProgress = 1;
+    } 
+  }
 //  $Turns = [][];
   
 // Stage 1 Scan the data
@@ -265,10 +273,11 @@ exit;
           $Prog = min($Pro['Acts'],$Pro['MaxRush'] + $Rush);
 //          if ($P['GMOverride']) $Pro['MaxRush'] = 20;
           if ($t == $GAME['Turn']) { 
+            if ($SkipProgress) $Prog = 0;
             $TotProg = $P['Progress'];
           }
           if ($TotProg || $Prog >= $Pro['Acts'] ) {
-            $TotProg += $Prog;
+            if ($t != $GAME['Turn'] || $SkipProgress==0 ) $TotProg += $Prog;
             if ($TotProg >= $Pro['Acts']) {
               $Pro['Progress'] = $Pro['Acts'] . "/" . $Pro['Acts'];
               $Pro['Status'] = 'Complete';
@@ -411,7 +420,7 @@ exit;
     
     echo "<td id=TotCost$Turn class=PHTurn>$TotCost<td class=PHTurn>";
     if ($Turn == $GAME['Turn']) {
-      $Left = $FACTION['Credits'] - $TotCost;
+      $Left = $FACTION['Credits'] - ($SkipProgress?0:$TotCost);
       if ($Left >=0 ) { 
         echo $Left;
       } else {

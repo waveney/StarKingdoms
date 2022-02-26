@@ -98,10 +98,9 @@ function New_Thing(&$t) {
        break;
 
      case 'Remove Thing (No debris)':
-       $t = Get_Thing($_REQUEST['id']);
-       $t['BuildState'] = 4;  // Ex
-       $t['SystemId'] = 0;
-       Put_Thing($t);
+       db_delete('Things',$_REQUEST['id']);
+       echo "<h1>Delete</h1>";
+       dotail();
        break;
 
      case 'Warp Out':

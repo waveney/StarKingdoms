@@ -481,7 +481,7 @@ echo "Moving " . $T['Name'] . "<br>";
       TurnLog($Fid,$T['Name'] . " moved to $pname along " . $LinkLevels[$L['Level']]['Colour']. " link #$Lid to " . $EndLocs[$T['NewLocation']],$T); 
       $T['LinkId'] = 0;
       Put_Thing($T);
-    } else if ( $T['WithinSysLoc'] != $T['NewLocation'] ) {
+    } else if ( $T['WithinSysLoc'] != $T['NewLocation'] && $T['NewLocation']>0) {
       $T['WithinSysLoc'] = $T['NewLocation'];
       $N = Get_System($T['SystemId']);
       $Sid = $T['SystemId'];
