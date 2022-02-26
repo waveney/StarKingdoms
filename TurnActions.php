@@ -466,7 +466,7 @@ echo "Moving " . $T['Name'] . "<br>";
       }
 
       $FS = Get_FactionSystemFS($Fid,$Sid);
-      if (!isset($FS['id'] || $FS['Scan'] < ($ShipScanLevel?5:1))) { // TODO Nebula
+      if (!isset($FS['id']) || $FS['Scan'] < ($ShipScanLevel?5:1)) { // TODO Nebula
         $SP = ['FactionId'=>$Fid, 'Sys'=> $Sid, 'Scan'=>($ShipScanLevel?5:1), 'Neb'=>$ShipNebScanLevel, 'Turn'=>$GAME['Turn']];
         Insert_db('ScansDue', $SP);
       } 
