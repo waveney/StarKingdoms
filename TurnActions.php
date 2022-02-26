@@ -56,7 +56,7 @@ function CheckTurnsReady() {
     }
   }
   echo "</table></div>\n";
-  if ($AllOK) return;
+  if ($AllOK) return true;
   echo "To proceed you must mark them as submitted<p>\n";
   return false;
 
@@ -117,7 +117,7 @@ function CashTransfers() {
               ' of  &#8373;' . $B['Amount'] . ' for ' . $B['YourRef'] .  ' Bounced',1);
       }
     } else {
-      Gain_Science($B['FactionId'],$B['What'],$B['Amount'],$B['YourRef']);
+      Gain_Science($B['Recipient'],$B['What'],$B['Amount'],$B['YourRef']);
       TurnLog($B['FactionId'],"Gained " . $B['Amount'] . " Science points for " . $B['YourRef']);    
     }
   }
@@ -392,7 +392,7 @@ function MoveCheck($Agents=0) {  // Show all movements to allow for blocking
   echo "<form method=Post action=TurnActions.php?ACTION=Complete>" . fm_hidden('S',($Agents?34:32));
   echo "<table border><tr><td>Who<td>What<td>From<td>Link<td>To<td>Stop<td>Why Stopping\n";
   foreach ($Things as $T) {
-    if ($T['Type'] == 5 && $Agents == 0) continue;
+    if (($T['Type'] == 5 && $Agents == 0) || $T['BuildState'] <2 || $T['BuildState'] > 3) continue;
     if ($T['LinkId'] && $T['NewSystemId'] != $T['SystemId'] ) {
       $Tid = $T['id'];
       $Lid = $T['LinkId']; 
@@ -430,7 +430,7 @@ function Movements($Agents=0) {
   $Facts = Get_Factions();
   
   foreach ($Things as $T) {
-    if ($T['Type'] == 5 && $Agents == 0) continue;
+    if (($T['Type'] == 5 && $Agents == 0) || $T['BuildState'] <2 || $T['BuildState'] > 3) continue;
     $Tid = $T['id'];
     $Fid = $T['Whose'];
     
