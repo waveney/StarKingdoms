@@ -91,7 +91,8 @@
     $Recalc = Recalc_Economic_Rating($H,$W,$Fid);
     
     if ($Recalc != $H['Economy']) {
-      echo "ECONOMY ERROR - SHOULD BE $Recalc ";
+      echo "ECONOMY ERROR - SHOULD BE $Recalc <br>";
+      var_dump($H,$W,$Fid);
     }
         
     echo "<td>$type<td><a href=WorldEdit.php?id=" . $W['id'] . ">$Name</a><td>" . $W['Minerals'] . "<td>" . $H['Economy'] . "<td>" . $H['Devastation'];

@@ -804,7 +804,7 @@ function LogisticalSupport($Fid) {  // Note this sets the Economic rating of all
     }
 
 //var_dump($Prime, $Commerce, $Mine, $PH);
-    $H['Economy'] = $Prime * $Commerce*2 + (isset($PH['Minerals'])? 99 +(min($PH['Minerals'], $Commerce) + min($PH['Minerals'], $Mine*2)):0);
+    $H['Economy'] = $Prime * $Commerce*2 + (isset($PH['Minerals'])? (min($PH['Minerals'], $Commerce) + min($PH['Minerals'], $Mine*2)):0);
     Put_ProjectHome($H);
     $EndAct($PH);
   }
