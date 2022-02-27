@@ -179,6 +179,8 @@
   echo "</table>";
   
   if ($Valid) {
+    if (isset($_REQUEST['Validate'])) echo "<h2 class=Green>Design is valid</h2>";
+    
     echo "<input type=submit name=Validate value=Validate>\n";
     echo "<h2>Once planned, go to where you want to make it and select an appropriate project</h2>";
     echo "You can customise by adding crew names, an images, notes and gadgets by selecting the thing while it is being made or used later.<p>\n";
