@@ -11,7 +11,7 @@ $ModuleCats = ['Ship','Civilian Ship','Support Ship','Military Ship','Army','Oth
 $Fields = ['Engineering','Physics','Xenology'];
 $Tech_Cats = ['Core','Supp','Non Std'];
 $CivMil = ['','Civilian','Military'];
-$BuildState = ['Planning','Building','Shakedown','Complete','Ex','Abandonded'];
+$BuildState = ['Planning','Building','Shakedown','Complete','Ex','Abandonded','Missing In Action'];
 
 $ModFormulaes = [];
 $ModValues = [];

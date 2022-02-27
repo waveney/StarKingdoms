@@ -249,7 +249,7 @@ function Colonisation() {
 
 
 function DeepSpaceConstruction() {
-  echo "Deep Space Construction	 are currently Manual<p>";
+  echo "Deep Space Construction	is currently Manual<p>";
   return true;
 }
 
@@ -459,10 +459,14 @@ echo "Moving " . $T['Name'] . "<br>";
         $Sid = $T['NewSystemId'] = $SR2['id'];
         $Ref = $SR2['Ref']; // Names...
         $N = $SR2;
+        $OldSid = $SR1['id'];
+        $OldN = $SR1;
       } else {
         $Sid = $T['NewSystemId'] = $SR1['id']; 
         $Ref = $SR1['Ref'];
         $N = $SR1;
+        $OldSid = $SR2['id'];
+        $OldN = $SR2;
       }
 
       $FS = Get_FactionSystemFS($Fid,$Sid);
@@ -478,7 +482,8 @@ echo "Moving " . $T['Name'] . "<br>";
       $T['SystemId'] = $T['NewSystemId'];
       $T['WithinSysLoc'] = $T['NewLocation'];
 //      SKLog("Moved to $pname along " . $LinkLevels[$L['Level']]['Colour']. " link #$Lid to " . $EndLocs[$T['NewLocation']]); 
-      TurnLog($Fid,$T['Name'] . " moved to $pname along " . $LinkLevels[$L['Level']]['Colour']. " link #$Lid" . ($T['NewLocation'] > 2?( " to " . $EndLocs[$T['NewLocation']]): ""),$T); 
+      TurnLog($Fid,$T['Name'] . " has moved from " . System_Name($OldN,$Fid) . " along <span style='color:" . $LinkLevels[$L['Level']]['Colour'] . ";'>link #$Lid </span>to $pname " . 
+        ($T['NewLocation'] > 2?( " to " . $EndLocs[$T['NewLocation']]): ""),$T); 
       $T['LinkId'] = 0;
       Put_Thing($T);
     } else if ( $T['WithinSysLoc'] != $T['NewLocation'] && $T['NewLocation']>1) {

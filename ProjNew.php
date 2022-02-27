@@ -196,7 +196,8 @@
         }
       }
       
-    echo "<h2>Rebuild and repair</h2>Manual at present<p>";
+    echo "<h2>Rebuild and repair</h2>Manual at present. Please put this in your turn orders<p>";
+      
       
     echo "<h2>Construct Warp Gate</h2>";
       $pc = Proj_Costs(4);
@@ -241,7 +242,7 @@
       }
    
     echo "<h2>Share Technology</h2>";
-      echo "This is manual at present<p>";
+      echo "This is manual at present. Please put this in your turn orders<p>";
     
     echo "<h2>Analyse</h2>";
       echo "These projects will be defined by a GM<p>";
@@ -260,7 +261,7 @@
     
     
       echo "<h2>Refit and Repair</h2>";
-      echo "Not yet";
+      echo "Not yet.  Please put this in your turn orders";
       $Ships = Get_ThingsSys($Sid,$type=1,$Fid);
       if ($Ships) {
     
