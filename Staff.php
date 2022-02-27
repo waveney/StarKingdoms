@@ -38,8 +38,8 @@
   if (isset($ErrorMessage)) echo "<h2 class=ERR>$ErrorMessage</h2>";
   
   $Facts = Get_Faction_Names();
+ 
   
-
 //echo php_ini_loaded_file() . "<P>";
   echo "<div class=floatright><h2>";
   echo "Turn : <a href=Staff.php?Y=0>Setup</a>";
@@ -49,6 +49,15 @@
   echo "</h2></div>";
 
   echo "<h2>SK Pages - " . (isset($GAME['Name'])?$GAME['Name']:"Star Kingdoms" ) . "</h2>\n";
+  
+  $Factions = Get_Factions();
+  foreach($Factions as $F) {
+    $Fid = $F['id'];
+    echo "<a href=Access.php?id=$Fid&Key=" . $F['AccessKey'] . " style='background:" . $F['MapColour'] . "; text-shadow: 2px 2px 3px white;padding:2px;'><b>"  . $F['Name'] . "</b></a> ";
+  }
+
+  echo "<p>\n";
+
   
   $txt = "<div class=tablecont><table border width=100% class=Staff style='min-width:800px'>\n";
    

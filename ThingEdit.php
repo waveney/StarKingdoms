@@ -56,6 +56,13 @@ function New_Thing(&$t) {
        $_POST['NewSystemId'] = $_POST['SystemId'];
        $tid = Insert_db_post('Things',$t);
        $t['id'] = $tid;
+       
+       if ($t['Type'] == 6) { // Outpost
+         $N = Get_System($t['SystemId']);
+         $N['Control'] = $t['Whose'];
+         Put_System($N);
+         echo "<h2>System Control Updated</h2>\n";
+       }
        break;
      
      case 'DELETE' :

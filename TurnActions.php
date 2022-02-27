@@ -803,7 +803,7 @@ function ProjectsComplete() {
     case 'Construct Ship':
       $T = Get_Thing($P['ThingId']);
       $T['BuildState'] = 2; // Shakedown
-      TurnLog($P['FactionId'], $T['Name'] . " has been lanched");              
+      TurnLog($P['FactionId'], $T['Name'] . " has been lanched and will now start its shakedown cruise");              
       Calc_Scanners($T);
       Put_Thing($T);
       break;
