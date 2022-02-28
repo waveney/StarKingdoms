@@ -36,13 +36,23 @@
       case 'Delete': 
         db_delete('Projects',$Prid);
         echo "<h1>Deleted</h1>";
+        db_delete_cond('ProjectTurn',"ProjectId=$Prid");
         echo "<h2><a href=ProjDisp.php>Back to Project Display</a> , <a href=ProjList.php?F=$Fid>Back to Project List</a></h2>\n";
         dotail();
         exit;
       case 'Abandon Project':
+        if ($P['Status'] == 0) { // Never started
+          db_delete('Projects',$Prid);
+          echo "<h1>Deleted</h1>";
+          db_delete_cond('ProjectTurn',"ProjectId=$Prid");
+          echo "<h2><a href=ProjDisp.php>Back to Project Display</a> , <a href=ProjList.php?F=$Fid>Back to Project List</a></h2>\n";
+          dotail();
+          exit;
+        }  
         $P['Status'] = 3;
         Put_Project($P);
-        echo "<h1>Cancelled</h1>";
+        echo "<h1>Abandoned</h1>";
+        db_delete_cond('ProjectTurn',"ProjectId=$Prid AND TurnNumber>=" . $GAME['Turn']);
         echo "<h2><a href=ProjDisp.php>Back to Project Display</a> , <a href=ProjList.php?F=$Fid>Back to Project List</a></h2>\n";
         dotail();
         exit;       

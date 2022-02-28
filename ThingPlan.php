@@ -66,7 +66,7 @@
     }
   }
   
-  dostaffhead("Plan a thing",["js/ProjectTools.js"]);
+  dostaffhead("Plan a thing",["js/ProjectTools.js", "js/dropzone.js","css/dropzone.css" ]);
  
 // var_dump($T);  
  
@@ -115,7 +115,13 @@
     echo "<tr>" . fm_number('Level',$T,'Level','','min=1 max=10');
     echo "<tr>" . fm_text('Name',$T,'Name') . "<td><td" . (empty($T['Name'])? " class=Err" : "") . ">This is needed";
     if (empty($T['Name'])) $Valid = 0;
-    echo "<tr>" . fm_text('Class',$T,'Class') . "<td><td>This is optional";  
+    echo "<tr>" . fm_text('Class',$T,'Class') . "<td><td>This is optional";
+
+    echo "<tr><td rowspan=4 colspan=3><table><tr>";
+    echo fm_DragonDrop(1,'Image','Thing',$Tid,$T,1,'',1,'','Thing');
+    echo "</table><td>This is optional";
+    echo "<tr><tr><tr>";   
+    
     if ($tprops & THING_HAS_MODULES) {
     echo "<tr><td>Maximum Module Slots<td id=MaxModules>" . $T['MaxModules'];
       $MTs = Get_ModuleTypes();
@@ -179,8 +185,12 @@
   echo "</table>";
   
   if ($Valid) {
-    if (isset($_REQUEST['Validate'])) echo "<h2 class=Green>Design is valid</h2>";
-    
+    if (isset($_REQUEST['Validate'])) {
+      echo "<h2 class=Green>Design is valid</h2>";
+      if (($tprops & THING_HAS_MODULES) && ($totmodc < $T['MaxModules'] )) {
+        echo "<h2>Though it can have " . ( $T['MaxModules'] - $totmodc). " cdmore modules</h2>\n";
+      }
+    }
     echo "<input type=submit name=Validate value=Validate>\n";
     echo "<h2>Once planned, go to where you want to make it and select an appropriate project</h2>";
     echo "You can customise by adding crew names, an images, notes and gadgets by selecting the thing while it is being made or used later.<p>\n";

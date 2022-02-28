@@ -398,9 +398,8 @@ function System_Name(&$N,$Fid=0) {
   $Ref = $N['Ref'];
   if ($Fid) {
     $FS = Get_FactionSystemFS($Fid, $N['id']);
-    if (!empty($FS['Name']) > 1) {
+    if (!empty($FS['Name'])) {
       $Fname = NameFind($FS);
-      
       if ($pname != $Fname) {
         if (strlen($pname) > 1) {
           $pname = $Fname . " ( $pname | $Ref ) ";
