@@ -337,6 +337,7 @@ exit;
   Register_AutoUpdate('Projects',$Fid);
   echo fm_hidden('id',$Fid);
 
+  echo "<input type=submit name=Ignore value=Ignore hidden>\n";
   echo "<table border style='width:auto;height:50px;'>";
   echo "<h2>Worlds:</h2> $Headline1";
   echo "</table>";
