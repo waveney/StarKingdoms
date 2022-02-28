@@ -65,14 +65,15 @@
       if (isset($_REQUEST['pname']) && strlen($_REQUEST['pname']) > 0) {
         $pcurname = $_REQUEST['pname'];
         $Ps = Get_Planets($Sid);
+// var_dump($pcurname,$Ps);
         foreach ($Ps as $P) {
-          if ($P['Name'] == $pcurname) {
+          if (trim($P['Name']) == $pcurname) { 
             if (isset($_REQUEST['mname'])&& strlen($_REQUEST['mname']) > 0) { // Setting a Moon
               $mcurname = $_REQUEST['mname'];
               $Ms = Get_Moons($P['id']);
               foreach ($Ms as $M) {
-                if ($M['Name'] == $mcurname) {
-                  $FM = Get_FactionPlanetFS($Fid, $M['id']);
+                if (trim($M['Name']) == $mcurname) {
+                  $FM = Get_FactionMoonFS($Fid, $M['id']);
                   $FM['Name'] = $Name;
                   Put_FactionMoon($FM);
                   if ($Control) {
@@ -87,6 +88,7 @@
               break 2;
             } else { // Planet
               $FP = Get_FactionPlanetFS($Fid, $P['id']);
+//var_dump("BB",$FP);
               $FP['Name'] = $Name;
               Put_FactionPlanet($FP);
               if ($Control) {
@@ -96,6 +98,39 @@
               echo "<h2>Planet $pcurname has been renamed $Name</h2>";
             }
             break 2;
+          } else {
+            $FP = Get_FactionPlanetFS($Fid, $P['id']);
+//var_dump("AA",$FP);
+            if (isset($FP['Name']) && trim($FP['Name']) == $pcurname) { 
+              if (isset($_REQUEST['mname'])&& strlen($_REQUEST['mname']) > 0) { // Setting a Moon
+                $mcurname = $_REQUEST['mname'];
+                $Ms = Get_Moons($P['id']);
+                foreach ($Ms as $M) {
+                  if ($M['Name'] == $mcurname) {
+                    $FM = Get_FactionMoonFS($Fid, $M['id']);
+                    $FM['Name'] = $Name;
+                    Put_FactionMoon($FM);
+                    if ($Control) {
+                      $M['Name'] = $Name;
+                      Put_Moon($M);
+                    }
+                    echo "<h2>Moon $mcurname has been renamed $Name</h2>";
+                    break 3;
+                  }
+                }
+                echo "<h2 class=Err>Moon $mcurname not found</h2>";
+                break 2;
+              } else { // Planet
+                $FP['Name'] = $Name;
+                Put_FactionPlanet($FP);
+                if ($Control) {
+                  $P['Name'] = $Name;
+                  Put_Planet($P);
+                }
+                echo "<h2>Planet $pcurname has been renamed $Name</h2>";
+              }
+            break 2;
+            }
           }
         }
         echo "<h2 class=Err>Planet $pcurname not found</h2>";

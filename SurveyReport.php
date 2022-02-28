@@ -208,7 +208,7 @@
           $Fname = NameFind($FP);
       
           if ($pname != $Fname) {
-            if (strlen($pname) > 1) {
+            if (strlen($pname) > 0) {
               $pname = $Fname . " ( $pname ) ";
             } else {
               $pname = $Fname;        

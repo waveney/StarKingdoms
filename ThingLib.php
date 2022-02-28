@@ -747,7 +747,7 @@ function LogisticalSupport($Fid) {  // Note this sets the Economic rating of all
   $DistTypes = Get_DistrictTypes();
   
   foreach($PHomes as $H) {
-    $PH['Economy'] = 0;
+//    $PH['Economy'] = 0;
     $Commerce = 0;
     $Hi = $H['id'];
     switch ($H['ThingType']) {
@@ -766,7 +766,7 @@ function LogisticalSupport($Fid) {  // Note this sets the Economic rating of all
       $Dists = Get_DistrictsT($H['ThingId']);
       if (!$Dists) {
         $H['Skip'] = 1;
-        Put_Thing($PH);
+//        Put_Thing($PH);
         continue 2;  // Remove things without districts
       }
       $EndAct = 'Put_Thing';
@@ -804,9 +804,9 @@ function LogisticalSupport($Fid) {  // Note this sets the Economic rating of all
     }
 
 //var_dump($Prime, $Commerce, $Mine, $PH);
-    $H['Economy'] = $Prime * $Commerce*2 + (isset($PH['Minerals'])? (min($PH['Minerals'], $Commerce) + min($PH['Minerals'], $Mine*2)):0);
-    Put_ProjectHome($H);
-    $EndAct($PH);
+//    $H['Economy'] = $Prime * $Commerce*2 + (isset($PH['Minerals'])? (min($PH['Minerals'], $Commerce) + min($PH['Minerals'], $Mine*2)):0);
+//    Put_ProjectHome($H);
+//    $EndAct($PH);
   }
 
 //var_dump($Logistics); echo "<br>";

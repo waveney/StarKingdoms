@@ -73,7 +73,7 @@ function Player_Page() {
     echo "<li><a href=TechShow.php?PLAYER>Technologies</a><p>\n";
     echo "<li><a href=WhatCanIC.php>What Things can I See?</a>\n";
     echo "<li><a href=WorldList.php>Worlds and Colonies</a> - High Level info only\n";  
-    if ($GM) echo "<li><a href=NamePlaces.php>Name Places</a> - Systems, Planets etc<p>\n";      
+    echo "<li><a href=NamePlaces.php>Name Places</a> - Systems, Planets etc<p>\n";      
     echo "<li><a href=ProjDisp.php>Projects</a>\n";
     echo "<li><a href=PThingList.php>List of Things</a> - List of Things (Ships, Armies, Agents, Space stations etc)";
     echo "<li><a href=ThingPlan.php>Plan a Thing</a> - Planning Things (Ships, Armies, Agents, Space stations etc)<P>";

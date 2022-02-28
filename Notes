@@ -108,4 +108,13 @@ ThingLib.php:      $Dists = Get_DistrictsT($H['ThingId']);
 ThingLib.php:  $Discs = Get_DistrictsT($otid);
 WorldEdit.php:  $Dists = Get_DistrictsH($H['id']);
 
+Economy.php:      $ECon = $H['Economy'] = Recalc_Economic_Rating($H,$W,$Fid);
+HomesLib.php:          $H['Economy'] = $Recalc;
+HomesLib.php:      $H['Economy'] = $Recalc;
+ThingLib.php:    $PH['Economy'] = 0;
+ThingLib.php:    $H['Economy'] = $Prime * $Commerce*2 + (isset($PH['Minerals'])? (min($PH['Minerals'], $Commerce) + min($PH['Minerals'], $Mine*2)):0);
+TurnActions.php:      $ECon = $H['Economy'] = Recalc_Economic_Rating($H,$W,$Fid);
+WorldEdit.php:  $H['Economy'] = Recalc_Economic_Rating($H,$W,$Fid);
+WorldList.php:    echo "<td>$type<td><a href=WorldEdit.php?id=" . $W['id'] . ">$Name</a><td>" . $W['Minerals'] . "<td>" . $H['Economy'] . "<td>" . $H['Devastation'];
+
 

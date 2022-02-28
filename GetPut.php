@@ -269,7 +269,7 @@ function Get_FactionPlanet($id) {
 function Get_FactionPlanetFS($Fact, $id) {
   global $db;
   $res = $db->query("SELECT * FROM FactionPlanet WHERE FactionId=$Fact AND Planet=$id");
-  if ($res) return $ans = $res->fetch_assoc();
+  if ($res) while ($ans = $res->fetch_assoc()) return $ans;
   return ['FactionId'=>$Fact, 'Planet'=>$id];
 }
 
@@ -277,6 +277,7 @@ function Put_FactionPlanet(&$now) {
   if (isset($now['id'])) {
     $e=$now['id'];
     $Cur = Get_FactionPlanet($e);
+
     return Update_db('FactionPlanet',$Cur,$now);
   } else {
     return $now['id'] = Insert_db ('FactionPlanet', $now );
