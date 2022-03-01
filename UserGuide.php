@@ -79,6 +79,8 @@ Movement only works for Ships and Agents at the moment.<p>
 
 Militia will only be created for a world that is under attack.<p>
 
+If you click on the name of the thing, you can do special actions such as colonisation, dissasembly and warping home.<p>
+
 <h2>Plan a Thing</h2>
 Design a Ship/Army/Agent/Space station etc.  You can design illegal things, you just won't be able to make them.<p>
 

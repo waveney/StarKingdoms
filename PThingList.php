@@ -5,7 +5,7 @@
   include_once("PlayerLib.php");
   include_once("ThingLib.php");
   
-global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState;
+global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$ThingInclrs;
 
 //var_dump($_COOKIE,$_REQUEST);
   if (Access('Player')) {
@@ -138,7 +138,9 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
     echo "<td><center>" . $T['CurHealth'] . ' / ' . $T['OrigHealth'];
     echo "<td>" . $BuildState[$T['BuildState']];
     echo "<td>" . (empty($T['SystemId']) ?'': $Systems[$T['SystemId']]);
-    if (($Props & THING_CAN_MOVE) && ( $T['BuildState'] == 3)) {
+    if ($T['Instruction']) {
+      echo "<td>" . $ThingInstrs[$T['Instruction']] . "<td><td>";
+    } else if (($Props & THING_CAN_MOVE) && ( $T['BuildState'] == 3)) {
       echo "<td><a href=PMoveThing.php?id=" . $T['id'] . ">Move</a>";
       if ($T['LinkId']) {
         $L = Get_Link($T['LinkId']);

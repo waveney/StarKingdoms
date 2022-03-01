@@ -2,7 +2,8 @@
   include_once("sk.php");
   include_once("GetPut.php");
   include_once("ThingLib.php");
-
+  include_once("ThingShow.php");
+  
 function New_Thing(&$t) {
   global $BuildState;
   $ttn = Thing_Type_Names();

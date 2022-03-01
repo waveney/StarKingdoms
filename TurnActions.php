@@ -242,11 +242,115 @@ function StartProjects() {
 }
 
 
-function Colonisation() {
-  echo "Colonisation are currently Manual<p>";
-  return true;
+function Colonisation() { // And other Instructions
+  $Things = Get_Things_Cond(0,"Instruction>0");
+  $NeedColStage2 = 0;
+  
+  foreach ($Things as $T) {
+    switch ($T['Instrction']) {
+    case 1: // Colonise
+      $N = Get_System($T['SystemId']);
+      TurnLog($T['Whose'],"The " . $T['Name'] . " is colonising in " . $N['Ref'] ,$T);
+      SKlog("Setup the colony in " . $N['Ref'] . " manually - the ships state is handled for you");
+      $T['BuildState'] = 4;
+      $T['Instruction'] = 0;
+      Put_Thing($T);
+      break;
+
+    case 2: // Warp out
+       $Gates = Get_Things_Cond($t['Whose'],' Type=15'); // Warp Gates
+       if ($Gates) {
+         if (isset($Gates[1])) { // Multiple Gates
+           $GLocs = [];
+           $FirstG = 0;
+           foreach ($Gates as $G) {
+             $N = Get_System($G['SystemId']);
+             $GLocs[$G['id']] = $N['Ref'];
+             if ($FirstG == 0) $FirstG = $G['id'];
+           }
+           if ($NeedColStage2 == 0) {
+             echo "<form method=post action=TurnActions.php?ACTION=Process&S=16>";
+             $NeedColStage2 = 1;
+           }
+           $_REQUEST['G'] = $FirstG;
+           echo "<p><a href=ThingEdit.php?id=" . $T['id'] .">" . $T['Name'] . " is warping out - Please Choose which gate:";
+           echo fm_select($GLocs,$_REQUEST,'G',0,'',"G" . $T['id']);
+           echo "<p>";
+           break;
+         } else {
+           $T['SystemId'] = $Gates[0]['SystemId'];
+           $T['WithinSysLoc'] = $Gates[0]['WithinSysLoc'];
+           $T['CurHealth'] = $t['Link_id'] = 0;
+           TurnLog($T['Whose']," The " . $T['Name'] . " has warped back.  It now needs repair before it can be used again",$T);         
+           Put_Thing($T);
+           break;
+         }
+       } else {
+         TurnLog($T['Whose']," The " . $T['Name'] . " tried to warp out, but you have no Warp Gates...",$T);
+         SKLog(" The " . $T['Name'] . " tried to warp out, but there are no warp gates",1);
+         $T['Instruction'] = 0;
+         Put_Thing($T);     
+       }
+       break;
+ 
+    case 3: // Dissasemble
+      $Lvl = $T['Level'];
+      $T['BuildState'] = 4;
+      $T['SystemId'] = 0;
+      $T['History'] .= "Decommissioned";
+      $T['Instruction'] = 0;
+      Put_Thing($T);
+      $cash = 10*$Lvl*Has_Tech($T['Whose'],'Ship Construction');
+      TurnLog($T['Whose'], "The " . $T['Name'] . " has been decommisioned gaining you  &#8373;" . $cash, $T);
+      Spend_Credit($T['Whose'],-$cash,"Decommisioning " . $T['Name']);
+      break;
+    
+    
+    case 4: // Anomoly
+    
+    case 5: 
+    }
+  }
+  
+  if ($NeedColStage2) {
+    echo "<input type=submit name=Ignore value=Chosen>\n";
+    
+    
+    dotail();
+  }
+  return 2;
 }
 
+function ColonisationStage2() { // And other Instructions
+  $Things = Get_Things_Cond(0,"Instruction>0");
+  $NeedColStage3 = 0;
+  foreach ($Things as $T) {
+    switch ($T['Instrction']) {
+    case 1: // Colonise
+
+    case 2: // Warp out when multiple gates
+      if (isset($_REQUEST['G' . $T['id']])) {
+        $Gate = Get_Thing($_REQUEST['G' . $T['id']]);
+      } else {
+        $Gates = Get_Things_Cond($t['Whose'],' Type=15'); // Warp Gates
+        $Gate = $Gates[0];      
+      }
+      $T['SystemId'] = $Gate['SystemId'];
+      $T['WithinSysLoc'] = $Gate['WithinSysLoc'];
+      $T['CurHealth'] = $T['Link_id'] = 0;
+      TurnLog($T['Whose']," The " . $T['Name'] . " has warped back.  It now needs repair before it can be used again",$T);         
+      Put_Thing($T);
+      break;
+    
+    default:
+    break;
+    }
+  }
+  return true;
+
+  echo "Colonisation Stage 2 is currently Manual<p>";
+  return true;
+}
 
 function DeepSpaceConstruction() {
   echo "Deep Space Construction	is currently Manual<p>";
@@ -969,7 +1073,7 @@ function Do_Turn() {
   global $Sand;  // If you need to add something, replace a spare if poss, then nothing breaks
   $Stages = ['Check Turns Ready', 'Spare', 'Spare','Start Turn Process', 'Save All Locations', 'Spare', 'Cash Transfers', 'Spare',
              'Spare', 'Pay For Stargates', 'Spare', 'Scientific Breakthroughs', 'Start Projects', 'Spare', 'Spare', 'Colonisation', 
-             'Spare', 'Spare', 'Deep Space Construction', 'Spare', 'Spare', 'Start Anomaly', 'Spare', 'Spare', 
+             'Colonisation Stage 2', 'Spare', 'Deep Space Construction', 'Spare', 'Spare', 'Start Anomaly', 'Spare', 'Spare', 
              'Agents Start Missions', 'Spare', 'Spare', 'Economy', 'Spare', 'Spare', 'Load Troops', 'Spare', 
              
              'Ship Move Check','Ship Movements', 'Agents Move Check', 'Agents Movements', 'Meetups', 'Spare', 'Spare', 'Spare', 
@@ -978,8 +1082,8 @@ function Do_Turn() {
              'Check Survey Reports', 'Give Survey Reports', 'Militia Army Recovery', 'Generate Turns', 'Spare', 'Tidy Up Movements', 'Recalc Project Homes', 'Finish Turn Process'];
 
   $Coded =  ['Coded','No','No','Coded','Coded','No','Coded', 'No',
-             'No','No','No','No','Partial','No','No','No',
-             'No','No','No','No','No','No','No','No',
+             'No','No','No','No','Partial','No','No','Coded',
+             'Coded','No','No','No','No','No','No','No',
              'No','No','No','Coded','No','No','No','No',
              
              'Coded','Coded','Coded','Coded','Coded','No','No', 'No',
@@ -1013,6 +1117,7 @@ function Do_Turn() {
       $Result = $act(); 
       if ($Result) {
         $Sand['Progress'] |= 1<<$S;
+        if ($Result == 2) $Sand['Progress'] |= 2<<$S;
       } else {
         echo "Processing cancelled<p>\n";
       }
