@@ -48,6 +48,12 @@
     }
   }
   
+  $left = $FACTION['Credits'] - $Spend;
+  echo "<h2>Total Expenditure &#8373; $Spend leaving with " . (($left < 0)? "<span class=red>$left</span>" : $left) . "</h2>";
+  if ($left < 0) {
+    echo "Some actions will fail - you need to rethink your turn.<p>The expected figure below assume you have 0 credits at this point.<p>\n";
+    $Spend = $FACTION['Credits'];
+  }
 /*  
   Current Credits
   

@@ -343,11 +343,14 @@ function Show_Thing(&$t,$Force=0) {
       continue 2; // NOt yet
       
     case 5: // Deep Space Construction
-      if (!Get_ModulesType($t,3)) continue 2;
+      if (!Get_ModulesType($tid,3)) continue 2;
       break;
       
     case 6: // Establish Embassy
-      if (!Get_ModulesType($t,22)) continue 2;
+      if (!Get_ModulesType($tid,22)) continue 2;
+      break;
+    
+    case 0: // None
       break;
     
     default: 
@@ -361,9 +364,9 @@ function Show_Thing(&$t,$Force=0) {
   if ($SpecCount>1) { 
 
     
-    echo "<tr>" . fm_radio('Special Instructions', $SpecOrders,$t,'Instruction','',1,' colspan=6 ','',$ThingInclrs);
+if ($GM)    echo "<tr>" . fm_radio('Special Instructions', $SpecOrders,$t,'Instruction','',1,' colspan=6 ','',$ThingInclrs) . " under development don't use yet";
     foreach($SpecOrders as $i=>$Order) {
-      echo "<tr id=InstMsg$i " . ($i == $t['Instruction']?'': 'hidden') . "><td colspan=6>" . $InstrMsg[$i];
+//      echo "<tr id=InstMsg$i " . ($i == $t['Instruction']?'': 'hidden') . "><td colspan=6>" . $InstrMsg[$i];
     }
   }
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
