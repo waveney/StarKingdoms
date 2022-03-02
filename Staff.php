@@ -182,7 +182,7 @@
       $txt .= "<input type=submit name=F value='Thing List' id=staffformid>" . 
                 fm_select($Facts,0,'F',1," onchange=this.form.submit()") . "</form>\n";
     
-
+//    $txt .= "<li><a href=InstrList.php>List Instructions</a>\n";
     $txt .= "<li><a href=TidyThings.php>Tidy up</a>  - Call this once a turn to remove unused temp entries\n";
     $txt .= "<li><a href=SetAllSpeeds.php>Set All Speeds</a> - Bug Fix";
     $txt .= "</ul>\n";

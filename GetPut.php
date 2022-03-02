@@ -1211,6 +1211,34 @@ function Get_Worlds($Fid=0) {
 }
 
 
+// Instruction - Can't use gen for UpdateMany
+function Get_Instruction($id) {
+  global $db;
+  $res = $db->query("SELECT * FROM Instructions WHERE id=$id");
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
+  return [];
+}
+
+function Put_Instruction(&$now) {
+  global $db,$GAMEID;
+  if (isset($now['id'])) {
+    $e=$now['id'];
+    $Cur = Get_Instruction($e);
+    return Update_db('Instructions',$Cur,$now);
+  } else {
+    return $now['id'] = Insert_db ('Instructions', $now );
+  }
+}
+
+function Get_Instructions() {
+  global $db;
+  $Ts = [];
+  $res = $db->query("SELECT * FROM Instructions");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
+  return $Ts;
+}
+
+
 // Future Tech
 function Get_FutureTech($Fid,$tid,$lvl) {
   global $db;

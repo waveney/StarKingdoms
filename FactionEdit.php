@@ -37,12 +37,13 @@ function Show_Faction(&$F,$Mode) {
   }
   $Fid = $F['id'];
   $PTs = Get_PlanetTypeNames();
-  $GM = Access('GM');
+  $GM = (isset($_REQUEST['FORCE'])?0:Access('GM'));
   $Setup = 0;
   
   $ReadOnly = (($F['TurnState'] != 0) && !$GM)? " readonly " : "";// Readonly when out of setup
   
   echo "<form method=post id=mainform enctype='multipart/form-data' action=FactionEdit.php>";
+  if ($GM) echo "<h2>GM: <a href=FactionEdit.php?id=$Fid&FORCE>This page in Player Mode</a></h2>";  
   echo "<div class=tablecont><table width=90% border class=SideTable>\n";
   Register_AutoUpdate('Faction',$Fid);
   echo fm_hidden('id',$Fid);
@@ -55,7 +56,9 @@ function Show_Faction(&$F,$Mode) {
 
   echo "<tr><td>Native BioSphere<td>" . (($GM || $Setup)?fm_select($PTs,$F,'Biosphere',1): $PTs[$F['Biosphere']]);
   echo "<tr>" . fm_text('Player Name',$F,'Player',2);
+
   echo "<tr><td>Player State:<td>" . (($GM)? fm_select($PlayerState,$F,'TurnState'): $PlayerState[$F['TurnState']]);
+
   if ($GM) {
     echo "<td>" . fm_checkbox("NPC",$F,'NPC');
     echo "<tr>" . fm_number('Credits',$F,'Credits') . fm_number('Physics Points', $F,'PhysicsSP');
@@ -66,6 +69,7 @@ function Show_Faction(&$F,$Mode) {
     echo "<tr><td>Engineering Points<td>" . $F['EngineeringSP'];
     echo "<tr><td>Xenology Points<td>" . $F['XenologySP'];
   }  
+  echo "<tr>" . fm_text('Adjective Name',$F,'Adjective',2) . "<td>To refer to your ships etc rather than your faction name - optional";
   echo "<tr>" . fm_text("Trait 1 Name",$F,'Trait1',1,'',$ReadOnly). "<td>Short name that is unique";
   echo "<td>" . ($GM ? fm_checkbox("Automated ",$F,'Trait1Automated') : ($F['Trait1Automated']? "Automated" : "Not Automated"));
   echo "<tr>" . fm_textarea('Description',$F,'Trait1Text',8,2);
