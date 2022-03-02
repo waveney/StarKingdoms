@@ -84,7 +84,7 @@ function New_Thing(&$t) {
        db_delete('Things',$tid);
 
        echo "<h1>Deleted</h1>";
-       echo "<h2><a href=ThingList.php>Back to Thing list</a></h2>";
+       echo "<h2><a href=PThingList.php>Back to Thing list</a></h2>";
        dotail();
        
      case 'Duplicate' :
@@ -107,7 +107,8 @@ function New_Thing(&$t) {
 
      case 'Remove Thing (No debris)':
        db_delete('Things',$_REQUEST['id']);
-       echo "<h1>Delete</h1>";
+       echo "<h1>Deleted</h1>";
+       echo "<h2><a href=PThingList.php>Back to Thing list</a></h2>";
        dotail();
        break;
 

@@ -50,6 +50,30 @@
   
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
+    case 'Delete':
+    
+       dostaffhead("Delete Plan");
+       $tid = $_REQUEST['id'];
+       $Discs = Get_DistrictsT($tid);
+       if ($Discs) {
+         foreach ($Discs as $D) {
+           db_delete('Districts',$D['id']);
+         }
+       }
+       $Mods = Get_DistrictsT($tid);
+       if ($Mods) {
+         foreach ($Mods as $M) {
+           db_delete('Modules',$M['id']);
+         }
+       }
+
+       db_delete('Things',$tid);
+
+       echo "<h1>Deleted</h1>";
+       echo "<h2><a href=PThingList.php>Back to Thing list</a></h2>";
+       dotail();
+    
+    
     case 'COPY':
       $OldT = Get_Thing($_REQUEST['Design']);
       $T = $OldT;      
@@ -192,10 +216,12 @@
       }
     }
     echo "<input type=submit name=Validate value=Validate>\n";
+    echo "<input type=submit name=ACTION value=Delete>\n";
     echo "<h2>Once planned, go to where you want to make it and select an appropriate project</h2>";
     echo "You can customise by adding crew names, an images, notes and gadgets by selecting the thing while it is being made or used later.<p>\n";
   } else {
     echo "<input type=submit name=Validate value=Validate>\n";
+    echo "<input type=submit name=ACTION value=Delete>\n";
     echo "<h2 class=Err>Warning.  If you try and make an Invalid thing. The action will fail</h2>\n";
   }
   echo "</form>";

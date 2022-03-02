@@ -266,7 +266,7 @@ exit;
 
           if (isset($TurnStuff[$TSi])) {
             if ($TurnStuff[$TSi]['TurnNumber'] == $t) {
-              $Rush = $Pro['Rush'] = $TurnStuff[$TSi]['Rush'];
+              $Rush = $Pro['Rush'] = min($TurnStuff[$TSi]['Rush'], $Pro['MaxRush']);
               $TSi ++;
             }
           }
