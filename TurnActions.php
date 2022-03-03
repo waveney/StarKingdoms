@@ -241,23 +241,30 @@ function StartProjects() {
   return true;  
 }
 
+/*
+$ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse Anomoly','Establish Embassy','Make Outpost','Make Asteroid Mine','Make Minefield',
+                'Make Orbital Repair Yard','Build Space Station','Expand Space Station','Make Deep Space Sensor','Make Advanced Asteroid Mine','Build Stargate',
+                'DSC Special'];
+*/
 
-function Colonisation() { // And other Instructions
+function ColonisationInstuctions() { // And other Instructions
+  global $ThingInstrs;
   $Things = Get_Things_Cond(0,"Instruction>0");
   $NeedColStage2 = 0;
+  $Facts = Get_Factions();
   
   foreach ($Things as $T) {
-    switch ($T['Instrction']) {
-    case 1: // Colonise
-      $N = Get_System($T['SystemId']);
-      TurnLog($T['Whose'],"The " . $T['Name'] . " is colonising in " . $N['Ref'] ,$T);
-      SKlog("Setup the colony in " . $N['Ref'] . " manually - the ships state is handled for you");
-      $T['BuildState'] = 4;
-      $T['Instruction'] = 0;
-      Put_Thing($T);
+    $N = Get_System($T['SystemId']);
+    $Tid = $T['id'];
+    switch ($ThingInstrs[$T['Instrction']]) {
+    case 'Colonise': // Colonise
+
+      $P = Get_Planet($T['Spare1']);
+      TurnLog($T['Whose'],"The " . $T['Name'] . " is colonising " . $P['Name'] . " in " . $N['Ref'] ,$T);
+      SKlog($Facts[$T['Whose']]['Name'] . " is startin to colonise " . $P['Name'] . " in " . $N['Ref']);
       break;
 
-    case 2: // Warp out
+    case 'Voluntary Warp Home': // Warp out
        $Gates = Get_Things_Cond($t['Whose'],' Type=15'); // Warp Gates
        if ($Gates) {
          if (isset($Gates[1])) { // Multiple Gates
@@ -273,7 +280,7 @@ function Colonisation() { // And other Instructions
              $NeedColStage2 = 1;
            }
            $_REQUEST['G'] = $FirstG;
-           echo "<p><a href=ThingEdit.php?id=" . $T['id'] .">" . $T['Name'] . " is warping out - Please Choose which gate:";
+           echo "<p><a href=ThingEdit.php?id=$Tid>" . $T['Name'] . " is warping out - Please Choose which gate:";
            echo fm_select($GLocs,$_REQUEST,'G',0,'',"G" . $T['id']);
            echo "<p>";
            break;
@@ -293,7 +300,7 @@ function Colonisation() { // And other Instructions
        }
        break;
  
-    case 3: // Dissasemble
+    case 'Decommision': // Dissasemble
       $Lvl = $T['Level'];
       $T['BuildState'] = 4;
       $T['SystemId'] = 0;
@@ -306,10 +313,86 @@ function Colonisation() { // And other Instructions
       break;
     
     
-    case 4: // Anomoly
+    case 'Analyse Anomoly': // Anomoly
+      break; // TODO
+      
+    case 'Establish Embassy': 
+      if ($NeedColStage2 == 0) {
+        echo "<form method=post action=TurnActions.php?ACTION=Process&S=16>";
+        $NeedColStage2 = 1;
+      }
+      echo $Facts[$T['Whose']]['Name'] . " setting up an Embassy in " . $N['Ref'] . fm_YesNo("Emb$Tid",1) . "\n<br>";
+      break;
     
-    case 5: 
-    }
+    case 'Make Outpost':
+      $T['ActionsNeeded'] = 1;
+      if (!Spend_Credit($T['Whose'],10,"Make Outpost in " . $N['Ref']) ) {
+        $T['Progress'] = -1; // Stalled
+        TurnLog($T['Whose'],"Could not afford to start an outpost in " .$N['Ref'],$T);
+        Put_Thing($T);
+      }
+      break;
+      
+    case 'Make Asteroid Mine':
+      $T['ActionsNeeded'] = 4;
+      if (!Spend_Credit($T['Whose'],40,"Make Asteroid Mine in " . $N['Ref']) ) {
+        $T['Progress'] = -1; // Stalled
+        TurnLog($T['Whose'],"Could not afford to start an Asteroid Mine in " .$N['Ref'],$T);
+        Put_Thing($T);
+      }
+      break;
+      
+    case 'Make Orbital Repair Yard':
+      $T['ActionsNeeded'] = 10;
+      if (!Spend_Credit($T['Whose'],100,"Make Orbital Repair Yard in " . $N['Ref']) ) {
+        $T['Progress'] = -1; // Stalled
+        TurnLog($T['Whose'],"Could not afford to start an Orbital Repair Yard in " .$N['Ref'],$T);
+        Put_Thing($T);
+      }
+      break;
+      
+    case 'Build Space Station':
+      $T['ActionsNeeded'] = 5*$T['Dist2'];
+      if (!Spend_Credit($T['Whose'],10*5*$T['Dist2'],"Build Space Station in " . $N['Ref']) ) {
+        $T['Progress'] = -1; // Stalled
+        TurnLog($T['Whose'],"Could not afford to start a Build Space Station in " .$N['Ref'],$T);
+        Put_Thing($T);
+      }
+      break;
+    
+    case 'Expand Space Station':
+      $T['ActionsNeeded'] = 10*$T['Dist1'];
+      if (!Spend_Credit($T['Whose'],10*5*$T['Dist2'],"Expand Space Station in " . $N['Ref']) ) {
+        $T['Progress'] = -1; // Stalled
+        TurnLog($T['Whose'],"Could not afford to Expand Space Station in " .$N['Ref'],$T);
+        Put_Thing($T);
+      }
+      break;
+    
+    case 'Make Deep Space Sensor':
+      $T['ActionsNeeded'] = 1;
+      if (!Spend_Credit($T['Whose'],10,"Make Deep Space Sensor in " . $N['Ref']) ) {
+        $T['Progress'] = -1; // Stalled
+        TurnLog($T['Whose'],"Could not afford to Make Deep Space Sensor in " .$N['Ref'],$T);
+        Put_Thing($T);
+      }
+      break;
+    
+    case 'Make Advanced Asteroid Mine':
+      $T['ActionsNeeded'] = 8;
+      if (!Spend_Credit($T['Whose'],80,"Make Advanced Asteroid Mine in " . $N['Ref']) ) {
+        $T['Progress'] = -1; // Stalled
+        TurnLog($T['Whose'],"Could not afford to start an Advanced Asteroid Mine in " .$N['Ref'],$T);
+        Put_Thing($T);
+      }
+      break;
+
+     case 'Build Stargate':
+// TODO 
+       break;
+     default:
+     
+     }
   }
   
   if ($NeedColStage2) {
@@ -321,16 +404,17 @@ function Colonisation() { // And other Instructions
   return 2;
 }
 
-function ColonisationStage2() { // And other Instructions
+function ColonisationInstuctionsStage2() { // And other Instructions
+  global $ThingInstrs,$GAME;
   $Things = Get_Things_Cond(0,"Instruction>0");
   $NeedColStage3 = 0;
   foreach ($Things as $T) {
-    switch ($T['Instrction']) {
-    case 1: // Colonise
+    $Tid = $T['id'];
+    switch ($ThingInstrs[$T['Instrction']]) {
 
-    case 2: // Warp out when multiple gates
-      if (isset($_REQUEST['G' . $T['id']])) {
-        $Gate = Get_Thing($_REQUEST['G' . $T['id']]);
+    case 'Voluntary Warp Home': // Warp out
+      if (isset($_REQUEST["G$Tid"])) {
+        $Gate = Get_Thing($_REQUEST["G$Tid"]);
       } else {
         $Gates = Get_Things_Cond($t['Whose'],' Type=15'); // Warp Gates
         $Gate = $Gates[0];      
@@ -338,17 +422,41 @@ function ColonisationStage2() { // And other Instructions
       $T['SystemId'] = $Gate['SystemId'];
       $T['WithinSysLoc'] = $Gate['WithinSysLoc'];
       $T['CurHealth'] = $T['Link_id'] = 0;
-      TurnLog($T['Whose']," The " . $T['Name'] . " has warped back.  It now needs repair before it can be used again",$T);         
+      TurnLog($T['Whose']," The " . $T['Name'] . " has warped back.  It now needs repair before it can be used again",$T);   
+      $T['Instruction'] = 0;            
       Put_Thing($T);
       break;
-    
+
+    case 'Establish Embassy': 
+      $N = Get_System($T['SystemId']);
+      if (isset($_REQUEST["Emb$Tid"]) &&  $_REQUEST["Emb$Tid"] != "on") {
+        TurnLog($T['Whose'],"The embassy was not created in " . $N['Ref'] . " because " . $_REQUEST["ReasonEmb$Tid"] . "\n<br>",$T);
+        $T['Instruction'] = 0;
+        Put_Thing($T);
+        break;
+      }
+      $Ws = Get_Worlds($N['Control']);
+      $W = $Ws[0];
+      $Ps = Get_Planets($T['SystemId']);
+      $i = 1;
+      foreach($Ps as $P) {
+        if ($P['id'] == $W['ThingId']) break;
+        $i++;
+      }
+      
+      $NT = ['GameId'=>$GAME['ID'], 'Type'=> 17, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=>200+$i, 'Whose'=>$T['Whose'], 'BuildState'=>3,
+             'TurnBuilt'=>$GAME['Turn'], 'OtherFaction'=>$N['Control']];
+      Put_Thing($NT);
+      $OF = Get_Faction($N['Control']);
+      TurnLog($T['Whose'],"You have created an Emabssy in " . $N['Ref'] . " with the " . $OF['Name']);
+      $T['Instruction'] = 0;
+      Put_Thing($T);
+      break;
+      
     default:
     break;
     }
   }
-  return true;
-
-  echo "Colonisation Stage 2 is currently Manual<p>";
   return true;
 }
 
@@ -788,6 +896,44 @@ function ProjectProgress() {
   return true;
 }
 
+function InstructionsProgress() {
+  global $ThingInstrs;
+  $Things = Get_Things_Cond(0,"Instruction>0");
+  $NeedColStage2 = 0;
+  $Facts = Get_Factions();
+  
+  foreach ($Things as $T) {
+    $N = Get_System($T['SystemId']);
+    $Tid = $T['id'];
+     switch ($ThingInstrs[$T['Instrction']]) {
+     case 'Colonise':
+       $Prog = Has_Tech($T['Whose'], 'Planetary Construction');
+       $Mods = Get_ModulesType($Tid, 10);
+       $T['Progress'] = max($T['ActionsNeeded'],$T['Progress']+$Prog*$Mods);
+       Put_Thing($T);
+       break 2;
+     case 'Make Outpost':
+     case 'Make Asteroid Mine':
+     case 'Make Minefield':
+     case 'Make Orbital Repair Yard':
+     case 'Build Space Station':
+     case 'Expand Space Station' :
+     case 'Make Deep Space Sensor':
+     case 'Make Advanced Asteroid Mine':
+     case 'Build Stargate':
+       $Prog = Has_Tech($T['Whose'],'Deep Space Construction');
+       $Mods = Get_ModulesType($Tid, 3);
+       $T['Progress'] = max($T['ActionsNeeded'],$T['Progress']+$Prog*$Mods);
+       Put_Thing($T);
+       break 2;
+     default: 
+       break 2;
+     }
+   }
+
+  return true;
+}
+
 function EspionageMissionsComplete() {
   echo "Espionage Missions Complete	is currently Manual<p>";
   return true;
@@ -950,6 +1096,155 @@ function ProjectsComplete() {
   return true;
 }
 
+function InstructionsComplete() {
+  global $ThingInstrs,$GAME;
+  $Things = Get_Things_Cond(0,"Instruction>0 AND Progress>=ActionsNeeded");
+  $NeedColStage2 = 0;
+  $Facts = Get_Factions();
+  
+  foreach ($Things as $T) {
+    $N = Get_System($T['SystemId']);
+    $Tid = $T['id'];
+     switch ($ThingInstrs[$T['Instrction']]) {
+     case 'Colonise':
+       $P = Get_Planet($T['Spare1']);
+       $Who = $T['Whose'];
+       if ($N['Control'] != $Who) {
+         if ($N['Control'] == 0) {
+           $N['Control'] = $Who;
+           Put_System($N);
+         }
+       }
+       
+       $D = ['HostType' =>1, 'HostId'=> $P['id'], 'Type'=> $T['Dist1'], 'Number'=>1, 'GameId'=>$GAME['id'], 'TurnStart'=>$GAME['Turn']];
+       Put_District($D);
+       if (Get_ModulesType($tid,27) && $T['Dist2']) {
+         $D = ['HostType' =>1, 'HostId'=> $P['id'], 'Type'=> $T['Dist2'], 'Number'=>1, 'GameId'=>$GAME['id'], 'TurnStart'=>$GAME['Turn']];
+         Put_District($D);
+       }
+       $T['Instruction'] = 0;
+       $T['BuildState'] = 4;
+       
+       TurnLog($Who,$P['Name'] . " on " . $N['Ref'] . " has been colonised");
+       SKLog($P['Name'] . " on " . $N['Ref'] . " has been colonised by " . $Facts[$Who]['Name'],1);
+       Put_Thing($T);
+       break 2; // The making homes and worlds in a later stage completes the colonisation I hope
+       
+     case 'Make Outpost':
+       $NT = ['GameId'=>$GAME['ID'], 'Type'=> 6, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn']];
+       Put_Thing($NT);
+       $N = Get_System($T['SystemId']);
+       $Who = $T['Whose'];
+       if ($N['Control'] != $Who) {
+         $N['Control'] = $Who;
+         Put_System($N);
+       }
+       TurnLog($Who,"An outpost has been made in " . $N['Ref']);
+       $T['Instruction'] = 0;
+       Put_Thing($T);
+       break 2;
+       
+     case 'Make Asteroid Mine':
+       $NT = ['GameId'=>$GAME['ID'], 'Type'=> 8, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn']];
+       Put_Thing($NT);
+       $N = Get_System($T['SystemId']);
+       $Who = $T['Whose'];
+       TurnLog($Who,"An Asteroid Mine has been made in " . $N['Ref']);
+       $T['Instruction'] = 0;
+       Put_Thing($T);
+       break 2;
+
+     case 'Make Minefield':
+       $NT = ['GameId'=>$GAME['ID'], 'Type'=> 8, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 'Whose'=>$T['Whose'], 
+              'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn']];
+       Put_Thing($NT);
+       $N = Get_System($T['SystemId']);
+       $Who = $T['Whose'];
+       TurnLog($Who,"An Asteroid Mine has been made in " . $N['Ref']);
+       $T['Instruction'] = 0;
+       Put_Thing($T);
+       break 2;
+
+     case 'Make Orbital Repair Yard':
+       $NT = ['GameId'=>$GAME['ID'], 'Type'=> 11, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 
+              'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn']];
+       Put_Thing($NT);
+       $N = Get_System($T['SystemId']);
+       $Who = $T['Whose'];
+       TurnLog($Who,"An Orbital Repair Yard has been made in " . $N['Ref']);
+       $T['Instruction'] = 0;
+       Put_Thing($T);
+       break 2;
+
+     case 'Build Space Station':
+       $NT = ['GameId'=>$GAME['ID'], 'Type'=> 7, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 
+              'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'MaxDistricts'=>$T['Dist1']];
+       $Sid = Put_Thing($NT);
+       $D = ['HostType' =>3, 'HostId'=> $sid, 'Type'=> $T['Dist2'], 'Number'=>1, 'GameId'=>$GAME['id'], 'TurnStart'=>$GAME['Turn']];
+       Put_District($D);
+       
+       $N = Get_System($T['SystemId']);
+       $Who = $T['Whose'];
+       TurnLog($Who,"A Space Station has been made in " . $N['Ref']);
+       SKLog("A space station has been made in " . $N['Ref'] . " by " . $Facts[$Who]['Name'],1);
+       $T['Instruction'] = 0;
+       Put_Thing($T);
+       break 2;
+
+     case 'Expand Space Station' :
+       $SS = Get_Things_Cond($Fid,"Type=7 OR Type=AND SystemId=" . $T['Systemid'] . " AND BuildState=3");
+       if (empty($SS)) {
+         TurnLog($Who,"There is not a Space Station here to expand in " . $N['Ref']);
+         SKLog("There is not a space station to extend in " . $N['Ref'] . " by " . $Facts[$Who]['Name'],1);
+       } else {
+         $S = $SS[0];
+         $S['MaxDistricts'] += $T['Dist1'];
+         Put_Thing($S);
+       }
+       $T['Instruction'] = 0;
+       Put_Thing($T);
+       break 2;       
+     
+     case 'Make Deep Space Sensor':
+       $NT = ['GameId'=>$GAME['ID'], 'Type'=> 9, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 
+              'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn']];
+       Put_Thing($NT);
+       $N = Get_System($T['SystemId']);
+       $Who = $T['Whose'];
+       TurnLog($Who,"A Deep Space Sensor has been made in " . $N['Ref']);
+       $T['Instruction'] = 0;
+       Put_Thing($T);
+       break 2;
+
+     case 'Make Advanced Asteroid Mine':
+       $NT = ['GameId'=>$GAME['ID'], 'Type'=> 8, 'Level'=> 2, 'SystemId'=>$T['SystemId'], 
+              'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn']];
+       Put_Thing($NT);
+       $N = Get_System($T['SystemId']);
+       $Who = $T['Whose'];
+       if ($N['Control'] != $Who) {
+         $N['Control'] = $Who;
+         Put_System($N);
+       }
+       TurnLog($Who,"An Advanced Asteroid Mine has been made in " . $N['Ref']);
+       $T['Instruction'] = 0;
+       Put_Thing($T);
+       break 2;
+
+     case 'Build Stargate':
+       SKLog("A stargate has been made in " . $N['Ref'] . " by " . $Facts[$Who]['Name'] . "Not Automated...",1);     
+       $T['Instruction'] = 0;
+       Put_Thing($T);
+       break 2;
+
+     default: 
+       break 2;
+     }
+   }
+
+  return true;
+}
+
 function CheckSurveyReports() {
   global $GAME, $SurveyLevels;
 
@@ -1043,6 +1338,7 @@ function TidyUpMovements() {
 function RecalcProjectHomes() {
   include_once("HomesLib.php");
   Recalc_Project_Homes('SKLog'); // in ThingLib - this is to add new project homes that have been created by colonisation etc.
+  Recalc_Worlds();
   return true;
 }
 
@@ -1072,23 +1368,23 @@ function FinishTurnProcess() {
 function Do_Turn() {
   global $Sand;  // If you need to add something, replace a spare if poss, then nothing breaks
   $Stages = ['Check Turns Ready', 'Spare', 'Spare','Start Turn Process', 'Save All Locations', 'Spare', 'Cash Transfers', 'Spare',
-             'Spare', 'Pay For Stargates', 'Spare', 'Scientific Breakthroughs', 'Start Projects', 'Spare', 'Spare', 'Colonisation', 
-             'Colonisation Stage 2', 'Spare', 'Deep Space Construction', 'Spare', 'Spare', 'Start Anomaly', 'Spare', 'Spare', 
+             'Spare', 'Pay For Stargates', 'Spare', 'Scientific Breakthroughs', 'Start Projects', 'Spare', 'Spare', 'Colonisation Instuctions', 
+             'Colonisation Instuctions Stage 2', 'Spare', 'Spare', 'Spare', 'Spare', 'Start Anomaly', 'Spare', 'Spare', 
              'Agents Start Missions', 'Spare', 'Spare', 'Economy', 'Spare', 'Spare', 'Load Troops', 'Spare', 
              
              'Ship Move Check','Ship Movements', 'Agents Move Check', 'Agents Movements', 'Meetups', 'Spare', 'Spare', 'Spare', 
              'Space Combat', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Devastation Selection', 'Devastation', 'Project Progress', 
-             'Spare','Espionage Missions Complete', 'Spare', 'Counter Espionage','Spare', 'Finish Shakedowns', 'Spare', 'Projects Complete', 
+             'Instructions Progress','Espionage Missions Complete', 'Spare', 'Counter Espionage','Spare', 'Finish Shakedowns', 'Projects Complete', 'Instructions Complete', 
              'Check Survey Reports', 'Give Survey Reports', 'Militia Army Recovery', 'Generate Turns', 'Spare', 'Tidy Up Movements', 'Recalc Project Homes', 'Finish Turn Process'];
 
   $Coded =  ['Coded','No','No','Coded','Coded','No','Coded', 'No',
-             'No','No','No','No','Partial','No','No','Coded',
-             'Coded','No','No','No','No','No','No','No',
+             'No','No','No','No','Partial','No','No','Partial',
+             'Partial','No','No','No','No','No','No','No',
              'No','No','No','Coded','No','No','No','No',
              
              'Coded','Coded','Coded','Coded','Coded','No','No', 'No',
              'No','No','No','No','No','Coded','Coded','Coded',
-             'No','No','No','No','No','Coded','No','Partial',
+             'No','No','No','No','No','Coded','Partial','No',
              'Partial (not nebula)','Coded','No','No','No','Coded','Coded','Coded?'];
   $Sand = Get_TurnNumber();
 // var_dump($Sand);
