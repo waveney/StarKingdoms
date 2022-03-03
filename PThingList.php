@@ -140,10 +140,10 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
     echo "<td><center>" . $T['CurHealth'] . ' / ' . $T['OrigHealth'];
     echo "<td>" . $BuildState[$T['BuildState']];
     echo "<td>" . (empty($T['SystemId']) ?'': $Systems[$T['SystemId']]);
-    if ($T['Instruction']) {
-      echo "<td>" . $ThingInstrs[$T['Instruction']] . "<td><td>";
-    } else if (($Props & THING_CAN_MOVE) && ( $T['BuildState'] == 3)) {
-      echo "<td><a href=PMoveThing.php?id=" . $T['id'] . ">Move</a>";
+    echo "<td>";
+    if ($T['Instruction']) echo $ThingInstrs[$T['Instruction']];
+    if (($T['Instruction'] == 0 || $T['Instruction'] == 5 ) && (($Props & THING_CAN_MOVE) && ( $T['BuildState'] == 3))) { 
+      echo " <a href=PMoveThing.php?id=" . $T['id'] . ">Move</a>";
       if ($T['LinkId']) {
         $L = Get_Link($T['LinkId']);
         echo "<td style=color:" . $LinkTypes[$L['Level']]['Colour'] . " >Link #" . $T['LinkId'];

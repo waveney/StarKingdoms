@@ -414,7 +414,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
   if ($SpecCount>1) { 
 
     $ProgShow = $Cost = $Acts = 0;
-    echo "<tr>" . fm_radio('Special Instructions', $SpecOrders,$t,'Instruction','',1,' colspan=6 ','',$ThingInclrs) . " under development don't use yet";
+    echo "<tr>" . fm_radio('Special Instructions', $SpecOrders,$t,'Instruction','',1,' colspan=6 ','',$ThingInclrs);// . " under development don't use yet";
     switch ($ThingInstrs[$t['Instruction']]) {
     case 'None': // None
       break;
@@ -439,28 +439,33 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       }
       
       if (empty($HabPs)) {
-        echo "<tr><td><td colspan=6 class=Err>There are no habitable planets to colonise here\n";
+        echo "<tr><td><td colspan=6 class=Err>There are no colonisable planets here\n";
         break;
       }
       $NumPs = count($HabPs);
       if ($NumPs == 1) {
         foreach ($HabPs as $Plid=>$data) {
           $P = $Ps[$Plid];
-          echo "<tr><td><td colspan=6>Colonising: " . $P['Name'] . " a " . $PTs[$P['Type']]['Name'] . ($PTs[$P['Type']]['Append']?' Planet':''); // TODO Moons
-          $t['Spare1'] = $Plid;
           $Acts = $data[2];
+          echo "<tr><td><td colspan=6>Colonising: " . $P['Name'] . " a " . $PTs[$P['Type']]['Name'] . ($PTs[$P['Type']]['Append']?' Planet':'') .
+             " will take " . $data[2] . " actions"; // TODO Moons
+          $t['Spare1'] = $Plid;
+
           break;
         }
       } else {
         echo "<tr><td><td colspan=6>";
-        $Plans = [];
-        foreach ($NumPs as $Plid=>$data) {
+        $Cols = $Plans = [];
+        $i = 1;
+        foreach ($HabPs as $Plid=>$data) {
           $P = $Ps[$Plid];
           $Plans[$Plid] = $P['Name'] . " a " . $PTs[$P['Type']]['Name'] . ($PTs[$P['Type']]['Append']?'Planet':'') . " will take " . $data[2] . " actions"; // TODO Moons
+          $Cols[$Plid] = $ThingInclrs[$i++];
         }
 //    echo "<tr>" . fm_radio('Special Instructions', $SpecOrders,$t,'Instruction','',1,' colspan=6 ','',$ThingInclrs) . " under development don't use yet";
-        echo fm_radio('Colonising',$Plans,$t,'Spare1','',0,'','',$ThingInclrs);
+        echo fm_radio('Colonising',$Plans,$t,'Spare1','',0,'','',$Cols);
       }
+      if ($t['Spare1']) $Acts = $HabPs[$t['Spare1']][2];
       $PrimeMods = [];
       $DTs = Get_DistrictTypes();
       foreach ($DTs as $D) if ($D['Props'] &1) $PrimeMods[$D['id']] = $D['Name'];
@@ -522,9 +527,10 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       break;
     }
     if ($ProgShow) {
+      $t['ActionsNeeded'] = $Acts;
       if ($ProgShow == 2) echo "<tr><td clospan=6>";
       if ($GM) {
-        echo fm_number0('Actions Needed',$t,'ActionsNeeded') . " / " . fm_number0('Progress',$t,'Progress');
+        echo fm_number0('Progress',$t,'Progress') . " / " . fm_number0('Actions Needed',$t,'ActionsNeeded');
       } else {
         echo " Progress " . $t['Progress'] . ' / ' . $t['ActionsNeeded'];
       }
