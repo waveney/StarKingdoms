@@ -287,7 +287,7 @@ function AutoInput(f,after) {
         }, 100);
     } else if (data.match(/CALLxxAFTER/m)) {
       after(f);
-    } else if (m=data.match(/\nREPLACE_ID_WITH:(.*) /m)) {
+    } else if (m=data.match(/REPLACE_ID_WITH:(.*) /m)) {
      if (document.getElementById(f)) document.getElementById(f).id = m[1];    
     }
   });
@@ -309,17 +309,29 @@ function AutoCheckBoxInput(f) {
 }
 
 function AutoRadioInput(f,i) {
-//  debugger;
+  debugger;
   var newval = document.getElementById(f+i).value;
   var yearval = (document.getElementById('Year') ? (document.getElementById('Year').value || 0) : 0);
   var typeval = document.getElementById('AutoType').value;
   var refval = document.getElementById('AutoRef').value;
   var dbg = document.getElementById('Debug');
   if (dbg) {
-    $.post("formfill.php", {'D':typeval, 'F':f, 'V':newval, 'Y':yearval, 'I':refval}, function( data ) { $('#Debug').html( data)});
+    $.post("formfill.php", {'D':typeval, 'F':f, 'V':newval, 'Y':yearval, 'I':refval}, function( data ) { $('#Debug').html( data);
+    if (data.match(/FORCERELOAD54321/m)) {
+      setTimeout(function(){
+        window.location.reload();
+        }, 100);
+    } else if (data.match(/FORCELOADCHANGE54321/m)) {
+      setTimeout(function(){
+        var Location = window.location.pathname + "?id=" + refval;  //  window.location.hostname
+        window.location.href = Location;
+        }, 100);
+    } 
+   });
   } else {
     $.post("formfill.php", {'D':typeval, 'F':f, 'V':newval, 'Y':yearval, 'I':refval});
   }
+
 }
 
 function Trader_Insurance_Upload() {

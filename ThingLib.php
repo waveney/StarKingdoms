@@ -5,17 +5,19 @@ include_once("GetPut.php");
 include_once("vendor/erusev/parsedown/Parsedown.php");
 include_once("PlayerLib.php");  
 
-global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$ThingInclrs,$InstrMsg;
+global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$InstrMsg,$Advance;
 
 $ModuleCats = ['Ship','Civilian Ship','Support Ship','Military Ship','Army','Other'];
 $Fields = ['Engineering','Physics','Xenology'];
 $Tech_Cats = ['Core','Supp','Non Std'];
 $CivMil = ['','Civilian','Military'];
 $BuildState = ['Planning','Building','Shakedown','Complete','Ex','Abandonded','Missing In Action'];
-$ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse Anomoly','Deep Space Construction','Establish Embassy'];
-$ThingInclrs = ['white','lightgreen','lightpink','lightblue','cream','bisque','#99ffcc'];
-$InstrMsg = ['', 'Please select the district type: ' ];
-    
+$ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse Anomoly','Establish Embassy','Make Outpost','Make Asteroid Mine','Make Minefield',
+                'Make Orbital Repair Yard','Build Space Station','Expand Space Station','Make Deep Space Sensor','Make Advanced Asteroid Mine','Build Stargate',
+                'DSC Special'];
+$Advance = ['','','Advanced ','Very Advanced ','Ultra Advanced ','Evolved '];
+
+
 $ModFormulaes = [];
 $ModValues = [];
 
@@ -31,6 +33,7 @@ define('THING_CAN_MOVE',256);
 define('THING_CAN_BETRANSPORTED',512);
 define('THING_HAS_2_FACTIONS',1024);
 define('THING_HAS_MINERALS',2048);
+define('THING_CAN_BE_ADVANCED',4096);
 
 function ModFormulaes() {
   global $ModFormulaes;
@@ -550,6 +553,7 @@ function EyesInSystem($Fid,$Sid) { // Eyes 1 = in space, 2= sens, 4= neb sens, 8
 }
 
 function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0) {
+  global $Advance;
   include_once("SystemLib.php");
 //var_dump($Sid,$Eyes);
 //  if (Access('GM')) $Eyes = 15;
@@ -580,6 +584,7 @@ function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0) {
       if ($T['Class']) echo " " . $T['Class'] . " class ";
       if ($T['Whose']) echo " <span style='background:" . $Factions[$T['Whose']]['MapColour'] . "'>" . 
         ($Factions[$T['Whose']]['Adjective']?$Factions[$T['Whose']]['Adjective']:$Factions[$T['Whose']]['Name']) . "</span>";
+      if (($T['Whose'] == $Fid) && ($ThingTypes[$T['Type']]['Properties'] & THING_CAN_BE_ADVANCED) && ($T['Level'] > 1)) echo ' ' . $Advance[$T['Level']];
       echo " " . $ThingTypes[$T['Type']]['Name'];
       if ($Images && !empty($T['Image'])) echo " <img valign=top src=" . $T['Image'] . " height=100> ";
       echo "<br clear=all>\n";

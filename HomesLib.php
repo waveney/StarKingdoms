@@ -323,6 +323,10 @@ function Recalc_Worlds() {
         break;
       case 3: // Thing 
         $T = Get_Thing($H['ThingId']);
+        if (empty($T)) {
+          echo "Home " . $H['id'] . " is faulty!";
+          break 2;
+        }
         if (($TTypes[$T['Type']]['Properties'] & THING_HAS_DISTRICTS) == 0) continue 2;
         $Fid = $T['Whose'];
         $Minerals = (($TTypes[$T['Type']]['Properties'] & THING_HAS_MINERALS)?10: 0);

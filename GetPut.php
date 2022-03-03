@@ -121,7 +121,7 @@ function Get_Planets($sysid) {
   $res = $db->query("SELECT * FROM Planets WHERE SystemId=$sysid ORDER BY OrbitalRadius");
   $Planets = [];
   if ($res) {
-    while ($ans = $res->fetch_assoc()) { $Planets[] = $ans; };
+    while ($ans = $res->fetch_assoc()) { $Planets[$ans['id']] = $ans; };
     }
   return $Planets;
 }
@@ -846,7 +846,7 @@ function Put_DeepSpace(&$now) {
   if (isset($now['id'])) {
     $e=$now['id'];
     $Cur = Get_DeepSpace($e);
-    return Update_db('ThingTypes',$Cur,$now);
+    return Update_db('DeepSpaceProjects',$Cur,$now);
   } else {
     return $now['id'] = Insert_db ('DeepSpaceProjects', $now );
   }

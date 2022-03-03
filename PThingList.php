@@ -29,6 +29,8 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
   }
 
   dostaffhead("Things",["js/ProjectTools.js"]);
+
+  CheckFaction('PThingList',$Fid);
   
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {

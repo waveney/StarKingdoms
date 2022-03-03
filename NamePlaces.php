@@ -29,6 +29,8 @@
     $F = Get_Faction($Fid);
   }
 
+  CheckFaction('NamePlaces',$Fid);
+
   $GM = Access('GM');
   
   echo "<h1>Name places you are aware of</h1>";

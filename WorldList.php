@@ -27,6 +27,8 @@
     if (isset($Fid)) $Faction = Get_Faction($Fid);
   }
   
+//  CheckFaction('WorldList',$Fid);
+    
   dostaffhead("List of Worlds and Colonies",["js/ProjectTools.js"]);
   
   $Worlds = Get_Worlds($Fid);

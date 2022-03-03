@@ -33,16 +33,9 @@ exit;
       $Fid = $_REQUEST['f'];
     } else if (isset( $_REQUEST['id'])) {
       $Fid = $_REQUEST['id'];
-    }
-    if (!$Fid) {
-      dostaffhead("Faction needed");
-      echo "<h1>For What faction?</h1>";
-      echo "<form method=post action=ProjDisp.php>";
-      $Facts = Get_Faction_Names();
-      echo fm_select($Facts,$_REQUEST,'F');
-      echo "<input type=submit value=Submit>";
-      dotail();
-    }
+    } 
+    CheckFaction('ProjDisp',$Fid);
+ 
     if (isset($Fid)) $Faction = Get_Faction($Fid);
   }
   

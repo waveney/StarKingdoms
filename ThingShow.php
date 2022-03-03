@@ -7,11 +7,17 @@ include_once("PlayerLib.php");
 
 
 
+
 function Show_Thing(&$t,$Force=0) {
   include_once("ProjLib.php");
-  global $BuildState,$GAME,$GAMEID;
+  global $BuildState,$GAME,$GAMEID,$FACTION;
   global $Project_Status;
   global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$ThingInclrs, $InstrMsg;
+  
+  $ThingInclrs = ['white','lightgreen','lightpink','lightblue','cream','bisque','#99ffcc','#b3b3ff',
+                 'lightgreen','lightpink','lightblue','cream','bisque','#99ffcc','#b3b3ff',
+                 'lightgreen','lightpink','lightblue','cream','bisque','#99ffcc','#b3b3ff'];
+
   $tid = $t['id'];
   
   if ($Force) {
@@ -318,17 +324,21 @@ function Show_Thing(&$t,$Force=0) {
   }
   $SpecOrders = []; $SpecCount = 0;
   if ($t['BuildState'] == 2 || $t['BuildState'] == 3) foreach ($ThingInstrs as $i=>$Ins) {
-    switch ($i) {
-    case 1: // Colonise
+    switch ($ThingInstrs[$i]) {
+    case 'None': // None
+      break;
+    
+
+    case 'Colonise': // Colonise
       if ((($tprops & THING_HAS_CIVSHIPMODS) == 0 ) ) continue 2;
       if (!Get_ModulesType($tid,10)) continue 2;
       break;
     
-    case 2: // Warp Home
+    case 'Voluntary Warp Home': // Warp Home
       if ((($tprops & THING_HAS_SHIPMODULES) == 0 ) || ($t['CurHealth'] == 0) ) continue 2;
       break;
     
-    case 3: // Dissasemble
+    case 'Decommision': // Dissasemble
       if (($tprops & THING_HAS_SHIPMODULES) == 0 ) continue 2;
       // Is there a Home here with a shipyard
       $Loc = $t['SystemId'];
@@ -337,23 +347,58 @@ function Show_Thing(&$t,$Force=0) {
         $Ds = Get_DistrictsH($H['id']);
         if (isset($Ds[3])) break 2; // FOund a Shipyard
       }
+      if (Get_Things_Cond($Fid,"Type=11 AND SystemId=" . $N['id'] . " AND BuildState=3")) break 2; // Orbital Shipyard     
       continue 2;
     
-    case 4: // Analyse
+    case 'Analyse Anomoly': // Analyse
       continue 2; // NOt yet
       
-    case 5: // Deep Space Construction
-      if (!Get_ModulesType($tid,3)) continue 2;
+    case 'Establish Embassy': // Establish Embassy
+      if (!Get_ModulesType($tid,22)) continue 2;  // Check if have Embassy & at homeworld
+      if (Get_Things_Cond($Fid,"Type=17 AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
+      break;
+    
+    case 'Make Outpost': // Make Outpost
+      if (!Get_ModulesType($tid,3) && ($N['Control'] ==0 || $N['Control'] == $Fid)) continue 2;
+      if (Get_Things_Cond($Fid,"Type=6 AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
       break;
       
-    case 6: // Establish Embassy
-      if (!Get_ModulesType($tid,22)) continue 2;
-      break;
+    case 'Make Asteroid Mine':
+    case 'Make Advanced Asteroid Mine':
+      if (!Get_ModulesType($tid,3) || !Has_Tech($Fid,'Asteroid Mining')) continue 2;
+      if (Get_Things_Cond(0,"(Type=10 OR Type=99) AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
+      $Ps = Get_Planets($N['id']);
+      foreach ($Ps as $P) if ($P['Type'] == 3) break;
+      continue 2; // No field 
     
-    case 0: // None
+    case 'Make Minefield':
+      if (!Get_ModulesType($tid,3) || !Has_Tech($Fid,'Mine Layers')) continue 2;
       break;
-    
-    default: 
+      
+    case 'Make Orbital Repair Yard':
+      if (!Get_ModulesType($tid,3) || !Has_Tech($Fid,'Orbital Repair Yards')) continue 2;
+      if (Get_Things_Cond(0,"Type=11 OR Type=AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
+      break;
+
+    case 'Build Space Station':
+      if (!Get_ModulesType($tid,3) || !Has_Tech($Fid,'Space Stations')) continue 2;
+      if (Get_Things_Cond(0,"Type=7 OR Type=AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
+      break;
+
+    case 'Expand Space Station':
+      if (!Get_ModulesType($tid,3) || !Has_Tech($Fid,'Space Stations')) continue 2;
+      if (!(Get_Things_Cond($Fid,"Type=7 OR Type=AND SystemId=" . $N['id'] . " AND BuildState=3"))) continue 2; // Don't have one
+      break;
+
+    case 'Make Deep Space Sensor':
+      if (!Get_ModulesType($tid,3) || !Has_Tech($Fid,'Deep Space Sensors')) continue 2;
+      break;
+
+    case 'Build Stargate':
+      if (!Get_ModulesType($tid,3) || !Has_Tech($Fid,'Stargate Construction')) continue 2;
+      break;
+
+     default: 
       continue 2;
       
     }
@@ -361,13 +406,131 @@ function Show_Thing(&$t,$Force=0) {
     $SpecCount++;
   }
 
+/*
+$ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse Anomoly','Establish Embassy','Make Outpost','Make Asteroid Mine','Make Minefield',
+                'Make Orbital Repair Yard','Build Space Station','Expand Space Station','Make Deep Space Sensor','Make Advanced Asteroid Mine','Build Stargate',
+                'DSC Special'];
+*/
   if ($SpecCount>1) { 
 
+    $ProgShow = $Cost = $Acts = 0;
+    echo "<tr>" . fm_radio('Special Instructions', $SpecOrders,$t,'Instruction','',1,' colspan=6 ','',$ThingInclrs) . " under development don't use yet";
+    switch ($ThingInstrs[$t['Instruction']]) {
+    case 'None': // None
+      break;
+
+    case 'Colonise': // Colonise
+      $PTs = Get_PlanetTypes();
+      $Ps = Get_Planets($N['id']);
+      $Hab_dome = Has_Tech($Fid,'Habitation Domes');
+      $HabPs = [];
+      foreach($Ps as $P) {
+        if (!$PTs[$P['Type']]['Hospitable']) continue;
+        if (Get_DistrictsP($P['id'])) continue; // Someone already there
+        if ($P['Type'] == $FACTION['Biosphere']) {
+          $HabPs[$P['id']] = [$P['Name'],$P['Type'],3];
+        }
+        if ($P['Type'] == 4 ) {
+          if (!$Hab_dome) continue;
+          $HabPs[$P['id']] = [$P['Name'],$P['Type'],10];
+        } else {
+          $HabPs[$P['id']] = [$P['Name'],$P['Type'],6];
+        }
+      }
+      
+      if (empty($HabPs)) {
+        echo "<tr><td><td colspan=6 class=Err>There are no habitable planets to colonise here\n";
+        break;
+      }
+      $NumPs = count($HabPs);
+      if ($NumPs == 1) {
+        foreach ($HabPs as $Plid=>$data) {
+          $P = $Ps[$Plid];
+          echo "<tr><td><td colspan=6>Colonising: " . $P['Name'] . " a " . $PTs[$P['Type']]['Name'] . ($PTs[$P['Type']]['Append']?' Planet':''); // TODO Moons
+          $t['Spare1'] = $Plid;
+          $Acts = $data[2];
+          break;
+        }
+      } else {
+        echo "<tr><td><td colspan=6>";
+        $Plans = [];
+        foreach ($NumPs as $Plid=>$data) {
+          $P = $Ps[$Plid];
+          $Plans[$Plid] = $P['Name'] . " a " . $PTs[$P['Type']]['Name'] . ($PTs[$P['Type']]['Append']?'Planet':'') . " will take " . $data[2] . " actions"; // TODO Moons
+        }
+//    echo "<tr>" . fm_radio('Special Instructions', $SpecOrders,$t,'Instruction','',1,' colspan=6 ','',$ThingInclrs) . " under development don't use yet";
+        echo fm_radio('Colonising',$Plans,$t,'Spare1','',0,'','',$ThingInclrs);
+      }
+      $PrimeMods = [];
+      $DTs = Get_DistrictTypes();
+      foreach ($DTs as $D) if ($D['Props'] &1) $PrimeMods[$D['id']] = $D['Name'];
+      echo "<br>District to Establish:" . fm_select($PrimeMods,$t,'Dist1');
+      if (Get_ModulesType($tid,27)) echo "<br>Second District (must be different):" .fm_select($PrimeMods,$t,'Dist2');
+      $ProgShow = 1;
+      break;
     
-if ($GM)    echo "<tr>" . fm_radio('Special Instructions', $SpecOrders,$t,'Instruction','',1,' colspan=6 ','',$ThingInclrs) . " under development don't use yet";
-    foreach($SpecOrders as $i=>$Order) {
-//      echo "<tr id=InstMsg$i " . ($i == $t['Instruction']?'': 'hidden') . "><td colspan=6>" . $InstrMsg[$i];
+    case 'Voluntary Warp Home': // Warp Home
+    case 'Decommision': // Dissasemble
+    case 'Establish Embassy': // Establish Embassy
+      break;
+      
+    case 'Make Outpost': // Make Outpost
+      $Cost = 10;
+      $Acts = 1;
+      $ProgShow = 2;      
+      break;
+
+    case 'Analyse Anomoly': // Analyse
+    case 'Make Asteroid Mine':
+    case 'Make Advanced Asteroid Mine':
+    case 'Make Orbital Repair Yard':
+      $Cost = 10;
+      $Acts = 1;
+      $ProgShow = 2;
+      break;
+
+    case 'Make Minefield':
+      echo "<tr><td><td colspan=6>Make sure you move to the location within the system you want to mine";
+      $Cost = 40;
+      $Acts = 4;
+      $ProgShow = 1;
+      break;
+
+    case 'Build Space Station':
+      $PrimeMods = [];
+      $DTs = Get_DistrictTypes();
+      foreach ($DTs as $D) if ($D['Props'] &1) $PrimeMods[$D['id']] = $D['Name'];
+      echo "<tr><td><td colspan=6>" . fm_number0('What size:',$t,'Dist1');
+      echo " First District:" . fm_select($PrimeMods,$t,'Dist2');
+      $ProgShow = 1;      
+      break;
+ 
+    case 'Expand Space Station':
+      echo "<tr><td clospan=6>" . fm_number0('By how much:',$t,'Dist1');
+      $ProgShow = 1;
+      break;
+
+    case 'Make Deep Space Sensor':
+      break;
+
+    case 'Build Stargate':
+      $ProgShow = 1;
+      // Needs a lot of work
+      break;
+
+    default: 
+      break;
     }
+    if ($ProgShow) {
+      if ($ProgShow == 2) echo "<tr><td clospan=6>";
+      if ($GM) {
+        echo fm_number0('Actions Needed',$t,'ActionsNeeded') . " / " . fm_number0('Progress',$t,'Progress');
+      } else {
+        echo " Progress " . $t['Progress'] . ' / ' . $t['ActionsNeeded'];
+      }
+      if ($Cost && ($t['Progress'] == 0)) echo " - Will cost &#8373; $Cost this turn";      
+    }
+
   }
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
   echo "</table></div>\n";

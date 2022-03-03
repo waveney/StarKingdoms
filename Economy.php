@@ -9,6 +9,9 @@
 
   global $FACTION, $GAME, $GAMEID, $db;
   $Fid = $FACTION['id'];
+  
+  CheckFaction('Economy',$Fid);
+  
   $Spend = 0;
   echo "<h1>Economy for this coming turn</h1>\n";
   
@@ -69,7 +72,7 @@
   
     $Worlds = Get_Worlds($Fid);
     $EconVal = 0;
-    $OutPosts = $AstMines = $Embassies = $OtherEmbs = 0;
+    $OutPosts = $AstMines = $AstVal = $Embassies = $OtherEmbs = 0;
     foreach ($Worlds as $W) {
       $H = Get_ProjectHome($W['Home']);
       $PH = Project_Home_Thing($H);
@@ -101,6 +104,7 @@
       
       case "Asteroid Mine":
         $AstMines ++;
+        $AstVal += $T['Level'];
         break;
       
       case "Embassy":
@@ -122,10 +126,9 @@
       $EconVal += $OutPosts*2;
     }
     if ($AstMines) {
-      $AstVal = Has_Tech($Fid,'Deep Space Construction');
-      if (Has_Tech($Fid,'Advanced Asteroid Mining')) $AstVal*=2;
-      echo "Plus $AstMines Asteroid Mines worth $AstVal each<br>\n";
-      $EconVal += $AstMines*$AstVal;
+      $AstVal *= Has_Tech($Fid,'Deep Space Construction');
+      echo "Plus $AstMines Asteroid Mines worth a total of $AstVal<br>\n";
+      $EconVal += $AstVal;
     }
     if ($Embassies) {
       echo "Plus $Embassies of your Embassies worth 1 each<br>\n";

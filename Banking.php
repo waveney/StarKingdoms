@@ -9,7 +9,9 @@
 
   $FACTION['LastActive'] = time();
   $Fid = $FACTION['id'];
-  
+
+  CheckFaction('Banking',$Fid);
+
   $GM = Access('GM');
   if (!$GM) Put_Faction($FACTION);
 

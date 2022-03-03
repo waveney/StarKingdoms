@@ -12,6 +12,18 @@ $Currencies = ['Credits','Physics Science Points','Engineering Science Points','
 
 global $PlayerState,$PlayerStates,$Currencies;
 
+function CheckFaction($Prog='Player',$Fid=0) {
+    if (!$Fid) {
+      dostaffhead("Faction needed");
+      echo "<h1>For What faction?</h1>";
+      echo "<form method=post action=$Prog.php>";
+      $Facts = Get_Faction_Names();
+      echo fm_select($Facts,$_REQUEST,'F');
+      echo "<input type=submit value=Submit>";
+      dotail();
+    }
+}
+
 
 function FactionFeature($Name,$default='') {  // Return value of feature if set from GAMESYS
   static $Features;

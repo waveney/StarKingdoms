@@ -386,7 +386,7 @@ function Economy() {
     $Worlds = Get_Worlds($Fid);
     $EconVal = 0;
     $EccTxt = "\nEconomy:\n";
-    $OutPosts = $AstMines = $Embassies = $OtherEmbs = 0;
+    $OutPosts = $AstMines = $AstVal = $Embassies = $OtherEmbs = 0;
     foreach ($Worlds as $W) {
       $H = Get_ProjectHome($W['Home']);
       $PH = Project_Home_Thing($H);
@@ -412,6 +412,7 @@ function Economy() {
       
       case "Asteroid Mine":
         $AstMines ++;
+        $AstVal += $T['Level'];
         break;
       
       case "Embassy":
@@ -433,10 +434,9 @@ function Economy() {
       $EconVal += $OutPosts*2;
     }
     if ($AstMines) {
-      $AstVal = Has_Tech($Fid,'Deep Space Construction');
-      if (Has_Tech($Fid,'Advanced Asteroid Mining')) $AstVal*=2;
-      $EccTxt .= "Plus $AstMines Asteroid Mines worth $AstVal each\n";
-      $EconVal += $AstMines*$AstVal;
+      $AstVal *= Has_Tech($Fid,'Deep Space Construction');
+      $EccTxt .= "Plus $AstMines Asteroid Mines worth a total of $AstVal\n";
+      $EconVal += $AstVal; 
     }
     if ($Embassies) {
       $EccTxt .= "Plus $Embassies of your Embassies worth 1 each\n";
