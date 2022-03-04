@@ -197,7 +197,7 @@
       $N['TargetKnown'] = $Known; 
     }
     if ($field == 'Type' || $field == 'Instruction' ) { // || $field == 'Level') {
-      echo 'FORCELOADCHANGE54321:NOW FORCERELOAD54321:NOW';
+      echo 'FORCELOADCHANGE54321:NOW';
     } else if ( $field == 'LinkId' ) {  //|| ($field == 'Name' && strlen($Value) < 2)) {
       echo 'FORCERELOAD54321:NOW';
     }

@@ -32,7 +32,7 @@
     if (isset($Fid)) $Faction = Get_Faction($Fid);
   }
 
-//var_dump($FACTION); exit;
+// var_dump($_REQUEST);
 
   if (isset($_REQUEST['id'])) {
     $Tid = $_REQUEST['id'];
@@ -97,7 +97,7 @@
   $ThingTypes = Get_ThingTypes();
   $ThingTypeNames = [''];
   foreach ($ThingTypes as $Ti=>$TT) {
-    if ($TT['Name'] && ($T['Type'] == $Ti || eval("return " . $TT['Gate'] . ";" ))) {
+    if ($TT['Name'] && ($T['Type'] == $Ti || (is_numeric($TT['Gate'])? ($TT['Gate'] >0? (Has_Tech($Fid,$TT['Gate'])): true) : eval("return " . $TT['Gate'] . ";" )))) {
       $ThingTypeNames[$Ti] = $TT['Name'];
     }
   }

@@ -364,6 +364,11 @@ function Recalc_Economic_Rating(&$H,&$W,$Fid,$Turn=0) {
   $NumCom = 0;
   if (!$Dists) return 0;
   foreach ($Dists as $D) {
+    if ($D['Type'] == 0) {
+      echo "District " . $D['id'] . " is illegal...<br>";
+      continue;
+    }
+
     if ($D['Type'] == 1) $NumCom = $D['Number'];
     if ($DTs[$D['Type']]['Props'] & 1) $NumPrime += $D['Number'];
     if ($DTs[$D['Type']]['Props'] & 4) $Mines += $D['Number'];

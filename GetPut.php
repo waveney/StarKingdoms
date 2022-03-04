@@ -789,6 +789,10 @@ function Has_Tech($fid,$name,$turn=0) { // Turn==0 = now
     $name= $Tech['id'];
   }
   
+  if (empty($Tech)) {
+    echo "Has_Tech called with impossible tech $name";
+    return 0;
+  }
   if ($Tech['Cat'] ==0) {
     $lvl = 0;
 
