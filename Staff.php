@@ -114,6 +114,8 @@
     $txt .= "<ul>\n";
     $txt .= "<li><a href=SysList.php>List Systems</a>\n";
     $txt .= "<p>";
+    $txt .= "<li><a href=WhereIs.php>Where is a name?</a>\n";
+    $txt .= "<P>";
     $txt .= "<li><a href=DTList.php>List District Types</a>\n";
     $txt .= "<li><a href=PlanetTypes.php>Planet Types</a>\n";  
     $txt .= "<li><a href=PlanetStats.php>Planet Stats</a>\n";  

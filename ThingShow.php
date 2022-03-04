@@ -461,6 +461,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
           $P = $Ps[$Plid];
           $Plans[$Plid] = $P['Name'] . " a " . $PTs[$P['Type']]['Name'] . ($PTs[$P['Type']]['Append']?'Planet':'') . " will take " . $data[2] . " actions"; // TODO Moons
           $Cols[$Plid] = $ThingInclrs[$i++];
+          
         }
 //    echo "<tr>" . fm_radio('Special Instructions', $SpecOrders,$t,'Instruction','',1,' colspan=6 ','',$ThingInclrs) . " under development don't use yet";
         echo fm_radio('Colonising',$Plans,$t,'Spare1','',0,'','',$Cols);

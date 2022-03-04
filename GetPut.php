@@ -1281,6 +1281,7 @@ function Gen_Put($Table, &$now) {
 function Gen_Get_Cond($Table,$Cond) {
   global $db;
   $Ts = [];
+  $Q = "SELECT * FROM $Table WHERE $Cond";
   $res = $db->query("SELECT * FROM $Table WHERE $Cond");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
   return $Ts;

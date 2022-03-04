@@ -44,6 +44,8 @@ If you know of non-standard technologies they will also appear.<p>
 <h2>What Can I See?</h2>
 For each system where you have eyes/cameras - what they can see.<p>
 
+You can always see everything of yours, but not necessarily everything of others.<P>
+
 <h2>Worlds and Colonies</h2>
 List of your worlds  and their economies.<p>
 
@@ -52,7 +54,7 @@ You can name your worlds and add a text description.<p>
 The Relative importance controls the order of display in the project list below (or will do).<P>
 
 <h2>Worlds and Things with projects</h2>
-To manage construction, and district based projects.  And in the near future Deep Space construction.<p>
+To manage construction, and district based projects. <p>
 
 You can switch between seeing 10 turns and 50+ turns - click on the right.<p>
 
@@ -79,8 +81,11 @@ Movement only works for Ships and Agents at the moment.<p>
 
 Militia will only be created for a world that is under attack.<p>
 
-If you click on the name of the thing, you can do special actions such as colonisation, dissasembly and warping home.<p>
+If you click on the name of the thing, you can do special actions such as colonisation, dissasembly, warping home and deep space projects.<p>
 
+Only those actions you can actually do at that location are shown.<p>
+
+Some actions ask supplimentary questions such as the district type to make on colonisation.<p>
 <h2>Plan a Thing</h2>
 Design a Ship/Army/Agent/Space station etc.  You can design illegal things, you just won't be able to make them.<p>
 
@@ -116,10 +121,10 @@ GM's do need to log in.  They have lots more features, and can also act as Playe
 
 It is hypothetically possible for a player in one game to be a GM in another (not tested).<p>
 
-Mostly to be written<p>
+Most User Guide to be written for this<p>
 
 <h1>Technical bits - if you are interested</h1>
-Mostly written in php (14K lines), some javascript (1300 lines), some css.  About 42 tables at time of writting of this paragraph.<p>
+Mostly written in php (16K lines), some javascript (1300 lines), some css.  About 42 tables at time of writting of this paragraph.<p>
 
 Graphics by GraphViz.<p>
 Uses the star system generator at <a href=https://donjon.bin.sh/scifi/system/index.cgi>https://donjon.bin.sh/scifi/system/index.cgi</a> to initially populate the map.<p>

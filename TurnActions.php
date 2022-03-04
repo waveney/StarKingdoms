@@ -256,10 +256,16 @@ function ColonisationInstuctions() { // And other Instructions
   foreach ($Things as $T) {
     $N = Get_System($T['SystemId']);
     $Tid = $T['id'];
-    switch ($ThingInstrs[$T['Instrction']]) {
+    switch ($ThingInstrs[$T['Instruction']]) {
     case 'Colonise': // Colonise
 
       $P = Get_Planet($T['Spare1']);
+      if (empty($P)) {
+        echo "<h2>Planet not found</h2>";
+        var_dump($T);
+        exit;
+      }
+        
       TurnLog($T['Whose'],"The " . $T['Name'] . " is colonising " . $P['Name'] . " in " . $N['Ref'] ,$T);
       SKlog($Facts[$T['Whose']]['Name'] . " is startin to colonise " . $P['Name'] . " in " . $N['Ref']);
       break;
@@ -410,7 +416,7 @@ function ColonisationInstuctionsStage2() { // And other Instructions
   $NeedColStage3 = 0;
   foreach ($Things as $T) {
     $Tid = $T['id'];
-    switch ($ThingInstrs[$T['Instrction']]) {
+    switch ($ThingInstrs[$T['Instruction']]) {
 
     case 'Voluntary Warp Home': // Warp out
       if (isset($_REQUEST["G$Tid"])) {
@@ -905,7 +911,7 @@ function InstructionsProgress() {
   foreach ($Things as $T) {
     $N = Get_System($T['SystemId']);
     $Tid = $T['id'];
-     switch ($ThingInstrs[$T['Instrction']]) {
+     switch ($ThingInstrs[$T['Instruction']]) {
      case 'Colonise':
        $Prog = Has_Tech($T['Whose'], 'Planetary Construction');
        $Mods = Get_ModulesType($Tid, 10);
@@ -1105,7 +1111,7 @@ function InstructionsComplete() {
   foreach ($Things as $T) {
     $N = Get_System($T['SystemId']);
     $Tid = $T['id'];
-     switch ($ThingInstrs[$T['Instrction']]) {
+     switch ($ThingInstrs[$T['Instruction']]) {
      case 'Colonise':
        $P = Get_Planet($T['Spare1']);
        $Who = $T['Whose'];
@@ -1378,13 +1384,13 @@ function Do_Turn() {
              'Check Survey Reports', 'Give Survey Reports', 'Militia Army Recovery', 'Generate Turns', 'Spare', 'Tidy Up Movements', 'Recalc Project Homes', 'Finish Turn Process'];
 
   $Coded =  ['Coded','No','No','Coded','Coded','No','Coded', 'No',
-             'No','No','No','No','Partial','No','No','Partial',
-             'Partial','No','No','No','No','No','No','No',
+             'No','No','No','No','Partial','No','No','Coded',
+             'Coded','No','No','No','No','No','No','No',
              'No','No','No','Coded','No','No','No','No',
              
              'Coded','Coded','Coded','Coded','Coded','No','No', 'No',
              'No','No','No','No','No','Coded','Coded','Coded',
-             'No','No','No','No','No','Coded','Partial','No',
+             'Coded','No','No','No','No','Coded','Partial','Coded',
              'Partial (not nebula)','Coded','No','No','No','Coded','Coded','Coded?'];
   $Sand = Get_TurnNumber();
 // var_dump($Sand);
