@@ -7,7 +7,7 @@
 
   dostaffhead("List Things");
 
-  global $db, $GAME,$BuildState;
+  global $db, $GAME,$BuildState,$ThingInstrs;
 
   $Systems = Get_SystemRefs();
   $Factions = Get_Factions();
@@ -48,7 +48,7 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Location</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Whose</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Project</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Instruction</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Build State</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Speed</a>\n";
   echo "</thead><tbody>";
@@ -68,7 +68,15 @@
     } else {
       $N = Get_System($T['SystemId']);
       $Locs = Within_Sys_Locs($N);
-      $Loc = $Locs[$T['WithinSysLoc']];
+      if (!isset($Locs[$T['WithinSysLoc']])) {
+        if ($T['WithinSysLoc'] > 2) {
+          $Loc = $T['WithinSysLoc'] . " <span class=red>CONFUSED</span>";
+        } else {
+          $Loc = "";
+        }
+      } else {
+        $Loc = $Locs[$T['WithinSysLoc']];
+      }
     }
     
     echo "<tr><td><a href=ThingEdit.php?id=$tid>$tid</a>";
@@ -78,7 +86,7 @@
     echo "<td><a href=ThingList.php?AT=$Ref>$Ref</a><td>$Loc";
     echo "<td><a href=ThingEdit.php?id=$tid>$Name</a>";
     echo "<td>" . ($who? $Factions[$T['Whose']]['Name'] : "");
-    echo "<td>" . $T['ProjectId'];
+    echo "<td>" . $ThingInstrs[$T['Instruction']];
     echo "<td>" . ($T['BuildState']? $BuildState[$T['BuildState']] : "<a href=ThingPlan.php?F=" . $T['Whose'] . "&id=$tid>Planning</a>" );
     echo "<td>" . sprintf('%0.3g',$T['Speed']);
 

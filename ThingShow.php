@@ -562,7 +562,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
     }
     if ($ProgShow) {
       $T['ActionsNeeded'] = $Acts;
-      if ($ProgShow == 2) echo "<tr><td clospan=6>";
+      if ($ProgShow == 2) echo "<tr><td><td colspan=6>";
       if ($GM) {
         echo fm_number0('Progress',$T,'Progress') . " / " . fm_number0('Actions Needed',$T,'ActionsNeeded');
       } else {

@@ -472,7 +472,7 @@ function ColonisationInstuctionsStage2() { // And other Instructions
       }
       
       $NT = ['GameId'=>$GAME['id'], 'Type'=> 17, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=>200+$i, 'Whose'=>$T['Whose'], 'BuildState'=>3,
-             'TurnBuilt'=>$GAME['Turn'], 'OtherFaction'=>$N['Control'], 'Name'=>$T['NameName']];
+             'TurnBuilt'=>$GAME['Turn'], 'OtherFaction'=>$N['Control'], 'Name'=>$T['MakeName']];
       Put_Thing($NT);
       $OF = Get_Faction($N['Control']);
       TurnLog($T['Whose'],"You have created an Emabssy in " . $N['Ref'] . " with the " . $OF['Name']);
@@ -1157,7 +1157,7 @@ function InstructionsComplete() {
        break; // The making homes and worlds in a later stage completes the colonisation I hope
        
      case 'Make Outpost':
-       $NT = ['GameId'=>$GAME['id'], 'Type'=> 6, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['NameName']];
+       $NT = ['GameId'=>$GAME['id'], 'Type'=> 6, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
        $Who = $T['Whose'];
@@ -1169,7 +1169,7 @@ function InstructionsComplete() {
        break;
        
      case 'Make Asteroid Mine':
-       $NT = ['GameId'=>$GAME['id'], 'Type'=> 8, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['NameName']];
+       $NT = ['GameId'=>$GAME['id'], 'Type'=> 8, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
        $Who = $T['Whose'];
@@ -1178,7 +1178,7 @@ function InstructionsComplete() {
 
      case 'Make Minefield':
        $NT = ['GameId'=>$GAME['id'], 'Type'=> 8, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 'Whose'=>$T['Whose'], 
-              'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['NameName']];
+              'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
        $Who = $T['Whose'];
@@ -1187,7 +1187,7 @@ function InstructionsComplete() {
 
      case 'Make Orbital Repair Yard':
        $NT = ['GameId'=>$GAME['id'], 'Type'=> 11, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 
-              'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['NameName']];
+              'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
        $Who = $T['Whose'];
@@ -1196,7 +1196,7 @@ function InstructionsComplete() {
 
      case 'Build Space Station':
        $NT = ['GameId'=>$GAME['id'], 'Type'=> 7, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 
-              'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'MaxDistricts'=>$T['Dist1'], 'Name'=>$T['NameName']];
+              'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'MaxDistricts'=>$T['Dist1'], 'Name'=>$T['MakeName']];
        $Sid = Put_Thing($NT);
        $D = ['HostType' =>3, 'HostId'=> $Sid, 'Type'=> $T['Dist2'], 'Number'=>1, 'GameId'=>$GAME['id'], 'TurnStart'=>$GAME['Turn']];
        Put_District($D);
@@ -1221,7 +1221,7 @@ function InstructionsComplete() {
      
      case 'Make Deep Space Sensor':
        $NT = ['GameId'=>$GAME['id'], 'Type'=> 9, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 
-              'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['NameName']];
+              'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
        $Who = $T['Whose'];
@@ -1230,7 +1230,7 @@ function InstructionsComplete() {
 
      case 'Make Advanced Asteroid Mine':
        $NT = ['GameId'=>$GAME['id'], 'Type'=> 8, 'Level'=> 2, 'SystemId'=>$T['SystemId'], 
-              'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['NameName']];
+              'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
        $Who = $T['Whose'];

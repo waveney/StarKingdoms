@@ -12,6 +12,7 @@ Done
 * Personisation of things (Crew, image etc)
 * User Guide (Partial)
 * Economy (Partial)
+* Colonisation, Deep space, Embassy creation
 
 Not Done
 * Move Armies
@@ -20,26 +21,21 @@ Not Done
 * No intelligence operations
 * Most Traits
 * Analyse Projects
-* Science points (collection or use)
+* Science points - use
 * Combat
-* Colonisation
 * Turn Submission Validation 
 * Anomolies
-* Survey report levels auttomated setting
 * Credit Symbols
 * Militia recovery
-* Player Editing Names
 * Back propogate names on control change
 
 
 Imeadiate todo list
-* Check Health 0 = no movement
 * Coexist/control/compilcated 
 * Agent Orders?
 * Survey reports - reorder
-* Warp out turn text & History
-* Delete in planning
 * Unassigned ships with Deep space help
+* Control of Worlds != control of systems
 
 
 

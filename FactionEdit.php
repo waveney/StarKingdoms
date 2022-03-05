@@ -85,7 +85,7 @@ function Show_Faction(&$F,$Mode) {
   if ($GM) {
     echo "<tr>" . fm_textarea('Features',$F,'Features',8,2);
     echo "<tr>" . fm_textarea('GM_Notes',$F,'GM_Notes',8,2);  
-    echo "<tr>" . fm_text('Map Colour',$F,'MapColour');
+    echo "<tr>" . fm_text('Map Colour',$F,'MapColour') . fm_number('HomeWorld',$F,'HomeWorld');
     echo "<tr>" . fm_date('Last Active',$F,'LastActive');
     echo fm_text('Access Key',$F,'AccessKey',3);
     echo "<a href=Access.php?id=$Fid&Key=" . $F['AccessKey'] . " ><b>Use</b></a>";
