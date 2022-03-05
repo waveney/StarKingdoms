@@ -91,7 +91,8 @@ function Player_Page() {
     echo "<li><a href=ThingPlan.php>Plan a Thing</a> - Planning Things (Ships, Armies, Agents, Space stations etc)<P>";
     echo "<li><a href=Economy.php>Economy</a>";
     echo "<li><a href=Banking.php>Banking</a> - Sending credits to others and statements<p>";
-    echo "<li><a href=PlayerTurnTxt.php>Turn Actions Text</a>";
+    echo "<li><a href=PlayerTurnTxt.php>Turn Actions Automated Response Text</a>";
+    echo "<li><a href=PlayerTurn.php>Submit Player Turn text</a> - For now a link to a Google Docs file.<p>\n";
     echo "<li><a href=Player.php?ACTION=Submit>Submit Turn</a><p>\n";
     echo "<li><a href=FactionEdit.php>Faction Information</a> - Mostly read only once set up.\n";
     break;

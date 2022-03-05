@@ -97,7 +97,7 @@
   $ThingTypes = Get_ThingTypes();
   $ThingTypeNames = [''];
   foreach ($ThingTypes as $Ti=>$TT) {
-    if ($TT['Name'] && ($T['Type'] == $Ti || (is_numeric($TT['Gate'])? ($TT['Gate'] >0? (Has_Tech($Fid,$TT['Gate'])): true) : eval("return " . $TT['Gate'] . ";" )))) {
+    if ($TT['Name'] && ($T['Type'] == $Ti || (is_numeric($TT['Gate'])? ($TT['Gate'] >0? (Has_Tech($Fid,$TT['Gate'])): false) : eval("return " . $TT['Gate'] . ";" )))) {
       $ThingTypeNames[$Ti] = $TT['Name'];
     }
   }

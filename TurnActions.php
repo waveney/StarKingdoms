@@ -256,6 +256,13 @@ function ColonisationInstuctions() { // And other Instructions
   foreach ($Things as $T) {
     $N = Get_System($T['SystemId']);
     $Tid = $T['id'];
+    // Mark new Instructions
+    if ($T['Instruction'] != $T['CurInst']) {
+      $T['CurInst'] = $T['Instruction'];
+      $T['Progress'] = 0;
+    }
+    
+    
     switch ($ThingInstrs[$T['Instruction']]) {
     case 'Colonise': // Colonise
 
@@ -287,7 +294,6 @@ function ColonisationInstuctions() { // And other Instructions
         [$P,$Acts] = array_shift($HabPs);
         $T['Spare1'] = $P['id'];
         $T['ActionsNeeded'] = $Acts;
-        Put_Thing($T);
       }
       
       TurnLog($T['Whose'],"The " . $T['Name'] . " is colonising " . $P['Name'] . " in " . $N['Ref'] ,$T);
@@ -319,14 +325,12 @@ function ColonisationInstuctions() { // And other Instructions
            $T['WithinSysLoc'] = $Gates[0]['WithinSysLoc'];
            $T['CurHealth'] = $T['Link_id'] = 0;
            TurnLog($T['Whose']," The " . $T['Name'] . " has warped back.  It now needs repair before it can be used again",$T);         
-           Put_Thing($T);
            break;
          }
        } else {
          TurnLog($T['Whose']," The " . $T['Name'] . " tried to warp out, but you have no Warp Gates...",$T);
          SKLog(" The " . $T['Name'] . " tried to warp out, but there are no warp gates",1);
          $T['Instruction'] = 0;
-         Put_Thing($T);     
        }
        break;
  
@@ -336,7 +340,6 @@ function ColonisationInstuctions() { // And other Instructions
       $T['SystemId'] = 0;
       $T['History'] .= "Decommissioned";
       $T['Instruction'] = 0;
-      Put_Thing($T);
       $cash = 10*$Lvl*Has_Tech($T['Whose'],'Ship Construction');
       TurnLog($T['Whose'], "The " . $T['Name'] . " has been decommisioned gaining you  &#8373;" . $cash, $T);
       Spend_Credit($T['Whose'],-$cash,"Decommisioning " . $T['Name']);
@@ -359,7 +362,6 @@ function ColonisationInstuctions() { // And other Instructions
       if (!Spend_Credit($T['Whose'],10,"Make Outpost in " . $N['Ref']) ) {
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to start an outpost in " .$N['Ref'],$T);
-        Put_Thing($T);
       }
       break;
       
@@ -368,7 +370,6 @@ function ColonisationInstuctions() { // And other Instructions
       if (!Spend_Credit($T['Whose'],40,"Make Asteroid Mine in " . $N['Ref']) ) {
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to start an Asteroid Mine in " .$N['Ref'],$T);
-        Put_Thing($T);
       }
       break;
       
@@ -377,25 +378,22 @@ function ColonisationInstuctions() { // And other Instructions
       if (!Spend_Credit($T['Whose'],100,"Make Orbital Repair Yard in " . $N['Ref']) ) {
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to start an Orbital Repair Yard in " .$N['Ref'],$T);
-        Put_Thing($T);
       }
       break;
       
     case 'Build Space Station':
-      $T['ActionsNeeded'] = 5*$T['Dist2'];
-      if (!Spend_Credit($T['Whose'],10*5*$T['Dist2'],"Build Space Station in " . $N['Ref']) ) {
+      $T['ActionsNeeded'] = 5*$T['Dist1'];
+      if (!Spend_Credit($T['Whose'],10*5*$T['Dist1'],"Build Space Station in " . $N['Ref']) ) {
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to start a Build Space Station in " .$N['Ref'],$T);
-        Put_Thing($T);
       }
       break;
     
     case 'Expand Space Station':
       $T['ActionsNeeded'] = 10*$T['Dist1'];
-      if (!Spend_Credit($T['Whose'],10*5*$T['Dist2'],"Expand Space Station in " . $N['Ref']) ) {
+      if (!Spend_Credit($T['Whose'],10*5*$T['Dist1'],"Expand Space Station in " . $N['Ref']) ) {
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to Expand Space Station in " .$N['Ref'],$T);
-        Put_Thing($T);
       }
       break;
     
@@ -404,7 +402,6 @@ function ColonisationInstuctions() { // And other Instructions
       if (!Spend_Credit($T['Whose'],10,"Make Deep Space Sensor in " . $N['Ref']) ) {
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to Make Deep Space Sensor in " .$N['Ref'],$T);
-        Put_Thing($T);
       }
       break;
     
@@ -413,7 +410,6 @@ function ColonisationInstuctions() { // And other Instructions
       if (!Spend_Credit($T['Whose'],80,"Make Advanced Asteroid Mine in " . $N['Ref']) ) {
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to start an Advanced Asteroid Mine in " .$N['Ref'],$T);
-        Put_Thing($T);
       }
       break;
 
@@ -423,6 +419,7 @@ function ColonisationInstuctions() { // And other Instructions
      default:
      
      }
+     Put_Thing($T);
   }
   
   if ($NeedColStage2) {
@@ -475,7 +472,7 @@ function ColonisationInstuctionsStage2() { // And other Instructions
       }
       
       $NT = ['GameId'=>$GAME['id'], 'Type'=> 17, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=>200+$i, 'Whose'=>$T['Whose'], 'BuildState'=>3,
-             'TurnBuilt'=>$GAME['Turn'], 'OtherFaction'=>$N['Control']];
+             'TurnBuilt'=>$GAME['Turn'], 'OtherFaction'=>$N['Control'], 'Name'=>$T['NameName']];
       Put_Thing($NT);
       $OF = Get_Faction($N['Control']);
       TurnLog($T['Whose'],"You have created an Emabssy in " . $N['Ref'] . " with the " . $OF['Name']);
@@ -939,7 +936,7 @@ function InstructionsProgress() {
      case 'Colonise':
        $Prog = Has_Tech($T['Whose'], 'Planetary Construction');
        $Mods = Get_ModulesType($Tid, 10);
-       $T['Progress'] = max($T['ActionsNeeded'],($T['Progress']+$Prog*$Mods[0]['Number']));
+       $T['Progress'] = min($T['ActionsNeeded'],($T['Progress']+$Prog*$Mods[0]['Number']));
        Put_Thing($T);
        break 2;
      case 'Make Outpost':
@@ -953,7 +950,7 @@ function InstructionsProgress() {
      case 'Build Stargate':
        $Prog = Has_Tech($T['Whose'],'Deep Space Construction');
        $Mods = Get_ModulesType($Tid, 3);
-       $T['Progress'] = max($T['ActionsNeeded'],$T['Progress']+$Prog*$Mods);
+       $T['Progress'] = min($T['ActionsNeeded'],$T['Progress']+$Prog*$Mods[0]['Number']);
        Put_Thing($T);
        break 2;
      default: 
@@ -1153,16 +1150,14 @@ function InstructionsComplete() {
          $D1 = ['HostType' =>1, 'HostId'=> $P['id'], 'Type'=> $T['Dist2'], 'Number'=>1, 'GameId'=>$GAME['id'], 'TurnStart'=>$GAME['Turn']];
          Put_District($D1);
        }
-       $T['Instruction'] = 0;
-       $T['BuildState'] = 4;
-       
+
+       $T['BuildState'] = 4;      
        TurnLog($Who,$P['Name'] . " on " . $N['Ref'] . " has been colonised");
        SKLog($P['Name'] . " on " . $N['Ref'] . " has been colonised by " . $Facts[$Who]['Name'],1);
-       Put_Thing($T);
-       break 2; // The making homes and worlds in a later stage completes the colonisation I hope
+       break; // The making homes and worlds in a later stage completes the colonisation I hope
        
      case 'Make Outpost':
-       $NT = ['GameId'=>$GAME['id'], 'Type'=> 6, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn']];
+       $NT = ['GameId'=>$GAME['id'], 'Type'=> 6, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['NameName']];
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
        $Who = $T['Whose'];
@@ -1171,56 +1166,46 @@ function InstructionsComplete() {
          Put_System($N);
        }
        TurnLog($Who,"An outpost has been made in " . $N['Ref']);
-       $T['Instruction'] = 0;
-       Put_Thing($T);
-       break 2;
+       break;
        
      case 'Make Asteroid Mine':
-       $NT = ['GameId'=>$GAME['id'], 'Type'=> 8, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn']];
+       $NT = ['GameId'=>$GAME['id'], 'Type'=> 8, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['NameName']];
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
        $Who = $T['Whose'];
        TurnLog($Who,"An Asteroid Mine has been made in " . $N['Ref']);
-       $T['Instruction'] = 0;
-       Put_Thing($T);
-       break 2;
+      break;
 
      case 'Make Minefield':
        $NT = ['GameId'=>$GAME['id'], 'Type'=> 8, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 'Whose'=>$T['Whose'], 
-              'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn']];
+              'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['NameName']];
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
        $Who = $T['Whose'];
        TurnLog($Who,"An Asteroid Mine has been made in " . $N['Ref']);
-       $T['Instruction'] = 0;
-       Put_Thing($T);
-       break 2;
+       break;
 
      case 'Make Orbital Repair Yard':
        $NT = ['GameId'=>$GAME['id'], 'Type'=> 11, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 
-              'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn']];
+              'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['NameName']];
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
        $Who = $T['Whose'];
        TurnLog($Who,"An Orbital Repair Yard has been made in " . $N['Ref']);
-       $T['Instruction'] = 0;
-       Put_Thing($T);
-       break 2;
+       break;
 
      case 'Build Space Station':
        $NT = ['GameId'=>$GAME['id'], 'Type'=> 7, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 
-              'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'MaxDistricts'=>$T['Dist1']];
+              'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'MaxDistricts'=>$T['Dist1'], 'Name'=>$T['NameName']];
        $Sid = Put_Thing($NT);
-       $D = ['HostType' =>3, 'HostId'=> $sid, 'Type'=> $T['Dist2'], 'Number'=>1, 'GameId'=>$GAME['id'], 'TurnStart'=>$GAME['Turn']];
+       $D = ['HostType' =>3, 'HostId'=> $Sid, 'Type'=> $T['Dist2'], 'Number'=>1, 'GameId'=>$GAME['id'], 'TurnStart'=>$GAME['Turn']];
        Put_District($D);
        
        $N = Get_System($T['SystemId']);
        $Who = $T['Whose'];
        TurnLog($Who,"A Space Station has been made in " . $N['Ref']);
        SKLog("A space station has been made in " . $N['Ref'] . " by " . $Facts[$Who]['Name'],1);
-       $T['Instruction'] = 0;
-       Put_Thing($T);
-       break 2;
+       break;
 
      case 'Expand Space Station' :
        $SS = Get_Things_Cond($Fid,"Type=7 OR Type=AND SystemId=" . $T['Systemid'] . " AND BuildState=3");
@@ -1232,24 +1217,20 @@ function InstructionsComplete() {
          $S['MaxDistricts'] += $T['Dist1'];
          Put_Thing($S);
        }
-       $T['Instruction'] = 0;
-       Put_Thing($T);
-       break 2;       
+       break;       
      
      case 'Make Deep Space Sensor':
        $NT = ['GameId'=>$GAME['id'], 'Type'=> 9, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 
-              'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn']];
+              'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['NameName']];
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
        $Who = $T['Whose'];
        TurnLog($Who,"A Deep Space Sensor has been made in " . $N['Ref']);
-       $T['Instruction'] = 0;
-       Put_Thing($T);
-       break 2;
+       break;
 
      case 'Make Advanced Asteroid Mine':
        $NT = ['GameId'=>$GAME['id'], 'Type'=> 8, 'Level'=> 2, 'SystemId'=>$T['SystemId'], 
-              'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn']];
+              'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['NameName']];
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
        $Who = $T['Whose'];
@@ -1258,19 +1239,21 @@ function InstructionsComplete() {
          Put_System($N);
        }
        TurnLog($Who,"An Advanced Asteroid Mine has been made in " . $N['Ref']);
-       $T['Instruction'] = 0;
-       Put_Thing($T);
-       break 2;
+       break;
 
      case 'Build Stargate':
        SKLog("A stargate has been made in " . $N['Ref'] . " by " . $Facts[$Who]['Name'] . "Not Automated...",1);     
-       $T['Instruction'] = 0;
-       Put_Thing($T);
-       break 2;
+       break;
 
      default: 
-       break 2;
+       break;
      }
+     $T['Instruction'] = 0;
+     $T['Progress'] = 0;
+     $T['CurInst'] = 0;
+     $T['MakeName'] = '';
+     Put_Thing($T);
+     
    }
 
   return true;

@@ -464,6 +464,7 @@ function LogisticalSupport($Fid) {  // Note this sets the Economic rating of all
     $Prime = $Mine = 0;
     $District_Type = [];
     foreach ($Dists as $D) {
+      if ($D['Type'] == 0) continue;
       if ($DistTypes[$D['Type']]['Props'] &1) {
         if (Has_Trait($Fid,'No customers') && $DistTypes[$D['Type']]['Name'] == 'Commerce') {
         } else {

@@ -25,7 +25,7 @@
     if (isset($Fid)) $Faction = Get_Faction($Fid);
   }
 
-  CheckFaction('WorldEdit',$Fid);
+//  CheckFaction('WorldEdit',$Fid);
 
   dostaffhead("Edit Worlds and Colonies",["js/ProjectTools.js"]);
 
