@@ -462,21 +462,25 @@ function ColonisationInstuctionsStage2() { // And other Instructions
         Put_Thing($T);
         break;
       }
-      $Ws = Get_Worlds($N['Control']);
-      $W = $Ws[0];
-      $Ps = Get_Planets($T['SystemId']);
-      $i = 1;
-      foreach($Ps as $P) {
-        if ($P['id'] == $W['ThingId']) break;
-        $i++;
+
+      $Facts = Get_Factions();
+      foreach ($Facts as $F) {
+        if ($F['id'] == $T['Whose'] || $F['HomeWorld'] == 0) continue;
+        $W = Get_World($F['HomeWorld']);
+        $H = Get_ProjectHome($W['Home']);
+        if ($H['SystemId'] == $T['SystemId']) break;
       }
-      
-      $NT = ['GameId'=>$GAME['id'], 'Type'=> 17, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=>200+$i, 'Whose'=>$T['Whose'], 'BuildState'=>3,
-             'TurnBuilt'=>$GAME['Turn'], 'OtherFaction'=>$N['Control'], 'Name'=>$T['MakeName']];
+
+      $NT = ['GameId'=>$GAME['id'], 'Type'=> 17, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=>$H['WithinSysLoc'], 'Whose'=>$T['Whose'], 'BuildState'=>3,
+               'TurnBuilt'=>$GAME['Turn'], 'OtherFaction'=>$T['OtherFaction'], 'Name'=>$T['MakeName']];
       Put_Thing($NT);
-      $OF = Get_Faction($N['Control']);
-      TurnLog($T['Whose'],"You have created an Emabssy in " . $N['Ref'] . " with the " . $OF['Name']);
+      $OF = $Facts[$T['OtherFaction']];
+      TurnLog($T['Whose'],"You have created an Embassy in " . $N['Ref'] . " with the " . $OF['Name']);
+      TurnLog($T['OtherFaction'],"An embassy to you has been setup by " . $Facts[$T['Whose']]['Name']);
       $T['Instruction'] = 0;
+      $T['CurInst'] = 0;
+      $T['Progress'] = 0;
+      $T['MakeName'] = ''
       Put_Thing($T);
       break;
       
@@ -1166,6 +1170,7 @@ function InstructionsComplete() {
          Put_System($N);
        }
        TurnLog($Who,"An outpost has been made in " . $N['Ref']);
+       SKLog($N['Ref'] . " is now controlled by " . $Facts[$Who]['Name'],1);
        break;
        
      case 'Make Asteroid Mine':

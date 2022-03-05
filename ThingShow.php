@@ -356,7 +356,17 @@ function Show_Thing(&$T,$Force=0) {
     case 'Establish Embassy': // Establish Embassy
       if (!Get_ModulesType($tid,22)) continue 2;  // Check if have Embassy & at homeworld
       if (Get_Things_Cond($Fid,"Type=17 AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
-      break;
+      $Facts = Get_Factions();
+      foreach ($Facts as $F) {
+        if ($F['id'] == $T['Whose'] || $F['HomeWorld'] == 0) continue;
+        $W = Get_World($F['HomeWorld']);
+        $H = Get_ProjectHome($W['Home']);
+        if ($H['SystemId'] == $T['SystemId']) {
+          $T['OtherFaction'] = $F['id'];
+          break 2;
+        }
+      }
+      continue 2;
     
     case 'Make Outpost': // Make Outpost
       if (!isset($N['Control']) || (!Get_ModulesType($tid,3) && ($N['Control'] ==0 || $N['Control'] == $Fid))) continue 2;
@@ -480,7 +490,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       break;
       
     case 'Establish Embassy': // Establish Embassy
-      echo "<br>" . fm_text0("Name of Embassy",$T,'MakeName');
+      echo "<br>" . fm_text0("Name of Embassy",$T,'MakeName') . " with " . $FactNames[$T['OtherFaction']];
       break;
       
     case 'Make Outpost': // Make Outpost
