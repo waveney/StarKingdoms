@@ -276,6 +276,10 @@
     
     echo "<h2>Analyse</h2>";
       echo "These projects will be defined by a GM<p>";
+      echo "<form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=8&t=$Turn&Hi=$Hi&Di=$Di'>";
+      echo "Name of project - meaningfull to you and the GM:" . fm_text0('',$_REQUEST,'AnalyseText'). fm_number0(' Level ',$_REQUEST,'Level');
+      echo "<button class=projtype type=submit>Analyse</button>";
+      echo "</form><p>"; 
       
     
     echo "<h2>Decipher Alien Language</h2>"; 

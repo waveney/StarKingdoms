@@ -144,7 +144,7 @@ function StartProjects() {
 // Pay costs, Status = Started  
 
   $ProjTypes = Get_ProjectTypes();
-  $Projects = Get_Projects_Cond("Progress=0 AND Status=0 AND Costs!=0 AND TurnStart=" . $GAME['Turn']);
+  $Projects = Get_Projects_Cond("Status=0 AND Costs!=0 AND TurnStart=" . $GAME['Turn']);
   $TTypes = Get_ThingTypes();
 //var_dump("Projects",$Projects);
 
@@ -153,6 +153,7 @@ function StartProjects() {
 //  var_dump("Project",$P);
     $PT = $ProjTypes[$P['Type']];
     $Cost = $P['Costs'];
+    $Fid = $P['FactionId'];
     if ($ProjTypes[$P['Type']]['Props'] & 2) { // Has a thing
       $Where = Where_Is_Home($P['Home']);
       
@@ -1149,12 +1150,38 @@ function ProjectsComplete() {
       }
       break;
         
-    case 'Construct Warp Gate':
-
     case 'Analyse':
+      $Fact = Get_Faction($Fid);
+      TurnLog($Fid, "You have conpleted " . $P['Name'] . " look at your turn response from the GM to see what you learnt");
+      SKLog($Fact['Name'] . " has completed a level " . $P['Level'] . " analyse project called " . $P['Name'] . ".  Please give the results in the player", 1);
+      break;
+
+    case 'Construct Warp Gate':
+      $H = Get_ProjectHome($P['Home']);
+      switch ($H['ThingType']) {
+        case 1: // Planet
+          $PH = Get_Planet($H['ThingId']);
+          break;
+        case 2: // Moon
+          $PH = Get_Moon($H['ThingId']);
+          break;
+        case 3: // Thing
+          $PH = Get_Thing($H['ThingId']);
+          break;
+        }
+      $NT = ['GameId'=>$GAME['id'], 'Type'=> 15, 'Level'=> 1, 'SystemId'=>$H['SystemId'], 'WithinSysLoc' => $H['WithinSysLoc'], 'Whose'=>$P['FactionId'], 
+              'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>($PH['Name'] . " warp gate" )];
+      Put_Thing($NT);
+      TurnLog($P['FactionId'],"A warp gate has been made for " . $PH['Name']);
+
+      break;
+
     case 'Decipher Alien Language':
+    case 'Re-equip and Reinforce':    
+    case 'Grow Modules' :    
+      break;
+    // These all now handled as instructions - not projects at the moment
     case 'Decommission Ship':
-    case 'Re-equip and Reinforce':
     case 'Build Outpost':
     case 'Build Asteroid Mining Facility':
     case 'Build Minefield':
@@ -1164,7 +1191,7 @@ function ProjectsComplete() {
     case 'Deep Space Sensors':
     case 'Build Advanced Asteroid Mining Facility':
     case 'Unknown' :
-    case 'Grow Modules' :
+
     default:
       SKLog("A project to " . $PT['Name'] . " has completed, this is not automated yet.  See <a href=ProjEdit.php?id=" . $P['id'] . ">Project</a>",1);
     }

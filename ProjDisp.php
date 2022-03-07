@@ -58,7 +58,7 @@ exit;
             $T = Thing_Duplicate($T['id']);
           }
           $Level = $T['Level'];
-          $pc = Proj_Costs($Level);            
+          $pc = Proj_Costs($Level);
           $Costs = $pc[1];
           $ProgN = $pc[0];
           $TthingId = $T['id'];
@@ -75,7 +75,12 @@ exit;
           $Tech = Get_Tech($Sel);
           $Fact = Get_Faction($With);
           $Name = "Share " . $Tech['Name'] . " at level $Level with " . $Fact['Name'];
-                   
+        } else if ($Ptype == 8) {
+          $Level = $_REQUEST['Level'];
+          $Name = $_REQUEST['AnalyseText'];
+          $pc = Proj_Costs($Level);          
+          $Costs = $pc[1];
+          $ProgN = $pc[0];
         } else {
           $Sel = $_REQUEST['Sel'];
           $Level = $_REQUEST['L'];

@@ -256,6 +256,7 @@ function Max_Modules(&$t) {
 }
 
 function Calc_Health(&$t) {
+  if (empty($t['Level'])) return 0;
   $Health = 5*$t['Level'];
   $Ms = Get_Modules($t['id']);
   $Mts = Get_ModuleTypes();
@@ -376,10 +377,12 @@ function Moves_4_Thing(&$T, $Force=0, &$N=0) {
 }
 
 function Scanners(&$T) {
+  if (empty($T['Sensors']) || empty($T['SensorLevel'])) return 0;
   return $T['Sensors'] * $T['SensorLevel'];
 }
 
 function NebScanners(&$T) {
+  if (empty($T['NebSensors']) || empty($T['SensorLevel'])) return 0;
   return $T['NebSensors'] * $T['SensorLevel'];
 }
 
@@ -399,6 +402,7 @@ function Calc_Scanners(&$T) {
 }
 
 function RefitRepair(&$T,$Save=1) {
+  if (empty($T['Level']) ) return 0;
 // Refit
   $TTypes = Get_ThingTypes();
   $tid = $T['id'];
