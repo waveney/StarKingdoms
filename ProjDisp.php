@@ -63,6 +63,19 @@ exit;
           $ProgN = $pc[0];
           $TthingId = $T['id'];
           $Name = "Build " . $T['Name'] . " (level $Level)"; 
+        } else if ($Ptype == 7) {
+          $Tech2S = $_REQUEST['Tech2Share'];
+          preg_match('/(\d*):(\d*)/',$Tech2S,$mtch);
+          $With = $_REQUEST["ShareWith"];
+          $Level = $mtch[2];
+          $pc = Proj_Costs($Level-1);            
+          $Costs = $pc[1];
+          $ProgN = $pc[0];
+          $Sel = $mtch[1];
+          $Tech = Get_Tech($Sel);
+          $Fact = Get_Faction($With);
+          $Name = "Share " . $Tech['Name'] . " at level $Level with " . $Fact['Name'];
+                   
         } else {
           $Sel = $_REQUEST['Sel'];
           $Level = $_REQUEST['L'];
@@ -74,6 +87,7 @@ exit;
         $OldPro = Get_ProjectAT($Hi, $Di, $Turn);
         $Pro = ['FactionId'=>$Fid, 'Type'=>$Ptype, 'Level'=> $Level, 'Home'=>$Hi, 'Progress'=>0, 'Status'=>0, 'TurnStart'=>$Turn, 'Name'=>$Name,
                 'Costs' => $Costs, 'ProgNeeded' => $ProgN, 'BuildState'=>0];
+        if (isset($With)) $Pro['ThingId'] = $With;
         if (isset($Sel)) $Pro['ThingType'] = $Sel;
         if (isset($TthingId)) $Pro['ThingId'] = $TthingId;
         if (isset($TthingId2)) $Pro['ThingId2'] = $TthingId2;

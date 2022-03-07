@@ -242,7 +242,37 @@
       }
    
     echo "<h2>Share Technology</h2>";
-      echo "This is manual at present. Please put this in your turn orders<p>";
+//      echo "This is manual at present. Please put this in your turn orders<p>";
+  echo "</form>";  
+      echo "<form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=7&t=$Turn&Hi=$Hi&Di=$Di'>";
+
+      $Shares = [];
+      foreach ($CTs as $TT) {
+        $Tid = $TT['id'];
+        for($Lvl = 1; $Lvl <= $FactTechs[$Tid]['Level']; $Lvl++) {
+          $pc = Proj_Costs($Lvl-1);
+          $Shares["$Tid:$Lvl"] = $TT['Name'] . " at level $Lvl; Cost " . $pc[1] . " Needs " . $pc[0] . " progress";
+        }
+      }
+      
+      foreach ($Techs as $T) {
+        if ($T['Cat'] == 0 || !isset($FactTechs[$T['id']]) ) continue;
+        if (!isset($FactTechs[$T['PreReqTech']]) ) continue;
+        $Tid = $T['id'];
+        $Lvl = $T['PreReqLevel'];
+        $pc = Proj_Costs($Lvl-1);
+        $Shares["$Tid:$Lvl"] = $T['Name'] . " at level $Lvl; Cost " . $pc[1] . " Needs " . $pc[0] . " progress";
+      }
+      
+      $Factions = Get_Factions(); 
+      $Facts = Get_FactionFactions($Fid);
+      $FactList = [];
+      foreach ($Facts as $Fi=>$F) {
+        $FactList[$Fi] = $Factions[$Fi]['Name'];
+      }
+      echo "Tecnology: " . fm_select($Shares,$_REQUEST,"Tech2Share") . " share with: " .fm_select($FactList,$_REQUEST,"ShareWith",1);
+      echo "<button class=projtype type=submit>Share</button>";
+      echo "</form><p>"; 
     
     echo "<h2>Analyse</h2>";
       echo "These projects will be defined by a GM<p>";

@@ -127,10 +127,14 @@
         echo fm_number('Thing',$P,'ThingId') . "<td><a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . $Thing['Name'] . "</a>"; 
       } else {
         echo fm_number('Thing',$P,'ThingId');
+
       }
       
     } else if (1 || $P['ThingType']) {
       echo "<td>" . ($P['Type'] == 1 ? fm_select($DistTypeN,$P,'ThingType') : fm_select($TechNames, $P, 'ThingType') );
+      if ($PProps & 8) {
+        echo fm_select($FactionNames,$P,'ThingId');
+      }
     }
     echo "<tr>" . fm_textarea('Notes',$P,'Notes',8,2);
   
@@ -149,6 +153,9 @@
       echo "<td><a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . $Thing['Name'] . "</a>"; // May need Tweek for player edit
     } else if ($P['ThingType']) {
       echo "<td>" . ($P['Type'] == 1 ? ($DistTypeN[$P['ThingType']]) : $TechNames[$P['ThingType']] );
+      if ($PProps & 8) {
+        echo " Recipient: " . $FactionNames[$P['ThingId']];
+      }
     }
     echo "<tr>" . fm_textarea('Notes',$P,'Notes',8,2);
   }

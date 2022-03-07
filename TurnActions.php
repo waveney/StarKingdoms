@@ -480,7 +480,7 @@ function ColonisationInstuctionsStage2() { // And other Instructions
       $T['Instruction'] = 0;
       $T['CurInst'] = 0;
       $T['Progress'] = 0;
-      $T['MakeName'] = ''
+      $T['MakeName'] = '';
       Put_Thing($T);
       break;
       
@@ -1102,9 +1102,55 @@ function ProjectsComplete() {
       Put_Thing($T);
       break;
      
+    case 'Share Technology':
+      $FFact = Get_Faction($P['FactionId']);
+      $Tech = Get_Tech($P['ThingType']);
+      $Level = $P['Level'];
+      $Xfr2 = $P['ThingId'];
+      $XFact = Get_Faction($Xfr2);
+      $Have = Has_Tech($Xfr2,$Tech['id']);
+      if ($Tech['Cat'] == 0) {
+        if ($Have >= $Level) {
+          TurnLog($P['FactionId'], "You tried to share " . $Tech['Name'] . " at level $Level. with " . $XFact['Name'] . " They already know it.");                      
+          TurnLog($Xfr2, $FFact['Name'] . " tried to share " . $Tech['Name'] . " at level $Level.  With you - you already have it at level $Have.");
+        } else if ($Have == $Level-1) {
+          $CTech = Get_Faction_TechFT($Xfr2 ,$Tech['id']);
+          $CTech['Level'] = $Level;
+          Put_Faction_Tech($CTech);
+          TurnLog($P['FactionId'], "Your have shared " . $Tech['Name'] . " at level $Level.  with " . $XFact['Name']);                      
+          TurnLog($Xfr2, $FFact['Name'] . " has shared " . $Tech['Name'] . " at level $Level.  With you.");
+        } else if (0 ) { // Learn lower level option
+          $CTech = Get_Faction_TechFT($Xfr2 ,$Tech['id']);
+          $CTech['Level'] = $Have+1;
+          Put_Faction_Tech($CTech);
+          TurnLog($P['FactionId'], "You tried to share " . $Tech['Name'] . " at level $Level. with " . $XFact['Name'] . 
+             " They only had it at level $Have.  They learnt level " . ($Have+1));                      
+          TurnLog($Xfr2, $FFact['Name'] .  " tried to share " . $Tech['Name'] . " at level $Level with you. You only have it at level $Have  so learnt it at level " . ($Have+1));
+        } else {
+          TurnLog($P['FactionId'], "You tried to share " . $Tech['Name'] . " at level $Level. with " . $XFact['Name'] . 
+             " They only had it at level $Have - they don't understand what you sent");
+          TurnLog($Xfr2, $FFact['Name'] .  " tried to share " . $Tech['Name'] . " at level $Level with you. You only have it at level $Have so learnt nothing");        
+        }
+      } else { // Supp techs
+        $PRHave = Has_Tech($Xfr2,$Tech['PreReqTech']);
+        if ($Have) {
+          TurnLog($P['FactionId'], "You tried to share " . $Tech['Name'] . " with " . $XFact['Name'] . " They already know it.");                      
+          TurnLog($Xfr2, $FFact['Name'] . " tried to share " . $Tech['Name'] . " with you - you already have it.");
+        } else if ($PRHave >= $Tech['PreReqLevel']) {
+          $CTech = Get_Faction_TechFT($Xfr2 ,$Tech['id']);
+          $CTech['Level'] = $Level;
+          Put_Faction_Tech($CTech);
+          TurnLog($P['FactionId'], "Your have shared " . $Tech['Name'] . " with " . $XFact['Name']);                      
+          TurnLog($Xfr2, $FFact['Name'] . " has shared " . $Tech['Name'] . " with you.");
+        } else {
+          TurnLog($P['FactionId'], "You tried to share " . $Tech['Name'] . " with " . $XFact['Name'] . " They don't understand what you sent");
+          TurnLog($Xfr2, $FFact['Name'] .  " tried to share " . $Tech['Name'] . " with you. You don't understand it");        
+        }
+      }
+      break;
         
     case 'Construct Warp Gate':
-    case 'Share Technology':
+
     case 'Analyse':
     case 'Decipher Alien Language':
     case 'Decommission Ship':
