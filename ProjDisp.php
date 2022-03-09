@@ -83,14 +83,14 @@ exit;
           $ProgN = $pc[0];
         } else if ($Ptype == '11') {
           $Level = 1;
-          if (empty($Sel = $_REQUEST['Sel'])) {
+          if (empty($TthingId = $_REQUEST['Sel'])) {
             echo "<h2 class=Err>You must select a ship</h2>\n";
             break;
           }
           if (isset($_REQUEST['Name'])) {
             $Name = base64_decode($_REQUEST['Name']);
           } else {
-            $T1 = Get_Thing($Sel);
+            $T1 = Get_Thing($TthingId);
             $Name = "Refit and Repair " . $T1['Name'];
           }
           $pc = Proj_Costs(1);          
@@ -110,11 +110,11 @@ exit;
             break;
           }
           if ($Count == 1) {
-            $Sel = $Sels[0];
+            $TthingId = $Sels[0];
             if (isset($_REQUEST['Name'])) {
               $Name = base64_decode($_REQUEST['Name']);
             } else {
-              $T1 = Get_Thing($Sel);
+              $T1 = Get_Thing($TthingId);
               $Name = "Refit and Repair " . $T1['Name'];
             }
           } else {
@@ -127,6 +127,57 @@ exit;
               break;
             }
             $Name = "Refit and Repair " . $T1['Name'] . " and " . $T2['Name'];
+          }
+
+          $pc = Proj_Costs(1);          
+          $Costs = $pc[1];
+          $ProgN = $pc[0];                    
+         } else if ($Ptype == '16') {
+          $Level = 1;
+          if (empty($TthingId = $_REQUEST['Sel'])) {
+            echo "<h2 class=Err>You must select an army</h2>\n";
+            break;
+          }
+          if (isset($_REQUEST['Name'])) {
+            $Name = base64_decode($_REQUEST['Name']);
+          } else {
+            $T1 = Get_Thing($TthingId);
+            $Name = "Re-equip and Reinforce " . $T1['Name'];
+          }
+          $pc = Proj_Costs(1);          
+          $Costs = $pc[1];
+          $ProgN = $pc[0];          
+        } else if ($Ptype == '11b') {
+          if (empty($_REQUEST['Sel2'])) {
+            echo "<h2 class=Err>You must select an army</h2>\n";
+            break;
+          }
+          $Level = 1;
+          $Ptype = 11;
+          $Sels = $_REQUEST['Sel2'];
+          $Count = count($Sels);
+          if ($Count == 0 || $Count>2) {
+            echo "<h2 class=Err>You must select 1 (or up to two level 1 armies)</h2>\n";
+            break;
+          }
+          if ($Count == 1) {
+            $TthingId = $Sels[0];
+            if (isset($_REQUEST['Name'])) {
+              $Name = base64_decode($_REQUEST['Name']);
+            } else {
+              $T1 = Get_Thing($TthingId);
+              $Name = "Re-equip and Reinforce " . $T1['Name'];
+            }
+          } else {
+            $TthingId =$Sels[0];
+            $TthingId2 = $Sels[1];
+            $T1 = Get_Thing($TthingId);
+            $T2 = Get_Thing($TthingId2);
+            if ($T1['Level'] != 1 || $T2['Level'] != 1) {
+              echo "<h2 class=Err>You can only do two level 1 armies at once</h2>\n";
+              break;
+            }
+            $Name = "Re-equip and Reinforce " . $T1['Name'] . " and " . $T2['Name'];
           }
 
           $pc = Proj_Costs(1);          

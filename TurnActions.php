@@ -1092,7 +1092,8 @@ function ProjectsComplete() {
       }
       break;
       
-    case 'Rebuild and Repair':  
+    case 'Re-equip and Reinforce':    
+
     case 'Refit and Repair': 
       if ($P['ThingId']) {
         $T = Get_Thing($P['ThingId']);
@@ -1196,7 +1197,7 @@ function ProjectsComplete() {
       break;
 
     case 'Decipher Alien Language':
-    case 'Re-equip and Reinforce':    
+    case 'Rebuild and Repair':  
     case 'Grow Modules' :    
       break;
     // These all now handled as instructions - not projects at the moment
