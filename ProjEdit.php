@@ -124,12 +124,18 @@
     if ($PProps &2) {
       if ($P['ThingId']) {
         $Thing = Get_Thing($P['ThingId']);
-        echo fm_number('Thing',$P,'ThingId') . "<td><a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . $Thing['Name'] . "</a>"; 
+        echo "<tr>" . fm_number('Thing',$P,'ThingId') . "<td><a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . $Thing['Name'] . "</a>"; 
       } else {
-        echo fm_number('Thing',$P,'ThingId');
-
+        echo "<tr>" . fm_number('Thing',$P,'ThingId');
       }
-      
+      if ($PProps & 4) {
+        if ($P['ThingId2']) {
+          $Thing2 = Get_Thing($P['ThingId2']);
+          echo fm_number('Thing 2',$P,'ThingId2') . "<td><a href=ThingEdit.php?id=" . $P['ThingId2'] . ">" . $Thing2['Name'] . "</a>"; 
+        } else {
+          echo fm_number('Thing 2',$P,'ThingId2');
+        }
+      }
     } else if (1 || $P['ThingType']) {
       echo "<td>" . ($P['Type'] == 1 ? fm_select($DistTypeN,$P,'ThingType') : fm_select($TechNames, $P, 'ThingType') );
       if ($PProps & 8) {

@@ -182,9 +182,9 @@ function fm_checkbox($Desc,&$data,$field,$extra='',$field2='',$split=0,$extra2='
           ($AutoADD? " oninput=AutoCheckBoxInput('$field2') " : "") . " Name=$field2 id=$field2 $extra>";
 }
 
-function fm_YesNo($Field,$Dft) {
+function fm_YesNo($Field,$Dft,$Rtxt="Why") {
   $Nul = [$Field =>$Dft];
-  return fm_checkbox('',$Nul,$Field) . fm_text0(' Why',$Nul,"Reason$Field");
+  return fm_checkbox('',$Nul,$Field) . fm_text0(" $Rtxt",$Nul,"Reason$Field");
 }
 
 function fm_select2(&$Options,$Curr,$field,$blank=0,$selopt='',$field2='',$Max=0, &$optclass=0) {

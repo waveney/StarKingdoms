@@ -195,7 +195,9 @@ function Link_Cost($Fid,$LinkLevel,$ShipLevel) {
   
 }
 
-
+function Credit() {
+  return "&#8373;";
+}
 
 
 ?>

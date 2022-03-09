@@ -146,12 +146,14 @@ function Show_Thing(&$T,$Force=0) {
         case 4: // Ex thing
           break; // Can't move
         case 2: // Shakedown - In sys only
-          echo "<tr><td>Where in the system should it go? " . fm_select($Syslocs,$T,'WithinSysLoc');
+          echo "<tr><td>This is unable to use links, it can move within the system.<br>Where in the system should it go? " . fm_select($Syslocs,$T,'WithinSysLoc');
           break;
         case 3: //
 //        var_dump($SelLinks);
 //           if (empty($SelCols[$T['LinkId']])) $T['LinkId'] = 0;
-           if (count($SelLinks) > 1) {
+           if ($T['CurHealth'] == 0 && !empty(Syslocs)) {
+             echo "<tr><td>This is unable to use links, it can move within the system.<br>Where in the system should it go? " . fm_select($Syslocs,$T,'WithinSysLoc');           
+           } else if (count($SelLinks) > 1) {
              echo "<tr><td>Taking Link:<td>" . fm_select($SelLinks,$T,'LinkId',0," style=color:" . $SelCols[$T['LinkId']] ,'',0,$SelCols);
              if ($T['LinkId'] && !strpos($SelLinks[$T['LinkId']],'?')) {
                echo "<td>To:" . fm_select($NewSyslocs,$T,'NewLocation');
@@ -369,7 +371,7 @@ function Show_Thing(&$T,$Force=0) {
       continue 2;
     
     case 'Make Outpost': // Make Outpost
-      if (!isset($N['Control']) || (!Get_ModulesType($tid,3) && ($N['Control'] ==0 || $N['Control'] == $Fid))) continue 2;
+      if ((!Get_ModulesType($tid,3) && ($N['Control'] != $Fid))) continue 2;
       if (Get_Things_Cond($Fid,"Type=6 AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
       break;
       

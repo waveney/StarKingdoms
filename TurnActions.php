@@ -102,19 +102,19 @@ function CashTransfers() {
   foreach($Bs as $B) {
     if ($B['What'] == 0) {
       if (Spend_Credit($B['FactionId'],$B['Amount'],$B['YourRef'])) {
-        TurnLog($B['FactionId'],"Transfered  &#8373;" . $B['Amount'] . " for " . $B['YourRef'] . " to " . $Facts[$B['Recipient']]['Name']);
+        TurnLog($B['FactionId'],"Transfered " . Credit() . $B['Amount'] . " for " . $B['YourRef'] . " to " . $Facts[$B['Recipient']]['Name']);
 
         if ($B['Recipient'] > 0) {
           Spend_Credit($B['Recipient'], - $B['Amount'],$B['YourRef']);
-          TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " transfered  &#8373;" . $B['Amount'] . " to you for " . $B['YourRef'] );
+          TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " transfered " . Credit() . $B['Amount'] . " to you for " . $B['YourRef'] );
         }
         SKLog('Cash transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . ' of ' . $B['Amount'] . ' for ' . $B['YourRef'],1);     
       } else {
-        TurnLog($B['FactionId'],"Failed to transfer  &#8373;" . $B['Amount'] . " for " . $B['YourRef'] . " to " . $Facts[$B['Recipient']]['Name'] . 
+        TurnLog($B['FactionId'],"Failed to transfer " . Credit() . $B['Amount'] . " for " . $B['YourRef'] . " to " . $Facts[$B['Recipient']]['Name'] . 
                  " you only have " . $Facts[$B['FactionId']]['Credits']);
-        if ($B['Recipient'] > 0) TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " Failed to transfer  &#8373;" . $B['Amount'] . " for " . $B['YourRef'] );
+        if ($B['Recipient'] > 0) TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " Failed to transfer " . Credit() . $B['Amount'] . " for " . $B['YourRef'] );
         SKLog('Cash transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . 
-              ' of  &#8373;' . $B['Amount'] . ' for ' . $B['YourRef'] .  ' Bounced',1);
+              ' of ' . Credit() . $B['Amount'] . ' for ' . $B['YourRef'] .  ' Bounced',1);
       }
     } else {
       Gain_Science($B['Recipient'],$B['What'],$B['Amount'],$B['YourRef']);
@@ -166,14 +166,24 @@ function StartProjects() {
           Put_Project($P);
           continue;      
         }
-        if ($T['SystemId'] != 0 && $T['SystemId'] != $Where[0]) {
+        if (($T['SystemId'] != 0 && $T['SystemId'] != $Where[0])) {
 //var_dump($Where,$T);
           $P['Status'] = 5; // Not Started
           TurnLog($P['FactionId'],'Not starting as not in same system: ' . $P['Name']);
           Put_Project($P);
           continue;     
         }
-      } // TODO 2nd thing for repair - Checks are wrong
+        if ($ProjTypes[$P['Type']]['Props'] & 16) { // Tight Location check
+          if (($T['WithinSysLoc'] == $Where[1] || $T['WithinSysLoc'] == $Where[1]-100)) {       
+            // OK
+          } else {
+            $P['Status'] = 5; // Not Started
+            TurnLog($P['FactionId'],'Not starting as not at the same planet: ' . $P['Name']);
+            Put_Project($P);
+            continue;
+          }
+        }
+      } // TODO 2nd thing for repair 
       if ($ProjTypes[$P['Type']]['Props'] & 4) { // Has can have a 2nd thing
         $Tid2 = $P['ThingId2'];
         if ($Tid2) {
@@ -184,13 +194,23 @@ function StartProjects() {
             Put_Project($P);
             continue;     
           }
+          if ($ProjTypes[$P['Type']]['Props'] & 16) { // Tight Location check
+            if (($T['WithinSysLoc'] == $Where[1] || $T['WithinSysLoc'] == $Where[1]-100)) {       
+              // OK
+            } else {
+              $P['Status'] = 5; // Not Started
+              TurnLog($P['FactionId'],'Not starting as not at the same planet: ' . $P['Name']);
+              Put_Project($P);
+              continue;             
+            }
+          }
         }
       } 
     }
     if (Spend_Credit($P['FactionId'],$Cost,'Starting: ' . $P['Name'])) {
       $P['Status'] = 1; // Started
-      TurnLog($P['FactionId'],'Starting ' . $P['Name'] . " Cost: &#8373;$Cost");
-      if ($ProjTypes[$P['Type']]['Props'] & 2) { // Has a thing      
+      TurnLog($P['FactionId'],'Starting ' . $P['Name'] . " Cost: " . Credit() . " $Cost");
+      if (($ProjTypes[$P['Type']]['Props'] & 2) && (($ProjTypes[$P['Type']]['Props'] &16) ==0 )) { // Has a thing      
         if ($Tid) {
           $T['BuildState'] = 1; // Building
           $T['SystemId'] = $Where[0];
@@ -342,11 +362,10 @@ function ColonisationInstuctions() { // And other Instructions
       $T['History'] .= "Decommissioned";
       $T['Instruction'] = 0;
       $cash = 10*$Lvl*Has_Tech($T['Whose'],'Ship Construction');
-      TurnLog($T['Whose'], "The " . $T['Name'] . " has been decommisioned gaining you  &#8373;" . $cash, $T);
+      TurnLog($T['Whose'], "The " . $T['Name'] . " has been decommisioned gaining you " . Credit() . $cash, $T);
       Spend_Credit($T['Whose'],-$cash,"Decommisioning " . $T['Name']);
       break;
-    
-    
+
     case 'Analyse Anomoly': // Anomoly
       break; // TODO
       
@@ -355,9 +374,9 @@ function ColonisationInstuctions() { // And other Instructions
         echo "<form method=post action=TurnActions.php?ACTION=Process&S=16>";
         $NeedColStage2 = 1;
       }
-      echo $Facts[$T['Whose']]['Name'] . " setting up an Embassy in " . $N['Ref'] . " - Allow? " . fm_YesNo("Emb$Tid",1) . "\n<br>";
+      echo $Facts[$T['Whose']]['Name'] . " setting up an Embassy in " . $N['Ref'] . " - Allow? " . fm_YesNo("Emb$Tid",1, "Reason to reject") . "\n<br>";
       break;
-    
+
     case 'Make Outpost':
       $T['ActionsNeeded'] = 1;
       if (!Spend_Credit($T['Whose'],10,"Make Outpost in " . $N['Ref']) ) {
@@ -365,7 +384,7 @@ function ColonisationInstuctions() { // And other Instructions
         TurnLog($T['Whose'],"Could not afford to start an outpost in " .$N['Ref'],$T);
       }
       break;
-      
+
     case 'Make Asteroid Mine':
       $T['ActionsNeeded'] = 4;
       if (!Spend_Credit($T['Whose'],40,"Make Asteroid Mine in " . $N['Ref']) ) {
@@ -911,7 +930,7 @@ function ProjectProgress() {
       $Rush = min($TurnStuff['Rush'],$Acts,$P['ProgNeeded']-$P['Progress']-$Acts);
       if ($Rush) {
         if (Spend_Credit($P['FactionId'],$Rc = (Rush_Cost($P['FactionId'])*$Rush), 'Rushing ' . $P['Name'] . " By $Rush")) {
-          TurnLog($P['FactionId'],'Rushing ' . $P['Name'] . " by $Rush  Cost: &#8373; $Rc");
+          TurnLog($P['FactionId'],'Rushing ' . $P['Name'] . " by $Rush  Cost: " . Credit() . " $Rc");
         } else {
           TurnLog($P['FactionId'],'Not enough Credits to Rush: ' . $P['Name']);
         }
