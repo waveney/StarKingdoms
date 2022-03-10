@@ -156,7 +156,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
         echo "<td><td>";
       }
     } else {
-      echo "<td><td><td>";
+      echo "<td><td>";
     }
  //   echo "<td>" . (isset($Systems[$T['NewSystemId']]) ? $Systems[$T['NewSystemId']] :"") ;
     

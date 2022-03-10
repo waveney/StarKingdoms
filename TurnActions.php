@@ -274,6 +274,8 @@ function ColonisationInstuctions() { // And other Instructions
   $NeedColStage2 = 0;
   $Facts = Get_Factions();
   
+  $PTs = Get_ProjectTypes();
+  
   foreach ($Things as $T) {
     $N = Get_System($T['SystemId']);
     $Tid = $T['id'];
@@ -379,55 +381,63 @@ function ColonisationInstuctions() { // And other Instructions
 
     case 'Make Outpost':
       $T['ActionsNeeded'] = 1;
-      if (!Spend_Credit($T['Whose'],10,"Make Outpost in " . $N['Ref']) ) {
+      if (!Spend_Credit($T['Whose'],$T['InstCost'],"Make Outpost in " . $N['Ref']) ) {
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to start an outpost in " .$N['Ref'],$T);
       }
       break;
 
     case 'Make Asteroid Mine':
-      $T['ActionsNeeded'] = 4;
-      if (!Spend_Credit($T['Whose'],40,"Make Asteroid Mine in " . $N['Ref']) ) {
+//      $T['ActionsNeeded'] = 4;
+      if (!Spend_Credit($T['Whose'],$T['InstCost'],"Make Asteroid Mine in " . $N['Ref']) ) {
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to start an Asteroid Mine in " .$N['Ref'],$T);
       }
       break;
       
     case 'Make Orbital Repair Yard':
-      $T['ActionsNeeded'] = 10;
-      if (!Spend_Credit($T['Whose'],100,"Make Orbital Repair Yard in " . $N['Ref']) ) {
+//      $T['ActionsNeeded'] = 10;
+      if (!Spend_Credit($T['Whose'],$T['InstCost'],"Make Orbital Repair Yard in " . $N['Ref']) ) {
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to start an Orbital Repair Yard in " .$N['Ref'],$T);
       }
       break;
       
+    case 'Make Minefield':
+//      $T['ActionsNeeded'] = 4;
+      if (!Spend_Credit($T['Whose'],$T['InstCost'],"Make Minefield in " . $N['Ref']) ) {
+        $T['Progress'] = -1; // Stalled
+        TurnLog($T['Whose'],"Could not afford to start a Minefield in " .$N['Ref'],$T);
+      }
+      break;
+      
     case 'Build Space Station':
-      $T['ActionsNeeded'] = 5*$T['Dist1'];
-      if (!Spend_Credit($T['Whose'],10*5*$T['Dist1'],"Build Space Station in " . $N['Ref']) ) {
+//      $T['ActionsNeeded'] = 5*$T['Dist1'];
+      if (!Spend_Credit($T['Whose'],$T['InstCost'],"Build Space Station in " . $N['Ref']) ) {
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to start a Build Space Station in " .$N['Ref'],$T);
       }
       break;
     
     case 'Expand Space Station':
-      $T['ActionsNeeded'] = 10*$T['Dist1'];
-      if (!Spend_Credit($T['Whose'],10*5*$T['Dist1'],"Expand Space Station in " . $N['Ref']) ) {
+//      $T['ActionsNeeded'] = 10*$T['Dist1'];
+      if (!Spend_Credit($T['Whose'],$T['InstCost'],"Expand Space Station in " . $N['Ref']) ) {
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to Expand Space Station in " .$N['Ref'],$T);
       }
       break;
     
     case 'Make Deep Space Sensor':
-      $T['ActionsNeeded'] = 1;
-      if (!Spend_Credit($T['Whose'],10,"Make Deep Space Sensor in " . $N['Ref']) ) {
+//      $T['ActionsNeeded'] = 1;
+      if (!Spend_Credit($T['Whose'],$T['InstCost'],"Make Deep Space Sensor in " . $N['Ref']) ) {
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to Make Deep Space Sensor in " .$N['Ref'],$T);
       }
       break;
     
     case 'Make Advanced Asteroid Mine':
-      $T['ActionsNeeded'] = 8;
-      if (!Spend_Credit($T['Whose'],80,"Make Advanced Asteroid Mine in " . $N['Ref']) ) {
+//      $T['ActionsNeeded'] = 8;
+      if (!Spend_Credit($T['Whose'],$T['InstCost'],"Make Advanced Asteroid Mine in " . $N['Ref']) ) {
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to start an Advanced Asteroid Mine in " .$N['Ref'],$T);
       }

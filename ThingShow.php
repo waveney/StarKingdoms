@@ -424,7 +424,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
                 'DSC Special'];
 */
   if ($SpecCount>1) { 
-
+    $PTs=Get_ProjectTypes();
     $ProgShow = $Cost = $Acts = 0;
     echo "<tr>" . fm_radio('Special Instructions', $SpecOrders,$T,'Instruction','',1,' colspan=6 ','',$ThingInclrs);// . " under development don't use yet";
     switch ($ThingInstrs[$T['Instruction']]) {
@@ -497,8 +497,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       
     case 'Make Outpost': // Make Outpost
       echo "<br>" . fm_text0("Name of Outpost",$T,'MakeName');
-      $Cost = 10;
-      $Acts = 1;
+      $Acts = $PTs[22]['CompTarget'];
       $ProgShow = 2;      
       break;
 
@@ -507,30 +506,26 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       
     case 'Make Asteroid Mine':
       echo "<br>" . fm_text0("Name of Asteroid Mine",$T,'MakeName');
-      $Cost = 50;
-      $Acts = 4;
+      $Acts = $PTs[23]['CompTarget'];
       $ProgShow = 2;
       break;
 
     case 'Make Advanced Asteroid Mine':
       echo "<br>" . fm_text0("Name of Advanced Asteroid Mine",$T,'MakeName');
-      $Cost = 80;
-      $Acts = 8;
+      $Acts = $PTs[29]['CompTarget'];
       $ProgShow = 2;
       break;
 
     case 'Make Orbital Repair Yard':
       echo "<br>" . fm_text0("Name of Orbital Repair Yard",$T,'MakeName');
-      $Cost = 10;
-      $Acts = 1;
+      $Acts = $PTs[25]['CompTarget'];
       $ProgShow = 2;
       break;
 
     case 'Make Minefield':
       echo "<tr><td><td colspan=6>Make sure you move to the location within the system you want to mine";
       echo "<br>" . fm_text0("Name of Minefield",$T,'MakeName');
-      $Cost = 40;
-      $Acts = 4;
+      $Acts = $PTs[24]['CompTarget'];
       $ProgShow = 1;
       break;
 
@@ -541,8 +536,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       echo "<tr><td><td colspan=6>" . (($GM || $T['Progress'] == 0)? fm_number0('What size:',$T,'Dist1'): ("<td>Size: " . $T['Dist1']));
       echo " First District:" . fm_select($PrimeMods,$T,'Dist2',1);
       echo "<br>" . fm_text0("Name of Space Station",$T,'MakeName');
-      $Cost = 5*10*$T['Dist1'];
-      $Acts = 5*$T['Dist1'];
+      $Acts = - $PTs[26]['CompTarget']*$T['Dist1'];
       $ProgShow = 1;      
       break;
  
@@ -550,21 +544,18 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       echo "<tr><td clospan=6>" . (($GM || $T['Progress'] == 0)? fm_number0('By how much:',$T,'Dist1'): ("<td>Adding Size: " . $T['Dist1']));
       $ProgShow = 1;
       if ($T['Dist1']) {
-        $Cost = 10*10*$T['Dist1'];
-        $Acts = 10*$T['Dist1']; 
+        $Acts = - $PTs[27]['CompTarget']*$T['Dist1'];
       }
       break;
 
     case 'Make Deep Space Sensor':
       echo "<br>" . fm_text0("Name of Deep Space Sensor",$T,'MakeName');
-      $Cost = 10;
-      $Acts = 1; 
+      $Acts = $PTs[28]['CompTarget'];
       break;
 
     case 'Build Stargate':
       $ProgShow = 1;
-      $Cost = 450;
-      $Acts = 45; 
+      $Acts = $PTs[33]['CompTarget'];
 
       // Needs a lot of work
       break;
@@ -574,13 +565,17 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
     }
     if ($ProgShow) {
       $T['ActionsNeeded'] = $Acts;
+      $T['InstCost'] = $Cost = $Acts*10;
+      if (Has_Trait($Fid,'Built for Construction and Logistics') && ($Cost>200)) {
+        $T['InstCost'] = $Cost = (200+($Cost-200)/2);
+      }
       if ($ProgShow == 2) echo "<tr><td><td colspan=6>";
       if ($GM) {
         echo fm_number0('Progress',$T,'Progress') . " / " . fm_number0('Actions Needed',$T,'ActionsNeeded');
       } else {
         echo " Progress " . $T['Progress'] . ' / ' . $T['ActionsNeeded'];
       }
-      if ($Cost && ($T['Progress'] == 0)) echo " - Will cost &#8373; $Cost this turn";
+      if ($Cost && ($T['Progress'] == 0)) echo " - Will cost " . Credit() . fm_number0('',$T,'InstCost') . " this turn";
       if ($T['Instruction'] != $T['CurInst']) {
         $T['CurInst'] = $T['Instruction'];
         $T['Progress'] = 0;
