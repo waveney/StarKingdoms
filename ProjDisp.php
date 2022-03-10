@@ -300,6 +300,7 @@ exit;
         "<th $back class='PHLevel Group$Di Home$Hi'id=PHLevel$Hi:$Di $Hide>Lvl" .
         "<th $back class='PHCost Group$Di Home$Hi' id=PHCost$Hi:$Di $Hide>Cost" .
         "<th $back class='PHRush Group$Di Home$Hi' id=PHRush$Hi:$Di $Hide>Rush" .
+//        "<th $back class='PHBonus Group$Di Home$Hi' id=PHBonus$Hi:$Di $GMHide>B" . 
         "<th $back class='PHProg Group$Di Home$Hi' id=PHProg$Hi:$Di $Hide>Prog" .
         "<th $back class='PHStatus Group$Di Home$Hi' id=PHStatus$Hi:$Di $Hide>Status";
      
@@ -371,7 +372,7 @@ exit;
 
         for ($t = $P['TurnStart']; $t <= ($P['TurnEnd']?$P['TurnEnd']:$P['TurnStart']+50); $t++) {
 
-          $Pro['Rush'] = $Rush = 0;
+          $Pro['Rush'] = $Rush = $Bonus = 0;
           $Pro['MaxRush'] = ( ($ProjTypes[$P['Type']]['Category'] & 16) ? $PlanCon : $District_Type[$WantedDT]);
             
 /*            $Pro['MaxRush'] =  (($ProjTypes[$P['Type']]['BasedOn'])? Has_Tech($Fid,$ProjTypes[$P['Type']]['BasedOn'],$t) : 
@@ -381,10 +382,11 @@ exit;
           if (isset($TurnStuff[$TSi])) {
             if ($TurnStuff[$TSi]['TurnNumber'] == $t) {
               $Rush = $Pro['Rush'] = min($TurnStuff[$TSi]['Rush'], $Pro['MaxRush']);
+              if (!empty($TurnStuff[$TSi]['Bonus'])) $Bonus = $Pro['Bonus'] = $TurnStuff[$TSi]['Bonus'];
               $TSi ++;
             }
           }
-          $Prog = min($Pro['Acts'],$Pro['MaxRush'] + $Rush);
+          $Prog = min($Pro['Acts'],$Pro['MaxRush'] + $Rush + $Bonus); // Note Bonus can be negative
 //          if ($P['GMOverride']) $Pro['MaxRush'] = 20;
           if ($t == $GAME['Turn']) { 
             if ($SkipProgress) $Prog = 0;
@@ -515,6 +517,7 @@ exit;
                "<input type=number id=Rush$Turn:$PN name=Rush$Turn:$PN oninput=RushChange($Turn,$PN,$Hi,$Di," . 
                $Proj[$Turn][$Hi][$Di]['MaxRush'] . ") value=" . min($Proj[$Turn][$Hi][$Di]['Rush'],$Proj[$Turn][$Hi][$Di]['MaxRush'])  .
                " min=0 max=" . ($Proj[$Turn][$Hi][$Di]['GMOverride']?20:$Proj[$Turn][$Hi][$Di]['MaxRush']) .">" );
+//          if (!empty($Proj[$Turn][$Hi][$Di]['Bonus'])) echo "<div id=ProjB$Turn:$Hi:$Di class='PHBonus hidden>" . $Proj[$Turn][$Hi][$Di]['Bonus'] . "</div>";
           echo "\n<td $BG id=ProjP$Turn:$Hi:$Di class='PHProg Group$Di Home$Hi' $Hide>" . $Proj[$Turn][$Hi][$Di]['Progress'];
           echo "\n<td $BG id=ProjT$Turn:$Hi:$Di class='PHStatus Group$Di Home$Hi' $Hide>" . $Proj[$Turn][$Hi][$Di]['Status'] . "";
           

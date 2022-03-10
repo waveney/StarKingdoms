@@ -34,10 +34,22 @@
   
   foreach($Projects as $P) {
     $Spend += $P['Costs'];
-    echo "Starting " . $P['Name'] . " costs &#8373; " . $P['Costs'] . "<br>";
+    echo "Starting " . $P['Name'] . " costs " . Credit() . $P['Costs'] . "<br>";
   }
   
   echo "<P>";
+  
+  $Things = Get_Things_Cond($Fid," Instruction!=0 AND Progress=0 AND InstCost!=0 ");
+
+  $DeepSpace = 0;
+  foreach($Things as $T) {
+    $DeepSpace += $T['InstCost'];
+  }
+  
+  if ($DeepSpace) {
+    echo "Starting " . count($Things) . " Deep Space Constructions, costing " . Credit() . $DeepSpace . "<p>";
+    $Spend += $DeepSpace;
+  }
   
   $res = $db->query("SELECT pt.* FROM ProjectTurn pt, Projects p WHERE pt.TurnNumber=". $GAME['Turn'] . " AND pt.ProjectId=p.id AND p.FactionId=$Fid AND pt.Rush>0");
   if ($res) {
@@ -52,7 +64,7 @@
   }
   
   $left = $FACTION['Credits'] - $Spend;
-  echo "<h2>Total Expenditure &#8373; $Spend leaving with " . (($left < 0)? "<span class=red>$left</span>" : $left) . "</h2>";
+  echo "<h2>Total Expenditure " . Credit() . "$Spend leaving with " . Credit() . (($left < 0)? "<span class=red>$left</span>" : $left) . "</h2>";
   if ($left < 0) {
     echo "Some actions will fail - you need to rethink your turn.<p>The expected figure below assume you have 0 credits at this point.<p>\n";
     $Spend = $FACTION['Credits'];
@@ -165,7 +177,7 @@
       }
     }
     
-    echo "<p>Total Economy is $EconVal worth &#8373; " . $EconVal*10 . "<p>\n";
+    echo "<p>Total Economy is $EconVal worth " . Credit() . $EconVal*10 . "<p>\n";
 
   $Final =  $FACTION['Credits'] - $Spend + $EconVal*10;
   echo "<h2>Expected End Credits is &#8373;" . ($Final < 0? "<span class=Red>$Final</span>":$Final) .  "</h2>";

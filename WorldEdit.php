@@ -82,7 +82,7 @@
   echo fm_hidden('id', $Wid);
   echo "<table border>";
   if ($GM) echo "<tr><td>Id:<td>$Wid\n";
-  echo "<tr>" . fm_text('Name',$WH,'Name',3,'',"Name:" . $W['ThingType'] . ":" . $W['ThingId']);
+  echo "<tr>" . fm_text('Name',$WH,'Name',3,'','',"Name:" . $W['ThingType'] . ":" . $W['ThingId']);
   echo "<tr>" . fm_textarea('Description',$WH,'Description',8,3,'','', "Description:" . $W['ThingType'] . ":" . $W['ThingId']);
   echo "<tr><td>Minerals<td>" . $W['Minerals'];
   echo "<tr>" . fm_number("Relative Importance", $W, 'RelOrder');
@@ -107,6 +107,9 @@
 
   if (!empty($WH['MaxDistricts'])) echo "<td>Max Districts: " . $WH['MaxDistricts'];
   echo "<tr><td>Economy:<td>" . $H['Economy'];
+
+  if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
+  
   echo "</table>";
   
   if (Access('GM')) echo "<h2><a href=WorldEdit.php?ACTION=Militia&id=$Wid>Update Militia</a></h2>";

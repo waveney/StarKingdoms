@@ -310,6 +310,7 @@
     exit;
   
    case 'Worlds':
+//var_dump($_REQUEST);
     if ((preg_match('/(\w*):(\d*):(\d*)/',$field,$mtch)?true:false)) {
       switch ($mtch[2]) {
       case 1: // Planet

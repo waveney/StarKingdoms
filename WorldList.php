@@ -48,6 +48,7 @@
   if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Id</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Type</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Where</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Minerals</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Current<br>Economy</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Devastation</a>\n";
@@ -85,6 +86,7 @@
         $type = $TTypes[$T['Type']]['Name'];
         $Name = $T['Name'];
         $Fid = $T['Whose'];
+        $Sys = Get_System($T['SystemId']);
         break;
     }
     
@@ -97,7 +99,8 @@
       var_dump($H,$W,$Fid);
     }
         
-    echo "<td>$type<td><a href=WorldEdit.php?id=" . $W['id'] . ">" . (empty($Name)? "Nameless": $Name) . "</a><td>" . $W['Minerals'] . "<td>" . $H['Economy'] . "<td>" . $H['Devastation'];
+    echo "<td>$type<td><a href=WorldEdit.php?id=" . $W['id'] . ">" . (empty($Name)? "Nameless": $Name) . "</a><td>" . (empty($Sys['Ref'])?"":$Sys['Ref'])  .
+         "<td>" . $W['Minerals'] . "<td>" . $H['Economy'] . "<td>" . $H['Devastation'];
     if ($GM) echo "<td>" . $H['EconomyFactor'] . "<td>" . $Facts[$W['FactionId']]['Name'];
     echo "<td>" . $W['RelOrder'] . "\n";
     if ($GM) echo "<td>" . fm_checkbox("Conflict?", $W, 'Conflict','',"Conflict:99:" . $W['id']);
