@@ -325,6 +325,7 @@ function Show_Thing(&$T,$Force=0) {
     echo "<tr>" . fm_number('Sensors',$T,'Sensors') . fm_number('Sens Level',$T,'SensorLevel') . fm_number('Neb Sensors', $T,'NebSensors');
   }
   $SpecOrders = []; $SpecCount = 0;
+  $HasDeep = Get_ModulesType($tid,3);
   if ($T['BuildState'] == 2 || $T['BuildState'] == 3) foreach ($ThingInstrs as $i=>$Ins) {
     switch ($ThingInstrs[$i]) {
     case 'None': // None
@@ -371,50 +372,78 @@ function Show_Thing(&$T,$Force=0) {
       continue 2;
     
     case 'Make Outpost': // Make Outpost
-      if ((!Get_ModulesType($tid,3) && ($N['Control'] != $Fid))) continue 2;
+      if ((!$HasDeep && ($N['Control'] != $Fid))) continue 2;
       if (Get_Things_Cond($Fid,"Type=6 AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
       break;
       
     case 'Make Asteroid Mine':
-      if (!Get_ModulesType($tid,3) || !Has_Tech($Fid,'Asteroid Mining')) continue 2;
+      if (!$HasDeep || !Has_Tech($Fid,'Asteroid Mining')) continue 2;
       if (Get_Things_Cond(0,"Type=8 AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
       $Ps = Get_Planets($N['id']);
       foreach ($Ps as $P) if ($P['Type'] == 3) break 2;
       continue 2; // No field 
     
     case 'Make Advanced Asteroid Mine':
-      if (!Get_ModulesType($tid,3) || !Has_Tech($Fid,'Advanced Asteroid Mining')) continue 2;
+      if (!$HasDeep || !Has_Tech($Fid,'Advanced Asteroid Mining')) continue 2;
       if (Get_Things_Cond(0,"Type=8 AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
       $Ps = Get_Planets($N['id']);
       foreach ($Ps as $P) if ($P['Type'] == 3) break 2;
       continue 2; // No field 
     
     case 'Make Minefield':
-      if (!Get_ModulesType($tid,3) || !Has_Tech($Fid,'Mine Layers')) continue 2;
+      if (!$HasDeep || !Has_Tech($Fid,'Mine Layers')) continue 2;
       break;
       
     case 'Make Orbital Repair Yard':
-      if (!Get_ModulesType($tid,3) || !Has_Tech($Fid,'Orbital Repair Yards')) continue 2;
+      if (!$HasDeep || !Has_Tech($Fid,'Orbital Repair Yards')) continue 2;
       if (Get_Things_Cond(0,"Type=11 OR Type=AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
       break;
 
     case 'Build Space Station':
-      if (!Get_ModulesType($tid,3) || !Has_Tech($Fid,'Space Stations')) continue 2;
+      if (!$HasDeep || !Has_Tech($Fid,'Space Stations')) continue 2;
       if (Get_Things_Cond(0,"Type=7 OR Type=AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
       break;
 
     case 'Expand Space Station':
-      if (!Get_ModulesType($tid,3) || !Has_Tech($Fid,'Space Stations')) continue 2;
+      if (!$HasDeep || !Has_Tech($Fid,'Space Stations')) continue 2;
       if (!(Get_Things_Cond($Fid,"Type=7 OR Type=AND SystemId=" . $N['id'] . " AND BuildState=3"))) continue 2; // Don't have one
       break;
 
     case 'Make Deep Space Sensor':
-      if (!Get_ModulesType($tid,3) || !Has_Tech($Fid,'Deep Space Sensors')) continue 2;
+      if (!$HasDeep || !Has_Tech($Fid,'Deep Space Sensors')) continue 2;
       break;
 
     case 'Build Stargate':
-      if (!Get_ModulesType($tid,3) || !Has_Tech($Fid,'Stargate Construction')) continue 2;
+      if (!$HasDeep || !Has_Tech($Fid,'Stargate Construction')) continue 2;
       break;
+
+    case 'Make Planet Mine':
+      if (!$HasDeep || !Has_Tech($Fid,'Signal Jammer')) continue 2;
+      $PMines = Get_Things_Cond(0,"Type=21 AND SystemId=" . $N['id'] . " AND BuildState=3");
+      $Ps = Get_Planets($N['id']);
+      $idx = $found = 0;
+      foreach ($Ps as $P) {
+        $idx++;
+        if ($P['Minerals'] == 0) continue;
+        foreach($PMines as $PM) {
+          if ($PM['WithinSysLoc'] == $idx+200) continue 2; // Already have mine on this planet
+          $found = 1;
+          break;
+        }
+        $found = 1;
+      }
+      if (!$found) continue 2; // No valid planets
+      break;
+
+    case 'Construct Command Relay Station':
+      if (!$HasDeep || !Has_Tech($Fid,'Signal Jammer')) continue 2;   
+      if (Get_Things_Cond(0,"Type=22 AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
+      break;
+      
+    case 'Repair Command Node': // Not coded yet
+      continue 2;
+      if (!$HasDeep || !Has_Tech($Fid,'Signal Jammer')) continue 2;
+      break;  
 
      default: 
       continue 2;
@@ -565,6 +594,24 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
 
       // Needs a lot of work
       break;
+
+    case 'Make Planet Mine':
+      // TODO should have code to select Planet
+      echo "<br>";
+      $ProgShow = 1;
+      $Acts = $PTs[34]['CompTarget'];
+      break;
+
+    case 'Construct Command Relay Station':
+      $ProgShow = 1;
+      $Acts = $PTs[35]['CompTarget'];
+      break;
+      
+    case 'Repair Command Node': // Not coded yet
+      $ProgShow = 2; // TODO choose first district
+      $Acts = $PTs[36]['CompTarget'];
+      break;
+
 
     default: 
       break;

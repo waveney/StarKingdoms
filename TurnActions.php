@@ -446,6 +446,27 @@ function ColonisationInstuctions() { // And other Instructions
      case 'Build Stargate':
 // TODO 
        break;
+
+    case 'Make Planet Mine':
+      if (!Spend_Credit($T['Whose'],$T['InstCost'],"Make Planet Mine in " . $N['Ref']) ) {
+        $T['Progress'] = -1; // Stalled
+        TurnLog($T['Whose'],"Could not afford to start a Planet Mine in " .$N['Ref'],$T);
+      }
+      break;
+
+    case 'Construct Command Relay Station':
+      if (!Spend_Credit($T['Whose'],$T['InstCost'],"Make Command Relay Statione in " . $N['Ref']) ) {
+        $T['Progress'] = -1; // Stalled
+        TurnLog($T['Whose'],"Could not afford to start a Command Relay Station in " .$N['Ref'],$T);
+      }
+      
+    case 'Repair Command Node': // Not coded yet
+      if (!Spend_Credit($T['Whose'],$T['InstCost'],"Repair Command Node " . $N['Ref']) ) {
+        $T['Progress'] = -1; // Stalled
+        TurnLog($T['Whose'],"Could not afford to Repair Command Node " .$N['Ref'],$T);
+      }
+
+
      default:
      
      }
@@ -982,6 +1003,9 @@ function InstructionsProgress() {
      case 'Make Deep Space Sensor':
      case 'Make Advanced Asteroid Mine':
      case 'Build Stargate':
+     case 'Make Planet Mine':
+     case 'Construct Command Relay Station':
+     case 'Repair Command Node': // Not coded yet
        $Prog = Has_Tech($T['Whose'],'Deep Space Construction');
        $Mods = Get_ModulesType($Tid, 3);
        $T['Progress'] = min($T['ActionsNeeded'],$T['Progress']+$Prog*$Mods[0]['Number']);
@@ -1341,17 +1365,36 @@ function InstructionsComplete() {
               'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
-       $Who = $T['Whose'];
-       if ($N['Control'] != $Who) {
-         $N['Control'] = $Who;
-         Put_System($N);
-       }
        TurnLog($Who,"An Advanced Asteroid Mine has been made in " . $N['Ref']);
        break;
 
      case 'Build Stargate':
        SKLog("A stargate has been made in " . $N['Ref'] . " by " . $Facts[$Who]['Name'] . "Not Automated...",1);     
        break;
+
+     case 'Make Planet Mine':
+       $NT = ['GameId'=>$GAME['id'], 'Type'=> 21, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 
+              'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']]; // TODO add withinsysloc
+       Put_Thing($NT);
+       $N = Get_System($T['SystemId']);
+       TurnLog($Who,"A Planet Mine has been made in " . $N['Ref']);
+       SKLog("A Plnet Mine has been setup in " . $N['Ref'] . " by " . $Facts[$Who]['Name'] . ".  Tell Richard to set the right withinsysloc",1);
+       break;
+
+     case 'Construct Command Relay Station':
+       $NT = ['GameId'=>$GAME['id'], 'Type'=> 22, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 
+              'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
+       Put_Thing($NT);
+       $N = Get_System($T['SystemId']);
+       $Who = $T['Whose'];
+       TurnLog($Who,"A Command Relay Station has been made in " . $N['Ref']);
+       break;
+      
+     case 'Repair Command Node': // Not coded yet
+       TurnLog($Who,"A Command Node has been repaired " . $N['Ref']);
+       SKLog("A Command Node has been repaired in " . $N['Ref'] . " by " . $Facts[$Who]['Name'] . ".  Tell Richard to set the right stuff up",1);
+       break;
+
 
      default: 
        break;
@@ -1360,8 +1403,7 @@ function InstructionsComplete() {
      $T['Progress'] = 0;
      $T['CurInst'] = 0;
      $T['MakeName'] = '';
-     Put_Thing($T);
-     
+     Put_Thing($T);   
    }
 
   return true;

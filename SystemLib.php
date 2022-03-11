@@ -207,7 +207,7 @@ function Show_System(&$N,$Mode=0) {
     echo "</form></center>";
   }
   echo "<center><h2><a href=SurveyReport.php?id=$Sid>Survey Report</a>";
-  if (Access('God'))  echo ", <a href=SurveyReport.php?id=$Sid&F=1>Survey Report from Faction 1</a>"  ;
+//  if (Access('God'))  echo ", <a href=SurveyReport.php?id=$Sid&F=1>Survey Report from Faction 1</a>"  ;
   echo "</h2></center>";
 
 }
