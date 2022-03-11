@@ -378,7 +378,7 @@ function Show_Thing(&$T,$Force=0) {
     case 'Make Asteroid Mine':
     case 'Make Advanced Asteroid Mine':
       if (!Get_ModulesType($tid,3) || !Has_Tech($Fid,'Asteroid Mining')) continue 2;
-      if (Get_Things_Cond(0,"(Type=10 OR Type=99) AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
+      if (Get_Things_Cond(0,"Type=8 AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
       $Ps = Get_Planets($N['id']);
       foreach ($Ps as $P) if ($P['Type'] == 3) break;
       continue 2; // No field 
