@@ -46,7 +46,9 @@
     echo "<td><a href=SurveyReport.php?id=$sid>Survey Report</a>"; // Generic 
     echo "<td><a href=ThingList.php?AT=$Ref>$Ref</a>\n";
     $Who = Gen_Get_Cond('FactionSystem',"SystemId=$sid");
-    echo "<td>" .($Who?"Yes":"No");
+    $npc = 1;
+    foreach($Who as $W) if (!$Factions[$W['FactionId']]['NPC']) $npc = 0;
+    echo "<td>" .($Who?($npc?"NPC only":"Yes"):"No");
   }
       
   echo "</tbody></table></div>\n";
