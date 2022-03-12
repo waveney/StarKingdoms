@@ -258,7 +258,9 @@ function Max_Modules(&$t) {
 
 function Calc_Health(&$t) {
   if (empty($t['Level'])) return 0;
-  $Health = 5*$t['Level'];
+  $Plus = 0;
+  if (Has_Trait($t['Whose'],'Thick Skinned')) $Plus =1;
+  $Health = 5*($t['Level']+$Plus);
   $Ms = Get_Modules($t['id']);
   $Mts = Get_ModuleTypes();
   $Techs = Get_Techs();
@@ -269,7 +271,7 @@ function Calc_Health(&$t) {
         if ($Techs[$based]['Cat'] == 1) {
           $l = Has_Tech($t['Whose'],$Techs[$based]['PreReqTech']);
         }
-        $Mhlth = $M['Number'] * Mod_ValueSimple($l,$M['Type']);
+        $Mhlth = $M['Number'] * Mod_ValueSimple($l+$Plus,$M['Type']);
         $Health += $Mhlth;
       }
     }
@@ -550,9 +552,12 @@ function EyesInSystem($Fid,$Sid) { // Eyes 1 = in space, 2= sens, 4= neb sens, 8
   $Eyes = 0;
   $ThingTypes = Get_ThingTypes();
   $MyThings = Get_Things_Cond($Fid," SystemId=$Sid AND (BuildState=2 OR BuildState=3)");
+  $N = Get_System($Sid);
+  $Neb = $N['Nebulae'];
 
 //var_dump($MyThings);
   foreach ($MyThings as $T) {
+    if (($Neb > 0) && ($T['NebSensors'] < $Neb)) continue;
     $Eyes |= $ThingTypes[$T['Type']]['Eyes'];
     if ($T['Sensors']) $Eyes |= 2;
     if ($T['NebSensors']) $Eyes != 4;

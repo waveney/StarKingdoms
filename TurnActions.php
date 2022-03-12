@@ -118,7 +118,7 @@ function CashTransfers() {
       }
     } else {
       Gain_Science($B['Recipient'],$B['What'],$B['Amount'],$B['YourRef']);
-      TurnLog($B['FactionId'],"Gained " . $B['Amount'] . " Science points for " . $B['YourRef']);    
+      TurnLog($B['Recipient'],"Gained " . $B['Amount'] . " Science points for " . $B['YourRef']);    
     }
   }
   
@@ -579,13 +579,17 @@ function Economy() {
       $ECon = $H['Economy'] = Recalc_Economic_Rating($H,$W,$Fid);
       $ECon = ceil(($ECon - $H['Devastation'])*$H['EconomyFactor']/100);
       
-      $EccTxt .= "$Name: $ECon " . ($H['Devastation']? " after devastation effect of -" . $H['Devastation'] : "");
-      if ($H['EconomyFactor'] < 100) {
-        $EccTxt .= " - at " . $H['EconomyFactor'] . "%\n";
-      } else if ($H['EconomyFactor'] > 100) {
-        $EccTxt .= " - at " . $H['EconomyFactor'] . "%\n";
+      if ($ECon <0) {
+        $EccTxt .= "$Name: 0\n";
+      } else {
+        $EccTxt .= "$Name: $ECon " . ($H['Devastation']? " after devastation effect of -" . $H['Devastation'] : "");
+        if ($H['EconomyFactor'] < 100) {
+          $EccTxt .= " - at " . $H['EconomyFactor'] . "%\n";
+        } else if ($H['EconomyFactor'] > 100) {
+          $EccTxt .= " - at " . $H['EconomyFactor'] . "%\n";
+        }
+        $EconVal += $ECon;
       }
-      $EconVal += $ECon;
     }
     $Things = Get_Things($Fid);
     foreach ($Things as $T) {
@@ -1478,7 +1482,7 @@ function GiveSurveyReports() {
     $FS['ScanLevel'] = $S['Scan'];
     Put_FactionSystem($FS);
     
-    if ($New) {
+    if (!$New) {
       TurnLog($Fid, "<h3>You are due an improved survey report for <a href=SurveyReport.php?N=$Sys>" . System_Name($N,$Fid) . "</a></h3>");
     } else {
       TurnLog($Fid, "<h3>You are have new survey report for <a href=SurveyReport.php?N=$Sys>" . System_Name($N,$Fid) . "</a></h3>");    

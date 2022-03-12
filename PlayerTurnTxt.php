@@ -40,8 +40,8 @@
   }
   
 //echo php_ini_loaded_file() . "<P>";
-  echo "<div class=floatright><h2>";
-  if (file_exists("Turns/$GAMEID/0/$Fid.txt")) echo "Turn : <a href=PlayerTurnTxt.php?Turn=0$xtra>Setup</a>";
+  echo "<div class=floatright><h2>Older Turns =&gt;";
+  if (file_exists("Turns/$GAMEID/0/$Fid.txt")) echo " <a href=PlayerTurnTxt.php?Turn=0$xtra>Setup</a>";
   if ($GAME['Turn']) for($turn=1; $turn <= $GAME['Turn']; $turn++) {
     if (file_exists("Turns/$GAMEID/$turn/$Fid.txt")) echo ", <a href=PlayerTurnTxt.php?Turn=$turn$xtra>$turn</a>";
   }

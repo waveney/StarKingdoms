@@ -78,6 +78,10 @@ exit;
         } else if ($Ptype == 8) {
           $Level = $_REQUEST['Level'];
           $Name = $_REQUEST['AnalyseText'];
+          if (empty($Name)) {
+            echo "<h2 class=Err>No project name given</h2>";
+            break;
+          }
           $pc = Proj_Costs($Level);          
           $Costs = $pc[1];
           $ProgN = $pc[0];

@@ -163,19 +163,6 @@
   echo "<tr><td><td><input type=submit name=ACTION value='Setup'>\n";
   echo "</table></form>";
   
-/*    
-  echo "table border>";
-  echo "<h2Setup Transfer</h2>\n";
-  echo "To: " fm_select(KnownFactions) + "Other" <- for RP actions with spend
-  echo "Amount: ";
-  echo "Start Turn: " fm_number(This onwards)
-  echo "End Turn: " fm_number(This onwards);
-  echo "Your Ref": fm_text(Whatever) 
-  echo "Transaction name:" fm_text(whatextra)
-  echo "<tr><td><td><input type=submit name=ACTION value=Setup>\n";
-  echo "</table<p>\n";
-
-*/  
   echo "<form method=post action=Banking.php>\n";
   echo "<h2>Other expected income</h2>\n";
   echo "What do expect from others, and amount - may stop annoying nag messages that you have overspent in your plans. No other effect. These are not checked<p>";

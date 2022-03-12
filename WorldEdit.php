@@ -126,7 +126,7 @@
     echo "<h2><a href=WorldEdit.php?ACTION=Militia&id=$Wid>Update Militia</a></h2>";
     if (!isset($H['id'])) {
       echo "<h2>No Home!</h2>";
-      echo "<button type=submit formaction=WorldEdit.php?ACTION=DELETE&id=$Wid>Delete?</button>\n";
+      echo "<form><button type=button formmethod=post formaction=WorldEdit.php?ACTION=DELETE&id=$Wid>Delete?</button></form>\n";
     }
   }
   
