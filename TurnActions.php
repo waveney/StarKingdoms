@@ -686,7 +686,7 @@ function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
   echo "<form method=Post action=TurnActions.php?ACTION=Complete>" . fm_hidden('S',($Agents?34:32));
   echo "<table border><tr><td>Who<td>What<td>From<td>Link<td>To<td>Stop<td>Why Stopping\n";
   foreach ($Things as $T) {
-    if (($T['Type'] == 5 && $Agents == 0) || ($T['Type'] == !5 && $Agents == 1) || $T['BuildState'] <2 || $T['BuildState'] > 3) continue;
+    if (($T['Type'] == 5 && $Agents == 0) || ($T['Type'] != 5 && $Agents == 1) || $T['BuildState'] <2 || $T['BuildState'] > 3) continue;
     if ($T['LinkId'] && $T['NewSystemId'] != $T['SystemId'] ) {
       $Tid = $T['id'];
       $Lid = $T['LinkId']; 
@@ -724,7 +724,7 @@ function ShipMovements($Agents=0) {
   $Facts = Get_Factions();
   
   foreach ($Things as $T) {
-    if (($T['Type'] == 5 && $Agents == 0) || ($T['Type'] == !5 && $Agents == 1) || $T['BuildState'] <2 || $T['BuildState'] > 3) continue;
+    if (($T['Type'] == 5 && $Agents == 0) || ($T['Type'] != 5 && $Agents == 1) || $T['BuildState'] <2 || $T['BuildState'] > 3) continue;
     $Tid = $T['id'];
     $Fid = $T['Whose'];
     
@@ -1008,7 +1008,11 @@ function InstructionsProgress() {
       case 'Repair Command Node': // Not coded yet
         $Prog = Has_Tech($T['Whose'],'Deep Space Construction');
         $Mods = Get_ModulesType($Tid, 3);
-        $T['Progress'] = min($T['ActionsNeeded'],$T['Progress']+$Prog*$Mods[0]['Number']);
+//var_dump($T);exit;
+//var_dump($T['Progress'], $Prog, $Mods[0], $T['ActionsNeeded']);
+//echo "<br>" . $Prog*$Mods[0]['Number'] . "<p>";
+        $T['Progress'] = min($T['ActionsNeeded'],($T['Progress']+$Prog*$Mods[0]['Number']));
+//var_dump($T['Progress']); exit;
         Put_Thing($T);
         break;
       default: 
