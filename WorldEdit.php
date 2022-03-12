@@ -30,6 +30,16 @@
   dostaffhead("Edit Worlds and Colonies",["js/ProjectTools.js"]);
 
   $Wid = $_REQUEST['id'];
+
+  if (isset($_REQUEST['ACTION'])) {
+    switch ($_REQUEST['ACTION']) {
+      case 'DELETE': 
+        db_delete('Worlds',$Wid);
+        echo "<h2>Deleted</h2>";
+        dotail();
+    }
+  }
+
   $W = Get_World($Wid);
   $H = Get_ProjectHome($W['Home']);
   $Dists = Get_DistrictsH($H['id']);
@@ -103,7 +113,7 @@
     echo "<tr><td>No Districts currently\n";
   }
   $H['Economy'] = Recalc_Economic_Rating($H,$W,$Fid);
-  Put_ProjectHome($H);
+  if (isset($H['id'])) Put_ProjectHome($H);
 
   if (!empty($WH['MaxDistricts'])) echo "<td>Max Districts: " . $WH['MaxDistricts'];
   echo "<tr><td>Economy:<td>" . $H['Economy'];
@@ -112,7 +122,13 @@
   
   echo "</table>";
   
-  if (Access('GM')) echo "<h2><a href=WorldEdit.php?ACTION=Militia&id=$Wid>Update Militia</a></h2>";
+  if (Access('GM')) {
+    echo "<h2><a href=WorldEdit.php?ACTION=Militia&id=$Wid>Update Militia</a></h2>";
+    if (!isset($H['id'])) {
+      echo "<h2>No Home!</h2>";
+      echo "<button type=submit formaction=WorldEdit.php?ACTION=DELETE&id=$Wid>Delete?</button>\n";
+    }
+  }
   
   dotail();
 ?>

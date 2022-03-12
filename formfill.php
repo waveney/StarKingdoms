@@ -156,6 +156,10 @@
     }
 
     $N = Get_Thing($id);
+    if ($field == 'Instruction' && $N['Instruction'] != $Value) {
+      $N['Progress'] = 0;
+    }  
+    
     $N[$field] = $Value;
     if ($field == 'LinkId') {
       $L = Get_Link($Value);
@@ -195,7 +199,7 @@
           echo "Error!"; exit;// Can't see that link
         }
       $N['TargetKnown'] = $Known; 
-    }
+    } 
     if ($field == 'Type' || $field == 'Instruction' ) { // || $field == 'Level') {
       echo 'FORCELOADCHANGE54321:NOW';
     } else if ( $field == 'LinkId' ) {  //|| ($field == 'Name' && strlen($Value) < 2)) {

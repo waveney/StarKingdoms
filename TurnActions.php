@@ -542,11 +542,6 @@ function ColonisationInstuctionsStage2() { // And other Instructions
   return true;
 }
 
-function DeepSpaceConstruction() {
-  echo "Deep Space Construction	is currently Manual<p>";
-  return true;
-}
-
 function StartAnomaly() {
   echo "Anomaly Studies are currently Manual<p>";
   return true;
@@ -662,7 +657,7 @@ function Economy() {
       }
     }
     
-    $EccTxt .= "Total Economy is $EconVal worth " . $EconVal*10;
+    $EccTxt .= "Total Economy is $EconVal worth " . $EconVal*10 . "\n\n";
     Spend_Credit($Fid, -$EconVal*10, "Turn Income");
     TurnLog($Fid,$EccTxt);
     echo "Done Economy for " . $F['Name'] . "<br>";
@@ -1585,7 +1580,7 @@ function Do_Turn() {
       $act = preg_replace('/ /','',$act);
       echo "Would call $act<p>";
       if (!is_callable($act)) {
-        echo "$act not yet written<p>";
+        echo "<class Err>$act not yet written</span><p>";
         break;
       }
       SKLog("Doing " . $Stages[$S]);      
@@ -1632,14 +1627,14 @@ function Do_Turn() {
   }
   
   echo "<table border>";
-  echo "<tr><th>#<td>Mask<td>Automation<td>Stage<th>State<th>Commands\n";
+  echo "<tr><th>#" . (Access('God')?"<td>Mask":"") . "<td>Automation<td>Stage<th>State<th>Commands\n";
   $Stage = 0;
   $Prog = 1;
   $NextStage = -1;
   
   foreach ($Stages as $sta) {
     if ($sta != 'Spare') {
-      echo "<tr><td>$Stage<td>" . dechex($Prog) . "<td>" . $Coded[$Stage] . "<td>" . $sta . "<td>";
+      echo "<tr><td>$Stage<td>" .  (Access('God')?(dechex($Prog) . "<td>"):"") . $Coded[$Stage] . "<td>" . $sta . "<td>";
       
       if ($Sand['Progress'] & $Prog) {
         echo "Completed<td><a href=TurnActions.php?ACTION=Revert&S=$Stage>Revert</a>";
