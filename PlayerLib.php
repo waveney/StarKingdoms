@@ -186,7 +186,7 @@ function Gain_Science($Who,$What,$Amount,$Why) { // Ammount is negative to gain 
     }
   }
   
-  var_dump($Fact);
+//  var_dump($Fact);
   Put_Faction($Fact);
 }
 

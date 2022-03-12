@@ -803,7 +803,7 @@ function AgentsMoveCheck() {
   return true;
 }
 
-function AgentsMovement() {
+function AgentsMovements() {
   ShipMovements(1);
   return true;
 }
@@ -987,32 +987,32 @@ function InstructionsProgress() {
   foreach ($Things as $T) {
     $N = Get_System($T['SystemId']);
     $Tid = $T['id'];
-     switch ($ThingInstrs[$T['Instruction']]) {
-     case 'Colonise':
-       $Prog = Has_Tech($T['Whose'], 'Planetary Construction');
-       $Mods = Get_ModulesType($Tid, 10);
-       $T['Progress'] = min($T['ActionsNeeded'],($T['Progress']+$Prog*$Mods[0]['Number']));
-       Put_Thing($T);
-       break 2;
-     case 'Make Outpost':
-     case 'Make Asteroid Mine':
-     case 'Make Minefield':
-     case 'Make Orbital Repair Yard':
-     case 'Build Space Station':
-     case 'Expand Space Station' :
-     case 'Make Deep Space Sensor':
-     case 'Make Advanced Asteroid Mine':
-     case 'Build Stargate':
-     case 'Make Planet Mine':
-     case 'Construct Command Relay Station':
-     case 'Repair Command Node': // Not coded yet
-       $Prog = Has_Tech($T['Whose'],'Deep Space Construction');
-       $Mods = Get_ModulesType($Tid, 3);
-       $T['Progress'] = min($T['ActionsNeeded'],$T['Progress']+$Prog*$Mods[0]['Number']);
-       Put_Thing($T);
-       break 2;
-     default: 
-       break 2;
+    switch ($ThingInstrs[$T['Instruction']]) {
+      case 'Colonise':
+        $Prog = Has_Tech($T['Whose'], 'Planetary Construction');
+        $Mods = Get_ModulesType($Tid, 10);
+        $T['Progress'] = min($T['ActionsNeeded'],($T['Progress']+$Prog*$Mods[0]['Number']));
+        Put_Thing($T);
+        break;
+      case 'Make Outpost':
+      case 'Make Asteroid Mine':
+      case 'Make Minefield':
+      case 'Make Orbital Repair Yard':
+      case 'Build Space Station':
+      case 'Expand Space Station' :
+      case 'Make Deep Space Sensor':
+      case 'Make Advanced Asteroid Mine':
+      case 'Build Stargate':
+      case 'Make Planet Mine':
+      case 'Construct Command Relay Station':
+      case 'Repair Command Node': // Not coded yet
+        $Prog = Has_Tech($T['Whose'],'Deep Space Construction');
+        $Mods = Get_ModulesType($Tid, 3);
+        $T['Progress'] = min($T['ActionsNeeded'],$T['Progress']+$Prog*$Mods[0]['Number']);
+        Put_Thing($T);
+        break;
+      default: 
+        break;
      }
    }
 

@@ -522,6 +522,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       echo "<br>District to Establish:" . fm_select($PrimeMods,$T,'Dist1');
       if (Get_ModulesType($tid,27)) echo "<br>Second District (must be different):" .fm_select($PrimeMods,$T,'Dist2');
       $ProgShow = 1;
+      $Cost = -1;
       break;
     
     case 'Voluntary Warp Home': // Warp Home
@@ -624,7 +625,11 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
     }
     if ($ProgShow) {
       $T['ActionsNeeded'] = $Acts;
-      $T['InstCost'] = $Cost = $Acts*10;
+      if ($Cost < 0) {
+        $T['InstCost'] = $Cost = 0;
+      } else {
+        $T['InstCost'] = $Cost = $Acts*10;
+      }
       if (Has_Trait($Fid,'Built for Construction and Logistics') && ($Cost>200)) {
         $T['InstCost'] = $Cost = (200+($Cost-200)/2);
       }
@@ -634,7 +639,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       } else {
         echo " Progress " . $T['Progress'] . ' / ' . $T['ActionsNeeded'];
       }
-      if ($Cost && ($T['Progress'] == 0)) echo " - Will cost " . Credit() . fm_number0('',$T,'InstCost') . " this turn";
+      if ($Cost>0 && ($T['Progress'] == 0)) echo " - Will cost " . Credit() . fm_number0('',$T,'InstCost') . " this turn";
       if ($T['Instruction'] != $T['CurInst']) {
         $T['CurInst'] = $T['Instruction'];
         $T['Progress'] = 0;
