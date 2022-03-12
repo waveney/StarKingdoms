@@ -351,7 +351,7 @@ function Show_Thing(&$T,$Force=0) {
         $Ds = Get_DistrictsH($H['id']);
         if (isset($Ds[3])) break 2; // FOund a Shipyard
       }
-      if (isset($N['id']) && Get_Things_Cond($Fid,"Type=" . $TTNames('Orbital Repair Yards') . " AND SystemId=" . $N['id'] . " AND BuildState=3")) break 2; // Orbital Shipyard     
+      if (isset($N['id']) && Get_Things_Cond($Fid,"Type=" . $TTNames['Orbital Repair Yards'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) break 2; // Orbital Shipyard     
       continue 2;
     
     case 'Analyse Anomoly': // Analyse
@@ -359,7 +359,7 @@ function Show_Thing(&$T,$Force=0) {
       
     case 'Establish Embassy': // Establish Embassy
       if (!Get_ModulesType($tid,22)) continue 2;  // Check if have Embassy & at homeworld
-      if (Get_Things_Cond($Fid,"Type=" . $TTNames('Embassy') . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
+      if (Get_Things_Cond($Fid,"Type=" . $TTNames['Embassy'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
       $Facts = Get_Factions();
       foreach ($Facts as $F) {
         if ($F['id'] == $T['Whose'] || $F['HomeWorld'] == 0) continue;
@@ -374,19 +374,20 @@ function Show_Thing(&$T,$Force=0) {
     
     case 'Make Outpost': // Make Outpost
       if ((!$HasDeep && ($N['Control'] != $Fid))) continue 2;
-      if (Get_Things_Cond($Fid,"Type=" . $TTNames('Outpost') . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
+      
+      if (Get_Things_Cond($Fid,"Type=" . $TTNames['Outpost'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
       break;
       
     case 'Make Asteroid Mine':
       if (!$HasDeep || !Has_Tech($Fid,'Asteroid Mining')) continue 2;
-      if (Get_Things_Cond(0,"Type=" . $TTNames('Asteroid Mine') . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
+      if (Get_Things_Cond(0,"Type=" . $TTNames['Asteroid Mine'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
       $Ps = Get_Planets($N['id']);
       foreach ($Ps as $P) if ($P['Type'] == 3) break 2;
       continue 2; // No field 
     
     case 'Make Advanced Asteroid Mine':
       if (!$HasDeep || !Has_Tech($Fid,'Advanced Asteroid Mining')) continue 2;
-      if (Get_Things_Cond(0,"Type=" . $TTNames('Asteroid Mine') . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
+      if (Get_Things_Cond(0,"Type=" . $TTNames['Asteroid Mine'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
       $Ps = Get_Planets($N['id']);
       foreach ($Ps as $P) if ($P['Type'] == 3) break 2;
       continue 2; // No field 
@@ -397,17 +398,17 @@ function Show_Thing(&$T,$Force=0) {
       
     case 'Make Orbital Repair Yard':
       if (!$HasDeep || !Has_Tech($Fid,'Orbital Repair Yards')) continue 2;
-      if (Get_Things_Cond(0,"Type=" . $TTNames('Orbital Repair Yards') . " OR Type=AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
+      if (Get_Things_Cond(0,"Type=" . $TTNames['Orbital Repair Yards'] . " OR Type=AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
       break;
 
     case 'Build Space Station':
       if (!$HasDeep || !Has_Tech($Fid,'Space Stations')) continue 2;
-      if (Get_Things_Cond(0,"Type=" . $TTNames('Space Station') . " OR Type=AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
+      if (Get_Things_Cond(0,"Type=" . $TTNames['Space Station'] . " OR Type=AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
       break;
 
     case 'Expand Space Station':
       if (!$HasDeep || !Has_Tech($Fid,'Space Stations')) continue 2;
-      if (!(Get_Things_Cond($Fid,"Type=" . $TTNames('Space Station') . " AND SystemId=" . $N['id'] . " AND BuildState=3"))) continue 2; // Don't have one
+      if (!(Get_Things_Cond($Fid,"Type=" . $TTNames['Space Station'] . " AND SystemId=" . $N['id'] . " AND BuildState=3"))) continue 2; // Don't have one
       break;
 
     case 'Make Deep Space Sensor':
@@ -420,7 +421,7 @@ function Show_Thing(&$T,$Force=0) {
 
     case 'Make Planet Mine':
       if (!$HasDeep || !Has_Tech($Fid,'Signal Jammer')) continue 2;
-      $PMines = Get_Things_Cond(0,"Type=" . $TTNames('Planet Mine') . " AND SystemId=" . $N['id'] . " AND BuildState=3");
+      $PMines = Get_Things_Cond(0,"Type=" . $TTNames['Planet Mine'] . " AND SystemId=" . $N['id'] . " AND BuildState=3");
       $Ps = Get_Planets($N['id']);
       $idx = $found = 0;
       foreach ($Ps as $P) {
@@ -438,7 +439,7 @@ function Show_Thing(&$T,$Force=0) {
 
     case 'Construct Command Relay Station':
       if (!$HasDeep || !Has_Tech($Fid,'Signal Jammer')) continue 2;   
-      if (Get_Things_Cond(0,"Type=" . $TTNames('Command Relay Station') . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
+      if (Get_Things_Cond(0,"Type=" . $TTNames['Command Relay Station'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
       break;
       
     case 'Repair Command Node': // Not coded yet

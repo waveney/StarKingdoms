@@ -1289,7 +1289,7 @@ function InstructionsComplete() {
        break; // The making homes and worlds in a later stage completes the colonisation I hope
        
      case 'Make Outpost':
-       $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames('Outpost'), 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'],
+       $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Outpost'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'],
               'Name'=>$T['MakeName']];
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
@@ -1303,7 +1303,7 @@ function InstructionsComplete() {
        break;
        
      case 'Make Asteroid Mine':
-       $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames('Asteroid Mine'), 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'],
+       $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Asteroid Mine'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'],
               'Name'=>$T['MakeName']];
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
@@ -1312,7 +1312,7 @@ function InstructionsComplete() {
       break;
 
      case 'Make Minefield':
-       $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames('Minefield'), 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 'Whose'=>$T['Whose'], 
+       $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Minefield'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 'Whose'=>$T['Whose'], 
               'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
@@ -1321,7 +1321,7 @@ function InstructionsComplete() {
        break;
 
      case 'Make Orbital Repair Yards':
-       $NT = ['GameId'=>$GAME['id'], 'Type'=>  $TTNames('Orbital Repair Yards'), 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 
+       $NT = ['GameId'=>$GAME['id'], 'Type'=>  $TTNames['Orbital Repair Yards'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 
               'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
@@ -1330,7 +1330,7 @@ function InstructionsComplete() {
        break;
 
      case 'Build Space Station':
-       $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames('Space Station'), 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 
+       $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Space Station'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 
               'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'MaxDistricts'=>$T['Dist1'], 'Name'=>$T['MakeName']];
        $Sid = Put_Thing($NT);
        $D = ['HostType' =>3, 'HostId'=> $Sid, 'Type'=> $T['Dist2'], 'Number'=>1, 'GameId'=>$GAME['id'], 'TurnStart'=>$GAME['Turn']];
@@ -1343,7 +1343,7 @@ function InstructionsComplete() {
        break;
 
      case 'Expand Space Station' :
-       $SS = Get_Things_Cond($Fid,"Type=" . $TTNames('Space Station') . " OR Type=AND SystemId=" . $T['Systemid'] . " AND BuildState=3");
+       $SS = Get_Things_Cond($Fid,"Type=" . $TTNames['Space Station'] . " OR Type=AND SystemId=" . $T['Systemid'] . " AND BuildState=3");
        if (empty($SS)) {
          TurnLog($Who,"There is not a Space Station here to expand in " . $N['Ref']);
          SKLog("There is not a space station to extend in " . $N['Ref'] . " by " . $Facts[$Who]['Name'],1);
@@ -1355,7 +1355,7 @@ function InstructionsComplete() {
        break;       
      
      case 'Make Deep Space Sensor':
-       $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames('Deep Space Sensor'), 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 
+       $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Deep Space Sensor'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 
               'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
@@ -1364,7 +1364,7 @@ function InstructionsComplete() {
        break;
 
      case 'Make Advanced Asteroid Mine':
-       $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames('Asteroid Mine'), 'Level'=> 2, 'SystemId'=>$T['SystemId'], 
+       $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Asteroid Mine'], 'Level'=> 2, 'SystemId'=>$T['SystemId'], 
               'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
@@ -1376,7 +1376,7 @@ function InstructionsComplete() {
        break;
 
      case 'Make Planet Mine':
-       $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames('Planet Mine'), 'Level'=> 1, 'SystemId'=>$T['SystemId'], 
+       $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Planet Mine'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 
               'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']]; // TODO add withinsysloc
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
@@ -1385,7 +1385,7 @@ function InstructionsComplete() {
        break;
 
      case 'Construct Command Relay Station':
-       $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames('Command Relay Station'), 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 
+       $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Command Relay Station'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 
               'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
@@ -1394,7 +1394,7 @@ function InstructionsComplete() {
        break;
       
      case 'Repair Command Node': // Not coded yet
-       $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames('Beta Node'), 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 
+       $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Beta Node'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 
               'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
        Put_Thing($NT);
        
