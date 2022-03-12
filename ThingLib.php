@@ -649,4 +649,19 @@ function Update_Militia(&$W,&$Dists) {
   }
 }
 
+function Thing_Types_From_Names(&$TTs=0) {
+  if ($TTs == 0) $TTs = Get_ThingTypes();
+  $TTN = [];
+  foreach ($TTs as $TT) $TTN[$TT['Name']] = $TT['id'];
+  return $TTN;
+}
+
+function Mod_Types_From_Names(&$TTs=0) {
+  if ($TTs == 0) $TTs = Get_ModuleTypes();
+  $TTN = [];
+  foreach ($TTs as $TT) $TTN[$TT['Name']] = $TT['id'];
+  return $TTN;
+}
+
+
 ?>
