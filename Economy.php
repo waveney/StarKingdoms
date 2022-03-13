@@ -182,6 +182,13 @@
   $Final =  $FACTION['Credits'] - $Spend + $EconVal*10;
   echo "<h2>Expected End Credits is &#8373;" . ($Final < 0? "<span class=Red>$Final</span>":$Final) .  "</h2>";
   
+  if ($FACTION['PhysicsSP'] >0 || $FACTION['EngineeringSP'] > 0 || $FACTION['XenologySP'] > 0 ) {
+    echo "<h2>You also have these Science points</h2>";
+    if ($FACTION['PhysicsSP']) echo "Physics Science Points: " . $FACTION['PhysicsSP'] . "<br>";
+    if ($FACTION['EngineeringSP']) echo "Engineering Science Points: " . $FACTION['EngineeringSP'] . "<br>";
+    if ($FACTION['XenologySP']) echo "Xenology Science Points: " . $FACTION['XenologySP'] . "<br>";
+  }
+  
   dotail();
   
 ?>

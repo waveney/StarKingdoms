@@ -258,11 +258,12 @@ exit;
 
 // var_dump($Homes);exit;
   
-  $PlanCon = Has_Tech($Fid,3);
+  $BPlanCon = Has_Tech($Fid,3);
   $PHx = 1;
   $Dis = [];
   $FirstHome = 0;
   foreach ($Homes as &$H) {
+    $PlanCon = $BPlanCon;
     $Hi = $H['id'];
     switch ($H['ThingType']) {
     case 1: // Planet
@@ -283,6 +284,7 @@ exit;
       break;
     }
     
+    if ($PH['Type'] != $Faction['Biosphere']) $PlanCon--;
     //TODO Construction and Districts... 
 
     $Dists[] = ['HostType'=>-1, 'HostId' => $PH['id'], 'Type'=> -1, 'Number'=>0, 'id'=>-$PH['id']];
@@ -295,7 +297,7 @@ exit;
 
       
       if ($D['Type'] > 0 && (($DistTypes[$D['Type']]['Props'] &2) == 0)) continue;
-      if ($D['Type'] < 0 && $PH['Type'] != $Faction['Biosphere'] && $PlanCon<2 ) continue;
+      if ($D['Type'] < 0 && $PlanCon<2 ) continue;
       $Di = $D['id'];
       $Hide = ($Hi == $OpenHi && $Di == $OpenDi? "" : "hidden");
       $Headline2[] = "<th class='PHStart Group$Di Home$Hi' id=PHDist$Hi:$Di $back $Hide><b>+</b>" .
