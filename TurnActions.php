@@ -56,9 +56,9 @@ function CheckTurnsReady() {
     }
   }
   echo "</table></div>\n";
-  if ($AllOK) return true;
+  if ($AllOK) return 1;
   echo "To proceed you must mark them as submitted<p>\n";
-  return false;
+  return 0;
 
 }
 
@@ -76,7 +76,9 @@ function StartTurnProcess() {
   if (!file_exists("Turns/$GAMEID/" . $GAME['Turn'])) {
     $LF = mkdir("Turns/$GAMEID/" . $GAME['Turn'],0777,true);
   }
-  return true;
+  
+  echo "Started Turn Processing<p>";
+  return 1;
 }
 
 function SaveAllLocations() {  
@@ -88,8 +90,9 @@ function SaveAllLocations() {
     $S = ['ThingId'=>$T['id'], 'SystemId'=>$T['SystemId'], 'Turn' => $GAME['Turn'],'BuildState'=> $T['BuildState'], 'CurHealth'=>$T['CurHealth'], 'Game'=>$GAMEID];
     Insert_db('LocationSave',$S);
   }
-  
-  return true;
+
+  echo "Saved all Location data<p>";  
+  return 1;
 }
 
 function CashTransfers() {
@@ -123,17 +126,17 @@ function CashTransfers() {
   }
   
   echo "All Cash trasfered complete.<br>\n";
-  return true;
+  return 1;
 }
 
 function PayForStargates() {
   echo "Pay For Stargates are currently Manual<p>";
-  return true;
+  return 1;
 }
 
 function ScientificBreakthroughs() {
   echo "Scientific Breakthroughs is currently Manual<p>";
-  return true;
+  return 1;
 
 }
 
@@ -259,7 +262,7 @@ function StartProjects() {
     }
     Put_Project($P);
   }
-  return true;  
+  return 1;  
 }
 
 /*
@@ -539,17 +542,17 @@ function ColonisationInstuctionsStage2() { // And other Instructions
     break;
     }
   }
-  return true;
+  return 1;
 }
 
 function StartAnomaly() {
   echo "Anomaly Studies are currently Manual<p>";
-  return true;
+  return 1;
 }
 
 function AgentsStartMissions() {
   echo "Agents Start Missions	are currently Manual<p>";
-  return true;
+  return 1;
 }
 
 function Economy() {
@@ -641,7 +644,7 @@ function Economy() {
       if (empty($T['Type'])) continue;
       $Props = $TTypes[$T['Type']]['Properties'];
       if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
-        if ($Props & THING_CAN_BETRANSPORTED) $Logistics[1] += $T['Level'];
+        if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $T['Level'];
         if ($Props & THING_HAS_GADGETS) $Logistics[2] += $T['Level'];
         if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $T['Level'];
       };
@@ -667,12 +670,12 @@ function Economy() {
     echo "Done Economy for " . $F['Name'] . "<br>";
     
   }
-  return true;
+  return 1;
 }
 
 function LoadTroops() {
   echo "Load Troops	is currently Manual<p>";
-  return true;
+  return 1;
 }
 
 function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
@@ -736,7 +739,7 @@ function ShipMovements($Agents=0) {
     }
     
     if ($T['LinkId'] && $T['NewSystemId'] != $T['SystemId'] ) {
-echo "Moving " . $T['Name'] . "<br>";
+      echo "Moving " . $T['Name'] . "<br>";
 
       $Lid = $T['LinkId']; 
 
@@ -794,17 +797,17 @@ echo "Moving " . $T['Name'] . "<br>";
     }        
     
   }
-  return true;
+  return 1;
 }
 
 function AgentsMoveCheck() {
   ShipMoveCheck(1);
-  return true;
+  return 1;
 }
 
 function AgentsMovements() {
   ShipMovements(1);
-  return true;
+  return 1;
 }
 
 function Meetups() {
@@ -816,22 +819,22 @@ function Meetups() {
   $_REQUEST['TurnP'] = 1; // Makes Meetings think its part of turn processing
   include_once("Meetings.php");
 
-  return true;
+  return 1;
 }
 
 function SpaceCombat() {
   echo "Space Combat is currently Manual<p>";
-  return true;
+  return 1;
 }
 
 function OrbitalBombardment() {
   echo "Orbital Bombardment is currently Manual<p>";
-  return true;
+  return 1;
 }
 
 function GroundCombat() {
   echo "Ground Combat is currently Manual<p>";
-  return true;
+  return 1;
 }
 
 
@@ -840,7 +843,7 @@ function DevastationSelection() {
   $_REQUEST['CONFLICT'] = 1; // Makes WorldList think its part of turn processing
   include_once("WorldList.php");
 //  echo "Devastation Selectionis currently Manual<p>";
-  return true;
+  return 1;
 
 }
 
@@ -874,7 +877,7 @@ function Devastation() {
 // Look for Militia to recover
 
   echo "Devastation is Complete<p>";
-  return true;
+  return 1;
 
 }
 
@@ -974,7 +977,7 @@ function ProjectProgress() {
     Put_Project($P); // Note completeion is handled later in the turn sequence
   }
   
-  return true;
+  return 1;
 }
 
 function InstructionsProgress() {
@@ -1019,17 +1022,17 @@ function InstructionsProgress() {
      }
    }
 
-  return true;
+  return 1;
 }
 
 function EspionageMissionsComplete() {
   echo "Espionage Missions Complete	is currently Manual<p>";
-  return true;
+  return 1;
 }
 
 function CounterEspionage() {
   echo "Counter Espionage is currently Manual<p>";
-  return true;
+  return 1;
 }
 
 function FinishShakedowns() {
@@ -1044,7 +1047,7 @@ function FinishShakedowns() {
   }
   
   echo "Shakdowns finished<br>";
-  return true;
+  return 1;
 }
 
 
@@ -1254,7 +1257,7 @@ function ProjectsComplete() {
     }
   }
   
-  return true;
+  return 1;
 }
 
 function InstructionsComplete() {
@@ -1420,7 +1423,7 @@ function InstructionsComplete() {
      Put_Thing($T);   
    }
 
-  return true;
+  return 1;
 }
 
 function CheckSurveyReports() {
@@ -1459,7 +1462,7 @@ function CheckSurveyReports() {
     echo "<h2><a href=TurnActions.php?ACTION=StageDone&S=56>When Happy click here</a></h2>";
     dotail();
   }
-  return true;
+  return 1;
 }
 
 
@@ -1491,17 +1494,17 @@ function GiveSurveyReports() {
 
 
 //  echo "Give Survey Reports is currently Manual<p>";
-  return true;
+  return 1;
 }
 
 function MilitiaArmyRecovery() {
   echo "Militia Recovery is currently Manual<p>";
-  return true;
+  return 1;
 }
 
 function GenerateTurns() {
   echo "Generate Turns is currently Manual<p>";
-  return true;
+  return 1;
 }
 
 function TidyUpMovements() {
@@ -1510,14 +1513,14 @@ function TidyUpMovements() {
   $res = $db->query("UPDATE Things SET LinkId=0 WHERE LinkId>0 AND GameId=$GAMEID"); 
   
   echo "Movements Tidied Up<p>";  
-  return true;
+  return 1;
 }
 
 function RecalcProjectHomes() {
   include_once("HomesLib.php");
   Recalc_Project_Homes('SKLog'); // in ThingLib - this is to add new project homes that have been created by colonisation etc.
   Recalc_Worlds();
-  return true;
+  return 1;
 }
 
 function FinishTurnProcess() {
@@ -1540,7 +1543,7 @@ function FinishTurnProcess() {
   
 
   // TODO Send messages to discord ??
-  return true;
+  return 1;
 }
 
 function Do_Turn() {
@@ -1591,7 +1594,9 @@ function Do_Turn() {
       $Result = $act(); 
       if ($Result) {
         $Sand['Progress'] |= 1<<$S;
-        if ($Result == 2) $Sand['Progress'] |= 2<<$S;
+        if ($Result > 1) {
+          $Sand['Progress'] |= 2<<$S;
+        }
       } else {
         echo "Processing cancelled<p>\n";
       }
