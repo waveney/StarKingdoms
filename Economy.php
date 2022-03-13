@@ -30,7 +30,7 @@
 
   echo "<P>";
   
-  $Projects =  Get_Projects_Cond(" FactionId=$Fid AND TurnStart=" . $GAME['Turn'] . " AND Costs!=0");
+  $Projects =  Get_Projects_Cond(" FactionId=$Fid AND TurnStart=" . $GAME['Turn'] . " AND Costs!=0 AND Status=0");
   
   foreach($Projects as $P) {
     $Spend += $P['Costs'];

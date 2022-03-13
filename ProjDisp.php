@@ -10,10 +10,9 @@
   include_once("ProjLib.php");
   
   global $FACTION;
-/*  
-var_dump($_REQUEST);
-exit;
-*/
+ 
+// var_dump($_REQUEST);
+
   $HomeColours = ['#ff99ff', '#ccffff', '#ccffcc', '#ffffcc', '#ffcccc', '#e6ccff', '#cce6ff', '#ffd9b3', '#ecc6c6', '#ecc6d6', '#d6b3ff', '#d1e0e0', '#d6ff99' ];
   
   $Fid = 0;
@@ -46,7 +45,7 @@ exit;
   $OpenHi = $OpenDi = -99;
   
   if (isset($_REQUEST['ACTION'])) {
-    switch ($_REQUEST['ACTION']) {
+    switch ($_REQUEST['ACTION']) {  // TODO This code is DREADFUL needs redoing
       case 'NEW': 
         $Ptype = $_REQUEST['p'];
         $Turn = $_REQUEST['t'];
@@ -173,7 +172,7 @@ exit;
               $Name = "Re-equip and Reinforce " . $T1['Name'];
             }
           } else {
-            $TthingId =$Sels[0];
+            $TthingId = $Sels[0];
             $TthingId2 = $Sels[1];
             $T1 = Get_Thing($TthingId);
             $T2 = Get_Thing($TthingId2);
@@ -188,7 +187,7 @@ exit;
           $Costs = $pc[1];
           $ProgN = $pc[0];                    
         } else {
-          $Sel = $_REQUEST['Sel'];
+          if (isset($_REQUEST['Sel'])) $Sel = $_REQUEST['Sel'];
           $Level = $_REQUEST['L'];
           $Costs = $_REQUEST['C'];
           $ProgN = $_REQUEST['PN'];

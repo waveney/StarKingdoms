@@ -221,7 +221,11 @@
       $FactTechs = Get_Faction_Techs($Fid, $Turn);
       $CTs = Get_CoreTechsByName();
       foreach ($CTs as $TT) {
-        $Lvl = $FactTechs[$TT['id']]['Level']+1;
+        if (isset($FactTechs[$TT['id']]['Level'])) {
+          $Lvl = $FactTechs[$TT['id']]['Level']+1;
+        } else {
+          $Lvl = 1;
+        }
         $pc = Proj_Costs($Lvl);
         echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=5&t=$Turn&Hi=$Hi&Di=$Di&Sel=" . $TT['id'] .
                 "&Name=" . base64_encode("Research " . $TT['Name'] . " $Lvl$Place"). "&L=$Lvl&C=" . $pc[1] . "&PN=" . $pc[0] ."'>" .      
@@ -295,6 +299,44 @@
     
     
     
+      echo "<h2>Research Ship Construction</h2><p>";
+        $OldPc = Has_Tech($Fid,7);
+        $Lvl = $OldPc+1;
+        $pc = Proj_Costs($Lvl);
+        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=13&t=$Turn&Hi=$Hi&Di=$Di&Sel=7" .
+                "&Name=" . base64_encode("Research Ship Construction $Lvl$Place"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .  
+                "Research Ship Construction $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
+    
+      $Rbuts = [];
+      $FactTechs = Get_Faction_Techs($Fid, $Turn);
+      $Techs = Get_TechsByCore($Fid);
+      foreach ($Techs as $T) {
+        if ($T['Cat'] == 0 || isset($FactTechs[$T['id']]) ) continue;
+        if (!isset($FactTechs[$T['PreReqTech']])) continue;
+        if ($T['PreReqTech']!=7) continue;
+        if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
+
+        $Lvl = $T['PreReqLevel'];
+        $pc = Proj_Costs($Lvl);
+        $Rbuts[] = "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=14&t=$Turn&Hi=$Hi&Di=$Di&Sel=" . $T['id'] .
+                "&Name=" . base64_encode("Research " . $T['Name'] . $Place) . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
+                "Research " . $T['Name'] . "; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+      }
+   
+      if ($Rbuts) {
+        echo "<h2>Research Supplimental Ship Technology</h2>";
+        foreach ($Rbuts as $rb) echo $rb;
+      }
+
+      if (Has_Trait($Fid,'Grow Modules')) {
+        echo "<h2>Grow Modules</h2>";    
+        $Grow = Has_Tech($Fid,'Ship Construction');
+        $pc = Proj_Costs(1);
+        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=31&t=$Turn&Hi=$Hi&Di=$Di" .
+                "&Name=" . base64_encode("Grow $Grow Modules" . $Place) . "&L=1&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
+                "Grow $Grow Modules " . "; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+      }
+
       echo "<h2>Refit and Repair</h2>";
 
       echo "You can only do this to ships at the same planet.<p>";
@@ -337,35 +379,6 @@
       } else {
         echo "No ships are currently near the yard<p>";
       }
-
-      echo "<h2>Research Ship Construction</h2><p>";
-        $OldPc = Has_Tech($Fid,7);
-        $Lvl = $OldPc+1;
-        $pc = Proj_Costs($Lvl);
-        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=13&t=$Turn&Hi=$Hi&Di=$Di&Sel=7" .
-                "&Name=" . base64_encode("Research Ship Construction $Lvl$Place"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .  
-                "Research Ship Construction $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
-    
-      $Rbuts = [];
-      $FactTechs = Get_Faction_Techs($Fid, $Turn);
-      $Techs = Get_TechsByCore($Fid);
-      foreach ($Techs as $T) {
-        if ($T['Cat'] == 0 || isset($FactTechs[$T['id']]) ) continue;
-        if (!isset($FactTechs[$T['PreReqTech']])) continue;
-        if ($T['PreReqTech']!=7) continue;
-        if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
-
-        $Lvl = $T['PreReqLevel'];
-        $pc = Proj_Costs($Lvl);
-        $Rbuts[] = "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=14&t=$Turn&Hi=$Hi&Di=$Di&Sel=" . $T['id'] .
-                "&Name=" . base64_encode("Research " . $T['Name'] . $Place) . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Research " . $T['Name'] . "; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
-      }
-   
-     if ($Rbuts) {
-       echo "<h2>Research Supplimental Ship Technology</h2>";
-       foreach ($Rbuts as $rb) echo $rb;
-     }
 
       break;
       
