@@ -112,7 +112,9 @@
 // var_dump($ThingTypeNames);exit;  
   echo "<h1>Plan a Thing</h1>";
   echo "This is to design or modify a ship/army/agent etc to later build if you want to.";
-  
+
+  if (Access('GM')) echo "<h2><a href=ThingEdit.php?id=$Tid>GM: Thing Editing</a></h2>\n";
+
   if ($Exist == 0) {
     echo "<form method=post action=ThingPlan.php?ACTION=COPY>";
     echo fm_hidden('id',$Tid) . fm_hidden('F',$Fid);

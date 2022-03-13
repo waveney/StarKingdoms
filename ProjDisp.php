@@ -96,7 +96,7 @@
             $T1 = Get_Thing($TthingId);
             $Name = "Refit and Repair " . $T1['Name'];
           }
-          $pc = Proj_Costs(1);          
+          $pc = Proj_Costs(1);
           $Costs = $pc[1];
           $ProgN = $pc[0];          
         } else if ($Ptype == '11b') {
@@ -296,7 +296,7 @@
 
       
       if ($D['Type'] > 0 && (($DistTypes[$D['Type']]['Props'] &2) == 0)) continue;
-      if ($D['Type'] < 0 && $PlanCon<2 ) continue;
+      if ($D['Type'] < 0 && $PlanCon<1 ) continue;
       $Di = $D['id'];
       $Hide = ($Hi == $OpenHi && $Di == $OpenDi? "" : "hidden");
       $Headline2[] = "<th class='PHStart Group$Di Home$Hi' id=PHDist$Hi:$Di $back $Hide><b>+</b>" .

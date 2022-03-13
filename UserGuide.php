@@ -16,7 +16,7 @@ Players don't need to login.  Once you have followed your faction's link a sessi
 
 There is far more than I describe here, but this is what you can do now/near term.<p>
 
-Anywhere there is a table, you can click on a column to stop by that column.  Click again tosort the other way.<p>
+Anywhere there is a table, you can click on a column to sort by that column.  Click again to sort the other way.<p>
 
 <h2>Player States</h2>
 There are four states:
@@ -24,7 +24,7 @@ There are four states:
 <li>Setup - what it says.  Not yet written
 <li>Turn Planning - Do and see everything
 <li>Turn Submitted - You think you are ready.  Players can't change anything in this state, but you can revert to Turn Planning.
-<li>Turn Being Processed - GM's lockdown. Most features not accessible.
+<li>Turn Being Processed - GM's lockdown.  Most features not accessible.
 </ul>
 
 <h2>Maps</h2>
@@ -35,7 +35,7 @@ Click on a system to get a survey report.  If you have something there with eyes
 Note in this game we have link numbers with universal meaning, likewise for systems. I had planned to make it unknown until you travelled along/to them.<p>
 
 <h2>Technologies</h2>
-List of all the built in technologies and their prerequisits.<p>
+List of all the built in technologies and their pre-requisits.<p>
 
 Click on the name to expand the full explanation.<p>
 
@@ -53,7 +53,15 @@ You can name your worlds and add a text description.<p>
 
 The Relative importance controls the order of display in the project list below (or will do).<P>
 
-<h2>Worlds and Things with projects</h2>
+<h2>Name Places</h2>
+Name systems, planets and moons you have visited.<p>
+
+Give the System Reference, the current names of Planets/moons to identify the one you want to change.  Then give the name.<p>
+
+If you control the system they are public names, otherwise they only appear to you.<p>
+
+
+<h2>Worlds and Things with Projects</h2>
 To manage construction, and district based projects. <p>
 
 You can switch between seeing 10 turns and 50+ turns - click on the right.<p>
@@ -90,12 +98,16 @@ Some actions ask supplimentary questions such as the district type to make on co
 Design a Ship/Army/Agent/Space station etc.  You can design illegal things, you just won't be able to make them.<p>
 
 <h2>Economy</h2>
-Player interface to this is not written yet<P>
+Current credits and this turns expenditure and expected income.<p>
+
+This also shows any science points and Adianite you have.<p>
 
 <h2>Banking</h2>
 Transfer credits to another player or for RP actions.  You can do one off transfers and standing orders - No direct debits.<p>
 
 You can also see all credits in and out for as far back as you want to.<p>
+
+Adianite is also tradeable (if you have any).<p>
 
 <h2>Turn Actions Text</h2>
 Access to automatically generated text for all turns covereying everything done automatically by the system. to see back to previous turns click appropriate turn top right.<p>
@@ -124,7 +136,7 @@ It is hypothetically possible for a player in one game to be a GM in another (no
 Most User Guide to be written for this<p>
 
 <h1>Technical bits - if you are interested</h1>
-Mostly written in php (16K lines), some javascript (1300 lines), some css.  About 42 tables at time of writting of this paragraph.<p>
+Mostly written in php (17K lines), some javascript (1600 lines), some css.  About 43 tables at time of writting of this paragraph.<p>
 
 Graphics by GraphViz.<p>
 Uses the star system generator at <a href=https://donjon.bin.sh/scifi/system/index.cgi>https://donjon.bin.sh/scifi/system/index.cgi</a> to initially populate the map.<p>
