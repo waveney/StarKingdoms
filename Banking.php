@@ -17,6 +17,11 @@
 
   $Factions = Get_Factions();
   $Facts = Get_FactionFactions($Fid);
+  
+  AddCurrencies();
+  $Trade = TradeableCurrencies();
+
+//  var_dump($_REQUEST);
 
   $Turn = $GAME['Turn'];
   $LookBack = 2;
@@ -50,18 +55,30 @@
         dostaffhead("Banking");
         $B = ['FactionId'=>$Fid, 'Recipient'=>$_REQUEST['Recipient'], 'Amount'=>$_REQUEST['Amount'], 
                     'StartTurn'=> $_REQUEST['StartTurn'], 'EndTurn' => (empty( $_REQUEST['EndTurn'])? $_REQUEST['StartTurn'] : $_REQUEST['EndTurn']), 
-                    'YourRef' => $_REQUEST['YourRef']];
+                    'YourRef' => $_REQUEST['YourRef'], 'What'=>(isset($_REQUEST['What'])?$_REQUEST['What']:0)];
         if (empty($BankRec['YourRef'])) $BankRec['YourRef'] = "Unspecified";
         
-        if (Spend_Credit($Fid,$B['Amount'],$B['YourRef'])) {
-          echo "<h2>Transfered  &#8373;" . $B['Amount'] . " for " . $B['YourRef'] . " to " . $Factions[$B['Recipient']]['Name'] . "</h2>";
-          if ($B['Recipient'] > 0) {
-            Spend_Credit($B['Recipient'], - $B['Amount'],$B['YourRef']);
+
+        if (empty($_REQUEST['What'])) {
+          if (Spend_Credit($Fid,$B['Amount'],$B['YourRef'])) {
+            echo "<h2>Transfered  &#8373;" . $B['Amount'] . " for " . $B['YourRef'] . " to " . $Factions[$B['Recipient']]['Name'] . "</h2>";
+            if ($B['Recipient'] > 0) {
+              Spend_Credit($B['Recipient'], - $B['Amount'],$B['YourRef']);
+            }
+          } else {
+            echo "<h2 class=Err>Transfer failed you only have&#8373;" . $Factions[$Fid]['Credits'] . "</h2>\n";
           }
-        } else {
-          echo "<h2 class=Err>Transfer failed you only have&#8373;" . $Factions[$Fid]['Credits'] . "</h2>\n";
+          break;
+        } else { // Not Credits
+          if (Gain_Currency($Fid,$B['What'],-$B['Amount'],$B['YourRef'])) {
+           echo "<h2>Transfered " . $B['Amount'] . " of " . $Currencies[$B['What']] . " for " . $B['YourRef'] . " to " . $Factions[$B['Recipient']]['Name'] . "</h2>";
+            if ($B['Recipient'] > 0) {
+              Gain_Currency($B['Recipient'], $B['What'], $B['Amount'],$B['YourRef']);
+            }
+          } else {
+            echo "<h2 class=Err>Transfer failed you don't have " . $B['Amount'] . ' of ' . $Currencies[$B['What']]. "</h2>\n";
+          }
         }
-        break;
     }
   } else {
 
@@ -110,22 +127,29 @@
   echo "<thead><tr><td class=CLTurn>Turn<td class=CLCredit>Start<td class=CLCredit>Credit<td class=CLCredit>Debit<td class=CLCredit>end<td class=CLWhat>What</thead>\n<tbody>";
   foreach ($Creds as $C) echo "<tr><td class=CLTurn>" . $C['Turn'] . "<td class=CLCredit>" . $C['StartCredits'] . "<td class=CLCredit>" . 
                        ($C['Amount']<0 ? -$C['Amount'] . "<td class=CLCredit>" : "<td class=CLCredit>" . $C['Amount']) . 
-                      "<td class=CLCredit>" . $C['EndCredits'] . "<td class=CLWhat>" . $C['What'] . "\n";
+                      "<td class=CLCredit>" . $C['EndCredits'] . "<td class=CLWhat>" . $C['YourRef'] . "\n";
   echo "</tbody></table></div>\n";
   
    
   
   echo "<h2>Bank transfers for this turn:</h2>\n";
   $Banks = Get_BankingFT($Fid,$Turn);
+  
+  // Look for other currencies
+  
+  $OtherC = 0;
+  foreach ($Banks as $B) if ($B['What']>0) $OtherC=1;
 
 //var_dump($Banks);
 
   if ($Banks) {
     if ($Turn >= $GAME['Turn']) echo "Cancel will stop the transfer.  To edit it click Your Reference.<br>";
-    echo "<table border><tr><td>Recipient<td>Amount<td>Your Reference<td>Start Turn<td>Last Turn\n";
+    echo "<table border><tr><td>Recipient<td>" . ($OtherC? "What<td>" : "") . "Amount<td>Your Reference<td>Start Turn<td>Last Turn\n";
     if ($Turn >= $GAME['Turn']) echo "<td>Actions\n";
     foreach ($Banks as $B) {
-      echo "<tr><td>" . $FactList[$B['Recipient']] . "<td>" . $B['Amount'] ;
+      echo "<tr><td>" . $FactList[$B['Recipient']];
+      if ($OtherC) echo "<td>" . $Currencies[$B['What']];
+      echo "<td>" . $B['Amount'] ;
       echo "<td><a href=BankEdit.php?id=" . $B['id'] . ">" . $B['YourRef'] . "</a>";
       echo "<td>" . $B['StartTurn'];
       echo "<td>" . ($B['EndTurn']? $B['EndTurn']: $B['StartTurn']);
@@ -139,12 +163,22 @@
   }
   echo "</form>";
   
+  $Currens = [];
+  $CCount = 0;
+  foreach ($Currencies as $idx=>$CName) {
+    if ($GM || ( $Trade[$idx] && $Factions[$Fid]["Currency" . ($idx-4)])) {
+      $Currens[$idx] = $CName;
+      $CCount++;
+    }
+  }
+  
   if (empty($_REQUEST['StartTurn'])) $_REQUEST['StartTurn'] = $Turn;
   echo "<form method=post action=Banking.php>\n";
   echo "<h2>Setup One Off Transfer</h2>";
   echo "<table border>";
   echo fm_hidden('StartTurn',$GAME['Turn']);
   echo "<tr><td>To:<td>" . fm_select($FactList,$_REQUEST,'Recipient') . "<td>Select <b>Other</b> for RP actions";
+  if ($CCount>1) echo "<tr>" . fm_radio('Currency',$Currens,$_REQUEST,'What');
   echo "<tr>" . fm_number('Amount',$_REQUEST,'Amount');
   echo "<tr>" . fm_text('Your Reference',$_REQUEST,'YourRef') . "<td>Will be seen by both parties";
   echo "<tr><td><td><input type=submit name=ACTION value='Transfer Now'>\n";
@@ -155,7 +189,7 @@
   echo "<h2>Setup Ongoing or Future Transfer</h2>";
   echo "<table border>";
   echo "<tr><td>To:<td>" . fm_select($FactList,$_REQUEST,'Recipient') . "<td>Select <b>Other</b> for RP actions";
-  if ($GM) echo "<tr>" . fm_radio('Currency',$Currencies,$_REQUEST,'What');
+  if ($CCount>1) echo "<tr>" . fm_radio('Currency',$Currens,$_REQUEST,'What');
   echo "<tr>" . fm_number('Amount',$_REQUEST,'Amount');
   echo "<tr>" . fm_number('Start Turn', $_REQUEST,'StartTurn'); 
   echo "<tr>" . fm_number('Last Turn', $_REQUEST,'EndTurn') . "<td>Leave blank for a one off payment";

@@ -24,6 +24,22 @@ function CheckFaction($Prog='Player',$Fid=0) {
     }
 }
 
+function AddCurrencies() {
+  global $Currencies;
+  if ($Nam = GameFeature('Currency1')) $Currencies[5] = $Nam;
+  if ($Nam = GameFeature('Currency2')) $Currencies[6] = $Nam;
+  if ($Nam = GameFeature('Currency3')) $Currencies[7] = $Nam;
+  return $Currencies;
+}
+
+function TradeableCurrencies() {
+  global $Currencies;
+  $Trade = [1,0,0,0,0];
+  if (GameFeature('TradeCurrency1')) $Trade[5] = 1;
+  if (GameFeature('TradeCurrency2')) $Trade[6] = 1;
+  if (GameFeature('TradeCurrency3')) $Trade[7] = 1;
+  return $Trade;
+}
 
 function FactionFeature($Name,$default='') {  // Return value of feature if set from GAMESYS
   static $Features;
@@ -142,7 +158,7 @@ function Spend_Credit($Who,$Amount,$Why) { // Ammount is negative to gain credit
   global $GAME;
   $Fact = Get_Faction($Who);
   $StartC = $Fact['Credits'];
-  $CR = ['Whose'=>$Who, 'StartCredits'=>$StartC, 'Amount'=>$Amount, 'What'=>$Why, 'Turn'=>$GAME['Turn']];
+  $CR = ['Whose'=>$Who, 'StartCredits'=>$StartC, 'Amount'=>$Amount, 'YourRef'=>$Why, 'Turn'=>$GAME['Turn']];
   if ($StartC-$Amount < 0) {
     $CR['Status'] = 0;
     Put_CreditLog($CR);
@@ -188,6 +204,17 @@ function Gain_Science($Who,$What,$Amount,$Why) { // Ammount is negative to gain 
   
 //  var_dump($Fact);
   Put_Faction($Fact);
+}
+
+function Gain_Currency($Who,$What,$Amount,$Why) { // Ammount is negative to gain 
+  if ($What <=4) return 0; // Should be handled by spend_credit and Gain Science TODO generalise in long term
+  global $GAME,$Currencies;
+  $Fact = Get_Faction($Who);
+  $CNum = $What-4;
+  if ($CNum > 3) { echo "INVALID CURRENCY!!!"; exit; }
+  $Fact["Currency$CNum"] += $Amount;
+  Put_Faction($Fact);
+  return 1;
 }
 
 function Link_Cost($Fid,$LinkLevel,$ShipLevel) {

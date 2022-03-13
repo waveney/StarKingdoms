@@ -63,11 +63,17 @@ function Show_Faction(&$F,$Mode) {
     echo "<td>" . fm_checkbox("NPC",$F,'NPC');
     echo "<tr>" . fm_number('Credits',$F,'Credits') . fm_number('Physics Points', $F,'PhysicsSP');
     echo "<tr>" . fm_number('Engineering Points', $F,'EngineeringSP') . fm_number('Xenology Points', $F,'XenologySP');
+    if ($Nam = GameFeature('Currency1')) echo "<tr>" . fm_number($Nam, $F,'Currency1');
+    if ($Nam = GameFeature('Currency2')) echo "<tr>" . fm_number($Nam, $F,'Currency2');
+    if ($Nam = GameFeature('Currency3')) echo "<tr>" . fm_number($Nam, $F,'Currency3');
   } else {
     echo "<tr><td>Credits:<td>" . $F['Credits'];
     echo "<tr><td>Physics Points<td>" . $F['PhysicsSP'];
     echo "<tr><td>Engineering Points<td>" . $F['EngineeringSP'];
     echo "<tr><td>Xenology Points<td>" . $F['XenologySP'];
+    if ($Nam = GameFeature('Currency1')) echo "<tr><td>$Nam:<td>" . $F['Currency1'];
+    if ($Nam = GameFeature('Currency2')) echo "<tr><td>$Nam:<td>" . $F['Currency2'];
+    if ($Nam = GameFeature('Currency3')) echo "<tr><td>$Nam:<td>" . $F['Currency3'];
   }  
   echo "<tr>" . fm_text('Adjective Name',$F,'Adjective',2) . "<td>To refer to your ships etc rather than your faction name - optional";
   echo "<tr>" . fm_text("Trait 1 Name",$F,'Trait1',1,'',$ReadOnly). "<td>Short name that is unique";

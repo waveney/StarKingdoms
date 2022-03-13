@@ -87,7 +87,10 @@
     $OutPosts = $AstMines = $AstVal = $Embassies = $OtherEmbs = 0;
     foreach ($Worlds as $W) {
       $H = Get_ProjectHome($W['Home']);
+      if (!$H) continue;
       $PH = Project_Home_Thing($H);
+      if (!$PH) continue;
+      
       $Name = $PH['Name'];
       $ECon = $H['Economy'] = Recalc_Economic_Rating($H,$W,$Fid);
       
@@ -188,6 +191,9 @@
     if ($FACTION['EngineeringSP']) echo "Engineering Science Points: " . $FACTION['EngineeringSP'] . "<br>";
     if ($FACTION['XenologySP']) echo "Xenology Science Points: " . $FACTION['XenologySP'] . "<br>";
   }
+  if (($Nam = Feature('Currency1')) && $FACTION['Currency1']) echo "$Nam: " . $FACTION['Currency1'] . "<br>";
+  if (($Nam = Feature('Currency2')) && $FACTION['Currency2']) echo "$Nam: " . $FACTION['Currency2'] . "<br>";
+  if (($Nam = Feature('Currency3')) && $FACTION['Currency3']) echo "$Nam: " . $FACTION['Currency3'] . "<br>";
   
   dotail();
   

@@ -11,16 +11,22 @@
 
   $Factions = Get_Factions();
   $Facts = Get_Faction_Names();
+  AddCurrencies();
+  $Trade = TradeableCurrencies();
     
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
     case 'Pay Now' :
-      if ($_REQUEST['What'] == 0) {
+      $What = $_REQUEST['What'];
+      if ($What == 0) {
         Spend_Credit($_REQUEST['F'],- $_REQUEST['C'],$_REQUEST['R']);
         echo "<h1>" . $Facts[$_REQUEST['F']] . " has been paid " . $_REQUEST['C'] . "</h1>";
-      } else {
-        Gain_Science($_REQUEST['F'],$_REQUEST['What'], $_REQUEST['C'],$_REQUEST['R']);
+      } else if ($What <5) {
+        Gain_Science($_REQUEST['F'],$What, $_REQUEST['C'],$_REQUEST['R']);
         echo  "<h1>" . $Facts[$_REQUEST['F']] . " have gained " . $_REQUEST['C'] . " Science Points</h1>";
+      } else { // Extra currencies
+        Gain_Currency($_REQUEST['F'],$What, $_REQUEST['C'],$_REQUEST['R']);
+        echo  "<h1>" . $Facts[$_REQUEST['F']] . " have gained " . $_REQUEST['C'] . " " . $Currencies[$What] . "</h1>";  
       }
       break;
       
@@ -39,6 +45,7 @@
       break;
     }
   }
+
   
   if (!isset($_REQUEST['What'])) $_REQUEST['What'] = 0;
   echo "<h1>Pay a Faction directly</h1>";

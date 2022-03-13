@@ -247,7 +247,7 @@
    
     echo "<h2>Share Technology</h2>";
 //      echo "This is manual at present. Please put this in your turn orders<p>";
-  echo "</form>";  
+      echo "</form>";  
       echo "<form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=7&t=$Turn&Hi=$Hi&Di=$Di'>";
 
       $Shares = [];
@@ -286,8 +286,8 @@
       echo "</form><p>"; 
       
     
-    echo "<h2>Decipher Alien Language</h2>"; 
-    echo "Not in this game<p>";     
+//    echo "<h2>Decipher Alien Language</h2>"; 
+//    echo "Not in this game<p>";     
       break;
       
       
@@ -335,9 +335,29 @@
         echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=31&t=$Turn&Hi=$Hi&Di=$Di" .
                 "&Name=" . base64_encode("Grow $Grow Modules" . $Place) . "&L=1&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
                 "Grow $Grow Modules " . "; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+
+        echo "<h2>Grow Districts</h2>";
+          $DTs = Get_DistrictTypes();
+          foreach([3,5] as $DT) {
+            $Lvl = 0;
+          
+            foreach ($HDists[$Hi] as $D) {
+              if ($D['Type'] == $DT) {
+                $Lvl = $D['Number'];
+                break;
+              }
+            }
+          
+            $Lvl++;
+            $pc = Proj_Costs($Lvl);
+            echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=37&t=$Turn&Hi=$Hi&Di=$Di&Sel=$DT" . 
+                  "&Name=" . base64_encode("Build " . $DTs[$DT]['Name'] . " District $Lvl$Place") . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
+                  "Build " . $DTs[$DT]['Name'] . " District $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";        
+        
+          } 
       }
 
-      echo "<h2>Refit and Repair</h2>";
+      echo "<h2>Refit and Repair</h2>"; // THIS MUST be AFTER the simple buttons as the form gets lost
 
       echo "You can only do this to ships at the same planet.<p>";
       $HSys = $Homes[$Hi]['SystemId'];
@@ -389,7 +409,37 @@
       echo "<button class=projtype type=submit formaction='ProjNew.php?ACTION=NEWARMY&id=$Fid&p=15&t=$Turn&Hi=$Hi&Di=$Di$pl'>Train a new army$Place</button><p>";
     
     
-      echo "<h2>Re-equip and Reinforce Army</h2>";
+      echo "<h2>Research Military Organisation</h2><p>";
+        $OldPc = Has_Tech($Fid,8, $Turn);
+        $Lvl = $OldPc+1;
+        $pc = Proj_Costs($Lvl);
+        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=17&t=$Turn&Hi=$Hi&Di=$Di&Sel=8" .
+                "&Name=" . base64_encode("Research Military Organisation $Lvl$Place") . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
+                "Research Military Organisation $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
+    
+      $Rbuts = [];
+      $FactTechs = Get_Faction_Techs($Fid);
+      $Techs = Get_TechsByCore($Fid);
+      foreach ($Techs as $T) {
+        if ($T['Cat'] == 0 || isset($FactTechs[$T['id']]) ) continue;
+        if (!isset($FactTechs[$T['PreReqTech']])) continue;
+        if ($T['PreReqTech']!=8) continue;
+        if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
+
+        $Lvl = $T['PreReqLevel'];
+        $pc = Proj_Costs($Lvl);
+        $Rbuts[] = "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=18&t=$Turn&Hi=$Hi&Di=$Di&Sel=" . $T['id'] .
+                "&Name=" . base64_encode("Research " . $T['Name'] .  $Place) . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
+                "Research " . $T['Name'] . "; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+      }
+   
+     if ($Rbuts) {
+       echo "<h2>Research Supplimental Army Technology</h2>";
+       foreach ($Rbuts as $rb) echo $rb;
+     }
+
+    
+      echo "<h2>Re-equip and Reinforce Army</h2>"; // THIS MUST be AFTER the simple buttons as the form gets lost
       echo "You can only do this to armies on the same planet.<p>";
       $HSys = $Homes[$Hi]['SystemId'];
       $HLoc = $Homes[$Hi]['WithinSysLoc'];
@@ -430,35 +480,8 @@
       } else {
         echo "No armies are currently there<p>";
       }
-    
-      echo "<h2>Research Military Organisation</h2><p>";
-        $OldPc = Has_Tech($Fid,8, $Turn);
-        $Lvl = $OldPc+1;
-        $pc = Proj_Costs($Lvl);
-        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=17&t=$Turn&Hi=$Hi&Di=$Di&Sel=8" .
-                "&Name=" . base64_encode("Research Military Organisation $Lvl$Place") . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Research Military Organisation $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
-    
-      $Rbuts = [];
-      $FactTechs = Get_Faction_Techs($Fid);
-      $Techs = Get_TechsByCore($Fid);
-      foreach ($Techs as $T) {
-        if ($T['Cat'] == 0 || isset($FactTechs[$T['id']]) ) continue;
-        if (!isset($FactTechs[$T['PreReqTech']])) continue;
-        if ($T['PreReqTech']!=8) continue;
-        if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
 
-        $Lvl = $T['PreReqLevel'];
-        $pc = Proj_Costs($Lvl);
-        $Rbuts[] = "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=18&t=$Turn&Hi=$Hi&Di=$Di&Sel=" . $T['id'] .
-                "&Name=" . base64_encode("Research " . $T['Name'] .  $Place) . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Research " . $T['Name'] . "; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
-      }
-   
-     if ($Rbuts) {
-       echo "<h2>Research Supplimental Army Technology</h2>";
-       foreach ($Rbuts as $rb) echo $rb;
-     }
+
       break;
       
   case 'Intelligence':

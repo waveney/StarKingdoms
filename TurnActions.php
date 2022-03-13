@@ -1070,6 +1070,7 @@ function ProjectsComplete() {
     switch ($PT['Name']) {
     
     case 'Construction':
+    case 'Grow District':
       $H = Get_ProjectHome($P['Home']);
       switch ($H['ThingType']) {
         case 1: // Planet
@@ -1239,6 +1240,7 @@ function ProjectsComplete() {
     case 'Decipher Alien Language':
     case 'Rebuild and Repair':  
     case 'Grow Modules' :    
+      SKLog("A project to " . $PT['Name'] . " has completed, this is not automated yet.  See <a href=ProjEdit.php?id=" . $P['id'] . ">Project</a>",1);
       break;
     // These all now handled as instructions - not projects at the moment
     case 'Decommission Ship':
