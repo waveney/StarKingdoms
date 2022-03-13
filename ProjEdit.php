@@ -37,7 +37,9 @@
         db_delete('Projects',$Prid);
         echo "<h1>Deleted</h1>";
         db_delete_cond('ProjectTurn',"ProjectId=$Prid");
-        echo "<h2><a href=ProjDisp.php>Back to Project Display</a> , <a href=ProjList.php?F=$Fid>Back to Project List</a></h2>\n";
+        echo "<h2><a href=ProjDisp.php>Back to Project Display</a>";
+        if ($GM) echo " , <a href=ProjList.php?F=$Fid>Back to Project List</a>";
+        echo "</h2>\n";
         dotail();
         exit;
       case 'Abandon Project':
@@ -45,7 +47,9 @@
           db_delete('Projects',$Prid);
           echo "<h1>Deleted</h1>";
           db_delete_cond('ProjectTurn',"ProjectId=$Prid");
-          echo "<h2><a href=ProjDisp.php>Back to Project Display</a> , <a href=ProjList.php?F=$Fid>Back to Project List</a></h2>\n";
+          echo "<h2><a href=ProjDisp.php>Back to Project Display</a>";
+          if ($GM) echo " , <a href=ProjList.php?F=$Fid>Back to Project List</a>";
+          echo "</h2>\n";
           dotail();
           exit;
         }  
@@ -53,7 +57,9 @@
         Put_Project($P);
         echo "<h1>Abandoned</h1>";
         db_delete_cond('ProjectTurn',"ProjectId=$Prid AND TurnNumber>=" . $GAME['Turn']);
-        echo "<h2><a href=ProjDisp.php>Back to Project Display</a> , <a href=ProjList.php?F=$Fid>Back to Project List</a></h2>\n";
+        echo "<h2><a href=ProjDisp.php>Back to Project Display</a>";
+        if ($GM) echo " , <a href=ProjList.php?F=$Fid>Back to Project List</a>";
+        echo "</h2>\n";
         dotail();
         exit;       
     }
