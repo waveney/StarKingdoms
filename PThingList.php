@@ -100,6 +100,12 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
   $Systems = Get_SystemRefs();
 
   echo "<h1>Things</h1>";
+  
+  $ShowCats = ['All','Ships','Armies','Agents','Other'];
+  $Show['ThingShow'] = 0;
+  
+  echo "<div class=floatright ><b>" . fm_radio("Show",$ShowCats,$Show,'ThingShow',' onchange=ThingListShow()') . "</b></div>";
+
   echo "To see more information about each thing and to do movement and changes click on the name<p>\n";
   echo "Click on column heading to sort by column - toggles up/down<br>\n";
   echo "Buttons to selectively list only one type will follow at some point<br>\n";
@@ -132,7 +138,18 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
     $Name = $ThingTypes[$T['Type']]['Name'];
     if (!$Name) $Name = "Unknown Thing $Tid";
     
-    echo "<tr><td><a href=" . ($T['BuildState']? "ThingEdit.php" : "ThingPlan.php") . "?id=$Tid>" . ($T['Name'] ? $T['Name'] : "Nameless" ) . "</a>";
+
+    if ($Props & THING_HAS_SHIPMODULES) {
+      $RowClass = 'Ship';
+    } else  if ($Props & THING_HAS_ARMYMODULES) {
+      $RowClass = 'Army';
+    } else  if ($Props & THING_HAS_GADGETS) {
+      $RowClass = 'Agent';
+    } else {
+      $RowClass = 'Other';  
+    }
+
+    echo "<tr class=Thing_$RowClass><td><a href=" . ($T['BuildState']? "ThingEdit.php" : "ThingPlan.php") . "?id=$Tid>" . ($T['Name'] ? $T['Name'] : "Nameless" ) . "</a>";
     echo "<td>" . $T['Class'];
     echo "<td>" . $Name;
     echo "<td>" . $T['Level'];

@@ -5,7 +5,7 @@
   
   A_Check('GM');
 
-  dostaffhead("List Things");
+  dostaffhead("List Things",["js/ProjectTools.js"]);
 
   global $db, $GAME,$BuildState,$ThingInstrs;
 
@@ -25,14 +25,20 @@
     $Things = Get_AllThings();
     $xtra = '';
   }
-  $ThingTypes = Thing_Type_Names();
-  
+//  $ThingTypes = Thing_Type_Names();
+  $ThingTypes = Get_ThingTypes();
+    
   if (!$Things) {
     echo "<h2>No Things found</h2>";
     echo "<h2><a href=ThingEdit.php?ACTION=NEW>New Thing</a></h2>";
     dotail();
   }
+
+  $ShowCats = ['All','Ships','Armies','Agents','Other'];
+  $Show['ThingShow'] = 0;
   
+  echo "<div class=floatright ><b>" . fm_radio("Show",$ShowCats,$Show,'ThingShow',' onchange=ThingListShow()') . "</b></div>";
+
   echo "<h1>Things $xtra</h1>";
   echo "Clicking on the id takes you to GM level edit access, clickinging on Planning takes you to player level Plan access<br>\n";
   
@@ -78,10 +84,23 @@
         $Loc = $Locs[$T['WithinSysLoc']];
       }
     }
-    
-    echo "<tr><td><a href=ThingEdit.php?id=$tid>$tid</a>";
 
-    echo "<td>" . $ThingTypes[$T['Type']] . "<td>" . $T['Level'];
+    $Props = $ThingTypes[$T['Type']]['Properties'];
+    if ($Props & THING_HAS_SHIPMODULES) {
+      $RowClass = 'Ship';
+    } else  if ($Props & THING_HAS_ARMYMODULES) {
+      $RowClass = 'Army';
+    } else  if ($Props & THING_HAS_GADGETS) {
+      $RowClass = 'Agent';
+    } else {
+      $RowClass = 'Other';  
+    }
+
+
+    
+    echo "<tr class=Thing_$RowClass><td><a href=ThingEdit.php?id=$tid>$tid</a>";
+
+    echo "<td>" . $ThingTypes[$T['Type']]['Name'] . "<td>" . $T['Level'];
     echo "<td><center>" . $T['CurHealth'] . ' / ' . $T['OrigHealth'];
     echo "<td><a href=ThingList.php?AT=$Ref>$Ref</a><td>$Loc";
     echo "<td><a href=ThingEdit.php?id=$tid>$Name</a>";

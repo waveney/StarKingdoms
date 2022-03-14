@@ -78,6 +78,9 @@ The display sometimes gets confused. If that happens go to your Faction Menu and
 
 Note: This does not <b>YET</b> handle techs, districts etc changing over the period you are planning projects.<p>
 
+On the right is a ROUGH idea to your forward credits.  It does not allow for other uses of credits (such as for Deep space and paying other factions).  
+It does not allow for income from other factions and the building of districts, thing and technologies that gain you income.<p>
+
 <h2>List of Things</h2>
 Everything you own from Ships, Armies, Warp Gates, Embassies etc.<p>
 

@@ -111,4 +111,40 @@ debugger;
   window.location.pathname = "ProjNew.php?t=" + Turn + "&Hi=" + Hi + "&Di=" + Di;
 }
 
+function ThingListShow() {
+debugger;
+  var Show = $("input[name=ThingShow]:checked").val();
+  switch (Show) {
+  case "0":
+    $(".Thing_Ship").show();
+    $(".Thing_Army").show();
+    $(".Thing_Agent").show();
+    $(".Thing_Other").show();
+    return;
+  case "1":
+    $(".Thing_Ship").show();
+    $(".Thing_Army").hide();
+    $(".Thing_Agent").hide();
+    $(".Thing_Other").hide();
+    return;
+  case "2":
+    $(".Thing_Ship").hide();
+    $(".Thing_Army").show();
+    $(".Thing_Agent").hide();
+    $(".Thing_Other").hide();
+    return;
+  case "3":
+    $(".Thing_Ship").hide();
+    $(".Thing_Army").hide();
+    $(".Thing_Agent").show();
+    $(".Thing_Other").hide();
+    return;
+  case "4":
+    $(".Thing_Ship").hide();
+    $(".Thing_Army").hide();
+    $(".Thing_Agent").hide();
+    $(".Thing_Other").show();
+    return;
+  }  
+}
 
