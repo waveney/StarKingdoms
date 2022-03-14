@@ -31,6 +31,7 @@
     dotail();
   }
 
+//var_dump($_REQUEST);
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
       case 'Delete': 
@@ -38,7 +39,7 @@
         echo "<h1>Deleted</h1>";
         db_delete_cond('ProjectTurn',"ProjectId=$Prid");
         echo "<h2><a href=ProjDisp.php>Back to Project Display</a>";
-        if ($GM) echo " , <a href=ProjList.php?F=$Fid>Back to Project List</a>";
+        if (Access('GM')) echo " , <a href=ProjList.php?F=$Fid>Back to Project List</a>";
         echo "</h2>\n";
         dotail();
         exit;
@@ -48,7 +49,7 @@
           echo "<h1>Deleted</h1>";
           db_delete_cond('ProjectTurn',"ProjectId=$Prid");
           echo "<h2><a href=ProjDisp.php>Back to Project Display</a>";
-          if ($GM) echo " , <a href=ProjList.php?F=$Fid>Back to Project List</a>";
+        if (Access('GM')) echo " , <a href=ProjList.php?F=$Fid>Back to Project List</a>";
           echo "</h2>\n";
           dotail();
           exit;
@@ -58,7 +59,7 @@
         echo "<h1>Abandoned</h1>";
         db_delete_cond('ProjectTurn',"ProjectId=$Prid AND TurnNumber>=" . $GAME['Turn']);
         echo "<h2><a href=ProjDisp.php>Back to Project Display</a>";
-        if ($GM) echo " , <a href=ProjList.php?F=$Fid>Back to Project List</a>";
+        if (Access('GM')) echo " , <a href=ProjList.php?F=$Fid>Back to Project List</a>";
         echo "</h2>\n";
         dotail();
         exit;       

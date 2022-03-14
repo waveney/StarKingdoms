@@ -397,14 +397,14 @@
   echo "Click up/down or write number to rush projects<br>\n";
 
   echo "Note the cost totals are on the far right<br>
-  The credits left on current turn is a rough guide only - it does not take account of other expenditure.<p>";
+  The credits left on current turn is a rough guide only - it does not take account of other expenditure - or any additional income.<p>";
   
   echo "Currently this display is for construction and district based projects only.<br>\n";
   
   $Homes = Get_ProjectHomes($Fid);
   $DistTypes = Get_DistrictTypes();
 
-  
+  $Income = Income_Estimate($Fid);
 //var_dump($ProjTypes);exit;
 
   $Headline1 = '';
@@ -713,8 +713,17 @@
       } else {
         echo "<span class=Red>$Left</span>";
       }
-    } else {
+    } else if ($Turn < $GAME['Turn']-1) {
       echo "?";
+    } else if ($Turn == $GAME['Turn']-1) {
+      echo $FACTION['Credits'];
+    } else { // Future
+      $Left = $Left + $Income - $TotCost;
+      if ($Left >=0 ) { 
+        echo $Left;
+      } else {
+        echo "<span class=Red>$Left</span>";
+      }      
     }
   }
   echo "</table></form>";    

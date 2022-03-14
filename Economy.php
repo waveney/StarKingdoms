@@ -182,6 +182,8 @@
     
     echo "<p>Total Economy is $EconVal worth " . Credit() . $EconVal*10 . "<p>\n";
 
+//  echo "Estimated Income is : " . Income_Estimate($Fid);
+  
   $Final =  $FACTION['Credits'] - $Spend + $EconVal*10;
   echo "<h2>Expected End Credits is &#8373;" . ($Final < 0? "<span class=Red>$Final</span>":$Final) .  "</h2>";
   

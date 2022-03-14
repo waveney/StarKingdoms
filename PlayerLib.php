@@ -227,5 +227,87 @@ function Credit() {
   return "&#8373;";
 }
 
+function Income_Estimate($Fid) {
+  include_once("ThingLib.php");
+  include_once("HomesLib.php");  
+
+  $TTypes = Get_ThingTypes();
+  
+  $Worlds = Get_Worlds($Fid);
+  $EconVal = 0;
+  $OutPosts = $AstMines = $AstVal = $Embassies = $OtherEmbs = 0;
+  foreach ($Worlds as $W) {
+    $H = Get_ProjectHome($W['Home']);
+    if (!$H) continue;
+    $PH = Project_Home_Thing($H);
+    if (!$PH) continue;
+
+    $ECon = $H['Economy'] = Recalc_Economic_Rating($H,$W,$Fid);
+      
+    if ($H['Devastation']) {
+      $ECon = $ECon - $H['Devastation'];
+    }
+    $ECon = ceil($ECon*$H['EconomyFactor']/100);
+    $EconVal += $ECon;
+  }
+
+  $Things = Get_Things($Fid);
+  foreach ($Things as $T) {
+    if (empty($TTypes[$T['Type']])) continue;
+    switch ($TTypes[$T['Type']]['Name']) {
+    case "Outpost":
+      $OutPosts ++;
+      break;
+      
+    case "Asteroid Mine":
+      $AstMines ++;
+      $AstVal += $T['Level'];
+      break;
+      
+    case "Embassy":
+      $Embassies ++;
+      break;
+      
+    default:
+      continue 2;
+    }
+  }
+
+  $OtherTs = Get_Things_Cond(0,"Type=17 AND OtherFaction=$Fid");
+  foreach($OtherTs as $OT) $OtherEmbs++;
+    
+  if ($OutPosts) $EconVal += $OutPosts*2;
+
+  if ($AstMines) {
+    $AstVal *= Has_Tech($Fid,'Deep Space Construction');
+    $EconVal += $AstVal;
+  }
+  if ($Embassies) $EconVal += $Embassies;    
+
+  if ($OtherEmbs) $EconVal += $OtherEmbs;    
+
+  $Logistics = [0,0,0]; // Ship, Army, Intelligence  
+  foreach ($Things as $T) {
+    if (empty($T['Type'])) continue;
+    $Props = $TTypes[$T['Type']]['Properties'];
+    if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
+      if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $T['Level'];
+      if ($Props & THING_HAS_GADGETS) $Logistics[2] += $T['Level'];
+      if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $T['Level'];
+    };
+  }
+
+  
+  $LogAvail = LogisticalSupport($Fid);
+  $LogCats = ['Ships','Armies','Agents'];
+    
+  foreach ($LogCats as $i => $n) {
+    if ($Logistics[$i]) {
+      $pen = min(0,$LogAvail[$i]-$Logistics[$i]);
+      if ($pen < 0) $EconVal += $pen;
+    }
+  }
+  return $EconVal*10;   
+}
 
 ?>
