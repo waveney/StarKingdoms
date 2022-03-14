@@ -119,9 +119,26 @@ function CashTransfers() {
         SKLog('Cash transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . 
               ' of ' . Credit() . $B['Amount'] . ' for ' . $B['YourRef'] .  ' Bounced',1);
       }
-    } else {
+    } else if ($B['What'] <= 4 {
       Gain_Science($B['Recipient'],$B['What'],$B['Amount'],$B['YourRef']);
       TurnLog($B['Recipient'],"Gained " . $B['Amount'] . " Science points for " . $B['YourRef']);    
+    } else { // Other Currencies
+      if (Gain_Currency($Fid,$B['What'],-$B['Amount'],$B['YourRef'])) {
+        TurnLog($B['FactionId'], "Transfered " . $B['Amount'] . " of " . $Currencies[$B['What']] . " for " . $B['YourRef'] . " to " . $Factions[$B['Recipient']]['Name']);
+        if ($B['Recipient'] > 0) {
+          Gain_Currency($B['Recipient'], $B['What'], $B['Amount'],$B['YourRef']);
+          TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " transfered " . $B['Amount'] . " of " . $Currencies[$B['What']] . " for " . $B['YourRef'] );
+        }
+        SKLog('Transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . ' of ' . $B['Amount'] . $Currencies[$B['What']]
+               . ' for ' . $B['YourRef'],1);     
+      } else {
+        TurnLog($B['FactionId'],"Failed to transfer " . $B['Amount']  . " of " . $Currencies[$B['What']] . " for " . $B['YourRef'] . " to " . $Facts[$B['Recipient']]['Name']);
+        if ($B['Recipient'] > 0) TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " Failed to transfer " . $B['Amount']  " of " . $Currencies[$B['What']]
+            . " for " . $B['YourRef'] );
+        SKLog('Transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . 
+              ' of ' . $B['Amount'] . " of " . $Currencies[$B['What']] . ' for ' . $B['YourRef'] .  ' Bounced',1);
+
+      }
     }
   }
   

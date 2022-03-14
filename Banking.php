@@ -178,7 +178,7 @@
   echo "<table border>";
   echo fm_hidden('StartTurn',$GAME['Turn']);
   echo "<tr><td>To:<td>" . fm_select($FactList,$_REQUEST,'Recipient') . "<td>Select <b>Other</b> for RP actions";
-  if ($CCount>1) echo "<tr>" . fm_radio('Currency',$Currens,$_REQUEST,'What');
+  if ($CCount>1) echo "<tr>" . fm_radio('Currency',$Currens,$_REQUEST,'What','',1,'colspan=2');
   echo "<tr>" . fm_number('Amount',$_REQUEST,'Amount');
   echo "<tr>" . fm_text('Your Reference',$_REQUEST,'YourRef') . "<td>Will be seen by both parties";
   echo "<tr><td><td><input type=submit name=ACTION value='Transfer Now'>\n";
@@ -189,7 +189,7 @@
   echo "<h2>Setup Ongoing or Future Transfer</h2>";
   echo "<table border>";
   echo "<tr><td>To:<td>" . fm_select($FactList,$_REQUEST,'Recipient') . "<td>Select <b>Other</b> for RP actions";
-  if ($CCount>1) echo "<tr>" . fm_radio('Currency',$Currens,$_REQUEST,'What');
+  if ($CCount>1) echo "<tr>" . fm_radio('Currency',$Currens,$_REQUEST,'What','',1,'colspan=2');
   echo "<tr>" . fm_number('Amount',$_REQUEST,'Amount');
   echo "<tr>" . fm_number('Start Turn', $_REQUEST,'StartTurn'); 
   echo "<tr>" . fm_number('Last Turn', $_REQUEST,'EndTurn') . "<td>Leave blank for a one off payment";

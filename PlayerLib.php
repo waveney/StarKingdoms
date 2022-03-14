@@ -212,6 +212,7 @@ function Gain_Currency($Who,$What,$Amount,$Why) { // Ammount is negative to gain
   $Fact = Get_Faction($Who);
   $CNum = $What-4;
   if ($CNum > 3) { echo "INVALID CURRENCY!!!"; exit; }
+  if (($Fact["Currency$CNum"] + $Amount) < 0 ) return 0;
   $Fact["Currency$CNum"] += $Amount;
   Put_Faction($Fact);
   return 1;

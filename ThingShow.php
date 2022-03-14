@@ -14,9 +14,9 @@ function Show_Thing(&$T,$Force=0) {
   global $Project_Status;
   global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$ThingInclrs, $InstrMsg;
   
-  $ThingInclrs = ['white','lightgreen','lightpink','lightblue','cream','bisque','#99ffcc','#b3b3ff',
-                 'lightgreen','lightpink','lightblue','cream','bisque','#99ffcc','#b3b3ff',
-                 'lightgreen','lightpink','lightblue','cream','bisque','#99ffcc','#b3b3ff'];
+  $ThingInclrs = ['white','lightgreen','lightpink','lightblue','lightyellow','bisque','#99ffcc','#b3b3ff',
+                 'lightgreen','lightpink','lightblue','lightyellow','bisque','#99ffcc','#b3b3ff',
+                 'lightgreen','lightpink','lightblue','lightyellow','bisque','#99ffcc','#b3b3ff'];
 
   $tid = $T['id'];
   

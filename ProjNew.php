@@ -264,6 +264,7 @@
         if (!isset($FactTechs[$T['PreReqTech']]) ) continue;
         $Tid = $T['id'];
         $Lvl = $T['PreReqLevel'];
+        if ($Lvl < 1) continue;
         $pc = Proj_Costs($Lvl-1);
         $Shares["$Tid:$Lvl"] = $T['Name'] . " at level $Lvl; Cost " . $pc[1] . " Needs " . $pc[0] . " progress";
       }
@@ -390,7 +391,7 @@
           echo "Select the ship to refit and repair: " . fm_select($RepShips, $_REQUEST, 'Sel', 0) ;
           echo "<button class=projtype type=submit>Refit and Repair</button></form>";
         } else {
-          echo "</form><form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=11b&t=$Turn&Hi=$Hi&Di=$Di'>";
+          echo "</form><form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=11&t=$Turn&Hi=$Hi&Di=$Di'>";
           echo "You may select <b>2</b> level 1 ships or 1 ship of level 2 or more. (For PCs and Linux hold down Ctrl to select 2nd ship)<p>";
           echo "Select the ship to refit and repair: " . fm_select($RepShips, $_REQUEST, 'Sel', 0, ' multiple ','Sel2[]') ;
           echo "<button class=projtype type=submit>Refit and Repair</button><form>";
@@ -471,7 +472,7 @@
           echo "Select the army to Re-equip and Reinforce: " . fm_select($RepShips, $_REQUEST, 'Sel', 0) ;
           echo "<button class=projtype type=submit>Re-equip and Reinforce</button></form>";
         } else {
-          echo "</form><form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=16b&t=$Turn&Hi=$Hi&Di=$Di'>";
+          echo "</form><form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=16&t=$Turn&Hi=$Hi&Di=$Di'>";
           echo "You may select <b>2</b> level 1 Army or 1 Army of level 2 or more. (For PCs and Linux hold down Ctrl to select 2nd army)<p>";
           echo "Select the ship to Re-equip and Reinforce: " . fm_select($RepShips, $_REQUEST, 'Sel', 0, ' multiple ','Sel2[]') ;
           echo "<button class=projtype type=submit>Re-equip and Reinforce</button><form>";
@@ -520,9 +521,6 @@
        echo "<h2>Research Supplimental Intelligence Technology</h2>";
        foreach ($Rbuts as $rb) echo $rb;
      }
- 
-
-
     
       break;
     }

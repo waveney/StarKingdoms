@@ -3,6 +3,7 @@
 // Things far handling projects
 
 function Proj_Costs($lvl) {
+  if ($lvl<0) return [1E6,1E6]; // Should be never but...
   return [[1,50],[1,50],[4,200],[9,450],[16,800],[25,1250],[36,1800],[49,2450],[64,4300],[81,4050],[100,5000]][$lvl];
 }
 
