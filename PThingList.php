@@ -103,8 +103,11 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
   
   $ShowCats = ['All','Ships','Armies','Agents','Other'];
   $Show['ThingShow'] = 0;
+  $BuildCats = ['All','Plan','Building','Shakedown','Complete','Other'];
+  $Build['BuildShow'] = 0;
   
-  echo "<div class=floatright ><b>" . fm_radio("Show",$ShowCats,$Show,'ThingShow',' onchange=ThingListShow()') . "</b></div>";
+  echo "<div class=floatright ><b>" . fm_radio("Show",$ShowCats,$Show,'ThingShow',' onchange=ThingListShow()') . "<br><br>";
+  echo fm_radio("Build State",$BuildCats,$Build,'BuildShow',' onchange=ThingListBuild()') . "</b></div>";
 
   echo "To see more information about each thing and to do movement and changes click on the name<p>\n";
   echo "Click on column heading to sort by column - toggles up/down<br>\n";
@@ -149,7 +152,10 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
       $RowClass = 'Other';  
     }
 
-    echo "<tr class=Thing_$RowClass><td><a href=" . ($T['BuildState']? "ThingEdit.php" : "ThingPlan.php") . "?id=$Tid>" . ($T['Name'] ? $T['Name'] : "Nameless" ) . "</a>";
+    $BuildClass = ($T['BuildState']<4 ? $T['BuildState'] : 4);
+
+    echo "<tr class='Thing_$RowClass Thing_Build$BuildClass'>";
+    echo "<td><a href=" . ($T['BuildState']? "ThingEdit.php" : "ThingPlan.php") . "?id=$Tid>" . ($T['Name'] ? $T['Name'] : "Nameless" ) . "</a>";
     echo "<td>" . $T['Class'];
     echo "<td>" . $Name;
     echo "<td>" . $T['Level'];

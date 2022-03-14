@@ -214,7 +214,7 @@
     if (isset($_REQUEST['Validate'])) {
       echo "<h2 class=Green>Design is valid</h2>";
       if (($tprops & THING_HAS_MODULES) && ($totmodc < $T['MaxModules'] )) {
-        echo "<h2>Though it can have " . ( $T['MaxModules'] - $totmodc). " cdmore modules</h2>\n";
+        echo "<h2>Though it can have " . ( $T['MaxModules'] - $totmodc). " more modules</h2>\n";
       }
     }
     echo "<input type=submit name=Validate value=Validate>\n";

@@ -148,3 +148,51 @@ debugger;
   }  
 }
 
+function ThingListBuild() {
+debugger;
+  var Build = $("input[name=BuildShow]:checked").val();
+  switch (Build) {
+  case "0":
+    $(".Thing_Build0").show();
+    $(".Thing_Build1").show();
+    $(".Thing_Build2").show();
+    $(".Thing_Build3").show();
+    $(".Thing_Build4").show();
+    return;
+  case "1":
+    $(".Thing_Build0").show();
+    $(".Thing_Build1").hide();
+    $(".Thing_Build2").hide();
+    $(".Thing_Build3").hide();
+    $(".Thing_Build4").hide();
+    return;
+  case "2":
+    $(".Thing_Build0").hide();
+    $(".Thing_Build1").show();
+    $(".Thing_Build2").hide();
+    $(".Thing_Build3").hide();
+    $(".Thing_Build4").hide();
+    return;
+  case "3":
+    $(".Thing_Build0").hide();
+    $(".Thing_Build1").hide();
+    $(".Thing_Build2").show();
+    $(".Thing_Build3").hide();
+    $(".Thing_Build4").hide();
+    return;
+  case "4":
+    $(".Thing_Build0").hide();
+    $(".Thing_Build1").hide();
+    $(".Thing_Build2").hide();
+    $(".Thing_Build3").show();
+    $(".Thing_Build4").hide();
+  case "5":
+    $(".Thing_Build0").hide();
+    $(".Thing_Build1").hide();
+    $(".Thing_Build2").hide();
+    $(".Thing_Build3").hide();
+    $(".Thing_Build4").show();
+    return;
+  }  
+}
+

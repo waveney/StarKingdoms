@@ -249,7 +249,7 @@ function Max_Modules(&$t) {
     if ($t['Type'] == 2) $v = $v*3/4; // Support Ship
     if (Has_Tech($t['Whose'], 'Compact Ship Design') && $t['Level'] > 1) $v += $t['Level'];
     if ($t['Level'] > 2 && Has_Trait($t['Whose'],'Really Big')) $v += $t['Level']*$t['Level'];
-    if ($TTs['Name'] == 'Satellite Defences') $v += Has_Tech($t['Whose'],7); 
+    if ($TTs['Name'] == 'Satellite Defences') $v += $t['Level'];
     if ($TTs['Name'] == 'Planetary Defence Force') $v += $t['Level'];
     return $v;
   }
