@@ -186,6 +186,7 @@ debugger;
     $(".Thing_Build2").hide();
     $(".Thing_Build3").show();
     $(".Thing_Build4").hide();
+    return;
   case "5":
     $(".Thing_Build0").hide();
     $(".Thing_Build1").hide();

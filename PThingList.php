@@ -154,7 +154,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
 
     $BuildClass = ($T['BuildState']<4 ? $T['BuildState'] : 4);
 
-    echo "<tr class='Thing_$RowClass Thing_Build$BuildClass'>";
+    echo "\n<tr class='Thing_$RowClass Thing_Build$BuildClass'>";
     echo "<td><a href=" . ($T['BuildState']? "ThingEdit.php" : "ThingPlan.php") . "?id=$Tid>" . ($T['Name'] ? $T['Name'] : "Nameless" ) . "</a>";
     echo "<td>" . $T['Class'];
     echo "<td>" . $Name;

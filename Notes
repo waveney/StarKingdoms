@@ -44,6 +44,7 @@ Known Faults
 * Nebulae
 * Link ids and targets on movement orders
 * List of scans due - needs use and maintaining
+* Map update errors
 
 Has_Tech for projects - use turn number
 Distict count for projects use world data
