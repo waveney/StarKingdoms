@@ -39,8 +39,8 @@
   $BuildCats = ['All','Plan','Building','Shakedown','Complete','Other'];
   $Build['BuildShow'] = 0;
   
-  echo "<div class=floatright ><b>" . fm_radio("Show",$ShowCats,$Show,'ThingShow',' onchange=ThingListShow()') . "<br><br>";
-  echo fm_radio("Build State",$BuildCats,$Build,'BuildShow',' onchange=ThingListBuild()') . "</b></div>";
+  echo "<div class=floatright ><b>" . fm_radio("Show",$ShowCats,$Show,'ThingShow',' onchange=ThingListFilter()') . "<br><br>";
+  echo fm_radio("Build State",$BuildCats,$Build,'BuildShow',' onchange=ThingListFilter()') . "</b></div>";
 
   echo "<h1>Things $xtra</h1>";
   echo "Clicking on the id takes you to GM level edit access, clickinging on Planning takes you to player level Plan access<br>\n";
@@ -102,7 +102,7 @@
 
     $BuildClass = ($T['BuildState']<4 ? $T['BuildState'] : 4);
 
-    echo "<tr class='Thing_$RowClass Thing_Build$BuildClass'><td><a href=ThingEdit.php?id=$tid>$tid</a>";
+    echo "<tr class='ThingList Thing_$RowClass Thing_Build$BuildClass'><td><a href=ThingEdit.php?id=$tid>$tid</a>";
 
     echo "<td>" . $ThingTypes[$T['Type']]['Name'] . "<td>" . $T['Level'];
     echo "<td><center>" . $T['CurHealth'] . ' / ' . $T['OrigHealth'];

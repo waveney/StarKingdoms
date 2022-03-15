@@ -106,12 +106,12 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
   $BuildCats = ['All','Plan','Building','Shakedown','Complete','Other'];
   $Build['BuildShow'] = 0;
   
-  echo "<div class=floatright ><b>" . fm_radio("Show",$ShowCats,$Show,'ThingShow',' onchange=ThingListShow()') . "<br><br>";
-  echo fm_radio("Build State",$BuildCats,$Build,'BuildShow',' onchange=ThingListBuild()') . "</b></div>";
+  echo "<div class=floatright ><b>" . fm_radio("Show",$ShowCats,$Show,'ThingShow',' onchange=ThingListFilter()') . "<br><br>";
+  echo fm_radio("Build State",$BuildCats,$Build,'BuildShow',' onchange=ThingListFilter()') . "</b></div>";
 
   echo "To see more information about each thing and to do movement and changes click on the name<p>\n";
   echo "Click on column heading to sort by column - toggles up/down<br>\n";
-  echo "Buttons to selectively list only one type will follow at some point<br>\n";
+//  echo "Use only ONE of the filters to the right<br>\n";
   
   $coln = 0;
   echo "<div class=tablecont><table id=indextable border width=100% style='min-width:1400px'>\n";
@@ -154,7 +154,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
 
     $BuildClass = ($T['BuildState']<4 ? $T['BuildState'] : 4);
 
-    echo "\n<tr class='Thing_$RowClass Thing_Build$BuildClass'>";
+    echo "\n<tr class='ThingList Thing_$RowClass Thing_Build$BuildClass'>";
     echo "<td><a href=" . ($T['BuildState']? "ThingEdit.php" : "ThingPlan.php") . "?id=$Tid>" . ($T['Name'] ? $T['Name'] : "Nameless" ) . "</a>";
     echo "<td>" . $T['Class'];
     echo "<td>" . $Name;

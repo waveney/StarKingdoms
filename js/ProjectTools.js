@@ -111,6 +111,26 @@ debugger;
   window.location.pathname = "ProjNew.php?t=" + Turn + "&Hi=" + Hi + "&Di=" + Di;
 }
 
+function ThingListFilter() {
+  var Show = $("input[name=ThingShow]:checked").val();
+  var Build = $("input[name=BuildShow]:checked").val();
+  $(".ThingList").each(function() {
+    if (Show == 0 && Build==0) { $(this).show(); return }
+    var hide = 1;
+    if (Show ==1 && $(this).hasClass("Thing_Ship")) hide = 0;
+    if (Show ==2 && $(this).hasClass("Thing_Army")) hide = 0;
+    if (Show ==3 && $(this).hasClass("Thing_Agent")) hide = 0;
+    if (Show ==4 && $(this).hasClass("Thing_Other")) hide = 0;
+    
+    if (Build > 0 && ! $(this).hasClass("Thing_Build" + (Build-1)) ) hide =1;
+    if (hide) {
+      $(this).hide(); return
+    } else {
+      $(this).show(); return
+    }
+  })
+}
+
 function ThingListShow() {
 debugger;
   var Show = $("input[name=ThingShow]:checked").val();
