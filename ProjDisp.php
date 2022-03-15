@@ -397,7 +397,7 @@
   echo "Click up/down or write number to rush projects<br>\n";
 
   echo "Note the cost totals are on the far right<br>
-  The credits left on current turn is a rough guide only - it does not take account of other expenditure - or any additional income.<p>";
+  The credits left on current turn is a rough guide only - it does not take account of other expenditure other than for the current turn - or any additional income.<p>";
   
   echo "Currently this display is for construction and district based projects only.<br>\n";
   
@@ -427,6 +427,11 @@
   $PHx = 1;
   $Dis = [];
   $FirstHome = 0;
+  
+  $Things = Get_Things_Cond($Fid," Instruction!=0 AND Progress=0 AND InstCost!=0 ");
+  $DeepSpace = 0;
+  foreach($Things as $T) $DeepSpace += $T['InstCost'];
+  
   foreach ($Homes as &$H) {
     $PlanCon = $BPlanCon;
     $Hi = $H['id'];
@@ -706,8 +711,15 @@
     }
     
     echo "<td id=TotCost$Turn class=PHTurn>$TotCost<td class=PHTurn>";
+
+    $Spend = 0;  
+    if ($Turn >= $GAME['Turn']) {
+      $Bs = Get_BankingFT($Fid,$Turn);
+      foreach($Bs as $B) $Spend += $B['Amount'];
+    }    
+    
     if ($Turn == $GAME['Turn']) {
-      $Left = $FACTION['Credits'] - ($SkipProgress?0:$TotCost);
+      $Left = $FACTION['Credits'] - ($SkipProgress?0:$TotCost) - $DeepSpace -$Spend;
       if ($Left >=0 ) { 
         echo $Left;
       } else {
@@ -718,7 +730,7 @@
     } else if ($Turn == $GAME['Turn']-1) {
       echo $FACTION['Credits'];
     } else { // Future
-      $Left = $Left + $Income - $TotCost;
+      $Left = $Left + $Income - $TotCost - $Spend;
       if ($Left >=0 ) { 
         echo $Left;
       } else {

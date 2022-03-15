@@ -25,7 +25,7 @@
   
   foreach($Bs as $B) {
     $Spend += $B['Amount'];
-    echo "Sending &#8373; " . $B['Amount'] . " for " . $B['YourRef'] . " to " . $Facts[$B['Recipient']]['Name'] . "<br>";
+    echo "Sending " . Credit() . $B['Amount'] . " for " . $B['YourRef'] . " to " . $Facts[$B['Recipient']]['Name'] . "<br>";
   }
 
   echo "<P>";
