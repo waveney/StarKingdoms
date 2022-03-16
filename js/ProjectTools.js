@@ -117,6 +117,7 @@ function ThingListFilter() {
   $(".ThingList").each(function() {
     if (Show == 0 && Build==0) { $(this).show(); return }
     var hide = 1;
+    if (Show ==0) hide =0;
     if (Show ==1 && $(this).hasClass("Thing_Ship")) hide = 0;
     if (Show ==2 && $(this).hasClass("Thing_Army")) hide = 0;
     if (Show ==3 && $(this).hasClass("Thing_Agent")) hide = 0;
