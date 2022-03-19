@@ -52,6 +52,7 @@
         $Turn = $_REQUEST['t'];
         $Hi = $_REQUEST['Hi'];
         $Di = $_REQUEST['Di'];
+        $DT = (isset($_REQUEST['DT'])? $_REQUEST['DT'] : 0);
         $Valid = 1;
         
         switch ($ProjTypes[$Ptype]['Name']) {
@@ -199,6 +200,20 @@
           $ProgN = $pc[0];
           break;
 
+        case 'Post It':
+          $Level = $_REQUEST['Level'];
+          $pc = Proj_Costs($Level);
+          $Costs = $pc[1];
+          $ProgN = $pc[0];
+          $Name = $_REQUEST['PostItTxt'];          
+          if (empty($Name)) {
+            echo "<h2 class=Err>No message given</h2>";
+            $Valid = 0;
+            break;
+          }
+          break;
+          
+          
           /* These are treated as Instructions now */
         case 'Decommission Ship':
         case 'Build Outpost':
@@ -361,7 +376,7 @@
         if ($Valid) {
           $OldPro = Get_ProjectAT($Hi, $Di, $Turn);
           $Pro = ['FactionId'=>$Fid, 'Type'=>$Ptype, 'Level'=> $Level, 'Home'=>$Hi, 'Progress'=>0, 'Status'=>0, 'TurnStart'=>$Turn, 'Name'=>$Name,
-                  'Costs' => $Costs, 'ProgNeeded' => $ProgN, 'BuildState'=>0];
+                  'Costs' => $Costs, 'ProgNeeded' => $ProgN, 'BuildState'=>0, 'DType' => $DT];
           if (isset($With)) $Pro['ThingId'] = $With;
           if (isset($Sel)) $Pro['ThingType'] = $Sel;
           if (isset($TthingId)) $Pro['ThingId'] = $TthingId;
@@ -373,7 +388,7 @@
 
           $OpenHi = $Hi;
           $OpenDi = $Di;
-          Put_Project($Pro);
+          $Pid = Put_Project($Pro);
         }
       break;
       
@@ -470,6 +485,10 @@
       if ($D['Type'] < 0 && $PlanCon<1 ) continue;
       $Di = $D['id'];
       $Hide = ($Hi == $OpenHi && $Di == $OpenDi? "" : "hidden");
+//      if (!$Hide && $SaveDType) {
+//        $Pro['DType'] = $D['Type'];
+//        Put_Project($Pro);
+//      }
       $Headline2[] = "<th class='PHStart Group$Di Home$Hi' id=PHDist$Hi:$Di $back $Hide><b>+</b>" .
         "<th $back class='PHName  Home$Hi'><button type=button onclick=Toggle('Group$Di')>" . 
         ($D['Type'] > 0 ? ($DistTypes[$D['Type']]['Name']  . "&nbsp;-&nbsp;" .$D['Number'] ): "Construction&nbsp;-&nbsp;$PlanCon") . "</button>" .
@@ -508,14 +527,18 @@
       $PPtype = $ProjTypes[$P['Type']];
       $PCat = $PPtype['Category'];
       
-      $WantedDT = -10;
-      if ($PCat & 1) { $WantedDT = 5; }// Academic
-      else if ($PCat & 2) { $WantedDT = 3; } // Shipyard
-      else if ($PCat & 4) { $WantedDT = 2; } // Military      
-      else if ($PCat & 8) { $WantedDT = 4; } // Intelligence
-      else if ($PCat & 16) { $WantedDT = -1; } // Construction
-      else if ($PCat & 32) { $WantedDT = 100; } // Deep Space       
-      else if ($PCat & 64) { $WantedDT = 101; } // Intelligence
+      if ($P['DType']) {
+        $WantedDT = $P['DType'];
+      } else {
+        $WantedDT = -10;
+        if ($PCat & 1) { $WantedDT = 5; }// Academic
+        else if ($PCat & 2) { $WantedDT = 3; } // Shipyard
+        else if ($PCat & 4) { $WantedDT = 2; } // Military      
+        else if ($PCat & 8) { $WantedDT = 4; } // Intelligence
+        else if ($PCat & 16) { $WantedDT = -1; } // Construction
+        else if ($PCat & 32) { $WantedDT = 100; } // Deep Space       
+        else if ($PCat & 64) { $WantedDT = 101; } // Intelligence
+      }
       
       $Di = -10;
       foreach ($Dis[$Hi] as $Dix) {
@@ -684,7 +707,8 @@
         }
         if (isset($Proj[$Turn][$Hi][$Di]['Type'])) {
           $PN = $Proj[$Turn][$Hi][$Di]['id'];
-          echo "\n<td $BG id=ProjN$Turn:$Hi:$Di class='PHName Home$Hi'><a href=ProjEdit.php?id=" . $Proj[$Turn][$Hi][$Di]['id'] . ">" . 
+          echo "\n<td $BG id=ProjN$Turn:$Hi:$Di class='PHName Home$Hi" . ($Proj[$Turn][$Hi][$Di]['Type'] == 38?" PHpostit ":"") . "'>" .
+                "<a href=ProjEdit.php?id=" . $Proj[$Turn][$Hi][$Di]['id'] . ">" . 
                 $Proj[$Turn][$Hi][$Di]['Name'] . "</a>";
           echo "\n<td $BG id=ProjL$Turn:$Hi:$Di class='PHLevel Group$Di Home$Hi' $Hide>" . $Proj[$Turn][$Hi][$Di]['Level'];
           echo "\n<td $BG id=ProjC$Turn:$Hi:$Di class='PHCost Group$Di Home$Hi' $Hide>" . $Proj[$Turn][$Hi][$Di]['Cost'];

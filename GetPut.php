@@ -961,6 +961,7 @@ function Get_Projects($home) {
 function Get_Projects_Cond($Cond) {
   global $db;
   $Ts = [];
+// var_dump($Cond);
   $res = $db->query("SELECT * FROM Projects WHERE $Cond ORDER BY FactionId, TurnStart");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
   return $Ts;

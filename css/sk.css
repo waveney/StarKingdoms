@@ -98,6 +98,16 @@ table td .GreenProject {
   background-color:lightgreen;
 }
 
+.postit  {
+  background-color:yellow;
+  padding:3px;
+}
+
+.PHpostit {
+  background-color:yellow !important;
+  padding:3px;
+}
+
 .PHStart {
   border-left: 3px solid black;
   text-align:center;
@@ -141,6 +151,8 @@ button.projtype  {
   background-color:lightblue;
   padding:3px;
 }
+
+
 
 .Green {
   color:green;
