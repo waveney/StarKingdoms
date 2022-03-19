@@ -1518,6 +1518,7 @@ function GiveSurveyReports() {
 
 function MilitiaArmyRecovery() {
   echo "Militia Recovery is currently Manual<p>";
+  echo "Also Self Repair Armour<p>";
   return 1;
 }
 

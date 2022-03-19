@@ -138,7 +138,7 @@
   echo "<table border>";
   echo "<tr><td>Planning a:<td>" . fm_select($ThingTypeNames, $T,'Type');
   if ($T['Type']) {
-    echo "<tr>" . fm_number('Level',$T,'Level','','min=1 max=10');
+    if ($tprops & THING_HAS_LEVELS) echo "<tr>" . fm_number('Level',$T,'Level','','min=1 max=10');
     echo "<tr>" . fm_text('Name',$T,'Name') . "<td><td" . (empty($T['Name'])? " class=Err" : "") . ">This is needed";
     if (empty($T['Name'])) $Valid = 0;
     echo "<tr>" . fm_text('Class',$T,'Class') . "<td><td>This is optional";
@@ -200,6 +200,11 @@
       $BaseDam = Calc_Damage($T);
       if ($tprops & (THING_HAS_ARMYMODULES | THING_HAS_MILSHIPMODS )) echo "<tr><td>Basic Damage<td>$BaseDam<td><td>At current Tech Levels.  Before special weapons etc";
     }
+    
+    if ($tprops & THING_CAN_BECREATED) {
+      // Offer location based on Sys/within  OR onboard thing Y
+    }
+
 //  if (!$Valid) echo "<tr><td class=Err>Warning:<td class=Err>This is not yet valid\n";
     if (isset($T['DesignValid']) && $T['DesignValid'] != $Valid) {
       $T['DesignValid'] = $Valid;
@@ -211,16 +216,20 @@
   echo "</table>";
   
   if ($Valid) {
-    if (isset($_REQUEST['Validate'])) {
-      echo "<h2 class=Green>Design is valid</h2>";
-      if (($tprops & THING_HAS_MODULES) && ($totmodc < $T['MaxModules'] )) {
-        echo "<h2>Though it can have " . ( $T['MaxModules'] - $totmodc). " more modules</h2>\n";
+    if ($tprops & THING_CAN_BECREATED) {
+      echo "<h2><a href=<a href=ThingEdit.php?ACTION=CREATE&id=$Tid>Create</a></h2>";
+    } else {
+      if (isset($_REQUEST['Validate'])) {
+        echo "<h2 class=Green>Design is valid</h2>";
+        if (($tprops & THING_HAS_MODULES) && ($totmodc < $T['MaxModules'] )) {
+          echo "<h2>Though it can have " . ( $T['MaxModules'] - $totmodc). " more modules</h2>\n";
+        }
       }
+      echo "<input type=submit name=Validate value=Validate>\n";
+      echo "<input type=submit name=ACTION value=Delete>\n";
+      echo "<h2>Once planned, go to where you want to make it and select an appropriate project</h2>";
+      echo "You can customise by adding crew names, an images, notes and gadgets by selecting the thing while it is being made or used later.<p>\n";
     }
-    echo "<input type=submit name=Validate value=Validate>\n";
-    echo "<input type=submit name=ACTION value=Delete>\n";
-    echo "<h2>Once planned, go to where you want to make it and select an appropriate project</h2>";
-    echo "You can customise by adding crew names, an images, notes and gadgets by selecting the thing while it is being made or used later.<p>\n";
   } else {
     echo "<input type=submit name=Validate value=Validate>\n";
     echo "<input type=submit name=ACTION value=Delete>\n";

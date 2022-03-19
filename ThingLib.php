@@ -34,6 +34,7 @@ define('THING_CAN_BETRANSPORTED',512);
 define('THING_HAS_2_FACTIONS',1024);
 define('THING_HAS_MINERALS',2048);
 define('THING_CAN_BE_ADVANCED',4096);
+define('THING_CAN_BECREATED',8192);
 
 function ModFormulaes() {
   global $ModFormulaes;
@@ -250,7 +251,13 @@ function Max_Modules(&$t) {
     if (Has_Tech($t['Whose'], 'Compact Ship Design') && $t['Level'] > 1) $v += $t['Level'];
     if ($t['Level'] > 2 && Has_Trait($t['Whose'],'Really Big')) $v += $t['Level']*$t['Level'];
     if ($TTs['Name'] == 'Satellite Defences') $v += $t['Level'];
-    if ($TTs['Name'] == 'Planetary Defence Force') $v += $t['Level'];
+    if ($TTs['Name'] == 'Planetary Defence Force') {
+      if (Has_Trait($Fid,"Strong military")) {
+        $v *= 2;
+      } else {
+        $v += $t['Level'];
+      }
+    }
     return $v;
   }
   return 0;
