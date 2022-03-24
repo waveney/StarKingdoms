@@ -380,7 +380,8 @@
         }
 */
         if ($Valid) {
-          $OldPro = Get_ProjectAT($Hi, $Di, $Turn);
+          $OldPro = Get_ProjectAt($Hi, $DT, $Turn);
+// var_dump($OldPro);
           $Pro = ['FactionId'=>$Fid, 'Type'=>$Ptype, 'Level'=> $Level, 'Home'=>$Hi, 'Progress'=>0, 'Status'=>0, 'TurnStart'=>$Turn, 'Name'=>$Name,
                   'Costs' => $Costs, 'ProgNeeded' => $ProgN, 'BuildState'=>0, 'DType' => $DT];
           if (isset($With)) $Pro['ThingId'] = $With;

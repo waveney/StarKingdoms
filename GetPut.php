@@ -925,15 +925,16 @@ function Get_Project($id) {
   return [];
 }
 
-function Get_ProjectAt($Home,$Dist,$Start) {
+function Get_ProjectAt($Home,$DT,$Start) {
   global $db;
-  if ($Dist==0 || $Dist>5) return [];
+/*  if ($Dist==0 || $Dist>5) return [];
   if ($Dist < 0) {
      $Cat = 1;
   } else {
     $Cat = [-1=>1,1=>64,2=>4,3=>2,4=>8,5=>1][$Dist]; // Convert from Distict numbers to category mask in project types
-  }
-  $res = $db->query("SELECT p.* FROM Projects p ProjectTypes t WHERE p.Home=$Home AND p.TurnStart=$Start AND t.id=p.Type AND t.Category=$Cat");
+  }*/
+//echo "SELECT p.* FROM Projects p ProjectTypes t WHERE p.Home=$Home AND p.TurnStart=$Start AND t.id=p.Type AND DType=$DT<p>";
+  $res = $db->query("SELECT p.* FROM Projects p, ProjectTypes t WHERE p.Home=$Home AND p.TurnStart=$Start AND t.id=p.Type AND DType=$DT") ; // t.Category=$Cat");
   if ($res) if ($ans = $res->fetch_assoc()) return $ans;
   return [];
 }
