@@ -150,7 +150,17 @@ function New_Thing(&$t) {
        Put_Thing($t);
        break;
 
+     case 'UnloadAll' :
+       // Need list of Worlds in location  - if only one select it - 
+       $t = Get_Thing($_REQUEST['id']);
+       $Homes = Gen_Get_Cond('ProjectHomes', "SystemId=" . $t['SystemId']);
+       if (!Homes) { 
        
+       } else if (count($Homes) == 1) {
+       
+       } else {
+       
+       }  
        
     case 'None' :
     default: 

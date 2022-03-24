@@ -208,8 +208,8 @@ function Show_Thing(&$T,$Force=0) {
     foreach ($Have as $H) {
       $hprops = $ThingProps[$H['Type']];
       echo "<a href=ThingEdit.php?id=" . $H['id'] . ">" . $H['Name'] . "</a> a " . (($hprops & THING_HAS_LEVELS)? "Level " . $H['Level'] : "") . " " . $ttn[$H['Type']]; 
-      echo " , ";
     }
+    echo "<a href=ThingEdit.php?ACTION=UnloadAll>Unload All</a>";
   }
   
   if ($GM) echo "<tr>" . fm_textarea('GM Notes',$T,'GM_Notes',8,2,'class=NotSide');

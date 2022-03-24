@@ -163,7 +163,8 @@ function Recalc_Project_Homes($Logf=0) {
       continue;
     }
  
-    if ($T['HasDeepSpace'] || ($ThingTypes[$T['Type']]['Properties'] & THING_HAS_DISTRICTS) || ($ThingTypes[$T['Type']]['Properties'] & THING_HAS_GADGETS ) ) {
+//    if ($T['HasDeepSpace'] || ($ThingTypes[$T['Type']]['Properties'] & THING_HAS_DISTRICTS) || ($ThingTypes[$T['Type']]['Properties'] & THING_HAS_GADGETS ) ) {
+    if (($ThingTypes[$T['Type']]['Properties'] & THING_HAS_DISTRICTS) ) {
       $THi = $T['ProjHome'];
       if ($THi) {
         foreach ($KnownHomes as &$H) {

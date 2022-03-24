@@ -515,7 +515,7 @@ function LogisticalSupport($Fid) {  // Note this sets the Economic rating of all
 //var_dump($Logistics); echo "<br>";
   if ($ln = Has_Tech($Fid,'Naval Logistics')) $Logistics[0] += 2*$ln;
   if ($ln = Has_Tech($Fid,'Army Logistics')) $Logistics[1]  += 2*$ln;
-  if ($ln = Has_Tech($Fid,'Intelligence Logistics')) $Logistics[3] += 2*$ln;
+  if ($ln = Has_Tech($Fid,'Intelligence Logistics')) $Logistics[2] += 2*$ln;
 //var_dump($Logistics);
   return $Logistics;  
 }
