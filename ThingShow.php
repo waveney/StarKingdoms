@@ -110,13 +110,23 @@ function Show_Thing(&$T,$Force=0) {
           $T['LinkId'] = 0;
           $SelCols[0] = "white";
         }
-        if (($tprops & THING_CAN_MOVE) && isset($SelCols[$T['LinkId']]) ) {
-          echo "<td>";
-          if (($T['Instruction'] > 0) && ($T['Instruction'] != 5)) echo "<span class=Err>Warning Busy doing:<br>" . $ThingInstrs[$T['Instruction']] . "</span><br>";
+        if ($T['LinkId'] < 0) {
+          $Host = Get_Thing(-$T['LinkId']);
+          echo "<td>In:<td>" . $Host['Name'];
+          if ($GM || $Fid == $Host['FactionId'] || $Host['FactionId'] == $FACTION['id'] ) echo "<input type=submit class=SmallSubmit name=ACTION value=Disembark>\n";
+        } else {
+          if (($tprops & THING_CAN_MOVE) && isset($SelCols[$T['LinkId']]) ) {
+            echo "<td>";
+            if (($T['Instruction'] > 0) && ($T['Instruction'] != 5)) echo "<span class=Err>Warning Busy doing:<br>" . $ThingInstrs[$T['Instruction']] . "</span><br>";
             
-          echo "Taking Link:<td>" . fm_select($SelLinks,$T,'LinkId',0," style=color:" . $SelCols[$T['LinkId']] ,'',0,$SelCols) . "Update this normally";
+            echo "Taking Link:<td>" . fm_select($SelLinks,$T,'LinkId',0," style=color:" . $SelCols[$T['LinkId']] ,'',0,$SelCols) . "Update this normally";
+          }
         }
-        if ($tprops & THING_CAN_BETRANSPORTED) echo "<td>No mechanism<td>to move armies yet";  // TODO transport armies
+        if ($tprops & THING_CAN_BETRANSPORTED) { 
+          // List of what it can embark on armies - need cargo ships, individuals anything, if not yours needs confirmation from other party - can be out of turn
+                
+//        echo "<td>No mechanism<td>to move armies yet";  // TODO transport armies
+        }
       }
     }
 
@@ -191,6 +201,17 @@ function Show_Thing(&$T,$Force=0) {
   echo "<tr>" . fm_textarea("Description\n(For others)",$T,'Description',8,2);
   echo "<tr>" . fm_textarea('Notes',$T,'Notes',8,2);
   echo "<tr>" . fm_textarea('Named Crew',$T,'NamedCrew',8,2);
+  
+  $Have = Get_Things_Cond($Fid," LinkId<0 AND SystemId=$tid ");
+  if ($Have) {
+    echo "<tr><td>Has:<td colspan=6>";
+    foreach ($Have as $H) {
+      $hprops = $ThingProps[$H['Type']];
+      echo "<a href=ThingEdit.php?id=" . $H['id'] . ">" . $H['Name'] . "</a> a " . (($hprops & THING_HAS_LEVELS)? "Level " . $H['Level'] : "") . " " . $ttn[$H['Type']]; 
+      echo " , ";
+    }
+  }
+  
   if ($GM) echo "<tr>" . fm_textarea('GM Notes',$T,'GM_Notes',8,2,'class=NotSide');
   echo "<tr>" . fm_textarea('History',$T,'History',8,2,'','','',($GM?'':'Readonly'));
   if ($tprops & THING_HAS_2_FACTIONS) echo "<tr>" . fm_radio('Other Faction',$FactNames ,$T,'OtherFaction','',1,'colspan=6','',$Fact_Colours,0); 
@@ -656,6 +677,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
   }
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
   echo "</table></div>\n";
+  echo "<input type=submit name=ACTION value=Refresh>";
   if ($GM) echo "<input type=submit name=ACTION value='GM Refit'> <input type=submit name=ACTION value='Destroy Thing (Leave debris)'>" .
        " <input type=submit name=ACTION value='Remove Thing (No debris)'>  <input type=submit name=ACTION value='Warp Out'>\n";
   if ($GM || empty($Fid)) {

@@ -24,7 +24,9 @@
       $Fid = $FACTION['id'];
       $Faction = &$FACTION;
     }
-  } 
+  } else if (!$GM) {
+    Error_Page("Sorry you need to be a GM or a Player to access this");
+  }
   if ($GM && !$Fid) {
     if (isset( $_REQUEST['F'])) {
       $Fid = $_REQUEST['F'];
@@ -38,7 +40,11 @@
     if (isset($Fid)) $Faction = Get_Faction($Fid);
   }
   
-  $GM = Access('GM');
+  if ($Fid == 0) {
+    dostaffhead("Display Projects When no Faction selected");
+    echo "<h1>Display Projects When no Faction selected</h1>";
+    dotail();
+  }
   
   dostaffhead("Display Projects for faction",["js/ProjectTools.js"]);
   
@@ -585,7 +591,7 @@
             }
           }
           $Prog = min($Pro['Acts'],$Pro['MaxRush'] + $Rush + $Bonus); // Note Bonus can be negative
-//          if ($P['GMOverride']) $Pro['MaxRush'] = 20;
+
           if ($t == $GAME['Turn']) { 
             if ($SkipProgress) $Prog = 0;
             $TotProg = $P['Progress'];
@@ -601,7 +607,11 @@
               $Pro['Status'] = 'Ongoing';
             }
           } else {
-              $TotProg += $Prog;
+              if ($t == ($GAME['Turn']-1)) {
+                $TotProg = $P['Progress'];
+              } else {
+                $TotProg += $Prog;
+              }
               $Pro['Progress'] = "$TotProg/" . $Pro['Acts'];
               $Pro['Status'] = 'Started';
           }

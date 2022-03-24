@@ -384,7 +384,7 @@ function Swap(&$a,&$b) {
 }
 
 // Short term log of everything
-$req_dump = date("D d H:i:s ") . $_SERVER['SCRIPT_FILENAME'] . " " . print_r($_REQUEST, TRUE);
+$req_dump = date("D d H:i:s ") . $_SERVER['SCRIPT_FILENAME'] . " " . print_r($_REQUEST, TRUE) . print_r($_COOKIE, TRUE);
 $fp = fopen('cache/request.log', 'a');
 fwrite($fp, $req_dump);
 fclose($fp);

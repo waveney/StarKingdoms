@@ -293,6 +293,18 @@
       }
     }
     exit;
+
+  case 'FactionFaction' :
+    if (preg_match('/Set:(\d*):(\d*)/',$field,$mtch)?true:false) {
+      $N = Get_FactionFaction($mtch[2]);
+      if ($mtch[1] == 0) {
+        $N['Props'] = ($N['Props']& 0xfff0) + $Value;
+      } else {
+        $N['Props'] = ($N['Props']& 0xff0f) + $Value<<4;      
+      }
+      echo Put_FactionFaction($N);
+    }
+    exit;
     
   case 'Banking':
     $N = Get_Banking($id);
@@ -349,7 +361,7 @@
     if ((preg_match('/(\w*):(\d*)/',$field,$mtch)?true:false)) {
       $N = Gen_Get('ScansDue',$mtch[2]);
       $N[$mtch[1]] = $Value;
-var_dump($N);
+//var_dump($N);
       echo Gen_Put('ScansDue',$N);
     }
     exit;

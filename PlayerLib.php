@@ -112,6 +112,7 @@ function Player_Page() {
 //    echo "<li><a href=PlayerTurn.php>Submit Player Turn text</a> - For now a link to a Google Docs file.<p>\n";
     echo "<li><a href=Player.php?ACTION=Submit>Submit Turn</a><p>\n";
     echo "<li><a href=FactionEdit.php>Faction Information</a> - Mostly read only once set up.\n";
+    echo "<li><a href=FactionCarry.php>Carry Others Control</a> - To allow individuals and armies aboard.\n";
     break;
       
   case 'Turn Submitted':

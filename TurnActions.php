@@ -844,6 +844,12 @@ function SpaceCombat() {
   return 1;
 }
 
+
+function UnloadTroops() {
+  echo "Unload Troops is currently Manual<p>";
+  return 1;
+}
+
 function OrbitalBombardment() {
   echo "Orbital Bombardment is currently Manual<p>";
   return 1;
@@ -1039,6 +1045,11 @@ function InstructionsProgress() {
      }
    }
 
+  return 1;
+}
+
+function AnomolyStudiesProgress() {
+  echo "Anomoly Studies Progress is currently Manual<p>";
   return 1;
 }
 
@@ -1445,6 +1456,12 @@ function InstructionsComplete() {
   return 1;
 }
 
+function AnomolyStudiesComplete() {
+  echo "Anomoly Studies Complete is currently Manual<p>";
+  return 1;
+}
+
+
 function CheckSurveyReports() {
   global $GAME, $SurveyLevels;
 
@@ -1574,9 +1591,11 @@ function Do_Turn() {
              'Agents Start Missions', 'Spare', 'Spare', 'Economy', 'Spare', 'Spare', 'Load Troops', 'Spare', 
              
              'Ship Move Check','Ship Movements', 'Agents Move Check', 'Agents Movements', 'Meetups', 'Spare', 'Spare', 'Spare', 
-             'Space Combat', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Devastation Selection', 'Devastation', 'Project Progress', 
-             'Instructions Progress','Espionage Missions Complete', 'Spare', 'Counter Espionage','Spare', 'Finish Shakedowns', 'Projects Complete', 'Instructions Complete', 
-             'Check Survey Reports', 'Give Survey Reports', 'Militia Army Recovery', 'Generate Turns', 'Spare', 'Tidy Up Movements', 'Recalc Project Homes', 'Finish Turn Process'];
+             'Space Combat', 'Unload Troops', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Devastation Selection', 'Devastation', 'Project Progress', 
+             'Instructions Progress', 'Anomoly Studies Progress', 'Espionage Missions Complete', 'Counter Espionage',
+             'Spare', 'Finish Shakedowns', 'Projects Complete', 'Instructions Complete', 
+             'Anomaly Studies Complete', 'Check Survey Reports', 'Give Survey Reports', 'Militia Army Recovery', 
+             'Generate Turns', 'Tidy Up Movements', 'Recalc Project Homes', 'Finish Turn Process'];
 
   $Coded =  ['Coded','No','No','Coded','Coded','No','Coded', 'No',
              'No','No','No','No','Partial','No','No','Coded',
@@ -1585,8 +1604,10 @@ function Do_Turn() {
              
              'Coded','Coded','Coded','Coded','Coded','No','No', 'No',
              'No','No','No','No','No','Coded','Coded','Coded',
-             'Coded','No','No','No','No','Coded','Partial','Coded',
-             'Partial (not nebula)','Coded','No','No','No','Coded','Coded','Coded?'];
+             'Coded','No','No','No',
+             'No','Coded','Partial','Coded',
+             'No','Partial (not nebula)','Coded','No',
+             'No','Coded','Coded','Coded?'];
   $Sand = Get_TurnNumber();
 // var_dump($Sand);
 
