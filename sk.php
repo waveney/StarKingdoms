@@ -193,7 +193,7 @@ function Error_Page ($message) {
 
   case $Access_Type['GM'] :
   case $Access_Type['SysAdmin'] :
-  case $Access_Type['Internal'] :
+  case $Access_Type['God'] :
     $ErrorMessage = "Something went very wrong... - $message";
     include_once('Staff.php');  // Should be good
     exit;                        // Just in case
@@ -317,6 +317,9 @@ function doheadpart($title,$extras=[]) {
 // No Banner
 function dostaffhead($title,$extras=[]) {
   global $head_done,$GAMESYS,$CONF,$AdvancedHeaders,$GAME;
+  
+  LogEverything();
+  
   if ($head_done) return;
   $V=$GAMESYS['V'];
   $pfx="";
@@ -383,10 +386,19 @@ function Swap(&$a,&$b) {
   $b = $c;
 }
 
+
 // Short term log of everything
-$req_dump = date("D d H:i:s ") . $_SERVER['SCRIPT_FILENAME'] . " " . print_r($_REQUEST, TRUE) . print_r($_COOKIE, TRUE);
-$fp = fopen('cache/request.log', 'a');
-fwrite($fp, $req_dump);
-fclose($fp);
+function LogEverything($Msg='') {
+  global $FACTION,$USER;
+  $req_dump = date("D d H:i:s ") . $_SERVER['SCRIPT_FILENAME'] . " " . print_r($_REQUEST, TRUE) . print_r($_COOKIE, TRUE);
+  if (isset($FACTION)) $req_dump .= "Faction: " . $FACTION['Name'] . "\n";
+  if (isset($USER['Login'])) $req_dump .= "GM: " . $USER['Login'] . "\n";
+
+  $fp = fopen('cache/request.log', 'a');
+  fwrite($fp, $req_dump);
+  fclose($fp);
+}
+
+// LogEverything();
 
 ?>
