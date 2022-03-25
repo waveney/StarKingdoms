@@ -115,8 +115,8 @@
     $Hide = 0;
     $FS = 0;
     if ($Faction) {
+      $FS = Get_FactionSystemFS($Faction, $N['id']);
       if ($N['Control'] != $Faction) {
-        $FS = Get_FactionSystemFS($Faction, $N['id']);
         if (!isset($FS['id'])) continue;
         if ($FS['ScanLevel'] > 1) {
           if ($FS['Name']) $ShortName = $NodeName = $FS['Name'];

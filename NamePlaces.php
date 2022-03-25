@@ -170,8 +170,8 @@
           break;
         }
         $FS['Xlabel'] = $Label;
-        Put_FactionSystem($FS);   
-        echo "<h2>Label $Label has been assignedto $sysref</h2><p>";
+        Put_FactionSystem($FS); 
+        echo "<h2>Label $Label has been assigned to $sysref</h2><p>";
       }    
       break;
            
