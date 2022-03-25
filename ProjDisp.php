@@ -476,7 +476,7 @@
       break;
     }
     
-    if ($PH['Type'] != $Faction['Biosphere']) $PlanCon--;
+    if ($H['ThingType'] != 3 && $PH['Type'] != $Faction['Biosphere']) $PlanCon--;
     //TODO Construction and Districts... 
 
     $Dists[] = ['HostType'=>-1, 'HostId' => $PH['id'], 'Type'=> -1, 'Number'=>0, 'id'=>-$PH['id']];
