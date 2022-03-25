@@ -113,6 +113,7 @@
     $NodeName = $N['Name']?$N['Name']:"";
     $ShortName = $N['ShortName']?$N['ShortName']:$NodeName;
     $Hide = 0;
+    $FS = 0;
     if ($Faction) {
       if ($N['Control'] != $Faction) {
         $FS = Get_FactionSystemFS($Faction, $N['id']);
@@ -151,6 +152,8 @@
    
     if ($Faction) {
       $atts .= " href=\"/SurveyReport.php?R=" . $N['Ref'] . '" ';
+      
+      if (!empty($FS['Xlabel'])) $atts .= " xlabel=\"" . $FS['Xlabel'] . '" ';
     } else {
       $atts .= " href=\"/SysEdit.php?N=" . $N['id'] . '" ';
     }

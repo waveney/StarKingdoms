@@ -41,7 +41,7 @@
   }
 
 
-function Node_Show($Fid,$Tid, $Lid, $N) {
+function Node_Show($Fid,$Tid, $Lid, $N, $url='') {
   global $Factions,$Dot;
     $NodeName = $N['Name']?$N['Name']:"";
     $ShortName = $N['ShortName']?$N['ShortName']:$NodeName;
@@ -79,6 +79,8 @@ function Node_Show($Fid,$Tid, $Lid, $N) {
     }
     if ($N['Nebulae']) { $atts .= " penwidth=" . (2+$N['Nebulae']*2); $NebF = 1; }
     else { $atts .= " penwidth=2"; }
+    
+    if ($url) $atts .= " href=\"$url\" ";
    
     if ($Lid) $atts .= " href=\"/PThingList.php?ACTION=MOVE&T=$Tid&L=$Lid\" ";    
     fwrite($Dot,$N['Ref'] . " [$atts ];\n");
@@ -138,7 +140,7 @@ function Node_Show($Fid,$Tid, $Lid, $N) {
 
   $ThisRef = $N['Ref'];
   
-  Node_Show($Fid,$Tid,0,$N);
+  Node_Show($Fid,$Tid,0,$N,"/PThingList.php?ACTION=CANCELMOVE&T=$Tid");
 
   // Each link
   
