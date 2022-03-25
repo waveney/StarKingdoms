@@ -165,7 +165,7 @@
         }
         $Sid = $N['id'];
         $FS = Get_FactionSystemFS($Fid,$Sid);
-        if (!isset($FS['id'])) {
+        if (!isset($FS['id']) && $N['Control'] != $Fid) {
           echo "<h2 class=Err>System $sysref not known to you</h2>";
           break;
         }
