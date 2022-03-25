@@ -88,6 +88,12 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
              "</span> link do you need to pay " . $LOwner['Name'] . " for this?</h2>\n";
       }
       break;
+    case 'CANCELMOVE':
+      $Tid = $_REQUEST['T'];
+      $T = Get_Thing($Tid);
+      $T['LinkId'] = 0;
+      Put_Thing($T);
+      break;    
     }
   }
   

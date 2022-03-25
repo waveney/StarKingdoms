@@ -123,6 +123,7 @@ function Node_Show($Fid,$Tid, $Lid, $N) {
   $N = Get_System($ThisSys); 
 
   echo "<h1>Click on the destination to move:</h1><h2> " . $T['Name'] . " - from " . $N['Ref'] . " next turn</h2>";
+
   $Dot = fopen("cache/Movemap$Fid.dot","w+");
   if (!$Dot) { echo "Could not create dot file<p>"; dotail(); };
   
@@ -166,6 +167,7 @@ function Node_Show($Fid,$Tid, $Lid, $N) {
   echo "<img src=cache/Movemap$Fid.png?$Rand maxwidth=100% usemap='#skmovemap'>";
   readfile("cache/Movemap$Fid.map");
   
+  echo "<h2><a href=PThingList.php?ACTION=CANCELMOVE&T=$Tid>Cancel Move Order</a></h2>\n"; 
   dotail();
   
 ?>
