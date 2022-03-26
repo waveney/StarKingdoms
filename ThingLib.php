@@ -349,13 +349,13 @@ function Moves_4_Thing(&$T, $Force=0, &$N=0) {
 
       foreach ($Links as $L) {
         $LinkText = "Unknowm";
-        $FL = Get_FactionLink($Fid,$L['id']);
+        $FL = Get_FactionLinkFL($Fid,$L['id']);
         $FarSysRef =  (($L['System1Ref'] == $N['Ref'])?$L['System2Ref']: $L['System1Ref'] );
         $FSN = Get_SystemR($FarSysRef);
         $FarNeb = $FSN['Nebulae'];
         $FS = Get_FactionSystemFS($Fid,$FSN['id']);
 //echo "<p>doing link " . $L['id'] . " to $FarSysRef ". $FSN['id'] ; var_dump($FS);
-        if (isset($FL['known']) && $FL['known']) {
+        if (isset($FL['Known']) && $FL['Known']) {
           $LinkText = $FarSysRef;
         } else if ($NearNeb == 0) {
           if (isset($FS['id'])) {
@@ -376,6 +376,7 @@ function Moves_4_Thing(&$T, $Force=0, &$N=0) {
             $LinkText = '?';
           }
         } else {
+          unset($Links[$L['id']]);
           continue;
 //          $LinkText = '?';
         }

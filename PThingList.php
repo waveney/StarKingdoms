@@ -61,7 +61,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
       $FarNeb = $FSN['Nebulae'];
       $FS = Get_FactionSystemFS($Fid,$FSN['id']);
 
-      if (isset($FL['known']) && $FL['known']) {
+      if (isset($FL['Known']) && $FL['Known']) {
       } else if ($NearNeb == 0) {
           if (isset($FS['id'])) {
             if ($FarNeb != 0 && $FS['NebScanned'] < $FarWeb) {

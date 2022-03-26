@@ -191,7 +191,7 @@ function Get_FactionLink($id) {
 function Get_FactionLinkFL($Fact, $Lid) {
   global $db;
   $res = $db->query("SELECT * FROM FactionLink WHERE FactionId=$Fact AND LinkId=$Lid");
-  if ($res && ($ans = $res->fetch_assoc())) return $ans;
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
   return ['FactionId'=>$Fact, 'LinkId'=>$Lid, 'Known'=>0, 'NebScanned'=>0];
 }
 
