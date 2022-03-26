@@ -186,13 +186,13 @@
             }
           }
           
- //echo "Have $Lvl of " . $DT['Name'] . "<P>";
+//var_dump($DTz);
 // TODO bug if you already have that level in the pipeline - Add check to Turns Ready          
           $Lvl++;
           $pc = Proj_Costs($Lvl);
-          if (Has_Trait($Fid,"On the Shoulders of Giants") && $Lvl>1 ) {
-            $pc = Proj_Costs($Lvl-1);
-            if ($DTz['Type'] == 9) $pc[1] = 0;
+          if (Has_Trait($Fid,"We Happy Few")) {
+            if ($Lvl>1 ) $pc = Proj_Costs($Lvl-1);
+            if ($DTz['id'] == 9) $pc[1] = 0; // Mining
           }
           echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=1&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $DTz['id'] . 
                 "&Name=" . base64_encode("Build " . $DTz['Name'] . " District $Lvl$Place") . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .

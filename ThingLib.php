@@ -435,6 +435,7 @@ function RefitRepair(&$T,$Save=1) {
   }
 // Repair
   $Health = Calc_Health($T);
+  Calc_Scanners($T);
   $T['CurHealth'] = $T['OrigHealth'] = $Health;
   $T['Speed'] = $Engines*$Elvl/$T['Level'] +1;
   if ($Save) Put_Thing($T);
@@ -532,6 +533,7 @@ function Thing_Duplicate($otid) {
   $t['LinkId'] = 0;
   $t['WithinSysLoc'] = 0;
   $t['BuildState'] = 0;
+  $t['History'] = 0;
   
   $Fid = $t['Whose'];
        
