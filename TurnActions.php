@@ -1496,7 +1496,7 @@ function CheckSurveyReports() {
   }
   if ($Started) {
     echo "</table>\n";
-    echo "<h2><a href=TurnActions.php?ACTION=StageDone&S=56>When Happy click here</a></h2>";
+    echo "<h2><a href=TurnActions.php?ACTION=StageDone&S=57>When Happy click here</a></h2>";
     dotail();
   }
   return 1;

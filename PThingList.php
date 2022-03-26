@@ -16,8 +16,8 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
       $Faction = &$FACTION;
     }
   } 
-  if (Access('GM') ) {
-    A_Check('GM');
+  $GM = Access('GM');
+  if ($GM) {
     if (isset( $_REQUEST['F'])) {
       $Fid = $_REQUEST['F'];
     } else if (isset( $_REQUEST['f'])) {
@@ -133,7 +133,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Actions</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Using Link</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Moving to</a>\n";
-
+  if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Sensors</a>\n";
   echo "</thead><tbody>";
   
   $Logistics = [0,0,0]; // Ship, Army, Intelligence
@@ -187,6 +187,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
     } else {
       echo "<td><td>";
     }
+    if ($GM) echo "<td>" . ($T['Sensors']? ($T['Sensors'] . '*L' . $T['SensorLevel'] . ($T['NebSensors']?' N':'')) : '');
  //   echo "<td>" . (isset($Systems[$T['NewSystemId']]) ? $Systems[$T['NewSystemId']] :"") ;
     
     if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
