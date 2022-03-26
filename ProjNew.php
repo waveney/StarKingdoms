@@ -66,9 +66,10 @@
         $NameList = [];
         foreach ($Things as $T) {
           if ($T['Level'] > $Limit) continue;
-          $pc = Proj_Costs($T['Level']);        
+          $pc = Proj_Costs($T['Level']);
+          if ($_REQUEST['ACTION'] == 'NEWARMY' && Has_Tech($Fid,'Efficient Robot Construction')) $pc[0] = max(1, $pc[0] - $T['Level']); 
           $NameList[$T['id']] = $T['Name'] . (empty($T['Class'])?'': ", a " . $T['Class']) . " ( Level " . $T['Level'] . " ); $Place;" .
-            "Cost: " . $pc[1] .  " Needs " . $pc[0] . " progress'>";
+            "Cost: " . $pc[1] .  " Needs " . $pc[0] . " progress";
           }
         
         if ($NameList) {

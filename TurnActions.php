@@ -283,7 +283,7 @@ function StartProjects() {
 }
 
 /*
-$ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse Anomoly','Establish Embassy','Make Outpost','Make Asteroid Mine','Make Minefield',
+$ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse Anomaly','Establish Embassy','Make Outpost','Make Asteroid Mine','Make Minefield',
                 'Make Orbital Repair Yard','Build Space Station','Expand Space Station','Make Deep Space Sensor','Make Advanced Asteroid Mine','Build Stargate',
                 'DSC Special'];
 */
@@ -388,7 +388,7 @@ function ColonisationInstuctions() { // And other Instructions
       Spend_Credit($T['Whose'],-$cash,"Decommisioning " . $T['Name']);
       break;
 
-    case 'Analyse Anomoly': // Anomoly
+    case 'Analyse Anomaly': // Anomaly
       break; // TODO
       
     case 'Establish Embassy': 
@@ -703,7 +703,7 @@ function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
   
   echo "<h2>These movements are planned - to stop one, tick the stop box and say why</h2>";
   echo "<form method=Post action=TurnActions.php?ACTION=Complete>" . fm_hidden('S',($Agents?34:32));
-  echo "<table border><tr><td>Who<td>What<td>From<td>Link<td>To<td>Stop<td>Why Stopping\n";
+  echo "<table border><tr><td>Who<td>What<td>Level<td>From<td>Link<td>To<td>Stop<td>Why Stopping\n";
   foreach ($Things as $T) {
     if (($T['Type'] == 5 && $Agents == 0) || ($T['Type'] != 5 && $Agents == 1) || $T['BuildState'] <2 || $T['BuildState'] > 3) continue;
     if ($T['LinkId'] && $T['NewSystemId'] != $T['SystemId'] ) {
@@ -716,7 +716,7 @@ function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
       $SR1 = Get_SystemR($L['System1Ref']);
       $SR2 = Get_SystemR($L['System2Ref']);
       
-      echo "<tr><td>" . $Facts[$Fid]['Name'] . "<td><a href=ThingEdit.php?id=$Tid>" . $T['Name']  . "<td>";
+      echo "<tr><td>" . $Facts[$Fid]['Name'] . "<td><a href=ThingEdit.php?id=$Tid>" . $T['Name']  . "<td>" . $T['Level'] . "<td>";
       if ($T['SystemId'] == $SR1['id']) {
          echo $L['System1Ref'] . "<td style=color:" . $LinkLevels[$L['Level']]['Colour'] . ";>#$Lid<td>" . $L['System2Ref'];
       } else {
@@ -1048,8 +1048,8 @@ function InstructionsProgress() {
   return 1;
 }
 
-function AnomolyStudiesProgress() {
-  echo "Anomoly Studies Progress is currently Manual<p>";
+function AnomalyStudiesProgress() {
+  echo "Anomaly Studies Progress is currently Manual<p>";
   return 1;
 }
 
@@ -1456,8 +1456,8 @@ function InstructionsComplete() {
   return 1;
 }
 
-function AnomolyStudiesComplete() {
-  echo "Anomoly Studies Complete is currently Manual<p>";
+function AnomalyStudiesComplete() {
+  echo "Anomaly Studies Complete is currently Manual<p>";
   return 1;
 }
 
@@ -1476,6 +1476,7 @@ function CheckSurveyReports() {
 
     $Fid = $S['FactionId'];
     $Sid = $S['Sys'];
+    $SSid = $S['id'];
     if ($LastSys == $Sid) continue;
     $FS = Get_FactionSystemFS($Fid,$Sid);
     
@@ -1490,7 +1491,7 @@ function CheckSurveyReports() {
     }
 
     $N = Get_System($S['Sys']);
-    echo "<tr><td>" . $Facts[$Fid]['Name'] . "<td>" . $N['Ref'] . "<td>" . fm_radio('',$SurveyLevels,$S,'Scan','',0,'',"Scan:$Sid");
+    echo "<tr><td>" . $Facts[$Fid]['Name'] . "<td>" . $N['Ref'] . "<td>" . fm_radio('',$SurveyLevels,$S,'Scan','',0,'',"Scan:$SSid");
     $LastSys = $Sid;
   }
   if ($Started) {
@@ -1592,7 +1593,7 @@ function Do_Turn() {
              
              'Ship Move Check','Ship Movements', 'Agents Move Check', 'Agents Movements', 'Meetups', 'Spare', 'Spare', 'Spare', 
              'Space Combat', 'Unload Troops', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Devastation Selection', 'Devastation', 'Project Progress', 
-             'Instructions Progress', 'Anomoly Studies Progress', 'Espionage Missions Complete', 'Counter Espionage',
+             'Instructions Progress', 'Anomaly Studies Progress', 'Espionage Missions Complete', 'Counter Espionage',
              'Spare', 'Finish Shakedowns', 'Projects Complete', 'Instructions Complete', 
              'Anomaly Studies Complete', 'Check Survey Reports', 'Give Survey Reports', 'Militia Army Recovery', 
              'Generate Turns', 'Tidy Up Movements', 'Recalc Project Homes', 'Finish Turn Process'];

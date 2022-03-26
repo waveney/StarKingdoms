@@ -173,6 +173,7 @@
           }
           $Level = $T['Level'];
           $pc = Proj_Costs($Level);
+          if ($ProjTypes[$Ptype]['Name'] == 'Train Army' && Has_Tech($Fid,'Efficient Robot Construction')) $pc[0] = max(1, $pc[0] - $T['Level']); 
           $Costs = $pc[1];
           $ProgN = $pc[0];
           $TthingId = $T['id'];
