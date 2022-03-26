@@ -178,7 +178,7 @@
       $Fid = $N['Whose'];
       $Known = 1;
       // Handle link knowledge - KLUDGE 
-      $FL = Get_FactionLink($Fid,$L['id']);
+      $FL = Get_FactionLinkFL($Fid,$L['id']);
       $FarNeb = $FSN['Nebulae'];
       $FS = Get_FactionSystemFS($Fid,$FSN['id']);
 

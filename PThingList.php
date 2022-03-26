@@ -57,7 +57,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
 
       $Known = 1;
       // Handle link knowledge - KLUDGE 
-      $FL = Get_FactionLink($Fid,$Lid);
+      $FL = Get_FactionLinkFL($Fid,$Lid);
       $FarNeb = $FSN['Nebulae'];
       $FS = Get_FactionSystemFS($Fid,$FSN['id']);
 
