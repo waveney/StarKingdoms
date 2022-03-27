@@ -996,9 +996,11 @@ function ProjectProgress() {
     $TurnStuff = Get_ProjectTurnPT($P['id'],$GAME['Turn']);
     
     $Rush = 0;
+    $Bonus = 0;
+    if (!empty($TurnStuff['Bonus'])) $Bonus = $TurnStuff['Bonus'];
     $Acts = min($MaxActs,$P['ProgNeeded']-$P['Progress']);
     if (isset($TurnStuff['Rush'])) {
-      $Rush = min($TurnStuff['Rush'],$Acts,$P['ProgNeeded']-$P['Progress']-$Acts);
+      $Rush = min($TurnStuff['Rush'],$Acts,$P['ProgNeeded']-$P['Progress']-$Acts-$Bonus);
       if ($Rush) {
         if (Spend_Credit($P['FactionId'],$Rc = (Rush_Cost($P['FactionId'])*$Rush), 'Rushing ' . $P['Name'] . " By $Rush")) {
           TurnLog($P['FactionId'],'Rushing ' . $P['Name'] . " by $Rush  Cost: " . Credit() . " $Rc");
@@ -1009,8 +1011,8 @@ function ProjectProgress() {
     }
 
 //echo "Acts . $Acts<br>";        
-    $P['Progress'] = min($P['ProgNeeded'], $P['Progress']+$Acts+$Rush);
-    TurnLog($P['FactionId'],"Progressing " . $P['Name'] . " by " . ($Acts+$Rush));
+    $P['Progress'] = min($P['ProgNeeded'], $P['Progress']+$Acts+$Rush+$Bonus);
+    TurnLog($P['FactionId'],"Progressing " . $P['Name'] . " by " . ($Acts+$Rush+$Bonus));
     $P['LastUpdate'] = $GAME['Turn'];
     Put_Project($P); // Note completeion is handled later in the turn sequence
   }

@@ -579,6 +579,7 @@
           }
         }   
 
+        $TotProg = $P['Progress'];
         for ($t = $P['TurnStart']; $t <= ($P['TurnEnd']?$P['TurnEnd']:$P['TurnStart']+50); $t++) {
 
           $Pro['Rush'] = $Rush = $Bonus = 0;
@@ -594,12 +595,32 @@
               $TSi ++;
             }
           }
-          $Prog = min($Pro['Acts'],$Pro['MaxRush'] + $Rush + $Bonus); // Note Bonus can be negative
 
+          if ($t == $P['TurnEnd']) {
+            $Pro['Status'] = 'Complete';
+            $Pro['Progress'] = $Pro['Acts'] . "/" . $Pro['Acts'];
+          } else if ($t < $GAME['Turn'] -1) {
+            $Pro['Progress'] = "? /" . $Pro['Acts'];
+            $Pro['Status'] = (($t == $P['TurnStart'])?'Started' : 'Ongoing' );
+          } else if ($t == $GAME['Turn'] -1) {
+            $Pro['Progress'] = $P['Progress'] . "/" .  $Pro['Acts'];
+            $Pro['Status'] = (($t == $P['TurnStart'])?'Started' : 'Ongoing' );
+          } else {
+            $Prog = min($Pro['Acts'],$Pro['MaxRush'] + $Rush + $Bonus); // Note Bonus can be negative
+            if ($t == $GAME['Turn']) { 
+              if ($SkipProgress) $Prog = 0;
+              $TotProg = $P['Progress'];
+            } else {
+              $TotProg += $Prog;
+            }
+            $Pro['Progress'] = "$TotProg/" . $Pro['Acts'];
+            $Pro['Status'] = (($TotProg >= $Pro['Acts'])? 'Complete' : (($t == $P['TurnStart'])?'Started' : 'Ongoing' ));
+          }
           if ($t == $GAME['Turn']) { 
             if ($SkipProgress) $Prog = 0;
             $TotProg = $P['Progress'];
           }
+/*          
           if ($TotProg || $Prog >= $Pro['Acts'] ) {
             if ($t != $GAME['Turn'] || $SkipProgress==0 ) $TotProg += $Prog;
             if ($TotProg >= $Pro['Acts']) {
@@ -607,7 +628,7 @@
               $Pro['Status'] = 'Complete';
 // TODO Future              Project_Finished($P,$t);
             } else {
-              $Pro['Progress'] = "$TotProg/" . $Pro['Acts'];
+              $Pro['Progress'] = "? /" . $Pro['Acts'];
               $Pro['Status'] = 'Ongoing';
             }
           } else {
@@ -619,7 +640,7 @@
               $Pro['Progress'] = "$TotProg/" . $Pro['Acts'];
               $Pro['Status'] = 'Started';
           }
-          
+*/          
         
           $Proj[$t][$Hi][$Di] = $Pro;
           $Pro['Cost'] = 0;
