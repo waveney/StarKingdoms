@@ -616,10 +616,7 @@
             $Pro['Progress'] = "$TotProg/" . $Pro['Acts'];
             $Pro['Status'] = (($TotProg >= $Pro['Acts'])? 'Complete' : (($t == $P['TurnStart'])?'Started' : 'Ongoing' ));
           }
-          if ($t == $GAME['Turn']) { 
-            if ($SkipProgress) $Prog = 0;
-            $TotProg = $P['Progress'];
-          }
+
 /*          
           if ($TotProg || $Prog >= $Pro['Acts'] ) {
             if ($t != $GAME['Turn'] || $SkipProgress==0 ) $TotProg += $Prog;
