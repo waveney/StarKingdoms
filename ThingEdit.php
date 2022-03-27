@@ -29,9 +29,10 @@ function New_Thing(&$t) {
   
   if (Access('GM')) {
     A_Check('GM');
-    
+    $Fid = 0;
+    if (!empty($FACTION)) $Fid = $FACTION['id'];
   } else {
-    
+    $Fid = $FACTION['id'];
   }
 
 
@@ -188,7 +189,11 @@ function New_Thing(&$t) {
   }
 
   if ($GM) echo "<h2>GM: <a href=ThingEdit.php?id=$tid&FORCE>This page in Player Mode</a></h2>";  
-  Show_Thing($t,$Force);
+  if (empty($t) || ($t['Whose'] != $Fid && !$GM)) {
+     echo "<h2 class=Err>Sorry that thing is not yours</2>";
+  } else {
+    Show_Thing($t,$Force);
+  }
   if (($GM && !empty($tid)) || ($t['BuildState'] == 0)) echo "<br><p><br><p><h2><a href=ThingEdit.php?ACTION=DELETE&id=$tid>Delete Thing</a></h2>";
 
   

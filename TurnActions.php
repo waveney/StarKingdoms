@@ -203,6 +203,15 @@ function StartProjects() {
             continue;
           }
         }
+        if ($T['Level'] != $P['Level']) {
+          if ($T['Level'] > $P['Level']) {
+            $P['Status'] = 5; // Not Started
+            TurnLog($P['FactionId'],'Not starting as project level less than Thing Level: ' . $P['Name']);
+            Put_Project($P);
+            continue;      
+          } 
+          // Warning?       
+        }
       } // TODO 2nd thing for repair 
       if ($ProjTypes[$P['Type']]['Props'] & 4) { // Has can have a 2nd thing
         $Tid2 = $P['ThingId2'];
@@ -308,6 +317,7 @@ function ColonisationInstuctions() { // And other Instructions
     
     switch ($ThingInstrs[$T['Instruction']]) {
     case 'Colonise': // Colonise
+    case 'Build Planetary Mine':
 
       $P = Get_Planet($T['Spare1']);
       if (empty($P)) { // Refind the planet we need
@@ -339,8 +349,13 @@ function ColonisationInstuctions() { // And other Instructions
         $T['ActionsNeeded'] = $Acts;
       }
       
-      TurnLog($T['Whose'],"The " . $T['Name'] . " is colonising " . $P['Name'] . " in " . $N['Ref'] ,$T);
-      SKlog($Facts[$T['Whose']]['Name'] . " is starting to colonise " . $P['Name'] . " in " . $N['Ref']);
+      if ($ThingInstrs[$T['Instruction']]) == 'Colonise') {
+        TurnLog($T['Whose'],"The " . $T['Name'] . " is colonising " . $P['Name'] . " in " . $N['Ref'] ,$T);
+        SKlog($Facts[$T['Whose']]['Name'] . " is starting to colonise " . $P['Name'] . " in " . $N['Ref']);
+      } else {
+        TurnLog($T['Whose'],"The " . $T['Name'] . " is seting up planetary mining " . $P['Name'] . " in " . $N['Ref'] ,$T);
+        SKlog($Facts[$T['Whose']]['Name'] . " is starting to planetary mine " . $P['Name'] . " in " . $N['Ref']);      
+      }
       break;
 
     case 'Voluntary Warp Home': // Warp out
@@ -1442,7 +1457,19 @@ function InstructionsComplete() {
        SKLog("A Command Node has been repaired in " . $N['Ref'] . " by " . $Facts[$Who]['Name'] . ".  Tell Richard to set the right stuff up",1);
        break;
 
+     case 'Build Planetary Mine'::
+       $P = Get_Planet($T['Spare1']);
+       $Who = $T['Whose'];
+       
+       $D = ['HostType' =>1, 'HostId'=> $P['id'], 'Type'=> 9, 'Number'=>1, 'GameId'=>$GAME['id'], 'TurnStart'=>$GAME['Turn']];
+       if ($D['Type'] == 0) $D['Type'] = 1;
+       Put_District($D);
 
+       $T['BuildState'] = 4;      
+       TurnLog($Who,$P['Name'] . " on " . $N['Ref'] . " has plantary mining established");
+       SKLog($P['Name'] . " on " . $N['Ref'] . " has plantary mining by " . $Facts[$Who]['Name'],1);
+       break; // The making homes and worlds in a later stage completes the colonisation I hope
+       
      default: 
        break;
      }

@@ -474,6 +474,14 @@ function Show_Thing(&$T,$Force=0) {
       continue 2;
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Signal Jammer')) continue 2;
       break;  
+      
+    case 'Build Planetary Mine': // Zabanian special
+      if ((($Moving || $tprops & THING_HAS_CIVSHIPMODS) == 0 ) ) continue 2;
+      if (!Get_ModulesType($tid,25)) continue 2;
+      break;
+    
+    
+    
 
      default: 
       continue 2;
@@ -647,6 +655,55 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       $Acts = $PTs[36]['CompTarget'];
       break;
 
+    case 'Build Planetary Mine': // Zabanian special
+      $PTs = Get_PlanetTypes();
+      $Ps = Get_Planets($N['id']);
+      $Hab_dome = Has_Tech($Fid,'Habitation Domes');
+      $HabPs = [];
+      foreach($Ps as $P) {
+        if (!$PTs[$P['Type']]['Hospitable']) continue;
+        if (Get_DistrictsP($P['id'])) continue; // Someone already there
+        if ($P['Type'] == $FACTION['Biosphere']) {
+          $HabPs[$P['id']] = [$P['Name'],$P['Type'],3];
+        }
+        if ($P['Type'] == 4 ) {
+          if (!$Hab_dome) continue;
+          $HabPs[$P['id']] = [$P['Name'],$P['Type'],10];
+        } else {
+          $HabPs[$P['id']] = [$P['Name'],$P['Type'],6];
+        }
+      }
+      
+      if (empty($HabPs)) {
+        echo "<tr><td><td colspan=6 class=Err>There are no mineable planets here\n";
+        break;
+      }
+      $NumPs = count($HabPs);
+      if ($NumPs == 1) {
+        foreach ($HabPs as $Plid=>$data) {
+          $P = $Ps[$Plid];
+          $Acts = $data[2];
+          echo "<tr><td><td colspan=6>Mining: " . $P['Name'] . " a " . $PTs[$P['Type']]['Name'] . ($PTs[$P['Type']]['Append']?' Planet':'') .
+             " will take " . $data[2] . " actions"; // TODO Moons
+          $T['Spare1'] = $Plid;
+          break;
+        }
+      } else {
+        echo "<tr><td><td colspan=6>";
+        $Cols = $Plans = [];
+        $i = 1;
+        foreach ($HabPs as $Plid=>$data) {
+          $P = $Ps[$Plid];
+          $Plans[$Plid] = $P['Name'] . " a " . $PTs[$P['Type']]['Name'] . ($PTs[$P['Type']]['Append']?'Planet':'') . " will take " . $data[2] . " actions"; // TODO Moons
+          $Cols[$Plid] = $ThingInclrs[$i++];
+        }
+        echo fm_radio('Mining:',$Plans,$T,'Spare1','',0,'','',$Cols);
+      }
+      if ($T['Spare1']) $Acts = $HabPs[$T['Spare1']][2];
+      $ProgShow = 1;
+      $Cost = -1;
+      break;
+    
 
     default: 
       break;

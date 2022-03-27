@@ -422,6 +422,8 @@
   echo "Note the cost totals are on the far right<br>
   The credits left on current turn is a rough guide only - it does not take account of other expenditure other than for the current turn - or any additional income.<p>";
   
+  echo "Note 2: The amount of progress before the end of the previous turn is at best a guess.  If the number of districts/planetary construction has changed they will be wrong.<p>\n";
+  
   echo "Currently this display is for construction and district based projects only.<br>\n";
   
   $Homes = Get_ProjectHomes($Fid);

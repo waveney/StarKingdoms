@@ -126,7 +126,7 @@
     echo "<tr>" . fm_number("Turn Start",$P,'TurnStart') . fm_number('Turn Ended', $P, 'TurnEnd');
     echo "<tr>" . fm_number("Where",$P,'Home') . "<td>" . $PH['Name'] . " in " . NameFind($System);
     echo "<td>" . fm_checkbox('GM Override',$P,'GMOverride') . " Set to override maxrush";
-    echo "<tr>" . fm_number('Cost',$P,'Costs') . fm_number('Prog Needed', $P,'ProgNeeded');
+    echo "<tr>" . fm_number('Cost',$P,'Costs') . fm_number('Prog Needed', $P,'ProgNeeded') . fm_number('DType',$P,'DType');
     echo "<tr>" . fm_number("Progress",$P,'Progress') . fm_number('Last Updated',$P,'LastUpdate'); 
     if ($PProps &2) {
       if ($P['ThingId']) {

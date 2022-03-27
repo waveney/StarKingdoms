@@ -17,7 +17,37 @@ function ValidateTurn() {
     echo "<h2 class=Err>Warning - you have " . count($Projects) . " Post It Note this turn</h2>\n";
     $Valid = 0;
   }
-   
+
+  $ProjTypes = Get_ProjectTypes();
+  $Projects = Get_Projects_Cond("FactionId=$Fid AND TurnStart=$Turn");
+  foreach ($Projects as $P) {
+    if (($ProjTypes[$P['Type']]['Props'] & 6) == 2) { // Has one thing but not 2
+      $Pid = $P['id'];
+      if (empty($P['Name'])) $P['Name'] = 'Nameless';
+      $Tid = $P['ThingId'];
+      if ($Tid == 0) {
+        echo "<h2 class=Err>Warning - your project: <a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a> is level " . $P['Level'] . " trying to make an unknown thing</h2>\n";
+        $Valid = 0;               
+        continue;
+      }
+      $T = Get_Thing($Tid);
+//var_dump($T); echo "<p>";
+
+      if (empty($T)) {
+        echo "<h2 class=Err>Warning - your project: <a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a> is level " . $P['Level'] . " trying to make an unknown thing</h2>\n";
+        $Valid = 0;               
+      } else if ($P['Level'] != $T['Level']) {
+        if ($P['Level'] < $T['Level']) {
+          echo "<h2 class=Err>Warning - your project: <a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a>  is level " . $P['Level'] . " trying to make a level " . $T['Level'] . " thing</h2>\n";
+          $Valid = 0;          
+        } else {
+          echo "<h2 class=Err>Warning - your project: <a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a>  is level " . $P['Level'] . " trying to make a level " . $T['Level'] . " thing</h2>\n";
+          $Valid = 0;
+        }
+      }
+    }
+  }
+     
   return $Valid;
 }
 

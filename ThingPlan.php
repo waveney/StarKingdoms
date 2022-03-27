@@ -208,13 +208,12 @@
 //  if (!$Valid) echo "<tr><td class=Err>Warning:<td class=Err>This is not yet valid\n";
     if (isset($T['DesignValid']) && $T['DesignValid'] != $Valid) {
       $T['DesignValid'] = $Valid;
-      Put_Thing($T);
     }
   }
 
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";    
   echo "</table>";
-  
+  Put_Thing($T);  
   if ($Valid) {
     if ($tprops & THING_CAN_BECREATED) {
       echo "<h2><a href=<a href=ThingEdit.php?ACTION=CREATE&id=$Tid>Create</a></h2>";

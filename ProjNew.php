@@ -162,7 +162,8 @@
   echo "<form method=post action=ProjNew.php>";
   echo fm_hidden('t',$Turn) . fm_hidden('Hi',$Hi) . fm_hidden('Di',$Di) . fm_hidden('DT',$D['Type']);
   $DT = $D['Type'];
-  
+
+echo "DT = $DT<p>";
 // echo "Doinfg $Where<p>";
   switch ($Where) {
 
@@ -344,11 +345,11 @@
 
         echo "<h2>Grow Districts</h2>";
           $DTs = Get_DistrictTypes();
-          foreach([3,5] as $DT) {
+          foreach([3,5] as $DTp) {
             $Lvl = 0;
           
             foreach ($HDists[$Hi] as $D) {
-              if ($D['Type'] == $DT) {
+              if ($D['Type'] == $DTp) {
                 $Lvl = $D['Number'];
                 break;
               }
@@ -356,7 +357,7 @@
           
             $Lvl++;
             $pc = Proj_Costs($Lvl);
-            echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=37&t=$Turn&Hi=$Hi&Di=$Di&Sel=$DT&DT=$DT" . 
+            echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=37&t=$Turn&Hi=$Hi&Di=$Di&Sel=$DTp&DT=$DT" . 
                   "&Name=" . base64_encode("Build " . $DTs[$DT]['Name'] . " District $Lvl$Place") . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
                   "Build " . $DTs[$DT]['Name'] . " District $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";        
         
