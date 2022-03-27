@@ -337,7 +337,7 @@ echo "DT = $DT<p>";
 
       if (Has_Trait($Fid,'Grow Modules')) {
         echo "<h2>Grow Modules</h2>";    
-        $Grow = Has_Tech($Fid,'Ship Construction');
+        $Grow = (Has_Tech($Fid,'Ship Construction')-1)**2;
         $pc = Proj_Costs(1);
         echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=31&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT" .
                 "&Name=" . base64_encode("Grow $Grow Modules" . $Place) . "&L=1&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
