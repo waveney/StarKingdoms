@@ -349,7 +349,7 @@ function ColonisationInstuctions() { // And other Instructions
         $T['ActionsNeeded'] = $Acts;
       }
       
-      if ($ThingInstrs[$T['Instruction']]) == 'Colonise') {
+      if (($ThingInstrs[$T['Instruction']]) == 'Colonise') {
         TurnLog($T['Whose'],"The " . $T['Name'] . " is colonising " . $P['Name'] . " in " . $N['Ref'] ,$T);
         SKlog($Facts[$T['Whose']]['Name'] . " is starting to colonise " . $P['Name'] . " in " . $N['Ref']);
       } else {
