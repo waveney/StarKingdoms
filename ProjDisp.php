@@ -609,7 +609,7 @@
             $Prog = min($Pro['Acts'],$Pro['MaxRush'] + $Rush + $Bonus); // Note Bonus can be negative
             if ($t == $GAME['Turn']) { 
               if ($SkipProgress) $Prog = 0;
-              $TotProg = $P['Progress'];
+              $TotProg = $P['Progress'] + $Prog;
             } else {
               $TotProg += $Prog;
             }
