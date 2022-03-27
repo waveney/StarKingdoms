@@ -606,7 +606,7 @@
             $Pro['Progress'] = $P['Progress'] . "/" .  $Pro['Acts'];
             $Pro['Status'] = (($t == $P['TurnStart'])?'Started' : 'Ongoing' );
           } else {
-            $Prog = min($Pro['Acts'],$Pro['MaxRush'] + $Rush + $Bonus); // Note Bonus can be negative
+            $Prog = min($Pro['Acts'] - $P['Progress'],$Pro['MaxRush'] + $Rush + $Bonus); // Note Bonus can be negative
             if ($t == $GAME['Turn']) { 
               if ($SkipProgress) $Prog = 0;
               $TotProg = $P['Progress'] + $Prog;
