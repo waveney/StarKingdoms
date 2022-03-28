@@ -163,7 +163,7 @@
   echo fm_hidden('t',$Turn) . fm_hidden('Hi',$Hi) . fm_hidden('Di',$Di) . fm_hidden('DT',$D['Type']);
   $DT = $D['Type'];
 
-echo "DT = $DT<p>";
+//echo "DT = $DT<p>";
 // echo "Doinfg $Where<p>";
   switch ($Where) {
 
