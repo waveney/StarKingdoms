@@ -164,7 +164,7 @@ function StartProjects() {
 // Pay costs, Status = Started  
 
   $ProjTypes = Get_ProjectTypes();
-  $Projects = Get_Projects_Cond("Status=0 AND Costs!=0 AND TurnStart=" . $GAME['Turn']);
+  $Projects = Get_Projects_Cond("Status=0 AND TurnStart=" . $GAME['Turn']);
   $TTypes = Get_ThingTypes();
 //var_dump("Projects",$Projects);
 
@@ -236,7 +236,7 @@ function StartProjects() {
         }
       } 
     }
-    if (Spend_Credit($P['FactionId'],$Cost,'Starting: ' . $P['Name'])) {
+    if ($Cost == 0 || Spend_Credit($P['FactionId'],$Cost,'Starting: ' . $P['Name'])) {
       $P['Status'] = 1; // Started
       TurnLog($P['FactionId'],'Starting ' . $P['Name'] . " Cost: " . Credit() . " $Cost");
       if (($ProjTypes[$P['Type']]['Props'] & 2) && (($ProjTypes[$P['Type']]['Props'] &16) ==0 )) { // Has a thing      

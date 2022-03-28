@@ -809,6 +809,7 @@ function Has_Tech($fid,$name,$turn=0) { // Turn==0 = now
   // Supp Tech
   $res = $db->query("SELECT Level FROM  FactionTechs WHERE Faction_Id=$fid AND Tech_Id=$name AND StartTurn>=$turn");
   if (!$res || !($ans = $res->fetch_assoc())) return 0; // Don'y have it
+  if ($ans['Level'] == 0) return 0;
   
   $lvl = 0;
   $Based = $Tech['PreReqTech'];
