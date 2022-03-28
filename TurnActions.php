@@ -11,10 +11,21 @@
   A_Check('GM');
 
 // For logging turn processing events that need following up or long term record keeping, set e to echo to GM
+function GMLog($text) {
+  global $GAME,$GAMEID;
+  static $LF;
+  if (!isset($LF)) {
+     if (!file_exists("Turns/$GAMEID/" . $GAME['Turn'])) mkdir("Turns/" . $GAMEID . "/" . $GAME['Turn'],0777,true);
+     $LF = fopen("Turns/$GAMEID/" . $GAME['Turn'] . "/0.txt", "a+");
+  }
+  fwrite($LF,"$text\n");
+  echo $text;  
+}
+
 function SKLog($text,$e=0) {
   global $Sand,$USER;
   $Sand['ActivityLog'] .= date("Y-m-d H:i:s - ") . $USER['Login'] . " - " . $text . "\n";  // Who?
-  if ($e) echo $text . "<br>\n";
+  if ($e) GMLog($text. "<br>\n");
 }
 
 // Log to the turn text, and optionally aa history record of T
@@ -29,35 +40,36 @@ function TurnLog($Fid,$text,&$T=0) {
   if ($T) $T['History'] .= "Turn#" . $GAME['Turn'] . ": " . $text . "\n";
 }
 
+
 function CheckTurnsReady() {
   global $PlayerStates,$PlayerState, $PlayerStateColours;
   $Factions = Get_Factions();
   $AllOK = 1;
   $coln = 0;
   
-  echo "<div class=tablecont><table id=indextable border width=100% style='min-width:1400px'>\n";
-  echo "<thead><tr>";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Faction</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Who</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Last Active</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>State</a>\n";
+  GMLog( "<div class=tablecont><table id=indextable border width=100% style='min-width:1400px'>\n");
+  GMLog( "<thead><tr>");
+  GMLog( "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Faction</a>\n");
+  GMLog( "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Who</a>\n");
+  GMLog( "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Last Active</a>\n");
+  GMLog( "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>State</a>\n");
 
-  echo "</thead><tbody>";
+  GMLog( "</thead><tbody>");
 
   foreach($Factions as $F) {
     $Fid = $F['id'];
-    echo "<tr><td><a href=FactionEdit.php?F=$Fid>" . $F['Name'] . "</a>";
-    echo "<td>" . $F['Player'];
-    echo "<td style='background:" . $F['MapColour'] . ";'>"
+    GMLog( "<tr><td><a href=FactionEdit.php?F=$Fid>" . $F['Name'] . "</a>");
+    GMLog( "<td>" . $F['Player']);
+    GMLog( "<td style='background:" . $F['MapColour'] . ";'>"
          . (isset($F['LastActive']) && $F['LastActive']? date('d/m/y H:i:s',$F['LastActive']) :"Never");
-    echo "<td <span style='background:" . $PlayerStateColours[$F['TurnState']] . "'>"  . $PlayerState[$F['TurnState']];
+    GMLog( "<td <span style='background:" . $PlayerStateColours[$F['TurnState']] . "'>"  . $PlayerState[$F['TurnState']]);
     if ($F['TurnState'] != 2) {
       $AllOK = 0;
     }
   }
-  echo "</table></div>\n";
+  GMLog( "</table></div>\n");
   if ($AllOK) return 1;
-  echo "To proceed you must mark them as submitted<p>\n";
+  GMLog( "To proceed you must mark them as submitted<p>\n");
   return 0;
 
 }
@@ -72,12 +84,12 @@ function StartTurnProcess() {
     $F['TurnState'] = 3;
     Put_Faction($F);
   }
-  echo "<br>All Factions marked as Turn Processing<p>\n";
+  GMLog("<br>All Factions marked as Turn Processing<p>");
   if (!file_exists("Turns/$GAMEID/" . $GAME['Turn'])) {
     $LF = mkdir("Turns/$GAMEID/" . $GAME['Turn'],0777,true);
   }
   
-  echo "Started Turn Processing<p>";
+  GMLog("Started Turn Processing");
   return 1;
 }
 
@@ -91,7 +103,7 @@ function SaveAllLocations() {
     Insert_db('LocationSave',$S);
   }
 
-  echo "Saved all Location data<p>";  
+  GMLog("Saved all Location data");  
   return 1;
 }
 
@@ -142,17 +154,17 @@ function CashTransfers() {
     }
   }
   
-  echo "All Cash trasfered complete.<br>\n";
+  GMLog("All Cash trasfered complete.<br>\n");
   return 1;
 }
 
 function PayForStargates() {
-  echo "Pay For Stargates are currently Manual<p>";
+  GMLog("Pay For Stargates are currently Manual<p>");
   return 1;
 }
 
 function ScientificBreakthroughs() {
-  echo "Scientific Breakthroughs is currently Manual<p>";
+  GMLog("Scientific Breakthroughs is currently Manual<p>");
   return 1;
 
 }
@@ -340,7 +352,7 @@ function ColonisationInstuctions() { // And other Instructions
           }
         }
         if (empty($HabPs)) {
-          echo "<h2>Planet not found - Tell Richard</h2>";
+          GMLog("<h2>Planet not found - Tell Richard</h2>");
           var_dump($T);
           exit;
         }
@@ -374,9 +386,9 @@ function ColonisationInstuctions() { // And other Instructions
              $NeedColStage2 = 1;
            }
            $_REQUEST['G'] = $FirstG;
-           echo "<p><a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a> is warping out - Please Choose which gate:";
-           echo fm_select($GLocs,$_REQUEST,'G',0,'',"G" . $T['id']);
-           echo "<p>";
+           GMLog("<p><a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a> is warping out - Please Choose which gate:");
+           GMLog(fm_select($GLocs,$_REQUEST,'G',0,'',"G" . $T['id']));
+           GMLog("<p>");
            break;
          } else {
            $T['SystemId'] = $Gates[0]['SystemId'];
@@ -411,7 +423,7 @@ function ColonisationInstuctions() { // And other Instructions
         echo "<form method=post action=TurnActions.php?ACTION=Process&S=16>";
         $NeedColStage2 = 1;
       }
-      echo $Facts[$T['Whose']]['Name'] . " setting up an Embassy in " . $N['Ref'] . " - Allow? " . fm_YesNo("Emb$Tid",1, "Reason to reject") . "\n<br>";
+      GMLog($Facts[$T['Whose']]['Name'] . " setting up an Embassy in " . $N['Ref'] . " - Allow? " . fm_YesNo("Emb$Tid",1, "Reason to reject") . "\n<br>");
       break;
 
     case 'Make Outpost':
@@ -578,12 +590,12 @@ function ColonisationInstuctionsStage2() { // And other Instructions
 }
 
 function StartAnomaly() {
-  echo "Anomaly Studies are currently Manual<p>";
+  GMLog("Anomaly Studies are currently Manual<p>");
   return 1;
 }
 
 function AgentsStartMissions() {
-  echo "Agents Start Missions	are currently Manual<p>";
+  GMLog("Agents Start Missions	are currently Manual<p>");
   return 1;
 }
 
@@ -609,6 +621,7 @@ function Economy() {
     $OutPosts = $AstMines = $AstVal = $Embassies = $OtherEmbs = 0;
     foreach ($Worlds as $W) {
       $H = Get_ProjectHome($W['Home']);
+      if (empty($H)) continue;
       $PH = Project_Home_Thing($H);
       $Name = $PH['Name'];
       $ECon = $H['Economy'] = Recalc_Economic_Rating($H,$W,$Fid);
@@ -699,14 +712,14 @@ function Economy() {
     $EccTxt .= "Total Economy is $EconVal worth " . $EconVal*10 . "\n\n";
     Spend_Credit($Fid, -$EconVal*10, "Turn Income");
     TurnLog($Fid,$EccTxt);
-    echo "Done Economy for " . $F['Name'] . "<br>";
+    GMLog("Done Economy for " . $F['Name'] . "<br>");
     
   }
   return 1;
 }
 
 function LoadTroops() {
-  echo "Load Troops	is currently Manual<p>";
+  GMLog("Load Troops	is currently Manual<p>");
   return 1;
 }
 
@@ -716,9 +729,9 @@ function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
   $Things = Get_AllThings();
   $Facts = Get_Factions();
   
-  echo "<h2>These movements are planned - to stop one, tick the stop box and say why</h2>";
-  echo "<form method=Post action=TurnActions.php?ACTION=Complete>" . fm_hidden('S',($Agents?34:32));
-  echo "<table border><tr><td>Who<td>What<td>Level<td>From<td>Link<td>To<td>Stop<td>Why Stopping\n";
+  GMLog("<h2>These movements are planned - to stop one, tick the stop box and say why</h2>");
+  GMLog("<form method=Post action=TurnActions.php?ACTION=Complete>" . fm_hidden('S',($Agents?34:32)));
+  GMLog("<table border><tr><td>Who<td>What<td>Level<td>From<td>Link<td>To<td>Stop<td>Why Stopping\n");
   foreach ($Things as $T) {
     if (($T['Type'] == 5 && $Agents == 0) || ($T['Type'] != 5 && $Agents == 1) || $T['BuildState'] <2 || $T['BuildState'] > 3) continue;
     if ($T['LinkId'] && $T['NewSystemId'] != $T['SystemId'] ) {
@@ -731,16 +744,16 @@ function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
       $SR1 = Get_SystemR($L['System1Ref']);
       $SR2 = Get_SystemR($L['System2Ref']);
       
-      echo "<tr><td>" . $Facts[$Fid]['Name'] . "<td><a href=ThingEdit.php?id=$Tid>" . $T['Name']  . "<td>" . $T['Level'] . "<td>";
+      GMLog("<tr><td>" . $Facts[$Fid]['Name'] . "<td><a href=ThingEdit.php?id=$Tid>" . $T['Name']  . "<td>" . $T['Level'] . "<td>");
       if ($T['SystemId'] == $SR1['id']) {
-         echo $L['System1Ref'] . "<td style=color:" . $LinkLevels[$L['Level']]['Colour'] . ";>#$Lid<td>" . $L['System2Ref'];
+         GMLog($L['System1Ref'] . "<td style=color:" . $LinkLevels[$L['Level']]['Colour'] . ";>#$Lid<td>" . $L['System2Ref']);
       } else {
-         echo $L['System2Ref'] . "<td style=color:" . $LinkLevels[$L['Level']]['Colour'] . ";>#$Lid<td>" . $L['System1Ref'];      
+         GMLog($L['System2Ref'] . "<td style=color:" . $LinkLevels[$L['Level']]['Colour'] . ";>#$Lid<td>" . $L['System1Ref']);      
       }
-      echo "<td>" . fm_checkbox('',$_REQUEST,"Prevent$Tid") . fm_text1('', $_REQUEST,"Reason$Tid");
+      GMLog("<td>" . fm_checkbox('',$_REQUEST,"Prevent$Tid") . fm_text1('', $_REQUEST,"Reason$Tid"));
     }
   }
-  echo "</table><input type=submit value='Click to Proceed'></form>\n";
+  GMLog("</table><input type=submit value='Click to Proceed'></form>\n");
   dotail();
 
 }
@@ -855,32 +868,31 @@ function Meetups() {
 }
 
 function SpaceCombat() {
-  echo "Space Combat is currently Manual<p>";
+  GMLog("Space Combat is currently Manual<p>");
   return 1;
 }
 
 
 function UnloadTroops() {
-  echo "Unload Troops is currently Manual<p>";
+  GMLog("Unload Troops is currently Manual<p>");
   return 1;
 }
 
 function OrbitalBombardment() {
-  echo "Orbital Bombardment is currently Manual<p>";
+  GMLog("Orbital Bombardment is currently Manual<p>");
   return 1;
 }
 
 function GroundCombat() {
-  echo "Ground Combat is currently Manual<p>";
+  GMLog("Ground Combat is currently Manual<p>");
   return 1;
 }
 
 
 function DevastationSelection() {
-  echo "<h2>Please mark those worlds with combat on</h2>";
+  GMLog("<h2>Please mark those worlds with combat on</h2>");
   $_REQUEST['CONFLICT'] = 1; // Makes WorldList think its part of turn processing
   include_once("WorldList.php");
-//  echo "Devastation Selectionis currently Manual<p>";
   return 1;
 
 }
@@ -914,7 +926,7 @@ function Devastation() {
 
 // Look for Militia to recover
 
-  echo "Devastation is Complete<p>";
+  GMLog("Devastation is Complete<p>");
   return 1;
 
 }
@@ -928,7 +940,7 @@ function ProjectProgress() {
   $Projects = Get_Projects_Cond("Status=1");
   foreach ($Projects as $P) {
     if ($P['LastUpdate'] >= $GAME['Turn']) continue;
-    echo "Updating project " . $P['id'] . " " . $P['Name'] . "<br>";
+    GMLog("Updating project " . $P['id'] . " " . $P['Name'] . "<br>");
 
     
     $PT = $ProjTypes[$P['Type']];
@@ -982,7 +994,7 @@ function ProjectProgress() {
       case 4: $MaxActs = $Dists[2]['Number']; break;
       case 8: $MaxActs = $Dists[4]['Number']; break;
       default: 
-        echo "Confused state for project " . $P['id'] . "<p>";
+        GMLog("Confused state for project " . $P['id'] . "<p>");
       }
     }
 
@@ -1066,17 +1078,17 @@ function InstructionsProgress() {
 }
 
 function AnomalyStudiesProgress() {
-  echo "Anomaly Studies Progress is currently Manual<p>";
+  GMLog("Anomaly Studies Progress is currently Manual<p>");
   return 1;
 }
 
 function EspionageMissionsComplete() {
-  echo "Espionage Missions Complete	is currently Manual<p>";
+  GMLog("Espionage Missions Complete	is currently Manual<p>");
   return 1;
 }
 
 function CounterEspionage() {
-  echo "Counter Espionage is currently Manual<p>";
+  GMLog("Counter Espionage is currently Manual<p>");
   return 1;
 }
 
@@ -1091,7 +1103,7 @@ function FinishShakedowns() {
     Put_Thing($T);
   }
   
-  echo "Shakdowns finished<br>";
+  GMLog("Shakdowns finished<br>");
   return 1;
 }
 
@@ -1104,7 +1116,7 @@ function ProjectsComplete() {
   $ProjTypes = Get_ProjectTypes();
   $Projects = Get_Projects_Cond("Status=1 AND Progress=ProgNeeded");
   foreach ($Projects as $P) {
-    echo "Completing project " . $P['id'] . " " . $P['Name'] . "<br>";
+    GMLog("Completing project " . $P['id'] . " " . $P['Name'] . "<br>");
     $P['Status'] = 2;
     $P['TurnEnd'] = $GAME['Turn'];
     Put_Project($P);
@@ -1486,7 +1498,7 @@ function InstructionsComplete() {
 }
 
 function AnomalyStudiesComplete() {
-  echo "Anomaly Studies Complete is currently Manual<p>";
+  GMLog("Anomaly Studies Complete is currently Manual<p>");
   return 1;
 }
 
@@ -1512,20 +1524,20 @@ function CheckSurveyReports() {
 //var_dump($FS);
     if ($FS['ScanLevel'] >= $S['Scan']) continue;
     if (!$Started) {
-      echo "<h2>Please review these scans, mark lower as needed</h2>\n";
-      echo "<table border><tr><td>Faction<td>Where<td>Scan Level\n";
+      GMLog("<h2>Please review these scans, mark lower as needed</h2>\n");
+      GMLog("<table border><tr><td>Faction<td>Where<td>Scan Level\n");
       if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
       Register_AutoUpdate('ScansDue',0);
       $Started = 1;
     }
 
     $N = Get_System($S['Sys']);
-    echo "<tr><td>" . $Facts[$Fid]['Name'] . "<td>" . $N['Ref'] . "<td>" . fm_radio('',$SurveyLevels,$S,'Scan','',0,'',"Scan:$SSid");
+    GMLog("<tr><td>" . $Facts[$Fid]['Name'] . "<td>" . $N['Ref'] . "<td>" . fm_radio('',$SurveyLevels,$S,'Scan','',0,'',"Scan:$SSid"));
     $LastSys = $Sid;
   }
   if ($Started) {
-    echo "</table>\n";
-    echo "<h2><a href=TurnActions.php?ACTION=StageDone&S=57>When Happy click here</a></h2>";
+    GMLog("</table>\n");
+    GMLog("<h2><a href=TurnActions.php?ACTION=StageDone&S=57>When Happy click here</a></h2>");
     dotail();
   }
   return 1;
@@ -1564,13 +1576,13 @@ function GiveSurveyReports() {
 }
 
 function MilitiaArmyRecovery() {
-  echo "Militia Recovery is currently Manual<p>";
-  echo "Also Self Repair Armour<p>";
+  GMLog("Militia Recovery is currently Manual<p>");
+  GMLog("Also Self Repair Armour<p>");
   return 1;
 }
 
 function GenerateTurns() {
-  echo "Generate Turns is currently Manual<p>";
+  GMLog("Generate Turns is currently Manual<p>");
   return 1;
 }
 
@@ -1579,7 +1591,7 @@ function TidyUpMovements() {
   
   $res = $db->query("UPDATE Things SET LinkId=0 WHERE LinkId>0 AND GameId=$GAMEID"); 
   
-  echo "Movements Tidied Up<p>";  
+  GMLog("Movements Tidied Up<p>");  
   return 1;
 }
 
@@ -1601,12 +1613,12 @@ function FinishTurnProcess() {
   }
   
   
-  echo "<br>All Factions marked as Turn Planning<p>\n";
+  GMLog("<br>All Factions marked as Turn Planning<p>\n");
 
   $GAME['Turn'] ++;
   Put_Game($GAME);
   
-  echo "Turn number incremented<p>\n";
+  GMLog("Turn number incremented<p>\n");
   
 
   // TODO Send messages to discord ??
@@ -1656,9 +1668,9 @@ function Do_Turn() {
     case 'Process':
       $act = $Stages[$S];
       $act = preg_replace('/ /','',$act);
-      echo "Would call $act<p>";
+      GMLog("Would call $act<p>");
       if (!is_callable($act)) {
-        echo "<class Err>$act not yet written</span><p>";
+        GMLog("<class Err>$act not yet written</span><p>");
         break;
       }
       SKLog("Doing " . $Stages[$S]);      
@@ -1669,12 +1681,12 @@ function Do_Turn() {
           $Sand['Progress'] |= 2<<$S;
         }
       } else {
-        echo "Processing cancelled<p>\n";
+        GMLog("Processing cancelled<p>\n");
       }
       break;
     case 'Skip':
       if (isset($Stages[$S] )) {
-        echo "<b>" . $Stages[$S] . " Skipped<b>";
+        GMLog("<b>" . $Stages[$S] . " Skipped<b>");
         SKLog("Skipped " . $Stages[$S]);
         $Sand['Progress'] |= 1<<$S;
       } else {
@@ -1683,11 +1695,11 @@ function Do_Turn() {
       break;
     case 'Revert':
       if (isset($Stages[$S] )) {
-        echo "<b>" . $Stages[$S] . " Reverted<b>";
+        GMLog("<b>" . $Stages[$S] . " Reverted<b>");
         SKLog("Reverted " . $Stages[$S]);
         $Sand['Progress'] &= ~(1<<$S);
       } else {
-        echo "Off the end of the turn";
+        GMLog("Off the end of the turn");
       }
       break;    
     case 'RevertAll':
@@ -1695,7 +1707,7 @@ function Do_Turn() {
         SKLog("Reverted All");
         $Sand['Progress'] = 0;
       } else {
-        echo "Off the end of the turn";
+        GMLog("Off the end of the turn");
       }
       break;
     case 'StageDone':

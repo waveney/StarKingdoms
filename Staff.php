@@ -131,6 +131,7 @@
     $txt .= "<ul>\n";
  //   $txt .= "<li><a href=PlayerStates.php>Player States</a>\n";
     $txt .= "<li><a href=TurnActions.php>Turn Actions</a>\n";
+    $txt .= "<li><a href=GMTurnTxt.php>Follow Progress</a>\n";    
     $txt .= "<li><a href=Meetings.php>Systems with multiple Factions</a>\n";
     $txt .= "<p>";
     $txt .= "<li><a href=PayFaction.php>Pay Faction (Credit/SP)</a>\n";

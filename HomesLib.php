@@ -378,6 +378,7 @@ function Recalc_Economic_Rating(&$H,&$W,$Fid,$Turn=0) {
 }
 
 function Project_Home_Thing(&$H) {
+  if (empty($H['ThingType']) || empty($H['ThingId'])) return 0;
   switch ($H['ThingType']) {
     case 1: // Planet
       return Get_Planet($H['ThingId']);
