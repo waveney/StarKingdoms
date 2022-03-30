@@ -115,12 +115,13 @@ function Show_Thing(&$T,$Force=0) {
         if ($T['LinkId'] < 0) {
           $Host = Get_Thing($T['SystemId']);
           echo (($T['LinkId'] == -1)?"<td>In:<td>":"<td>Will Board:< td>") . $Host['Name']; // TODO Generalise that when other neg values coded
-          $Conflict = 0; // HOW?
-          $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $Host['SystemId'] . " AND W.Homw=PH.id");
-// var_dump($Conf);
-          if ($Conf) $Conflict = $Conf['Conflict'];
-          if ($GM || $Fid == $Host['FactionId'] || $Host['FactionId'] == $FACTION['id'] ) echo "<input type=submit name=ACTION value='Unload on Turn'>\n";
-          if ($GM || (!$Conflict && ($Fid == $Host['FactionId'] || $Host['FactionId'] == $FACTION['id'] ))) echo "<input type=submit name=ACTION value='Unload Now'>\n";
+          $Conflict = 0; 
+          $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
+          if ($Conf) $Conflict = $Conf[0]['Conflict'];
+
+          echo "<input type=submit name=ACTION value='Unload on Turn'>\n";
+          if ($Conflict) echo " <b>Conflict</b> ";
+          echo "<input type=submit name=ACTION value='Unload Now'>\n";
         } else {
           if (($tprops & THING_CAN_MOVE) && isset($SelCols[$T['LinkId']]) ) {
             echo "<td>";
@@ -131,16 +132,19 @@ function Show_Thing(&$T,$Force=0) {
         }
         if ($tprops & THING_CAN_BETRANSPORTED) { 
           $XPorts = Get_AllThingsAt($T['SystemId']);
+//var_dump($XPorts);exit;
           $NeedCargo = ($tprops & THING_NEEDS_CARGOSPACE);
           $TList = [];
           $FF = Get_FactionFactionsCarry($Fid);
           foreach($XPorts as $X) {
             if ($NeedCargo && $X['CargoSpace'] < $T['Level']) continue; // Not big enough
             if ($X['Whose'] != $Fid) {
+
               $Carry = (empty($FF[$X['Whose']])? 0 : $FF[$X['Whose']]);
               if (!$NeedCargo) $Carry >>= 4;
               if (($Carry&15) ==0) continue; // Don't carry
             }
+
             if ($NeedCargo) {
               $OnBoard = Get_Things_Cond(0,"LinkId<0 AND SystemId==" . $X['id']);
               $Used = 0;
@@ -151,11 +155,12 @@ function Show_Thing(&$T,$Force=0) {
           }
 
           if ($TList) {
-            echo "<td colspan=2>Board: " . fm_select($TList,$T,'BoardPlace') . "<input type=submit name=ACTION value='Board on Turn'>";
+            echo "<tr><td colspan=3>Board: " . fm_select($TList,$T,'BoardPlace') . "<input type=submit name=ACTION value='Board on Turn'>";
             $Conflict = 0; // HOW?
-            $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Homw=PH.id");
-            if ($Conf) $Conflict = $Conf['Conflict'];
-            if ($GM || !$Conflict ) echo "<input type=submit name=ACTION value='Board Now'>\n";
+            $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
+            if ($Conf) $Conflict = $Conf[0]['Conflict'];
+            if ($Conflict) echo " <b>Conflict</b> ";
+            echo "<input type=submit name=ACTION value='Board Now'>\n";
           } else {
             echo "<td>No Transport Avail";
           }
@@ -185,51 +190,87 @@ function Show_Thing(&$T,$Force=0) {
       }
       
     } else {
-      echo "<tr><td>Current System:<td>" . $N['Ref'] . "<td>" . $Syslocs[$T['WithinSysLoc']];
+      if ($T['LinkId']< 0) {
+        $Host = Get_Thing($T['SystemId']);
+        echo "<tr><td colspan=3>" . (($T['LinkId'] == -1)?"In:<td>":"Will Board:< td>") . $Host['Name']; // TODO Generalise that when other neg values coded
+        $Conflict = 0; 
+        $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
+        if ($Conf) $Conflict = $Conf[0]['Conflict'];
 
-      if ($tprops & THING_CAN_MOVE) {
-        switch ($T['BuildState']) {
+        if ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ) echo "<input type=submit name=ACTION value='Unload on Turn'>\n";
+        if ((!$Conflict && ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ))) echo "<input type=submit name=ACTION value='Unload Now'>\n";    
+      
+      } else {
+        echo "<tr><td>Current System:<td>" . $N['Ref'] . "<td>" . $Syslocs[$T['WithinSysLoc']];
+
+        if ($tprops & THING_CAN_MOVE) {
+          switch ($T['BuildState']) {
         
-        case 0: // Plan
-        case 1: // Build
-        case 4: // Ex thing
-          break; // Can't move
-        case 2: // Shakedown - In sys only
-          echo "<tr><td>This is unable to use links, it can move within the system.<br>Where in the system should it go? " . fm_select($Syslocs,$T,'WithinSysLoc');
-          break;
-        case 3: //
+          case 0: // Plan
+          case 1: // Build
+          case 4: // Ex thing
+            break; // Can't move
+          case 2: // Shakedown - In sys only
+            echo "<tr><td>This is unable to use links, it can move within the system.<br>Where in the system should it go? " . fm_select($Syslocs,$T,'WithinSysLoc');
+            break;
+          case 3: //
 //        var_dump($SelLinks);
 //           if (empty($SelCols[$T['LinkId']])) $T['LinkId'] = 0;
-           if ($T['CurHealth'] == 0 && !empty(Syslocs)) {
-             echo "<tr><td>This is unable to use links, it can move within the system.<br>Where in the system should it go? " . fm_select($Syslocs,$T,'WithinSysLoc');           
-           } else if (count($SelLinks) > 1) {
-             echo "<tr><td>";
-             if (($T['Instruction'] > 0) && ($T['Instruction'] != 5)) echo "<span class=Err>Warning Busy doing:<br>" . $ThingInstrs[$T['Instruction']] . "</br></span>";
+            if ($T['CurHealth'] == 0 && !empty(Syslocs)) {
+              echo "<tr><td>This is unable to use links, it can move within the system.<br>Where in the system should it go? " . fm_select($Syslocs,$T,'WithinSysLoc');           
+            } else if (count($SelLinks) > 1) {
+              echo "<tr><td>";
+              if (($T['Instruction'] > 0) && ($T['Instruction'] != 5)) echo "<span class=Err>Warning Busy doing:<br>" . $ThingInstrs[$T['Instruction']] . "</br></span>";
 
-             echo "Taking Link:<td>" . fm_select($SelLinks,$T,'LinkId',0," style=color:" . $SelCols[$T['LinkId']] ,'',0,$SelCols);
-             if ($T['LinkId'] && !strpos($SelLinks[$T['LinkId']],'?')) {
-               echo "<td>To:  " . fm_select($NewSyslocs,$T,'NewLocation');
-             }
-           } else {
+              echo "Taking Link:<td>" . fm_select($SelLinks,$T,'LinkId',0," style=color:" . $SelCols[$T['LinkId']] ,'',0,$SelCols);
+              if ($T['LinkId'] && !strpos($SelLinks[$T['LinkId']],'?')) {
+                echo "<td>To:  " . fm_select($NewSyslocs,$T,'NewLocation');
+              }
+            } else {
              echo "<tr><td>Row Not Used\n";
-           }
-           break;
-        default:
-          break;
-        }
-      } else if ($tprops & THING_CAN_BETRANSPORTED) {
-        echo "<tr><td>Transport of armies<td>not yet written\n"; // TODO move armies
-      } else { //Static, can specify where before start
-        if (($T['BuildState'] == 0)) {
-          echo "<tr><td>Where in the system is it to be built? " . fm_select($Syslocs,$T,'WithinSysLoc');
+            }
+            break;
+          default:
+            break;
+          }
+        } else if ($tprops & THING_CAN_BETRANSPORTED) {
+          $XPorts = Get_AllThingsAt($T['SystemId']);
+          $NeedCargo = ($tprops & THING_NEEDS_CARGOSPACE);
+          $TList = [];
+          $FF = Get_FactionFactionsCarry($Fid);
+          foreach($XPorts as $X) {
+            if ($NeedCargo && $X['CargoSpace'] < $T['Level']) continue; // Not big enough
+            if ($X['Whose'] != $Fid) {
+              $Carry = (empty($FF[$X['Whose']])? 0 : $FF[$X['Whose']]);
+              if (!$NeedCargo) $Carry >>= 4;
+              if (($Carry&15) ==0) continue; // Don't carry
+            }
+            if ($NeedCargo) {
+              $OnBoard = Get_Things_Cond(0,"LinkId<0 AND SystemId==" . $X['id']);
+              $Used = 0;
+              foreach($OnBoard as $OB) if ($ThingProps[$OB['Type']]['Properties'] & THING_NEEDS_CARGOSPACE) $Used += $OB['Level'];
+              if ($X['CargoSpace'] < $Used + $T['Level']) continue; // Space is used
+            }
+            $TList[$X['id']] = $X['Name'];  
+          }
+          $Conflict = 0; 
+          $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
+          if ($Conf) $Conflict = $Conf[0]['Conflict'];
+
+          if ($TList) {
+            echo "<tr><td colspan=3>Board: " . fm_select($TList,$T,'BoardPlace') . "<input type=submit name=ACTION value='Board on Turn'>";
+            if ( !$Conflict ) echo "<input type=submit name=ACTION value='Board Now'>\n";
+          } else {
+            echo "<td>No Transport Avail";
+          }
+
+        } else { //Static, can specify where before start
+          if (($T['BuildState'] == 0)) {
+            echo "<tr><td>Where in the system is it to be built? " . fm_select($Syslocs,$T,'WithinSysLoc');
+          }
         }
       }
     }
-
-
-//    if ($tprops & THING_CAN_MOVE) {
-//      echo "<tr><td>New System:<td>" . fm_select($Systems,$T,'NewSystemId',1) . "This is derived data<td>" . fm_select($NewSyslocs,$T,'NewLocation');
-//    }
   }
 
   if  ($tprops & THING_HAS_GADGETS) echo "<tr>" . fm_textarea("Gadgets",$T,'Gadgets',8,3);
@@ -241,18 +282,19 @@ function Show_Thing(&$T,$Force=0) {
   $Have = Get_Things_Cond($Fid," LinkId<0 AND SystemId=$tid ");
   if ($Have) {
     echo "<tr><td>Has:<td colspan=6>";
-    $Conflict = 0; // HOW?
-    $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Homw=PH.id");
-    if ($Conf) $Conflict = $Conf['Conflict'];
-    
+    $Conflict = 0; 
+    $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
+    if ($Conf) $Conflict = $Conf[0]['Conflict'];
+  
     $NewRef = (empty($T['NewSystemId']) ? $N['Ref'] : Get_System($T['NewSystemId'])['Ref']);
  
     foreach ($Have as $H) {
       $Hid = $H['id'];
       $hprops = $ThingProps[$H['Type']];
       echo "<a href=ThingEdit.php?id=$Hid>" . $H['Name'] . "</a> a " . (($hprops & THING_HAS_LEVELS)? "Level " . $H['Level'] : "") . " " . $ttn[$H['Type']]; 
+      if ($GM && $Conflict) echo " <b>Conflict</b> ";
       if ($GM || !$Conflict ) echo "<input type=submit name=ACT$Hid value='Unload Now'>\n";
-      echo " to: " . fm_select($Syslocs,$H,'WithinSysLoc',0,'',"WithinSysLoc:$Hid");
+      echo " to: " . $N['Ref'] . " - " . fm_select($Syslocs,$H,'WithinSysLoc',0,'',"WithinSysLoc:$Hid");
       echo "<input type=submit name=ACT$Hid value='Unload on Turn'>\n";
       echo " to: $NewRef - " . fm_select($NewSyslocs,$H,'NewLocation',0,'',"NewLocation:$Hid");
       echo "<br>";
