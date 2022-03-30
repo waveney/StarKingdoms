@@ -48,6 +48,16 @@ Known Faults
 * Map update errors
 * Change thing level after project proposed
 
+* Load (now/turn) - now not pos if contested space
+* unload (now/turn) - only ship owner can give on turn version - now not pos if contested space
+* Displaying things onboard (recursive)
+* Load on PthingList
+* unload on pthinglist
+* Removve one turn use of carry
+* Check space used to load more units
+
+
+
 Has_Tech for projects - use turn number
 Distict count for projects use world data
 Redo forward projections 

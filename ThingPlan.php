@@ -216,7 +216,7 @@
   Put_Thing($T);  
   if ($Valid) {
     if ($tprops & THING_CAN_BECREATED) {
-      echo "<h2><a href=<a href=ThingEdit.php?ACTION=CREATE&id=$Tid>Create</a></h2>";
+      echo "<h2><a href=ThingEdit.php?ACTION=CREATE&id=$Tid>Create</a></h2>";
     } else {
       if (isset($_REQUEST['Validate'])) {
         echo "<h2 class=Green>Design is valid</h2>";

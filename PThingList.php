@@ -168,7 +168,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
     echo "<td>" . $T['Orders'];
     echo "<td><center>" . $T['CurHealth'] . ' / ' . $T['OrigHealth'];
     echo "<td>" . $BuildState[$T['BuildState']];
-    echo "<td>" . (empty($T['SystemId']) ?'': $Systems[$T['SystemId']]);
+    echo "<td>" . ($T['LinkId'] >= 0 ? (empty($T['SystemId']) ?'': $Systems[$T['SystemId']]) : 'On Board');
     echo "<td>";
     if ($T['Instruction']) echo $ThingInstrs[$T['Instruction']];
     if (($T['Instruction'] == 0 || $T['Instruction'] == 5 ) && (($Props & THING_CAN_MOVE) && ( $T['BuildState'] == 3))) { 

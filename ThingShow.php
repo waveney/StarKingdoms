@@ -58,10 +58,12 @@ function Show_Thing(&$T,$Force=0) {
   }
 
 //var_dump($SelLinks);exit;
-  if ($Links && $T['LinkId'] && !isset($Links[$T['LinkId']]['Level'])) {
+/*
+  if ($Links && $T['LinkId'] >= 0 && !isset($Links[$T['LinkId']]['Level'])) {
     var_dump($T); echo "<p>"; var_dump($Links); echo "<p>";
   }
-  if ($Links && ($T['LinkId']) && ($ll = $Links[$T['LinkId']]['Level']) >1 && ($Who = GameFeature('LinkOwner',0)) && $Who != $T['Whose']) {
+*/
+  if ($Links && ($T['LinkId']>0) && ($ll = $Links[$T['LinkId']]['Level']) >1 && ($Who = GameFeature('LinkOwner',0)) && $Who != $T['Whose']) {
     $LOwner = Get_Faction($Who);
     echo "<h2>You are taking a <span style='color:" . $LinkTypes[$ll]['Colour'] . "'>" . $LinkTypes[$ll]['Colour'] .
          "</span> link do you need to pay " . $LOwner['Name'] . " for this?</h2>\n";
@@ -106,14 +108,19 @@ function Show_Thing(&$T,$Force=0) {
       
     } else {
       if (! empty($T['SystemId'])) {
-        if (!isset($T['LinkId']) || !isset($SelCols[$T['LinkId']])) { 
+        if (!isset($T['LinkId']) || ($T['LinkId'] > 0 && !isset($SelCols[$T['LinkId']]))) { 
           $T['LinkId'] = 0;
           $SelCols[0] = "white";
         }
         if ($T['LinkId'] < 0) {
-          $Host = Get_Thing(-$T['LinkId']);
-          echo "<td>In:<td>" . $Host['Name'];
-          if ($GM || $Fid == $Host['FactionId'] || $Host['FactionId'] == $FACTION['id'] ) echo "<input type=submit class=SmallSubmit name=ACTION value=Disembark>\n";
+          $Host = Get_Thing($T['SystemId']);
+          echo (($T['LinkId'] == -1)?"<td>In:<td>":"<td>Will Board:< td>") . $Host['Name']; // TODO Generalise that when other neg values coded
+          $Conflict = 0; // HOW?
+          $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $Host['SystemId'] . " AND W.Homw=PH.id");
+// var_dump($Conf);
+          if ($Conf) $Conflict = $Conf['Conflict'];
+          if ($GM || $Fid == $Host['FactionId'] || $Host['FactionId'] == $FACTION['id'] ) echo "<input type=submit name=ACTION value='Unload on Turn'>\n";
+          if ($GM || (!$Conflict && ($Fid == $Host['FactionId'] || $Host['FactionId'] == $FACTION['id'] ))) echo "<input type=submit name=ACTION value='Unload Now'>\n";
         } else {
           if (($tprops & THING_CAN_MOVE) && isset($SelCols[$T['LinkId']]) ) {
             echo "<td>";
@@ -123,6 +130,35 @@ function Show_Thing(&$T,$Force=0) {
           }
         }
         if ($tprops & THING_CAN_BETRANSPORTED) { 
+          $XPorts = Get_AllThingsAt($T['SystemId']);
+          $NeedCargo = ($tprops & THING_NEEDS_CARGOSPACE);
+          $TList = [];
+          $FF = Get_FactionFactionsCarry($Fid);
+          foreach($XPorts as $X) {
+            if ($NeedCargo && $X['CargoSpace'] < $T['Level']) continue; // Not big enough
+            if ($X['Whose'] != $Fid) {
+              $Carry = (empty($FF[$X['Whose']])? 0 : $FF[$X['Whose']]);
+              if (!$NeedCargo) $Carry >>= 4;
+              if (($Carry&15) ==0) continue; // Don't carry
+            }
+            if ($NeedCargo) {
+              $OnBoard = Get_Things_Cond(0,"LinkId<0 AND SystemId==" . $X['id']);
+              $Used = 0;
+              foreach($OnBoard as $OB) if ($ThingProps[$OB['Type']]['Properties'] & THING_NEEDS_CARGOSPACE) $Used += $OB['Level'];
+              if ($X['CargoSpace'] < $Used + $T['Level']) continue; // Space is used
+            }
+            $TList[$X['id']] = $X['Name'];  
+          }
+
+          if ($TList) {
+            echo "<td colspan=2>Board: " . fm_select($TList,$T,'BoardPlace') . "<input type=submit name=ACTION value='Board on Turn'>";
+            $Conflict = 0; // HOW?
+            $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Homw=PH.id");
+            if ($Conf) $Conflict = $Conf['Conflict'];
+            if ($GM || !$Conflict ) echo "<input type=submit name=ACTION value='Board Now'>\n";
+          } else {
+            echo "<td>No Transport Avail";
+          }
           // List of what it can embark on armies - need cargo ships, individuals anything, if not yours needs confirmation from other party - can be out of turn
                 
 //        echo "<td>No mechanism<td>to move armies yet";  // TODO transport armies
@@ -172,7 +208,7 @@ function Show_Thing(&$T,$Force=0) {
 
              echo "Taking Link:<td>" . fm_select($SelLinks,$T,'LinkId',0," style=color:" . $SelCols[$T['LinkId']] ,'',0,$SelCols);
              if ($T['LinkId'] && !strpos($SelLinks[$T['LinkId']],'?')) {
-               echo "<td>To:" . fm_select($NewSyslocs,$T,'NewLocation');
+               echo "<td>To:  " . fm_select($NewSyslocs,$T,'NewLocation');
              }
            } else {
              echo "<tr><td>Row Not Used\n";
@@ -197,7 +233,7 @@ function Show_Thing(&$T,$Force=0) {
   }
 
   if  ($tprops & THING_HAS_GADGETS) echo "<tr>" . fm_textarea("Gadgets",$T,'Gadgets',8,3);
-  if  ($tprops & THING_HAS_LEVELS) echo "<tr>" . fm_text("Orders",$T,'Orders',2);
+  if  ($tprops & THING_HAS_LEVELS) echo "\n<tr>" . fm_text("Orders",$T,'Orders',2);
   echo "<tr>" . fm_textarea("Description\n(For others)",$T,'Description',8,2);
   echo "<tr>" . fm_textarea('Notes',$T,'Notes',8,2);
   echo "<tr>" . fm_textarea('Named Crew',$T,'NamedCrew',8,2);
@@ -205,11 +241,23 @@ function Show_Thing(&$T,$Force=0) {
   $Have = Get_Things_Cond($Fid," LinkId<0 AND SystemId=$tid ");
   if ($Have) {
     echo "<tr><td>Has:<td colspan=6>";
+    $Conflict = 0; // HOW?
+    $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Homw=PH.id");
+    if ($Conf) $Conflict = $Conf['Conflict'];
+    
+    $NewRef = (empty($T['NewSystemId']) ? $N['Ref'] : Get_System($T['NewSystemId'])['Ref']);
+ 
     foreach ($Have as $H) {
+      $Hid = $H['id'];
       $hprops = $ThingProps[$H['Type']];
-      echo "<a href=ThingEdit.php?id=" . $H['id'] . ">" . $H['Name'] . "</a> a " . (($hprops & THING_HAS_LEVELS)? "Level " . $H['Level'] : "") . " " . $ttn[$H['Type']]; 
+      echo "<a href=ThingEdit.php?id=$Hid>" . $H['Name'] . "</a> a " . (($hprops & THING_HAS_LEVELS)? "Level " . $H['Level'] : "") . " " . $ttn[$H['Type']]; 
+      if ($GM || !$Conflict ) echo "<input type=submit name=ACT$Hid value='Unload Now'>\n";
+      echo " to: " . fm_select($Syslocs,$H,'WithinSysLoc',0,'',"WithinSysLoc:$Hid");
+      echo "<input type=submit name=ACT$Hid value='Unload on Turn'>\n";
+      echo " to: $NewRef - " . fm_select($NewSyslocs,$H,'NewLocation',0,'',"NewLocation:$Hid");
+      echo "<br>";
     }
-    echo "<a href=ThingEdit.php?ACTION=UnloadAll>Unload All</a>";
+//    echo "<a href=ThingEdit.php?ACTION=UnloadAll>Unload All</a>";
   }
   
   if ($GM) echo "<tr>" . fm_textarea('GM Notes',$T,'GM_Notes',8,2,'class=NotSide');
@@ -353,7 +401,7 @@ function Show_Thing(&$T,$Force=0) {
   $SpecOrders = []; $SpecCount = 0;
   $HasDeep = Get_ModulesType($tid,3);
   $TTNames = Thing_Types_From_Names();
-  $Moving = ($T['LinkId'] != 0);
+  $Moving = ($T['LinkId'] > 0);
   
   if ($T['BuildState'] == 2 || $T['BuildState'] == 3) foreach ($ThingInstrs as $i=>$Ins) {
     switch ($ThingInstrs[$i]) {
@@ -401,7 +449,7 @@ function Show_Thing(&$T,$Force=0) {
       continue 2;
     
     case 'Make Outpost': // Make Outpost
-      if ($Moving || (!$HasDeep && ($N['Control'] != $Fid))) continue 2;
+      if ($Moving || empty($N) || (!$HasDeep && ($N['Control'] != $Fid))) continue 2;
       
       if (Get_Things_Cond($Fid,"Type=" . $TTNames['Outpost'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
       break;

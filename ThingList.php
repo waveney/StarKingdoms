@@ -106,7 +106,13 @@
 
     echo "<td>" . $ThingTypes[$T['Type']]['Name'] . "<td>" . $T['Level'];
     echo "<td><center>" . $T['CurHealth'] . ' / ' . $T['OrigHealth'];
-    echo "<td><a href=ThingList.php?AT=$Ref>$Ref</a><td>$Loc";
+    if ($T['LinkId'] >= 0) {
+      echo "<td><a href=ThingList.php?AT=$Ref>$Ref</a><td>$Loc";
+    } else {
+      $Host = Get_Thing($T['SystemId']);
+      echo "<td>On:<td>" . $Host['Name'];
+    }
+    
     echo "<td><a href=ThingEdit.php?id=$tid>$Name</a>";
     echo "<td>" . ($who? $Factions[$T['Whose']]['Name'] : "");
     echo "<td>" . $ThingInstrs[$T['Instruction']];

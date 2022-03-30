@@ -35,6 +35,8 @@ define('THING_HAS_2_FACTIONS',1024);
 define('THING_HAS_MINERALS',2048);
 define('THING_CAN_BE_ADVANCED',4096);
 define('THING_CAN_BECREATED',8192);
+define('THING_NEEDS_CARGOSPACE',16384);
+define('THING_CANT_HAVENAMED',32768);
 
 function ModFormulaes() {
   global $ModFormulaes;
@@ -163,7 +165,7 @@ function Thing_Type_Props() {
   return $tns;
 }
 
-function Within_Sys_Locs(&$N,$PM=0,$Boarding=0,$Restrict=0) {// $PM +ve = Planet Number, -ve = Moon Number, restrict 1=ON, 2space only
+function Within_Sys_Locs(&$N,$PM=0,$Boarding=0,$Restrict=0,$Hab=0) {// $PM +ve = Planet Number, -ve = Moon Number, restrict 1=ON, 2space only
   include_once("SystemLib.php");
   $L[0] = "";
   if ($Restrict !=1) $L[1] = 'Deep space';
@@ -178,14 +180,20 @@ function Within_Sys_Locs(&$N,$PM=0,$Boarding=0,$Restrict=0) {// $PM +ve = Planet
       if ($PM == $P['id']) return 200+$pi;
       $PName = PM_Type($PTD[$P['Type']],"Planet") . " - " . NameFind($P);
       if ($Restrict !=1) $L[100 +$pi] = "Orbiting $PName";
-      if ($Restrict == 0 || ($Restrict == 2 && $PTD[$P['Type']]['Hospitable'])) $L[200 +$pi] = "On $PName";
+      if ($Restrict == 0 || ($Restrict == 2 && $PTD[$P['Type']]['Hospitable'])) {
+        $L[200 +$pi] = "On $PName";
+        if ($Hab && $PTD[$P['Type']]['Hospitable'])  $L[200 +$pi] .= " (Hospitable)";
+      }
       $Ms = Get_Moons($P['id']);
       if ($Ms) {
         foreach ($Ms as $M) {
           if ($PM == -$M['id']) return 400+$mi;
           $MName = PM_Type($PTD[$M['Type']],"Moon") . " - " . NameFind($M);
           if ($Restrict !=1) $L[300 +$mi] = "Orbiting $MName";
-          if ($Restrict == 0 || ($Restrict == 2 && $PTD[$M['Type']]['Hospitable'])) $L[400 +$mi] = "On $MName";
+          if ($Restrict == 0 || ($Restrict == 2 && $PTD[$M['Type']]['Hospitable'])) {
+            $L[400 +$mi] = "On $MName";
+            if ($Hab && $PTD[$M['Type']]['Hospitable'])  $L[400 +$mi] .= " (Hospitable)";
+          }
           $mi++;
         }
       }
@@ -399,9 +407,9 @@ function NebScanners(&$T) {
 }
 
 function Calc_Scanners(&$T) {
-  $mods = Get_ModulesType(4,$T['id']);
-  $nebs = Get_ModulesType(9,$T['id']);
-  $Cargo = Get_ModulesType(8,$T['id']);
+  $mods = Get_ModulesType($T['id'],4);
+  $nebs = Get_ModulesType($T['id'],9);
+  $Cargo = Get_ModulesType($T['id'],8);
   $T['Sensors'] = ($mods?$mods[0]['Number']:0);
   $T['SensorLevel'] = ($mods?$mods[0]['Level']:0);
   $T['NebSensors'] = ($nebs?$nebs[0]['Number']:0);

@@ -1094,6 +1094,14 @@ function Get_FactionFactions($who) {
   return $Ts;
 }
 
+function Get_FactionFactionsCarry($who) {
+  global $db,$GAMEID;
+  $Ts = [];
+  $res = $db->query("SELECT * FROM FactionFaction WHERE FactionId2=$who");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['FactionId1']] = $ans;
+  return $Ts;
+}
+
 function Put_FactionFaction(&$now) {
   global $db,$GAMEID;
   if (isset($now['id'])) {
@@ -1294,7 +1302,18 @@ function Gen_Get_Cond($Table,$Cond) {
   return $Ts;
 }
 
+function Gen_Select($Clause) {
+  global $db;
+  $Ts = [];
+  $res = $db->query($Clause);
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
+  return $Ts;
+}
 
+function GMLog4Later($text) {
+  $rec['What'] = $text;
+  Gen_Put('GMLog4Later',$rec);
+}
 
 
 

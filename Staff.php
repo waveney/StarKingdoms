@@ -39,6 +39,14 @@
   
   $Facts = Get_Faction_Names();
  
+  if (isset($_REQUEST['ACTION'])) {
+    switch ($_REQUEST['ACTION']) {
+      case 'Resolve' :
+        $gid = $_REQUEST['id'];
+        db_delete('GMLog4Later', $gid);
+        break;
+    }
+  }
   
 //echo php_ini_loaded_file() . "<P>";
   echo "<div class=floatright><h2>";
@@ -58,6 +66,13 @@
 
   echo "<p>\n";
 
+  $GMActs = Gen_Get_Cond('GMLog4Later','id>0');
+  if ($GMActs) {
+    echo "<h2>GMs need to be aware that:</h2>\n";
+    foreach($GMActs as $G) {
+      echo $G['What'] . " - <a href=Staff.php?ACTION=Resolve&id=" . $G['id'] . ">Resolved</a>";
+    }
+  }
   
   $txt = "<div class=tablecont><table border width=100% class=Staff style='min-width:800px'>\n";
    
@@ -187,6 +202,7 @@
     
 //    $txt .= "<li><a href=InstrList.php>List Instructions</a>\n";
     $txt .= "<li><a href=TidyThings.php>Tidy up</a>  - Call this once a turn to remove unused temp entries\n";
+    $txt .= "<li><a href=SetAllSensors.php>Set All Sensor data</a> - Bug Fix";
     $txt .= "<li><a href=SetAllSpeeds.php>Set All Speeds</a> - Bug Fix";
     $txt .= "</ul>\n";
   }
