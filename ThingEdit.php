@@ -218,6 +218,12 @@ function New_Thing(&$t) {
         echo "<h2 class=Err>No Warp Gates...</h2>\n";
       }
       break;
+    
+    case 'Cancel Move':
+      $t = Get_Thing($_REQUEST['id']);
+      $t['LinkId'] = 0;
+      Put_Thing($t);
+      break;            
        
     case 'Select Gate':
       $t = Get_Thing($_REQUEST['id']);
@@ -228,7 +234,7 @@ function New_Thing(&$t) {
       Put_Thing($t);
       break;
 
-    case 'UnloadAll' :
+    case 'UnloadAll' : // Not called 
       // Need list of Worlds in location  - if only one select it - 
       $t = Get_Thing($_REQUEST['id']);
       $Homes = Gen_Get_Cond('ProjectHomes', "SystemId=" . $t['SystemId']);
@@ -240,7 +246,7 @@ function New_Thing(&$t) {
        
       }  
      
-    case 'Board Now':
+    case 'Load Now':
 // echo "<p>Here";
       $t = Get_Thing($_REQUEST['id']);
       $Hid = $_REQUEST['BoardPlace'];
@@ -254,7 +260,7 @@ function New_Thing(&$t) {
       Put_Thing($t);
       break;
      
-    case 'Board on Turn':
+    case 'Load on Turn':
       $t = Get_Thing($_REQUEST['id']);
       $Hid = $_REQUEST['BoardPlace'];
       if (!$Hid || ! ($H = Get_Thing($Hid))) {
@@ -262,7 +268,7 @@ function New_Thing(&$t) {
         break;
       }
       $t['LinkId'] = -2;
-      $t['SystemId'] = $Hid;
+      $t['NewSystemId'] = $Hid;
       Put_Thing($t);
       break;
     
@@ -297,7 +303,71 @@ function New_Thing(&$t) {
       break;
       
     case 'Unload on Turn':
-     
+      $t = Get_Thing($_REQUEST['id']);
+      $Lid = $t['LinkId'];
+      $t['NewLocation'] = 0; // For now
+      if ($Lid > 0) {
+        echo "<h2 class=Err>Err?  This is moving itself...</h2>";
+        break;
+      } else if ($Lid == 0) {
+        echo "<h2 class=Err>Err? Not on board ...</h2>";
+        break;
+      } else if ($Lid == -1 || $Lid == -3) {
+        $Lid = -3;
+      } else if ($Lid == -2 || $Lid == -4) {
+        $Lid = -4;
+      }
+      $t['LinkId'] = $Lid;
+      Put_Thing($t);
+
+      
+      $HostId = (($Lid == -3) ? $t['SystemId'] : $t['NewSystemId']);
+      $H = Get_Thing($HostId);
+      
+      if ($H['LinkId'] > 0) {
+        $Dest = $H['NewSystemId'];
+      } else if ($H['LinkId'] == 0) {
+        $Dest = $H['SystemId'];
+      } else {
+        // Very complicated skip for now
+        break;
+      }
+
+      echo "<h2>Unload to where?</h2>\n";
+      echo "<form method=post action=ThingEdit.php>";
+      echo fm_hidden('id',$t['id']);
+
+
+      $N = Get_System($Dest);
+      $Syslocs = Within_Sys_Locs($N,0,0,0,1);
+      echo fm_select($Syslocs,$t,'NewLocation');
+      echo "<input type=submit name=ACTION value='Select Final Destination'>";
+      dotail();
+      
+    case 'Select Final Destination':
+      $t = Get_Thing($_REQUEST['id']);
+      $t['NewLocation'] = $_REQUEST['NewLocation'];
+      Put_Thing($t);      
+      break;
+      
+    case 'Cancel Load':
+      $t = Get_Thing($_REQUEST['id']);
+      $t['LinkId'] = 0;
+      Put_Thing($t);      
+      break;      
+    
+    case 'Cancel Unload':
+      $t = Get_Thing($_REQUEST['id']);
+      $t['LinkId'] = -1;
+      Put_Thing($t);      
+      break;      
+    
+    case 'Cancel Load and Unload':
+      $t = Get_Thing($_REQUEST['id']);
+      $t['LinkId'] = 0;
+      Put_Thing($t);      
+      break;
+      
     case 'None' :
     default: 
       break;
@@ -308,19 +378,20 @@ function New_Thing(&$t) {
         $Hid = $mtch[1];
         $H = Get_Thing($Hid);
         $t = Get_Thing($_REQUEST['id']); // What it is unloading from - gives sys
-        if ($t['LinkId'] >= 0) {
-          $Sys = $t['SystemId'];
-          $N = Get_System($Sys);
-          $tt = $t;
-        } else {
-          $tt = Get_Thing($t['SystemId']);
-          $Sys = $tt['SystemId'];
-          $N = Get_System($Sys);
-        } 
-          
+
         switch ($RV) {
           case 'Unload Now':
 
+            if ($t['LinkId'] >= 0) {
+              $Sys = $t['SystemId'];
+              $N = Get_System($Sys);
+              $tt = $t;
+            } else {
+              $tt = Get_Thing($t['SystemId']);
+              $Sys = $tt['SystemId'];
+              $N = Get_System($Sys);
+            } 
+          
             $wsysloc = $_REQUEST["WithinSysLoc:$Hid"];
             $Syslocs = Within_Sys_Locs($N,0,0,0,1);
             $newloc = (isset($Syslocs[$wsysloc])? $Syslocs[$wsysloc] : 'Deep Space');
@@ -346,7 +417,41 @@ function New_Thing(&$t) {
             break;
                 
           case 'Unload on Turn':
-            // TODO
+            $wsysloc = $_REQUEST["NewLocation:$Hid"];
+
+            if ($t['LinkId'] > 0) {
+              $Sys = $t['NewSystemId'];
+              $N = Get_System($Sys);
+              $tt = $t;
+            } else if ($t['LinkId'] == 0) {
+              $Sys = $t['SystemId'];
+              $N = Get_System($Sys);
+            } else if ($t['LinkId'] == -1) {
+              $tt = Get_Thing($t['SystemId']);
+              $Sys = $tt['SystemId'];
+              $N = Get_System($Sys);
+            } // TODO Other cases are COMPLICATED
+
+            $Syslocs = Within_Sys_Locs($N,0,0,0,1);
+            $newloc = (isset($Syslocs[$wsysloc])? $Syslocs[$wsysloc] : 'Deep Space');
+            if ((preg_match('/Hospitable/',$newloc,$mtch)?true:false) || isset($_REQUEST['YES_SPACE'])) {
+              $H['LinkId'] = 0;
+              $H['SystemId'] = $Sys;
+              $H['WithinSysLoc'] = $wsysloc;
+              Put_Thing($H);
+              
+              if (isset($_REQUEST['YES_SPACE'])) {
+                $Who = empty($FACTION['Name'])? "A GM " : $FACTION['Name'];
+                GMLog4Later("$Who has unloaded <a href=ThingEdit.php?id=$Hid>" . $H['Name'] . " in " . $N['Ref'] . " to $newloc"); 
+              }
+              
+            } else {
+              echo "<h2>Do your really mean to unload to $newloc?</h2>";
+              echo "<form method=post action=ThingEdit.php>";
+              foreach($_REQUEST as $RI=>$RV) echo fm_hidden($RI,$RV);
+              echo "<input type=submit name=YES_SPACE value='Yes Space Them!'></form>\n";
+              dotail();
+            }
             break;
             
         }

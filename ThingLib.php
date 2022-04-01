@@ -338,6 +338,7 @@ function Moves_4_Thing(&$T, $Force=0, &$N=0) {
   } else {
     $GM = Access('GM');    
   }
+  if ($T['LinkId'] <0) return [[],[],[]];
 //var_dump($T);exit;
   $Fid = $T['Whose'];
   if (!$N) $N = Get_System($T['SystemId']);

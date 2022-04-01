@@ -15,7 +15,9 @@
   }
   dostaffhead("Full Map");
  //var_dump($_REQUEST, $_COOKIE);  
-   
+
+  A_Check('Player');
+
   $CatCols = ["white","grey", "Yellow"];
   $HexLegPos = [[1,8],[1,7.5],[1,7],[1,6.5], [9,8],[9,7.5],[9,7],[9,6.5], [1,0],[1,0.5],[1,1],[1,1.5], [9,0],[9,0.5],[9,1.5],[9,2]];
 

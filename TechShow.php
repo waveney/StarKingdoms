@@ -12,7 +12,7 @@
       Error_Page("Sorry you need to be a GM or a Player to access this");
     }
   }
-
+  A_Check('Player');
   dostaffhead("Technologies");
   $CTs = Get_CoreTechsByName();
   $CTNs = [];

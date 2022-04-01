@@ -4,6 +4,7 @@
   include_once("SystemLib.php");
   include_once("PlayerLib.php");
     
+  A_Check('Player');  
   if (Access('Player')) {
     if (!$FACTION) {
       if (!Access('GM') ) Error_Page("Sorry you need to be a GM or a Player to access this");

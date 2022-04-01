@@ -8,6 +8,7 @@
 global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$ThingInclrs;
 
 //var_dump($_COOKIE,$_REQUEST);
+  A_Check('Player');  
   if (Access('Player')) {
     if (!$FACTION) {
       if (!Access('GM') ) Error_Page("Sorry you need to be a GM or a Player to access this");

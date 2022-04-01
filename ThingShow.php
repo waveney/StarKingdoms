@@ -93,28 +93,162 @@ function Show_Thing(&$T,$Force=0) {
   echo "<td rowspan=4 colspan=4><table><tr>";
     echo fm_DragonDrop(1,'Image','Thing',$tid,$T,1,'',1,'','Thing');
   echo "</table>";
+
+
+
   echo "<tr>" . fm_text('Class',$T,'Class',2);
-  if ($GM) {
-    echo "<tr><td>Build State:" . fm_select($BuildState,$T,'BuildState'); 
-    if (isset($T['BuildState']) && $T['BuildState'] <= 1) {
-      echo fm_number('Build Project',$T,'ProjectId');
-      if ($T['ProjectId']) {
-        $Proj = Get_Project($T['ProjectId']);
-//var_dump($Proj,"<br>", $Project_Status);
-        echo "Status: " . $Project_Status[$Proj['Status']];
-        if ($Proj['TurnStart']) echo " Start Turn: " . $Proj['TurnStart'];
-        if ($Proj['TurnEnd']) echo " End Turn: " . $Proj['TurnEnd'];
+
+// WHERE IS IT AND MOVEMENT
+
+
+
+  echo "<tr><td>Build State:" . fm_select($BuildState,$T,'BuildState'); 
+  if (isset($T['BuildState']) && $T['BuildState'] <= 1) {
+    if ($GM) echo fm_number('Build Project',$T,'ProjectId');
+    if ($T['ProjectId']) {
+      $Proj = Get_Project($T['ProjectId']);
+      echo "<tr><td>See <a href=ProjEdit.php?id=" . $T['ProjectId'] . ">Project</a>";
+      echo "<tr><td>Status: " . $Project_Status[$Proj['Status']];
+      if ($Proj['TurnStart']) echo " Start Turn: " . $Proj['TurnStart'];
+      if ($Proj['TurnEnd']) echo " End Turn: " . $Proj['TurnEnd'];
+    }
+  } else if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
+  // WHERE
+    $Lid = $T['LinkId'];
+echo "Lid:$Lid SystemId:" . $T['SystemId'];
+    if ($Lid >= 0 || $Lid == -2 || $Lid == -4) { // Insystem
+      if ($GM) {
+        echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId',1);
+        echo "<td>" . fm_select($Syslocs,$T,'WithinSysLoc');
+      } else {
+        echo "<tr><td>Current System:<td>" . $N['Ref'] . "<td>" . $Syslocs[$T['WithinSysLoc']];    
       }
-      
-    } else {
+    } else { // On Board
+      $Host = Get_Thing($T['SystemId']);
+      echo "<tr><td colspan=3>In: " . $Host['Name'];
+      $Conflict = 0; 
+      $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
+      if ($Conf) $Conflict = $Conf[0]['Conflict'];
+
+      if ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ) echo "<input type=submit name=ACTION value='Unload on Turn'>\n";
+      if ($GM || (!$Conflict && ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ))) echo "<input type=submit name=ACTION value='Unload Now'>\n";         
+//          echo "<input type=submit name=ACTION value='Unload on Turn'>\n";
+//          if ($Conflict) echo " <b>Conflict</b> ";
+//          echo "<input type=submit name=ACTION value='Unload Now'>\n";
+      echo "<br>Note: To unload AFTER moving, please put the movement order in for the transport before the unload on turn order.\n";
+    }
+    if ($Lid == -2 || $Lid == -4) {
+      $Host = Get_Thing($T['NewSystemId']);
+      echo "<tr><td colspan=3>Loading on to: <b>" . $Host['Name'] . "</b> on the turn";
+      if ($Lid == -4) echo " and then unloading";
+
+      $Conflict = 0; 
+      $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
+      if ($Conf) $Conflict = $Conf[0]['Conflict'];
+
+      if ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ) echo "<input type=submit name=ACTION value='Unload on Turn'>\n";
+    }
+     
+
+    $NeedOr = 0;
+    if ($Lid >= 0) {
+
+      if (($T['BuildState'] == 2) || ($T['CurHealth'] == 0) || empty($SelLinks)) { // Shakedown or just warped out
+        echo "<tr><td colspan=3>This is unable to use links, it can move within the system.<br>Where in the system should it go? " . fm_select($Syslocs,$T,'WithinSysLoc');
+      } else {
+        if (($T['Instruction'] > 0) && ($T['Instruction'] != 5)) echo "<tr><td class=Err>Warning Busy doing:<td>" . $ThingInstrs[$T['Instruction']] . "<td class=Err>Moving will cancel";
+
+        if ($GM) {
+          echo "<tr><td>Taking Link:<td>" . fm_select($SelLinks,$T,'LinkId',0," style=color:" . $SelCols[$T['LinkId']] ,'',0,$SelCols) . "Update this normally";
+          echo "<td>To:  " . fm_select($NewSyslocs,$T,'NewLocation');
+        } else {
+          echo "<tr><td>Taking Link:<td>" . fm_select($SelLinks,$T,'LinkId',0," style=color:" . $SelCols[$T['LinkId']] ,'',0,$SelCols);
+          if ($Lid > 0 && !strpos($SelLinks[$Lid],'?')) {
+            echo "<td>To:  " . fm_select($NewSyslocs,$T,'NewLocation');
+          }
+        }
+      }
+      if ($Lid > 0) {
+        echo "<input type=submit name=ACTION value='Cancel Move'>\n";
+        $NeedOr = 1;
+      }
+    }
+
+    if (($Lid == 0) && (($tprops & THING_CAN_BETRANSPORTED))) { 
+      $XPorts = Get_AllThingsAt($T['SystemId']);
+      $NeedCargo = ($tprops & THING_NEEDS_CARGOSPACE);
+      $TList = [];
+      $FF = Get_FactionFactionsCarry($Fid);
+      foreach($XPorts as $X) {
+        if ($NeedCargo && $X['CargoSpace'] < $T['Level']) continue; // Not big enough
+        if ($X['Whose'] != $Fid) {
+          $Carry = (empty($FF[$X['Whose']])? 0 : $FF[$X['Whose']]);
+          if (!$NeedCargo) $Carry >>= 4;
+          if (($Carry&15) ==0) continue; // Don't carry
+        }
+
+        if ($NeedCargo) {
+          $OnBoard = Get_Things_Cond(0,"LinkId<0 AND SystemId==" . $X['id']);
+          $Used = 0;
+          foreach($OnBoard as $OB) if ($ThingProps[$OB['Type']]['Properties'] & THING_NEEDS_CARGOSPACE) $Used += $OB['Level'];
+          if ($X['CargoSpace'] < $Used + $T['Level']) continue; // Space is used
+        }
+        $TList[$X['id']] = $X['Name'];  
+      }
+
+      if ($TList) {
+        echo "<tr><td colspan=3>" . ($NeedOr?" <b>Or</b> ":'') . "Board: " . fm_select($TList,$T,'BoardPlace') . "<input type=submit name=ACTION value='Load on Turn'>";
+        $Conflict = 0; // HOW?
+        $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
+        if ($Conf) $Conflict = $Conf[0]['Conflict'];
+        if ($GM && $Conflict) echo " <b>Conflict</b> ";
+        if ($GM || !$Conflict) echo "<input type=submit name=ACTION value='Load Now'>\n";
+      } else {
+        echo "<td>No Transport Avail";
+      }
+    } else if (($Lid < -1) && (($tprops & THING_CAN_BETRANSPORTED))) {
+      if ($Lid == -2) { 
+        echo "<input type=submit name=ACTION value='Cancel Load'>\n";
+      } else if ($Lid == -3) { 
+        echo "<input type=submit name=ACTION value='Cancel Unload'>\n";
+      } else if ($Lid == -4) { 
+        echo "<input type=submit name=ACTION value='Cancel Load and Unload'>\n";
+      }
+    }
+  }  
+  
+/*    
+    
+    if ($T['LinkId'] >= 0 || Lid == -2 || Lid == -4) // SystemId/Within
+    
+    if (Lid== -1 ) { On board [unload now]  }
+    
+    ||Lid == -3 || (On board unloading on turn to X [c] [unload now]
+    
+    Lid == -4) Loading on turn, then unloading to X [c]
+
+    
+      // Show link options
+  
+  // (unload now)
+  
+  // Link MOve [c]
+  
+  // Load now, turn [c]
+  
+  // unload Turn [c]
+  
+  
+   if ($GM) {     
       if (! empty($T['SystemId'])) {
         if (!isset($T['LinkId']) || ($T['LinkId'] > 0 && !isset($SelCols[$T['LinkId']]))) { 
           $T['LinkId'] = 0;
           $SelCols[0] = "white";
         }
+        $NeedOr = 0;
         if ($T['LinkId'] < 0) {
           $Host = Get_Thing($T['SystemId']);
-          echo (($T['LinkId'] == -1)?"<td>In:<td>":"<td>Will Board:< td>") . $Host['Name']; // TODO Generalise that when other neg values coded
+          echo (($T['LinkId'] == -1)?"<td>In:<td>":"<td>Will Board:<td>") . $Host['Name']; // TODO Generalise that when other neg values coded
           $Conflict = 0; 
           $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
           if ($Conf) $Conflict = $Conf[0]['Conflict'];
@@ -128,11 +262,11 @@ function Show_Thing(&$T,$Force=0) {
             if (($T['Instruction'] > 0) && ($T['Instruction'] != 5)) echo "<span class=Err>Warning Busy doing:<br>" . $ThingInstrs[$T['Instruction']] . "</span><br>";
             
             echo "Taking Link:<td>" . fm_select($SelLinks,$T,'LinkId',0," style=color:" . $SelCols[$T['LinkId']] ,'',0,$SelCols) . "Update this normally";
+            $NeedOr = 1;
           }
         }
         if ($tprops & THING_CAN_BETRANSPORTED) { 
           $XPorts = Get_AllThingsAt($T['SystemId']);
-//var_dump($XPorts);exit;
           $NeedCargo = ($tprops & THING_NEEDS_CARGOSPACE);
           $TList = [];
           $FF = Get_FactionFactionsCarry($Fid);
@@ -155,7 +289,7 @@ function Show_Thing(&$T,$Force=0) {
           }
 
           if ($TList) {
-            echo "<tr><td colspan=3>Board: " . fm_select($TList,$T,'BoardPlace') . "<input type=submit name=ACTION value='Board on Turn'>";
+            echo "<tr><td colspan=3>" . ($NeedOr?" <b>Or</b> ":'') . "Board: " . fm_select($TList,$T,'BoardPlace') . "<input type=submit name=ACTION value='Board on Turn'>";
             $Conflict = 0; // HOW?
             $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
             if ($Conf) $Conflict = $Conf[0]['Conflict'];
@@ -171,8 +305,6 @@ function Show_Thing(&$T,$Force=0) {
       }
     }
 
-    echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId',1);
-    echo "<td>" . fm_select($Syslocs,$T,'WithinSysLoc');
     if ($tprops & THING_CAN_MOVE) {
       echo "<tr><td>New System:<td>" . fm_select($Systems,$T,'NewSystemId',1) . "This is derived data<td>" . fm_select($NewSyslocs,$T,'NewLocation');
       echo fm_number('Target Known',$T,'TargetKnown');
@@ -192,7 +324,7 @@ function Show_Thing(&$T,$Force=0) {
     } else {
       if ($T['LinkId']< 0) {
         $Host = Get_Thing($T['SystemId']);
-        echo "<tr><td colspan=3>" . (($T['LinkId'] == -1)?"In:<td>":"Will Board:< td>") . $Host['Name']; // TODO Generalise that when other neg values coded
+        echo "<tr><td colspan=3>" . (($T['LinkId'] == -1)?"In:<td>":"Will Board:<td>") . $Host['Name']; // TODO Generalise that when other neg values coded
         $Conflict = 0; 
         $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
         if ($Conf) $Conflict = $Conf[0]['Conflict'];
@@ -203,6 +335,7 @@ function Show_Thing(&$T,$Force=0) {
       } else {
         echo "<tr><td>Current System:<td>" . $N['Ref'] . "<td>" . $Syslocs[$T['WithinSysLoc']];
 
+        $NeedOr = 0;
         if ($tprops & THING_CAN_MOVE) {
           switch ($T['BuildState']) {
         
@@ -226,6 +359,7 @@ function Show_Thing(&$T,$Force=0) {
               if ($T['LinkId'] && !strpos($SelLinks[$T['LinkId']],'?')) {
                 echo "<td>To:  " . fm_select($NewSyslocs,$T,'NewLocation');
               }
+            $NeedOr = 1;
             } else {
              echo "<tr><td>Row Not Used\n";
             }
@@ -233,7 +367,8 @@ function Show_Thing(&$T,$Force=0) {
           default:
             break;
           }
-        } else if ($tprops & THING_CAN_BETRANSPORTED) {
+        }
+        if ($tprops & THING_CAN_BETRANSPORTED) {
           $XPorts = Get_AllThingsAt($T['SystemId']);
           $NeedCargo = ($tprops & THING_NEEDS_CARGOSPACE);
           $TList = [];
@@ -258,7 +393,7 @@ function Show_Thing(&$T,$Force=0) {
           if ($Conf) $Conflict = $Conf[0]['Conflict'];
 
           if ($TList) {
-            echo "<tr><td colspan=3>Board: " . fm_select($TList,$T,'BoardPlace') . "<input type=submit name=ACTION value='Board on Turn'>";
+            echo "<tr><td colspan=3>" . ($NeedOr?" <b>Or</b> ":'') . "Board: " . fm_select($TList,$T,'BoardPlace') . "<input type=submit name=ACTION value='Board on Turn'>";
             if ( !$Conflict ) echo "<input type=submit name=ACTION value='Board Now'>\n";
           } else {
             echo "<td>No Transport Avail";
@@ -273,6 +408,10 @@ function Show_Thing(&$T,$Force=0) {
     }
   }
 
+
+*/
+
+  if ($GM) echo "<tr>" . fm_radio('Whose',$FactNames ,$T,'Whose','',1,'colspan=6','',$Fact_Colours,0); 
   if  ($tprops & THING_HAS_GADGETS) echo "<tr>" . fm_textarea("Gadgets",$T,'Gadgets',8,3);
   if  ($tprops & THING_HAS_LEVELS) echo "\n<tr>" . fm_text("Orders",$T,'Orders',2);
   echo "<tr>" . fm_textarea("Description\n(For others)",$T,'Description',8,2);
@@ -281,7 +420,7 @@ function Show_Thing(&$T,$Force=0) {
   
   $Have = Get_Things_Cond($Fid," LinkId<0 AND SystemId=$tid ");
   if ($Have) {
-    echo "<tr><td>Has:<td colspan=6>";
+    echo "<tr><td>Has:<td colspan=6>Note: To unload after moving PLEASE put the move order in first.<br>";
     $Conflict = 0; 
     $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
     if ($Conf) $Conflict = $Conf[0]['Conflict'];

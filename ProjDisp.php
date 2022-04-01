@@ -14,7 +14,8 @@
 // var_dump($_REQUEST);
 
   $HomeColours = ['#ff99ff', '#ccffff', '#ccffcc', '#ffffcc', '#ffcccc', '#e6ccff', '#cce6ff', '#ffd9b3', '#ecc6c6', '#ecc6d6', '#d6b3ff', '#d1e0e0', '#d6ff99' ];
-  
+
+  A_Check('Player');    
   $Fid = 0;
   $GM = Access('GM');  
   if (Access('Player')) {
@@ -39,7 +40,7 @@
  
     if (isset($Fid)) $Faction = Get_Faction($Fid);
   }
-  
+
   if ($Fid == 0) {
     dostaffhead("Display Projects When no Faction selected");
     echo "<h1>Display Projects When no Faction selected</h1>";

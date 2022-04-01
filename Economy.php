@@ -10,7 +10,7 @@
   global $FACTION, $GAME, $GAMEID, $db;
   $Fid = $FACTION['id'];
   
-  CheckFaction('Economy',$Fid);
+  A_Check('Player');  
   
   $Spend = 0;
   echo "<h1>Economy for this coming turn</h1>\n";

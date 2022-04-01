@@ -13,7 +13,14 @@ $Currencies = ['Credits','Physics Science Points','Engineering Science Points','
 global $PlayerState,$PlayerStates,$Currencies;
 
 function CheckFaction($Prog='Player',$Fid=0) {
-    if (!$Fid) {
+  if (!Access('Player') && !Access('GM')) {
+    dostaffhead("Who are you?");    
+    echo "<h2>Who are you?</h2>";
+    echo "If you are are a player, reuse your personal link.<p>";
+    echo "If you are a GM go to the login prompt and type your username and password.<p>";
+    dotail();  
+  }
+  if (!$Fid) {
       dostaffhead("Faction needed");
       echo "<h1>For What faction?</h1>";
       echo "<form method=post action=$Prog.php>";

@@ -9,7 +9,7 @@
   include_once("ProjLib.php");
   
   global $FACTION,$GAME;
-  
+  A_Check('Player');    
   $Fid = 0;
   if (Access('Player')) {
     if (!$FACTION) {

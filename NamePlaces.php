@@ -29,7 +29,7 @@
     $F = Get_Faction($Fid);
   }
 
-  CheckFaction('NamePlaces',$Fid);
+  A_Check('Player');
 
   $GM = Access('GM');
   
