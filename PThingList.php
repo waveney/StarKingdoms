@@ -108,7 +108,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
 
   echo "<h1>Things</h1>";
   
-  $ShowCats = ['All','Ships','Armies','Agents','Other'];
+  $ShowCats = ['All','Ships','Armies','Agents','Chars', 'Other'];
   $Show['ThingShow'] = 0;
   $BuildCats = ['All','Plan','Building','Shakedown','Complete','Other'];
   $Build['BuildShow'] = 0;
@@ -155,6 +155,8 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
       $RowClass = 'Army';
     } else  if ($Props & THING_HAS_GADGETS) {
       $RowClass = 'Agent';
+    } else  if ($Name == 'Named Character') {
+      $RowClass = 'Chars';
     } else {
       $RowClass = 'Other';  
     }

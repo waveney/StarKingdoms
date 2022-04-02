@@ -115,7 +115,7 @@ function Show_Thing(&$T,$Force=0) {
   } else if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
   // WHERE
     $Lid = $T['LinkId'];
- echo "Lid:$Lid SystemId:" . $T['SystemId'];
+ if ($GM) echo "Lid:$Lid SystemId:" . $T['SystemId'];
     if ($Lid >= 0 || $Lid == -2 || $Lid == -4) { // Insystem
       if ($GM) {
         echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId',1);
@@ -221,7 +221,7 @@ function Show_Thing(&$T,$Force=0) {
         }
 
         if ($NeedCargo) {
-          $OnBoard = Get_Things_Cond(0,"LinkId<0 AND SystemId==" . $X['id']);
+          $OnBoard = Get_Things_Cond(0,"((LinkId=-1 OR LinkId=-3) AND SystemId=" . $X['id']);
           $Used = 0;
           foreach($OnBoard as $OB) if ($ThingProps[$OB['Type']]['Properties'] & THING_NEEDS_CARGOSPACE) $Used += $OB['Level'];
           if ($X['CargoSpace'] < $Used + $T['Level']) continue; // Space is used
@@ -495,8 +495,8 @@ function Show_Thing(&$T,$Force=0) {
   echo "<tr>" . fm_textarea('Notes',$T,'Notes',8,2);
   echo "<tr>" . fm_textarea('Named Crew',$T,'NamedCrew',8,2);
   
-  $Have = Get_Things_Cond($Fid," (LinkId=-1 AND SystemId=$tid ) OR (OR LinkId=-3 AND NewSystemId=$tid )");
-  $Having = Get_Things_Cond($Fid," (LinkId=-2 OR LinkId=-4) AND NewSystemId=$tid ");
+  $Have = Get_Things_Cond(0," (LinkId=-1 OR LinkId=-3) AND SystemId=$tid ");
+  $Having = Get_Things_Cond(0," (LinkId=-2 OR LinkId=-4) AND NewSystemId=$tid ");
   
   if ($Have || $Having) {
     echo "<tr><td>Carrying:<td colspan=6>Note: To unload after moving PLEASE put the move order in first.<br>";

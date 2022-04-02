@@ -34,7 +34,7 @@
     dotail();
   }
 
-  $ShowCats = ['All','Ships','Armies','Agents','Other'];
+  $ShowCats = ['All','Ships','Armies','Agents','Chars', 'Other'];
   $Show['ThingShow'] = 0;
   $BuildCats = ['All','Plan','Building','Shakedown','Complete','Other'];
   $Build['BuildShow'] = 0;
@@ -95,6 +95,8 @@
       $RowClass = 'Army';
     } else  if ($Props & THING_HAS_GADGETS) {
       $RowClass = 'Agent';
+    } else  if ($ThingTypes[$T['Type']]['Name'] == 'Named Character') {
+      $RowClass = 'Chars';
     } else {
       $RowClass = 'Other';  
     }
@@ -106,12 +108,12 @@
 
     echo "<td>" . $ThingTypes[$T['Type']]['Name'] . "<td>" . $T['Level'];
     echo "<td><center>" . $T['CurHealth'] . ' / ' . $T['OrigHealth'];
-    if ($T['LinkId'] >= 0) {
+    if ($T['LinkId'] >= 0 || $T['LinkId'] == -2 || $T['LinkId'] == -4) {
       echo "<td><a href=ThingList.php?AT=$Ref>$Ref</a><td>$Loc";
-    } else {
+    } else if ($T['LinkId'] == -1 || $T['LinkId'] == -3) {
       $Host = Get_Thing($T['SystemId']);
       echo "<td>On:<td>" . $Host['Name'];
-    }
+    } 
     
     echo "<td><a href=ThingEdit.php?id=$tid>$Name</a>";
     echo "<td>" . ($who? $Factions[$T['Whose']]['Name'] : "");

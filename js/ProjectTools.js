@@ -121,7 +121,8 @@ function ThingListFilter() {
     if (Show ==1 && $(this).hasClass("Thing_Ship")) hide = 0;
     if (Show ==2 && $(this).hasClass("Thing_Army")) hide = 0;
     if (Show ==3 && $(this).hasClass("Thing_Agent")) hide = 0;
-    if (Show ==4 && $(this).hasClass("Thing_Other")) hide = 0;
+    if (Show ==4 && $(this).hasClass("Thing_Chars")) hide = 0;
+    if (Show ==5 && $(this).hasClass("Thing_Other")) hide = 0;
     
     if (Build > 0 && ! $(this).hasClass("Thing_Build" + (Build-1)) ) hide =1;
     if (hide) {

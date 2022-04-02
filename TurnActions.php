@@ -719,7 +719,56 @@ function Economy() {
 }
 
 function LoadTroops() {
-  GMLog("Load Troops	is currently Manual<p>");
+  $Things = Get_Things_Cond(0,"(BuildState=2 OR BuildState=3) AND (LinkId=-2 OR LinkId=-4)");
+  $TTypes = Get_ThingTypes();
+  $Facts = Get_Factions();
+  
+  foreach($Things as $T) {
+    $HostId = $T['NewSystemId'];
+    $H = Get_Thing($HostId);
+    $NeedCargo = ($TTypes[$T['Type']]['Properties'] & THING_NEEDS_CARGOSPACE);
+    if ($H['Whose'] != $T['Whose']) {
+      $FF = Get_FactionFactionsCarry($T['Whose']);
+      $Carry = (empty($FF[$H['Whose']])? 0 : $FF[$H['Whose']]);
+      if (!$NeedCargo) $Carry >>= 4;
+      if (($Carry&15) ==0) {
+        TurnLog($T['Whose'],"You tried to load " . $T['Name'] . " on to " . $H['Name'] . " access was denied by " . $Facts[$H['Whose']]['Name']);
+        TurnLog($H['Whose'],  $Facts[$T['Whose']]['Name'] . " tried to load " . $T['Name'] . " on to " . $H['Name'] . " you denied access");
+        GMLog($Facts[$T['Whose']]['Name'] . " tried to load " . $T['Name'] . " on to " . $H['Name'] . " access was denied by " . $Facts[$H['Whose']]['Name']);
+        continue; 
+      }
+    }
+    
+    if ($NeedCargo) {
+      $OnBoard = Get_Things_Cond(0,"(LinkId=-1 OR LinkId=-3) AND SystemId=" . $H['id']);
+      $Used = 0;
+      foreach($OnBoard as $OB) if ($ThingProps[$OB['Type']]['Properties'] & THING_NEEDS_CARGOSPACE) $Used += $OB['Level'];
+      if ($H['CargoSpace'] < $Used + $T['Level']) {
+        TurnLog($T['Whose'],"You tried to load " . $T['Name'] . " on to " . $H['Name'] . " there is not enough space");
+        if ($H['Whose'] != $T['Whose']) TurnLog($H['Whose'],  $Facts[$T['Whose']]['Name'] . " tried to load " . $T['Name'] . " on to " . $H['Name'] . " there is not enough space");
+        GMLog($Facts[$T['Whose']]['Name'] . " tried to load " . $T['Name'] . " on to " . $H['Name'] . " there is not enough space");
+        continue;
+      }
+    }
+     
+    TurnLog($T['Whose'],"Loaded " . $T['Name'] . " on to " . $H['Name']);
+    if ($H['Whose'] != $T['Whose']) TurnLog($H['Whose'],  $Facts[$T['Whose']]['Name'] . " loaded " . $T['Name'] . " on to " . $H['Name'] );
+    GMLog($Facts[$T['Whose']]['Name'] . " loaded " . $T['Name'] . " on to " . $H['Name']);
+    
+     
+    $T['SystemId'] = $HostId;
+    if ($T['LinkId'] == -2) {
+      $T['LinkId'] = -1;
+    } else {
+      $T['LinkId'] = -3;
+    }
+var_dump($T); echo "<P>";
+
+    Put_Thing($T);
+  }
+
+
+  GMLog("Load Troops	is Complete<p>");
   return 1;
 }
 
@@ -874,7 +923,32 @@ function SpaceCombat() {
 
 
 function UnloadTroops() {
-  GMLog("Unload Troops is currently Manual<p>");
+  $Things = Get_Things_Cond(0,"(BuildState=2 OR BuildState=3) AND LinkId=-3"); // -4 has been converted on load to -3
+  $TTypes = Get_ThingTypes();
+  $Facts = Get_Factions();
+  
+  foreach($Things as $T) {
+    $HostId = $T['SystemId'];
+    $H = Get_Thing($HostId);
+    
+    $N = Get_System($H['SystemId']);
+    $Syslocs = Within_Sys_Locs($N,0,0,0,1);
+    
+    $T['SystemId'] = $H['SystemId'];
+    if (isset($Syslocs[$T['NewLocation']])) {
+      $T['WithinSysLoc'] = $T['NewLocation'];
+    } else {
+      $T['WithinSysLoc'] = 1;
+    }
+    $T['LinkId'] = 0;
+    
+    TurnLog($T['Whose'], $T['Name'] . " has been unloaded from " . $H['Name'] . " in " . $N['Ref'] . " to " . $Syslocs[$T['WithinSysLoc']]);
+    if ($T['Whose'] != $H['Whose']) TurnLog($H['Whose'], $T['Name'] . " has been unloded from " . $H['Name'] . " in " . $N['Ref'] . " to " . $Syslocs[$T['WithinSysLoc']]);
+    GMLog($T['Name'] . " has been unloaded from " . $H['Name'] . " in " . $N['Ref'] . " to " . $Syslocs[$T['WithinSysLoc']]);
+    Put_Thing($T);
+  }
+
+  GMLog("Unload Troops is complete<p>");
   return 1;
 }
 
@@ -1642,10 +1716,10 @@ function Do_Turn() {
   $Coded =  ['Coded','No','No','Coded','Coded','No','Coded', 'No',
              'No','No','No','No','Partial','No','No','Coded',
              'Coded','No','No','No','No','No','No','No',
-             'No','No','No','Coded','No','No','No','No',
+             'No','No','No','Coded','No','No','Coded','No',
              
              'Coded','Coded','Coded','Coded','Coded','No','No', 'No',
-             'No','No','No','No','No','Coded','Coded','Coded',
+             'No','Coded','No','No','No','Coded','Coded','Coded',
              'Coded','No','No','No',
              'No','Coded','Partial','Coded',
              'No','Partial (not nebula)','Coded','No',
