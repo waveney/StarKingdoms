@@ -71,7 +71,7 @@ function Show_Thing(&$T,$Force=0) {
 
 
 
-  echo "Note Movement does not yet work for armies moving by ship.<p>\n";
+//  echo "Note Movement does not yet work for armies moving by ship.<p>\n";
   
   if ($T['BuildState'] == 0) echo "Note the Tech level of this will be recorded when it is built<br>";
 
@@ -115,7 +115,7 @@ function Show_Thing(&$T,$Force=0) {
   } else if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
   // WHERE
     $Lid = $T['LinkId'];
-echo "Lid:$Lid SystemId:" . $T['SystemId'];
+ echo "Lid:$Lid SystemId:" . $T['SystemId'];
     if ($Lid >= 0 || $Lid == -2 || $Lid == -4) { // Insystem
       if ($GM) {
         echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId',1);
@@ -140,20 +140,53 @@ echo "Lid:$Lid SystemId:" . $T['SystemId'];
     if ($Lid == -2 || $Lid == -4) {
       $Host = Get_Thing($T['NewSystemId']);
       echo "<tr><td colspan=3>Loading on to: <b>" . $Host['Name'] . "</b> on the turn";
-      if ($Lid == -4) echo " and then unloading";
-
-      $Conflict = 0; 
-      $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
-      if ($Conf) $Conflict = $Conf[0]['Conflict'];
-
-      if ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ) echo "<input type=submit name=ACTION value='Unload on Turn'>\n";
     }
-     
+    
+    if ($Lid == -3 || $Lid == -4) {
+      if ($Lid == -4) {
+        echo " and then unloading to ";
+        $HostId = $T['NewSystemId'];
+      } else {
+        echo "Unloading to ";
+        $HostId = $T['SystemId'];
+      }
+      $Host = Get_Thing($HostId);
+      if ($Host['LinkId'] > 0) {
+        $Dest = $Host['NewSystemId'];
+      } else if ($Host['LinkId'] == 0) {
+        $Dest = $Host['NewSystemId'];
+      } else {
+        $HostId = $H['SystemId'];
+        $H = Get_Thing($HostId);        
+        $Hlid = $H['LinkId'];
+        if ($Hlid > 0) {
+          $Dest = $H['NewSystemId'];
+        } else if ($Hlid == 0) {
+          $Dest = $H['SystemId'];
+        } else {
+          $Dest = 0;
+        }
+      }
+      
+      if ($Dest) {
+        $DN = Get_System($Dest);
+        $FS = Get_FactionSystemFS($Fid,$Dest);
+        if (isset($FS['Known']) && $FS['Known'] >=3) {
+          $finallocs = Within_Sys_Locs($DN);
+          echo "<b>" . $DN['Ref'] . " - " . $finallocs[$T['NewLocation']] . "</b> ";
+        } else {
+          echo "<b>Unknown location</b> ";        
+        }
+      } else {
+        echo "<b>Unknown location</b> ";
+      }
+    }
+ 
 
     $NeedOr = 0;
-    if ($Lid >= 0) {
+    if ((($tprops & THING_CAN_MOVE)) && $Lid >= 0) {
 
-      if (($T['BuildState'] == 2) || ($T['CurHealth'] == 0) || empty($SelLinks)) { // Shakedown or just warped out
+      if (($T['BuildState'] == 2) || ($T['CurHealth'] == 0) || empty($SelLinks) ) { // Shakedown or just warped out
         echo "<tr><td colspan=3>This is unable to use links, it can move within the system.<br>Where in the system should it go? " . fm_select($Syslocs,$T,'WithinSysLoc');
       } else {
         if (($T['Instruction'] > 0) && ($T['Instruction'] != 5)) echo "<tr><td class=Err>Warning Busy doing:<td>" . $ThingInstrs[$T['Instruction']] . "<td class=Err>Moving will cancel";
@@ -184,7 +217,7 @@ echo "Lid:$Lid SystemId:" . $T['SystemId'];
         if ($X['Whose'] != $Fid) {
           $Carry = (empty($FF[$X['Whose']])? 0 : $FF[$X['Whose']]);
           if (!$NeedCargo) $Carry >>= 4;
-          if (($Carry&15) ==0) continue; // Don't carry
+          if (($Carry&15) ==0) continue; // Don't carry Anoth#r8yPwd
         }
 
         if ($NeedCargo) {
@@ -207,6 +240,50 @@ echo "Lid:$Lid SystemId:" . $T['SystemId'];
         echo "<td>No Transport Avail";
       }
     } else if (($Lid < -1) && (($tprops & THING_CAN_BETRANSPORTED))) {
+/*
+      if ($Lid == -2 || $Lid == -4) {
+        $Host = Get_Thing($T['NewSystemId']);
+        echo "<tr><td colspan=3>Loading on to: <b>" . $Host['Name'] . "</b> on the turn";
+    
+        if ($Lid == -4) {
+          echo " and then unloading ";
+        
+          $HostId = $t['NewSytemId'];
+          $H = Get_Thing($HostId);        
+          $Hlid = $H['LinkId'];
+          if ($Hlid > 0) {
+            $Dest = $H['NewSystemId'];
+          } else if ($Hlid == 0 || $Hlid == -2 || $Hlid == -4) {
+            $Dest = $H['SystemId'];
+          } else {
+            $HostId = $H['SystemId'];
+            $H = Get_Thing($HostId);        
+            $Hlid = $H['LinkId'];
+            if ($Hlid > 0) {
+              $Dest = $H['NewSystemId'];
+            } else if ($Hlid == 0) {
+              $Dest = $H['SystemId'];
+            } else {
+              $Dest = 0;
+            }
+          }
+          if ($Dest) {
+            $TN = Get_System($Dest);
+            $Locs = Within_Sys_Locs($TN);
+            echo "<b>" . $TN['Ref'] . " - " . $finallocs[$t['NewLocation']] . "</b> "; 
+          }
+        }
+//to what
+
+      } else {        
+//        $Conflict = 0; 
+//        $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
+//        if ($Conf) $Conflict = $Conf[0]['Conflict'];
+*/
+
+      if ($Lid == -2)  if ($GM || $Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ) echo "<input type=submit name=ACTION value='Unload on Turn'>\n";
+//      }
+     
       if ($Lid == -2) { 
         echo "<input type=submit name=ACTION value='Cancel Load'>\n";
       } else if ($Lid == -3) { 
@@ -418,26 +495,54 @@ echo "Lid:$Lid SystemId:" . $T['SystemId'];
   echo "<tr>" . fm_textarea('Notes',$T,'Notes',8,2);
   echo "<tr>" . fm_textarea('Named Crew',$T,'NamedCrew',8,2);
   
-  $Have = Get_Things_Cond($Fid," LinkId<0 AND SystemId=$tid ");
-  if ($Have) {
-    echo "<tr><td>Has:<td colspan=6>Note: To unload after moving PLEASE put the move order in first.<br>";
+  $Have = Get_Things_Cond($Fid," (LinkId=-1 AND SystemId=$tid ) OR (OR LinkId=-3 AND NewSystemId=$tid )");
+  $Having = Get_Things_Cond($Fid," (LinkId=-2 OR LinkId=-4) AND NewSystemId=$tid ");
+  
+  if ($Have || $Having) {
+    echo "<tr><td>Carrying:<td colspan=6>Note: To unload after moving PLEASE put the move order in first.<br>";
     $Conflict = 0; 
     $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
     if ($Conf) $Conflict = $Conf[0]['Conflict'];
   
     $NewRef = (empty($T['NewSystemId']) ? $N['Ref'] : Get_System($T['NewSystemId'])['Ref']);
+    
+    $CargoUsed = 0;
  
-    foreach ($Have as $H) {
+    if ($Have) foreach ($Have as $H) {
       $Hid = $H['id'];
       $hprops = $ThingProps[$H['Type']];
       echo "<a href=ThingEdit.php?id=$Hid>" . $H['Name'] . "</a> a " . (($hprops & THING_HAS_LEVELS)? "Level " . $H['Level'] : "") . " " . $ttn[$H['Type']]; 
       if ($GM && $Conflict) echo " <b>Conflict</b> ";
       if ($GM || !$Conflict ) echo "<input type=submit name=ACT$Hid value='Unload Now'>\n";
       echo " to: " . $N['Ref'] . " - " . fm_select($Syslocs,$H,'WithinSysLoc',0,'',"WithinSysLoc:$Hid");
-      echo "<input type=submit name=ACT$Hid value='Unload on Turn'>\n";
-      echo " to: $NewRef - " . fm_select($NewSyslocs,$H,'NewLocation',0,'',"NewLocation:$Hid");
+      if ($H['LinkId'] == -3) {
+        echo " - Unloading on Turn";
+      } else { 
+        echo "<input type=submit name=ACT$Hid value='Unload on Turn'>\n"; 
+        echo " to: $NewRef - " . fm_select($NewSyslocs,$H,'NewLocation',0,'',"NewLocation:$Hid");
+      }
       echo "<br>";
+      if ($hprops & THING_NEEDS_CARGOSPACE) $CargoUsed += $H['Level'];
     }
+    
+    if ($Having) foreach ($Having as $H) {
+      echo "Loading on turn:<br>";
+      
+      $Hid = $H['id'];
+      $hprops = $ThingProps[$H['Type']];
+      echo "<a href=ThingEdit.php?id=$Hid>" . $H['Name'] . "</a> a " . (($hprops & THING_HAS_LEVELS)? "Level " . $H['Level'] : "") . " " . $ttn[$H['Type']]; 
+      echo " to: " . $N['Ref'] . " - " . fm_select($Syslocs,$H,'WithinSysLoc',0,'',"WithinSysLoc:$Hid");
+      if ($H['LinkId'] == -4) {
+        echo " - Unloading on Turn";
+      } else { 
+        echo "<input type=submit name=ACT$Hid value='Unload on Turn'>\n";
+        echo " to: $NewRef - " . fm_select($NewSyslocs,$H,'NewLocation',0,'',"NewLocation:$Hid");
+      }
+      echo "<br>";
+      if ($hprops & THING_NEEDS_CARGOSPACE) $CargoUsed += $H['Level'];
+    }
+    
+    if ($CargoUsed > $T['CargoSpace'] ) echo "<span class=Err>This needs $CargoUsed cargo space, but only has " . $T['CargoSpace'] . "</span>\n";
 //    echo "<a href=ThingEdit.php?ACTION=UnloadAll>Unload All</a>";
   }
   
