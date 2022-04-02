@@ -106,7 +106,7 @@ function New_Thing(&$t) {
     
         $H = Get_ProjectHome($W['Home']);
         
-        echo "<button class=projtype type=submit formaction=ThingEdit.php?ACTION=Select_World&Sys=" . $Sys['id'] . ">$Name</button><p>\n";
+        echo "<button class=projtype type=submit formaction=ThingEdit.php?ACTION=Select_World&Wid=" . $W['id'] . ">$Name</button><p>\n";
         
       }
       
@@ -124,9 +124,9 @@ function New_Thing(&$t) {
     case 'Select_World' :
       $tid = $_REQUEST['id'];
       $t = Get_Thing($tid);
-      $Sys = $_REQUEST['Sys'];
-      $Worlds = Get_Worlds($Fid);
-      $Home = Get_ProjectHome($Worlds[$Sys]['Home']);
+      $Wid = $_REQUEST['Wid'];
+      $World = Get_World($Wid);
+      $Home = Get_ProjectHome($World['Home']);
       $t['SystemId'] = $Home['SystemId'];
       $t['WithinSysLoc'] = $Home['WithinSysLoc'];
       $t['BuildState'] = 3;
