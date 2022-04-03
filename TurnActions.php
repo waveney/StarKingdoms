@@ -19,7 +19,7 @@ function GMLog($text) {
      $LF = fopen("Turns/$GAMEID/" . $GAME['Turn'] . "/0.txt", "a+");
   }
   fwrite($LF,"$text\n");
-  echo $text;  
+  echo "$text<br>";  
 }
 
 function SKLog($text,$e=0) {
@@ -735,6 +735,8 @@ function LoadTroops() {
         TurnLog($T['Whose'],"You tried to load " . $T['Name'] . " on to " . $H['Name'] . " access was denied by " . $Facts[$H['Whose']]['Name']);
         TurnLog($H['Whose'],  $Facts[$T['Whose']]['Name'] . " tried to load " . $T['Name'] . " on to " . $H['Name'] . " you denied access");
         GMLog($Facts[$T['Whose']]['Name'] . " tried to load " . $T['Name'] . " on to " . $H['Name'] . " access was denied by " . $Facts[$H['Whose']]['Name']);
+        $T['LinkId'] = 0;
+        Put_Thing($T);
         continue; 
       }
     }
@@ -742,16 +744,18 @@ function LoadTroops() {
     if ($NeedCargo) {
       $OnBoard = Get_Things_Cond(0,"(LinkId=-1 OR LinkId=-3) AND SystemId=" . $H['id']);
       $Used = 0;
-      foreach($OnBoard as $OB) if ($ThingProps[$OB['Type']]['Properties'] & THING_NEEDS_CARGOSPACE) $Used += $OB['Level'];
+      foreach($OnBoard as $OB) if ($TTypes[$OB['Type']]['Properties'] & THING_NEEDS_CARGOSPACE) $Used += $OB['Level'];
       if ($H['CargoSpace'] < $Used + $T['Level']) {
         TurnLog($T['Whose'],"You tried to load " . $T['Name'] . " on to " . $H['Name'] . " there is not enough space");
         if ($H['Whose'] != $T['Whose']) TurnLog($H['Whose'],  $Facts[$T['Whose']]['Name'] . " tried to load " . $T['Name'] . " on to " . $H['Name'] . " there is not enough space");
         GMLog($Facts[$T['Whose']]['Name'] . " tried to load " . $T['Name'] . " on to " . $H['Name'] . " there is not enough space");
+        $T['LinkId'] = 0;
+        Put_Thing($T);
         continue;
       }
     }
      
-    TurnLog($T['Whose'],"Loaded " . $T['Name'] . " on to " . $H['Name']);
+    TurnLog($T['Whose'],"Loaded " . $T['Name'] . " on to " . $H['Name'], $T);
     if ($H['Whose'] != $T['Whose']) TurnLog($H['Whose'],  $Facts[$T['Whose']]['Name'] . " loaded " . $T['Name'] . " on to " . $H['Name'] );
     GMLog($Facts[$T['Whose']]['Name'] . " loaded " . $T['Name'] . " on to " . $H['Name']);
     
@@ -762,13 +766,13 @@ function LoadTroops() {
     } else {
       $T['LinkId'] = -3;
     }
-var_dump($T); echo "<P>";
+// var_dump($T); echo "<P>";
 
     Put_Thing($T);
   }
 
 
-  GMLog("Load Troops	is Complete<p>");
+  GMLog("<br>Load Troops	is Complete<p>");
   return 1;
 }
 
@@ -942,7 +946,7 @@ function UnloadTroops() {
     }
     $T['LinkId'] = 0;
     
-    TurnLog($T['Whose'], $T['Name'] . " has been unloaded from " . $H['Name'] . " in " . $N['Ref'] . " to " . $Syslocs[$T['WithinSysLoc']]);
+    TurnLog($T['Whose'], $T['Name'] . " has been unloaded from " . $H['Name'] . " in " . $N['Ref'] . " to " . $Syslocs[$T['WithinSysLoc']], $T);
     if ($T['Whose'] != $H['Whose']) TurnLog($H['Whose'], $T['Name'] . " has been unloded from " . $H['Name'] . " in " . $N['Ref'] . " to " . $Syslocs[$T['WithinSysLoc']]);
     GMLog($T['Name'] . " has been unloaded from " . $H['Name'] . " in " . $N['Ref'] . " to " . $Syslocs[$T['WithinSysLoc']]);
     Put_Thing($T);
@@ -1664,6 +1668,23 @@ function TidyUpMovements() {
   global $db,$GAMEID;
   
   $res = $db->query("UPDATE Things SET LinkId=0 WHERE LinkId>0 AND GameId=$GAMEID"); 
+  
+  // Check for lid <-1...
+  $NotFin = Get_Things(0,"LinkId<-1");
+  if ($NotFin) {
+    echo "<h2 class=Err>These things have a broken load/unload still in place get Richard to fix</h2>";
+    foreach ($NotFin as $T) {
+      GMLog("<a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . " has a lid of " . $T['LinkId']);
+    }
+  }
+  
+  // Tidy 1 turn carry options
+  $FFs = Gen_Get_Cond('FactionFaction','Props>0');
+  foreach ($FFs as $F) {
+    if (($F['Props'] &15) == 2) $F['Props'] = ($F['Props']&0xf0)+1;
+    if ((($F['Props']>>4) &15) == 2) $F['Props'] = ($F['Props']&0x0f)+16;  
+    Put_FactionFaction($F);  
+  }
   
   GMLog("Movements Tidied Up<p>");  
   return 1;

@@ -499,7 +499,10 @@ function Show_Thing(&$T,$Force=0) {
   $Having = Get_Things_Cond(0," (LinkId=-2 OR LinkId=-4) AND NewSystemId=$tid ");
   
   if ($Have || $Having) {
-    echo "<tr><td>Carrying:<td colspan=6>Note: To unload after moving PLEASE put the move order in first.<br>";
+    echo "<tr><td>Carrying:<td colspan=6>Note: To unload after moving PLEASE put the move order in for the transport first.<br>";
+
+//var_dump($Have,$Having);
+
     $Conflict = 0; 
     $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
     if ($Conf) $Conflict = $Conf[0]['Conflict'];
