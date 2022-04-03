@@ -731,7 +731,7 @@ function LoadTroops() {
       $FF = Get_FactionFactionsCarry($T['Whose']);
       $Carry = (empty($FF[$H['Whose']])? 0 : $FF[$H['Whose']]);
       if (!$NeedCargo) $Carry >>= 4;
-      if (($Carry&15) ==0) {
+      if (($Carry&15) <2) {
         TurnLog($T['Whose'],"You tried to load " . $T['Name'] . " on to " . $H['Name'] . " access was denied by " . $Facts[$H['Whose']]['Name']);
         TurnLog($H['Whose'],  $Facts[$T['Whose']]['Name'] . " tried to load " . $T['Name'] . " on to " . $H['Name'] . " you denied access");
         GMLog($Facts[$T['Whose']]['Name'] . " tried to load " . $T['Name'] . " on to " . $H['Name'] . " access was denied by " . $Facts[$H['Whose']]['Name']);

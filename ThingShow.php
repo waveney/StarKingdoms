@@ -217,7 +217,7 @@ function Show_Thing(&$T,$Force=0) {
         if ($X['Whose'] != $Fid) {
           $Carry = (empty($FF[$X['Whose']])? 0 : $FF[$X['Whose']]);
           if (!$NeedCargo) $Carry >>= 4;
-          if (($Carry&15) ==0) continue; // Don't carry Anoth#r8yPwd
+          if (($Carry&15) < 2) continue; // Don't carry Anoth#r8yPwd
         }
 
         if ($NeedCargo) {

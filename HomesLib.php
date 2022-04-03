@@ -163,6 +163,7 @@ function Recalc_Project_Homes($Logf=0) {
       continue;
     }
  
+    if ($T['BuildState'] < 2 || $T['BuildState'] > 3 ) continue;
 //    if ($T['HasDeepSpace'] || ($ThingTypes[$T['Type']]['Properties'] & THING_HAS_DISTRICTS) || ($ThingTypes[$T['Type']]['Properties'] & THING_HAS_GADGETS ) ) {
     if (($ThingTypes[$T['Type']]['Properties'] & THING_HAS_DISTRICTS) ) {
       $THi = $T['ProjHome'];
