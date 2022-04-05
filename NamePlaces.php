@@ -40,12 +40,26 @@
   $Force = 0;
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
+    case 'Remove Label':
+      $sysref = $_REQUEST['sysref'];
+      $N = Get_SystemR($sysref);
+      if (!$N) {
+        echo "<h2 class=Err>System $sysref not known to you</h2>";
+        break;
+      }
+      $Sid = $N['id'];
+      $FS = Get_FactionSystemFS($Fid,$Sid);
+      $FS['Xlabel'] = '';
+      Put_FactionSystem($FS);
+      echo "<h2>Label has been removed from $sysref</h2>";
+      break;
+    
     case 'Name' :
       if (!empty($_REQUEST['Name'])) {
         echo "<p>";
         $Name = $_REQUEST['Name'];
         if (! isset($_REQUEST['sysref']) || strlen($_REQUEST['sysref']) < 3 ) {
-          echo "<h2 class=Err>System not known to you</h2>";
+          echo "<h2 class=Err>System $sysref not known to you</h2>";
           break;      
         }
         $sysref = $_REQUEST['sysref'];
@@ -185,7 +199,8 @@
   
   echo "<b>Instructions: Naming:</b> Give System Ref, existing Planet name (To name Planet), existing Moon name (To name a Moon) THEN the name<p>";
   
-  echo "<b>Private Label:</b> For a SYSTEM ONLY, you can give a private label.  This will appear Outside the system node on your maps ONLY. (Hope to add emoji support)<p>\n";
+  echo "<b>Private Label:</b> For a SYSTEM ONLY, you can give a private label.<br>Keep this SHORT a few characters or symbols otherwise your map will be unreadable.<br>" .
+       "This will appear Outside the system node on your maps ONLY. (Hope to add emoji support)<p>\n";
   
   echo "Note most moons can't be named<p>";
   
@@ -195,7 +210,7 @@
   echo "<tr>" . fm_text('Moon Name',$dat,'mname');
   $val = (empty($dat['Name'])? '' : "value='" . $dat['Name'] . "'" );
   echo "<tr><td>Name to assign:<td><input type=text name=Name $val onchange=this.form.submit()>";
-  echo "<tr><td>Private Label assign:<td><input type=text name=Label $val onchange=this.form.submit()>";
+  echo "<tr><td>Private Label assign:<td><input type=text name=Label $val onchange=this.form.submit()> <button type=submit name=ACTION value='Remove Label'>Remove Label</button>";
   echo "</form></table><p>";
   
   if ($Force) echo "<input type=submit value=SET>";

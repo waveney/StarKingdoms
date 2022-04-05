@@ -23,7 +23,7 @@ There are four states:
 <ul>
 <li>Setup - what it says.  Not yet written
 <li>Turn Planning - Do and see everything
-<li>Turn Submitted - You think you are ready.  Players can't change anything in this state, but you can revert to Turn Planning.
+<li>Turn Submitted - You think you are ready.  Players can't change anything in this state, but you can easily revert to Turn Planning.
 <li>Turn Being Processed - GM's lockdown.  Most features not accessible.
 </ul>
 
@@ -39,7 +39,7 @@ List of all the built in technologies and their pre-requisits.<p>
 
 Click on the name to expand the full explanation.<p>
 
-If you know of non-standard technologies they will also appear.<p>
+If you know of non-standard technologies they will also appear - even if you are yet to research them.<p>
 
 <h2>What Can I See?</h2>
 For each system where you have eyes/cameras - what they can see.<p>
@@ -81,22 +81,40 @@ Note: This does not <b>YET</b> handle techs, districts etc changing over the per
 On the right is a ROUGH idea to your forward credits.  It does not allow for other uses of credits (such as for Deep space and paying other factions).  
 It does not allow for income from other factions and the building of districts, thing and technologies that gain you income.<p>
 
+
 <h2>List of Things</h2>
-Everything you own from Ships, Armies, Warp Gates, Embassies etc.<p>
+Everything you own from Ships, Armies, Warp Gates, Embassies, Named Characters etc.<p>
 
 Click on the name to change names, crew, gadgets, notes, description, add an image if you like.<p>
 
 Click on the <b>Move</b> to have that thing move in your next turn.  It shows a mini map - click on the link you want<p>
 
-Movement only works for Ships and Agents at the moment.<p>
+Movement here only works for Ships and Agents at the moment.<p>
 
 Militia will only be created for a world that is under attack.<p>
 
-If you click on the name of the thing, you can do special actions such as colonisation, dissasembly, warping home and deep space projects.<p>
+If you click on the name of the thing, for lots more detail:
+<h3>Instructions</h3>
+ you can do special actions such as colonisation, dissasembly, warping home and deep space projects.<p>
 
 Only those actions you can actually do at that location are shown.<p>
 
 Some actions ask supplimentary questions such as the district type to make on colonisation.<p>
+
+<h3>Moving armies and named characters</h3>
+You can load/unload named characters to and from things and armies on to transport ships.  These can normally be done both now and in turn.<p>
+
+Named characters take no space and can be part of (almost) anything.  Armies take space, you will not be able to overload a ship.<p>
+
+If you want to move troops to another system you need to unload on your turn (which is after movement).<p>
+
+Under conflict conditions, you are only allowed to do this on your turn.<p>
+
+You can also load/unload on to things of other factions, as long as they have given permission to load.  This can be for one turn or ongoing.<p>
+
+If you are loaded on someone elses ship they can unload you any time and place they like (including deep space).
+
+
 <h2>Plan a Thing</h2>
 Design a Ship/Army/Agent/Space station etc.  You can design illegal things, you just won't be able to make them.<p>
 
@@ -126,6 +144,9 @@ Name, total credits, traits, a picture, science points.<P>
 
 If a trait is automated in the system it will indicate that it is automated, for all other cases you need to do the RP yourself and tell GMs if it affects underlying mechanics.<p>
 
+<h2>Carry Others Control</h2>
+Enable your things to carry things of other factions.<p>
+
 <h2>Why can't I do that?</h2>
 Ask, I may not have realised you want to do it.<p>
 
@@ -139,7 +160,7 @@ It is hypothetically possible for a player in one game to be a GM in another (no
 Most User Guide to be written for this<p>
 
 <h1>Technical bits - if you are interested</h1>
-Mostly written in php (17K lines), some javascript (1600 lines), some css.  About 43 tables at time of writting of this paragraph.<p>
+Mostly written in php (19K lines), some javascript (1700 lines), some css.  About 44 tables at time of writting of this paragraph.<p>
 
 Graphics by GraphViz.<p>
 Uses the star system generator at <a href=https://donjon.bin.sh/scifi/system/index.cgi>https://donjon.bin.sh/scifi/system/index.cgi</a> to initially populate the map.<p>
