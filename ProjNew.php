@@ -192,8 +192,11 @@
           $Lvl++;
           $pc = Proj_Costs($Lvl);
           if (Has_Trait($Fid,"We Happy Few")) {
-            if ($Lvl>1 ) $pc = Proj_Costs($Lvl-1);
-            if ($DTz['id'] == 9) $pc[1] = 0; // Mining
+            if ($DTz['Name'] == 'Mining') {
+              $pc[1] = 0; // Mining
+            else if ($Lvl>1 ) {
+              $pc = Proj_Costs($Lvl-1);
+            }
           }
           echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=1&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $DTz['id'] . 
                 "&Name=" . base64_encode("Build " . $DTz['Name'] . " District $Lvl$Place") . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
