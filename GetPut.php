@@ -492,7 +492,7 @@ function Get_Things($Fact,$type=0) {
 function Get_AllThings() {
   global $db,$GAMEID;
   $Ts = [];
-  $res = $db->query("SELECT * FROM Things WHERE GameId=$GAMEID");
+  $res = $db->query("SELECT * FROM Things WHERE GameId=$GAMEID ORDER BY Whose");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
   return $Ts;
 }

@@ -210,6 +210,8 @@
   echo "<tr>" . fm_text('Current Moon Name',$dat,'mname') . "- so it can be found";
   $val = (empty($dat['Name'])? '' : "value='" . $dat['Name'] . "'" );
   echo "<tr><td>Name to assign:<td><input type=text name=Name $val onchange=this.form.submit()>";
+  echo "<td><input type=submit Name=ACTION Value=Name hidden>";
+  
   echo "<tr><td>Private Label assign:<td><input type=text name=Label $val onchange=this.form.submit()> <button type=submit name=ACTION value='Remove Label'>Remove Label</button>";
   echo "</form></table><p>";
   

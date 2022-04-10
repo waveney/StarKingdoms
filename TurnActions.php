@@ -37,7 +37,7 @@ function TurnLog($Fid,$text,&$T=0) {
      $LF[$Fid] = fopen("Turns/$GAMEID/" . $GAME['Turn'] . "/$Fid.txt", "a+");
   }
   fwrite($LF[$Fid],"$text\n");
-  if ($T) $T['History'] .= "Turn#" . $GAME['Turn'] . ": " . $text . "\n";
+  if ($T) $T['History'] .= "Turn#" . ($GAME['Turn']+1) . ": " . $text . "\n";
 }
 
 
@@ -175,6 +175,7 @@ function StartProjects() {
 // Find all projects with 0 progress due to start this turn
 // Pay costs, Status = Started  
 
+  $Facts = Get_Factions();
   $ProjTypes = Get_ProjectTypes();
   $Projects = Get_Projects_Cond("Status=0 AND TurnStart=" . $GAME['Turn']);
   $TTypes = Get_ThingTypes();
@@ -195,6 +196,7 @@ function StartProjects() {
         if (!$T['DesignValid']) {
           $P['Status'] = 5; // Not Started
           TurnLog($P['FactionId'],'Not starting as design invalid: ' . $P['Name']);
+          GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as design invalid: ' . $P['Name']);
           Put_Project($P);
           continue;      
         }
@@ -202,6 +204,7 @@ function StartProjects() {
 //var_dump($Where,$T);
           $P['Status'] = 5; // Not Started
           TurnLog($P['FactionId'],'Not starting as not in same system: ' . $P['Name']);
+          GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as not in same system: ' . $P['Name']);
           Put_Project($P);
           continue;     
         }
@@ -211,6 +214,7 @@ function StartProjects() {
           } else {
             $P['Status'] = 5; // Not Started
             TurnLog($P['FactionId'],'Not starting as not at the same planet: ' . $P['Name']);
+            GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as not at the same planet: ' . $P['Name']);
             Put_Project($P);
             continue;
           }
@@ -218,7 +222,9 @@ function StartProjects() {
         if ($T['Level'] != $P['Level']) {
           if ($T['Level'] > $P['Level']) {
             $P['Status'] = 5; // Not Started
+
             TurnLog($P['FactionId'],'Not starting as project level less than Thing Level: ' . $P['Name']);
+            GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as project level less than Thing Level: ' . $P['Name']);
             Put_Project($P);
             continue;      
           } 
@@ -232,6 +238,7 @@ function StartProjects() {
           if ($T2['SystemId'] != 0 && $T2['SystemId'] != $Where[0]) {
             $P['Status'] = 5; // Not Started
             TurnLog($P['FactionId'],'Not starting as not in same system: ' . $P['Name']);
+            GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as not in same system: ' . $P['Name']);
             Put_Project($P);
             continue;     
           }
@@ -241,6 +248,7 @@ function StartProjects() {
             } else {
               $P['Status'] = 5; // Not Started
               TurnLog($P['FactionId'],'Not starting as not at the same planet: ' . $P['Name']);
+              GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as not at the same planet: ' . $P['Name']);
               Put_Project($P);
               continue;             
             }
@@ -251,6 +259,7 @@ function StartProjects() {
     if ($Cost == 0 || Spend_Credit($P['FactionId'],$Cost,'Starting: ' . $P['Name'])) {
       $P['Status'] = 1; // Started
       TurnLog($P['FactionId'],'Starting ' . $P['Name'] . " Cost: " . Credit() . " $Cost");
+      GMLog($Facts[$P['FactionId']]['Name'] . 'Starting ' . $P['Name'] . " Cost: " . Credit() . " $Cost");
       if (($ProjTypes[$P['Type']]['Props'] & 2) && (($ProjTypes[$P['Type']]['Props'] &16) ==0 )) { // Has a thing      
         if ($Tid) {
           $T['BuildState'] = 1; // Building
@@ -278,6 +287,9 @@ function StartProjects() {
     } else {
       $P['Status'] = 5; // Not Started
       TurnLog($P['FactionId'],'Not starting as not enough Credits: ' . $P['Name']);
+      GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as not enough Credits: ' . $P['Name']);
+      Put_Project($P);
+      continue;             
     }
     // Is there a project already running there?  If so put it on hold
     $home = $P['Home'];
@@ -296,6 +308,7 @@ function StartProjects() {
           }
         }
         TurnLog($P['FactionId'],'Project ' . $OP['Name'] . " has been put on hold, having made " . $OP['Progress'] . "/" . $OP['ProgNeeded'] . "progress");
+//        GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as not enough Credits: ' . $P['Name']);
       }
     }
     Put_Project($P);
@@ -786,8 +799,8 @@ function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
   GMLog("<form method=Post action=TurnActions.php?ACTION=Complete>" . fm_hidden('S',($Agents?34:32)));
   GMLog("<table border><tr><td>Who<td>What<td>Level<td>From<td>Link<td>To<td>Stop<td>Why Stopping\n");
   foreach ($Things as $T) {
-    if (($T['Type'] == 5 && $Agents == 0) || ($T['Type'] != 5 && $Agents == 1) || $T['BuildState'] <2 || $T['BuildState'] > 3) continue;
-    if ($T['LinkId']>=0 && $T['NewSystemId'] != $T['SystemId'] ) {
+    if (($T['Type'] == 5 && $Agents == 0) || ($T['Type'] != 5 && $Agents == 1) || $T['BuildState'] <2 || $T['BuildState'] > 3 || $T['LinkId'] <= 0) continue;
+    if ($T['LinkId']>0 && $T['NewSystemId'] != $T['SystemId'] ) {
       $Tid = $T['id'];
       $Lid = $T['LinkId']; 
             
@@ -1177,7 +1190,7 @@ function FinishShakedowns() {
 
   foreach($Things as $T) {
     $T['BuildState'] = 3;
-    TurnLog($T['FactionId'],$T['Name'] . " has finished it's Shakedown and is now ready for operations.");
+    TurnLog($T['Whose'],$T['Name'] . " has finished it's Shakedown and is now ready for operations.");
     Put_Thing($T);
   }
   
@@ -1549,7 +1562,7 @@ function InstructionsComplete() {
        SKLog("A Command Node has been repaired in " . $N['Ref'] . " by " . $Facts[$Who]['Name'] . ".  Tell Richard to set the right stuff up",1);
        break;
 
-     case 'Build Planetary Mine'::
+     case 'Build Planetary Mine':
        $P = Get_Planet($T['Spare1']);
        $Who = $T['Whose'];
        
