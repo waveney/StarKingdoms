@@ -206,8 +206,8 @@
   
   echo "<table><tr>" . fm_text('System Ref',$dat,'sysref');
   if ($Force) echo fm_hidden('FORCE',1);
-  echo "<tr>" . fm_text('Planet Name',$dat,'pname');
-  echo "<tr>" . fm_text('Moon Name',$dat,'mname');
+  echo "<tr>" . fm_text('Current Planet Name',$dat,'pname') . "- so it can be found";
+  echo "<tr>" . fm_text('Current Moon Name',$dat,'mname') . "- so it can be found";
   $val = (empty($dat['Name'])? '' : "value='" . $dat['Name'] . "'" );
   echo "<tr><td>Name to assign:<td><input type=text name=Name $val onchange=this.form.submit()>";
   echo "<tr><td>Private Label assign:<td><input type=text name=Label $val onchange=this.form.submit()> <button type=submit name=ACTION value='Remove Label'>Remove Label</button>";

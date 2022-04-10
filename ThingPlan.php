@@ -103,7 +103,7 @@
   }
   $ThingProps = Thing_Type_Props();
   $tprops = (empty($T['Type'])? 0: $ThingProps[$T['Type']]);
-  $Valid = 1;
+  $Valid = $CanMake = 1;
   RefitRepair($T,0);
   Calc_Health($T);
   Calc_Damage($T);
@@ -138,7 +138,25 @@
   echo "<table border>";
   echo "<tr><td>Planning a:<td>" . fm_select($ThingTypeNames, $T,'Type');
   if ($T['Type']) {
-    if ($tprops & THING_HAS_LEVELS) echo "<tr>" . fm_number('Level',$T,'Level','','min=1 max=10');
+  
+    $Limit = 0;
+    if ($tprops & THING_HAS_LEVELS) {
+      if ($tprops & THING_HAS_SHIPMODULES) {
+        $Limit = Has_Tech($Fid,'Ship Construction');
+      } else if ($tprops & THING_HAS_ARMYMODULES) {
+        $Limit = Has_Tech($Fid,'Military Organisation');
+      } else if ($tprops & THING_HAS_GADGETS) {
+        $Limit = Has_Tech($Fid,'Intelligence Operations');
+      }
+    }
+  
+    if ($tprops & THING_HAS_LEVELS) {
+      echo "<tr>" . fm_number('Level',$T,'Level','','min=1 max=10');
+      if ($T['Level'] > $Limit) {
+        $CanMake = 0;
+        echo "<td><td class=Err>Note this is higher level than you can currently make";
+      }
+    }
     echo "<tr>" . fm_text('Name',$T,'Name') . "<td><td" . (empty($T['Name'])? " class=Err" : "") . ">This is needed";
     if (empty($T['Name'])) $Valid = 0;
     echo "<tr>" . fm_text('Class',$T,'Class') . "<td><td>This is optional";
@@ -219,14 +237,18 @@
       echo "<h2><a href=ThingEdit.php?ACTION=CREATE&id=$Tid>Create</a></h2>";
     } else {
       if (isset($_REQUEST['Validate'])) {
-        echo "<h2 class=Green>Design is valid</h2>";
+        if ($CanMake) {
+          echo "<h2 class=Green>Design is valid</h2>";
+        } else {
+          echo "<h2 class=Green>Design is valid, but can't currently be made</h2>";       
+        }
         if (($tprops & THING_HAS_MODULES) && ($totmodc < $T['MaxModules'] )) {
           echo "<h2>Though it can have " . ( $T['MaxModules'] - $totmodc). " more modules</h2>\n";
         }
       }
       echo "<input type=submit name=Validate value=Validate>\n";
       echo "<input type=submit name=ACTION value=Delete>\n";
-      echo "<h2>Once planned, go to where you want to make it and select an appropriate project</h2>";
+      if ($CanMake) echo "<h2>Once planned, go to where you want to make it and select an appropriate project</h2>";
       echo "You can customise by adding crew names, an images, notes and gadgets by selecting the thing while it is being made or used later.<p>\n";
     }
   } else {
