@@ -437,10 +437,10 @@ function DurationFormat($mins) { // Show N mins as N <=90, x hr ymins
 }
 
 function Register_AutoUpdate($type,$ref) {
-  global $AutoADD,$AutoAfter;
+  global $ADDALL,$AutoADD,$AutoAfter;
   echo fm_hidden('AutoType',$type);
   echo fm_hidden('AutoRef',$ref);
-  $AutoADD = 1;
+  if (!$ADDALL) $AutoADD = 1;
 }
 
 function ChunkSplit($txt,$maxlen,$maxchnks) {

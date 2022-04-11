@@ -82,16 +82,19 @@ function Player_Page() {
   echo "<h1>Player Actions: " . $FACTION['Name'] . "</h1>\n";
   
   $TState = $PlayerState[$FACTION['TurnState']] ;
-  
+    
   echo "<h2>Player state: <span style='background:" . $PlayerStateColours[$FACTION['TurnState']] . "'>$TState</span> Turn:" .
        $GAME['Turn'] . "</h2>";
+  if ($GM || isset($_REQUEST['SEEALL'])) $TState = 'Turn Planning';
+  
   echo "<div class=Player>";
+  if ((!$GM) && $TState == 'Turn Submitted') echo "To change anything, cancel the turn submission first.<br>";
   echo "The only current actions are:";
   echo "<ul>";
 
   echo "<p><li><a href=UserGuide.php>User Guide</a><p>\n";
   
-  if (isset($_REQUEST['SEEALL'])) $TState = 'Turn Planning';
+
   switch ($TState) {
   case 'Setup':
     echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";    
@@ -101,7 +104,8 @@ function Player_Page() {
     echo "<li><a href=ThingSetup.php?T=Agent>Setup Agents</a>\n";    
     break;
   
-  
+  case 'Turn Submitted':
+    if (!$GM) fm_addall('readonly');
   case 'Turn Planning':
     echo "<li><a href=MapFull.php>Faction Map</a>\n";
     if (Has_Tech($FACTION['id'],'Astral Mapping')) echo "<li><a href=MapFull.php?Hex>Faction Map</a> - with spatial location of nodes\n";
@@ -117,19 +121,15 @@ function Player_Page() {
     echo "<li><a href=Banking.php>Banking</a> - Sending credits to others and statements<p>";
     echo "<li><a href=PlayerTurnTxt.php>Turn Actions Automated Response Text</a>";
 //    echo "<li><a href=PlayerTurn.php>Submit Player Turn text</a> - For now a link to a Google Docs file.<p>\n";
-    echo "<li><a href=Player.php?ACTION=Submit>Submit Turn</a><p>\n";
+    if ($PlayerState[$FACTION['TurnState']] == 'Turn Planning') {
+      echo "<li><a href=Player.php?ACTION=Submit>Submit Turn</a><p>\n";
+    } else {
+      echo "<li><a href=Player.php?ACTION=Unsub>Cancel Submission</a><p>\n";
+    }
     echo "<li><a href=FactionEdit.php>Faction Information</a> - Mostly read only once set up.\n";
     echo "<li><a href=FactionCarry.php>Carry Others Control</a> - To allow individuals and armies aboard.\n";
     break;
-      
-  case 'Turn Submitted':
-    echo "<li><a href=MapFull.php?PLAYER>Faction Map</a>\n";
-    echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";  
-    echo "<li><a href=Player.php?ACTION=Unsub>Cancel Submission</a>\n";        
-
-    if ($GM) echo "<p><li><a href=Player.php?SEEALL>(GM) See All Actions</a>\n";
-    break;
-      
+            
   case 'Turn Being Processed':
     echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";
     

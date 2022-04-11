@@ -194,7 +194,7 @@
           if (Has_Trait($Fid,"We Happy Few")) {
             if ($DTz['Name'] == 'Mining') {
               $pc[1] = 0; // Mining
-            else if ($Lvl>1 ) {
+            } else if ($Lvl>1 ) {
               $pc = Proj_Costs($Lvl-1);
             }
           }

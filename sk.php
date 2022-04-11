@@ -316,7 +316,7 @@ function doheadpart($title,$extras=[]) {
 
 // No Banner
 function dostaffhead($title,$extras=[]) {
-  global $head_done,$GAMESYS,$CONF,$AdvancedHeaders,$GAME;
+  global $head_done,$GAMESYS,$CONF,$AdvancedHeaders,$GAME,$FACTION;
   
   LogEverything();
   
@@ -347,6 +347,9 @@ function dostaffhead($title,$extras=[]) {
     echo "<div class=content>";
   }
   $head_done = 1;
+  
+  if (isset($FACTION) && $FACTION['TurnState'] >1 && (1 || !$GM)) fm_addall('readonly');
+
 }
 
 // No Banner

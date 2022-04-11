@@ -200,8 +200,14 @@
       $txt .= "<input type=submit name=F value='Thing List' id=staffformid>" . 
                 fm_select($Facts,0,'F',1," onchange=this.form.submit()") . "</form>\n";
     
+    $txt .= "<p>\n";
+    $txt .= "<li><a href=ThingTypes.php>Thing Types</a>\n";          
+    $txt .= "<li><a href=ThingList.php>Thing list</a>\n";          
+    $txt .= "<li><a href=ThingEdit.php?ACTION=NEW>New Thing</a>";
+    $txt .= "<p>\n";
+
 //    $txt .= "<li><a href=InstrList.php>List Instructions</a>\n";
-    $txt .= "<li><a href=TidyThings.php>Tidy up</a>  - Call this once a turn to remove unused temp entries\n";
+    $txt .= "<li><a href=TidyThings.php>Tidy up</a>  - Call this once a turn to remove unused temp entries<p>\n";
     $txt .= "<li><a href=SetAllSensors.php>Set All Sensor data</a> - Bug Fix";
     $txt .= "<li><a href=SetAllSpeeds.php>Set All Speeds</a> - Bug Fix";
     $txt .= "</ul>\n";
@@ -216,11 +222,10 @@
     $txt .= "<li><a href=ModuleList.php>List Module Types</a>\n";
     $txt .= "<li><a href=ModFormulae.php>List Module Formulas</a>\n";
     $txt .= "<p>";
-    $txt .= "<li><a href=ThingTypes.php>Thing Types</a>\n";          
-    $txt .= "<li><a href=ThingList.php>Thing list</a>\n";          
-    $txt .= "<li><a href=ThingEdit.php?ACTION=NEW>New Thing</a>";
-    $txt .= "<p>\n";
 
+    $txt .= "<li><a href=Anomoly.php>Anomolies</a>\n";          
+    $txt .= "<p>";
+    
     $txt .= "<li><a href=DeepSpace.php>Deep Space Projects</a>\n";          
     $txt .= "</ul>\n";
   }
