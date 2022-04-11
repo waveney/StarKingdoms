@@ -223,10 +223,10 @@
     $txt .= "<li><a href=ModFormulae.php>List Module Formulas</a>\n";
     $txt .= "<p>";
 
-    $txt .= "<li><a href=Anomoly.php>Anomolies</a>\n";          
+    $txt .= "<li><a href=Anomoly.php>Anomalies</a>\n";          
     $txt .= "<p>";
     
-    $txt .= "<li><a href=DeepSpace.php>Deep Space Projects</a>\n";          
+//    $txt .= "<li><a href=DeepSpace.php>Deep Space Projects</a>\n";          
     $txt .= "</ul>\n";
   }
 
