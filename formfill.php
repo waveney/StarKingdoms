@@ -325,6 +325,26 @@
     echo Put_ProjectHome($N);
     exit;
   
+   case 'Anomaly':
+    if ((preg_match('/(\w*):(\d*)/',$field,$mtch)?true:false)) {
+      $N = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$id AND FactionId=" . $mtch[2]);
+      if (!$N) {
+        $N = ['FactionId'=>$mtch[2],'AnomalyId'=>$id];
+      } else {
+        $N = $N[0];
+      }
+      $N[$mtch[1]] = $Value;
+ var_dump($N);
+      echo Gen_Put('FactionAnomaly',$N);
+    } else {
+      $N = Get_Anomaly($id);
+      $N[$field] = $Value;
+ //  var_dump($N);
+      echo Put_Anomaly($N);
+    }
+    exit;
+   
+  
    case 'Worlds':
 //var_dump($_REQUEST);
     if ((preg_match('/(\w*):(\d*):(\d*)/',$field,$mtch)?true:false)) {

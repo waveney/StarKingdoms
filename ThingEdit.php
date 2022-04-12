@@ -124,6 +124,7 @@ function New_Thing(&$t) {
     case 'Select_World' :
       $tid = $_REQUEST['id'];
       $t = Get_Thing($tid);
+      Check_MyThing($t,$Fid);
       $Wid = $_REQUEST['Wid'];
       $World = Get_World($Wid);
       $Home = Get_ProjectHome($World['Home']);
@@ -136,6 +137,7 @@ function New_Thing(&$t) {
     case 'Select_Thing' :
       $tid = $_REQUEST['id'];
       $t = Get_Thing($tid);
+      Check_MyThing($t,$Fid);
       $Thing = $_REQUEST['Thing'];
       $Host = Get_Thing($Thing);
       $t['LinkId'] = -1;
@@ -146,6 +148,8 @@ function New_Thing(&$t) {
      
     case 'DELETE' :
       $tid = $_REQUEST['id'];
+      $t = Get_Thing($tid);
+      Check_MyThing($t,$Fid);
       $Discs = Get_DistrictsT($tid);
       if ($Discs) {
         foreach ($Discs as $D) {
@@ -166,6 +170,9 @@ function New_Thing(&$t) {
       dotail();
        
     case 'Duplicate' :
+      $tid = $_REQUEST['id'];
+      $t = Get_Thing($tid);
+      Check_MyThing($t,$Fid);
       $t = Thing_Duplicate($_REQUEST['id']);
       $tid = $t['id'];
       break;
@@ -173,17 +180,24 @@ function New_Thing(&$t) {
     case 'GM Refit' :
       $tid = $_REQUEST['id'];
       $t = Get_Thing($tid);
+      Check_MyThing($t,$Fid);
       Calc_Scanners($t);
       RefitRepair($t);
       break;     
      
     case 'Destroy Thing (Leave debris)':
+      $tid = $_REQUEST['id'];
+      $t = Get_Thing($tid);
+      Check_MyThing($t,$Fid);
       $t = Get_Thing($_REQUEST['id']);
       $t['BuildState'] = 4;  // Ex
       Put_Thing($t);
       break;
 
     case 'Remove Thing (No debris)':
+      $tid = $_REQUEST['id'];
+      $t = Get_Thing($tid);
+      Check_MyThing($t,$Fid);
       db_delete('Things',$_REQUEST['id']);
       echo "<h1>Deleted</h1>";
       echo "<h2><a href=PThingList.php>Back to Thing list</a></h2>";
@@ -191,7 +205,9 @@ function New_Thing(&$t) {
       break;
 
     case 'Warp Out':
-      $t = Get_Thing($_REQUEST['id']);
+      $tid = $_REQUEST['id'];
+      $t = Get_Thing($tid);
+      Check_MyThing($t,$Fid);
       $Gates = Get_Things_Cond($t['Whose'],' Type=15'); // Warp Gates
       if ($Gates) {
         if (isset($Gates[1])) { // Multiple Gates
@@ -220,13 +236,17 @@ function New_Thing(&$t) {
       break;
     
     case 'Cancel Move':
-      $t = Get_Thing($_REQUEST['id']);
+      $tid = $_REQUEST['id'];
+      $t = Get_Thing($tid);
+      Check_MyThing($t,$Fid);
       $t['LinkId'] = 0;
       Put_Thing($t);
       break;            
        
     case 'Select Gate':
-      $t = Get_Thing($_REQUEST['id']);
+      $tid = $_REQUEST['id'];
+      $t = Get_Thing($tid);
+      Check_MyThing($t,$Fid);
       $Gate = Get_Thing($_REQUEST['G']);
       $t['SystemId'] = $Gate['SystemId'];
       $t['WithinSysLoc'] = $Gate['WithinSysLoc'];
@@ -236,7 +256,9 @@ function New_Thing(&$t) {
 
     case 'UnloadAll' : // Not called 
       // Need list of Worlds in location  - if only one select it - 
-      $t = Get_Thing($_REQUEST['id']);
+      $tid = $_REQUEST['id'];
+      $t = Get_Thing($tid);
+      Check_MyThing($t,$Fid);
       $Homes = Gen_Get_Cond('ProjectHomes', "SystemId=" . $t['SystemId']);
       if (!Homes) { 
       
@@ -248,7 +270,9 @@ function New_Thing(&$t) {
      
     case 'Load Now':
 // echo "<p>Here";
-      $t = Get_Thing($_REQUEST['id']);
+      $tid = $_REQUEST['id'];
+      $t = Get_Thing($tid);
+      Check_MyThing($t,$Fid);
       $Hid = $_REQUEST['BoardPlace'];
       if (!$Hid || ! ($H = Get_Thing($Hid))) {
         echo "<h2 class=Err>Board What?</h2>\n";
@@ -261,7 +285,9 @@ function New_Thing(&$t) {
       break;
      
     case 'Load on Turn':
-      $t = Get_Thing($_REQUEST['id']);
+      $tid = $_REQUEST['id'];
+      $t = Get_Thing($tid);
+      Check_MyThing($t,$Fid);
       $Hid = $_REQUEST['BoardPlace'];
       if (!$Hid || ! ($H = Get_Thing($Hid))) {
         echo "<h2 class=Err>Board What?</h2>\n";
@@ -273,8 +299,10 @@ function New_Thing(&$t) {
       break;
     
     case 'Unload Now': 
-      $t = Get_Thing($_REQUEST['id']);
+      $tid = $_REQUEST['id'];
+      $t = Get_Thing($tid);
       $H = Get_Thing($t['SystemId']);
+      Check_MyThing($t,$Fid,$H);
       if ($H['LinkId'] < 0) {
         $t['LinkId'] = -1;
         $t['SystemId'] = $H['SystemId'];
@@ -297,13 +325,16 @@ function New_Thing(&$t) {
       dotail();
       
     case 'Select Destination':
-      $t = Get_Thing($_REQUEST['id']);
-      $t['WithinSysLoc'] = $_REQUEST['WithinSysLoc'];
+      $tid = $_REQUEST['id'];
+      $t = Get_Thing($tid);
+      Check_MyThing($t,$Fid);
       Put_Thing($t);      
       break;
       
     case 'Unload on Turn':
-      $t = Get_Thing($_REQUEST['id']);
+      $tid = $_REQUEST['id'];
+      $t = Get_Thing($tid);
+ //     Check_MyThing($t,$Fid);  // TODO make this work with transports
       $Lid = $t['LinkId'];
       $t['NewLocation'] = 0; // For now
       if ($Lid > 0) {
@@ -345,25 +376,33 @@ function New_Thing(&$t) {
       dotail();
       
     case 'Select Final Destination':
-      $t = Get_Thing($_REQUEST['id']);
+      $tid = $_REQUEST['id'];
+      $t = Get_Thing($tid);
+      Check_MyThing($t,$Fid);
       $t['NewLocation'] = $_REQUEST['NewLocation'];
       Put_Thing($t);      
       break;
       
     case 'Cancel Load':
-      $t = Get_Thing($_REQUEST['id']);
+      $tid = $_REQUEST['id'];
+      $t = Get_Thing($tid);
+      Check_MyThing($t,$Fid);
       $t['LinkId'] = 0;
       Put_Thing($t);      
       break;      
     
     case 'Cancel Unload':
-      $t = Get_Thing($_REQUEST['id']);
+      $tid = $_REQUEST['id'];
+      $t = Get_Thing($tid);
+      Check_MyThing($t,$Fid);
       $t['LinkId'] = -1;
       Put_Thing($t);      
       break;      
     
     case 'Cancel Load and Unload':
-      $t = Get_Thing($_REQUEST['id']);
+      $tid = $_REQUEST['id'];
+      $t = Get_Thing($tid);
+      Check_MyThing($t,$Fid);
       $t['LinkId'] = 0;
       Put_Thing($t);      
       break;
@@ -470,6 +509,7 @@ function New_Thing(&$t) {
     dotail();
   }
 
+  Check_MyThing($t,$Fid);
   echo "<br>";
 
   if ($Force) {

@@ -171,7 +171,8 @@ function Show_Thing(&$T,$Force=0) {
       if ($Dest) {
         $DN = Get_System($Dest);
         $FS = Get_FactionSystemFS($Fid,$Dest);
-        if (isset($FS['Known']) && $FS['Known'] >=3) {
+// var_dump($FS,$Fid,$Dest);
+        if (isset($FS['ScanLevel']) && $FS['ScanLevel'] >=3) {
           $finallocs = Within_Sys_Locs($DN);
           echo "<b>" . $DN['Ref'] . " - " . $finallocs[$T['NewLocation']] . "</b> ";
         } else {

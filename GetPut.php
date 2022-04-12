@@ -559,6 +559,26 @@ function Get_ModulesType($Thing,$Type) {
   return $Ms;
 }
 
+// Anomalies
+
+function Get_Anomaly($id) {
+  global $db;
+  $res = $db->query("SELECT * FROM Anomalies WHERE id=$id");
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
+  return [];
+}
+
+function Put_Anomaly(&$now) {
+  global $db,$GAMEID;
+  if (isset($now['id'])) {
+    $e=$now['id'];
+    $Cur = Get_Anomaly($e);
+    return Update_db('Anomalies',$Cur,$now);
+  } else {
+    return $now['id'] = Insert_db ('Anomalies', $now );
+  }
+}
+
 // Module Types
 
 function Get_ModuleType($id) {

@@ -10,7 +10,7 @@
 
   dostaffhead("Import Anomalies");
 
-  global $db, $GAME,$BuildState;
+  global $db, $GAME,$BuildState,$GAMEID;
 
   echo "<h1>Import Anomalies</h1>";
   
@@ -42,14 +42,14 @@
 
     
     $An = ['SystemId'=>$Sid, 'Description'=>$F[$HeadNames['Narrative Seed']], 'ScanLevel'=>$F[$HeadNames['Scan Level Needed']],
-           'AnomalyLevel'=>$F[$HeadNames['Anomaly Level']], 'Name'=> $F[$HeadNames['Name']],
+           'AnomalyLevel'=>$F[$HeadNames['Anomaly Level']], 'Name'=> $F[$HeadNames['Name']], 'GameId'=>$GAMEID,
            'Reward' => $F[$HeadNames['Reward']], 'Notes' => $F[$HeadNames['Notes']], 'Comments' => $F[$HeadNames['Comments']] ];
 
     Gen_Put('Anomalies',$An);
     
     foreach ($Facts as $FCol=>$Fid) {
       if (!empty($F[$HeadNames[$FCol]])) {
-        $FAn = ['FactionId'=>$Fid, 'State'=>1, 'Notes'=>$F[$HeadNames[$FCol]], 'AnomolyId'=>$An['id']];
+        $FAn = ['FactionId'=>$Fid, 'State'=>0, 'Notes'=>$F[$HeadNames[$FCol]], 'AnomalyId'=>$An['id']];
         Gen_Put('FactionAnomaly',$FAn);
       }
     }

@@ -226,7 +226,7 @@
     $txt .= "<li><a href=ModFormulae.php>List Module Formulas</a>\n";
     $txt .= "<p>";
 
-    $txt .= "<li><a href=Anomaly.php>Anomalies</a>\n";          
+    $txt .= "<li><a href=AnomalyList.php>Anomalies</a>\n";          
     $txt .= "<p>";
     $txt .= "<li><a href=AnomalyImport.php>Anomaly Import</a>\n";          
     $txt .= "<p>";
