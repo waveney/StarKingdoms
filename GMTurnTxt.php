@@ -36,13 +36,19 @@
   /// List of turns
   
   echo "<h1>Automated Actions Turn: $Turn</h1>\n";
+  
+  echo "<h2><a href=#END>Jump to End</a></h2>\n";
  // $Parsedown = new Parsedown();  
   
   $FileName = "Turns/$GAMEID/$Turn/0.txt";
   
   if (!file_exists($FileName)) {
-    echo "<h2>Sorry that turn does not have any text on file</h2>";
-    dotail();
+    $Turn--;
+    $FileName = "Turns/$GAMEID/$Turn/0.txt";
+    if (!file_exists($FileName)) {
+      echo "<h2>Sorry that turn does not have any text on file</h2>";
+      dotail();
+    }
   }
   
   $FILE = fopen($FileName,'r');
@@ -54,6 +60,6 @@
   echo $Parsedown->text($Text) . "<p>";
 */
   
-  echo "<h2><a href=GMTurnTxt.php?Turn=$turn$xtra>Refresh</a></h2>";
+  echo "<h2><a id=END href=GMTurnTxt.php?Turn=$turn$xtra>Refresh</a></h2>";
   dotail();  
 ?>

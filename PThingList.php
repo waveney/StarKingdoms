@@ -31,7 +31,10 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
 
   dostaffhead("Things",["js/ProjectTools.js"]);
 
-  CheckFaction('PThingList',$Fid);
+  if ($GM && isset($Fid) && $Fid==0) {
+  } else {
+    CheckFaction('PThingList',$Fid);
+  }
   
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
@@ -202,21 +205,24 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
   }
   
   echo "</table></div>\n";
-  echo "<h1>Logistics</h1>";
   
-  $LogAvail = LogisticalSupport($Fid);
+  if ($Fid) {
+    echo "<h1>Logistics</h1>";
   
-  $LogCats = ['Ships','Armies','Agents'];
+    $LogAvail = LogisticalSupport($Fid);
   
-  echo "<table border>";
-  echo "<tr><td>Category<td>Logistical Support<td>Logistics needed<td>Logistics Penalty\n";
-  foreach ($LogCats as $i => $n) {
-    if ($Logistics[$i]) {
-      $pen = min(0,$LogAvail[$i]-$Logistics[$i]);
-      echo "<tr><td>$n<td>" . $LogAvail[$i] . "<td>" . $Logistics[$i] . "<td " . ($pen < 0? " class=Err":'') . ">$pen" ;
+    $LogCats = ['Ships','Armies','Agents'];
+  
+    echo "<table border>";
+    echo "<tr><td>Category<td>Logistical Support<td>Logistics needed<td>Logistics Penalty\n";
+    foreach ($LogCats as $i => $n) {
+      if ($Logistics[$i]) {
+        $pen = min(0,$LogAvail[$i]-$Logistics[$i]);
+        echo "<tr><td>$n<td>" . $LogAvail[$i] . "<td>" . $Logistics[$i] . "<td " . ($pen < 0? " class=Err":'') . ">$pen" ;
+      }
     }
+    echo "</table><p>\n";
   }
-  echo "</table><p>\n";
 
   echo "<h2><a href=ThingPlan.php?F=$Fid>Plan a new thing</a></h2>\n";
 

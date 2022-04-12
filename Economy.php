@@ -56,7 +56,7 @@
     while ($PT = $res->fetch_assoc()) {
       $P = Get_Project($PT['ProjectId']);
       $RCost =  (Rush_Cost($Fid) * $PT['Rush']);
-      if ($RCost > 0) {
+      if ($RCost > 0 && $P['Status']<2) {
         $Spend += $RCost;
         echo "Spendng &#8373; $RCost to rush " . $P['Name'] . " by " . $PT['Rush'] . "<br>";
       }

@@ -251,7 +251,7 @@ function fm_radio($Desc,&$defn,&$data,$field,$extra='',$tabs=1,$extra2='',$field
       $str .= " value='$i' $extra4";
       if (isset($data[$field]) && ($data[$field] == $i)) $str .= " checked";
     }
-    $str .= ">\n";
+    $str .= ">";
     if ($colours) $str .= "</span>";
   }
   return $str;

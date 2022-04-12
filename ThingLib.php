@@ -228,21 +228,23 @@ function Get_Valid_Modules(&$t) {
   $ThingProps = Thing_Type_Props();
   $tprop = (empty($ThingProps[$t['Type']] )?0: $ThingProps[$t['Type']] ) ;
   foreach ($MTs as $M) {
-    if ($ModuleCats[$M['CivMil']] == 'Army') {
-      if (($tprop & THING_HAS_ARMYMODULES) == 0) continue; // Armies
-    } else if ($M['CivMil'] <= 4) {
-      if ($tprop & THING_HAS_SHIPMODULES) { 
-        if ($ModuleCats[$M['CivMil']] == 'Military Ship' && ($tprop & THING_HAS_MILSHIPMODS) ==0 ) continue;
-        if ($ModuleCats[$M['CivMil']] == 'Civilian Ship' && ($tprop & THING_HAS_CIVSHIPMODS) ==0) continue;
+    if ($t['Whose']) {
+      if ($ModuleCats[$M['CivMil']] == 'Army') {
+        if (($tprop & THING_HAS_ARMYMODULES) == 0) continue; // Armies
+      } else if ($M['CivMil'] <= 4) {
+        if ($tprop & THING_HAS_SHIPMODULES) { 
+          if ($ModuleCats[$M['CivMil']] == 'Military Ship' && ($tprop & THING_HAS_MILSHIPMODS) ==0 ) continue;
+          if ($ModuleCats[$M['CivMil']] == 'Civilian Ship' && ($tprop & THING_HAS_CIVSHIPMODS) ==0) continue;
+        } else {
+          continue;
+        }
       } else {
         continue;
       }
-    } else {
-      continue;
+      $l = Has_Tech($t['Whose'],$M['BasedOn']);
+      if (!$l) continue;
+      if ($M['MinShipLevel'] > $t['Level']) continue;
     }
-    $l = Has_Tech($t['Whose'],$M['BasedOn']);
-    if (!$l) continue;
-    if ($M['MinShipLevel'] > $t['Level']) continue;
     $VMT[$M['id']] = $M['Name'];
   }
   return $VMT;
@@ -612,7 +614,9 @@ function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0) {
       if ($T['BuildState'] < 2 || $T['BuildState'] > 4) continue; // Building or abandoned
       if ($LastWhose && $LastWhose!= $T['Whose']) echo "<P>";
       if ($T['BuildState'] == 4) echo "The remains of: ";
-      echo ((($Fid < 0) || ($Fid == $T['Whose']))?( "<a href=ThingEdit.php?id=" . $T['id'] . ">" . (empty($T['Name'])?"Unnamed":$T['Name']) . "</a>") : $T['Name'] ) . " a ";
+      if ($T['Whose']) {
+        echo ((($Fid < 0) || ($Fid == $T['Whose']))?( "<a href=ThingEdit.php?id=" . $T['id'] . ">" . (empty($T['Name'])?"Unnamed":$T['Name']) . "</a>") : $T['Name'] ) . " a ";
+      } 
       if ($ThingTypes[$T['Type']]['Properties'] & THING_HAS_LEVELS) echo " level " . $T['Level'];
       if ($T['Class']) echo " " . $T['Class'] . " class ";
       if ($T['Whose']) echo " <span style='background:" . $Factions[$T['Whose']]['MapColour'] . "'>" . 

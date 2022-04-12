@@ -32,6 +32,11 @@ function SKLog($text,$e=0) {
 function TurnLog($Fid,$text,&$T=0) {
   global $GAME,$GAMEID;
   static $LF = [];
+  if ($Fid == 0) {
+    echo "<h2 class=Err>Loging a turn action for Faction 0! - Call Richard</h2>\n";
+    debug_print_backtrace();
+    dotail();
+  }
   if (!isset($LF[$Fid])) {
      if (!file_exists("Turns/$GAMEID/" . $GAME['Turn'])) mkdir("Turns/" . $GAMEID . "/" . $GAME['Turn'],0777,true);
      $LF[$Fid] = fopen("Turns/$GAMEID/" . $GAME['Turn'] . "/$Fid.txt", "a+");
@@ -799,7 +804,7 @@ function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
   GMLog("<form method=Post action=TurnActions.php?ACTION=Complete>" . fm_hidden('S',($Agents?34:32)));
   GMLog("<table border><tr><td>Who<td>What<td>Level<td>From<td>Link<td>To<td>Stop<td>Why Stopping\n");
   foreach ($Things as $T) {
-    if (($T['Type'] == 5 && $Agents == 0) || ($T['Type'] != 5 && $Agents == 1) || $T['BuildState'] <2 || $T['BuildState'] > 3 || $T['LinkId'] <= 0) continue;
+    if (($T['Type'] == 5 && $Agents == 0) || ($T['Type'] != 5 && $Agents == 1) || $T['BuildState'] <2 || $T['BuildState'] > 3 || $T['LinkId'] <= 0 || $T['Whose']==0) continue;
     if ($T['LinkId']>0 && $T['NewSystemId'] != $T['SystemId'] ) {
       $Tid = $T['id'];
       $Lid = $T['LinkId']; 
@@ -850,7 +855,7 @@ function ShipMovements($Agents=0) {
     }
     
     if ($T['LinkId']>0 && $T['NewSystemId'] != $T['SystemId'] ) {
-      echo "Moving " . $T['Name'] . "<br>";
+      GMLog("Moving " . $T['Name'] . "<br>");
 
       $Lid = $T['LinkId']; 
 
@@ -876,20 +881,22 @@ function ShipMovements($Agents=0) {
         $OldN = $SR2;
       }
 
-      $FS = Get_FactionSystemFS($Fid,$Sid);
-      if (!isset($FS['id']) || $FS['Scan'] < ($ShipScanLevel?5:1)) { // TODO Nebula
-        $SP = ['FactionId'=>$Fid, 'Sys'=> $Sid, 'Scan'=>($ShipScanLevel?5:1), 'Neb'=>$ShipNebScanLevel, 'Turn'=>$GAME['Turn']];
-        Insert_db('ScansDue', $SP);
-      } 
+      if ($Fid) {
+        $FS = Get_FactionSystemFS($Fid,$Sid);
+        if (!isset($FS['id']) || $FS['Scan'] < ($ShipScanLevel?5:1)) { // TODO Nebula
+          $SP = ['FactionId'=>$Fid, 'Sys'=> $Sid, 'Scan'=>($ShipScanLevel?5:1), 'Neb'=>$ShipNebScanLevel, 'Turn'=>$GAME['Turn']];
+          Insert_db('ScansDue', $SP);
+        } 
       
-      $pname = System_Name($N,$Fid);
+        $pname = System_Name($N,$Fid);
+      }
       
 //      $N = Get_System($T['NewSystemId']);
       $EndLocs = Within_Sys_Locs($N);
       $T['SystemId'] = $T['NewSystemId'];
       $T['WithinSysLoc'] = $T['NewLocation'];
 //      SKLog("Moved to $pname along " . $LinkLevels[$L['Level']]['Colour']. " link #$Lid to " . $EndLocs[$T['NewLocation']]); 
-      TurnLog($Fid,$T['Name'] . " has moved from " . System_Name($OldN,$Fid) . " along <span style='color:" . $LinkLevels[$L['Level']]['Colour'] . ";'>link #$Lid </span>to $pname " . 
+      if ($Fid) TurnLog($Fid,$T['Name'] . " has moved from " . System_Name($OldN,$Fid) . " along <span style='color:" . $LinkLevels[$L['Level']]['Colour'] . ";'>link #$Lid </span>to $pname " . 
         ($T['NewLocation'] > 2?( " to " . $EndLocs[$T['NewLocation']]): ""),$T); 
       $T['LinkId'] = 0;
       Put_Thing($T);
@@ -903,7 +910,7 @@ function ShipMovements($Agents=0) {
 
       $EndLocs = Within_Sys_Locs($N);
 //      SKLog("Moved to " . $EndLocs[$T['NewLocation']] . " within $pname"); 
-      TurnLog($Fid,$T['Name'] . " moved to " . $EndLocs[$T['NewLocation']] .  " within $pname",$T); 
+      if ($Fid) TurnLog($Fid,$T['Name'] . " moved to " . $EndLocs[$T['NewLocation']] .  " within $pname",$T); 
       Put_Thing($T);
     }        
     
