@@ -327,7 +327,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
                 'DSC Special'];
 */
 
-function ColonisationInstuctions() { // And other Instructions
+function Instuctions() { // And other Instructions
   global $ThingInstrs;
   $Things = Get_Things_Cond(0,"Instruction>0");
   $NeedColStage2 = 0;
@@ -547,7 +547,7 @@ function ColonisationInstuctions() { // And other Instructions
   return 2;
 }
 
-function ColonisationInstuctionsStage2() { // And other Instructions
+function InstuctionsStage2() { // And other Instructions
   global $ThingInstrs,$GAME;
   $Things = Get_Things_Cond(0,"Instruction>0");
   $NeedColStage3 = 0;
@@ -1635,7 +1635,7 @@ function CheckSurveyReports() {
   }
   if ($Started) {
     GMLog("</table>\n");
-    GMLog("<h2><a href=TurnActions.php?ACTION=StageDone&S=55>When Happy click here</a></h2>");
+    GMLog("<h2><a href=TurnActions.php?ACTION=StageDone&Stage=CheckSurveyReports&=55>When Happy click here</a></h2>");
     dotail();
   }
   return 1;
@@ -1797,8 +1797,8 @@ function FinishTurnProcess() {
 function Do_Turn() {
   global $Sand;  // If you need to add something, replace a spare if poss, then nothing breaks
   $Stages = ['Check Turns Ready', 'Spare', 'Spare','Start Turn Process', 'Save All Locations', 'Spare', 'Cash Transfers', 'Spare',
-             'Spare', 'Pay For Stargates', 'Spare', 'Scientific Breakthroughs', 'Start Projects', 'Spare', 'Spare', 'Colonisation Instuctions', 
-             'Colonisation Instuctions Stage 2', 'Spare', 'Spare', 'Spare', 'Spare', 'Start Anomaly', 'Spare', 'Spare', 
+             'Spare', 'Pay For Stargates', 'Spare', 'Scientific Breakthroughs', 'Start Projects', 'Spare', 'Spare', 'Instuctions', 
+             'Instuctions Stage 2', 'Spare', 'Spare', 'Spare', 'Spare', 'Start Anomaly', 'Spare', 'Spare', 
              'Agents Start Missions', 'Spare', 'Spare', 'Economy', 'Spare', 'Spare', 'Load Troops', 'Spare', 
              
              'Ship Move Check','Ship Movements', 'Agents Move Check', 'Agents Movements', 
@@ -1821,7 +1821,7 @@ function Do_Turn() {
              'Coded','Coded', 'Coded', 'No',
              'No', 'No', 'No','Coded',
              'Partial','Coded', 'No','Partial (not nebula)',
-             'Coded', 'No', 'No', 'No',
+             'Coded', 'Coded', 'No', 'No',
              'No','Coded','Coded','Coded?'];
   $Sand = Get_TurnNumber();
 // var_dump($Sand);
@@ -1884,9 +1884,18 @@ function Do_Turn() {
       }
       break;
     case 'StageDone':
-      $S = $_REQUEST['S'];
-      $Sand['Progress'] |= 1<<$S;
-      
+//      $S = $_REQUEST['S'];
+      $SName = $_REQUEST['Stage'];
+      for($S =0; $S <64 ; $S++) {
+        $act = $Stages[$S];
+        $act = preg_replace('/ /','',$act);
+        if ($SName == $act) break;
+      }
+      if ($S > 63) { 
+        GMLog("Stage $SName not found");
+      } else {
+        $Sand['Progress'] |= 1<<$S;
+      }
       break;
     }  
   }

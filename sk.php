@@ -348,7 +348,7 @@ function dostaffhead($title,$extras=[]) {
   }
   $head_done = 1;
   
-  if (isset($FACTION) && $FACTION['TurnState'] >1 && (1 || !$GM)) fm_addall('readonly');
+  if (isset($FACTION['TurnState']) && $FACTION['TurnState'] >1 && (1 || !$GM)) fm_addall('readonly');
 
 }
 
@@ -394,7 +394,7 @@ function Swap(&$a,&$b) {
 function LogEverything($Msg='') {
   global $FACTION,$USER;
   $req_dump = date("D d H:i:s ") . $_SERVER['SCRIPT_FILENAME'] . " " . print_r($_REQUEST, TRUE) . print_r($_COOKIE, TRUE);
-  if (isset($FACTION)) $req_dump .= "Faction: " . $FACTION['Name'] . "\n";
+  if (isset($FACTION['Name'])) $req_dump .= "Faction: " . $FACTION['Name'] . "\n";
   if (isset($USER['Login'])) $req_dump .= "GM: " . $USER['Login'] . "\n";
 
   $fp = fopen('cache/request.log', 'a');

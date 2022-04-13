@@ -12,9 +12,13 @@ function Get_Faction($id) {
 }
 
 function Put_Faction(&$now) {
-  $e=$now['id'];
-  $Cur = Get_Faction($e);
-  return Update_db('Factions',$Cur,$now);
+  if (isset($now['id'])) {
+    $e=$now['id'];
+    $Cur = Get_Faction($e);
+    return Update_db('Factions',$Cur,$now);
+  } else {
+    return $now['id'] = Insert_db ('Factions', $now );  
+  }
 }
 
 function Get_Factions() {

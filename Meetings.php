@@ -96,7 +96,7 @@
   
   echo "<P>Scan Finished<p>";
   
-  if ($TurnP) echo "<h2><a href=TurnActions.php?ACTION=StageDone&S=36>Back To Turn Processing</a></h2>";
+  if ($TurnP) echo "<h2><a href=TurnActions.php?ACTION=StageDone&Stage=Meetups&S=36>Back To Turn Processing</a></h2>";
   
   dotail();
   

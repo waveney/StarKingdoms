@@ -108,7 +108,7 @@
   echo "</table></div>\n";
   
   
-  if ($Conflict) echo "<h2><a href=TurnActions.php?ACTION=StageDone&S=45>Back To Turn Processing</a></h2>";
+  if ($Conflict) echo "<h2><a href=TurnActions.php?ACTION=StageDone&Stage=DevastationSelection&S=45>Back To Turn Processing</a></h2>";
   
   dotail();
 ?>

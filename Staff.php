@@ -188,7 +188,8 @@
     
     $txt .= "<p>";
 
-    if (Access('God')) $txt .= "<li><a href=Import.php>Import</a>\n";
+    $txt .= "<li><a href=FactionEdit.php?ACTION=NEW>New Faction</a>\n";
+//    if (Access('God')) $txt .= "<li><a href=Import.php>Import</a>\n";
     $txt .= "</ul>\n";
   }
 

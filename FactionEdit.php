@@ -43,6 +43,8 @@ function Show_Faction(&$F,$Mode) {
   
   $ReadOnly = (($F['TurnState'] != 0) && !$GM)? " readonly " : "";// Readonly when out of setup
   
+  if (Access('God')) echo "You can only delete a faction with -99 credits<br>";
+  
   echo "<form method=post id=mainform enctype='multipart/form-data' action=FactionEdit.php>";
   if ($GM) echo "<h2>GM: <a href=FactionEdit.php?id=$Fid&FORCE>This page in Player Mode</a></h2>";  
   echo "<div class=tablecont><table width=90% border class=SideTable>\n";
@@ -104,6 +106,7 @@ function Show_Faction(&$F,$Mode) {
     echo "<input type=submit name=nothing value=nothing hidden>";
     echo "<center><form method=post action=FactionEdit.php>" . fm_hidden('id', $Fid) .
          "<input type=submit name=ACTION value='New Key' class=Button onclick=\"return confirm('Are you sure?')\" >";
+    if ($F['Credits'] == -99) echo "<input type=submit name=ACTION value='Delete' class=Button onclick=\"return confirm('Are you sure?')\" >";
     echo "</form></center>";
   }
   
@@ -119,6 +122,25 @@ function Show_Faction(&$F,$Mode) {
     case 'New Key' :
       $F['AccessKey'] = rand_string(40);
       Put_Faction($F);
+      break;
+      
+    case 'NEW':
+      $F = [];
+      echo "<form method=post action=FactionEdit.php?ACTION=Create>";
+      echo "Name: <input type=text name=Name  onchange=this.form.submit()>";
+      echo "</form>";
+      dotail();
+      
+    case 'Create':
+      $F = ['Name'=> $_REQUEST['Name'], 'GameId'=>$GAMEID, 'AccessKey'=> rand_string(40)] ;
+      $Fid = Put_Faction($F);
+      $F = Get_Faction($Fid);
+      break;
+      
+    case 'Delete':
+      db_delete('Factions',$Fid);
+      echo "<h2>Faction deleted</h2>\n";
+      dotail();
       break;
            
     default: 
