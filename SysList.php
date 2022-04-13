@@ -6,10 +6,11 @@
 
   dostaffhead("List Systems");
 
-  global $db, $GAME;
+  global $db, $GAME, $GAMEID;
 
   $Systems = Get_Systems();
   $Factions = Get_Factions();
+
   
   if (!$Systems) {
     echo "<h2>No systems found</h2>";
@@ -27,6 +28,7 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Nebulae</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Survey Report</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Things</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Anomalies</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Visited?</a>\n";
   echo "</thead><tbody>";
 
@@ -45,6 +47,14 @@
     echo "<td>$Neb";
     echo "<td><a href=SurveyReport.php?id=$sid>Survey Report</a>"; // Generic 
     echo "<td><a href=ThingList.php?AT=$Ref>$Ref</a>\n";
+    $Anoms = Gen_Get_Cond('Anomalies',"GameId=$GAMEID AND SystemId=$sid");
+    echo "<td>";
+    if ($Anoms) {
+      foreach($Anoms as $A) {
+        $Aid = $A['id'];
+        echo "<a href=AnomalyEdit.php?id=$Aid>$Aid</a> ";
+      } 
+    }
     $Who = Gen_Get_Cond('FactionSystem',"SystemId=$sid");
     $npc = 1;
     foreach($Who as $W) if (!$Factions[$W['FactionId']]['NPC']) $npc = 0;

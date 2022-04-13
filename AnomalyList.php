@@ -10,7 +10,7 @@
   global $db, $GAME, $ModuleCats, $GAMEID;
   global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil;
 
-  $As = Gen_Get_Cond('Anomalies',"GameId=$GAMEID");
+  $As = Gen_Get_Cond('Anomalies',"GameId=$GAMEID ORDER BY SystemId");
   
   echo "<h1>List Anomalies</h1>";
   echo "click on id or name to edit description<p>";
@@ -36,7 +36,7 @@
     }   
   echo "</tbody></table></div>\n";
 
-  echo "<h2><a href=EditAnomaly.php?ACTION=NEW>New Anomaly</a></h2>";
+  echo "<h2><a href=AnomalyEdit.php?ACTION=NEW>New Anomaly</a></h2>";
   dotail();
 ?>
 

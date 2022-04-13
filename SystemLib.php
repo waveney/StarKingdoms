@@ -194,7 +194,16 @@ function Show_System(&$N,$Mode=0) {
     }
   echo "</table>\n";
 
-  
+  $Anoms = Gen_Get_Cond('Anomalies',"GameId=$GAMEID AND SystemId=$Sid");
+  if ($Anoms) {
+    echo "<h2>Anomalies</h2>";
+    foreach($Anoms as $A) {
+      $Aid = $A['id'];
+      echo "<a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . "</a></br>";
+    } 
+  }
+
+
   if (Access('God')) {
     echo "<center><form method=post action=SysEdit.php>" . fm_hidden('id', $Sid) .
          "<input type=submit name=ACTION value='Add Planet' class=Button> ";

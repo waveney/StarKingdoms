@@ -7,7 +7,7 @@
 
   dostaffhead("Edit System",["js/dropzone.js","css/dropzone.css" ]);
 
-  global $db, $GAME;
+  global $db, $GAME, $GAMEID;
   
   function PTrim(&$N,&$things,$what,$saveas=0) {
     if (!isset($things[$what])) return;
@@ -239,6 +239,6 @@ echo "No tds<p>";
   
   
   Show_System($N,1);
-  
+    
   dotail();
 ?>

@@ -1635,7 +1635,7 @@ function CheckSurveyReports() {
   }
   if ($Started) {
     GMLog("</table>\n");
-    GMLog("<h2><a href=TurnActions.php?ACTION=StageDone&S=57>When Happy click here</a></h2>");
+    GMLog("<h2><a href=TurnActions.php?ACTION=StageDone&S=55>When Happy click here</a></h2>");
     dotail();
   }
   return 1;
@@ -1672,6 +1672,60 @@ function GiveSurveyReports() {
 //  echo "Give Survey Reports is currently Manual<p>";
   return 1;
 }
+
+function SpotAnomalies() {
+  global $GAMEID;
+  // Get all Anomalies - order by locn and scan level asc
+  // foreach get all ships with sensors in each locn
+  // if fact already knows skip
+  // if sensors < scan level needed report failure and margin
+  // if sensors >= scan level report found
+  // Do we need to consider multiple ships from a faction?
+  
+  $Facts = Get_Factions();
+  $Systems = Get_SystemRefs();
+  
+  $Anoms = Gen_Get_Cond('Anomalies',"GameId=$GAMEID ORDER BY SystemId, ScanLevel");
+  foreach($Anoms as $A) {
+    $Aid = $A['id'];
+    $Sid = $A['SystemId'];
+    $ScanNeed = $A['ScanLevel'];
+    
+    $Things = Get_Things_Cond(0,"SystemId=$Sid AND SensorLevel>=($ScanNeed-1) ORDER BY Whose, SensorLevel DESC");
+    $LastWho = 0;
+    $LastAn = 0;
+    foreach($Things as $T) {
+      if ($T['Whose'] != $LastWho) {
+        $LastWho = $T['Whose'];
+        $FA = Gen_Get_Cond('FactionAnomaly',"FactionId=$LastWho AND AnomalyId=$Aid");
+        if ($FA) {
+          $FA = $FA[0];
+        } else {
+          $FA = ['FactionId'=>$LastWho, 'AnomalyId'=>$Aid, 'State'=>0, 'Notes'=>''];
+        }
+      }
+      if ($FA['State'] == 0 && $LastAn!= $Aid) {
+        if ($T['SensorLevel'] < $A['ScanLevel'] ) {
+          if ( GameFeature('MissedAnomalies',0)) GMLog($Facts[$T['Whose']]['Name'] . " Just missed spotting an anomaly in " . $Systems[$Sid] . " by one sensor level on the " . $T['Name']);
+          $LastAn = $Aid;
+          continue;
+        }
+        GMLog($Facts[$T['Whose']]['Name'] . " have just spotted anomaly: <a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . "</a> in " . $Systems[$Sid] . " from the " . $T['Name'] );
+        $FA['State'] = 1;
+// var_dump($FA);
+        Gen_Put('FactionAnomaly',$FA);
+        $LastAn = $Aid;
+        continue;
+      } else { // Already known
+      
+      }
+    }
+  }
+
+  GMLog("All Anomalies checked<p>");
+  return 1;
+}
+
 
 function MilitiaArmyRecovery() {
   GMLog("Militia Recovery is currently Manual<p>");
@@ -1747,11 +1801,13 @@ function Do_Turn() {
              'Colonisation Instuctions Stage 2', 'Spare', 'Spare', 'Spare', 'Spare', 'Start Anomaly', 'Spare', 'Spare', 
              'Agents Start Missions', 'Spare', 'Spare', 'Economy', 'Spare', 'Spare', 'Load Troops', 'Spare', 
              
-             'Ship Move Check','Ship Movements', 'Agents Move Check', 'Agents Movements', 'Meetups', 'Spare', 'Spare', 'Spare', 
-             'Space Combat', 'Unload Troops', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Devastation Selection', 'Devastation', 'Project Progress', 
-             'Instructions Progress', 'Anomaly Studies Progress', 'Espionage Missions Complete', 'Counter Espionage',
-             'Spare', 'Finish Shakedowns', 'Projects Complete', 'Instructions Complete', 
-             'Anomaly Studies Complete', 'Check Survey Reports', 'Give Survey Reports', 'Militia Army Recovery', 
+             'Ship Move Check','Ship Movements', 'Agents Move Check', 'Agents Movements', 
+             'Meetups', 'Spare', 'Space Combat', 'Unload Troops', 
+             'Orbital Bombardment', 'Spare', 'Ground Combat', 'Devastation Selection', 
+             'Devastation', 'Project Progress', 'Instructions Progress', 'Anomaly Studies Progress', 
+             'Espionage Missions Complete', 'Counter Espionage', 'Spare', 'Finish Shakedowns', 
+             'Projects Complete', 'Instructions Complete', 'Anomaly Studies Complete', 'Check Survey Reports', 
+             'Give Survey Reports', 'Spot Anomalies', 'Spare', 'Militia Army Recovery', 
              'Generate Turns', 'Tidy Up Movements', 'Recalc Project Homes', 'Finish Turn Process'];
 
   $Coded =  ['Coded','No','No','Coded','Coded','No','Coded', 'No',
@@ -1759,11 +1815,13 @@ function Do_Turn() {
              'Coded','No','No','No','No','No','No','No',
              'No','No','No','Coded','No','No','Coded','No',
              
-             'Coded','Coded','Coded','Coded','Coded','No','No', 'No',
-             'No','Coded','No','No','No','Coded','Coded','Coded',
-             'Coded','No','No','No',
-             'No','Coded','Partial','Coded',
-             'No','Partial (not nebula)','Coded','No',
+             'Coded','Coded','Coded','Coded',
+             'Coded','No', 'No','Coded',
+             'No','No','No','Coded',
+             'Coded','Coded', 'Coded', 'No',
+             'No', 'No', 'No','Coded',
+             'Partial','Coded', 'No','Partial (not nebula)',
+             'Coded', 'No', 'No', 'No',
              'No','Coded','Coded','Coded?'];
   $Sand = Get_TurnNumber();
 // var_dump($Sand);

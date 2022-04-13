@@ -6,7 +6,7 @@
   include_once("PlayerLib.php");
   include_once("SystemLib.php");
   
-  global $FACTION,$GAME;
+  global $FACTION,$GAME,$GAMEID;
   
   A_Check('GM');
 
@@ -15,12 +15,27 @@
 //var_dump($_REQUEST);
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
-      case 'New': 
+      case 'NEW': 
+        $A = ['GameId'=>$GAMEID, 'Name'=>'Nameless', 'SystemId'=>0 ];
+        Put_Anomaly($A);
+        $Aid = $A['id'];
+        break;
 
+      case 'Delete':
+        $Aid = $_REQUEST['id'];
+        $A = Get_Anomaly($Aid);
+        db_delete('Anomalies',$Aid);
+        
+        echo "<h2>Anomaly: " . $A['Name'] . " has been deleted</h2>";
+        echo "<h2><a href=AnomalyList.php>Back to Anomaly List</a></h2>\n";
+        dotail();
+      
+      default:
     }
   }
   
-  if (isset($_REQUEST['id'])) {
+  if (isset($Aid)) { // Already done
+  } else if (isset($_REQUEST['id'])) {
     $Aid = $_REQUEST['id'];
     $A = Get_Anomaly($Aid);
   } else { 
@@ -39,7 +54,7 @@
   echo "<tr><td>Anomaly Id:<td>$Aid" . fm_number("Game",$A,'GameId');
   echo "<tr>" . fm_text("Anomaly Name", $A,'Name',4);
   echo "<tr>" . fm_number('Scan Level',$A,'ScanLevel') .  fm_number('Anomaly Level',$A,'AnomalyLevel');
-  echo "<tr><td>Location:<td>" . fm_select($Systems,$A,'SystemId');
+  echo "<tr><td>Location:<td>" . fm_select($Systems,$A,'SystemId',1);
   if ($Others) {
     echo "<tr><td>Other Anomalies here:<td colspan=8>";
     foreach($Others as $O) {
@@ -70,6 +85,7 @@
   
   echo "</table><p>\n";
   
+  echo "<input type=submit name=ACTION value=Refresh> <input type=submit name=ACTION value=Delete>\n";
   echo "<h2><a href=AnomalyList.php>Back to Anomaly List</a></h2>\n";
    
   dotail();
