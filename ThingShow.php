@@ -46,7 +46,7 @@ function Show_Thing(&$T,$Force=0) {
   }
   $Systems = Get_SystemRefs();
   $T['MaxModules'] = Max_Modules($T);
-  if  ($tprops & THING_HAS_MODULES) $T['OrigHealth'] = Calc_Health($T);
+  if  ($tprops & THING_HAS_MODULES) $T['OrigHealth'] = Calc_Health($T,1);
 
   if (($T['BuildState'] == 3) && ($tprops & THING_CAN_MOVE) && ($T['CurHealth'] > 0)) { // Complete Only
     $res =     Moves_4_Thing($T,$Force,$N);
