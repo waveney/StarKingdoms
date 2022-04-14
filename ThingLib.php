@@ -273,7 +273,7 @@ function Max_Modules(&$t) {
   return 0;
 }
 
-function Calc_Health(&$t) {
+function Calc_Health(&$t,$KeepTechLvl=0) {
   if (empty($t['Level'])) return 0;
   $Plus = 0;
   if (Has_Trait($t['Whose'],'Thick Skinned')) $Plus =1;
@@ -283,13 +283,18 @@ function Calc_Health(&$t) {
   $Techs = Get_Techs();
   foreach ($Mts as $mt) if ($mt['DefWep'] == 1 ) {
     foreach ($Ms as $M) if ($Mts[$M['Type']]['Name'] == $mt['Name']) {
-      $based = $Mts[$M['Type']]['BasedOn'];
-      if ($l = Has_Tech($t['Whose'],$based)) {
-        if ($Techs[$based]['Cat'] == 1) {
-          $l = Has_Tech($t['Whose'],$Techs[$based]['PreReqTech']);
+      if ($KeepTechLvl) {
+          $Mhlth = $M['Number'] * Mod_ValueSimple($M['Level']+$Plus,$M['Type']);
+          $Health += $Mhlth;        
+      } else {
+        $based = $Mts[$M['Type']]['BasedOn'];
+        if ($l = Has_Tech($t['Whose'],$based)) {
+          if ($Techs[$based]['Cat'] == 1) {
+            $l = Has_Tech($t['Whose'],$Techs[$based]['PreReqTech']);
+          }
+          $Mhlth = $M['Number'] * Mod_ValueSimple($l+$Plus,$M['Type']);
+          $Health += $Mhlth;
         }
-        $Mhlth = $M['Number'] * Mod_ValueSimple($l+$Plus,$M['Type']);
-        $Health += $Mhlth;
       }
     }
   }
@@ -452,7 +457,7 @@ function RefitRepair(&$T,$Save=1,$KeepTechLvl=0) {
     }
   }
 // Repair
-  $Health = Calc_Health($T);
+  $Health = Calc_Health($T,$KeepTechLvl);
   Calc_Scanners($T);
   $T['CurHealth'] = $T['OrigHealth'] = $Health;
   $T['Speed'] = $Engines*$Elvl/$T['Level'] +1;
