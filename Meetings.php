@@ -89,7 +89,7 @@
     }
     if ($NumF > 1) {
       echo "System: <a href=Meetings.php?ACTION=Check&S=$Sid$TurnP>" . $N['Ref'] . "</a> has ";
-      foreach($Fs as $F) echo $F['Name'] . " , ";
+      foreach($Fs as $F) echo (empty($F['Name'])?'Other', $F['Name']) . " , ";
       echo "<br>";
     }   
   }
