@@ -79,7 +79,7 @@ function Show_Thing(&$T,$Force=0) {
   echo "<div class=tablecont><table width=90% border class=SideTable>\n";
   Register_AutoUpdate('Thing',$tid);
   echo fm_hidden('id',$tid);
-  
+  echo "<input type=submit name=ACTION value=Refresh hidden>";  
   if ($GM) {
     echo "<tr class=NotSide><td class=NotSide>Id:<td class=NotSide>$tid<td class=NotSide>Game<td class=NotSide>$GAMEID<td class=NotSide>" . $GAME['Name'];
     echo "<tr><td>Type:<td>" . fm_select($ttn,$T,'Type',1); 
