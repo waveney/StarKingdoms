@@ -424,7 +424,7 @@ function Calc_Scanners(&$T) {
   }
 }
 
-function RefitRepair(&$T,$Save=1) {
+function RefitRepair(&$T,$Save=1,$KeepTechLvl=0) {
   if (empty($T['Level']) ) return 0;
 // Refit
   $TTypes = Get_ThingTypes();
@@ -435,13 +435,20 @@ function RefitRepair(&$T,$Save=1) {
   $Mods = Get_Modules($tid); 
   if ($Mods) {
     foreach ($Mods as $M) {
-      $Lvl = Calc_TechLevel($T['Whose'],$M['Type']);
-      if ($M['Type'] == 5) { 
-        $Engines = $M['Number'];
-        $Elvl = $Lvl;
+      if ($KeepTechLvl) {
+        if ($M['Type'] == 5) { 
+          $Engines = $M['Number'];
+          $Elvl = $M['Level'];
+        }
+      } else {
+        $Lvl = Calc_TechLevel($T['Whose'],$M['Type']);
+        if ($M['Type'] == 5) { 
+          $Engines = $M['Number'];
+          $Elvl = $Lvl;
+        }
+        $M['Level'] = $Lvl;
+        Put_Module($M);
       }
-      $M['Level'] = $Lvl;
-      Put_Module($M);
     }
   }
 // Repair

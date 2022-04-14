@@ -1077,7 +1077,9 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
   if ($GM) echo "<input type=submit name=ACTION value='GM Refit'> <input type=submit name=ACTION value='Destroy Thing (Leave debris)'>" .
        " <input type=submit name=ACTION value='Remove Thing (No debris)'>  <input type=submit name=ACTION value='Warp Out'>\n";
   if ($GM || empty($Fid)) {
-    if (Access('God')) echo "<h2><a href=ThingList.php>Back to Thing list</a> &nbsp; <input type=submit name=ACTION value=Duplicate></h2>";
+    if (Access('God')) {
+      echo "<h2><a href=ThingList.php>Back to Thing list</a> &nbsp; <input type=submit name=ACTION value=Duplicate> <input type=submit name=ACTION value='GM Recalc'></h2>";
+    }
   } else {
     echo "<h2><a href=PThingList.php?id=$Fid>Back to Thing list</a></h2>";
   }

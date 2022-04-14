@@ -180,9 +180,15 @@ function New_Thing(&$t) {
     case 'GM Refit' :
       $tid = $_REQUEST['id'];
       $t = Get_Thing($tid);
-      Check_MyThing($t,$Fid);
       Calc_Scanners($t);
       RefitRepair($t);
+      break;     
+     
+    case 'GM Recalc' :
+      $tid = $_REQUEST['id'];
+      $t = Get_Thing($tid);
+      Calc_Scanners($t);
+      RefitRepair($t,1,1);
       break;     
      
     case 'Destroy Thing (Leave debris)':
