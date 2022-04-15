@@ -115,7 +115,7 @@ function Show_Thing(&$T,$Force=0) {
   } else if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
   // WHERE
     $Lid = $T['LinkId'];
- if ($GM) echo "Lid:$Lid SystemId:" . $T['SystemId'];
+if ($GM) echo "Lid:$Lid SystemId:" . $T['SystemId']; // TEST CODE DELIBARATELY STILL BEING USED - GM ONLY
     if ($Lid >= 0 || $Lid == -2 || $Lid == -4) { // Insystem
       if ($GM) {
         echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId',1);
@@ -130,12 +130,20 @@ function Show_Thing(&$T,$Force=0) {
       $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
       if ($Conf) $Conflict = $Conf[0]['Conflict'];
 
-      if ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ) echo "<input type=submit name=ACTION value='Unload on Turn'>\n";
-      if ($GM || (!$Conflict && ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ))) echo "<input type=submit name=ACTION value='Unload Now'>\n";         
+      if ($Host['LinkId']>0 && $Host['TargetKnown'] == 0) {
+        echo "You don't know where you are going to unlooad<br>";
+        if ($GM) {
+          echo "<input type=submit name=ACTION value='Unload on Turn'>\n";
+          echo "<input type=submit name=ACTION value='Unload Now'>\n";
+        }
+      } else {
+        if ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ) echo "<input type=submit name=ACTION value='Unload on Turn'>\n";
+        if ($GM || (!$Conflict && ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ))) echo "<input type=submit name=ACTION value='Unload Now'>\n";         
 //          echo "<input type=submit name=ACTION value='Unload on Turn'>\n";
 //          if ($Conflict) echo " <b>Conflict</b> ";
 //          echo "<input type=submit name=ACTION value='Unload Now'>\n";
-      echo "<br>Note: To unload AFTER moving, please put the movement order in for the transport before the unload on turn order.\n";
+        echo "<br>Note: To unload AFTER moving, please put the movement order in for the transport before the unload on turn order.<br>\n";
+      }
     }
     if ($Lid == -2 || $Lid == -4) {
       $Host = Get_Thing($T['NewSystemId']);
@@ -522,7 +530,7 @@ function Show_Thing(&$T,$Force=0) {
       echo " to: " . $N['Ref'] . " - " . fm_select($Syslocs,$H,'WithinSysLoc',0,'',"WithinSysLoc:$Hid");
       if ($H['LinkId'] == -3) {
         echo " - Unloading on Turn";
-      } else { 
+      } else if ($T['NewSystemId'] && $T['TargetKnown']) {
         echo "<input type=submit name=ACT$Hid value='Unload on Turn'>\n"; 
         echo " to: $NewRef - " . fm_select($NewSyslocs,$H,'NewLocation',0,'',"NewLocation:$Hid");
       }
@@ -539,8 +547,8 @@ function Show_Thing(&$T,$Force=0) {
       echo " to: " . $N['Ref'] . " - " . fm_select($Syslocs,$H,'WithinSysLoc',0,'',"WithinSysLoc:$Hid");
       if ($H['LinkId'] == -4) {
         echo " - Unloading on Turn";
-      } else { 
-        echo "<input type=submit name=ACT$Hid value='Unload on Turn'>\n";
+      } else if ($T['NewSystemId'] && $T['TargetKnown']) {
+        echo "<input type=submit name=ACT$Hid value='Unload on Turn'>\n"; 
         echo " to: $NewRef - " . fm_select($NewSyslocs,$H,'NewLocation',0,'',"NewLocation:$Hid");
       }
       echo "<br>";

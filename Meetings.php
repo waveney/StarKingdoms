@@ -50,13 +50,13 @@
   
   $Things = Get_AllThings();
   foreach ($Things as $T){
-    if ($T['BuildState'] <2 || $T['BuildState'] >3) continue; // Don't exist
+    if ($T['BuildState'] <2 || $T['BuildState'] >3 || $T['LinkId'] < 0) continue; // Don't exist
     $Sid = $T['SystemId'];
     $Eyes = $TTypes[$T['Type']]['Eyes'];
     if (isset($Sys[$Sid][$T['Whose']])) {
       $Sys[$Sid][$T['Whose']] |= $Eyes;
     } else {
-      $Sys[$Sid][$T['Whose']] = $Eyes;
+      $Sys[$Sid][$T['Whose']] |= $Eyes;
     }
   }
   
@@ -87,9 +87,13 @@
         $Fs[] = $F;
       }
     }
+    if (isset($Sys[$Sid][0])) {
+      $NumF++;
+      $Fs[] = [];
+    }
     if ($NumF > 1) {
       echo "System: <a href=Meetings.php?ACTION=Check&S=$Sid$TurnP>" . $N['Ref'] . "</a> has ";
-      foreach($Fs as $F) echo (empty($F['Name'])?'Other', $F['Name']) . " , ";
+      foreach($Fs as $F) echo (empty($F['Name'])?'Other': $F['Name']) . " , ";
       echo "<br>";
     }   
   }

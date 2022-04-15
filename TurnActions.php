@@ -1448,7 +1448,19 @@ function InstructionsComplete() {
 
        $T['BuildState'] = 4;      
        TurnLog($Who,$P['Name'] . " on " . $N['Ref'] . " has been colonised");
-       SKLog($P['Name'] . " on " . $N['Ref'] . " has been colonised by " . $Facts[$Who]['Name'],1);
+       SKLog($P['Name'] . " on " . $N['Ref'] . " has been colonised by " . $Facts[$Who]['Name'],1);  // TODO Check for any named chars and offload
+       
+       $Have = Get_Things_Cond(0," (LinkId<0 AND SystemId=$tid ");
+       if ($Have) {
+         $Loc = Within_Sys_Locs($N,$T['Spare1']);       
+         foreach ($Have as $H) {
+           $H['SystemId'] = $T['SystemId'];
+           $H['WithinSysLoc'] = $Loc;
+           TurnLog($Who,$H['Name'] . " has been offloaded on to " . $P['Name'] . " in " . $N['Ref'],$H);
+           Put_Thing($H);
+         }
+       }
+       
        break; // The making homes and worlds in a later stage completes the colonisation I hope
        
      case 'Make Outpost':

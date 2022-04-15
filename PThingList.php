@@ -178,14 +178,18 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
     echo "<td>";
     if ($T['Instruction']) echo $ThingInstrs[$T['Instruction']];
     if (($T['Instruction'] == 0 || $T['Instruction'] == 5 ) && (($Props & THING_CAN_MOVE) && ( $T['BuildState'] == 3))) { 
-      echo " <a href=PMoveThing.php?id=" . $T['id'] . ">Move</a>";
-      if ($T['LinkId']) {
-        $L = Get_Link($T['LinkId']);
-        echo "<td style=color:" . $LinkTypes[$L['Level']]['Colour'] . " >Link #" . $T['LinkId'];
-        if ($T['NewSystemId'] && $T['TargetKnown']) {
-          echo "<td>" . $Systems[$T['NewSystemId']];
+      if ($T['LinkId'] >=0 ) {
+        echo " <a href=PMoveThing.php?id=" . $T['id'] . ">Move</a>";
+        if ($T['LinkId'] > 0) {
+          $L = Get_Link($T['LinkId']);
+          echo "<td style=color:" . $LinkTypes[$L['Level']]['Colour'] . " >Link #" . $T['LinkId'];
+          if ($T['NewSystemId'] && $T['TargetKnown']) {
+            echo "<td>" . $Systems[$T['NewSystemId']];
+          } else {
+            echo "<td> ? ";
+          }
         } else {
-          echo "<td> ? ";
+          echo "<td><td>";
         }
       } else {
         echo "<td><td>";
