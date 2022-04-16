@@ -932,6 +932,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       break;
 
     case 'Analyse Anomoly': // Analyse
+if ($GM) {
       echo "<br>" . fm_text0("Name of Study",$T,'MakeName') . " Just to make it clear to GMs whih one you are studying<br>";
       if ($T['Spare1'] == 0) {
         $Anoms = Gen_Get_Cond('Anomalies',"SystemId=" . $T['SystemId']);
@@ -967,6 +968,8 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
         $Acts = $Anom['AnomalyLevel'];
         $T['Progress'] = $FA['Progress'];
       }
+/**/
+}
       break;
       
     case 'Make Asteroid Mine':
