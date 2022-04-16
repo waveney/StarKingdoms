@@ -607,11 +607,6 @@ function InstuctionsStage2() { // And other Instructions
   return 1;
 }
 
-function StartAnomaly() {
-  GMLog("Anomaly Studies are currently Manual<p>");
-  return 1;
-}
-
 function AgentsStartMissions() {
   GMLog("Agents Start Missions	are currently Manual<p>");
   return 1;
@@ -899,6 +894,7 @@ function ShipMovements($Agents=0) {
       if ($Fid) TurnLog($Fid,$T['Name'] . " has moved from " . System_Name($OldN,$Fid) . " along <span style='color:" . $LinkLevels[$L['Level']]['Colour'] . ";'>link #$Lid </span>to $pname " . 
         ($T['NewLocation'] > 2?( " to " . $EndLocs[$T['NewLocation']]): ""),$T); 
       $T['LinkId'] = 0;
+      $T['Instruction'] = 0;
       Put_Thing($T);
     } else if ( $T['WithinSysLoc'] != $T['NewLocation'] && $T['NewLocation']>1) {
       $T['WithinSysLoc'] = $T['NewLocation'];
@@ -1707,6 +1703,7 @@ function SpotAnomalies() {
     $LastWho = 0;
     $LastAn = 0;
     foreach($Things as $T) {
+// if ($Aid == 45) echo "Checking " . $T['id'] . "<br>";
       if ($T['Whose'] != $LastWho) {
         $LastWho = $T['Whose'];
         $FA = Gen_Get_Cond('FactionAnomaly',"FactionId=$LastWho AND AnomalyId=$Aid");
@@ -1810,7 +1807,7 @@ function Do_Turn() {
   global $Sand;  // If you need to add something, replace a spare if poss, then nothing breaks
   $Stages = ['Check Turns Ready', 'Spare', 'Spare','Start Turn Process', 'Save All Locations', 'Spare', 'Cash Transfers', 'Spare',
              'Spare', 'Pay For Stargates', 'Spare', 'Scientific Breakthroughs', 'Start Projects', 'Spare', 'Spare', 'Instuctions', 
-             'Instuctions Stage 2', 'Spare', 'Spare', 'Spare', 'Spare', 'Start Anomaly', 'Spare', 'Spare', 
+             'Instuctions Stage 2', 'Spare', 'Spare', 'Spare', 'Spare', 'Spare', 'Spare', 'Spare', 
              'Agents Start Missions', 'Spare', 'Spare', 'Economy', 'Spare', 'Spare', 'Load Troops', 'Spare', 
              
              'Ship Move Check','Ship Movements', 'Agents Move Check', 'Agents Movements', 

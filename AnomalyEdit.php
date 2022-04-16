@@ -6,7 +6,7 @@
   include_once("PlayerLib.php");
   include_once("SystemLib.php");
   
-  global $FACTION,$GAME,$GAMEID;
+  global $FACTION,$GAME,$GAMEID,$AnomalyStates;
   
   A_Check('GM');
 
@@ -70,14 +70,15 @@
   echo "<tr>" . fm_number('Complete',$A,'Complete') .  fm_number('Story Level',$A,'StoryLevel');
 
   echo "<tr><td colspan=8><h2>Factions:</h2>";
-  echo "<tr><td>Faction<td>Progress<td colspan=7>Notes\n";
+  echo "<tr><td>Faction<td colspan=2>State<td>Progress<td colspan=7>Notes\n";
   foreach ($Facts as $F) {
     $Fid = $F['id'];
     $FA = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
     if ($FA) $FA = $FA[0];
     echo "<form method=post action=AnomalyEdit.php>";    
     echo "<tr><td style='background:" . $F['MapColour'] . ";'>" . $F['Name'];
-    echo fm_number1('',$FA,'State','','',"State:$Fid");
+    echo "<td colspan=2>". fm_radio('',$AnomalyStates,$FA,'State','',0,'',"State:$Fid");
+    echo fm_number1('',$FA,'Progress','','',"Progress:$Fid");
     echo fm_text1('',$FA,'Notes',7,'','',"Notes:$Fid");
     echo "</tr>\n";
   }

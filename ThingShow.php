@@ -730,6 +730,15 @@ if ($GM) echo "Lid:$Lid SystemId:" . $T['SystemId']; // TEST CODE DELIBARATELY S
       continue 2;
     
     case 'Analyse Anomoly': // Analyse
+      if ($T['Sensors'] == 0) continue 2;
+      $Anoms = Gen_Get_Cond('Anomalies',"SystemId=" . $T['SystemId']);
+      foreach($Anoms as $A) {
+        $Aid = $A['id'];
+        $FA = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
+        if (empty($FA[0]['id'])) continue;
+        $FA = $FA[0];
+        if ($FA['Progres'] < $A['AnomalyLevel']) break 2; // This anomaly can be studied (There may be more than one, but one is enough
+      }
       continue 2; // NOt yet
       
     case 'Establish Embassy': // Establish Embassy
@@ -923,6 +932,41 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       break;
 
     case 'Analyse Anomoly': // Analyse
+      echo "<br>" . fm_text0("Name of Study",$T,'MakeName') . " Just to make it clear to GMs whih one you are studying<br>";
+      if ($T['Spare1'] == 0) {
+        $Anoms = Gen_Get_Cond('Anomalies',"SystemId=" . $T['SystemId']);
+        $Alist = [];
+        $Al = 0;
+        foreach($Anoms as $A) {
+          $Aid = $A['id'];
+          $FA = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
+          if (empty($FA[0]['id'])) continue;
+          $FA = $FA[0];
+          if ($FA['Progres'] < $A['AnomalyLevel']) {
+            $Alist[$Aid] = $A['AnomalyLevel'];
+            $Al = $Aid;
+          }
+        }
+        if (count($Alist) == 1) {
+          $T['Spare1'] = $Al;
+        } else if (count($Alist) == 0) {
+          echo "No known Anomaly Here.";
+          $T['Instruction'] = 0;
+          break;
+        } else {
+          echo "Select Anomaly:" ;// TODO finish
+        }
+
+        
+      } else {
+        $Anom = Get_Anomaly($T['Spare1']);
+        $Aid = Anom['id'];
+        $FA = (Gen_Get_Cond('FactionAnomaly',"FactionId=$Fid AND AnomalyId=$Aid"))[0];
+        
+        $ProgShow = 2;
+        $Acts = $Anom['AnomalyLevel'];
+        $T['Progress'] = $FA['Progress'];
+      }
       break;
       
     case 'Make Asteroid Mine':

@@ -51,7 +51,12 @@ Known Faults
 * Load on PthingList
 * unload on pthinglist
 
-
+Anomalies
+1) Analysing - do the factions know how much effort? Yes
+2) What if a system has multiple anoms? Problem - see 4
+3) No longer adding 1 pt progress when found
+4) Anomaly Names - at present these couldn't be presented to players.  Would like to be able to.
+5) 
 
 
 Has_Tech for projects - use turn number
