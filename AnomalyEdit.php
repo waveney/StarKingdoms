@@ -43,6 +43,8 @@
     dotail();
   }
   
+  echo "<h1>Anomaly Edit</h1>\n";
+  echo "Note for Factions: Known - Seen the Anomaly, Analysed - Done it.  Can Analyse - to enable analysis when there are Other requirements - no effect when none.<p>\n";
   $Facts = Get_Factions();
   $Systems = Get_SystemRefs();
   
@@ -66,11 +68,14 @@
   echo "<tr>" . fm_textarea('Notes',$A,'Notes',8,4);
   echo "<tr>" . fm_textarea('Reward',$A,'Reward',8,2);
   echo "<tr>" . fm_textarea('Comments',$A,'Comments',8,2);
-    
+  echo "<tr>" . fm_textarea('Other Requirements',$A,'OtherReq',8,1);    
   echo "<tr>" . fm_number('Complete',$A,'Complete') .  fm_number('Story Level',$A,'StoryLevel');
 
   echo "<tr><td colspan=8><h2>Factions:</h2>";
   echo "<tr><td>Faction<td colspan=2>State<td>Progress<td colspan=7>Notes\n";
+  
+  if (empty($A['OtherReq'])) unset($AnomalyStates[2]);
+  
   foreach ($Facts as $F) {
     $Fid = $F['id'];
     $FA = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");

@@ -7,7 +7,8 @@
   include_once("ProjLib.php");
   include_once("HomesLib.php");
   include_once("BattleLib.php");
-      
+  include_once("vendor/erusev/parsedown/Parsedown.php");
+  
   A_Check('GM');
 
 // For logging turn processing events that need following up or long term record keeping, set e to echo to GM
@@ -433,7 +434,87 @@ function Instuctions() { // And other Instructions
       Spend_Credit($T['Whose'],-$cash,"Decommisioning " . $T['Name']);
       break;
 
-    case 'Analyse Anomaly': // Anomaly
+    case 'Analyse Anomaly': // Anomaly      
+/*
+    // If no Anomaly - search and find.  (None found error and drop
+      $Aid = $T['ProjectId'];
+      if (isset($FA)) unset($FA);
+      if (!$Aid) {          
+        $Anoms = Gen_Get_Cond('Anomalies',"SystemId=" . $T['SystemId']);
+        if ($Anoms) {
+          $AList = [];
+          foreach($Anoms as $A) {
+            $Aid = $A['id'];
+            $FAs = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
+            if (empty($FAs[0]['id'])) continue;
+            $FA = $FAs[0];
+            if ($FA['State'] == 0 || $FA['State'] == 3) continue;
+            if ($FA['Progress'] > 0 || $FA['State'] == 2) {
+              $T['ProjectId'] = $Aid;
+              Put_Thing($T);
+              break;
+            }
+            
+            if ($FA['Progres'] < $A['AnomalyLevel']) {
+                $Pro = $T['Sensors']*$T['SensorLevel'];
+                $FA['Progress'] = min($FA['Progress']+$Pro, $A['AnomalyLevel']);
+                Gen_Put('FactionAnomaly',$FA);
+                $T['ProjectId'] = $Aid;
+                TurnLog($T['Name'] . " did $Pro towards completing anomaly " . $A['Name'] . " now at " . $FA['Progress'] . " / " , $A['AnomalyLevel']);
+              }
+              break 2;
+            }
+          }
+          TurnLog($T['Name'] . " is supposed to be analysing an anomaly - but there isn't one");                    
+        }
+
+
+
+    // Not Find FA - create new FA data
+    
+    // if progress==0 && State==1 other reqa ask GMs and wait
+    
+    // if prog==0 report starting study to GMs and Player
+    
+      $Aid = $T['ProjectId'];
+      if ($Aid) {
+        $A = Get_Anomaly($Aid);
+        $Fid = $T['Whose'];
+        $FAs = Gen_Get_Cond('FactionAnomaly',"FactionId=$Fid AND AnomalyId=$Aid");
+        if ($FAs) {
+          $FA = $FAs[0];
+          $Pro = $T['Sensors']*$T['SensorLevel'];
+          $FA['Progress'] = min($FA['Progress']+$Pro, $A['AnomalyLevel']);
+            Gen_Put('FactionAnomaly',$FA);
+            TurnLog($T['Name'] . " did $Pro towards completing anomaly " . $A['Name'] . " now at " . $FA['Progress'] . " / " , $A['AnomalyLevel']);
+          } else {
+            TurnLog($T['Name'] . " is supposed to be analysing an anomaly - but there isn't one selected");          
+          }
+        } else { // No anomaly is there one here?
+          $Anoms = Gen_Get_Cond('Anomalies',"SystemId=" . $T['SystemId']);
+          if ($Anoms) {
+            foreach($Anoms as $A) {
+              $Aid = $A['id'];
+              $FAs = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
+              if (empty($FAs[0]['id'])) continue;
+              $FA = $FAs[0];
+              if ($FA['Progres'] < $A['AnomalyLevel']) {
+                $Pro = $T['Sensors']*$T['SensorLevel'];
+                $FA['Progress'] = min($FA['Progress']+$Pro, $A['AnomalyLevel']);
+                Gen_Put('FactionAnomaly',$FA);
+                $T['ProjectId'] = $Aid;
+                TurnLog($T['Name'] . " did $Pro towards completing anomaly " . $A['Name'] . " now at " . $FA['Progress'] . " / " , $A['AnomalyLevel']);
+              }
+              break 2;
+            }
+          }
+          TurnLog($T['Name'] . " is supposed to be analysing an anomaly - but there isn't one");                    
+        }
+        break;        
+
+
+
+*/      
       break; // TODO
       
     case 'Establish Embassy': 
@@ -1163,16 +1244,48 @@ function InstructionsProgress() {
 //var_dump($T['Progress']); exit;
         Put_Thing($T);
         break;
+        
+      case 'Analyse Anomaly':
+        $Aid = $T['ProjectId'];
+        if ($Aid) {
+          $A = Get_Anomaly($Aid);
+          $Fid = $T['Whose'];
+          $FAs = Gen_Get_Cond('FactionAnomaly',"FactionId=$Fid AND AnomalyId=$Aid");
+          if ($FAs) {
+            $FA = $FAs[0];
+            $Pro = $T['Sensors']*$T['SensorLevel'];
+            $FA['Progress'] = min($FA['Progress']+$Pro, $A['AnomalyLevel']);
+            Gen_Put('FactionAnomaly',$FA);
+            TurnLog($T['Name'] . " did $Pro towards completing anomaly " . $A['Name'] . " now at " . $FA['Progress'] . " / " , $A['AnomalyLevel']);
+          } else {
+            TurnLog($T['Name'] . " is supposed to be analysing an anomaly - but there isn't one selected");          
+          }
+        } else { // No anomaly is there one here?
+          $Anoms = Gen_Get_Cond('Anomalies',"SystemId=" . $T['SystemId']);
+          if ($Anoms) {
+            foreach($Anoms as $A) {
+              $Aid = $A['id'];
+              $FAs = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
+              if (empty($FAs[0]['id'])) continue;
+              $FA = $FAs[0];
+              if ($FA['Progres'] < $A['AnomalyLevel']) {
+                $Pro = $T['Sensors']*$T['SensorLevel'];
+                $FA['Progress'] = min($FA['Progress']+$Pro, $A['AnomalyLevel']);
+                Gen_Put('FactionAnomaly',$FA);
+                $T['ProjectId'] = $Aid;
+                TurnLog($T['Name'] . " did $Pro towards completing anomaly " . $A['Name'] . " now at " . $FA['Progress'] . " / " , $A['AnomalyLevel']);
+              }
+              break 2;
+            }
+          }
+          TurnLog($T['Name'] . " is supposed to be analysing an anomaly - but there isn't one");                    
+        }
+        break;        
       default: 
         break;
      }
    }
 
-  return 1;
-}
-
-function AnomalyStudiesProgress() {
-  GMLog("Anomaly Studies Progress is currently Manual<p>");
   return 1;
 }
 
@@ -1304,6 +1417,7 @@ function ProjectsComplete() {
       $T['BuildState'] = 2; // Shakedown
       TurnLog($P['FactionId'], $T['Name'] . " has been lanched and will now start its shakedown cruise");              
       Calc_Scanners($T);
+      $T['ProjectId'] = 0;
       Put_Thing($T);
       break;
 
@@ -1312,6 +1426,7 @@ function ProjectsComplete() {
       $T = Get_Thing($P['ThingId']);
       $T['BuildState'] = 3; // Complete
       TurnLog($P['FactionId'], $T['Name'] . " has been completed");              
+      $T['ProjectId'] = 0;
       Put_Thing($T);
       break;
      
@@ -1415,7 +1530,7 @@ function ProjectsComplete() {
 
 function InstructionsComplete() {
   global $ThingInstrs,$GAME;
-  $Things = Get_Things_Cond(0,"Instruction>0 AND Progress>=ActionsNeeded");
+  $Things = Get_Things_Cond(0,"Instruction>0 AND ( Progress>=ActionsNeeded OR ProjectId>0 ) ");
   $NeedColStage2 = 0;
   $Facts = Get_Factions();
   $TTNames = Thing_Types_From_Names();
@@ -1423,41 +1538,63 @@ function InstructionsComplete() {
   foreach ($Things as $T) {
     $N = Get_System($T['SystemId']);
     $Tid = $T['id'];
-     switch ($ThingInstrs[$T['Instruction']]) {
-     case 'Colonise':
-       $P = Get_Planet($T['Spare1']);
-       $Who = $T['Whose'];
-       if ($N['Control'] != $Who) {
-         if ($N['Control'] == 0) {
-           $N['Control'] = $Who;
-           Put_System($N);
-         }
-       }
+    switch ($ThingInstrs[$T['Instruction']]) {
+    case 'Colonise':
+      $P = Get_Planet($T['Spare1']);
+      $Who = $T['Whose'];
+      if ($N['Control'] != $Who) {
+        if ($N['Control'] == 0) {
+          $N['Control'] = $Who;
+          Put_System($N);
+        }
+      }
        
-       $D = ['HostType' =>1, 'HostId'=> $P['id'], 'Type'=> $T['Dist1'], 'Number'=>1, 'GameId'=>$GAME['id'], 'TurnStart'=>$GAME['Turn']];
-       if ($D['Type'] == 0) $D['Type'] = 1;
-       Put_District($D);
-       if (Get_ModulesType($Tid,27) && $T['Dist2']) {
-         $D1 = ['HostType' =>1, 'HostId'=> $P['id'], 'Type'=> $T['Dist2'], 'Number'=>1, 'GameId'=>$GAME['id'], 'TurnStart'=>$GAME['Turn']];
-         Put_District($D1);
-       }
+      $D = ['HostType' =>1, 'HostId'=> $P['id'], 'Type'=> $T['Dist1'], 'Number'=>1, 'GameId'=>$GAME['id'], 'TurnStart'=>$GAME['Turn']];
+      if ($D['Type'] == 0) $D['Type'] = 1;
+      Put_District($D);
+      if (Get_ModulesType($Tid,27) && $T['Dist2']) {
+        $D1 = ['HostType' =>1, 'HostId'=> $P['id'], 'Type'=> $T['Dist2'], 'Number'=>1, 'GameId'=>$GAME['id'], 'TurnStart'=>$GAME['Turn']];
+        Put_District($D1);
+      }
 
-       $T['BuildState'] = 4;      
-       TurnLog($Who,$P['Name'] . " on " . $N['Ref'] . " has been colonised");
-       SKLog($P['Name'] . " on " . $N['Ref'] . " has been colonised by " . $Facts[$Who]['Name'],1);  // TODO Check for any named chars and offload
+      $T['BuildState'] = 4;      
+      TurnLog($Who,$P['Name'] . " on " . $N['Ref'] . " has been colonised");
+      SKLog($P['Name'] . " on " . $N['Ref'] . " has been colonised by " . $Facts[$Who]['Name'],1);  // TODO Check for any named chars and offload
        
-       $Have = Get_Things_Cond(0," (LinkId<0 AND SystemId=$tid ");
-       if ($Have) {
-         $Loc = Within_Sys_Locs($N,$T['Spare1']);       
-         foreach ($Have as $H) {
-           $H['SystemId'] = $T['SystemId'];
-           $H['WithinSysLoc'] = $Loc;
-           TurnLog($Who,$H['Name'] . " has been offloaded on to " . $P['Name'] . " in " . $N['Ref'],$H);
-           Put_Thing($H);
+      $Have = Get_Things_Cond(0," (LinkId<0 AND SystemId=$tid ");
+      if ($Have) {
+        $Loc = Within_Sys_Locs($N,$T['Spare1']);       
+        foreach ($Have as $H) {
+          $H['SystemId'] = $T['SystemId'];
+          $H['WithinSysLoc'] = $Loc;
+          TurnLog($Who,$H['Name'] . " has been offloaded on to " . $P['Name'] . " in " . $N['Ref'],$H);
+          Put_Thing($H);
+        }
+      }
+       
+      break; // The making homes and worlds in a later stage completes the colonisation I hope
+       
+    case 'Analyse Anomaly':
+       $Aid = $T['ProjectId'];
+       if ($Aid) {
+         $A = Get_Anomaly($Aid);
+         $Fid = $T['Whose'];
+         $FAs = Gen_Get_Cond('FactionAnomaly',"FactionId=$Fid AND AnomalyId=$Aid");
+         if ($FAs) {
+           $FA = $FAs[0];
+           if ($FA['Progress'] >= $A['AnomalyLevel']) {
+             $FA['State'] = 2;
+             Gen_Put('FactionAnomaly',$FA);          
+             TurnLog($T['Name'] . " Anomaly study on " . $A['Name'] . " has been completed - See sperate response from the GMs for what you get");
+             GMLog($Facts[$Fid]['Name'] . " has completed anomaly study : <a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . " has been completed - give them the reward.");
+             $T['ProjectId'] = 0;
+           }
+         } else {
+           continue 2;
          }
        }
-       
-       break; // The making homes and worlds in a later stage completes the colonisation I hope
+     
+       break;
        
      case 'Make Outpost':
        $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Outpost'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'],
@@ -1597,17 +1734,13 @@ function InstructionsComplete() {
      $T['Progress'] = 0;
      $T['CurInst'] = 0;
      $T['MakeName'] = '';
+     $T['ProjectId'] = 0;
+     $T['Spare1'] = 0;
      Put_Thing($T);   
    }
 
   return 1;
 }
-
-function AnomalyStudiesComplete() {
-  GMLog("Anomaly Studies Complete is currently Manual<p>");
-  return 1;
-}
-
 
 function CheckSurveyReports() {
   global $GAME, $SurveyLevels;
@@ -1692,6 +1825,7 @@ function SpotAnomalies() {
   
   $Facts = Get_Factions();
   $Systems = Get_SystemRefs();
+  $Parsedown = new Parsedown();
   
   $Anoms = Gen_Get_Cond('Anomalies',"GameId=$GAMEID ORDER BY SystemId, ScanLevel");
   foreach($Anoms as $A) {
@@ -1719,6 +1853,10 @@ function SpotAnomalies() {
           $LastAn = $Aid;
           continue;
         }
+              
+        TurnLog($LastWho,"You have spotted an anomaly: " . $A['Name'] . " in " . $Systems[$Sid] . "\n" .  $Parsedown->text($A['Description']) . 
+                "\nIt will take " . $A['AnomalyLevel'] . " scan level actions to cmplete.\n\n");
+                
         GMLog($Facts[$T['Whose']]['Name'] . " have just spotted anomaly: <a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . "</a> in " . $Systems[$Sid] . " from the " . $T['Name'] );
         $FA['State'] = 1;
 // var_dump($FA);
@@ -1813,9 +1951,9 @@ function Do_Turn() {
              'Ship Move Check','Ship Movements', 'Agents Move Check', 'Agents Movements', 
              'Meetups', 'Spare', 'Space Combat', 'Unload Troops', 
              'Orbital Bombardment', 'Spare', 'Ground Combat', 'Devastation Selection', 
-             'Devastation', 'Project Progress', 'Instructions Progress', 'Anomaly Studies Progress', 
+             'Devastation', 'Project Progress', 'Instructions Progress', 'Spare', 
              'Espionage Missions Complete', 'Counter Espionage', 'Spare', 'Finish Shakedowns', 
-             'Projects Complete', 'Instructions Complete', 'Anomaly Studies Complete', 'Check Survey Reports', 
+             'Projects Complete', 'Instructions Complete', 'Spare', 'Check Survey Reports', 
              'Give Survey Reports', 'Spot Anomalies', 'Spare', 'Militia Army Recovery', 
              'Generate Turns', 'Tidy Up Movements', 'Recalc Project Homes', 'Finish Turn Process'];
 

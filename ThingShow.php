@@ -757,7 +757,7 @@ if ($GM) echo "Lid:$Lid SystemId:" . $T['SystemId']; // TEST CODE DELIBARATELY S
       continue 2;
     
     case 'Make Outpost': // Make Outpost
-      if ($Moving || empty($N) || (!$HasDeep && ($N['Control'] != $Fid))) continue 2;
+      if ($Moving || empty($N) || !$HasDeep || ($N['Control'] != $Fid)) continue 2;
       
       if (Get_Things_Cond($Fid,"Type=" . $TTNames['Outpost'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
       break;
@@ -933,8 +933,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
 
     case 'Analyse Anomoly': // Analyse
 if ($GM) {
-      echo "<br>" . fm_text0("Name of Study",$T,'MakeName') . " Just to make it clear to GMs whih one you are studying<br>";
-      if ($T['Spare1'] == 0) {
+      if ($T['ProjectId'] == 0) { // Pid == AnomId
         $Anoms = Gen_Get_Cond('Anomalies',"SystemId=" . $T['SystemId']);
         $Alist = [];
         $Al = 0;
@@ -944,23 +943,22 @@ if ($GM) {
           if (empty($FA[0]['id'])) continue;
           $FA = $FA[0];
           if ($FA['Progres'] < $A['AnomalyLevel']) {
-            $Alist[$Aid] = $A['AnomalyLevel'];
+            $Alist[$Aid] = $A['Name'] . " - takes " . $A['AnomalyLevel'] . " Sensor Points to Analyse.\n";
             $Al = $Aid;
           }
         }
         if (count($Alist) == 1) {
-          $T['Spare1'] = $Al;
+          $T['ProjectId'] = $Al;
         } else if (count($Alist) == 0) {
           echo "No known Anomaly Here.";
           $T['Instruction'] = 0;
           break;
         } else {
-          echo "Select Anomaly:" ;// TODO finish
+          echo "Select Anomaly:" . fm_select($Alist,$T,'ProjectId');
         }
-
         
       } else {
-        $Anom = Get_Anomaly($T['Spare1']);
+        $Anom = Get_Anomaly($T['ProjectId']);
         $Aid = Anom['id'];
         $FA = (Gen_Get_Cond('FactionAnomaly',"FactionId=$Fid AND AnomalyId=$Aid"))[0];
         

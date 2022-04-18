@@ -24,6 +24,7 @@
   echo "<th colspan=2><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Scan Level</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Anomaly Lvl</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Other Reqs</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Location</a>\n";
   echo "</thead><tbody>";
 
@@ -32,6 +33,7 @@
     echo "<tr><td><a href=AnomalyEdit.php?id=$i>$i</a><td colspan=2><a href=AnomalyEdit.php?id=$i>" . $A['Name'] . "</a>";
     echo "<td>" . $A['ScanLevel'];
     echo "<td>" . $A['AnomalyLevel'];
+    echo "<td>" . ($A['OtherReq']?'Yes':'');
     echo "<td>" . $Systems[$A['SystemId']];
     }   
   echo "</tbody></table></div>\n";
