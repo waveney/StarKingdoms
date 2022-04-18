@@ -146,7 +146,7 @@ function Show_System(&$N,$Mode=0) {
     echo "<tr>" . fm_number('Temperature',$N,'Temperature2',1,"class=NotCSide") . "<td>K" ;
     echo "<tr>" . fm_number('Luminosity',$N,'Luminosity2',1,"class=NotCSide") . "<td>W = " . RealWorld($N,'Luminosity2');
     echo "<tr>" . fm_number('Distance',$N,'Distance',1,"class=NotCSide") . "<td>Km = " . RealWorld($N,'Distance') ;
-    echo "<tr>" . fm_number('Period',$N,'Period',1,"class=NotCSide") . "<td>Hr = " . RealWorld($N,'Period');  
+    echo "<tr>" . fm_number('Period',$N,'Period',1,"class=NotCSide step=0.00000000000001") . "<td>Hr = " . RealWorld($N,'Period');  
     if (Access('God')) echo "<td><a href=SysEdit.php?id=$Sid&ACTION=RECALC>Recalc</a>";
   } elseif ($Mode) {
     echo "<tr>" . fm_text('2nd Star Type',$N,'Type2',2,"class=NotCSide");  

@@ -145,7 +145,7 @@
     if ($Faction == 0 && $N['HistoricalControl']) $BdrColour = $Factions[$N['HistoricalControl']]['MapColour'];
     
     if ($typ) $atts .= " shape=box pos=\"" . ($N['GridX']+(5-$N['GridY'])/2) . "," . (9-$N['GridY']) . "!\"";
-    $atts .= "  shape=box style=filled fillcolor=$Colour color=$BdrColour";
+    $atts .= "  shape=box style=filled fillcolor=\"$Colour\" color=$BdrColour";
     if ($NodeName) {
       $atts .= NodeLab($ShortName, $N['Ref']); //($Faction==0?$N['Ref']:""));
     }
@@ -228,7 +228,7 @@
   $ls=0;
   foreach ($Factions as $F) {
     if (isset($F['Seen'])) {
-      fwrite($Dot,"FF" . $F['id'] . " [shape=box style=filled fillcolor=" . $F['MapColour'] . 
+      fwrite($Dot,"FF" . $F['id'] . " [shape=box style=filled fillcolor=\"" . $F['MapColour'] . '"' .
           NodeLab($F['Name']) . ($typ?" pos=\"" . $HexLegPos[$ls][0] . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");
       $ls++;
     }

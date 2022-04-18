@@ -435,7 +435,8 @@ function Instuctions() { // And other Instructions
       break;
 
     case 'Analyse Anomaly': // Anomaly      
-/*
+
+if (0) {
     // If no Anomaly - search and find.  (None found error and drop
       $Aid = $T['ProjectId'];
       if (isset($FA)) unset($FA);
@@ -511,10 +512,7 @@ function Instuctions() { // And other Instructions
           TurnLog($T['Name'] . " is supposed to be analysing an anomaly - but there isn't one");                    
         }
         break;        
-
-
-
-*/      
+}     
       break; // TODO
       
     case 'Establish Embassy': 
