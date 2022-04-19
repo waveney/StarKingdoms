@@ -10,9 +10,51 @@ global $SurveyLevels,$AnomalyStates;
 
 // System common code
 
+function Dynamic_Update(&$N,$Tinc=0) {
+  global $GAME;
+  // Period and distance dynamic update based on Turn number and date 
+  ///  Called as part of Turn Actions and every showing of system
+  $G = 0.0000000000667431;
+  $C = 299792458;
+  $M1 = $N['Mass'];
+  $M2 = $N['Mass2'];
+  $e = 0.98171334;
+  $pi = pi();
+  
+  
+// var_dump($G,$C,$M1,$M2,$e,$pi);
+
+  $CurPeriod = $N['Period']*3600; // Hours
+  $CurDist = $N['Distance']; // KM
+  
+//var_dump($CurPeriod*3600);
+  
+  $Decay = (192*$pi*($G**(5/3)*$M1*$M2*($M1+$M2)**(-1/3))/((5*$C**5)*(1-$e**2)**(7/2)*(1+73/24*($e**2)+37/96*($e**4))*($CurPeriod/2*$pi)));
+  $TurnDecay = $Decay*60*24*365;
+
+//   echo "Decay = $Decay TurnDec=$TurnDecay<br>\n";  
+  $NewPeriod = $CurPeriod - $TurnDecay;
+  $NewDistance = ((($NewPeriod/(2*$pi))**2)*$G*($M1+$M2))**(1/3)/1000;
+  
+  echo "NewPeriod = $NewPeriod, NewDistance = $NewDistance<br\n";
+//  Decay = // =(192*PI()*($B$1^(5/3)*$B$2*$B$3*($B$3+$B$2)^(-1/3))/(5*$B$4^5*(1-$B$5^2)^(7/2)*(1+73/24*$B$5^2+37/96*$B$5^4)*(E6/2*PI())))
+
+  if ($Tinc) {
+    $N['Period'] = $NewPeriod/3600;
+    $N['Distance'] = $NewDistance;
+    Put_System($N);
+  } else {
+    $Duration = -(time() - $GAME['DateCompleted'])/(3600*24*14);
+    $N['Period'] = ($CurPeriod - ($CurPeriod - $NewPeriod)/$Duration)/3600;
+    $N['Distance'] = $CurDist - ($CurDist - $NewDistance)/$Duration;
+  }
+}
+
 function RealWorld(&$Data,$fld) {
     $Star = (isset($Data['SystemId'])?1:0);
     $val = $Data[$fld];
+    $Acc = "%0.2f";
+    if (isset($Data['Flags']) && ($Data['Flags'] &1)) $Acc="%0.8f";
     switch ($fld) {
     case 'Radius' :
     case 'Radius2' :
@@ -49,11 +91,11 @@ function RealWorld(&$Data,$fld) {
       } elseif ($val > 50) {
         return sprintf("%0.2f Days",$val/24);                    
       } elseif ($val > 2) {
-        return sprintf("%0.2f Hours",$val);      
+        return sprintf("$Acc Hours",$val);      
       } elseif ($val > 2/60) {
-        return sprintf("%0.2f Minutes",$val*60);      
+        return sprintf("$Acc Minutes",$val*60);      
       } else {
-        return sprintf("%0.2f Seconds",$val*3600);      
+        return sprintf("$Acc Seconds",$val*3600);      
       }
       return;
     
@@ -64,7 +106,7 @@ function RealWorld(&$Data,$fld) {
       if ($val > 2e6) {
         return sprintf("%0.2f AU",$val/1.496e8);      
       } else {
-        return sprintf("%0.2f x Radius of Stars",$val/($Data['Radius']+$Data['Radius2']));      
+        return sprintf("$Acc x Radius of Stars",$val/($Data['Radius']+$Data['Radius2']));      
       }
 
     default:
@@ -99,6 +141,7 @@ function Show_System(&$N,$Mode=0) {
   if ($Mode) {
     echo "<span class=NotSide>Fields marked are not visible to factions.</span>";
     echo "  <span class=NotCSide>Marked are visible if set, but not changeable by factions.</span>";
+    echo "Flags: 1=Dynamic<br>\n";
   }
   
   $FactNames = Get_Faction_Names();
@@ -110,6 +153,8 @@ function Show_System(&$N,$Mode=0) {
   $LinkLevels = Get_LinkLevels();
   $Ls = Get_Links($Ref);  
   
+  if ($N['Flags'] & 1) Dynamic_Update($N);
+  
   echo "<form method=post id=mainform enctype='multipart/form-data' action=SysEdit.php>";
   echo "<div class=tablecont><table width=90% border class=SideTable>\n";
   Register_AutoUpdate('System',$Sid);
@@ -117,10 +162,11 @@ function Show_System(&$N,$Mode=0) {
   echo "<tr class=NotSide><td class=NotSide>Id:<td class=NotSide>$Sid<td class=NotSide>Game<td class=NotSide>$GAMEID" .
        "<td class=NotSide>" . $GAME['Name'];
   echo "<tr class=NotSide>" . fm_text('Grid X',$N,'GridX',1,"class=NotSide") . fm_text('Grid Y',$N,'GridY',1,"class=NotSide") . fm_text('Ref',$N,'Ref',1,"class=NotSide");
-//  echo "<tr class=NotCSide><td class=NotCSide>Control:<td class=NotCSide>" . fm_select($Facts,$N,'Control',1); // Known by TODO, Image
+
   echo "<tr>" . fm_radio('Control',$FactNames ,$N,'Control','',1,'colspan=6','',$Fact_Colours,0); 
   echo "<tr>" . fm_text('Name',$N,'Name',8);
-  echo "<tr>" . fm_text('Short Name',$N,'ShortName') . fm_text('Nebulae',$N,'Nebulae',1,"class=NotCSide"). fm_number('Category',$N,'Category',1,"class=NotSide") ;
+  echo "<tr>" . fm_text('Short Name',$N,'ShortName') . fm_text1('Nebulae',$N,'Nebulae',1,"class=NotCSide"). fm_number1('Category',$N,'Category',1,"class=NotSide") ;
+    echo fm_number1('Flags',$N,'Flags');
   echo "<tr>" . fm_textarea('Description',$N,'Description',8,3);
   echo "<tr>" . fm_text('Type',$N,'Type',2,"class=NotCSide") . "<td rowspan=6 colspan=3>";
 //  if ($N['Image']) echo "<img src='" . $N['Image'] . "'>";

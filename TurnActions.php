@@ -1914,7 +1914,7 @@ function RecalcProjectHomes() {
 }
 
 function FinishTurnProcess() {
-  global $GAME;
+  global $GAME,$Sand;
   // Change faction state update turn number
 
   $Facts = Get_Factions();
@@ -1927,6 +1927,7 @@ function FinishTurnProcess() {
   GMLog("<br>All Factions marked as Turn Planning<p>\n");
 
   $GAME['Turn'] ++;
+  $Sand['DateCompleted'] = $GAME['DateCompleted'] = time();
   Put_Game($GAME);
   
   GMLog("Turn number incremented<p>\n");

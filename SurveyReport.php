@@ -86,7 +86,9 @@
   $N=Get_System($Sid);
   $Ref = $N['Ref'];
   $Fs= Get_Factions();
- 
+
+  if ($N['Flags'] & 1) Dynamic_Update($N);
+  
   $pname = System_Name($N,$Fid);
 /*
   $pname = NameFind($N);
@@ -141,18 +143,21 @@
         sprintf("%0.2g Km = ",$N['Luminosity'])  . RealWorld($N,'Luminosity') . ".<p>";
         
   if ($N['Type2']) {
+    $Acc = "%0.2g";
+    if (isset($N['Flags']) && ($N['Flags'] &1)) $Acc="%0.8g";
+
     if ($N['Image2']) echo "<br clear=all><img src=" . $N['Image2'] . ">";
     echo "The companion star ";
     if ($N['StarName2']) echo " ( " . $N['StarName2'] . " ) " ;      
     echo " is a " . $N['Type2']  . ".<br>";
-
+    
     if ($SurveyLevel >= 3) echo "It has a radius of " . 
         sprintf("%0.2g Km = ",$N['Radius2'])  . RealWorld($N,'Radius2') . ", a mass of " .
-        sprintf("%0.2g Kg = ",$N['Mass2'])  . RealWorld($N,'Mass2') . ", a temperature of " .
+        sprintf("%0.2g Kg = ",$N['Mass2'])  . RealWorld($N,'Mass2') . ",<br>A temperature of " .
         sprintf("%0.0f K = ",$N['Temperature2'])  . " and a luminosity of " .
-        sprintf("%0.2g Km = ",$N['Luminosity2'])  . RealWorld($N,'Luminosity2') . " which orbits at " .
-        sprintf("%0.2g Km = ",$N['Distance'])  . RealWorld($N,'Distance') . ", with a periodicity of " .
-        sprintf("%0.2g Hr = ",$N['Period'])  . RealWorld($N,'Period') . ".<p>";
+        sprintf("%0.2g Km = ",$N['Luminosity2'])  . RealWorld($N,'Luminosity2') . ",<br>Which orbits at " .
+        sprintf("$Acc Km = ",$N['Distance'])  . RealWorld($N,'Distance') . ", with a periodicity of " .
+        sprintf("$Acc Hr = ",$N['Period'])  . RealWorld($N,'Period') . ".<p>";
   }      
   echo "<br>";
   if ($SurveyLevel >= 2) {
