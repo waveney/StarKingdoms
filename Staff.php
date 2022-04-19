@@ -114,9 +114,9 @@
     
     $txt .= "<li><a href=MapFull.php>Full Map Generate</a>\n";
     $txt .= "<li><a href=MapFull.php?Hex>Hex Map Generate</a>\n<p>";
-    $txt .= "<li><a href=MapEdit.php>Map Edit</a><p>\n";
-    $txt .= "<li><a href=MapValid.php>Map Validation</a>\n";
-    if (Access('God')) {
+    if (0 && Access('God')) {
+      $txt .= "<li><a href=MapEdit.php>Map Edit</a><p>\n";
+      $txt .= "<li><a href=MapValid.php>Map Validation</a>\n";
       $txt .= "<li><a href=MapFromCSV.php>Map from CSV</a>\n";
     }
     $txt .= "</ul><p>\n";
@@ -210,7 +210,7 @@
 
 //    $txt .= "<li><a href=InstrList.php>List Instructions</a>\n";
     $txt .= "<li><a href=TidyThings.php>Tidy up</a>  - Call this once a turn to remove unused temp entries<p>\n";
-    if (Access('God')) {
+    if (0 && Access('God')) {
       $txt .= "<li><a href=SetAllSensors.php>Set All Sensor data</a> - Bug Fix";
       $txt .= "<li><a href=SetAllSpeeds.php>Set All Speeds</a> - Bug Fix";
     }
@@ -229,7 +229,7 @@
 
     $txt .= "<li><a href=AnomalyList.php>Anomalies</a>\n";          
     $txt .= "<p>";
-    $txt .= "<li><a href=AnomalyImport.php>Anomaly Import</a>\n";          
+    if (0)    $txt .= "<li><a href=AnomalyImport.php>Anomaly Import</a>\n";          
     $txt .= "<p>";
     
 //    $txt .= "<li><a href=DeepSpace.php>Deep Space Projects</a>\n";          

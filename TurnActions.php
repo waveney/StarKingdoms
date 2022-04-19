@@ -434,86 +434,64 @@ function Instuctions() { // And other Instructions
       Spend_Credit($T['Whose'],-$cash,"Decommisioning " . $T['Name']);
       break;
 
-    case 'Analyse Anomaly': // Anomaly      
-
-if (0) {
-    // If no Anomaly - search and find.  (None found error and drop
-      $Aid = $T['ProjectId'];
-      if (isset($FA)) unset($FA);
-      if (!$Aid) {          
-        $Anoms = Gen_Get_Cond('Anomalies',"SystemId=" . $T['SystemId']);
-        if ($Anoms) {
-          $AList = [];
-          foreach($Anoms as $A) {
-            $Aid = $A['id'];
-            $FAs = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
-            if (empty($FAs[0]['id'])) continue;
-            $FA = $FAs[0];
-            if ($FA['State'] == 0 || $FA['State'] == 3) continue;
-            if ($FA['Progress'] > 0 || $FA['State'] == 2) {
-              $T['ProjectId'] = $Aid;
-              Put_Thing($T);
-              break;
-            }
-            
-            if ($FA['Progres'] < $A['AnomalyLevel']) {
-                $Pro = $T['Sensors']*$T['SensorLevel'];
-                $FA['Progress'] = min($FA['Progress']+$Pro, $A['AnomalyLevel']);
-                Gen_Put('FactionAnomaly',$FA);
-                $T['ProjectId'] = $Aid;
-                TurnLog($T['Name'] . " did $Pro towards completing anomaly " . $A['Name'] . " now at " . $FA['Progress'] . " / " , $A['AnomalyLevel']);
-              }
-              break 2;
-            }
-          }
-          TurnLog($T['Name'] . " is supposed to be analysing an anomaly - but there isn't one");                    
-        }
-
-
-
-    // Not Find FA - create new FA data
-    
-    // if progress==0 && State==1 other reqa ask GMs and wait
-    
-    // if prog==0 report starting study to GMs and Player
-    
+    case 'Analyse Anomaly': // Anomaly   
       $Aid = $T['ProjectId'];
       if ($Aid) {
         $A = Get_Anomaly($Aid);
-        $Fid = $T['Whose'];
-        $FAs = Gen_Get_Cond('FactionAnomaly',"FactionId=$Fid AND AnomalyId=$Aid");
-        if ($FAs) {
-          $FA = $FAs[0];
-          $Pro = $T['Sensors']*$T['SensorLevel'];
-          $FA['Progress'] = min($FA['Progress']+$Pro, $A['AnomalyLevel']);
-            Gen_Put('FactionAnomaly',$FA);
-            TurnLog($T['Name'] . " did $Pro towards completing anomaly " . $A['Name'] . " now at " . $FA['Progress'] . " / " , $A['AnomalyLevel']);
-          } else {
-            TurnLog($T['Name'] . " is supposed to be analysing an anomaly - but there isn't one selected");          
-          }
-        } else { // No anomaly is there one here?
-          $Anoms = Gen_Get_Cond('Anomalies',"SystemId=" . $T['SystemId']);
-          if ($Anoms) {
-            foreach($Anoms as $A) {
-              $Aid = $A['id'];
-              $FAs = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
-              if (empty($FAs[0]['id'])) continue;
-              $FA = $FAs[0];
-              if ($FA['Progres'] < $A['AnomalyLevel']) {
-                $Pro = $T['Sensors']*$T['SensorLevel'];
-                $FA['Progress'] = min($FA['Progress']+$Pro, $A['AnomalyLevel']);
-                Gen_Put('FactionAnomaly',$FA);
-                $T['ProjectId'] = $Aid;
-                TurnLog($T['Name'] . " did $Pro towards completing anomaly " . $A['Name'] . " now at " . $FA['Progress'] . " / " , $A['AnomalyLevel']);
+        $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
+        if (!$FA || ($FA['State'] == 0) ) {
+          TurnLog($T['Whose'], $T['Name'] . " is supposed to be analysing an anomaly - but you don't know of one here");
+          $T['Instruction'] = $T['ProjectId'] = 0;
+          Put_Thing($T);
+          break;
+        } else if ( ($FA['State'] == 1) && $A['OtherReq']) {
+           if ($NeedColStage2 == 0) {
+             echo "<form method=post action=TurnActions.php?ACTION=Process&S=16>";
+             $NeedColStage2 = 1;
+           }
+           GMLog("<p><a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a> is starting to analyse anomaly <a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . 
+                 "</a> which has other requirements. <b>" . $A['OtherReq'] . "</b>.  Are they met? " . fm_YesNo("AA$Tid" ,1,$Rtxt="Why" ));
+           GMLog("<p>");
+           break;
+        } else if ($FA['State'] == 3) {
+          TurnLog($T['Whose'], $T['Name'] . " is trying to analyse a completed Anomaly: " , $T['Name']);
+          $T['Instruction'] = $T['ProjectId'] = 0;
+          Put_Thing($T);
+          break;          
+        } else { // No action needed
+        
+        } 
+      } else {
+        $Anoms = Gen_Get_Cond('Anomalies',"SystemId=" . $T['SystemId'] . " ORDER BY AnomalyLevel");
+        if ($Anoms) {
+          foreach($Anoms as $A) {
+            $Aid = $A['id'];
+            $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
+            if (empty($FA['id'])) continue;
+
+            if ($FA['State'] == 0 || $FA['State'] == 3) continue;
+            if ($FA['Progress'] > 0 || $FA['State'] == 2 || ($FA['State'] == 1 && empty($A['OtherReq']))) {
+              $T['ProjectId'] = $Aid;
+              Put_Thing($T);
+              break 2;
+            } else if ($FA['State'] == 1 && !empty($A['OtherReq'])) {
+              if ($NeedColStage2 == 0) {
+                echo "<form method=post action=TurnActions.php?ACTION=Process&S=16>";
+                $NeedColStage2 = 1;
               }
+              $T['ProjectId'] = $Aid;
+              Put_Thing($T);
+
+              GMLog("<p><a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a> is starting to analyse anomaly <a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . 
+                    "</a> which has other requirements. <b>" . $A['OtherReq'] . "</b>.  Are they met? " . fm_YesNo("AA$Tid" ,1,$Rtxt="Why" ));
+              GMLog("<p>");
               break 2;
             }
           }
-          TurnLog($T['Name'] . " is supposed to be analysing an anomaly - but there isn't one");                    
         }
-        break;        
-}     
-      break; // TODO
+        TurnLog($T['Name'] . " is supposed to be analysing an anomaly - but there isn't a known one");                            
+      }
+      break;
       
     case 'Establish Embassy': 
       if ($NeedColStage2 == 0) {
@@ -678,6 +656,25 @@ function InstuctionsStage2() { // And other Instructions
       $T['MakeName'] = '';
       Put_Thing($T);
       break;
+
+    case 'Analyse Anomaly': // Anomaly   
+      $Aid = $T['ProjectId'];
+      if ($Aid) {
+        $A = Get_Anomaly($Aid);
+        $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
+        if ( ($FA['State'] == 1) && $A['OtherReq']) {
+          if (isset($_REQUEST["AA$Tid"]) &&  $_REQUEST["AA$Tid"] == "on") {
+            $FA['State'] = 2;
+            Gen_Put('FactionAnomaly',$FA);
+            break;
+          }
+          TurnLog($T['Whose'], $T['Name'] . " Could not start to analyse: " . $A['Name'] . " because " . $_REQUEST["ReasonAA$Tid"] . "\n<br>");
+          $T['Instruction'] = $T['ProjectId'] = 0;
+          Put_Thing($T);
+        } 
+      }
+      break;
+
       
     default:
     break;
@@ -1983,6 +1980,7 @@ function Do_Turn() {
       SKLog("Completed " . $Stages[$S]);
       $Sand['Progress'] |= 1<<$S;    
       $S++; // Deliberate drop through    
+
     case 'Process':
       $act = $Stages[$S];
       $act = preg_replace('/ /','',$act);
@@ -2002,6 +2000,7 @@ function Do_Turn() {
         GMLog("Processing cancelled<p>\n");
       }
       break;
+
     case 'Skip':
       if (isset($Stages[$S] )) {
         GMLog("<b>" . $Stages[$S] . " Skipped<b>");
@@ -2011,6 +2010,7 @@ function Do_Turn() {
         echo "Off the end of the turn";
       }
       break;
+
     case 'Revert':
       if (isset($Stages[$S] )) {
         GMLog("<b>" . $Stages[$S] . " Reverted<b>");
@@ -2020,6 +2020,7 @@ function Do_Turn() {
         GMLog("Off the end of the turn");
       }
       break;    
+
     case 'RevertAll':
       if (isset($Stages[$S] )) {
         SKLog("Reverted All");
@@ -2028,6 +2029,7 @@ function Do_Turn() {
         GMLog("Off the end of the turn");
       }
       break;
+
     case 'StageDone':
 //      $S = $_REQUEST['S'];
       $SName = $_REQUEST['Stage'];

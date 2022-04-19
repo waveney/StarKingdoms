@@ -244,7 +244,7 @@
   };
   
   if (!$Faction) {
-    fwrite($Dot,"Historical [shape=box style=filled fillcolor=white penwidth=2 color=\"" . $F['MapColour'] . '"' .
+    fwrite($Dot,"Historical [shape=box style=filled fillcolor=white penwidth=2 color=\"CadetBlue\"" .
           ($typ?" pos=\"" . $HexLegPos[$ls][0] . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");  
     $ls++;  
     fwrite($Dot,"ZZ99 [shape=box style=filled fillcolor=yellow penwidth=2 " . NodeLab("Interest","Other") . 

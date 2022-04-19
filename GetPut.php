@@ -1327,6 +1327,14 @@ function Gen_Get_Cond($Table,$Cond) {
   return $Ts;
 }
 
+function Gen_Get_Cond1($Table,$Cond) {
+  global $db;
+  $Q = "SELECT * FROM $Table WHERE $Cond";
+  $res = $db->query("SELECT * FROM $Table WHERE $Cond");
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
+  return [];
+}
+
 function Gen_Select($Clause) {
   global $db;
   $Ts = [];
