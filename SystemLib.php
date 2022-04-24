@@ -36,7 +36,7 @@ function Dynamic_Update(&$N,$Tinc=0) {
   $NewPeriod = $CurPeriod - $TurnDecay;
   $NewDistance = ((($NewPeriod/(2*$pi))**2)*$G*($M1+$M2))**(1/3)/1000;
   
-  echo "NewPeriod = $NewPeriod, NewDistance = $NewDistance<br\n";
+//  echo "NewPeriod = $NewPeriod, NewDistance = $NewDistance<br\n";
 //  Decay = // =(192*PI()*($B$1^(5/3)*$B$2*$B$3*($B$3+$B$2)^(-1/3))/(5*$B$4^5*(1-$B$5^2)^(7/2)*(1+73/24*$B$5^2+37/96*$B$5^4)*(E6/2*PI())))
 
   if ($Tinc) {

@@ -676,8 +676,9 @@ function Update_Militia(&$W,&$Dists) {
     }
   } else {
     $MNames = [];
-    foreach ($Mils as $Ml) $MNames[$Ml['Name']] = 1;
-    $M = ['Type'=>20, 'CurHealth'=>40, 'OrigHealth'=>40, 'Whose'=>$W['FactionId'], 'SystemId'=>$Sys, 'WithinSysLoc'=>$loc, 'BuildState'=>3 ];
+    foreach ($Mils as $Ml) $MNames[$Ml['Name']] = 1; // Didts & Dist2 give short cut to world and districts
+    $M = ['Type'=>20, 'CurHealth'=>40, 'OrigHealth'=>40, 'Whose'=>$W['FactionId'], 'SystemId'=>$Sys, 'WithinSysLoc'=>$loc, 'BuildState'=>3, 
+           'Dist1'=> $W['ThingType'], 'Dist2'=>$W['ThingType']];
     $Mn = 1;
     for ($Mnum = count($Mils); $Mnum < $Dcount; $Mnum++) {
       while (isset($MNames["Militia $Mname $Mn"])) $Mn++;

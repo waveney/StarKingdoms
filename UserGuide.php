@@ -60,6 +60,11 @@ Give the System Reference, the current names of Planets/moons to identify the on
 
 If you control the system they are public names, otherwise they only appear to you.<p>
 
+<h2>Anomalies that have been seen</h2>
+A list of all known anomalies and where you are on analysing them.<p>
+
+Note: Analysing Anomalies is an instruction see below.<p>
+
 
 <h2>Worlds and Things with Projects</h2>
 To manage construction, and district based projects. <p>
@@ -89,7 +94,7 @@ Click on the name to change names, crew, gadgets, notes, description, add an ima
 
 Click on the <b>Move</b> to have that thing move in your next turn.  It shows a mini map - click on the link you want<p>
 
-Movement here only works for Ships and Agents at the moment.<p>
+Movement from the list only works for Ships and Agents at the moment.<p>
 
 Militia will only be created for a world that is under attack.<p>
 
@@ -100,6 +105,21 @@ If you click on the name of the thing, for lots more detail:
 Only those actions you can actually do at that location are shown.<p>
 
 Some actions ask supplimentary questions such as the district type to make on colonisation.<p>
+
+One Instruction of note is for <b>Analyse Anomaly</b>.  You must be where the anomaly is to issue the instruction.<p>
+
+If there are multiple anomalies, you will be asked to pick the one you want to study.<p>
+
+Other ships in the same location can also help study the same anomaly, you need to give each their own instruction.<p>
+
+There is no automation covering Anomaly Collaboration at present - if used notify the GMs.<p>
+
+<h3>Deep Space Construction</h3>
+Almost all Deep Space construction projects are built in.<p>
+
+Your ships need to be in the location at the start of the turn to do a DSC project.
+
+There is no automation covering multiple ships working together on DSC, if used please notify the GMs.<p>
 
 <h3>Moving armies and named characters</h3>
 You can load/unload named characters to and from things and armies on to transport ships.  These can normally be done both now and in turn.<p>
@@ -123,6 +143,8 @@ Current credits and this turns expenditure and expected income.<p>
 
 This also shows any science points and Adianite you have.<p>
 
+Please use turn text to cover any use of science points or Adianite.<p>
+
 <h2>Banking</h2>
 Transfer credits to another player or for RP actions.  You can do one off transfers and standing orders - No direct debits.<p>
 
@@ -136,9 +158,9 @@ Access to automatically generated text for all turns covereying everything done 
 <h2>Submit Turn</h2>
 Guess what that does?<p>
 
-In the future it will include checking for errors and ommisions<p>
+It does some limited checking for errors and ommisions<p>
 
-Once submitted, you can't do much, but can revert to Turn planning as long as you do it before the GMs start turn processing.<p>
+Once submitted, you view everything but not do changes.  You can revert to Turn planning as long as you do it before the GMs start turn processing.<p>
 <h2>Faction Information</h2>
 Name, total credits, traits, a picture, science points.<P>
 
@@ -160,7 +182,7 @@ It is hypothetically possible for a player in one game to be a GM in another (no
 Most User Guide to be written for this<p>
 
 <h1>Technical bits - if you are interested</h1>
-Mostly written in php (19K lines), some javascript (1700 lines), some css.  About 44 tables at time of writting of this paragraph.<p>
+Mostly written in php (20K lines), some javascript (1700 lines), some css.  About 44 tables at time of writting of this paragraph.<p>
 
 Graphics by GraphViz.<p>
 Uses the star system generator at <a href=https://donjon.bin.sh/scifi/system/index.cgi>https://donjon.bin.sh/scifi/system/index.cgi</a> to initially populate the map.<p>

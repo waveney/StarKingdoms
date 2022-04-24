@@ -1850,7 +1850,7 @@ function SpotAnomalies() {
         }
               
         TurnLog($LastWho,"You have spotted an anomaly: " . $A['Name'] . " in " . $Systems[$Sid] . "\n" .  $Parsedown->text($A['Description']) . 
-                "\nIt will take " . $A['AnomalyLevel'] . " scan level actions to cmplete.\n\n");
+                "\nIt will take " . $A['AnomalyLevel'] . " scan level actions to complete.\n\n");
                 
         GMLog($Facts[$T['Whose']]['Name'] . " have just spotted anomaly: <a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . "</a> in " . $Systems[$Sid] . " from the " . $T['Name'] );
         $FA['State'] = 1;
@@ -1872,6 +1872,53 @@ function SpotAnomalies() {
 function MilitiaArmyRecovery() {
   GMLog("Militia Recovery is currently Manual<p>");
   GMLog("Also Self Repair Armour<p>");
+  
+  $Things = Get_Things_Cond(0,"CurHealth!=OrigHealth");
+  $TTypes = Get_Thing_Types();
+  $MTypes = Get_Module_Types();
+  $MTNs = Mod_Types_From_Names($MTypes);
+  
+  foreach ($Things as $T) {
+    if ($TTypes[$T['Type']]['Name'] == 'Militia') {
+      // if not in conflit, recovery some
+      $Conflict = 0; 
+      $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
+      if ($Conf) $Conflict = $Conf[0]['Conflict'];
+      if ($Conflict) continue;  // No recovery allowed
+      
+      $Dists = Gen_Get_Cond('Districts',"HostType=" . $T['Dist1'] . " AND HostId=" . $T['Dist2']);
+      $Dcount = 0;
+      foreach($Dists as $D) $Dcount += $D['Number'];
+      $Rec = floor($Dcount/2)+1;
+      $T['CurHealth'] = max($T['OrigHealth'], $T['CurHealth']+$Rec);
+      Put_Thing($T);
+      
+    }
+    
+    if ($TTypes[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) {
+      $Self = Get_ModulesType($T['id'],$MTNs['Self-Repairing Armour']);
+      if (isset($Self[0])) {
+        $Rep = $Self[0]['Number']*$Self[0]['Level']*2;
+        $T['CurHealth'] = min($T['OrigHealth'],$T['CurHealth']+$Rep);
+        Put_Thing($T);
+      }
+    }  
+    
+    if ($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES) {
+      $Med = Get_ModulesType($T['id'],$MTNs['Medical Corps']);
+      if (isset($Med[0])) {
+        $Rep = $Self[0]['Number']*$Self[0]['Level']*2;
+        $Conflict = 0; 
+        $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
+        if ($Conf) $Conflict = $Conf[0]['Conflict'];
+        if (!$Conflict) $Rep*=2;
+        $T['CurHealth'] = min($T['OrigHealth'],$T['CurHealth']+$Rep);
+        Put_Thing($T);
+      }
+    }  
+     
+  }
+  
   return 1;
 }
 
@@ -1907,9 +1954,17 @@ function TidyUpMovements() {
 }
 
 function RecalcProjectHomes() {
+  // Proj Homes, Worlds
   include_once("HomesLib.php");
   Recalc_Project_Homes('SKLog'); // in ThingLib - this is to add new project homes that have been created by colonisation etc.
   Recalc_Worlds();
+  
+  // Dynamic Systems
+  
+  $DSys = Gen_Get_Cond('Systems',"Flags>0");
+  foreach($DSys as $N) {
+    Dynamic_Update($N,1);
+  }
   return 1;
 }
 
