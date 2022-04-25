@@ -41,7 +41,16 @@
   $Parsedown = new Parsedown();
     
   if ($FAs) {
-    echo "<table border><tr><td>Name<td>Where<td>State<td>Progress<td colspan=4>Description\n";
+    $coln = 0;
+    echo "<div class=tablecont><table id=indextable border width=100% style='min-width:1400px'>\n";
+    echo "<thead><tr>";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Where</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>State</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Progress</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Description</a>\n";  
+    echo "</thead><tbody>";
+
     foreach($FAs as $FA) {
       $Aid = $FA['AnomalyId'];
       $A = Get_Anomaly($Aid);
