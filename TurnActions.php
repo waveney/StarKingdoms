@@ -1870,8 +1870,8 @@ function SpotAnomalies() {
 
 
 function MilitiaArmyRecovery() {
-  GMLog("Militia Recovery is currently Manual<p>");
-  GMLog("Also Self Repair Armour<p>");
+//  GMLog("Militia Recovery is currently Manual<p>");
+//  GMLog("Also Self Repair Armour<p>");
   
   $Things = Get_Things_Cond(0,"CurHealth!=OrigHealth");
   $TTypes = Get_Thing_Types();
@@ -2019,7 +2019,7 @@ function Do_Turn() {
              'Coded','Coded', 'Coded', 'No',
              'No', 'No', 'No','Coded',
              'Partial','Coded', 'No','Partial (not nebula)',
-             'Coded', 'Coded', 'No', 'No',
+             'Coded', 'Coded', 'No', 'Coded',
              'No','Coded','Coded','Coded?'];
   $Sand = Get_TurnNumber();
 // var_dump($Sand);

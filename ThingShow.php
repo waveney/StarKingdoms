@@ -207,6 +207,8 @@ if ($GM) echo "Lid:$Lid SystemId:" . $T['SystemId']; // TEST CODE DELIBARATELY S
           echo "<tr><td>Taking Link:<td>" . fm_select($SelLinks,$T,'LinkId',0," style=color:" . $SelCols[$T['LinkId']] ,'',0,$SelCols);
           if ($Lid > 0 && !strpos($SelLinks[$Lid],'?')) {
             echo "<td>To:  " . fm_select($NewSyslocs,$T,'NewLocation');
+          } else {
+            echo "<td>Move to:  " . fm_select($NewSyslocs,$T,'NewLocation');          
           }
         }
       }
