@@ -36,10 +36,12 @@
 
   global $db, $GAME, $AnomalyStates, $GAMEID;
 
+  $AnStateCols = ['White','Lightgreen','Yellow','Pink'];
   $FAs = Gen_Get_Cond('FactionAnomaly',"FactionId=$Fid AND State>0");
 
   $Parsedown = new Parsedown();
     
+
   if ($FAs) {
     $coln = 0;
     echo "<div class=tablecont><table id=indextable border width=100% style='min-width:1400px'>\n";
@@ -55,10 +57,11 @@
       $Aid = $FA['AnomalyId'];
       $A = Get_Anomaly($Aid);
       $N = Get_System($A['SystemId']);
-      echo "<tr><td>" . $A['Name'] . "<td>" . $N['Ref'] . "<td>" . $AnomalyStates[$FA['State']] . "<td>";
+      echo "<tr><td>" . $A['Name'] . "<td>" . $N['Ref'] . "<td style='Background:" . $AnStateCols[$FA['State']] . ";'>" . $AnomalyStates[$FA['State']] . "<td>";
       echo $FA['Progress'] . " / " . $A['AnomalyLevel'] . "<td colspan=4>" .  $Parsedown->text($A['Description']);
+//      echo "</tr>";
     }
-    echo "</table>";
+    echo "</tbody></table></div>";
   } else {
     echo "<h2>You haven't found any yet</h2>\n";
   
