@@ -934,7 +934,6 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       break;
 
     case 'Analyse Anomoly': // Analyse
-if ($GM) {
       if ($T['ProjectId'] == 0) { // Pid == AnomId
         $Anoms = Gen_Get_Cond('Anomalies',"SystemId=" . $T['SystemId']);
         $Alist = [];
@@ -968,8 +967,6 @@ if ($GM) {
         $Acts = $Anom['AnomalyLevel'];
         $T['Progress'] = $FA['Progress'];
       }
-/**/
-}
       break;
       
     case 'Make Asteroid Mine':

@@ -582,7 +582,7 @@ function Instuctions() { // And other Instructions
         TurnLog($T['Whose'],"Could not afford to start a Command Relay Station in " .$N['Ref'],$T);
       }
       
-    case 'Repair Command Node': // Not coded yet
+    case 'Repair Command Node': 
       if (!Spend_Credit($T['Whose'],$T['InstCost'],"Repair Command Node " . $N['Ref']) ) {
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to Repair Command Node " .$N['Ref'],$T);
