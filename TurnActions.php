@@ -225,14 +225,16 @@ function StartProjects() {
             continue;
           }
         }
-        if ($T['Level'] != $P['Level']) {
-          if ($T['Level'] > $P['Level']) {
-            $P['Status'] = 5; // Not Started
+        if (($ProjTypes[$P['Type']]['Props'] & 64) == 0) { // No Level Check
+          if ($T['Level'] != $P['Level']) {
+            if ($T['Level'] > $P['Level']) {
+              $P['Status'] = 5; // Not Started
 
-            TurnLog($P['FactionId'],'Not starting as project level less than Thing Level: ' . $P['Name']);
-            GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as project level less than Thing Level: ' . $P['Name']);
-            Put_Project($P);
-            continue;      
+              TurnLog($P['FactionId'],'Not starting as project level less than Thing Level: ' . $P['Name']);
+              GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as project level less than Thing Level: ' . $P['Name']);
+              Put_Project($P);
+              continue;      
+            }
           } 
           // Warning?       
         }
@@ -265,7 +267,7 @@ function StartProjects() {
     if ($Cost == 0 || Spend_Credit($P['FactionId'],$Cost,'Starting: ' . $P['Name'])) {
       $P['Status'] = 1; // Started
       TurnLog($P['FactionId'],'Starting ' . $P['Name'] . " Cost: " . Credit() . " $Cost");
-      GMLog($Facts[$P['FactionId']]['Name'] . 'Starting ' . $P['Name'] . " Cost: " . Credit() . " $Cost");
+      GMLog($Facts[$P['FactionId']]['Name'] . ' Starting ' . $P['Name'] . " Cost: " . Credit() . " $Cost");
       if (($ProjTypes[$P['Type']]['Props'] & 2) && (($ProjTypes[$P['Type']]['Props'] &16) ==0 )) { // Has a thing      
         if ($Tid) {
           $T['BuildState'] = 1; // Building
