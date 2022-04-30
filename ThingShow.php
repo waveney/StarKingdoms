@@ -115,7 +115,10 @@ function Show_Thing(&$T,$Force=0) {
   } else if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
   // WHERE
     $Lid = $T['LinkId'];
-if ($GM) echo "Lid:$Lid SystemId:" . $T['SystemId']; // TEST CODE DELIBARATELY STILL BEING USED - GM ONLY
+// if ($GM) echo "Lid:$Lid SystemId:" . $T['SystemId']; // TEST CODE DELIBARATELY STILL BEING USED - GM ONLY
+    if ($Lid<0 && Access('God') ) {
+      echo fm_number0("Lid",$T,'LinkId') . fm_number1("SysId",$T,'SystemId');
+    }
     if ($Lid >= 0 || $Lid == -2 || $Lid == -4) { // Insystem
       if ($GM) {
         echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId',1);
