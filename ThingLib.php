@@ -12,7 +12,7 @@ $Fields = ['Engineering','Physics','Xenology'];
 $Tech_Cats = ['Core','Supp','Non Std'];
 $CivMil = ['','Civilian','Military'];
 $BuildState = ['Planning','Building','Shakedown','Complete','Ex','Abandonded','Missing In Action'];
-$ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse Anomoly','Establish Embassy','Make Outpost','Make Asteroid Mine','Make Minefield',
+$ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse Anomaly','Establish Embassy','Make Outpost','Make Asteroid Mine','Make Minefield',
                 'Make Orbital Repair Yard','Build Space Station','Expand Space Station','Make Deep Space Sensor','Make Advanced Asteroid Mine','Build Stargate',
                 'Make Planet Mine', 'Construct Command Relay Station', 'Repair Command Node','Build Planetary Mine'];
 $Advance = ['','','Advanced ','Very Advanced ','Ultra Advanced ','Evolved '];

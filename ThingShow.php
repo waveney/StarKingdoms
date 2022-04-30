@@ -734,7 +734,7 @@ function Show_Thing(&$T,$Force=0) {
       if (isset($N['id']) && Get_Things_Cond($Fid,"Type=" . $TTNames['Orbital Repair Yards'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) break 2; // Orbital Shipyard     
       continue 2;
     
-    case 'Analyse Anomoly': // Analyse
+    case 'Analyse Anomaly': // Analyse
       if ($T['Sensors'] == 0) continue 2;
       $Anoms = Gen_Get_Cond('Anomalies',"SystemId=" . $T['SystemId']);
       foreach($Anoms as $A) {
@@ -853,7 +853,7 @@ function Show_Thing(&$T,$Force=0) {
   }
 
 /*
-$ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse Anomoly','Establish Embassy','Make Outpost','Make Asteroid Mine','Make Minefield',
+$ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse Anomaly','Establish Embassy','Make Outpost','Make Asteroid Mine','Make Minefield',
                 'Make Orbital Repair Yard','Build Space Station','Expand Space Station','Make Deep Space Sensor','Make Advanced Asteroid Mine','Build Stargate',
                 'DSC Special'];
 */
@@ -936,7 +936,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       $ProgShow = 2;      
       break;
 
-    case 'Analyse Anomoly': // Analyse
+    case 'Analyse Anomaly': // Analyse
       if ($T['ProjectId'] == 0) { // Pid == AnomId
         $Anoms = Gen_Get_Cond('Anomalies',"SystemId=" . $T['SystemId']);
         $Alist = [];

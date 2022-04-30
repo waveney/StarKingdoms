@@ -1246,18 +1246,18 @@ function InstructionsProgress() {
         
       case 'Analyse Anomaly':
         $Aid = $T['ProjectId'];
+        $Fid = $T['Whose'];
         if ($Aid) {
           $A = Get_Anomaly($Aid);
-          $Fid = $T['Whose'];
           $FAs = Gen_Get_Cond('FactionAnomaly',"FactionId=$Fid AND AnomalyId=$Aid");
           if ($FAs) {
             $FA = $FAs[0];
             $Pro = $T['Sensors']*$T['SensorLevel'];
             $FA['Progress'] = min($FA['Progress']+$Pro, $A['AnomalyLevel']);
             Gen_Put('FactionAnomaly',$FA);
-            TurnLog($T['Name'] . " did $Pro towards completing anomaly " . $A['Name'] . " now at " . $FA['Progress'] . " / " , $A['AnomalyLevel']);
+            TurnLog($Fid,$T['Name'] . " did $Pro towards completing anomaly " . $A['Name'] . " now at " . $FA['Progress'] . " / " , $A['AnomalyLevel']);
           } else {
-            TurnLog($T['Name'] . " is supposed to be analysing an anomaly - but there isn't one selected");          
+            TurnLog($Fid, $T['Name'] . " is supposed to be analysing an anomaly - but there isn't one selected");          
           }
         } else { // No anomaly is there one here?
           $Anoms = Gen_Get_Cond('Anomalies',"SystemId=" . $T['SystemId']);
@@ -1272,12 +1272,12 @@ function InstructionsProgress() {
                 $FA['Progress'] = min($FA['Progress']+$Pro, $A['AnomalyLevel']);
                 Gen_Put('FactionAnomaly',$FA);
                 $T['ProjectId'] = $Aid;
-                TurnLog($T['Name'] . " did $Pro towards completing anomaly " . $A['Name'] . " now at " . $FA['Progress'] . " / " , $A['AnomalyLevel']);
+                TurnLog($Fid,$T['Name'] . " did $Pro towards completing anomaly " . $A['Name'] . " now at " . $FA['Progress'] . " / " , $A['AnomalyLevel']);
               }
               break 2;
             }
           }
-          TurnLog($T['Name'] . " is supposed to be analysing an anomaly - but there isn't one");                    
+          TurnLog($Fid,$T['Name'] . " is supposed to be analysing an anomaly - but there isn't one");                    
         }
         break;        
       default: 
