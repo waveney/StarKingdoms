@@ -963,7 +963,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
         
       } else {
         $Anom = Get_Anomaly($T['ProjectId']);
-        $Aid = Anom['id'];
+        $Aid = $Anom['id'];
         $FA = (Gen_Get_Cond('FactionAnomaly',"FactionId=$Fid AND AnomalyId=$Aid"))[0];
         
         $ProgShow = 2;

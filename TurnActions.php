@@ -1255,7 +1255,7 @@ function InstructionsProgress() {
             $Pro = $T['Sensors']*$T['SensorLevel'];
             $FA['Progress'] = min($FA['Progress']+$Pro, $A['AnomalyLevel']);
             Gen_Put('FactionAnomaly',$FA);
-            TurnLog($Fid,$T['Name'] . " did $Pro towards completing anomaly " . $A['Name'] . " now at " . $FA['Progress'] . " / " , $A['AnomalyLevel']);
+            TurnLog($Fid,$T['Name'] . " did $Pro towards completing anomaly " . $A['Name'] . " now at " . $FA['Progress'] . " / " . $A['AnomalyLevel']);
           } else {
             TurnLog($Fid, $T['Name'] . " is supposed to be analysing an anomaly - but there isn't one selected");          
           }
@@ -1272,7 +1272,7 @@ function InstructionsProgress() {
                 $FA['Progress'] = min($FA['Progress']+$Pro, $A['AnomalyLevel']);
                 Gen_Put('FactionAnomaly',$FA);
                 $T['ProjectId'] = $Aid;
-                TurnLog($Fid,$T['Name'] . " did $Pro towards completing anomaly " . $A['Name'] . " now at " . $FA['Progress'] . " / " , $A['AnomalyLevel']);
+                TurnLog($Fid,$T['Name'] . " did $Pro towards completing anomaly " . $A['Name'] . " now at " . $FA['Progress'] . " / " . $A['AnomalyLevel']);
               }
               break 2;
             }
