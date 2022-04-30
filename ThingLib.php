@@ -634,7 +634,11 @@ function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0) {
       if ($T['Whose']) echo " <span style='background:" . $Factions[$T['Whose']]['MapColour'] . "'>" . 
         ($Factions[$T['Whose']]['Adjective']?$Factions[$T['Whose']]['Adjective']:$Factions[$T['Whose']]['Name']) . "</span>";
       if (($T['Whose'] == $Fid) && ($ThingTypes[$T['Type']]['Properties'] & THING_CAN_BE_ADVANCED) && ($T['Level'] > 1)) echo ' ' . $Advance[$T['Level']];
-      echo " " . $ThingTypes[$T['Type']]['Name'];
+      if ($T['Whose']==0 && Access('GM')) {
+        echo "<a href=ThingEdit.php?id=" . $T['id'] . ">" . $ThingTypes[$T['Type']]['Name'] . "</a>";
+      } else {
+        echo " " . $ThingTypes[$T['Type']]['Name'];
+      }
       if ($Images && !empty($T['Image'])) echo " <img valign=top src=" . $T['Image'] . " height=100> ";
       echo "<br clear=all>\n";
       $LastWhose = $T['Whose'];

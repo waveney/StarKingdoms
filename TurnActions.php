@@ -12,13 +12,14 @@
   A_Check('GM');
 
 // For logging turn processing events that need following up or long term record keeping, set e to echo to GM
-function GMLog($text) {
+function GMLog($text,$Bold=0) {
   global $GAME,$GAMEID;
   static $LF;
   if (!isset($LF)) {
      if (!file_exists("Turns/$GAMEID/" . $GAME['Turn'])) mkdir("Turns/" . $GAMEID . "/" . $GAME['Turn'],0777,true);
      $LF = fopen("Turns/$GAMEID/" . $GAME['Turn'] . "/0.txt", "a+");
   }
+  if ($Bold) $text = "<b>" . $text . "</b>";
   fwrite($LF,"$text\n");
   echo "$text<br>";  
 }
@@ -202,7 +203,7 @@ function StartProjects() {
         if (!$T['DesignValid']) {
           $P['Status'] = 5; // Not Started
           TurnLog($P['FactionId'],'Not starting as design invalid: ' . $P['Name']);
-          GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as design invalid: ' . $P['Name']);
+          GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as design invalid: ' . $P['Name'],1);
           Put_Project($P);
           continue;      
         }
@@ -210,7 +211,7 @@ function StartProjects() {
 //var_dump($Where,$T);
           $P['Status'] = 5; // Not Started
           TurnLog($P['FactionId'],'Not starting as not in same system: ' . $P['Name']);
-          GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as not in same system: ' . $P['Name']);
+          GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as not in same system: ' . $P['Name'],1);
           Put_Project($P);
           continue;     
         }
@@ -220,7 +221,7 @@ function StartProjects() {
           } else {
             $P['Status'] = 5; // Not Started
             TurnLog($P['FactionId'],'Not starting as not at the same planet: ' . $P['Name']);
-            GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as not at the same planet: ' . $P['Name']);
+            GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as not at the same planet: ' . $P['Name'],1);
             Put_Project($P);
             continue;
           }
@@ -231,7 +232,7 @@ function StartProjects() {
               $P['Status'] = 5; // Not Started
 
               TurnLog($P['FactionId'],'Not starting as project level less than Thing Level: ' . $P['Name']);
-              GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as project level less than Thing Level: ' . $P['Name']);
+              GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as project level less than Thing Level: ' . $P['Name'],1);
               Put_Project($P);
               continue;      
             }
@@ -246,7 +247,7 @@ function StartProjects() {
           if ($T2['SystemId'] != 0 && $T2['SystemId'] != $Where[0]) {
             $P['Status'] = 5; // Not Started
             TurnLog($P['FactionId'],'Not starting as not in same system: ' . $P['Name']);
-            GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as not in same system: ' . $P['Name']);
+            GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as not in same system: ' . $P['Name'],1);
             Put_Project($P);
             continue;     
           }
@@ -256,7 +257,7 @@ function StartProjects() {
             } else {
               $P['Status'] = 5; // Not Started
               TurnLog($P['FactionId'],'Not starting as not at the same planet: ' . $P['Name']);
-              GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as not at the same planet: ' . $P['Name']);
+              GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as not at the same planet: ' . $P['Name'],1);
               Put_Project($P);
               continue;             
             }
@@ -295,7 +296,7 @@ function StartProjects() {
     } else {
       $P['Status'] = 5; // Not Started
       TurnLog($P['FactionId'],'Not starting as not enough Credits: ' . $P['Name']);
-      GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as not enough Credits: ' . $P['Name']);
+      GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as not enough Credits: ' . $P['Name'],1);
       Put_Project($P);
       continue;             
     }
@@ -373,7 +374,7 @@ function Instuctions() { // And other Instructions
           }
         }
         if (empty($HabPs)) {
-          GMLog("<h2>Planet not found - Tell Richard</h2>");
+          GMLog("<h2>Planet not found - Tell Richard</h2>",1);
           var_dump($T);
           exit;
         }
@@ -826,7 +827,7 @@ function LoadTroops() {
       if (($Carry&15) <2) {
         TurnLog($T['Whose'],"You tried to load " . $T['Name'] . " on to " . $H['Name'] . " access was denied by " . $Facts[$H['Whose']]['Name']);
         TurnLog($H['Whose'],  $Facts[$T['Whose']]['Name'] . " tried to load " . $T['Name'] . " on to " . $H['Name'] . " you denied access");
-        GMLog($Facts[$T['Whose']]['Name'] . " tried to load " . $T['Name'] . " on to " . $H['Name'] . " access was denied by " . $Facts[$H['Whose']]['Name']);
+        GMLog($Facts[$T['Whose']]['Name'] . " tried to load " . $T['Name'] . " on to " . $H['Name'] . " access was denied by " . $Facts[$H['Whose']]['Name'],1);
         $T['LinkId'] = 0;
         Put_Thing($T);
         continue; 
@@ -840,7 +841,7 @@ function LoadTroops() {
       if ($H['CargoSpace'] < $Used + $T['Level']) {
         TurnLog($T['Whose'],"You tried to load " . $T['Name'] . " on to " . $H['Name'] . " there is not enough space");
         if ($H['Whose'] != $T['Whose']) TurnLog($H['Whose'],  $Facts[$T['Whose']]['Name'] . " tried to load " . $T['Name'] . " on to " . $H['Name'] . " there is not enough space");
-        GMLog($Facts[$T['Whose']]['Name'] . " tried to load " . $T['Name'] . " on to " . $H['Name'] . " there is not enough space");
+        GMLog($Facts[$T['Whose']]['Name'] . " tried to load " . $T['Name'] . " on to " . $H['Name'] . " there is not enough space",1);
         $T['LinkId'] = 0;
         Put_Thing($T);
         continue;
