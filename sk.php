@@ -348,7 +348,7 @@ function dostaffhead($title,$extras=[]) {
   }
   $head_done = 1;
   
-  if (isset($FACTION['TurnState']) && $FACTION['TurnState'] >1 && (!$GM)) fm_addall('readonly');
+  if (isset($FACTION['TurnState']) && $FACTION['TurnState'] >1 && (!Access('GM'))) fm_addall('readonly');
 
 }
 
