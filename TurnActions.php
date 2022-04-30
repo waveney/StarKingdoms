@@ -44,7 +44,7 @@ function TurnLog($Fid,$text,&$T=0) {
      $LF[$Fid] = fopen("Turns/$GAMEID/" . $GAME['Turn'] . "/$Fid.txt", "a+");
   }
   fwrite($LF[$Fid],"$text\n");
-  if ($T) $T['History'] .= "Turn#" . ($GAME['Turn']+1) . ": " . $text . "\n";
+  if ($T) $T['History'] .= "Turn#" . ($GAME['Turn']) . ": " . $text . "\n";
 }
 
 

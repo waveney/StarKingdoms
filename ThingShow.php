@@ -565,7 +565,16 @@ function Show_Thing(&$T,$Force=0) {
   }
   
   if ($GM) echo "<tr>" . fm_textarea('GM Notes',$T,'GM_Notes',8,2,'class=NotSide');
-  echo "<tr>" . fm_textarea('History',$T,'History',8,2,'','','',($GM?'':'Readonly'));
+  
+  $History = preg_split("/\n/",$T['History']);
+  $RevHist = implode("\n",array_reverse($History));
+  
+  if (isset($_REQUEST['EDHISTORY'])) {
+    echo "<tr>" . fm_textarea('History',$T,'History',8,2,'','','',($GM?'':'Readonly'));
+  } else {
+//    echo "<tr>" . fm_textarea('History',$T,'History',8,2,'','','',($GM?'':'Readonly'));
+    echo "<tr><td>History:<td colspan=8><textarea rows=2>$RevHist</textarea>";
+  }
   if ($tprops & THING_HAS_2_FACTIONS) echo "<tr>" . fm_radio('Other Faction',$FactNames ,$T,'OtherFaction','',1,'colspan=6','',$Fact_Colours,0); 
   if  ($tprops & (THING_HAS_MODULES | THING_HAS_ARMYMODULES)) {
     if ($GM) {

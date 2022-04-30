@@ -525,7 +525,9 @@ function New_Thing(&$t) {
     $GM = Access('GM');
   }
 
-  if ($GM) echo "<h2>GM: <a href=ThingEdit.php?id=$tid&FORCE>This page in Player Mode</a></h2>";  
+  if ($GM) {
+    echo "<h2>GM: <a href=ThingEdit.php?id=$tid&FORCE>This page in Player Mode</a>" . (Access('God')?", <a href=ThingEdit.php?id=$tid&EDHISTORY>Edit History</a>":"") . "</h2>";  
+  }
   if (empty($t) || ($t['Whose'] != $Fid && !$GM)) {
      echo "<h2 class=Err>Sorry that thing is not yours</2>";
   } else {
