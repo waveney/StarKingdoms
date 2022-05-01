@@ -100,7 +100,7 @@ function Recalc_Project_Homes($Logf=0) {
                   if ($H['id'] == $MHi) {
                     $H['Inuse'] = 1;
                     if ($H['ThingType'] != 2 || $H['ThingId'] != $M['id']) {
-                      $H['ThingType'] = 1;
+                      $H['ThingType'] = 2;
                       $H['ThingId'] = $M['id'];
                       $loc = Within_Sys_Locs($N,- $M['id']);
                       $H['SystemId'] = $P['SystemId'];

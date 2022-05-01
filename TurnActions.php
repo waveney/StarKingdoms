@@ -435,6 +435,7 @@ function Instuctions() { // And other Instructions
       $cash = 10*$Lvl*Has_Tech($T['Whose'],'Ship Construction');
       TurnLog($T['Whose'], "The " . $T['Name'] . " has been decommisioned gaining you " . Credit() . $cash, $T);
       Spend_Credit($T['Whose'],-$cash,"Decommisioning " . $T['Name']);
+      GMLog($Facts[$T['Whose']]['Name'] . " - " . $T['Name'] . " has been decommisioned"); 
       break;
 
     case 'Analyse Anomaly': // Anomaly   
@@ -443,7 +444,9 @@ function Instuctions() { // And other Instructions
         $A = Get_Anomaly($Aid);
         $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
         if (!$FA || ($FA['State'] == 0) ) {
+          $Sys = Get_System($T['SystemId']);
           TurnLog($T['Whose'], $T['Name'] . " is supposed to be analysing an anomaly - but you don't know of one here");
+          GMLog($Facts[$T['Whose']]['Name'] . " - " . $T['Name'] . " is supposed to be analysing an anomaly - but you don't know of one at" . $Sys['Ref']);
           $T['Instruction'] = $T['ProjectId'] = 0;
           Put_Thing($T);
           break;
@@ -654,6 +657,7 @@ function InstuctionsStage2() { // And other Instructions
       $OF = $Facts[$T['OtherFaction']];
       TurnLog($T['Whose'],"You have created an Embassy in " . $N['Ref'] . " with the " . $OF['Name']);
       TurnLog($T['OtherFaction'],"An embassy to you has been setup by " . $Facts[$T['Whose']]['Name']);
+      GMLog($T['OtherFaction'],"An embassy to "  . $Facts[$T['Whose']]['Name'] . " has been setup in " . $N['Ref'] . " with the " . $OF['Name']);
       $T['Instruction'] = 0;
       $T['CurInst'] = 0;
       $T['Progress'] = 0;
@@ -962,6 +966,10 @@ function ShipMovements($Agents=0) {
           $SP = ['FactionId'=>$Fid, 'Sys'=> $Sid, 'Scan'=>($ShipScanLevel?5:1), 'Neb'=>$ShipNebScanLevel, 'Turn'=>$GAME['Turn']];
           Insert_db('ScansDue', $SP);
         } 
+        
+        $FL = Get_FactionLinkFL($Fid,$Lid);
+        $FL['Known'] = 1;
+        Put_FactionLink($FL);
       
         $pname = System_Name($N,$Fid);
       }
@@ -1812,6 +1820,8 @@ function GiveSurveyReports() {
 //  echo "Give Survey Reports is currently Manual<p>";
   return 1;
 }
+
+// TODO GM check, and use the scan results to modify
 
 function SpotAnomalies() {
   global $GAMEID;

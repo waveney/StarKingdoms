@@ -77,6 +77,7 @@
         $type = $PlanetTypes[$M['Type']]['Name'];
         if ($PlanetTypes[$M['Type']]['Append']) $type .= " Moon";
         $Name = $M['Name'];
+        $P = Get_Planet($M['PlanetId']);
         $Sys = Get_System($P['SystemId']);
         $Fid = $Sys['Control'];
         break;

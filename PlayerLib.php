@@ -88,7 +88,7 @@ function Player_Page() {
   if ($GM || isset($_REQUEST['SEEALL'])) $TState = 'Turn Planning';
   
   echo "<div class=Player>";
-  if ((!$GM) && $TState == 'Turn Submitted') echo "To change anything, cancel the turn submission first.<br>";
+  if ((!$GM) && $TState == 'Turn Submitted') echo "<b>To change anything, cancel the turn submission first.</b><br>";
   echo "The only current actions are:";
   echo "<ul>";
 
