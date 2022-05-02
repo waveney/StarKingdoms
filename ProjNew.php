@@ -374,7 +374,7 @@
       $HSys = $Homes[$Hi]['SystemId'];
       $HLoc = $Homes[$Hi]['WithinSysLoc'];
       $TTs = Get_ThingTypes();
-      $Things = Get_Things_Cond($Fid," SystemId=$HSys "); // Get all things at xx then filter  by type == Ship & WithinSysLoc
+      $Things = Get_Things_Cond($Fid," SystemId=$HSys AND ( BuildState=3 OR BuildState=2) "); // Get all things at xx then filter  by type == Ship & WithinSysLoc
       $RepShips = [];
       $Level1 = 0;
       $Count = 0;
@@ -455,7 +455,7 @@
       $HSys = $Homes[$Hi]['SystemId'];
       $HLoc = $Homes[$Hi]['WithinSysLoc'];
       $TTs = Get_ThingTypes();
-      $Things = Get_Things_Cond($Fid," SystemId=$HSys "); // Get all things at xx then filter  by type == Ship & WithinSysLoc
+      $Things = Get_Things_Cond($Fid," SystemId=$HSys AND BuildState=3 "); // Get all things at xx then filter  by type == Ship & WithinSysLoc
       $RepShips = [];
       $Level1 = 0;
       $Count = 0;

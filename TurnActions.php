@@ -428,7 +428,7 @@ function Instuctions() { // And other Instructions
  
     case 'Decommision': // Dissasemble
       $Lvl = $T['Level'];
-      $T['BuildState'] = 4;
+      $T['BuildState'] = -1;
       $T['SystemId'] = 0;
       $T['History'] .= "Decommissioned";
       $T['Instruction'] = 0;
@@ -436,7 +436,21 @@ function Instuctions() { // And other Instructions
       TurnLog($T['Whose'], "The " . $T['Name'] . " has been decommisioned gaining you " . Credit() . $cash, $T);
       Spend_Credit($T['Whose'],-$cash,"Decommisioning " . $T['Name']);
       GMLog($Facts[$T['Whose']]['Name'] . " - " . $T['Name'] . " has been decommisioned"); 
-      break;
+      
+      $Have = Get_Things_Cond(0," (LinkId<0 AND SystemId=$Tid ");
+      if ($Have) {
+        foreach ($Have as $H) {
+          $H['SystemId'] = $T['SystemId'];
+          $H['WithinSysLoc'] = 0;
+          TurnLog($T['Whose'],$H['Name'] . " has been offloaded on to " . $P['Name'] . " in " . $N['Ref'],$H);
+          
+          if ($H['Whose'] != $T['Whose']) TurnLog($H['Whose'],$H['Name'] . " has been offloaded on to " . $P['Name'] . " in " . $N['Ref'],$H);
+          Put_Thing($H);
+        }
+      }
+      
+      db_delete('Things',$Tid);
+      continue 2;
 
     case 'Analyse Anomaly': // Anomaly   
       $Aid = $T['ProjectId'];
@@ -880,7 +894,8 @@ function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
   $Facts = Get_Factions();
   
   GMLog("<h2>These movements are planned - to stop one, tick the stop box and say why</h2>");
-  GMLog("<form method=Post action=TurnActions.php?ACTION=Complete>" . fm_hidden('S',($Agents?34:32)));
+//  GMLog("<form method=Post action=TurnActions.php?ACTION=Complete>" . fm_hidden('S',($Agents?34:32)));
+  GMLog("<form method=Post action=TurnActions.php?ACTION=StageDone>" . fm_hidden('Stage',($Agents?'Ship Move Check':'Agents Move Check')));
   GMLog("<table border><tr><td>Who<td>What<td>Level<td>From<td>Link<td>To<td>Stop<td>Why Stopping\n");
   foreach ($Things as $T) {
     if (($T['Type'] == 5 && $Agents == 0) || ($T['Type'] != 5 && $Agents == 1) || $T['BuildState'] <2 || $T['BuildState'] > 3 || $T['LinkId'] <= 0 || $T['Whose']==0) continue;
@@ -1516,7 +1531,7 @@ function ProjectsComplete() {
       SKLog("A project to " . $PT['Name'] . " has completed, this is not automated yet.  See <a href=ProjEdit.php?id=" . $P['id'] . ">Project</a>",1);
       break;
     // These all now handled as instructions - not projects at the moment
-    case 'Decommission Ship':
+    case 'Decommision':
     case 'Build Outpost':
     case 'Build Asteroid Mining Facility':
     case 'Build Minefield':
@@ -1564,21 +1579,22 @@ function InstructionsComplete() {
         Put_District($D1);
       }
 
-      $T['BuildState'] = 4;      
+
       TurnLog($Who,$P['Name'] . " on " . $N['Ref'] . " has been colonised");
       SKLog($P['Name'] . " on " . $N['Ref'] . " has been colonised by " . $Facts[$Who]['Name'],1);  // TODO Check for any named chars and offload
        
-      $Have = Get_Things_Cond(0," (LinkId<0 AND SystemId=$tid ");
+      $Have = Get_Things_Cond(0," (LinkId<0 AND SystemId=$Tid ");
       if ($Have) {
         $Loc = Within_Sys_Locs($N,$T['Spare1']);       
         foreach ($Have as $H) {
           $H['SystemId'] = $T['SystemId'];
           $H['WithinSysLoc'] = $Loc;
           TurnLog($Who,$H['Name'] . " has been offloaded on to " . $P['Name'] . " in " . $N['Ref'],$H);
+          if ($H['Whose'] != $Who) TurnLog($H['Whose'],$H['Name'] . " has been offloaded on to " . $P['Name'] . " in " . $N['Ref'],$H);
           Put_Thing($H);
         }
       }
-       
+      $T['BuildState'] = -1;       
       break; // The making homes and worlds in a later stage completes the colonisation I hope
        
     case 'Analyse Anomaly':
@@ -1737,13 +1753,17 @@ function InstructionsComplete() {
      default: 
        break;
      }
-     $T['Instruction'] = 0;
-     $T['Progress'] = 0;
-     $T['CurInst'] = 0;
-     $T['MakeName'] = '';
-     $T['ProjectId'] = 0;
-     $T['Spare1'] = 0;
-     Put_Thing($T);   
+     if ($T['BuildState']>=0) {
+       $T['Instruction'] = 0;
+       $T['Progress'] = 0;
+       $T['CurInst'] = 0;
+       $T['MakeName'] = '';
+       $T['ProjectId'] = 0;
+       $T['Spare1'] = 0;
+       Put_Thing($T);   
+     } else {
+       db_delete('Things',$Tid);
+     }
    }
 
   return 1;
@@ -1823,6 +1843,66 @@ function GiveSurveyReports() {
 
 // TODO GM check, and use the scan results to modify
 
+function CheckSpotAnomalies() {
+  global $GAME;
+  // Get all Anomalies - order by locn and scan level asc
+  // foreach get all ships with sensors in each locn
+  // if fact already knows skip
+  // if sensors < scan level needed report failure and margin
+  // if sensors >= scan level report found
+  // Do we need to consider multiple ships from a faction?
+  
+  $Facts = Get_Factions();
+  $Systems = Get_SystemRefs();
+  $Scans = Gen_Get_Cond('ScansDue'," Turn=" . $GAME['Turn'] . " ORDER BY FactionId,Sys");
+
+  GMLog("<form method=Post action=TurnActions.php?ACTION=StageDone>" . fm_hidden('Stage','Check Spot Anomalies'));
+  GMLog("<h1>Please check these anomalies should be spotted</h1>");
+  GMLog("<table border><tr><td>Who<td>Where<td>what<td>Stop\n");
+  $Anoms = Gen_Get_Cond('Anomalies',"GameId=" . $GAME['id'] . " ORDER BY SystemId, ScanLevel");
+  foreach($Anoms as $A) {
+    $Aid = $A['id'];
+    $Sid = $A['SystemId'];
+    $ScanNeed = $A['ScanLevel'];
+    
+    $Things = Get_Things_Cond(0,"SystemId=$Sid AND SensorLevel>=($ScanNeed-1) ORDER BY Whose, SensorLevel DESC");
+    $LastWho = 0;
+    $LastAn = 0;
+    foreach($Things as $T) {
+// if ($Aid == 45) echo "Checking " . $T['id'] . "<br>";
+      foreach($Scans as $S) {
+        if (($S['Sys'] == $Sid) && $S['FactionId'] == $T['Whose'] && $S['Scan']<5) continue 2; // Next thing
+      }
+
+      if ($T['Whose'] != $LastWho) {
+        $LastWho = $T['Whose'];
+        $FA = Gen_Get_Cond('FactionAnomaly',"FactionId=$LastWho AND AnomalyId=$Aid");
+        if ($FA) {
+          $FA = $FA[0];
+        } else {
+          $FA = ['FactionId'=>$LastWho, 'AnomalyId'=>$Aid, 'State'=>0, 'Notes'=>''];
+        }
+      }
+      if ($FA['State'] == 0 && $LastAn!= $Aid) {
+        if ($T['SensorLevel'] < $A['ScanLevel'] ) {
+          if ( GameFeature('MissedAnomalies',0)) GMLog($Facts[$T['Whose']]['Name'] . " Just missed spotting an anomaly in " . $Systems[$Sid] . " by one sensor level on the " . $T['Name']);
+          $LastAn = $Aid;
+          continue;
+        }
+        
+        $Tid = $T['id'];
+        GMLog("<tr><Td>" . $Facts[$T['Whose']]['Name'] . "<td>" . $Systems[$Sid] . "<td><a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . "</a><td>" .  fm_checkbox('',$_REQUEST,"Prevent$Tid"));
+        $LastAn = $Aid;
+        continue;
+      }
+    }
+  }
+
+  GMLog("</table><input type=submit value='Click to Proceed'></form>\n");
+  dotail();
+}
+
+
 function SpotAnomalies() {
   global $GAMEID;
   // Get all Anomalies - order by locn and scan level asc
@@ -1842,7 +1922,7 @@ function SpotAnomalies() {
     $Sid = $A['SystemId'];
     $ScanNeed = $A['ScanLevel'];
     
-    $Things = Get_Things_Cond(0,"SystemId=$Sid AND SensorLevel>=($ScanNeed-1) ORDER BY Whose, SensorLevel DESC");
+    $Things = Get_Things_Cond(0,"SystemId=$Sid AND SensorLevel>=$ScanNeed ORDER BY Whose, SensorLevel DESC");
     $LastWho = 0;
     $LastAn = 0;
     foreach($Things as $T) {
@@ -1856,20 +1936,18 @@ function SpotAnomalies() {
           $FA = ['FactionId'=>$LastWho, 'AnomalyId'=>$Aid, 'State'=>0, 'Notes'=>''];
         }
       }
+      $Tid = $T['id'];
       if ($FA['State'] == 0 && $LastAn!= $Aid) {
-        if ($T['SensorLevel'] < $A['ScanLevel'] ) {
-          if ( GameFeature('MissedAnomalies',0)) GMLog($Facts[$T['Whose']]['Name'] . " Just missed spotting an anomaly in " . $Systems[$Sid] . " by one sensor level on the " . $T['Name']);
-          $LastAn = $Aid;
-          continue;
-        }
+        if ( !isset($_REQUEST["Prevent$Tid"]) || $_REQUEST["PREVENT$Tid"]!='on')  {
               
-        TurnLog($LastWho,"You have spotted an anomaly: " . $A['Name'] . " in " . $Systems[$Sid] . "\n" .  $Parsedown->text($A['Description']) . 
+          TurnLog($LastWho,"You have spotted an anomaly: " . $A['Name'] . " in " . $Systems[$Sid] . "\n" .  $Parsedown->text($A['Description']) . 
                 "\nIt will take " . $A['AnomalyLevel'] . " scan level actions to complete.\n\n");
                 
-        GMLog($Facts[$T['Whose']]['Name'] . " have just spotted anomaly: <a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . "</a> in " . $Systems[$Sid] . " from the " . $T['Name'] );
-        $FA['State'] = 1;
+          GMLog($Facts[$T['Whose']]['Name'] . " have just spotted anomaly: <a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . "</a> in " . $Systems[$Sid] . " from the " . $T['Name'] );
+          $FA['State'] = 1;
 // var_dump($FA);
-        Gen_Put('FactionAnomaly',$FA);
+          Gen_Put('FactionAnomaly',$FA);
+        }
         $LastAn = $Aid;
         continue;
       } else { // Already known
@@ -2019,7 +2097,7 @@ function Do_Turn() {
              'Devastation', 'Project Progress', 'Instructions Progress', 'Spare', 
              'Espionage Missions Complete', 'Counter Espionage', 'Spare', 'Finish Shakedowns', 
              'Projects Complete', 'Instructions Complete', 'Spare', 'Check Survey Reports', 
-             'Give Survey Reports', 'Spot Anomalies', 'Spare', 'Militia Army Recovery', 
+             'Give Survey Reports', 'Check Spot Anomalies', 'Spot Anomalies', 'Militia Army Recovery', 
              'Generate Turns', 'Tidy Up Movements', 'Recalc Project Homes', 'Finish Turn Process'];
 
   $Coded =  ['Coded','No','No','Coded','Coded','No','Coded', 'No',
@@ -2033,7 +2111,7 @@ function Do_Turn() {
              'Coded','Coded', 'Coded', 'No',
              'No', 'No', 'No','Coded',
              'Partial','Coded', 'No','Partial (not nebula)',
-             'Coded', 'Coded', 'No', 'Coded',
+             'Coded', 'No', 'Coded', 'Coded',
              'No','Coded','Coded','Coded?'];
   $Sand = Get_TurnNumber();
 // var_dump($Sand);
@@ -2046,7 +2124,7 @@ function Do_Turn() {
   if (isset($_REQUEST['ACTION']) && isset($_REQUEST['S'])) {
     $S = $_REQUEST['S'];
     switch ($_REQUEST['ACTION']) {
-    case 'Complete':
+    case 'Complete': // Should be now no longer used - See StageDone lower down.  (Uses name of stge not number - thus allows for renumbering)
       SKLog("Completed " . $Stages[$S]);
       $Sand['Progress'] |= 1<<$S;    
       $S++; // Deliberate drop through    

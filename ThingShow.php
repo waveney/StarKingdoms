@@ -40,7 +40,12 @@ function Show_Thing(&$T,$Force=0) {
     $NewSyslocs = $Syslocs;
   } elseif ($T['NewSystemId']) {
     $NN = Get_System($T['NewSystemId']);
-    $NewSyslocs = Within_Sys_Locs($NN);
+    $FS = Get_FactionSystemFS($Fid,$T['NewSystemId']);
+    if (($FS['ScanLevel'] >= 3) && ($NN['Nebula'] <= $FS['NebScanned'])) {
+      $NewSyslocs = Within_Sys_Locs($NN);
+    } else {
+      $NewSyslocs = [];    
+    }
   } else {
     $NewSyslocs = [];
   }
@@ -749,8 +754,9 @@ function Show_Thing(&$T,$Force=0) {
       foreach($Anoms as $A) {
         $Aid = $A['id'];
         $FA = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
-        if (empty($FA[0]['id'])) continue;
+        if (empty($FA[0]['id']) ) continue;
         $FA = $FA[0];
+        if ($FA['State'] == 0 || $FA['State'] == 3) continue;
         if ($FA['Progres'] < $A['AnomalyLevel']) break 2; // This anomaly can be studied (There may be more than one, but one is enough
       }
       continue 2; // NOt yet

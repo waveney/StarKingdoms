@@ -22,7 +22,6 @@ Not Done
 * Science points - use
 * Combat
 * Credit Symbols
-* Militia recovery
 * Back propogate names on control change
 
 
@@ -41,7 +40,7 @@ Known Faults
 * Nebulae
 * Link ids and targets on movement orders
 * List of scans due - needs use and maintaining
-* Map update errors - may have found it now
+* Map update errors - may have found it now, x2
 
 * Load on PthingList
 * unload on pthinglist
@@ -51,5 +50,15 @@ Anomalies
 2) Complete - Reward - possible description - reward can be techs, SPs, things etc - GMs may add stuff
 3) Colob analysis
 4) TEST IT
+5) Private Anomalies
+6) Control Spotting
+
+
+
+
+
+
+
+
 
 
