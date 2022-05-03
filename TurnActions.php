@@ -348,6 +348,7 @@ function Instuctions() { // And other Instructions
       $T['Progress'] = 0;
     }
     
+    if ($T['Progress']>0) continue;
     
     switch ($ThingInstrs[$T['Instruction']]) {
     case 'Colonise': // Colonise
@@ -575,7 +576,9 @@ function Instuctions() { // And other Instructions
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to Make Deep Space Sensor in " .$N['Ref'],$T);
       }
-      break;
+      b
+      
+      reak;
     
     case 'Make Advanced Asteroid Mine':
 //      $T['ActionsNeeded'] = 8;
