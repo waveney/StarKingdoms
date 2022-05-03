@@ -576,9 +576,7 @@ function Instuctions() { // And other Instructions
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to Make Deep Space Sensor in " .$N['Ref'],$T);
       }
-      b
-      
-      reak;
+      break;
     
     case 'Make Advanced Asteroid Mine':
 //      $T['ActionsNeeded'] = 8;
@@ -1859,26 +1857,31 @@ function CheckSpotAnomalies() {
   $Systems = Get_SystemRefs();
   $Scans = Gen_Get_Cond('ScansDue'," Turn=" . $GAME['Turn'] . " ORDER BY FactionId,Sys");
 
-  GMLog("<form method=Post action=TurnActions.php?ACTION=StageDone>" . fm_hidden('Stage','Check Spot Anomalies'));
+  GMLog("<form method=Post action=TurnActions.php?ACTION=StageDone>" . fm_hidden('Stage','CheckSpotAnomalies'));
   GMLog("<h1>Please check these anomalies should be spotted</h1>");
   GMLog("<table border><tr><td>Who<td>Where<td>what<td>Stop\n");
   $Anoms = Gen_Get_Cond('Anomalies',"GameId=" . $GAME['id'] . " ORDER BY SystemId, ScanLevel");
   foreach($Anoms as $A) {
     $Aid = $A['id'];
+//if ($Aid == 37) var_dump($A);
     $Sid = $A['SystemId'];
     $ScanNeed = $A['ScanLevel'];
     
-    $Things = Get_Things_Cond(0,"SystemId=$Sid AND SensorLevel>=($ScanNeed-1) ORDER BY Whose, SensorLevel DESC");
+    $Things = Get_Things_Cond(0,"SystemId=$Sid AND SensorLevel>=$ScanNeed ORDER BY Whose, SensorLevel DESC");
+// if ($Aid == 37) var_dump($Things);
     $LastWho = 0;
     $LastAn = 0;
     foreach($Things as $T) {
-// if ($Aid == 45) echo "Checking " . $T['id'] . "<br>";
+//if ($Aid == 45) echo "Checking " . $T['id'] . "<br>";
+//if ($Aid == 37) echo "Checking " . $T['Name'] . "<br>";
       foreach($Scans as $S) {
         if (($S['Sys'] == $Sid) && $S['FactionId'] == $T['Whose'] && $S['Scan']<5) continue 2; // Next thing
       }
 
+//if ($Aid == 45) echo "Checked " . $T['Name'] . "<br>";
       if ($T['Whose'] != $LastWho) {
         $LastWho = $T['Whose'];
+        $LastAn = 0;
         $FA = Gen_Get_Cond('FactionAnomaly',"FactionId=$LastWho AND AnomalyId=$Aid");
         if ($FA) {
           $FA = $FA[0];
@@ -1886,17 +1889,18 @@ function CheckSpotAnomalies() {
           $FA = ['FactionId'=>$LastWho, 'AnomalyId'=>$Aid, 'State'=>0, 'Notes'=>''];
         }
       }
-      if ($FA['State'] == 0 && $LastAn!= $Aid) {
+      if (($FA['State'] == 0) && ($LastAn != $Aid)) {
+/*
         if ($T['SensorLevel'] < $A['ScanLevel'] ) {
           if ( GameFeature('MissedAnomalies',0)) GMLog($Facts[$T['Whose']]['Name'] . " Just missed spotting an anomaly in " . $Systems[$Sid] . " by one sensor level on the " . $T['Name']);
           $LastAn = $Aid;
           continue;
         }
+*/
         
         $Tid = $T['id'];
         GMLog("<tr><Td>" . $Facts[$T['Whose']]['Name'] . "<td>" . $Systems[$Sid] . "<td><a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . "</a><td>" .  fm_checkbox('',$_REQUEST,"Prevent$Tid"));
         $LastAn = $Aid;
-        continue;
       }
     }
   }
@@ -1932,6 +1936,7 @@ function SpotAnomalies() {
 // if ($Aid == 45) echo "Checking " . $T['id'] . "<br>";
       if ($T['Whose'] != $LastWho) {
         $LastWho = $T['Whose'];
+        $LastAn = 0;
         $FA = Gen_Get_Cond('FactionAnomaly',"FactionId=$LastWho AND AnomalyId=$Aid");
         if ($FA) {
           $FA = $FA[0];
@@ -1941,7 +1946,7 @@ function SpotAnomalies() {
       }
       $Tid = $T['id'];
       if ($FA['State'] == 0 && $LastAn!= $Aid) {
-        if ( !isset($_REQUEST["Prevent$Tid"]) || $_REQUEST["PREVENT$Tid"]!='on')  {
+        if ( !isset($_REQUEST["Prevent$Tid"]) || $_REQUEST["Prevent$Tid"]!='on')  {
               
           TurnLog($LastWho,"You have spotted an anomaly: " . $A['Name'] . " in " . $Systems[$Sid] . "\n" .  $Parsedown->text($A['Description']) . 
                 "\nIt will take " . $A['AnomalyLevel'] . " scan level actions to complete.\n\n");
@@ -2123,9 +2128,9 @@ function Do_Turn() {
   // At each stage BEGIN TRANSACTION at end COMMIT TRANSACTION ??
   dostaffhead("Turn Processing");
   echo "<H1>Turn Processing</h1>";
-  
-  if (isset($_REQUEST['ACTION']) && isset($_REQUEST['S'])) {
-    $S = $_REQUEST['S'];
+// var_dump($_REQUEST);  
+  if (isset($_REQUEST['ACTION']) && ( isset($_REQUEST['S']) || isset($_REQUEST['Stage']))) {
+    $S = (isset($_REQUEST['S'])? $_REQUEST['S'] : 0);
     switch ($_REQUEST['ACTION']) {
     case 'Complete': // Should be now no longer used - See StageDone lower down.  (Uses name of stge not number - thus allows for renumbering)
       SKLog("Completed " . $Stages[$S]);

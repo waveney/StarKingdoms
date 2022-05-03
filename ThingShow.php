@@ -41,7 +41,7 @@ function Show_Thing(&$T,$Force=0) {
   } elseif ($T['NewSystemId']) {
     $NN = Get_System($T['NewSystemId']);
     $FS = Get_FactionSystemFS($Fid,$T['NewSystemId']);
-    if (($FS['ScanLevel'] >= 3) && ($NN['Nebula'] <= $FS['NebScanned'])) {
+    if (($FS['ScanLevel'] >= 3) && ($NN['Nebulae'] <= $FS['NebScanned'])) {
       $NewSyslocs = Within_Sys_Locs($NN);
     } else {
       $NewSyslocs = [];    
