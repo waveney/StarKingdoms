@@ -70,7 +70,7 @@ function Show_Thing(&$T,$Force=0) {
 */
   if ($Links && ($T['LinkId']>0) && ($ll = $Links[$T['LinkId']]['Level']) >1 && ($Who = GameFeature('LinkOwner',0)) && $Who != $T['Whose']) {
     $LOwner = Get_Faction($Who);
-    echo "<h2>You are taking a <span style='color:" . $LinkTypes[$ll]['Colour'] . "'>" . $LinkTypes[$ll]['Colour'] .
+    echo "<h2>You are taking a <span style='color:" . $LinkTypes[$ll]['Colour'] . "'>" . $LinkTypes[$ll]['Name'] .
          "</span> link do you need to pay " . $LOwner['Name'] . " for this?</h2>\n";
   }
 

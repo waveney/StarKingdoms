@@ -193,8 +193,12 @@ echo "No tds<p>";
   } else if (isset($_REQUEST['R'])) {
     $N = Get_SystemR($_REQUEST['R']);
     $Sysid = $N['id'];
-  } else { 
-
+  } else if (isset($_REQUEST['ACTION']) && $_REQUEST['ACTION'] == 'New') {
+    $N = ['Ref'=>'@@@', 'GameId'=>$GAMEID, 'Type2'=>0, 'Category'=>0, 'Flags'=>0 ];
+    Put_System($N);
+    Auto_Populate($N);
+    echo "Set the X and Y for hex map position, check planets.<p>";
+  } else {
     echo "<h2>No Systems Requested</h2>";
     dotail();
   }
@@ -215,6 +219,13 @@ echo "No tds<p>";
       
     case 'Delete Planets' :
       db_delete_cond('Planets',"SystemId=$Sysid");
+      break;
+      
+    case 'Delete System' :
+      db_delete_cond('Planets',"SystemId=$Sysid");
+      db_delete('Systems',$Sysid);
+      echo "<h2><a href=SysList.php>List of Systems</a></h2>";
+      dotail();
       break;
       
     case 'RECALC' :

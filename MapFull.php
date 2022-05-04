@@ -145,7 +145,7 @@
     if ($Faction == 0 && $N['HistoricalControl']) $BdrColour = $Factions[$N['HistoricalControl']]['MapColour'];
     
     if ($typ) $atts .= " shape=box pos=\"" . ($N['GridX']+(5-$N['GridY'])/2) . "," . (9-$N['GridY']) . "!\"";
-    $atts .= "  shape=box style=filled fillcolor=\"$Colour\" color=$BdrColour";
+    $atts .= "  shape=box style=filled fillcolor=\"$Colour\" color=\"$BdrColour\"";
     if ($NodeName) {
       $atts .= NodeLab($ShortName, $N['Ref']); //($Faction==0?$N['Ref']:""));
     }
@@ -186,7 +186,7 @@
         if (isset($LinkShown[$L['id']])) continue;
         $Fl = Get_FactionLinkFL($Faction, $L['id']);
         if (isset($Fl['id']) && $Fl['Known']) {
-          fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=" . $Levels[$L['Level']]['Colour'] . " label=\"#" . $L['id'] . "\" ];\n");
+          fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=\"" . $Levels[$L['Level']]['Colour'] . "\" label=\"#" . $L['id'] . "\" ];\n");
           $LinkShown[$L['id']]=1;
         } else {
           if ($Neb && $Fl['NebScanned'] < $Neb) continue;
@@ -197,7 +197,7 @@
           if (isset($if['ScanLevel']) && $if['ScanLevel']<2) continue;
           $rand = "B$ul";  // This kludge at least allows both ends to be displayed
           fwrite($Dot,"Unk$ul$rand [label=\"?\" shape=circle];\n");
-          fwrite($Dot,"$from -- Unk$ul$rand [color=" . $Levels[$L['Level']]['Colour'] . " label=\"#" . $L['id'] . "\" ];\n");
+          fwrite($Dot,"$from -- Unk$ul$rand [color=\"" . $Levels[$L['Level']]['Colour'] . "\" label=\"#" . $L['id'] . "\" ];\n");
           $ul++;
           if (isset($UnknownLink[$L['id']])) {
             $RedoMap = 1;
@@ -216,7 +216,7 @@
       $Links = Get_Links1end($from);
 
       foreach ($Links as $L) {
-        fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=" . $Levels[$L['Level']]['Colour'] . ($typ?"":(" label=\"#" . $L['id'] . "\"")) . "];\n");
+        fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=\"" . $Levels[$L['Level']]['Colour'] . '"' . ($typ?"":(" label=\"#" . $L['id'] . "\"")) . "];\n");
       }
     }
   }

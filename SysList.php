@@ -62,6 +62,8 @@
   }
       
   echo "</tbody></table></div>\n";
+  
+  if (Access('God')) echo "<h2><a href=SysEdit.php?ACTION=New>New System</a></h2>";
 
 
   dotail();
