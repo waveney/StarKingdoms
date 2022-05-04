@@ -142,7 +142,7 @@ function Get_Link($id) {
 function Put_Link(&$now) {
   if (isset($now['id'])) {
     $e=$now['id'];
-    $Cur = Get_Faction($e);
+    $Cur = Get_Link($e);
     return Update_db('Links',$Cur,$now);
   } else {
 //var_dump($now); exit;
@@ -150,6 +150,18 @@ function Put_Link(&$now) {
   }
 
 }
+
+function Get_LinksGame() {
+  global $db,$GAMEID;
+  $res = $db->query("SELECT * FROM Links WHERE GameId=$GAMEID");
+  $links = [];
+  if ($res) {
+    while ($ans = $res->fetch_assoc()) { $links[] = $ans; };
+    }
+  return $links;
+}
+
+
 
 function Get_Links($sysref) {
   global $db,$GAMEID;
@@ -298,6 +310,19 @@ function Get_Factions4Plan($id) {
 }
 
 // ??
+
+function Get_LinkLevel($id) {
+  global $db;
+  $res = $db->query("SELECT * FROM LinkLevel WHERE id=$id");
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
+  return [];
+}
+
+function Put_LinkLevel(&$now) {
+  $e=$now['id'];
+  $Cur = Get_LinkLevel($e);
+  return Update_db('LinkLevel',$Cur,$now);
+}
 
 function Get_LinkLevels() {
   global $db,$GAMEID;

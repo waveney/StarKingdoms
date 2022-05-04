@@ -137,6 +137,9 @@
     $txt .= "<p>";
     $txt .= "<li><a href=WorldList.php>List Worlds and colonies</a>\n";  
     $txt .= "<li><a href=WorldMake.php>Rebuild list of Worlds and colonies</a>\n";  
+    $txt .= "<p>";
+    $txt .= "<li><a href=LinkLevels.php>Link Levels</a>\n";  
+    $txt .= "<li><a href=EditLinks.php>Edit Links</a>\n";  
     $txt .= "</ul>\n";
   }
 

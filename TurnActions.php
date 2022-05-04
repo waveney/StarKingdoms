@@ -2119,7 +2119,7 @@ function Do_Turn() {
              'Coded','Coded', 'Coded', 'No',
              'No', 'No', 'No','Coded',
              'Partial','Coded', 'No','Partial (not nebula)',
-             'Coded', 'No', 'Coded', 'Coded',
+             'Coded', 'Coded', 'Coded', 'Coded',
              'No','Coded','Coded','Coded?'];
   $Sand = Get_TurnNumber();
 // var_dump($Sand);

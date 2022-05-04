@@ -297,7 +297,7 @@ function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$M
               $t[$fld] = 0;
             }
           }
-//          var_dump($t);
+//          var_dump($recpres,$t);exit;
 //          return;
           if ($recpres) $Putfn($t);
         }
@@ -317,7 +317,7 @@ function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$M
           }
         }
       }
-//var_dump($t);
+//var_dump($t); exit;
       Insert_db($table,$t);
     }
     return 1;
