@@ -19,8 +19,9 @@
   A_Check('Player');
 
   $CatCols = ["white","grey", "Yellow"];
-  $HexLegPos = [[1,8],[1,7.5],[1,7],[1,6.5], [9,8],[9,7.5],[9,7],[9,6.5], [1,0],[1,0.5],[1,1],[1,1.5], [9,0],[9,0.5],[9,1.5],[9,2]];
-
+//  $HexLegPos = [[1,8],[1,7.5],[1,7],[1,6.5], [9,8],[9,7.5],[9,7],[9,6.5], [1,0],[1,0.5],[1,1],[1,1.5], [9,0],[9,0.5],[9,1.5],[9,2]];
+  eval("\$HexLegPos=" . GameFeature('HexLegPos','') . ";" ); // [[1,8],[1,7.5],[1,7],[1,6.5], [9,8],[9,7.5],[9,7],[9,6.5], [1,0],[1,0.5],[1,1],[1,1.5], [9,0],[9,0.5],[9,1.5],[9,2]];
+// var_dump($HexLegPos);exit;
   
   if (isset($_REQUEST['f'])) {
     $Faction = $_REQUEST['f'];
@@ -112,6 +113,7 @@
 //  if (!$typ) fwrite($Dot, "[size=\"10,20!\"];\n");
   
   foreach ($Nodes as $N) {
+    if (!ctype_alnum($N['Ref'])) continue;
     $NodeName = $N['Name']?$N['Name']:"";
     $ShortName = $N['ShortName']?$N['ShortName']:$NodeName;
     $Hide = 0;
