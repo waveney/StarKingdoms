@@ -119,6 +119,9 @@
       $txt .= "<li><a href=MapValid.php>Map Validation</a>\n";
       $txt .= "<li><a href=MapFromCSV.php>Map from CSV</a>\n";
     }
+    $txt .= "<p>";
+    $txt .= "<li><a href=LinkLevels.php>Link Levels</a>\n";  
+    $txt .= "<li><a href=EditLinks.php>Edit Links</a>\n";  
     $txt .= "</ul><p>\n";
   }
 
@@ -137,9 +140,6 @@
     $txt .= "<p>";
     $txt .= "<li><a href=WorldList.php>List Worlds and colonies</a>\n";  
     $txt .= "<li><a href=WorldMake.php>Rebuild list of Worlds and colonies</a>\n";  
-    $txt .= "<p>";
-    $txt .= "<li><a href=LinkLevels.php>Link Levels</a>\n";  
-    $txt .= "<li><a href=EditLinks.php>Edit Links</a>\n";  
     $txt .= "</ul>\n";
   }
 
@@ -189,9 +189,6 @@
       $txt .= "<input type=submit name=F value='Projects' id=staffformid>" . 
                 fm_select($Facts,0,'F',1," onchange=this.form.submit()") . "</form>\n";
     
-    $txt .= "<p>";
-
-    $txt .= "<li><a href=FactionEdit.php?ACTION=NEW>New Faction</a>\n";
 //    if (Access('God')) $txt .= "<li><a href=Import.php>Import</a>\n";
     $txt .= "</ul>\n";
   }

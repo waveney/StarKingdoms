@@ -46,5 +46,7 @@
   echo "</tbody></table></div>\n";
 
 
+  echo "<h2><a href=FactionEdit.php?ACTION=NEW>New Faction</a></h2>\n";
+
   dotail();
 ?>

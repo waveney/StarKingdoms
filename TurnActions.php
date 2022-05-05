@@ -1889,7 +1889,8 @@ function CheckSpotAnomalies() {
           $FA = ['FactionId'=>$LastWho, 'AnomalyId'=>$Aid, 'State'=>0, 'Notes'=>''];
         }
       }
-      if (($FA['State'] == 0) && ($LastAn != $Aid)) {
+      if ((($A['Properties'] == 0) && (($FA['State'] == 0) && ($LastAn != $Aid))) ||
+          (($A['Properties'] == 1) && (($FA['State'] == -1) && ($LastAn != $Aid)))) {
 /*
         if ($T['SensorLevel'] < $A['ScanLevel'] ) {
           if ( GameFeature('MissedAnomalies',0)) GMLog($Facts[$T['Whose']]['Name'] . " Just missed spotting an anomaly in " . $Systems[$Sid] . " by one sensor level on the " . $T['Name']);
@@ -1945,7 +1946,9 @@ function SpotAnomalies() {
         }
       }
       $Tid = $T['id'];
-      if ($FA['State'] == 0 && $LastAn!= $Aid) {
+      if ((($A['Properties'] == 0) && (($FA['State'] == 0) && ($LastAn != $Aid))) ||
+          (($A['Properties'] == 1) && (($FA['State'] == -1) && ($LastAn != $Aid)))) {
+
         if ( !isset($_REQUEST["Prevent$Tid"]) || $_REQUEST["Prevent$Tid"]!='on')  {
               
           TurnLog($LastWho,"You have spotted an anomaly: " . $A['Name'] . " in " . $Systems[$Sid] . "\n" .  $Parsedown->text($A['Description']) . 

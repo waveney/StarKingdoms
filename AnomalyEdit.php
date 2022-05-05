@@ -65,16 +65,17 @@
   }
 
   echo "<tr>" . fm_textarea("Description",$A,'Description',8,4);
-  echo "<tr>" . fm_textarea('Notes',$A,'Notes',8,4);
+  echo "<tr>" . fm_textarea('Notes',$A,'Notes',8,3);
   echo "<tr>" . fm_textarea('Reward',$A,'Reward',8,2);
   echo "<tr>" . fm_textarea('Comments',$A,'Comments',8,2);
-  echo "<tr>" . fm_textarea('Other Requirements',$A,'OtherReq',8,1);    
-  echo "<tr>" . fm_number('Complete',$A,'Complete') .  fm_number('Story Level',$A,'StoryLevel');
+  echo "<tr>" . fm_textarea('Other Requirements',$A,'OtherReq',6,1) . "<td>Refresh after change";    
+  echo "<tr><td>" . fm_checkbox("Limit Factions",$A,'Properties') . "<td>Refresh after change" . fm_number('Complete',$A,'Complete') .  fm_number('Story Level',$A,'StoryLevel');
 
   echo "<tr><td colspan=8><h2>Factions:</h2>";
-  echo "<tr><td>Faction<td colspan=2>State<td>Progress<td colspan=7>Notes\n";
+  echo "<tr><td>Faction<td colspan=3>State<td>Progress<td colspan=7>Notes\n";
   
   if (empty($A['OtherReq'])) unset($AnomalyStates[2]);
+  if (empty($A['Properties'])) unset($AnomalyStates[-1]);
   
   foreach ($Facts as $F) {
     $Fid = $F['id'];
@@ -82,7 +83,7 @@
     if ($FA) $FA = $FA[0];
     echo "<form method=post action=AnomalyEdit.php>";    
     echo "<tr><td style='background:" . $F['MapColour'] . ";'>" . $F['Name'];
-    echo "<td colspan=2>". fm_radio('',$AnomalyStates,$FA,'State','',0,'',"State:$Fid");
+    echo "<td colspan=3>". fm_radio('',$AnomalyStates,$FA,'State','',0,'',"State:$Fid");
     echo fm_number1('',$FA,'Progress','','',"Progress:$Fid");
     echo fm_text1('',$FA,'Notes',7,'','',"Notes:$Fid");
     echo "</tr>\n";
