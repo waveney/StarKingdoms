@@ -1291,7 +1291,7 @@ function InstructionsProgress() {
               $FAs = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
               if (empty($FAs[0]['id'])) continue;
               $FA = $FAs[0];
-              if ($FA['Progres'] < $A['AnomalyLevel']) {
+              if ($FA['Progress'] < $A['AnomalyLevel']) {
                 $Pro = $T['Sensors']*$T['SensorLevel'];
                 $FA['Progress'] = min($FA['Progress']+$Pro, $A['AnomalyLevel']);
                 Gen_Put('FactionAnomaly',$FA);

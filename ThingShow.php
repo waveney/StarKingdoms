@@ -757,7 +757,7 @@ function Show_Thing(&$T,$Force=0) {
         if (empty($FA[0]['id']) ) continue;
         $FA = $FA[0];
         if ($FA['State'] == 0 || $FA['State'] == 3) continue;
-        if ($FA['Progres'] < $A['AnomalyLevel']) break 2; // This anomaly can be studied (There may be more than one, but one is enough
+        if ($FA['Progress'] < $A['AnomalyLevel']) break 2; // This anomaly can be studied (There may be more than one, but one is enough
       }
       continue 2; // NOt yet
       
@@ -961,7 +961,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
           $FA = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
           if (empty($FA[0]['id'])) continue;
           $FA = $FA[0];
-          if ($FA['Progres'] < $A['AnomalyLevel']) {
+          if ($FA['Progress'] < $A['AnomalyLevel']) {
             $Alist[$Aid] = $A['Name'] . " - takes " . $A['AnomalyLevel'] . " Sensor Points to Analyse.\n";
             $Al = $Aid;
           }

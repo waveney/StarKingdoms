@@ -73,6 +73,11 @@ function Player_Page() {
   dostaffhead("Things",["js/ProjectTools.js"]);  
   $GM = Access('GM');
   $FF = 1; //FactionFeature('AllowActions',$GM);  // Eventually change GM to 1
+  
+  if (empty($FACTION['id'])) {
+    echo "<h1>No Faction Selected</h1>";
+    dotail();
+  }
 
   $FACTION['LastActive'] = time();
   
