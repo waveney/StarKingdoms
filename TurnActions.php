@@ -2193,6 +2193,7 @@ function Do_Turn() {
     case 'StageDone':
 //      $S = $_REQUEST['S'];
       $SName = $_REQUEST['Stage'];
+      $act = preg_replace('/ /','',$SName);
       for($S =0; $S <64 ; $S++) {
         $act = $Stages[$S];
         $act = preg_replace('/ /','',$act);
