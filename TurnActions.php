@@ -1610,8 +1610,8 @@ function InstructionsComplete() {
            if ($FA['Progress'] >= $A['AnomalyLevel']) {
              $FA['State'] = 2;
              Gen_Put('FactionAnomaly',$FA);          
-             TurnLog($T['W$T['Name'] . " Anomaly study on " . $A['Name'] . " has been completed - See sperate response from the GMs for what you get");
-             GMLog($Facts[$Fid]['Name'] . " has completed anomaly study : <a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . " has been completed - give them the reward.");
+             TurnLog($T['Whose'], $T['Name'] . " Anomaly study on " . $A['Name'] . " has been completed - See sperate response from the GMs for what you get");
+             GMLog($Facts[$Fid]['Name'] . " has completed anomaly study : <a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . "</a> has been completed - give them the reward.");
              $T['ProjectId'] = 0;
            }
          } else {
@@ -1978,8 +1978,8 @@ function MilitiaArmyRecovery() {
 //  GMLog("Also Self Repair Armour<p>");
   
   $Things = Get_Things_Cond(0,"CurHealth!=OrigHealth");
-  $TTypes = Get_Thing_Types();
-  $MTypes = Get_Module_Types();
+  $TTypes = Get_ThingTypes();
+  $MTypes = Get_ModuleTypes();
   $MTNs = Mod_Types_From_Names($MTypes);
   
   foreach ($Things as $T) {
