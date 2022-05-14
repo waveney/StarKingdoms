@@ -958,6 +958,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
         $Al = 0;
         foreach($Anoms as $A) {
           $Aid = $A['id'];
+          $LastA = $A;
           $FA = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
           if (empty($FA[0]['id'])) continue;
           $FA = $FA[0];
@@ -968,7 +969,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
         }
         if (count($Alist) == 1) {
           $T['ProjectId'] = $Al;
-          echo "<br>Analysing: " . $FA[0]['Name'];
+          echo "<br>Analysing: " . $LastA['Name'];
         } else if (count($Alist) == 0) {
           echo "No known Anomaly Here.";
           $T['Instruction'] = 0;
