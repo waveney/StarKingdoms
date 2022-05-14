@@ -1610,7 +1610,7 @@ function InstructionsComplete() {
            if ($FA['Progress'] >= $A['AnomalyLevel']) {
              $FA['State'] = 2;
              Gen_Put('FactionAnomaly',$FA);          
-             TurnLog($T['Name'] . " Anomaly study on " . $A['Name'] . " has been completed - See sperate response from the GMs for what you get");
+             TurnLog($T['W$T['Name'] . " Anomaly study on " . $A['Name'] . " has been completed - See sperate response from the GMs for what you get");
              GMLog($Facts[$Fid]['Name'] . " has completed anomaly study : <a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . " has been completed - give them the reward.");
              $T['ProjectId'] = 0;
            }
