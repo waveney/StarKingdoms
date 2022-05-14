@@ -27,6 +27,9 @@ function Dynamic_Update(&$N,$Tinc=0) {
   $CurPeriod = $N['Period']*3600; // Hours
   $CurDist = $N['Distance']; // KM
   
+  $CurPeriod = 0.077385053686678*3600;
+  $CurDist = 85238.5273897988;
+  
 //var_dump($CurPeriod*3600);
   
   $Decay = (192*$pi*($G**(5/3)*$M1*$M2*($M1+$M2)**(-1/3))/((5*$C**5)*(1-$e**2)**(7/2)*(1+73/24*($e**2)+37/96*($e**4))*($CurPeriod/2*$pi)));
@@ -44,9 +47,11 @@ function Dynamic_Update(&$N,$Tinc=0) {
     $N['Distance'] = $NewDistance;
     Put_System($N);
   } else {
-    $Duration = -(time() - $GAME['DateCompleted'])/(3600*24*14);
-    $N['Period'] = ($CurPeriod - ($CurPeriod - $NewPeriod)/$Duration)/3600;
-    $N['Distance'] = $CurDist - ($CurDist - $NewDistance)/$Duration;
+    $tt = 3600*24*14;
+    $Duration = (time() - $GAME['DateCompleted']);
+//if (Access('GM')) echo "Duration: $Duration<br>CurP $CurPeriod<br>NewP $NewPeriod";
+    $N['Period'] = ($NewPeriod*$Duration + $CurPeriod*($tt-$Duration))/($tt*3600);
+    $N['Distance'] = ($NewDistance*$Duration + $CurDist*($tt-$Duration))/$tt;
   }
 }
 
@@ -191,8 +196,8 @@ function Show_System(&$N,$Mode=0) {
     echo "<tr>" . fm_number('Mass',$N,'Mass2',1,"class=NotCSide") . "<td>Kg = " . RealWorld($N,'Mass2');
     echo "<tr>" . fm_number('Temperature',$N,'Temperature2',1,"class=NotCSide") . "<td>K" ;
     echo "<tr>" . fm_number('Luminosity',$N,'Luminosity2',1,"class=NotCSide") . "<td>W = " . RealWorld($N,'Luminosity2');
-    echo "<tr>" . fm_number('Distance',$N,'Distance',1,"class=NotCSide") . "<td>Km = " . RealWorld($N,'Distance') ;
-    echo "<tr>" . fm_number('Period',$N,'Period',1,"class=NotCSide step=0.00000000000001") . "<td>Hr = " . RealWorld($N,'Period');  
+    echo "<tr>" . fm_number('Distance',$N,'Distance',1,"class=NotCSide step='any'") . "<td>Km = " . RealWorld($N,'Distance') ;
+    echo "<tr>" . fm_number('Period',$N,'Period',1,"class=NotCSide step='any'") . "<td>Hr = " . RealWorld($N,'Period');  
     if (Access('God')) echo "<td><a href=SysEdit.php?id=$Sid&ACTION=RECALC>Recalc</a>";
   } elseif ($Mode) {
     echo "<tr>" . fm_text('2nd Star Type',$N,'Type2',2,"class=NotCSide");  
