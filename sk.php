@@ -50,6 +50,7 @@ function Set_User() {
   $USER = array();
   $USERID = 0;
   if (isset($_COOKIE{'SKD'})) {
+    include_once("GetPut.php");
     $biscuit = $_COOKIE{'SKD'};
     $Cake = openssl_decrypt($biscuit,'aes-128-ctr','Quarterjack',0,'BrianMBispHarris');
     $crumbs = explode(':',$Cake);

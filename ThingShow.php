@@ -968,19 +968,20 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
         }
         if (count($Alist) == 1) {
           $T['ProjectId'] = $Al;
+          echo "<br>Analysing: " . $FA[0]['Name'];
         } else if (count($Alist) == 0) {
           echo "No known Anomaly Here.";
           $T['Instruction'] = 0;
           break;
         } else {
-          echo "Select Anomaly:" . fm_select($Alist,$T,'ProjectId');
+          echo "Select Anomaly: " . fm_select($Alist,$T,'ProjectId');
         }
         
       } else {
         $Anom = Get_Anomaly($T['ProjectId']);
         $Aid = $Anom['id'];
         $FA = (Gen_Get_Cond('FactionAnomaly',"FactionId=$Fid AND AnomalyId=$Aid"))[0];
-        
+        echo "<br>Analysing: " . $Anom['Name'];
         $ProgShow = 2;
         $Acts = $Anom['AnomalyLevel'];
         $T['Progress'] = $FA['Progress'];

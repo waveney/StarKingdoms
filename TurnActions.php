@@ -455,6 +455,7 @@ function Instuctions() { // And other Instructions
 
     case 'Analyse Anomaly': // Anomaly   
       $Aid = $T['ProjectId'];
+      $Fid = $T['Whose'];
       if ($Aid) {
         $A = Get_Anomaly($Aid);
         $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
