@@ -952,24 +952,32 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       break;
 
     case 'Analyse Anomaly': // Analyse
+      if ($T['ProjectId'] != 0) {
+        $Anom = Get_Anomaly($T['ProjectId']);
+        if (!$Anom) {
+          $T['ProjectId'] = 0;
+        }      
+      }
+ 
       if ($T['ProjectId'] == 0) { // Pid == AnomId
         $Anoms = Gen_Get_Cond('Anomalies',"SystemId=" . $T['SystemId']);
         $Alist = [];
         $Al = 0;
         foreach($Anoms as $A) {
           $Aid = $A['id'];
-          $LastA = $A;
+
           $FA = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
           if (empty($FA[0]['id'])) continue;
           $FA = $FA[0];
           if ($FA['Progress'] < $A['AnomalyLevel']) {
             $Alist[$Aid] = $A['Name'] . " - takes " . $A['AnomalyLevel'] . " Sensor Points to Analyse.\n";
+            $LastA = $A['Name'];
             $Al = $Aid;
           }
         }
         if (count($Alist) == 1) {
           $T['ProjectId'] = $Al;
-          echo "<br>Analysing: " . $LastA['Name'];
+          echo "<br>Analysing: " . $LastA;
         } else if (count($Alist) == 0) {
           echo "No known Anomaly Here.";
           $T['Instruction'] = 0;
@@ -979,7 +987,6 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
         }
         
       } else {
-        $Anom = Get_Anomaly($T['ProjectId']);
         $Aid = $Anom['id'];
         $FA = (Gen_Get_Cond('FactionAnomaly',"FactionId=$Fid AND AnomalyId=$Aid"))[0];
         echo "<br>Analysing: " . $Anom['Name'];
