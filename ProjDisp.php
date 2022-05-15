@@ -519,7 +519,7 @@
       } else if ($DistTypes[$D['Type']]['Props'] & 8 ) {
         $HL .= $DistTypes[$D['Type']]['Name'];
       } else {   
-        $HL .= "Construction&nbsp;-&nbsp;$PlanCon";
+        $HL .= $DistTypes[$D['Type']]['Name'] . "&nbsp;-&nbsp;" . $D['Number'];
       }
       
       $HL .= "</button><th $back class='PHLevel Group$Di Home$Hi'id=PHLevel$Hi:$Di $Hide>Lvl" .
