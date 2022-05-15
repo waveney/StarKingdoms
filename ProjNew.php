@@ -254,7 +254,7 @@
     echo "<h2>Research Supplimental Technology</h2>";
       $Techs = Get_TechsByCore($Fid);
       foreach ($Techs as $T) {
-        if ($T['Cat'] == 0 || isset($FactTechs[$T['id']]) ) continue;
+        if ($T['Cat'] == 0 || (isset($FactTechs[$T['id']]) && $FactTechs[$T['id']]['Level'])) continue;
         if (!isset($FactTechs[$T['PreReqTech']]) ) continue;
         if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
         $Lvl = $T['PreReqLevel'];
