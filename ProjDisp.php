@@ -511,16 +511,26 @@
 //        $Pro['DType'] = $D['Type'];
 //        Put_Project($Pro);
 //      }
-      $Headline2[] = "<th class='PHStart Group$Di Home$Hi' id=PHDist$Hi:$Di $back $Hide><b>+</b>" .
-        "<th $back class='PHName  Home$Hi'><button type=button onclick=Toggle('Group$Di')>" . 
-        ($D['Type'] > 0 ? ($DistTypes[$D['Type']]['Name']  . "&nbsp;-&nbsp;" .$D['Number'] ): "Construction&nbsp;-&nbsp;$PlanCon") . "</button>" .
-        "<th $back class='PHLevel Group$Di Home$Hi'id=PHLevel$Hi:$Di $Hide>Lvl" .
+      $HL = "<th class='PHStart Group$Di Home$Hi' id=PHDist$Hi:$Di $back $Hide><b>+</b>" .
+        "<th $back class='PHName  Home$Hi'><button type=button onclick=Toggle('Group$Di')>";
+        
+      if ($D['Type'] <= 0) {
+        $HL .= "Construction&nbsp;-&nbsp;$PlanCon";
+      } else if ($DistTypes[$D['Type']]['Props'] & 8 ) {
+        $HL .= $DistTypes[$D['Type']]['Name'];
+      } else {   
+        $HL .= "Construction&nbsp;-&nbsp;$PlanCon";
+      }
+      
+      $HL .= "</button><th $back class='PHLevel Group$Di Home$Hi'id=PHLevel$Hi:$Di $Hide>Lvl" .
         "<th $back class='PHCost Group$Di Home$Hi' id=PHCost$Hi:$Di $Hide>Cost" .
-        "<th $back class='PHRush Group$Di Home$Hi' id=PHRush$Hi:$Di $Hide>Rush" .
+        "<th $back class='PHRush Group$Di Home$Hi' id=PHRush$Hi:$Di $Hide>Rush";
+        
 //        "<th $back class='PHBonus Group$Di Home$Hi' id=PHBonus$Hi:$Di $GMHide>B" . 
-        "<th $back class='PHProg Group$Di Home$Hi' id=PHProg$Hi:$Di $Hide>Prog" .
+      $HL .= "<th $back class='PHProg Group$Di Home$Hi' id=PHProg$Hi:$Di $Hide>Prog" .
         "<th $back class='PHStatus Group$Di Home$Hi' id=PHStatus$Hi:$Di $Hide>Status";
      
+      $Headline2[] = $HL;
       $District_Type[$D['Type']] = $D['Number'];
       $Dis[$Hi][] = $D;
       }

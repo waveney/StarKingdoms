@@ -389,12 +389,12 @@
       $Count = 0;
       foreach ($Things as $T) {
         if ($TTs[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) {
-          if ($T['WithinSysLoc'] < 2 || $T['WithinSysLoc'] == $HLoc || $T['WithinSysLoc'] == ($HLoc-100)) {
+//          if ($T['WithinSysLoc'] < 2 || $T['WithinSysLoc'] == $HLoc || $T['WithinSysLoc'] == ($HLoc-100)) {
             $RepShips[$T['id']] = $T['Name'] . " - level " . $T['Level'];
             if ($T['Level'] == 1) $Level1++;
             $Count++;
           }
-        }
+//        }
       }
       
       $pc = Proj_Costs(1);
@@ -417,7 +417,7 @@
         }
           
       } else {
-        echo "No ships are currently near the yard<p>";
+        echo "No ships are currently near the yard that need repairing<p>";
       }
 
       break;
@@ -556,12 +556,12 @@
       $Count = 0;
       foreach ($Things as $T) {
         if ($TTs[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) {
-          if ($T['WithinSysLoc'] < 2 || $T['WithinSysLoc'] == $HLoc || $T['WithinSysLoc'] == ($HLoc-100)) {
+//          if ($T['WithinSysLoc'] < 2 || $T['WithinSysLoc'] == $HLoc || $T['WithinSysLoc'] == ($HLoc-100)) {
             $RepShips[$T['id']] = $T['Name'] . " - level " . $T['Level'];
             if ($T['Level'] == 1) $Level1++;
             $Count++;
           }
-        }
+//        }
       }
       
       $pc = Proj_Costs(1);
@@ -584,7 +584,7 @@
         }
           
       } else {
-        echo "No ships are currently near the yard<p>";
+        echo "No ships are currently near the yard that need repairing<p>";
       }
 
   
