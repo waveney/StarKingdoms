@@ -98,11 +98,13 @@
   $Homes = Get_ProjectHomes($Fid);
   $DistTypes = Get_DistrictTypes();
   $ProjTypes = Get_ProjectTypes();
-
+  $ThingTypes = Get_ThingTypes();
+  
   $DiCall = $_REQUEST['Di'];
   $Di = abs($DiCall);
   $Hi = $_REQUEST['Hi'];
-      
+  $NoC = 0;
+        
   $PHx = 1;
   $Dis = [];
   foreach ($Homes as &$H) {
@@ -121,6 +123,11 @@
       break;
     case 3: // Thing
       $PH = Get_Thing($H['ThingId']);
+      if ($ThingTypes[$PH['Type']]['Properties'] & THING_CAN_DO_PROJECTS) {
+        $Dists = [10=>['HostType'=>3,'HostId'=>$PH['id'],'Type'=>10,'Number'=>1, 'id'=>-1]];
+        $NoC = 1;
+        break;
+      } 
       $Dists = Get_DistrictsT($H['ThingId']);
       if (!$Dists) {
         $H['Skip'] = 1;
@@ -131,7 +138,7 @@
     }
     //TODO Construction and Districts... 
 
-    $Dists[] = ['HostType'=>-1, 'HostId' => $PH['id'], 'Type'=> -1, 'Number'=>0, 'id'=>-$PH['id']];
+    if (!$NoC) $Dists[] = ['HostType'=>-1, 'HostId' => $PH['id'], 'Type'=> -1, 'Number'=>0, 'id'=>-$PH['id']];
     foreach ($Dists as &$D) {
       if ($D['Type'] > 0 && (($DistTypes[$D['Type']]['Props'] &2) == 0)) continue;
       if ($D['Type'] < 0 && $PH['Type'] != $Faction['Biosphere'] && Has_Tech($Fid,3)<2 ) continue;
@@ -533,7 +540,54 @@
      }
     
       break;
-    }
+
+  case 'Orbital Repair':
+      echo "<h2>Refit and Repair</h2>"; // THIS MUST be AFTER the simple buttons as the form gets lost
+
+      echo "You can only do this to ships at the same planet.<p>";
+      $HSys = $Homes[$Hi]['SystemId'];
+      $HLoc = $Homes[$Hi]['WithinSysLoc'];
+      $TTs = Get_ThingTypes();
+      $Things = Get_Things_Cond($Fid," SystemId=$HSys AND ( BuildState=3 OR BuildState=2) "); // Get all things at xx then filter  by type == Ship & WithinSysLoc
+      $RepShips = [];
+      $Level1 = 0;
+      $Count = 0;
+      foreach ($Things as $T) {
+        if ($TTs[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) {
+          if ($T['WithinSysLoc'] < 2 || $T['WithinSysLoc'] == $HLoc || $T['WithinSysLoc'] == ($HLoc-100)) {
+            $RepShips[$T['id']] = $T['Name'] . " - level " . $T['Level'];
+            if ($T['Level'] == 1) $Level1++;
+            $Count++;
+          }
+        }
+      }
+      
+      $pc = Proj_Costs(1);
+      if ($Count) {
+        if ($Count == 1) {
+          foreach ($RepShips as $tid=>$Name) { 
+            echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=11&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=$tid" .
+                "&Name=" . base64_encode("Refit and Repair " . $Name ) . "&L=1&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .  
+                "Refit and Repair $Name $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+          }
+        } else if ($Level1 < 2) {
+          echo "</form><form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=11&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT'>";
+          echo "Select the ship to refit and repair: " . fm_select($RepShips, $_REQUEST, 'Sel', 0) ;
+          echo "<button class=projtype type=submit>Refit and Repair</button></form>";
+        } else {
+          echo "</form><form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=11&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT'>";
+          echo "You may select <b>2</b> level 1 ships or 1 ship of level 2 or more. (For PCs and Linux hold down Ctrl to select 2nd ship)<p>";
+          echo "Select the ship to refit and repair: " . fm_select($RepShips, $_REQUEST, 'Sel', 0, ' multiple ','Sel2[]') ;
+          echo "<button class=projtype type=submit>Refit and Repair</button><form>";
+        }
+          
+      } else {
+        echo "No ships are currently near the yard<p>";
+      }
+
+  
+  
+    }  
     
   echo "</form><h2>Post It Note</h2>\n";
   echo "Block off some time and money for a project you can't yet do.<p>\n";

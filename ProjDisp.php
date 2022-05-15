@@ -51,6 +51,7 @@
   
   $OpenHi = $OpenDi = -99;
   $ProjTypes = Get_ProjectTypes();
+  $ThingTypes = Get_ThingTypes();
   
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {  // TODO This code is DREADFUL needs redoing
@@ -454,6 +455,7 @@
   $PHx = 1;
   $Dis = [];
   $FirstHome = 0;
+  $NoC = 0;
   
   $Things = Get_Things_Cond($Fid," Instruction!=0 AND Progress=0 AND InstCost!=0 ");
   $DeepSpace = 0;
@@ -473,6 +475,11 @@
       break;
     case 3: // Thing
       $PH = Get_Thing($H['ThingId']);
+      if ($ThingTypes[$PH['Type']]['Properties'] & THING_CAN_DO_PROJECTS) {
+        $Dists = [10=>['HostType'=>3,'HostId'=>$PH['id'],'Type'=>10,'Number'=>1, 'id'=>-1]];
+        $NoC = 1;
+        break;
+      } 
       $Dists = Get_DistrictsT($H['ThingId']);
       if (!$Dists) {
         $H['Skip'] = 1;
@@ -480,13 +487,14 @@
       }
       break;
     }
-    
+// if($Hi==199) echo "Here";    
     if ($H['ThingType'] != 3 && $PH['Type'] != $Faction['Biosphere']) $PlanCon--;
     //TODO Construction and Districts... 
 
-    $Dists[] = ['HostType'=>-1, 'HostId' => $PH['id'], 'Type'=> -1, 'Number'=>0, 'id'=>-$PH['id']];
+    if (!$NoC) $Dists[] = ['HostType'=>-1, 'HostId' => $PH['id'], 'Type'=> -1, 'Number'=>0, 'id'=>-$PH['id']];
     $back = "style='background:" . $HomeColours[$PHx-1] . ";'";
     $Headline1 .= "<th id=PHH$PHx $back><button type=button class=ProjHome id=PHome$Hi onclick=ToggleHome($Hi)>" . $PH['Name'] . "</button>";
+// if($Hi==199) { echo " THere"; var_dump($Headline1); };
     if ($FirstHome == 0) $FirstHome=$Hi;
     
     $District_Type = [];

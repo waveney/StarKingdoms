@@ -1653,7 +1653,7 @@ function InstructionsComplete() {
        TurnLog($Who,"An Asteroid Mine has been made in " . $N['Ref']);
        break;
 
-     case 'Make Orbital Repair Yards':
+     case 'Make Orbital Repair Yard':
        $NT = ['GameId'=>$GAME['id'], 'Type'=>  $TTNames['Orbital Repair Yards'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 
               'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
        Put_Thing($NT);

@@ -37,6 +37,7 @@ define('THING_CAN_BE_ADVANCED',4096);
 define('THING_CAN_BECREATED',8192);
 define('THING_NEEDS_CARGOSPACE',16384);
 define('THING_CANT_HAVENAMED',32768);
+define('THING_CAN_DO_PROJECTS',65536);
 
 function ModFormulaes() {
   global $ModFormulaes;
