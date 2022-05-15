@@ -124,7 +124,9 @@
     case 3: // Thing
       $PH = Get_Thing($H['ThingId']);
       if ($ThingTypes[$PH['Type']]['Properties'] & THING_CAN_DO_PROJECTS) {
-        $Dists = [10=>['HostType'=>3,'HostId'=>$PH['id'],'Type'=>10,'Number'=>1, 'id'=>-1]];
+        $ORY = 0;
+        foreach($DistTypes as $DT) if ($DT['Name'] == 'Orbital Repair') $ORY = $DT['id'];
+        $Dists = [$ORY=>['HostType'=>3,'HostId'=>$PH['id'],'Type'=>$ORY,'Number'=>1, 'id'=>-1]];
         $NoC = 1;
         break;
       } 
