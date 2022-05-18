@@ -722,7 +722,8 @@ function Show_Thing(&$T,$Force=0) {
   $Moving = ($T['LinkId'] > 0);
   
   if ($T['BuildState'] == 2 || $T['BuildState'] == 3) foreach ($ThingInstrs as $i=>$Ins) {
-    switch ($ThingInstrs[$i]) {
+//  echo "Checking: $Ins<br>";
+    switch ($Ins) {
     case 'None': // None
       break;
     
@@ -745,7 +746,7 @@ function Show_Thing(&$T,$Force=0) {
         $Ds = Get_DistrictsH($H['id']);
         if (isset($Ds[3])) break 2; // FOund a Shipyard
       }
-      if (isset($N['id']) && Get_Things_Cond($Fid,"Type=" . $TTNames['Orbital Repair Yards'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) break 2; // Orbital Shipyard     
+      if (isset($N['id']) && Get_Things_Cond($Fid,"Type=" . $TTNames['Orbital Repair Yards'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) break; // Orbital Shipyard     
       continue 2;
     
     case 'Analyse Anomaly': // Analyse
@@ -802,16 +803,17 @@ function Show_Thing(&$T,$Force=0) {
       
     case 'Make Orbital Repair Yard':
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Orbital Repair Yards')) continue 2;
-      if (Get_Things_Cond(0,"Type=" . $TTNames['Orbital Repair Yards'] . " OR Type=AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
+      if (Get_Things_Cond(0,"Type=" . $TTNames['Orbital Repair Yards'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
       break;
 
     case 'Build Space Station':
-      if ($Moving || !$HasDeep || !Has_Tech($Fid,'Space Stations')) continue 2;
-      if (Get_Things_Cond(0,"Type=" . $TTNames['Space Station'] . " OR Type=AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
+      if ($Moving || !$HasDeep) continue 2;
+      if (!Has_Tech($Fid,'Space Stations')) continue 2;
+      if (Get_Things_Cond(0,"Type=" . $TTNames['Space Station'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
       break;
 
     case 'Expand Space Station':
-      if ($Moving || !$HasDeep || !Has_Tech($Fid,'Space Stations')) continue 2;
+      if ($Moving || !$HasDeep || !Has_Tech($Fid,'Space Stations')) continue 2;//
       if (!(Get_Things_Cond($Fid,"Type=" . $TTNames['Space Station'] . " AND SystemId=" . $N['id'] . " AND BuildState=3"))) continue 2; // Don't have one
       break;
 
@@ -874,6 +876,9 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
 */
   if ($SpecCount>1) { 
     $PTs=Get_ProjectTypes();
+    $PTNs = [];
+    foreach($PTs as $PT) $PTNs[$PT['Name']] = $PT;
+    
     $ProgShow = $Cost = $Acts = 0;
     echo "<tr>" . fm_radio('Special Instructions', $SpecOrders,$T,'Instruction','',1,' colspan=6 ','',$ThingInclrs);// . " under development don't use yet";
     switch ($ThingInstrs[$T['Instruction']]) {
@@ -881,12 +886,12 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       break;
 
     case 'Colonise': // Colonise
-      $PTs = Get_PlanetTypes();
+      $PlTs = Get_PlanetTypes();
       $Ps = Get_Planets($N['id']);
       $Hab_dome = Has_Tech($Fid,'Habitation Domes');
       $HabPs = [];
       foreach($Ps as $P) {
-        if (!$PTs[$P['Type']]['Hospitable']) continue;
+        if (!$PlTs[$P['Type']]['Hospitable']) continue;
         if (Get_DistrictsP($P['id'])) continue; // Someone already there
         if ($P['Type'] == $FACTION['Biosphere']) {
           $HabPs[$P['id']] = [$P['Name'],$P['Type'],3];
@@ -908,7 +913,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
         foreach ($HabPs as $Plid=>$data) {
           $P = $Ps[$Plid];
           $Acts = $data[2];
-          echo "<tr><td><td colspan=6>Colonising: " . $P['Name'] . " a " . $PTs[$P['Type']]['Name'] . ($PTs[$P['Type']]['Append']?' Planet':'') .
+          echo "<tr><td><td colspan=6>Colonising: " . $P['Name'] . " a " . $PlTs[$P['Type']]['Name'] . ($PlTs[$P['Type']]['Append']?' Planet':'') .
              " will take " . $data[2] . " actions"; // TODO Moons
           $T['Spare1'] = $Plid;
 
@@ -920,7 +925,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
         $i = 1;
         foreach ($HabPs as $Plid=>$data) {
           $P = $Ps[$Plid];
-          $Plans[$Plid] = $P['Name'] . " a " . $PTs[$P['Type']]['Name'] . ($PTs[$P['Type']]['Append']?'Planet':'') . " will take " . $data[2] . " actions"; // TODO Moons
+          $Plans[$Plid] = $P['Name'] . " a " . $PlTs[$P['Type']]['Name'] . ($PlTs[$P['Type']]['Append']?'Planet':'') . " will take " . $data[2] . " actions"; // TODO Moons
           $Cols[$Plid] = $ThingInclrs[$i++];
           
         }
@@ -947,7 +952,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       
     case 'Make Outpost': // Make Outpost
       echo "<br>" . fm_text0("Name of Outpost",$T,'MakeName');
-      $Acts = $PTs[22]['CompTarget'];
+      $Acts = $PTNs['Build Outpost']['CompTarget'];
       $ProgShow = 2;      
       break;
 
@@ -998,26 +1003,26 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       
     case 'Make Asteroid Mine':
       echo "<br>" . fm_text0("Name of Asteroid Mine",$T,'MakeName');
-      $Acts = $PTs[23]['CompTarget'];
+      $Acts = $PTNs['Build Asteroid Mining Facility']['CompTarget'];
       $ProgShow = 2;
       break;
 
     case 'Make Advanced Asteroid Mine':
       echo "<br>" . fm_text0("Name of Advanced Asteroid Mine",$T,'MakeName');
-      $Acts = $PTs[29]['CompTarget'];
+      $Acts = $PTNs['Build Advanced Asteroid Mining Facility']['CompTarget'];
       $ProgShow = 2;
       break;
 
     case 'Make Orbital Repair Yard':
       echo "<br>" . fm_text0("Name of Orbital Repair Yard",$T,'MakeName');
-      $Acts = $PTs[25]['CompTarget'];
+      $Acts = $PTNs['Build Orbital Shipyard']['CompTarget'];
       $ProgShow = 2;
       break;
 
     case 'Make Minefield':
       echo "<tr><td><td colspan=6>Make sure you move to the location within the system you want to mine";
       echo "<br>" . fm_text0("Name of Minefield",$T,'MakeName');
-      $Acts = $PTs[24]['CompTarget'];
+      $Acts = $PTNs['Build Minefield']['CompTarget'];
       $ProgShow = 1;
       break;
 
@@ -1029,27 +1034,36 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       echo "<tr><td><td colspan=6>" . (($GM || $T['Progress'] == 0)? fm_number0('How many districts:',$T,'Dist1',''," max=$MaxDeep "): ("<td>Districts: " . $T['Dist1']));
       echo " First District:" . fm_select($PrimeMods,$T,'Dist2',1);
       echo "<br>" . fm_text0("Name of Space Station",$T,'MakeName');
-      $Acts = - $PTs[26]['CompTarget']*$T['Dist1'];
+      $Acts = - $PTNs['Build Space Station']['CompTarget']*$T['Dist1'];
       $ProgShow = 1;      
       break;
  
-    case 'Expand Space Station': // TODO No limit to size of expanded station - should use MaxDeep
-      $MaxDeep = HasTech($Fid,'Deep Space Construction')*2;
-      echo "<tr><td colspan=6>" . (($GM || $T['Progress'] == 0)? fm_number0('By how many districts:',$T,'Dist1'): ("<td>Adding: " . $T['Dist1'] . " disticts"));
+    case 'Expand Space Station': 
+      $MaxDeep = Has_Tech($Fid,'Deep Space Construction')*2;
+      
+      $SS = (Get_Things_Cond($Fid,"Type=" . $TTNames['Space Station'] . " AND SystemId=" . $N['id'] . " AND BuildState=3"))[0];
+      
+      if (empty($SS)) {
+        echo "Tell Richrd something hs gone wrong with this<p>";
+        break;
+      }     
+      
+      $MaxDeep = $MaxDeep - $T['MaxDistricts'];
+      echo "<tr><td colspan=6>" . (($GM || $T['Progress'] == 0)? fm_number0('By how many districts:',$T,'Dist1',''," max=$MaxDeep "): ("<td>Adding: " . $T['Dist1'] . " disticts"));
       $ProgShow = 1;
       if ($T['Dist1']) {
-        $Acts = - $PTs[27]['CompTarget']*$T['Dist1'];
+        $Acts = - $PTNs['Extend Space Station']['CompTarget']*$T['Dist1'];
       }
       break;
 
     case 'Make Deep Space Sensor':
       echo "<br>" . fm_text0("Name of Deep Space Sensor",$T,'MakeName');
-      $Acts = $PTs[28]['CompTarget'];
+      $Acts = $PTNs['Deep Space Sensors']['CompTarget'];
       break;
 
     case 'Build Stargate':
       $ProgShow = 1;
-      $Acts = $PTs[33]['CompTarget'];
+      $Acts = $PTNs['Build Stargate']['CompTarget'];
 
       // Needs a lot of work
       break;
@@ -1058,12 +1072,12 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       // TODO should have code to select Planet
       echo "<br>";
       $ProgShow = 1;
-      $Acts = $PTs[34]['CompTarget'];
+      $Acts = $PTNs['Build Planet Mine']['CompTarget'];
       break;
 
     case 'Construct Command Relay Station':
       $ProgShow = 1;
-      $Acts = $PTs[35]['CompTarget'];
+      $Acts = $PTNs['Construct Command Relay Station']['CompTarget'];
       break;
       
     case 'Repair Command Node': // Not coded yet
@@ -1072,16 +1086,16 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       foreach ($DTs as $D) if ($D['Props'] &1) $PrimeMods[$D['id']] = $D['Name'];
       echo "<br>District to Establish:" . fm_select($PrimeMods,$T,'Dist1');
       $ProgShow = 2; // TODO choose first district
-      $Acts = $PTs[36]['CompTarget'];
+      $Acts = $PTNs['Repair Command Node']['CompTarget'];
       break;
 
     case 'Build Planetary Mine': // Zabanian special
-      $PTs = Get_PlanetTypes();
+      $PlTs = Get_PlanetTypes();
       $Ps = Get_Planets($N['id']);
       $Hab_dome = Has_Tech($Fid,'Habitation Domes');
       $HabPs = [];
       foreach($Ps as $P) {
-        if (!$PTs[$P['Type']]['Hospitable']) continue;
+        if (!$PlTs[$P['Type']]['Hospitable']) continue;
         if (Get_DistrictsP($P['id'])) continue; // Someone already there
         if ($P['Type'] == $FACTION['Biosphere']) {
           $HabPs[$P['id']] = [$P['Name'],$P['Type'],3];
@@ -1103,7 +1117,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
         foreach ($HabPs as $Plid=>$data) {
           $P = $Ps[$Plid];
           $Acts = $data[2];
-          echo "<tr><td><td colspan=6>Mining: " . $P['Name'] . " a " . $PTs[$P['Type']]['Name'] . ($PTs[$P['Type']]['Append']?' Planet':'') .
+          echo "<tr><td><td colspan=6>Mining: " . $P['Name'] . " a " . $PlTs[$P['Type']]['Name'] . ($PlTs[$P['Type']]['Append']?' Planet':'') .
              " will take " . $data[2] . " actions"; // TODO Moons
           $T['Spare1'] = $Plid;
           break;
@@ -1114,7 +1128,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
         $i = 1;
         foreach ($HabPs as $Plid=>$data) {
           $P = $Ps[$Plid];
-          $Plans[$Plid] = $P['Name'] . " a " . $PTs[$P['Type']]['Name'] . ($PTs[$P['Type']]['Append']?'Planet':'') . " will take " . $data[2] . " actions"; // TODO Moons
+          $Plans[$Plid] = $P['Name'] . " a " . $PlTs[$P['Type']]['Name'] . ($PlTs[$P['Type']]['Append']?'Planet':'') . " will take " . $data[2] . " actions"; // TODO Moons
           $Cols[$Plid] = $ThingInclrs[$i++];
         }
         echo fm_radio('Mining:',$Plans,$T,'Spare1','',0,'','',$Cols);
