@@ -141,16 +141,16 @@ function Show_Thing(&$T,$Force=0) {
       if ($Host['LinkId']>0 && $Host['TargetKnown'] == 0) {
         echo "You don't know where you are going to unlooad<br>";
         if ($GM) {
-          echo "<input type=submit name=ACTION value='Unload on Turn'>\n";
+          echo "<input type=submit name=ACTION value='Unload After Move";
           echo "<input type=submit name=ACTION value='Unload Now'>\n";
         }
       } else {
-        if ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ) echo "<input type=submit name=ACTION value='Unload on Turn'>\n";
+        if ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ) echo "<input type=submit name=ACTION value='Unload After Move'>\n";
         if ($GM || (!$Conflict && ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ))) echo "<input type=submit name=ACTION value='Unload Now'>\n";         
 //          echo "<input type=submit name=ACTION value='Unload on Turn'>\n";
 //          if ($Conflict) echo " <b>Conflict</b> ";
 //          echo "<input type=submit name=ACTION value='Unload Now'>\n";
-        echo "<br>Note: To unload AFTER moving, please put the movement order in for the transport before the unload on turn order.<br>\n";
+        echo "<br>Note: To unload AFTER moving, please put the movement order in for the transport before the Unload After Move order.<br>\n";
       }
     }
     if ($Lid == -2 || $Lid == -4) {
@@ -192,10 +192,10 @@ function Show_Thing(&$T,$Force=0) {
           $finallocs = Within_Sys_Locs($DN);
           echo "<b>" . $DN['Ref'] . " - " . $finallocs[$T['NewLocation']] . "</b> ";
         } else {
-          echo "<b>Unknown location</b> ";        
+          echo "<b>Unknown location" . ($GM?":$Dest":"") . "</b> ";        
         }
       } else {
-        echo "<b>Unknown location</b> ";
+        echo "<b>Unknown location" . ($GM?":$Dest":"") . "</b> ";
       }
     }
  
@@ -519,7 +519,7 @@ function Show_Thing(&$T,$Force=0) {
   $Having = Get_Things_Cond(0," (LinkId=-2 OR LinkId=-4) AND NewSystemId=$tid ");
   
   if ($Have || $Having) {
-    echo "<tr><td>Carrying:<td colspan=6>Note: To unload after moving PLEASE put the move order in for the transport first.<br>";
+    echo "<tr><td>Carrying:<td colspan=6>Note: To Unload after moving PLEASE put the move order in for the transport first.<br>";
 
 //var_dump($Have,$Having);
 
@@ -849,8 +849,21 @@ function Show_Thing(&$T,$Force=0) {
       break;
       
     case 'Repair Command Node': // Not coded yet
-      continue 2;
+//      continue 2;
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Signal Jammer')) continue 2;
+
+      $Betas = Get_Things_Cond($Fid,"Type=" . $TTNames['Beta Node'] . " AND SystemId=" . $N['id'] . " AND BuildState=3");
+      
+      if (!$Betas) continue 2;
+      
+      $PMines = Get_Things_Cond($Fid,"Type=" . $TTNames['Planet Mine'] . " AND BuildState=3");
+      $CRelay = Get_Things_Cond($Fid,"Type=" . $TTNames['Command Relay Station'] . " AND BuildState=3");
+
+      if ($GM) echo "Betas: " . count($Betas) . " PMines: " . count($PMines) . " Relays: " . count($CRelay) . "<br>";
+            
+      if (count($Betas) >= (count($PMines)+1)) continue 2;
+      if (count($Betas) >= (count($CRelay)+1)) continue 2;
+      
       break;  
       
     case 'Build Planetary Mine': // Zabanian special
@@ -1029,7 +1042,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
     case 'Build Space Station':
       $PrimeMods = [];
       $DTs = Get_DistrictTypes();
-      $MaxDeep = HasTech($Fid,'Deep Space Construction')*2;
+      $MaxDeep = Has_Tech($Fid,'Deep Space Construction')*2;
       foreach ($DTs as $D) if ($D['Props'] &1) $PrimeMods[$D['id']] = $D['Name'];
       echo "<tr><td><td colspan=6>" . (($GM || $T['Progress'] == 0)? fm_number0('How many districts:',$T,'Dist1',''," max=$MaxDeep "): ("<td>Districts: " . $T['Dist1']));
       echo " First District:" . fm_select($PrimeMods,$T,'Dist2',1);
@@ -1085,7 +1098,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       $DTs = Get_DistrictTypes();
       foreach ($DTs as $D) if ($D['Props'] &1) $PrimeMods[$D['id']] = $D['Name'];
       echo "<br>District to Establish:" . fm_select($PrimeMods,$T,'Dist1');
-      $ProgShow = 2; // TODO choose first district
+      $ProgShow = 2; 
       $Acts = $PTNs['Repair Command Node']['CompTarget'];
       break;
 

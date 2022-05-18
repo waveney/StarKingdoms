@@ -337,6 +337,7 @@ function New_Thing(&$t) {
       Put_Thing($t);      
       break;
       
+    case 'Unload After Move':
     case 'Unload on Turn':
       $tid = $_REQUEST['id'];
       $t = Get_Thing($tid);
