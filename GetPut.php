@@ -514,7 +514,7 @@ function Get_Things($Fact,$type=0) {
   global $db,$GAMEID;
   $Ts = [];
   $res = $db->query("SELECT * FROM Things WHERE GameId=$GAMEID AND Whose=$Fact " . ($type?" AND Type=$type":""));
-  if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
   return $Ts;
 }
 

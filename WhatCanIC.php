@@ -25,20 +25,30 @@
   $MyThings = Get_Things($Fid);
   $MyHomes = Get_ProjectHomes($Fid);
   $ThingTypes = Get_ThingTypes();
+  $SRefs = Get_SystemRefs();
   
   $Factions = Get_Factions();
   
   $Places = [];
+  $Hosts = [];
   
   foreach ($MyThings as $T) {
     if ($T['BuildState'] < 2 || $T['BuildState']> 3) continue; // Ignore things not in use
     $Sid = $T['SystemId'];
-    if (!$Sid) continue;
+    if ($T['LinkId'] == -1 || $T['LinkId'] == -3) {
+      $Hosts[$T['SystemId']][] = $T['id']; // On board something
+      continue;
+ //    if ($Sid <= 0 || $T['LinkId'] <0 ) continue;
+    } else if ($Sid == 0) continue; // Not Anywhere
+
  //echo "Adding " .$T['Name'] . " " .$T['id'] . " " . $T['SystemId'] . "<br>";
     $Eyes = EyesInSystem($Fid,$Sid);
     $Places[$Sid] = (empty($Places[$Sid])? $Eyes : ($Places[$Sid] | $Eyes));
   }
 
+  echo "<h1>What Can I see?</h1>";
+  echo "Everything of yours and what they can see.<p>";
+//  echo "Note: Things on board other things (e.g. Named Characters) do not show up in this display - currently<p>";
 // var_dump ($Places);  
 
   foreach ($MyHomes as $H) {
@@ -60,9 +70,13 @@
   }
 
 //var_dump ($Places);
+//var_dump ($SRefs);
 // Now have list of places to search
 
-  foreach ($Places as $Sid=>$Eyes ) {
+  foreach ($SRefs as $Sid=>$Ref) {
+    if (!isset($Places[$Sid])) continue;
+    $Eyes = $Places[$Sid];
+//  foreach ($Places as $Sid=>$Eyes ) {
     SeeInSystem($Sid,$Eyes,1,1,$Fid);
 /*
     $Things = Get_AllThingsAt($Sid);
@@ -85,14 +99,20 @@
     };
 */
   }
-      
-  // List of all things and places
+ 
+  $LastWhose = 0;
   
-  // Sort by location - alphabetically?
-  
-  // Anything here?
-  
-  
+  if (!empty($Hosts)) {
+    foreach($Hosts as $Hid=>$H) {
+      if (empty($H)) continue;
+      $HostT = isset($MyThings[$Hid]) ? $MyThings[$Hid] : Get_Thing($Hid);
+      echo "<h2>On Board " . $HostT['Name'] . " is:</h2>";
+      foreach($H as $Tid) {
+        $T = Get_Thing($Tid);
+        SeeThing($T,$LastWhose,15,$T['Whose'],1);
+      }
+    }
+  }
 
   dotail();  
 ?>

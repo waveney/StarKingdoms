@@ -1206,10 +1206,20 @@ function ProjectProgress() {
     
     $TurnStuff = Get_ProjectTurnPT($P['id'],$GAME['Turn']);
     
-    $Rush = 0;
+    $Rush = $FreeRush = 0;
     $Bonus = 0;
     if (!empty($TurnStuff['Bonus'])) $Bonus = $TurnStuff['Bonus'];
     $Acts = min($MaxActs,$P['ProgNeeded']-$P['Progress']);
+    if (preg_match('/Research/',$PT['Name'],$mtch) && Has_Trait($P['FactionId'],'Built for Construction and Logistics')) {
+      $TechId = $P['ThingType'];
+      $Tech = Get_Tech($TechId);
+      if ($Tech['PreReqTech'] == 1) {
+        $FreeRush = min(1,$Acts,$P['ProgNeeded']-$P['Progress']-$Acts-$Bonus);
+        if ($FreeRush) {
+          TurnLog($P['FactionId'],'Free Rush of ' . $P['Name'] . " by $FreeRush ");
+        }
+      } 
+    }
     if (isset($TurnStuff['Rush'])) {
       $Rush = min($TurnStuff['Rush'],$Acts,$P['ProgNeeded']-$P['Progress']-$Acts-$Bonus);
       if ($Rush) {
@@ -1222,8 +1232,8 @@ function ProjectProgress() {
     }
 
 //echo "Acts . $Acts<br>";        
-    $P['Progress'] = min($P['ProgNeeded'], $P['Progress']+$Acts+$Rush+$Bonus);
-    TurnLog($P['FactionId'],"Progressing " . $P['Name'] . " by " . ($Acts+$Rush+$Bonus));
+    $P['Progress'] = min($P['ProgNeeded'], $P['Progress']+$Acts+$Rush+$Bonus+$FreeRush);
+    TurnLog($P['FactionId'],"Progressing " . $P['Name'] . " by " . ($Acts+$Rush+$Bonus+$FreeRush));
     $P['LastUpdate'] = $GAME['Turn'];
     Put_Project($P); // Note completeion is handled later in the turn sequence
   }

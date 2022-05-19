@@ -859,7 +859,7 @@ function Show_Thing(&$T,$Force=0) {
       $PMines = Get_Things_Cond($Fid,"Type=" . $TTNames['Planet Mine'] . " AND BuildState=3");
       $CRelay = Get_Things_Cond($Fid,"Type=" . $TTNames['Command Relay Station'] . " AND BuildState=3");
 
-      if ($GM) echo "Betas: " . count($Betas) . " PMines: " . count($PMines) . " Relays: " . count($CRelay) . "<br>";
+//      if ($GM) echo "Betas: " . count($Betas) . " PMines: " . count($PMines) . " Relays: " . count($CRelay) . "<br>";
             
       if (count($Betas) >= (count($PMines)+1)) continue 2;
       if (count($Betas) >= (count($CRelay)+1)) continue 2;
