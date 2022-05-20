@@ -364,7 +364,7 @@ function Instuctions() { // And other Instructions
         foreach($Ps as $P) {
           if (!$PTs[$P['Type']]['Hospitable']) continue;
           if (Get_DistrictsP($P['id'])) continue; // Someone already there
-          if ($P['Type'] == $FACTION['Biosphere']) {
+          if (($P['Type'] == $FACTION['Biosphere']) || ($PH['Type'] != $FACTION['Biosphere2']) || ($PH['Type'] != $FACTION['Biosphere3'])) { 
             $HabPs[$P['id']] = [$P,3];
           }
           if ($P['Type'] == 4 ) {
@@ -1151,11 +1151,11 @@ function ProjectProgress() {
       switch ($H['ThingType']) {
         case 1: // Planet
           $PH = Get_Planet($H['ThingId']);
-          if ($PH['Type'] != $Fact['Biosphere']) $MaxActs-=1;
+          if (($PH['Type'] != $Faction['Biosphere']) && ($PH['Type'] != $Faction['Biosphere2']) && ($PH['Type'] != $Faction['Biosphere3'])) $MaxActs-=1;
           break;
         case 2: // Moon
           $PH = Get_Moon($H['ThingId']);
-          if ($PH['Type'] != $Fact['Biosphere']) $MaxActs-=1; 
+          if (($PH['Type'] != $Faction['Biosphere']) && ($PH['Type'] != $Faction['Biosphere2']) && ($PH['Type'] != $Faction['Biosphere3'])) $MaxActs-=1;
           break;
         case 3: // Thing
           $PH = Get_Thing($H['ThingId']);

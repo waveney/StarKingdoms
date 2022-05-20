@@ -57,7 +57,14 @@ function Show_Faction(&$F,$Mode) {
     echo fm_DragonDrop(1,'Image','Faction',$Fid,$F,1,'',1,'','Faction');
   echo "</table>";
 
-  echo "<tr><td>Native BioSphere<td>" . (($GM || $Setup)?fm_select($PTs,$F,'Biosphere',1): $PTs[$F['Biosphere']]);
+  echo "<tr><td>Native BioSphere<td colspan=2>" . (($GM || $Setup)?fm_select($PTs,$F,'Biosphere',1): $PTs[$F['Biosphere']]);
+  if ($GM) {
+    echo ", " . fm_select($PTs,$F,'Biosphere2',1) . ", " . fm_select($PTs,$F,'Biosphere3',1);
+  } else if ($F['Biosphere2']) {
+    echo ", " .  $PTs[$F['Biosphere2']];
+  } else if ($F['Biosphere3']) {
+    echo ", " .  $PTs[$F['Biosphere3']];    
+  } 
   echo "<tr>" . fm_text('Player Name',$F,'Player',2);
 
   echo "<tr><td>Player State:<td>" . (($GM)? fm_select($PlayerState,$F,'TurnState'): $PlayerState[$F['TurnState']]);

@@ -490,7 +490,7 @@
       break;
     }
 // if($Hi==199) echo "Here";    
-    if ($H['ThingType'] != 3 && $PH['Type'] != $Faction['Biosphere']) $PlanCon--;
+    if (($H['ThingType'] != 3) && ($PH['Type'] != $Faction['Biosphere']) && ($PH['Type'] != $Faction['Biosphere2']) && ($PH['Type'] != $Faction['Biosphere3'])) $PlanCon--;
     //TODO Construction and Districts... 
 
     if (!$NoC) $Dists[] = ['HostType'=>-1, 'HostId' => $PH['id'], 'Type'=> -1, 'Number'=>0, 'id'=>-$PH['id']];
