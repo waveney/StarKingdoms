@@ -107,7 +107,7 @@ function Show_Thing(&$T,$Force=0) {
 
 
 
-  echo "<tr><td>Build State:" . fm_select($BuildState,$T,'BuildState'); 
+  echo "<tr><td>Build State: " . ($GM? fm_select($BuildState,$T,'BuildState') : $BuildState[$T['BuildState']]); 
   if (isset($T['BuildState']) && $T['BuildState'] <= 1) {
     if ($GM) echo fm_number('Build Project',$T,'ProjectId');
     if ($T['ProjectId']) {
