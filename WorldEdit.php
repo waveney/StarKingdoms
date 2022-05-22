@@ -31,7 +31,7 @@
 
   $Wid = $_REQUEST['id'];
 
-  if (isset($_REQUEST['ACTION'])) {
+  if (isset($_REQUEST['ACTION'])) { // Pre Home actions
     switch ($_REQUEST['ACTION']) {
       case 'DELETE': 
         db_delete('Worlds',$Wid);
@@ -41,12 +41,20 @@
   }
 
   $W = Get_World($Wid);
-  $H = Get_ProjectHome($W['Home']);
-  $Dists = Get_DistrictsH($H['id']);
+
+// var_dump($W)  ;
+  if (!isset($W['id'])) {
+    echo "<h2>No World selected</h2>";
+    dotail();
+  }
+  $TTypes = Get_ThingTypes();
   $PlanetTypes = Get_PlanetTypes();
   $Fid = $W['FactionId'];
-  $TTypes = Get_ThingTypes();
-  
+  $DTs = Get_DistrictTypes();
+
+  $H = Get_ProjectHome($W['Home']);
+  if (isset($H['id'])) {
+    $Dists = Get_DistrictsH($H['id']);
   
     switch ($W['ThingType']) {
       case 1: //Planet
@@ -70,17 +78,17 @@
         break;
     }
     
-  $DTs = Get_DistrictTypes();
-  
-  if (isset($_REQUEST['ACTION'])) {
-    switch ($_REQUEST['ACTION']) {
-     case 'Militia' :
-       Update_Militia($W,$Dists);
-       echo "<h2>Militia Updated</h2>";
-       break;
-     }
-  }
 
+  
+    if (isset($_REQUEST['ACTION'])) { // Post home actions
+      switch ($_REQUEST['ACTION']) {
+       case 'Militia' :
+         Update_Militia($W,$Dists);
+         echo "<h2>Militia Updated</h2>";
+         break;
+       }
+    }
+  }
 
   $NumDists = count($Dists);
   $dc=0;
@@ -125,8 +133,7 @@
   if (Access('GM')) {
     echo "<h2><a href=WorldEdit.php?ACTION=Militia&id=$Wid>Update Militia</a></h2>";
     if (!isset($H['id'])) {
-      echo "<h2>No Home!</h2>";
-      echo "<form><button type=button formmethod=post formaction=WorldEdit.php?ACTION=DELETE&id=$Wid>Delete?</button></form>\n";
+      echo "<h2>No Home! - <a href=WorldEdit.php?ACTION=DELETE&id=$Wid>Delete?</h2>\n";
     }
   }
   

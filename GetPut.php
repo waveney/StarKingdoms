@@ -383,41 +383,53 @@ function Put_District(&$now) {
   }  
 }
 
-function Get_DistrictsP($Pid,$Turn=0) {
+function Get_DistrictsP($Pid,$Cvl=0,$Turn=0) {
   global $db,$GAMEID,$GAME;
   $Ts = [];
 //  $res = $db->query("SELECT * FROM Districts WHERE HostType=1 AND HostId=$Pid AND TurnStart<=" . ($Turn? $Turn : $GAME['Turn']) . "ORDER BY Type, TurnStart");
   $res = $db->query("SELECT * FROM Districts WHERE HostType=1 AND HostId=$Pid ORDER BY Type");
-  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['Type']] = $ans;
+  if ($res) while ($ans = $res->fetch_assoc()) {
+    if ($ans['Delta'] && $Cvl==0) $ans['Number'] += $ans['Delta'];
+    $Ts[$ans['Type']] = $ans;
+  }
   return $Ts;
 }
 
-function Get_DistrictsM($Mid,$Turn=0) {
+function Get_DistrictsM($Mid,$Cvl=0,$Turn=0) {
   global $db,$GAMEID,$GAME;
   $Ts = [];
 //  $res = $db->query("SELECT * FROM Districts WHERE HostType=2 AND HostId=$Mid AND TurnStart<=" . ($Turn? $Turn : $GAME['Turn']) . "ORDER BY Type, TurnStart");
   $res = $db->query("SELECT * FROM Districts WHERE HostType=2 AND HostId=$Mid ORDER BY Type");
-  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['Type']] = $ans;
+  if ($res) while ($ans = $res->fetch_assoc()) {
+    if ($ans['Delta'] && $Cvl==0) $ans['Number'] += $ans['Delta'];
+    $Ts[$ans['Type']] = $ans;
+  }
   return $Ts;
 }
 
-function Get_DistrictsT($Tid,$Turn=0) {
+function Get_DistrictsT($Tid,$Cvl=0,$Turn=0) {
   global $db,$GAMEID,$GAME;
   $Ts = [];
 //  $res = $db->query("SELECT * FROM Districts WHERE HostType=3 AND HostId=$Tid AND TurnStart<=" . ($Turn? $Turn : $GAME['Turn']) . "ORDER BY Type, TurnStart");
   $res = $db->query("SELECT * FROM Districts WHERE HostType=3 AND HostId=$Tid ORDER BY Type");
-  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['Type']] = $ans;
+  if ($res) while ($ans = $res->fetch_assoc()) {
+    if ($ans['Delta'] && $Cvl==0) $ans['Number'] += $ans['Delta'];
+    $Ts[$ans['Type']] = $ans;
+  }
   return $Ts;
 }
 
-function Get_DistrictsH($Hid,$Turn=0) {
+function Get_DistrictsH($Hid,$Cvl=0,$Turn=0) {
   global $db,$GAMEID,$GAME;
   $Ts = [];
 /*  $res = $db->query("SELECT D.* FROM Districts D, ProjectHomes H WHERE D.HostType=H.ThingType AND H.id=$Hid AND D.HostId=H.ThingId " . 
                     " AND TurnStart<=" . ($Turn? $Turn : $GAME['Turn']) . "ORDER BY Type, TurnStart");*/
   $res = $db->query("SELECT D.* FROM Districts D, ProjectHomes H WHERE D.HostType=H.ThingType AND H.id=$Hid AND D.HostId=H.ThingId " . 
                     "ORDER BY Type");
-  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['Type']] = $ans;
+  if ($res) while ($ans = $res->fetch_assoc()) {
+    if ($ans['Delta'] && $Cvl==0) $ans['Number'] += $ans['Delta'];
+    $Ts[$ans['Type']] = $ans;
+  }
   return $Ts;
 }
 

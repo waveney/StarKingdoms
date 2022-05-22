@@ -92,6 +92,10 @@
     }
     
     $H = Get_ProjectHome($W['Home']);
+    if (!isset($H['Economy'])) {
+      echo "<h2 clss=Err>World #" . $W['id'] . " has no project home</h2>";
+      continue;
+    }
     
     $Recalc = Recalc_Economic_Rating($H,$W,$Fid);
     

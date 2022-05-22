@@ -2063,7 +2063,14 @@ function TidyUpMovements() {
     Put_FactionFaction($F);  
   }
   
-  GMLog("Movements Tidied Up<p>");  
+  // Tidy up 1 turn District Deltas
+  $Ds = Gen_Get_Cond("Districts","Delta!=0");
+  foreach($Ds as $D) {
+    $D['Delta'] = 0;
+    Put_District($D);
+  }
+  
+  GMLog("Movements, 1 turn carry, district deltas Tidied Up<p>");  
   return 1;
 }
 

@@ -283,7 +283,7 @@ function Show_Planet(&$P,$Mode=0,$Buts=0) {
   
   $Facts = Get_Faction_Names();
   $DTs = Get_DistrictTypeNames();
-  $Ds = Get_DistrictsP($Pid);
+  $Ds = Get_DistrictsP($Pid,1);
   $N = Get_System($P['SystemId']);
   $PTNs = Get_PlanetTypeNames();
   $PTD = Get_PlanetTypes();
@@ -341,7 +341,8 @@ function Show_Planet(&$P,$Mode=0,$Buts=0) {
   foreach ($Ds as $D) {
     $did = $D['id'];
     if ($dc++%4 == 0)  echo "<tr>";
-    echo "<td>" . fm_Select($DTs, $D , 'Type', 1,'',"DistrictType-$did") . fm_number1('', $D,'Number', '','',"DistrictNumber-$did");
+    echo "<td>" . fm_Select($DTs, $D , 'Type', 1,'',"DistrictType-$did") . fm_number1('', $D,'Number', '',' class=Num3 ',"DistrictNumber-$did");
+    echo fm_number0("&Delta; ",$D,'Delta','',' class=Num3 ',"DistrictDelta-$did");
     };
 
   echo "<tr><td>Add District Type<td>" . fm_Select($DTs, NULL , 'Number', 1,'',"DistrictTypeAdd-$Pid");
@@ -383,7 +384,7 @@ function Show_Moon(&$M,$Mode=0) {
   $P = Get_Planet($Pid);
   $Facts = Get_Faction_Names();
   $DTs = Get_DistrictTypeNames();
-  $Ds = Get_DistrictsM($Mid);
+  $Ds = Get_DistrictsM($Mid,1);
   $N = Get_System($P['SystemId']);
   $PTNs = Get_PlanetTypeNames();
   $PTD = Get_PlanetTypes();
@@ -419,7 +420,8 @@ function Show_Moon(&$M,$Mode=0) {
   foreach ($Ds as $D) {
     $did = $D['id'];
     if ($dc++%4 == 0)  echo "<tr>";
-    echo "<td>" . fm_Select($DTs, $D , 'Type', 1,'',"DistrictType-$did") . fm_number1('', $D,'Number', '','',"DistrictNumber-$did");
+    echo "<td>" . fm_Select($DTs, $D , 'Type', 1,'',"DistrictType-$did") . fm_number1('', $D,'Number', '',' class=Num3 ',"DistrictNumber-$did");
+    echo fm_number0("&Delta; ",$D,'Delta','',' class=Num3 ',"DistrictDelta-$did");
     };
 
   echo "<tr><td>Add District Type<td>" . fm_Select($DTs, NULL , 'Number', 1,'',"DistrictTypeAdd-$Mid");
