@@ -7,12 +7,15 @@
 
   $Fid = 0;
   $xtra = '';
+  $NeedDelta = 0;
   if (Access('Player')) {
     if (!$FACTION) {
       if (!Access('GM') ) Error_Page("Sorry you need to be a GM or a Player to access this");
     } else {
       $Fid = $FACTION['id'];
       $Faction = &$FACTION;
+      
+      $NeedDelta = Has_Trait($Fid,'This can be optimised');
     }
   } 
   if ($GM = Access('GM') ) {
@@ -110,13 +113,19 @@
     echo "<tr>" . fm_number('Economy Factor
 */
   $NumCom = 0;
-  $NumPrime = $Mines = 0;
+  $NumPrime = $Mines = 0; $DeltaSum = 0;
   if ($NumDists) {
     if ($NumDists) echo "<tr><td rowspan=" . ($NumDists+1) . ">Districts:";
     foreach ($Dists as $D) {
       echo "<tr><td>" . $DTs[$D['Type']]['Name'] . ": " . $D['Number'];
+      if ($NeedDelta) {
+        echo fm_number1("Delta",$D,'Delta',''," min=-$NeedDelta max=$NeedDelta ","Dist:Delta:" . $D['id']);
+        $DeltaSum += $D['Delta'];
+      }
     }
-
+    if ($NeedDelta && $DeltaSum != 0) {
+      echo "<tr><td colspan=3 class=Err>The Deltas do not sum to zero";
+    }
   } else {
     echo "<tr><td>No Districts currently\n";
   }

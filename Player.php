@@ -47,7 +47,60 @@ function ValidateTurn() {
       }
     }
   }
-     
+  
+  if (Has_Trait($Fid, 'This can be optimised')) {
+    $Ws = Get_Worlds($Fid);
+    $TTypes = Get_ThingTypes();
+    $PlanetTypes = Get_PlanetTypes();
+    $DTs = Get_DistrictTypes();
+
+    foreach($Ws as $W) {
+      $H = Get_ProjectHome($W['Home']);
+      switch ($W['ThingType']) {
+      case 1: //Planet
+        $WH = $P = Get_Planet($W['ThingId']);
+        $type = $PlanetTypes[$P['Type']]['Name'];
+        if ($PlanetTypes[$P['Type']]['Append']) $type .= " Planet";
+        $Name = $P['Name'];
+        break;
+        
+      case 2: /// Moon
+        $WH = $M = Get_Moon($W['ThingId']);
+        $type = $PlanetTypes[$M['Type']]['Name'];
+        if ($PlanetTypes[$M['Type']]['Append']) $type .= " Moon";
+        $Name = $M['Name'];
+        break;
+    
+      case 3: // Thing
+        $WH = $T = Get_Thing($W['ThingId']);
+        $type = $TTypes[$T['Type']]['Name'];
+        $Name = $T['Name'];
+        break;
+      }
+
+      $Dists = Get_DistrictsH($H['id']);
+
+      $DeltaSum = $Used = 0;
+      foreach($Dists as $D) {
+        if ($D['Delta']) {
+          $Used++;
+          $DeltaSum += $D['Delta'];
+        }
+      }
+      if ($Used == 0) {
+        echo "<h2 class=Err>Warning - No use of <b>This can be optimised</b> on $Name</h2>";
+        $Valid = 0;
+      } elseif ($Used > 2) {
+         echo "<h2 class=Err>Warning - <b>This can be optimised</b> can only be used once on $Name</h2>";
+        $Valid = 0;                    
+      } elseif ($DeltaSum  != 0) { 
+        echo "<h2 class=Err>Warning - <b>This can be optimised</b> on $Name Does not Sum to Zero</h2>";
+        $Valid = 0;               
+      }
+    }
+  }
+  
+  
   return $Valid;
 }
 

@@ -365,11 +365,14 @@
         $N = Get_World($mtch[3]);
         $N[$mtch[1]] = $Value;
         return Put_World($N);
-
       }
       echo "ERROR";
       var_dump($_REQUEST);
       exit;
+    } else if ((preg_match('/Dist:(\w*):(\d*)/',$field,$mtch)?true:false)) {
+      $N = Get_District($mtch[2]);
+      $N[$mtch[1]] = $Value;      
+      return Put_District($N);   
     }
     $N = Get_World($id);
     $N[$field] = $Value;
