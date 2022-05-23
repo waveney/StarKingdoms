@@ -200,6 +200,7 @@ function New_Thing(&$t) {
       Put_Thing($t);
       break;
 
+    case 'Delete':
     case 'Remove Thing (No debris)':
       $tid = $_REQUEST['id'];
       $t = Get_Thing($tid);

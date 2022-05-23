@@ -1010,6 +1010,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
         echo "<br>Analysing: " . $Anom['Name'];
         $ProgShow = 2;
         $Acts = $Anom['AnomalyLevel'];
+        $Cost = -1;
         $T['Progress'] = $FA['Progress'];
       }
       break;
@@ -1184,6 +1185,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
   echo "<input type=submit name=ACTION value=Refresh>";
   if ($GM) echo "<input type=submit name=ACTION value='GM Refit'> <input type=submit name=ACTION value='Destroy Thing (Leave debris)'>" .
        " <input type=submit name=ACTION value='Remove Thing (No debris)'>  <input type=submit name=ACTION value='Warp Out'>\n";
+  if (!$GM && ($tprops & THING_CAN_BECREATED)) echo "<input type=submit name=ACTION value='Delete'>";
   if ($GM || empty($Fid)) {
     if (Access('God')) {
       echo "<h2><a href=ThingList.php>Back to Thing list</a> &nbsp; <input type=submit name=ACTION value=Duplicate> <input type=submit name=ACTION value='GM Recalc'></h2>";
