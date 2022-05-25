@@ -192,7 +192,7 @@
           foreach ($HDists[$Hi] as $D) {
 //echo "<br>Checking "; var_dump($D);
             if ($D['Type'] == $DTz['id']) {
-              $Lvl = $D['Number'];
+              $Lvl = $D['Number']-$D['Delta'];
               break;
             }
           }
