@@ -54,6 +54,8 @@
       echo "<h2>Label has been removed from $sysref</h2>";
       break;
     
+    case 'Assign Name' :
+    case 'Assign Label' :
     case 'Name' :
       if (!empty($_REQUEST['Name'])) {
         echo "<p>";
@@ -210,9 +212,11 @@
   echo "<tr>" . fm_text('Current Moon Name',$dat,'mname') . "- so it can be found";
   $val = (empty($dat['Name'])? '' : "value='" . $dat['Name'] . "'" );
   echo "<tr><td>Name to assign:<td><input type=text name=Name $val onchange=this.form.submit()>";
-  echo "<td><input type=submit Name=ACTION Value=Name hidden>";
-  
-  echo "<tr><td>Private Label assign:<td><input type=text name=Label $val onchange=this.form.submit()> <button type=submit name=ACTION value='Remove Label'>Remove Label</button>";
+  echo "<input type=submit Name=ACTION Value='Assign Name'>";
+
+  echo "<tr><td>Private Label assign:<td><input type=text name=Label $val onchange=this.form.submit()>";
+  echo "<input type=submit Name=ACTION Value='Assign Label'>";  
+  echo "<input type=submit name=ACTION value='Remove Label'>";
   echo "</form></table><p>";
   
   if ($Force) echo "<input type=submit value=SET>";
