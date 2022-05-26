@@ -271,6 +271,12 @@ function StartProjects() {
       GMLog($Facts[$P['FactionId']]['Name'] . ' Starting ' . $P['Name'] . " Cost: " . Credit() . " $Cost");
       if (($ProjTypes[$P['Type']]['Props'] & 2) && (($ProjTypes[$P['Type']]['Props'] & 20) ==0 )) { // Has ONE thing - 2nd test elimiates repair and construction 
         if ($Tid) {
+          if ($T['BuildState'] !=0) {
+            $T = Thing_Duplicate($Tid);
+            $Tid = $T['id'];
+            $P['ThingId'] = $Tid;
+            Put_Project($P);
+          }
           $T['BuildState'] = 1; // Building
           $T['SystemId'] = $Where[0];
           $T['WithinSysLoc'] = $Where[1];
