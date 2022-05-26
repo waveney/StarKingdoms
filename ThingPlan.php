@@ -188,6 +188,9 @@
       $ZZnull = []; 
       $MTs = Get_ModuleTypes();
       echo "<tr><th><b>Module type</b><th><b>Number</b><th><b>Slots per Module</b><th><b>Comments</b>";
+      $Elvl = 1;
+      $Engines = 0;
+
       foreach ($MTs as $Mti=>$Mtype) {
         if (isset($MTNs[$Mti])) {
           $MT = $MTNs[$Mti];
@@ -205,8 +208,12 @@
           echo "<td class=Err>This module is not allowed on this type of thing\n";
           $Valid = 0;
           $totmodc += $MMs[$Mti]['Number'] * $MTs[$Mti]['SpaceUsed'];
-
         }
+        
+         if ($Mti == 5) { // Engines
+           $ELvl = Calc_TechLevel($T['Whose'],$Mti);
+           if(isset($MMs[$Mti]['Number'])) $Engines = $MMs[$Mti]['Number'];
+         }
       }
 
       echo "<tr><td><td><td><tr><td>Modules slots used:";
@@ -217,6 +224,10 @@
       echo "<tr><td>Health/Hull<td>" . $T['OrigHealth'] . "<td><td>At current Tech Levels";
       $BaseDam = Calc_Damage($T);
       if ($tprops & (THING_HAS_ARMYMODULES | THING_HAS_MILSHIPMODS )) echo "<tr><td>Basic Damage<td>$BaseDam<td><td>At current Tech Levels.  Before special weapons etc";
+      if ((($tprops & THING_CAN_MOVE) != 0) && (($tprops & THING_HAS_SHIPMODULES) != 0)) {
+        $T['Speed'] = $Engines*$Elvl/$T['Level'] +1;
+        echo "<tr><td>Speed:<td>" . sprintf('%0.3g',$T['Speed']) . "<td><td>At current Tech Levels";
+      } 
     }
     
     if ($tprops & THING_CAN_BECREATED) {
