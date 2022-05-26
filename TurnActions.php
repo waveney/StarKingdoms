@@ -269,7 +269,7 @@ function StartProjects() {
       $P['Status'] = 1; // Started
       TurnLog($P['FactionId'],'Starting ' . $P['Name'] . " Cost: " . Credit() . " $Cost");
       GMLog($Facts[$P['FactionId']]['Name'] . ' Starting ' . $P['Name'] . " Cost: " . Credit() . " $Cost");
-      if (($ProjTypes[$P['Type']]['Props'] & 2) && (($ProjTypes[$P['Type']]['Props'] &16) ==0 )) { // Has a thing      
+      if (($ProjTypes[$P['Type']]['Props'] & 2) && (($ProjTypes[$P['Type']]['Props'] & 20) ==0 )) { // Has ONE thing - 2nd test elimiates repair and construction 
         if ($Tid) {
           $T['BuildState'] = 1; // Building
           $T['SystemId'] = $Where[0];
@@ -338,6 +338,7 @@ function Instuctions() { // And other Instructions
   $Facts = Get_Factions();
   
   $PTs = Get_ProjectTypes();
+  $AAs = [];
   
   foreach ($Things as $T) {
     $N = Get_System($T['SystemId']);
