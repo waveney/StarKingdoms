@@ -143,7 +143,7 @@ function CashTransfers() {
       Gain_Science($B['Recipient'],$B['What'],$B['Amount'],$B['YourRef']);
       TurnLog($B['Recipient'],"Gained " . $B['Amount'] . " Science points for " . $B['YourRef']);    
     } else { // Other Currencies
-      if (Gain_Currency($Fid,$B['What'],-$B['Amount'],$B['YourRef'])) {
+      if (Gain_Currency($['FactionId'],$B['What'],-$B['Amount'],$B['YourRef'])) {
         TurnLog($B['FactionId'], "Transfered " . $B['Amount'] . " of " . $Currencies[$B['What']] . " for " . $B['YourRef'] . " to " . $Factions[$B['Recipient']]['Name']);
         if ($B['Recipient'] > 0) {
           Gain_Currency($B['Recipient'], $B['What'], $B['Amount'],$B['YourRef']);
