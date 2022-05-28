@@ -1168,11 +1168,11 @@ function ProjectProgress() {
       switch ($H['ThingType']) {
         case 1: // Planet
           $PH = Get_Planet($H['ThingId']);
-          if (($PH['Type'] != $Faction['Biosphere']) && ($PH['Type'] != $Faction['Biosphere2']) && ($PH['Type'] != $Faction['Biosphere3'])) $MaxActs-=1;
+          if (($PH['Type'] != $Fact['Biosphere']) && ($PH['Type'] != $Fact['Biosphere2']) && ($PH['Type'] != $Fact['Biosphere3'])) $MaxActs-=1;
           break;
         case 2: // Moon
           $PH = Get_Moon($H['ThingId']);
-          if (($PH['Type'] != $Faction['Biosphere']) && ($PH['Type'] != $Faction['Biosphere2']) && ($PH['Type'] != $Faction['Biosphere3'])) $MaxActs-=1;
+          if (($PH['Type'] != $Fact['Biosphere']) && ($PH['Type'] != $Fact['Biosphere2']) && ($PH['Type'] != $Fact['Biosphere3'])) $MaxActs-=1;
           break;
         case 3: // Thing
           $PH = Get_Thing($H['ThingId']);
@@ -1238,7 +1238,7 @@ function ProjectProgress() {
       } 
     }
     if (isset($TurnStuff['Rush'])) {
-      $Rush = min($TurnStuff['Rush'],$Acts,$P['ProgNeeded']-$P['Progress']-$Acts-$Bonus);
+      $Rush = min($TurnStuff['Rush'],$Acts,$P['ProgNeeded']-$P['Progress']-$Acts-$Bonus-$FreeRush);
       if ($Rush) {
         if (Spend_Credit($P['FactionId'],$Rc = (Rush_Cost($P['FactionId'])*$Rush), 'Rushing ' . $P['Name'] . " By $Rush")) {
           TurnLog($P['FactionId'],'Rushing ' . $P['Name'] . " by $Rush  Cost: " . Credit() . " $Rc");

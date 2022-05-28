@@ -262,6 +262,7 @@
     } else {
       $txt .= "<li><a href=ListUsers.php>List Group Users</a>";    
     }
+    $txt .= "<li><a href=ListTraits.php>List All Traits</a>\n";
     $txt .= "</ul><p>\n";
   }
 

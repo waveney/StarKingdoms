@@ -46,7 +46,7 @@
     echo "<td>$Name";
     echo "<td>$Neb";
     echo "<td><a href=SurveyReport.php?id=$sid>Survey Report</a>"; // Generic 
-    echo "<td><a href=ThingList.php?AT=$Ref>$Ref</a>\n";
+    echo "<td><a href=ThingList.php?AT=$Ref>Things in $Ref</a>\n";
     $Anoms = Gen_Get_Cond('Anomalies',"GameId=$GAMEID AND SystemId=$sid");
     echo "<td>";
     if ($Anoms) {
