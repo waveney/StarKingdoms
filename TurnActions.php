@@ -115,11 +115,12 @@ function SaveAllLocations() {
 }
 
 function CashTransfers() {
-  global $GAME;
+  global $GAME,$Currencies;
   
   $Facts = Get_Factions();
   $Facts[-1]['Name'] = "Other";
   $Bs = Get_BankingFT(0,$GAME['Turn']);
+  AddCurrencies();
   
   foreach($Bs as $B) {
     if ($B['What'] == 0) {

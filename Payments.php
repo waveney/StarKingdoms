@@ -12,6 +12,7 @@
 
   global $GAME,$Currencies;
 
+  AddCurrencies();
   $Facts = Get_Faction_Names();
 //  var_dump($_REQUEST);
   echo "<h2>Payments in Credits or SP</h2>\n";
