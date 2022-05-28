@@ -113,7 +113,10 @@ function Player_Page() {
     if (!$GM) fm_addall('readonly');
   case 'Turn Planning':
     echo "<li><a href=MapFull.php>Faction Map</a>\n";
-    if (Has_Tech($FACTION['id'],'Astral Mapping')) echo "<li><a href=MapFull.php?Hex>Faction Map</a> - with spatial location of nodes\n";
+    if (Has_Tech($FACTION['id'],'Astral Mapping')) {
+      echo "<li><a href=MapFull.php?Hex&Links=0>Faction Map</a> - with spatial location of nodes\n";
+      echo "(<a href=MapFull.php?Hex>With Link Numbers)</a>\n";
+    }
     echo "<li><a href=TechShow.php?PLAYER>Technologies</a><p>\n";
     echo "<li><a href=WhatCanIC.php>What Things can I See?</a>\n";
     echo "<li><a href=WorldList.php>Worlds and Colonies</a> - High Level info only\n";  

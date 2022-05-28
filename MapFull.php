@@ -17,6 +17,8 @@
  //var_dump($_REQUEST, $_COOKIE);  
 
   A_Check('Player');
+  $ShowLinks = 1;
+  if (isset($_REQUEST['Links'])) $ShowLinks = $_REQUEST['Links'];
 
   $CatCols = ["white","grey", "Yellow"];
 //  $HexLegPos = [[1,8],[1,7.5],[1,7],[1,6.5], [9,8],[9,7.5],[9,7],[9,6.5], [1,0],[1,0.5],[1,1],[1,1.5], [9,0],[9,0.5],[9,1.5],[9,2]];
@@ -188,7 +190,7 @@
         if (isset($LinkShown[$L['id']])) continue;
         $Fl = Get_FactionLinkFL($Faction, $L['id']);
         if (isset($Fl['id']) && $Fl['Known']) {
-          fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=\"" . $Levels[$L['Level']]['Colour'] . "\" label=\"#" . $L['id'] . "\" ];\n");
+          fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=\"" . $Levels[$L['Level']]['Colour'] . '"' . ($ShowLinks? " label=\"#" . $L['id'] . '"' : '') . " ];\n");
           $LinkShown[$L['id']]=1;
         } else {
           if ($Neb && $Fl['NebScanned'] < $Neb) continue;
@@ -199,7 +201,7 @@
           if (isset($if['ScanLevel']) && $if['ScanLevel']<2) continue;
           $rand = "B$ul";  // This kludge at least allows both ends to be displayed
           fwrite($Dot,"Unk$ul$rand [label=\"?\" shape=circle];\n");
-          fwrite($Dot,"$from -- Unk$ul$rand [color=\"" . $Levels[$L['Level']]['Colour'] . "\" label=\"#" . $L['id'] . "\" ];\n");
+          fwrite($Dot,"$from -- Unk$ul$rand [color=\"" . $Levels[$L['Level']]['Colour'] . '"' . ($ShowLinks? " label=\"#" . $L['id'] . '"' : '') . " ];\n");
           $ul++;
           if (isset($UnknownLink[$L['id']])) {
             $RedoMap = 1;

@@ -123,6 +123,7 @@ function CashTransfers() {
   AddCurrencies();
   
   foreach($Bs as $B) {
+    if ($B['DoneTurn'] >= $GAME['Turn']) continue; // Already done
     if ($B['What'] == 0) {
       if (Spend_Credit($B['FactionId'],$B['Amount'],$B['YourRef'])) {
         TurnLog($B['FactionId'],"Transfered " . Credit() . $B['Amount'] . " for " . $B['YourRef'] . " to " . $Facts[$B['Recipient']]['Name']);
@@ -166,6 +167,8 @@ function CashTransfers() {
         }      
       }
     }
+    $B['DoneTurn'] = $GAME['Turn'];
+    Put_Banking($B);
   }
   
   GMLog("All Cash trasfered complete.<br>\n");
