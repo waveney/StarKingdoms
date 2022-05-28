@@ -468,7 +468,7 @@ function Instuctions() { // And other Instructions
         $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
         if (!$FA || ($FA['State'] == 0) ) {
           $Sys = Get_System($T['SystemId']);
-          TurnLog($T['Whose'], $T['Name'] . " is supposed to be analysing an anomaly - but you don't know of one here");
+          TurnLog($T['Whose'], $T['Name'] . " is supposed to be analysing an anomaly - but you don't know of one here",$T);
           GMLog($Facts[$T['Whose']]['Name'] . " - " . $T['Name'] . " is supposed to be analysing an anomaly - but you don't know of one at" . $Sys['Ref']);
           $T['Instruction'] = $T['ProjectId'] = 0;
           Put_Thing($T);
@@ -678,7 +678,7 @@ function InstuctionsStage2() { // And other Instructions
                'TurnBuilt'=>$GAME['Turn'], 'OtherFaction'=>$T['OtherFaction'], 'Name'=>$T['MakeName']];
       Put_Thing($NT);
       $OF = $Facts[$T['OtherFaction']];
-      TurnLog($T['Whose'],"You have created an Embassy in " . $N['Ref'] . " with the " . $OF['Name']);
+      TurnLog($T['Whose'],"You have created an Embassy in " . $N['Ref'] . " with the " . $OF['Name'],$T);
       TurnLog($T['OtherFaction'],"An embassy to you has been setup by " . $Facts[$T['Whose']]['Name']);
       GMLog($T['OtherFaction'],"An embassy to "  . $Facts[$T['Whose']]['Name'] . " has been setup in " . $N['Ref'] . " with the " . $OF['Name']);
       $T['Instruction'] = 0;
@@ -699,7 +699,7 @@ function InstuctionsStage2() { // And other Instructions
             Gen_Put('FactionAnomaly',$FA);
             break;
           }
-          TurnLog($T['Whose'], $T['Name'] . " Could not start to analyse: " . $A['Name'] . " because " . $_REQUEST["ReasonAA$Tid"] . "\n<br>");
+          TurnLog($T['Whose'], $T['Name'] . " Could not start to analyse: " . $A['Name'] . " because " . $_REQUEST["ReasonAA$Tid"] . "\n<br>",$T);
           $T['Instruction'] = $T['ProjectId'] = 0;
           Put_Thing($T);
         } 
@@ -852,8 +852,8 @@ function LoadTroops() {
       $Carry = (empty($FF[$H['Whose']])? 0 : $FF[$H['Whose']]);
       if (!$NeedCargo) $Carry >>= 4;
       if (($Carry&15) <2) {
-        TurnLog($T['Whose'],"You tried to load " . $T['Name'] . " on to " . $H['Name'] . " access was denied by " . $Facts[$H['Whose']]['Name']);
-        TurnLog($H['Whose'],  $Facts[$T['Whose']]['Name'] . " tried to load " . $T['Name'] . " on to " . $H['Name'] . " you denied access");
+        TurnLog($T['Whose'],"You tried to load " . $T['Name'] . " on to " . $H['Name'] . " access was denied by " . $Facts[$H['Whose']]['Name'],$T);
+        TurnLog($H['Whose'],  $Facts[$T['Whose']]['Name'] . " tried to load " . $T['Name'] . " on to " . $H['Name'] . " you denied access",$T);
         GMLog($Facts[$T['Whose']]['Name'] . " tried to load " . $T['Name'] . " on to " . $H['Name'] . " access was denied by " . $Facts[$H['Whose']]['Name'],1);
         $T['LinkId'] = 0;
         Put_Thing($T);
@@ -866,7 +866,7 @@ function LoadTroops() {
       $Used = 0;
       foreach($OnBoard as $OB) if ($TTypes[$OB['Type']]['Properties'] & THING_NEEDS_CARGOSPACE) $Used += $OB['Level'];
       if ($H['CargoSpace'] < $Used + $T['Level']) {
-        TurnLog($T['Whose'],"You tried to load " . $T['Name'] . " on to " . $H['Name'] . " there is not enough space");
+        TurnLog($T['Whose'],"You tried to load " . $T['Name'] . " on to " . $H['Name'] . " there is not enough space",$T);
         if ($H['Whose'] != $T['Whose']) TurnLog($H['Whose'],  $Facts[$T['Whose']]['Name'] . " tried to load " . $T['Name'] . " on to " . $H['Name'] . " there is not enough space");
         GMLog($Facts[$T['Whose']]['Name'] . " tried to load " . $T['Name'] . " on to " . $H['Name'] . " there is not enough space",1);
         $T['LinkId'] = 0;
@@ -1261,6 +1261,9 @@ function InstructionsProgress() {
       case 'Colonise':
         $Prog = Has_Tech($T['Whose'], 'Planetary Construction');
         $Mods = Get_ModulesType($Tid, 10);
+        if ($Prog*$Mods[0]['Number'] == 0) {
+          GMLog("Colonisation by <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "Has zero progress - Tell Richard");
+        }
         $T['Progress'] = min($T['ActionsNeeded'],($T['Progress']+$Prog*$Mods[0]['Number']));
         Put_Thing($T);
         break;
@@ -1297,9 +1300,9 @@ function InstructionsProgress() {
             $Pro = $T['Sensors']*$T['SensorLevel'];
             $FA['Progress'] = min($FA['Progress']+$Pro, $A['AnomalyLevel']);
             Gen_Put('FactionAnomaly',$FA);
-            TurnLog($Fid,$T['Name'] . " did $Pro towards completing anomaly " . $A['Name'] . " now at " . $FA['Progress'] . " / " . $A['AnomalyLevel']);
+            TurnLog($Fid,$T['Name'] . " did $Pro towards completing anomaly " . $A['Name'] . " now at " . $FA['Progress'] . " / " . $A['AnomalyLevel'],$T);
           } else {
-            TurnLog($Fid, $T['Name'] . " is supposed to be analysing an anomaly - but there isn't one selected");          
+            TurnLog($Fid, $T['Name'] . " is supposed to be analysing an anomaly - but there isn't one selected",$T);
           }
         } else { // No anomaly is there one here?
           $Anoms = Gen_Get_Cond('Anomalies',"SystemId=" . $T['SystemId']);
@@ -1314,12 +1317,12 @@ function InstructionsProgress() {
                 $FA['Progress'] = min($FA['Progress']+$Pro, $A['AnomalyLevel']);
                 Gen_Put('FactionAnomaly',$FA);
                 $T['ProjectId'] = $Aid;
-                TurnLog($Fid,$T['Name'] . " did $Pro towards completing anomaly " . $A['Name'] . " now at " . $FA['Progress'] . " / " . $A['AnomalyLevel']);
+                TurnLog($Fid,$T['Name'] . " did $Pro towards completing anomaly " . $A['Name'] . " now at " . $FA['Progress'] . " / " . $A['AnomalyLevel'],$T);
               }
               break 2;
             }
           }
-          TurnLog($Fid,$T['Name'] . " is supposed to be analysing an anomaly - but there isn't one");                    
+          TurnLog($Fid,$T['Name'] . " is supposed to be analysing an anomaly - but there isn't one",$T);                    
         }
         break;        
       default: 
@@ -1347,7 +1350,7 @@ function FinishShakedowns() {
 
   foreach($Things as $T) {
     $T['BuildState'] = 3;
-    TurnLog($T['Whose'],$T['Name'] . " has finished it's Shakedown and is now ready for operations.");
+    TurnLog($T['Whose'],$T['Name'] . " has finished it's Shakedown and is now ready for operations.",$T);
     Put_Thing($T);
   }
   
@@ -1444,19 +1447,19 @@ function ProjectsComplete() {
       if ($P['ThingId']) {
         $T = Get_Thing($P['ThingId']);
         RefitRepair($T);
-        TurnLog($P['FactionId'], $T['Name'] . " has been " . $PT['Name'] . "ed");        
+        TurnLog($P['FactionId'], $T['Name'] . " has been " . $PT['Name'] . "ed",$T);        
       }
       if ($P['ThingId2']) {
         $T = Get_Thing($P['ThingId2']);
         RefitRepair($T);
-        TurnLog($P['FactionId'], $T['Name'] . " has been " . $PT['Name'] . "ed");        
+        TurnLog($P['FactionId'], $T['Name'] . " has been " . $PT['Name'] . "ed",$T);        
       }
       break;
     
     case 'Construct Ship':
       $T = Get_Thing($P['ThingId']);
       $T['BuildState'] = 2; // Shakedown
-      TurnLog($P['FactionId'], $T['Name'] . " has been lanched and will now start its shakedown cruise");              
+      TurnLog($P['FactionId'], $T['Name'] . " has been lanched and will now start its shakedown cruise",$T);              
       Calc_Scanners($T);
       $T['ProjectId'] = 0;
       Put_Thing($T);
@@ -1466,7 +1469,7 @@ function ProjectsComplete() {
     case 'Train Agent':
       $T = Get_Thing($P['ThingId']);
       $T['BuildState'] = 3; // Complete
-      TurnLog($P['FactionId'], $T['Name'] . " has been completed");              
+      TurnLog($P['FactionId'], $T['Name'] . " has been completed",$T);              
       $T['ProjectId'] = 0;
       Put_Thing($T);
       break;

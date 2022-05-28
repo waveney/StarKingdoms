@@ -61,7 +61,7 @@
   $Factions = Get_Factions();
   foreach($Factions as $F) {
     $Fid = $F['id'];
-    echo "<a href=Access.php?id=$Fid&Key=" . $F['AccessKey'] . " style='background:" . $F['MapColour'] . "; text-shadow: 2px 2px 3px white;padding:2px;'><b>"  . $F['Name'] . "</b></a> ";
+    echo "<a href=Access.php?id=$Fid&Key=" . $F['AccessKey'] . " style='background:" . $F['MapColour'] . "; text-shadow: 2px 2px 3px white;padding:2px;color:black;'><b>"  . $F['Name'] . "</b></a> ";
   }
 
   echo "<p>\n";
