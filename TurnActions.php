@@ -2007,7 +2007,7 @@ function MilitiaArmyRecovery() {
 //  GMLog("Militia Recovery is currently Manual<p>");
 //  GMLog("Also Self Repair Armour<p>");
   
-  $Things = Get_Things_Cond(0,"CurHealth!=OrigHealth");
+  $Things = Get_Things_Cond(0,"CurHealth>0 AND CurHealth!=OrigHealth");
   $TTypes = Get_ThingTypes();
   $MTypes = Get_ModuleTypes();
   $MTNs = Mod_Types_From_Names($MTypes);

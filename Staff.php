@@ -107,7 +107,7 @@
       $txt .= "<input type=submit name=f value='Map Show for' id=staffformid>" . 
                 fm_select($Facts,0,'f',1," onchange=this.form.submit()") . "</form>\n";
 
-    $txt .= "<li><form method=Post action=MapFull.php?Hex class=staffform>";
+    $txt .= "<li><form method=Post action=MapFull.php?Hex&Links=0 class=staffform>";
       $txt .= "<input type=submit name=f1 value='Hex Map for' id=staffformid>" . 
                 fm_select($Facts,0,'f1',1," onchange=this.form.submit()") . "</form>\n";
 
