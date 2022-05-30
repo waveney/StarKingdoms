@@ -129,7 +129,18 @@ function fm_hex($Name,&$data=0,$field,$extra1='',$extra2='',$field2='') {
   if ($field2 == '') $field2=$field;
   $str = "<td $extra1>";
   if ($Name) $str .= "$Name: ";
-  $str .= help($field) . "<td $extra1><input type=text name=$field id=$field $extra2";
+  $str .= help($field) . "<td $extra1><input type=text name=$field2 id=$field2 $extra2";
+  if ($data) if (isset($data[$field])) $str .= " value=\"" . dechex($data[$field]) . "\"";
+  if ($AutoADD) $str .=  " oninput=AutoInput('$field2') ";
+  return $str . " $ADDALL>\n";
+}
+
+function fm_hex1($Name,&$data=0,$field,$extra1='',$extra2='',$field2='') {
+  global $ADDALL,$AutoADD,$AutoAfter;
+  if ($field2 == '') $field2=$field;
+  $str = "<td $extra1>";
+  if ($Name) $str .= "$Name: ";
+  $str .= help($field) . "<input type=text name=$field2 id=$field2 $extra2";
   if ($data) if (isset($data[$field])) $str .= " value=\"" . dechex($data[$field]) . "\"";
   if ($AutoADD) $str .=  " oninput=AutoInput('$field2') ";
   return $str . " $ADDALL>\n";

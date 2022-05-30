@@ -174,19 +174,27 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
     echo "<td>" . $T['Orders'];
     echo "<td><center>" . $T['CurHealth'] . ' / ' . $T['OrigHealth'];
     echo "<td>" . $BuildState[$T['BuildState']];
-    echo "<td>" . ($T['LinkId'] >= 0 ? (empty($T['SystemId']) ?'': $Systems[$T['SystemId']]) : 'On Board');
-    echo "<td>";
-    if ($T['Instruction']) echo $ThingInstrs[$T['Instruction']];
-    if (($T['Instruction'] == 0 || $T['Instruction'] == 5 ) && (($Props & THING_CAN_MOVE) && ( $T['BuildState'] == 3))) { 
-      if ($T['LinkId'] >=0 ) {
-        echo " <a href=PMoveThing.php?id=" . $T['id'] . ">Move</a>";
-        if ($T['LinkId'] > 0) {
-          $L = Get_Link($T['LinkId']);
-          echo "<td style=color:" . $LinkTypes[$L['Level']]['Colour'] . " >Link #" . $T['LinkId'];
-          if ($T['NewSystemId'] && $T['TargetKnown']) {
-            echo "<td>" . $Systems[$T['NewSystemId']];
+    if ($Props & THING_MOVES_DIRECTLY) {
+      echo "<td>" . $Systems[$T['SystemId']];
+      echo "<td>Direct<td>";
+      echo "<td>" . ($T['NewSystemId'] == 0? "" : $Systems[$T['NewSystemId']]); 
+    } else {
+      echo "<td>" . ($T['LinkId'] >= 0 ? (empty($T['SystemId']) ?'': $Systems[$T['SystemId']]) : 'On Board');
+      echo "<td>";
+      if ($T['Instruction']) echo $ThingInstrs[$T['Instruction']];
+      if (($T['Instruction'] == 0 || $T['Instruction'] == 5 ) && (($Props & THING_CAN_MOVE) && ( $T['BuildState'] == 3))) { 
+        if ($T['LinkId'] >=0 ) {
+          echo " <a href=PMoveThing.php?id=" . $T['id'] . ">Move</a>";
+          if ($T['LinkId'] > 0) {
+            $L = Get_Link($T['LinkId']);
+            echo "<td style=color:" . $LinkTypes[$L['Level']]['Colour'] . " >Link #" . $T['LinkId'];
+            if ($T['NewSystemId'] && $T['TargetKnown']) {
+              echo "<td>" . $Systems[$T['NewSystemId']];
+            } else {
+              echo "<td> ? ";
+            }
           } else {
-            echo "<td> ? ";
+            echo "<td><td>";
           }
         } else {
           echo "<td><td>";
@@ -194,8 +202,6 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
       } else {
         echo "<td><td>";
       }
-    } else {
-      echo "<td><td>";
     }
     if ($GM) echo "<td>" . ($T['Sensors']? ($T['Sensors'] . '*L' . $T['SensorLevel'] . ($T['NebSensors']?' N':'')) : '');
  //   echo "<td>" . (isset($Systems[$T['NewSystemId']]) ? $Systems[$T['NewSystemId']] :"") ;

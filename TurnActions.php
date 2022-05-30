@@ -848,6 +848,21 @@ function Economy() {
   return 1;
 }
 
+function DirectMoves() {
+  // EG for sharks
+  $Things = Get_Things_Cond(0,'LinkId=-6 AND NewSystemId!=0 ');
+  $TTypes = Get_ThingTypes();
+  $SysRefs = Get_SystemRefs();
+  foreach($Things as $T) {
+    $T['SystemId'] = $T['NewSystemId'];
+    $T['WithinSysLoc'] = $T['NewLocation'];
+    $T['NewSystemId'] = $T['LinkId'] = 0;
+    Put_Thing($T);
+    GMLog("Directly moved " . (empty($T['Name'])?'': $T['Name']) . " a " . $TTypes[$T['Name']]['Name'] . " to " . $SysRefs[$T['SystemId']]);
+  }
+  return 1;
+}
+
 function LoadTroops() {
   $Things = Get_Things_Cond(0,"(BuildState=2 OR BuildState=3) AND (LinkId=-2 OR LinkId=-4)");
   $TTypes = Get_ThingTypes();
@@ -1393,15 +1408,15 @@ function ProjectsComplete() {
       switch ($H['ThingType']) {
         case 1: // Planet
           $PH = Get_Planet($H['ThingId']);
-          $Dists = Get_DistrictsP($H['ThingId']);
+          $Dists = Get_DistrictsP($H['ThingId'],1);
           break;
         case 2: // Moon
           $PH = Get_Moon($H['ThingId']);
-          $Dists = Get_DistrictsM($H['ThingId']);
+          $Dists = Get_DistrictsM($H['ThingId'],1);
           break;
         case 3: // Thing
           $PH = Get_Thing($H['ThingId']);
-          $Dists = Get_DistrictsT($H['ThingId']);
+          $Dists = Get_DistrictsT($H['ThingId'],1);
           break;
         }
       foreach($Dists as $D) {
@@ -2026,6 +2041,8 @@ function MilitiaArmyRecovery() {
       $Rec = floor($Dcount/2)+1;
       $T['CurHealth'] = max($T['OrigHealth'], $T['CurHealth']+$Rec);
       Put_Thing($T);
+      if ($T['Whose']) TurnLog($T['Whose'],$T['Name'] . " recovered $Rec health",$T);
+      GMLog("<a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a> recovered $Rec health",1);
       
     }
     
@@ -2035,6 +2052,8 @@ function MilitiaArmyRecovery() {
         $Rep = $Self[0]['Number']*$Self[0]['Level']*2;
         $T['CurHealth'] = min($T['OrigHealth'],$T['CurHealth']+$Rep);
         Put_Thing($T);
+        if ($T['Whose']) TurnLog($T['Whose'],$T['Name'] . " recovered $Rep health",$T);
+        GMLog("<a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a> recovered $Rep health",1);
       }
     }  
     
@@ -2048,6 +2067,8 @@ function MilitiaArmyRecovery() {
         if (!$Conflict) $Rep*=2;
         $T['CurHealth'] = min($T['OrigHealth'],$T['CurHealth']+$Rep);
         Put_Thing($T);
+        if ($T['Whose']) TurnLog($T['Whose'],$T['Name'] . " recovered $Rep health",$T);
+        GMLog("<a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a> recovered $Rep health",1);
       }
     }  
      
@@ -2138,7 +2159,7 @@ function Do_Turn() {
   $Stages = ['Check Turns Ready', 'Spare', 'Spare','Start Turn Process', 'Save All Locations', 'Spare', 'Cash Transfers', 'Spare',
              'Spare', 'Pay For Stargates', 'Spare', 'Scientific Breakthroughs', 'Start Projects', 'Spare', 'Spare', 'Instuctions', 
              'Instuctions Stage 2', 'Spare', 'Spare', 'Spare', 'Spare', 'Spare', 'Spare', 'Spare', 
-             'Agents Start Missions', 'Spare', 'Spare', 'Economy', 'Spare', 'Spare', 'Load Troops', 'Spare', 
+             'Agents Start Missions', 'Spare', 'Spare', 'Economy', 'Spare', 'Direct Moves', 'Load Troops', 'Spare', 
              
              'Ship Move Check','Ship Movements', 'Agents Move Check', 'Agents Movements', 
              'Meetups', 'Spare', 'Space Combat', 'Unload Troops', 

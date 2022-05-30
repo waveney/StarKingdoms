@@ -38,6 +38,7 @@ define('THING_CAN_BECREATED',8192);
 define('THING_NEEDS_CARGOSPACE',16384);
 define('THING_CANT_HAVENAMED',32768);
 define('THING_CAN_DO_PROJECTS',65536);
+define('THING_MOVES_DIRECTLY',131072);
 
 function ModFormulaes() {
   global $ModFormulaes;

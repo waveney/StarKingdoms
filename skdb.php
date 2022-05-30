@@ -259,12 +259,13 @@ function set_ShowGame($last=0) { // Overrides default above if not set by a Y ar
 
 // Works for simple tables
 // Deletes = 0 none, 1=one, 2=many
-function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$Mstr='Name',$MstrNot='') {
+function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$Mstr='Name',$MstrNot='',$Hexflds='') {
   global $TableIndexes;
   include_once("DateTime.php");
   $Flds = table_fields($table);
   $DateFlds = explode(',',$Dateflds);
   $TimeFlds = explode(',',$Timeflds);
+  $HexFlds = explode(',',$Hexflds);
   $indxname = (isset($TableIndexes[$table])?$TableIndexes[$table]:'id');
 
 //var_dump($_REQUEST);
@@ -290,6 +291,9 @@ function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$M
             } else if (in_array($fld,$TimeFlds)) {
               $t[$fld] = Time_BestGuess($_POST["$fld$i"]);
               $recpres = 1;
+            } else if (in_array($fld,$HexFlds)) {
+              $t[$fld] = hexdec($_POST["$fld$i"]);
+              $recpres = 1;
             } else if (isset($_POST["$fld$i"])) {
               $t[$fld] = $_POST["$fld$i"];
               $recpres = 1;
@@ -312,6 +316,8 @@ function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$M
             $t[$fld] = Date_BestGuess($_POST[$fld . "0"]);
           } else if (in_array($fld,$TimeFlds)) {
             $t[$fld] = Time_BestGuess($_POST[$fld . "0"]);
+          } else if (in_array($fld,$HexFlds)) {
+            $t[$fld] = hexdec($_POST[$fld . "0"]);
           } else {
             $t[$fld] = $_POST[$fld . "0"];
           }
