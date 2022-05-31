@@ -108,12 +108,14 @@
 
     echo "<td>" . $ThingTypes[$T['Type']]['Name'] . "<td>" . $T['Level'];
     echo "<td><center>" . $T['CurHealth'] . ' / ' . $T['OrigHealth'];
-    if ($T['LinkId'] >= 0 || $T['LinkId'] == -2 || $T['LinkId'] == -4) {
+    if ($T['LinkId'] >= 0 || $T['LinkId'] == -2 || $T['LinkId'] == -4 || ($T['LinkId'] == -6)) {
       echo "<td><a href=ThingList.php?AT=$Ref>$Ref</a><td>$Loc";
     } else if ($T['LinkId'] == -1 || $T['LinkId'] == -3) {
       $Host = Get_Thing($T['SystemId']);
       echo "<td>On:<td>" . $Host['Name'];
-    } 
+    } else if ($T['LinkId'] == -6) {
+      echo "<td><a href=ThingList.php?AT=$Ref>$Ref</a><td>$Loc";      
+    }
     
     echo "<td><a href=ThingEdit.php?id=$tid>$Name</a>";
     echo "<td>" . ($who? $Factions[$T['Whose']]['Name'] : "");
