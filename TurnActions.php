@@ -181,9 +181,48 @@ function PayForStargates() {
 }
 
 function ScientificBreakthroughs() {
-  GMLog("Scientific Breakthroughs is currently Manual<p>");
-  return 1;
+  global $GAME,$GAMEID;
+//  GMLog("Scientific Breakthroughs is currently Manual<p>");
 
+  $TechCats = [['Engineering','EngineeringSP'],['Physics','PhysicsSP'],['Xenology','XenologySP']];  
+  $Breaks = Gen_Get_Cond('Breakthroughs',"Game=$GAMEID AND Turn=" . $GAME['Turn'] . " AND DoneTurn=0");
+
+// var_dump($Breaks);
+  
+  foreach($Breaks as $Br) {
+    $Fid = $Br['FactionId'];
+    $Fact = Get_Faction($Fid);
+    $Tid = $Br['TechId'];
+
+    $CTech = Get_Faction_TechFT($Fid,$Tid);
+    $Tech = Get_Tech($Tid);
+
+    if ($Tech['Cat'] == 0) { // Core
+      if ($CTech['Level'] < $Br['Level']) {
+        $CTech['Level'] = $Br['Level'];
+        Put_Faction_Tech($CTech);
+        TurnLog($Br['FactionId'],'Using ' . $Br['Cost'] . $TechCats[$Br['Field']][0] . " science points " . $Tech['Name'] . " has been raised to level " . $Br['Level']);
+        $Fact[$TechCats[$Br['Field']][1]] = max(0, $Fact[$TechCats[$Br['Field']][1]] - $Br['Cost']);
+        Put_Faction($Fact);
+      } else {
+        GMLog("Faction: " . $Fact['Name'] . " attempted to use science points to raise " . $Tech['Name'] . " to level " . $Br['Level'] . " already at level " . $CTech['Level']);
+        TurnLog($Br['FactionId'],"You attempted to use science points to raise " . $Tech['Name'] . " to level " . $Br['Level'] . " it is already at level " . $CTech['Level']);
+      }
+    } else if ($CTech['Level'] == 0) { // Supp
+      $CTech['Level'] = 1;
+      Put_Faction_Tech($CTech);
+      TurnLog($Br['FactionId'],'Using ' . $Br['Cost'] . $TechCats[$Br['Field']][0] . " science points " . $Tech['Name'] . " has been reserched");
+      $Fact[$TechCats[$Br['Field']][1]] = max(0, $Fact[$TechCats[$Br['Field']][1]] - $Br['Cost']);
+      Put_Faction($Fact);
+    } else {
+      GMLog("Faction: " . $Fact['Name'] . " attempted to use science points to research " . $Tech['Name'] . " it is already known");
+      TurnLog($Br['FactionId'],"You attempted to use science points to research " . $Tech['Name'] . " it is already known");
+    }
+    $Br['DoneTurn'] = $GAME['Turn'];
+    Gen_Put('Breakthroughs',$Br);
+  }
+
+  return 1;
 }
 
 function StartProjects() {
@@ -2171,9 +2210,9 @@ function Do_Turn() {
              'Generate Turns', 'Tidy Up Movements', 'Recalc Project Homes', 'Finish Turn Process'];
 
   $Coded =  ['Coded','No','No','Coded','Coded','No','Coded', 'No',
-             'No','No','No','No','Partial','No','No','Coded',
+             'No','No','No','Coded','Partial','No','No','Coded',
              'Coded','No','No','No','No','No','No','No',
-             'No','No','No','Coded','No','No','Coded','No',
+             'No','No','No','Coded','No','Coded','Coded','No',
              
              'Coded','Coded','Coded','Coded',
              'Coded','No', 'No','Coded',

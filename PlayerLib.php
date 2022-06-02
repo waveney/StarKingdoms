@@ -125,7 +125,7 @@ function Player_Page() {
     echo "<li><a href=ProjDisp.php>Projects</a>\n";
     echo "<li><a href=PThingList.php>List of Things</a> - List of Things (Ships, Armies, Agents, Space stations etc)";
     echo "<li><a href=ThingPlan.php>Plan a Thing</a> - Planning Things (Ships, Armies, Agents, Space stations etc)<P>";
-//    if ($FACTION['PhysicsSP'] >=5 || $FACTION['EngineeringSP'] >=5 || $FACTION['XenologySP'] >=5 ) echo "<li><a href=SciencePoints.php>Spend Science Points</a>";
+    if ($FACTION['PhysicsSP'] >=5 || $FACTION['EngineeringSP'] >=5 || $FACTION['XenologySP'] >=5 ) echo "<li><a href=SciencePoints.php>Spend Science Points</a>";
     echo "<li><a href=Economy.php>Economy</a>";
     echo "<li><a href=Banking.php>Banking</a> - Sending credits to others and statements<p>";
     echo "<li><a href=PlayerTurnTxt.php>Turn Actions Automated Response Text</a>";
