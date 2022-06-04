@@ -80,7 +80,7 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$Thi
   */
   
 
-  $SPCosts = [0,5,20,45,80,125,180,245,320,405,500,605,720];
+  $SPCosts = [0,5,20,45,80,125,180,245,320,405,500,605,720,845,980];
   
   $Ts = Get_Techs();
 

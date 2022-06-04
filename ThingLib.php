@@ -14,7 +14,7 @@ $CivMil = ['','Civilian','Military'];
 $BuildState = ['Planning','Building','Shakedown','Complete','Ex','Abandonded','Missing In Action'];
 $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse Anomaly','Establish Embassy','Make Outpost','Make Asteroid Mine','Make Minefield',
                 'Make Orbital Repair Yard','Build Space Station','Expand Space Station','Make Deep Space Sensor','Make Advanced Asteroid Mine','Build Stargate',
-                'Make Planet Mine', 'Construct Command Relay Station', 'Repair Command Node','Build Planetary Mine'];
+                'Make Planet Mine', 'Construct Command Relay Station', 'Repair Command Node','Build Planetary Mine','Dismantle Stargate'];
 $Advance = ['','','Advanced ','Very Advanced ','Ultra Advanced ','Evolved '];
 
 
@@ -356,7 +356,7 @@ function Moves_4_Thing(&$T, $Force=0, &$N=0) {
     $Links = (empty($N['Ref']) ? [] : Get_Links($N['Ref']));
     $SelLinks = [''];
     $SelCols = [''];
-    if ($GM) {
+    if ($GM || Has_Tech($T['Whose'],'Know All Links')) {
       foreach ($Links as $L) {
         $SelLinks[$L['id']] = "#" . $L['id'] . " to " . (($L['System1Ref'] == $N['Ref'])?$L['System2Ref']: $L['System1Ref'] );
         $SelCols[$L['id']] = $LinkTypes[$L['Level']]['Colour'];

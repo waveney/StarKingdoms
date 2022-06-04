@@ -177,6 +177,7 @@
 
   if ($Faction) {
     $ul = 1;
+    $AllLinks = Has_Tech($Faction,'Know All Links');
     foreach($Nodes as $N) {
       $from = $N['Ref'];
       
@@ -189,7 +190,7 @@
       foreach ($Links as $L) {
         if (isset($LinkShown[$L['id']])) continue;
         $Fl = Get_FactionLinkFL($Faction, $L['id']);
-        if (isset($Fl['id']) && $Fl['Known']) {
+        if (isset($Fl['id']) && $Fl['Known'] || $AllLinks) {
           fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=\"" . $Levels[$L['Level']]['Colour'] . '"' . ($ShowLinks? " label=\"#" . $L['id'] . '"' : '') . " ];\n");
           $LinkShown[$L['id']]=1;
         } else {

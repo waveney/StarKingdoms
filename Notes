@@ -3,7 +3,7 @@ Done
 * Build Districts
 * Build Ships/Armies/ (Agents?)
 * Move Ships, Agents
-* A couple of Traits
+* Many automatable Traits
 * Auto progress from build/launch/Shakedown/use of Ships
 * Project display and managing
 * What Can I see 
@@ -19,7 +19,6 @@ Not Done
 * Agents - not ready
 * No intelligence operations
 * Most Traits
-* Science points - use
 * Combat
 * Credit Symbols
 * Back propogate names on control change
@@ -30,7 +29,6 @@ Imeadiate todo list
 * Agent Orders?
 * Unassigned ships with Deep space help
 * Control of Worlds != control of systems
-* Self Repair...
 * Where is adanite?
 
 
@@ -40,7 +38,7 @@ Known Faults
 * Nebulae
 * Link ids and targets on movement orders
 * List of scans due - needs use and maintaining
-* Map update errors - may have found it now, x2
+* Map update errors - may have found it now, x4
 
 * Load on PthingList
 * unload on pthinglist
@@ -53,7 +51,7 @@ Anomalies
 5) Private Anomalies
 6) Control Spotting
 
-Scientific Breakthroughs from science points are now automated
+Scientific Breakthroughs from Science Points are now automated
 
 IF you have enough science points to do anything, THEN an additionl item on the main player menu "Spend Sceince Points" will appear.
 
