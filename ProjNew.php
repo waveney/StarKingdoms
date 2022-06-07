@@ -109,6 +109,7 @@
   $Dis = [];
   foreach ($Homes as &$H) {
     $Hix = $H['id'];
+    $NoC = 0;
     switch ($H['ThingType']) {
     case 1: // Planet
       $PH = Get_Planet($H['ThingId']);
@@ -140,7 +141,7 @@
     }
     //TODO Construction and Districts... 
 
-    if (!$NoC) $Dists[] = ['HostType'=>-1, 'HostId' => $PH['id'], 'Type'=> -1, 'Number'=>0, 'id'=>-$PH['id']];
+    if ($NoC == 1 || ($NoC==0 && !$Dists)) $Dists[] = ['HostType'=>-1, 'HostId' => $PH['id'], 'Type'=> -1, 'Number'=>0, 'id'=>-$PH['id']];
     foreach ($Dists as &$D) {
       if ($D['Type'] > 0 && (($DistTypes[$D['Type']]['Props'] &2) == 0)) continue;
       if (($D['Type'] < 0) && ($PH['Type'] != $Faction['Biosphere']) && ($PH['Type'] != $Faction['Biosphere2']) && ($PH['Type'] != $Faction['Biosphere3']) && (Has_Tech($Fid,3)<2)) continue;
