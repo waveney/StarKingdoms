@@ -281,7 +281,9 @@ function Show_Planet(&$P,$Mode=0,$Buts=0) {
     echo "  <span class=NotCSide>Marked are visible if set, but not changeable by factions.</span>";
   }
   
-  $Facts = Get_Faction_Names();
+  $FactNames = Get_Faction_Names();
+  $Facts = Get_Factions();
+  $Fact_Colours = Get_Faction_Colours();
   $DTs = Get_DistrictTypeNames();
   $Ds = Get_DistrictsP($Pid,1);
   $N = Get_System($P['SystemId']);
@@ -295,6 +297,7 @@ function Show_Planet(&$P,$Mode=0,$Buts=0) {
   echo fm_hidden('id',$Pid);
   echo "<tr class=NotSide><td class=NotSide>Id:<td class=NotSide>$Pid<td class=NotSide>Game<td class=NotSide>$GAMEID" .
        "<td class=NotSide>" . $GAME['Name'] . fm_text('System Ref',$N,'Ref',1,"class=NotSide");
+  echo "<tr>" . fm_radio('Control',$FactNames ,$P,'Control','',1,'colspan=6','',$Fact_Colours,0); 
   echo "<tr>" . fm_text('Name',$P,'Name',8);  // TODO Image
   echo "<tr>" . fm_text('Short Name',$P,'ShortName');
   echo "<tr>" . fm_textarea('Description',$P,'Description',8,3);
@@ -382,7 +385,9 @@ function Show_Moon(&$M,$Mode=0) {
   
   $Pid = $M['PlanetId'];
   $P = Get_Planet($Pid);
-  $Facts = Get_Faction_Names();
+  $FactNames = Get_Faction_Names();
+  $Facts = Get_Factions();
+  $Fact_Colours = Get_Faction_Colours();
   $DTs = Get_DistrictTypeNames();
   $Ds = Get_DistrictsM($Mid,1);
   $N = Get_System($P['SystemId']);
@@ -396,6 +401,7 @@ function Show_Moon(&$M,$Mode=0) {
   echo "<tr class=NotSide><td class=NotSide>PlanetId:<td class=NotSide>$Pid<td class=NotSide>Game<td class=NotSide>$GAMEID" .
        "<td class=NotSide>" . $GAME['Name'] . fm_text('System Ref',$N,'Ref',1,"class=NotSide");
   echo "<tr><td class=NotSide>Moon Id:<td class=NotSide>$Mid";
+  echo "<tr>" . fm_radio('Control',$FactNames ,$M,'Control','',1,'colspan=6','',$Fact_Colours,0);   
   echo "<tr>" . fm_text('Name',$M,'Name',8);  // TODO Image
   echo "<tr>" . fm_text('Short Name',$M,'ShortName');
   echo "<tr>" . fm_textarea('Description',$M,'Description',8,3);

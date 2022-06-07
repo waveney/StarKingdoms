@@ -439,7 +439,7 @@ function Show_Thing(&$T,$Force=0) {
       echo fm_number(($T['ProjHome']?"<a href=ProjHomes.php?id=" . $T['ProjHome'] . ">Project Home</a>":"Project Home"),$T,'ProjHome');
 
       if (!isset($T['MaxDistricts'])) $T['MaxDistricts'] = 0;
-      if ($totdisc > $T['MaxDistricts']) echo "<td class=Err>TOO MANY DISTRICTS\n";
+      if ($totdisc > $T['MaxDistricts'] && $T['MaxDistricts']>0) echo "<td class=Err>TOO MANY DISTRICTS\n";
     } else {
       if ($NumDists) echo "<tr><td rowspan=" . ceil(($NumDists+4)/4) . ">Districts:";
       

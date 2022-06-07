@@ -63,7 +63,7 @@ function Recalc_Project_Homes($Logf=0) {
           } else {
             $Dists = Get_DistrictsP($P['id']);
             $Homeless = 1;
-            if ($Dists) {
+            if ($Dists || $P['Control']) {
               foreach ($KnownHomes as &$H) {
                 if ($H['ThingType'] == 1 && $H['ThingId'] == $P['id']) {
                   $Homeless = 0;
@@ -122,7 +122,7 @@ function Recalc_Project_Homes($Logf=0) {
                 $Dists = Get_DistrictsM($M['id']);
 //var_dump($Dists);
                 $Homeless = 1;
-                if ($Dists) {
+                if ($Dists || $M['Control']) {
                   foreach ($KnownHomes as &$H) {
                     if ($H['ThingType'] == 2 && $H['ThingId'] == $M['id']) {
                       $Homeless = 0;
