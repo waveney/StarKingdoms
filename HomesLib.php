@@ -39,7 +39,7 @@ function Recalc_Project_Homes($Logf=0) {
 //if (!isset($H['id'])) { echo "<P>"; var_dump($H);exit;}
               if ($H['id'] == $PHi) {
                 $H['Inuse'] = 1;
-                if ($H['ThingType'] != 1 || $H['ThingId'] != $P['id'] || $H['Whose'] != $Cont;) {
+                if ($H['ThingType'] != 1 || $H['ThingId'] != $P['id'] || $H['Whose'] != $Cont) {
                   $H['ThingType'] = 1;
                   $H['ThingId'] = $P['id'];
                   $loc = Within_Sys_Locs($N,$P['id']);

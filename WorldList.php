@@ -69,7 +69,7 @@
         if ($PlanetTypes[$P['Type']]['Append']) $type .= " Planet";
         $Name = $P['Name'];
         $Sys = Get_System($P['SystemId']);
-        $Fid = $Sys['Control'];
+        $Fid = ($P['Control'] ? $P['Control'] : $Sys['Control']);
         break;
         
       case 2: /// Moon
@@ -79,7 +79,7 @@
         $Name = $M['Name'];
         $P = Get_Planet($M['PlanetId']);
         $Sys = Get_System($P['SystemId']);
-        $Fid = $Sys['Control'];
+        $Fid = ($M['Control'] ? $M['Control'] : $P['Control']? $P['Control'] :$Sys['Control']) );
         break;
     
       case 3: // Thing
