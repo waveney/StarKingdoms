@@ -303,6 +303,7 @@ function Recalc_Worlds() {
     
         $W['Home'] = $H['id'];
         $W['Minerals'] = $Minerals;
+        $W['FactionId'] = $Fid;
  
         Put_World($W);
 
@@ -321,7 +322,7 @@ function Recalc_Worlds() {
       case 1: // Planet
         $P = Get_Planet($H['ThingId']);
         $Sys = Get_System($P['SystemId']);
-        $Fid = $Sys['Control'];
+        $Fid = ($P['Control'] ? $P['Control'] : $Sys['Control']);
         $Minerals = $P['Minerals'];
         $ThisBio = $P['Type'];
         break;
@@ -329,7 +330,7 @@ function Recalc_Worlds() {
         $M = Get_Moon($H['ThingId']);
         $P = Get_Planet($M['PlanetId']);
         $Sys = Get_System($P['SystemId']);
-        $Fid = $Sys['Control'];
+        $Fid = ($M['Control'] ? $M['Control'] : $P['Control'] ? $P['Control'] : $Sys['Control']);
         $Minerals = $M['Minerals'];
         $ThisBio = $M['Type'];
         break;

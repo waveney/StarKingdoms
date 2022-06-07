@@ -494,7 +494,7 @@
     if (($H['ThingType'] != 3) && ($PH['Type'] != $Faction['Biosphere']) && ($PH['Type'] != $Faction['Biosphere2']) && ($PH['Type'] != $Faction['Biosphere3'])) $PlanCon--;
     //TODO Construction and Districts... 
 
-    if ($NoC == 1 || ($NoC==0 && !$Dists)) $Dists[] = ['HostType'=>-1, 'HostId' => $PH['id'], 'Type'=> -1, 'Number'=>0, 'id'=>-$PH['id']];
+    if ($NoC != 1 ) $Dists[] = ['HostType'=>-1, 'HostId' => $PH['id'], 'Type'=> -1, 'Number'=>0, 'id'=>-$PH['id']];
     $back = "style='background:" . $HomeColours[$PHx-1] . ";'";
     $Headline1 .= "<th id=PHH$PHx $back><button type=button class=ProjHome id=PHome$Hi onclick=ToggleHome($Hi)>" . $PH['Name'] . "</button>";
 // if($Hi==199) { echo " THere"; var_dump($Headline1); };
