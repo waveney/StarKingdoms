@@ -353,9 +353,9 @@ function Moves_4_Thing(&$T, $Force=0, &$N=0) {
   if (!$N) $N = Get_System($T['SystemId']);
   $LinkTypes = Get_LinkLevels();
 
-    $Links = (empty($N['Ref']) ? [] : Get_Links($N['Ref']));
-    $SelLinks = [''];
-    $SelCols = [''];
+  $Links = (empty($N['Ref']) ? [] : Get_Links($N['Ref']));
+  $SelLinks = [''];
+  $SelCols = [''];
     if ($GM || Has_Tech($T['Whose'],'Know All Links')) {
       foreach ($Links as $L) {
         $SelLinks[$L['id']] = "#" . $L['id'] . " to " . (($L['System1Ref'] == $N['Ref'])?$L['System2Ref']: $L['System1Ref'] );

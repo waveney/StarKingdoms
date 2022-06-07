@@ -544,6 +544,7 @@ function Show_Thing(&$T,$Force=0) {
   }
   $SpecOrders = []; $SpecCount = 0;
   $HasDeep = Get_ModulesType($tid,3);
+  if ($HasDeep) $HasDeep = $HasDeep[0]['Number'] * $HasDeep[1]['Level'];
   $TTNames = Thing_Types_From_Names();
   $Moving = ($T['LinkId'] > 0);
   
@@ -648,6 +649,10 @@ function Show_Thing(&$T,$Force=0) {
       break;
 
     case 'Build Stargate':
+      if ($Moving || ($HasDeep < 20) || !Has_Tech($Fid,'Stargate Construction')) continue 2;
+      break;
+
+    case 'Dismantle Stargate':
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Stargate Construction')) continue 2;
       break;
 
@@ -904,6 +909,13 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
     case 'Build Stargate':
       $ProgShow = 1;
       $Acts = $PTNs['Build Stargate']['CompTarget'];
+
+      // Needs a lot of work
+      break;
+
+    case 'Dismantle Stargate':
+      $ProgShow = 1;
+      $Acts = $PTNs['Dismantle Stargate']['CompTarget'];
 
       // Needs a lot of work
       break;
