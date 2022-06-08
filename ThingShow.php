@@ -544,7 +544,7 @@ function Show_Thing(&$T,$Force=0) {
   }
   $SpecOrders = []; $SpecCount = 0;
   $HasDeep = Get_ModulesType($tid,3);
-  if ($HasDeep) $HasDeep = $HasDeep[0]['Number'] * $HasDeep[1]['Level'];
+  if ($HasDeep) $HasDeep = $HasDeep[0]['Number'] * $HasDeep[0]['Level'];
   $TTNames = Thing_Types_From_Names();
   $Moving = ($T['LinkId'] > 0);
   
@@ -605,7 +605,7 @@ function Show_Thing(&$T,$Force=0) {
       continue 2;
     
     case 'Make Outpost': // Make Outpost
-      if ($Moving || empty($N) || !$HasDeep || ($N['Control'] != $Fid)) continue 2;
+      if ($Moving || empty($N) || !$HasDeep || ($N['Control'] > 0 && $N['Control'] != $Fid)) continue 2;
       
       if (Get_Things_Cond($Fid,"Type=" . $TTNames['Outpost'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
       break;
