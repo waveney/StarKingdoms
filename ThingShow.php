@@ -544,7 +544,11 @@ function Show_Thing(&$T,$Force=0) {
   }
   $SpecOrders = []; $SpecCount = 0;
   $HasDeep = Get_ModulesType($tid,3);
-  if ($HasDeep) $HasDeep = $HasDeep[0]['Number'] * $HasDeep[0]['Level'];
+  if ($HasDeep) {
+    $HasDeep = $HasDeep[0]['Number'] * $HasDeep[0]['Level'];
+  } else {
+    $HasDeep = 0;
+  }
   $TTNames = Thing_Types_From_Names();
   $Moving = ($T['LinkId'] > 0);
   
@@ -1040,8 +1044,11 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
   }
   echo "</table></div>\n";
   echo "<input type=submit name=ACTION value=Refresh>";
-  if ($GM) echo "<input type=submit name=ACTION value='GM Refit'> <input type=submit name=ACTION value='Destroy Thing (Leave debris)'>" .
-       " <input type=submit name=ACTION value='Remove Thing (No debris)'>  <input type=submit name=ACTION value='Warp Out'>\n";
+  if ($GM) {
+    echo "<input type=submit name=ACTION value='GM Refit'> <input type=submit name=ACTION value='Destroy Thing (Leave debris)'>" .
+       " <input type=submit name=ACTION value='Remove Thing (No debris)'>";
+    if ($tprops & THING_CAN_MOVE) echo "  <input type=submit name=ACTION value='Warp Out'>\n";
+  }
   if (!$GM && ($tprops & THING_CAN_BECREATED)) echo "<input type=submit name=ACTION value='Delete'>";
   if ($GM || empty($Fid)) {
     if (Access('God')) {

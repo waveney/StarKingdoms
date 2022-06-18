@@ -231,9 +231,10 @@ function New_Thing(&$t) {
           echo "</form>";
           dotail();
         } else {
-          $t['SystemId'] = $Gates[0]['SystemId'];
+          $t['NewSystemId'] = $t['SystemId'] = $Gates[0]['SystemId'];
           $t['WithinSysLoc'] = $Gates[0]['WithinSysLoc'];
           $t['CurHealth'] = $t['Link_id'] = 0;
+          $t['TargetKnown'] = 1;
           Put_Thing($t);
           break;
         }
@@ -255,9 +256,10 @@ function New_Thing(&$t) {
       $t = Get_Thing($tid);
       Check_MyThing($t,$Fid);
       $Gate = Get_Thing($_REQUEST['G']);
-      $t['SystemId'] = $Gate['SystemId'];
+      $t['NewSystemId'] = $t['SystemId'] = $Gate['SystemId'];
       $t['WithinSysLoc'] = $Gate['WithinSysLoc'];
       $t['CurHealth'] = $t['Link_id'] = 0;
+          $t['TargetKnown'] = 1;
       Put_Thing($t);
       break;
 
