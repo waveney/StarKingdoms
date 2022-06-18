@@ -50,7 +50,7 @@
   
   $Things = Get_AllThings();
   foreach ($Things as $T){
-    if ($T['BuildState'] <2 || $T['BuildState'] >3 || $T['LinkId'] < 0) continue; // Don't exist
+    if ($T['BuildState'] <2 || $T['BuildState'] >3 || ($T['LinkId'] < 0) && $T['LinkId'] > -5)) continue; // Don't exist
     $Sid = $T['SystemId'];
     $Eyes = $TTypes[$T['Type']]['Eyes'];
     if (isset($Sys[$Sid][$T['Whose']])) {

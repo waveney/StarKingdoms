@@ -541,7 +541,7 @@ function Get_AllThings() {
 function Get_AllThingsAt($id) {
   global $db,$GAMEID;
   $Ts = [];
-  $res = $db->query("SELECT * FROM Things WHERE GameId=$GAMEID AND SystemId=$id AND LinkId>=0 ORDER By Whose");
+  $res = $db->query("SELECT * FROM Things WHERE GameId=$GAMEID AND SystemId=$id AND ( LinkId>=0 OR LinkId=-6) ORDER By Whose");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
   return $Ts;
 }
@@ -549,7 +549,7 @@ function Get_AllThingsAt($id) {
 function Get_ThingsSys($Sid,$type=0,$Fid=0) {
   global $db,$GAMEID;
   $Ts = [];
-  $res = $db->query("SELECT * FROM Things WHERE GameId=$GAMEID AND SystemId=$Sid AND LinkId>=0 " . ($type?" AND Type=$type":"") . ($Fid?" AND Whose=$Fid":""));
+  $res = $db->query("SELECT * FROM Things WHERE GameId=$GAMEID AND SystemId=$Sid AND  ( LinkId>=0 OR LinkId=-6)  " . ($type?" AND Type=$type":"") . ($Fid?" AND Whose=$Fid":""));
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
   return $Ts;
 }

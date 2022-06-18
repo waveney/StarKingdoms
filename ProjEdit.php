@@ -131,7 +131,7 @@
     if ($PProps &2) {
       if ($P['ThingId']) {
         $Thing = Get_Thing($P['ThingId']);
-        echo "<tr>" . fm_number('Thing',$P,'ThingId') . "<td><a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . $Thing['Name'] . "</a>"; 
+        echo "<tr>" . fm_number('Thing',$P,'ThingId') . "<td><b><a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . $Thing['Name'] . "</a></b>"; 
       } else {
         echo "<tr>" . fm_number('Thing',$P,'ThingId');
       }
