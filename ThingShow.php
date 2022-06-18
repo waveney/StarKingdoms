@@ -497,7 +497,7 @@ function Show_Thing(&$T,$Force=0) {
         echo fm_number1("Cargo Space",$T,'CargoSpace');
       }
       if ($totmodc > $T['MaxModules']) {
-        echo "<td class=Err>TOO MANY MODULES\n";
+        echo "<td class=Err>($totmodc) TOO MANY MODULES\n";
       } elseif ($BadMods) {
         echo "<td class=Err>$BadMods INVALID MODULES\n";
       } else {
@@ -565,7 +565,7 @@ function Show_Thing(&$T,$Force=0) {
       break;
     
     case 'Decommision': // Dissasemble
-      if (($Moving || $tprops & THING_HAS_SHIPMODULES) == 0 ) continue 2;
+      if ($Moving || ($tprops & THING_HAS_SHIPMODULES) == 0 ) continue 2;
       // Is there a Home here with a shipyard
       $Loc = $T['SystemId'];
       $Homes = Gen_Get_Cond('ProjectHomes', "SystemId=$Loc AND Whose=$Fid");
@@ -574,6 +574,18 @@ function Show_Thing(&$T,$Force=0) {
         if (isset($Ds[3])) break 2; // FOund a Shipyard
       }
       if (isset($N['id']) && Get_Things_Cond($Fid,"Type=" . $TTNames['Orbital Repair Yards'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) break; // Orbital Shipyard     
+      continue 2;
+    
+    case 'Disband': // Dissasemble
+      if ($Moving || ($tprops & THING_HAS_ARMYMODULES) == 0 ) continue 2;
+      // Is there a Home here with a Military
+      $Loc = $T['SystemId'];
+      $Homes = Gen_Get_Cond('ProjectHomes', "SystemId=$Loc AND Whose=$Fid");
+      foreach ($Homes as $H) {
+        $Ds = Get_DistrictsH($H['id']);
+        if (isset($Ds[2])) break 2; // FOund a Military District
+      }
+//      if (isset($N['id']) && Get_Things_Cond($Fid,"Type=" . $TTNames['Orbital Repair Yards'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) break; // Orbital Shipyard     
       continue 2;
     
     case 'Analyse Anomaly': // Analyse
@@ -654,6 +666,7 @@ function Show_Thing(&$T,$Force=0) {
 
     case 'Dismantle Stargate':
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Stargate Construction')) continue 2;
+      if (empty($Links)) continue 2;
       break;
 
     case 'Make Planet Mine':
@@ -788,6 +801,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
     
     case 'Voluntary Warp Home': // Warp Home
     case 'Decommision': // Dissasemble
+    case 'Disband': // Disband
       break;
       
     case 'Establish Embassy': // Establish Embassy

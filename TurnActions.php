@@ -509,6 +509,32 @@ function Instuctions() { // And other Instructions
       db_delete('Things',$Tid);
       continue 2;
 
+    case 'Disband': // Dissasemble
+      $Lvl = $T['Level'];
+      $T['BuildState'] = -1;
+      $T['SystemId'] = 0;
+      $T['History'] .= "Disbanded";
+      $T['Instruction'] = 0;
+      $cash = 10*$Lvl*Has_Tech($T['Whose'],'Military Organisation');
+      TurnLog($T['Whose'], "The " . $T['Name'] . " has been disbanded gaining you " . Credit() . $cash, $T);
+      Spend_Credit($T['Whose'],-$cash,"Disbanded " . $T['Name']);
+      GMLog($Facts[$T['Whose']]['Name'] . " - " . $T['Name'] . " has been disbanded"); 
+      
+      $Have = Get_Things_Cond(0," (LinkId<0 AND SystemId=$Tid ");
+      if ($Have) {
+        foreach ($Have as $H) {
+          $H['SystemId'] = $T['SystemId'];
+          $H['WithinSysLoc'] = 0;
+          TurnLog($T['Whose'],$H['Name'] . " has been offloaded on to " . $P['Name'] . " in " . $N['Ref'],$H);
+          
+          if ($H['Whose'] != $T['Whose']) TurnLog($H['Whose'],$H['Name'] . " has been offloaded on to " . $P['Name'] . " in " . $N['Ref'],$H);
+          Put_Thing($H);
+        }
+      }
+      
+      db_delete('Things',$Tid);
+      continue 2;
+
     case 'Analyse Anomaly': // Anomaly   
       $Aid = $T['ProjectId'];
       $Fid = $T['Whose'];
@@ -1618,6 +1644,7 @@ function ProjectsComplete() {
       break;
     // These all now handled as instructions - not projects at the moment
     case 'Decommision':
+    case 'Disband':
     case 'Build Outpost':
     case 'Build Asteroid Mining Facility':
     case 'Build Minefield':
