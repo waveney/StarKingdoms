@@ -91,12 +91,14 @@
   global $db, $GAME;
   
   $RedoMap = 1;
-  $Dot = fopen("cache/Fullmap$Faction$typ.dot","w+");
-  if (!$Dot) { echo "Could not create dot file<p>"; dotail(); };
+//  $Dot = fopen("cache/Fullmap$Faction$typ.dot","w+");
+//  if (!$Dot) { echo "Could not create dot file<p>"; dotail(); };
 
 
   while ($RedoMap) {
-  ftruncate($Dot,0);  // Needed for redoing logic
+  $Dot = fopen("cache/Fullmap$Faction$typ.dot","w+");
+  if (!$Dot) { echo "Could not create dot file<p>"; dotail(); };
+//  ftruncate($Dot,0);  // Needed for redoing logic
   
  // echo "AA";
   
@@ -258,9 +260,9 @@
   }
 
   fwrite($Dot,"}\n"); 
+  fclose($Dot);
   } // Redo Loop
 
-  fclose($Dot);
     
 //  echo "<H1>Dot File written</h1>";
   
