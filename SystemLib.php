@@ -27,8 +27,8 @@ function Dynamic_Update(&$N,$Tinc=0) {
   $CurPeriod = $N['Period']*3600; // Hours
   $CurDist = $N['Distance']; // KM
   
-  $CurPeriod = 0.077385053686678*3600;
-  $CurDist = 85238.5273897988;
+//  $CurPeriod = 0.077385053686678*3600;
+//  $CurDist = 85238.5273897988;
   
 //var_dump($CurPeriod*3600);
   
@@ -49,7 +49,7 @@ function Dynamic_Update(&$N,$Tinc=0) {
   } else {
     $tt = 3600*24*14;
     $Duration = (time() - $GAME['DateCompleted']);
-//if (Access('GM')) echo "Duration: $Duration<br>CurP $CurPeriod<br>NewP $NewPeriod";
+// if (Access('GM')) echo "Duration: $Duration<br>CurP $CurPeriod<br>NewP $NewPeriod";
     $N['Period'] = ($NewPeriod*$Duration + $CurPeriod*($tt-$Duration))/($tt*3600);
     $N['Distance'] = ($NewDistance*$Duration + $CurDist*($tt-$Duration))/$tt;
   }

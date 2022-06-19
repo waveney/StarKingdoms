@@ -601,7 +601,7 @@ function EyesInSystem($Fid,$Sid) { // Eyes 1 = in space, 2= sens, 4= neb sens, 8
   return $Eyes;
 }
 
-function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images) {
+function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
   global $Advance;
   static $ThingTypes;
   static $Factions;
@@ -625,6 +625,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images) {
       } else {
         echo " " . $ThingTypes[$T['Type']]['Name'];
       }
+      if ($GM && !empty($T['Orders'])) echo ", <span style='background:#ffd966;'>Orders: " . $T['Orders'] . "</span>";
       if ($Images && !empty($T['Image'])) echo " <img valign=top src=" . $T['Image'] . " height=100> ";
       echo "<br clear=all>\n";
       $LastWhose = $T['Whose'];
@@ -638,6 +639,8 @@ function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0) {
     if (!$Eyes) return;
     $Things = Get_AllThingsAt($Sid);
     if (!$Things) return;
+    
+  $GM = Access('GM');
 //    $ThingTypes = Get_ThingTypes();
   
 //    $Factions = Get_Factions();
@@ -645,37 +648,18 @@ function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0) {
 //if ($Sid == 58) var_dump ($Things); echo "XX<p>";   
     $N = Get_System($Sid);
     if ($heading) {
-       echo "<h2>System " . System_Name($N,$Fid) . "</h2>"; 
+       $Col = 'White';
+       if ($N['Control']) {
+         $Fac = Get_Faction($N['Control']);
+         $Col = $Fac['MapColour'];
+       }
+       echo "<h2 style='background:$Col;'>System " . System_Name($N,$Fid) . "</h2>"; 
     } else {
        echo "<h2>In the System is:</h2>";
     }
     $LastWhose = 0;
     foreach ($Things as $T) {
-      SeeThing($T,$LastWhose,$Eyes,$Fid,$Images); //,$ThingTypes,$Factions);
-      continue;
-//var_dump($T); echo "<p>";
-// if ( $Sid == 58) echo $T['Name'] . " - " . $ThingTypes[$T['Type']]['SeenBy'] . " - " . $Eyes . "<p>";
-
-      if ($Fid >=0 && ($T['Whose'] != $Fid) && (($ThingTypes[$T['Type']]['SeenBy'] & $Eyes) == 0 )) continue;
-      if ($T['BuildState'] < 2 || $T['BuildState'] > 4) continue; // Building or abandoned
-      if ($LastWhose && $LastWhose!= $T['Whose']) echo "<P>";
-      if ($T['BuildState'] == 4) echo "The remains of: ";
-      if ($T['Whose']) {
-        echo ((($Fid < 0) || ($Fid == $T['Whose']))?( "<a href=ThingEdit.php?id=" . $T['id'] . ">" . (empty($T['Name'])?"Unnamed":$T['Name']) . "</a>") : $T['Name'] ) . " a ";
-      } 
-      if ($ThingTypes[$T['Type']]['Properties'] & THING_HAS_LEVELS) echo " level " . $T['Level'];
-      if ($T['Class']) echo " " . $T['Class'] . " class ";
-      if ($T['Whose']) echo " <span style='background:" . $Factions[$T['Whose']]['MapColour'] . "'>" . 
-        ($Factions[$T['Whose']]['Adjective']?$Factions[$T['Whose']]['Adjective']:$Factions[$T['Whose']]['Name']) . "</span>";
-      if (($T['Whose'] == $Fid) && ($ThingTypes[$T['Type']]['Properties'] & THING_CAN_BE_ADVANCED) && ($T['Level'] > 1)) echo ' ' . $Advance[$T['Level']];
-      if ($T['Whose']==0 && Access('GM')) {
-        echo "<a href=ThingEdit.php?id=" . $T['id'] . ">" . $ThingTypes[$T['Type']]['Name'] . "</a>";
-      } else {
-        echo " " . $ThingTypes[$T['Type']]['Name'];
-      }
-      if ($Images && !empty($T['Image'])) echo " <img valign=top src=" . $T['Image'] . " height=100> ";
-      echo "<br clear=all>\n";
-      $LastWhose = $T['Whose'];
+      SeeThing($T,$LastWhose,$Eyes,$Fid,$Images,$GM); //,$ThingTypes,$Factions);
     };
 }
 

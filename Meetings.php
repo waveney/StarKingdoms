@@ -56,7 +56,7 @@
     if (isset($Sys[$Sid][$T['Whose']])) {
       $Sys[$Sid][$T['Whose']] |= $Eyes;
     } else {
-      $Sys[$Sid][$T['Whose']] |= $Eyes;
+      $Sys[$Sid][$T['Whose']] = $Eyes;
     }
   }
   
