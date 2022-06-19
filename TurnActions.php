@@ -1665,7 +1665,7 @@ function ProjectsComplete() {
 
 function InstructionsComplete() {
   global $ThingInstrs,$GAME;
-  $Things = Get_Things_Cond(0,"Instruction>0 AND ( Progress>=ActionsNeeded OR ProjectId>0 ) ");
+  $Things = Get_Things_Cond(0,"Instruction>0 AND Progress>=ActionsNeeded ");
   $NeedColStage2 = 0;
   $Facts = Get_Factions();
   $TTNames = Thing_Types_From_Names();
