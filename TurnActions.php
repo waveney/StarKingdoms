@@ -145,8 +145,8 @@ function CashTransfers() {
       TurnLog($B['Recipient'],"Gained " . $B['Amount'] . " Science points for " . $B['YourRef']);    
     } else { // Other Currencies
       if ($B['FactionId'] > 0) {
-        if (Gain_Currency($B['Recipient'],$B['What'],-$B['Amount'],$B['YourRef'])) {
-          TurnLog($B['FactionId'], "Transfered " . $B['Amount'] . " of " . $Currencies[$B['What']] . " for " . $B['YourRef'] . " to " . $Factions[$B['Recipient']]['Name']);
+        if (Gain_Currency($B['FactionId'],$B['What'],-$B['Amount'],$B['YourRef'])) {
+          TurnLog($B['FactionId'], "Transfered " . $B['Amount'] . " of " . $Currencies[$B['What']] . " for " . $B['YourRef'] . " to " . $Facts[$B['Recipient']]['Name']);
           if ($B['Recipient'] > 0) {
             Gain_Currency($B['Recipient'], $B['What'], $B['Amount'],$B['YourRef']);
             TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " transfered " . $B['Amount'] . " of " . $Currencies[$B['What']] . " for " . $B['YourRef'] );
