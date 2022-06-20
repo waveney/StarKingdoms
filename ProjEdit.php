@@ -85,27 +85,32 @@
   foreach ($ProjTypes as $PT) $ProjTypeNames[$PT['id']] = $PT['Name'];
   
   $H = Get_ProjectHome($P['Home']);
- 
+
+  if (!isset($H['ThingType'])) {
+    $PH['Name'] = 'Bug Bug Bug';
+    $Sid = 0;
+  } else {
 //var_dump($H);
-  switch ($H['ThingType']) {
-    case 1: // Planet
-      $PH = Get_Planet($H['ThingId']);
-      $Dists = Get_DistrictsP($H['ThingId']);
-      $Sid = $PH['SystemId'];
-      break;
-    case 2: // Moon
-      $PH = Get_Moon($H['ThingId']);
-      $Dists = Get_DistrictsM($H['ThingId']);
-      $Plan = Get_Planet($PH['PlanetId']);
-      $Sid = $Plan['SystemId'];
-      break;
-    case 3: // Thing
-      $PH = Get_Thing($H['ThingId']);
-      $Dists = Get_DistrictsT($H['ThingId']);
-      $Sid = $PH['SystemId'];
-      break;
-    }
-  $System = Get_System($Sid);
+    switch ($H['ThingType']) {
+      case 1: // Planet
+        $PH = Get_Planet($H['ThingId']);
+        $Dists = Get_DistrictsP($H['ThingId']);
+        $Sid = $PH['SystemId'];
+        break;
+      case 2: // Moon
+        $PH = Get_Moon($H['ThingId']);
+        $Dists = Get_DistrictsM($H['ThingId']);
+        $Plan = Get_Planet($PH['PlanetId']);
+        $Sid = $Plan['SystemId'];
+        break;
+      case 3: // Thing
+        $PH = Get_Thing($H['ThingId']);
+        $Dists = Get_DistrictsT($H['ThingId']);
+        $Sid = $PH['SystemId'];
+        break;
+      }
+    $System = Get_System($Sid);
+  }
 
   // Past is frozen unless GM
   // Future changeble by all

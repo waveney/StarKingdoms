@@ -1246,6 +1246,11 @@ function ProjectProgress() {
       $MaxActs = Has_Tech($P['FactionId'],3);  
 
       $H = Get_ProjectHome($P['Home']);
+      if (!isset($H['ThingType'])) {
+        GMLog("<b>Confused state for project " . $P['id'] . "</b><p>");
+        $H['Skip'] = 1;
+        continue;  // Remove things without districts                
+      }
       switch ($H['ThingType']) {
         case 1: // Planet
           $PH = Get_Planet($H['ThingId']);
@@ -1265,6 +1270,11 @@ function ProjectProgress() {
     
     } else { // District based 
       $H = Get_ProjectHome($P['Home']);
+      if (!isset($H['ThingType'])) {
+        GMLog("<b>Confused state for project " . $P['id'] . "</b><p>");
+        $H['Skip'] = 1;
+        continue;  // Remove things without districts                
+      }
       switch ($H['ThingType']) {
         case 1: // Planet
           $PH = Get_Planet($H['ThingId']);
@@ -1291,7 +1301,7 @@ function ProjectProgress() {
       case 4: $MaxActs = $Dists[2]['Number']; break;
       case 8: $MaxActs = $Dists[4]['Number']; break;
       default: 
-        GMLog("Confused state for project " . $P['id'] . "<p>");
+        GMLog("<b>Confused state for project " . $P['id'] . "</b><p>");
       }
     }
 
@@ -1471,6 +1481,10 @@ function ProjectsComplete() {
     case 'Construction':
     case 'Grow District':
       $H = Get_ProjectHome($P['Home']);
+      if (!isset($H['ThingType'])) {
+        GMLog("Project " . $P['id'] . " Does not have a valid home<br>");
+        break;
+      }
       switch ($H['ThingType']) {
         case 1: // Planet
           $PH = Get_Planet($H['ThingId']);
@@ -1485,7 +1499,7 @@ function ProjectsComplete() {
           $Dists = Get_DistrictsT($H['ThingId'],1);
           break;
         }
-      foreach($Dists as $D) {
+      if ($Dists) foreach($Dists as $D) {
         if ($D['Type'] == $P['ThingType']) {
           $D['Number']++;
           Put_District($D);
@@ -1507,9 +1521,13 @@ function ProjectsComplete() {
     case 'Research Supplemental Army Tech':
     case 'Research Intelligence Operations':
     case 'Research Supplemental Intelligence Tech':
+    case 'Research Supplemental Planetary Construction Tech':
       $Tid = $P['ThingType'];
       $CTech = Get_Faction_TechFT($Fid,$Tid);
       $Tech = Get_Tech($Tid);
+      if (empty($Tech)) {
+        GMLog($Facts[$Fid]['Name'] . " has completed Researching an unknown tech: $Tid",1);      
+      }
       if ($Tech['Cat'] == 0) { // Core
         if ($CTech['Level'] < $P['Level']) {
           $CTech['Level'] = $P['Level'];

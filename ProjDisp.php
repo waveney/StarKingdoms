@@ -75,6 +75,7 @@
         case 'Research Supplemental Army Tech':
         case 'Research Intelligence Operations':
         case 'Research Supplemental Intelligence Tech':
+        case 'Research Supplemental Planetary Construction Tech':
         case 'Construct Warp Gate':
         case 'Decipher Alien Language':
         case 'Rebuild and Repair':  

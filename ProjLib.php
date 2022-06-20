@@ -90,6 +90,7 @@ function Project_Finished(&$P,$Turn) {  // CODE ON HOLD
     case 'Research Supplemental Army Tech':
     case 'Research Intelligence Operations':
     case 'Research Supplemental Intelligence Tech':
+    case 'Research Supplemental Planetary Construction Tech':
       $Tid = $P['ThingType'];
       $CTech = Get_Faction_TechFT($Fid,$Tid);
       $Tech = Get_Tech($Tid);
