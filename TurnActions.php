@@ -994,7 +994,7 @@ function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
   
   GMLog("<h2>These movements are planned - to stop one, tick the stop box and say why</h2>");
 //  GMLog("<form method=Post action=TurnActions.php?ACTION=Complete>" . fm_hidden('S',($Agents?34:32)));
-  GMLog("<form method=Post action=TurnActions.php?ACTION=StageDone>" . fm_hidden('Stage',($Agents?'Ship Move Check':'Agents Move Check')));
+  GMLog("<form method=Post action=TurnActions.php?ACTION=StageDone>" . fm_hidden('Stage',($Agents?'Agents Move Check':'Ship Move Check')));
   GMLog("<table border><tr><td>Who<td>What<td>Level<td>From<td>Link<td>To<td>Stop<td>Why Stopping\n");
   foreach ($Things as $T) {
     if (($T['Type'] == 5 && $Agents == 0) || ($T['Type'] != 5 && $Agents == 1) || $T['BuildState'] <2 || $T['BuildState'] > 3 || $T['LinkId'] <= 0 || $T['Whose']==0) continue;
@@ -2317,7 +2317,7 @@ function Do_Turn() {
     case 'StageDone':
 //      $S = $_REQUEST['S'];
       $SName = $_REQUEST['Stage'];
-      $act = preg_replace('/ /','',$SName);
+      $SName = preg_replace('/ /','',$SName);
       for($S =0; $S <64 ; $S++) {
         $act = $Stages[$S];
         $act = preg_replace('/ /','',$act);
