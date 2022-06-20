@@ -919,11 +919,12 @@ function DirectMoves() {
   $TTypes = Get_ThingTypes();
   $SysRefs = Get_SystemRefs();
   foreach($Things as $T) {
+    $Tid = $T['id'];
     $T['SystemId'] = $T['NewSystemId'];
     $T['WithinSysLoc'] = $T['NewLocation'];
     $T['NewSystemId'] = $T['LinkId'] = 0;
     Put_Thing($T);
-    GMLog("Directly moved " . (empty($T['Name'])?'': $T['Name']) . " a " . $TTypes[$T['Name']]['Name'] . " to " . $SysRefs[$T['SystemId']]);
+    GMLog("Directly moved " . (empty($T['Name'])?"Nameless $Tid": $T['Name']) . " a " . $TTypes[$T['Type']]['Name'] . " to " . $SysRefs[$T['SystemId']]);
   }
   return 1;
 }
