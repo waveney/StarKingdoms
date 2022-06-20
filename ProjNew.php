@@ -243,7 +243,7 @@
       $FactTechs = Get_Faction_Techs($Fid, $Turn);
       $Techs = Get_TechsByCore($Fid);
       foreach ($Techs as $T) {
-        if ($T['Cat'] == 0 || isset($FactTechs[$T['id']]) ) continue;
+        if ($T['Cat'] == 0 || (isset($FactTechs[$T['id']]) && $FactTechs[$T['id']]['Level'])) continue;
         if (!isset($FactTechs[$T['PreReqTech']])) continue;
         if ($T['PreReqTech']!=3) continue;
         if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
@@ -361,7 +361,7 @@
       $FactTechs = Get_Faction_Techs($Fid, $Turn);
       $Techs = Get_TechsByCore($Fid);
       foreach ($Techs as $T) {
-        if ($T['Cat'] == 0 || isset($FactTechs[$T['id']]) ) continue;
+        if ($T['Cat'] == 0 || (isset($FactTechs[$T['id']]) && $FactTechs[$T['id']]['Level'])) continue;
         if (!isset($FactTechs[$T['PreReqTech']])) continue;
         if ($T['PreReqTech']!=7) continue;
         if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
@@ -472,7 +472,7 @@
       $FactTechs = Get_Faction_Techs($Fid);
       $Techs = Get_TechsByCore($Fid);
       foreach ($Techs as $T) {
-        if ($T['Cat'] == 0 || isset($FactTechs[$T['id']]) ) continue;
+        if ($T['Cat'] == 0 ||  (isset($FactTechs[$T['id']]) && $FactTechs[$T['id']]['Level'])) continue;
         if (!isset($FactTechs[$T['PreReqTech']])) continue;
         if ($T['PreReqTech']!=8) continue;
         if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
@@ -557,7 +557,7 @@
       $FactTechs = Get_Faction_Techs($Fid, $Turn);
       $Techs = Get_TechsByCore($Fid);
       foreach ($Techs as $T) {
-        if ($T['Cat'] == 0 || isset($FactTechs[$T['id']]) ) continue;
+        if ($T['Cat'] == 0 ||  (isset($FactTechs[$T['id']]) && $FactTechs[$T['id']]['Level'])) continue;
         if (!isset($FactTechs[$T['PreReqTech']])) continue;
         if ($T['PreReqTech']!=4) continue;
         if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
