@@ -1904,14 +1904,15 @@ function CheckSurveyReports() {
     if ($FS['ScanLevel'] >= $S['Scan']) continue;
     if (!$Started) {
       GMLog("<h2>Please review these scans, mark lower as needed</h2>\n");
-      GMLog("<table border><tr><td>Faction<td>Where<td>Scan Level\n");
+      GMLog("<table border><tr><td>Faction<td>Where<td>Scan Level<td>Control\n");
       if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
       Register_AutoUpdate('ScansDue',0);
       $Started = 1;
     }
 
     $N = Get_System($S['Sys']);
-    GMLog("<tr><td>" . $Facts[$Fid]['Name'] . "<td>" . $N['Ref'] . "<td>" . fm_radio('',$SurveyLevels,$S,'Scan','',0,'',"Scan:$SSid"));
+    GMLog("<tr><td>" . $Facts[$Fid]['Name'] . "<td>" . $N['Ref'] . "<td>" . fm_radio('',$SurveyLevels,$S,'Scan','',0,'',"Scan:$SSid") . 
+      ($N['Control'] ? ( "<td style='background:" . $Facts[$N['Control']]['MapColour'] . ";'>" . $Facts[$N['Control']]['Name'])  : '<td>None') );
     $LastSys = $Sid;
   }
   if ($Started) {
