@@ -79,6 +79,7 @@ function Player_Page() {
     dotail();
   }
 
+  $Fid = $FACTION['id'];
   $FACTION['LastActive'] = time();
   
   if (!$GM || $FACTION['NPC'] ) Put_Faction($FACTION);
@@ -117,8 +118,9 @@ function Player_Page() {
       echo "<li><a href=MapFull.php?Hex&Links=0>Faction Map</a> - with spatial location of nodes\n";
       echo "(<a href=MapFull.php?Hex>With Link Numbers)</a>\n";
     }
-    echo "<li><a href=TechShow.php?PLAYER>Technologies</a><p>\n";
-    echo "<li><a href=WhatCanIC.php>What Things can I See?</a>\n";
+    echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";
+    if ($GM) echo "<li>GM: <a href=TechShow.php?SETUP&id=$Fid>Edit Technologies</a>\n";
+    echo "<p><li><a href=WhatCanIC.php>What Things can I See?</a>\n";
     echo "<li><a href=WorldList.php>Worlds and Colonies</a> - High Level info only\n";  
     echo "<li><a href=NamePlaces.php>Name Places</a> - Systems, Planets etc\n";      
     echo "<li><a href=PAnomalyList.php>Anomalies that have been seen</a><p>\n";      

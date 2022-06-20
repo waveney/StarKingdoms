@@ -211,8 +211,8 @@
         }
         
          if ($Mti == 5) { // Engines
-           $ELvl = Calc_TechLevel($T['Whose'],$Mti);
-           if(isset($MMs[$Mti]['Number'])) $Engines = $MMs[$Mti]['Number'];
+           $Elvl = Calc_TechLevel($T['Whose'],$Mti);
+           if (isset($MMs[$Mti]['Number'])) $Engines = $MMs[$Mti]['Number'];
          }
       }
 
