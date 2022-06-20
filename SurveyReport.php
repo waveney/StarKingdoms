@@ -157,7 +157,7 @@
         sprintf("%0.0f K = ",$N['Temperature2'])  . " and a luminosity of " .
         sprintf("%0.2g Km = ",$N['Luminosity2'])  . RealWorld($N,'Luminosity2') . ",<br>Which orbits at " .
         sprintf("$Acc Km = ",$N['Distance'])  . RealWorld($N,'Distance') . ", with a periodicity of " .
-        sprintf("$Acc Hr = ",$N['Period'])  . RealWorld($N,'Period') . ".<p>";
+        ($N['Period']>1? sprintf("$Acc Hr = ",$N['Period']) : sprintf("$Acc Seconds = ",$N['Period']*3600) )  . RealWorld($N,'Period') . ".<p>";
   }      
   echo "<br>";
   if ($SurveyLevel >= 2) {
