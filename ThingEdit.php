@@ -26,9 +26,8 @@ function New_Thing(&$t) {
 }
 
   $Force = (isset($_REQUEST['FORCE'])?1:0);
-  
-  if (Access('GM')) {
-    A_Check('GM');
+  $GM = Access('GM');
+  if ($GM) {
     $Fid = 0;
     if (!empty($FACTION)) $Fid = $FACTION['id'];
   } else {
@@ -417,6 +416,15 @@ function New_Thing(&$t) {
       Put_Thing($t);      
       break;
       
+    case 'Pay on Turn':
+      $tid = $_REQUEST['id'];
+      $t = Get_Thing($tid);
+      Check_MyThing($t,$Fid);
+      $t['LinkCost'] = $_REQUEST['LinkCost'];
+      $t['LinkPay'] = 1;
+      Put_Thing($t);      
+      break;
+    
     case 'None' :
     default: 
       break;
@@ -525,15 +533,15 @@ function New_Thing(&$t) {
   if ($Force) {
     $GM = 0;
     $Fid = $t['Whose'];
-  } else {
-    $GM = Access('GM');
   }
 
   if ($GM) {
     echo "<h2>GM: <a href=ThingEdit.php?id=$tid&FORCE>This page in Player Mode</a>" . (Access('God')?", <a href=ThingEdit.php?id=$tid&EDHISTORY>Edit History</a>":"") . "</h2>";  
   }
-  if (empty($t) || ($t['Whose'] != $Fid && !$GM)) {
-     echo "<h2 class=Err>Sorry that thing is not yours</2>";
+  if (empty($t)) {
+    echo "<h2 class=Err>Sorry that thing is not found</2>";  
+  } elseif ($t['Whose'] != $Fid && !$GM) {
+    echo "<h2 class=Err>Sorry that thing is not yours</2>";
   } else {
     Show_Thing($t,$Force);
   }

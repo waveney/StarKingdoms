@@ -63,6 +63,16 @@
     }
   }
   
+  $Things = Get_Things_Cond($Fid,"LinkId>0 AND LinkCost>0 AND LinkPay>0");
+  $LinkCosts = 0;
+  foreach($Things as $T) {
+    $LinkCosts += $T['LinkCost'];
+  }  
+  if ($LinkCosts) {
+    echo "Using " . count($Things) . " " . Plural($Things,'Link','Link','Links') . " costing " . Credit() . $LinkCosts . "<p>";
+    $Spend += $LinkCosts;
+  }
+  
   $left = $FACTION['Credits'] - $Spend;
   echo "<h2>Total Expenditure " . Credit() . "$Spend leaving with " . Credit() . (($left < 0)? "<span class=red>$left</span>" : $left) . "</h2>";
   if ($left < 0) {

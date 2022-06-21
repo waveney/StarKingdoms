@@ -176,6 +176,9 @@ function CashTransfers() {
 }
 
 function PayForStargates() {
+  $Facts = Get_Factions();
+
+
   GMLog("Pay For Stargates are currently Manual<p>");
   return 1;
 }
@@ -996,7 +999,7 @@ function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
   GMLog("<h2>These movements are planned - to stop one, tick the stop box and say why</h2>");
 //  GMLog("<form method=Post action=TurnActions.php?ACTION=Complete>" . fm_hidden('S',($Agents?34:32)));
   GMLog("<form method=Post action=TurnActions.php?ACTION=StageDone>" . fm_hidden('Stage',($Agents?'Agents Move Check':'Ship Move Check')));
-  GMLog("<table border><tr><td>Who<td>What<td>Level<td>From<td>Link<td>To<td>Stop<td>Why Stopping\n");
+  GMLog("<table border><tr><td>Who<td>What<td>Level<td>From<td>Link<td>To<td>Paid<td>Stop<td>Why Stopping\n");
   foreach ($Things as $T) {
     if (($T['Type'] == 5 && $Agents == 0) || ($T['Type'] != 5 && $Agents == 1) || $T['BuildState'] <2 || $T['BuildState'] > 3 || $T['LinkId'] <= 0 || $T['Whose']==0) continue;
     if ($T['LinkId']>0 && $T['NewSystemId'] != $T['SystemId'] ) {
@@ -1015,7 +1018,8 @@ function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
       } else {
          GMLog($L['System2Ref'] . "<td style=color:" . $LinkLevels[$L['Level']]['Colour'] . ";>#$Lid<td>" . $L['System1Ref']);      
       }
-      GMLog("<td>" . fm_checkbox('',$_REQUEST,"Prevent$Tid") . fm_text1('', $_REQUEST,"Reason$Tid"));
+      
+      GMLog("<td>" . (($L['Level'] ==1 || $T['LinkPay']<0)?'Free':($T['LinkPay'] == 0? '<b>No</b>':'Yes'))  ."<td>" . fm_checkbox('',$_REQUEST,"Prevent$Tid") . fm_text1('', $_REQUEST,"Reason$Tid"));
     }
   }
   GMLog("</table><input type=submit value='Click to Proceed'></form>\n");
@@ -2171,7 +2175,7 @@ function GenerateTurns() {
 function TidyUpMovements() {
   global $db,$GAMEID;
   
-  $res = $db->query("UPDATE Things SET LinkId=0 WHERE LinkId>0 AND GameId=$GAMEID"); 
+  $res = $db->query("UPDATE Things SET LinkId=0, LinkPay=0, LinkCost=0 WHERE LinkId>0 AND GameId=$GAMEID"); 
   
   // Check for lid <-1...
   $NotFin = Get_Things(0,"LinkId<-1");

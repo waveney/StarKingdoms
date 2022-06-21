@@ -68,10 +68,21 @@ function Show_Thing(&$T,$Force=0) {
     var_dump($T); echo "<p>"; var_dump($Links); echo "<p>";
   }
 */
-  if ($Links && ($T['LinkId']>0) && ($ll = $Links[$T['LinkId']]['Level']) >1 && ($Who = GameFeature('LinkOwner',0)) && $Who != $T['Whose']) {
-    $LOwner = Get_Faction($Who);
+
+  echo "<form method=post id=mainform enctype='multipart/form-data' action=ThingEdit.php>";
+  
+  $ll = ($T['LinkId']>0 ? $Links[$T['LinkId']]['Level'] : 0);
+  $LOWho = GameFeature('LinkOwner',0);
+  if ($LOWho) $LOwner = Get_Faction($LOWho);
+  if ($Links && ($T['LinkId']>0) && ($LinkTypes[$ll]['Cost'] > 0) && $LOWho && $LOWho != $T['Whose'] && $T['LinkPay']==0) {
+    $Lc = $LinkTypes[$ll][($tprops & THING_HAS_GADGETS) ? 'AgentCost':'Cost']*$T['Level'];
     echo "<h2>You are taking a <span style='color:" . $LinkTypes[$ll]['Colour'] . "'>" . $LinkTypes[$ll]['Name'] .
-         "</span> link do you need to pay " . $LOwner['Name'] . " for this?</h2>\n";
+         "</span> link do you need to pay " . credit() . "$Lc to " . $LOwner['Name'] . " for this? ";
+         
+    echo fm_hidden('LinkCost', $Lc) . "<input type=submit Name=ACTION value='Pay on Turn'>";
+    echo "</h2>\n";
+    $T['LinkCost'] = $Lc;
+    Put_Thing($T);
   }
 
 
@@ -80,7 +91,6 @@ function Show_Thing(&$T,$Force=0) {
   
   if ($T['BuildState'] == 0) echo "Note the Tech level of this will be recorded when it is built<br>";
 
-  echo "<form method=post id=mainform enctype='multipart/form-data' action=ThingEdit.php>";
   echo "<div class=tablecont><table width=90% border class=SideTable>\n";
   Register_AutoUpdate('Thing',$tid);
   echo fm_hidden('id',$tid);
@@ -90,7 +100,7 @@ function Show_Thing(&$T,$Force=0) {
     echo "<tr><td>Type:<td>" . fm_select($ttn,$T,'Type',1); 
     if ($tprops & THING_HAS_LEVELS) echo fm_number("Level",$T,'Level');
   } else {
-    echo "<tr><td>Type: " . $ttn[$T['Type']];
+    echo "<tr><td>Type:<td>" . $ttn[$T['Type']];
     if ($tprops & THING_HAS_LEVELS) "<td>Level: " . $T['Level'];
   }
   echo "<tr>" . fm_text('Name',$T,'Name',2);
@@ -107,7 +117,7 @@ function Show_Thing(&$T,$Force=0) {
 
 
 
-  echo "<tr><td>Build State: " . ($GM? fm_select($BuildState,$T,'BuildState') : $BuildState[$T['BuildState']]); 
+  echo "<tr><td>Build State:<td>" . ($GM? fm_select($BuildState,$T,'BuildState') : $BuildState[$T['BuildState']]); 
   if (isset($T['BuildState']) && $T['BuildState'] <= 1) {
     if ($GM) echo fm_number('Build Project',$T,'ProjectId');
     if ($T['ProjectId']) {
@@ -228,10 +238,17 @@ function Show_Thing(&$T,$Force=0) {
           if (($T['Instruction'] > 0) && ($T['Instruction'] != 5)) echo "<tr><td class=Err>Warning Busy doing:<td>" . $ThingInstrs[$T['Instruction']] . "<td class=Err>Moving will cancel";
 
           if ($GM) {
-            echo "<tr><td>Taking Link:<td>" . fm_select($SelLinks,$T,'LinkId',0," style=color:" . $SelCols[$T['LinkId']] ,'',0,$SelCols) . "Update this normally";
+            echo "<tr><td>Taking Link:<td>" . fm_select($SelLinks,$T,'LinkId',0," style=color:" . $SelCols[$T['LinkId']] ,'',0,$SelCols);
+            if ($ll>0 && $LinkTypes[$ll]['Cost'] && $LOWho && $LOWho != $T['Whose'] ) { 
+              echo fm_checkbox('Pay',$T,'LinkPay') . " " . Credit() . $T['LinkCost'];
+            }
+            echo "<br>Update this normally";
             echo "<td>To:  " . fm_select($NewSyslocs,$T,'NewLocation');
           } else {
             echo "<tr><td>Taking Link:<td>" . fm_select($SelLinks,$T,'LinkId',0," style=color:" . $SelCols[$T['LinkId']] ,'',0,$SelCols);
+            if ($LinkTypes[$ll]['Cost'] && $LOWho && $LOWho != $T['Whose'] ) { 
+              echo fm_checkbox('Pay',$T,'LinkPay') . " " . Credit() . $T['LinkCost'];
+            }
             if ($Lid > 0 && !strpos($SelLinks[$Lid],'?')) {
               echo "<td>To:  " . fm_select($NewSyslocs,$T,'NewLocation');
             } else {

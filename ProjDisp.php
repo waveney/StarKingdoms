@@ -461,6 +461,12 @@
   $Things = Get_Things_Cond($Fid," Instruction!=0 AND Progress=0 AND InstCost!=0 ");
   $DeepSpace = 0;
   foreach($Things as $T) $DeepSpace += $T['InstCost'];
+
+  $Thing = Get_Things_Cond($Fid,"LinkId>0 AND LinkCost>0 AND LinkPay>0");
+  $LinkCosts = 0;
+  foreach($Things as $T) {
+    $LinkCosts += $T['LinkCost'];
+  }  
   
   foreach ($Homes as &$H) {
     $PlanCon = $BPlanCon;
@@ -583,6 +589,7 @@
       }
       
       if ($Di == -10) {
+        if ($P['Status'] > 1) continue; // Duff in past
         echo "Faulty project " . $P['id'];
       } else {
       
@@ -797,10 +804,10 @@
     if ($Turn >= $GAME['Turn']) {
       $Bs = Get_BankingFT($Fid,$Turn);
       foreach($Bs as $B) $Spend += $B['Amount'];
-    }    
+    }
     
-    if ($Turn == $GAME['Turn']) {
-      $Left = $FACTION['Credits'] - ($SkipProgress?0:$TotCost) - $DeepSpace -$Spend;
+    if ($Turn == $GAME['Turn']) {    
+      $Left = $FACTION['Credits'] - ($SkipProgress?0:$TotCost) - $DeepSpace -$LinkCosts -$Spend;
       if ($Left >=0 ) { 
         echo $Left;
       } else {
