@@ -87,8 +87,6 @@ function Show_Thing(&$T,$Force=0) {
     Put_Thing($T);
   }
 
-
-
 //  echo "Note Movement does not yet work for armies moving by ship.<p>\n";
   
   if ($T['BuildState'] == 0) echo "Note the Tech level of this will be recorded when it is built<br>";

@@ -176,10 +176,41 @@ function CashTransfers() {
 }
 
 function PayForStargates() {
+
+//  echo "Called Pay4SGates<p>";
+  $LOWho = GameFeature('LinkOwner',0);
+  if ($LOWho == 0) return 1; // Not 4 this gaame
+ 
+// echo "HERE!";  
   $Facts = Get_Factions();
 
+  $TotalPay = 0;
+  $Things = Get_Things_Cond(0," LinkId>0 AND LinkPay=1 AND LinkCost>0 ORDER BY Whose");
+// var_dump($Things);
+  foreach($Things as $T) {
+    $Cost = $T['LinkCost'];
+    $Ref = $T['Name'] . " along link " . $T['LinkId'];
+    if (Spend_Credit($T['Whose'],$Cost,'Moving ' . $Ref)) {
+      TurnLog($T['Whose'],"Transfered " . Credit() . $Cost . " for $Ref to " . $Facts[$LOWho]['Name']);
+      $TotalPay += $Cost;
+      $T['LinkPay'] = 2;
+      GMLog("Payed for $Ref");    
+    } else {
+      TurnLog($T['Whose'],"Failed to transfer " . Credit() . $Cost . " for $Ref to " . $Facts[$LOWho]['Name']);
+      GMLog("Failed to pay for $Ref",1);    
+      $T['LinkPay'] = 0;
+    }
+    Put_Thing($T);
+  }
 
-  GMLog("Pay For Stargates are currently Manual<p>");
+  if ($TotalPay) {
+    Spend_Credit($LOWho,-$TotalPay,'Link Receipts');
+    TurnLog($LOWho,"Recieved " . Credit() . $TotalPay  . " for Link use");  
+    GMLog("Transfered " . Credit() . $TotalPay  . " for Link use");  
+  }
+  
+  GMLog("Finished paying for stargates");
+//  GMLog("Pay For Stargates are currently Manual<p>");
   return 1;
 }
 
@@ -1061,6 +1092,10 @@ function ShipMovements($Agents=0) {
       $ShipNebScanLevel = NebScanners($T);
             
       $L = Get_Link($Lid);
+      if ($Agents == 0) {
+        $L['UseCount'] += $T['Level'];
+        Put_Link($L);
+      }
 
       $SR1 = Get_SystemR($L['System1Ref']);
       $SR2 = Get_SystemR($L['System2Ref']);
@@ -2261,7 +2296,7 @@ function Do_Turn() {
              'Generate Turns', 'Tidy Up Movements', 'Recalc Project Homes', 'Finish Turn Process'];
 
   $Coded =  ['Coded','No','No','Coded','Coded','No','Coded', 'No',
-             'No','No','No','Coded','Partial','No','No','Coded',
+             'No','Coded','No','Coded','Partial','No','No','Coded',
              'Coded','No','No','No','No','No','No','No',
              'No','No','No','Coded','No','Coded','Coded','No',
              
