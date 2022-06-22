@@ -117,7 +117,9 @@ function Node_Show($Fid,$Tid, $Lid, $N, $url='') {
   }
   $Fid = $T['Whose'];    
 
-  [$Links, $SelLinks, $SelCols ] = Moves_4_Thing($T,1);
+  $ThingProps = Thing_Type_Props();
+  $tprops = $ThingProps[$T['Type']];
+  [$Links, $SelLinks, $SelCols ] = Moves_4_Thing($T,1,($tprops & (THING_HAS_GADGETS | THING_CAN_BETRANSPORTED)));
   
 // var_dump($Links,$SelLinks);
   
@@ -149,6 +151,7 @@ function Node_Show($Fid,$Tid, $Lid, $N, $url='') {
     $OtherRef = ($L['System1Ref'] == $ThisRef? $L['System2Ref'] :$L['System1Ref'] );
     $ON = Get_SystemR($OtherRef);
     if (strchr($SelLinks[$Lid],'?')) {
+      
 //      if ($T['Type'] == 5) continue;
       fwrite($Dot,"$OtherRef [label=\"?\" shape=circle href=\"/PThingList.php?ACTION=MOVE&T=$Tid&L=$Lid\" ] ");    
     } else {

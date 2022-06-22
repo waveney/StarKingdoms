@@ -84,13 +84,28 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
       
       $T['TargetKnown'] = $Known;
       $T['LinkId'] = $Lid;
-      Put_Thing($T);
-      if ($L['Level']>1 && ($Who = GameFeature('LinkOwner',0)) && $Who != $Fid) {
-        $LinkTypes = Get_LinkLevels();
-        $LOwner = Get_Faction($Who);
-        echo "<h2>You are taking a <span style='color:" . $LinkTypes[$L['Level']]['Colour'] . "'>" . $LinkTypes[$L['Level']]['Name'] .
-             "</span> link do you need to pay " . $LOwner['Name'] . " for this?</h2>\n";
+      $LinkTypes = Get_LinkLevels();
+      $ThingProps = Thing_Type_Props();
+      $tprops = $ThingProps[$T['Type']];
+
+      $ll = ($Lid>>0 ? $L['Level'] : 0);
+      $LOWho = GameFeature('LinkOwner',0);
+// var_dump($Lid,$LinkTypes[$ll]['Cost'],$LOWho,$T['LinkPay']);
+      if ($Lid>0 && ($LinkTypes[$ll]['Cost'] > 0) && $LOWho && $LOWho != $T['Whose']) {
+        $Lc = $LinkTypes[$ll][($tprops & THING_HAS_GADGETS) ? 'AgentCost':'Cost']*$T['Level'];
+        if ($T['LinkPay']==0 || $T['LinkCost'] < $Lc) {
+          $LOwner = Get_Faction($LOWho);
+          echo "<form method=post action=PThingList.php>";
+          echo "<h2>You are taking a <span style='color:" . $LinkTypes[$ll]['Colour'] . "'>" . $LinkTypes[$ll]['Name'] .
+            "</span> link do you need to pay " . credit() . "$Lc to " . $LOwner['Name'] . " for this? ";
+         
+          echo fm_hidden('LinkCost', $Lc) . fm_hidden('T',$T['id']) . "<input type=submit Name=ACTION value='Pay on Turn'>";
+          echo "</h2>\n";
+          echo "</form>";
+        }
+        $T['LinkCost'] = $Lc;
       }
+      Put_Thing($T);
       break;
     case 'CANCELMOVE':
       $Tid = $_REQUEST['T'];
@@ -98,6 +113,14 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
       $T['LinkId'] = 0;
       Put_Thing($T);
       break;    
+    case 'Pay on Turn':
+      $Tid = $_REQUEST['T'];
+      $T = Get_Thing($Tid);
+      Check_MyThing($T,$Fid);
+      $t['LinkCost'] = $_REQUEST['LinkCost'];
+      $t['LinkPay'] = 1;
+      Put_Thing($t);      
+      break;
     }
   }
   

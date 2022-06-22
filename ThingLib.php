@@ -341,7 +341,7 @@ function Thing_Finished($tid) {
 }
 
 
-function Moves_4_Thing(&$T, $Force=0, &$N=0) {
+function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0 ) {
   if ($Force) {
     $GM = 0;
   } else {
@@ -365,7 +365,7 @@ function Moves_4_Thing(&$T, $Force=0, &$N=0) {
       $NearNeb = $N['Nebulae'];
       $NS = Get_FactionSystemFS($Fid,$N['id']);
 
-      foreach ($Links as $L) {
+      foreach ($Links as $Lid=>$L) {
         $LinkText = "Unknowm";
         $FL = Get_FactionLinkFL($Fid,$L['id']);
         $FarSysRef =  (($L['System1Ref'] == $N['Ref'])?$L['System2Ref']: $L['System1Ref'] );
@@ -382,19 +382,31 @@ function Moves_4_Thing(&$T, $Force=0, &$N=0) {
             } else if ($FS['NebScanned'] >= $FarWeb) {
               $LinkText = $FarSysRef;
             } else {
+              if ($KnownOnly) {
+                unset($Links[$Lid]);
+                continue;
+              }
               $LinkText = '?';
             }
           } else {
+            if ($KnownOnly) {
+              unset($Links[$Lid]);
+              continue;
+            }
             $LinkText = '?';
           }
         } else if ($NS['NebScanned'] >= $NearNeb) { // In a Neb...
           if (isset($FS['id'])) {
             $LinkText = $FarSysRef;
           } else {
+            if ($KnownOnly) {
+              unset($Links[$Lid]);
+              continue;
+            }
             $LinkText = '?';
           }
         } else {
-          unset($Links[$L['id']]);
+          unset($Links[$Lid]);
           continue;
 //          $LinkText = '?';
         }

@@ -54,7 +54,7 @@ function Show_Thing(&$T,$Force=0) {
   if  ($tprops & THING_HAS_MODULES) $T['OrigHealth'] = Calc_Health($T,1);
 
   if (($T['BuildState'] == 3) && ($tprops & THING_CAN_MOVE) && ($T['CurHealth'] > 0)) { // Complete Only
-    $res =     Moves_4_Thing($T,$Force,$N);
+    $res = Moves_4_Thing($T,$Force, ($tprops & (THING_HAS_GADGETS | THING_CAN_BETRANSPORTED)), $N);
 //var_dump($res);exit;
     [$Links, $SelLinks, $SelCols ] = $res;
 
@@ -73,14 +73,16 @@ function Show_Thing(&$T,$Force=0) {
   
   $ll = ($T['LinkId']>0 ? $Links[$T['LinkId']]['Level'] : 0);
   $LOWho = GameFeature('LinkOwner',0);
-  if ($LOWho) $LOwner = Get_Faction($LOWho);
-  if ($Links && ($T['LinkId']>0) && ($LinkTypes[$ll]['Cost'] > 0) && $LOWho && $LOWho != $T['Whose'] && $T['LinkPay']==0) {
+  if ($Links && ($T['LinkId']>0) && ($LinkTypes[$ll]['Cost'] > 0) && $LOWho && $LOWho != $T['Whose']) {
     $Lc = $LinkTypes[$ll][($tprops & THING_HAS_GADGETS) ? 'AgentCost':'Cost']*$T['Level'];
-    echo "<h2>You are taking a <span style='color:" . $LinkTypes[$ll]['Colour'] . "'>" . $LinkTypes[$ll]['Name'] .
-         "</span> link do you need to pay " . credit() . "$Lc to " . $LOwner['Name'] . " for this? ";
+    if ($T['LinkPay']==0 || $T['LinkCost'] < $Lc) {
+      $LOwner = Get_Faction($LOWho);
+      echo "<h2>You are taking a <span style='color:" . $LinkTypes[$ll]['Colour'] . "'>" . $LinkTypes[$ll]['Name'] .
+          "</span> link do you need to pay " . credit() . "$Lc to " . $LOwner['Name'] . " for this? ";
          
-    echo fm_hidden('LinkCost', $Lc) . "<input type=submit Name=ACTION value='Pay on Turn'>";
-    echo "</h2>\n";
+      echo fm_hidden('LinkCost', $Lc) . "<input type=submit Name=ACTION value='Pay on Turn'>";
+      echo "</h2>\n";
+    }
     $T['LinkCost'] = $Lc;
     Put_Thing($T);
   }
