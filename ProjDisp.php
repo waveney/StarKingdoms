@@ -462,7 +462,7 @@
   $DeepSpace = 0;
   foreach($Things as $T) $DeepSpace += $T['InstCost'];
 
-  $Thing = Get_Things_Cond($Fid,"LinkId>0 AND LinkCost>0 AND LinkPay>0");
+  $Things = Get_Things_Cond($Fid,"LinkId>0 AND LinkCost>0 AND LinkPay>0");
   $LinkCosts = 0;
   foreach($Things as $T) {
     $LinkCosts += $T['LinkCost'];
