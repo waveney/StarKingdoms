@@ -1274,6 +1274,8 @@ function ProjectProgress() {
 
   $ProjTypes = Get_ProjectTypes();
   $Projects = Get_Projects_Cond("Status=1");
+  $DistTypes = Get_DistrictTypes();
+
   foreach ($Projects as $P) {
     if ($P['LastUpdate'] >= $GAME['Turn']) continue;
     GMLog("Updating project " . $P['id'] . " " . $P['Name'] . "<br>");
@@ -1325,6 +1327,15 @@ function ProjectProgress() {
           break;
         case 3: // Thing
           $PH = Get_Thing($H['ThingId']);
+
+          if ($ThingTypes[$PH['Type']]['Properties'] & THING_CAN_DO_PROJECTS) {
+            $ORY = 0;
+            foreach($DistTypes as $DT) if ($DT['Name'] == 'Orbital Repair') $ORY = $DT['id'];
+            $Dists = [$ORY=>['HostType'=>3,'HostId'=>$PH['id'],'Type'=>$ORY,'Number'=>1, 'id'=>-1]];
+            $NoC = 1;
+            break;
+          } 
+
           $Dists = Get_DistrictsT($H['ThingId']);
           if (!$Dists) {
             $H['Skip'] = 1;
@@ -1360,7 +1371,7 @@ function ProjectProgress() {
     if (preg_match('/Research/',$PT['Name'],$mtch) && Has_Trait($P['FactionId'],'Built for Construction and Logistics')) {
       $TechId = $P['ThingType'];
       $Tech = Get_Tech($TechId);
-      if ($Tech['PreReqTech'] == 1) {
+      if ($Tech['PreReqTech'] == 1 || $TechId == 1) {
         $FreeRush = min(1,$Acts,$P['ProgNeeded']-$P['Progress']-$Acts-$Bonus);
         if ($FreeRush) {
           TurnLog($P['FactionId'],'Free Rush of ' . $P['Name'] . " by $FreeRush ");

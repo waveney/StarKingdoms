@@ -613,12 +613,19 @@
         $TotProg = $P['Progress'];
         for ($t = $P['TurnStart']; $t <= ($P['TurnEnd']?$P['TurnEnd']:$P['TurnStart']+50); $t++) {
 
-          $Pro['Rush'] = $Rush = $Bonus = 0;
+          $Pro['Rush'] = $Rush = $FreeRush = $Bonus = 0;
 //          $Pro['MaxRush'] = ( ($ProjTypes[$P['Type']]['Category'] & 16) ? $PlanCon : $District_Type[$WantedDT]);
           $Pro['MaxRush'] = (( $WantedDT < 0) ? $PlanCon : $District_Type[$WantedDT]);
             
 /*            $Pro['MaxRush'] =  (($ProjTypes[$P['Type']]['BasedOn'])? Has_Tech($Fid,$ProjTypes[$P['Type']]['BasedOn'],$t) : 
                (isset ($District_Type[5]) ?$District_Type[5]:0)); */
+          if (preg_match('/Research/',$PT['Name'],$mtch) && Has_Trait($P['FactionId'],'Built for Construction and Logistics')) {
+            $TechId = $P['ThingType'];
+            $Tech = Get_Tech($TechId);
+            if ($Tech['PreReqTech'] == 1 || $TechId == 1) {
+              $FreeRush = min(1,$Acts,$P['ProgNeeded']-$P['Progress']-$Acts-$Bonus);
+            } 
+         }
 
           if (isset($TurnStuff[$TSi])) {
             if ($TurnStuff[$TSi]['TurnNumber'] == $t) {
@@ -638,7 +645,7 @@
             $Pro['Progress'] = $P['Progress'] . "/" .  $Pro['Acts'];
             $Pro['Status'] = (($t == $P['TurnStart'])?'Started' : 'Ongoing' );
           } else {
-            $Prog = min($Pro['Acts'] - $TotProg,$Pro['MaxRush'] + $Rush + $Bonus); // Note Bonus can be negative
+            $Prog = min($Pro['Acts'] - $TotProg,$Pro['MaxRush'] + $Rush + $Bonus+ $FreeRush ); // Note Bonus can be negative
             if ($t == $GAME['Turn']) { 
               if ($SkipProgress) $Prog = 0;
               $TotProg = $P['Progress'] + $Prog;
