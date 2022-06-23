@@ -466,7 +466,9 @@
   $LinkCosts = 0;
   foreach($Things as $T) {
     $LinkCosts += $T['LinkCost'];
-  }  
+  }
+  
+  $FreeRushes = Has_Trait($Fid,'Built for Construction and Logistics');
   
   foreach ($Homes as &$H) {
     $PlanCon = $BPlanCon;
@@ -619,11 +621,11 @@
             
 /*            $Pro['MaxRush'] =  (($ProjTypes[$P['Type']]['BasedOn'])? Has_Tech($Fid,$ProjTypes[$P['Type']]['BasedOn'],$t) : 
                (isset ($District_Type[5]) ?$District_Type[5]:0)); */
-          if (preg_match('/Research/',$PT['Name'],$mtch) && Has_Trait($P['FactionId'],'Built for Construction and Logistics')) {
+          if ($FreeRushes && preg_match('/Research/',$ProjTypes[$P['Type']]['Name'],$mtch) ) {
             $TechId = $P['ThingType'];
             $Tech = Get_Tech($TechId);
             if ($Tech['PreReqTech'] == 1 || $TechId == 1) {
-              $FreeRush = min(1,$Acts,$P['ProgNeeded']-$P['Progress']-$Acts-$Bonus);
+              $FreeRush = 1; // min(1,$Acts,$P['ProgNeeded']-$P['Progress']-$Acts-$Bonus);
             } 
          }
 
