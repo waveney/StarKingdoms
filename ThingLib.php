@@ -39,6 +39,7 @@ define('THING_NEEDS_CARGOSPACE',16384);
 define('THING_CANT_HAVENAMED',32768);
 define('THING_CAN_DO_PROJECTS',65536);
 define('THING_MOVES_DIRECTLY',131072);
+define('THING_MOVES_AFTER',262144);
 
 function ModFormulaes() {
   global $ModFormulaes;
@@ -572,7 +573,17 @@ function Thing_Duplicate($otid) {
   $t['WithinSysLoc'] = 0;
   $t['BuildState'] = 0;
   $t['History'] = 0;
+  $t['Instruction'] = 0;
+  $t['LinkPay'] = 0;
+  $t['LinkCost'] = 0;
+  $t['Progress'] = 0;
+  $t['ActionsNeeded'] = 0;
+  $t['Dist1'] = 0;
+  $t['Dist2'] = 0;
+  $t['CurInst'] = 0;
+  $t['MakeName'] ='';
   
+    
   $Fid = $t['Whose'];
        
   if ($Discs) {

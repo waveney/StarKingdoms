@@ -495,9 +495,9 @@ function Show_Thing(&$T,$Force=0) {
       foreach ($Ds as $D) {
         $did = $D['id'];
         if (($dc++)%2 == 0)  echo "<tr>";
-        echo "<td>" . fm_Select($MTNs, $D , 'Type', 1,'',"ModuleType-$did")
-                    . fm_number1('Level', $D,'Level', '', '',"ModuleLevel-$did") 
-                    . fm_number0('', $D,'Number', '','',"ModuleNumber-$did") 
+        echo "<td>" . fm_Select($MTNs, $D , 'Type', 1,'',"ModuleType-$did") // . "<td colspan=2>"
+                    . fm_number1('Level', $D,'Level', '', ' class=Num3 ',"ModuleLevel-$did") . ' # '
+                    . fm_number0('', $D,'Number', '',' class=Num3 ',"ModuleNumber-$did") 
                     . "<button id=ModuleRemove-$did onclick=AutoInput('ModuleRemove-$did')>R</button>";
         if (!isset($MTNs[$D['Type']])) $BadMods += $D['Number'];
         $totmodc += $D['Number'] * $MTs[$D['Type']]['SpaceUsed'];
@@ -508,7 +508,7 @@ function Show_Thing(&$T,$Force=0) {
         } else if ($D['Type'] == 9) $T['NebSensors'] = $D['Number'];
       }
       echo "<tr><td>Add Module Type<td>" . fm_Select($MTNs, NULL , 'Number', 1,'',"ModuleTypeAdd-$tid");
-      echo fm_number1("Max Modules",$T,'MaxModules');
+      echo fm_number1("Max Modules",$T,'MaxModules','',' class=Num3 ');
       if ($tprops & THING_HAS_CIVSHIPMODS) {
         echo fm_number1("Deep Space",$T,'HasDeepSpace');
         echo fm_number1("Cargo Space",$T,'CargoSpace');

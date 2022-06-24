@@ -1025,14 +1025,33 @@ function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
   global $GAME,$GAMEID;
   $LinkLevels = Get_LinkLevels();
   $Things = Get_AllThings();
+  $TTypes = Get_ThingTypes();
   $Facts = Get_Factions();
   
   GMLog("<h2>These movements are planned - to stop one, tick the stop box and say why</h2>");
 //  GMLog("<form method=Post action=TurnActions.php?ACTION=Complete>" . fm_hidden('S',($Agents?34:32)));
   GMLog("<form method=Post action=TurnActions.php?ACTION=StageDone>" . fm_hidden('Stage',($Agents?'Agents Move Check':'Ship Move Check')));
-  GMLog("<table border><tr><td>Who<td>What<td>Level<td>From<td>Link<td>To<td>Paid<td>Stop<td>Why Stopping\n");
+
+  
+  $UsedLinks = [];
+  if ($Agents) {
+    foreach ($Things as $T) {
+      if ($T['BuildState'] <2 || $T['BuildState'] > 3 || $T['LinkId'] <= 0 || $T['Whose']==0) continue;
+      if ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER) {
+      } else {      
+        $UsedLinks[$T['LinkId']][$T['Whose']] = ($T['SystemId'] == $T['NewSystemId']);
+      }
+    }
+  }
+ var_dump($UsedLinks);
+
+  GMLog("<table border><tr><td>Who<td>What<td>Level<td>From<td>Link<td>To<td>Paid<td>Stop<td>Why Stopping\n");  
   foreach ($Things as $T) {
-    if (($T['Type'] == 5 && $Agents == 0) || ($T['Type'] != 5 && $Agents == 1) || $T['BuildState'] <2 || $T['BuildState'] > 3 || $T['LinkId'] <= 0 || $T['Whose']==0) continue;
+    if ($T['BuildState'] <2 || $T['BuildState'] > 3 || $T['LinkId'] <= 0 || $T['Whose']==0) continue;
+    if (( $Agents == 0 &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER)) || ( $Agents &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER) ==0 ) ) continue;
+    
+    $CheckNeeded = ( $Agents && ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER) );
+
     if ($T['LinkId']>0 && $T['NewSystemId'] != $T['SystemId'] ) {
       $Tid = $T['id'];
       $Lid = $T['LinkId']; 
@@ -1049,8 +1068,22 @@ function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
       } else {
          GMLog($L['System2Ref'] . "<td style=color:" . $LinkLevels[$L['Level']]['Colour'] . ";>#$Lid<td>" . $L['System1Ref']);      
       }
+
+// var_dump($CheckNeeded,$T['LinkPay']);
+      if ($L['Level'] ==1 || $T['LinkPay']<0) {
+        GMLog("<td>Free");
+      } elseif ($T['LinkPay'] > 0) {
+        GMLog("<td>Yes");     
+      } elseif ($CheckNeeded && isset($UsedLinks[$Lid][$T['Whose']]) && $UsedLinks[$Lid][$T['Whose']]) {
+        GMLog("<td>Following");     
+      } else {
+        GMLog("<td><b>No</b");
+      }
+              
       
-      GMLog("<td>" . (($L['Level'] ==1 || $T['LinkPay']<0)?'Free':($T['LinkPay'] == 0? '<b>No</b>':'Yes'))  ."<td>" . fm_checkbox('',$_REQUEST,"Prevent$Tid") . fm_text1('', $_REQUEST,"Reason$Tid"));
+//      GMLog("<td>" . (($L['Level'] ==1 || $T['LinkPay']<0)?'Free':($T['LinkPay'] > 0?'Yes':
+//            ($CheckNeeded && isset($UsedLinks[$Lid][$T['Whose']]) && $UsedLinks[$Lid][$T['Whose']])?'Following':'<b>No</b>')));
+      GMLog("<td>" . fm_checkbox('',$_REQUEST,"Prevent$Tid") . fm_text1('', $_REQUEST,"Reason$Tid"));
     }
   }
   GMLog("</table><input type=submit value='Click to Proceed'></form>\n");
@@ -1068,10 +1101,13 @@ function ShipMovements($Agents=0) {
 //  $PotS = fopen("Turns/" . $GAMEID . "/" . $GAME['Turn'] . "/ScansDue", "a+");
   $LinkLevels = Get_LinkLevels();
   $Things = Get_AllThings();
+  $TTypes = Get_ThingTypes();
   $Facts = Get_Factions();
   
   foreach ($Things as $T) {
-    if (($T['Type'] == 5 && $Agents == 0) || ($T['Type'] != 5 && $Agents == 1) || $T['BuildState'] <2 || $T['BuildState'] > 3) continue;
+    if ($T['BuildState'] <2 || $T['BuildState'] > 3 || $T['LinkId'] <= 0 || $T['Whose']==0) continue;
+    if (( $Agents == 0 &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER)) || ( $Agents &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER) ==0 ) ) continue;
+
     $Tid = $T['id'];
     $Fid = $T['Whose'];
     
@@ -1135,7 +1171,7 @@ function ShipMovements($Agents=0) {
 //      SKLog("Moved to $pname along " . $LinkLevels[$L['Level']]['Colour']. " link #$Lid to " . $EndLocs[$T['NewLocation']]); 
       if ($Fid) TurnLog($Fid,$T['Name'] . " has moved from " . System_Name($OldN,$Fid) . " along <span style='color:" . $LinkLevels[$L['Level']]['Colour'] . ";'>link #$Lid </span>to $pname " . 
         ($T['NewLocation'] > 2?( " to " . $EndLocs[$T['NewLocation']]): ""),$T); 
-      $T['LinkId'] = 0;
+//    $T['LinkId'] = 0;
       $T['Instruction'] = 0;
       Put_Thing($T);
     } else if ( $T['WithinSysLoc'] != $T['NewLocation'] && $T['NewLocation']>1) {
@@ -2330,6 +2366,22 @@ function Do_Turn() {
   if (isset($_REQUEST['ACTION']) && ( isset($_REQUEST['S']) || isset($_REQUEST['Stage']))) {
     $S = (isset($_REQUEST['S'])? $_REQUEST['S'] : 0);
     switch ($_REQUEST['ACTION']) {
+    case 'StageDone':
+//      $S = $_REQUEST['S'];
+      $SName = $_REQUEST['Stage'];
+      $SName = preg_replace('/ /','',$SName);
+      for($S =0; $S <64 ; $S++) {
+        $act = $Stages[$S];
+        $act = preg_replace('/ /','',$act);
+        if ($SName == $act) break;
+      }
+      if ($S > 63) { 
+        GMLog("Stage $SName not found");
+        break;                           
+      } else {
+        $Sand['Progress'] |= 1<<$S;
+      }// Deliberate drop through 
+
     case 'Complete': // Should be now no longer used - See StageDone lower down.  (Uses name of stge not number - thus allows for renumbering)
       SKLog("Completed " . $Stages[$S]);
       $Sand['Progress'] |= 1<<$S;    
@@ -2384,21 +2436,6 @@ function Do_Turn() {
       }
       break;
 
-    case 'StageDone':
-//      $S = $_REQUEST['S'];
-      $SName = $_REQUEST['Stage'];
-      $SName = preg_replace('/ /','',$SName);
-      for($S =0; $S <64 ; $S++) {
-        $act = $Stages[$S];
-        $act = preg_replace('/ /','',$act);
-        if ($SName == $act) break;
-      }
-      if ($S > 63) { 
-        GMLog("Stage $SName not found");
-      } else {
-        $Sand['Progress'] |= 1<<$S;
-      }
-      break;
     }  
   }
   
