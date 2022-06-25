@@ -316,7 +316,7 @@ function doheadpart($title,$extras=[]) {
 }
 
 // No Banner
-function dostaffhead($title,$extras=[]) {
+function dostaffhead($title,$extras=[],$bodyextra='') {
   global $head_done,$GAMESYS,$CONF,$AdvancedHeaders,$GAME,$FACTION;
   
   LogEverything();
@@ -341,7 +341,7 @@ function dostaffhead($title,$extras=[]) {
     include_once("skgame.php");
     if ($extras) doextras($extras);
     echo "<meta http-equiv='cache-control' content=no-cache>";
-    echo "</head><body>\n";
+    echo "</head><body $bodyextra>\n";
 
     include_once("skfiles/navigation.php"); 
 

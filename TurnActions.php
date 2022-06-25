@@ -430,6 +430,11 @@ function Instuctions() { // And other Instructions
   $AAs = [];
   
   foreach ($Things as $T) {
+    if ( $T['BuildState'] < 2 || $T['BuildState'] > 3) {
+      $T['Instruction'] = $T['Progress'] = 0;
+      Put_Thing($T);
+      continue;
+    }
     $N = Get_System($T['SystemId']);
     $Tid = $T['id'];
     // Mark new Instructions

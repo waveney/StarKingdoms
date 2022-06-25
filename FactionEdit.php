@@ -101,7 +101,9 @@ function Show_Faction(&$F,$Mode) {
   if ($GM) {
     echo "<tr>" . fm_textarea('Features',$F,'Features',8,2);
     echo "<tr>" . fm_textarea('GM_Notes',$F,'GM_Notes',8,2);  
-    echo "<tr>" . fm_text('Map Colour',$F,'MapColour') . fm_number('HomeWorld',$F,'HomeWorld');
+    echo "<tr>" . fm_text('Map Colour',$F,'MapColour') . fm_text('Map Text Colour',$F,'MapText') . fm_number('HomeWorld',$F,'HomeWorld');
+    echo "<tr>" . fm_number('Thing List Type', $F,'ThingType') . fm_number('List Build State', $F,'ThingBuild');
+    echo "<tr>" . fm_number('GM:Thing List Type', $F,'GMThingType') . fm_number('GM: List Build State', $F,'GMThingBuild');
     echo "<tr>" . fm_date('Last Active',$F,'LastActive');
     echo fm_text('Access Key',$F,'AccessKey',3);
     echo "<a href=Access.php?id=$Fid&Key=" . $F['AccessKey'] . " ><b>Use</b></a>";

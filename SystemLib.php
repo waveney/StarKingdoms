@@ -20,7 +20,7 @@ function Dynamic_Update(&$N,$Tinc=0) {
   $M2 = $N['Mass2'];
   $e = 0.98171334;
   $pi = pi();
-  
+  $Friction =1.25;
   
 // var_dump($G,$C,$M1,$M2,$e,$pi);
 
@@ -32,7 +32,7 @@ function Dynamic_Update(&$N,$Tinc=0) {
   
 //var_dump($CurPeriod*3600);
   
-  $Decay = (192*$pi*($G**(5/3)*$M1*$M2*($M1+$M2)**(-1/3))/((5*$C**5)*(1-$e**2)**(7/2)*(1+73/24*($e**2)+37/96*($e**4))*($CurPeriod/2*$pi)));
+  $Decay = (192*$pi*($G**(5/3)*$M1*$M2*($M1+$M2)**(-1/3))/((5*$C**5)*(1-$e**2)**(7/2)*(1+73/24*($e**2)+37/96*($e**4))*($CurPeriod/2*$pi)))*$Friction;
   $TurnDecay = $Decay*60*24*365;
 
 //   echo "Decay = $Decay TurnDec=$TurnDecay<br>\n";  
@@ -43,8 +43,20 @@ function Dynamic_Update(&$N,$Tinc=0) {
 //  Decay = // =(192*PI()*($B$1^(5/3)*$B$2*$B$3*($B$3+$B$2)^(-1/3))/(5*$B$4^5*(1-$B$5^2)^(7/2)*(1+73/24*$B$5^2+37/96*$B$5^4)*(E6/2*PI())))
 
   if ($Tinc) {
+  
+    $OldSpeed = 2*$pi*$CurDist*1000/$CurPeriod;
+    $OldEnergy = ($M1+$M2)*$C*$C;
+    
+    $NewSpeed = 2*$pi*$NewDistance*1000/$NewPeriod;
+    $LostEnergy = 0;
+    
+    
     $N['Period'] = $NewPeriod/3600;
     $N['Distance'] = $NewDistance;
+    
+    
+    
+    
     Put_System($N);
   } else {
     $tt = 3600*24*14;

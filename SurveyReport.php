@@ -131,20 +131,20 @@
   // Star (s)
   
   if ($N['Image']) echo "<img src=" . $N['Image'] . ">";
+  $Acc = "%0.2g";
+  if (isset($N['Flags']) && ($N['Flags'] &1)) $Acc="%0.8g";
   
   echo "The " . ($N['Type2']?"principle star":"star");
   if ($N['StarName']) echo " ( " . $N['StarName'] . " ) " ;  
   echo " is a " . $N['Type'] . ".<br>";
   
   if ($SurveyLevel >= 3) echo "It has a radius of " . 
-        sprintf("%0.2g Km = ",$N['Radius'])  . RealWorld($N,'Radius') . ", a mass of " .
-        sprintf("%0.2g Kg = ",$N['Mass'])  . RealWorld($N,'Mass') . ", a temperature of " .
-        sprintf("%0.0f K = ",$N['Temperature'])  . " and a luminosity of " .
-        sprintf("%0.2g Km = ",$N['Luminosity'])  . RealWorld($N,'Luminosity') . ".<p>";
+        sprintf("$Acc Km = ",$N['Radius'])  . RealWorld($N,'Radius') . ", a mass of " .
+        sprintf("$Acc Kg = ",$N['Mass'])  . RealWorld($N,'Mass') . ", a temperature of " .
+        sprintf("$Acc K = ",$N['Temperature'])  . " and a luminosity of " .
+        sprintf("$Acc Km = ",$N['Luminosity'])  . RealWorld($N,'Luminosity') . ".<p>";
         
   if ($N['Type2']) {
-    $Acc = "%0.2g";
-    if (isset($N['Flags']) && ($N['Flags'] &1)) $Acc="%0.8g";
 
     if ($N['Image2']) echo "<br clear=all><img src=" . $N['Image2'] . ">";
     echo "The companion star ";
@@ -152,10 +152,10 @@
     echo " is a " . $N['Type2']  . ".<br>";
     
     if ($SurveyLevel >= 3) echo "It has a radius of " . 
-        sprintf("%0.2g Km = ",$N['Radius2'])  . RealWorld($N,'Radius2') . ", a mass of " .
-        sprintf("%0.2g Kg = ",$N['Mass2'])  . RealWorld($N,'Mass2') . ",<br>A temperature of " .
-        sprintf("%0.0f K = ",$N['Temperature2'])  . " and a luminosity of " .
-        sprintf("%0.2g Km = ",$N['Luminosity2'])  . RealWorld($N,'Luminosity2') . ",<br>Which orbits at " .
+        sprintf("$Acc Km = ",$N['Radius2'])  . RealWorld($N,'Radius2') . ", a mass of " .
+        sprintf("$Acc Kg = ",$N['Mass2'])  . RealWorld($N,'Mass2') . ",<br>A temperature of " .
+        sprintf("$Acc K = ",$N['Temperature2'])  . " and a luminosity of " .
+        sprintf("$Acc Km = ",$N['Luminosity2'])  . RealWorld($N,'Luminosity2') . ",<br>Which orbits at " .
         sprintf("$Acc Km = ",$N['Distance'])  . RealWorld($N,'Distance') . ", with a periodicity of " .
         ($N['Period']>1? sprintf("$Acc Hr = ",$N['Period']) : sprintf("$Acc Seconds = ",$N['Period']*3600) )  . RealWorld($N,'Period') . ".<p>";
   }      
