@@ -329,4 +329,75 @@ function Income_Estimate($Fid) {
   return $EconVal*10;   
 }
 
+function WhatCanBeSeenBy($Fid) {
+  $MyThings = Get_Things($Fid);
+  $MyHomes = Get_ProjectHomes($Fid);
+  $ThingTypes = Get_ThingTypes();
+  $SRefs = Get_SystemRefs();
+  
+  $Factions = Get_Factions();
+  
+  $Places = [];
+  $Hosts = [];
+  
+  $txt = '';
+  
+  foreach ($MyThings as $T) {
+    if ($T['BuildState'] < 2 || $T['BuildState']> 3) continue; // Ignore things not in use
+    $Sid = $T['SystemId'];
+    if ($T['LinkId'] == -1 || $T['LinkId'] == -3) {
+      $Hosts[$T['SystemId']][] = $T['id']; // On board something
+      continue;
+    } else if ($Sid == 0) continue; // Not Anywhere
+
+ //echo "Adding " .$T['Name'] . " " .$T['id'] . " " . $T['SystemId'] . "<br>";
+    $Eyes = EyesInSystem($Fid,$Sid);
+    $Places[$Sid] = (empty($Places[$Sid])? $Eyes : ($Places[$Sid] | $Eyes));
+  }
+
+  $txt .= "Everything of yours and what they can see.<p>";
+//  echo "Note: Things on board other things (e.g. Named Characters) do not show up in this display - currently<p>";
+
+  foreach ($MyHomes as $H) {
+    switch ($H['ThingType']) {
+    case 1: 
+      $P = Get_Planet($H['ThingId']);
+      $Sid = $P['SystemId'];
+      break;
+    case 2:
+      $M = Get_Moon($H['ThingId']);
+      if ($M) $P = Get_Planet($M['PlanetId']);
+      if (!empty($P)) $Sid = $P['SystemId'];
+      break;
+    case 3: // Thing - already done
+      continue 2;
+    }
+    if (!$Sid) continue;
+    $Places[$Sid] = (empty($Places[$Sid])? 8 : ($Places[$Sid] | 8));
+  }
+
+  foreach ($SRefs as $Sid=>$Ref) {
+    if (!isset($Places[$Sid])) continue;
+    $Eyes = $Places[$Sid];
+    $txt .= SeeInSystem($Sid,$Eyes,1,1,$Fid);
+  }
+ 
+  $LastWhose = 0;
+  
+  if (!empty($Hosts)) {
+    foreach($Hosts as $Hid=>$H) {
+      if (empty($H)) continue;
+      $HostT = isset($MyThings[$Hid]) ? $MyThings[$Hid] : Get_Thing($Hid);
+      $txt .= "<h2>On Board " . $HostT['Name'] . " is:</h2>";
+      foreach($H as $Tid) {
+        $T = Get_Thing($Tid);
+        $txt .= SeeThing($T,$LastWhose,15,$T['Whose'],1);
+      }
+    }
+  }
+  
+  return $txt;
+}
+
+
 ?>

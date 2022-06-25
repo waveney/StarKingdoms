@@ -66,7 +66,7 @@
     case 'Check':
       $Sid = $_REQUEST['S'];
       $N = Get_System($Sid);
-      SeeInSystem($Sid,31,1,0,-1);
+      echo SeeInSystem($Sid,31,1,0,-1);
       
  //     foreach($Facts as $Fid=>$F) {      
  //       if ($

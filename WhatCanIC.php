@@ -4,7 +4,6 @@
   include_once("GetPut.php");
   include_once("PlayerLib.php");
   include_once("ThingLib.php");
-  global $PlayerState,$PlayerStates;
 
   A_Check('Player');
   
@@ -21,6 +20,26 @@
       echo "<h2>Note you are here without a faction...</h2>\n";
     }
   }
+  
+
+  
+  echo "<div class=floatright><h2>Older Turns =&gt;";
+  for($turn=1; $turn <= $GAME['Turn']; $turn++) {
+    if (file_exists("Turns/$GAMEID/$turn/CouldC$Fid.html")) echo " <a href=WhatCanIC.php?Turn=$turn>$turn</a>";
+  }
+  echo "</h2></div>";
+  
+  if (isset($_REQUEST['Turn'])) {
+    $Turn = $_REQUEST['Turn'];
+    echo "<h1>What Could I See on Turn $Turn?</h1>";
+    $html = file_get_contents("Turns/$GAMEID/$Turn/CouldC$Fid.html");
+    echo $html;
+  } else {  
+    echo "<h1>What Can I See Now?</h1>";
+    echo WhatCanBeSeenBy($Fid);
+  }
+  
+/*  
   
   $MyThings = Get_Things($Fid);
   $MyHomes = Get_ProjectHomes($Fid);
@@ -77,7 +96,7 @@
     if (!isset($Places[$Sid])) continue;
     $Eyes = $Places[$Sid];
 //  foreach ($Places as $Sid=>$Eyes ) {
-    SeeInSystem($Sid,$Eyes,1,1,$Fid);
+    echo SeeInSystem($Sid,$Eyes,1,1,$Fid);
 /*
     $Things = Get_AllThingsAt($Sid);
 // var_dump ($Things); echo "XX<p>";   
@@ -97,7 +116,7 @@
       echo "<br clear=all>\n";
       $LastWhose = $T['Whose'];
     };
-*/
+//
   }
  
   $LastWhose = 0;
@@ -109,10 +128,10 @@
       echo "<h2>On Board " . $HostT['Name'] . " is:</h2>";
       foreach($H as $Tid) {
         $T = Get_Thing($Tid);
-        SeeThing($T,$LastWhose,15,$T['Whose'],1);
+        echo SeeThing($T,$LastWhose,15,$T['Whose'],1);
       }
     }
   }
-
+*/
   dotail();  
 ?>

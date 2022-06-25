@@ -2259,8 +2259,23 @@ function GenerateTurns() {
   return 1;
 }
 
+function FixFudge() { // Tempcode called to fix thi9ngs
+  global $db,$GAMEID,$GAME;
+  // Save What can I see data
+  $Factions = Get_Factions();
+  foreach($Factions as $F) {
+    $Fid = $F['id'];
+    $CouldC = WhatCanBeSeenBy($Fid);
+    $CB = fopen("Turns/$GAMEID/" . ($GAME['Turn']-1) . "/CouldC$Fid.html", "w");
+    fwrite($CB,$CouldC);
+    fclose($CB);
+    GMLog("Saved What could be seen for " . $F['Name']);
+  }
+
+}
+
 function TidyUpMovements() {
-  global $db,$GAMEID;
+  global $db,$GAMEID,$GAME;
   
   $res = $db->query("UPDATE Things SET LinkId=0, LinkPay=0, LinkCost=0 WHERE LinkId>0 AND GameId=$GAMEID"); 
   
@@ -2286,6 +2301,17 @@ function TidyUpMovements() {
   foreach($Ds as $D) {
     $D['Delta'] = 0;
     Put_District($D);
+  }
+  
+  // Save What can I see data
+  $Factions = Get_Factions();
+  foreach($Factions as $F) {
+    $Fid = $F['id'];
+    $CouldC = WhatCanBeSeenBy($Fid);
+    $CB = fopen("Turns/$GAMEID/" . $GAME['Turn'] . "/CouldC$Fid.html", "w");
+    fwrite($CB,$CouldC);
+    fclose($CB);
+    GMLog("Saved What could be seen for " . $F['Name']);
   }
   
   GMLog("Movements, 1 turn carry, district deltas Tidied Up<p>");  
@@ -2333,7 +2359,7 @@ function FinishTurnProcess() {
 
 function Do_Turn() {
   global $Sand;  // If you need to add something, replace a spare if poss, then nothing breaks
-  $Stages = ['Check Turns Ready', 'Spare', 'Spare','Start Turn Process', 'Save All Locations', 'Spare', 'Cash Transfers', 'Spare',
+  $Stages = ['Check Turns Ready', 'Fix Fudge', 'Spare','Start Turn Process', 'Save All Locations', 'Spare', 'Cash Transfers', 'Spare',
              'Spare', 'Pay For Stargates', 'Spare', 'Scientific Breakthroughs', 'Start Projects', 'Spare', 'Spare', 'Instuctions', 
              'Instuctions Stage 2', 'Spare', 'Spare', 'Spare', 'Spare', 'Spare', 'Spare', 'Spare', 
              'Agents Start Missions', 'Spare', 'Spare', 'Economy', 'Spare', 'Direct Moves', 'Load Troops', 'Spare', 

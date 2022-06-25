@@ -388,7 +388,7 @@
   echo "</div>";
   
 //  if ($GM) 
-  SeeInSystem($Sid,EyesInSystem($Fid,$Sid),0); // TODO temp fix to prevent leakage before ready
+  echo SeeInSystem($Sid,EyesInSystem($Fid,$Sid),0); // TODO temp fix to prevent leakage before ready
  
   
   if (Access('GM')) echo "<p><h2><a href=SysEdit.php?id=$Sid>Edit System</s></h2>";

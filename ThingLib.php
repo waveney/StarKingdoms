@@ -632,37 +632,41 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
   if (!$ThingTypes) $ThingTypes = Get_ThingTypes();
   if (!$Factions) $Factions = Get_Factions();
   
-      if ($Fid >=0 && ($T['Whose'] != $Fid) && (($ThingTypes[$T['Type']]['SeenBy'] & $Eyes) == 0 )) return;
-      if ($T['BuildState'] < 2 || $T['BuildState'] > 4) return; // Building or abandoned
-      if ($LastWhose && $LastWhose!= $T['Whose']) echo "<P>";
-      if ($T['BuildState'] == 4) echo "The remains of: ";
+  $txt = '';
+  
+      if ($Fid >=0 && ($T['Whose'] != $Fid) && (($ThingTypes[$T['Type']]['SeenBy'] & $Eyes) == 0 )) return '';
+      if ($T['BuildState'] < 2 || $T['BuildState'] > 4) return ''; // Building or abandoned
+      if ($LastWhose && $LastWhose!= $T['Whose']) $txt .= "<P>";
+      if ($T['BuildState'] == 4) $txt .= "The remains of: ";
       if ($T['Whose']) {
-        echo ((($Fid < 0) || ($Fid == $T['Whose']))?( "<a href=ThingEdit.php?id=" . $T['id'] . ">" . (empty($T['Name'])?"Unnamed":$T['Name']) . "</a>") : $T['Name'] ) . " a ";
+        $txt .= ((($Fid < 0) || ($Fid == $T['Whose']))?( "<a href=ThingEdit.php?id=" . $T['id'] . ">" . (empty($T['Name'])?"Unnamed":$T['Name']) . "</a>") : $T['Name'] ) . " a ";
       } 
-      if ($ThingTypes[$T['Type']]['Properties'] & THING_HAS_LEVELS) echo " level " . $T['Level'];
-      if ($T['Class']) echo " " . $T['Class'] . " class ";
-      if ($T['Whose']) echo " <span style='background:" . $Factions[$T['Whose']]['MapColour'] . "'>" . 
+      if ($ThingTypes[$T['Type']]['Properties'] & THING_HAS_LEVELS) $txt .= " level " . $T['Level'];
+      if ($T['Class']) $txt .= " " . $T['Class'] . " class ";
+      if ($T['Whose']) $txt .= " <span style='background:" . $Factions[$T['Whose']]['MapColour'] . "'>" . 
         ($Factions[$T['Whose']]['Adjective']?$Factions[$T['Whose']]['Adjective']:$Factions[$T['Whose']]['Name']) . "</span>";
-      if (($T['Whose'] == $Fid) && ($ThingTypes[$T['Type']]['Properties'] & THING_CAN_BE_ADVANCED) && ($T['Level'] > 1)) echo ' ' . $Advance[$T['Level']];
+      if (($T['Whose'] == $Fid) && ($ThingTypes[$T['Type']]['Properties'] & THING_CAN_BE_ADVANCED) && ($T['Level'] > 1)) $txt .= ' ' . $Advance[$T['Level']];
       if ($T['Whose']==0 && Access('GM')) {
-        echo "<a href=ThingEdit.php?id=" . $T['id'] . ">" . $ThingTypes[$T['Type']]['Name'] . "</a>";
+        $txt .= "<a href=ThingEdit.php?id=" . $T['id'] . ">" . $ThingTypes[$T['Type']]['Name'] . "</a>";
       } else {
-        echo " " . $ThingTypes[$T['Type']]['Name'];
+        $txt .= " " . $ThingTypes[$T['Type']]['Name'];
       }
-      if ($GM && !empty($T['Orders'])) echo ", <span style='background:#ffd966;'>Orders: " . $T['Orders'] . "</span>";
-      if ($Images && !empty($T['Image'])) echo " <img valign=top src=" . $T['Image'] . " height=100> ";
-      echo "<br clear=all>\n";
+      if ($GM && !empty($T['Orders'])) $txt .= ", <span style='background:#ffd966;'>Orders: " . $T['Orders'] . "</span>";
+      if ($Images && !empty($T['Image'])) $txt .= " <img valign=top src=" . $T['Image'] . " height=100> ";
+      $txt .= "<br clear=all>\n";
       $LastWhose = $T['Whose'];
+   return $txt;
 }
 
 function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0) {
   global $Advance;
   include_once("SystemLib.php");
+  $txt ='';
 //var_dump($Sid,$Eyes);
 //  if (Access('GM')) $Eyes = 15;
-    if (!$Eyes) return;
+    if (!$Eyes) return '';
     $Things = Get_AllThingsAt($Sid);
-    if (!$Things) return;
+    if (!$Things) return '';
     
   $GM = Access('GM');
 //    $ThingTypes = Get_ThingTypes();
@@ -677,14 +681,15 @@ function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0) {
          $Fac = Get_Faction($N['Control']);
          $Col = $Fac['MapColour'];
        }
-       echo "<h2 style='background:$Col;'>System " . System_Name($N,$Fid) . "</h2>"; 
+       $txt .= "<h2 style='background:$Col;'>System " . System_Name($N,$Fid) . "</h2>"; 
     } else {
-       echo "<h2>In the System is:</h2>";
+       $txt .= "<h2>In the System is:</h2>";
     }
     $LastWhose = 0;
     foreach ($Things as $T) {
-      SeeThing($T,$LastWhose,$Eyes,$Fid,$Images,$GM); //,$ThingTypes,$Factions);
+      $txt .= SeeThing($T,$LastWhose,$Eyes,$Fid,$Images,$GM); //,$ThingTypes,$Factions);
     };
+  return $txt;
 }
 
 function Update_Militia(&$W,&$Dists) {
