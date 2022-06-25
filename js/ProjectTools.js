@@ -111,9 +111,32 @@ debugger;
   window.location.pathname = "ProjNew.php?t=" + Turn + "&Hi=" + Hi + "&Di=" + Di;
 }
 
+var ListFaction = 0;
+var ListGM = 0;
+var ListType = 0;
+var ListBuild = 0;
+
 function ThingListFilter() {
+debugger;
   var Show = $("input[name=ThingShow]:checked").val();
+  var dbg = document.getElementById('Debug');
+  if (Show != ListType && ListFaction) {
+    $.post("setfield.php", {'T':'Factions', 'I':ListFaction, 'F':(ListGM?'GMThingType':'ThingType'), 'V':Show} , function( data ) { 
+      if (dbg) { 
+        $('#Debug').html( data)
+        }
+      }
+    );
+  }
   var Build = $("input[name=BuildShow]:checked").val();
+  if (Build != ListBuild && ListFaction) {
+    $.post("setfield.php", {'T':'Factions', 'I':ListFaction, 'F':(ListGM?'GMThingBuild':'ThingBuild'), 'V':Build}, function( data ) { 
+      if (dbg) { 
+        $('#Debug').html( data);
+        }
+      }
+    );  
+  }
   $(".ThingList").each(function() {
     if (Show == 0 && Build==0) { $(this).show(); return }
     var hide = 1;
@@ -132,6 +155,25 @@ function ThingListFilter() {
     }
   })
 }
+
+function ListThingSetup (Fact,GM,TType,TBuild) {
+debugger;
+  ListFaction = Fact;
+  ListGM = GM;
+  ListType = TType;
+  ListBuild = TBuild;
+/*  if (TType) {
+    radiobtn = document.getElementById("ThingShow");
+    radiobtn.checked = true;
+  }
+  if (TBuild) {
+    radiobtn = document.getElementById("ThingBuild");
+    radiobtn.checked = true;  
+  }*/
+  ThingListFilter();
+}
+
+// This is old code
 
 function ThingListShow() {
 debugger;

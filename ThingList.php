@@ -5,7 +5,7 @@
   
   A_Check('GM');
 
-  dostaffhead("List Things",["js/ProjectTools.js"]);
+  dostaffhead("List Things",["js/ProjectTools.js"]," onload=ListThingSetup(0,1,0,0)");
 
   global $db, $GAME,$BuildState,$ThingInstrs;
 
@@ -125,8 +125,8 @@
 
   }
       
-  echo "</tbody></table></div>\n";
-  
+  echo "</tbody></table></div onload=ListThingSetup(0,1,0,0)>\n";  
+
   echo "<h2><a href=ThingEdit.php?ACTION=NEW>New Thing</a></h2>";
 
   dotail();

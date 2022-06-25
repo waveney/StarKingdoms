@@ -29,7 +29,8 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
     if (isset($Fid)) $Faction = Get_Faction($Fid);
   }
 
-  dostaffhead("Things",["js/ProjectTools.js"]);
+  dostaffhead("Things",["js/ProjectTools.js"]," onload=ListThingSetup($Fid,$GM," . ($GM?$Faction['GMThingType']:$Faction['ThingType']) . "," . 
+             ($GM?$Faction['GMThingBuild']:$Faction['ThingBuild']) . ")" );
 
   if ($GM && isset($Fid) && $Fid==0) {
   } else {
@@ -135,12 +136,12 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
   echo "<h1>Things</h1>";
   
   $ShowCats = ['All','Ships','Armies','Agents','Chars', 'Other'];
-  $Show['ThingShow'] = 0;
+  $Show['ThingShow'] = $Faction[$GM?'GMThingType':'ThingType'];
   $BuildCats = ['All','Plan','Building','Shakedown','Complete','Other'];
-  $Build['BuildShow'] = 0;
+  $Build['BuildShow'] = $Faction[$GM?'GMThingBuild':'ThingBuild'];
   
   echo "<div class=floatright ><b>" . fm_radio("Show",$ShowCats,$Show,'ThingShow',' onchange=ThingListFilter()') . "<br><br>";
-  echo fm_radio("Build State",$BuildCats,$Build,'BuildShow',' onchange=ThingListFilter()') . "</b></div>";
+  echo fm_radio("Build State",$BuildCats, $Build,'BuildShow',' onchange=ThingListFilter()') . "</b></div>";
 
   echo "To see more information about each thing and to do movement and changes click on the name<p>\n";
   echo "Click on column heading to sort by column - toggles up/down<br>\n";
@@ -236,8 +237,8 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
     };
     
   }
-  
-  echo "</table></div>\n";
+  if (Access('God'))  echo "<tr><td class=NotSide>Debug<td colspan=15 class=NotSide><textarea id=Debug></textarea>";  
+  echo "</table></div onload=ListThingSetup($Fid,$GM," . ($GM?$Faction['GMThingType']:$Faction['ThingType']) . "," . ($GM?$Faction['GMThingBuild']:$Faction['ThingBuild']) . ")>\n";
   
   if ($Fid) {
     echo "<h1>Logistics</h1>";
