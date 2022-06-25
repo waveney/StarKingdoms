@@ -15,9 +15,9 @@
   foreach($Factions as $F) {
     $Fid = $F['id'];
     $Facts[$Fid] = $F;
-    if ($F['Trait1']) $TraitNames[$F['Trait1']][] = [$Fid,1];
-    if ($F['Trait2']) $TraitNames[$F['Trait2']][] = [$Fid,2];
-    if ($F['Trait3']) $TraitNames[$F['Trait3']][] = [$Fid,3];      
+    if ($F['Trait1']) $TraitNames[$F['Trait1']][] = [$Fid,1, $F['Trait1Automated']];
+    if ($F['Trait2']) $TraitNames[$F['Trait2']][] = [$Fid,2, $F['Trait2Automated']];
+    if ($F['Trait3']) $TraitNames[$F['Trait3']][] = [$Fid,3, $F['Trait3Automated']];      
   };
   
   ksort($TraitNames);
@@ -27,8 +27,8 @@
     echo "<tr><td>$Name<td>";
     $use = 0;
     foreach($TraitUse as $Use) {
-      [$Fid,$TN] = $Use;
-      echo ($use++?', ':'') . "<a href=FactionEdit.php?F=Fid>" . $Facts[$Fid]['GameId']  . ':' . $Facts[$Fid]['Name'] ."</a>";
+      [$Fid,$TN,$Auto] = $Use;
+      echo ($use++?', ':'') . "<a href=FactionEdit.php?F=Fid>" . $Facts[$Fid]['GameId']  . ':' . $Facts[$Fid]['Name'] . ($Auto?" <b>A</b>":'') . "</a>";
     }
   }
   
