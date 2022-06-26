@@ -34,8 +34,31 @@
     $ColNum+=$cols;
     return $txt;
   }
+  
+  function GameList(&$Games) {
+    $GL = [];
+    foreach(array_reverse($Games) as $G) $GL[$G['id']] = $G['id'] . ":" . $G['Name'];
+    return $GL;
+  }
 
+  global $USER,$GAME;
   if (isset($ErrorMessage)) echo "<h2 class=ERR>$ErrorMessage</h2>";
+
+  $Usr = $USER['id'];
+    
+  if (Access('God')) {
+  
+    $Games =Gen_Get_Cond('Games','TRUE');
+
+    if (count($Games)>1) echo "<h2>Select Game: " . GameList($Games);
+  } else { // Not God
+    $Games = Gen_Get_Cond('Games', "GM1=$usr OR GM2=$usr OR GM3=$usr");
+
+    if ($Usr != $GAME['GM1'] && $Usr != $GAME['GM2'] && $Usr != $GAME['GM3']) {
+      // Not GM of this game
+    }
+  }
+  
   
   $Facts = Get_Faction_Names();
  
@@ -214,6 +237,7 @@
     if (0 && Access('God')) {
       $txt .= "<li><a href=SetAllSensors.php>Set All Sensor data</a> - Bug Fix";
       $txt .= "<li><a href=SetAllSpeeds.php>Set All Speeds</a> - Bug Fix";
+      $txt .= "<li><a href=HistoryFudge.php>Set History files</a> - Bug Fix";
     }
     $txt .= "</ul>\n";
   }

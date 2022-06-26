@@ -2260,6 +2260,7 @@ function GenerateTurns() {
 }
 
 function FixFudge() { // Tempcode called to fix thi9ngs
+  return 1;
   global $db,$GAMEID,$GAME;
   // Save What can I see data
   $Factions = Get_Factions();
@@ -2359,7 +2360,7 @@ function FinishTurnProcess() {
 
 function Do_Turn() {
   global $Sand;  // If you need to add something, replace a spare if poss, then nothing breaks
-  $Stages = ['Check Turns Ready', 'Fix Fudge', 'Spare','Start Turn Process', 'Save All Locations', 'Spare', 'Cash Transfers', 'Spare',
+  $Stages = ['Check Turns Ready', 'Spare', 'Spare','Start Turn Process', 'Save All Locations', 'Spare', 'Cash Transfers', 'Spare',
              'Spare', 'Pay For Stargates', 'Spare', 'Scientific Breakthroughs', 'Start Projects', 'Spare', 'Spare', 'Instuctions', 
              'Instuctions Stage 2', 'Spare', 'Spare', 'Spare', 'Spare', 'Spare', 'Spare', 'Spare', 
              'Agents Start Missions', 'Spare', 'Spare', 'Economy', 'Spare', 'Direct Moves', 'Load Troops', 'Spare', 
