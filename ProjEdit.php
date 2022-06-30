@@ -62,7 +62,19 @@
         if (Access('GM')) echo " , <a href=ProjList.php?F=$Fid>Back to Project List</a>";
         echo "</h2>\n";
         dotail();
-        exit;       
+        exit;
+      case 'Raise 1 Level':
+        $OldLvl = $P['Level'];
+        $P['Level'] ++;
+        $Newlvl = $P['Level'];
+        $pc = Proj_Costs($Newlvl);
+        $Costs = $pc[1];
+        $ProgN = $pc[0];
+        $P['Costs'] = $Costs;
+        $P['ProgNeeded'] = $ProgN;
+        $P['Name'] = preg_replace("/ $OldLvl /", " $Newlvl ",$P['Name'],1);
+        Put_Project($P);
+        break;
     }
   }
 
@@ -183,7 +195,7 @@
   echo "</table><h2>";
   echo "<input type=submit Name=Ignore value=Ignore hidden>";
   if ($when >=0) echo "<input type=submit name=ACTION value='Abandon Project'> ";
-  if ($when > 0 || Access('GM') )  echo "<input type=submit name=ACTION value=Delete> ";
+  if ($when > 0 || Access('GM') )  echo "<input type=submit name=ACTION value=Delete> <input type=submit name=ACTION value='Raise 1 Level'>";
 //  if ($when == 0 || Access('GM') )  echo "<input type=submit name=ACTION value=Suspend> ";
 //  if ($P['Status'] == 4)  echo "<input type=submit name=ACTION value=Resume> ";
   echo "</h2>";

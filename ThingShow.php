@@ -430,7 +430,14 @@ function Show_Thing(&$T,$Force=0) {
     } else {
       echo "<tr><td>Original Health: " . $T['OrigHealth'] . ($T['BuildState']? "<td>Current Health: " . $T['CurHealth'] : "");
     }
-    echo "<td>Basic Damage: " . Calc_Damage($T);
+    
+    $Resc =0;
+    $BD = Calc_Damage($T,$Resc);
+    if ($Resc) {
+      echo "<td>Basic Damage: $BD<td>There are other weapons";
+    } else {
+      echo "<td>Damage: $BD";
+    }
   }
   if ($tprops & THING_HAS_DISTRICTS) {
     $DTs = Get_DistrictTypeNames();

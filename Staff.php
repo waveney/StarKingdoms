@@ -298,13 +298,13 @@
     $txt .= $x;
     $txt .= "<ul>\n";
 
-    if (Access('Player')) {
+    if (0 && Access('Player')) {
       $txt .= "<li><a href=AddBug.php>New Bug/Feature request</a>\n";
       $txt .= "<li><a href=ListBugs.php>List Bugs/Feature requests</a><p>\n";
     }
 
-    if (Access('God')) $txt .= "<li><a href=TEmailProformas.php>EMail Proformas</a>";
-    if (Access('God')) $txt .= "<li><a href=AdminGuide.php>Admin Guide</a> \n";
+    if (0 && Access('God')) $txt .= "<li><a href=TEmailProformas.php>EMail Proformas</a>";
+    if (0 && Access('God')) $txt .= "<li><a href=AdminGuide.php>Admin Guide</a> \n";
     if (Access('GM')) {
 //      $txt .= "<li><a href=BannerManage>Manage Banners</a> \n";
       $txt .= "<li><a href=GameData.php>Game Settings</a> \n";

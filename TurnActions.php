@@ -2303,7 +2303,12 @@ function TidyUpMovements() {
     $D['Delta'] = 0;
     Put_District($D);
   }
-  
+
+  GMLog("Movements, 1 turn carry, district deltas Tidied Up<p>");  
+  return 1;
+}
+
+function SaveWhatCanBeSeen() {
   // Save What can I see data
   $Factions = Get_Factions();
   foreach($Factions as $F) {
@@ -2314,8 +2319,6 @@ function TidyUpMovements() {
     fclose($CB);
     GMLog("Saved What could be seen for " . $F['Name']);
   }
-  
-  GMLog("Movements, 1 turn carry, district deltas Tidied Up<p>");  
   return 1;
 }
 
@@ -2362,31 +2365,23 @@ function Do_Turn() {
   global $Sand;  // If you need to add something, replace a spare if poss, then nothing breaks
   $Stages = ['Check Turns Ready', 'Spare', 'Spare','Start Turn Process', 'Save All Locations', 'Spare', 'Cash Transfers', 'Spare',
              'Spare', 'Pay For Stargates', 'Spare', 'Scientific Breakthroughs', 'Start Projects', 'Spare', 'Spare', 'Instuctions', 
-             'Instuctions Stage 2', 'Spare', 'Spare', 'Spare', 'Spare', 'Spare', 'Spare', 'Spare', 
-             'Agents Start Missions', 'Spare', 'Spare', 'Economy', 'Spare', 'Direct Moves', 'Load Troops', 'Spare', 
+             'Instuctions Stage 2', 'Spare', 'Agents Start Missions', 'Spare', 'Spare', 'Economy', 'Spare', 'Direct Moves', 
+             'Load Troops', 'Spare', 'Ship Move Check', 'Ship Movements', 'Agents Move Check', 'Agents Movements', 'Spare', 'Meetups',
              
-             'Ship Move Check','Ship Movements', 'Agents Move Check', 'Agents Movements', 
-             'Meetups', 'Spare', 'Space Combat', 'Unload Troops', 
-             'Orbital Bombardment', 'Spare', 'Ground Combat', 'Devastation Selection', 
-             'Devastation', 'Project Progress', 'Instructions Progress', 'Spare', 
-             'Espionage Missions Complete', 'Counter Espionage', 'Spare', 'Finish Shakedowns', 
-             'Projects Complete', 'Instructions Complete', 'Spare', 'Check Survey Reports', 
-             'Give Survey Reports', 'Check Spot Anomalies', 'Spot Anomalies', 'Militia Army Recovery', 
-             'Generate Turns', 'Tidy Up Movements', 'Recalc Project Homes', 'Finish Turn Process'];
+             'Spare', 'Space Combat', 'Unload Troops', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Devastation Selection', 
+             'Spare', 'Devastation', 'Project Progress', 'Instructions Progress', 'Spare', 'Espionage Missions Complete', 'Counter Espionage', 'Spare', 
+             'Finish Shakedowns', 'Spare', 'Projects Complete', 'Instructions Complete', 'Spare', 'Check Survey Reports', 'Give Survey Reports', 'Check Spot Anomalies', 
+             'Spot Anomalies', 'Militia Army Recovery', 'Spare', 'Generate Turns', 'Tidy Up Movements', 'Save What Can Be Seen', 'Recalc Project Homes', 'Finish Turn Process'];
 
   $Coded =  ['Coded','No','No','Coded','Coded','No','Coded', 'No',
-             'No','Coded','No','Coded','Partial','No','No','Coded',
-             'Coded','No','No','No','No','No','No','No',
-             'No','No','No','Coded','No','Coded','Coded','No',
+             'No','Coded','No','Coded','Partial,M','No','No','Coded,M',
+             'Coded,M','No', 'No','No','No','Coded','No','Coded',
+             'Coded','No','Coded,M','Coded','Coded,M','Coded','No', 'Coded,M',
              
-             'Coded','Coded','Coded','Coded',
-             'Coded','No', 'No','Coded',
-             'No','No','No','Coded',
-             'Coded','Coded', 'Coded', 'No',
-             'No', 'No', 'No','Coded',
-             'Partial','Coded', 'No','Partial (not nebula)',
-             'Coded', 'Coded', 'Coded', 'Coded',
-             'No','Coded','Coded','Coded?'];
+             'No','No','Coded','No','No','No','No','Coded', 
+             'No', 'Coded', 'Coded','Coded','No','No','No','No',
+             'Coded','No','Coded,M','Coded,M', 'No','Partial,M','Coded', 'Coded,M',
+             'Coded','Coded','No','No','Coded','Coded','Coded','Coded'];
   $Sand = Get_TurnNumber();
 // var_dump($Sand);
 

@@ -104,9 +104,10 @@
   $ThingProps = Thing_Type_Props();
   $tprops = (empty($T['Type'])? 0: $ThingProps[$T['Type']]);
   $Valid = $CanMake = 1;
+  $ResC =0;
   RefitRepair($T,0);
   Calc_Health($T);
-  Calc_Damage($T);
+  Calc_Damage($T,$ResC);
   Calc_Scanners($T);
 
 // var_dump($ThingTypeNames);exit;  
@@ -222,7 +223,8 @@
       if ($totmodc > $T['MaxModules'] ) $Valid = 0;
       $T['OrigHealth'] = Calc_Health($T);
       echo "<tr><td>Health/Hull<td>" . $T['OrigHealth'] . "<td><td>At current Tech Levels";
-      $BaseDam = Calc_Damage($T);
+      $ResC = 0;
+      $BaseDam = Calc_Damage($T), $ResC;
       if ($tprops & (THING_HAS_ARMYMODULES | THING_HAS_MILSHIPMODS )) echo "<tr><td>Basic Damage<td>$BaseDam<td><td>At current Tech Levels.  Before special weapons etc";
       if ((($tprops & THING_CAN_MOVE) != 0) && (($tprops & THING_HAS_SHIPMODULES) != 0)) {
         $T['Speed'] = $Engines*$Elvl/$T['Level'] +1;

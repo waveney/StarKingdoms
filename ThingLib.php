@@ -77,7 +77,7 @@ function Mod_Value($fid,$modtypeid) {
   return $v;
 }
 
-function Mod_ValueSimple($tl,$modtypeid) {
+function Mod_ValueSimple($tl,$modtypeid,&$Rescat) {
 //echo "Mod Value of $tl, $modtypeid<p>";
   $mt = Get_ModuleType($modtypeid);
   $mf = Get_ModFormula($mt['Formula']);
@@ -87,6 +87,7 @@ function Mod_ValueSimple($tl,$modtypeid) {
     $v = 0;
   }
   $v = $v + $mf['Num3x'];
+  if ($mf['Name'] != 'Basic Weapons') $Rescat = 1;
 //echo "Is $v<p>";
   return $v;
 }
@@ -284,10 +285,11 @@ function Calc_Health(&$t,$KeepTechLvl=0) {
   $Ms = Get_Modules($t['id']);
   $Mts = Get_ModuleTypes();
   $Techs = Get_Techs();
+  $Rescat = 0;
   foreach ($Mts as $mt) if ($mt['DefWep'] == 1 ) {
     foreach ($Ms as $M) if ($Mts[$M['Type']]['Name'] == $mt['Name']) {
       if ($KeepTechLvl) {
-          $Mhlth = $M['Number'] * Mod_ValueSimple($M['Level']+$Plus,$M['Type']);
+          $Mhlth = $M['Number'] * Mod_ValueSimple($M['Level']+$Plus,$M['Type'],$Rescat);
           $Health += $Mhlth;        
       } else {
         $based = $Mts[$M['Type']]['BasedOn'];
@@ -295,7 +297,7 @@ function Calc_Health(&$t,$KeepTechLvl=0) {
           if ($Techs[$based]['Cat'] == 1) {
             $l = Has_Tech($t['Whose'],$Techs[$based]['PreReqTech']);
           }
-          $Mhlth = $M['Number'] * Mod_ValueSimple($l+$Plus,$M['Type']);
+          $Mhlth = $M['Number'] * Mod_ValueSimple($l+$Plus,$M['Type'],$Rescat);
           $Health += $Mhlth;
         }
       }
@@ -305,16 +307,17 @@ function Calc_Health(&$t,$KeepTechLvl=0) {
   return $Health;
 }
 
-function Calc_Damage(&$t) { 
+function Calc_Damage(&$t,&$Rescat) { 
 
   if ($t['Type'] ==20) return 8; // Militia
   $Dam = 0;
   $Ms = Get_Modules($t['id']);
   $Mts = Get_ModuleTypes();
 
+  $Rescat = 0;
   foreach ($Mts as $mt) if ($mt['DefWep'] == 2 ) {
     foreach ($Ms as $M) if ($Mts[$M['Type']]['Name'] == $mt['Name']) { 
-      $dam = $M['Number'] * Mod_ValueSimple($M['Level'],$M['Type']);
+      $dam = $M['Number'] * Mod_ValueSimple($M['Level'],$M['Type'],$Rescat);
       $Dam += $dam;
     }
   }
