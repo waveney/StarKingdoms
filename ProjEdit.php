@@ -69,14 +69,14 @@
         $P['Level'] ++;
         $Newlvl = $P['Level'];
         $pc = Proj_Costs($Newlvl);
-          if ( ($P['Type'] == 1) && (Has_Trait($P['FactionId'],"We Happy Few"))) {
-            $DTs = Get_DistrictTypes();
-            if ( $DTs[$P['Type']]['Name'] == 'Mining') {
-              $pc[1] = 0; // Mining
-            } else if ($Newlvl>1 ) {
-              $pc = Proj_Costs($Newlvl-1);
-            }
+        if ( ($P['Type'] == 1) && (Has_Trait($P['FactionId'],"We Happy Few"))) {
+          $DTs = Get_DistrictTypes();
+          if ( $DTs[$P['ThingType']]['Name'] == 'Mining') {
+            $pc[1] = 0; // Mining
+          } else if ($Newlvl>1 ) {
+            $pc = Proj_Costs($Newlvl-1);
           }
+        }
         $Costs = $pc[1];
         $ProgN = $pc[0];
         $P['Costs'] = $Costs;
