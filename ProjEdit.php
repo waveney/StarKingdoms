@@ -197,7 +197,7 @@
   if ($when >=0) echo "<input type=submit name=ACTION value='Abandon Project'> ";
   if ($when > 0 || Access('GM') )  {
     echo "<input type=submit name=ACTION value=Delete> ";
-    if ($PProps & 128) echo "type=submit name=ACTION value='Raise 1 Level'>";
+    if ($PProps & 128) echo "<type=submit name=ACTION value='Raise 1 Level'>";
   }
 //  if ($when == 0 || Access('GM') )  echo "<input type=submit name=ACTION value=Suspend> ";
 //  if ($P['Status'] == 4)  echo "<input type=submit name=ACTION value=Resume> ";
