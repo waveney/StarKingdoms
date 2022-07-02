@@ -426,9 +426,21 @@ function Show_Thing(&$T,$Force=0) {
   if ($tprops & THING_HAS_2_FACTIONS) echo "<tr>" . fm_radio('Other Faction',$FactNames ,$T,'OtherFaction','',1,'colspan=6','',$Fact_Colours,0); 
   if  ($tprops & (THING_HAS_MODULES | THING_HAS_ARMYMODULES)) {
     if ($GM) {
-      echo "<tr>" . fm_number('Orig Health',$T,'OrigHealth') . fm_number('Cur Health',$T,'CurHealth');
+      echo "<tr>" . fm_number('Orig Health',$T,'OrigHealth');
+      if ($T['CurHealth'] > 0) {
+        echo fm_number('Cur Health',$T,'CurHealth');
+      } else {
+        echo fm_number('Cur Health',$T,'CurHealth',' class=Err ');      
+      }
     } else {
-      echo "<tr><td>Original Health: " . $T['OrigHealth'] . ($T['BuildState']? "<td>Current Health: " . $T['CurHealth'] : "");
+      echo "<tr><td>Original Health: " . $T['OrigHealth'];
+      if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
+        if ($T['CurHealth'] > 0) {
+          echo "<td>Current Health: " . $T['CurHealth'];
+        } else {
+          echo "<td class=Err>Current Health: <b>0</b>";
+        }
+      }
     }
     
     $Resc =0;
@@ -586,6 +598,25 @@ function Show_Thing(&$T,$Force=0) {
     case 'Colonise': // Colonise
       if ((($Moving || $tprops & THING_HAS_CIVSHIPMODS) == 0 ) ) continue 2;
       if (!Get_ModulesType($tid,10)) continue 2;
+
+      $PlTs = Get_PlanetTypes();
+      $Ps = Get_Planets($N['id']);
+      $Hab_dome = Has_Tech($Fid,'Habitation Domes');
+      $HabPs = [];
+      foreach($Ps as $P) {
+        if (!$PlTs[$P['Type']]['Hospitable']) continue;
+        if (Get_DistrictsP($P['id'])) continue; // Someone already there
+        if (($P['Type'] == $FACTION['Biosphere']) || ($PH['Type'] == $FACTION['Biosphere2']) || ($PH['Type'] == $FACTION['Biosphere3'])) {
+          $HabPs[$P['id']] = [$P['Name'],$P['Type'],3];
+        }
+        if ($P['Type'] == 4 ) {
+          if (!$Hab_dome) continue ;
+          $HabPs[$P['id']] = [$P['Name'],$P['Type'],10];
+        } else {
+          $HabPs[$P['id']] = [$P['Name'],$P['Type'],6];
+        }
+      }
+      if (empty($HabPs)) continue 2;
       break;
     
     case 'Voluntary Warp Home': // Warp Home
@@ -743,8 +774,8 @@ function Show_Thing(&$T,$Force=0) {
       if (!Get_ModulesType($tid,25)) continue 2;
       break;
     
-    
-    
+    case 'Transfer':
+      break;    
 
      default: 
       continue 2;
@@ -763,6 +794,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
     $PTs=Get_ProjectTypes();
     $PTNs = [];
     foreach($PTs as $PT) $PTNs[$PT['Name']] = $PT;
+// var_dump($PTNs);
     
     $ProgShow = $Cost = $Acts = 0;
     echo "<tr>" . fm_radio('Special Instructions', $SpecOrders,$T,'Instruction','',1,' colspan=6 ','',$ThingInclrs);// . " under development don't use yet";
@@ -960,7 +992,6 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       $ProgShow = 1;
       $Acts = $PTNs['Dismantle Stargate']['CompTarget'];
 
-      // Needs a lot of work
       break;
 
     case 'Make Planet Mine':
@@ -1032,7 +1063,19 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       $ProgShow = 1;
       $Cost = -1;
       break;
-    
+
+    case 'Transfer':
+      $Facts = Get_FactionFactions($Fid);
+
+      $FactList = [];
+      $FactList[-1] = "Other";
+      if (!empty($Facts)) foreach ($Facts as $Fi=>$F) {
+        $FactList[$Fi] = $FactNames[$Fi];
+      }
+      echo "<br>Transfer control to: " . fm_select($FactList,$T,'Dist1');
+      $ProgShow = 0;
+      $Cost = -1;
+      break;
 
     default: 
       break;

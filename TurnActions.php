@@ -27,7 +27,7 @@ function GMLog($text,$Bold=0) {
 function SKLog($text,$e=0) {
   global $Sand,$USER;
   $Sand['ActivityLog'] .= date("Y-m-d H:i:s - ") . $USER['Login'] . " - " . $text . "\n";  // Who?
-  if ($e) GMLog($text. "<br>\n");
+  if ($e) GMLog($text. "<br>\n",1);
 }
 
 // Log to the turn text, and optionally aa history record of T
@@ -132,12 +132,12 @@ function CashTransfers() {
           Spend_Credit($B['Recipient'], - $B['Amount'],$B['YourRef']);
           TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " transfered " . Credit() . $B['Amount'] . " to you for " . $B['YourRef'] );
         }
-        SKLog('Cash transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . ' of ' . $B['Amount'] . ' for ' . $B['YourRef'],1);     
+        GMLog('Cash transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . ' of ' . $B['Amount'] . ' for ' . $B['YourRef'],1);     
       } else {
         TurnLog($B['FactionId'],"Failed to transfer " . Credit() . $B['Amount'] . " for " . $B['YourRef'] . " to " . $Facts[$B['Recipient']]['Name'] . 
                  " you only have " . $Facts[$B['FactionId']]['Credits']);
         if ($B['Recipient'] > 0) TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " Failed to transfer " . Credit() . $B['Amount'] . " for " . $B['YourRef'] );
-        SKLog('Cash transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . 
+        GMLog('Cash transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . 
               ' of ' . Credit() . $B['Amount'] . ' for ' . $B['YourRef'] .  ' Bounced',1);
       }
     } else if ($B['What'] <= 4) {
@@ -151,13 +151,13 @@ function CashTransfers() {
             Gain_Currency($B['Recipient'], $B['What'], $B['Amount'],$B['YourRef']);
             TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " transfered " . $B['Amount'] . " of " . $Currencies[$B['What']] . " for " . $B['YourRef'] );
           }
-          SKLog('Transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . ' of ' . $B['Amount'] . $Currencies[$B['What']]
+          GMLog('Transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . ' of ' . $B['Amount'] . $Currencies[$B['What']]
                  . ' for ' . $B['YourRef'],1);      
         } else {
           TurnLog($B['FactionId'],"Failed to transfer " . $B['Amount']  . " of " . $Currencies[$B['What']] . " for " . $B['YourRef'] . " to " . $Facts[$B['Recipient']]['Name']);
           if ($B['Recipient'] > 0) TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " Failed to transfer " . $B['Amount']  . " of " . $Currencies[$B['What']]
               . " for " . $B['YourRef'] );
-          SKLog('Transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . 
+          GMLog('Transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . 
                 ' of ' . $B['Amount'] . " of " . $Currencies[$B['What']] . ' for ' . $B['YourRef'] .  ' Bounced',1);
         }
       } else {
@@ -481,10 +481,10 @@ function Instuctions() { // And other Instructions
       
       if (($ThingInstrs[$T['Instruction']]) == 'Colonise') {
         TurnLog($T['Whose'],"The " . $T['Name'] . " is colonising " . $P['Name'] . " in " . $N['Ref'] ,$T);
-        SKlog($Facts[$T['Whose']]['Name'] . " is starting to colonise " . $P['Name'] . " in " . $N['Ref']);
+        GMlog($Facts[$T['Whose']]['Name'] . " is starting to colonise " . $P['Name'] . " in " . $N['Ref']);
       } else {
         TurnLog($T['Whose'],"The " . $T['Name'] . " is seting up planetary mining " . $P['Name'] . " in " . $N['Ref'] ,$T);
-        SKlog($Facts[$T['Whose']]['Name'] . " is starting to planetary mine " . $P['Name'] . " in " . $N['Ref']);      
+        GMlog($Facts[$T['Whose']]['Name'] . " is starting to planetary mine " . $P['Name'] . " in " . $N['Ref']);      
       }
       break;
 
@@ -517,7 +517,7 @@ function Instuctions() { // And other Instructions
          }
        } else {
          TurnLog($T['Whose']," The " . $T['Name'] . " tried to warp out, but you have no Warp Gates...",$T);
-         SKLog(" The " . $T['Name'] . " tried to warp out, but there are no warp gates",1);
+         GMLog(" The " . $T['Name'] . " tried to warp out, but there are no warp gates",1);
          $T['Instruction'] = 0;
        }
        break;
@@ -739,11 +739,17 @@ function Instuctions() { // And other Instructions
         TurnLog($T['Whose'],"Could not afford to Repair Command Node " .$N['Ref'],$T);
       }
 
-
-     default:
+    case 'Transfer':
+      $OldWho = $T['Whose'];
+      $T['Whose'] = $T['Dist1'];
+      TurnLog($OldWho,$T['Name'] . " has been transfered to: " .$Facts[$T['Whose']]['Name'],$T);  
+      TurnLog($T['Whose'],$T['Name'] . " has been transfered to you from the : " .$Facts[$OldWho]['Name'],$T);  
+      GMLog("The " . $T['Name'] . " has been transfered from the " . $Facts[$OldWho]['Name'] . " to the " . $Facts[$T['Whose']]['Name']);
+      break;
+    default:
      
-     }
-     Put_Thing($T);
+    }
+    Put_Thing($T);
   }
   
   if ($NeedColStage2) {
@@ -1296,7 +1302,7 @@ function Devastation() {
       if ($H['Devastation'] > $Dcount) { // Lose districts...
         $LogT = Devastate($H,$W,$Dists,1);
         TurnLog($Fid,$LogT);
-        SKLog($LogT,1);      
+        GMLog($LogT,1);      
       }
       Put_ProjectHome($H);    
     } else { // Recovery?
@@ -1484,7 +1490,10 @@ function InstructionsProgress() {
 //var_dump($T);exit;
 //var_dump($T['Progress'], $Prog, $Mods[0], $T['ActionsNeeded']);
 //echo "<br>" . $Prog*$Mods[0]['Number'] . "<p>";
-        $T['Progress'] = min($T['ActionsNeeded'],($T['Progress']+$Prog*$Mods[0]['Number']));
+        $ProgGain = $Prog*$Mods[0]['Number'];
+        GMLog("$ProgGain progress on " . $ThingInstrs[$T['Instruction']] . " for " . $Facts[$T['Whose']]['Name'] . ":" . $T['Name']);
+
+        $T['Progress'] = min($T['ActionsNeeded'],($T['Progress']+$ProgGain);
 //var_dump($T['Progress']); exit;
         Put_Thing($T);
         break;
@@ -1634,7 +1643,7 @@ function ProjectsComplete() {
           TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");
           break;
         } else {
-          SKLog( "Project to " . $P['Name'] . " already have level " . $CTech['Level'] . " See <a href=ProjEdit.php?id=" . $P['id'] . ">Project</a>", 1);
+          GMLog( "Project to " . $P['Name'] . " already have level " . $CTech['Level'] . " See <a href=ProjEdit.php?id=" . $P['id'] . ">Project</a>", 1);
           TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");
           break;          
         }
@@ -1644,7 +1653,7 @@ function ProjectsComplete() {
         TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");
         break;
       } else {
-        SKLog( "Project to " . $P['Name'] . " already have". " See <a href=ProjEdit.php?id=" . $P['id'] . ">Project</a>", 1);
+        GMLog( "Project to " . $P['Name'] . " already have". " See <a href=ProjEdit.php?id=" . $P['id'] . ">Project</a>", 1);
         TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");
       }
       break;
@@ -1732,7 +1741,7 @@ function ProjectsComplete() {
     case 'Analyse':
       $Fact = Get_Faction($Fid);
       TurnLog($Fid, "You have conpleted " . $P['Name'] . " look at your turn response from the GM to see what you learnt");
-      SKLog($Fact['Name'] . " has completed a level " . $P['Level'] . " analyse project called " . $P['Name'] . ".  Please give the results in the player", 1);
+      GMLog($Fact['Name'] . " has completed a level " . $P['Level'] . " analyse project called " . $P['Name'] . ".  Please give the results in the player", 1);
       break;
 
     case 'Construct Warp Gate':
@@ -1758,7 +1767,7 @@ function ProjectsComplete() {
     case 'Decipher Alien Language':
     case 'Rebuild and Repair':  
     case 'Grow Modules' :    
-      SKLog("A project to " . $PT['Name'] . " has completed, this is not automated yet.  See <a href=ProjEdit.php?id=" . $P['id'] . ">Project</a>",1);
+      GMLog("A project to " . $PT['Name'] . " has completed, this is not automated yet.  See <a href=ProjEdit.php?id=" . $P['id'] . ">Project</a>",1);
       break;
     // These all now handled as instructions - not projects at the moment
     case 'Decommision':
@@ -1774,7 +1783,7 @@ function ProjectsComplete() {
     case 'Unknown' :
 
     default:
-      SKLog("A project to " . $PT['Name'] . " has completed, this is not automated yet.  See <a href=ProjEdit.php?id=" . $P['id'] . ">Project</a>",1);
+      GMLog("A project to " . $PT['Name'] . " has completed, this is not automated yet.  See <a href=ProjEdit.php?id=" . $P['id'] . ">Project</a>",1);
     }
   }
   
@@ -1812,7 +1821,7 @@ function InstructionsComplete() {
 
 
       TurnLog($Who,$P['Name'] . " on " . $N['Ref'] . " has been colonised");
-      SKLog($P['Name'] . " on " . $N['Ref'] . " has been colonised by " . $Facts[$Who]['Name'],1);  // TODO Check for any named chars and offload
+      GMLog($P['Name'] . " on " . $N['Ref'] . " has been colonised by " . $Facts[$Who]['Name'],1);  // TODO Check for any named chars and offload
        
       $Have = Get_Things_Cond(0," (LinkId<0 AND SystemId=$Tid ");
       if ($Have) {
@@ -1861,7 +1870,7 @@ function InstructionsComplete() {
          Put_System($N);
        }
        TurnLog($Who,"An outpost has been made in " . $N['Ref']);
-       SKLog($N['Ref'] . " is now controlled by " . $Facts[$Who]['Name'],1);
+       GMLog($N['Ref'] . " is now controlled by " . $Facts[$Who]['Name'],1);
        break;
        
      case 'Make Asteroid Mine':
@@ -1902,7 +1911,7 @@ function InstructionsComplete() {
        $N = Get_System($T['SystemId']);
        $Who = $T['Whose'];
        TurnLog($Who,"A Space Station has been made in " . $N['Ref']);
-       SKLog("A space station has been made in " . $N['Ref'] . " by " . $Facts[$Who]['Name'],1);
+       GMLog("A space station has been made in " . $N['Ref'] . " by " . $Facts[$Who]['Name'],1);
        break;
 
      case 'Expand Space Station' :
@@ -1910,7 +1919,7 @@ function InstructionsComplete() {
        $SS = Get_Things_Cond($Fid,"Type=" . $TTNames['Space Station'] . " OR Type=AND SystemId=" . $T['SystemId'] . " AND BuildState=3");
        if (empty($SS)) {
          TurnLog($Fid,"There is not a Space Station here to expand in " . $N['Ref']);
-         SKLog("There is not a space station to extend in " . $N['Ref'] . " by " . $Facts[$Fid]['Name'],1);
+         GMLog("There is not a space station to extend in " . $N['Ref'] . " by " . $Facts[$Fid]['Name'],1);
        } else {
          $S = $SS[0];
          $S['MaxDistricts'] += $T['Dist1'];
@@ -1936,7 +1945,7 @@ function InstructionsComplete() {
        break;
 
      case 'Build Stargate':
-       SKLog("A stargate has been made in " . $N['Ref'] . " by " . $Facts[$Who]['Name'] . "Not Automated...",1);     
+       GMLog("A stargate has been made in " . $N['Ref'] . " by " . $Facts[$Who]['Name'] . "Not Automated...",1);     
        break;
 
      case 'Make Planet Mine':
@@ -1945,7 +1954,7 @@ function InstructionsComplete() {
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
        TurnLog($Who,"A Planet Mine has been made in " . $N['Ref']);
-       SKLog("A Planet Mine has been setup in " . $N['Ref'] . " by " . $Facts[$Who]['Name'] . ".  Tell Richard to set the right withinsysloc",1);
+       GMLog("A Planet Mine has been setup in " . $N['Ref'] . " by " . $Facts[$Who]['Name'] . ".  Tell Richard to set the right withinsysloc",1);
        break;
 
      case 'Construct Command Relay Station':
@@ -1968,7 +1977,7 @@ function InstructionsComplete() {
        Put_District($D);
 
        TurnLog($Who,"A Command Node has been repaired " . $N['Ref']);
-       SKLog("A Command Node has been repaired in " . $N['Ref'] . " by " . $Facts[$Who]['Name'] . ".  Tell Richard to set the right stuff up",1);
+       GMLog("A Command Node has been repaired in " . $N['Ref'] . " by " . $Facts[$Who]['Name'] . ".  Tell Richard to set the right stuff up",1);
        break;
 
      case 'Build Planetary Mine':
@@ -1981,7 +1990,7 @@ function InstructionsComplete() {
 
        $T['BuildState'] = 4;      
        TurnLog($Who,$P['Name'] . " on " . $N['Ref'] . " has plantary mining established");
-       SKLog($P['Name'] . " on " . $N['Ref'] . " has plantary mining by " . $Facts[$Who]['Name'],1);
+       GMLog($P['Name'] . " on " . $N['Ref'] . " has plantary mining by " . $Facts[$Who]['Name'],1);
        break; // The making homes and worlds in a later stage completes the colonisation I hope
        
      case 'Dismantle Stargate' :
@@ -2412,7 +2421,7 @@ function Do_Turn() {
              'Coded,M','No', 'No','No','No','Coded','No','Coded',
              'Coded','No','Coded,M','Coded','Coded,M','Coded','No', 'Coded,M',
              
-             'No','No','Coded','No','No','No','No','Coded', 
+             'No','No','Coded','No','No','No','No','Coded,M', 
              'No', 'Coded', 'Coded','Coded','No','No','No','No',
              'Coded','No','Coded,M','Coded,M', 'No','Partial,M','Coded', 'Coded,M',
              'Coded','Coded','No','No','Coded','Coded','Coded','Coded'];

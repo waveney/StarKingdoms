@@ -14,7 +14,7 @@ $CivMil = ['','Civilian','Military'];
 $BuildState = ['Planning','Building','Shakedown','Complete','Ex','Abandonded','Missing In Action'];
 $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse Anomaly','Establish Embassy','Make Outpost','Make Asteroid Mine','Make Minefield',
                 'Make Orbital Repair Yard','Build Space Station','Expand Space Station','Make Deep Space Sensor','Make Advanced Asteroid Mine','Build Stargate',
-                'Make Planet Mine', 'Construct Command Relay Station', 'Repair Command Node','Build Planetary Mine','Dismantle Stargate','Disband'];
+                'Make Planet Mine', 'Construct Command Relay Station', 'Repair Command Node','Build Planetary Mine','Dismantle Stargate','Disband','Transfer'];
 $Advance = ['','','Advanced ','Very Advanced ','Ultra Advanced ','Evolved '];
 
 
