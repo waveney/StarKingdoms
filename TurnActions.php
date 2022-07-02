@@ -1493,7 +1493,7 @@ function InstructionsProgress() {
         $ProgGain = $Prog*$Mods[0]['Number'];
         GMLog("$ProgGain progress on " . $ThingInstrs[$T['Instruction']] . " for " . $Facts[$T['Whose']]['Name'] . ":" . $T['Name']);
 
-        $T['Progress'] = min($T['ActionsNeeded'],($T['Progress']+$ProgGain);
+        $T['Progress'] = min($T['ActionsNeeded'],$T['Progress']+$ProgGain);
 //var_dump($T['Progress']); exit;
         Put_Thing($T);
         break;
