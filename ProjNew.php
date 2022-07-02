@@ -380,8 +380,10 @@
       }
 
       if (Has_Trait($Fid,'Grow Modules')) {
-        echo "<h2>Grow Modules</h2>";    
-        $Grow = (Has_Tech($Fid,'Ship Construction')-1)**2;
+        echo "<h2>Grow Modules</h2>";
+        $CurLevel = $PH['Level'];
+// var_dump($CurLevel);
+        $Grow = min((Has_Tech($Fid,'Ship Construction')-1), 1)*$CurLevel; // Consider ship yards rather than the tech
         $pc = Proj_Costs(1);
         echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Grow Modules'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT" .
                 "&Name=" . base64_encode("Grow $Grow Modules" . $Place) . "&L=1&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
@@ -402,8 +404,8 @@
             $Lvl++;
             $pc = Proj_Costs($Lvl);
             echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Grow District'] . "&t=$Turn&Hi=$Hi&Di=$Di&Sel=$DTp&DT=$DT" . 
-                  "&Name=" . base64_encode("Build " . $DTs[$DT]['Name'] . " District $Lvl$Place") . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                  "Build " . $DTs[$DT]['Name'] . " District $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";        
+                  "&Name=" . base64_encode("Build " . $DTs[$DTp]['Name'] . " District $Lvl$Place") . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
+                  "Build " . $DTs[$DTp]['Name'] . " District $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";        
         
           } 
       }

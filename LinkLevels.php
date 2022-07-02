@@ -22,6 +22,7 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Game</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Cost</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Agent Cost</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Make Cost</a>\n";
   echo "</thead><tbody>";
   foreach($DT as $D) {
     $i = $Did = $D['id'];
@@ -31,6 +32,7 @@
     echo fm_number1("",$D,'GameId','','',"GameId$i");
     echo fm_number1("",$D,'Cost','','',"Cost$i");
     echo fm_number1("",$D,'AgentCost','','',"AgentCost$i");
+    echo fm_number1("",$D,'MakeCost','','',"MakeCost$i");
   }
   echo "<tr><td><td><input type=text name=Name0 >";
   echo "<td><input type=number name=Level0 value=0>"; 
@@ -38,6 +40,7 @@
   echo "<td><input type=number name=GameId0 value=$GAMEID>"; 
   echo "<td><input type=number name=Cost0 value=0>"; 
   echo "<td><input type=number name=AgentCost0 value=0>"; 
+  echo "<td><input type=number name=MakeCost0 value=0>"; 
   echo "</table></div>\n";
   echo "<input type=submit name=Update value=Update>\n";
   echo "</form></div>";

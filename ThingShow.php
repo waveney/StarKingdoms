@@ -956,6 +956,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       break;
 
     case 'Dismantle Stargate':
+      echo "<br>Link to dismantle: " . fm_select($SelLinks,$T,'Dist1',0," style=color:" . $SelCols[$T['Dist1']] ,'',0,$SelCols);
       $ProgShow = 1;
       $Acts = $PTNs['Dismantle Stargate']['CompTarget'];
 

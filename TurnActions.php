@@ -707,6 +707,13 @@ function Instuctions() { // And other Instructions
         TurnLog($T['Whose'],"Could not afford to start an Advanced Asteroid Mine in " .$N['Ref'],$T);
       }
       break;
+      
+     case 'Dismantle Stargate':
+      if (!Spend_Credit($T['Whose'],$T['InstCost'],"Dismantle Stargate #" . $T['Dist1']) ) {
+        $T['Progress'] = -1; // Stalled
+        TurnLog($T['Whose'],"Could not afford to start to dismantle stargate #" .$T['Dist1'],$T);
+      }
+      break;
 
      case 'Build Stargate':
 // TODO 
@@ -1467,6 +1474,7 @@ function InstructionsProgress() {
       case 'Expand Space Station' :
       case 'Make Deep Space Sensor':
       case 'Make Advanced Asteroid Mine':
+      case 'Dismantle Stargate':
       case 'Build Stargate':
       case 'Make Planet Mine':
       case 'Construct Command Relay Station':
@@ -1884,6 +1892,7 @@ function InstructionsComplete() {
        break;
 
      case 'Build Space Station':
+       $Fid = $T['Whose'];
        $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Space Station'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 
               'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'MaxDistricts'=>$T['Dist1'], 'Name'=>$T['MakeName']];
        $Sid = Put_Thing($NT);
@@ -1897,10 +1906,11 @@ function InstructionsComplete() {
        break;
 
      case 'Expand Space Station' :
-       $SS = Get_Things_Cond($Fid,"Type=" . $TTNames['Space Station'] . " OR Type=AND SystemId=" . $T['Systemid'] . " AND BuildState=3");
+       $Fid = $T['Whose'];
+       $SS = Get_Things_Cond($Fid,"Type=" . $TTNames['Space Station'] . " OR Type=AND SystemId=" . $T['SystemId'] . " AND BuildState=3");
        if (empty($SS)) {
-         TurnLog($Who,"There is not a Space Station here to expand in " . $N['Ref']);
-         SKLog("There is not a space station to extend in " . $N['Ref'] . " by " . $Facts[$Who]['Name'],1);
+         TurnLog($Fid,"There is not a Space Station here to expand in " . $N['Ref']);
+         SKLog("There is not a space station to extend in " . $N['Ref'] . " by " . $Facts[$Fid]['Name'],1);
        } else {
          $S = $SS[0];
          $S['MaxDistricts'] += $T['Dist1'];
@@ -1948,6 +1958,7 @@ function InstructionsComplete() {
        break;
       
      case 'Repair Command Node': // Not coded yet
+       $Who = $T['Whose'];
        $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Beta Node'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 
               'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
        Put_Thing($NT);
@@ -1973,6 +1984,29 @@ function InstructionsComplete() {
        SKLog($P['Name'] . " on " . $N['Ref'] . " has plantary mining by " . $Facts[$Who]['Name'],1);
        break; // The making homes and worlds in a later stage completes the colonisation I hope
        
+     case 'Dismantle Stargate' :
+       global $Currencies;
+       AddCurrencies();
+       $LLs =Get_LinkLevels();
+       $Lid = $T['Dist1'];
+       $L = Get_Link($Lid);
+       $Lvl =$L['Level'];
+       $L['System1Ref'] = $L['System2Ref'] = '';
+       Put_Link($L);
+       $Adianite = $LLs[$Lvl]['MakeCost'];
+       $Recovery = $Adianite * ((Has_Trait($T['Whose'],'Grow Modules'))?0.9:0.5);
+
+       $AdianName = GameFeature('LinkResource');
+       $AdianNumber = -1;
+       foreach($Currencies as $CN=>$C) if ($C == $AdianName) { $AdianNumber=$CN; break;}
+       if ($AdianNumber < 0) {
+         GMLog("Dismantling Stargate: $Lid Could not find currency name");
+         break;
+       }
+       Gain_Currency($T['Whose'],$AdianNumber,$Recovery,"Dismantling Link #$Lid");
+       GMLog("Link $Lid has been dismantled by " . $Facts[$T['Whose']]['Name'] . " recovered $Recovery $AdianName ");
+       break;
+     
      default: 
        break;
      }
