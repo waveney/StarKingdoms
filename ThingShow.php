@@ -235,7 +235,9 @@ function Show_Thing(&$T,$Force=0) {
         if (($T['BuildState'] == 2) || ($T['CurHealth'] == 0) || empty($SelLinks) ) { // Shakedown or just warped out
           echo "<tr><td colspan=3>This is unable to use links, it can move within the system.<br>Where in the system should it go? " . fm_select($Syslocs,$T,'WithinSysLoc');
         } else {
-          if (($T['Instruction'] > 0) && ($T['Instruction'] != 5)) echo "<tr><td class=Err>Warning Busy doing:<td>" . $ThingInstrs[$T['Instruction']] . "<td class=Err>Moving will cancel";
+          if (($T['Instruction'] > 0) && ($T['Instruction'] != 5) && ($T['Instruction'] != 21) ) {
+            echo "<tr><td class=Err>Warning Busy doing:<td>" . $ThingInstrs[$T['Instruction']] . "<td class=Err>Moving will cancel";
+          }
 
           if ($GM) {
             echo "<tr><td>Taking Link:<td>" . fm_select($SelLinks,$T,'LinkId',0," style=color:" . $SelCols[$T['LinkId']] ,'',0,$SelCols);
@@ -1075,6 +1077,9 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       echo "<br>Transfer control to: " . fm_select($FactList,$T,'Dist1');
       $ProgShow = 0;
       $Cost = -1;
+      if ($T['Dist1']) {
+        echo "<input type=submit name=ACTION value='Transfer Now'>";
+      }
       break;
 
     default: 

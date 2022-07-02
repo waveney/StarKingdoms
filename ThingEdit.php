@@ -424,6 +424,19 @@ function New_Thing(&$t) {
       $t['LinkPay'] = 1;
       Put_Thing($t);      
       break;
+      
+    case 'Transfer Now':
+      $Factions = Get_Factions();
+      $tid = $_REQUEST['id'];
+      $t = Get_Thing($tid);
+      Check_MyThing($t,$Fid);
+      $OldWho = $t['Whose'];
+      $t['Whose'] = $t['Dist1'];
+      Put_Thing($t);
+      echo "<h2>" . $t['Name'] . " has now been transfered to " . $Factions[$t['Whose']]['Name'] . "</h2>";
+      dotail();
+      
+      break;
     
     case 'None' :
     default: 
