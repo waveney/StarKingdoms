@@ -239,6 +239,9 @@
       $txt .= "<li><a href=SetAllSpeeds.php>Set All Speeds</a> - Bug Fix";
       $txt .= "<li><a href=HistoryFudge.php>Set History files</a> - Bug Fix";
     }
+    if (1 && Access('God')) {
+      $txt .= "<li><a href=FixAnomaly.php>Fix Anomaly records</a> - Bug Fix";
+    }
     $txt .= "</ul>\n";
   }
 

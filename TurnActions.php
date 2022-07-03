@@ -1508,8 +1508,9 @@ function InstructionsProgress() {
           if ($FAs) {
             $FA = $FAs[0];
             $Pro = $T['Sensors']*$T['SensorLevel'];
-            $FA['Progress'] = min($FA['Progress']+$Pro, $A['AnomalyLevel']);
+            $T['Progress'] = $FA['Progress'] = min($FA['Progress']+$Pro, $A['AnomalyLevel']);
             Gen_Put('FactionAnomaly',$FA);
+            Put_Thing($T);
             TurnLog($Fid,$T['Name'] . " did $Pro towards completing anomaly " . $A['Name'] . " now at " . $FA['Progress'] . " / " . $A['AnomalyLevel'],$T);
           } else {
             TurnLog($Fid, $T['Name'] . " is supposed to be analysing an anomaly - but there isn't one selected",$T);
@@ -1524,9 +1525,10 @@ function InstructionsProgress() {
               $FA = $FAs[0];
               if ($FA['Progress'] < $A['AnomalyLevel']) {
                 $Pro = $T['Sensors']*$T['SensorLevel'];
-                $FA['Progress'] = min($FA['Progress']+$Pro, $A['AnomalyLevel']);
+                $T['Progress'] = $FA['Progress'] = min($FA['Progress']+$Pro, $A['AnomalyLevel']);
                 Gen_Put('FactionAnomaly',$FA);
                 $T['ProjectId'] = $Aid;
+                Put_Thing($T);
                 TurnLog($Fid,$T['Name'] . " did $Pro towards completing anomaly " . $A['Name'] . " now at " . $FA['Progress'] . " / " . $A['AnomalyLevel'],$T);
               }
               break 2;
@@ -1846,7 +1848,7 @@ function InstructionsComplete() {
          $FAs = Gen_Get_Cond('FactionAnomaly',"FactionId=$Fid AND AnomalyId=$Aid");
          if ($FAs) {
            $FA = $FAs[0];
-           if ($FA['Progress'] >= $A['AnomalyLevel']) {
+           if ($FA['Progress'] >= $A['AnomalyLevel'] && $FA['State'] != 2) {
              $FA['State'] = 2;
              Gen_Put('FactionAnomaly',$FA);          
              TurnLog($T['Whose'], $T['Name'] . " Anomaly study on " . $A['Name'] . " has been completed - See sperate response from the GMs for what you get");
@@ -1854,10 +1856,9 @@ function InstructionsComplete() {
              $T['ProjectId'] = 0;
            }
          } else {
-           continue 2;
+           continue 2; // elsewhere
          }
        }
-     
        break;
        
      case 'Make Outpost':
