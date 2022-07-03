@@ -165,3 +165,8 @@ button.projtype  {
 .ShowThingLevel {
   width:50; 
 }
+
+input[type='radio'] {
+  Margin:12;
+  height:12;
+}

@@ -248,7 +248,7 @@ function Show_Thing(&$T,$Force=0) {
             echo "<td>To:  " . fm_select($NewSyslocs,$T,'NewLocation');
           } else {
             echo "<tr><td>Taking Link:<td>" . fm_select($SelLinks,$T,'LinkId',0," style=color:" . $SelCols[$T['LinkId']] ,'',0,$SelCols);
-            if ($LinkTypes[$ll]['Cost'] && $LOWho && $LOWho != $T['Whose'] ) { 
+            if ($ll && $LinkTypes[$ll]['Cost'] && $LOWho && $LOWho != $T['Whose'] ) { 
               echo fm_checkbox('Pay',$T,'LinkPay') . " " . Credit() . $T['LinkCost'];
             }
             if ($Lid > 0 && !strpos($SelLinks[$Lid],'?')) {
@@ -497,6 +497,8 @@ function Show_Thing(&$T,$Force=0) {
   if ($tprops & THING_HAS_MODULES) {
 //    echo "<tr><td>Modules to be done\n";
     $MTs = Get_ModuleTypes();
+    $MNs = [];
+    foreach ($MTs as $M) $MNs[$M['id']] = $M['Name']; 
 
 //var_dump($MTs);
 //    $MTNs = [];
@@ -516,7 +518,7 @@ function Show_Thing(&$T,$Force=0) {
       foreach ($Ds as $D) {
         $did = $D['id'];
         if (($dc++)%2 == 0)  echo "<tr>";
-        echo "<td>" . fm_Select($MTNs, $D , 'Type', 1,'',"ModuleType-$did") // . "<td colspan=2>"
+        echo "<td>" . (isset($MTNs[$D['Type']])? fm_Select($MTNs, $D , 'Type', 1,'',"ModuleType-$did") : "<span class=red>INV:" .  fm_Select($MNs, $D , 'Type', 1,'',"ModuleType-$did") . "</span>" )
                     . fm_number1('Level', $D,'Level', '', ' class=Num3 ',"ModuleLevel-$did") . ' # '
                     . fm_number0('', $D,'Number', '',' class=Num3 ',"ModuleNumber-$did") 
                     . "<button id=ModuleRemove-$did onclick=AutoInput('ModuleRemove-$did')>R</button>";
@@ -549,7 +551,17 @@ function Show_Thing(&$T,$Force=0) {
 //        if ($D['Number'] == 0) continue;
         $did = $D['id'];
         if (($dc++)%4 == 0)  echo "<tr>";
-        echo "<td><b>" . $D['Number']. "</b> of " . (isset($MTNs[$D['Type']]) ?$MTNs[$D['Type']] : 'Unknown Modules')  . ($T['BuildState']? (" (Level " . $D['Level'] . ") ") :"") ;
+        echo "<td><b>" . $D['Number']. "</b> of ";
+        if (isset($MTNs[$D['Type']])) {
+          echo $MTNs[$D['Type']] . ($T['BuildState']? (" (Level " . $D['Level'] . ") ") :"") ;
+        } else {
+          $M = $MTs[$D['Type']];
+          if ($l = Has_Tech($T['Whose'],$M['BasedOn'])) {
+            echo "<span class=err>Invalid</span> " . $M['Name'] . ' Modules ' . ($T['BuildState']? (" (Level " . $D['Level'] . ") ") :"") ;
+          } else {
+            echo '<span class=err>Unknown</span> ' . $M['Name'] . ' Modules' . ($T['BuildState']? (" (Level " . $D['Level'] . ") ") :"") ;
+          }
+        }
                 
         $CLvl = Calc_TechLevel($Fid,$D['Type']);
         if ($CLvl < $D['Level'] && $T['BuildState'] != 0 ) {
@@ -608,7 +620,7 @@ function Show_Thing(&$T,$Force=0) {
       foreach($Ps as $P) {
         if (!$PlTs[$P['Type']]['Hospitable']) continue;
         if (Get_DistrictsP($P['id'])) continue; // Someone already there
-        if (($P['Type'] == $FACTION['Biosphere']) || ($PH['Type'] == $FACTION['Biosphere2']) || ($PH['Type'] == $FACTION['Biosphere3'])) {
+        if (($P['Type'] == $FACTION['Biosphere']) || ($P['Type'] == $FACTION['Biosphere2']) || ($P['Type'] == $FACTION['Biosphere3'])) {
           $HabPs[$P['id']] = [$P['Name'],$P['Type'],3];
         }
         if ($P['Type'] == 4 ) {

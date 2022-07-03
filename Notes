@@ -43,25 +43,19 @@ Known Faults
 * Load on PthingList
 * unload on pthinglist
 
-Anomalies
-1) Spot - report name and effort - GMs may add stuff
-2) Complete - Reward - possible description - reward can be techs, SPs, things etc - GMs may add stuff
-3) Colob analysis
-4) TEST IT
-5) Private Anomalies
-6) Control Spotting
+Nebula
+* Auto handle movement w N sensors, follow w/o sensors
+* Knowledge of links w N sensors
 
-Scientific Breakthroughs from Science Points are now automated
 
-IF you have enough science points to do anything, THEN an additionl item on the main player menu "Spend Sceince Points" will appear.
 
-Select the way you want to spend them.  They are normally spent on your turn - so you can change your mind until turns are processed.
 
-If for some obscure reason, you want the tech instantly.  Once the breakthrough has been selected.  There will be a "Do now" option - no changes of mind...
 
-During turn processing science points are spent instantly at the start of the turn so you can use the tech that turn.
 
-One minor note: You cannot use points to raise a tech more than one level per turn.
+
+
+
+
 
 Mammots
 
