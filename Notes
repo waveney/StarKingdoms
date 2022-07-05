@@ -46,6 +46,11 @@ Known Faults
 Nebula
 * Auto handle movement w N sensors, follow w/o sensors
 * Knowledge of links w N sensors
+* No sensors = blind
+* Warpout & surveys
+* Find Ye Map bug.
+* Select destinations
+* 
 
 
 

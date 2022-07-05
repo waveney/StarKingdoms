@@ -183,8 +183,7 @@
     foreach($Nodes as $N) {
       $from = $N['Ref'];
       
-      $if = Get_FactionSystemFS($Faction,$N['id']);
-// var_dump($if);
+      $FS = Get_FactionSystemFS($Faction,$N['id']);
  
       $Links = Get_Links($from);
       if (!isset( $ShownNodes[$N['Ref']])) continue;
@@ -196,12 +195,8 @@
           fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=\"" . $Levels[$L['Level']]['Colour'] . '"' . ($ShowLinks? " label=\"#" . $L['id'] . '"' : '') . " ];\n");
           $LinkShown[$L['id']]=1;
         } else {
-          if ($Neb && $Fl['NebScanned'] < $Neb) continue;
-//          $To = ($L['System1Ref'] == $from ? $L['System2Ref'] : $L['System1Ref']);
-//          $if = Get_FactionSystemFRef($Faction,$To);
-
-//if ($from == 'DDE') { var_dump($if); echo "<br>"; }
-          if (isset($if['ScanLevel']) && $if['ScanLevel']<2) continue;
+          if ($Neb && $FS['NebScanned'] < $Neb) continue;
+          if (isset($FS['ScanLevel']) && $FS['ScanLevel']<2) continue;
           $rand = "B$ul";  // This kludge at least allows both ends to be displayed
           fwrite($Dot,"Unk$ul$rand [label=\"?\" shape=circle];\n");
           fwrite($Dot,"$from -- Unk$ul$rand [color=\"" . $Levels[$L['Level']]['Colour'] . '"' . ($ShowLinks? " label=\"#" . $L['id'] . '"' : '') . " ];\n");

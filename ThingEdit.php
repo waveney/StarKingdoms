@@ -235,6 +235,7 @@ function New_Thing(&$t) {
           $t['CurHealth'] = $t['Link_id'] = 0;
           $t['TargetKnown'] = 1;
           Put_Thing($t);
+          db_delete_cond('ScansDue','ThingId=$tid AND Turn=' . $GAME['Turn']);
           break;
         }
       } else {
@@ -259,6 +260,7 @@ function New_Thing(&$t) {
       $t['WithinSysLoc'] = $Gate['WithinSysLoc'];
       $t['CurHealth'] = $t['Link_id'] = 0;
           $t['TargetKnown'] = 1;
+      db_delete_cond('ScansDue','ThingId=$tid AND Turn=' . $GAME['Turn']);
       Put_Thing($t);
       break;
 

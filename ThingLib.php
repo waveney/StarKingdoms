@@ -430,7 +430,7 @@ function Scanners(&$T) {
 
 function NebScanners(&$T) {
   if (empty($T['NebSensors']) || empty($T['SensorLevel'])) return 0;
-  return $T['NebSensors'] * $T['SensorLevel'];
+  return floor($T['NebSensors'] * $T['SensorLevel'] / 2);
 }
 
 function Calc_Scanners(&$T) {

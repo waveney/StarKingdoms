@@ -421,7 +421,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
 */
 
 function Instuctions() { // And other Instructions
-  global $ThingInstrs;
+  global $ThingInstrs,$GAME;
   $Things = Get_Things_Cond(0,"Instruction>0");
   $NeedColStage2 = 0;
   $Facts = Get_Factions();
@@ -507,6 +507,7 @@ function Instuctions() { // And other Instructions
            GMLog("<p><a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a> is warping out - Please Choose which gate:");
            GMLog(fm_select($GLocs,$_REQUEST,'G',0,'',"G" . $T['id']));
            GMLog("<p>");
+           db_delete_cond('ScansDue','ThingId=$Tid AND Turn=' . $GAME['Turn']);
            break;
          } else {
            $T['SystemId'] = $Gates[0]['SystemId'];
@@ -1080,11 +1081,11 @@ function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
       $SR1 = Get_SystemR($L['System1Ref']);
       $SR2 = Get_SystemR($L['System2Ref']);
       
-      GMLog("<tr><td>" . $Facts[$Fid]['Name'] . "<td><a href=ThingEdit.php?id=$Tid>" . $T['Name']  . "<td>" . $T['Level'] . "<td>");
+      GMLog("<tr><td>" . $Facts[$Fid]['Name'] . "<td><a href=ThingEdit.php?id=$Tid>" . $T['Name']  . "<td>" . $T['Level']);
       if ($T['SystemId'] == $SR1['id']) {
-         GMLog($L['System1Ref'] . "<td style=color:" . $LinkLevels[$L['Level']]['Colour'] . ";>#$Lid<td>" . $L['System2Ref']);
+         GMLog("<td>" . $L['System1Ref'] . "<td style=color:" . $LinkLevels[$L['Level']]['Colour'] . ";>#$Lid<td>" . $L['System2Ref']);
       } else {
-         GMLog($L['System2Ref'] . "<td style=color:" . $LinkLevels[$L['Level']]['Colour'] . ";>#$Lid<td>" . $L['System1Ref']);      
+         GMLog("<td>" . $L['System2Ref'] . "<td style=color:" . $LinkLevels[$L['Level']]['Colour'] . ";>#$Lid<td>" . $L['System1Ref']);      
       }
 
 // var_dump($CheckNeeded,$T['LinkPay']);
@@ -1170,8 +1171,9 @@ function ShipMovements($Agents=0) {
 
       if ($Fid) {
         $FS = Get_FactionSystemFS($Fid,$Sid);
-        if (!isset($FS['id']) || $FS['Scan'] < ($ShipScanLevel?5:1)) { // TODO Nebula
-          $SP = ['FactionId'=>$Fid, 'Sys'=> $Sid, 'Scan'=>($ShipScanLevel?5:1), 'Neb'=>$ShipNebScanLevel, 'Turn'=>$GAME['Turn']];
+        if (!isset($FS['id']) || $FS['ScanLevel'] < ($ShipScanLevel?5:1) || $FS['NebScanned']<$ShipNebScanLevel) { 
+          $SP = ['FactionId'=>$Fid, 'Sys'=> $Sid, 'Scan'=>($ShipScanLevel?5:1), 'Neb'=>$ShipNebScanLevel, 'Turn'=>$GAME['Turn'], 'ThingId'=>$T['id']];
+// var_dump($SP);
           Insert_db('ScansDue', $SP);
         } 
         
@@ -2042,8 +2044,9 @@ function CheckSurveyReports() {
 
 //  Go throuh Scans file - sort by Fid - each link, is it higher scan level than currently scanned?  If so find highest scan level attempted and show menu
 //  GMs can de-tune to allow for conflict etc  Enable scan data - save scans to log?
-  $Scans = Gen_Get_Cond('ScansDue'," Turn=" . $GAME['Turn'] . " ORDER BY FactionId,Sys,Scan DESC");
-  
+  $Scans = Gen_Get_Cond('ScansDue'," Turn=" . ($GAME['Turn']) . " ORDER BY FactionId,Sys,Scan DESC");
+ 
+// var_dump($Scans);  
   $Facts = Get_Factions();
   $Started = 0;
   $LastSys = 0;
@@ -2066,6 +2069,7 @@ function CheckSurveyReports() {
     }
 
     $N = Get_System($S['Sys']);
+    if ($N['Nebulae'] > $S['Neb']) $S['Scan'] = 0; // Blind - in nebula wo neb scanners
     GMLog("<tr><td>" . $Facts[$Fid]['Name'] . "<td>" . $N['Ref'] . "<td>" . fm_radio('',$SurveyLevels,$S,'Scan','',0,'',"Scan:$SSid") . 
       ($N['Control'] ? ( "<td style='background:" . $Facts[$N['Control']]['MapColour'] . ";'>" . $Facts[$N['Control']]['Name'])  : '<td>None') );
     $LastSys = $Sid;
@@ -2081,7 +2085,7 @@ function CheckSurveyReports() {
 
 function GiveSurveyReports() {
   global $GAME;
-  $Scans = Gen_Get_Cond('ScansDue'," Turn=" . $GAME['Turn'] . " ORDER BY FactionId,Sys");
+  $Scans = Gen_Get_Cond('ScansDue'," Turn=" . ($GAME['Turn']) . " ORDER BY FactionId,Sys,Scan DESC");
   
   $Facts = Get_Factions();
   $Started = 0;
@@ -2089,13 +2093,16 @@ function GiveSurveyReports() {
 
     $Fid = $S['FactionId'];
     $FS = Get_FactionSystemFS($Fid,$S['Sys']);
-
-    
-    if ($FS['ScanLevel'] >= $S['Scan']) continue;
+//echo "<p>";
+// if ($Fid == 2) var_dump($Fid, $S, $FS);
+    if ($FS['ScanLevel'] >= $S['Scan'] && $FS['NebScanned'] >= $S['Neb']) continue;
     $Sys = $S['Sys'];
     $N = Get_System($Sys);
+    $Neb = $N['Nebulae'];
     $New = !isset($FS['id']);
-    $FS['ScanLevel'] = $S['Scan'];
+    if ($FS['ScanLevel'] < $S['Scan']) $FS['ScanLevel'] = $S['Scan'];
+    if ($FS['NebScanned'] < $S['Neb']) $FS['NebScanned'] = $S['Neb'];
+// if ($Fid == 2) var_dump($FS);
     Put_FactionSystem($FS);
     
     if (!$New) {
@@ -2348,6 +2355,9 @@ function TidyUpMovements() {
     $D['Delta'] = 0;
     Put_District($D);
   }
+
+  // Tidy up Scans due ?
+
 
   GMLog("Movements, 1 turn carry, district deltas Tidied Up<p>");  
   return 1;

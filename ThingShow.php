@@ -49,6 +49,7 @@ function Show_Thing(&$T,$Force=0) {
   } else {
     $NewSyslocs = [];
   }
+
   $Systems = Get_SystemRefs();
   $T['MaxModules'] = Max_Modules($T);
   if  ($tprops & THING_HAS_MODULES) $T['OrigHealth'] = Calc_Health($T,1);
@@ -99,9 +100,10 @@ function Show_Thing(&$T,$Force=0) {
     echo "<tr class=NotSide><td class=NotSide>Id:<td class=NotSide>$tid<td class=NotSide>Game<td class=NotSide>$GAMEID<td class=NotSide>" . $GAME['Name'];
     echo "<tr><td>Type:<td>" . fm_select($ttn,$T,'Type',1); 
     if ($tprops & THING_HAS_LEVELS) echo fm_number("Level",$T,'Level');
+//    if (Access('God') echo fm_number1('Turn Moved',$T,
   } else {
     echo "<tr><td>Type:<td>" . $ttn[$T['Type']];
-    if ($tprops & THING_HAS_LEVELS) "<td>Level: " . $T['Level'];
+    if ($tprops & THING_HAS_LEVELS) echo "<td>Level: " . $T['Level'];
   }
   echo "<tr>" . fm_text('Name',$T,'Name',2);
 
