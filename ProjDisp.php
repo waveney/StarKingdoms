@@ -181,7 +181,19 @@
           $Costs = $pc[1];
           $ProgN = $pc[0];
           $TthingId = $T['id'];
-          $Name = "Build " . $T['Name'] . " (level $Level)"; 
+          $PH = Get_ProjectHome($Hi);
+          switch ($PH['ThingType']) {
+          case 1:
+            $Place = Get_Planet($PH['ThingId']);
+            break;
+          case 2:
+            $Place = Get_Moon($PH['ThingId']);
+            break;
+          case 3:
+            $Place = Get_Thing($PH['ThingId']);
+            break;
+          }      
+          $Name = "Build " . $T['Name'] . " (level $Level) on " . $Place['Name'] ; 
           break;
 
         case 'Share Technology':

@@ -290,6 +290,14 @@ function StartProjects() {
           Put_Project($P);
           continue;      
         }
+        
+        if ($T['BuildState'] > 0 ) {
+          $T = Thing_Duplicate($Tid);
+          $Tid = $T['id'];
+          $P['ThingId'] = $Tid;
+          Put_Project($P);
+        }
+  
         if (($T['SystemId'] != 0 && $T['SystemId'] != $Where[0])) {
 //var_dump($Where,$T);
           $P['Status'] = 5; // Not Started

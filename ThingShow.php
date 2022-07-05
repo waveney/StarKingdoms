@@ -177,7 +177,11 @@ function Show_Thing(&$T,$Force=0) {
           }
         } else {
           if ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ) echo "<input type=submit name=ACTION value='Unload After Move'>\n";
-          if ($GM || (!$Conflict && ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ))) echo "<input type=submit name=ACTION value='Unload Now'>\n";         
+          if ($GM || (!$Conflict && ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ))) { 
+            echo "<input type=submit name=ACTION value='Unload Now'>\n";         
+          } else {
+            echo "Only the transport owner can unload you";
+          }
 //          echo "<input type=submit name=ACTION value='Unload on Turn'>\n";
 //          if ($Conflict) echo " <b>Conflict</b> ";
 //          echo "<input type=submit name=ACTION value='Unload Now'>\n";
