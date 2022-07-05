@@ -301,7 +301,7 @@ function Show_Thing(&$T,$Force=0) {
           if ($GM && $Conflict) echo " <b>Conflict</b> ";
           if ($GM || !$Conflict) echo "<input type=submit name=ACTION value='Load Now'>\n";
         } else {
-          echo "<td>No Transport Avail";
+          echo "<tr><td>No Transport Avail";
         }
       } else if (($Lid < -1) && (($tprops & THING_CAN_BETRANSPORTED))) {
 /*

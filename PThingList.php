@@ -69,7 +69,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
       if (isset($FL['Known']) && $FL['Known']) {
       } else if ($NearNeb == 0) {
           if (isset($FS['id'])) {
-            if ($FarNeb != 0 && $FS['NebScanned'] < $FarWeb) {
+            if ($FarNeb != 0 && $FS['NebScanned'] < $FarNeb) {
               $Known = 0;
             }
           } else {
@@ -118,9 +118,9 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
       $Tid = $_REQUEST['T'];
       $T = Get_Thing($Tid);
       Check_MyThing($T,$Fid);
-      $t['LinkCost'] = $_REQUEST['LinkCost'];
-      $t['LinkPay'] = 1;
-      Put_Thing($t);      
+      $T['LinkCost'] = $_REQUEST['LinkCost'];
+      $T['LinkPay'] = 1;
+      Put_Thing($T);      
       break;
     }
   }

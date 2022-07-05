@@ -185,7 +185,7 @@
       if (isset($FL['Known']) && $FL['Known']) {
       } else if ($NearNeb == 0) {
           if (isset($FS['id'])) {
-            if ($FarNeb != 0 && $FS['NebScanned'] < $FarWeb) {
+            if ($FarNeb != 0 && $FS['NebScanned'] < $FarNeb) {
               $Known = 0;
             }
           } else {
