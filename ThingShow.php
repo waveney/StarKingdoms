@@ -172,11 +172,11 @@ function Show_Thing(&$T,$Force=0) {
         if ($Host['LinkId']>0 && $Host['TargetKnown'] == 0) {
           echo "You don't know where you are going to unlooad<br>";
           if ($GM) {
-            echo "<input type=submit name=ACTION value='Unload After Move";
+            if ($Lid == -1 || $Lid == -2) echo "<input type=submit name=ACTION value='Unload After Move";
             echo "<input type=submit name=ACTION value='Unload Now'>\n";
           }
         } else {
-          if ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ) echo "<input type=submit name=ACTION value='Unload After Move'>\n";
+          if ($Lid == -1 || $Lid == -2) if ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ) echo "<input type=submit name=ACTION value='Unload After Move'>\n";
           if ($GM || (!$Conflict && ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ))) { 
             echo "<input type=submit name=ACTION value='Unload Now'>\n";         
           } else {
@@ -225,6 +225,10 @@ function Show_Thing(&$T,$Force=0) {
 // var_dump($FS,$Fid,$Dest);
           if (isset($FS['ScanLevel']) && $FS['ScanLevel'] >=3) {
             $finallocs = Within_Sys_Locs($DN);
+            if (!isset($finallocs[$T['NewLocation']]) ) {
+              $T['NewLocation'] = 0;
+              Put_Thing($T);
+            }
             echo "<b>" . $DN['Ref'] . " - " . $finallocs[$T['NewLocation']] . "</b> ";
           } else {
             echo "<b>Unknown location" . ($GM?":$Dest":"") . "</b> ";        
@@ -312,7 +316,7 @@ function Show_Thing(&$T,$Force=0) {
         if ($Lid == -4) {
           echo " and then unloading ";
         
-          $HostId = $t['NewSytemId'];
+          $HostId = $T['NewSytemId'];
           $H = Get_Thing($HostId);        
           $Hlid = $H['LinkId'];
           if ($Hlid > 0) {
@@ -334,7 +338,7 @@ function Show_Thing(&$T,$Force=0) {
           if ($Dest) {
             $TN = Get_System($Dest);
             $Locs = Within_Sys_Locs($TN);
-            echo "<b>" . $TN['Ref'] . " - " . $finallocs[$t['NewLocation']] . "</b> "; 
+            echo "<b>" . $TN['Ref'] . " - " . $finallocs[$T['NewLocation']] . "</b> "; 
           }
         }
 //to what
@@ -390,7 +394,8 @@ function Show_Thing(&$T,$Force=0) {
       if ($GM || !$Conflict ) echo "<input type=submit name=ACT$Hid value='Unload Now'>\n";
       echo " to: " . $N['Ref'] . " - " . fm_select($Syslocs,$H,'WithinSysLoc',0,'',"WithinSysLoc:$Hid");
       if ($H['LinkId'] == -3) {
-        echo " - Unloading on Turn";
+        echo " - Unloading on Turn to <b>$NewRef</b>, " . $NewSyslocs[$H['NewLocation']];
+        echo "<input type=submit name=ACT$Hid value='Cancel Unload'>";
       } else if ($T['NewSystemId'] && $T['TargetKnown']) {
         echo "<input type=submit name=ACT$Hid value='Unload on Turn'>\n"; 
         echo " to: $NewRef - " . fm_select($NewSyslocs,$H,'NewLocation',0,'',"NewLocation:$Hid");

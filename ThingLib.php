@@ -158,14 +158,14 @@ function Tech_Names(&$Techs) {
 function Thing_Type_Names() {
   $tts = Get_ThingTypes();
   $tns = [];
-  foreach ($tts as $t) $tns[$t['id']] = $t['Name'];
+  foreach ($tts as $T) $tns[$T['id']] = $T['Name'];
   return $tns;
 }
 
 function Thing_Type_Props() {
   $tts = Get_ThingTypes();
   $tns = [];
-  foreach ($tts as $t) $tns[$t['id']] = $t['Properties'];
+  foreach ($tts as $T) $tns[$T['id']] = $T['Properties'];
   return $tns;
 }
 
@@ -225,14 +225,14 @@ function Within_Sys_Locs(&$N,$PM=0,$Boarding=0,$Restrict=0,$Hab=0) {// $PM +ve =
   return $L;
 }
 
-function Get_Valid_Modules(&$t) {
+function Get_Valid_Modules(&$T) {
   global $ModuleCats;
   $MTs = Get_ModuleTypes();
   $VMT = [];
   $ThingProps = Thing_Type_Props();
-  $tprop = (empty($ThingProps[$t['Type']] )?0: $ThingProps[$t['Type']] ) ;
+  $tprop = (empty($ThingProps[$T['Type']] )?0: $ThingProps[$T['Type']] ) ;
   foreach ($MTs as $M) {
-    if ($t['Whose']) {
+    if ($T['Whose']) {
       if ($ModuleCats[$M['CivMil']] == 'Army') {
         if (($tprop & THING_HAS_ARMYMODULES) == 0) continue; // Armies
       } else if ($M['CivMil'] <= 4) {
@@ -245,9 +245,9 @@ function Get_Valid_Modules(&$t) {
       } else {
         continue;
       }
-      $l = Has_Tech($t['Whose'],$M['BasedOn']);
+      $l = Has_Tech($T['Whose'],$M['BasedOn']);
       if (!$l) continue;
-      if ($M['MinShipLevel'] > $t['Level']) continue;
+      if ($M['MinShipLevel'] > $T['Level']) continue;
     }
     $VMT[$M['id']] = $M['Name'];
   }
@@ -255,21 +255,21 @@ function Get_Valid_Modules(&$t) {
 }
 
 
-function Max_Modules(&$t) {
-  if (empty($t['Type'])) return 0;
+function Max_Modules(&$T) {
+  if (empty($T['Type'])) return 0;
   $ThingTypes = Get_ThingTypes();
-  $TTs = $ThingTypes[$t['Type']];
+  $TTs = $ThingTypes[$T['Type']];
   if (!empty($TTs['Properties']) && ($TTs['Properties'] & THING_HAS_MODULES)) {
-    $v = [0,4,12,24,40,60,84,112,144,180,220][$t['Level']];
-    if ($t['Type'] == 2) $v = $v*3/4; // Support Ship
-    if (Has_Tech($t['Whose'], 'Compact Ship Design') && $t['Level'] > 1 && ($TTs['Properties'] & THING_HAS_SHIPMODULES)) $v += $t['Level'];
-    if ($t['Level'] > 2 && Has_Trait($t['Whose'],'Really Big')) $v += $t['Level']*$t['Level']*$t['Level'];
-    if ($TTs['Name'] == 'Satellite Defences') $v += $t['Level'];
+    $v = [0,4,12,24,40,60,84,112,144,180,220][$T['Level']];
+    if ($T['Type'] == 2) $v = $v*3/4; // Support Ship
+    if (Has_Tech($T['Whose'], 'Compact Ship Design') && $T['Level'] > 1 && ($TTs['Properties'] & THING_HAS_SHIPMODULES)) $v += $T['Level'];
+    if ($T['Level'] > 2 && Has_Trait($T['Whose'],'Really Big')) $v += $T['Level']*$T['Level']*$T['Level'];
+    if ($TTs['Name'] == 'Satellite Defences') $v += $T['Level'];
     if ($TTs['Name'] == 'Planetary Defence Force') {
       if (Has_Trait($Fid,"Strong military")) {
         $v *= 2;
       } else {
-        $v += $t['Level'];
+        $v += $T['Level'];
       }
     }
     return $v;
@@ -277,12 +277,12 @@ function Max_Modules(&$t) {
   return 0;
 }
 
-function Calc_Health(&$t,$KeepTechLvl=0) {
-  if (empty($t['Level'])) return 0;
+function Calc_Health(&$T,$KeepTechLvl=0) {
+  if (empty($T['Level'])) return 0;
   $Plus = 0;
-  if (Has_Trait($t['Whose'],'Thick Skinned')) $Plus =1;
-  $Health = 5*($t['Level']+$Plus);
-  $Ms = Get_Modules($t['id']);
+  if (Has_Trait($T['Whose'],'Thick Skinned')) $Plus =1;
+  $Health = 5*($T['Level']+$Plus);
+  $Ms = Get_Modules($T['id']);
   $Mts = Get_ModuleTypes();
   $Techs = Get_Techs();
   $Rescat = 0;
@@ -293,9 +293,9 @@ function Calc_Health(&$t,$KeepTechLvl=0) {
           $Health += $Mhlth;        
       } else {
         $based = $Mts[$M['Type']]['BasedOn'];
-        if ($l = Has_Tech($t['Whose'],$based)) {
+        if ($l = Has_Tech($T['Whose'],$based)) {
           if ($Techs[$based]['Cat'] == 1) {
-            $l = Has_Tech($t['Whose'],$Techs[$based]['PreReqTech']);
+            $l = Has_Tech($T['Whose'],$Techs[$based]['PreReqTech']);
           }
           $Mhlth = $M['Number'] * Mod_ValueSimple($l+$Plus,$M['Type'],$Rescat);
           $Health += $Mhlth;
@@ -307,11 +307,11 @@ function Calc_Health(&$t,$KeepTechLvl=0) {
   return $Health;
 }
 
-function Calc_Damage(&$t,&$Rescat) { 
+function Calc_Damage(&$T,&$Rescat) { 
 
-  if ($t['Type'] ==20) return 8; // Militia
+  if ($T['Type'] ==20) return 8; // Militia
   $Dam = 0;
-  $Ms = Get_Modules($t['id']);
+  $Ms = Get_Modules($T['id']);
   $Mts = Get_ModuleTypes();
 
   $Rescat = 0;
@@ -337,11 +337,11 @@ function Calc_TechLevel($Fid,$MType) {
   return $l;
 }
 
-function Thing_Finished($tid) {
-  $t = Get_Thing($tid);
-  $t['BuildState'] = 3;
-  $t['CurHealth'] = $t['OrigHealth'];
-  Put_Thing($t);
+function Thing_Finished($Tid) {
+  $T = Get_Thing($tid);
+  $T['BuildState'] = 3;
+  $T['CurHealth'] = $T['OrigHealth'];
+  Put_Thing($T);
 }
 
 
@@ -566,28 +566,28 @@ function LogisticalSupport($Fid) {  // Note this sets the Economic rating of all
 }
 
 function Thing_Duplicate($otid) {
-  $t = Get_Thing($otid);
-  unset($t['id']);
-  $t['Name'] = "Copy of " . $t['Name'];
-  $t['id'] = $tid = Insert_db('Things',$t);
+  $T = Get_Thing($otid);
+  unset($T['id']);
+  $T['Name'] = "Copy of " . $T['Name'];
+  $T['id'] = $Tid = Insert_db('Things',$T);
   $Discs = Get_DistrictsT($otid);
-  $t['SystemId'] = 0;
-  $t['LinkId'] = 0;
-  $t['WithinSysLoc'] = 0;
-  $t['BuildState'] = 0;
-  $t['History'] = 0;
-  $t['Instruction'] = 0;
-  $t['LinkPay'] = 0;
-  $t['LinkCost'] = 0;
-  $t['Progress'] = 0;
-  $t['ActionsNeeded'] = 0;
-  $t['Dist1'] = 0;
-  $t['Dist2'] = 0;
-  $t['CurInst'] = 0;
-  $t['MakeName'] ='';
-  
+  $T['SystemId'] = 0;
+  $T['LinkId'] = 0;
+  $T['WithinSysLoc'] = 0;
+  $T['BuildState'] = 0;
+  $T['History'] = 0;
+  $T['Instruction'] = 0;
+  $T['LinkPay'] = 0;
+  $T['LinkCost'] = 0;
+  $T['Progress'] = 0;
+  $T['ActionsNeeded'] = 0;
+  $T['Dist1'] = 0;
+  $T['Dist2'] = 0;
+  $T['CurInst'] = 0;
+  $T['MakeName'] ='';
+  $T['CurHealth'] = $T['OrigHealth'];
     
-  $Fid = $t['Whose'];
+  $Fid = $T['Whose'];
        
   if ($Discs) {
     foreach ($Discs as $D) {
@@ -606,8 +606,8 @@ function Thing_Duplicate($otid) {
       Insert_db('Modules',$M);
     }
   }
-  Put_Thing($t);
-  return $t;
+  Put_Thing($T);
+  return $T;
 }
 
 function EyesInSystem($Fid,$Sid) { // Eyes 1 = in space, 2= sens, 4= neb sens, 8=ground
@@ -759,8 +759,8 @@ function Mod_Types_From_Names(&$TTs=0) {
   return $TTN;
 }
 
-function Check_MyThing(&$t,$Fid=0) {
-  if ($t['Whose'] == $Fid) return;
+function Check_MyThing(&$T,$Fid=0) {
+  if ($T['Whose'] == $Fid) return;
   if (Access('GM')) return;
   echo "<h2 class=Err>Not Your Thing...</h2>\n";
   dotail();
