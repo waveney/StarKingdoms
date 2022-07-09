@@ -7,8 +7,9 @@
   
   dostaffhead("Move Things",["js/dropzone.js","css/dropzone.css" ]);
 
-  global $FACTION, $GAME, $GAMEID, $db;
+  global $FACTION, $GAME, $GAMEID, $db, $Currencies;
   $Fid = $FACTION['id'];
+  AddCurrencies();
   
   A_Check('Player');  
   
@@ -25,7 +26,7 @@
   
   foreach($Bs as $B) {
     $Spend += $B['Amount'];
-    echo "Sending " . Credit() . $B['Amount'] . " for " . $B['YourRef'] . " to " . $Facts[$B['Recipient']]['Name'] . "<br>";
+    echo "Sending " . ($B['What'] == 0? ( Credit() . $B['Amount']) : ($B['Amount'] . " " . $Currencies[$B['What']]))  . " for " . $B['YourRef'] . " to " . $Facts[$B['Recipient']]['Name'] . "<br>";
   }
 
   echo "<P>";
