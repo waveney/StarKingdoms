@@ -837,8 +837,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
         if (Get_DistrictsP($P['id'])) continue; // Someone already there
         if (($P['Type'] == $FACTION['Biosphere']) || ($PH['Type'] == $FACTION['Biosphere2']) || ($PH['Type'] == $FACTION['Biosphere3'])) {
           $HabPs[$P['id']] = [$P['Name'],$P['Type'],3];
-        }
-        if ($P['Type'] == 4 ) {
+        } else if ($P['Type'] == 4 ) {
           if (!$Hab_dome) continue;
           $HabPs[$P['id']] = [$P['Name'],$P['Type'],10];
         } else {

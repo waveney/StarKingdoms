@@ -855,6 +855,155 @@ function AgentsStartMissions() {
   return 1;
 }
 
+function ProjectProgressActions($Pay4=0) {
+  // Mark progress on all things, if finished change state appropriately 
+//  echo "Project Progress is currently Manual<p>"; 
+// Note the rushes have already been paid for in the almost identicalcode PayForRushes above. 
+  global $GAME;
+
+  $ProjTypes = Get_ProjectTypes();
+  $Projects = Get_Projects_Cond("Status=1");
+  $DistTypes = Get_DistrictTypes();
+  $ThingTypes = Get_ThingTypes();
+
+  foreach ($Projects as $P) {
+    if ($P['LastUpdate'] >= $GAME['Turn']) continue;
+    GMLog("Updating project " . $P['id'] . " " . $P['Name'] . "<br>");
+
+    
+    $PT = $ProjTypes[$P['Type']];
+    if ($PT['Category'] & 16) { // Construction
+      $Fact = Get_Faction($P['FactionId']);
+      $MaxActs = Has_Tech($P['FactionId'],3);  
+
+      $H = Get_ProjectHome($P['Home']);
+      if (!isset($H['ThingType'])) {
+        GMLog("<b>Confused state for project " . $P['id'] . "</b><p>");
+        $H['Skip'] = 1;
+        continue;  // Remove things without districts                
+      }
+      switch ($H['ThingType']) {
+        case 1: // Planet
+          $PH = Get_Planet($H['ThingId']);
+          if (($PH['Type'] != $Fact['Biosphere']) && ($PH['Type'] != $Fact['Biosphere2']) && ($PH['Type'] != $Fact['Biosphere3'])) $MaxActs-=1;
+          break;
+        case 2: // Moon
+          $PH = Get_Moon($H['ThingId']);
+          if (($PH['Type'] != $Fact['Biosphere']) && ($PH['Type'] != $Fact['Biosphere2']) && ($PH['Type'] != $Fact['Biosphere3'])) $MaxActs-=1;
+          break;
+        case 3: // Thing
+          $PH = Get_Thing($H['ThingId']);
+          break;
+      }
+    } else if ($PT['Category'] & 32) { // Deep SPace - TODO
+    
+    } else if ($PT['Category'] > 32) { // Intelligence -TODO
+    
+    } else { // District based 
+      $H = Get_ProjectHome($P['Home']);
+      if (!isset($H['ThingType'])) {
+        GMLog("<b>Confused state for project " . $P['id'] . "</b><p>");
+        $H['Skip'] = 1;
+        continue;  // Remove things without districts                
+      }
+      switch ($H['ThingType']) {
+        case 1: // Planet
+          $PH = Get_Planet($H['ThingId']);
+          $Dists = Get_DistrictsP($H['ThingId']);
+          break;
+        case 2: // Moon
+          $PH = Get_Moon($H['ThingId']);
+          $Dists = Get_DistrictsM($H['ThingId']);
+          break;
+        case 3: // Thing
+          $PH = Get_Thing($H['ThingId']);
+
+          if ($ThingTypes[$PH['Type']]['Properties'] & THING_CAN_DO_PROJECTS) {
+            $ORY = 0;
+            foreach($DistTypes as $DT) if ($DT['Name'] == 'Orbital Repair') $ORY = $DT['id'];
+            $Dists = [$ORY=>['HostType'=>3,'HostId'=>$PH['id'],'Type'=>$ORY,'Number'=>1, 'id'=>-1]];
+            $NoC = 1;
+            break;
+          } 
+
+          $Dists = Get_DistrictsT($H['ThingId']);
+          if (!$Dists) {
+            $H['Skip'] = 1;
+            continue 2;  // Remove things without districts
+          }
+          break;
+      }
+
+//var_dump($Dists);
+      switch ($PT['Category']) {
+      case 1: $MaxActs = $Dists[5]['Number']; break;
+      case 2: $MaxActs = $Dists[3]['Number']; break;
+      case 4: $MaxActs = $Dists[2]['Number']; break;
+      case 8: $MaxActs = $Dists[4]['Number']; break;
+      default: 
+        GMLog("<b>Confused state for project " . $P['id'] . "</b><p>");
+      }
+    }
+
+//echo "Maxacts . $MaxActs<br>";    
+
+  // Find Project Home
+  // Find Dists or Skill to base on
+  // Set maxact from num dists or skill
+    
+    
+    $TurnStuff = Get_ProjectTurnPT($P['id'],$GAME['Turn']);
+    
+    $Rush = $FreeRush = 0;
+    $Bonus = 0;
+    if (!empty($TurnStuff['Bonus'])) $Bonus = $TurnStuff['Bonus'];
+    $Acts = min($MaxActs,$P['ProgNeeded']-$P['Progress']);
+    if (preg_match('/Research/',$PT['Name'],$mtch) && Has_Trait($P['FactionId'],'Built for Construction and Logistics')) {
+      $TechId = $P['ThingType'];
+      $Tech = Get_Tech($TechId);
+      if ($Tech['PreReqTech'] == 1 || $TechId == 1) {
+        $FreeRush = min(1,$Acts,$P['ProgNeeded']-$P['Progress']-$Acts-$Bonus);
+        if ($FreeRush && $Pay4 == 0) {
+          TurnLog($P['FactionId'],'Free Rush of ' . $P['Name'] . " by $FreeRush ");
+        }
+      } 
+    }
+    if (isset($TurnStuff['Rush'])) {
+      $Rush = min($TurnStuff['Rush'],$Acts,$P['ProgNeeded']-$P['Progress']-$Acts-$Bonus-$FreeRush);
+      if ($Rush) {
+        if ($Pay4) {
+          if (Spend_Credit($P['FactionId'],$Rc = (Rush_Cost($P['FactionId'])*$Rush), 'Rushing ' . $P['Name'] . " By $Rush")) {
+            TurnLog($P['FactionId'],'Rushing ' . $P['Name'] . " by $Rush  Cost: " . Credit() . " $Rc");
+          } else {
+            TurnLog($P['FactionId'],'Not enough Credits to Rush: ' . $P['Name']);
+            $TurnStuff['Rush'] = 0;
+            Put_ProjectTurn($TurnStuff);
+            $Rush = 0;
+          }
+        }
+      }
+    }
+
+//echo "Acts . $Acts<br>";   
+    if ($Pay4 == 0) {     
+      $P['Progress'] = min($P['ProgNeeded'], $P['Progress']+$Acts+$Rush+$Bonus+$FreeRush);
+      TurnLog($P['FactionId'],"Progressing " . $P['Name'] . " by " . ($Acts+$Rush+$Bonus+$FreeRush));
+      $P['LastUpdate'] = $GAME['Turn'];
+      Put_Project($P); // Note completeion is handled later in the turn sequence
+    }
+  }
+  
+  return 1;
+}
+
+
+function PayForRushes() {
+  ProjectProgressActions(1); // Pay 4 rushes only
+  GMLog("Rushes paid for<p>");
+  return 1;
+}
+
+
 function Economy() {
   global $db,$GAMEID;
   // TWork out economies and generate income for each faction.
@@ -1332,134 +1481,8 @@ function Devastation() {
 }
 
 function ProjectProgress() {
-  // Mark progress on all things, if finished change state appropriately 
-//  echo "Project Progress is currently Manual<p>";  
-  global $GAME;
-
-  $ProjTypes = Get_ProjectTypes();
-  $Projects = Get_Projects_Cond("Status=1");
-  $DistTypes = Get_DistrictTypes();
-
-  foreach ($Projects as $P) {
-    if ($P['LastUpdate'] >= $GAME['Turn']) continue;
-    GMLog("Updating project " . $P['id'] . " " . $P['Name'] . "<br>");
-
-    
-    $PT = $ProjTypes[$P['Type']];
-    if ($PT['Category'] & 16) { // Construction
-      $Fact = Get_Faction($P['FactionId']);
-      $MaxActs = Has_Tech($P['FactionId'],3);  
-
-      $H = Get_ProjectHome($P['Home']);
-      if (!isset($H['ThingType'])) {
-        GMLog("<b>Confused state for project " . $P['id'] . "</b><p>");
-        $H['Skip'] = 1;
-        continue;  // Remove things without districts                
-      }
-      switch ($H['ThingType']) {
-        case 1: // Planet
-          $PH = Get_Planet($H['ThingId']);
-          if (($PH['Type'] != $Fact['Biosphere']) && ($PH['Type'] != $Fact['Biosphere2']) && ($PH['Type'] != $Fact['Biosphere3'])) $MaxActs-=1;
-          break;
-        case 2: // Moon
-          $PH = Get_Moon($H['ThingId']);
-          if (($PH['Type'] != $Fact['Biosphere']) && ($PH['Type'] != $Fact['Biosphere2']) && ($PH['Type'] != $Fact['Biosphere3'])) $MaxActs-=1;
-          break;
-        case 3: // Thing
-          $PH = Get_Thing($H['ThingId']);
-          break;
-      }
-    } else if ($PT['Category'] & 32) { // Deep SPace - TODO
-    
-    } else if ($PT['Category'] > 32) { // Intelligence -TODO
-    
-    } else { // District based 
-      $H = Get_ProjectHome($P['Home']);
-      if (!isset($H['ThingType'])) {
-        GMLog("<b>Confused state for project " . $P['id'] . "</b><p>");
-        $H['Skip'] = 1;
-        continue;  // Remove things without districts                
-      }
-      switch ($H['ThingType']) {
-        case 1: // Planet
-          $PH = Get_Planet($H['ThingId']);
-          $Dists = Get_DistrictsP($H['ThingId']);
-          break;
-        case 2: // Moon
-          $PH = Get_Moon($H['ThingId']);
-          $Dists = Get_DistrictsM($H['ThingId']);
-          break;
-        case 3: // Thing
-          $PH = Get_Thing($H['ThingId']);
-
-          if ($ThingTypes[$PH['Type']]['Properties'] & THING_CAN_DO_PROJECTS) {
-            $ORY = 0;
-            foreach($DistTypes as $DT) if ($DT['Name'] == 'Orbital Repair') $ORY = $DT['id'];
-            $Dists = [$ORY=>['HostType'=>3,'HostId'=>$PH['id'],'Type'=>$ORY,'Number'=>1, 'id'=>-1]];
-            $NoC = 1;
-            break;
-          } 
-
-          $Dists = Get_DistrictsT($H['ThingId']);
-          if (!$Dists) {
-            $H['Skip'] = 1;
-            continue 2;  // Remove things without districts
-          }
-          break;
-      }
-
-//var_dump($Dists);
-      switch ($PT['Category']) {
-      case 1: $MaxActs = $Dists[5]['Number']; break;
-      case 2: $MaxActs = $Dists[3]['Number']; break;
-      case 4: $MaxActs = $Dists[2]['Number']; break;
-      case 8: $MaxActs = $Dists[4]['Number']; break;
-      default: 
-        GMLog("<b>Confused state for project " . $P['id'] . "</b><p>");
-      }
-    }
-
-//echo "Maxacts . $MaxActs<br>";    
-
-  // Find Project Home
-  // Find Dists or Skill to base on
-  // Set maxact from num dists or skill
-    
-    
-    $TurnStuff = Get_ProjectTurnPT($P['id'],$GAME['Turn']);
-    
-    $Rush = $FreeRush = 0;
-    $Bonus = 0;
-    if (!empty($TurnStuff['Bonus'])) $Bonus = $TurnStuff['Bonus'];
-    $Acts = min($MaxActs,$P['ProgNeeded']-$P['Progress']);
-    if (preg_match('/Research/',$PT['Name'],$mtch) && Has_Trait($P['FactionId'],'Built for Construction and Logistics')) {
-      $TechId = $P['ThingType'];
-      $Tech = Get_Tech($TechId);
-      if ($Tech['PreReqTech'] == 1 || $TechId == 1) {
-        $FreeRush = min(1,$Acts,$P['ProgNeeded']-$P['Progress']-$Acts-$Bonus);
-        if ($FreeRush) {
-          TurnLog($P['FactionId'],'Free Rush of ' . $P['Name'] . " by $FreeRush ");
-        }
-      } 
-    }
-    if (isset($TurnStuff['Rush'])) {
-      $Rush = min($TurnStuff['Rush'],$Acts,$P['ProgNeeded']-$P['Progress']-$Acts-$Bonus-$FreeRush);
-      if ($Rush) {
-        if (Spend_Credit($P['FactionId'],$Rc = (Rush_Cost($P['FactionId'])*$Rush), 'Rushing ' . $P['Name'] . " By $Rush")) {
-          TurnLog($P['FactionId'],'Rushing ' . $P['Name'] . " by $Rush  Cost: " . Credit() . " $Rc");
-        } else {
-          TurnLog($P['FactionId'],'Not enough Credits to Rush: ' . $P['Name']);
-        }
-      }
-    }
-
-//echo "Acts . $Acts<br>";        
-    $P['Progress'] = min($P['ProgNeeded'], $P['Progress']+$Acts+$Rush+$Bonus+$FreeRush);
-    TurnLog($P['FactionId'],"Progressing " . $P['Name'] . " by " . ($Acts+$Rush+$Bonus+$FreeRush));
-    $P['LastUpdate'] = $GAME['Turn'];
-    Put_Project($P); // Note completeion is handled later in the turn sequence
-  }
-  
+  ProjectProgressActions(0); // Progress, payment already made
+  GMLog("All Projects Progressed<p>");
   return 1;
 }
 
@@ -2428,7 +2451,7 @@ function Do_Turn() {
   global $Sand;  // If you need to add something, replace a spare if poss, then nothing breaks
   $Stages = ['Check Turns Ready', 'Spare', 'Spare','Start Turn Process', 'Save All Locations', 'Spare', 'Cash Transfers', 'Spare',
              'Spare', 'Pay For Stargates', 'Spare', 'Scientific Breakthroughs', 'Start Projects', 'Spare', 'Spare', 'Instuctions', 
-             'Instuctions Stage 2', 'Spare', 'Agents Start Missions', 'Spare', 'Spare', 'Economy', 'Spare', 'Direct Moves', 
+             'Instuctions Stage 2', 'Spare', 'Agents Start Missions', 'Pay For Rushes', 'Spare', 'Economy', 'Spare', 'Direct Moves', 
              'Load Troops', 'Spare', 'Ship Move Check', 'Ship Movements', 'Agents Move Check', 'Agents Movements', 'Spare', 'Meetups',
              
              'Spare', 'Space Combat', 'Unload Troops', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Devastation Selection', 
@@ -2438,7 +2461,7 @@ function Do_Turn() {
 
   $Coded =  ['Coded','No','No','Coded','Coded','No','Coded', 'No',
              'No','Coded','No','Coded','Partial,M','No','No','Coded,M',
-             'Coded,M','No', 'No','No','No','Coded','No','Coded',
+             'Coded,M','No', 'No','Coded','No','Coded','No','Coded',
              'Coded','No','Coded,M','Coded','Coded,M','Coded','No', 'Coded,M',
              
              'No','No','Coded','No','No','No','No','Coded,M', 
