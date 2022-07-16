@@ -430,10 +430,12 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
 
 function Instuctions() { // And other Instructions
   global $ThingInstrs,$GAME;
+  global $Currencies;
   $Things = Get_Things_Cond(0,"Instruction>0");
   $NeedColStage2 = 0;
   $Facts = Get_Factions();
-  
+  $Systems = Get_SystemRefs();
+ 
   $PTs = Get_ProjectTypes();
   $AAs = [];
   
@@ -717,16 +719,31 @@ function Instuctions() { // And other Instructions
       }
       break;
       
-     case 'Dismantle Stargate':
+    case 'Dismantle Stargate':
       if (!Spend_Credit($T['Whose'],$T['InstCost'],"Dismantle Stargate #" . $T['Dist1']) ) {
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to start to dismantle stargate #" .$T['Dist1'],$T);
       }
       break;
 
-     case 'Build Stargate':
-// TODO 
-       break;
+    case 'Build Stargate':
+      if (!Spend_Credit($T['Whose'],$T['InstCost'],"Build Stargate Level " . $T['Dist1']) ) {
+        $T['Progress'] = -1; // Stalled
+        TurnLog($T['Whose'],"Could not afford to start to dismantle stargate #" .$T['Dist1'],$T);
+      }
+      $LinkLevels = Get_LinkLevels();
+       
+      $LL = $LinkLevels[$T['Dist1']];
+      $LinkRes = GameFeature('LinkResource',0);
+      if ($LinkRes) {
+        AddCurrencies();
+        $Cur = 0;
+        foreach ($Currencies as $Ci => $C) if ( $C == $LinkRes) $Cur = $Ci;
+        if (!Gain_Currency($T['Whose'],$Cur,-$LL['MakeCost'],"Build new stargate level " . $T['Dist1'] . " from " . $Systems[$T['SystemId']] . " to " . $Systems[$T['Dist2']])) {
+          TurnLog($T['Whose'],"Could not aford the $LinkRes to build new stargate level " . $T['Dist1'] . " from " . $Systems[$T['SystemId']] . " to " . $Systems[$T['Dist2']]); 
+        }  
+      }
+      break;
 
     case 'Make Planet Mine':
       if (!Spend_Credit($T['Whose'],$T['InstCost'],"Make Planet Mine in " . $N['Ref']) ) {
@@ -751,9 +768,11 @@ function Instuctions() { // And other Instructions
     case 'Transfer':
       $OldWho = $T['Whose'];
       $T['Whose'] = $T['Dist1'];
-      TurnLog($OldWho,$T['Name'] . " has been transfered to: " .$Facts[$T['Whose']]['Name'],$T);  
-      TurnLog($T['Whose'],$T['Name'] . " has been transfered to you from the : " .$Facts[$OldWho]['Name'],$T);  
-      GMLog("The " . $T['Name'] . " has been transfered from the " . $Facts[$OldWho]['Name'] . " to the " . $Facts[$T['Whose']]['Name']);
+      if ($OldWho && $T['Whose']) {
+        TurnLog($OldWho,$T['Name'] . " has been transfered to: " .$Facts[$T['Whose']]['Name'],$T);  
+        TurnLog($T['Whose'],$T['Name'] . " has been transfered to you from the : " .$Facts[$OldWho]['Name'],$T);  
+        GMLog("The " . $T['Name'] . " has been transfered from the " . $Facts[$OldWho]['Name'] . " to the " . $Facts[$T['Whose']]['Name']);
+      }
       break;
     default:
      
@@ -1219,7 +1238,7 @@ function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
       }
     }
   }
- var_dump($UsedLinks);
+// var_dump($UsedLinks);
 
   GMLog("<table border><tr><td>Who<td>What<td>Level<td>From<td>Link<td>To<td>Paid<td>Stop<td>Why Stopping\n");  
   foreach ($Things as $T) {
@@ -1980,7 +1999,15 @@ function InstructionsComplete() {
        break;
 
      case 'Build Stargate':
-       GMLog("A stargate has been made in " . $N['Ref'] . " by " . $Facts[$Who]['Name'] . "Not Automated...",1);     
+       $Systems = Get_SystemRefs();
+       $LinkLevels = Get_LinkLevels();
+       $LL = $LinkLevels[$T['Dist1']];
+       $NewLink = ['GameId'=>$GAME['id'], 'System1Ref'=>$Systems[$T['SystemId']], 'System2Ref'=> $Systems[$T['Dist2']], 'Level'=>$T['Dist1']];
+       $Lid = Put_Link($NewLink);
+       TurnLog($T['Whose'], "<span style=color:" . $LL['Colour'] . ">Link#$Lid </span>has been created between " . $Systems[$T['SystemId']] . " and " . $Systems[$T['Dist2']]);
+       GMLog("A new " . $LL['Colour'] . ">level " . $T['Dist1'] . " link #$Lid </span> has been made between " . $Systems[$T['SystemId']] . " and " . $Systems[$T['Dist2']]);
+       $FL = ['LinkId'=>$Lid, 'FactionId'=>$T['Whose'],'Known'=>1];
+       Put_FactionLink($FL);
        break;
 
      case 'Make Planet Mine':
@@ -2049,6 +2076,7 @@ function InstructionsComplete() {
        }
        Gain_Currency($T['Whose'],$AdianNumber,$Recovery,"Dismantling Link #$Lid");
        GMLog("Link $Lid has been dismantled by " . $Facts[$T['Whose']]['Name'] . " recovered $Recovery $AdianName ");
+       TurnLog($Who,"Link $Lid has been dismantled you recovered $Recovery $AdianName ");
        break;
      
      default: 

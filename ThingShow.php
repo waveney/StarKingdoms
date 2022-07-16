@@ -13,6 +13,7 @@ function Show_Thing(&$T,$Force=0) {
   global $BuildState,$GAME,$GAMEID,$FACTION;
   global $Project_Status;
   global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$ThingInclrs, $InstrMsg;
+  global $Currencies;
   
   $ThingInclrs = ['white','lightgreen','lightpink','lightblue','lightyellow','bisque','#99ffcc','#b3b3ff',
                  'lightgreen','lightpink','lightblue','lightyellow','bisque','#99ffcc','#b3b3ff',
@@ -35,6 +36,7 @@ function Show_Thing(&$T,$Force=0) {
   $N = Get_System($T['SystemId']);
   $Syslocs = Within_Sys_Locs($N);
   $LinkTypes = Get_LinkLevels();
+  if ($Fid) $Faction = Get_Faction($Fid);
   
   if ($T['SystemId'] == $T['NewSystemId'] || $T['NewSystemId'] == 0) {
     $NewSyslocs = $Syslocs;
@@ -1005,16 +1007,46 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       break;
 
     case 'Build Stargate':
+      echo "<br>Select link level and destination, then refresh.  To link off the map, GMs need to create a new node first.<br>";
+      $LinkLevels = Get_LinkLevels();
+      $LLMenu = [];
+      $LLCols = [];
+      foreach ($LinkLevels as $LL) {
+        $LLMenu[$LL['Level']] = "Level: " . $LL['Level'] . " - " . $LL['Name'];
+        $LLCols[$LL['Level']] =  $LL['Colour'];
+      }
+      $LLMenu[0] = '';
+      $LLCols[0] = 'Black';
+      if (empty($LLCols[$T['Dist1']])) $T['Dist1'] = 0;
+//var_dump($T['Dist1'],$LLMenu,$LLCols);
+      echo fm_select($LLMenu,$T,'Dist1',0," style=color:" . $LLCols[$T['Dist1']],'',0,$LLCols ) . " to: " . fm_select($Systems,$T,'Dist2');
       $ProgShow = 1;
-      $Acts = $PTNs['Build Stargate']['CompTarget'];
+      if ($T['Dist1']) {
+        $LL = $LinkLevels[$T['Dist1']];
+        $LinkRes = GameFeature('LinkResource',0);
+        if ($LinkRes) {
+          AddCurrencies();
+          $Cur = 0;
+          foreach ($Currencies as $Ci => $C) if ( $C == $LinkRes) $Cur = $Ci;
+          if ($Faction["Currency" . (6 - $Cur)] >= $LL['MakeCost']) {
+            echo "Will use " . $LL['MakeCost'] . " $LinkRes<br>";
+          } else {
+            echo "<span class=Err>Warning needs more $LinkRes than you have </span>";
+          }
+          $Acts = $LL['MakeCost']*2;
+        }
+      } else {
+        $Acts = 0;
+      }
 
       // Needs a lot of work
       break;
 
     case 'Dismantle Stargate':
-      echo "<br>Link to dismantle: " . fm_select($SelLinks,$T,'Dist1',0," style=color:" . $SelCols[$T['Dist1']] ,'',0,$SelCols);
+      echo "<br>Link to dismantle: " . fm_select($SelLinks,$T,'Dist1',0," style=color:" . $SelCols[$T['Dist1']] ,'',0,$SelCols) . " Refresh after selecting.";
       $ProgShow = 1;
-      $Acts = $PTNs['Dismantle Stargate']['CompTarget'];
+      $LLevel = $Links[$T['Dist1']]['Level'];
+      $Acts = $PTNs['Dismantle Stargate']['CompTarget']*$LLevel;
 
       break;
 
