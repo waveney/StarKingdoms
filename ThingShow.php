@@ -804,6 +804,11 @@ function Show_Thing(&$T,$Force=0) {
     case 'Transfer':
       break;    
 
+    case 'Make Something': // Generic GM special for weird DSC projects
+      if ($Moving || !$HasDeep ) continue 2;   
+      break;
+      
+
      default: 
       continue 2;
       
@@ -1135,6 +1140,16 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
         echo "<input type=submit name=ACTION value='Transfer Now'>";
       }
       break;
+      
+    case 'Make Something':  // Generic making AKA Analyse for academic 
+      echo "These projects will be defined by a GM<p>";
+      echo "<br>" . fm_text0("Name project - meaningfull to you and the GM:",$T,'MakeName');
+      echo fm_number0('Actions Needed',$T,'ActionsNeeded');
+      $Acts = $T['ActionsNeeded'];
+      $ProgShow = 3;
+      break;
+
+
 
     default: 
       break;
@@ -1149,8 +1164,14 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       if (Has_Trait($Fid,'Built for Construction and Logistics') && ($Cost>200)) {
         $T['InstCost'] = $Cost = (200+($Cost-200)/2);
       }
-      if ($ProgShow == 2) echo "<tr><td><td colspan=6>";
-      if ($GM) {
+      if ($ProgShow >= 2) echo "<tr><td><td colspan=6>";
+      if ($ProgShow == 3) { // Generic DSC instruction
+        if ($GM) {
+          echo fm_number0('Progress',$T,'Progress') ;
+        } else {
+          echo " Progress " . $T['Progress'];
+        }
+      } else if ($GM) {
         echo fm_number0('Progress',$T,'Progress') . " / " . fm_number0('Actions Needed',$T,'ActionsNeeded');
       } else {
         echo " Progress " . $T['Progress'] . ' / ' . $T['ActionsNeeded'];
@@ -1161,7 +1182,6 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
         $T['Progress'] = 0;
       }
     }
-
   }
   if (Access('God')) { 
     echo "<tr><td>Instruction:<td>" . fm_select($ThingInstrs,$T,'Instruction') . "<td>Stored: "  . fm_select($ThingInstrs,$T,'CurInst');
@@ -1175,6 +1195,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
     echo "<input type=submit name=ACTION value='GM Refit'> <input type=submit name=ACTION value='Destroy Thing (Leave debris)'>" .
        " <input type=submit name=ACTION value='Remove Thing (No debris)'>";
     if ($tprops & THING_CAN_MOVE) echo "  <input type=submit name=ACTION value='Warp Out'>\n";
+    echo fm_number0(" Do",$T,'Damage', '',' class=Num3 ') . " <input type=submit name=ACTION value=Damage>\n";
   }
   if (!$GM && ($tprops & THING_CAN_BECREATED)) echo "<input type=submit name=ACTION value='Delete'>";
   if ($GM || empty($Fid)) {

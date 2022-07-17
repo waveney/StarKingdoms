@@ -14,7 +14,8 @@ $CivMil = ['','Civilian','Military'];
 $BuildState = ['Planning','Building','Shakedown','Complete','Ex','Abandonded','Missing In Action'];
 $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse Anomaly','Establish Embassy','Make Outpost','Make Asteroid Mine','Make Minefield',
                 'Make Orbital Repair Yard','Build Space Station','Expand Space Station','Make Deep Space Sensor','Make Advanced Asteroid Mine','Build Stargate',
-                'Make Planet Mine', 'Construct Command Relay Station', 'Repair Command Node','Build Planetary Mine','Dismantle Stargate','Disband','Transfer'];
+                'Make Planet Mine', 'Construct Command Relay Station', 'Repair Command Node','Build Planetary Mine','Dismantle Stargate','Disband','Transfer',
+                'Make Something'];
 $Advance = ['','','Advanced ','Very Advanced ','Ultra Advanced ','Evolved '];
 
 
@@ -599,7 +600,7 @@ function Thing_Duplicate($otid) {
   $Mods = Get_Modules($otid); 
   if ($Mods) {
     foreach ($Mods as $M) {
-      $M['ThingId'] = $tid;
+      $M['ThingId'] = $Tid;
       $Lvl = Calc_TechLevel($Fid,$M['Type']);
       unset($M['id']);
       $M['Level'] = $Lvl;

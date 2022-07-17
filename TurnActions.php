@@ -764,7 +764,8 @@ function Instuctions() { // And other Instructions
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to Repair Command Node " .$N['Ref'],$T);
       }
-
+      break;
+      
     case 'Transfer':
       $OldWho = $T['Whose'];
       $T['Whose'] = $T['Dist1'];
@@ -774,6 +775,14 @@ function Instuctions() { // And other Instructions
         GMLog("The " . $T['Name'] . " has been transfered from the " . $Facts[$OldWho]['Name'] . " to the " . $Facts[$T['Whose']]['Name']);
       }
       break;
+      
+    case 'Make Something': 
+      if (!Spend_Credit($T['Whose'],$T['InstCost'],"Make Something" . $N['Ref']) ) {
+        $T['Progress'] = -1; // Stalled
+        TurnLog($T['Whose'],"Could not afford to Make something in " . $N['Ref'],$T);
+      }
+      break;      
+    
     default:
      
     }
@@ -891,7 +900,9 @@ function ProjectProgressActions($Pay4=0) {
 
     
     $PT = $ProjTypes[$P['Type']];
+
     if ($PT['Category'] & 16) { // Construction
+
       $Fact = Get_Faction($P['FactionId']);
       $MaxActs = Has_Tech($P['FactionId'],3);  
 
@@ -919,6 +930,7 @@ function ProjectProgressActions($Pay4=0) {
     } else if ($PT['Category'] > 32) { // Intelligence -TODO
     
     } else { // District based 
+
       $H = Get_ProjectHome($P['Home']);
       if (!isset($H['ThingType'])) {
         GMLog("<b>Confused state for project " . $P['id'] . "</b><p>");
@@ -938,10 +950,12 @@ function ProjectProgressActions($Pay4=0) {
           $PH = Get_Thing($H['ThingId']);
 
           if ($ThingTypes[$PH['Type']]['Properties'] & THING_CAN_DO_PROJECTS) {
-            $ORY = 0;
+
+/*            $ORY = 0;
             foreach($DistTypes as $DT) if ($DT['Name'] == 'Orbital Repair') $ORY = $DT['id'];
-            $Dists = [$ORY=>['HostType'=>3,'HostId'=>$PH['id'],'Type'=>$ORY,'Number'=>1, 'id'=>-1]];
-            $NoC = 1;
+            $Dists = [$ORY=>['HostType'=>3,'HostId'=>$PH['id'],'Type'=>$ORY,'Number'=>1, 'id'=>-1]];*/
+            $Dists = [3=>['HostType'=>3,'HostId'=>$PH['id'],'Type'=>3,'Number'=>1, 'id'=>-1]];
+            $MaxActs = $NoC = 1;
             break;
           } 
 
@@ -976,6 +990,7 @@ function ProjectProgressActions($Pay4=0) {
     $Rush = $FreeRush = 0;
     $Bonus = 0;
     if (!empty($TurnStuff['Bonus'])) $Bonus = $TurnStuff['Bonus'];
+
     $Acts = min($MaxActs,$P['ProgNeeded']-$P['Progress']);
     if (preg_match('/Research/',$PT['Name'],$mtch) && Has_Trait($P['FactionId'],'Built for Construction and Logistics')) {
       $TechId = $P['ThingType'];
@@ -1242,7 +1257,7 @@ function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
 
   GMLog("<table border><tr><td>Who<td>What<td>Level<td>From<td>Link<td>To<td>Paid<td>Stop<td>Why Stopping\n");  
   foreach ($Things as $T) {
-    if ($T['BuildState'] <2 || $T['BuildState'] > 3 || $T['LinkId'] <= 0 || $T['Whose']==0) continue;
+    if ($T['BuildState'] <2 || $T['BuildState'] > 3 || $T['LinkId'] <= 0 || $T['Whose']==0 || $T['CurHealth']==0) continue;
     if (( $Agents == 0 &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER)) || ( $Agents &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER) ==0 ) ) continue;
     
     $CheckNeeded = ( $Agents && ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER) );
@@ -1300,7 +1315,7 @@ function ShipMovements($Agents=0) {
   $Facts = Get_Factions();
   
   foreach ($Things as $T) {
-    if ($T['BuildState'] <2 || $T['BuildState'] > 3 || $T['LinkId'] <= 0 || $T['Whose']==0) continue;
+    if ($T['BuildState'] <2 || $T['BuildState'] > 3 || $T['LinkId'] <= 0 || $T['Whose']==0 || $T['CurHealth']==0) continue;
     if (( $Agents == 0 &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER)) || ( $Agents &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER) ==0 ) ) continue;
 
     $Tid = $T['id'];
@@ -1537,6 +1552,7 @@ function InstructionsProgress() {
       case 'Make Planet Mine':
       case 'Construct Command Relay Station':
       case 'Repair Command Node': // Not coded yet
+      case 'Make Something': 
         $Prog = Has_Tech($T['Whose'],'Deep Space Construction');
         $Mods = Get_ModulesType($Tid, 3);
 //var_dump($T);exit;
@@ -2060,6 +2076,7 @@ function InstructionsComplete() {
        AddCurrencies();
        $LLs =Get_LinkLevels();
        $Lid = $T['Dist1'];
+       $Who = $T['Whose'];
        $L = Get_Link($Lid);
        $Lvl =$L['Level'];
        $L['System1Ref'] = $L['System2Ref'] = '';
@@ -2078,7 +2095,13 @@ function InstructionsComplete() {
        GMLog("Link $Lid has been dismantled by " . $Facts[$T['Whose']]['Name'] . " recovered $Recovery $AdianName ");
        TurnLog($Who,"Link $Lid has been dismantled you recovered $Recovery $AdianName ");
        break;
-     
+
+     case 'Make Something': 
+       $Who = $T['Whose'];
+       $Name = $Facts[$Who]['Name'];
+       GMLog("$Name has done a DSC make something of " . $T['MakeName'] . " this needs to be handled by the GMs.",1);
+       break;
+           
      default: 
        break;
      }

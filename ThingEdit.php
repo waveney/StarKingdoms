@@ -234,6 +234,7 @@ function New_Thing(&$T) {
           $T['WithinSysLoc'] = $Gates[0]['WithinSysLoc'];
           $T['CurHealth'] = $T['Link_id'] = 0;
           $T['TargetKnown'] = 1;
+          $T['History'] .= "Warped out to " . $T['SystemId'] . " reduced to 0 health\n";
           Put_Thing($T);
           db_delete_cond('ScansDue','ThingId=$tid AND Turn=' . $GAME['Turn']);
           break;
@@ -439,8 +440,18 @@ function New_Thing(&$T) {
       Put_Thing($T);
       echo "<h2>" . $T['Name'] . " has now been transfered to " . $Factions[$T['Whose']]['Name'] . "</h2>";
       dotail();
-      
       break;
+      
+    case 'Damage':
+      $tid = $_REQUEST['id'];
+      $T = Get_Thing($tid);
+      Check_MyThing($T,$Fid);
+      $Dam = $_REQUEST['Damage'];
+      $T['CurHealth'] = min(max(0,$T['CurHealth'] - $Dam), $T['OrigHealth']);
+      echo "<h2>" . $T['Name'] . " has received $Dam dammage</h2>";
+      Put_Thing($T);
+      break;
+      
     
     case 'None' :
     default: 
