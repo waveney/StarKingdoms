@@ -1162,15 +1162,15 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       break;
     }
     $T['ActionsNeeded'] = $Acts;    
+    if ($Cost < 0) {
+      $T['InstCost'] = $Cost = 0;
+    } else {
+      $T['InstCost'] = $Cost = $Acts*10;
+    }
+    if (Has_Trait($Fid,'Built for Construction and Logistics') && ($Cost>200)) {
+      $T['InstCost'] = $Cost = (200+($Cost-200)/2);
+    }
     if ($ProgShow) {
-      if ($Cost < 0) {
-        $T['InstCost'] = $Cost = 0;
-      } else {
-        $T['InstCost'] = $Cost = $Acts*10;
-      }
-      if (Has_Trait($Fid,'Built for Construction and Logistics') && ($Cost>200)) {
-        $T['InstCost'] = $Cost = (200+($Cost-200)/2);
-      }
       if ($ProgShow >= 2) echo "<tr><td><td colspan=6>";
       if ($ProgShow == 3) { // Generic DSC instruction
         if ($GM) {
