@@ -93,7 +93,11 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
       $LOWho = GameFeature('LinkOwner',0);
 // var_dump($Lid,$LinkTypes[$ll]['Cost'],$LOWho,$T['LinkPay']);
       if ($Lid>0 && ($LinkTypes[$ll]['Cost'] > 0) && $LOWho && $LOWho != $T['Whose']) {
-        $Lc = $LinkTypes[$ll][($tprops & THING_HAS_GADGETS) ? 'AgentCost':'Cost']*$T['Level'];
+        if ($tprops & THING_HAS_GADGETS) {
+          $Lc = $LinkTypes[$ll]['AgentCost'];  
+        } else {
+          $Lc = $LinkTypes[$ll]['Cost']*$T['Level'];   
+        }
         if ($T['LinkPay']==0 || $T['LinkCost'] < $Lc) {
           $LOwner = Get_Faction($LOWho);
           echo "<form method=post action=PThingList.php>";

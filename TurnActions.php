@@ -1916,8 +1916,8 @@ function InstructionsComplete() {
          $FAs = Gen_Get_Cond('FactionAnomaly',"FactionId=$Fid AND AnomalyId=$Aid");
          if ($FAs) {
            $FA = $FAs[0];
-           if ($FA['Progress'] >= $A['AnomalyLevel'] && $FA['State'] != 2) {
-             $FA['State'] = 2;
+           if ($FA['Progress'] >= $A['AnomalyLevel'] && $FA['State'] != 3) {
+             $FA['State'] = 3;
              Gen_Put('FactionAnomaly',$FA);          
              TurnLog($T['Whose'], $T['Name'] . " Anomaly study on " . $A['Name'] . " has been completed - See sperate response from the GMs for what you get");
              GMLog($Facts[$Fid]['Name'] . " has completed anomaly study : <a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . "</a> has been completed - give them the reward.");

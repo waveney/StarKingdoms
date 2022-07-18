@@ -77,7 +77,13 @@ function Show_Thing(&$T,$Force=0) {
   $ll = ($T['LinkId']>0 ? $Links[$T['LinkId']]['Level'] : 0);
   $LOWho = GameFeature('LinkOwner',0);
   if ($Links && ($T['LinkId']>0) && ($LinkTypes[$ll]['Cost'] > 0) && $LOWho && $LOWho != $T['Whose']) {
-    $Lc = $LinkTypes[$ll][($tprops & THING_HAS_GADGETS) ? 'AgentCost':'Cost']*$T['Level'];
+    if ($tprops & THING_HAS_GADGETS) {
+      $Lc = $LinkTypes[$ll]['AgentCost'];  
+    } else {
+      $Lc = $LinkTypes[$ll]['Cost']*$T['Level'];   
+    }
+    
+//    $Lc = $LinkTypes[$ll][($tprops & THING_HAS_GADGETS) ? 'AgentCost':'Cost']*$T['Level'];
     if ($T['LinkPay']==0 || $T['LinkCost'] < $Lc) {
       $LOwner = Get_Faction($LOWho);
       echo "<h2>You are taking a <span style='color:" . $LinkTypes[$ll]['Colour'] . "'>" . $LinkTypes[$ll]['Name'] .
@@ -1142,8 +1148,8 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       break;
       
     case 'Make Something':  // Generic making AKA Analyse for academic 
-      echo "These projects will be defined by a GM<p>";
-      echo "<br>" . fm_text0("Name project - meaningfull to you and the GM:",$T,'MakeName');
+      echo "<br>These projects will be defined by a GM<br>";
+      echo fm_text0("Name project - meaningfull to you and the GM:",$T,'MakeName',2);
       echo fm_number0('Actions Needed',$T,'ActionsNeeded');
       $Acts = $T['ActionsNeeded'];
       $ProgShow = 3;
