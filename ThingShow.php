@@ -1161,8 +1161,8 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
     default: 
       break;
     }
+    $T['ActionsNeeded'] = $Acts;    
     if ($ProgShow) {
-      $T['ActionsNeeded'] = $Acts;
       if ($Cost < 0) {
         $T['InstCost'] = $Cost = 0;
       } else {
