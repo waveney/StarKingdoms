@@ -899,6 +899,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
     case 'Voluntary Warp Home': // Warp Home
     case 'Decommision': // Dissasemble
     case 'Disband': // Disband
+      $Acts = $Cost = 0;
       break;
       
     case 'Establish Embassy': // Establish Embassy
