@@ -216,7 +216,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
           if ($T['LinkId'] > 0) {
             $L = Get_Link($T['LinkId']);
             echo "<td style=color:" . $LinkTypes[$L['Level']]['Colour'] . " >Link #" . $T['LinkId'];
-            if ($T['NewSystemId'] && $T['TargetKnown']) {
+            if ($T['NewSystemId'] && $T['TargetKnown'] || Has_Tech($T['Whose'],'Know All Links')) {
               echo "<td>" . $Systems[$T['NewSystemId']];
             } else {
               echo "<td> ? ";
