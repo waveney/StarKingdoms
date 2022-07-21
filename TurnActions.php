@@ -774,6 +774,16 @@ function Instuctions() { // And other Instructions
         TurnLog($T['Whose'],$T['Name'] . " has been transfered to you from the : " .$Facts[$OldWho]['Name'],$T);  
         GMLog("The " . $T['Name'] . " has been transfered from the " . $Facts[$OldWho]['Name'] . " to the " . $Facts[$T['Whose']]['Name']);
       }
+      $T['Instruction'] = 0;
+      $T['LinkId'] = 0;
+      $T['LinkPay'] = 0;
+      $T['LinkCost'] = 0;
+      $T['Progress'] = 0;
+      $T['ActionsNeeded'] = 0;
+      $T['Dist1'] = 0;
+      $T['Dist2'] = 0;
+      $T['CurInst'] = 0;
+      $T['MakeName'] ='';
       break;
       
     case 'Make Something': 

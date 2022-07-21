@@ -437,6 +437,17 @@ function New_Thing(&$T) {
       Check_MyThing($T,$Fid);
       $OldWho = $T['Whose'];
       $T['Whose'] = $T['Dist1'];
+      $T['Instruction'] = 0;
+      $T['LinkId'] = 0;
+      $T['LinkPay'] = 0;
+      $T['LinkCost'] = 0;
+      $T['Progress'] = 0;
+      $T['ActionsNeeded'] = 0;
+      $T['Dist1'] = 0;
+      $T['Dist2'] = 0;
+      $T['CurInst'] = 0;
+      $T['MakeName'] ='';
+
       Put_Thing($T);
       echo "<h2>" . $T['Name'] . " has now been transfered to " . $Factions[$T['Whose']]['Name'] . "</h2>";
       dotail();
