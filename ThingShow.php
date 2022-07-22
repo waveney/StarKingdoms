@@ -573,6 +573,15 @@ function Show_Thing(&$T,$Force=0) {
         echo "<td><b>" . $D['Number']. "</b> of ";
         if (isset($MTNs[$D['Type']])) {
           echo $MTNs[$D['Type']] . ($T['BuildState']? (" (Level " . $D['Level'] . ") ") :"") ;
+          switch ($MTs[$D['Type']]['Name']) {
+            case 'Cargo Space':
+              echo " Capacity: " . $T['CargoSpace'];
+              break;
+            case 'Sublight Engines':
+              echo " Speed: " . sprintf('%0.3g',$T['Speed']);
+              break;            
+            default:
+          }            
         } else {
           $M = $MTs[$D['Type']];
           if ($l = Has_Tech($T['Whose'],$M['BasedOn'])) {

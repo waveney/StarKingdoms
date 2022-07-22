@@ -229,6 +229,7 @@
       if ((($tprops & THING_CAN_MOVE) != 0) && (($tprops & THING_HAS_SHIPMODULES) != 0)) {
         $T['Speed'] = $Engines*$Elvl/$T['Level'] +1;
         echo "<tr><td>Speed:<td>" . sprintf('%0.3g',$T['Speed']) . "<td><td>At current Tech Levels";
+      if ($T['CargoSpace']) echo "<tr><td>Cargo Capacity:<td>" . $T['CargoSpace'] . "<td><td>At current Tech Levels";
       } 
     }
     
