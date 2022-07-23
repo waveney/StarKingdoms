@@ -642,6 +642,7 @@
          }
 
           if (isset($TurnStuff[$TSi])) {
+            while ($TurnStuff[$TSi]['TurnNumber'] < $t) $TSi++;
             if ($TurnStuff[$TSi]['TurnNumber'] == $t) {
               $Rush = $Pro['Rush'] = min($TurnStuff[$TSi]['Rush'], $Pro['MaxRush']);
               if (!empty($TurnStuff[$TSi]['Bonus'])) $Bonus = $Pro['Bonus'] = $TurnStuff[$TSi]['Bonus'];
