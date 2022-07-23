@@ -566,6 +566,8 @@
       if ($P['Status'] > 2 ) continue; // Cancelled, On Hold or Could not start
 //var_dump($P); echo "<P>";
       $TurnStuff = Get_ProjectTurns($P['id']);
+      $TSi = 0;
+      while (isset($TurnStuff[$TSi]['TurnNumber']) && ($TurnStuff[$TSi]['TurnNumber'] < $P['TurnStart'])) $TSi++;
 //
 //var_dump($TurnStuff); echo "<br>";
       $Pro = [];
@@ -611,7 +613,6 @@
         $TotProg = 0;
       
 //var_dump($Pro, $ProjTypes[$P['Type']]);  echo "<p>";    
-        $TSi = 0;
         // Is there an existing project where this is going?
         if (isset($Proj[$P['TurnStart']][$Hi][$Di]['id'])) {
           $What = $Proj[$P['TurnStart']][$Hi][$Di]['id'];
@@ -642,7 +643,6 @@
          }
 
           if (isset($TurnStuff[$TSi])) {
-            while ($TurnStuff[$TSi]['TurnNumber'] < $t) $TSi++;
             if ($TurnStuff[$TSi]['TurnNumber'] == $t) {
               $Rush = $Pro['Rush'] = min($TurnStuff[$TSi]['Rush'], $Pro['MaxRush']);
               if (!empty($TurnStuff[$TSi]['Bonus'])) $Bonus = $Pro['Bonus'] = $TurnStuff[$TSi]['Bonus'];
