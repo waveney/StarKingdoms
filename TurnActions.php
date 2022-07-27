@@ -793,6 +793,14 @@ function Instuctions() { // And other Instructions
       }
       break;      
     
+    case 'Make Warpgate': 
+      if (!Spend_Credit($T['Whose'],$T['InstCost'],"Make Warpgate" . $N['Ref']) ) {
+        $T['Progress'] = -1; // Stalled
+        TurnLog($T['Whose'],"Could not afford to Make Warpgate in " . $N['Ref'],$T);
+      }
+      break;      
+    
+
     default:
      
     }
@@ -1563,6 +1571,7 @@ function InstructionsProgress() {
       case 'Construct Command Relay Station':
       case 'Repair Command Node': // Not coded yet
       case 'Make Something': 
+      case 'Make Warpgate':
         $Prog = Has_Tech($T['Whose'],'Deep Space Construction');
         $Mods = Get_ModulesType($Tid, 3);
 //var_dump($T);exit;
@@ -2111,7 +2120,15 @@ function InstructionsComplete() {
        $Name = $Facts[$Who]['Name'];
        GMLog("$Name has done a DSC make something of " . $T['MakeName'] . " this needs to be handled by the GMs.",1);
        break;
-           
+     
+     case 'Make Warpgate':
+       $Who = $T['Whose'];
+       $NT = ['GameId'=>$GAME['id'], 'Type'=> 15, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc' => $T['WithinSysLoc'], 'Whose'=>$Who, 
+              'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>($T['MakeName'] . " warp gate" )];
+       Put_Thing($NT);
+       TurnLog($Who,"warp gate has been made in " . $T['SystemId']);
+       break;
+     
      default: 
        break;
      }

@@ -537,7 +537,8 @@ function Show_Thing(&$T,$Force=0) {
       foreach ($Ds as $D) {
         $did = $D['id'];
         if (($dc++)%2 == 0)  echo "<tr>";
-        echo "<td>" . (isset($MTNs[$D['Type']])? fm_Select($MTNs, $D , 'Type', 1,'',"ModuleType-$did") : "<span class=red>INV:" .  fm_Select($MNs, $D , 'Type', 1,'',"ModuleType-$did") . "</span>" )
+        echo "<td>" . (isset($MTNs[$D['Type']])? fm_Select($MTNs, $D , 'Type', 1,'',"ModuleType-$did") : "<span class=red>INV:" .  
+                      fm_Select($MNs, $D , 'Type', 1,'',"ModuleType-$did") . "</span>" )
                     . fm_number1('Level', $D,'Level', '', ' class=Num3 ',"ModuleLevel-$did") . ' # '
                     . fm_number0('', $D,'Number', '',' class=Num3 ',"ModuleNumber-$did") 
                     . "<button id=ModuleRemove-$did onclick=AutoInput('ModuleRemove-$did')>R</button>";
@@ -823,6 +824,9 @@ function Show_Thing(&$T,$Force=0) {
       if ($Moving || !$HasDeep ) continue 2;   
       break;
       
+    case 'Make Warpgate': // Warp gate through DSC
+      if ($Moving || !$HasDeep || !Has_Tech($Fid,'Construct Warp Gate using DSC')) continue 2;       
+      break;
 
      default: 
       continue 2;
@@ -1163,6 +1167,12 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       echo fm_number0('Actions Needed',$T,'ActionsNeeded');
       $Acts = $T['ActionsNeeded'];
       $ProgShow = 3;
+      break;
+
+    case 'Make Warpgate':
+      echo "<br>" . fm_text0("Name of Warpgate",$T,'MakeName');
+      $Acts = $PTNs['Build Warpgate using DSC']['CompTarget'];
+      $ProgShow = 2;
       break;
 
 
