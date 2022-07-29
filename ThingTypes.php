@@ -18,7 +18,7 @@
   echo "<h1>Thing Types</h1>";
   
   echo "Props (Hex) 1=Districts, 2=Modules, 4=Leveled, 8=Ship, 10=Gadgets, 20=Army, 40=Mil, 80=Civil, 100=Normal Move, 200=Army Move, 400= Two Factions, 800=Inherit Minerals,<br>" .
-       "1000=Can be Advanced, 2000=Instant Create, 4000=Need Cargo Space, 8000=No Named Chars, 10000=Do Projects (Wo Dists), 20000=Direct Move, 40000=Move 2nd<br>\n";
+       "1000=Can be Advanced, 2000=Instant Create, 4000=Need Cargo Space, 8000=No Named Chars, 10000=Do Projects (Wo Dists), 20000=Direct Move, 40000=Move 2nd, 80000=Has Health<br>\n";
   echo "Eyes:  1 = in space, 2= sens, 4= neb sens, 8=ground 1, 16 ground 2 etc<br>\n"; // TODO no ground differntion yet 
   echo "SeenBy: What Eyes can see this<br>\n";
   echo "<form method=post action=ThingTypes.php>";

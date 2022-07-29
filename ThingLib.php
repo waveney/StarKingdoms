@@ -41,6 +41,7 @@ define('THING_CANT_HAVENAMED',32768);
 define('THING_CAN_DO_PROJECTS',65536);
 define('THING_MOVES_DIRECTLY',131072);
 define('THING_MOVES_AFTER',262144);
+define('THING_HAS_HEALTH',524288);
 
 function ModFormulaes() {
   global $ModFormulaes;

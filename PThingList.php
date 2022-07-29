@@ -200,7 +200,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
     echo "<td>" . $Name;
     echo "<td>" . $T['Level'];
     echo "<td>" . $T['Orders'];
-    echo "<td><center>" . $T['CurHealth'] . ' / ' . $T['OrigHealth'];
+    echo "<td><center>" . (($Props & THING_HAS_HEALTH)? $T['CurHealth'] . ' / ' . $T['OrigHealth'] : "-");
     echo "<td>" . $BuildState[$T['BuildState']];
     if ($Props & THING_MOVES_DIRECTLY) {
       echo "<td>" . $Systems[$T['SystemId']];
@@ -211,7 +211,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
       echo "<td>";
       if ($T['Instruction']) echo $ThingInstrs[$T['Instruction']];
       if (($T['Instruction'] == 0 || $T['Instruction'] == 5 ) && (($Props & THING_CAN_MOVE) && ( $T['BuildState'] == 3))) { 
-        if ($T['LinkId'] >=0 && $T['CurHealth'] > 0) {
+        if ($T['LinkId'] >=0 && ($T['CurHealth'] > 0 || ($Props & THING_HAS_HEALTH) ==0)) {
           echo " <a href=PMoveThing.php?id=" . $T['id'] . ">Move</a>";
           if ($T['LinkId'] > 0) {
             $L = Get_Link($T['LinkId']);
