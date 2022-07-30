@@ -144,7 +144,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
   $BuildCats = ['All','Plan','Building','Shakedown','Complete','Other'];
   $Build['BuildShow'] = $Faction[$GM?'GMThingBuild':'ThingBuild'];
   
-  echo "<div class=floatright ><b>" . fm_radio("Show",$ShowCats,$Show,'ThingShow',' onchange=ThingListFilter()') . "<br><br>";
+  echo "<div class=floatright ><b>" . fm_radio("Show",$ShowCats,$Show,'ThingShow',' onchange=ThingListFilter()') . "<br>";
   echo fm_radio("Build State",$BuildCats, $Build,'BuildShow',' onchange=ThingListFilter()') . "</b></div>";
 
   echo "To see more information about each thing and to do movement and changes click on the name<p>\n";
@@ -212,7 +212,10 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
       if ($T['Instruction']) echo $ThingInstrs[$T['Instruction']];
       if (($T['Instruction'] == 0 || $T['Instruction'] == 5 ) && (($Props & THING_CAN_MOVE) && ( $T['BuildState'] == 3))) { 
         if ($T['LinkId'] >=0 && ($T['CurHealth'] > 0 || ($Props & THING_HAS_HEALTH) ==0)) {
-          echo " <a href=PMoveThing.php?id=" . $T['id'] . ">Move</a>";
+          if ($Faction['TurnState'] == 1) {
+            echo " <a href=PMoveThing.php?id=" . $T['id'] . ">Move</a>";
+          } else {
+          }
           if ($T['LinkId'] > 0) {
             $L = Get_Link($T['LinkId']);
             echo "<td style=color:" . $LinkTypes[$L['Level']]['Colour'] . " >Link #" . $T['LinkId'];
