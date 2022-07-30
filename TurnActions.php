@@ -132,13 +132,13 @@ function CashTransfers() {
           Spend_Credit($B['Recipient'], - $B['Amount'],$B['YourRef']);
           TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " transfered " . Credit() . $B['Amount'] . " to you for " . $B['YourRef'] );
         }
-        GMLog('Cash transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . ' of ' . $B['Amount'] . ' for ' . $B['YourRef'],1);     
+        GMLog('Cash transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . ' of ' . $B['Amount'] . ' for ' . $B['YourRef']);     
       } else {
         TurnLog($B['FactionId'],"Failed to transfer " . Credit() . $B['Amount'] . " for " . $B['YourRef'] . " to " . $Facts[$B['Recipient']]['Name'] . 
                  " you only have " . $Facts[$B['FactionId']]['Credits']);
         if ($B['Recipient'] > 0) TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " Failed to transfer " . Credit() . $B['Amount'] . " for " . $B['YourRef'] );
         GMLog('Cash transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . 
-              ' of ' . Credit() . $B['Amount'] . ' for ' . $B['YourRef'] .  ' Bounced',1);
+              ' of ' . Credit() . $B['Amount'] . ' for ' . $B['YourRef'] .  ' Bounced');
       }
     } else if ($B['What'] <= 4) {
       Gain_Science($B['Recipient'],$B['What'],$B['Amount'],$B['YourRef']);
@@ -152,13 +152,13 @@ function CashTransfers() {
             TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " transfered " . $B['Amount'] . " of " . $Currencies[$B['What']] . " for " . $B['YourRef'] );
           }
           GMLog('Transfer from ' . $Facts[$B['FactionId']]['Name'] . ' to ' . $Facts[$B['Recipient']]['Name'] . ' of ' . $B['Amount'] . ' ' .$Currencies[$B['What']]
-                 . ' for ' . $B['YourRef'],1);      
+                 . ' for ' . $B['YourRef']);      
         } else {
           TurnLog($B['FactionId'],"Failed to transfer " . $B['Amount']  . " of " . $Currencies[$B['What']] . " for " . $B['YourRef'] . " to " . $Facts[$B['Recipient']]['Name']);
           if ($B['Recipient'] > 0) TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " Failed to transfer " . $B['Amount']  . " of " . $Currencies[$B['What']]
               . " for " . $B['YourRef'] );
           GMLog('Transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . 
-                ' of ' . $B['Amount'] . " of " . $Currencies[$B['What']] . ' for ' . $B['YourRef'] .  ' Bounced',1);
+                ' of ' . $B['Amount'] . " of " . $Currencies[$B['What']] . ' for ' . $B['YourRef'] .  ' Bounced');
         }
       } else {
         if ($B['Recipient'] > 0) {
@@ -291,11 +291,13 @@ function StartProjects() {
           continue;      
         }
         
-        if ($T['BuildState'] > 0 ) {
-          $T = Thing_Duplicate($Tid);
-          $Tid = $T['id'];
-          $P['ThingId'] = $Tid;
-          Put_Project($P);
+        if (($ProjTypes[$P['Type']]['Props'] & 256) ==0) { // Has a thing
+          if ($T['BuildState'] > 0 ) {
+            $T = Thing_Duplicate($Tid);
+            $Tid = $T['id'];
+            $P['ThingId'] = $Tid;
+            Put_Project($P);
+          }
         }
   
         if (($T['SystemId'] != 0 && $T['SystemId'] != $Where[0])) {
@@ -305,8 +307,7 @@ function StartProjects() {
           GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as not in same system: ' . $P['Name'],1);
           Put_Project($P);
           continue;     
-        }
-        if ($ProjTypes[$P['Type']]['Props'] & 16) { // Tight Location check
+        }if ($ProjTypes[$P['Type']]['Props'] & 16) { // Tight Location check
           if (($T['WithinSysLoc'] == $Where[1] || $T['WithinSysLoc'] == $Where[1]-100)) {       
             // OK
           } else {
@@ -484,6 +485,17 @@ function Instuctions() { // And other Instructions
           var_dump($T);
           exit;
         }
+        
+        if ($N['Control'] > 0 && $N['Control'] != $T['Whose']) {  // Colonising system under control of others
+          if ($NeedColStage2 == 0) {
+            echo "<form method=post action=TurnActions.php?ACTION=Process&S=16>";
+            $NeedColStage2 = 1;
+          }
+          GMLog($Facts[$T['Whose']]['Name'] . " colonising " . $N['Ref'] . " it is controlled by " . $Facts[$N['Control']]['Name'] . 
+                " - Allow? " . fm_YesNo("Col$Tid",1, "Reason to reject") . "\n<br>");
+          break;        
+        }
+        
         [$P,$Acts] = array_shift($HabPs);
         $T['Spare1'] = $P['id'];
         $T['ActionsNeeded'] = $Acts;
@@ -787,7 +799,11 @@ function Instuctions() { // And other Instructions
       break;
       
     case 'Make Something': 
-      if (!Spend_Credit($T['Whose'],$T['InstCost'],"Make Something" . $N['Ref']) ) {
+      if (empty($T['MakeName']) || $T['ActionsNeeded']==0) {
+        $T['Progress'] = -1; // Stalled
+        TurnLog($T['Whose'],"Attempted to make an ill defned thing in " . $N['Ref'],$T);
+        GMLog($Facts[$T['Whose']]['Name'] . " attempting to make ill defined thing in " . $N['Ref'] . " with " . $T['Name']);
+      } else if (!Spend_Credit($T['Whose'],$T['InstCost'],"Make Something" . $N['Ref']) ) {
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to Make something in " . $N['Ref'],$T);
       }
@@ -887,6 +903,60 @@ function InstuctionsStage2() { // And other Instructions
         } 
       }
       break;
+
+    case 'Colonise': // Colonise
+    case 'Build Planetary Mine':
+
+      $P = Get_Planet($T['Spare1']);
+      if (empty($P)) { // Refind the planet we need
+        $Fid = $T['Whose'];
+        $PTs = Get_PlanetTypes();
+        $Ps = Get_Planets($N['id']);
+        $Hab_dome = Has_Tech($Fid,'Habitation Domes');
+        $HabPs = [];
+        foreach($Ps as $P) {
+          if (!$PTs[$P['Type']]['Hospitable']) continue;
+          if (Get_DistrictsP($P['id'])) continue; // Someone already there
+          if (($P['Type'] == $FACTION['Biosphere']) || ($PH['Type'] != $FACTION['Biosphere2']) || ($PH['Type'] != $FACTION['Biosphere3'])) { 
+            $HabPs[$P['id']] = [$P,3];
+          }
+          if ($P['Type'] == 4 ) {
+            if (!$Hab_dome) continue;
+            $HabPs[$P['id']] = [$P,10];
+          } else {
+            $HabPs[$P['id']] = [$P,6];
+          }
+        }
+        if (empty($HabPs)) {
+          GMLog("<h2>Planet not found - Tell Richard</h2>",1);
+          var_dump($T);
+          exit;
+        }
+        
+        if ($N['Control'] > 0 && $N['Control'] != $T['Whose']) {  // Colonising system under control of others
+          if (isset($_REQUEST["Col$Tid"]) &&  $_REQUEST["Col$Tid"] != "on") {
+            TurnLog($T['Whose'],"The colony was not created in " . $N['Ref'] . " because " . $_REQUEST["ReasonCol$Tid"] . "\n<br>",$T);
+            $T['Instruction'] = 0;
+            Put_Thing($T);
+            
+        break;
+          }
+        }
+        
+        [$P,$Acts] = array_shift($HabPs);
+        $T['Spare1'] = $P['id'];
+        $T['ActionsNeeded'] = $Acts;
+      }
+      
+      if (($ThingInstrs[$T['Instruction']]) == 'Colonise') {
+        TurnLog($T['Whose'],"The " . $T['Name'] . " is colonising " . $P['Name'] . " in " . $N['Ref'] ,$T);
+        GMlog($Facts[$T['Whose']]['Name'] . " is starting to colonise " . $P['Name'] . " in " . $N['Ref']);
+      } else {
+        TurnLog($T['Whose'],"The " . $T['Name'] . " is seting up planetary mining " . $P['Name'] . " in " . $N['Ref'] ,$T);
+        GMlog($Facts[$T['Whose']]['Name'] . " is starting to planetary mine " . $P['Name'] . " in " . $N['Ref']);      
+      }
+      break;
+
 
       
     default:
@@ -1901,6 +1971,8 @@ function InstructionsComplete() {
           Put_System($N);
         }
       }
+      $P['Control'] = $Who;
+      Put_Planet($P);
        
       $D = ['HostType' =>1, 'HostId'=> $P['id'], 'Type'=> $T['Dist1'], 'Number'=>1, 'GameId'=>$GAME['id'], 'TurnStart'=>$GAME['Turn']];
       if ($D['Type'] == 0) $D['Type'] = 1;
@@ -2041,7 +2113,7 @@ function InstructionsComplete() {
        $NewLink = ['GameId'=>$GAME['id'], 'System1Ref'=>$Systems[$T['SystemId']], 'System2Ref'=> $Systems[$T['Dist2']], 'Level'=>$T['Dist1']];
        $Lid = Put_Link($NewLink);
        TurnLog($T['Whose'], "<span style=color:" . $LL['Colour'] . ">Link#$Lid </span>has been created between " . $Systems[$T['SystemId']] . " and " . $Systems[$T['Dist2']]);
-       GMLog("A new " . $LL['Colour'] . ">level " . $T['Dist1'] . " link #$Lid </span> has been made between " . $Systems[$T['SystemId']] . " and " . $Systems[$T['Dist2']]);
+       GMLog("A new " . $LL['Colour'] . " level " . $T['Dist1'] . " link #$Lid </span> has been made between " . $Systems[$T['SystemId']] . " and " . $Systems[$T['Dist2']]);
        $FL = ['LinkId'=>$Lid, 'FactionId'=>$T['Whose'],'Known'=>1];
        Put_FactionLink($FL);
        break;
@@ -2119,7 +2191,7 @@ function InstructionsComplete() {
      case 'Make Something': 
        $Who = $T['Whose'];
        $Name = $Facts[$Who]['Name'];
-       GMLog("$Name has done a DSC make something of " . $T['MakeName'] . " this needs to be handled by the GMs.",1);
+       GMLog("$Name has done a DSC make something of '" . $T['MakeName'] . "' in " . $N['Ref'] . " it took " . $T['Progress'] . " actions this needs to be handled by the GMs.",1);
        break;
      
      case 'Make Warpgate':
@@ -2381,7 +2453,7 @@ function MilitiaArmyRecovery() {
       $T['CurHealth'] = max($T['OrigHealth'], $T['CurHealth']+$Rec);
       Put_Thing($T);
       if ($T['Whose']) TurnLog($T['Whose'],$T['Name'] . " recovered $Rec health",$T);
-      GMLog("<a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a> recovered $Rec health",1);
+      GMLog("<a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . ' a ' . $TTypes[$T['Type']]['Name'] . "</a> recovered $Rec health");
       
     }
     
@@ -2392,7 +2464,7 @@ function MilitiaArmyRecovery() {
         $T['CurHealth'] = min($T['OrigHealth'],$T['CurHealth']+$Rep);
         Put_Thing($T);
         if ($T['Whose']) TurnLog($T['Whose'],$T['Name'] . " recovered $Rep health",$T);
-        GMLog("<a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a> recovered $Rep health",1);
+        GMLog("<a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a> recovered $Rep health");
       }
     }  
     
@@ -2407,7 +2479,7 @@ function MilitiaArmyRecovery() {
         $T['CurHealth'] = min($T['OrigHealth'],$T['CurHealth']+$Rep);
         Put_Thing($T);
         if ($T['Whose']) TurnLog($T['Whose'],$T['Name'] . " recovered $Rep health",$T);
-        GMLog("<a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a> recovered $Rep health",1);
+        GMLog("<a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a> recovered $Rep health");
       }
     }  
      

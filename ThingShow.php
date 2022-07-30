@@ -861,7 +861,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       foreach($Ps as $P) {
         if (!$PlTs[$P['Type']]['Hospitable']) continue;
         if (Get_DistrictsP($P['id'])) continue; // Someone already there
-        if (($P['Type'] == $FACTION['Biosphere']) || ($PH['Type'] == $FACTION['Biosphere2']) || ($PH['Type'] == $FACTION['Biosphere3'])) {
+        if (($P['Type'] == $FACTION['Biosphere']) || ($P['Type'] == $FACTION['Biosphere2']) || ($P['Type'] == $FACTION['Biosphere3'])) {
           $HabPs[$P['id']] = [$P['Name'],$P['Type'],3];
         } else if ($P['Type'] == 4 ) {
           if (!$Hab_dome) continue;
@@ -1166,6 +1166,9 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       echo fm_text0("Name project - meaningfull to you and the GM:",$T,'MakeName',2);
       echo fm_number0('Actions Needed',$T,'ActionsNeeded');
       $Acts = $T['ActionsNeeded'];
+      if (empty($T['MakeName']) || $T['ActionsNeeded'] == 0) {
+        echo "<span class=Err>These MUST be filled in</span>";
+      }
       $ProgShow = 3;
       break;
 
