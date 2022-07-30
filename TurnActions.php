@@ -151,7 +151,7 @@ function CashTransfers() {
             Gain_Currency($B['Recipient'], $B['What'], $B['Amount'],$B['YourRef']);
             TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " transfered " . $B['Amount'] . " of " . $Currencies[$B['What']] . " for " . $B['YourRef'] );
           }
-          GMLog('Transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . ' of ' . $B['Amount'] . $Currencies[$B['What']]
+          GMLog('Transfer from ' . $Facts[$B['FactionId']]['Name'] . ' to ' . $Facts[$B['Recipient']]['Name'] . ' of ' . $B['Amount'] . ' ' .$Currencies[$B['What']]
                  . ' for ' . $B['YourRef'],1);      
         } else {
           TurnLog($B['FactionId'],"Failed to transfer " . $B['Amount']  . " of " . $Currencies[$B['What']] . " for " . $B['YourRef'] . " to " . $Facts[$B['Recipient']]['Name']);
@@ -1255,6 +1255,7 @@ function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
   $Things = Get_AllThings();
   $TTypes = Get_ThingTypes();
   $Facts = Get_Factions();
+  $LOWho = GameFeature('LinkOwner',0);
   
   GMLog("<h2>These movements are planned - to stop one, tick the stop box and say why</h2>");
 //  GMLog("<form method=Post action=TurnActions.php?ACTION=Complete>" . fm_hidden('S',($Agents?34:32)));
@@ -1298,7 +1299,7 @@ function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
       }
 
 // var_dump($CheckNeeded,$T['LinkPay']);
-      if ($L['Level'] ==1 || $T['LinkPay']<0) {
+      if ($L['Level'] ==1 || $T['LinkPay']<0 || ($LOWho>0 && $Fid == $LOWho)) {
         GMLog("<td>Free");
       } elseif ($T['LinkPay'] > 0) {
         GMLog("<td>Yes");     

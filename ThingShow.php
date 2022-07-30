@@ -553,7 +553,7 @@ function Show_Thing(&$T,$Force=0) {
       echo "<tr><td>Add Module Type<td>" . fm_Select($MTNs, NULL , 'Number', 1,'',"ModuleTypeAdd-$tid");
       echo fm_number1("Max Modules",$T,'MaxModules','',' class=Num3 ');
       if ($tprops & THING_HAS_CIVSHIPMODS) {
-        echo fm_number1("Deep Space",$T,'HasDeepSpace');
+//        echo fm_number1("Deep Space",$T,'HasDeepSpace');
         echo fm_number1("Cargo Space",$T,'CargoSpace');
       }
       if ($totmodc > $T['MaxModules']) {
