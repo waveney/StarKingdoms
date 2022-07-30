@@ -156,7 +156,7 @@ function Get_LinksGame() {
   $res = $db->query("SELECT * FROM Links WHERE GameId=$GAMEID");
   $links = [];
   if ($res) {
-    while ($ans = $res->fetch_assoc()) { $links[] = $ans; };
+    while ($ans = $res->fetch_assoc()) { $links[$ans['id']] = $ans; };
     }
   return $links;
 }

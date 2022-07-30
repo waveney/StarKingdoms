@@ -474,11 +474,14 @@
   $DeepSpace = 0;
   foreach($Things as $T) $DeepSpace += $T['InstCost'];
 
+  $AllLinks = Get_LinksGame();
+  $LLevels = Get_LinkLevels();
   $Things = Get_Things_Cond($Fid,"LinkId>0 AND LinkCost>0 AND LinkPay>0");
   $LinkCosts = 0;
   foreach($Things as $T) {
+    if ($LLevels[$AllLinks[$T['LinkId']]['Level']]['Cost'] == 0) continue;
     $LinkCosts += $T['LinkCost'];
-  }
+  }  
   
   $FreeRushes = Has_Trait($Fid,'Built for Construction and Logistics');
   
