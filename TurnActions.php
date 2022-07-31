@@ -11,6 +11,29 @@
   
   A_Check('GM');
 
+  global $Stages,$Coded;
+  
+  $Stages = ['Check Turns Ready', 'Spare', 'Spare','Start Turn Process', 'Save All Locations', 'Spare', 'Cash Transfers', 'Spare',
+             'Spare', 'Pay For Stargates', 'Spare', 'Scientific Breakthroughs', 'Start Projects', 'Spare', 'Spare', 'Instuctions', 
+             'Instuctions Stage 2', 'Spare', 'Agents Start Missions', 'Pay For Rushes', 'Spare', 'Economy', 'Spare', 'Direct Moves', 
+             'Load Troops', 'Spare', 'Ship Move Check', 'Ship Movements', 'Agents Move Check', 'Agents Movements', 'Spare', 'Meetups',
+             
+             'Spare', 'Space Combat', 'Unload Troops', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Devastation Selection', 
+             'Spare', 'Devastation', 'Project Progress', 'Instructions Progress', 'Spare', 'Espionage Missions Complete', 'Counter Espionage', 'Spare', 
+             'Finish Shakedowns', 'Spare', 'Projects Complete', 'Instructions Complete', 'Spare', 'Check Survey Reports', 'Give Survey Reports', 'Check Spot Anomalies', 
+             'Spot Anomalies', 'Militia Army Recovery', 'Spare', 'Generate Turns', 'Tidy Up Movements', 'Save What Can Be Seen', 'Recalc Project Homes', 'Finish Turn Process'];
+
+  $Coded =  ['Coded','No','No','Coded','Coded','No','Coded', 'No',
+             'No','Coded','No','Coded','Partial,M','No','No','Coded,M',
+             'Coded,M','No', 'No','Coded','No','Coded','No','Coded',
+             'Coded','No','Coded,M','Coded','Coded,M','Coded','No', 'Coded,M',
+             
+             'No','No','Coded','No','No','No','No','Coded,M', 
+             'No', 'Coded', 'Coded','Coded','No','No','No','No',
+             'Coded','No','Coded,M','Coded,M', 'No','Partial,M','Coded', 'Coded,M',
+             'Coded','Coded','No','No','Coded','Coded','Coded','Coded'];
+
+
 // For logging turn processing events that need following up or long term record keeping, set e to echo to GM
 function GMLog($text,$Bold=0) {
   global $GAME,$GAMEID;
@@ -485,21 +508,23 @@ function Instuctions() { // And other Instructions
           var_dump($T);
           exit;
         }
-        
-        if ($N['Control'] > 0 && $N['Control'] != $T['Whose']) {  // Colonising system under control of others
-          if ($NeedColStage2 == 0) {
-            echo "<form method=post action=TurnActions.php?ACTION=Process&S=16>";
-            $NeedColStage2 = 1;
-          }
-          GMLog($Facts[$T['Whose']]['Name'] . " colonising " . $N['Ref'] . " it is controlled by " . $Facts[$N['Control']]['Name'] . 
-                " - Allow? " . fm_YesNo("Col$Tid",1, "Reason to reject") . "\n<br>");
-          break;        
-        }
+
         
         [$P,$Acts] = array_shift($HabPs);
         $T['Spare1'] = $P['id'];
         $T['ActionsNeeded'] = $Acts;
       }
+
+      if ($N['Control'] > 0 && $N['Control'] != $T['Whose']) {  // Colonising system under control of others
+        if ($NeedColStage2 == 0) {
+          GMLog("<form method=post action=TurnActions.php?ACTION=Process&S=16>");
+          $NeedColStage2 = 1;
+        }
+        GMLog($Facts[$T['Whose']]['Name'] . " colonising " . $N['Ref'] . " it is controlled by " . $Facts[$N['Control']]['Name'] . 
+               " - Allow? " . fm_YesNo("Col$Tid",1, "Reason to reject") . "\n<br>");
+        break;        
+      }
+
       
       if (($ThingInstrs[$T['Instruction']]) == 'Colonise') {
         TurnLog($T['Whose'],"The " . $T['Name'] . " is colonising " . $P['Name'] . " in " . $N['Ref'] ,$T);
@@ -522,7 +547,7 @@ function Instuctions() { // And other Instructions
              if ($FirstG == 0) $FirstG = $G['id'];
            }
            if ($NeedColStage2 == 0) {
-             echo "<form method=post action=TurnActions.php?ACTION=Process&S=16>";
+             GMLog("<form method=post action=TurnActions.php?ACTION=Process&S=16>");
              $NeedColStage2 = 1;
            }
            $_REQUEST['G'] = $FirstG;
@@ -835,9 +860,12 @@ function Instuctions() { // And other Instructions
 function InstuctionsStage2() { // And other Instructions
   global $ThingInstrs,$GAME;
   $Things = Get_Things_Cond(0,"Instruction>0");
+  $Facts = Get_Factions();
   $NeedColStage3 = 0;
   foreach ($Things as $T) {
     $Tid = $T['id'];
+    $Fid = $T['Whose'];
+    $N = Get_System($T['SystemId']);
     switch ($ThingInstrs[$T['Instruction']]) {
 
     case 'Voluntary Warp Home': // Warp out
@@ -906,6 +934,7 @@ function InstuctionsStage2() { // And other Instructions
 
     case 'Colonise': // Colonise
     case 'Build Planetary Mine':
+// var_dump($_REQUEST);
 
       $P = Get_Planet($T['Spare1']);
       if (empty($P)) { // Refind the planet we need
@@ -932,22 +961,21 @@ function InstuctionsStage2() { // And other Instructions
           var_dump($T);
           exit;
         }
-        
-        if ($N['Control'] > 0 && $N['Control'] != $T['Whose']) {  // Colonising system under control of others
-          if (isset($_REQUEST["Col$Tid"]) &&  $_REQUEST["Col$Tid"] != "on") {
-            TurnLog($T['Whose'],"The colony was not created in " . $N['Ref'] . " because " . $_REQUEST["ReasonCol$Tid"] . "\n<br>",$T);
-            $T['Instruction'] = 0;
-            Put_Thing($T);
-            
-        break;
-          }
-        }
-        
+
         [$P,$Acts] = array_shift($HabPs);
         $T['Spare1'] = $P['id'];
         $T['ActionsNeeded'] = $Acts;
       }
-      
+
+      if ($N['Control'] > 0 && $N['Control'] != $T['Whose']) {  // Colonising system under control of others
+        if (!isset($_REQUEST["Col$Tid"]) ||  $_REQUEST["Col$Tid"] != "on") {
+          TurnLog($T['Whose'],"The colony was not created in " . $N['Ref'] . " because " . $_REQUEST["ReasonCol$Tid"] . "\n<br>",$T);
+          $T['Instruction'] = 0;
+          Put_Thing($T);
+          break;
+        }
+      }
+              
       if (($ThingInstrs[$T['Instruction']]) == 'Colonise') {
         TurnLog($T['Whose'],"The " . $T['Name'] . " is colonising " . $P['Name'] . " in " . $N['Ref'] ,$T);
         GMlog($Facts[$T['Whose']]['Name'] . " is starting to colonise " . $P['Name'] . " in " . $N['Ref']);
@@ -963,6 +991,8 @@ function InstuctionsStage2() { // And other Instructions
     break;
     }
   }
+  
+  Done_Stage("Instuctions");
   return 1;
 }
 
@@ -2598,27 +2628,28 @@ function FinishTurnProcess() {
   return 1;
 }
 
+function Done_Stage($Name) {
+  global $Sand;  // If you need to add something, replace a spare if poss, then nothing breaks
+  global $Stages,$Coded;
+
+  $SName = preg_replace('/ /','',$Name);
+  for($S =0; $S <64 ; $S++) {
+    $act = $Stages[$S];
+    $act = preg_replace('/ /','',$act);
+    if ($SName == $act) break;
+  }
+
+  if ($S > 63) { 
+    GMLog("Stage $SName not found");
+  } else {
+    $Sand['Progress'] |= 1<<$S;
+  }// Deliberate drop through 
+}
+
 function Do_Turn() {
   global $Sand;  // If you need to add something, replace a spare if poss, then nothing breaks
-  $Stages = ['Check Turns Ready', 'Spare', 'Spare','Start Turn Process', 'Save All Locations', 'Spare', 'Cash Transfers', 'Spare',
-             'Spare', 'Pay For Stargates', 'Spare', 'Scientific Breakthroughs', 'Start Projects', 'Spare', 'Spare', 'Instuctions', 
-             'Instuctions Stage 2', 'Spare', 'Agents Start Missions', 'Pay For Rushes', 'Spare', 'Economy', 'Spare', 'Direct Moves', 
-             'Load Troops', 'Spare', 'Ship Move Check', 'Ship Movements', 'Agents Move Check', 'Agents Movements', 'Spare', 'Meetups',
-             
-             'Spare', 'Space Combat', 'Unload Troops', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Devastation Selection', 
-             'Spare', 'Devastation', 'Project Progress', 'Instructions Progress', 'Spare', 'Espionage Missions Complete', 'Counter Espionage', 'Spare', 
-             'Finish Shakedowns', 'Spare', 'Projects Complete', 'Instructions Complete', 'Spare', 'Check Survey Reports', 'Give Survey Reports', 'Check Spot Anomalies', 
-             'Spot Anomalies', 'Militia Army Recovery', 'Spare', 'Generate Turns', 'Tidy Up Movements', 'Save What Can Be Seen', 'Recalc Project Homes', 'Finish Turn Process'];
-
-  $Coded =  ['Coded','No','No','Coded','Coded','No','Coded', 'No',
-             'No','Coded','No','Coded','Partial,M','No','No','Coded,M',
-             'Coded,M','No', 'No','Coded','No','Coded','No','Coded',
-             'Coded','No','Coded,M','Coded','Coded,M','Coded','No', 'Coded,M',
-             
-             'No','No','Coded','No','No','No','No','Coded,M', 
-             'No', 'Coded', 'Coded','Coded','No','No','No','No',
-             'Coded','No','Coded,M','Coded,M', 'No','Partial,M','Coded', 'Coded,M',
-             'Coded','Coded','No','No','Coded','Coded','Coded','Coded'];
+  global $Stages,$Coded;
+  
   $Sand = Get_TurnNumber();
 // var_dump($Sand);
 
