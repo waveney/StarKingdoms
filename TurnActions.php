@@ -2499,17 +2499,21 @@ function MilitiaArmyRecovery() {
     }  
     
     if ($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES) {
-      $Med = Get_ModulesType($T['id'],$MTNs['Medical Corps']);
-      if (isset($Med[0])) {
-        $Rep = $Self[0]['Number']*$Self[0]['Level']*2;
-        $Conflict = 0; 
-        $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
-        if ($Conf) $Conflict = $Conf[0]['Conflict'];
-        if (!$Conflict) $Rep*=2;
-        $T['CurHealth'] = min($T['OrigHealth'],$T['CurHealth']+$Rep);
-        Put_Thing($T);
-        if ($T['Whose']) TurnLog($T['Whose'],$T['Name'] . " recovered $Rep health",$T);
-        GMLog("<a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a> recovered $Rep health");
+      $RepMods = ['Medical Corps', 'Self Repairing Robot Armour'];
+      foreach ($RepMods as $Mt) {
+        $Med = Get_ModulesType($T['id'],$MTNs[$Mt]);
+        if (isset($Med[0])) {
+          $Rep = $Self[0]['Number']*$Self[0]['Level']*2;
+          if ($MT == 'Self Repairing Robot Armour') $Rep *=2;
+          $Conflict = 0; 
+          $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
+          if ($Conf) $Conflict = $Conf[0]['Conflict'];
+          if (!$Conflict) $Rep*=2;
+          $T['CurHealth'] = min($T['OrigHealth'],$T['CurHealth']+$Rep);
+          Put_Thing($T);
+          if ($T['Whose']) TurnLog($T['Whose'],$T['Name'] . " recovered $Rep health",$T);
+          GMLog("<a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a> recovered $Rep health");
+        }
       }
     }  
      

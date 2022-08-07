@@ -80,7 +80,7 @@
       echo "<tr>" . fm_number('Start Turn', $B,'StartTurn'); 
       echo "<tr>" . fm_number('End Turn', $B,'EndTurn') . "<td>Leave blank for a one off payment";
       echo "<tr>" . fm_text('Your Reference',$B,'YourRef') . "<td>Will be seen by both parties";
-
+      echo "<input hidden type=submit formaction=Banking.php formmethod=post name=Refresh >";
       if ($Turn >= $GAME['Turn']) echo "<td><input type=submit formaction=Banking.php formmethod=post name=DELETE" . $B['id'] . " value=Cancel >";
 
   

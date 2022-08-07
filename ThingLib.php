@@ -643,8 +643,8 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
       if ($T['BuildState'] < 2 || $T['BuildState'] > 4) return ''; // Building or abandoned
       if ($LastWhose && $LastWhose!= $T['Whose']) $txt .= "<P>";
       if ($T['BuildState'] == 4) $txt .= "The remains of: ";
-      if ($T['Whose']) {
-        $txt .= ((($Fid < 0) || ($Fid == $T['Whose']))?( "<a href=ThingEdit.php?id=" . $T['id'] . ">" . (empty($T['Name'])?"Unnamed":$T['Name']) . "</a>") : $T['Name'] ) . " a ";
+      if ($T['Whose'] || $GM) {
+        $txt .= ((($Fid < 0) || ($Fid == $T['Whose']) || $GM )?( "<a href=ThingEdit.php?id=" . $T['id'] . ">" . (empty($T['Name'])?"Unnamed":$T['Name']) . "</a>") : $T['Name'] ) . " a ";
       } 
       if ($ThingTypes[$T['Type']]['Properties'] & THING_HAS_LEVELS) $txt .= " level " . $T['Level'];
       if ($T['Class']) $txt .= " " . $T['Class'] . " class ";
