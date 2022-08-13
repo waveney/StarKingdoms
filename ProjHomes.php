@@ -45,6 +45,8 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Id</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Home Type</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Home id</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>System</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Home Name</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Whose</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Economy</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Devastation</a>\n";
@@ -57,6 +59,21 @@
     echo "<tr><td><a href=ProjHomes.php?ACTION=EDIT&id=$Hid>$Hid</a>";
     echo "<td>" . $HomeTypes[$H['ThingType']];
     echo "<td><a href=" . (['','PlanEdit.php','MoonEdit.php','ThingEdit.php'][$H['ThingType']]) . "?id=" . $H['ThingId'] . ">" . $H['ThingId'] . "</a>";
+    switch ($HomeTypes[$H['ThingType']]) {
+      case 'Planet':
+        $P = Get_Planet($H['ThingId']);
+        echo "<td>" . $Systems[$P['SystemId']] . "<td>" . $P['Name'];
+        break;
+      case 'Moon':
+        $M = Get_Moon($H['ThingId']);
+        $P = Get_Planet($M['PlanetId']);
+        echo "<td>" . $Systems[$P['SystemId']] . "<td>" .$M['Name'];
+        break;
+      case 'Thing':
+        $P = Get_Thing($H['ThingId']);
+        echo "<td>" . $Systems[$P['SystemId']] . "<td>" .$P['Name'];
+        break;
+    }
     echo "<td>" . $Factions[$H['Whose']]['Name'];
     echo "<td>" . $H['Economy'];
     echo "<td>" . $H['Devastation'];
