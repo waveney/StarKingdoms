@@ -27,7 +27,7 @@ function table_fields($table) {
   static $tables = array();
   if (isset($tables[$table])) return $tables[$table];
 
-  $qry = "SELECT Column_Name, Data_type FROM information_schema.columns WHERE table_schema='" . $CONF['dbase'] ."' AND table_name='" . $table . "'";
+  $qry = "SELECT COLUMN_NAME, DATA_TYPE FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='" . $CONF['dbase'] ."' AND TABLE_NAME='" . $table . "'";
 //var_dump($qry);
   $Flds = $db->query($qry);
 //var_dump($Flds);
