@@ -38,6 +38,7 @@ function Logon(&$use=0) {
       setcookie('SKC2',$ans['Yale'],($Rem ? mktime(0,0,0,1,1,$CALYEAR+1) : 0),'/' );
       $_COOKIE{'SKC2'} = $ans['Yale'];
       Put_User($ans);
+echo "Set Yale as: " . $ans['Yale'] . "<p>";
       $USER=$ans;
       $USERID = $USER{'id'};
       include_once ("Staff.php"); // no return wanted

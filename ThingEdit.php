@@ -450,6 +450,11 @@ function New_Thing(&$T) {
 
       Put_Thing($T);
       echo "<h2>" . $T['Name'] . " has now been transfered to " . $Factions[$T['Whose']]['Name'] . "</h2>";
+
+      if ($TTypes[$T['Type']] & THING_HAS_CONTROL) {
+        Control_Propogate($T['SystemId'],$T['Whose']);
+      }
+
       dotail();
       break;
       

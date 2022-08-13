@@ -176,7 +176,8 @@ function Get_User($who,&$newdata=0) {
 }
 
 function Put_User(&$data,$Save_User=0) {
-//echo "Put User called<p>";
+echo "Put User called: $Save_User<p>";
+var_dump($data);
   if (!$Save_User) $Save_User = Get_User($data['id'],$data);
   return Update_db('People',$Save_User,$data);
 }

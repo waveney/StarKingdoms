@@ -461,6 +461,7 @@ function Instuctions() { // And other Instructions
   $Systems = Get_SystemRefs();
  
   $PTs = Get_ProjectTypes();
+  $TTypes = Get_ThingTypes();
   $AAs = [];
   
   foreach ($Things as $T) {
@@ -807,7 +808,7 @@ function Instuctions() { // And other Instructions
       $OldWho = $T['Whose'];
       $T['Whose'] = $T['Dist1'];
       if ($OldWho && $T['Whose']) {
-        TurnLog($OldWho,$T['Name'] . " has been transfered to: " .$Facts[$T['Whose']]['Name'],$T);  
+        TurnLog($OldWho,$T['Name'] . " has been transfered to: " . $Facts[$T['Whose']]['Name'],$T);  
         TurnLog($T['Whose'],$T['Name'] . " has been transfered to you from the : " .$Facts[$OldWho]['Name'],$T);  
         GMLog("The " . $T['Name'] . " has been transfered from the " . $Facts[$OldWho]['Name'] . " to the " . $Facts[$T['Whose']]['Name']);
       }
@@ -821,6 +822,10 @@ function Instuctions() { // And other Instructions
       $T['Dist2'] = 0;
       $T['CurInst'] = 0;
       $T['MakeName'] ='';
+      
+      if ($TTypes[$T['Type']] & THING_HAS_CONTROL) {
+        Control_Propogate($T['SystemId'],$T['Whose']);
+      }
       break;
       
     case 'Make Something': 

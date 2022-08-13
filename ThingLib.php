@@ -42,6 +42,7 @@ define('THING_CAN_DO_PROJECTS',65536);
 define('THING_MOVES_DIRECTLY',131072);
 define('THING_MOVES_AFTER',262144);
 define('THING_HAS_HEALTH',524288);
+define('THING_HAS_CONTROL',1048576);
 
 function ModFormulaes() {
   global $ModFormulaes;
@@ -630,6 +631,10 @@ function EyesInSystem($Fid,$Sid) { // Eyes 1 = in space, 2= sens, 4= neb sens, 8
   return $Eyes;
 }
 
+function is_vowel(&$Text) {
+  return strpos(" aeiou",strtolower(substr($Text,0,1)));
+}
+
 function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
   global $Advance;
   static $ThingTypes;
@@ -638,18 +643,31 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
   if (!$Factions) $Factions = Get_Factions();
   
   $txt = '';
+  $RawA = 0;
   
       if ($Fid >=0 && ($T['Whose'] != $Fid) && (($ThingTypes[$T['Type']]['SeenBy'] & $Eyes) == 0 )) return '';
       if ($T['BuildState'] < 2 || $T['BuildState'] > 4) return ''; // Building or abandoned
       if ($LastWhose && $LastWhose!= $T['Whose']) $txt .= "<P>";
       if ($T['BuildState'] == 4) $txt .= "The remains of: ";
       if ($T['Whose'] || $GM) {
-        $txt .= ((($Fid < 0) || ($Fid == $T['Whose']) || $GM )?( "<a href=ThingEdit.php?id=" . $T['id'] . ">" . (empty($T['Name'])?"Unnamed":$T['Name']) . "</a>") : $T['Name'] ) . " a ";
+        $txt .= ((($Fid < 0) || ($Fid == $T['Whose']) || $GM )?( "<a href=ThingEdit.php?id=" . $T['id'] . ">" . (empty($T['Name'])?"Unnamed":$T['Name']) . "</a>") : $T['Name'] ) . " a";
+        $RawA = 1;
       } 
-      if ($ThingTypes[$T['Type']]['Properties'] & THING_HAS_LEVELS) $txt .= " level " . $T['Level'];
-      if ($T['Class']) $txt .= " " . $T['Class'] . " class ";
-      if ($T['Whose']) $txt .= " <span style='background:" . $Factions[$T['Whose']]['MapColour'] . "'>" . 
-        ($Factions[$T['Whose']]['Adjective']?$Factions[$T['Whose']]['Adjective']:$Factions[$T['Whose']]['Name']) . "</span>";
+      if ($ThingTypes[$T['Type']]['Properties'] & THING_HAS_LEVELS) {
+        $txt .= " level " . $T['Level'];
+        $RawA = 0;
+      }
+      if ($T['Class']) {
+        if ($RawA && is_vowel($T['Class'])) $txt .= "n";
+        $txt .= " " . $T['Class'] . " class ";
+        $RawA = 0;
+      }
+      if ($T['Whose']) {
+        $Who = ($Factions[$T['Whose']]['Adjective']?$Factions[$T['Whose']]['Adjective']:$Factions[$T['Whose']]['Name']);
+        if ($RawA && is_vowel($Who)) $txt .= "n";      
+        $txt .= " <span style='background:" . $Factions[$T['Whose']]['MapColour'] . "'>$Who</span>";
+        $RawA = 0;
+      }
       if (($T['Whose'] == $Fid) && ($ThingTypes[$T['Type']]['Properties'] & THING_CAN_BE_ADVANCED) && ($T['Level'] > 1)) $txt .= ' ' . $Advance[$T['Level']];
       if ($T['Whose']==0 && Access('GM')) {
         $txt .= "<a href=ThingEdit.php?id=" . $T['id'] . ">" . $ThingTypes[$T['Type']]['Name'] . "</a>";

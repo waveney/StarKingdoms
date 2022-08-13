@@ -404,5 +404,19 @@ function Project_Home_Thing(&$H) {
   }
 }
 
+function Control_Propogate($Sid,$Who) {
+  // System Control & Name
+  $N = Get_System($Sid);
+  $N['Control'] = $Who;
+  
+  $FS = Get_FactionSystemFS($Who,$Sid);
+  if (!empty($FS['Name'])) {
+    $N['Name'] = $FS['Name'];
+    $N['ShortName'] = $FS['ShortName'];
+  }
+  Put_System($N);
+  
+  // TODO Worlds within system
+}
 
 ?>

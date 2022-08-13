@@ -33,7 +33,7 @@ function table_fields($table) {
 //var_dump($Flds);
   while ($Field = $Flds->fetch_array()) {
 //var_dump($Field);
-    $tables[$table][$Field['Column_Name']] = $Field['Data_type'];
+    $tables[$table][$Field['COLUMN_NAME']] = $Field['DATA_TYPE'];
   }
   return $tables[$table];
 }
@@ -51,8 +51,9 @@ function Update_db($table,&$old,&$new,$proced=1) {
   $newrec = "UPDATE $table SET ";
   $fcnt = 0;
 
-//var_dump( $Flds);
-//echo "<p>$newrec<p>";
+/*echo "Fields:";
+var_dump( $Flds);
+echo "<p>$newrec<p>";*/
 
   foreach ($Flds as $fname=>$ftype) {
     if ($indxname == $fname) { // Skip
@@ -86,9 +87,10 @@ function Update_db($table,&$old,&$new,$proced=1) {
     }
   }
 
-//var_dump($old);
-//echo "$fcnt<p>";
-//debug_print_backtrace();
+/*var_dump($old);
+echo "$fcnt<p>";
+debug_print_backtrace();
+echo "<p>Here: $proced And: $fcnt<p>";*/
   if ($proced && $fcnt) {
     $newrec .= " WHERE $indxname=" . $old[$indxname];
 //var_dump($newrec);
