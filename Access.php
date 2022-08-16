@@ -27,8 +27,8 @@
   setcookie('SKD',$biscuit,0,'/');
   $_COOKIE['SKD'] = $biscuit;
 
-  $USER{'AccessLevel'} = $Access_Type['Player'];
-  $USER{'UserId'} =  $Fid;
+  $USER['AccessLevel'] = $Access_Type['Player'];
+  $USER['UserId'] =  $Fid;
 
   Check_Login();
   Player_Page();

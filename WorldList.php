@@ -79,7 +79,7 @@
         $Name = $M['Name'];
         $P = Get_Planet($M['PlanetId']);
         $Sys = Get_System($P['SystemId']);
-        $Fid = ($M['Control'] ? $M['Control'] : $P['Control']? $P['Control'] :$Sys['Control']);
+        $Fid = ($M['Control'] ? $M['Control'] : ($P['Control']? $P['Control'] :$Sys['Control']));
         break;
     
       case 3: // Thing

@@ -91,9 +91,11 @@
          break;
        }
     }
+    $NumDists = count($Dists);
+  } else {
+    $NumDists = 0;
   }
 
-  $NumDists = count($Dists);
   $dc=0;
   $totdisc = 0;
 

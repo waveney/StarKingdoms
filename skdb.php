@@ -133,7 +133,7 @@ if ($indxname!=$fname) echo "T3 "; */
         $newrec .= " $fname=" . '"' . $dbform . '"';
       } elseif ($ftype == "tinyint" || $ftype == 'smallint') {
         $dbform = 0;
-        if ($from{$fname}) {
+        if ($from[$fname]) {
           if ((string)(int)$from[$fname] = $from[$fname]) { $dbform = $from[$fname]; } else { $dbform = 1; };
         }
         if ($data) $data[$fname] = $dbform;

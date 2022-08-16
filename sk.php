@@ -6,8 +6,8 @@
   include_once("skfm.php");
 $BUTTON = 0;
 
-if (isset($_REQUEST{'Y'})) $YEAR = $_REQUEST{'Y'};
-if (isset($_REQUEST{'B'})) $BUTTON = ($_REQUEST{'B'}+1) % 4;
+if (isset($_REQUEST['Y'])) $YEAR = $_REQUEST['Y'];
+if (isset($_REQUEST['B'])) $BUTTON = ($_REQUEST['B']+1) % 4;
 
 if (isset($YEAR)) {
   if (strlen($YEAR)>10) exit("Invalid Year");
@@ -23,11 +23,11 @@ date_default_timezone_set('GMT');
 function Check_Login() {
   global $db,$USER,$USERID,$AccessType,$YEAR,$CALYEAR,$FACTION;
   if (isset($_COOKIE{'SKC2'})) {
-    $res=$db->query("SELECT * FROM People WHERE Yale='" . $_COOKIE{'SKC2'} . "'");
+    $res=$db->query("SELECT * FROM People WHERE Yale='" . $_COOKIE['SKC2'] . "'");
     if ($res) {
       $USER = $res->fetch_assoc();
       $USERID = $USER['id'];
-      $db->query("UPDATE People SET LastAccess='" . time() . "' WHERE UserId=$USERID" );
+      $db->query("UPDATE People SET LastAccess='" . time() . "' WHERE id=$USERID" );
 // Track suspicious things
       if (($USER['LogUse']) && (file_exists("LogFiles"))) {
         $logf = fopen("LogFiles/U$USERID.txt",'a+');
@@ -51,12 +51,12 @@ function Set_User() {
   $USERID = 0;
   if (isset($_COOKIE{'SKD'})) {
     include_once("GetPut.php");
-    $biscuit = $_COOKIE{'SKD'};
+    $biscuit = $_COOKIE['SKD'];
     $Cake = openssl_decrypt($biscuit,'aes-128-ctr','Quarterjack',0,'BrianMBispHarris');
     $crumbs = explode(':',$Cake);
-    $USER{'Subtype'} = $crumbs[0];
-    $USER{'AccessLevel'} = $crumbs[1];
-    $FACTIONID = $USER{'UserId'} = $crumbs[2];
+    $USER['Subtype'] = $crumbs[0];
+    $USER['AccessLevel'] = $crumbs[1];
+    $FACTIONID = $USER['UserId'] = $crumbs[2];
     $FACTION = Get_Faction($FACTIONID);
     if ($USERID) return;
 //    $USER = array();
@@ -69,21 +69,21 @@ function Access($level,$subtype=0,$thing=0) {
   global $Access_Type,$USER,$USERID;
   $want = $Access_Type[$level];
   Set_User();
-  if (!isset($USER{'AccessLevel'})) return 0;
-  if ($USER{'AccessLevel'} < $want) return 0;
+  if (!isset($USER['AccessLevel'])) return 0;
+  if ($USER['AccessLevel'] < $want) return 0;
   
-  if ($USER{'AccessLevel'} > $want+1) return 1;
+  if ($USER['AccessLevel'] > $want+1) return 1;
 
-  switch  ($USER{'AccessLevel'}) {
+  switch  ($USER['AccessLevel']) {
 
   case $Access_Type['Player'] : 
     if (!$subtype) return 1;
     if ($USER['Subtype'] == 'Other' && $subtype == 'Act') {}
-    elseif ($USER{'Subtype'} != $subtype) return 0;
+    elseif ($USER['Subtype'] != $subtype) return 0;
     return $thing == $USERID;
 
   case $Access_Type['Observer'] :
-    if (!$subtype) return $USER{'AccessLevel'} >= $want;
+    if (!$subtype) return $USER['AccessLevel'] >= $want;
     if (isset($USER[$subtype]) && $USER[$subtype]) return 1;
     return 0; 
 
@@ -176,8 +176,8 @@ function Get_User($who,&$newdata=0) {
 }
 
 function Put_User(&$data,$Save_User=0) {
-echo "Put User called: $Save_User<p>";
-var_dump($data);
+//echo "Put User called: $Save_User<p>";
+//var_dump($data);
   if (!$Save_User) $Save_User = Get_User($data['id'],$data);
   return Update_db('People',$Save_User,$data);
 }
@@ -185,7 +185,7 @@ var_dump($data);
 function Error_Page ($message) {
   global $Access_Type,$USER,$USERID;
   set_user();
-  if (isset($USER{'AccessLevel'})) { $type = $USER{'AccessLevel'}; } else { $type = 0; }
+  if (isset($USER['AccessLevel'])) { $type = $USER['AccessLevel']; } else { $type = 0; }
 //  var_dump($USER);
 //  echo "$type<p>";
   switch ($type) {

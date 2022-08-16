@@ -437,7 +437,7 @@ function Get_DistrictsAll($Turn=0) {
   global $db,$GAMEID;
   $Ts = [];
   $res = $db->query("SELECT * FROM Districts WHERE GameId=$GAMEID ORDER BY HostId, Type, TurnStart");
-  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['Type']] = $ans;
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
   return $Ts;
 }
 

@@ -16,8 +16,29 @@ function Recalc_Project_Homes($Logf=0) {
     $Homes = Get_ProjectHomes($F['id']);
     if ($Homes) $KnownHomes = array_merge($KnownHomes,$Homes);
   }
-
+  
+  $AllDists = Get_DistrictsAll();
+//var_dump($AllDists); exit;
+  $PWithDists = $MWithDists = $TWithDists = [];
+  foreach($AllDists as $D) {
+    switch ($D['HostType']) {
+    case 0:
+    case 1:
+      $PWithDists[$D['HostId']] = 1;
+      break;
+    case 2: 
+      $MWithDists[$D['HostId']] = 1;
+      break;
+    case 3:
+      $TWithDists[$D['HostId']] = 1;
+      break;
+    default:
+    }
+  }
+  
 //var_dump($KnownHomes); exit;  
+//var_dump($PWithDists);exit;
+//var_dump($MWithDists);exit;
   $Systems = Get_Systems();
   foreach ($Systems as &$N) {
     if ($N['Control']) {
@@ -26,32 +47,41 @@ function Recalc_Project_Homes($Logf=0) {
       $Planets = Get_Planets($N['id']);
       if ($Planets) {
         foreach ($Planets as &$P) {
+if ($N['Ref'] == 'RSS') echo "Check Planet: " . $P['id'] . " - " . $P['Name'] . "<br>";
           $doneP = 0;
 
           $Cont = $P['Control'];
           if ($Cont == 0) $Cont = $N['Control'];
 
-          if ($P['ProjHome']) {
-            $PHi = $P['ProjHome'];
+          if (isset($PWithDists[$P['id']])) {
+            if ($P['ProjHome']) {
+              $PHi = $P['ProjHome'];
+
 //echo "PHI is $PHi<p>";
-            foreach ($KnownHomes as &$H) {
+              foreach ($KnownHomes as &$H) {
 //var_dump($H);
 //if (!isset($H['id'])) { echo "<P>"; var_dump($H);exit;}
-              if ($H['id'] == $PHi) {
-                $H['Inuse'] = 1;
-                if ($H['ThingType'] != 1 || $H['ThingId'] != $P['id'] || $H['Whose'] != $Cont) {
-                  $H['ThingType'] = 1;
-                  $H['ThingId'] = $P['id'];
-                  $loc = Within_Sys_Locs($N,$P['id']);
-                  $H['SystemId'] = $P['SystemId'];
-                  $H['WithinSysLoc'] = $loc;
-                  $H['Whose'] = $Cont;
-                  Put_ProjectHome($H);
-                } else {
-                  Where_Is_Home($PHi,1);
+                if ($H['id'] == $PHi) {
+                  $H['Inuse'] = 1;
+                  if ($H['ThingType'] != 1 || $H['ThingId'] != $P['id'] || $H['Whose'] != $Cont) {
+                    $H['ThingType'] = 1;
+                    $H['ThingId'] = $P['id'];
+                    $loc = Within_Sys_Locs($N,$P['id']);
+                    $H['SystemId'] = $P['SystemId'];
+                    $H['WithinSysLoc'] = $loc;
+                    $H['Whose'] = $Cont;
+                    Put_ProjectHome($H);
+                  } else {
+                    Where_Is_Home($PHi,1);
+                  }
+                  $doneP = 1;
+                  break;
                 }
-                $doneP = 1;
-                break;
+              }
+              if (!$doneP) {
+              // Has home defined but not found 
+                echo "Would Delete $PHi<p>";
+//              db_delete('ProjectHomes',$PHi);          
               }
             }
             
@@ -65,12 +95,18 @@ function Recalc_Project_Homes($Logf=0) {
               $P['ProjHome'] = $H['id'];
               Put_Planet($P);
             }
+         }
+/*
           } else {
-            $Dists = Get_DistrictsP($P['id']);
+            if (isset($PWithDists[$P['id']])) {
+              $Dists = $PWithDists[$P['id']];
+            } else {
+              $Dists = 0;
+            }
             $Homeless = 1;
             if ($Dists || $P['Control']) {
               foreach ($KnownHomes as &$H) {
-                if ($H['ThingType'] == 1 && $H['ThingId'] == $P['id']) {
+                if (($H['ThingType'] == 1) && ($H['ThingId'] == $P['id'])) {
                   $Homeless = 0;
                   if ($H['Whose'] == $Cont) {
                     $H['Inuse'] = 1;
@@ -91,7 +127,8 @@ function Recalc_Project_Homes($Logf=0) {
                 Put_Planet($P);
               }
             }
-          }
+*/          
+
 //echo "Getting Moons of " . $P['Name'] . $P['id'] . "<p>";
           $Mns = Get_Moons($P['id']);
 //var_dump($Mns);
@@ -103,33 +140,49 @@ function Recalc_Project_Homes($Logf=0) {
               if ($Cont == 0) $Cont = $P['Control'];
               if ($Cont == 0) $Cont = $N['Control'];
 
-              if ($M['ProjHome']) {
-                $MHi = $M['ProjHome'];
-                foreach ($KnownHomes as &$H) {
-                  if ($H['id'] == $MHi) {
-                    $H['Inuse'] = 1;
-                    if ($H['ThingType'] != 2 || $H['ThingId'] != $M['id'] || $H['Whose'] != $Cont) {
-                      $H['ThingType'] = 2;
-                      $H['ThingId'] = $M['id'];
-                      $loc = Within_Sys_Locs($N,- $M['id']);
-                      $H['SystemId'] = $P['SystemId'];
-                      $H['WithinSysLoc'] = $loc;
-                      $H['Whose'] = $Cont;
-                      Put_ProjectHome($H);
-                    } else {
-                      Where_Is_Home($H['id'],1);
+              if (isset($MWithDists[$M['id']])) {
+                if ($M['ProjHome']) {
+                  $MHi = $M['ProjHome'];
+
+                  foreach ($KnownHomes as &$H) {
+                    if ($H['id'] == $MHi) {
+                      $H['Inuse'] = 1;
+                      if ($H['ThingType'] != 2 || $H['ThingId'] != $M['id'] || $H['Whose'] != $Cont) {
+                        $H['ThingType'] = 2;
+                        $H['ThingId'] = $M['id'];
+                        $loc = Within_Sys_Locs($N,- $M['id']);
+                        $H['SystemId'] = $P['SystemId'];
+                        $H['WithinSysLoc'] = $loc;
+                        $H['Whose'] = $Cont;
+                        Put_ProjectHome($H);
+                      } else {
+                        Where_Is_Home($H['id'],1);
+                      }
+                      continue 2;
                     }
-                    continue 2;
                   }
                 }
-                $H = ['ThingType'=> 2, 'ThingId'=> $M['id'], 'Inuse'=>1, 'Whose'=>$Cont];
-                $H['id'] = Put_ProjectHome($H);
-                $KnownHomes[] = $H;
-                $M['ProjHome'] = $H['id'];
-                Put_Moon($M);
+              }
+              $H = ['ThingType'=> 2, 'ThingId'=> $M['id'], 'Inuse'=>1, 'Whose'=>$Cont];
+              $H['id'] = Put_ProjectHome($H);
+              $KnownHomes[] = $H;
+              $M['ProjHome'] = $H['id'];
+              Put_Moon($M);
+              continue;
+/*                
+                else { // No dists
+                echo "Would delete Moon home $MHi<p>";// WRONG
+//                  db_delete('ProjectHomes',$MHi);          
+                }
                 
               } else {
-                $Dists = Get_DistrictsM($M['id']);
+                if (isset($MWithDists[$M['id']])) {
+                  $Dists = $MWithDists[$M['id']];
+                } else {
+                  $Dists = 0;
+                }
+
+                $Dists = $MWithDists[$M['id']];              
 //var_dump($Dists);
                 $Homeless = 1;
                 if ($Dists || $M['Control']) {
@@ -156,6 +209,7 @@ function Recalc_Project_Homes($Logf=0) {
                   }
                 }
               }
+*/
             }
           }
         }
@@ -264,8 +318,8 @@ function Recalc_Worlds() {
   // Go through each world 
     // does it exist?  If so check minerals level and check its home numbber
     // If not create it
-  // Any worldd without districts is removed
-  $Dists = Get_DistrictsAll();
+  // Any worldd without districts is removed - TODO
+
   $Worlds = Get_Worlds();
   $Facts = Get_Factions();
   $Homes = Get_ProjectHomes();
@@ -286,7 +340,7 @@ function Recalc_Worlds() {
           $M = Get_Moon($H['ThingId']);
           $P = Get_Planet($M['PlanetId']);
           $Sys = Get_System($P['SystemId']);
-          $Fid = ($M['Control'] ? $M['Control'] : $P['Control'] ? $P['Control'] : $Sys['Control']);
+          $Fid = ($M['Control'] ? $M['Control'] : ($P['Control'] ? $P['Control'] : $Sys['Control']));
           $Minerals = $M['Minerals'];
           $ThisBio = $M['Type'];
           break;
@@ -330,7 +384,7 @@ function Recalc_Worlds() {
         $M = Get_Moon($H['ThingId']);
         $P = Get_Planet($M['PlanetId']);
         $Sys = Get_System($P['SystemId']);
-        $Fid = ($M['Control'] ? $M['Control'] : $P['Control'] ? $P['Control'] : $Sys['Control']);
+        $Fid = ($M['Control'] ? $M['Control'] : ($P['Control'] ? $P['Control'] : $Sys['Control']));
         $Minerals = $M['Minerals'];
         $ThisBio = $M['Type'];
         break;
@@ -370,6 +424,7 @@ function Recalc_Worlds() {
 }
 
 function Recalc_Economic_Rating(&$H,&$W,$Fid,$Turn=0) {
+  if (!isset($H['id'])) return 0;
   $Dists = Get_DistrictsH($H['id'],$Turn);
   $DTs = Get_DistrictTypes();
 

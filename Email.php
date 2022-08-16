@@ -304,7 +304,7 @@ function Parse_Proforma(&$Mess,$helper='',$helperdata=0,$Preview=0,&$attachments
             $url = '';
             if (isset($bits[1])) $url = $bits[1];
             if (isset($bits[2])) { $txt = $bits[2]; $txt = preg_replace('/_/',' ',$txt); }
-            $rep = "<a href='https://" . $_SERVER{'HTTP_HOST'} . ($url? "/$url" : "") . "'>$txt</a>";
+            $rep = "<a href='https://" . $_SERVER['HTTP_HOST'] . ($url? "/$url" : "") . "'>$txt</a>";
             break;
           case (preg_match('/WEB(:.*)/',$key,$mtch)?true:false):
             $bits = preg_split('/:/',$mtch[1],3);

@@ -5,8 +5,8 @@
 
   A_Check('GM');
 
-  if (isset($_COOKIE{'SKD'})) {
-    unset($_COOKIE{'SKD'});
+  if (isset($_COOKIE['SKD'])) {
+    unset($_COOKIE['SKD']);
     setcookie('SKD','',1,'/');
   }
 
