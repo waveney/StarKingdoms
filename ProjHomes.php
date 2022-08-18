@@ -19,9 +19,13 @@
         echo "<h1>Project Home</h1>";
         $Hid = $_REQUEST['id'];
         Show_Home($Hid);
-        echo "<h2><a href=ProjHomes.php>Back to list of Homes</a></h2>\n";
+        echo "<h2><a href=ProjHomes.php>Back to list of Homes</a> ,  <a href=ProjHomes.php?ACTION=DELETE&id=$Hid>Delete Home</a></h2>\n";
         dotail();
         exit;
+      case 'DELETE':
+        db_delete('ProjectHomes',$_REQUEST['id']);
+        echo "Project home: " . $_REQUEST['id'] . " Deleted<p>";
+        break;
     }
   }
 
