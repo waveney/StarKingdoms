@@ -329,7 +329,7 @@ function Income_Estimate($Fid) {
   return $EconVal*10;   
 }
 
-function WhatCanBeSeenBy($Fid) {
+function WhatCanBeSeenBy($Fid,$Mode=0) {
   $MyThings = Get_Things($Fid);
   $MyHomes = Get_ProjectHomes($Fid);
   $ThingTypes = Get_ThingTypes();
@@ -391,7 +391,7 @@ function WhatCanBeSeenBy($Fid) {
       $txt .= "<h2>On Board " . $HostT['Name'] . " is:</h2>";
       foreach($H as $Tid) {
         $T = Get_Thing($Tid);
-        $txt .= SeeThing($T,$LastWhose,15,$T['Whose'],1);
+        $txt .= SeeThing($T,$LastWhose,15,$T['Whose'],1,$Mode);
       }
     }
   }

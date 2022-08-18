@@ -681,7 +681,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
    return $txt;
 }
 
-function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0) {
+function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0,$Mode=0) {
   global $Advance;
   include_once("SystemLib.php");
   $txt ='';
@@ -691,7 +691,7 @@ function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0) {
     $Things = Get_AllThingsAt($Sid);
     if (!$Things) return '';
     
-  $GM = Access('GM');
+  $GM = (Access('GM') & $Mode);
 //    $ThingTypes = Get_ThingTypes();
   
 //    $Factions = Get_Factions();

@@ -96,7 +96,7 @@
     if (!isset($Places[$Sid])) continue;
     $Eyes = $Places[$Sid];
 //  foreach ($Places as $Sid=>$Eyes ) {
-    echo SeeInSystem($Sid,$Eyes,1,1,$Fid);
+    echo SeeInSystem($Sid,$Eyes,1,1,$Fid,$GM);
 /*
     $Things = Get_AllThingsAt($Sid);
 // var_dump ($Things); echo "XX<p>";   

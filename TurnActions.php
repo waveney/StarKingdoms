@@ -2585,6 +2585,7 @@ function TidyUpMovements() {
 }
 
 function SaveWhatCanBeSeen() {
+  global $db,$GAMEID,$GAME;
   // Save What can I see data
   $Factions = Get_Factions();
   foreach($Factions as $F) {
@@ -2763,7 +2764,7 @@ function Do_Turn() {
       }
     }
     $Stage ++;
-    $Prog*=2;
+    $Prog << 1;
   }
   echo "</table>";
   
