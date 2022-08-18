@@ -33,7 +33,7 @@
     $Turn = $_REQUEST['Turn'];
     echo "<h1>What Could I See on Turn $Turn?</h1>";
     $html = file_get_contents("Turns/$GAMEID/$Turn/CouldC$Fid.html");
-    $html = preg_replace('/Orders: .*\<\n/',"<",$html);
+    $html = preg_replace('/Orders: .?*\<\n/',"<",$html);
     echo $html;
   } else {  
     echo "<h1>What Can I See Now?</h1>";
