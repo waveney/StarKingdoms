@@ -663,7 +663,12 @@ function Show_Thing(&$T,$Force=0) {
       break;
     
     case 'Voluntary Warp Home': // Warp Home
-      if ((($tprops & THING_HAS_SHIPMODULES) == 0 ) || ($T['CurHealth'] == 0) ) continue 2;
+      if ((($tprops & THING_HAS_SHIPMODULES) == 0 ) || ($T['CurHealth'] == 0) || ($tprops & THING_CAN_MOVE) == 0) continue 2;
+      $Gates = Gates_Avail($T['Whose']);
+      
+      if (empty($Gates)) {
+        continue 2;
+      }
       break;
     
     case 'Decommision': // Dissasemble
@@ -836,11 +841,6 @@ function Show_Thing(&$T,$Force=0) {
     $SpecCount++;
   }
 
-/*
-$ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse Anomaly','Establish Embassy','Make Outpost','Make Asteroid Mine','Make Minefield',
-                'Make Orbital Repair Yard','Build Space Station','Expand Space Station','Make Deep Space Sensor','Make Advanced Asteroid Mine','Build Stargate',
-                'DSC Special'];
-*/
   if ($SpecCount>1) { 
     $PTs=Get_ProjectTypes();
     $PTNs = [];
@@ -910,6 +910,28 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       break;
     
     case 'Voluntary Warp Home': // Warp Home
+    // Count Warp gates, if 0 impossible, if 1 select gate, if many show list
+      $Gates = Gates_Avail($T['Whose']);
+//var_dump($Gates); echo "<p>";
+      if (empty($Gates)) {
+        // Should be removed above
+        echo "<br class=Err>No gates to warp home";
+      } else if (count($Gates) == 1) {
+        $T['Dist1'] = $Gates[0]['id'];
+      } else {
+        $Gatelist = [];
+        foreach ($Gates as $G) {
+          if ($G['Whose'] == $T['Whose']) {
+            $Gatelist[$G['id']] = "System: " . $Systems[$G['SystemId']];
+          } else {
+            $Gatelist[$G['id']] = "System: " . $Systems[$G['SystemId']] . " - " . $FactNames[$G['Whose']];
+          }
+        }
+//var_dump($Gatelist);
+        echo "<br>System to Warp to: " . fm_select($Gatelist,$T,'Dist1');
+      }
+      break;
+      
     case 'Decommision': // Dissasemble
     case 'Disband': // Disband
       $Acts = $Cost = 0;
@@ -1019,7 +1041,8 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
       }     
       
       $MaxDeep = $MaxDeep - $T['MaxDistricts'];
-      echo "<tr><td colspan=6>" . (($GM || $T['Progress'] == 0)? fm_number0('By how many districts:',$T,'Dist1',''," max=$MaxDeep "): ("<td>Adding: " . $T['Dist1'] . " disticts"));
+      echo "<tr><td colspan=6>" . 
+           (($GM || $T['Progress'] == 0)? fm_number0('By how many districts:',$T,'Dist1',''," max=$MaxDeep "): ("<td>Adding: " . $T['Dist1'] . " disticts"));
       $ProgShow = 1;
       if ($T['Dist1']) {
         $Acts = - $PTNs['Extend Space Station']['CompTarget']*$T['Dist1'];

@@ -784,7 +784,21 @@ function Check_MyThing(&$T,$Fid=0) {
   if (Access('GM')) return;
   echo "<h2 class=Err>Not Your Thing...</h2>\n";
   dotail();
+}
 
+function Gates_Avail($Fid) {
+  $Gates = [];
+  $OwnGates = Get_Things_Cond($Fid,' Type=15 AND BuildState=3'); // Warp Gates
+  if (!empty($OwnGates)) $Gates = array_merge($Gates,$OwnGates);
+  
+  $FFdata = Get_FactionFactionsCarry($Fid);
+  foreach($FFdata as $FC) {
+    if ($FC['Props'] & 0xf00) {
+      $OGates = Get_Things_Cond($FC['FactionId1'],' Type=15 AND BuildState=3'); // Warp Gates
+      if (!empty($OwnGates)) $Gates = array_merge($Gates,$OGates); 
+    }
+  }
+  return $Gates;
 }
 
 ?>

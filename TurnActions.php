@@ -537,6 +537,16 @@ function Instuctions() { // And other Instructions
       break;
 
     case 'Voluntary Warp Home': // Warp out
+      if ($T['Dist1']) {
+        $Gate = Get_Thing($T['Dist1']);
+        if (isset($Gate['Type']) && $Gate['Type'] == 15) {
+          $T['SystemId'] = $Gates['SystemId'];
+          $T['WithinSysLoc'] = $Gates['WithinSysLoc'];
+          $T['CurHealth'] = $T['LinkId'] = 0;
+          TurnLog($T['Whose']," The " . $T['Name'] . " has warped back.  It now needs repair before it can be used again",$T);         
+          break;
+        }
+      }
        $Gates = Get_Things_Cond($T['Whose'],' Type=15'); // Warp Gates
        if ($Gates) {
          if (isset($Gates[1])) { // Multiple Gates
@@ -560,7 +570,7 @@ function Instuctions() { // And other Instructions
          } else {
            $T['SystemId'] = $Gates[0]['SystemId'];
            $T['WithinSysLoc'] = $Gates[0]['WithinSysLoc'];
-           $T['CurHealth'] = $T['Link_id'] = 0;
+           $T['CurHealth'] = $T['LinkId'] = 0;
            TurnLog($T['Whose']," The " . $T['Name'] . " has warped back.  It now needs repair before it can be used again",$T);         
            break;
          }
@@ -882,7 +892,7 @@ function InstuctionsStage2() { // And other Instructions
       }
       $T['SystemId'] = $Gate['SystemId'];
       $T['WithinSysLoc'] = $Gate['WithinSysLoc'];
-      $T['CurHealth'] = $T['Link_id'] = 0;
+      $T['CurHealth'] = $T['LinkId'] = 0;
       TurnLog($T['Whose']," The " . $T['Name'] . " has warped back.  It now needs repair before it can be used again",$T);   
       $T['Instruction'] = 0;            
       Put_Thing($T);
@@ -2565,8 +2575,14 @@ function TidyUpMovements() {
   // Tidy 1 turn carry options
   $FFs = Gen_Get_Cond('FactionFaction','Props>0');
   foreach ($FFs as $F) {
-    if (($F['Props'] &15) == 2) $F['Props'] = ($F['Props']&0xf0)+1;
-    if ((($F['Props']>>4) &15) == 2) $F['Props'] = ($F['Props']&0x0f)+16;  
+    if (($F['Props'] &15) == 2) $F['Props'] = ($F['Props']&0xfffffff0)+1;
+    if ((($F['Props']>>4) &15) == 2) $F['Props'] = ($F['Props']&0xffffff0f)+16;  
+    if ((($F['Props']>>8) &15) == 2) $F['Props'] = ($F['Props']&0xfffff0ff)+256;
+    if ((($F['Props']>>12) &15) == 2) $F['Props'] = ($F['Props']&0xffff0fff)+0x1000;  
+    if ((($F['Props']>>16) &15) == 2) $F['Props'] = ($F['Props']&0xfff0ffff)+0x10000;
+    if ((($F['Props']>>20) &15) == 2) $F['Props'] = ($F['Props']&0xff0fffff)+0x100000;
+    if ((($F['Props']>>24) &15) == 2) $F['Props'] = ($F['Props']&0xf0ffffff)+0x1000000;  
+    if ((($F['Props']>>28) &15) == 2) $F['Props'] = ($F['Props']&0x0fffffff)+0x10000000;  
     Put_FactionFaction($F);  
   }
   
@@ -2753,7 +2769,8 @@ function Do_Turn() {
   foreach ($Stages as $sta) {
     if ($sta != 'Spare') {
       echo "<tr><td>$Stage<td>" .  (Access('God')?(dechex($Prog) . "<td>"):"") . $Coded[$Stage] . "<td>" . $sta . "<td>";
-      
+
+// var_dump($Sand['Progress'],$Prog);
       if ($Sand['Progress'] & $Prog) {
         echo "Completed<td><a href=TurnActions.php?ACTION=Revert&S=$Stage>Revert</a>";
       } else if ($NextStage < 0) {
@@ -2764,7 +2781,7 @@ function Do_Turn() {
       }
     }
     $Stage ++;
-    $Prog << 1;
+    $Prog <<= 1;
   }
   echo "</table>";
   

@@ -214,7 +214,7 @@ function New_Thing(&$T) {
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
       Check_MyThing($T,$Fid);
-      $Gates = Get_Things_Cond($T['Whose'],' Type=15'); // Warp Gates
+      $Gates = Gates_Avail($Fid);
       if ($Gates) {
         if (isset($Gates[1])) { // Multiple Gates
           $GLocs = [];
@@ -232,7 +232,7 @@ function New_Thing(&$T) {
         } else {
           $T['NewSystemId'] = $T['SystemId'] = $Gates[0]['SystemId'];
           $T['WithinSysLoc'] = $Gates[0]['WithinSysLoc'];
-          $T['CurHealth'] = $T['Link_id'] = 0;
+          $T['CurHealth'] = $T['LinkId'] = 0;
           $T['TargetKnown'] = 1;
           $T['History'] .= "Warped out to " . $T['SystemId'] . " reduced to 0 health\n";
           Put_Thing($T);
@@ -259,9 +259,9 @@ function New_Thing(&$T) {
       $Gate = Get_Thing($_REQUEST['G']);
       $T['NewSystemId'] = $T['SystemId'] = $Gate['SystemId'];
       $T['WithinSysLoc'] = $Gate['WithinSysLoc'];
-      $T['CurHealth'] = $T['Link_id'] = 0;
+      $T['CurHealth'] = $T['LinkId'] = 0;
           $T['TargetKnown'] = 1;
-      db_delete_cond('ScansDue','ThingId=$tid AND Turn=' . $GAME['Turn']);
+      db_delete_cond('ScansDue',"ThingId=$tid AND Turn=" . $GAME['Turn']);
       Put_Thing($T);
       break;
 

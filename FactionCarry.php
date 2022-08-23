@@ -45,7 +45,7 @@
   $FactFacts = Get_FactionFactions($Fid);
   $Boarding = ['No', 'This turn only', 'Ongoing'];
   
-  echo "<h1>Allow Other Factions Aboard Your Ships</h1>";
+  echo "<h1>Allow Other Factions Aboard Your Ships, use your Warp gates, to repair your ships</h1>";
   
   $coln = 0;
   echo "<form method=post action=FactionCarry.php>";
@@ -53,9 +53,10 @@
   echo "<div class=tablecont><table id=indextable border width=100% style='min-width:1000px'>\n";
   echo "<thead><tr>";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Faction Name</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Armies</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Individuals</a>\n";
-
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Carry Armies</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Carry Individuals</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Use your Warp Gates</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Repair your Ships</a>\n";  
   echo "</thead><tbody>";
 
   foreach($FactFacts as $FF) {
@@ -64,6 +65,8 @@
     $perms = [ $FF['Props'] & 15, ($FF['Props'] >>4)];
     echo "<td>" . fm_radio('',$Boarding,$perms,0,'',0,'',"Set:0:" . $FF['id']);
     echo "<td>" . fm_radio('',$Boarding,$perms,1,'',0,'',"Set:1:" . $FF['id']);
+    echo "<td>" . fm_radio('',$Boarding,$perms,2,'',0,'',"Set:2:" . $FF['id']);
+    echo "<td>" . fm_radio('',$Boarding,$perms,2,'',0,'',"Set:3:" . $FF['id']);
   }
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
   echo "</table></div></form>\n";

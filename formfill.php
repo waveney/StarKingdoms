@@ -297,11 +297,11 @@
   case 'FactionFaction' :
     if (preg_match('/Set:(\d*):(\d*)/',$field,$mtch)?true:false) {
       $N = Get_FactionFaction($mtch[2]);
-      if ($mtch[1] == 0) {
-        $N['Props'] = ($N['Props']& 0xfff0) + $Value;
-      } else {
-        $N['Props'] = ($N['Props']& 0xff0f) + $Value<<4;      
-      }
+//var_dump($mtch,$N,$Value); echo "Props:" . dechex($N['Props']) . "\n";
+      $nib = $mtch[1];
+      $Mask = ~(0xf << ($nib*4));
+      $N['Props'] = ($N['Props'] & $Mask) + ($Value << ($nib*4));
+//echo "Mask: " . dechex($Mask) . " New Props:" . dechex($N['Props']) . "\n";
       echo Put_FactionFaction($N);
     }
     exit;

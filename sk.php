@@ -22,7 +22,7 @@ $Months = ['','Jan','Feb','Mar','Apr','May','June','July','Aug','Sep','Oct','Nov
 date_default_timezone_set('GMT');
 function Check_Login() {
   global $db,$USER,$USERID,$AccessType,$YEAR,$CALYEAR,$FACTION;
-  if (isset($_COOKIE{'SKC2'})) {
+  if (isset($_COOKIE['SKC2'])) {
     $res=$db->query("SELECT * FROM People WHERE Yale='" . $_COOKIE['SKC2'] . "'");
     if ($res) {
       $USER = $res->fetch_assoc();
@@ -49,7 +49,7 @@ function Set_User() {
   if (isset($USER)) return;
   $USER = array();
   $USERID = 0;
-  if (isset($_COOKIE{'SKD'})) {
+  if (isset($_COOKIE['SKD'])) {
     include_once("GetPut.php");
     $biscuit = $_COOKIE['SKD'];
     $Cake = openssl_decrypt($biscuit,'aes-128-ctr','Quarterjack',0,'BrianMBispHarris');
