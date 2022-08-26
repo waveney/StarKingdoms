@@ -542,6 +542,7 @@ function Show_Thing(&$T,$Force=0) {
                     . fm_number1('Level', $D,'Level', '', ' class=Num3 ',"ModuleLevel-$did") . ' # '
                     . fm_number0('', $D,'Number', '',' class=Num3 ',"ModuleNumber-$did") 
                     . "<button id=ModuleRemove-$did onclick=AutoInput('ModuleRemove-$did')>R</button>";
+        if ($D['Number'] < 0) echo " <b>Inactive</b>";
         if (!isset($MTNs[$D['Type']])) $BadMods += $D['Number'];
         $totmodc += $D['Number'] * $MTs[$D['Type']]['SpaceUsed'];
         
@@ -571,7 +572,7 @@ function Show_Thing(&$T,$Force=0) {
 //        if ($D['Number'] == 0) continue;
         $did = $D['id'];
         if (($dc++)%4 == 0)  echo "<tr>";
-        echo "<td><b>" . $D['Number']. "</b> of ";
+        echo "<td><b>" . abs($D['Number']). "</b> of ";
         if (isset($MTNs[$D['Type']])) {
           echo $MTNs[$D['Type']] . ($T['BuildState']? (" (Level " . $D['Level'] . ") ") :"") ;
           switch ($MTs[$D['Type']]['Name']) {
@@ -582,7 +583,8 @@ function Show_Thing(&$T,$Force=0) {
               echo " Speed: " . sprintf('%0.3g',$T['Speed']);
               break;            
             default:
-          }            
+          }
+          if ($D['Number'] <0) echo " <b>Inactive</b>";            
         } else {
           $M = $MTs[$D['Type']];
           if ($l = Has_Tech($T['Whose'],$M['BasedOn'])) {
@@ -623,7 +625,7 @@ function Show_Thing(&$T,$Force=0) {
   }
   $SpecOrders = []; $SpecCount = 0;
   $HasDeep = Get_ModulesType($tid,3);
-  if ($HasDeep) {
+  if ($HasDeep && ($HasDeep[0]['Number'] > 0)) {
     $HasDeep = $HasDeep[0]['Number'] * $HasDeep[0]['Level'];
   } else {
     $HasDeep = 0;

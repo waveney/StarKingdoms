@@ -228,9 +228,10 @@ function Within_Sys_Locs(&$N,$PM=0,$Boarding=0,$Restrict=0,$Hab=0) {// $PM +ve =
   return $L;
 }
 
-function Get_Valid_Modules(&$T) {
+function Get_Valid_Modules(&$T,$Other=0) {
   global $ModuleCats;
   $MTs = Get_ModuleTypes();
+  if ($Other == 0) $Other = $T['Whose'];
   $VMT = [];
   $ThingProps = Thing_Type_Props();
   $tprop = (empty($ThingProps[$T['Type']] )?0: $ThingProps[$T['Type']] ) ;
@@ -248,7 +249,7 @@ function Get_Valid_Modules(&$T) {
       } else {
         continue;
       }
-      $l = Has_Tech($T['Whose'],$M['BasedOn']);
+      $l = Has_Tech($Other,$M['BasedOn']);
       if (!$l) continue;
       if ($M['MinShipLevel'] > $T['Level']) continue;
     }
@@ -280,25 +281,26 @@ function Max_Modules(&$T) {
   return 0;
 }
 
-function Calc_Health(&$T,$KeepTechLvl=0) {
+function Calc_Health(&$T,$KeepTechLvl=0,$Other=0) {
   if (empty($T['Level'])) return 0;
   $Plus = 0;
-  if (Has_Trait($T['Whose'],'Thick Skinned')) $Plus =1;
+  if ($Other == 0) $Other = $T['Whose'];
+  if (Has_Trait($Other,'Thick Skinned')) $Plus =1;
   $Health = 5*($T['Level']+$Plus);
   $Ms = Get_Modules($T['id']);
   $Mts = Get_ModuleTypes();
-  $Techs = Get_Techs();
+  $Techs = Get_Techs($Other);
   $Rescat = 0;
   foreach ($Mts as $mt) if ($mt['DefWep'] == 1 ) {
-    foreach ($Ms as $M) if ($Mts[$M['Type']]['Name'] == $mt['Name']) {
+    foreach ($Ms as $M) if (($Mts[$M['Type']]['Name'] == $mt['Name']) && ($M['Number'] > 0)) { 
       if ($KeepTechLvl) {
           $Mhlth = $M['Number'] * Mod_ValueSimple($M['Level']+$Plus,$M['Type'],$Rescat);
           $Health += $Mhlth;        
       } else {
         $based = $Mts[$M['Type']]['BasedOn'];
-        if ($l = Has_Tech($T['Whose'],$based)) {
+        if ($l = Has_Tech($Other,$based)) {
           if ($Techs[$based]['Cat'] == 1) {
-            $l = Has_Tech($T['Whose'],$Techs[$based]['PreReqTech']);
+            $l = Has_Tech($Other,$Techs[$based]['PreReqTech']);
           }
           $Mhlth = $M['Number'] * Mod_ValueSimple($l+$Plus,$M['Type'],$Rescat);
           $Health += $Mhlth;
@@ -319,7 +321,7 @@ function Calc_Damage(&$T,&$Rescat) {
 
   $Rescat = 0;
   foreach ($Mts as $mt) if ($mt['DefWep'] == 2 ) {
-    foreach ($Ms as $M) if ($Mts[$M['Type']]['Name'] == $mt['Name']) { 
+    foreach ($Ms as $M) if (($Mts[$M['Type']]['Name'] == $mt['Name']) && ($M['Number'] > 0)) { 
       $dam = $M['Number'] * Mod_ValueSimple($M['Level'],$M['Type'],$Rescat);
       $Dam += $dam;
     }
@@ -440,26 +442,29 @@ function Calc_Scanners(&$T) {
   $mods = Get_ModulesType($T['id'],4);
   $nebs = Get_ModulesType($T['id'],9);
   $Cargo = Get_ModulesType($T['id'],8);
-  $T['Sensors'] = ($mods?$mods[0]['Number']:0);
-  $T['SensorLevel'] = ($mods?$mods[0]['Level']:0);
-  $T['NebSensors'] = ($nebs?$nebs[0]['Number']:0);
-  $T['CargoSpace'] = ($Cargo?$Cargo[0]['Number']*($Cargo[0]['Level']+1):0);
-  if ($Deep = Get_ModulesType(3,$T['id'])) {
+  $T['Sensors'] = (($mods && ($mods[0]['Number']>0))?$mods[0]['Number']:0);
+  $T['SensorLevel'] = (($mods && ($mods[0]['Level']>0))?$mods[0]['Level']:0);
+  $T['NebSensors'] = (($nebs && ($nebs[0]['Number']>0))?$nebs[0]['Number']:0);
+  $T['CargoSpace'] = (($Cargo && ($Cargo[0]['Number']>0))?$Cargo[0]['Number']*($Cargo[0]['Level']+1):0);
+  if (($Deep = Get_ModulesType(3,$T['id'])) && ($Deep[0]['Number']>0)) {
     $T['HasDeepSpace'] = $Deep[0]['Number']*$Deep[0]['Level'];
   }else {
     $T['HasDeepSpace'] = 0;
   }
 }
 
-function RefitRepair(&$T,$Save=1,$KeepTechLvl=0) {
+function RefitRepair(&$T,$Save=1,$KeepTechLvl=0,$Other=0) {
   if (empty($T['Level']) ) return 0;
 // Refit
   $TTypes = Get_ThingTypes();
+  $MTypes = Get_ModuleTypes();
   $tid = $T['id'];
 //  $Engines = (($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE)? 1:0);
   $Elvl = 1;
   $Engines = 0;
   $Mods = Get_Modules($tid); 
+  $Etxt = "";
+  $VMTs = Get_Valid_Modules($T,$Other) ;
   if ($Mods) {
     foreach ($Mods as $M) {
       if ($KeepTechLvl) {
@@ -467,23 +472,35 @@ function RefitRepair(&$T,$Save=1,$KeepTechLvl=0) {
           $Engines = $M['Number'];
           $Elvl = $M['Level'];
         }
-      } else {
-        $Lvl = Calc_TechLevel($T['Whose'],$M['Type']);
-        if ($M['Type'] == 5) { 
-          $Engines = $M['Number'];
-          $Elvl = $Lvl;
+        continue;
+      }
+      if (isset($VMTs[$M['Type']])) {
+        $Lvl = Calc_TechLevel(($Other?$Other:$T['Whose']),$M['Type']);
+        if ($Lvl) {
+          if ($M['Type'] == 5) { 
+            $Engines = $M['Number'];
+            $Elvl = $Lvl;
+          }
+          $M['Level'] = $Lvl;
+          $M['Number'] = abs($M['Number']);
+          Put_Module($M);
+        } else {
+          $Etxt .= abs($M['Number']) . " " . $MTypes[$M['Type']]['Name'] . Plural($M['Number']," Modules"," Module"," Modules") . " inactive as unknown tech";
+          $M['Number'] = - abs($M['Number']);
         }
-        $M['Level'] = $Lvl;
-        Put_Module($M);
+      } else {
+          $Etxt .= abs($M['Number']) . " " . $MTypes[$M['Type']]['Name'] . Plural($M['Number']," Modules"," Module"," Modules") . " inactive as unknown tech";
+          $M['Number'] = - abs($M['Number']);      
       }
     }
   }
 // Repair
-  $Health = Calc_Health($T,$KeepTechLvl);
+  $Health = Calc_Health($T,$KeepTechLvl,$Other);
   Calc_Scanners($T);
   $T['CurHealth'] = $T['OrigHealth'] = $Health;
   $T['Speed'] = $Engines*$Elvl/$T['Level'] +1;
   if ($Save) Put_Thing($T);
+  return $Etxt;
 }
 
 //  &#8373; = Credit symbol

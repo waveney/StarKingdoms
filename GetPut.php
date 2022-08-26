@@ -781,7 +781,8 @@ function Get_Faction_Techs($Fact,$Turn=0) {
   } 
   $res = $db->query("SELECT * FROM  FactionTechs WHERE Faction_Id=$Fact AND StartTurn<=$Turn ");
   if ($res) while ($ans = $res->fetch_assoc()) $Ms[$ans['Tech_Id']] = $ans;  
-  
+
+/*  
   foreach ($Ms as $M) {
     if ($M['Tech_Id'] < 100) {
       $tid = $M['Tech_Id'];
@@ -789,6 +790,7 @@ function Get_Faction_Techs($Fact,$Turn=0) {
       if ($res) while ($ans = $res->fetch_assoc()) $Ms[$tid]['Level'] = $ans['Level'];
     }
   }
+*/
   return $Ms;
 }// . ($Turn? " AND StartTurn>=$Turn " : ""
 
@@ -861,10 +863,12 @@ function Has_Tech($fid,$name,$turn=0) { // Turn==0 = now
     $res = $db->query("SELECT Level FROM  FactionTechs WHERE Faction_Id=$fid AND Tech_Id=$name ");
     if ($res && ($ans = $res->fetch_assoc())) $lvl = $ans['Level'];
 
+/*
     if ($turn != 0) {
       $res = $db->query("SELECT Level FROM FactionTechLevels WHERE Faction_Id=$fid AND Tech_Id=$name AND StartTurn > " . $GAME['Turn'] . " AND StartTurn <= Turn");
       if ($res && ($ans = $res->fetch_assoc())) $lvl = $ans['Level'];
     }
+*/
     return $lvl;
   }
   
@@ -879,10 +883,12 @@ function Has_Tech($fid,$name,$turn=0) { // Turn==0 = now
   $res = $db->query("SELECT Level FROM  FactionTechs WHERE Faction_Id=$fid AND Tech_Id=$Based ");
   if ($res && ($ans = $res->fetch_assoc())) $lvl = $ans['Level'];
 
+/*
   if ($turn != 0) {
     $res = $db->query("SELECT Level FROM FactionTechLevels WHERE Faction_Id=$fid AND Tech_Id=$Based AND StartTurn > " . $GAME['Turn'] . " AND StartTurn <= Turn");
     if ($res && ($ans = $res->fetch_assoc())) $lvl = $ans['Level'];
   }
+*/
   return $lvl;
 }
 

@@ -138,7 +138,7 @@ function Player_Page() {
       echo "<li><a href=Player.php?ACTION=Unsub>Cancel Submission</a><p>\n";
     }
     echo "<li><a href=FactionEdit.php>Faction Information</a> - Mostly read only once set up.\n";
-    echo "<li><a href=FactionCarry.php>Carry Others Control</a> - To allow individuals and armies aboard.\n";
+    echo "<li><a href=FactionCarry.php>Allow Others Control</a> - To allow individuals and armies aboard, use of Warp gates and repairing.\n";
     break;
             
   case 'Turn Being Processed':

@@ -100,7 +100,7 @@ Militia will only be created for a world that is under attack.<p>
 
 If you click on the name of the thing, for lots more detail:
 <h3>Instructions</h3>
- you can do special actions such as colonisation, dissasembly, warping home and deep space projects.<p>
+You can do special actions such as colonisation, dissasembly, warping home and deep space projects.<p>
 
 Only those actions you can actually do at that location are shown.<p>
 
@@ -166,8 +166,10 @@ Name, total credits, traits, a picture, science points.<P>
 
 If a trait is automated in the system it will indicate that it is automated, for all other cases you need to do the RP yourself and tell GMs if it affects underlying mechanics.<p>
 
-<h2>Carry Others Control</h2>
-Enable your things to carry things of other factions.<p>
+<h2>Allow Others Control</h2>
+Enable your things to carry things of other factions.  Allow others to use your Warp gates.  Allow others to repair your ships.<p>
+
+Controls can be for one turn or ongoing.<p>
 
 <h2>Why can't I do that?</h2>
 Ask, I may not have realised you want to do it.<p>

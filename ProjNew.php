@@ -148,7 +148,8 @@
     if ($NoC != 1) $Dists[] = ['HostType'=>-1, 'HostId' => $PH['id'], 'Type'=> -1, 'Number'=>0, 'id'=>-$PH['id']];
     foreach ($Dists as &$D) {
       if ($D['Type'] > 0 && (($DistTypes[$D['Type']]['Props'] &2) == 0)) continue;
-      if (($D['Type'] < 0) && ($PH['Type'] != $Faction['Biosphere']) && ($PH['Type'] != $Faction['Biosphere2']) && ($PH['Type'] != $Faction['Biosphere3']) && (Has_Tech($Fid,3)<2)) continue;
+      if (($D['Type'] < 0) && ($PH['Type'] != $Faction['Biosphere']) && 
+         ($PH['Type'] != $Faction['Biosphere2']) && ($PH['Type'] != $Faction['Biosphere3']) && (Has_Tech($Fid,3)<2)) continue;
       $Dix = $D['id'];
      
       if (($Hi == $Hix) && ($DiCall == $Dix)) {
@@ -276,7 +277,8 @@
           $Lvl = 1;
         }
         $pc = Proj_Costs($Lvl);
-        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Core Technology'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $TT['id'] .
+        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . 
+                $PTi['Research Core Technology'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $TT['id'] .
                 "&Name=" . base64_encode("Research " . $TT['Name'] . " $Lvl$Place"). "&L=$Lvl&C=" . $pc[1] . "&PN=" . $pc[0] ."'>" .      
                 "Research " . $TT['Name'] . " $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
         }
@@ -289,7 +291,8 @@
         if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
         $Lvl = $T['PreReqLevel'];
         $pc = Proj_Costs($Lvl);
-        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Supplemental Technology'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $T['id'] .
+        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Supplemental Technology'] .
+                "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $T['id'] .
                 "&Name=" . base64_encode("Research " . $T['Name'] . $Place) . "&L=$Lvl&C=" . $pc[1] . "&PN=" . $pc[0] ."'>" .
                 "Research " . $T['Name'] . "; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
       }
@@ -412,7 +415,6 @@
 
       echo "<h2>Refit and Repair</h2>"; // THIS MUST be AFTER the simple buttons as the form gets lost
 
-      echo "You can only do this to ships at the same planet.<p>";
       $HSys = $Homes[$Hi]['SystemId'];
       $HLoc = $Homes[$Hi]['WithinSysLoc'];
       $TTs = Get_ThingTypes();
@@ -420,8 +422,10 @@
       $RepShips = [];
       $Level1 = 0;
       $Count = 0;
+      $MaxLvl = Has_Tech($Fid,'Ship Construction');
+
       foreach ($Things as $T) {
-        if ($TTs[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) {
+        if (($TTs[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) && ($T['Level'] <= $MaxLvl)) {
 //          if ($T['WithinSysLoc'] < 2 || $T['WithinSysLoc'] == $HLoc || $T['WithinSysLoc'] == ($HLoc-100)) {
             $RepShips[$T['id']] = $T['Name'] . " - level " . $T['Level'];
             if ($T['Level'] == 1) $Level1++;
@@ -429,6 +433,22 @@
           }
 //        }
       }
+        
+      $Factions = Get_Factions(); 
+      $FFdata = Get_FactionFactionsCarry($Fid);
+      foreach($FFdata as $FC) {
+        if ($FC['Props'] & 0xf000) {
+          $OThings = Get_Things_Cond($FC['FactionId1']," SystemId=$HSys AND ( BuildState=3 OR BuildState=2) AND Level<=$MaxLvl "); // Warp Gates
+          foreach ($OThings as $T) {
+            if ($TTs[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) {
+              $RepShips[$T['id']] = $T['Name'] . " - level " . $T['Level'] . " (" . $Factions[$T['Whose']]['Name'] . ")";
+              if ($T['Level'] == 1) $Level1++;
+              $Count++;
+            }
+          }
+        }
+      }
+ 
       
       $pc = Proj_Costs(1);
       if ($Count) {
