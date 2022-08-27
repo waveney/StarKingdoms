@@ -111,6 +111,8 @@
         
   $PHx = 1;
   $Dis = [];
+  $MaxDists = 0;
+  $ThingLevel = 1;
   foreach ($Homes as &$H) {
     $Hix = $H['id'];
     $NoC = 0;
@@ -140,6 +142,8 @@
         $H['Skip'] = 1;
         continue 2;  // Remove things without districts
       }
+      $MaxDists = $PH['MaxDistricts'];
+      $ThingLevel = $PH['Level'];
       $Sid = $PH['SystemId'];
       break;
     }
@@ -186,48 +190,59 @@
  
   case 'Construction':
     echo "<h2>Select Construction Project:</h2><p>";
-      $DTs = Get_DistrictTypes();
-      $DNames = [];
+    
+      if ($MaxDists > 0) {
+        $CurDists = 0;
+        foreach ($HDists[$Hi] as $D) $CurDists += $D['Number'];     
+      
+        echo "Maximum Districts: $MaxDists<br>Current Districts: $CurDists<br>";
+      }
+    
+      if ($MaxDists && ($CurDists < $MaxDists)) {
+        $DTs = Get_DistrictTypes();
+        $DNames = [];
 //var_dump($HDists[$Hi]);
-      foreach ($DTs as $DTz) {
-        if (eval("return " . $DTz['Gate'] . ";" )) { // ($DT['BasedOn'] == 0 || Has_tech($Fid,$DT['BasedOn'], $Turn)) {
-          $DNames[$DTz['id']] = $DTz['Name'];
+        foreach ($DTs as $DTz) {
+          if (eval("return " . $DTz['Gate'] . ";" )) { // ($DT['BasedOn'] == 0 || Has_tech($Fid,$DT['BasedOn'], $Turn)) {
+            $DNames[$DTz['id']] = $DTz['Name'];
           
-          $Lvl = 0;
+            $Lvl = 0;
           
-          foreach ($HDists[$Hi] as $D) {
+            foreach ($HDists[$Hi] as $D) {
 //echo "<br>Checking "; var_dump($D);
-            if ($D['Type'] == $DTz['id']) {
-              $Lvl = $D['Number']-$D['Delta'];
-              break;
+              if ($D['Type'] == $DTz['id']) {
+                $Lvl = $D['Number']-$D['Delta'];
+                break;
+              }
             }
-          }
           
 //var_dump($DTz);
 // TODO bug if you already have that level in the pipeline - Add check to Turns Ready          
-          $Lvl++;
-          $pc = Proj_Costs($Lvl);
-          if (Has_Trait($Fid,"We Happy Few")) {
-            if ($DTz['Name'] == 'Mining') {
-              $pc[1] = 0; // Mining
-            } else if ($Lvl>1 ) {
-              $pc = Proj_Costs($Lvl-1);
+            $Lvl++;
+            $pc = Proj_Costs($Lvl);
+            if (Has_Trait($Fid,"We Happy Few")) {
+              if ($DTz['Name'] == 'Mining') {
+                $pc[1] = 0; // Mining
+              } else if ($Lvl>1 ) {
+                $pc = Proj_Costs($Lvl-1);
+              }
             }
-          }
-          echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Construction'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $DTz['id'] . 
-                "&Name=" . base64_encode("Build " . $DTz['Name'] . " District $Lvl$Place") . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Build " . $DTz['Name'] . " District $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>\n";        
+            echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Construction'] . 
+                  "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $DTz['id'] . 
+                  "&Name=" . base64_encode("Build " . $DTz['Name'] . " District $Lvl$Place") . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
+                  "Build " . $DTz['Name'] . " District $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>\n";        
         
+          }
         }
       }
-      
+        
     echo "<h2>Rebuild and repair</h2>Manual at present. Please put this in your turn orders<p>";
       
       
     echo "<h2>Construct Warp Gate</h2>";
       $pc = Proj_Costs(4);
       echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Construct Warp Gate'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=0" .
-                "&Name=" . base64_encode("Build Warp Gate$Place"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
+                "&Name=" . base64_encode("Build Warp Gate$Place"). "&L=4&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
                 "Build Warp Gate $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
     
     echo "<h2>Research Planetary Construction</h2><p>";
@@ -384,9 +399,8 @@
 
       if (Has_Trait($Fid,'Grow Modules')) {
         echo "<h2>Grow Modules</h2>";
-        $CurLevel = $PH['Level'];
 // var_dump($CurLevel);
-        $Grow = min((Has_Tech($Fid,'Ship Construction')-1), 1)*$CurLevel; // Consider ship yards rather than the tech
+        $Grow = min((Has_Tech($Fid,'Ship Construction')-1), 1)*$ThingLevel; // Consider ship yards rather than the tech
         $pc = Proj_Costs(1);
         echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Grow Modules'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT" .
                 "&Name=" . base64_encode("Grow $Grow Modules" . $Place) . "&L=1&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
