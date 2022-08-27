@@ -1029,7 +1029,7 @@ function ProjectProgressActions($Pay4=0) {
 
   foreach ($Projects as $P) {
     if ($P['LastUpdate'] >= $GAME['Turn']) continue;
-    GMLog("Updating project " . $P['id'] . " " . $P['Name'] . "<br>");
+    GMLog("Updating project " . $P['id'] . " " . $P['Name']);
 
     
     $PT = $ProjTypes[$P['Type']];
@@ -1464,7 +1464,7 @@ function ShipMovements($Agents=0) {
     }
     
     if ($T['LinkId']>0 && $T['NewSystemId'] != $T['SystemId'] ) {
-      GMLog("Moving " . $T['Name'] . "<br>");
+      GMLog("Moving " . $T['Name']);
 
       $Lid = $T['LinkId']; 
 

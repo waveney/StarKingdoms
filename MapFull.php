@@ -21,8 +21,7 @@
   if (isset($_REQUEST['Links'])) $ShowLinks = $_REQUEST['Links'];
 
   $CatCols = ["white","grey", "Yellow"];
-//  $HexLegPos = [[1,8],[1,7.5],[1,7],[1,6.5], [9,8],[9,7.5],[9,7],[9,6.5], [1,0],[1,0.5],[1,1],[1,1.5], [9,0],[9,0.5],[9,1.5],[9,2]];
-  eval("\$HexLegPos=" . GameFeature('HexLegPos','') . ";" ); // [[1,8],[1,7.5],[1,7],[1,6.5], [9,8],[9,7.5],[9,7],[9,6.5], [1,0],[1,0.5],[1,1],[1,1.5], [9,0],[9,0.5],[9,1.5],[9,2]];
+  eval("\$HexLegPos=" . GameFeature('HexLegPos','') . ";" ); 
 // var_dump($HexLegPos);exit;
   
   if (isset($_REQUEST['f'])) {
@@ -95,167 +94,162 @@
 //  if (!$Dot) { echo "Could not create dot file<p>"; dotail(); };
 
 
+  $Nodes = Get_Systems(); 
+  $Levels = Get_LinkLevels();
+  $Factions = Get_Factions(); 
+
   while ($RedoMap) {
-  $Dot = fopen("cache/Fullmap$Faction$typ.dot","w+");
-  if (!$Dot) { echo "Could not create dot file<p>"; dotail(); };
+    $Dot = fopen("cache/Fullmap$Faction$typ.dot","w+");
+    if (!$Dot) { echo "Could not create dot file<p>"; dotail(); };
 //  ftruncate($Dot,0);  // Needed for redoing logic
   
  // echo "AA";
   
-  $RedoMap = 0;
+    $RedoMap = 0;
     
-  $Nodes = Get_Systems(); 
-  $Levels = Get_LinkLevels();
-  $Factions = Get_Factions(); 
-  $NebF = 0;
-  $ShownNodes = [];
-  $LinkSown = [];
-  $UnknownLink = [];
+    $NebF = 0;
+    $ShownNodes = [];
+    $LinkSown = [];
+    $UnknownLink = [];
+    $LinkShown = [];
   
-  fwrite($Dot,"graph skmap {\n") ; //size=" . '"8,12!"' . "\n");
+    fwrite($Dot,"graph skmap {\n") ; //size=" . '"8,12!"' . "\n");
 //  echo "BB";
 //  if (!$typ) fwrite($Dot, "[size=\"10,20!\"];\n");
   
-  foreach ($Nodes as $N) {
-    if (!ctype_alnum($N['Ref'])) continue;
-    $NodeName = $N['Name']?$N['Name']:"";
-    $ShortName = $N['ShortName']?$N['ShortName']:$NodeName;
-    $Hide = 0;
-    $FS = 0;
-    if ($Faction) {
-      $FS = Get_FactionSystemFS($Faction, $N['id']);
-      if ($N['Control'] != $Faction) {
-        if (!isset($FS['id'])) continue;
-        if ($FS['ScanLevel'] > 1) {
-          if ($FS['Name']) $ShortName = $NodeName = $FS['Name'];
-          if ($FS['ShortName']) $ShortName = $FS['ShortName'];
-        } else {
-          $Hide = 1;
-        }
-      }
-    }
-    $atts = "";
-
-    $Colour = "white";
-    if ($N['Control'] && !$Hide) {
-      $Colour = $Factions[$N['Control']]['MapColour'];
-      $Factions[$N['Control']]['Seen']=1;
-    } else if ($N['Category']) {
-      $Colour = ($Faction?"White":$CatCols[$N['Category']]);
-    } else {
-      $Colour = "White";
-    }
-    
-    if ($Hide) $NodeName = '';
-    $BdrColour = "Black";
-    if ($Faction == 0 && $N['HistoricalControl']) $BdrColour = $Factions[$N['HistoricalControl']]['MapColour'];
-    
-    if ($typ) $atts .= " shape=box pos=\"" . ($N['GridX']+(5-$N['GridY'])/2) . "," . (9-$N['GridY']) . "!\"";
-    $atts .= "  shape=box style=filled fillcolor=\"$Colour\" color=\"$BdrColour\"";
-    if ($NodeName) {
-      $atts .= NodeLab($ShortName, $N['Ref']); //($Faction==0?$N['Ref']:""));
-    }
-    if ($N['Nebulae']) { $atts .= " penwidth=" . (2+$N['Nebulae']*2); $NebF = 1; }
-    else { $atts .= " penwidth=2"; }
-   
-    if ($Faction) {
-      $atts .= " href=\"/SurveyReport.php?R=" . $N['Ref'] . '" ';
-      
-      if (!empty($FS['Xlabel'])) $atts .= " xlabel=\"" . $FS['Xlabel'] . '" ';
-    } else {
-      $atts .= " href=\"/SysEdit.php?N=" . $N['id'] . '" ';
-    }
-    
-    fwrite($Dot,$N['Ref'] . " [$atts ];\n");
-    $ShownNodes[$N['Ref']]= 1;
-    
-//    if ($typ) {
-//      fwrite($Dot,$N['Ref'] . " [shape=hexagon pos=\"" . ($N['GridX']+(5-$N['GridY'])/2) . "," . (9-$N['GridY']) . "!\" style=filled fillcolor=$Colour] ;\n");
-//    } else {
-//      fwrite($Dot,$N['Ref'] . " [style=filled fillcolor=$Colour];\n");
-//    }
-  }
-  
-
-  if ($Faction) {
-    $ul = 1;
-    $AllLinks = Has_Tech($Faction,'Know All Links');
-    foreach($Nodes as $N) {
-      $from = $N['Ref'];
-      
-      $FS = Get_FactionSystemFS($Faction,$N['id']);
- 
-      $Links = Get_Links($from);
-      if (!isset( $ShownNodes[$N['Ref']])) continue;
-      $Neb = $N['Nebulae'];
-      foreach ($Links as $L) {
-        if (isset($LinkShown[$L['id']])) continue;
-        $Fl = Get_FactionLinkFL($Faction, $L['id']);
-        if (isset($Fl['id']) && $Fl['Known'] || $AllLinks) {
-          fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=\"" . $Levels[$L['Level']]['Colour'] . '"' . ($ShowLinks? " label=\"#" . $L['id'] . '"' : '') . " ];\n");
-          $LinkShown[$L['id']]=1;
-        } else {
-          if ($Neb && $FS['NebScanned'] < $Neb) continue;
-          if (isset($FS['ScanLevel']) && $FS['ScanLevel']<2) continue;
-          $rand = "B$ul";  // This kludge at least allows both ends to be displayed
-          fwrite($Dot,"Unk$ul$rand [label=\"?\" shape=circle];\n");
-          fwrite($Dot,"$from -- Unk$ul$rand [color=\"" . $Levels[$L['Level']]['Colour'] . '"' . ($ShowLinks? " label=\"#" . $L['id'] . '"' : '') . " ];\n");
-          $ul++;
-          if (isset($UnknownLink[$L['id']])) {
-            $RedoMap = 1;
-            $Fl['Known'] = 1;
-            Put_FactionLink($Fl);
+    foreach ($Nodes as $N) {
+      if (!ctype_alnum($N['Ref'])) continue;
+      $NodeName = $N['Name']?$N['Name']:"";
+      $ShortName = $N['ShortName']?$N['ShortName']:$NodeName;
+      $Hide = 0;
+      $FS = 0;
+      if ($Faction) {
+        $FS = Get_FactionSystemFS($Faction, $N['id']);
+        if ($N['Control'] != $Faction) {
+          if (!isset($FS['id'])) continue;
+          if ($FS['ScanLevel'] > 1) {
+            if ($FS['Name']) $ShortName = $NodeName = $FS['Name'];
+            if ($FS['ShortName']) $ShortName = $FS['ShortName'];
           } else {
-            $UnknownLink[$L['id']] = 1;
+            $Hide = 1;
           }
         }
+      }
+      $atts = "";
+ 
+      $Colour = "white";
+      if ($N['Control'] && !$Hide) {
+        $Colour = $Factions[$N['Control']]['MapColour'];
+        $Factions[$N['Control']]['Seen']=1;
+      } else if ($N['Category']) {
+        $Colour = ($Faction?"White":$CatCols[$N['Category']]);
+      } else {
+        $Colour = "White";
+      }
+    
+      if ($Hide) $NodeName = '';
+      $BdrColour = "Black";
+      if ($Faction == 0 && $N['HistoricalControl']) $BdrColour = $Factions[$N['HistoricalControl']]['MapColour'];
+    
+      if ($typ) $atts .= " shape=box pos=\"" . ($N['GridX']+(5-$N['GridY'])/2) . "," . (9-$N['GridY']) . "!\"";
+      $atts .= "  shape=box style=filled fillcolor=\"$Colour\" color=\"$BdrColour\"";
+      if ($NodeName) {
+        $atts .= NodeLab($ShortName, $N['Ref']); //($Faction==0?$N['Ref']:""));
+      }
+      if ($N['Nebulae']) { $atts .= " penwidth=" . (2+$N['Nebulae']*2); $NebF = 1; }
+      else { $atts .= " penwidth=2"; }
+   
+      if ($Faction) {
+        $atts .= " href=\"/SurveyReport.php?R=" . $N['Ref'] . '" ';
+      
+        if (!empty($FS['Xlabel'])) $atts .= " xlabel=\"" . $FS['Xlabel'] . '" ';
+      } else {
+        $atts .= " href=\"/SysEdit.php?N=" . $N['id'] . '" ';
+      }
+    
+      fwrite($Dot,$N['Ref'] . " [$atts ];\n");
+      $ShownNodes[$N['Ref']]= 1;
+    }
+  
+
+    if ($Faction) {
+      $ul = 1;
+      $AllLinks = Has_Tech($Faction,'Know All Links');
+      foreach($Nodes as $N) {
+        $from = $N['Ref'];
+      
+        $FS = Get_FactionSystemFS($Faction,$N['id']);
+ 
+        $Links = Get_Links($from);
+        if (!isset( $ShownNodes[$N['Ref']])) continue;
+        $Neb = $N['Nebulae'];
+        foreach ($Links as $L) {
+          if (isset($LinkShown[$L['id']])) continue;
+          $Fl = Get_FactionLinkFL($Faction, $L['id']);
+          if (isset($Fl['id']) && $Fl['Known'] || $AllLinks) {
+            fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=\"" . $Levels[$L['Level']]['Colour'] . '"' . 
+                   ($ShowLinks? " label=\"#" . $L['id'] . '"' : '') . " ];\n");
+            $LinkShown[$L['id']]=1;
+          } else {
+            if ($Neb && $FS['NebScanned'] < $Neb) continue;
+            if (isset($FS['ScanLevel']) && $FS['ScanLevel']<2) continue;
+            $rand = "B$ul";  // This kludge at least allows both ends to be displayed
+            fwrite($Dot,"Unk$ul$rand [label=\"?\" shape=circle];\n");
+            fwrite($Dot,"$from -- Unk$ul$rand [color=\"" . $Levels[$L['Level']]['Colour'] . '"' . ($ShowLinks? " label=\"#" . $L['id'] . '"' : '') . " ];\n");
+            $ul++;
+            if (isset($UnknownLink[$L['id']])) {
+              $RedoMap = 1;
+              $Fl['Known'] = 1;
+              Put_FactionLink($Fl);
+            } else {
+              $UnknownLink[$L['id']] = 1;
+            }
+          }
  //       $LinkShown[$L['id']]=1;
+        }
+      }
+    } else {
+      foreach($Nodes as $N) {
+        $from = $N['Ref'];
+        $Links = Get_Links1end($from);
+
+        foreach ($Links as $L) {
+          fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=\"" . $Levels[$L['Level']]['Colour'] . '"' . ($typ?"":(" label=\"#" . $L['id'] . "\"")) . "];\n");
+        }
       }
     }
-  } else {
-    foreach($Nodes as $N) {
-      $from = $N['Ref'];
-      $Links = Get_Links1end($from);
-
-      foreach ($Links as $L) {
-        fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=\"" . $Levels[$L['Level']]['Colour'] . '"' . ($typ?"":(" label=\"#" . $L['id'] . "\"")) . "];\n");
-      }
-    }
-  }
   
-  
-
 //  fwrite($Dot,"}\n");
 //  fwrite($Dot,"graph legend {\n");
-  $ls=0;
-  foreach ($Factions as $F) {
-    if (isset($F['Seen'])) {
-      fwrite($Dot,"FF" . $F['id'] . " [shape=box style=filled fillcolor=\"" . $F['MapColour'] . '"' .
-          NodeLab($F['Name']) . ($typ?" pos=\"" . $HexLegPos[$ls][0] . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");
+    $ls=0;
+    foreach ($Factions as $F) {
+      if (isset($F['Seen'])) {
+        fwrite($Dot,"FF" . $F['id'] . " [shape=box style=filled fillcolor=\"" . $F['MapColour'] . '"' .
+            NodeLab($F['Name']) . ($typ?" pos=\"" . $HexLegPos[$ls][0] . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");
+        $ls++;
+      }
+    }
+  
+    if ($NebF) {
+      if ($typ) {
+        fwrite($Dot,"Nebulae [shape=box style=filled fillcolor=white penwidth=3" . ($typ?" pos=\"" . $HexLegPos[$ls][0] . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");
+      } else {
+        fwrite($Dot,"Nebulae [shape=box style=filled fillcolor=white penwidth=3];\n");
+      }
       $ls++;
-    }
-  }
+    };
   
-  if ($NebF) {
-    if ($typ) {
-      fwrite($Dot,"Nebulae [shape=box style=filled fillcolor=white penwidth=3" . ($typ?" pos=\"" . $HexLegPos[$ls][0] . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");
-    } else {
-      fwrite($Dot,"Nebulae [shape=box style=filled fillcolor=white penwidth=3];\n");
+    if (!$Faction) {
+      fwrite($Dot,"Historical [shape=box style=filled fillcolor=white penwidth=2 color=\"CadetBlue\"" .
+          ($typ?" pos=\"" . $HexLegPos[$ls][0] . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");  
+      $ls++;  
+      fwrite($Dot,"ZZ99 [shape=box style=filled fillcolor=yellow penwidth=2 " . NodeLab("Interest","Other") . 
+          ($typ?" pos=\"" . $HexLegPos[$ls][0] . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");  
+      $ls++;  
     }
-    $ls++;
-  };
-  
-  if (!$Faction) {
-    fwrite($Dot,"Historical [shape=box style=filled fillcolor=white penwidth=2 color=\"CadetBlue\"" .
-          ($typ?" pos=\"" . $HexLegPos[$ls][0] . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");  
-    $ls++;  
-    fwrite($Dot,"ZZ99 [shape=box style=filled fillcolor=yellow penwidth=2 " . NodeLab("Interest","Other") . 
-          ($typ?" pos=\"" . $HexLegPos[$ls][0] . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");  
-    $ls++;  
-  }
 
-  fwrite($Dot,"}\n"); 
-  fclose($Dot);
+    fwrite($Dot,"}\n"); 
+    fclose($Dot);
   } // Redo Loop
 
     
