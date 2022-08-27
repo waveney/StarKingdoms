@@ -662,15 +662,17 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
   $txt = '';
   $RawA = 0;
   
+  $TTprops = $ThingTypes[$T['Type']]['Properties'];
       if ($Fid >=0 && ($T['Whose'] != $Fid) && (($ThingTypes[$T['Type']]['SeenBy'] & $Eyes) == 0 )) return '';
       if ($T['BuildState'] < 2 || $T['BuildState'] > 4) return ''; // Building or abandoned
       if ($LastWhose && $LastWhose!= $T['Whose']) $txt .= "<P>";
       if ($T['BuildState'] == 4) $txt .= "The remains of: ";
       if ($T['Whose'] || $GM) {
-        $txt .= ((($Fid < 0) || ($Fid == $T['Whose']) || $GM )?( "<a href=ThingEdit.php?id=" . $T['id'] . ">" . (empty($T['Name'])?"Unnamed":$T['Name']) . "</a>") : $T['Name'] ) . " a";
+        $txt .= ((($Fid < 0) || ($Fid == $T['Whose']) || $GM )?( "<a href=ThingEdit.php?id=" . $T['id'] . ">" . 
+                (empty($T['Name'])?"Unnamed":$T['Name']) . "</a>") : $T['Name'] ) . " a";
         $RawA = 1;
       } 
-      if ($ThingTypes[$T['Type']]['Properties'] & THING_HAS_LEVELS) {
+      if ($TTprops & THING_HAS_LEVELS) {
         $txt .= " level " . $T['Level'];
         $RawA = 0;
       }
@@ -685,7 +687,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
         $txt .= " <span style='background:" . $Factions[$T['Whose']]['MapColour'] . "'>$Who</span>";
         $RawA = 0;
       }
-      if (($T['Whose'] == $Fid) && ($ThingTypes[$T['Type']]['Properties'] & THING_CAN_BE_ADVANCED) && ($T['Level'] > 1)) $txt .= ' ' . $Advance[$T['Level']];
+      if (($T['Whose'] == $Fid) && ($TTprops & THING_CAN_BE_ADVANCED) && ($T['Level'] > 1)) $txt .= ' ' . $Advance[$T['Level']];
       if ($T['Whose']==0 && Access('GM')) {
         $txt .= "<a href=ThingEdit.php?id=" . $T['id'] . ">" . $ThingTypes[$T['Type']]['Name'] . "</a>";
       } else {
@@ -693,6 +695,17 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
       }
       if ($GM && !empty($T['Orders'])) $txt .= ", <span style='background:#ffd966;'>Orders: " . $T['Orders'] . "</span>";
       if ($Images && !empty($T['Image'])) $txt .= " <img valign=top src=" . $T['Image'] . " height=100> ";
+      
+      if ($GM) {
+        $Resc =0;
+        $BD = Calc_Damage($T,$Resc);
+           
+        $txt .= " (";
+        if ($TTprops & THING_CAN_MOVE) $txt .= "Speed: " . sprintf("%0.1f",$T['Speed']);
+        if ($TTprops & THING_HAS_HEALTH) $txt .= ", Health: " . $T['CurHealth'] . "/" . $T['OrigHealth']; 
+        if ($TTprops & THING_CAN_MOVE) $txt .= ", Dam: " . $BD . ($Resc? "<b>*</b>":'');
+        $txt .= ")";
+      }
       $txt .= "<br clear=all>\n";
       $LastWhose = $T['Whose'];
    return $txt;
