@@ -51,7 +51,7 @@
       if ($Ps) {
         echo "<h2>Factions name for Planets with that name</h2>";
         foreach($Ps as $FP) {
-          $P = Get_Planet($FP['PlanetId']);
+          $P = Get_Planet($FP['Planet']);
           $N = Get_System($P['SystemId']);
           echo "<a href=PlanEdit.php?id=" . $P['id'] . ">" . $FP['Name'] . " in " . System_Name($N) . "</a><br>\n";
         }

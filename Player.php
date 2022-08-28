@@ -26,6 +26,7 @@ function ValidateTurn() {
       if (empty($P['Name'])) $P['Name'] = 'Nameless';
       $Tid = $P['ThingId'];
       if ($Tid == 0) {
+        dostaffhead("Player Actions");
         echo "<h2 class=Err>Warning - your project: <a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a> is level " . $P['Level'] . " trying to make an unknown thing</h2>\n";
         $Valid = 0;               
         continue;
@@ -34,14 +35,19 @@ function ValidateTurn() {
 //var_dump($T); echo "<p>";
 
       if (empty($T)) {
+        dostaffhead("Player Actions");
         echo "<h2 class=Err>Warning - your project: <a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a> is level " . $P['Level'] . " trying to make an unknown thing</h2>\n";
         $Valid = 0;               
       } else if ($P['Level'] != $T['Level']) {
         if ($P['Level'] < $T['Level']) {
-          echo "<h2 class=Err>Warning - your project: <a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a>  is level " . $P['Level'] . " trying to make a level " . $T['Level'] . " thing</h2>\n";
+          dostaffhead("Player Actions");
+          echo "<h2 class=Err>Warning - your project: <a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a>  is level " . $P['Level'] . 
+               " trying to make a level " . $T['Level'] . " thing</h2>\n";
           $Valid = 0;          
         } else {
-          echo "<h2 class=Err>Warning - your project: <a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a>  is level " . $P['Level'] . " trying to make a level " . $T['Level'] . " thing</h2>\n";
+          dostaffhead("Player Actions");
+          echo "<h2 class=Err>Warning - your project: <a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a>  is level " . $P['Level'] . 
+               " trying to make a level " . $T['Level'] . " thing</h2>\n";
           $Valid = 0;
         }
       }
@@ -88,12 +94,15 @@ function ValidateTurn() {
         }
       }
       if ($Used == 0) {
+        dostaffhead("Player Actions");
         echo "<h2 class=Err>Warning - No use of <b>This can be optimised</b> on $Name</h2>";
         $Valid = 0;
       } elseif ($Used > 2) {
-         echo "<h2 class=Err>Warning - <b>This can be optimised</b> can only be used once on $Name</h2>";
+        dostaffhead("Player Actions");
+        echo "<h2 class=Err>Warning - <b>This can be optimised</b> can only be used once on $Name</h2>";
         $Valid = 0;                    
       } elseif ($DeltaSum  != 0) { 
+        dostaffhead("Player Actions");
         echo "<h2 class=Err>Warning - <b>This can be optimised</b> on $Name Does not Sum to Zero</h2>";
         $Valid = 0;               
       }
@@ -106,7 +115,7 @@ function ValidateTurn() {
 
 
   A_Check('Player');
-  dostaffhead("Player Actions");
+//  dostaffhead("Player Actions");
   
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
@@ -139,6 +148,7 @@ function ValidateTurn() {
   }
 
 
+  dostaffhead("Player Actions");
   echo "You can always get back here by clicking on 'Faction Menu' on the bar above.<br>\n";
   
   Player_Page();

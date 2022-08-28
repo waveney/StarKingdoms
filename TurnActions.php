@@ -2031,7 +2031,7 @@ function InstructionsComplete() {
       TurnLog($Who,$P['Name'] . " on " . $N['Ref'] . " has been colonised");
       GMLog($P['Name'] . " on " . $N['Ref'] . " has been colonised by " . $Facts[$Who]['Name'],1);  // TODO Check for any named chars and offload
        
-      $Have = Get_Things_Cond(0," (LinkId<0 AND SystemId=$Tid ");
+      $Have = Get_Things_Cond(0," (LinkId<0 AND SystemId=$Tid) ");
       if ($Have) {
         $Loc = Within_Sys_Locs($N,$T['Spare1']);       
         foreach ($Have as $H) {
