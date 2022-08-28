@@ -669,7 +669,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
       if ($T['BuildState'] == 4) $txt .= "The remains of: ";
       if ($T['Whose'] || $GM) {
         $txt .= ((($Fid < 0) || ($Fid == $T['Whose']) || $GM )?( "<a href=ThingEdit.php?id=" . $T['id'] . ">" . 
-                (empty($T['Name'])?"Unnamed":$T['Name']) . "</a>") : $T['Name'] ) . " a";
+                (empty($T['Name'])?"Unnamed":$T['Name']) . "</a>") : $T['Name'] ) . " a ";
         $RawA = 1;
       } 
       if ($TTprops & THING_HAS_LEVELS) {
@@ -703,7 +703,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
         $txt .= " (";
         if ($TTprops & THING_CAN_MOVE) $txt .= "Speed: " . sprintf("%0.3g, ",$T['Speed']) ;
         if ($TTprops & THING_HAS_HEALTH) $txt .= "Health: " . $T['CurHealth'] . "/" . $T['OrigHealth'] . ", "; 
-        if ($TTprops & THING_CAN_MOVE) $txt .= "Dam: " . $BD . ($Resc? "<b>*</b>":'');
+        if ($BD) $txt .= "Dam: " . $BD . ($Resc? "<b>*</b>":'');
         $txt .= ")";
       }
       $txt .= "<br clear=all>\n";
