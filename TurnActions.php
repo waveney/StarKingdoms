@@ -2081,7 +2081,8 @@ function InstructionsComplete() {
        break;
        
      case 'Make Asteroid Mine':
-       $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Asteroid Mine'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'],
+       $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Asteroid Mine'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'Whose'=>$T['Whose'], 
+              'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'],
               'Name'=>$T['MakeName']];
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
@@ -2236,7 +2237,8 @@ function InstructionsComplete() {
      case 'Make Something': 
        $Who = $T['Whose'];
        $Name = $Facts[$Who]['Name'];
-       GMLog("$Name has done a DSC make something of '" . $T['MakeName'] . "' in " . $N['Ref'] . " it took " . $T['Progress'] . " actions this needs to be handled by the GMs.",1);
+       GMLog("$Name has done a DSC make something of '" . $T['MakeName'] . "' in " . $N['Ref'] . " it took " . $T['Progress'] . 
+             " actions this needs to be handled by the GMs.",1);
        break;
      
      case 'Make Warpgate':

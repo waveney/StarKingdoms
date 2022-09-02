@@ -190,15 +190,17 @@
  
   case 'Construction':
     echo "<h2>Select Construction Project:</h2><p>";
-    
+      $CurDists = 0;    
       if ($MaxDists > 0) {
-        $CurDists = 0;
+
         foreach ($HDists[$Hi] as $D) $CurDists += $D['Number'];     
       
         echo "Maximum Districts: $MaxDists<br>Current Districts: $CurDists<br>";
       }
-    
-      if ($MaxDists && ($CurDists < $MaxDists)) {
+ 
+//         echo "Maximum Districts: $MaxDists<br>Current Districts: $CurDists<br>";
+            
+      if ($MaxDists==0 || ($CurDists < $MaxDists)) {
         $DTs = Get_DistrictTypes();
         $DNames = [];
 //var_dump($HDists[$Hi]);
