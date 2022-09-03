@@ -29,7 +29,7 @@
           exit;
         }
       }
-      $N= ['Type'=>$Value,'HostId'=>$mtch[1],'Number'=>1, 'HostType' => ($type == 'Planet'?1:2)];
+      $N= ['Type'=>$Value,'HostId'=>$mtch[1],'Number'=>1, 'HostType' => ($type == 'Planet'?1:2), 'GameId'=>$GAMEID];
       $N['HostType'] = ($type == 'Planet'?1:2);
       echo 'FORCERELOAD54321:NOW' . Put_District($N);
       exit;

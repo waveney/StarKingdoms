@@ -590,7 +590,7 @@ function Thing_Duplicate($otid) {
   unset($T['id']);
   $T['Name'] = "Copy of " . $T['Name'];
   $T['id'] = $Tid = Insert_db('Things',$T);
-  $Discs = Get_DistrictsT($otid);
+
   $T['SystemId'] = 0;
   $T['LinkId'] = 0;
   $T['WithinSysLoc'] = 0;
@@ -608,10 +608,11 @@ function Thing_Duplicate($otid) {
   $T['CurHealth'] = $T['OrigHealth'];
     
   $Fid = $T['Whose'];
-       
-  if ($Discs) {
-    foreach ($Discs as $D) {
-      $D['HostId'] = $tid;
+ 
+  $Dists = Get_DistrictsT($otid);      
+  if ($Dists) {
+    foreach ($Dists as $D) {
+      $D['HostId'] = $Tid;
       unset($D['id']);
       Insert_db('Districts',$D);
     }
