@@ -149,6 +149,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
 
   echo "To see more information about each thing and to do movement and changes click on the name<p>\n";
   echo "Click on column heading to sort by column - toggles up/down<br>\n";
+  echo "Ex things only show up under state <b>Other</b><br>\n";
 //  echo "Use only ONE of the filters to the right<br>\n";
   
   $coln = 0;
@@ -245,7 +246,8 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
     
   }
   if (Access('God'))  echo "<tr><td class=NotSide>Debug<td colspan=15 class=NotSide><textarea id=Debug></textarea>";  
-  echo "</table></div onload=ListThingSetup($Fid,$GM," . ($GM?$Faction['GMThingType']:$Faction['ThingType']) . "," . ($GM?$Faction['GMThingBuild']:$Faction['ThingBuild']) . ")>\n";
+  echo "</table></div onload=ListThingSetup($Fid,$GM," . ($GM?$Faction['GMThingType']:$Faction['ThingType']) . "," . 
+       ($GM?$Faction['GMThingBuild']:$Faction['ThingBuild']) . ")>\n";
   
   if ($Fid) {
     echo "<h1>Logistics</h1>";

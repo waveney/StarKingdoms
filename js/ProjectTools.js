@@ -147,7 +147,8 @@ debugger;
     if (Show ==4 && $(this).hasClass("Thing_Chars")) hide = 0;
     if (Show ==5 && $(this).hasClass("Thing_Other")) hide = 0;
     
-    if (Build > 0 && ! $(this).hasClass("Thing_Build" + (Build-1)) ) hide =1;
+    if ((Build > 0 && ! $(this).hasClass("Thing_Build" + (Build-1))) ||
+        (Build == 0 && $(this).hasClass("Thing_Build4")))  hide =1;
     if (hide) {
       $(this).hide(); return
     } else {
