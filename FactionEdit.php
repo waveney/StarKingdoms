@@ -108,6 +108,37 @@ function Show_Faction(&$F,$Mode) {
     echo fm_text('Access Key',$F,'AccessKey',3);
     echo "<a href=Access.php?id=$Fid&Key=" . $F['AccessKey'] . " ><b>Use</b></a>";
     if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
+  } else {
+    echo "<tr><td>Home World<td colspan=6>";
+    if (empty($F['HomeWorld']) || $F['HomeWorld']==0) {
+      echo "Not set up!";
+    } else {
+      $W = Get_World($F['HomeWorld']);
+//var_dump($W);
+      switch ($W['ThingType']) {
+      case 1: // Planet
+        $P = Get_Planet($W['ThingId']);
+        $N = Get_System($P['SystemId']);
+        $Name = $P['Name'] . " in " . $N['Name'] . " (" . $N['Ref'] . ")";
+        break;
+      case 2: // MOon
+        $M = Get_Moon($W['ThingId']);
+        $P = Get_Planet($M['PlanetId']);
+        $N = Get_System($P['SystemId']);
+        $Name = $M['Name'] . " a moon of " . $P['Name'] . " in " . $N['Name'] . " (" . $N['Ref'] . ")";
+        break;
+      case 3: // Thing
+        $T = Get_Thing($W['ThingId']);
+        $TTypes = Get_ThingTypes();
+        if ($T['SystemId'] > 0) {
+          $N = Get_System($T['SystemId']);
+          $Name = $T['Name'] . " a " . $TTypes[$T['Type']]['Name'] . " in " . $N['Name'] . " (" . $N['Ref'] . ")";
+        } else {
+          $Name = $T['Name'] . " a " . $TTypes[$T['Type']]['Name'];
+        }
+      }
+      echo $Name;
+    }
   }
   echo "</table></div>\n";
   

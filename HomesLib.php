@@ -408,6 +408,7 @@ function Recalc_Worlds() {
     $W = ['FactionId' => $Fid, 'Home' => $H['id'], 'Minerals' => $Minerals, 'RelOrder' => ($Bio == $ThisBio ? 100:80), 
           'ThingType' => $H['ThingType'], 'ThingId'=>$H['ThingId'], 'Done'=>1 ];
     Put_World($W);
+    $Worlds[$W['id']] = $W;
     
     $Recalc = Recalc_Economic_Rating($H,$W,$Fid);
     if ($H['Economy'] != $Recalc) {
@@ -421,6 +422,30 @@ function Recalc_Worlds() {
       echo "World " . $W['id'] . " is not used - Delete?<br>\n";
     }
   }
+  
+  foreach ($Facts as $F) {
+    if (isset($F['HomeWorld']) && isset($Worlds[$F['HomeWorld']])) {
+      echo "Faction " . $F['Name'] . " has a homeworld<br>\n";
+    } else {
+      echo "Faction " . $F['Name'] . " does <b>NOT</b> have a homeworld<br>\n";    
+      $HW = 0;
+      $Ord = 0;
+      foreach ($Worlds as $W) {
+        if ($W['FactionId'] == $F['id'] && $W['RelOrder'] > $Ord) {
+          $HW = $W['id'];
+          $Ord = $W['RelOrder'];
+        }
+      }
+      if ($HW) {
+        $F['HomeWorld'] = $HW;
+        Put_Faction($F);
+        echo "Now setup<p>";
+      } else {
+        echo "No Worlds for faction<p>";
+      }  
+    }
+  }
+  
   
   echo "Worlds recalculted<p>\n";
 }

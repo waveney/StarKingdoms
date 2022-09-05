@@ -54,9 +54,17 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Devastation</a>\n";
   if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Economy<br>Modifier</a>\n";
   if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Whose</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Priority<br>Importance</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Priority<br>Importance</a>\n";
   if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Conflict?</a>\n";
   echo "</thead><tbody>";
+  
+  foreach ($Facts as $F) {
+    if (!empty($F['HomeWorld'])) {
+      if (isset($Worlds[$F['HomeWorld']])) {
+        $Worlds[$F['HomeWorld']]['HomeOf'] = $F['id'];
+      }
+    }
+  }
 
   foreach ($Worlds as $W) {
 
@@ -106,7 +114,10 @@
         
     echo "<td>$type<td><a href=WorldEdit.php?id=" . $W['id'] . ">" . (empty($Name)? "Nameless": $Name) . "</a><td>" . (empty($Sys['Ref'])?"":$Sys['Ref'])  .
          "<td>" . $W['Minerals'] . "<td>" . $H['Economy'] . "<td>" . $H['Devastation'];
-    if ($GM) echo "<td>" . $H['EconomyFactor'] . "<td>" . $Facts[$W['FactionId']]['Name'];
+    if ($GM) { 
+      echo "<td>" . $H['EconomyFactor'] . "<td>" . $Facts[$W['FactionId']]['Name'];
+      if (isset($W['HomeOf'])) echo " <b>(Home)</b>";
+    }
     echo "<td>" . $W['RelOrder'] . "\n";
     if ($GM) echo "<td>" . fm_checkbox("Conflict?", $W, 'Conflict','',"Conflict:99:" . $W['id']);
   }
