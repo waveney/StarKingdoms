@@ -62,6 +62,7 @@
         $Di = $_REQUEST['Di'];
         $DT = (isset($_REQUEST['DT'])? $_REQUEST['DT'] : 0);
         $Valid = 1;
+        $FreeRush = 0;
         
         switch ($ProjTypes[$Ptype]['Name']) {
         case 'Construction':
@@ -208,6 +209,9 @@
           $Tech = Get_Tech($Sel);
           $Fact = Get_Faction($With);
           $Name = "Share " . $Tech['Name'] . " at level $Level with " . $Fact['Name'];
+          if (Get_Things_Cond($Fid, " Type=17 AND OtherFaction=$With ")) {
+            $FreeRush=1;
+          }
           break;
 
         case 'Analyse':
@@ -252,155 +256,11 @@
         default:    
         }
         
-/*
-        if (isset($_REQUEST['ThingId'])) {
-          $T = Get_Thing($_REQUEST['ThingId']);
-          if ($T['BuildState'] > 0) {
-            $T = Thing_Duplicate($T['id']);
-          }
-          $Level = $T['Level'];
-          $pc = Proj_Costs($Level);
-          $Costs = $pc[1];
-          $ProgN = $pc[0];
-          $TthingId = $T['id'];
-          $Name = "Build " . $T['Name'] . " (level $Level)"; 
-        } else if ($Ptype == 7) {
-          $Tech2S = $_REQUEST['Tech2Share'];
-          preg_match('/(\d*):(\d*)/',$Tech2S,$mtch);
-          $With = $_REQUEST["ShareWith"];
-          $Level = $mtch[2];
-          $pc = Proj_Costs($Level-1);            
-          $Costs = $pc[1];
-          $ProgN = $pc[0];
-          $Sel = $mtch[1];
-          $Tech = Get_Tech($Sel);
-          $Fact = Get_Faction($With);
-          $Name = "Share " . $Tech['Name'] . " at level $Level with " . $Fact['Name'];
-        } else if ($Ptype == 8) {
-          $Level = $_REQUEST['Level'];
-          $Name = $_REQUEST['AnalyseText'];
-          if (empty($Name)) {
-            echo "<h2 class=Err>No project name given</h2>";
-            break;
-          }
-          $pc = Proj_Costs($Level);          
-          $Costs = $pc[1];
-          $ProgN = $pc[0];
-        } else if ($Ptype == '11') {
-          $Level = 1;
-          if (empty($TthingId = $_REQUEST['Sel'])) {
-            echo "<h2 class=Err>You must select a ship</h2>\n";
-            break;
-          }
-          if (isset($_REQUEST['Name'])) {
-            $Name = base64_decode($_REQUEST['Name']);
-          } else {
-            $T1 = Get_Thing($TthingId);
-            $Name = "Refit and Repair " . $T1['Name'];
-          }
-          $pc = Proj_Costs(1);
-          $Costs = $pc[1];
-          $ProgN = $pc[0];          
-        } else if ($Ptype == '11b') {
-          if (empty($_REQUEST['Sel2'])) {
-            echo "<h2 class=Err>You must select a ship</h2>\n";
-            break;
-          }
-          $Level = 1;
-          $Ptype = 11;
-          $Sels = $_REQUEST['Sel2'];
-          $Count = count($Sels);
-          if ($Count == 0 || $Count>2) {
-            echo "<h2 class=Err>You must select 1 (or up to two level 1 ships)</h2>\n";
-            break;
-          }
-          if ($Count == 1) {
-            $TthingId = $Sels[0];
-            if (isset($_REQUEST['Name'])) {
-              $Name = base64_decode($_REQUEST['Name']);
-            } else {
-              $T1 = Get_Thing($TthingId);
-              $Name = "Refit and Repair " . $T1['Name'];
-            }
-          } else {
-            $TthingId =$Sels[0];
-            $TthingId2 = $Sels[1];
-            $T1 = Get_Thing($TthingId);
-            $T2 = Get_Thing($TthingId2);
-            if ($T1['Level'] != 1 || $T2['Level'] != 1) {
-              echo "<h2 class=Err>You can only do two level 1 ships at once</h2>\n";
-              break;
-            }
-            $Name = "Refit and Repair " . $T1['Name'] . " and " . $T2['Name'];
-          }
-
-          $pc = Proj_Costs(1);          
-          $Costs = $pc[1];
-          $ProgN = $pc[0];                    
-         } else if ($Ptype == '16') {
-          $Level = 1;
-          if (empty($TthingId = $_REQUEST['Sel'])) {
-            echo "<h2 class=Err>You must select an army</h2>\n";
-            break;
-          }
-          if (isset($_REQUEST['Name'])) {
-            $Name = base64_decode($_REQUEST['Name']);
-          } else {
-            $T1 = Get_Thing($TthingId);
-            $Name = "Re-equip and Reinforce " . $T1['Name'];
-          }
-          $pc = Proj_Costs(1);          
-          $Costs = $pc[1];
-          $ProgN = $pc[0];          
-        } else if ($Ptype == '11b') {
-          if (empty($_REQUEST['Sel2'])) {
-            echo "<h2 class=Err>You must select an army</h2>\n";
-            break;
-          }
-          $Level = 1;
-          $Ptype = 11;
-          $Sels = $_REQUEST['Sel2'];
-          $Count = count($Sels);
-          if ($Count == 0 || $Count>2) {
-            echo "<h2 class=Err>You must select 1 (or up to two level 1 armies)</h2>\n";
-            break;
-          }
-          if ($Count == 1) {
-            $TthingId = $Sels[0];
-            if (isset($_REQUEST['Name'])) {
-              $Name = base64_decode($_REQUEST['Name']);
-            } else {
-              $T1 = Get_Thing($TthingId);
-              $Name = "Re-equip and Reinforce " . $T1['Name'];
-            }
-          } else {
-            $TthingId = $Sels[0];
-            $TthingId2 = $Sels[1];
-            $T1 = Get_Thing($TthingId);
-            $T2 = Get_Thing($TthingId2);
-            if ($T1['Level'] != 1 || $T2['Level'] != 1) {
-              echo "<h2 class=Err>You can only do two level 1 armies at once</h2>\n";
-              break;
-            }
-            $Name = "Re-equip and Reinforce " . $T1['Name'] . " and " . $T2['Name'];
-          }
-
-          $pc = Proj_Costs(1);          
-          $Costs = $pc[1];
-          $ProgN = $pc[0];                    
-        } else {
-          if (isset($_REQUEST['Sel'])) $Sel = $_REQUEST['Sel'];
-          $Level = $_REQUEST['L'];
-          $Costs = $_REQUEST['C'];
-          $ProgN = $_REQUEST['PN'];
-          $Name = base64_decode($_REQUEST['Name']);
-        }
-*/
         if ($Valid) {
           $OldPro = Get_ProjectAt($Hi, $DT, $Turn);
 // var_dump($OldPro);
           $Pro = ['FactionId'=>$Fid, 'Type'=>$Ptype, 'Level'=> $Level, 'Home'=>$Hi, 'Progress'=>0, 'Status'=>0, 'TurnStart'=>$Turn, 'Name'=>$Name,
-                  'Costs' => $Costs, 'ProgNeeded' => $ProgN, 'BuildState'=>0, 'DType' => $DT];
+                  'Costs' => $Costs, 'ProgNeeded' => $ProgN, 'BuildState'=>0, 'DType' => $DT, 'FreeRushes'=>$FreeRush];
           if (isset($With)) $Pro['ThingId'] = $With;
           if (isset($Sel)) $Pro['ThingType'] = $Sel;
           if (isset($TthingId)) $Pro['ThingId'] = $TthingId;
@@ -435,10 +295,11 @@
   echo "Click on <button type=submit class=PHStart id=StartExample formaction=''>+</button> buttons to start/change projects<br>\n";
   echo "Click up/down or write number to rush projects<br>\n";
 
-  echo "Note the cost totals are on the far right<br>
-  The credits left on current turn is a rough guide only - it does not take account of other expenditure other than for the current turn - or any additional income.<p>";
+  echo "Note the cost totals are on the far right<br>" .
+       "The credits left on current turn is a rough guide only - it does not take account of other expenditure other than for the current turn - or any additional income.<p>";
   
-  echo "Note 2: The amount of progress before the end of the previous turn is at best a guess.  If the number of districts/planetary construction has changed they will be wrong.<p>\n";
+  echo "Note 2: The amount of progress before the end of the previous turn is at best a guess.  " .
+       "If the number of districts/planetary construction has changed they will be wrong.<p>\n";
   
   echo "Currently this display is for construction and district based projects only.<br>\n";
   
@@ -483,7 +344,7 @@
     $LinkCosts += $T['LinkCost'];
   }  
   
-  $FreeRushes = Has_Trait($Fid,'Built for Construction and Logistics');
+  $BonusRushes = Has_Trait($Fid,'Built for Construction and Logistics');
   
   foreach ($Homes as &$H) {
     $PlanCon = $BPlanCon;
@@ -580,8 +441,8 @@
       $Pro['Level'] = $P['Level'];
       $Pro['Cost'] = $P['Costs'];
       $Pro['Acts'] = $P['ProgNeeded'];
-//      $Pro['Prog'] = $P['Progress'];
       $Pro['GMOverride'] = $P['GMOverride'];
+      $Pro['FreeRushes'] = $P['FreeRushes'];
       
       $PPtype = $ProjTypes[$P['Type']];
       $PCat = $PPtype['Category'];
@@ -631,17 +492,18 @@
         $TotProg = $P['Progress'];
         for ($t = $P['TurnStart']; $t <= ($P['TurnEnd']?$P['TurnEnd']:$P['TurnStart']+50); $t++) {
 
-          $Pro['Rush'] = $Rush = $FreeRush = $Bonus = 0;
+          $Pro['Rush'] = $Rush = $BonusRush = $Bonus = 0;
 //          $Pro['MaxRush'] = ( ($ProjTypes[$P['Type']]['Category'] & 16) ? $PlanCon : $District_Type[$WantedDT]);
           $Pro['MaxRush'] = (( $WantedDT < 0) ? $PlanCon : $District_Type[$WantedDT]);
+          if ($P['FreeRushes']) $Pro['Rush'] = $Rush = $Pro['MaxRush'];
             
 /*            $Pro['MaxRush'] =  (($ProjTypes[$P['Type']]['BasedOn'])? Has_Tech($Fid,$ProjTypes[$P['Type']]['BasedOn'],$t) : 
                (isset ($District_Type[5]) ?$District_Type[5]:0)); */
-          if ($FreeRushes && preg_match('/Research/',$ProjTypes[$P['Type']]['Name'],$mtch) ) {
+          if ($BonusRushes && preg_match('/Research/',$ProjTypes[$P['Type']]['Name'],$mtch) ) {
             $TechId = $P['ThingType'];
             $Tech = Get_Tech($TechId);
             if ($Tech['PreReqTech'] == 1 || $TechId == 1) {
-              $FreeRush = 1; // min(1,$Acts,$P['ProgNeeded']-$P['Progress']-$Acts-$Bonus);
+              $BonusRush = 1; // min(1,$Acts,$P['ProgNeeded']-$P['Progress']-$Acts-$Bonus);
             } 
          }
 
@@ -663,7 +525,7 @@
             $Pro['Progress'] = $P['Progress'] . "/" .  $Pro['Acts'];
             $Pro['Status'] = (($t == $P['TurnStart'])?'Started' : 'Ongoing' );
           } else {
-            $Prog = min($Pro['Acts'] - $TotProg,$Pro['MaxRush'] + $Rush + $Bonus+ $FreeRush ); // Note Bonus can be negative
+            $Prog = min($Pro['Acts'] - $TotProg,$Pro['MaxRush'] + $Rush + $Bonus+ $BonusRush ); // Note Bonus can be negative
             if ($t == $GAME['Turn']) { 
               if ($SkipProgress) $Prog = 0;
               $TotProg = $P['Progress'] + $Prog;
@@ -809,7 +671,7 @@
           echo "\n<td $BG id=ProjP$Turn:$Hi:$Di class='PHProg Group$Di Home$Hi' $Hide>" . $Proj[$Turn][$Hi][$Di]['Progress'];
           echo "\n<td $BG id=ProjT$Turn:$Hi:$Di class='PHStatus Group$Di Home$Hi' $Hide>" . $Proj[$Turn][$Hi][$Di]['Status'] . "";
           
-          $TotCost += $Proj[$Turn][$Hi][$Di]['Cost'] + $Proj[$Turn][$Hi][$Di]['Rush']*Rush_Cost($Fid);
+          $TotCost += $Proj[$Turn][$Hi][$Di]['Cost'] + ( $Proj[$Turn][$Hi][$Di]['FreeRushes']?0:($Proj[$Turn][$Hi][$Di]['Rush']*Rush_Cost($Fid)));
           
         } else {
           echo "<td $BG id=ProjN$Turn:$Hi:$Di class='PHName Home$Hi'>";
@@ -828,6 +690,7 @@
     $Spend = 0;  
     if ($Turn >= $GAME['Turn']) {
       $Bs = Get_BankingFT($Fid,$Turn);
+//var_dump($Bs);
       foreach($Bs as $B) $Spend += $B['Amount'];
     }
     
@@ -843,6 +706,7 @@
     } else if ($Turn == $GAME['Turn']-1) {
       echo $FACTION['Credits'];
     } else { // Future
+//var_dump($Left,$Income,$TotCost,$Spend);
       $Left = $Left + $Income - $TotCost - $Spend;
       if ($Left >=0 ) { 
         echo $Left;

@@ -57,6 +57,7 @@
   if ($res) {
     while ($PT = $res->fetch_assoc()) {
       $P = Get_Project($PT['ProjectId']);
+      if (isset($P['FreeRushes']) && $P['FreeRushes']>0) continue;
       $RCost =  (Rush_Cost($Fid) * $PT['Rush']);
       if ($RCost > 0 && $P['Status']<2) {
         $Spend += $RCost;

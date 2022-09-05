@@ -1138,6 +1138,7 @@ function ProjectProgressActions($Pay4=0) {
     if (isset($TurnStuff['Rush'])) {
       $Rush = min($TurnStuff['Rush'],$Acts,$P['ProgNeeded']-$P['Progress']-$Acts-$Bonus-$FreeRush);
       if ($Rush) {
+        if (isset($P['FreeRushes']) && $P['FreeRushes']>0) continue;
         if ($Pay4) {
           if (Spend_Credit($P['FactionId'],$Rc = (Rush_Cost($P['FactionId'])*$Rush), 'Rushing ' . $P['Name'] . " By $Rush")) {
             TurnLog($P['FactionId'],'Rushing ' . $P['Name'] . " by $Rush  Cost: " . Credit() . " $Rc");
