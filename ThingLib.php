@@ -641,6 +641,7 @@ function EyesInSystem($Fid,$Sid) { // Eyes 1 = in space, 2= sens, 4= neb sens, 8
 
 //var_dump($MyThings);
   foreach ($MyThings as $T) {
+    if ($T['SeenTypeMask']) continue;
     if (($Neb > 0) && ($T['NebSensors'] < $Neb)) continue;
     $Eyes |= $ThingTypes[$T['Type']]['Eyes'];
     if ($T['Sensors']) $Eyes |= 2;
@@ -664,7 +665,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
   $RawA = 0;
   
   $TTprops = $ThingTypes[$T['Type']]['Properties'];
-      if ($Fid >=0 && ($T['Whose'] != $Fid) && (($ThingTypes[$T['Type']]['SeenBy'] & $Eyes) == 0 )) return '';
+      if ($Fid >=0 && ($T['Whose'] != $Fid) && ((($ThingTypes[$T['Type']]['SeenBy'] & !$T['SeenTypeMask']) & $Eyes) == 0 )) return '';
       if ($T['BuildState'] < 2 || $T['BuildState'] > 4) return ''; // Building or abandoned
       if ($LastWhose && $LastWhose!= $T['Whose']) $txt .= "<P>";
       if ($T['BuildState'] == 4) $txt .= "The remains of: ";
