@@ -25,7 +25,7 @@
         $F['TurnState'] = $NewState;
         Put_Faction($F);
       }
-      
+      $Factions = Get_Factions();
       break;
     }
   }
