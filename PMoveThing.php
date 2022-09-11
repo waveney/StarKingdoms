@@ -73,7 +73,7 @@ function Node_Show($Fid,$Tid, $Lid, $N, $url='') {
     if ($Hide) $NodeName = '';
     $BdrColour = "Black";
     
-    $atts .= "  shape=box style=filled fillcolor=$Colour color=$BdrColour";
+    $atts .= "  shape=box style=filled fillcolor=\"$Colour\" color=$BdrColour";
     if ($NodeName) {
       $atts .= NodeLab($ShortName, $N['Ref']); //($Faction==0?$N['Ref']:""));
     }
