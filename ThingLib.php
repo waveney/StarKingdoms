@@ -671,7 +671,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
       if ($T['BuildState'] == 4) $txt .= "The remains of: ";
       if ($T['Whose'] || $GM) {
         $txt .= ((($Fid < 0) || ($Fid == $T['Whose']) || $GM )?( "<a href=ThingEdit.php?id=" . $T['id'] . ">" . 
-                (empty($T['Name'])?"Unnamed":$T['Name']) . "</a>") : $T['Name'] ) . " a ";
+                (empty($T['Name'])?"Unnamed":$T['Name']) . "</a>") : $T['Name'] ) . " a";
         $RawA = 1;
       } 
       if ($TTprops & THING_HAS_LEVELS) {

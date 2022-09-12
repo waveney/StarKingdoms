@@ -1336,7 +1336,8 @@ function LoadTroops() {
       foreach($OnBoard as $OB) if ($TTypes[$OB['Type']]['Properties'] & THING_NEEDS_CARGOSPACE) $Used += $OB['Level'];
       if ($H['CargoSpace'] < $Used + $T['Level']) {
         TurnLog($T['Whose'],"You tried to load " . $T['Name'] . " on to " . $H['Name'] . " there is not enough space",$T);
-        if ($H['Whose'] != $T['Whose']) TurnLog($H['Whose'],  $Facts[$T['Whose']]['Name'] . " tried to load " . $T['Name'] . " on to " . $H['Name'] . " there is not enough space");
+        if ($H['Whose'] != $T['Whose']) 
+          TurnLog($H['Whose'],  $Facts[$T['Whose']]['Name'] . " tried to load " . $T['Name'] . " on to " . $H['Name'] . " there is not enough space");
         GMLog($Facts[$T['Whose']]['Name'] . " tried to load " . $T['Name'] . " on to " . $H['Name'] . " there is not enough space",1);
         $T['LinkId'] = 0;
         Put_Thing($T);
@@ -1515,8 +1516,10 @@ function ShipMovements($Agents=0) {
       $T['SystemId'] = $T['NewSystemId'];
       $T['WithinSysLoc'] = $T['NewLocation'];
 //      SKLog("Moved to $pname along " . $LinkLevels[$L['Level']]['Colour']. " link #$Lid to " . $EndLocs[$T['NewLocation']]); 
-      if ($Fid) TurnLog($Fid,$T['Name'] . " has moved from " . System_Name($OldN,$Fid) . " along <span style='color:" . $LinkLevels[$L['Level']]['Colour'] . ";'>link #$Lid </span>to $pname " . 
-        ($T['NewLocation'] > 2?( " to " . $EndLocs[$T['NewLocation']]): ""),$T); 
+      if ($Fid) {
+        TurnLog($Fid,$T['Name'] . " has moved from " . System_Name($OldN,$Fid) . " along <span style='color:" . $LinkLevels[$L['Level']]['Colour'] . 
+        ";'>link #$Lid </span>to $pname " .         ($T['NewLocation'] > 2?( " to " . $EndLocs[$T['NewLocation']]): ""),$T); 
+      }
 //    $T['LinkId'] = 0;
       $T['Instruction'] = 0;
       Put_Thing($T);
@@ -1921,7 +1924,8 @@ function ProjectsComplete() {
           Put_Faction_Tech($CTech);
           TurnLog($P['FactionId'], "You tried to share " . $Tech['Name'] . " at level $Level. with " . $XFact['Name'] . 
              " They only had it at level $Have.  They learnt level " . ($Have+1));                      
-          TurnLog($Xfr2, $FFact['Name'] .  " tried to share " . $Tech['Name'] . " at level $Level with you. You only have it at level $Have  so learnt it at level " . ($Have+1));
+          TurnLog($Xfr2, $FFact['Name'] .  " tried to share " . $Tech['Name'] . " at level $Level with you. You only have it at level $Have  so learnt it at level " .
+                  ($Have+1));
         } else {
           TurnLog($P['FactionId'], "You tried to share " . $Tech['Name'] . " at level $Level. with " . $XFact['Name'] . 
              " They only had it at level $Have - they don't understand what you sent");
@@ -2125,7 +2129,7 @@ function InstructionsComplete() {
 
      case 'Expand Space Station' :
        $Fid = $T['Whose'];
-       $SS = Get_Things_Cond($Fid,"Type=" . $TTNames['Space Station'] . " OR Type=AND SystemId=" . $T['SystemId'] . " AND BuildState=3");
+       $SS = Get_Things_Cond($Fid,"Type=" . $TTNames['Space Station'] . " AND SystemId=" . $T['SystemId'] . " AND BuildState=3");
        if (empty($SS)) {
          TurnLog($Fid,"There is not a Space Station here to expand in " . $N['Ref']);
          GMLog("There is not a space station to extend in " . $N['Ref'] . " by " . $Facts[$Fid]['Name'],1);
@@ -2398,14 +2402,16 @@ function CheckSpotAnomalies() {
           (($A['Properties'] == 1) && (($FA['State'] == -1) && ($LastAn != $Aid)))) {
 /*
         if ($T['SensorLevel'] < $A['ScanLevel'] ) {
-          if ( GameFeature('MissedAnomalies',0)) GMLog($Facts[$T['Whose']]['Name'] . " Just missed spotting an anomaly in " . $Systems[$Sid] . " by one sensor level on the " . $T['Name']);
+          if ( GameFeature('MissedAnomalies',0)) GMLog($Facts[$T['Whose']]['Name'] . " Just missed spotting an anomaly in " . $Systems[$Sid] . 
+              " by one sensor level on the " . $T['Name']);
           $LastAn = $Aid;
           continue;
         }
 */
         
         $Tid = $T['id'];
-        GMLog("<tr><Td>" . $Facts[$T['Whose']]['Name'] . "<td>" . $Systems[$Sid] . "<td><a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . "</a><td>" .  fm_checkbox('',$_REQUEST,"Prevent$Tid"));
+        GMLog("<tr><Td>" . $Facts[$T['Whose']]['Name'] . "<td>" . $Systems[$Sid] . "<td><a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . "</a><td>" .  
+              fm_checkbox('',$_REQUEST,"Prevent$Tid"));
         $LastAn = $Aid;
       }
     }
@@ -2459,7 +2465,8 @@ function SpotAnomalies() {
           TurnLog($LastWho,"You have spotted an anomaly: " . $A['Name'] . " in " . $Systems[$Sid] . "\n" .  $Parsedown->text($A['Description']) . 
                 "\nIt will take " . $A['AnomalyLevel'] . " scan level actions to complete.\n\n");
                 
-          GMLog($Facts[$T['Whose']]['Name'] . " have just spotted anomaly: <a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . "</a> in " . $Systems[$Sid] . " from the " . $T['Name'] );
+          GMLog($Facts[$T['Whose']]['Name'] . " have just spotted anomaly: <a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . "</a> in " . 
+                $Systems[$Sid] . " from the " . $T['Name'] );
           $FA['State'] = 1;
 // var_dump($FA);
           Gen_Put('FactionAnomaly',$FA);
