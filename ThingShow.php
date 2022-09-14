@@ -953,7 +953,7 @@ function Show_Thing(&$T,$Force=0) {
     case 'Analyse Anomaly': // Analyse
       if ($T['ProjectId'] != 0) {
         $Anom = Get_Anomaly($T['ProjectId']);
-        if (!$Anom || ($Anom['SystemId'] == $T['SystemId'])) {
+        if (!$Anom || ($Anom['SystemId'] != $T['SystemId'])) {
           $T['ProjectId'] = 0;
         }      
       }
