@@ -32,7 +32,7 @@
     if (isset($Fid)) $Faction = Get_Faction($Fid);
   }
 
-// var_dump($_REQUEST);
+ // var_dump($_REQUEST);
 
   if (isset($_REQUEST['id'])) {
     $Tid = $_REQUEST['id'];
@@ -87,6 +87,13 @@
         Put_Thing($T);
       }
       $Exist = 1; 
+      break;
+      
+    case 'Remove Module' :
+      $Tid = $_REQUEST['id'];
+      $Mid = $_REQUEST['Mid'];
+      db_delete('Modules',$Mid);     
+      break;
     }
   }
   
@@ -203,10 +210,12 @@
             echo "<tr>" . fm_number($MT,$ZZnull,'Number','','min=0',"ModuleAddType-$Mti");
           }
           echo "<td>" . $Mtype['SpaceUsed'];
-        } else if (isset($MMs[$Mti])) {
+        } else if (isset($MMs[$Mti]) && $MMs[$Mti]['Number']>0) {
           echo "<tr>" . fm_number($Mtype['Name'],$MMs[$Mti],'Number','','min=0',"ModuleNumber-" . $MMs[$Mti]['id']);
           echo "<td>" . $Mtype['SpaceUsed'];
-          echo "<td class=Err>This module is not allowed on this type of thing\n";
+          echo "<td><span class=Err>This module is not allowed on this type of thing</span>\n";
+          echo fm_hidden('Mid',$MMs[$Mti]['id']);
+          echo "<input type=submit name=ACTION value='Remove Module'>";
           $Valid = 0;
           $totmodc += $MMs[$Mti]['Number'] * $MTs[$Mti]['SpaceUsed'];
         }
