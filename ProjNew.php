@@ -193,7 +193,7 @@
       $CurDists = 0;    
       if ($MaxDists > 0) {
 
-        foreach ($HDists[$Hi] as $D) $CurDists += $D['Number'];     
+        foreach ($HDists[$Hi] as $D) if ($D['Type'] > 0) $CurDists += $D['Number'];     
       
         echo "Maximum Districts: $MaxDists<br>Current Districts: $CurDists<br>";
       }
