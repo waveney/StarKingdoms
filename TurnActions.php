@@ -21,7 +21,8 @@
              'Spare', 'Space Combat', 'Unload Troops', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Devastation Selection', 
              'Spare', 'Devastation', 'Project Progress', 'Instructions Progress', 'Spare', 'Espionage Missions Complete', 'Counter Espionage', 'Spare', 
              'Finish Shakedowns', 'Spare', 'Projects Complete', 'Instructions Complete', 'Spare', 'Check Survey Reports', 'Give Survey Reports', 'Check Spot Anomalies', 
-             'Spot Anomalies', 'Militia Army Recovery', 'Spare', 'Generate Turns', 'Tidy Up Movements', 'Save What Can Be Seen', 'Recalc Project Homes', 'Finish Turn Process'];
+             'Spot Anomalies', 'Militia Army Recovery', 'Spare', 'Generate Turns', 'Tidy Up Movements', 
+             'Save What Can Be Seen', 'Recalc Project Homes', 'Finish Turn Process'];
 
   $Coded =  ['Coded','No','No','Coded','Coded','No','Coded', 'No',
              'No','Coded','No','Coded','Partial,M','No','No','Coded,M',
@@ -31,7 +32,8 @@
              'No','No','Coded','No','No','No','No','Coded,M', 
              'No', 'Coded', 'Coded','Coded','No','No','No','No',
              'Coded','No','Coded,M','Coded,M', 'No','Partial,M','Coded', 'Coded,M',
-             'Coded','Coded','No','No','Coded','Coded','Coded','Coded'];
+             'Coded','Coded','No','No',
+             'Coded','Coded','Coded','Coded'];
 
 
 // For logging turn processing events that need following up or long term record keeping, set e to echo to GM
@@ -177,7 +179,8 @@ function CashTransfers() {
           GMLog('Transfer from ' . $Facts[$B['FactionId']]['Name'] . ' to ' . $Facts[$B['Recipient']]['Name'] . ' of ' . $B['Amount'] . ' ' .$Currencies[$B['What']]
                  . ' for ' . $B['YourRef']);      
         } else {
-          TurnLog($B['FactionId'],"Failed to transfer " . $B['Amount']  . " of " . $Currencies[$B['What']] . " for " . $B['YourRef'] . " to " . $Facts[$B['Recipient']]['Name']);
+          TurnLog($B['FactionId'],"Failed to transfer " . $B['Amount']  . " of " . $Currencies[$B['What']] . " for " . $B['YourRef'] . 
+                  " to " . $Facts[$B['Recipient']]['Name']);
           if ($B['Recipient'] > 0) TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " Failed to transfer " . $B['Amount']  . " of " . $Currencies[$B['What']]
               . " for " . $B['YourRef'] );
           GMLog('Transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . 
@@ -262,8 +265,10 @@ function ScientificBreakthroughs() {
         $Fact[$TechCats[$Br['Field']][1]] = max(0, $Fact[$TechCats[$Br['Field']][1]] - $Br['Cost']);
         Put_Faction($Fact);
       } else {
-        GMLog("Faction: " . $Fact['Name'] . " attempted to use science points to raise " . $Tech['Name'] . " to level " . $Br['Level'] . " already at level " . $CTech['Level']);
-        TurnLog($Br['FactionId'],"You attempted to use science points to raise " . $Tech['Name'] . " to level " . $Br['Level'] . " it is already at level " . $CTech['Level']);
+        GMLog("Faction: " . $Fact['Name'] . " attempted to use science points to raise " . $Tech['Name'] . " to level " . $Br['Level'] . 
+              " already at level " . $CTech['Level']);
+        TurnLog($Br['FactionId'],"You attempted to use science points to raise " . $Tech['Name'] . " to level " . $Br['Level'] . 
+                " it is already at level " . $CTech['Level']);
       }
     } else if ($CTech['Level'] == 0) { // Supp
       $CTech['Level'] = 1;
@@ -787,8 +792,10 @@ function Instuctions() { // And other Instructions
         AddCurrencies();
         $Cur = 0;
         foreach ($Currencies as $Ci => $C) if ( $C == $LinkRes) $Cur = $Ci;
-        if (!Gain_Currency($T['Whose'],$Cur,-$LL['MakeCost'],"Build new stargate level " . $T['Dist1'] . " from " . $Systems[$T['SystemId']] . " to " . $Systems[$T['Dist2']])) {
-          TurnLog($T['Whose'],"Could not aford the $LinkRes to build new stargate level " . $T['Dist1'] . " from " . $Systems[$T['SystemId']] . " to " . $Systems[$T['Dist2']]); 
+        if (!Gain_Currency($T['Whose'],$Cur,-$LL['MakeCost'],"Build new stargate level " . $T['Dist1'] . " from " . $Systems[$T['SystemId']] . 
+            " to " . $Systems[$T['Dist2']])) {
+          TurnLog($T['Whose'],"Could not aford the $LinkRes to build new stargate level " . $T['Dist1'] . " from " . $Systems[$T['SystemId']] . 
+                  " to " . $Systems[$T['Dist2']]); 
         }  
       }
       break;
@@ -2163,7 +2170,8 @@ function InstructionsComplete() {
        $LL = $LinkLevels[$T['Dist1']];
        $NewLink = ['GameId'=>$GAME['id'], 'System1Ref'=>$Systems[$T['SystemId']], 'System2Ref'=> $Systems[$T['Dist2']], 'Level'=>$T['Dist1']];
        $Lid = Put_Link($NewLink);
-       TurnLog($T['Whose'], "<span style=color:" . $LL['Colour'] . ">Link#$Lid </span>has been created between " . $Systems[$T['SystemId']] . " and " . $Systems[$T['Dist2']]);
+       TurnLog($T['Whose'], "<span style=color:" . $LL['Colour'] . ">Link#$Lid </span>has been created between " . $Systems[$T['SystemId']] . " and " .
+               $Systems[$T['Dist2']]);
        GMLog("A new " . $LL['Colour'] . " level " . $T['Dist1'] . " link #$Lid </span> has been made between " . $Systems[$T['SystemId']] . " and " . $Systems[$T['Dist2']]);
        $FL = ['LinkId'=>$Lid, 'FactionId'=>$T['Whose'],'Known'=>1];
        Put_FactionLink($FL);

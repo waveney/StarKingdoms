@@ -713,6 +713,7 @@ function Show_Thing(&$T,$Force=0) {
       
     case 'Establish Embassy': // Establish Embassy
       if (!Get_ModulesType($tid,22)) continue 2;  // Check if have Embassy & at homeworld
+      if (!isset($N['id'])) continue 2;
       if (Get_Things_Cond($Fid,"Type=" . $TTNames['Embassy'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
       $Facts = Get_Factions();
       foreach ($Facts as $F) {

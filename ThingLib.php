@@ -647,6 +647,7 @@ function EyesInSystem($Fid,$Sid) { // Eyes 1 = in space, 2= sens, 4= neb sens, 8
     if ($T['Sensors']) $Eyes |= 2;
     if ($T['NebSensors']) $Eyes != 4;
   }
+// echo "System " . $N['Ref'] . " eyes: $Eyes<br>";
   return $Eyes;
 }
 
@@ -664,8 +665,16 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
   $txt = '';
   $RawA = 0;
   
+//  if ($T['id'] == 238) { echo "Here with outpost<br>"; var_dump($T); }
   $TTprops = $ThingTypes[$T['Type']]['Properties'];
-      if ($Fid >=0 && ($T['Whose'] != $Fid) && ((($ThingTypes[$T['Type']]['SeenBy'] & !$T['SeenTypeMask']) & $Eyes) == 0 )) return '';
+  $stm = (int) (~ (int)$T['SeenTypeMask']);
+//echo "Failed to see:" . $ThingTypes[$T['Type']]['SeenBy'] . ":$stm:" . $T['SeenTypeMask'] . ":$Eyes<p>";
+//var_dump($stm);
+      if ($Fid >=0 && ($T['Whose'] != $Fid) && 
+          ((($ThingTypes[$T['Type']]['SeenBy'] & $stm & $Eyes) == 0 ))) {
+// echo "Failed to see:" . $ThingTypes[$T['Type']]['SeenBy'] . ":$stm:$Eyes<p>";
+        return '';
+      }
       if ($T['BuildState'] < 2 || $T['BuildState'] > 4) return ''; // Building or abandoned
       if ($LastWhose && $LastWhose!= $T['Whose']) $txt .= "<P>";
       if ($T['BuildState'] == 4) $txt .= "The remains of: ";
@@ -710,6 +719,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
       }
       $txt .= "<br clear=all>\n";
       $LastWhose = $T['Whose'];
+// if ($T['id'] == 238) echo "Txt is:$txt<p>";
    return $txt;
 }
 
@@ -717,7 +727,7 @@ function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0,$Mode=0) {
   global $Advance;
   include_once("SystemLib.php");
   $txt ='';
-//var_dump($Sid,$Eyes);
+// var_dump($Sid,$Eyes);
 //  if (Access('GM')) $Eyes = 15;
     if (!$Eyes) return '';
     $Things = Get_AllThingsAt($Sid);
@@ -728,7 +738,7 @@ function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0,$Mode=0) {
   
 //    $Factions = Get_Factions();
     
-//if ($Sid == 58) var_dump ($Things); echo "XX<p>";   
+//if ($Sid == 4) var_dump ($Things); echo "XX<p>";   
     $N = Get_System($Sid);
     if ($heading) {
        $Col = 'White';

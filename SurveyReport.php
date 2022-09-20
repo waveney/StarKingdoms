@@ -251,9 +251,10 @@
         if ($Ds) { // && 
           echo "<p>Districts: ";
           $dc = 0;
-          foreach ($Ds as $D) {
+          foreach ($Ds as $DD) {
+            if (!isset($DistTypes[$DD['Type']])) continue;
             if ($dc++) echo ", ";
-            echo $DistTypes[$D['Type']]['Name'] . ": " . $D['Number'];
+            echo $DistTypes[$DD['Type']]['Name'] . ": " . $DD['Number'];
           }
           echo "<p>";
         }
