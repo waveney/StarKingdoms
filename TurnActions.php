@@ -72,6 +72,21 @@ function TurnLog($Fid,$text,&$T=0) {
   if ($T) $T['History'] .= "Turn#" . ($GAME['Turn']) . ": " . $text . "\n";
 }
 
+function Report_Others($Who, $Where, $SeenBy, $Message) {
+  // Find all others in Where
+  // if eyes see report message, then skip rest of faction
+
+//var_dump($Who,$Where,$SeenBy,$Message);exit;
+  static $Factions;
+  if (!isset($Factions)) $Factions = Get_Factions();
+  
+  foreach ($Factions as $F) {
+    if ($F['id'] == $Who) continue;
+    $Eyes = EyesInSystem($F['id'],$Where);
+    if (($Eyes & $SeenBy) == 0) continue;
+    TurnLog($F['id'],"$Message by " . $Factions[$Who]['Name']);
+  }
+}
 
 function CheckTurnsReady() {
   global $PlayerStates,$PlayerState, $PlayerStateColours;
@@ -2042,6 +2057,7 @@ function InstructionsComplete() {
 
       TurnLog($Who,$P['Name'] . " on " . $N['Ref'] . " has been colonised");
       GMLog($P['Name'] . " on " . $N['Ref'] . " has been colonised by " . $Facts[$Who]['Name'],1);  // TODO Check for any named chars and offload
+      Report_Others($T['Whose'], $T['SystemId'],31,$P['Name'] . " on " . $N['Ref'] . " has been colonised by " . $N['Ref']);
        
       $Have = Get_Things_Cond(0," (LinkId<0 AND SystemId=$Tid) ");
       if ($Have) {
@@ -2090,6 +2106,7 @@ function InstructionsComplete() {
        }
        TurnLog($Who,"An outpost has been made in " . $N['Ref']);
        GMLog($N['Ref'] . " is now controlled by " . $Facts[$Who]['Name'],1);
+       Report_Others($T['Whose'], $T['SystemId'],"An outpost has been made in " . $N['Ref']);
        break;
        
      case 'Make Asteroid Mine':
@@ -2100,6 +2117,7 @@ function InstructionsComplete() {
        $N = Get_System($T['SystemId']);
        $Who = $T['Whose'];
        TurnLog($Who,"An Asteroid Mine has been made in " . $N['Ref']);
+       Report_Others($T['Whose'], $T['SystemId'],2,"An Asteroid Mine has been made in " . $N['Ref']);
       break;
 
      case 'Make Minefield':
@@ -2109,6 +2127,7 @@ function InstructionsComplete() {
        $N = Get_System($T['SystemId']);
        $Who = $T['Whose'];
        TurnLog($Who,"An Asteroid Mine has been made in " . $N['Ref']);
+       Report_Others($T['Whose'], $T['SystemId'],2,"An Asteroid Mine has been made in " . $N['Ref']);
        break;
 
      case 'Make Orbital Repair Yard':
@@ -2118,6 +2137,7 @@ function InstructionsComplete() {
        $N = Get_System($T['SystemId']);
        $Who = $T['Whose'];
        TurnLog($Who,"An Orbital Repair Yard has been made in " . $N['Ref']);
+       Report_Others($T['Whose'], $T['SystemId'],2,"An Orbital Repair Yard has been made in " . $N['Ref']);
        break;
 
      case 'Build Space Station':
@@ -2132,6 +2152,7 @@ function InstructionsComplete() {
        $Who = $T['Whose'];
        TurnLog($Who,"A Space Station has been made in " . $N['Ref']);
        GMLog("A space station has been made in " . $N['Ref'] . " by " . $Facts[$Who]['Name'],1);
+       Report_Others($T['Whose'], $T['SystemId'],2,"A Space Station has been made in " . $N['Ref']);
        break;
 
      case 'Expand Space Station' :
@@ -2154,6 +2175,7 @@ function InstructionsComplete() {
        $N = Get_System($T['SystemId']);
        $Who = $T['Whose'];
        TurnLog($Who,"A Deep Space Sensor has been made in " . $N['Ref']);
+       Report_Others($T['Whose'], $T['SystemId'],2,"A Deep Space Sensor has been made in " . $N['Ref']);
        break;
 
      case 'Make Advanced Asteroid Mine':
@@ -2162,6 +2184,7 @@ function InstructionsComplete() {
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
        TurnLog($Who,"An Advanced Asteroid Mine has been made in " . $N['Ref']);
+       Report_Others($T['Whose'], $T['SystemId'],2,"An Asteroid Mine has been made in " . $N['Ref']);
        break;
 
      case 'Build Stargate':
@@ -2175,6 +2198,8 @@ function InstructionsComplete() {
        GMLog("A new " . $LL['Colour'] . " level " . $T['Dist1'] . " link #$Lid </span> has been made between " . $Systems[$T['SystemId']] . " and " . $Systems[$T['Dist2']]);
        $FL = ['LinkId'=>$Lid, 'FactionId'=>$T['Whose'],'Known'=>1];
        Put_FactionLink($FL);
+       Report_Others($T['Whose'], $T['SystemId'],2,"A new " . $LL['Colour'] . " level " . $T['Dist1'] . " link #$Lid </span> has been made in " . $N['Ref']);
+       Report_Others($T['Whose'], $T['Dist2'],2,"A new " . $LL['Colour'] . " level " . $T['Dist1'] . " link #$Lid </span> has been made in " . $Systems[$T['Dist2']]);
        break;
 
      case 'Make Planet Mine':
@@ -2193,6 +2218,7 @@ function InstructionsComplete() {
        $N = Get_System($T['SystemId']);
        $Who = $T['Whose'];
        TurnLog($Who,"A Command Relay Station has been made in " . $N['Ref']);
+       Report_Others($T['Whose'], $T['SystemId'],2,"A Command Relay Station has been made in " . $N['Ref']);
        break;
       
      case 'Repair Command Node': // Not coded yet
@@ -2223,12 +2249,13 @@ function InstructionsComplete() {
        break; // The making homes and worlds in a later stage completes the colonisation I hope
        
      case 'Dismantle Stargate' :
+       $Systems = Get_Systems();
        global $Currencies;
        AddCurrencies();
-       $LLs =Get_LinkLevels();
+       $LLs = Get_LinkLevels();
        $Lid = $T['Dist1'];
        $Who = $T['Whose'];
-       $L = Get_Link($Lid);
+       $SaveL = $L = Get_Link($Lid);
        $Lvl =$L['Level'];
        $L['System1Ref'] = $L['System2Ref'] = '';
        Put_Link($L);
@@ -2245,6 +2272,8 @@ function InstructionsComplete() {
        Gain_Currency($T['Whose'],$AdianNumber,$Recovery,"Dismantling Link #$Lid");
        GMLog("Link $Lid has been dismantled by " . $Facts[$T['Whose']]['Name'] . " recovered $Recovery $AdianName ");
        TurnLog($Who,"Link $Lid has been dismantled you recovered $Recovery $AdianName ");
+       Report_Others($T['Whose'], $Systems[$SaveL['System1Ref']]['id'],2,"Link $Lid has been dismantled in " . $SaveL['System1Ref']);
+       Report_Others($T['Whose'], $Systems[$SaveL['System2Ref']]['id'],2,"Link $Lid has been dismantled in " . $SaveL['System2Ref']);
        break;
 
      case 'Make Something': 
@@ -2259,7 +2288,8 @@ function InstructionsComplete() {
        $NT = ['GameId'=>$GAME['id'], 'Type'=> 15, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc' => $T['WithinSysLoc'], 'Whose'=>$Who, 
               'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>($T['MakeName'] . " warp gate" )];
        Put_Thing($NT);
-       TurnLog($Who,"warp gate has been made in " . $T['SystemId']);
+       TurnLog($Who,"A warp gate has been made in " . $N['Ref']);
+       Report_Others($T['Whose'], $T['SystemId'],2,"A warp gate has been made in " . $N['Ref']);
        break;
      
      default: 
