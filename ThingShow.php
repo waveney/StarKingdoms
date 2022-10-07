@@ -836,6 +836,10 @@ function Show_Thing(&$T,$Force=0) {
     case 'Make Warpgate': // Warp gate through DSC
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Construct Warp Gate using DSC')) continue 2;       
       break;
+  
+    case 'Retire' :
+      if ($tprops & THING_HAS_GADGETS) break;
+      continue 2;
 
      default: 
       continue 2;
@@ -936,6 +940,7 @@ function Show_Thing(&$T,$Force=0) {
       }
       break;
       
+    case 'Retire':
     case 'Decommision': // Dissasemble
     case 'Disband': // Disband
       $Acts = $Cost = 0;

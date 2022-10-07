@@ -612,7 +612,7 @@ function Instuctions() { // And other Instructions
       Spend_Credit($T['Whose'],-$cash,"Decommisioning " . $T['Name']);
       GMLog($Facts[$T['Whose']]['Name'] . " - " . $T['Name'] . " has been decommisioned"); 
       
-      $Have = Get_Things_Cond(0," (LinkId<0 AND SystemId=$Tid ");
+      $Have = Get_Things_Cond(0," (LinkId<0 AND SystemId=$Tid) ");
       if ($Have) {
         foreach ($Have as $H) {
           $H['SystemId'] = $T['SystemId'];
@@ -638,7 +638,7 @@ function Instuctions() { // And other Instructions
       Spend_Credit($T['Whose'],-$cash,"Disbanded " . $T['Name']);
       GMLog($Facts[$T['Whose']]['Name'] . " - " . $T['Name'] . " has been disbanded"); 
       
-      $Have = Get_Things_Cond(0," (LinkId<0 AND SystemId=$Tid ");
+      $Have = Get_Things_Cond(0," (LinkId<0 AND SystemId=$Tid) ");
       if ($Have) {
         foreach ($Have as $H) {
           $H['SystemId'] = $T['SystemId'];
@@ -652,6 +652,49 @@ function Instuctions() { // And other Instructions
       
       db_delete('Things',$Tid);
       continue 2;
+
+    case 'Retire': // Retire Agent
+      $Fid = $T['Whose'];
+      $IntDist = 0;
+      $Loc = $T['SystemId'];
+      $Homes = Gen_Get_Cond('ProjectHomes', "SystemId=$Loc AND Whose=$Fid");
+      foreach ($Homes as $H) {
+        $Ds = Get_DistrictsH($H['id']);
+        if (isset($Ds[4])) {
+          $IntDist =1;
+          break ; // FOund a Inteligence District
+        }
+      }
+     
+      $Lvl = $T['Level'];
+      $T['BuildState'] = -1;
+      $T['SystemId'] = 0;
+      $T['History'] .= "Retired";
+      $T['Instruction'] = 0;
+      if ($IntDist) {
+        $cash = 10*$Lvl*Has_Tech($T['Whose'],'Intelligence Operations');
+        TurnLog($Fid, $T['Name'] . " has retired gaining you " . Credit() . $cash, $T);
+        Spend_Credit($Fid,-$cash,"Retired " . $T['Name']);
+      } else {
+        TurnLog($TFid, $T['Name'] . " has retired", $T);           
+      }
+      GMLog($Facts[$Fid]['Name'] . " - " . $T['Name'] . " has been Retired"); 
+      
+      $Have = Get_Things_Cond(0," (LinkId<0 AND SystemId=$Tid) ");
+      if ($Have) {
+        foreach ($Have as $H) {
+          $H['SystemId'] = $T['SystemId'];
+          $H['WithinSysLoc'] = 0;
+          TurnLog($T['Whose'],$H['Name'] . " has been offloaded on to " . $P['Name'] . " in " . $N['Ref'],$H);
+          
+          if ($H['Whose'] != $T['Whose']) TurnLog($H['Whose'],$H['Name'] . " has been offloaded on to " . $P['Name'] . " in " . $N['Ref'],$H);
+          Put_Thing($H);
+        }
+      }
+      
+      db_delete('Things',$Tid);
+      continue 2;
+
 
     case 'Analyse Anomaly': // Anomaly   
       $Aid = $T['ProjectId'];
