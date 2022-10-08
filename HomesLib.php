@@ -289,6 +289,7 @@ function Recalc_Project_Homes($Logf=0) {
 function Show_Home($Hid) {
   global $HomeTypes;
   $H = Get_ProjectHome($Hid);
+  echo "Properties: 1=No Projects<p>";
   echo "<form method=post action=ProjHomes.php>";
   Register_Autoupdate("ProjectHome",$Hid);
   fm_hidden('id',$Hid);
@@ -309,6 +310,7 @@ function Show_Home($Hid) {
     echo "<tr><td>System:<td>" . fm_select($SysNames,$H,'SystemId') . "<td>Refresh after changing to get within sys locs right\n";
     echo "<tr><td>Where:<td>" . fm_select($SysLocs, $H,'WithinSysLoc');
   }
+  echo "<tr>" . fm_number('Properties ',$H,'Props');
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
   echo "</table><p>";
 }
