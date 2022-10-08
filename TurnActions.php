@@ -2138,8 +2138,8 @@ function InstructionsComplete() {
        break;
        
      case 'Make Outpost':
-       $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Outpost'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'],
-              'Name'=>$T['MakeName']];
+       $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Outpost'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'Whose'=>$T['Whose'], 
+              'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
        $Who = $T['Whose'];
@@ -2149,7 +2149,7 @@ function InstructionsComplete() {
        }
        TurnLog($Who,"An outpost has been made in " . $N['Ref']);
        GMLog($N['Ref'] . " is now controlled by " . $Facts[$Who]['Name'],1);
-       Report_Others($T['Whose'], $T['SystemId'],"An outpost has been made in " . $N['Ref']);
+       Report_Others($T['Whose'], $T['SystemId'],2,"An outpost has been made in " . $N['Ref']);
        break;
        
      case 'Make Asteroid Mine':
