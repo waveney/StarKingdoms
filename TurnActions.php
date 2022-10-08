@@ -676,7 +676,7 @@ function Instuctions() { // And other Instructions
         TurnLog($Fid, $T['Name'] . " has retired gaining you " . Credit() . $cash, $T);
         Spend_Credit($Fid,-$cash,"Retired " . $T['Name']);
       } else {
-        TurnLog($TFid, $T['Name'] . " has retired", $T);           
+        TurnLog($Fid, $T['Name'] . " has retired", $T);           
       }
       GMLog($Facts[$Fid]['Name'] . " - " . $T['Name'] . " has been Retired"); 
       
