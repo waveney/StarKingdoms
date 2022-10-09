@@ -69,12 +69,16 @@
         $P['Level'] ++;
         $Newlvl = $P['Level'];
         $pc = Proj_Costs($Newlvl);
-        if ( ($P['Type'] == 1) && (Has_Trait($P['FactionId'],"We Happy Few"))) {
+        if ( ($P['Type'] == 1) && (Has_Trait($P['FactionId'],"On the Shoulders of Giants"))) {
           $DTs = Get_DistrictTypes();
           if ( $DTs[$P['ThingType']]['Name'] == 'Mining') {
             $pc[1] = 0; // Mining
           } else if ($Newlvl>1 ) {
-            $pc = Proj_Costs($Newlvl-1);
+            $HomeW = $FACTION['HomeWorld'];
+            $World = Get_World($HomeW);
+            if ($World['Home'] == $P['Home']) {
+              $pc = Proj_Costs($Lvl-1);
+            }
           }
         }
         $Costs = $pc[1];

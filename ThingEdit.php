@@ -454,6 +454,11 @@ function New_Thing(&$T) {
       if ($TTypes[$T['Type']] & THING_HAS_CONTROL) {
         Control_Propogate($T['SystemId'],$T['Whose']);
       }
+      
+      if (TTypes[$T['Type']] & THING_CAN_DO_PROJECTS) {
+        Recalc_Project_Homes(0,1); //Should be silent
+        Recalc_Worlds(1);  // Should be silent
+      }
 
       dotail();
       break;

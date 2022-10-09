@@ -62,7 +62,12 @@
   foreach ($Facts as $F) {
     if (!empty($F['HomeWorld'])) {
       if (isset($Worlds[$F['HomeWorld']])) {
-        $Worlds[$F['HomeWorld']]['HomeOf'] = $F['id'];
+        if (empty($Worlds[$F['HomeWorld']]['HomeOf'])) {
+          $Worlds[$F['HomeWorld']]['HomeOf'] = $F['id'];
+//echo "Home of " . $F['Name'] . " is world " . $F['HomeWorld'] . "<br>";
+        } else {
+          if ($GM) echo "World: " . $F['HomeWorld'] . " is the home of both " . $Facts[$Worlds[$F['HomeWorld']]['HomeOf']]['Name'] . " and " . $F['Name'] . "<br>";
+        }
       }
     }
   }

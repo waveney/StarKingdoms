@@ -222,11 +222,15 @@
 // TODO bug if you already have that level in the pipeline - Add check to Turns Ready          
             $Lvl++;
             $pc = Proj_Costs($Lvl);
-            if (Has_Trait($Fid,"We Happy Few")) {
+            if (Has_Trait($Fid,"On the Shoulders of Giants")) {
               if ($DTz['Name'] == 'Mining') {
                 $pc[1] = 0; // Mining
               } else if ($Lvl>1 ) {
-                $pc = Proj_Costs($Lvl-1);
+                $HomeW = $FACTION['HomeWorld'];
+                $World = Get_World($HomeW);
+                if ($World['Home'] == $Hi) {
+                  $pc = Proj_Costs($Lvl-1);
+                }
               }
             }
             echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Construction'] . 
@@ -251,7 +255,8 @@
       $OldPc = Has_Tech($Fid,3, $Turn);
       $Lvl = $OldPc+1;
       $pc = Proj_Costs($Lvl);
-      echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Planetary Construction'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=3" .
+      echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Planetary Construction'] .
+                "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=3" .
                 "&Name=" . base64_encode("Research Planetary Construction $Lvl$Place"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .      
                 "Research Planetary Construction $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
     
@@ -373,7 +378,8 @@
         $OldPc = Has_Tech($Fid,7);
         $Lvl = $OldPc+1;
         $pc = Proj_Costs($Lvl);
-        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Ship Construction'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=7" .
+        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Ship Construction'] .
+                "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=7" .
                 "&Name=" . base64_encode("Research Ship Construction $Lvl$Place"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .  
                 "Research Ship Construction $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
     
@@ -495,14 +501,16 @@
       echo "<h2>Train an Army</h2>";
 //      echo "Not yet<p>";
       echo "This action is to build an already designed Army.  If you want a new design please go to <a href=ThingPlan.php>The Thing Planning Tool</a> first.<p>\n";
-      echo "<button class=projtype type=submit formaction='ProjNew.php?ACTION=NEWARMY&id=$Fid&p=" . $PTi['Train Army'] . "&t=$Turn&Hi=$Hi&Di=$Di$pl&DT=$DT'>Train a new army$Place</button><p>";
+      echo "<button class=projtype type=submit formaction='ProjNew.php?ACTION=NEWARMY&id=$Fid&p=" . $PTi['Train Army'] . 
+           "&t=$Turn&Hi=$Hi&Di=$Di$pl&DT=$DT'>Train a new army$Place</button><p>";
     
     
       echo "<h2>Research Military Organisation</h2><p>";
         $OldPc = Has_Tech($Fid,8, $Turn);
         $Lvl = $OldPc+1;
         $pc = Proj_Costs($Lvl);
-        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Military Organisation'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=8" .
+        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Military Organisation'] .
+                "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=8" .
                 "&Name=" . base64_encode("Research Military Organisation $Lvl$Place") . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
                 "Research Military Organisation $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
     
@@ -552,7 +560,8 @@
       if ($Count) {
         if ($Count == 1) {
           foreach ($RepShips as $tid=>$Name) { 
-            echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Re-equip and Reinforce'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=$tid" .
+            echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Re-equip and Reinforce'] .
+                "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=$tid" .
                 "&Name=" . base64_encode("Re-equip and Reinforce " . $Name ) . "&L=1&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .  
                 "Refit and Repair $Name $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
           }
@@ -587,7 +596,8 @@
         $OldPc = Has_Tech($Fid,4, $Turn);
         $Lvl = $OldPc+1;
         $pc = Proj_Costs($Lvl);
-        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Intelligence Operations'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=4" .
+        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Intelligence Operations'] .
+                "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=4" .
                 "&Name=" . base64_encode("Research Intelligence Operations $Lvl$Place"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
                 "Research Intelligence Operations $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
     

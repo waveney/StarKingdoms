@@ -5,7 +5,7 @@ global $HomeTypes;
 
 include_once("ProjLib.php");
 
-function Recalc_Project_Homes($Logf=0) {
+function Recalc_Project_Homes($Logf=0, $Silent=0) {
   global $GAME;
   echo "<h1>Rebuild Project homes database</h1>";
   $Facts = Get_Factions();
@@ -42,7 +42,7 @@ function Recalc_Project_Homes($Logf=0) {
   $Systems = Get_Systems();
   foreach ($Systems as &$N) {
     if ($N['Control']) {
-      echo "Checking " . $N['Ref'] . "<br>\n";
+      if (!$Silent) echo "Checking " . $N['Ref'] . "<br>\n";
       
       $Planets = Get_Planets($N['id']);
       if ($Planets) {
@@ -80,7 +80,7 @@ function Recalc_Project_Homes($Logf=0) {
               }
               if (!$doneP) {
               // Has home defined but not found 
-                echo "Would Delete $PHi<p>";
+                if (!$Silent) echo "Would Delete $PHi<p>";
 //              db_delete('ProjectHomes',$PHi);          
               }
             }
@@ -222,8 +222,8 @@ function Recalc_Project_Homes($Logf=0) {
   $Things = Get_AllThings();
   foreach ($Things as &$T) {
     if ($T['Type'] == 0) {
-      db_delete('Things',$T['id']);
-      echo "Deleted entry Null Thing " . $T['id'] . "<br>";
+      if (!$Silent) db_delete('Things',$T['id']);
+      if (!$Silent) echo "Deleted entry Null Thing " . $T['id'] . "<br>";
       continue;
     }
  
@@ -259,7 +259,7 @@ function Recalc_Project_Homes($Logf=0) {
             if ($H['Whose'] == $N['Control']) {
               $H['Inuse'] = 1;
             } else {
-              echo "GM question - <a href=ProjHomes.php?id=" . $H['id'] . " who should control project home " . $H['id'] . " is it a thing?</a><P>";
+              if (!$Silent) echo "GM question - <a href=ProjHomes.php?id=" . $H['id'] . " who should control project home " . $H['id'] . " is it a thing?</a><P>";
             }
             break;
           }
@@ -279,11 +279,11 @@ function Recalc_Project_Homes($Logf=0) {
   // Remove unused entries
   foreach ($KnownHomes as &$H) {
     if (isset($H['Inuse']) && $H['Inuse']) continue;
-      echo "Would delete Home " . $H['id'] . "<br>";
+      if (!$Silent) echo "Would delete Home " . $H['id'] . "<br>";
 //    db_delete('ProjectHomes',$H['id']);
   }
   
-  echo "Project Homes Rebuilt<p>";
+  if (!$Silent) echo "Project Homes Rebuilt<p>";
 }
 
 function Show_Home($Hid) {
@@ -315,7 +315,7 @@ function Show_Home($Hid) {
   echo "</table><p>";
 }
 
-function Recalc_Worlds() {
+function Recalc_Worlds($Silent=0) {
   include_once("ThingLib.php");
   // Get all districts
   // Work out list of things that have them
@@ -395,7 +395,7 @@ function Recalc_Worlds() {
       case 3: // Thing 
         $T = Get_Thing($H['ThingId']);
         if (empty($T)) {
-          echo "Home " . $H['id'] . " is faulty!";
+          if (!$Silent) echo "Home " . $H['id'] . " is faulty!";
           break 2;
         }
         if (($TTypes[$T['Type']]['Properties'] & THING_HAS_DISTRICTS) == 0) continue 2;
@@ -421,15 +421,16 @@ function Recalc_Worlds() {
   
   foreach ($Worlds as $W) {
     if (empty($W['Done'])) {
-      echo "World " . $W['id'] . " is not used - Delete?<br>\n";
+      if (!$Silent) echo "World " . $W['id'] . " is not used - Delete?<br>\n";
     }
   }
   
   foreach ($Facts as $F) {
     if (isset($F['HomeWorld']) && isset($Worlds[$F['HomeWorld']])) {
-      echo "Faction " . $F['Name'] . " has a homeworld<br>\n";
+      if (!$Silent) echo "Faction " . $F['Name'] . " has a homeworld<br>\n";
+      if (empty($Worlds[$F['HomeWorld']]['Done'])) if (!$Silent) echo "Faction " . $F['Name'] . " Homeworld Not USED!<br>\n";
     } else {
-      echo "Faction " . $F['Name'] . " does <b>NOT</b> have a homeworld<br>\n";    
+      if (!$Silent) echo "Faction " . $F['Name'] . " does <b>NOT</b> have a homeworld<br>\n";    
       $HW = 0;
       $Ord = 0;
       foreach ($Worlds as $W) {
@@ -441,15 +442,15 @@ function Recalc_Worlds() {
       if ($HW) {
         $F['HomeWorld'] = $HW;
         Put_Faction($F);
-        echo "Now setup<p>";
+        if (!$Silent) echo "Now setup<p>";
       } else {
-        echo "No Worlds for faction<p>";
+       if (!$Silent)  echo "No Worlds for faction<p>";
       }  
     }
   }
   
   
-  echo "Worlds recalculted<p>\n";
+  if (!$Silent) echo "Worlds recalculted<p>\n";
 }
 
 function Recalc_Economic_Rating(&$H,&$W,$Fid,$Turn=0) {
