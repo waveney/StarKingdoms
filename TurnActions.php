@@ -19,7 +19,7 @@
              'Load Troops', 'Spare', 'Ship Move Check', 'Ship Movements', 'Agents Move Check', 'Agents Movements', 'Spare', 'Meetups',
              
              'Spare', 'Space Combat', 'Unload Troops', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Devastation Selection', 
-             'Spare', 'Devastation', 'Project Progress', 'Instructions Progress', 'Spare', 'Espionage Missions Complete', 'Counter Espionage', 'Spare', 
+             'Devastation', 'Ownership Change', 'Project Progress', 'Instructions Progress', 'Spare', 'Espionage Missions Complete', 'Counter Espionage', 'Spare', 
              'Finish Shakedowns', 'Spare', 'Projects Complete', 'Instructions Complete', 'Spare', 'Check Survey Reports', 'Give Survey Reports', 'Check Spot Anomalies', 
              'Spot Anomalies', 'Militia Army Recovery', 'Spare', 'Generate Turns', 'Tidy Up Movements', 
              'Save What Can Be Seen', 'Recalc Project Homes', 'Finish Turn Process'];
@@ -30,7 +30,7 @@
              'Coded','No','Coded,M','Coded','Coded,M','Coded','No', 'Coded,M',
              
              'No','No','Coded','No','No','No','No','Coded,M', 
-             'No', 'Coded', 'Coded','Coded','No','No','No','No',
+             'Coded', 'No', 'Coded','Coded','No','No','No','No',
              'Coded','No','Coded,M','Coded,M', 'No','Partial,M','Coded', 'Coded,M',
              'Coded','Coded','No','No',
              'Coded','Coded','Coded','Coded'];
@@ -1115,11 +1115,62 @@ function ProjectProgressActions($Pay4=0) {
   $Projects = Get_Projects_Cond("Status=1");
   $DistTypes = Get_DistrictTypes();
   $ThingTypes = Get_ThingTypes();
+  $Factions = Get_Factions();
 
   foreach ($Projects as $P) {
     if ($P['LastUpdate'] >= $GAME['Turn']) continue;
     GMLog("Updating project " . $P['id'] . " " . $P['Name']);
 
+    $H = Get_ProjectHome($P['Home']);
+    if (isset($H['ThingType'])) switch ($H['ThingType']) {
+      case 1: // Planet
+        $PH = Get_Planet($H['ThingId']);
+        if ($PH['Control'] != 0) {
+          $C = $PH['Control'];
+        } else {
+          $N = Get_System($PH['SystemId']);
+          $C = $N['Control'];
+        }
+        if ($C != $P['FactionId']) {
+          GMLog("<b>Project " . $P['id'] . " fails as <a href=PlanEdit.php?id=" . $H['ThingId']. ">" . $PH['Name'] . "</a>" .
+                " is no longer controlled by " . $Factions[$P['FactionId']]['Name'] . "</b><p>");
+          TurnLog($P['FactionId'], " <b>Project " . $P['Name'] . " fails as " . $PH['Name'] . " is no longer controlled by you.");
+          Abandon_Project($P);
+          continue 2;
+        }
+        break;
+      case 2: // Moon
+        $PH = Get_Moon($H['ThingId']);
+        if ($PH['Control'] != 0) {
+          $C = $PH['Control'];
+        } else {
+          $PL = Get_Planet($PH['PlanetId']);
+          if ($PL['Control'] != 0) {
+            $C = $PL['Control'];
+          } else {
+            $N = Get_System($PL['SystemId']);
+            $C = $N['Control'];
+          }
+        }
+        if ($C != $P['FactionId']) {
+          GMLog("<b>Project " . $P['id'] . " fails as <a href=MoonEdit.php?id=" . $H['ThingId']. ">" . $PH['Name'] . "</a>" .
+                " is no longer controlled by " . $Factions[$P['FactionId']]['Name'] . "</b><p>");
+          TurnLog($P['FactionId'], " <b>Project " . $P['Name'] . " fails as " . $PH['Name'] . " is no longer controlled by you.");
+          Abandon_Project($P);
+          continue 2;
+        }
+        break;
+      case 3: // Thing
+        $PH = Get_Thing($H['ThingId']);
+        if ($PH['Whose'] != $P['FactionId']) {
+          GMLog("<b>Project " . $P['id'] . " fails as <a href=ThingEdit.php?id=" . $H['ThingId']. ">" . $PH['Name'] . "</a>" .
+                " is no longer controlled by " . $Factions[$P['FactionId']]['Name'] . "</b><p>");
+          TurnLog($P['FactionId'], " <b>Project " . $P['Name'] . " fails as " . $PH['Name'] . " is no longer controlled by you.");
+          Abandon_Project($P);
+          continue 2;
+        }
+        break;
+    }
     
     $PT = $ProjTypes[$P['Type']];
 
@@ -1127,13 +1178,13 @@ function ProjectProgressActions($Pay4=0) {
 
       $Fact = Get_Faction($P['FactionId']);
       $MaxActs = Has_Tech($P['FactionId'],3);  
-
-      $H = Get_ProjectHome($P['Home']);
+      
       if (!isset($H['ThingType'])) {
         GMLog("<b>Confused state for project " . $P['id'] . "</b><p>");
         $H['Skip'] = 1;
         continue;  // Remove things without districts                
       }
+      
       switch ($H['ThingType']) {
         case 1: // Planet
           $PH = Get_Planet($H['ThingId']);
@@ -1152,8 +1203,6 @@ function ProjectProgressActions($Pay4=0) {
     } else if ($PT['Category'] > 32) { // Intelligence -TODO
     
     } else { // District based 
-
-      $H = Get_ProjectHome($P['Home']);
       if (!isset($H['ThingType'])) {
         GMLog("<b>Confused state for project " . $P['id'] . "</b><p>");
         $H['Skip'] = 1;
@@ -1739,6 +1788,11 @@ function Devastation() {
   GMLog("Devastation is Complete<p>");
   return 1;
 
+}
+
+function OwnershipChange() {
+  GMLog("<h2>If worlds have changed hands after conflict, do that NOW</h2>");
+  return 1;
 }
 
 function ProjectProgress() {

@@ -4,7 +4,8 @@
 
 function Proj_Costs($lvl) {
   if ($lvl<0) return [1E6,1E6]; // Should be never but...
-  if ($lvl <11) return [[1,50],[1,50],[4,200],[9,450],[16,800],[25,1250],[36,1800],[49,2450],[64,4300],[81,4050],[100,5000],[121,5550],[144,6200],[169,6950],[196,7800],[225,8750],[256,9800]][$lvl];
+  if ($lvl <11) return [[1,50],[1,50],[4,200],[9,450],[16,800],[25,1250],[36,1800],[49,2450],[64,4300],[81,4050],[100,5000],[121,5550],
+                        [144,6200],[169,6950],[196,7800],[225,8750],[256,9800]][$lvl];
   $Cst = 9800;
   for($l=11;$l<=$lvl;$l++) $Cst+= $l*100+50;
   return [$lvl*$lvl,$Cst];
@@ -15,8 +16,9 @@ function Rush_Cost($who) {
   return 75; 
 }
 
-global $Project_Status;
+global $Project_Status,$Project_Statuses;
 $Project_Status = [0=>'Planned',1=>'Started', 2=>'Finished',3=>'Cancelled', 4=>'On Hold', 5=>'Not Started'];
+$Project_Statuses = array_flip($Project_Status);
 
 function  Where_Is_Home($PH,$Set=0) {
   $Home = Get_ProjectHome($PH);
@@ -144,5 +146,11 @@ function Project_Finished(&$P,$Turn) {  // CODE ON HOLD
     }
 }
 
+function Abandon_Project(&$P) {
+  global $Project_Status, $Project_Statuses;
+  
+  $P['Status'] = $Project_Statuses['Cancelled'];
+  Put_Project($P);
+}
 
 ?>
