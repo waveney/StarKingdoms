@@ -254,7 +254,7 @@ function Show_Thing(&$T,$Force=0) {
         if (($T['BuildState'] == 2) || ($T['CurHealth'] == 0) || empty($SelLinks) ) { // Shakedown or just warped out
           echo "<tr><td colspan=3>This is unable to use links, it can move within the system.<br>Where in the system should it go? " . fm_select($Syslocs,$T,'WithinSysLoc');
         } else {
-          if (($T['Instruction'] > 0) && ($T['Instruction'] != 5) && ($T['Instruction'] != 21) ) {
+          if (($T['Instruction'] != 0) && ($T['Instruction'] != 5) && ($T['Instruction'] != 21) ) {
             echo "<tr><td class=Err>Warning Busy doing:<td>" . $ThingInstrs[$T['Instruction']] . "<td class=Err>Moving will cancel";
           }
 
@@ -857,7 +857,7 @@ function Show_Thing(&$T,$Force=0) {
     
     $ProgShow = $Cost = $Acts = 0;
     echo "<tr>" . fm_radio('Special Instructions', $SpecOrders,$T,'Instruction','',1,' colspan=6 ','',$ThingInclrs);// . " under development don't use yet";
-    switch ($ThingInstrs[$T['Instruction']]) {
+    switch ($ThingInstrs[abs($T['Instruction'])]) {
     case 'None': // None
       break;
 

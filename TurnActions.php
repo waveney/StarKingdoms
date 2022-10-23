@@ -15,7 +15,7 @@
   
   $Stages = ['Check Turns Ready', 'Spare', 'Spare','Start Turn Process', 'Save All Locations', 'Spare', 'Cash Transfers', 'Spare',
              'Spare', 'Pay For Stargates', 'Spare', 'Scientific Breakthroughs', 'Start Projects', 'Spare', 'Spare', 'Instuctions', 
-             'Instuctions Stage 2', 'Spare', 'Agents Start Missions', 'Pay For Rushes', 'Spare', 'Economy', 'Spare', 'Direct Moves', 
+             'Instuctions Stage 2', 'Clear Paid For', 'Agents Start Missions', 'Pay For Rushes', 'Spare', 'Economy', 'Spare', 'Direct Moves', 
              'Load Troops', 'Spare', 'Ship Move Check', 'Ship Movements', 'Agents Move Check', 'Agents Movements', 'Spare', 'Meetups',
              
              'Spare', 'Space Combat', 'Unload Troops', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Devastation Selection', 
@@ -26,7 +26,7 @@
 
   $Coded =  ['Coded','No','No','Coded','Coded','No','Coded', 'No',
              'No','Coded','No','Coded','Partial,M','No','No','Coded,M',
-             'Coded,M','No', 'No','Coded','No','Coded','No','Coded',
+             'Coded,M','Coded', 'No','Coded','No','Coded','No','Coded',
              'Coded','No','Coded,M','Coded','Coded,M','Coded','No', 'Coded,M',
              
              'No','No','Coded','No','No','No','No','Coded,M', 
@@ -498,7 +498,7 @@ function Instuctions() { // And other Instructions
       $T['Progress'] = 0;
     }
     
-    if ($T['Progress']>0) continue;
+    if ($T['Progress']>0 || $T['Instruction']<0) continue;
     
     switch ($ThingInstrs[$T['Instruction']]) {
     case 'Colonise': // Colonise
@@ -780,6 +780,7 @@ function Instuctions() { // And other Instructions
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to start an Asteroid Mine in " .$N['Ref'],$T);
       }
+      $T['Instruction'] = -$T['Instruction'];
       break;
       
     case 'Make Orbital Repair Yard':
@@ -788,6 +789,7 @@ function Instuctions() { // And other Instructions
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to start an Orbital Repair Yard in " .$N['Ref'],$T);
       }
+      $T['Instruction'] = -$T['Instruction'];
       break;
       
     case 'Make Minefield':
@@ -796,6 +798,7 @@ function Instuctions() { // And other Instructions
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to start a Minefield in " .$N['Ref'],$T);
       }
+      $T['Instruction'] = -$T['Instruction'];
       break;
       
     case 'Build Space Station':
@@ -804,6 +807,7 @@ function Instuctions() { // And other Instructions
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to start a Build Space Station in " .$N['Ref'],$T);
       }
+      $T['Instruction'] = -$T['Instruction'];
       break;
     
     case 'Expand Space Station':
@@ -812,6 +816,7 @@ function Instuctions() { // And other Instructions
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to Expand Space Station in " .$N['Ref'],$T);
       }
+      $T['Instruction'] = -$T['Instruction'];
       break;
     
     case 'Make Deep Space Sensor':
@@ -820,6 +825,7 @@ function Instuctions() { // And other Instructions
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to Make Deep Space Sensor in " .$N['Ref'],$T);
       }
+      $T['Instruction'] = -$T['Instruction'];
       break;
     
     case 'Make Advanced Asteroid Mine':
@@ -828,6 +834,7 @@ function Instuctions() { // And other Instructions
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to start an Advanced Asteroid Mine in " .$N['Ref'],$T);
       }
+      $T['Instruction'] = -$T['Instruction'];
       break;
       
     case 'Dismantle Stargate':
@@ -835,6 +842,7 @@ function Instuctions() { // And other Instructions
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to start to dismantle stargate #" .$T['Dist1'],$T);
       }
+      $T['Instruction'] = -$T['Instruction'];
       break;
 
     case 'Build Stargate':
@@ -854,8 +862,10 @@ function Instuctions() { // And other Instructions
             " to " . $Systems[$T['Dist2']])) {
           TurnLog($T['Whose'],"Could not aford the $LinkRes to build new stargate level " . $T['Dist1'] . " from " . $Systems[$T['SystemId']] . 
                   " to " . $Systems[$T['Dist2']]); 
+          $T['Progress'] = -1; // Stalled
         }  
       }
+      $T['Instruction'] = -$T['Instruction'];
       break;
 
     case 'Make Planet Mine':
@@ -863,6 +873,7 @@ function Instuctions() { // And other Instructions
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to start a Planet Mine in " .$N['Ref'],$T);
       }
+      $T['Instruction'] = -$T['Instruction'];
       break;
 
     case 'Construct Command Relay Station':
@@ -870,6 +881,7 @@ function Instuctions() { // And other Instructions
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to start a Command Relay Station in " .$N['Ref'],$T);
       }
+      $T['Instruction'] = -$T['Instruction'];
       break;
       
     case 'Repair Command Node': 
@@ -877,6 +889,7 @@ function Instuctions() { // And other Instructions
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to Repair Command Node " .$N['Ref'],$T);
       }
+      $T['Instruction'] = -$T['Instruction'];
       break;
       
     case 'Transfer':
@@ -912,6 +925,7 @@ function Instuctions() { // And other Instructions
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to Make something in " . $N['Ref'],$T);
       }
+      $T['Instruction'] = -$T['Instruction'];
       break;      
     
     case 'Make Warpgate': 
@@ -919,6 +933,7 @@ function Instuctions() { // And other Instructions
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to Make Warpgate in " . $N['Ref'],$T);
       }
+      $T['Instruction'] = -$T['Instruction'];
       break;      
     
 
@@ -939,14 +954,14 @@ function Instuctions() { // And other Instructions
 
 function InstuctionsStage2() { // And other Instructions
   global $ThingInstrs,$GAME;
-  $Things = Get_Things_Cond(0,"Instruction>0");
+  $Things = Get_Things_Cond(0,"Instruction!=0");
   $Facts = Get_Factions();
   $NeedColStage3 = 0;
   foreach ($Things as $T) {
     $Tid = $T['id'];
     $Fid = $T['Whose'];
     $N = Get_System($T['SystemId']);
-    switch ($ThingInstrs[$T['Instruction']]) {
+    switch ($ThingInstrs[abs($T['Instruction'])]) {
 
     case 'Voluntary Warp Home': // Warp out
       if (isset($_REQUEST["G$Tid"])) {
@@ -1074,6 +1089,15 @@ function InstuctionsStage2() { // And other Instructions
   
   Done_Stage("Instuctions");
   return 1;
+}
+
+function ClearPaidFor() {
+  $Things = Get_Things_Cond(0,"Instruction<0");
+  foreach ($Things as $T) {
+    $T['Instruction'] = -$T['Instruction'];
+    Put_Thing($T);
+  }
+  return 1;  
 }
 
 function AgentsStartMissions() {
@@ -1274,7 +1298,7 @@ function Economy() {
         } else if ($H['EconomyFactor'] > 100) {
           $EccTxt .= " - at " . $H['EconomyFactor'] . "%\n";
         }
-        $EconVal += $ECon;
+        $EconVal += "$ECon\n";
       }
     }
     $Things = Get_Things($Fid);
@@ -1725,14 +1749,14 @@ function ProjectProgress() {
 
 function InstructionsProgress() {
   global $ThingInstrs;
-  $Things = Get_Things_Cond(0,"Instruction>0");
+  $Things = Get_Things_Cond(0,"Instruction!=0");
   $NeedColStage2 = 0;
   $Facts = Get_Factions();
   
   foreach ($Things as $T) {
     $N = Get_System($T['SystemId']);
     $Tid = $T['id'];
-    switch ($ThingInstrs[$T['Instruction']]) {
+    switch ($ThingInstrs[abs($T['Instruction'])]) {
       case 'Colonise':
         $Prog = Has_Tech($T['Whose'], 'Planetary Construction');
         $Mods = Get_ModulesType($Tid, 10);
@@ -1934,17 +1958,31 @@ function ProjectsComplete() {
       break;
       
     case 'Re-equip and Reinforce':    
-
     case 'Refit and Repair': 
-      if ($P['ThingId']) {
-        $T = Get_Thing($P['ThingId']);
-        RefitRepair($T);
-        TurnLog($P['FactionId'], $T['Name'] . " has been " . $PT['Name'] . "ed",$T);        
+      $Where = Where_Is_Home($P['Home']);
+      
+      $Tid = $P['ThingId'];
+      if ($Tid) {
+        $T = Get_Thing($Tid);
+        if (($T['SystemId'] != 0 && $T['SystemId'] != $Where[0])) {
+          TurnLog($P['FactionId'],"Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system");
+          GMLog($Facts[$P['FactionId']]['Name'] . "Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system",1);
+        } else if ($P['ThingId']) {
+          $T = Get_Thing($P['ThingId']);
+          RefitRepair($T);
+          TurnLog($P['FactionId'], $T['Name'] . " has been " . $PT['Name'] . "ed",$T);        
+        }
       }
       if ($P['ThingId2']) {
-        $T = Get_Thing($P['ThingId2']);
-        RefitRepair($T);
-        TurnLog($P['FactionId'], $T['Name'] . " has been " . $PT['Name'] . "ed",$T);        
+        $Tid = $P['ThingId2'];
+        if (($T['SystemId'] != 0 && $T['SystemId'] != $Where[0])) {
+          TurnLog($P['FactionId'],"Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system");
+          GMLog($Facts[$P['FactionId']]['Name'] . "Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system",1);
+        } else {        
+          $T = Get_Thing($Tid);
+          RefitRepair($T);
+          TurnLog($P['FactionId'], $T['Name'] . " has been " . $PT['Name'] . "ed",$T);
+        }
       }
       break;
     
@@ -2068,7 +2106,7 @@ function ProjectsComplete() {
 
 function InstructionsComplete() {
   global $ThingInstrs,$GAME;
-  $Things = Get_Things_Cond(0,"Instruction>0 AND Progress>=ActionsNeeded ");
+  $Things = Get_Things_Cond(0,"Instruction!=0 AND Progress>=ActionsNeeded ");
   $NeedColStage2 = 0;
   $Facts = Get_Factions();
   $TTNames = Thing_Types_From_Names();
@@ -2076,7 +2114,7 @@ function InstructionsComplete() {
   foreach ($Things as $T) {
     $N = Get_System($T['SystemId']);
     $Tid = $T['id'];
-    switch ($ThingInstrs[$T['Instruction']]) {
+    switch ($ThingInstrs[abs($T['Instruction'])]) {
     case 'Colonise':
       $P = Get_Planet($T['Spare1']);
       $Who = $T['Whose'];
@@ -2128,7 +2166,8 @@ function InstructionsComplete() {
              $FA['State'] = 3;
              Gen_Put('FactionAnomaly',$FA);          
              TurnLog($T['Whose'], $T['Name'] . " Anomaly study on " . $A['Name'] . " has been completed - See sperate response from the GMs for what you get");
-             GMLog($Facts[$Fid]['Name'] . " has completed anomaly study : <a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . "</a> has been completed - give them the reward.");
+             GMLog($Facts[$Fid]['Name'] . " has completed anomaly study : <a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . 
+                   "</a> has been completed - give them the reward.");
              $T['ProjectId'] = 0;
            }
          } else {
@@ -2609,7 +2648,7 @@ function MilitiaArmyRecovery() {
       foreach ($RepMods as $Mt) {
         $Med = Get_ModulesType($T['id'],$MTNs[$Mt]);
         if (isset($Med[0])) {
-          $Rep = $Self[0]['Number']*$Self[0]['Level']*2;
+          $Rep = $Med[0]['Number']*$Med[0]['Level']*2;
           if ($MT == 'Self Repairing Robot Armour') $Rep *=2;
           $Conflict = 0; 
           $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");

@@ -491,10 +491,6 @@ global $DDdata;
 $DDdata = [
     'Image'    => [ 'UseGame'=>1, 'AddState'=>0, 'tr'=>0, 'SetValue'=>'URL', 'Extra'=>"acceptedFiles: 'image/*',", 'cols'=>[4,1], 'path'=>'images', 'Show'=>1 ], 
     'Image2'    => [ 'UseGame'=>1, 'AddState'=>0, 'tr'=>0, 'SetValue'=>'URL', 'Extra'=>"acceptedFiles: 'image/*',", 'cols'=>[4,1], 'path'=>'images', 'Show'=>1 ], 
-    'NewPhoto' => [ 'UseYear'=>0, 'AddState'=>0, 'tr'=>0, 'SetValue'=>'URL','cols'=>[1,1], 'URL'=>'PhotoProcess.php', 'Replace'=>1, 
-                 'Extra'=>"acceptedFiles: 'image/*',", 'Show'=>1],
-    'NewImage' => [ 'UseYear'=>0, 'AddState'=>0, 'tr'=>0, 'SetValue'=>'URL','cols'=>[1,1], 'URL'=>'PhotoProcess.php', 'Replace'=>1, 
-                 'Extra'=>"acceptedFiles: 'image/*',"],
 ];
 
 
