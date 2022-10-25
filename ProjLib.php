@@ -33,6 +33,7 @@ function  Where_Is_Home($PH,$Set=0) {
     $Home['WithinSysLoc'] = $loc;
     Put_ProjectHome($Home);
     return [$P['SystemId'],$loc];
+
   case '2': // Moon
     if (!$Set) return [$Home['SystemId'],$Home['WithinSysLoc']];
     $M = Get_Moon($Home['ThingId']);

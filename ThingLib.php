@@ -684,7 +684,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
         $RawA = 1;
       } 
       if ($TTprops & THING_HAS_LEVELS) {
-        $txt .= " level " . $T['Level'];
+        $txt .= " level " . $T['Level'] . " ";
         $RawA = 0;
       }
       if ($T['Class']) {

@@ -40,7 +40,8 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$Thi
       db_delete('Breakthroughs',$_REQUEST['Bid']);
       break;
     case 'NEW':
-      $Bt = ['FactionId'=>$Fid, 'TechId'=> $_REQUEST['Tid'], 'Level'=>$_REQUEST['L'], 'Field'=>$_REQUEST['Fld'], 'Cost'=>$_REQUEST['C'], 'Turn'=>$GAME['Turn'], 'Game'=>$GAMEID];
+      $Bt = ['FactionId'=>$Fid, 'TechId'=> $_REQUEST['Tid'], 'Level'=>$_REQUEST['L'], 'Field'=>$_REQUEST['Fld'], 'Cost'=>$_REQUEST['C'], 
+             'Turn'=>$GAME['Turn'], 'Game'=>$GAMEID];
 // echo "<br>"; var_dump($Bt);
       Gen_Put('Breakthroughs',$Bt);
       break;
@@ -137,7 +138,7 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$Thi
           $Lvl = 1;
         }
 
-        if ($Avail[$Fld]-$Used[$Fld] >+ $SPCosts[$Lvl]) {
+        if ($Avail[$Fld]-$Used[$Fld] >= $SPCosts[$Lvl]) {
           echo "<button class=projtype type=submit formaction='SciencePoints.php?ACTION=NEW&id=$Fid&Tid=" . $TT['id'] . "&L=$Lvl&C=" . $SPCosts[$Lvl] . "&Fld=$Fld'>" .      
                 "Research " . $TT['Name'] . " Level $Lvl; Cost " . $SPCosts[$Lvl] . "</button><p>";  
         }
@@ -152,7 +153,7 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$Thi
         if (!isset($FactTechs[$T['PreReqTech']]) ) continue;
         if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
         $Lvl = $T['PreReqLevel'];
-        if ($Avail[$Fld]-$Used[$Fld] >+ $SPCosts[$Lvl]) {
+        if ($Avail[$Fld]-$Used[$Fld] >= $SPCosts[$Lvl]) {
           echo "<button class=projtype type=submit formaction='SciencePoints.php?ACTION=NEW&id=$Fid&Tid=" . $T['id'] . "&L=$Lvl&C=" . $SPCosts[$Lvl] . "&Fld=$Fld'>" .      
                 "Research " . $T['Name'] . " Level $Lvl; Cost " . $SPCosts[$Lvl] . "</button><p>";  
         }

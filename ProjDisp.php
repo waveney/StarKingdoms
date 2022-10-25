@@ -296,7 +296,8 @@
   echo "Click up/down or write number to rush projects<br>\n";
 
   echo "Note the cost totals are on the far right<br>" .
-       "The credits left on current turn is a rough guide only - it does not take account of other expenditure other than for the current turn - or any additional income.<p>";
+       "The credits left on current turn is a rough guide only - it does not take account of other expenditure other than for the current turn " .
+       "- or any additional income.<p>";
   
   echo "Note 2: The amount of progress before the end of the previous turn is at best a guess.  " .
        "If the number of districts/planetary construction has changed they will be wrong.<p>\n";
@@ -345,6 +346,7 @@
   }  
   
   $BonusRushes = Has_Trait($Fid,'Built for Construction and Logistics');
+  $ShowOtherCat = 0;
   
   foreach ($Homes as &$H) {
     $PlanCon = $BPlanCon;
@@ -363,7 +365,10 @@
       $PH = Get_Thing($H['ThingId']);
       if ($ThingTypes[$PH['Type']]['Properties'] & THING_CAN_DO_PROJECTS) {
         $ORY = 0;
-        foreach($DistTypes as $DT) if ($DT['Name'] == 'Orbital Repair') $ORY = $DT['id'];
+        foreach($DistTypes as $DT) {
+          if ($DT['Name'] == 'Orbital Repair') $ORY = $DT['id'];
+          if (($DT['Props'] & 3) == 2) $ShowOtherCat = 1;
+        }
         $Dists = [$ORY=>['HostType'=>3,'HostId'=>$PH['id'],'Type'=>$ORY,'Number'=>1, 'id'=>-1]];
         $NoC = 1;
         break;
@@ -605,6 +610,19 @@
   echo "<table border style='width:auto;height:50px;'>";
   echo "<h2>Worlds:</h2> $Headline1";
   echo "</table>";
+  
+  /*
+  echo "<H2>Category:</h2>";
+  echo "<table border style='width:auto;height:50px;'><tr>";  
+  
+  $DTypes = Get_DistrictTypes();
+  foreach ($DTypes as $DCat => $Dty) {
+    if ($Dty['Props'] &2 ) echo "<th id=TCat$DCat><button type=button class=ProjCat id=PCat$DCat onclick=ToggleCat($DCat)>" . $Dty['Name'] . "</button>";
+  }
+  echo "<th id=TCat-1 ><button type=button class=ProjCat id=PCat-1 onclick=ToggleCat(-1)>Construction</button>";
+  if ($ShowOtherCat) echo "<th id=TCat-2 ><button type=button class=ProjCat id=PCat-2 onclick=ToggleCat(-2)>Other</button>";
+
+  echo "</table>";  */
   echo "<h2>Projects:</h2>";
   echo "<table border>";
   

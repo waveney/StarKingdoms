@@ -29,6 +29,20 @@ debugger;
   }
 }
 
+function ToggleCat(id) {
+debugger;
+  var HomeBut = document.getElementById('PCat'+id);
+  x =1;
+  if (HomeBut.classList.contains('Cathidden')) {
+    $('.PHName.Cat' + id).toggle(true);
+    HomeBut.classList.remove('Cathidden');
+  } else {
+    $('.Cat' + id).toggle(false);
+    HomeBut.classList.add('Cathidden');
+  }
+}
+
+
 function RushChange(Turn,Projn,Homeindx,Distindx,MaxRush) {
 debugger;
   AutoInput('Rush' + Turn + ':' + Projn);

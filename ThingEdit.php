@@ -195,6 +195,7 @@ function New_Thing(&$T) {
       $T = Get_Thing($tid);
       Check_MyThing($T,$Fid);
       $T = Get_Thing($_REQUEST['id']);
+      $T['Control'] = 0;
       $T['BuildState'] = 4;  // Ex
       Put_Thing($T);
       break;
