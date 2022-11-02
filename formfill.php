@@ -334,7 +334,7 @@
         $N = $N[0];
       }
       $N[$mtch[1]] = $Value;
- var_dump($N);
+ // var_dump($N);
       echo Gen_Put('FactionAnomaly',$N);
     } else {
       $N = Get_Anomaly($id);
