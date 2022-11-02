@@ -70,6 +70,7 @@ Major General Vladivosky  #25 - head invasion 1
 Major General Khodorkovsky #28 - head invasion 2
 Kolonel Ramzan Kadyrov #332 - Military Fleet 
 Kolonel Slovyansky #388 - Civilian fleet 
+Kolonel Kirill Stremousov #425 - Arachni
 Major Nikitovich #6,257 - wombles
 Major Tsymbaliuk #8,238 - fongari
 Major Sergi Peskov #7,551 - Sedranna
@@ -123,4 +124,17 @@ Major General Vladivosky #25, is leading a Limited Miltary Operation to liberate
 He is willing to accept the surrender of the puny Fongari, they will be welcome as slaves.
 
 
+
+Sedrana has completed a level 2 analyse project called Analyse Adianite. Please give the results in the player
+
+Loging a turn action for Faction 0! - Call Richard
+#0 TurnLog(0, Aravi tried to share Cryo-Freeze with you. You don't understand it) called at [/var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php:2012] #1 ProjectsComplete() called at [/var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php:2811] #2 Do_Turn() called at [/var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php:2901]
+Sedrana has completed anomaly study : Binary Star Analysis has been completed - give them the reward.
+Kallipolis has completed anomaly study : Remains of ship? has been completed - give them the reward.
+Zabanian Remnant has completed anomaly study : Black Hole has been completed - give them the reward.
+Sedrana has done a DSC make something of 'Attach Aimbot and Bashir' in DFH it took 5 actions this needs to be handled by the GMs.
+
+https://us02web.zoom.us/j/81312611998?pwd=NG5UdjYrbnJaaDllV05VSjlEMkJUZz09 - Chip Zoom
+
+AH01071: Got error '/vhosts/www2.chippfolk.co.uk/httpdocs ') in /var/www/vhosts/www2.chippfolk.co.uk/httpdocs/int/Email.php:6\nStack trace:\n#0 /var/www/vhosts/www2.chippfolk.co.uk/httpdocs/int/VolLib.php(6): include_once()\n#1 /var/www/vhosts/www2.chippfolk.co.uk/httpdocs/int/Volunteers.php(6): include_once('...')\n#2 {main}\n thrown in /var/www/vhosts/www2.chippfolk.co.uk/httpdocs/int/Email.php on line 6', referer: https://www2.chippfolk.co.uk/int/Staff
 

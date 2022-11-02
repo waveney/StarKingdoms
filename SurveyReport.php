@@ -163,7 +163,15 @@
   if ($SurveyLevel >= 2) {
     $Ps = Get_Planets($Sid);
     $Planets = $Asteroids = 0;
-    foreach ($Ps as $P) {
+    foreach ($Ps as $Pi=>$P) {
+      if ($P['Attributes'] & 1) {
+        if ($GM || $P['Control'] == $Fid) {
+          $Ps[$Pi]['Hidden'] = 1;
+        } else {
+          unset($Ps[$Pi]);
+          continue;
+        }
+      }
       if ($PTNs[$P['Type']] == 'Asteroid Belt') {
         $Asteroids++;
       } else { 
@@ -206,6 +214,17 @@
       $Mns = [];
       if ($P['Moons']) $Mns = Get_Moons($Pid);
 
+      foreach ($Mns as $Mip=>$MM) {
+        if ($MM['Attributes'] & 1) {
+          if ($GM || $MM['Control'] == $Fid) {
+            $Mns[$Mip]['Hidden'] = 1;
+          } else {
+            unset($Mns[$Mip]);
+            continue;
+          }
+        }
+      }
+
       $pname = NameFind($P); // Need diff logic for player
       if ($Fid) {
         $FP = Get_FactionPlanetFS($Fid, $Pid);
@@ -223,9 +242,11 @@
       } 
 
       echo "<li><span class=SRName>" . $pname . "</span>";
+//var_dump($P);
       if ($P['Image']) echo "<img src=" . $P['Image'] . ">";
       if ($SurveyLevel >= 4) {
-        echo " Is " . ($PTNs[$P['Type']] == 'Asteroid Belt'?" an ":($PTD[$P['Type']]['Hospitable']?" a <b>habitable ":" an uninhabitable "));
+        echo " Is " . (isset($P['Hidden'])?' (hidden) ':'') . 
+             ($PTNs[$P['Type']] == 'Asteroid Belt'?" an ":($PTD[$P['Type']]['Hospitable']?" a <b>habitable ":" an uninhabitable "));
       } else {
         echo "<br>";
       }
@@ -282,9 +303,11 @@
           } 
 
           echo "<li><span class=SRName>" . $pname . "</span>";
+//var_dump($M);
           if ($M['Image']) echo "<img src=" . $M['Image'] . ">";        
           if ($SurveyLevel >= 4) {
-            echo " Is " . ($PTNs[$M['Type']] == 'Asteroid Belt'?" an ":($PTD[$M['Type']]['Hospitable']?" a <b>habitable ":" an uninhabitable "));
+            echo " Is " . (isset($M['Hidden'])?' (hidden) ':'') .  
+                 ($PTNs[$M['Type']] == 'Asteroid Belt'?" an ":($PTD[$M['Type']]['Hospitable']?" a <b>habitable ":" an uninhabitable "));
           } else {
             echo "<br>";
           }
