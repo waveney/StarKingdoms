@@ -119,6 +119,7 @@
   
     foreach ($Nodes as $N) {
       if (!ctype_alnum($N['Ref'])) continue;
+      if (!isset($N['GridX']) || ( $N['GridX'] == 0 && $N['GridY'])) continue;
       $NodeName = $N['Name']?$N['Name']:"";
       $ShortName = $N['ShortName']?$N['ShortName']:$NodeName;
       $Hide = 0;
@@ -214,7 +215,8 @@
         $Links = Get_Links1end($from);
 
         foreach ($Links as $L) {
-          fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=\"" . $Levels[$L['Level']]['Colour'] . '"' . ($typ?"":(" label=\"#" . $L['id'] . "\"")) . "];\n");
+          fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=\"" . $Levels[$L['Level']]['Colour'] . '"' . 
+          ($typ?"":(" label=\"#" . $L['id'] . "\"")) . "];\n");
         }
       }
     }
