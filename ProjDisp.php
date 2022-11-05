@@ -320,12 +320,19 @@
       $SkipProgress = 1;
     } 
   }
-//  $Turns = [][];
   
-// Stage 1 Scan the data
-
-// var_dump($Homes);exit;
+  foreach($Homes as &$H) $H['RelOrder'] = 0;
   
+  // Reoder Homes based on Worlds Importance
+  $Worlds = Get_Worlds();
+  foreach ($Worlds as $W) {
+    if (isset($Homes[$W['Home']])) $Homes[$W['Home']]['RelOrder'] = $W['RelOrder'];
+  }
+  
+  usort($Homes, function ($a, $b) {
+    return $b['RelOrder'] - $a['RelOrder'];
+  });
+    
   $BPlanCon = Has_Tech($Fid,3);
   $PHx = 1;
   $Dis = [];
