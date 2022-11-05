@@ -62,11 +62,13 @@
   foreach($FactFacts as $FF) {
     $F = Get_Faction($FF['FactionId2']);
     echo "<tr height=50><Td>" . $F['Name'];
-    $perms = [ $FF['Props'] & 15, ($FF['Props'] >>4)];
+//echo  "\nProps:" . dechex($FF['Props']) . "\n";
+    $perms = [ $FF['Props'] & 15, (($FF['Props'] >>4)&15), (($FF['Props'] >>8)&15),(($FF['Props'] >>12)&15),];
+//var_dump($perms);
     echo "<td>" . fm_radio('',$Boarding,$perms,0,'',0,'',"Set:0:" . $FF['id']);
     echo "<td>" . fm_radio('',$Boarding,$perms,1,'',0,'',"Set:1:" . $FF['id']);
     echo "<td>" . fm_radio('',$Boarding,$perms,2,'',0,'',"Set:2:" . $FF['id']);
-    echo "<td>" . fm_radio('',$Boarding,$perms,2,'',0,'',"Set:3:" . $FF['id']);
+    echo "<td>" . fm_radio('',$Boarding,$perms,3,'',0,'',"Set:3:" . $FF['id']);
   }
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
   echo "</table></div></form>\n";
