@@ -119,7 +119,7 @@
   
     foreach ($Nodes as $N) {
       if (!ctype_alnum($N['Ref'])) continue;
-      if (!isset($N['GridX']) || ( $N['GridX'] == 0 && $N['GridY'])) continue;
+      if (!isset($N['GridX']) || ( $N['GridX'] == 0 && $N['GridY'] == 0)) continue;
       $NodeName = $N['Name']?$N['Name']:"";
       $ShortName = $N['ShortName']?$N['ShortName']:$NodeName;
       $Hide = 0;
