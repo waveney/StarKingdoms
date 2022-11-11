@@ -760,7 +760,13 @@ function Show_Thing(&$T,$Force=0) {
       if ($Moving || !$HasDeep) continue 2;
       if (!Has_Tech($Fid,'Space Stations')) continue 2;
       if (Get_Things_Cond(0,"Type=" . $TTNames['Space Station'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
-      break;
+      // Is there a world there
+      $phs = Gen_Get_Cond('ProjectHomes',"SystemId=" . $N['id']);
+      if (isset($phs[0])) break;
+      // or a planetary mine
+      $PMines = Get_Things_Cond(0,"Type=" . $TTNames['Planet Mine'] . " AND SystemId=" . $N['id'] . " AND BuildState=3");
+      if (isset($PMines[0])) break;      
+      continue 2; // Not valid here
 
     case 'Expand Space Station':
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Space Stations')) continue 2;//

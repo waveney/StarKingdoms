@@ -775,7 +775,6 @@ function Instuctions() { // And other Instructions
       break;
 
     case 'Make Asteroid Mine':
-//      $T['ActionsNeeded'] = 4;
       if (!Spend_Credit($T['Whose'],$T['InstCost'],"Make Asteroid Mine in " . $N['Ref']) ) {
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to start an Asteroid Mine in " .$N['Ref'],$T);
@@ -784,7 +783,6 @@ function Instuctions() { // And other Instructions
       break;
       
     case 'Make Orbital Repair Yard':
-//      $T['ActionsNeeded'] = 10;
       if (!Spend_Credit($T['Whose'],$T['InstCost'],"Make Orbital Repair Yard in " . $N['Ref']) ) {
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to start an Orbital Repair Yard in " .$N['Ref'],$T);
@@ -793,7 +791,6 @@ function Instuctions() { // And other Instructions
       break;
       
     case 'Make Minefield':
-//      $T['ActionsNeeded'] = 4;
       if (!Spend_Credit($T['Whose'],$T['InstCost'],"Make Minefield in " . $N['Ref']) ) {
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to start a Minefield in " .$N['Ref'],$T);
@@ -802,16 +799,62 @@ function Instuctions() { // And other Instructions
       break;
       
     case 'Build Space Station':
-//      $T['ActionsNeeded'] = 5*$T['Dist1'];
       if (!Spend_Credit($T['Whose'],$T['InstCost'],"Build Space Station in " . $N['Ref']) ) {
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to start a Build Space Station in " .$N['Ref'],$T);
       }
       $T['Instruction'] = -$T['Instruction'];
+      
+      // Is there a world there controlled by the faction?
+      $phs = Gen_Get_Cond('ProjectHomes',"SystemId=" . $N['id']);
+      foreach ($phs as $ph) {
+        if ($ph['Whose'] == $T['Whose']) break 2; // Yes fine
+      }
+      // or a planetary mine
+      $PMines = Get_Things_Cond(0,"Type=" . $TTNames['Planet Mine'] . " AND SystemId=" . $N['id'] . " AND BuildState=3");
+      if (isset($PMines[0]) && $PMines[0]['Whose'] == $T['Whose']) break; // Yes fine
+      // By others?
+      if (empty($phs) && empty($PMines)) {
+        TurnLog($T['Whose'],"Attempting to build a Build Space Station in " . $N['Ref'] . " but there is nothing there to build it round. ",$T); 
+        $T['Progress'] = -1; // Stalled
+        break;        
+      }
+      if ($NeedColStage2 == 0) {
+        GMLog("<form method=post action=TurnActions.php?ACTION=Process&S=16>");
+        $NeedColStage2 = 1;
+      }
+      
+      $List = [];
+      foreach ($phs as $ph) {
+        switch ($ph['ThingType']) {
+          case 1: // Planet
+            $Plan = Get_Planet($ph['ThingId']);
+            $Control = ($Plan['Control'] != 0? $Plan['Control'] : $N['Control']);
+            if ($Control) {
+              $List[]= $Plan['Name']  . " a planet controlled by " . $Facts[$Control]['Name'];
+            } else {
+              $List[]= $Plan['Name']  . " an uncontrolled planet";
+            }
+            break;
+          case 2: // Moon
+            $Moon = Get_Moon($ph['ThingId']);
+            $Plan = Get_Planet($Moon['PlanetId']);
+            $Cont = ($Moon['Control'] != 0 ? $Moon['Control'] : ($Plan['Control'] != 0 ? $Plan['Control'] : $N['Control']));
+            if ($Control) {
+              $List[]= $Moon['Name']  . " a moon of " . $Plan['Name'] . " controlled by " . $Facts[$Control]['Name'];
+            } else {
+              $List[]= $Moon['Name']  . " an uncontrolled moon";
+            }
+            break;
+          case 3: // Thing???
+            break;  // Not permitted I think
+        }
+      }
+      GMLog($Facts[$T['Whose']]['Name'] . " making a space station in " . $N['Ref'] . " there is " . implode($List) . 
+               " - Allow? " . fm_YesNo("SpaceStn$Tid",1, "Reason to reject") . "\n<br>");
       break;
     
     case 'Expand Space Station':
-//      $T['ActionsNeeded'] = 10*$T['Dist1'];
       if (!Spend_Credit($T['Whose'],$T['InstCost'],"Expand Space Station in " . $N['Ref']) ) {
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to Expand Space Station in " .$N['Ref'],$T);
@@ -820,7 +863,6 @@ function Instuctions() { // And other Instructions
       break;
     
     case 'Make Deep Space Sensor':
-//      $T['ActionsNeeded'] = 1;
       if (!Spend_Credit($T['Whose'],$T['InstCost'],"Make Deep Space Sensor in " . $N['Ref']) ) {
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to Make Deep Space Sensor in " .$N['Ref'],$T);
@@ -829,7 +871,6 @@ function Instuctions() { // And other Instructions
       break;
     
     case 'Make Advanced Asteroid Mine':
-//      $T['ActionsNeeded'] = 8;
       if (!Spend_Credit($T['Whose'],$T['InstCost'],"Make Advanced Asteroid Mine in " . $N['Ref']) ) {
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to start an Advanced Asteroid Mine in " .$N['Ref'],$T);
@@ -1080,8 +1121,15 @@ function InstuctionsStage2() { // And other Instructions
       }
       break;
 
-
-      
+    case 'Build Space Station':
+      $N = Get_System($T['SystemId']);
+      if (isset($_REQUEST["SpaceStn$Tid"]) &&  $_REQUEST["SpaceStn$Tid"] != "on") {
+        TurnLog($T['Whose'],"The space station was not created in " . $N['Ref'] . " because " . $_REQUEST["ReasonSpaceStn$Tid"] . "\n<br>",$T);
+        $T['Instruction'] = 0;
+        Put_Thing($T);
+      }
+      break;
+         
     default:
     break;
     }

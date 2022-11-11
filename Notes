@@ -136,5 +136,39 @@ Sedrana has done a DSC make something of 'Attach Aimbot and Bashir' in DFH it to
 
 https://us02web.zoom.us/j/81312611998?pwd=NG5UdjYrbnJaaDllV05VSjlEMkJUZz09 - Chip Zoom
 
+YuIQ4#vM5Spcn$KrG1m!
+
 AH01071: Got error '/vhosts/www2.chippfolk.co.uk/httpdocs ') in /var/www/vhosts/www2.chippfolk.co.uk/httpdocs/int/Email.php:6\nStack trace:\n#0 /var/www/vhosts/www2.chippfolk.co.uk/httpdocs/int/VolLib.php(6): include_once()\n#1 /var/www/vhosts/www2.chippfolk.co.uk/httpdocs/int/Volunteers.php(6): include_once('...')\n#2 {main}\n thrown in /var/www/vhosts/www2.chippfolk.co.uk/httpdocs/int/Email.php on line 6', referer: https://www2.chippfolk.co.uk/int/Staff
+
+
+
+Fasthosts: We limit the amount of email you can send to no more than 50 at once, no more than 50 within 10 minutes and no more than 1000 in 24 hours.
+
+VWX - Paramushir
+
+BEfore live:
+1) Mailing list stuff for Mailchimp
+2) Who/What/Format for contacts
+3) Emails live
+4) Analytics, Maps API
+
+When LIve:
+1) Sort out certs
+
+Dance:
+1) Talk to Laura re campsite etc
+2) Talk to Laura for system
+3) Talk to Laura re standard messages
+
+
+I am porting a folk festival management package (that I have written and used for many years) that runs for one folk festival on a 1and1  server to Chippenham Folk Festival on a Fasthosts server.  Email is handled by phpmailer.
+
+Help here says to send to websmtp.livemail.co.uk
+
+Questions:
+1) What port should it be sent to?   The help does not say.
+2) What SMTP options should be selected?  The help here does not say
+3) What happens if the usage limits shown on the help page are exceeded?   I have many potential users that could all result in a few emails being sent.   I want to know what I should do to manage this.   The total load should not be excessive, but short term peaks are not improbable.
+
+
 
