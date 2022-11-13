@@ -251,6 +251,10 @@
         echo "<br>";
       }
       echo PM_Type($PTD[$P['Type']],"Planet") . "</b>.  ";
+      
+      if ($SurveyLevel >= 4 && $P['Control']>0 && $P['Control'] != $N['Control']) {
+        echo "Controlled by: " . "<span style='background:" . $Fs[$P['Control']]['MapColour'] . "; padding=2;'>" . $Fs[$P['Control']]['Name'] . "</span><p>";
+      }
     
       if ( $SurveyLevel >= 5 && $PTD[$P['Type']]['Hospitable'] && $P['Minerals']) echo "It has a minerals rating of <b>" . $P['Minerals'] . "</b>.  ";
       if ($SurveyLevel >= 4) {
@@ -314,6 +318,12 @@
 
           echo PM_Type($PTD[$M['Type']],"Moon") . "</b>.  ";
     
+          if ($SurveyLevel >= 4 && $M['Control']>0 && $M['Control'] != $P['Control']) {
+            echo "Controlled by: " . "<span style='background:" . $Fs[$M['Control']]['MapColour'] . "; padding=2;'>" . $Fs[$M['Control']]['Name'] . "</span><p>";
+          }
+    
+
+
           if ( $SurveyLevel >= 5 && $PTD[$M['Type']]['Hospitable'] && $M['Minerals']) echo "It has a minerals rating of <b>" . $M['Minerals'] . "</b>.  ";
           if ($SurveyLevel >= 4) {
             echo "It's orbital radius is " . sprintf('%0.2g', $M['OrbitalRadius']) . " Km = " .  RealWorld($M,'OrbitalRadius') . 
