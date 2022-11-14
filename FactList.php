@@ -42,6 +42,7 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Map Colour</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Last Active</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>State</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Economy</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Use</a>\n";
   echo "</thead><tbody>";
 
@@ -54,6 +55,7 @@
     echo "<td style='background:" . $F['MapColour'] . ";'>";
     echo "<td>" . (isset($F['LastActive']) && $F['LastActive']? date('d/m/y H:i:s',$F['LastActive']) :"Never");
     echo "<td <span style='background:" . $PlayerStateColours[$F['TurnState']] . "'>"  . $PlayerState[$F['TurnState']];
+    echo "<td>" . Income_Estimate($Fid);
     echo "<td><a href=Access.php?id=$Fid&Key=" . $F['AccessKey'] . " ><b>Use</b></a>";
   }
       
