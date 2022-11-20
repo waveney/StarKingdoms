@@ -631,6 +631,7 @@ function Show_Thing(&$T,$Force=0) {
   } else {
     $HasDeep = 0;
   }
+  $HasMinesweep = Get_ModulesType($tid,23);
   $TTNames = Thing_Types_From_Names();
   $Moving = ($T['LinkId'] > 0);
   
@@ -856,7 +857,10 @@ function Show_Thing(&$T,$Force=0) {
       if (Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 AND WithinSyssloc=" . $T['WithinSyssloc'])) continue 2; 
       break;
       
-    
+    case 'Clear Minefield':
+      if ($Moving || !$HasDeep || !$HasMinesweep ) continue 2;
+      if (Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 AND WithinSyssloc=" . $T['WithinSyssloc'])) continue 2; 
+      break;
 
     default: 
       continue 2;
@@ -1248,6 +1252,11 @@ function Show_Thing(&$T,$Force=0) {
       echo "Support for this will end at the beginning of the next turn.";
       break;
     
+    case 'Clear Minefield':
+      $Acts = $PTNs['Clear Minefield']['CompTarget'];
+      $ProgShow = 2;
+      break;
+
     default: 
       break;
     }

@@ -815,6 +815,7 @@ function Instuctions() { // And other Instructions
       $T['Instruction'] = -$T['Instruction'];
       break;
       
+    case 'Make Advanced Minefield':
     case 'Make Minefield':
       $Who = $T['Whose'];
       $Loc = Within_Sys_Locs($N);
@@ -1012,7 +1013,14 @@ function Instuctions() { // And other Instructions
       $T['Instruction'] = -$T['Instruction'];
       break;      
     
-
+    case 'Clear Minefield':
+      if (!Spend_Credit($T['Whose'],$T['InstCost'],"Clear Minefield" . $N['Ref']) ) {
+        $T['Progress'] = -1; // Stalled
+        TurnLog($T['Whose'],"Could not afford to Clear Minefield in " . $N['Ref'],$T);
+      }
+      $T['Instruction'] = -$T['Instruction'];      
+      break;
+      
     default:
      
     }
@@ -1412,7 +1420,7 @@ function Economy() {
     $Worlds = Get_Worlds($Fid);
     $EconVal = 0;
     $EccTxt = "\nEconomy:\n";
-    $OutPosts = $AstMines = $AstVal = $Embassies = $OtherEmbs = 0;
+    $OutPosts = $AstMines = $AstVal = $Embassies = $OtherEmbs = $MineFields = 0;
     foreach ($Worlds as $W) {
       $H = Get_ProjectHome($W['Home']);
       if (empty($H)) continue;
@@ -1450,6 +1458,10 @@ function Economy() {
         $Embassies ++;
         break;
       
+      case "Minefield":
+        $MineFields ++;
+        break;
+
       default:
         continue 2;
       }
@@ -1478,6 +1490,11 @@ function Economy() {
       $EconVal += $OtherEmbs;    
     }
     
+    if ($MineFields) {
+      $EccTxt .= "Less $MineFields of Minefields worth 1 each\n";
+      $EconVal -= $MineFields;    
+    }
+
     $Logistics = [0,0,0]; // Ship, Army, Intelligence  
     foreach ($Things as $T) {
       if (empty($T['Type'])) continue;
@@ -2251,7 +2268,8 @@ function InstructionsComplete() {
   foreach ($Things as $T) {
     $N = Get_System($T['SystemId']);
     $Tid = $T['id'];
-    switch ($ThingInstrs[abs($T['Instruction'])]) {
+    $Instr = $ThingInstrs[abs($T['Instruction'])];
+    switch ($Instr) {
     case 'Colonise':
       $P = Get_Planet($T['Spare1']);
       $Who = $T['Whose'];
@@ -2339,6 +2357,7 @@ function InstructionsComplete() {
        Report_Others($T['Whose'], $T['SystemId'],2,"An Asteroid Mine has been made in " . $N['Ref']);
       break;
 
+     case 'Make Advanced Minefield':
      case 'Make Minefield':
        $N = Get_System($T['SystemId']);
        $Who = $T['Whose'];
@@ -2347,11 +2366,12 @@ function InstructionsComplete() {
        $LocText = $Loc[$WLoc];
        $LocType = int($WLoc/100);
        if ($ValidMines[$LocType] == 1 ) {
-         $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Minefield'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $WLoc, 'Whose'=>$T['Whose'], 
+         $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Minefield'], 'Level'=> (($Instr == 'Make Minefield') ?1:2), 
+                'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $WLoc, 'Whose'=>$T['Whose'], 
                 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
          Put_Thing($NT);
-         TurnLog($Who,"An Asteroid Mine has been made in " . $N['Ref'] . " " . $LocText);
-         Report_Others($T['Whose'], $T['SystemId'],2,"An Asteroid Mine has been made in " . $N['Ref'] . " " . $LocText);
+         TurnLog($Who,"A Minefield has been made in " . $N['Ref'] . " " . $LocText);
+         Report_Others($T['Whose'], $T['SystemId'],2,"A Minefield has been made in " . $N['Ref'] . " " . $LocText);
          
          switch ($LocType) {
          case 1: //Orbiting Planet
@@ -2561,6 +2581,59 @@ function InstructionsComplete() {
        Put_Thing($NT);
        TurnLog($Who,"A warp gate has been made in " . $N['Ref']);
        Report_Others($T['Whose'], $T['SystemId'],2,"A warp gate has been made in " . $N['Ref']);
+       break;
+     
+     case 'Clear Minefield':
+       $Mines = Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 AND WithinSyssloc=" . $T['WithinSyssloc']);
+       $N = Get_System($T['SystemId']);
+       $Who = $T['Whose'];
+       $Loc = Within_Sys_Locs($N);
+       $WLoc = $T['WithinSysLoc'];
+       $LocText = $Loc[$WLoc];
+       $LocType = int($WLoc/100);
+
+       if ($Mines) {
+         foreach($Mines as $Mine) {
+           $Mid = $Mine['id'];
+           db_delete('Things',$Mid);
+           
+           switch ($LocType) {
+           case 1: // Planet
+             $P = Gen_Get_Cond1('Planets'," Mined=$Mid ");
+             if ($P) {
+               if ($P['Mined'] == $Mid) $P['Mined'] = 0;
+               Put_Planet($P);
+             }
+             break;
+           
+           case 3: // Moon
+             $M = Gen_Get_Cond1('Moons'," Mined=$Mid ");
+             if ($M) {
+               if ($M['Mined'] == $Mid) $M['Mined'] = 0;
+               Put_Moon($M);
+             }
+             break;
+             
+           case 5: // Stargate
+             $Link = Gen_Get_Cond1('Links'," Mined1=$Mid OR Mined2=$Mid ");
+             if ($Link) {
+               if ($Link['Mined1'] == $Mid) $Link['Mined1'] = 0;
+               if ($Link['Mined2'] == $Mid) $Link['Mined2'] = 0;
+               Put_Link($Link);
+             }
+             break;
+           
+           default:
+           }
+
+         TurnLog($Who,"A Minefield in " . $N['Ref'] . " $LocText has been cleared.");           
+         Report_Others($Who, $T['SystemId'],2,"A Minefield in " . $N['Ref'] . " $LocText has been cleared by " . $Facts[$Who]['Name']);
+         GMLog("A Minefield in " . $N['Ref'] . " $LocText has been cleared by " . $Facts[$Who]['Name']);
+         }
+       } else {
+         TurnLog($$T['Whose'],"There is no Minefield to remove in " . $N['Ref'] . " $LocText");       
+       }
+     
        break;
      
      default: 
