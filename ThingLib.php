@@ -5,7 +5,7 @@ include_once("GetPut.php");
 include_once("vendor/erusev/parsedown/Parsedown.php");
 include_once("PlayerLib.php");  
 
-global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$InstrMsg,$Advance;
+global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$InstrMsg,$Advance,$ValidMines;
 
 $ModuleCats = ['Ship','Civilian Ship','Support Ship','Military Ship','Army','Other'];
 $Fields = ['Engineering','Physics','Xenology'];
@@ -15,9 +15,9 @@ $BuildState = ['Planning','Building','Shakedown','Complete','Ex','Abandonded','M
 $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse Anomaly','Establish Embassy','Make Outpost','Make Asteroid Mine','Make Minefield',
                 'Make Orbital Repair Yard','Build Space Station','Expand Space Station','Make Deep Space Sensor','Make Advanced Asteroid Mine','Build Stargate',
                 'Make Planet Mine', 'Construct Command Relay Station', 'Repair Command Node','Build Planetary Mine','Dismantle Stargate','Disband','Transfer',
-                'Make Something','Make Warpgate','Retire'];
+                'Make Something','Make Warpgate','Retire','Stop Support','Make Advanced Minefield'];
 $Advance = ['','','Advanced ','Very Advanced ','Ultra Advanced ','Evolved '];
-
+$ValidMines = [0,1,0,1,0,1,0,0,0,0,0];
 
 $ModFormulaes = [];
 $ModValues = [];
@@ -43,6 +43,7 @@ define('THING_MOVES_DIRECTLY',131072);
 define('THING_MOVES_AFTER',262144);
 define('THING_HAS_HEALTH',524288);
 define('THING_HAS_CONTROL',1048576);
+define('THING_NEEDS_SUPPORT',2097152);
 
 function ModFormulaes() {
   global $ModFormulaes;

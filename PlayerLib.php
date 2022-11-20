@@ -288,7 +288,7 @@ function Income_Estimate($Fid) {
       break;
       
     case "Minefield":
-      $MineFields ++:
+      $MineFields ++;
       break;
       
     default:

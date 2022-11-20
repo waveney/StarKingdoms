@@ -12,7 +12,7 @@ function Show_Thing(&$T,$Force=0) {
   include_once("ProjLib.php");
   global $BuildState,$GAME,$GAMEID,$FACTION;
   global $Project_Status;
-  global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$ThingInclrs, $InstrMsg;
+  global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$ThingInclrs, $InstrMsg, $ValidMines;
   global $Currencies;
   
   $ThingInclrs = ['white','lightgreen','lightpink','lightblue','lightyellow','bisque','#99ffcc','#b3b3ff',
@@ -695,7 +695,6 @@ function Show_Thing(&$T,$Force=0) {
         $Ds = Get_DistrictsH($H['id']);
         if (isset($Ds[2])) break 2; // FOund a Military District
       }
-//      if (isset($N['id']) && Get_Things_Cond($Fid,"Type=" . $TTNames['Orbital Repair Yards'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) break; // Orbital Shipyard     
       continue 2;
     
     case 'Analyse Anomaly': // Analyse
@@ -749,6 +748,7 @@ function Show_Thing(&$T,$Force=0) {
     
     case 'Make Minefield':
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Mine Layers')) continue 2;
+      if (Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 AND WithinSyssloc=" . $T['WithinSyssloc'])) continue 2; 
       break;
       
     case 'Make Orbital Repair Yard':
@@ -846,8 +846,19 @@ function Show_Thing(&$T,$Force=0) {
     case 'Retire' :
       if ($tprops & THING_HAS_GADGETS) break;
       continue 2;
+      
+    case 'End Support' :
+      if ($tprops & THING_NEEDS_SUPPORT) continue 2;
+      break;
+    
+    case 'Build Advanced Minefield' :
+      if ($Moving || !$HasDeep || !Has_Tech($Fid,'Advanced Minefields')) continue 2;
+      if (Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 AND WithinSyssloc=" . $T['WithinSyssloc'])) continue 2; 
+      break;
+      
+    
 
-     default: 
+    default: 
       continue 2;
       
     }
@@ -1027,10 +1038,27 @@ function Show_Thing(&$T,$Force=0) {
       break;
 
     case 'Make Minefield':
-      echo "<tr><td><td colspan=6>Make sure you move to the location within the system you want to mine";
+      echo "<tr><td><td colspan=6>Make sure you move to the location within the system you want to mine.  ";
+      $LocT = int($T['WithinSysLoc']/100);
+      if ($ValidMines[$LocT] == 0 ) echo "<span class=Err> the current location is unsuitable.</span>";
+      if (Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 AND WithinSyssloc=" . $T['WithinSyssloc'])) {
+        echo "<span class=Err>  There is already one here.</span>";
+      }
       echo "<br>" . fm_text0("Name of Minefield",$T,'MakeName');
       $Acts = $PTNs['Build Minefield']['CompTarget'];
-      $ProgShow = 1;
+      $ProgShow = 2;
+      break;
+
+    case 'Make Advanced Minefield':
+      echo "<tr><td><td colspan=6>Make sure you move to the location within the system you want to mine.  ";
+      $LocT = int($T['WithinSysLoc']/100);
+      if ($ValidMines[$LocT] == 0 ) echo "<span class=Err> the current location is unsuitable.</span>";
+      if (Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 AND WithinSyssloc=" . $T['WithinSyssloc'])) {
+        echo "<span class=Err>  There is already one here.</span>";
+      }
+      echo "<br>" . fm_text0("Name of Minefield",$T,'MakeName');
+      $Acts = $PTNs['Build Advanced Minefield']['CompTarget'];
+      $ProgShow = 2;
       break;
 
     case 'Build Space Station':
@@ -1216,8 +1244,10 @@ function Show_Thing(&$T,$Force=0) {
       $ProgShow = 2;
       break;
 
-
-
+    case 'End Support' :
+      echo "Support for this will end at the beginning of the next turn.";
+      break;
+    
     default: 
       break;
     }

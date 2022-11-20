@@ -145,6 +145,8 @@ function New_Thing(&$T) {
       Put_Thing($T);
       break;
      
+    case 'Delete':
+    case 'Remove Thing (No debris)':
     case 'DELETE' :
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
@@ -198,17 +200,6 @@ function New_Thing(&$T) {
       $T['Control'] = 0;
       $T['BuildState'] = 4;  // Ex
       Put_Thing($T);
-      break;
-
-    case 'Delete':
-    case 'Remove Thing (No debris)':
-      $tid = $_REQUEST['id'];
-      $T = Get_Thing($tid);
-      Check_MyThing($T,$Fid);
-      db_delete('Things',$_REQUEST['id']);
-      echo "<h1>Deleted</h1>";
-      echo "<h2><a href=PThingList.php>Back to Thing list</a></h2>";
-      dotail();
       break;
 
     case 'Warp Out':

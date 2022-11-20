@@ -13,7 +13,7 @@
 
   global $Stages,$Coded;
   
-  $Stages = ['Check Turns Ready', 'Spare', 'Spare','Start Turn Process', 'Save All Locations', 'Spare', 'Cash Transfers', 'Spare',
+  $Stages = ['Check Turns Ready', 'Spare', 'Spare','Start Turn Process', 'Save All Locations', 'Remove Unsupported Minefields', 'Cash Transfers', 'Spare',
              'Spare', 'Pay For Stargates', 'Spare', 'Scientific Breakthroughs', 'Start Projects', 'Spare', 'Spare', 'Instuctions', 
              'Instuctions Stage 2', 'Clear Paid For', 'Agents Start Missions', 'Pay For Rushes', 'Spare', 'Economy', 'Spare', 'Direct Moves', 
              'Load Troops', 'Spare', 'Ship Move Check', 'Ship Movements', 'Agents Move Check', 'Agents Movements', 'Spare', 'Meetups',
@@ -118,10 +118,33 @@ function CheckTurnsReady() {
   if ($AllOK) return 1;
   GMLog( "To proceed you must mark them as submitted<p>\n");
   return 0;
-
 }
 
+function RemoveUnsupportedMinefields() {
+  global $ThingInstrs;
+  $Facts = Get_Factions();
+  $Things = Get_Things_Cond(0,"Instruction=" . $ThingInstrs['Stop Support']);
 
+  foreach ($Things as $T) {
+    $Tid = $T['id'];
+    $Who = $T['Whose'];
+    $SystemRefs = Get_SystemRefs();
+    $Discs = Get_DistrictsT($Tid);
+    if ($Discs) foreach ($Discs as $D) db_delete('Districts',$D['id']);
+    $Mods = Get_DistrictsT($Tid);
+    if ($Mods) foreach ($Mods as $M) db_delete('Modules',$M['id']);
+
+    db_delete('Things',$Tid);
+
+    $SysLocs = WithinSysLocs($T['SystemId']);
+    $LocText = $SysLocs[$T['WithinSysLoc']];
+    TurnLog($Who,"The Minefield " . $T['Name'] . " in " . $SystemRefs[$T['SystemId']] . " $LocText has been removed.");
+    GMLog("The Minefield " . $T['Name'] . " in " . $SystemRefs[$T['SystemId']] . " $LocText has been removed.");
+  }
+
+  GMLog("Removed Unsupported Things");
+  return 1;
+}
 
 function StartTurnProcess() {
   global $GAME,$GAMEID,$db;
@@ -474,7 +497,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
 
 function Instuctions() { // And other Instructions
   global $ThingInstrs,$GAME;
-  global $Currencies;
+  global $Currencies,$ValidMines;
   $Things = Get_Things_Cond(0,"Instruction>0");
   $NeedColStage2 = 0;
   $Facts = Get_Factions();
@@ -791,10 +814,20 @@ function Instuctions() { // And other Instructions
       break;
       
     case 'Make Minefield':
-      if (!Spend_Credit($T['Whose'],$T['InstCost'],"Make Minefield in " . $N['Ref']) ) {
+      $Who = $T['Whose'];
+      $Loc = Within_Sys_Locs($N);
+      $LocText = $Loc[$T['WithinSysLoc']];
+      $LocType = int($T['WithinSysLoc']/100);
+      if (!Spend_Credit($Who,$T['InstCost'],"Make Minefield in " . $N['Ref']) ) {
         $T['Progress'] = -1; // Stalled
-        TurnLog($T['Whose'],"Could not afford to start a Minefield in " .$N['Ref'],$T);
+        TurnLog($Who,"Could not afford to start a Minefield in " .$N['Ref'],$T);
       }
+
+      if ($ValidMines[$LocType] == 0 ) {
+        $T['Progress'] = -1; // Stalled
+        TurnLog($Who,"An Asteroid Mine could not be made in " . $N['Ref'] . " " . $LocText);
+      }
+
       $T['Instruction'] = -$T['Instruction'];
       break;
       
@@ -2207,7 +2240,7 @@ function ProjectsComplete() {
 }
 
 function InstructionsComplete() {
-  global $ThingInstrs,$GAME;
+  global $ThingInstrs,$GAME,$ValidMines;
   $Things = Get_Things_Cond(0,"Instruction!=0 AND Progress>=ActionsNeeded ");
   $NeedColStage2 = 0;
   $Facts = Get_Factions();
@@ -2305,13 +2338,20 @@ function InstructionsComplete() {
       break;
 
      case 'Make Minefield':
-       $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Minefield'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 'Whose'=>$T['Whose'], 
-              'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
-       Put_Thing($NT);
        $N = Get_System($T['SystemId']);
        $Who = $T['Whose'];
-       TurnLog($Who,"An Asteroid Mine has been made in " . $N['Ref']);
-       Report_Others($T['Whose'], $T['SystemId'],2,"An Asteroid Mine has been made in " . $N['Ref']);
+       $Loc = Within_Sys_Locs($N);
+       $LocText = $Loc[$T['WithinSysLoc']];
+       $LocType = int($T['WithinSysLoc']/100);
+       if ($ValidMines[$LocType] == 1 ) {
+         $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Minefield'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 'Whose'=>$T['Whose'], 
+                'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
+         Put_Thing($NT);
+         TurnLog($Who,"An Asteroid Mine has been made in " . $N['Ref'] . " " . $LocText);
+         Report_Others($T['Whose'], $T['SystemId'],2,"An Asteroid Mine has been made in " . $N['Ref'] . " " . $LocText);
+       } else {
+         TurnLog($Who,"An Asteroid Mine could not be made in " . $N['Ref'] . " " . $LocText);
+       }
        break;
 
      case 'Make Orbital Repair Yard':

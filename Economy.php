@@ -143,7 +143,7 @@
         break;
       
       case "Minefield":
-        $MineFields ++:
+        $MineFields ++;
         break;
       
       default:
