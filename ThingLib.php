@@ -229,6 +229,11 @@ function Within_Sys_Locs(&$N,$PM=0,$Boarding=0,$Restrict=0,$Hab=0) {// $PM +ve =
   return $L;
 }
 
+function Within_Sys_Locs_Id($Nid,$PM=0,$Boarding=0,$Restrict=0,$Hab=0) {// $PM +ve = Planet Number, -ve = Moon Number, restrict 1=ON, 2space only
+  $N = Get_System($Nid);
+  return Within_Sys_Locs($N,$PM,$Boarding,$Restrict,$Hab);
+}
+
 function Get_Valid_Modules(&$T,$Other=0) {
   global $ModuleCats;
   $MTs = Get_ModuleTypes();
@@ -662,6 +667,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
   static $Factions;
   if (!$ThingTypes) $ThingTypes = Get_ThingTypes();
   if (!$Factions) $Factions = Get_Factions();
+  $Locations = Within_Sys_Locs_Id($T['SystemId']);
   
   $txt = '';
   $RawA = 0;
@@ -705,6 +711,16 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
       } else {
         $txt .= " " . $ThingTypes[$T['Type']]['Name'];
       }
+ 
+//var_dump($Locations);exit;
+      if ($T['SystemId'] > 0 && isset($T['WithinSysLoc']) && ($T['WithinSysLoc'] > 0)) {
+        if (isset($Locations[$T['WithinSysLoc']])) {
+          $txt .= " ( " . $Locations[$T['WithinSysLoc']] . " ) ";
+        } else if ($GM) {
+          $txt .= " ( Unknown Location " . $T['WithinSysLoc'] . " ) ";
+        }
+      }
+      
       if ($GM && !empty($T['Orders'])) $txt .= ", <span style='background:#ffd966;'>Orders: " . $T['Orders'] . "</span>";
       if ($Images && !empty($T['Image'])) $txt .= " <img valign=top src=" . $T['Image'] . " height=100> ";
       

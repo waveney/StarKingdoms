@@ -123,6 +123,7 @@ function CheckTurnsReady() {
 function RemoveUnsupportedMinefields() {
   global $ThingInstrs;
   $Facts = Get_Factions();
+  $TTypes = Get_ThingTypes();
   $Things = Get_Things_Cond(0,"Instruction=" . $ThingInstrs['Stop Support']);
 
   foreach ($Things as $T) {
@@ -138,8 +139,9 @@ function RemoveUnsupportedMinefields() {
 
     $SysLocs = WithinSysLocs($T['SystemId']);
     $LocText = $SysLocs[$T['WithinSysLoc']];
-    TurnLog($Who,"The Minefield " . $T['Name'] . " in " . $SystemRefs[$T['SystemId']] . " $LocText has been removed.");
-    GMLog("The Minefield " . $T['Name'] . " in " . $SystemRefs[$T['SystemId']] . " $LocText has been removed.");
+    $TName = $TTypes[$T['Type']]['Name'];
+    TurnLog($Who,"The $TName " . $T['Name'] . " in " . $SystemRefs[$T['SystemId']] . " $LocText has been removed.");
+    GMLog("The $TName " . $T['Name'] . " in " . $SystemRefs[$T['SystemId']] . " $LocText has been removed.");
   }
 
   GMLog("Removed Unsupported Things");
@@ -2341,16 +2343,61 @@ function InstructionsComplete() {
        $N = Get_System($T['SystemId']);
        $Who = $T['Whose'];
        $Loc = Within_Sys_Locs($N);
-       $LocText = $Loc[$T['WithinSysLoc']];
-       $LocType = int($T['WithinSysLoc']/100);
+       $WLoc = $T['WithinSysLoc'];
+       $LocText = $Loc[$WLoc];
+       $LocType = int($WLoc/100);
        if ($ValidMines[$LocType] == 1 ) {
-         $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Minefield'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 'Whose'=>$T['Whose'], 
+         $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Minefield'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $WLoc, 'Whose'=>$T['Whose'], 
                 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
          Put_Thing($NT);
          TurnLog($Who,"An Asteroid Mine has been made in " . $N['Ref'] . " " . $LocText);
          Report_Others($T['Whose'], $T['SystemId'],2,"An Asteroid Mine has been made in " . $N['Ref'] . " " . $LocText);
+         
+         switch ($LocType) {
+         case 1: //Orbiting Planet
+           $Ps = Get_Planets($N['id']);
+           $Pi = 1;
+           foreach($Ps as $P) if ( (100+($Pi++)) == $WLoc ) break;
+           
+           $P['Mined'] = $NT['id'];
+           Put_Planet($P);
+           break;
+         
+         case 3: //Orbiting Moon
+           $Ps = Get_Planets($N['id']);
+           $Pi = $Mi = 1;
+           foreach($Ps as $P) {
+             $Ms = Get_Moons($P['PlanetId']);
+             if ($Ms) {
+               foreach($Ms as $M) if ((300+($Mi++)) == $WLoc ) break 2;
+             }
+           }
+           if (isset($Ms) && isset($M)) {
+             $M['Mined'] = $NT['id'];
+             Put_Moon($P);
+           }
+           break;
+         
+         case 5: //At Stargate
+           $LKs = Get_Links($N['Ref']);
+           $Li = 1;
+           foreach($LKs as $lk) if ( (500+($li++)) == $WLoc ) break;
+           
+           if ($lk['System1Ref'] == $N['Ref']) {
+             $lk['Mined1'] = $NT['id'];
+           } else {
+             $lk['Mined2'] = $NT['id'];
+           }
+           Put_Link($lk);
+           break;
+         
+         default:
+           // Should not get here (yet)
+         }
+         
+         
        } else {
-         TurnLog($Who,"An Asteroid Mine could not be made in " . $N['Ref'] . " " . $LocText);
+         TurnLog($Who,"An Minefield could not be made in " . $N['Ref'] . " " . $LocText);
        }
        break;
 

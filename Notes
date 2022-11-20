@@ -161,14 +161,21 @@ Dance:
 3) Talk to Laura re standard messages
 
 
-I am porting a folk festival management package (that I have written and used for many years) that runs for one folk festival on a 1and1  server to Chippenham Folk Festival on a Fasthosts server.  Email is handled by phpmailer.
+MineFields
 
-Help here says to send to websmtp.livemail.co.uk
+1 Minesweppers
+2 Mines on Anomalies
+2A Anomaly locations
+Y 3 Making on Links
+Y 4 Making on Planets/Moons
+5 Reporting where they are
+6 Damage when moving along links
+7 Damage when moving to planets/moons
+8 Reset the link/planet mine data
 
-Questions:
-1) What port should it be sent to?   The help does not say.
-2) What SMTP options should be selected?  The help here does not say
-3) What happens if the usage limits shown on the help page are exceeded?   I have many potential users that could all result in a few emails being sent.   I want to know what I should do to manage this.   The total load should not be excessive, but short term peaks are not improbable.
+Collab Construction
+Collab Anomallies
+
 
 
 
