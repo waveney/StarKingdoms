@@ -254,7 +254,7 @@ function Income_Estimate($Fid) {
   
   $Worlds = Get_Worlds($Fid);
   $EconVal = 0;
-  $OutPosts = $AstMines = $AstVal = $Embassies = $OtherEmbs = 0;
+  $OutPosts = $AstMines = $AstVal = $Embassies = $OtherEmbs = $MineFields = 0;
   foreach ($Worlds as $W) {
     $H = Get_ProjectHome($W['Home']);
     if (!$H) continue;
@@ -287,6 +287,10 @@ function Income_Estimate($Fid) {
       $Embassies ++;
       break;
       
+    case "Minefield":
+      $MineFields ++:
+      break;
+      
     default:
       continue 2;
     }
@@ -304,6 +308,8 @@ function Income_Estimate($Fid) {
   if ($Embassies) $EconVal += $Embassies;    
 
   if ($OtherEmbs) $EconVal += $OtherEmbs;    
+
+  if ($MineFields) $EconVal -= $MineFields;    
 
   $Logistics = [0,0,0]; // Ship, Army, Intelligence  
   foreach ($Things as $T) {

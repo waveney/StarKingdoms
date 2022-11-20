@@ -100,7 +100,7 @@
   
     $Worlds = Get_Worlds($Fid);
     $EconVal = 0;
-    $OutPosts = $AstMines = $AstVal = $Embassies = $OtherEmbs = 0;
+    $OutPosts = $AstMines = $AstVal = $Embassies = $OtherEmbs = $MineFields = 0;
     foreach ($Worlds as $W) {
       $H = Get_ProjectHome($W['Home']);
       if (!$H) continue;
@@ -142,6 +142,10 @@
         $Embassies ++;
         break;
       
+      case "Minefield":
+        $MineFields ++:
+        break;
+      
       default:
         continue 2;
       }
@@ -168,6 +172,11 @@
     if ($OtherEmbs) {
       echo "Plus $OtherEmbs of other Factions Embassies worth 1 each<br>\n";
       $EconVal += $OtherEmbs;    
+    }
+    
+    if ($MineFields) {
+      echo "Less $MineFields which cost 1 each<br>\n";    
+      $EconVal -= $MineFields;
     }
     
     echo "<p>";
