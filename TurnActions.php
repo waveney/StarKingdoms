@@ -1675,6 +1675,29 @@ function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
 
 }
 
+function Do_Mine_Damage(&$T,&$Mine,&$N=0) {
+// Do damage and report
+
+  if (Get_ModulesType($T,23)) return;
+  $Dsc = Has_Tech($Mine['Whose'],'Deep Space Construction'];
+  $Dam = $Dsc * $Mine['Level']*5;
+  if (empty($N)) $N = Get_System($Mine['SystemId']);
+  
+  if ($T['CurHealth'] > $Dam) {
+    $T['CurHealth'] -= $Dam;
+  } else {
+    $T['BuildState'] = 4;
+  }
+  Put_Thing($T);
+  
+  $Locations = Within_Sys_Locs($N);
+  $LocText = $Locations[$Mine['WithinSysLoc']];
+  
+  TurnLog($T['Whose'],"The " . $T['Name'] . " has recieved $Dam damage from a minefield in " . $N['Ref'] . " $LocText " . 
+    ($T['BuildState'] > 3? " and has been destroyed." : ""),$T);
+  GMLog("The <a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . " took $Dam from a minefield in " . $N['Ref'] . " $LocText " . 
+    ($['BuildState'] > 3? " and has been destroyed." : ""));
+}
 
 function ShipMovements($Agents=0) {
   global $GAME,$GAMEID;
@@ -1690,7 +1713,8 @@ function ShipMovements($Agents=0) {
   
   foreach ($Things as $T) {
     if ($T['BuildState'] <2 || $T['BuildState'] > 3 || $T['LinkId'] <= 0 || $T['Whose']==0 || $T['CurHealth']==0) continue;
-    if (( $Agents == 0 &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER)) || ( $Agents &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER) ==0 ) ) continue;
+    if (( $Agents == 0 &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER)) || 
+        ( $Agents &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER) ==0 ) ) continue;
 
     $Tid = $T['id'];
     $Fid = $T['Whose'];
@@ -1717,8 +1741,7 @@ function ShipMovements($Agents=0) {
         Put_Link($L);
       }
 
-      $SR1 = Get_SystemR($L['System1Ref']);
-      $SR2 = Get_SystemR($L['System2Ref']);
+      $SR1 = Get_SystemR($L['System1Ref']);      
       
       if ($T['SystemId'] == $SR1['id']) {
         $Sid = $T['NewSystemId'] = $SR2['id'];
@@ -1726,19 +1749,32 @@ function ShipMovements($Agents=0) {
         $N = $SR2;
         $OldSid = $SR1['id'];
         $OldN = $SR1;
+        $GFrom = 1;
+        $GTo = 2;
       } else {
         $Sid = $T['NewSystemId'] = $SR1['id']; 
         $Ref = $SR1['Ref'];
         $N = $SR1;
         $OldSid = $SR2['id'];
         $OldN = $SR2;
+        $GFrom = 2;
+        $GTo = 1;
+      }
+      
+      $MineChecks = ['From'=>$GFrom, 'To'=>$GTo];
+      foreach ($MineChecks as $Dir=>$MC) {
+        if ($L["Mined$MC"]) {
+          $Mine = Get_Thing($L["Mined$MC"]);
+          if ($Mine) Do_Mine_Damage($T,$Mine, ($Dir == 'To'? $N : $OldN));
+          if ($T['BuildState'] != 3) continue 2;
+        }
       }
 
       if ($Fid) {
         $FS = Get_FactionSystemFS($Fid,$Sid);
         if (!isset($FS['id']) || $FS['ScanLevel'] < ($ShipScanLevel?5:1) || $FS['NebScanned']<$ShipNebScanLevel) { 
           $SP = ['FactionId'=>$Fid, 'Sys'=> $Sid, 'Scan'=>($ShipScanLevel?5:1), 'Neb'=>$ShipNebScanLevel, 'Turn'=>$GAME['Turn'], 'ThingId'=>$T['id']];
-// var_dump($SP);
+
           Insert_db('ScansDue', $SP);
         } 
         
