@@ -163,15 +163,16 @@ Dance:
 
 MineFields
 
-1 Minesweppers
+Y 1 Minesweppers
 2 Mines on Anomalies
 2A Anomaly locations
 Y 3 Making on Links
 Y 4 Making on Planets/Moons
 Y 5 Reporting where they are
-6 Damage when moving along links
+Y 6 Damage when moving along links
 7 Damage when moving to planets/moons
-8 Reset the link/planet mine data
+Y 8 Reset the link/planet mine data
+9 Shakedowns
 
 Collab Construction
 Collab Anomallies

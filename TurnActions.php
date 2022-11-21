@@ -1632,7 +1632,8 @@ function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
   GMLog("<table border><tr><td>Who<td>What<td>Level<td>From<td>Link<td>To<td>Paid<td>Stop<td>Why Stopping\n");  
   foreach ($Things as $T) {
     if ($T['BuildState'] <2 || $T['BuildState'] > 3 || $T['LinkId'] <= 0 || $T['Whose']==0 || $T['CurHealth']==0) continue;
-    if (( $Agents == 0 &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER)) || ( $Agents &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER) ==0 ) ) continue;
+    if (( $Agents == 0 &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER)) || 
+        ( $Agents &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER) ==0 ) ) continue;
     
     $CheckNeeded = ( $Agents && ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER) );
 
@@ -1679,7 +1680,7 @@ function Do_Mine_Damage(&$T,&$Mine,&$N=0) {
 // Do damage and report
 
   if (Get_ModulesType($T,23)) return;
-  $Dsc = Has_Tech($Mine['Whose'],'Deep Space Construction'];
+  $Dsc = Has_Tech($Mine['Whose'],'Deep Space Construction');
   $Dam = $Dsc * $Mine['Level']*5;
   if (empty($N)) $N = Get_System($Mine['SystemId']);
   
@@ -1696,7 +1697,7 @@ function Do_Mine_Damage(&$T,&$Mine,&$N=0) {
   TurnLog($T['Whose'],"The " . $T['Name'] . " has recieved $Dam damage from a minefield in " . $N['Ref'] . " $LocText " . 
     ($T['BuildState'] > 3? " and has been destroyed." : ""),$T);
   GMLog("The <a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . " took $Dam from a minefield in " . $N['Ref'] . " $LocText " . 
-    ($['BuildState'] > 3? " and has been destroyed." : ""));
+    ($T['BuildState'] > 3? " and has been destroyed." : ""));
 }
 
 function ShipMovements($Agents=0) {
@@ -3046,6 +3047,7 @@ function SaveWhatCanBeSeen() {
 function RecalcProjectHomes() {
   // Proj Homes, Worlds
   include_once("HomesLib.php");
+  include_once("MinedLib.php");
   Recalc_Project_Homes('SKLog'); // in ThingLib - this is to add new project homes that have been created by colonisation etc.
   Recalc_Worlds();
   
@@ -3055,6 +3057,8 @@ function RecalcProjectHomes() {
   foreach($DSys as $N) {
     Dynamic_Update($N,1);
   }
+  
+  Recalc_Mined_locs();
   return 1;
 }
 

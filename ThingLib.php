@@ -860,4 +860,30 @@ function Gates_Avail($Fid) {
   return $Gates;
 }
 
+function Out_OF_Turn_Mine_Damage(&$T,&$Mine,&$N=0) { // Needs changes
+// Do damage and report
+
+  if (Get_ModulesType($T,23)) return;
+  $Dsc = Has_Tech($Mine['Whose'],'Deep Space Construction');
+  $Dam = $Dsc * $Mine['Level']*5;
+  if (empty($N)) $N = Get_System($Mine['SystemId']);
+  
+  if ($T['CurHealth'] > $Dam) {
+    $T['CurHealth'] -= $Dam;
+  } else {
+    $T['BuildState'] = 4;
+  }
+  Put_Thing($T);
+  
+  $Locations = Within_Sys_Locs($N);
+  $LocText = $Locations[$Mine['WithinSysLoc']];
+  
+  TurnLog($T['Whose'],"The " . $T['Name'] . " has recieved $Dam damage from a minefield in " . $N['Ref'] . " $LocText " . 
+    ($T['BuildState'] > 3? " and has been destroyed." : ""),$T);
+  GMLog("The <a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a> took $Dam from a minefield in " . $N['Ref'] . " $LocText " . 
+    ($T['BuildState'] > 3? " and has been destroyed." : ""));
+}
+
+
+
 ?>

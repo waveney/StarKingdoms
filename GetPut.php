@@ -111,11 +111,13 @@ function Get_Planet($id) {
 }
 
 function Put_Planet(&$now) {
+  global $GAMEID;
   if (isset($now['id'])) {
     $e=$now['id'];
     $Cur = Get_Planet($e);
     return Update_db('Planets',$Cur,$now);
   } else {
+    $now['GameId'] = $GAMEID;
     return $now['id'] = Insert_db ('Planets', $now );  
   }
 }
@@ -483,11 +485,13 @@ function Get_Moon($id) {
 }
 
 function Put_Moon(&$now) {
+  global $db,$GAMEID;
   if (isset($now['id'])) {
     $e=$now['id'];
     $Cur = Get_Moon($e);
     return Update_db('Moons',$Cur,$now);
   } else {
+    $now['GameId'] = $GAMEID;
     return $now['id'] = Insert_db ('Moons', $now );
   }
 }
@@ -1365,7 +1369,7 @@ function Gen_Put($Table, &$now) {
 function Gen_Get_Cond($Table,$Cond) {
   global $db;
   $Ts = [];
-  $Q = "SELECT * FROM $Table WHERE $Cond";
+//  $Q = "SELECT * FROM $Table WHERE $Cond";
   $res = $db->query("SELECT * FROM $Table WHERE $Cond");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
   return $Ts;
@@ -1373,10 +1377,18 @@ function Gen_Get_Cond($Table,$Cond) {
 
 function Gen_Get_Cond1($Table,$Cond) {
   global $db;
-  $Q = "SELECT * FROM $Table WHERE $Cond";
+//  $Q = "SELECT * FROM $Table WHERE $Cond";
   $res = $db->query("SELECT * FROM $Table WHERE $Cond");
   if ($res) if ($ans = $res->fetch_assoc()) return $ans;
   return [];
+}
+
+function Gen_Get_Table($Table, $Cond='') {
+  global $db,$GAME,$GAMEID;
+  $Ts = [];
+  $res = $db->query("SELECT * FROM $Table WHERE GameId=$GAMEID $Cond");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
+  return $Ts;
 }
 
 function Gen_Select($Clause) {

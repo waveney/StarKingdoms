@@ -275,6 +275,7 @@
     $txt .= "<li><a href=ProjHomes.php>List Project Homes</a><p>\n";
 
     $txt .= "<li><a href=RebuildHomes.php>Rebuild Project Homes</a>\n";
+    $txt .= "<li><a href=RebuildMines.php>Rebuild Mines Data</a>\n";
     $txt .= "<p>";
 
 
