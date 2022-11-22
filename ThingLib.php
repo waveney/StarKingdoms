@@ -860,7 +860,7 @@ function Gates_Avail($Fid) {
   return $Gates;
 }
 
-function Out_OF_Turn_Mine_Damage(&$T,&$Mine,&$N=0) { // Needs changes
+function Do_Mine_Damage(&$T,&$Mine,&$N=0,$InTurn=0) { // Needs changes
 // Do damage and report
 
   if (Get_ModulesType($T,23)) return;
@@ -878,12 +878,83 @@ function Out_OF_Turn_Mine_Damage(&$T,&$Mine,&$N=0) { // Needs changes
   $Locations = Within_Sys_Locs($N);
   $LocText = $Locations[$Mine['WithinSysLoc']];
   
-  TurnLog($T['Whose'],"The " . $T['Name'] . " has recieved $Dam damage from a minefield in " . $N['Ref'] . " $LocText " . 
-    ($T['BuildState'] > 3? " and has been destroyed." : ""),$T);
-  GMLog("The <a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a> took $Dam from a minefield in " . $N['Ref'] . " $LocText " . 
-    ($T['BuildState'] > 3? " and has been destroyed." : ""));
+  if ($InTurn) {
+    TurnLog($T['Whose'],"The " . $T['Name'] . " has recieved $Dam damage from a minefield in " . $N['Ref'] . " $LocText " . 
+      ($T['BuildState'] > 3? " and has been destroyed." : ""),$T);
+    GMLog("The <a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a> took $Dam from a minefield in " . $N['Ref'] . " $LocText " . 
+      ($T['BuildState'] > 3? " and has been destroyed." : ""));
+    Report_Others($T['Whose'], $T['SystemId'],2,$T['Name'] . " has recieved damage from a minefield in " . $N['Ref'] . " $LocText " . 
+      ($T['BuildState'] > 3? " and has been destroyed." : ""),$T);
+      return "";
+  } else {
+    // Report Out Of Turn
+    include_once("TurnTools.php");
+    $msg = "The " . $T['Name'] . " has recieved $Dam damage from a minefield in " . $N['Ref'] . " $LocText " . ($T['BuildState'] > 3? " and has been destroyed." : "");
+    TurnLog($T['Whose'],$msg,$T);
+    GMLog4Later("The <a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a> took $Dam from a minefield in " . $N['Ref'] . " $LocText " . 
+      ($T['BuildState'] > 3? " and has been destroyed." : ""));
+    Report_Others($T['Whose'], $T['SystemId'],2,$T['Name'] . " has recieved damage from a minefield in " . $N['Ref'] . " $LocText " . 
+      ($T['BuildState'] > 3? " and has been destroyed." : ""),$T);
+    return $msg;
+  }
 }
 
+function Move_Thing_Within_Sys(&$T,$Dest,$InTurn) {
+  if ($T['WithinSysLoc'] == $Dest) return;
+  $WSL = $T['WithinSysLoc'];
+// Is there a mine here?
+  $Mines = Get_Things_Cond(0,"Type=10 AND SystemId=" . $T['SystemId'] . " AND BuildState=3");
+  if (empty($Mines)) return;
+  foreach($Mines as $i=>&$M) if ($M['WithinSysLoc']>500) unset($Mines[$i]); // 
+  if (empty($Mines)) return;
+  
+// From current to Deep space
+  if ($WSL > 2 && $WSL < 500) {
+    switch (intdiv($WSL,100)) {
+    case 1: //Orbiting
+    case 3:
+      break; 
+    case 2: //On
+    case 4:
+      foreach($Mines as $M) {
+        if ($M['WithinSysLoc'] == ($WSL-100)) {
+          Do_Mine_Damage($T,$M,0,$InTurn);
+          break 2;
+        }
+      }
+      break;
+          
+    default:
+    }
+  }
+// From Deep space to Dest
+  if ($Dest > 2 && $Dest < 500) {
+    switch (intdiv($Dest,100)) {
+    case 1: //Orbiting
+    case 3:
+      foreach($Mines as $M) {
+        if ($M['WithinSysLoc'] == $Dest) {
+          Do_Mine_Damage($T,$M,0,$InTurn);
+          break 2;
+        }
+      }
+      break;
 
+    case 2: //On
+    case 4:
+      foreach($Mines as $M) {
+        if ($M['WithinSysLoc'] == ($Dest-100)) {
+          Do_Mine_Damage($T,$M,0,$InTurn);
+          break 2;
+        }
+      }
+      break;
+          
+    default:
+    }
+  }
+  
+  $T['WithinSysLoc'] = $Dest;
+}
 
 ?>

@@ -7,6 +7,7 @@
   include_once("ProjLib.php");
   include_once("HomesLib.php");
   include_once("BattleLib.php");
+  include_once("TurnTools.php");
   include_once("vendor/erusev/parsedown/Parsedown.php");
   
   A_Check('GM');
@@ -34,59 +35,6 @@
              'Coded','No','Coded,M','Coded,M', 'No','Partial,M','Coded', 'Coded,M',
              'Coded','Coded','No','No',
              'Coded','Coded','Coded','Coded'];
-
-
-// For logging turn processing events that need following up or long term record keeping, set e to echo to GM
-function GMLog($text,$Bold=0) {
-  global $GAME,$GAMEID;
-  static $LF;
-  if (!isset($LF)) {
-     if (!file_exists("Turns/$GAMEID/" . $GAME['Turn'])) mkdir("Turns/" . $GAMEID . "/" . $GAME['Turn'],0777,true);
-     $LF = fopen("Turns/$GAMEID/" . $GAME['Turn'] . "/0.txt", "a+");
-  }
-  if ($Bold) $text = "<b>" . $text . "</b>";
-  fwrite($LF,"$text\n");
-  echo "$text<br>";  
-}
-
-function SKLog($text,$e=0) {
-  global $Sand,$USER;
-  $Sand['ActivityLog'] .= date("Y-m-d H:i:s - ") . $USER['Login'] . " - " . $text . "\n";  // Who?
-  if ($e) GMLog($text. "<br>\n",1);
-}
-
-// Log to the turn text, and optionally aa history record of T
-function TurnLog($Fid,$text,&$T=0) {
-  global $GAME,$GAMEID;
-  static $LF = [];
-  if ($Fid == 0) {
-    echo "<h2 class=Err>Loging a turn action for Faction 0! - Call Richard</h2>\n";
-    debug_print_backtrace();
-    dotail();
-  }
-  if (!isset($LF[$Fid])) {
-     if (!file_exists("Turns/$GAMEID/" . $GAME['Turn'])) mkdir("Turns/" . $GAMEID . "/" . $GAME['Turn'],0777,true);
-     $LF[$Fid] = fopen("Turns/$GAMEID/" . $GAME['Turn'] . "/$Fid.txt", "a+");
-  }
-  fwrite($LF[$Fid],"$text\n");
-  if ($T) $T['History'] .= "Turn#" . ($GAME['Turn']) . ": " . $text . "\n";
-}
-
-function Report_Others($Who, $Where, $SeenBy, $Message) {
-  // Find all others in Where
-  // if eyes see report message, then skip rest of faction
-
-//var_dump($Who,$Where,$SeenBy,$Message);exit;
-  static $Factions;
-  if (!isset($Factions)) $Factions = Get_Factions();
-  
-  foreach ($Factions as $F) {
-    if ($F['id'] == $Who) continue;
-    $Eyes = EyesInSystem($F['id'],$Where);
-    if (($Eyes & $SeenBy) == 0) continue;
-    TurnLog($F['id'],"$Message by " . $Factions[$Who]['Name']);
-  }
-}
 
 function CheckTurnsReady() {
   global $PlayerStates,$PlayerState, $PlayerStateColours;
@@ -1676,30 +1624,6 @@ function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
 
 }
 
-function Do_Mine_Damage(&$T,&$Mine,&$N=0) {
-// Do damage and report
-
-  if (Get_ModulesType($T,23)) return;
-  $Dsc = Has_Tech($Mine['Whose'],'Deep Space Construction');
-  $Dam = $Dsc * $Mine['Level']*5;
-  if (empty($N)) $N = Get_System($Mine['SystemId']);
-  
-  if ($T['CurHealth'] > $Dam) {
-    $T['CurHealth'] -= $Dam;
-  } else {
-    $T['BuildState'] = 4;
-  }
-  Put_Thing($T);
-  
-  $Locations = Within_Sys_Locs($N);
-  $LocText = $Locations[$Mine['WithinSysLoc']];
-  
-  TurnLog($T['Whose'],"The " . $T['Name'] . " has recieved $Dam damage from a minefield in " . $N['Ref'] . " $LocText " . 
-    ($T['BuildState'] > 3? " and has been destroyed." : ""),$T);
-  GMLog("The <a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . " took $Dam from a minefield in " . $N['Ref'] . " $LocText " . 
-    ($T['BuildState'] > 3? " and has been destroyed." : ""));
-}
-
 function ShipMovements($Agents=0) {
   global $GAME,$GAMEID;
   // Foreach thing, do moves, generate list of new survey reports & levels, update "knowns" 
@@ -1766,7 +1690,7 @@ function ShipMovements($Agents=0) {
       foreach ($MineChecks as $Dir=>$MC) {
         if ($L["Mined$MC"]) {
           $Mine = Get_Thing($L["Mined$MC"]);
-          if ($Mine) Do_Mine_Damage($T,$Mine, ($Dir == 'To'? $N : $OldN));
+          if ($Mine) Do_Mine_Damage($T,$Mine, ($Dir == 'To'? $N : $OldN),1);
           if ($T['BuildState'] != 3) continue 2;
         }
       }
@@ -1786,10 +1710,13 @@ function ShipMovements($Agents=0) {
         $pname = System_Name($N,$Fid);
       }
       
+      // Leaving Minefields
+      if (!$Agents) Move_Thing_Within_Sys($T,0,1);
 //      $N = Get_System($T['NewSystemId']);
       $EndLocs = Within_Sys_Locs($N);
       $T['SystemId'] = $T['NewSystemId'];
       $T['WithinSysLoc'] = $T['NewLocation'];
+      if (!$Agents) Move_Thing_Within_Sys($T,0,$T['NewLocation']);
 //      SKLog("Moved to $pname along " . $LinkLevels[$L['Level']]['Colour']. " link #$Lid to " . $EndLocs[$T['NewLocation']]); 
       if ($Fid) {
         TurnLog($Fid,$T['Name'] . " has moved from " . System_Name($OldN,$Fid) . " along <span style='color:" . $LinkLevels[$L['Level']]['Colour'] . 
@@ -1799,7 +1726,9 @@ function ShipMovements($Agents=0) {
       $T['Instruction'] = 0;
       Put_Thing($T);
     } else if ( $T['WithinSysLoc'] != $T['NewLocation'] && $T['NewLocation']>1) {
+      if (!$Agents) Move_Thing_Within_Sys($T,0,1);
       $T['WithinSysLoc'] = $T['NewLocation'];
+      if (!$Agents) Move_Thing_Within_Sys($T,0,$T['NewLocation']);
       $N = Get_System($T['SystemId']);
       $Sid = $T['SystemId'];
       $Fid = $T['Whose'];
@@ -2621,7 +2550,7 @@ function InstructionsComplete() {
        break;
      
      case 'Clear Minefield':
-       $Mines = Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 AND WithinSyssloc=" . $T['WithinSyssloc']);
+       $Mines = Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 AND WithinSysLoc=" . $T['WithinSysLoc']);
        $N = Get_System($T['SystemId']);
        $Who = $T['Whose'];
        $Loc = Within_Sys_Locs($N);

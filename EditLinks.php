@@ -28,9 +28,11 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Index</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Game</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Sys 1</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Sys 2</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Sys 2</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Level</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Usage</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Mined 1</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Mined 2</a>\n";
 
   echo "</thead><tbody>";
   foreach($DT as $D) {
@@ -42,6 +44,8 @@
     echo "<td>" . fm_select($Ssys,$D,'System2Ref',0,'',"System2Ref$i");
     echo "<td>" . fm_select($LLs,$D,'Level',0,'',"Level$i");
     echo fm_number1('',$D,'UseCount','','',"UseCount$i");
+    echo fm_number1('',$D,'Mined1');
+    echo fm_number1('',$D,'Mined2');
 //    echo fm_number1("",$D,'Level','','',"Level$i");
   }
   $D = [];

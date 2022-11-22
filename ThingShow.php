@@ -749,7 +749,7 @@ function Show_Thing(&$T,$Force=0) {
     
     case 'Make Minefield':
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Mine Layers')) continue 2;
-      if (Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 AND WithinSyssloc=" . $T['WithinSyssloc'])) continue 2; 
+      if (Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 AND WithinSysLoc=" . $T['WithinSysLoc'])) continue 2; 
       break;
       
     case 'Make Orbital Repair Yard':
@@ -854,12 +854,12 @@ function Show_Thing(&$T,$Force=0) {
     
     case 'Build Advanced Minefield' :
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Advanced Minefields')) continue 2;
-      if (Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 AND WithinSyssloc=" . $T['WithinSyssloc'])) continue 2; 
+      if (Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 AND WithinSysLoc=" . $T['WithinSysLoc'])) continue 2; 
       break;
       
     case 'Clear Minefield':
       if ($Moving || !$HasDeep || !$HasMinesweep ) continue 2;
-      if (Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 AND WithinSyssloc=" . $T['WithinSyssloc'])) continue 2; 
+      if (Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 AND WithinSysLoc=" . $T['WithinSysLoc'])) continue 2; 
       break;
 
     default: 
