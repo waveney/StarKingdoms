@@ -169,7 +169,7 @@ function Show_Thing(&$T,$Force=0) {
           echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId',1);
           echo "<td>" . fm_select($Syslocs,$T,'WithinSysLoc');
         } else {
-          echo "<tr><td>Current System:<td>" . $N['Ref'] . "<td>" . $Syslocs[$T['WithinSysLoc']];    
+          echo "<tr><td>Current System:<td>" . (empty($N)? 'Unknown' : $N['Ref']) . "<td>" . $Syslocs[$T['WithinSysLoc']];    
         }
       } else { // On Board
         $Host = Get_Thing($T['SystemId']);
@@ -667,7 +667,7 @@ function Show_Thing(&$T,$Force=0) {
       break;
     
     case 'Voluntary Warp Home': // Warp Home
-      if ((($tprops & THING_HAS_SHIPMODULES) == 0 ) || ($T['CurHealth'] == 0) || ($tprops & THING_CAN_MOVE) == 0) continue 2;
+      if ((($tprops & THING_HAS_SHIPMODULES) == 0 ) || ($T['CurHealth'] == 0) || (($tprops & THING_CAN_MOVE) == 0) || ($T['BuildState'] != 3) ) continue 2;
       $Gates = Gates_Avail($T['Whose']);
       
       if (empty($Gates)) {
