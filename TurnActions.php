@@ -767,8 +767,9 @@ function Instuctions() { // And other Instructions
     case 'Make Minefield':
       $Who = $T['Whose'];
       $Loc = Within_Sys_Locs($N);
-      $LocText = $Loc[$T['WithinSysLoc']];
-      $LocType = int($T['WithinSysLoc']/100);
+      $WSL = $T['WithinSysLoc'];
+      if ($T['NewSystemId'] == 0 && $T['NewSystemLoc'] != 0) $WSL = $T['NewSystemLoc'];
+      $LocT = intdiv($WSL,100);
       if (!Spend_Credit($Who,$T['InstCost'],"Make Minefield in " . $N['Ref']) ) {
         $T['Progress'] = -1; // Stalled
         TurnLog($Who,"Could not afford to start a Minefield in " .$N['Ref'],$T);
@@ -2109,6 +2110,9 @@ function ProjectsComplete() {
     case 'Construct Ship':
       $T = Get_Thing($P['ThingId']);
       $T['BuildState'] = 2; // Shakedown
+      $WSL = ConstructLoc($P['Home']);
+      Move_Thing_Within_Sys($T,$WSL,1);
+      $T['WithinSysLoc'] = $WSL;
       TurnLog($P['FactionId'], $T['Name'] . " has been lanched and will now start its shakedown cruise",$T);              
       Calc_Scanners($T);
       $T['ProjectId'] = 0;
@@ -2119,6 +2123,7 @@ function ProjectsComplete() {
     case 'Train Agent':
       $T = Get_Thing($P['ThingId']);
       $T['BuildState'] = 3; // Complete
+      $T['WithinSysLoc'] = ConstructLoc($P['Home'])+100;
       TurnLog($P['FactionId'], $T['Name'] . " has been completed",$T);              
       $T['ProjectId'] = 0;
       Put_Thing($T);
@@ -2330,7 +2335,7 @@ function InstructionsComplete() {
        $Loc = Within_Sys_Locs($N);
        $WLoc = $T['WithinSysLoc'];
        $LocText = $Loc[$WLoc];
-       $LocType = int($WLoc/100);
+       $LocType = intdiv($WLoc,100);
        if ($ValidMines[$LocType] == 1 ) {
          $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Minefield'], 'Level'=> (($Instr == 'Make Minefield') ?1:2), 
                 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $WLoc, 'Whose'=>$T['Whose'], 
@@ -2556,7 +2561,7 @@ function InstructionsComplete() {
        $Loc = Within_Sys_Locs($N);
        $WLoc = $T['WithinSysLoc'];
        $LocText = $Loc[$WLoc];
-       $LocType = int($WLoc/100);
+       $LocType = intdiv($WLoc,100);
 
        if ($Mines) {
          foreach($Mines as $Mine) {

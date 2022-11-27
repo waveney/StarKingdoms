@@ -1043,7 +1043,9 @@ function Show_Thing(&$T,$Force=0) {
 
     case 'Make Minefield':
       echo "<tr><td><td colspan=6>Make sure you move to the location within the system you want to mine.  ";
-      $LocT = int($T['WithinSysLoc']/100);
+      $WSL = $T['WithinSysLoc'];
+      if ($T['NewSystemId'] == 0 && $T['NewSystemLoc'] != 0) $WSL = $T['NewSystemLoc'];
+      $LocT = intdiv($WSL,100);
       if ($ValidMines[$LocT] == 0 ) echo "<span class=Err> the current location is unsuitable.</span>";
       if (Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 AND WithinSyssloc=" . $T['WithinSyssloc'])) {
         echo "<span class=Err>  There is already one here.</span>";
@@ -1055,7 +1057,10 @@ function Show_Thing(&$T,$Force=0) {
 
     case 'Make Advanced Minefield':
       echo "<tr><td><td colspan=6>Make sure you move to the location within the system you want to mine.  ";
-      $LocT = int($T['WithinSysLoc']/100);
+      $WSL = $T['WithinSysLoc'];
+      if ($T['NewSystemId'] == 0 && $T['NewSystemLoc'] != 0) $WSL = $T['NewSystemLoc'];
+      $LocT = intdiv($WSL,100);
+
       if ($ValidMines[$LocT] == 0 ) echo "<span class=Err> the current location is unsuitable.</span>";
       if (Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 AND WithinSyssloc=" . $T['WithinSyssloc'])) {
         echo "<span class=Err>  There is already one here.</span>";

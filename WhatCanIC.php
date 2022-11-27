@@ -22,13 +22,23 @@
   }
   
 
-  
-  echo "<div class=floatright><h2>Older Turns =&gt;";
-  for($turn=1; $turn <= $GAME['Turn']; $turn++) {
-    if (file_exists("Turns/$GAMEID/$turn/CouldC$Fid.html")) echo " <a href=WhatCanIC.php?Turn=$turn>$turn</a>";
+  echo "<div class=floatright><h2>";
+  if ($GAME['Turn'] <5 ) {
+    echo "Older Turns =&gt;";
+    if ($GAME['Turn']) for($turn=1; $turn <= $GAME['Turn']; $turn++) {
+      echo ", <a href=WhatCanIC.php?Y=$turn>$turn</a>";
+    }
+  } else {
+    echo "Older Turns =&gt; <div id=ExpandTurnsDots class=InLine><b onclick=ExpandTurns()>...</b></div><div id=HiddenTurns hidden>";
+    for($turn=1; $turn <= $GAME['Turn']; $turn++) {
+      if ($turn == ($GAME['Turn'] - 5)) echo "</div><div class=InLine>";
+      if (file_exists("Turns/$GAMEID/$turn/CouldC$Fid.html")) echo " <a href=WhatCanIC.php?Turn=$turn>$turn</a>";
+    }
+    echo "</div>";
   }
   echo "</h2></div>";
-  
+
+    
   if (isset($_REQUEST['Turn'])) {
     $Turn = $_REQUEST['Turn'];
     echo "<h1>What Could I See on Turn $Turn?</h1>";

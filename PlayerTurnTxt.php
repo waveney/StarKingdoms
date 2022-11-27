@@ -39,11 +39,21 @@
     dotail();
   }
   
-//echo php_ini_loaded_file() . "<P>";
-  echo "<div class=floatright><h2>Older Turns =&gt;";
-  if (file_exists("Turns/$GAMEID/0/$Fid.txt")) echo " <a href=PlayerTurnTxt.php?Turn=0$xtra>Setup</a>";
-  if ($GAME['Turn']) for($turn=1; $turn <= $GAME['Turn']; $turn++) {
-    if (file_exists("Turns/$GAMEID/$turn/$Fid.txt")) echo ", <a href=PlayerTurnTxt.php?Turn=$turn$xtra>$turn</a>";
+  echo "<div class=floatright><h2>";
+  if ($GAME['Turn'] <5 ) {
+    echo "Older Turns =&gt;";
+    if (file_exists("Turns/$GAMEID/0/$Fid.txt")) echo " <a href=PlayerTurnTxt.php?Turn=0$xtra>Setup</a>";    
+    if ($GAME['Turn']) for($turn=1; $turn <= $GAME['Turn']; $turn++) {
+      echo ", <a href=PlayerTurnTxt.php?Y=$turnxtra>$turn</a>";
+    }
+  } else {
+    echo "Older Turns =&gt; <div id=ExpandTurnsDots class=InLine><b onclick=ExpandTurns()>...</b></div><div id=HiddenTurns hidden>";
+    if (file_exists("Turns/$GAMEID/0/$Fid.txt")) echo " <a href=PlayerTurnTxt.php?Turn=0$xtra>Setup</a>";    
+    for($turn=1; $turn <= $GAME['Turn']; $turn++) {
+      if ($turn == ($GAME['Turn'] - 5)) echo "</div><div class=InLine>";
+      if (file_exists("Turns/$GAMEID/$turn/$Fid.txt")) echo ", <a href=PlayerTurnTxt.php?Turn=$turn$xtra>$turn</a>";
+    }
+    echo "</div>";
   }
   echo "</h2></div>";
 

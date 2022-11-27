@@ -364,4 +364,7 @@ $(document).ready(function() {
   }
 })
 
-
+function ExpandTurns() {
+  $('#HiddenTurns').addClass('InLine');
+  $('#ExpandTurnsDots').hide();
+}

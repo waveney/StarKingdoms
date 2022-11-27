@@ -235,7 +235,10 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
         echo "<td><td>";
       }
     }
-    if ($GM) echo "<td>" . ($T['Sensors']? ($T['Sensors'] . '*L' . $T['SensorLevel'] . ($T['NebSensors']?' N':'')) : '');
+    if ($GM) { 
+      echo "<td>" . (($T['Sensors'] ? ($T['Sensors'] . '*L' . $T['SensorLevel'])
+      if ($T['NebSensors'])  echo ' N';
+    }
  //   echo "<td>" . (isset($Systems[$T['NewSystemId']]) ? $Systems[$T['NewSystemId']] :"") ;
     
     if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {

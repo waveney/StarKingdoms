@@ -504,4 +504,23 @@ function Control_Propogate($Sid,$Who) {
   // TODO Worlds within system
 }
 
+function ConstructLoc($Hid) {
+  $H = Get_ProjectHome($Hid);
+  switch ($H['ThingType']) {
+    case 1: // Planet
+      return Get_Planet($H['ThingId']);
+          
+    case 2: // Moon
+      return Get_Moon($H['ThingId']);
+    
+    case 3: // Thing
+      return Get_Thing($H['ThingId']);
+    
+  }
+  
+  
+  
+  
+}
+
 ?>
