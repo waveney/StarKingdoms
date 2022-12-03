@@ -243,12 +243,14 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
         echo "<td><td>";
       }
     }
-    $Modules = Get_Modules($T);
+    $Modules = Get_Modules($Tid);
     $Up = "No";
     foreach ($Modules as $M) {
       $Mt = $ModTypes[$M['Type']];
+      if (($Mt['Leveled'] & 1) == 0) continue;
       if ($M['Level'] < $Mt['Target']) {
         $Up = "Yes";
+//var_dump($M,$Mt);
         break;
       }
     }

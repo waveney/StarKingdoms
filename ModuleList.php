@@ -20,6 +20,7 @@
 
   echo "<h1>Module Types</h1>";
   echo "Fire order: 5 = normal, 1 early, 9 late, -1 not first round.  Fire rate 1= every round, 0=once, 5=once every 5 rounds, -2 double first round<p>";
+  echo "Properties: 1 = Leveled<p>";
   echo "<form method=post action=ModuleList.php>";
 
   
@@ -37,6 +38,8 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>FireOrd</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>FireRate</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Formula</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Properties</a>\n";
+
     echo "</thead><tbody>";
 
     foreach($MTs as $MT) {
@@ -50,6 +53,7 @@
       echo fm_number1("",$MT,'MinShipLevel','','',"MinShipLevel$i");
       echo fm_number1("",$MT,'FireOrder','','',"FireOrder$i") . fm_number1("",$MT,'FireRate',"",'',"FireRate$i");
       echo "<td>" . fm_select($Forms,$MT,'Formula',1,'',"Formula$i");
+      echo fm_number1("",$MT,'Leveled','','',"Leveled$i");
       }   
 
 
@@ -63,6 +67,7 @@
   echo fm_number1("",$MT,'MinShipLevel','','',"MinShipLevel0");
   echo fm_number1("",$MT,'FireOrder',"",'',"FireOrder0") . fm_number1("",$MT,'FireRate',"",'',"FireRate0");     
   echo "<td>" . fm_select($Forms,$MT,'Formula',1,'',"Formula0");
+  echo fm_number1("",$MT,'Leveled','','',"Leveled0");
   echo "</tbody></table></div>\n";
 
   echo "<h2><input type=submit name=Update value=Update></h2>";
