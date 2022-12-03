@@ -1672,7 +1672,8 @@ function ShipMovements($Agents=0) {
       }
 
       $SR1 = Get_SystemR($L['System1Ref']);      
-      
+      $SR2 = Get_SystemR($L['System2Ref']);           
+ 
       if ($T['SystemId'] == $SR1['id']) {
         $Sid = $T['NewSystemId'] = $SR2['id'];
         $Ref = $SR2['Ref']; // Names...
@@ -1713,6 +1714,8 @@ function ShipMovements($Agents=0) {
         Put_FactionLink($FL);
       
         $pname = System_Name($N,$Fid);
+      } else {
+        $pname = $N['Ref'];
       }
       
       // Leaving Minefields
