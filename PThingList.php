@@ -136,6 +136,12 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
   $Things = Get_Things($Fid);
   $ThingTypes = Get_ThingTypes();
   $Systems = Get_SystemRefs();
+//  $Techs = Get_Techs($Fid);
+  $ModTypes = Get_ModuleTypes();
+  foreach ($ModTypes as &$Mt) {
+    $Lvl = Calc_TechLevel($Fid,$Mt['id']);
+    $Mt['Target'] = $Lvl;    
+  }
 
   echo "<h1>Things</h1>";
   
@@ -153,6 +159,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
 //  echo "Use only ONE of the filters to the right<br>\n";
   
   $coln = 0;
+  
   echo "<div class=tablecont><table id=indextable border width=100% style='min-width:1400px'>\n";
   echo "<thead><tr>";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
@@ -166,6 +173,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Actions</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Using Link</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Moving to</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Refit?</a>\n";
   if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Sensors</a>\n";
   echo "</thead><tbody>";
   
@@ -235,6 +243,17 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
         echo "<td><td>";
       }
     }
+    $Modules = Get_Modules($T);
+    $Up = "No";
+    foreach ($Modules as $M) {
+      $Mt = $ModTypes[$M['Type']];
+      if ($M['Level'] < $Mt['Target']) {
+        $Up = "Yes";
+        break;
+      }
+    }
+    echo "<td>$Up";
+    
     if ($GM) { 
       echo "<td>" . (($T['Sensors'] ? ($T['Sensors'] . '*L' . $T['SensorLevel']) : ''));
       if ($T['NebSensors'])  echo ' N';

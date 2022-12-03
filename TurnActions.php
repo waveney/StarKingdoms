@@ -138,7 +138,11 @@ function CashTransfers() {
   foreach($Bs as $B) {
     if ($B['DoneTurn'] >= $GAME['Turn']) continue; // Already done
     if ($B['What'] == 0) {
-      if (Spend_Credit($B['FactionId'],$B['Amount'],$B['YourRef'])) {
+      if ($B['FactionId'] == 0) {
+          Spend_Credit($B['Recipient'], - $B['Amount'],$B['YourRef']);
+          TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " transfered " . Credit() . $B['Amount'] . " to you for " . $B['YourRef'] );
+          GMLog('Cash transfer  to ' . $Facts[$B['Recipient']]['Name'] . ' of ' . $B['Amount'] . ' for ' . $B['YourRef']);           
+      } else if (Spend_Credit($B['FactionId'],$B['Amount'],$B['YourRef'])) {
         TurnLog($B['FactionId'],"Transfered " . Credit() . $B['Amount'] . " for " . $B['YourRef'] . " to " . $Facts[$B['Recipient']]['Name']);
 
         if ($B['Recipient'] > 0) {
