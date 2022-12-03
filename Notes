@@ -184,6 +184,12 @@ Y 8 Reset the link/planet mine data
 Collab Construction
 Collab Anomallies
 
+Warning: Undefined variable $FestTypes in /var/www/vhosts/www2.chippfolk.co.uk/httpdocs/int/AddPerf.php on line 32
 
+Warning: foreach() argument must be of type array|object, null given in /var/www/vhosts/www2.chippfolk.co.uk/httpdocs/int/AddPerf.php on line 32 
+
+Warning: openssl_decrypt(): IV passed is only 12 bytes long, cipher expects an IV of precisely 16 bytes, padding with \0 in /var/www/vhosts/www2.chippfolk.co.uk/httpdocs/int/fest.php on line 86 
+
+Warning: openssl_decrypt(): IV passed is only 12 bytes long, cipher expects an IV of precisely 16 bytes, padding with \0 in /var/www/vhosts/www2.chippfolk.co.uk/httpdocs/int/fest.php on line 86 Warning: Trying to access array offset on value of type null in /var/www/vhosts/www2.chippfolk.co.uk/httpdocs/int/Login.php on line 116 
 
 

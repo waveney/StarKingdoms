@@ -504,23 +504,39 @@ function Control_Propogate($Sid,$Who) {
   // TODO Worlds within system
 }
 
-function ConstructLoc($Hid) {
+function ConstructLoc($Hid,$Posn=0) {
   $H = Get_ProjectHome($Hid);
   switch ($H['ThingType']) {
     case 1: // Planet
-      return Get_Planet($H['ThingId']);
+      $Planet = Get_Planet($H['ThingId']);
+      $Planets = Get_Planets($Planet['SystemId']);
+      $Pi = 1;
+      foreach ($Planets as $P) {
+        if ($P['id'] == $Planet['id']) return $Pi + 100 + ($Posn?100:0);
+        $pi++;
+      }
+      return 0;
           
     case 2: // Moon
-      return Get_Moon($H['ThingId']);
-    
+      $Moon = Get_Moon($H['ThingId']);
+      $Plan = Get_Planet($Moon['PlanetId']);
+      $Planets = Get_Planets($Plan['SystemId']);
+      $mi = 1;
+      foreach ($Planets as $P) {
+        $Moons = Get_Moons($P['Planetid']);
+        foreach($Moons as $M) {
+          if ($M['id'] == $Moon['id']) return 300+$mi + ($Posn?100:0);
+          $mi++;
+        }
+      }
+      return 0;
+      
     case 3: // Thing
-      return Get_Thing($H['ThingId']);
-    
+      $T = Get_Thing($H['ThingId']);
+      return $T['WithinSysLoc']; // Ignores Posn
   }
-  
-  
-  
-  
+    
 }
+
 
 ?>

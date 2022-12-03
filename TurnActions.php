@@ -2110,7 +2110,7 @@ function ProjectsComplete() {
     case 'Construct Ship':
       $T = Get_Thing($P['ThingId']);
       $T['BuildState'] = 2; // Shakedown
-      $WSL = ConstructLoc($P['Home']);
+      $WSL = ConstructLoc($P['Home'],0);
       Move_Thing_Within_Sys($T,$WSL,1);
       $T['WithinSysLoc'] = $WSL;
       TurnLog($P['FactionId'], $T['Name'] . " has been lanched and will now start its shakedown cruise",$T);              
@@ -2123,7 +2123,7 @@ function ProjectsComplete() {
     case 'Train Agent':
       $T = Get_Thing($P['ThingId']);
       $T['BuildState'] = 3; // Complete
-      $T['WithinSysLoc'] = ConstructLoc($P['Home'])+100;
+      $T['WithinSysLoc'] = ConstructLoc($P['Home'],1);
       TurnLog($P['FactionId'], $T['Name'] . " has been completed",$T);              
       $T['ProjectId'] = 0;
       Put_Thing($T);
