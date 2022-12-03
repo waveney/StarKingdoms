@@ -875,6 +875,7 @@ function Do_Mine_Damage(&$T,&$Mine,&$N=0,$InTurn=0) { // Needs changes
     $T['BuildState'] = 4;
   }
   Put_Thing($T);
+  $N0 = 0;
   
   $Locations = Within_Sys_Locs($N);
   $LocText = $Locations[$Mine['WithinSysLoc']];
@@ -919,7 +920,7 @@ function Move_Thing_Within_Sys(&$T,$Dest,$InTurn) {
     case 4:
       foreach($Mines as $M) {
         if ($M['WithinSysLoc'] == ($WSL-100)) {
-          Do_Mine_Damage($T,$M,0,$InTurn);
+          Do_Mine_Damage($T,$M,$N0,$InTurn);
           break 2;
         }
       }
@@ -935,7 +936,7 @@ function Move_Thing_Within_Sys(&$T,$Dest,$InTurn) {
     case 3:
       foreach($Mines as $M) {
         if ($M['WithinSysLoc'] == $Dest) {
-          Do_Mine_Damage($T,$M,0,$InTurn);
+          Do_Mine_Damage($T,$M,$N0,$InTurn);
           break 2;
         }
       }
@@ -945,7 +946,7 @@ function Move_Thing_Within_Sys(&$T,$Dest,$InTurn) {
     case 4:
       foreach($Mines as $M) {
         if ($M['WithinSysLoc'] == ($Dest-100)) {
-          Do_Mine_Damage($T,$M,0,$InTurn);
+          Do_Mine_Damage($T,$M,$N0,$InTurn);
           break 2;
         }
       }
