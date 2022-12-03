@@ -684,7 +684,8 @@ function Show_Thing(&$T,$Force=0) {
         $Ds = Get_DistrictsH($H['id']);
         if (isset($Ds[3])) break 2; // FOund a Shipyard
       }
-      if (isset($N['id']) && Get_Things_Cond($Fid,"Type=" . $TTNames['Orbital Repair Yards'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) break; // Orbital Shipyard     
+      if (isset($N['id']) && Get_Things_Cond($Fid,"Type=" . $TTNames['Orbital Repair Yards'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) break; 
+        // Orbital Shipyard     
       continue 2;
     
     case 'Disband': // Dissasemble

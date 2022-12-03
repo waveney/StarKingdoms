@@ -22,8 +22,8 @@
              'Spare', 'Space Combat', 'Unload Troops', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Devastation Selection', 
              'Devastation', 'Ownership Change', 'Project Progress', 'Instructions Progress', 'Spare', 'Espionage Missions Complete', 'Counter Espionage', 'Spare', 
              'Finish Shakedowns', 'Spare', 'Projects Complete', 'Instructions Complete', 'Spare', 'Check Survey Reports', 'Give Survey Reports', 'Check Spot Anomalies', 
-             'Spot Anomalies', 'Militia Army Recovery', 'Spare', 'Generate Turns', 'Tidy Up Movements', 
-             'Save What Can Be Seen', 'Recalc Project Homes', 'Finish Turn Process'];
+             'Spot Anomalies', 'Militia Army Recovery', 'Generate Turns', 'Tidy Up Movements', 
+             'Save What Can Be Seen', 'Recalc Project Homes', 'Finish Turn Process', 'Enable Factions Access'];
 
   $Coded =  ['Coded','No','No','Coded','Coded','No','Coded', 'No',
              'No','Coded','No','Coded','Partial,M','No','No','Coded,M',
@@ -33,8 +33,8 @@
              'No','No','Coded','No','No','No','No','Coded,M', 
              'Coded', 'No', 'Coded','Coded','No','No','No','No',
              'Coded','No','Coded,M','Coded,M', 'No','Partial,M','Coded', 'Coded,M',
-             'Coded','Coded','No','No',
-             'Coded','Coded','Coded','Coded'];
+             'Coded','Coded','No',
+             'Coded','Coded','Coded','Coded','Coded'];
 
 function CheckTurnsReady() {
   global $PlayerStates,$PlayerState, $PlayerStateColours;
@@ -2210,8 +2210,25 @@ function ProjectsComplete() {
 
       break;
 
-    case 'Decipher Alien Language':
     case 'Rebuild and Repair':  
+      $H = Get_ProjectHome($P['Home']);
+      switch ($H['ThingType']) {
+        case 1: // Planet
+          $PH = Get_Planet($H['ThingId']);
+          break;
+        case 2: // Moon
+          $PH = Get_Moon($H['ThingId']);
+          break;
+        case 3: // Thing
+          $PH = Get_Thing($H['ThingId']);
+          break;
+        }
+
+      $H['Devastation'] = min(0,$H['Devastation']-2);
+      TurnLog($P['FactionId'],"The has been Rebuilding and Repair on " . $PH['Name']);      
+      break;
+
+    case 'Decipher Alien Language':
     case 'Grow Modules' :    
       GMLog("A project to " . $PT['Name'] . " has completed, this is not automated yet.  See <a href=ProjEdit.php?id=" . $P['id'] . ">Project</a>",1);
       break;
@@ -3009,13 +3026,13 @@ function FinishTurnProcess() {
 
   $Facts = Get_Factions();
   foreach ($Facts as $F) {
+    if ($F['NPC'] == 0 ) continue;
     $F['TurnState'] = 1;
     Put_Faction($F);
   }
   
+  GMLog("<br>NPC Factions marked as Turn Planning<p>\n");  
   
-  GMLog("<br>All Factions marked as Turn Planning<p>\n");
-
   $GAME['Turn'] ++;
   $Sand['DateCompleted'] = $GAME['DateCompleted'] = time();
   Put_Game($GAME);
@@ -3026,6 +3043,19 @@ function FinishTurnProcess() {
   // TODO Send messages to discord ??
   return 1;
 }
+
+function EnableFactionsAccess() {
+  $Facts = Get_Factions();
+  foreach ($Facts as $F) {
+    $F['TurnState'] = 1;
+    Put_Faction($F);
+  }
+  
+  GMLog("<br>All Factions marked as Turn Planning<p>\n");
+
+  return 1;
+}
+
 
 function Done_Stage($Name) {
   global $Sand;  // If you need to add something, replace a spare if poss, then nothing breaks

@@ -35,7 +35,7 @@
   
   echo "<h1>Name places you are aware of</h1>";
   echo "You can't name places you haven't been to.<p>You can have your own name for a System or Planet even if you don't control the system.<p>";
-  echo "If you control the system, that name becomes a public name for other factions<p>";
+  echo "If you control the system/planet, that name becomes a public name for other factions<p>";
 
   $Force = 0;
   if (isset($_REQUEST['ACTION'])) {
@@ -95,7 +95,7 @@
                     $FM = Get_FactionMoonFS($Fid, $M['id']);
                     $FM['Name'] = $Name;
                     Put_FactionMoon($FM);
-                    if ($Control) {
+                    if ($Control && ($M['Control'] == 0 || $M['Control'] == $Control)) {
                       $M['Name'] = $Name;
                       Put_Moon($M);
                     }
@@ -110,7 +110,7 @@
 //var_dump("BB",$FP);
                 $FP['Name'] = $Name;
                 Put_FactionPlanet($FP);
-                if ($Control) {
+                if ($Control && ($P['Control'] == 0 || $P['Control'] == $Control)) {
                   $P['Name'] = $Name;
                   Put_Planet($P);
                 }

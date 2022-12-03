@@ -242,8 +242,18 @@
         }
       }
         
-    echo "<h2>Rebuild and repair</h2>Manual at present. Please put this in your turn orders<p>";
-      
+
+      // find devestation locally if > 0 then
+      // show project
+      $H = $Homes[$Hi];
+      if ($H['Devastation'] > 0) {
+      echo "<h2>Rebuild and Repair</h2>";
+        $pc = Proj_Costs(1);
+        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Rebuild and Repair'] . 
+                  "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $DTz['id'] . 
+                  "&Name=" . base64_encode("Rebuild and Repair") . "&L=1&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
+                  "Rebuild and Repair $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>\n";
+      }
       
     echo "<h2>Construct Warp Gate</h2>";
       $pc = Proj_Costs(4);
