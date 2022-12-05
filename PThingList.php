@@ -156,6 +156,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
   echo "To see more information about each thing and to do movement and changes click on the name<p>\n";
   echo "Click on column heading to sort by column - toggles up/down<br>\n";
   echo "Ex things only show up under state <b>Other</b><br>\n";
+  echo "If the Thing would benefit from refit/repair/re-equipping/reinforcing then the Refit column will have a Yes</br>";
 //  echo "Use only ONE of the filters to the right<br>\n";
   
   $coln = 0;
@@ -254,6 +255,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
         break;
       }
     }
+    if (($T['CurHealth'] < $T['OrigHealth']) && ($Props & THING_HAS_HEALTH)) $Up = "Yes";
     echo "<td>$Up";
     
     if ($GM) { 

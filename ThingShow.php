@@ -780,7 +780,7 @@ function Show_Thing(&$T,$Force=0) {
       break;
 
     case 'Build Stargate':
-      if ($Moving || ($HasDeep < 20) || !Has_Tech($Fid,'Stargate Construction')) continue 2;
+      if ($Moving || ($HasDeep < 10) || !Has_Tech($Fid,'Stargate Construction')) continue 2;
       break;
 
     case 'Dismantle Stargate':

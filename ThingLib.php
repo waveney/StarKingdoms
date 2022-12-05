@@ -448,10 +448,12 @@ function Calc_Scanners(&$T) {
   $mods = Get_ModulesType($T['id'],4);
   $nebs = Get_ModulesType($T['id'],9);
   $Cargo = Get_ModulesType($T['id'],8);
+  $Cryo = Get_ModulesType($T['id'],33);
   $T['Sensors'] = (($mods && ($mods[0]['Number']>0))?$mods[0]['Number']:0);
   $T['SensorLevel'] = (($mods && ($mods[0]['Level']>0))?$mods[0]['Level']:0);
   $T['NebSensors'] = (($nebs && ($nebs[0]['Number']>0))?$nebs[0]['Number']:0);
-  $T['CargoSpace'] = (($Cargo && ($Cargo[0]['Number']>0))?$Cargo[0]['Number']*($Cargo[0]['Level']+1):0);
+  $T['CargoSpace'] = ( (($Cargo && ($Cargo[0]['Number']>0))?$Cargo[0]['Number']*($Cargo[0]['Level']+1):0) +
+                       (($Cryo  && ($Cryo[0]['Number']>0))?$Cryo[0]['Number']*($Cryo[0]['Level']+3):0));
   if (($Deep = Get_ModulesType(3,$T['id'])) && ($Deep[0]['Number']>0)) {
     $T['HasDeepSpace'] = $Deep[0]['Number']*$Deep[0]['Level'];
   }else {
