@@ -743,7 +743,7 @@ function Show_Thing(&$T,$Force=0) {
     
     case 'Make Advanced Asteroid Mine':
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Advanced Asteroid Mining')) continue 2;
-      if (Get_Things_Cond(0,"Type=" . $TTNames['Asteroid Mine'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
+      if (Get_Things_Cond(0,"Type=" . $TTNames['Asteroid Mine'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 AND Level>2")) continue 2; // Already have one
       $Ps = Get_Planets($N['id']);
       foreach ($Ps as $P) if ($P['Type'] == 3) break 2;
       continue 2; // No field 

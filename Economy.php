@@ -53,7 +53,8 @@
     $Spend += $DeepSpace;
   }
   
-  $res = $db->query("SELECT pt.* FROM ProjectTurn pt, Projects p WHERE pt.TurnNumber=". $GAME['Turn'] . " AND pt.ProjectId=p.id AND p.FactionId=$Fid AND pt.Rush>0");
+  $res = $db->query("SELECT pt.* FROM ProjectTurn pt, Projects p WHERE pt.TurnNumber=". $GAME['Turn'] . 
+       " AND pt.ProjectId=p.id AND p.FactionId=$Fid AND pt.Rush>0 AND p.TurnStart<=" . $GAME['Turn'] . " AND p.Status<2");
   if ($res) {
     while ($PT = $res->fetch_assoc()) {
       $P = Get_Project($PT['ProjectId']);

@@ -2465,12 +2465,19 @@ function InstructionsComplete() {
        break;
 
      case 'Make Advanced Asteroid Mine':
-       $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Asteroid Mine'], 'Level'=> 2, 'SystemId'=>$T['SystemId'], 
-              'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
-       Put_Thing($NT);
-       $N = Get_System($T['SystemId']);
-       TurnLog($Who,"An Advanced Asteroid Mine has been made in " . $N['Ref']);
-       Report_Others($T['Whose'], $T['SystemId'],2,"An Asteroid Mine has been made in " . $N['Ref']);
+       if (($NT = Get_Things_Cond1(0,"Type=" . $TTNames['Asteroid Mine'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 "))) {
+         $NT['Level'] = 2;  // Generalise how?
+         Put_Thing($NT);
+         $N = Get_System($T['SystemId']);
+         TurnLog($Who,"An Asteroid Mine has been upgraded in " . $N['Ref']);
+       } else {
+         $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Asteroid Mine'], 'Level'=> 2, 'SystemId'=>$T['SystemId'], 
+                'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
+         Put_Thing($NT);
+         $N = Get_System($T['SystemId']);
+         TurnLog($Who,"An Advanced Asteroid Mine has been made in " . $N['Ref']);
+         Report_Others($T['Whose'], $T['SystemId'],2,"An Asteroid Mine has been made in " . $N['Ref']);
+       }
        break;
 
      case 'Build Stargate':

@@ -287,6 +287,7 @@
        "<div class=Bespoke hidden id=BespokeMess>" .
        "Showing:<button class=BigSwitchSelected id=GenericM1 onclick=Remove_Bespoke()>All Turns</button><br>" .  
        "Switch to: <button class=BigSwitch id=BespokeM1 onclick=Remove_Bespoke()>10 Turns</button></div>" .
+       "<h2><a href=ProjDisp.php>Refresh</a></h2>" .
        "</div>";
 
   echo "Click on Place to Expand/Contract<br>";

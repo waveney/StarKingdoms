@@ -1399,6 +1399,23 @@ function Gen_Select($Clause) {
   return $Ts;
 }
 
+function Gen_Get_Names($Table) {
+  global $db;
+  $Ts = [];
+  $res = $db->query("SELECT id,Name FROM $Table");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans['Name'];
+  return $Ts;
+}
+
+function Gen_Get_Names_Flip($Table) {
+  global $db;
+  $Ts = [];
+  $res = $db->query("SELECT id,Name FROM $Table");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['Name']] = $ans['id'];
+  return $Ts;
+}
+
+
 function GMLog4Later($text) {
   $rec['What'] = $text;
   Gen_Put('GMLog4Later',$rec);
