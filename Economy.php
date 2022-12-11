@@ -100,7 +100,7 @@
   $TTypes = Get_ThingTypes();
   
     $Worlds = Get_Worlds($Fid);
-    $EconVal = 0;
+    $EconVal = $EmbVal = $OtherEmbVal = $OutPVal = 0;
     $OutPosts = $AstMines = $AstVal = $Embassies = $OtherEmbs = $MineFields = 0;
     foreach ($Worlds as $W) {
       $H = Get_ProjectHome($W['Home']);
@@ -132,6 +132,7 @@
       switch ($TTypes[$T['Type']]['Name']) {
       case "Outpost":
         $OutPosts ++;
+        $OutPVal += $T['Level'];
         break;
       
       case "Asteroid Mine":
@@ -141,6 +142,7 @@
       
       case "Embassy":
         $Embassies ++;
+        $EmbVal += $T['Level'];
         break;
       
       case "Minefield":
@@ -155,11 +157,12 @@
     $OtherTs = Get_Things_Cond(0,"Type=17 AND OtherFaction=$Fid");
     foreach($OtherTs as $OT) {
       $OtherEmbs++;
+      $OtherEmbVal += $OT['Level'];
     }
     
     if ($OutPosts) {
       echo "Plus $OutPosts Outposts worth 2 each<br>\n";
-      $EconVal += $OutPosts*2;
+      $EconVal += $OutPVal*2;
     }
     if ($AstMines) {
       $AstVal *= Has_Tech($Fid,'Deep Space Construction');
@@ -168,11 +171,11 @@
     }
     if ($Embassies) {
       echo "Plus $Embassies of your Embassies worth 1 each<br>\n";
-      $EconVal += $Embassies;    
+      $EconVal += $EmbVal;    
     }
     if ($OtherEmbs) {
       echo "Plus $OtherEmbs of other Factions Embassies worth 1 each<br>\n";
-      $EconVal += $OtherEmbs;    
+      $EconVal += $OtherEmbVal;    
     }
     
     if ($MineFields) {

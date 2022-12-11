@@ -290,6 +290,10 @@ function Max_Modules(&$T) {
 function Calc_Health(&$T,$KeepTechLvl=0,$Other=0) {
   if (empty($T['Level'])) return 0;
   $Plus = 0;
+  if ($T['Type'] == 20) { // Militia
+    return 40 + Has_Tech($T['Whose'],'Militia Training Techniques')*2;
+  }
+  
   if ($Other == 0) $Other = $T['Whose'];
   if (Has_Trait($Other,'Thick Skinned')) $Plus =1;
   $Health = 5*($T['Level']+$Plus);
@@ -445,7 +449,7 @@ function NebScanners(&$T) {
 }
 
 function Calc_Scanners(&$T) {
-  $MTNames = Get_Get_Names_Flip('ModuleTypes');
+  $MTNames = Gen_Get_Names_Flip('ModuleTypes');
   $mods = Get_ModulesType($T['id'],$MTNames['Sensors']);
   $nebs = Get_ModulesType($T['id'],$MTNames['Nebula Sensors']);
   $Cargo = Get_ModulesType($T['id'],$MTNames['Cargo Space']);
@@ -813,9 +817,11 @@ function Update_Militia(&$W,&$Dists) {
     }
   } else {
     $MNames = [];
+    $Hlth = 40+Has_Tech($W['FactionId'],'Militia Training Techniques')*2;
     foreach ($Mils as $Ml) $MNames[$Ml['Name']] = 1; // Didts & Dist2 give short cut to world and districts
-    $M = ['Type'=>20, 'CurHealth'=>40, 'OrigHealth'=>40, 'Whose'=>$W['FactionId'], 'SystemId'=>$Sys, 'WithinSysLoc'=>$loc, 'BuildState'=>3, 
-           'Dist1'=> $W['ThingType'], 'Dist2'=>$W['ThingType']];
+    $M = ['Type'=>20, 'CurHealth'=>$Hlth, 'OrigHealth'=>$Hlth, 
+           'Whose'=>$W['FactionId'], 'SystemId'=>$Sys, 'WithinSysLoc'=>$loc, 'BuildState'=>3, 
+           'Dist1'=> $W['ThingType'], 'Dist2'=>$W['ThingId'] ];
     $Mn = 1;
     for ($Mnum = count($Mils); $Mnum < $Dcount; $Mnum++) {
       while (isset($MNames["Militia $Mname $Mn"])) $Mn++;

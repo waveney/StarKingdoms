@@ -446,7 +446,7 @@ function Show_Thing(&$T,$Force=0) {
     echo "<tr><td>History:<td colspan=8><textarea rows=2>$RevHist</textarea>";
   }
   if ($tprops & THING_HAS_2_FACTIONS) echo "<tr>" . fm_radio('Other Faction',$FactNames ,$T,'OtherFaction','',1,'colspan=6','',$Fact_Colours,0); 
-  if  ($tprops & (THING_HAS_MODULES | THING_HAS_ARMYMODULES)) {
+  if  ($tprops & (THING_HAS_MODULES | THING_HAS_ARMYMODULES | THING_HAS_HEALTH)) {
     if ($GM) {
       echo "<tr>" . fm_number('Orig Health',$T,'OrigHealth');
       if ($T['CurHealth'] > 0) {

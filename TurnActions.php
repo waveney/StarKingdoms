@@ -2872,23 +2872,31 @@ function MilitiaArmyRecovery() {
 //  GMLog("Militia Recovery is currently Manual<p>");
 //  GMLog("Also Self Repair Armour<p>");
   
-  $Things = Get_Things_Cond(0,"CurHealth>0 AND CurHealth!=OrigHealth");
+  $Things = Get_Things_Cond(0,"(CurHealth>0 OR (CurHealth=0 AND Type=20)) AND CurHealth!=OrigHealth");
   $TTypes = Get_ThingTypes();
   $MTypes = Get_ModuleTypes();
   $MTNs = Mod_Types_From_Names($MTypes);
+  $LastHost = $LastId = $Rec = 0;
   
   foreach ($Things as $T) {
     if ($TTypes[$T['Type']]['Name'] == 'Militia') {
+
       // if not in conflit, recovery some
       $Conflict = 0; 
       $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
       if ($Conf) $Conflict = $Conf[0]['Conflict'];
       if ($Conflict) continue;  // No recovery allowed
       
-      $Dists = Gen_Get_Cond('Districts',"HostType=" . $T['Dist1'] . " AND HostId=" . $T['Dist2']);
-      $Dcount = 0;
-      foreach($Dists as $D) $Dcount += $D['Number'];
-      $Rec = floor($Dcount/2)+1;
+      if ($LastHost != $T['Dist1'] || $LastId != $T['Dist2']) {
+        $Dists = Gen_Get_Cond('Districts',"HostType=" . $T['Dist1'] . " AND HostId=" . $T['Dist2']);
+        $Dcount = 0;
+        foreach($Dists as $D) $Dcount += $D['Number'];
+        $Rec = floor($Dcount/2)+1;
+        $LastHost = $T['Dist1'];
+        $LastId = $T['Dist2'];
+      }
+      
+// echo "Recovery of $Rec<br>";
       $T['CurHealth'] = max($T['OrigHealth'], $T['CurHealth']+$Rec);
       Put_Thing($T);
       if ($T['Whose']) TurnLog($T['Whose'],$T['Name'] . " recovered $Rec health",$T);
