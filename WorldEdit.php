@@ -54,11 +54,13 @@
   $PlanetTypes = Get_PlanetTypes();
   $Fid = $W['FactionId'];
   $DTs = Get_DistrictTypes();
+  $DistTypes = 0;
 
   $H = Get_ProjectHome($W['Home']);
   if (isset($H['id'])) {
     $Dists = Get_DistrictsH($H['id']);
-  
+
+// var_dump($Dists);  
     switch ($W['ThingType']) {
       case 1: //Planet
         $WH = $P = Get_Planet($W['ThingId']);
@@ -91,7 +93,11 @@
          break;
        }
     }
-    $NumDists = count($Dists);
+    $NumDists = 0;
+    foreach ($Dists as $DT) {
+      $NumDists += $DT['Number'];
+      $DistTypes++;
+    }
   } else {
     $NumDists = 0;
   }
@@ -117,7 +123,7 @@
   $NumCom = 0;
   $NumPrime = $Mines = 0; $DeltaSum = 0;
   if ($NumDists) {
-    if ($NumDists) echo "<tr><td rowspan=" . ($NumDists+1) . ">Districts:";
+    if ($NumDists) echo "<tr><td rowspan=" . ($DistTypes+1) . ">Districts:";
     foreach ($Dists as $D) {
       echo "<tr><td>" . $DTs[$D['Type']]['Name'] . ": " . $D['Number'];
       if ($NeedDelta) {
@@ -136,6 +142,13 @@
 
   if (!empty($WH['MaxDistricts'])) echo "<td>Max Districts: " . $WH['MaxDistricts'];
   echo "<tr><td>Economy:<td>" . $H['Economy'];
+  if ($H['Devastation']) {
+    if ($H['Devastation'] <= $NumDists) {
+      echo "<tr><td>Devastation:<td>" . $H['Devastation'] . " If this ever goes higher than the number of districts ($NumDists), districts will be lost."; 
+    } else {
+      echo "<tr><td class=Err>Devastation:<td class=Err>" . $H['Devastation'] . "  This is higher than the number of districts ($NumDists), districts will be lost.";     
+    }
+  }
 //  echo "<tr><td>Home World:<td colspan=4>";
 
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
@@ -143,10 +156,13 @@
   echo "</table>";
   
   if (Access('GM')) {
-    echo "<h2><a href=WorldEdit.php?ACTION=Militia&id=$Wid>Update Militia</a></h2>";
+    echo "<h2><a href=WorldEdit.php?ACTION=Militia&id=$Wid>Update Militia</a>, ";
     if (!isset($H['id'])) {
-      echo "<h2>No Home! - <a href=WorldEdit.php?ACTION=DELETE&id=$Wid>Delete?</h2>\n";
+      echo "No Home! - <a href=WorldEdit.php?ACTION=DELETE&id=$Wid>No Home! Delete?</a>, \n";
+    } else {
+      echo "<a href=ProjHomes.php?ACTION=EDIT&id=" . $H['id'] .">Goto Project Home</a>";
     }
+    echo "</h2>\n";
   }
   
   dotail();
