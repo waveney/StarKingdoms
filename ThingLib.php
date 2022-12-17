@@ -748,8 +748,10 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
         $BD = Calc_Damage($T,$Resc);
            
         $txt .= " (";
-        if ($TTprops & THING_CAN_MOVE) $txt .= "Speed: " . sprintf("%0.3g, ",$T['Speed']) ;
-        if ($TTprops & THING_HAS_HEALTH) $txt .= "Health: " . $T['CurHealth'] . "/" . $T['OrigHealth'] . ", "; 
+        if ($TTprops & THING_HAS_HEALTH) {
+          if ($TTprops & THING_CAN_MOVE) $txt .= "Speed: " . sprintf("%0.3g, ",$T['Speed']) ;
+          $txt .= "Health: " . $T['CurHealth'] . "/" . $T['OrigHealth'] . ", "; 
+        }
         if ($BD) $txt .= "Dam: " . $BD . ($Resc? "<b>*</b>":'') . ", ";
         if ($T['NebSensors']) $txt .= "N, ";
         $txt .= ")";

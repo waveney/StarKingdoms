@@ -696,7 +696,7 @@
 //          if (!empty($Proj[$Turn][$Hi][$Di]['Bonus'])) echo "<div id=ProjB$Turn:$Hi:$Di class='PHBonus hidden>" . $Proj[$Turn][$Hi][$Di]['Bonus'] . "</div>";
           echo "\n<td $BG id=ProjP$Turn:$Hi:$Di class='PHProg Group$Di Home$Hi' $Hide>" . $Proj[$Turn][$Hi][$Di]['Progress'];
           echo "\n<td $BG id=ProjT$Turn:$Hi:$Di class='PHStatus Group$Di Home$Hi' $Hide>" . $Proj[$Turn][$Hi][$Di]['Status'] . "";
-          
+
           $TotCost += $Proj[$Turn][$Hi][$Di]['Cost'] + ( $Proj[$Turn][$Hi][$Di]['FreeRushes']?0:($Proj[$Turn][$Hi][$Di]['Rush']*Rush_Cost($Fid)));
           
         } else {

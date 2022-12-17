@@ -2225,6 +2225,7 @@ function ProjectsComplete() {
         }
 
       $H['Devastation'] = min(0,$H['Devastation']-2);
+      Put_ProjectHome($H);
       TurnLog($P['FactionId'],"The has been Rebuilding and Repair on " . $PH['Name']);      
       break;
 

@@ -87,6 +87,7 @@
   }
   echo "<h1>Checking</h1>";
 
+  echo "<span class=NotHostile>Factions</span> thus marked have only Never Hostile Things<p>";
 //  echo "Checked Things<p>";
   
   foreach ($Systems as $N) {
