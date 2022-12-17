@@ -1129,10 +1129,12 @@ function Show_Thing(&$T,$Force=0) {
           AddCurrencies();
           $Cur = 0;
           foreach ($Currencies as $Ci => $C) if ( $C == $LinkRes) $Cur = $Ci;
-          if ($Faction["Currency" . (6 - $Cur)] >= $LL['MakeCost']) {
-            echo "Will use " . $LL['MakeCost'] . " $LinkRes<br>";
-          } else {
-            echo "<span class=Err>Warning needs more $LinkRes than you have </span>";
+          if ( $T['Progress'] == 0) {
+            if ($Faction["Currency" . (6 - $Cur)] >= $LL['MakeCost']) {
+              echo "Will use " . $LL['MakeCost'] . " $LinkRes<br>";
+            } else {
+              echo "<span class=Err>Warning needs more $LinkRes than you have </span>";
+            }
           }
           $Acts = $LL['MakeCost']*2;
         }
