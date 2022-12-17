@@ -252,7 +252,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
         }
       } else {
         if (($Props & THING_HAS_HEALTH) && ($Props & THING_CAN_BE_SPLATED) && ($T['CurHealth']>0)) {
-          echo "<a href=PThingList.php?ACTION=SPLAT&id=$Tid>SPLAT</a>";
+          echo "<a href=PThingList.php?ACTION=SPLAT&T=$Tid&F=$Fid>SPLAT</a>";
         }
         echo "<td><td>";
       }
