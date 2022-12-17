@@ -170,3 +170,7 @@ input[type='radio'] {
   Margin:12;
   height:12;
 }
+
+.NotHostile {
+  color:green;
+}

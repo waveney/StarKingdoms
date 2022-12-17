@@ -53,10 +53,16 @@
     if ($T['BuildState'] <2 || $T['BuildState'] >3 || ($T['LinkId'] < 0 && $T['LinkId'] > -5)) continue; // Don't exist
     $Sid = $T['SystemId'];
     $Eyes = $TTypes[$T['Type']]['Eyes'];
+    $Hostile = ($TTypes[$T['Type']]['Properties'] & THING_IS_HOSTILE);
     if (isset($Sys[$Sid][$T['Whose']])) {
       $Sys[$Sid][$T['Whose']] |= $Eyes;
     } else {
       $Sys[$Sid][$T['Whose']] = $Eyes;
+    }
+    if (isset($Hostiles[$Sid][$T['Whose']])) {
+      $Hostiles[$Sid][$T['Whose']] |= $Hostile;
+    } else {
+      $Hostiles[$Sid][$T['Whose']] = $Hostile;
     }
   }
   
@@ -93,7 +99,19 @@
     }
     if ($NumF > 1) {
       echo "System: <a href=Meetings.php?ACTION=Check&S=$Sid$TurnP>" . $N['Ref'] . "</a> has ";
-      foreach($Fs as $F) echo (empty($F['Name'])?'Other': $F['Name']) . " , ";
+      foreach($Fs as $F) {
+        if (empty($F['Name'])) {
+          echo 'Other , ';
+        } else {
+          if (isset($Hostiles[$Sid][$Fid]) && $Hostiles[$Sid][$Fid]) {
+//if (isset($Hostiles[$Sid][$Fid])) echo $Hostiles[$Sid][$Fid] . ": ";
+            echo $F['Name'] . " , ";
+          } else {
+//echo "NOT HOSTILE ";
+            echo "<span class=NotHostile>" . $F['Name'] . "</span> , ";          
+          }
+        }
+      }
       echo "<br>";
     }   
   }

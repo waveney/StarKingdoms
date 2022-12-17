@@ -44,6 +44,7 @@ define('THING_MOVES_AFTER',262144);
 define('THING_HAS_HEALTH',524288);
 define('THING_HAS_CONTROL',1048576);
 define('THING_NEEDS_SUPPORT',2097152);
+define('THING_IS_HOSTILE',4194304);
 
 function ModFormulaes() {
   global $ModFormulaes;

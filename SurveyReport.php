@@ -139,10 +139,10 @@
   echo " is a " . $N['Type'] . ".<br>";
   
   if ($SurveyLevel >= 3) echo "It has a radius of " . 
-        sprintf("$Acc Km = ",$N['Radius'])  . RealWorld($N,'Radius') . ", a mass of " .
-        sprintf("$Acc Kg = ",$N['Mass'])  . RealWorld($N,'Mass') . ", a temperature of " .
-        sprintf("$Acc K = ",$N['Temperature'])  . " and a luminosity of " .
-        sprintf("$Acc Km = ",$N['Luminosity'])  . RealWorld($N,'Luminosity') . ".<p>";
+        sprintf("$Acc Km = ",$N['Radius'])  . RealWorld($N,'Radius') . 
+        ", a mass of " . sprintf("$Acc Kg = ",$N['Mass'])  . RealWorld($N,'Mass') . 
+        ", a temperature of " . sprintf("$Acc K = ",$N['Temperature'])  .
+        " and a luminosity of " . sprintf("$Acc W = ",$N['Luminosity'])  . RealWorld($N,'Luminosity') . ".<p>";
         
   if ($N['Type2']) {
 
@@ -151,12 +151,12 @@
     if ($N['StarName2']) echo " ( " . $N['StarName2'] . " ) " ;      
     echo " is a " . $N['Type2']  . ".<br>";
     
-    if ($SurveyLevel >= 3) echo "It has a radius of " . 
-        sprintf("$Acc Km = ",$N['Radius2'])  . RealWorld($N,'Radius2') . ", a mass of " .
-        sprintf("$Acc Kg = ",$N['Mass2'])  . RealWorld($N,'Mass2') . ",<br>A temperature of " .
-        sprintf("$Acc K = ",$N['Temperature2'])  . " and a luminosity of " .
-        sprintf("$Acc Km = ",$N['Luminosity2'])  . RealWorld($N,'Luminosity2') . ",<br>Which orbits at " .
-        sprintf("$Acc Km = ",$N['Distance'])  . RealWorld($N,'Distance') . ", with a periodicity of " .
+    if ($SurveyLevel >= 3) echo "It has a radius of " . sprintf("$Acc Km = ",$N['Radius2'])  . RealWorld($N,'Radius2') . 
+        ", a mass of " . sprintf("$Acc Kg = ",$N['Mass2'])  . RealWorld($N,'Mass2') . 
+        ",<br>A temperature of " . sprintf("$Acc K = ",$N['Temperature2'])  . 
+        " and a luminosity of " . sprintf("$Acc W = ",$N['Luminosity2'])  . RealWorld($N,'Luminosity2') . 
+        ",<br>Which orbits at " . sprintf("$Acc Km = ",$N['Distance'])  . RealWorld($N,'Distance') . 
+        ", with a periodicity of " .
         ($N['Period']>1? sprintf("$Acc Hr = ",$N['Period']) : sprintf("$Acc Seconds = ",$N['Period']*3600) )  . RealWorld($N,'Period') . ".<p>";
   }      
   echo "<br>";
