@@ -126,6 +126,16 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
       $T['LinkPay'] = 1;
       Put_Thing($T);      
       break;
+      
+    case 'SPLAT': 
+      $Tid = $_REQUEST['T'];
+      $T = Get_Thing($Tid);
+      $T['CurHealth'] = 0;
+      Put_Thing($T);      
+      break;
+    
+    
+    
     }
   }
   
@@ -241,7 +251,11 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
           echo "<td><td>";
         }
       } else {
-        echo "<td><td>";
+        if (($Props & THING_HAS_HEALTH) && ($Props & THING_CAN_BE_SPLATED) && ($T['CurHealth']>0)) {
+          echo "<a href=PThingList.php?ACTION=SPLAT&id=$Tid>SPLAT</a><td><td>";
+        } else {
+          echo "<td><td>";
+        }
       }
     }
     $Modules = Get_Modules($Tid);

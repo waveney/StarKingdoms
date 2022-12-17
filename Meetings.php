@@ -72,7 +72,13 @@
     case 'Check':
       $Sid = $_REQUEST['S'];
       $N = Get_System($Sid);
-      echo SeeInSystem($Sid,31,1,0,-1,1);
+      $txt = SeeInSystem($Sid,31,1,0,-1,1);
+      
+      echo $txt;
+      
+      if (preg_match('/<div class=FullD hidden>/',$txt,$mtch)) {
+        echo "<button class='floatright FullD' onclick=\"($('.FullD').toggle())\">Show Remains of Things</button>";
+      }
       
  //     foreach($Facts as $Fid=>$F) {      
  //       if ($

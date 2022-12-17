@@ -45,6 +45,7 @@ define('THING_HAS_HEALTH',524288);
 define('THING_HAS_CONTROL',1048576);
 define('THING_NEEDS_SUPPORT',2097152);
 define('THING_IS_HOSTILE',4194304);
+define('THING_CAN_BE_SPLATED',83886084);
 
 function ModFormulaes() {
   global $ModFormulaes;
@@ -692,7 +693,17 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
       }
       if ($T['BuildState'] < 2 || $T['BuildState'] > 4) return ''; // Building or abandoned
       if ($LastWhose && $LastWhose!= $T['Whose']) $txt .= "<P>";
-      if ($T['BuildState'] == 4) $txt .= "The remains of: ";
+      if ($T['BuildState'] == 4) {
+        if ($GM) {
+          $txt .= "<div class=FullD hidden>";
+        } else {
+          $txt .= "<div>";
+        }
+        $txt .= "The remains of: ";
+      } else {
+        $txt .= "<div>";
+      }
+        
       if ($T['Whose'] || $GM) {
         $txt .= ((($Fid < 0) || ($Fid == $T['Whose']) || $GM )?( "<a href=ThingEdit.php?id=" . $T['id'] . ">" . 
                 (empty($T['Name'])?"Unnamed":$T['Name']) . "</a>") : $T['Name'] ) . " a";
@@ -744,6 +755,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
         $txt .= ")";
       }
       $txt .= "<br clear=all>\n";
+      if ($GM) $txt .= "</div>";
       $LastWhose = $T['Whose'];
 // if ($T['id'] == 238) echo "Txt is:$txt<p>";
    return $txt;
