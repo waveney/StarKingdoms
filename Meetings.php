@@ -103,6 +103,7 @@
         if (empty($F['Name'])) {
           echo 'Other , ';
         } else {
+          $Fid = $F['id'];
           if (isset($Hostiles[$Sid][$Fid]) && $Hostiles[$Sid][$Fid]) {
 //if (isset($Hostiles[$Sid][$Fid])) echo $Hostiles[$Sid][$Fid] . ": ";
             echo $F['Name'] . " , ";
