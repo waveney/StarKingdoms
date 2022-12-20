@@ -70,7 +70,7 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$Thi
         $Faction[$TechCats[$Br['Field']][1]] = max(0, $Faction[$TechCats[$Br['Field']][1]] - $Br['Cost']);
         Put_Faction($Faction);
       }
-      $Br['DoneTurn'] = $GAME['Turn'];
+      $Br['DoneTurn'] = $GAME['Turn']-1;
       Gen_Put('Breakthroughs',$Br);
       break;
     }
@@ -111,8 +111,9 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$Thi
         echo "<td>Already Done";
       } else {
         echo "<td><a href=SciencePoints.php?ACTION=Cancel&Bid=" . $Br['id'] . ">Cancel</a>, <a href=SciencePoints.php?ACTION=Now&Bid=" . $Br['id'] . ">Do Now</a>\n";
+        $Used[$Br['Field']] += $Br['Cost'];
       }
-      $Used[$Br['Field']] += $Br['Cost'];
+
     }
     echo "</table>\n";
   }
