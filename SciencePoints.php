@@ -59,7 +59,7 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$Thi
           Put_Faction_Tech($CTech);
           echo 'Using ' . $Br['Cost'] . $TechCats[$Br['Field']][0] . " science points " . $Tech['Name'] . " has been raised to level " . $Br['Level'];
           $Faction[$TechCats[$Br['Field']][1]] = max(0, $Faction[$TechCats[$Br['Field']][1]] - $Br['Cost']);
-          Put_Faction($Fact);
+          Put_Faction($Faction);
         } else {
           echo "You already know it.<p>";
         }
