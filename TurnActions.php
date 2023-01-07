@@ -14,27 +14,41 @@
 
   global $Stages,$Coded;
   
-  $Stages = ['Check Turns Ready', 'Spare', 'Spare','Start Turn Process', 'Save All Locations', 'Remove Unsupported Minefields', 'Cash Transfers', 'Spare',
-             'Spare', 'Pay For Stargates', 'Spare', 'Scientific Breakthroughs', 'Start Projects', 'Spare', 'Spare', 'Instuctions', 
-             'Instuctions Stage 2', 'Clear Paid For', 'Agents Start Missions', 'Pay For Rushes', 'Spare', 'Economy', 'Spare', 'Direct Moves', 
-             'Load Troops', 'Spare', 'Ship Move Check', 'Ship Movements', 'Agents Move Check', 'Agents Movements', 'Spare', 'Meetups',
+  $Stages = ['Check Turns Ready', 'Spare', 'Spare','Start Turn Process', 
+             'Save All Locations', 'Remove Unsupported Minefields', 'Cash Transfers', 'Spare',
+             'Spare', 'Pay For Stargates', 'Spare', 'Scientific Breakthroughs', 
+             'Start Projects', 'Spare', 'Spare', 'Instuctions', 
+             'Instuctions Stage 2', 'Clear Paid For', 'Agents Start Missions', 'Pay For Rushes', 
+             'Spare', 'Economy', 'Spare', 'Direct Moves', 
+             'Load Troops', 'Spare', 'Ship Move Check', 'Ship Movements', 
+             'Agents Move Check', 'Agents Movements', 'Spare', 'Meetups',
              
-             'Spare', 'Space Combat', 'Unload Troops', 'Spare', 'Orbital Bombardment', 'Spare', 'Ground Combat', 'Devastation Selection', 
-             'Devastation', 'Ownership Change', 'Project Progress', 'Instructions Progress', 'Spare', 'Espionage Missions Complete', 'Counter Espionage', 'Spare', 
-             'Finish Shakedowns', 'Spare', 'Projects Complete', 'Instructions Complete', 'Spare', 'Check Survey Reports', 'Give Survey Reports', 'Check Spot Anomalies', 
+             'Spare', 'Space Combat', 'Unload Troops', 'Spare', 
+             'Orbital Bombardment', 'Spare', 'Ground Combat', 'Devastation Selection', 
+             'Devastation', 'Ownership Change', 'Project Progress', 'Instructions Progress', 
+             'Spare', 'Espionage Missions Complete', 'Counter Espionage', 'Spare', 
+             'Finish Shakedowns', 'Spare', 'Projects Complete', 'Instructions Complete', 
+             'Spare', 'Check Survey Reports', 'Give Survey Reports', 'Check Spot Anomalies', 
              'Spot Anomalies', 'Militia Army Recovery', 'Generate Turns', 'Tidy Up Movements', 
              'Save What Can Be Seen', 'Recalc Project Homes', 'Finish Turn Process', 'Enable Factions Access'];
 
-  $Coded =  ['Coded','No','No','Coded','Coded','No','Coded', 'No',
-             'No','Coded','No','Coded','Partial,M','No','No','Coded,M',
-             'Coded,M','Coded', 'No','Coded','No','Coded','No','Coded',
-             'Coded','No','Coded,M','Coded','Coded,M','Coded','No', 'Coded,M',
+  $Coded =  ['Coded','No','No','Coded',
+             'Coded','Coded','Coded', 'No',
+             'No','Coded','No','Coded',
+             'Partial,M','No','No','Coded,M',
+             'Coded,M','Coded', 'No','Coded',
+             'No','Coded','No','Coded',
+             'Coded','No','Coded,M','Coded',
+             'Coded,M','Coded','No', 'Coded,M',
              
-             'No','No','Coded','No','No','No','No','Coded,M', 
-             'Coded', 'No', 'Coded','Coded','No','No','No','No',
-             'Coded','No','Coded,M','Coded,M', 'No','Partial,M','Coded', 'Coded,M',
-             'Coded','Coded','No',
-             'Coded','Coded','Coded','Coded','Coded'];
+             'No','No','Coded','No',
+             'No','No','No','Coded,M', 
+             'Coded', 'No', 'Coded','Coded',
+             'No','No','No','No',
+             'Coded','No','Coded,M','Coded,M', 
+             'No','Partial,M','Coded', 'Coded,M',
+             'Coded','Coded','No','Coded',
+             'Coded','Coded','Coded','Coded'];
 
 function CheckTurnsReady() {
   global $PlayerStates,$PlayerState, $PlayerStateColours;
@@ -765,6 +779,54 @@ function Instuctions() { // And other Instructions
         TurnLog($T['Whose'],"Could not afford to start an Orbital Repair Yard in " .$N['Ref'],$T);
       }
       $T['Instruction'] = -$T['Instruction'];
+      
+      // Is there a world there controlled by the faction?
+      $phs = Gen_Get_Cond('ProjectHomes',"SystemId=" . $N['id']);
+      foreach ($phs as $ph) {
+        if ($ph['Whose'] == $T['Whose']) break 2; // Yes fine
+      }
+      // or a planetary mine
+      $PMines = Get_Things_Cond(0,"Type=" . $TTNames['Planet Mine'] . " AND SystemId=" . $N['id'] . " AND BuildState=3");
+      if (isset($PMines[0]) && $PMines[0]['Whose'] == $T['Whose']) break; // Yes fine
+      // By others?
+      if (empty($phs) && empty($PMines)) {
+        TurnLog($T['Whose'],"Attempting to build an orbital repair yard in " . $N['Ref'] . " but there is nothing there to build it round. ",$T); 
+        $T['Progress'] = -1; // Stalled
+        break;        
+      }
+      if ($NeedColStage2 == 0) {
+        GMLog("<form method=post action=TurnActions.php?ACTION=Process&S=16>");
+        $NeedColStage2 = 1;
+      }
+      
+      $List = [];
+      foreach ($phs as $ph) {
+        switch ($ph['ThingType']) {
+          case 1: // Planet
+            $Plan = Get_Planet($ph['ThingId']);
+            $Control = ($Plan['Control'] != 0? $Plan['Control'] : $N['Control']);
+            if ($Control) {
+              $List[]= $Plan['Name']  . " a planet controlled by " . $Facts[$Control]['Name'];
+            } else {
+              $List[]= $Plan['Name']  . " an uncontrolled planet";
+            }
+            break;
+          case 2: // Moon
+            $Moon = Get_Moon($ph['ThingId']);
+            $Plan = Get_Planet($Moon['PlanetId']);
+            $Cont = ($Moon['Control'] != 0 ? $Moon['Control'] : ($Plan['Control'] != 0 ? $Plan['Control'] : $N['Control']));
+            if ($Control) {
+              $List[]= $Moon['Name']  . " a moon of " . $Plan['Name'] . " controlled by " . $Facts[$Control]['Name'];
+            } else {
+              $List[]= $Moon['Name']  . " an uncontrolled moon";
+            }
+            break;
+          case 3: // Thing???
+            break;  // Not permitted I think
+        }
+      }
+      GMLog($Facts[$T['Whose']]['Name'] . " making an orbital repair yard in " . $N['Ref'] . " there is " . implode($List) . 
+               " - Allow? " . fm_YesNo("SpaceStn$Tid",1, "Reason to reject") . "\n<br>");
       break;
       
     case 'Make Advanced Minefield':
@@ -851,6 +913,7 @@ function Instuctions() { // And other Instructions
       $T['Instruction'] = -$T['Instruction'];
       break;
     
+    case 'Make Advanced Deep Space Sensor':
     case 'Make Deep Space Sensor':
       if (!Spend_Credit($T['Whose'],$T['InstCost'],"Make Deep Space Sensor in " . $N['Ref']) ) {
         $T['Progress'] = -1; // Stalled
@@ -1126,6 +1189,16 @@ function InstuctionsStage2() { // And other Instructions
       }
       break;
          
+    case 'Make Orbital Repair Yard':
+      $N = Get_System($T['SystemId']);
+      if (isset($_REQUEST["SpaceStn$Tid"]) &&  $_REQUEST["SpaceStn$Tid"] != "on") {
+        TurnLog($T['Whose'],"The Orbital Repair Yard was not created in " . $N['Ref'] . " because " . $_REQUEST["ReasonSpaceStn$Tid"] . "\n<br>",$T);
+        $T['Instruction'] = 0;
+        Put_Thing($T);
+      }
+      break;
+         
+
     default:
     break;
     }
@@ -1900,6 +1973,7 @@ function InstructionsProgress() {
       case 'Make Orbital Repair Yard':
       case 'Build Space Station':
       case 'Expand Space Station' :
+      case 'Make Adbanced Deep Space Sensor':
       case 'Make Deep Space Sensor':
       case 'Make Advanced Asteroid Mine':
       case 'Dismantle Stargate':
@@ -2243,6 +2317,7 @@ function ProjectsComplete() {
     case 'Build Space Station':
     case 'Extend Space Station':
     case 'Deep Space Sensors':
+    case 'Advanced Deep Space Sensors':
     case 'Build Advanced Asteroid Mining Facility':
     case 'Unknown' :
 
@@ -2462,6 +2537,16 @@ function InstructionsComplete() {
        $N = Get_System($T['SystemId']);
        $Who = $T['Whose'];
        TurnLog($Who,"A Deep Space Sensor has been made in " . $N['Ref']);
+       Report_Others($T['Whose'], $T['SystemId'],2,"A Deep Space Sensor has been made in " . $N['Ref']);
+       break;
+
+     case 'Make Advanced Deep Space Sensor':
+       $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Advanced Deep Space Sensor'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 
+              'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName'], 'Level'=>2, 'NebSensors'=>2];
+       Put_Thing($NT);
+       $N = Get_System($T['SystemId']);
+       $Who = $T['Whose'];
+       TurnLog($Who,"An Advanced Deep Space Sensor has been made in " . $N['Ref']);
        Report_Others($T['Whose'], $T['SystemId'],2,"A Deep Space Sensor has been made in " . $N['Ref']);
        break;
 

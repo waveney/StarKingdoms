@@ -756,7 +756,13 @@ function Show_Thing(&$T,$Force=0) {
     case 'Make Orbital Repair Yard':
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Orbital Repair Yards')) continue 2;
       if (Get_Things_Cond(0,"Type=" . $TTNames['Orbital Repair Yards'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
-      break;
+      // Is there a world there
+      $phs = Gen_Get_Cond('ProjectHomes',"SystemId=" . $N['id']);
+      if (isset($phs[0])) break;
+      // or a planetary mine
+      $PMines = Get_Things_Cond(0,"Type=" . $TTNames['Planet Mine'] . " AND SystemId=" . $N['id'] . " AND BuildState=3");
+      if (isset($PMines[0])) break;      
+      continue 2; // Not valid here
 
     case 'Build Space Station':
       if ($Moving || !$HasDeep) continue 2;
@@ -777,6 +783,7 @@ function Show_Thing(&$T,$Force=0) {
 
     case 'Make Deep Space Sensor':
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Deep Space Sensors')) continue 2;
+      if (Get_Things_Cond(0,"Type=" . $TTNames['Deep Space Sensor'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
       break;
 
     case 'Build Stargate':
@@ -860,8 +867,14 @@ function Show_Thing(&$T,$Force=0) {
       
     case 'Clear Minefield':
       if ($Moving || !$HasDeep || !$HasMinesweep ) continue 2;
-      if (Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 AND WithinSysLoc=" . $T['WithinSysLoc'])) continue 2; 
+      if (! Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 AND WithinSysLoc=" . $T['WithinSysLoc'])) continue 2; 
       break;
+
+    case 'Make Advanced Deep Space Sensor':
+      if ($Moving || !$HasDeep || !Has_Tech($Fid,'Advanced Deep Space Sensors')) continue 2;
+      if (Get_Things_Cond(0,"Type=" . $TTNames['Deep Space Sensor'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one //???
+      break;
+
 
     default: 
       continue 2;
@@ -1264,6 +1277,12 @@ function Show_Thing(&$T,$Force=0) {
       $Acts = $PTNs['Clear Minefield']['CompTarget'];
       $ProgShow = 2;
       break;
+
+    case 'Make Advanced Deep Space Sensor':
+      echo "<br>" . fm_text0("Name of Advanced Deep Space Sensor",$T,'MakeName');
+      $Acts = $PTNs['Advanced Deep Space Sensors']['CompTarget'];
+      break;
+
 
     default: 
       break;
