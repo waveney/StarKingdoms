@@ -77,7 +77,7 @@
             $HomeW = $FACTION['HomeWorld'];
             $World = Get_World($HomeW);
             if ($World['Home'] == $P['Home']) {
-              $pc = Proj_Costs($NewLvl-1);
+              $pc = Proj_Costs(max($NewLvl-1,1));
             }
           }
         }
