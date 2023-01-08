@@ -321,6 +321,8 @@
         if ($T['Cat'] == 0 || (isset($FactTechs[$T['id']]) && $FactTechs[$T['id']]['Level'])) continue;
         if (!isset($FactTechs[$T['PreReqTech']]) ) continue;
         if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
+        if ($T['PreReqTech2'] && ((! isset($FactTechs[$T['PreReqTech2']])) || $FactTechs[$T['PreReqTech2']]== 0)) continue;
+        if ($T['PreReqTech3'] && ((! isset($FactTechs[$T['PreReqTech3']])) || $FactTechs[$T['PreReqTech3']]== 0)) continue;
         $Lvl = $T['PreReqLevel'];
         $pc = Proj_Costs($Lvl);
         echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Supplemental Technology'] .

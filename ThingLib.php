@@ -101,6 +101,8 @@ function Mod_ValueSimple($tl,$modtypeid,&$Rescat) {
 
 function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0) {
   global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil;
+  static $AllTechs;
+  if (empty($AllTechs)) $AllTechs = Get_Techs(0);
   $Tid = $T['id'];
   $Parsedown = new Parsedown();
 
@@ -138,6 +140,11 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0) {
     echo " <span class=blue>Non Standard supplimentary Tech</span><br>";
   case 1:
     echo " Requires " . $CTNs[$T['PreReqTech']] . " at level " . $T['PreReqLevel'] . ".  Field: <b>" . $Fields[$T['Field']] . "</b><br>";
+    if ($T['PreReqTech2']) {
+      echo "Also requires: " . $AllTechs[$T['PreReqTech2']]['Name'];
+      if ($T['PreReqTech3']) echo " and  " . $AllTechs[$T['PreReqTech3']]['Name'];
+      echo "<br>";
+    }
     if ($T['MinThingLevel']) echo "Size Limitation - Requires at least level " . $T['MinThingLevel'] . " ship<br>";
     break;
   }
