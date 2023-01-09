@@ -265,7 +265,6 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
       if ($M['Level'] < $Mt['Target']) {
         $Up += $M['Number'];
 //var_dump($M,$Mt);
-        break;
       }
     }
     if (($T['CurHealth'] < $T['OrigHealth']) && ($Props & THING_HAS_HEALTH)) $Up++;
