@@ -62,9 +62,10 @@
 //      echo "Checking "  . $T['Name'] . " Against " . $CT['Name']
       if ($T['Cat']>0 && ($T['PreReqTech'] == $CT['id'])) {
 //        echo "Found " . $T['Name'] . "<br>";
-        Show_Tech($T,$CTNs,$FACTION,$TechFacts,0,$Setup);
+        Show_Tech($T,$CTNs,$FACTION,$TechFacts,0,$Setup,1); //,' hidden');
       }
     }
+//    echo "</div></div>";
   }
   
   dotail();

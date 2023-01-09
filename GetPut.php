@@ -1146,7 +1146,7 @@ function Get_People() {
   global $db,$GAMEID;
   $Ts = [];
   $res = $db->query("SELECT * FROM People ");
-  if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
   return $Ts;
 }
 

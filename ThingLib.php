@@ -99,7 +99,7 @@ function Mod_ValueSimple($tl,$modtypeid,&$Rescat) {
 }
 
 
-function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0) {
+function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0) {
   global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil;
   static $AllTechs;
   if (empty($AllTechs)) $AllTechs = Get_Techs(0);
@@ -156,8 +156,10 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0) {
   if (!$Descs) echo "<div id=TDesc$Tid hidden>";
   if ($T['Description']) echo  $Parsedown->text($T['Description']);
 
-  if (!$Descs) echo "</div>";  
-  echo "</div><p>";
+//  if ($lvl == 0) {
+    if (!$Descs) echo "</div>";  
+    echo "</div><p>";
+//  }
 
 }
 

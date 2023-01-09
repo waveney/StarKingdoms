@@ -14,7 +14,7 @@
 
   global $Stages,$Coded;
   
-  $Stages = ['Check Turns Ready', 'Spare', 'Spare','Start Turn Process', 
+  $Stages = ['Check Turns Ready', 'Spare', 'Start Turn Process', 
              'Save All Locations', 'Remove Unsupported Minefields', 'Cash Transfers', 'Spare',
              'Spare', 'Pay For Stargates', 'Spare', 'Scientific Breakthroughs', 
              'Start Projects', 'Spare', 'Spare', 'Instuctions', 
@@ -30,9 +30,10 @@
              'Finish Shakedowns', 'Spare', 'Projects Complete', 'Instructions Complete', 
              'Spare', 'Check Survey Reports', 'Give Survey Reports', 'Check Spot Anomalies', 
              'Spot Anomalies', 'Militia Army Recovery', 'Generate Turns', 'Tidy Up Movements', 
-             'Save What Can Be Seen', 'Recalc Project Homes', 'Finish Turn Process', 'Enable Factions Access'];
+             'Save What Can Be Seen', 'Recalc Project Homes', 'Finish Turn Process', 
+             'Check Follow Ups', 'Enable Factions Access'];
 
-  $Coded =  ['Coded','No','No','Coded',
+  $Coded =  ['Coded','No','Coded',
              'Coded','Coded','Coded', 'No',
              'No','Coded','No','Coded',
              'Partial,M','No','No','Coded,M',
@@ -48,7 +49,8 @@
              'Coded','No','Coded,M','Coded,M', 
              'No','Partial,M','Coded', 'Coded,M',
              'Coded','Coded','No','Coded',
-             'Coded','Coded','Coded','Coded'];
+             'Coded','Coded','Coded',
+             'No','Coded'];
 
 function CheckTurnsReady() {
   global $PlayerStates,$PlayerState, $PlayerStateColours;
@@ -1963,6 +1965,7 @@ function InstructionsProgress() {
         $Mods = Get_ModulesType($Tid, 10);
         if ($Prog*$Mods[0]['Number'] == 0) {
           GMLog("Colonisation by <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "Has zero progress - Tell Richard");
+          FollowUp($T['Whose'],"Colonisation by <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "Has zero progress - Tell Richard");
         }
         $T['Progress'] = min($T['ActionsNeeded'],($T['Progress']+$Prog*$Mods[0]['Number']));
         Put_Thing($T);
@@ -1989,7 +1992,7 @@ function InstructionsProgress() {
 //var_dump($T['Progress'], $Prog, $Mods[0], $T['ActionsNeeded']);
 //echo "<br>" . $Prog*$Mods[0]['Number'] . "<p>";
         $ProgGain = $Prog*$Mods[0]['Number'];
-        GMLog("$ProgGain progress on " . $ThingInstrs[$T['Instruction']] . " for " . $Facts[$T['Whose']]['Name'] . ":" . $T['Name']);
+        GMLog("$ProgGain progress on " . $ThingInstrs[abs($T['Instruction'])] . " for " . $Facts[$T['Whose']]['Name'] . ":" . $T['Name']);
 
 
         $T['Progress'] = min($T['ActionsNeeded'],$T['Progress']+$ProgGain);
@@ -2092,6 +2095,7 @@ function ProjectsComplete() {
       $H = Get_ProjectHome($P['Home']);
       if (!isset($H['ThingType'])) {
         GMLog("Project " . $P['id'] . " Does not have a valid home<br>");
+        FollowUp($Fid, "Construction Project " . $P['id'] . " Does not have a valid home");
         break;
       }
       switch ($H['ThingType']) {
@@ -2262,6 +2266,7 @@ function ProjectsComplete() {
       $Fact = Get_Faction($Fid);
       TurnLog($Fid, "You have conpleted " . $P['Name'] . " look at your turn response from the GM to see what you learnt");
       GMLog($Fact['Name'] . " has completed a level " . $P['Level'] . " analyse project called " . $P['Name'] . ".  Please give the results in the player", 1);
+      FollowUp($Fid,$Fact['Name'] . " has completed a level " . $P['Level'] . " analyse project called " . $P['Name'] . ".  Please give the results in the player");
       break;
 
     case 'Construct Warp Gate':
@@ -2306,7 +2311,9 @@ function ProjectsComplete() {
     case 'Decipher Alien Language':
     case 'Grow Modules' :    
       GMLog("A project to " . $PT['Name'] . " has completed, this is not automated yet.  See <a href=ProjEdit.php?id=" . $P['id'] . ">Project</a>",1);
+      FollowUp($Fid,"A project to " . $PT['Name'] . " has completed, this is not automated yet.");
       break;
+      
     // These all now handled as instructions - not projects at the moment
     case 'Decommision':
     case 'Disband':
@@ -2323,6 +2330,7 @@ function ProjectsComplete() {
 
     default:
       GMLog("A project to " . $PT['Name'] . " has completed, this is not automated yet.  See <a href=ProjEdit.php?id=" . $P['id'] . ">Project</a>",1);
+      FollowUp($Fid,"A project to " . $PT['Name'] . " has completed, this is not automated yet.  See <a href=ProjEdit.php?id=" . $P['id'] . ">Project</a>");
     }
   }
   
@@ -2393,6 +2401,8 @@ function InstructionsComplete() {
              Gen_Put('FactionAnomaly',$FA);          
              TurnLog($T['Whose'], $T['Name'] . " Anomaly study on " . $A['Name'] . " has been completed - See sperate response from the GMs for what you get");
              GMLog($Facts[$Fid]['Name'] . " has completed anomaly study : <a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . 
+                   "</a> has been completed - give them the reward.");
+             FollowUp($Fid,[$Fid]['Name'] . " has completed anomaly study : <a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . 
                    "</a> has been completed - give them the reward.");
              $T['ProjectId'] = 0;
            }
@@ -2586,8 +2596,9 @@ function InstructionsComplete() {
               'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']]; // TODO add withinsysloc
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
-       TurnLog($Who,"A Planet Mine has been made in " . $N['Ref']);
-       GMLog("A Planet Mine has been setup in " . $N['Ref'] . " by " . $Facts[$Who]['Name'] . ".  Tell Richard to set the right withinsysloc",1);
+       TurnLog($T['Whose'],"A Planet Mine has been made in " . $N['Ref']);
+       GMLog("A Planet Mine has been setup in " . $N['Ref'] . " by " . $Facts[$T['Whose']]['Name'] . ".  Tell Richard to set the right withinsysloc",1);
+       FollowUp($T['Whose'],"A Planet Mine has been setup in " . $N['Ref'] . " by " . $Facts[$T['Whose']]['Name'] . ".  Tell Richard to set the right withinsysloc");
        break;
 
      case 'Construct Command Relay Station':
@@ -2612,6 +2623,7 @@ function InstructionsComplete() {
 
        TurnLog($Who,"A Command Node has been repaired " . $N['Ref']);
        GMLog("A Command Node has been repaired in " . $N['Ref'] . " by " . $Facts[$Who]['Name'] . ".  Tell Richard to set the right stuff up",1);
+       FollowUp($Who,"A Command Node has been repaired in " . $N['Ref'] . " by " . $Facts[$Who]['Name'] . ".  Tell Richard to set the right stuff up");
        break;
 
      case 'Build Planetary Mine':
@@ -3054,7 +3066,8 @@ function TidyUpMovements() {
   // Check for lid <-1...
   $NotFin = Get_Things(0,"LinkId<-1");
   if ($NotFin) {
-    echo "<h2 class=Err>These things have a broken load/unload still in place get Richard to fix</h2>";
+    GMLog( "<h2 class=Err>These things have a broken load/unload still in place get Richard to fix</h2>");
+    FollowUp(0,"Things have broken load/unload get Richard to fix");
     foreach ($NotFin as $T) {
       GMLog("<a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . " has a lid of " . $T['LinkId']);
     }
@@ -3133,15 +3146,11 @@ function FinishTurnProcess() {
   }
   
   GMLog("<br>NPC Factions marked as Turn Planning<p>\n");  
-  
-  $GAME['Turn'] ++;
-  $Sand['DateCompleted'] = $GAME['DateCompleted'] = time();
-  Put_Game($GAME);
-  
-  GMLog("Turn number incremented<p>\n");
-  
-
   // TODO Send messages to discord ??
+  return 1;
+}
+
+function CheckFollowUps() {
   return 1;
 }
 
@@ -3153,6 +3162,12 @@ function EnableFactionsAccess() {
   }
   
   GMLog("<br>All Factions marked as Turn Planning<p>\n");
+
+  $GAME['Turn'] ++;
+  $Sand['DateCompleted'] = $GAME['DateCompleted'] = time();
+  Put_Game($GAME);
+  
+  GMLog("Turn number incremented<p>\n");
 
   return 1;
 }

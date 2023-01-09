@@ -19,6 +19,13 @@ function SKLog($text,$e=0) {
   if ($e) GMLog($text. "<br>\n",1);
 }
 
+function FollowUp($Fid,$Msg) {
+  global $GAME,$GAMEID;
+  
+  $rec = ['GameId'=>$GAMEID, 'Turn'=>$GAME['Turn'], 'FactionId'=>$Fid, 'ActionNeeded'=>$Msg ];
+  Gen_Put('FollowUp',$rec);
+}
+
 // Log to the turn text, and optionally aa history record of T
 function TurnLog($Fid,$text,&$T=0) {
   global $GAME,$GAMEID;
@@ -51,5 +58,7 @@ function Report_Others($Who, $Where, $SeenBy, $Message) {
     TurnLog($F['id'],"$Message by " . $Factions[$Who]['Name']);
   }
 }
+
+
 
 ?>
