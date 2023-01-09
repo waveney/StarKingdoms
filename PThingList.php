@@ -166,7 +166,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
   echo "To see more information about each thing and to do movement and changes click on the name<p>\n";
   echo "Click on column heading to sort by column - toggles up/down<br>\n";
   echo "Ex things only show up under state <b>Other</b><br>\n";
-  echo "If the Thing would benefit from refit/repair/re-equipping/reinforcing then the Refit column will have a Yes</br>";
+  echo "If the Thing would benefit from refit/repair/re-equipping/reinforcing then the Refit has the number of modules (+1 if it needs repair as well)</br>";
 //  echo "Use only ONE of the filters to the right<br>\n";
   
   $coln = 0;
@@ -258,17 +258,17 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
       }
     }
     $Modules = Get_Modules($Tid);
-    $Up = "No";
+    $Up = 0;
     foreach ($Modules as $M) {
       $Mt = $ModTypes[$M['Type']];
       if (($Mt['Leveled'] & 1) == 0) continue;
       if ($M['Level'] < $Mt['Target']) {
-        $Up = "Yes";
+        $Up += $M['Number'];
 //var_dump($M,$Mt);
         break;
       }
     }
-    if (($T['CurHealth'] < $T['OrigHealth']) && ($Props & THING_HAS_HEALTH)) $Up = "Yes";
+    if (($T['CurHealth'] < $T['OrigHealth']) && ($Props & THING_HAS_HEALTH)) $Up++;
     echo "<td>$Up";
     
     if ($GM) { 
