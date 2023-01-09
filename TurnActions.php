@@ -50,7 +50,7 @@
              'No','Partial,M','Coded', 'Coded,M',
              'Coded','Coded','No','Coded',
              'Coded','Coded','Coded',
-             'No','Coded'];
+             'Coded','Coded'];
 
 function CheckTurnsReady() {
   global $PlayerStates,$PlayerState, $PlayerStateColours;
@@ -2792,7 +2792,7 @@ function CheckSurveyReports() {
   }
   if ($Started) {
     GMLog("</table>\n");
-    GMLog("<h2><a href=TurnActions.php?ACTION=StageDone&Stage=CheckSurveyReports&=55>When Happy click here</a></h2>");
+    GMLog("<h2><a href=TurnActions.php?ACTION=StageDone&Stage=CheckSurveyReports&=54>When Happy click here</a></h2>");
     dotail();
   }
   return 1;
@@ -3151,10 +3151,13 @@ function FinishTurnProcess() {
 }
 
 function CheckFollowUps() {
+  $_REQUEST['TurnP'] = 1; // Makes FollowUps think its part of turn processing
+  include_once("FollowUp.php");
   return 1;
 }
 
 function EnableFactionsAccess() {
+  global $GAME,$Sand;
   $Facts = Get_Factions();
   foreach ($Facts as $F) {
     $F['TurnState'] = 1;

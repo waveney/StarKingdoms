@@ -10,6 +10,7 @@
 
   dostaffhead("Follow Ups needed");
 
+
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
       case 'Done' :  
@@ -20,6 +21,8 @@
     }
   }
 
+  $TurnP = '';
+  if (isset($_REQUEST['TurnP'])) $TurnP = "&TurnP=1";
   $Turn = $GAME['Turn'];
   if (isset($_REQUEST['Turn']))  $Turn = $_REQUEST['Turn'];
   
@@ -31,10 +34,11 @@
   
   if (!$Ups) {
     echo "No follow ups needed";
+    if ($TurnP) return;
     dotail();
   }
 
-  $coln = 0;
+  $coln = $todo = 0;
   $People = Get_People();
   
   echo "<form method=post action=FollowUp.php>";
@@ -47,11 +51,15 @@
   echo "</thead><tbody>";
   foreach($Ups as $Up) {
     $i = $Up['id'];
+    if ($Up['State'] == 0) $todo++;
     echo "<tr " . ($Up['State']?' class=FullD hidden':'') . "><td>$i<td>" . ($Up['FactionId']? $Facts[$Up['FactionId']]['Name'] : '') . 
         "<td>" . $Up['ActionNeeded'] . "<td>" . 
-        ($Up['State']? "Done - " . $People[$Up['State']]['Name'] : "<a href=FollowUp.php?ACTION=Done&i=$i>Done</a>");
+        ($Up['State']? "Done - " . $People[$Up['State']]['Name'] : "<a href=FollowUp.php?ACTION=Done&i=$i$TurnP>Done</a>");
   }
   echo "</table></div>";
-  dotail();
+  if (!$TurnP || $todo) dotail();
+
+  if ($TurnP) echo "<h2><a href=TurnActions.php?ACTION=StageDone&Stage=CheckFollowUps&S=62>Back To Turn Processing</a></h2>";
+  return;
 
 ?>
