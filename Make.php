@@ -1,4 +1,9 @@
 <?php
+chdir('Schema');
+$skema = `skeema pull`;
+echo $skema . "\n\n";
+chdir('..');
+
 $commits = `git shortlog -s -n`;
 $lines = explode("\n",$commits);
 $ctot = 0;

@@ -16,7 +16,8 @@
   $coln = 0;
   
   echo "Category 1=Academic,2=Ship Yard,4=Miltary,8=Intelligence,16=Construction, 32=Deep Space<p>";
-  echo "Props 1=Can Rush, 2=Thing, 4=Two things, 8=Other Faction, 16=Tight Loc match, 32=Instruction, 64=Don't Check Level, 128 Raise 1 Level, 256 Exist Things<p>";
+  echo "Props 1=Can Rush, 2=Thing, 4=Two things, 8=Other Faction, 16=Tight Loc match, 32=Instruction, 64=Don't Check Level, 128 Raise 1 Level, 256 Exist Things" .
+       "512=Refit type action<p>";
   echo "Do NOT change the project names - code depends on them<p>";
   
   echo "<form method=post action=ProjTypes.php>";

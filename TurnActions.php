@@ -27,7 +27,7 @@
              'Orbital Bombardment', 'Spare', 'Ground Combat', 'Devastation Selection', 
              'Devastation', 'Ownership Change', 'Project Progress', 'Instructions Progress', 
              'Spare', 'Espionage Missions Complete', 'Counter Espionage', 'Spare', 
-             'Finish Shakedowns', 'Spare', 'Projects Complete', 'Instructions Complete', 
+             'Finish Shakedowns', 'Refit Projects Complete', 'Projects Complete', 'Instructions Complete', 
              'Spare', 'Check Survey Reports', 'Give Survey Reports', 'Check Spot Anomalies', 
              'Spot Anomalies', 'Militia Army Recovery', 'Generate Turns', 'Tidy Up Movements', 
              'Save What Can Be Seen', 'Recalc Project Homes', 'Finish Turn Process', 
@@ -46,7 +46,7 @@
              'No','No','No','Coded,M', 
              'Coded', 'No', 'Coded','Coded',
              'No','No','No','No',
-             'Coded','No','Coded,M','Coded,M', 
+             'Coded','Coded','Coded,M','Coded,M', 
              'No','Partial,M','Coded', 'Coded,M',
              'Coded','Coded','No','Coded',
              'Coded','Coded','Coded',
@@ -2072,14 +2072,20 @@ function FinishShakedowns() {
 }
 
 
-function ProjectsComplete() {
-//  echo "Projects Complete is currently Manual<p>";  
+function ProjectsCompleted($Pass) {
+//  echo "Projects Complete is currently Manual<p>"; 
+// Pass 0 = Refits only, 1 = rest 
 
   global $GAME,$GAMEID;
 
   $ProjTypes = Get_ProjectTypes();
   $Projects = Get_Projects_Cond("Status=1 AND Progress=ProgNeeded");
   foreach ($Projects as $P) {
+    $PT = $ProjTypes[$P['Type']];
+    
+    if (($Pass==0) && (($PT['Props']&512) ==0) ||
+        ($Pass==1) && (($PT['Props']&512) !=0)) continue;
+      
     GMLog("Completing project " . $P['id'] . " " . $P['Name'] . "<br>");
     $P['Status'] = 2;
     $P['TurnEnd'] = $GAME['Turn'];
@@ -2087,7 +2093,7 @@ function ProjectsComplete() {
     
     $Fid = $P['FactionId'];
 
-    $PT = $ProjTypes[$P['Type']];
+
     switch ($PT['Name']) {
     
     case 'Construction':
@@ -2335,6 +2341,16 @@ function ProjectsComplete() {
   }
   
   return 1;
+}
+
+function RefitProjectsComplete() {
+//  echo "Projects Complete is currently Manual<p>";  
+  ProjectsCompleted(0);
+}
+
+function ProjectsComplete() {
+//  echo "Projects Complete is currently Manual<p>";  
+  ProjectsCompleted(1);
 }
 
 function InstructionsComplete() {
