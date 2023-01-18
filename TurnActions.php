@@ -1292,7 +1292,17 @@ function ProjectProgressActions($Pay4=0) {
     }
     
     $PT = $ProjTypes[$P['Type']];
-
+    
+    if (($PT['Category'] & 255) == 255) { // Post-it
+      if ($P['DType'] == -1) { $PT['Category'] = 16; }
+      else if ($P['DType'] == 2) { $PT['Category'] = 4; }
+      else if ($P['DType'] == 3) { $PT['Category'] = 2; }
+      else if ($P['DType'] == 4) { $PT['Category'] = 8; }
+      else if ($P['DType'] == 5) { $PT['Category'] = 1; }
+      else if ($P['DType'] == 10) { $PT['Category'] = 2; }
+      // else default actions
+    } 
+    
     if ($PT['Category'] & 16) { // Construction
 
       $Fact = Get_Faction($P['FactionId']);
