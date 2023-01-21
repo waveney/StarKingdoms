@@ -11,7 +11,7 @@ $ModuleCats = ['Ship','Civilian Ship','Support Ship','Military Ship','Army','Oth
 $Fields = ['Engineering','Physics','Xenology'];
 $Tech_Cats = ['Core','Supp','Non Std'];
 $CivMil = ['','Civilian','Military'];
-$BuildState = ['Planning','Building','Shakedown','Complete','Ex','Abandonded','Missing In Action'];
+$BuildState = ['Planning','Building','Shakedown','Complete','Ex','Abandonded','Missing In Action','Captured'];
 $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse Anomaly','Establish Embassy','Make Outpost','Make Asteroid Mine','Make Minefield',
                 'Make Orbital Repair Yard','Build Space Station','Expand Space Station','Make Deep Space Sensor','Make Advanced Asteroid Mine','Build Stargate',
                 'Make Planet Mine', 'Construct Command Relay Station', 'Repair Command Node','Build Planetary Mine','Dismantle Stargate','Disband','Transfer',
@@ -829,6 +829,7 @@ function Update_Militia(&$W,&$Dists) {
   }
   
   $Mils = Get_Things_COND(0,"Type=20 AND SystemId=$Sys AND WithinSysLoc=$loc ");
+  $Hlth = 40+Has_Tech($W['FactionId'],'Militia Training Techniques')*2;
   
   $Dcount = 0;
   foreach($Dists as $D) $Dcount += ($D['Number'] * ($D['Type'] ==2?2:1));
@@ -841,7 +842,7 @@ function Update_Militia(&$W,&$Dists) {
     }
   } else {
     $MNames = [];
-    $Hlth = 40+Has_Tech($W['FactionId'],'Militia Training Techniques')*2;
+
     foreach ($Mils as $Ml) $MNames[$Ml['Name']] = 1; // Didts & Dist2 give short cut to world and districts
     $M = ['Type'=>20, 'CurHealth'=>$Hlth, 'OrigHealth'=>$Hlth, 
            'Whose'=>$W['FactionId'], 'SystemId'=>$Sys, 'WithinSysLoc'=>$loc, 'BuildState'=>3, 
@@ -854,6 +855,12 @@ function Update_Militia(&$W,&$Dists) {
       unset($M['id']);
       Put_Thing($M);
       echo $M['Name'] . " created<br>";
+    }
+  }
+  foreach ($Mils as $Ml) {
+    if ($Ml['OrigHealth'] != $Hlth) {
+      $Ml['OrigHealth'] = $Hlth;
+      Put_Thing($Ml);
     }
   }
 }

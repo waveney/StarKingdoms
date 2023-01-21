@@ -1,3 +1,3 @@
 <?php
-$VERSION=504;
+$VERSION=505;
 ?>
