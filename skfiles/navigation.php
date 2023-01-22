@@ -21,7 +21,12 @@
   }
   if (isset($_COOKIE{'SKC2'})) {
     echo "<a href=Staff.php onmouseover=NoHoverSticky()>GM Menu</a>";
-    echo "<a href='Login.php?ACTION=LOGOUT' onmouseover=NoHoverSticky()>Logout " . (isset($USER['Login'])?$USER['Login']:" ") . "</a>\n";
+    echo "<a href='Login.php?ACTION=LOGOUT' onmouseover=NoHoverSticky()>Logout " . (isset($USER['Login'])?$USER['Login']:" ") . "</a>";
+    if (isset($FACTION)) {
+      echo "<a href=Access.php?id=" . $FACTION['id'] . "&Key=" . $FACTION['AccessKey'] . " style='background:" . $FACTION['MapColour'] . "; color: " . 
+         ($FACTION['MapText']?$FACTION['MapText']:'black') . 
+         ";text-shadow: 2px 2px 3px white;padding:2px'>"  . $FACTION['Name'] . "</a>";
+    }
   }
   $host= "https://" . $_SERVER['HTTP_HOST'];
 

@@ -7,6 +7,7 @@
 
   if (isset($_COOKIE['SKD'])) {
     unset($_COOKIE['SKD']);
+    unset($FACTION);
     setcookie('SKD','',1,'/');
   }
 
