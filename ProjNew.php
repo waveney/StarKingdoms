@@ -294,7 +294,21 @@
         foreach ($Rbuts as $rb) echo $rb;
       }
 
-
+      if (Has_Tech($Fid,'Adianite Production Methods')) {
+        $Lvl = 1;
+        $pc = Proj_Costs($Lvl);
+        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Produce Adianite'] .
+                "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=3" .
+                "&Name=" . base64_encode("Produce 1 unit of Adianite $Lvl$Place"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .      
+                "Produce 1 unit of Adianite $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
+        $Lvl = 2;
+        $pc = Proj_Costs($Lvl);
+        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Produce Adianite'] .
+                "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=3" .
+                "&Name=" . base64_encode("Produce 4 units of Adianite $Lvl$Place"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .      
+                "Produce 4 units of Adianite $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
+      
+      } 
     break;
       
   case 'Academic':

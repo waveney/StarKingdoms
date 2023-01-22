@@ -1465,10 +1465,14 @@ function Economy() {
       $PH = Project_Home_Thing($H);
       $Name = $PH['Name'];
       $ECon = $H['Economy'] = Recalc_Economic_Rating($H,$W,$Fid);
-      $ECon = ceil(($ECon - $H['Devastation'])*$H['EconomyFactor']/100);
-      
+      if ($W['Blockade'] && $Fid != 9) {
+        $Econ = 0;
+        echo "It is blockaded no income<br>\n";
+      } else {
+        $ECon = ceil(($ECon - $H['Devastation'])*$H['EconomyFactor']/100);
+      } 
       if ($ECon <0) {
-        $EccTxt .= "$Name: 0\n";
+          $EccTxt .= "$Name: 0\n";
       } else {
         $EccTxt .= "$Name: $ECon " . ($H['Devastation']? " after devastation effect of -" . $H['Devastation'] : "");
         if ($H['EconomyFactor'] < 100) {
@@ -2132,7 +2136,7 @@ function ProjectsCompleted($Pass) {
         if ($D['Type'] == $P['ThingType']) {
           $D['Number']++;
           Put_District($D);
-          TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");         
+          TurnLog($Fid,'Project ' . $P['Name'] . " is complete");         
           break 2;
         }
       }
@@ -2161,21 +2165,21 @@ function ProjectsCompleted($Pass) {
         if ($CTech['Level'] < $P['Level']) {
           $CTech['Level'] = $P['Level'];
           Put_Faction_Tech($CTech);
-          TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");
+          TurnLog($Fid,'Project ' . $P['Name'] . " is complete");
           break;
         } else {
           GMLog( "Project to " . $P['Name'] . " already have level " . $CTech['Level'] . " See <a href=ProjEdit.php?id=" . $P['id'] . ">Project</a>", 1);
-          TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");
+          TurnLog($Fid,'Project ' . $P['Name'] . " is complete");
           break;          
         }
       } else if ($CTech['Level'] == 0) { // Supp
         $CTech['Level'] = 1;
         Put_Faction_Tech($CTech);
-        TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");
+        TurnLog($Fid,'Project ' . $P['Name'] . " is complete");
         break;
       } else {
         GMLog( "Project to " . $P['Name'] . " already have". " See <a href=ProjEdit.php?id=" . $P['id'] . ">Project</a>", 1);
-        TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");
+        TurnLog($Fid,'Project ' . $P['Name'] . " is complete");
       }
       break;
       
@@ -2187,8 +2191,8 @@ function ProjectsCompleted($Pass) {
       if ($Tid) {
         $T = Get_Thing($Tid);
         if (($T['SystemId'] != 0 && $T['SystemId'] != $Where[0])) {
-          TurnLog($P['FactionId'],"Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system");
-          GMLog($Facts[$P['FactionId']]['Name'] . "Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system",1);
+          TurnLog($Fid,"Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system");
+          GMLog($Facts[$Fid]['Name'] . "Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system",1);
         } else if ($P['ThingId']) {
           $T = Get_Thing($P['ThingId']);
           RefitRepair($T);
@@ -2198,12 +2202,12 @@ function ProjectsCompleted($Pass) {
       if ($P['ThingId2']) {
         $Tid = $P['ThingId2'];
         if (($T['SystemId'] != 0 && $T['SystemId'] != $Where[0])) {
-          TurnLog($P['FactionId'],"Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system");
-          GMLog($Facts[$P['FactionId']]['Name'] . "Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system",1);
+          TurnLog($Fid,"Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system");
+          GMLog($Facts[$Fid]['Name'] . "Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system",1);
         } else {        
           $T = Get_Thing($Tid);
           RefitRepair($T);
-          TurnLog($P['FactionId'], $T['Name'] . " has been " . $PT['Name'] . "ed",$T);
+          TurnLog($Fid, $T['Name'] . " has been " . $PT['Name'] . "ed",$T);
         }
       }
       break;
@@ -2214,7 +2218,7 @@ function ProjectsCompleted($Pass) {
       $WSL = ConstructLoc($P['Home'],0);
       Move_Thing_Within_Sys($T,$WSL,1);
       $T['WithinSysLoc'] = $WSL;
-      TurnLog($P['FactionId'], $T['Name'] . " has been lanched and will now start its shakedown cruise",$T);              
+      TurnLog($Fid, $T['Name'] . " has been lanched and will now start its shakedown cruise",$T);              
       Calc_Scanners($T);
       $T['ProjectId'] = 0;
       Put_Thing($T);
@@ -2225,13 +2229,13 @@ function ProjectsCompleted($Pass) {
       $T = Get_Thing($P['ThingId']);
       $T['BuildState'] = 3; // Complete
       $T['WithinSysLoc'] = ConstructLoc($P['Home'],1);
-      TurnLog($P['FactionId'], $T['Name'] . " has been completed",$T);              
+      TurnLog($Fid, $T['Name'] . " has been completed",$T);              
       $T['ProjectId'] = 0;
       Put_Thing($T);
       break;
      
     case 'Share Technology':
-      $FFact = Get_Faction($P['FactionId']);
+      $FFact = Get_Faction($Fid);
       $Tech = Get_Tech($P['ThingType']);
       $Level = $P['Level'];
       $Xfr2 = $P['ThingId'];
@@ -2239,40 +2243,40 @@ function ProjectsCompleted($Pass) {
       $Have = Has_Tech($Xfr2,$Tech['id']);
       if ($Tech['Cat'] == 0) {
         if ($Have >= $Level) {
-          TurnLog($P['FactionId'], "You tried to share " . $Tech['Name'] . " at level $Level. with " . $XFact['Name'] . " They already know it.");                      
+          TurnLog($Fid, "You tried to share " . $Tech['Name'] . " at level $Level. with " . $XFact['Name'] . " They already know it.");                      
           TurnLog($Xfr2, $FFact['Name'] . " tried to share " . $Tech['Name'] . " at level $Level.  With you - you already have it at level $Have.");
         } else if ($Have == $Level-1) {
           $CTech = Get_Faction_TechFT($Xfr2 ,$Tech['id']);
           $CTech['Level'] = $Level;
           Put_Faction_Tech($CTech);
-          TurnLog($P['FactionId'], "Your have shared " . $Tech['Name'] . " at level $Level.  with " . $XFact['Name']);                      
+          TurnLog($Fid, "Your have shared " . $Tech['Name'] . " at level $Level.  with " . $XFact['Name']);                      
           TurnLog($Xfr2, $FFact['Name'] . " has shared " . $Tech['Name'] . " at level $Level.  With you.");
         } else if (0 ) { // Learn lower level option
           $CTech = Get_Faction_TechFT($Xfr2 ,$Tech['id']);
           $CTech['Level'] = $Have+1;
           Put_Faction_Tech($CTech);
-          TurnLog($P['FactionId'], "You tried to share " . $Tech['Name'] . " at level $Level. with " . $XFact['Name'] . 
+          TurnLog($Fid, "You tried to share " . $Tech['Name'] . " at level $Level. with " . $XFact['Name'] . 
              " They only had it at level $Have.  They learnt level " . ($Have+1));                      
           TurnLog($Xfr2, $FFact['Name'] .  " tried to share " . $Tech['Name'] . " at level $Level with you. You only have it at level $Have  so learnt it at level " .
                   ($Have+1));
         } else {
-          TurnLog($P['FactionId'], "You tried to share " . $Tech['Name'] . " at level $Level. with " . $XFact['Name'] . 
+          TurnLog($Fid, "You tried to share " . $Tech['Name'] . " at level $Level. with " . $XFact['Name'] . 
              " They only had it at level $Have - they don't understand what you sent");
           TurnLog($Xfr2, $FFact['Name'] .  " tried to share " . $Tech['Name'] . " at level $Level with you. You only have it at level $Have so learnt nothing");        
         }
       } else { // Supp techs
         $PRHave = Has_Tech($Xfr2,$Tech['PreReqTech']);
         if ($Have) {
-          TurnLog($P['FactionId'], "You tried to share " . $Tech['Name'] . " with " . $XFact['Name'] . " They already know it.");                      
+          TurnLog($Fid, "You tried to share " . $Tech['Name'] . " with " . $XFact['Name'] . " They already know it.");                      
           TurnLog($Xfr2, $FFact['Name'] . " tried to share " . $Tech['Name'] . " with you - you already have it.");
         } else if ($PRHave >= $Tech['PreReqLevel']) {
           $CTech = Get_Faction_TechFT($Xfr2 ,$Tech['id']);
           $CTech['Level'] = $Level;
           Put_Faction_Tech($CTech);
-          TurnLog($P['FactionId'], "Your have shared " . $Tech['Name'] . " with " . $XFact['Name']);                      
+          TurnLog($Fid, "Your have shared " . $Tech['Name'] . " with " . $XFact['Name']);                      
           TurnLog($Xfr2, $FFact['Name'] . " has shared " . $Tech['Name'] . " with you.");
         } else {
-          TurnLog($P['FactionId'], "You tried to share " . $Tech['Name'] . " with " . $XFact['Name'] . " They don't understand what you sent");
+          TurnLog($Fid, "You tried to share " . $Tech['Name'] . " with " . $XFact['Name'] . " They don't understand what you sent");
           TurnLog($Xfr2, $FFact['Name'] .  " tried to share " . $Tech['Name'] . " with you. You don't understand it");        
         }
       }
@@ -2301,7 +2305,7 @@ function ProjectsCompleted($Pass) {
       $NT = ['GameId'=>$GAME['id'], 'Type'=> 15, 'Level'=> 1, 'SystemId'=>$H['SystemId'], 'WithinSysLoc' => $H['WithinSysLoc'], 'Whose'=>$P['FactionId'], 
               'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>($PH['Name'] . " warp gate" )];
       Put_Thing($NT);
-      TurnLog($P['FactionId'],"A warp gate has been made for " . $PH['Name']);
+      TurnLog($Fid,"A warp gate has been made for " . $PH['Name']);
 
       break;
 
@@ -2321,7 +2325,7 @@ function ProjectsCompleted($Pass) {
 
       $H['Devastation'] = min(0,$H['Devastation']-2);
       Put_ProjectHome($H);
-      TurnLog($P['FactionId'],"The has been Rebuilding and Repair on " . $PH['Name']);      
+      TurnLog($Fid,"The has been Rebuilding and Repair on " . $PH['Name']);      
       break;
 
     case 'Decipher Alien Language':
@@ -2329,6 +2333,35 @@ function ProjectsCompleted($Pass) {
       GMLog("A project to " . $PT['Name'] . " has completed, this is not automated yet.  See <a href=ProjEdit.php?id=" . $P['id'] . ">Project</a>",1);
       FollowUp($Fid,"A project to " . $PT['Name'] . " has completed, this is not automated yet.");
       break;
+      
+    case 'Produce Adianite':
+      $LinkRes = GameFeature('LinkResource',0);
+      if ($LinkRes) {
+        AddCurrencies();
+        $Cur = 0;
+        foreach ($Currencies as $Ci => $C) if ( $C == $LinkRes) $Cur = $Ci;
+
+        $Ad = Proj_Costs($P['Level'])[0];
+        $Fact = Get_Faction($Fid);
+        $Fact["Curreny$Cur"] += $Ad;
+        Put_Faction($Fid);
+
+        $H = Get_ProjectHome($P['Home']);      
+        switch ($H['ThingType']) {
+          case 1: // Planet
+            $PH = Get_Planet($H['ThingId']);
+            break;
+          case 2: // Moon
+            $PH = Get_Moon($H['ThingId']);
+            break;
+          case 3: // Thing
+            $PH = Get_Thing($H['ThingId']);
+            break;
+          }
+        TurnLog($Fid,"Produced $Ad $LinkRes on " . $PH['Name']);              
+      }
+    break;
+
       
     // These all now handled as instructions - not projects at the moment
     case 'Decommision':

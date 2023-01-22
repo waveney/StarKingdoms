@@ -112,16 +112,21 @@
       $ECon = $H['Economy'] = Recalc_Economic_Rating($H,$W,$Fid);
       
       echo "$Name: Economic Value: $ECon <br>";
-      if ($H['Devastation']) {
-        $ECon = $ECon - $H['Devastation'];
-        echo "It has devastation reducing it to: $ECon <br>\n";
-      }
-      if ($H['EconomyFactor'] < 100) {
-        $ECon = ceil($ECon*$H['EconomyFactor']/100);
-        echo "It also is operating at only " . $H['EconomyFactor'] . "% so you have a rating of $ECon<br>\n";
-      } else if ($H['EconomyFactor'] > 100) {
-        $ECon = ceil($ECon*$H['EconomyFactor']/100);
-        echo "It is currently operating at " . $H['EconomyFactor'] . "% so you have a rating of $ECon<br>\n";
+      if ($W['Blockade'] && $Fid != 9) {
+        $Econ = 0;
+        echo "It is blockaded no income<br>\n";
+      } else {
+        if ($H['Devastation']) {
+          $ECon = $ECon - $H['Devastation'];
+          echo "It has devastation reducing it to: $ECon <br>\n";
+        }
+        if ($H['EconomyFactor'] < 100) {
+          $ECon = ceil($ECon*$H['EconomyFactor']/100);
+          echo "It also is operating at only " . $H['EconomyFactor'] . "% so you have a rating of $ECon<br>\n";
+        } else if ($H['EconomyFactor'] > 100) {
+          $ECon = ceil($ECon*$H['EconomyFactor']/100);
+          echo "It is currently operating at " . $H['EconomyFactor'] . "% so you have a rating of $ECon<br>\n";
+        }
       }
       $EconVal += $ECon;
     }

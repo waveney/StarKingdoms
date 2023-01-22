@@ -81,6 +81,7 @@
         case 'Decipher Alien Language':
         case 'Rebuild and Repair':  
         case 'Grow Modules' :    
+        case 'Produce Adianite' :
           if (isset($_REQUEST['Sel'])) $Sel = $_REQUEST['Sel'];
           $Level = $_REQUEST['L'];
           $Costs = $_REQUEST['C'];
