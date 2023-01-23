@@ -11,7 +11,6 @@
   global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil;
 
   $Ts = Get_Techs();
-  if (UpdateMany('Technologies','Put_Tech',$Ts,1))    $Ts = Get_Techs();
 
   $CTs = Get_CoreTechs();
   $CTNs = [];
@@ -32,7 +31,7 @@
     echo "<thead><tr>";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>id</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Cat</a>\n";
-    echo "<th colspan=2><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Field</a>\n";
     if ($CTs) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>PreReq</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>PreReq Lvl</a>\n";
@@ -45,33 +44,22 @@
 
     foreach($Ts as $T) {
       $i = $T['id'];
-      echo "<tr><td><a href=TechEdit.php?id=$i>$i</a><td>" . fm_select($Tech_Cats,$T,'Cat',0,'',"Cat$i");
-      echo fm_text1("",$T,'Name',2,'','',"Name$i");
-      echo "<td>" . fm_select($Fields,$T,'Field',0,'',"Field$i");
-      if ($CTs) echo "<td>" . fm_select($CTNs,$T,'PreReqTech',0,'',"PreReqTech$i");
-      echo fm_number1('',$T,'PreReqLevel','','',"PreReqLevel$i");
-      echo fm_number1("",$T,'Properties','','',"Properties$i");
-      echo fm_number1("",$T,'Slots','','',"Slots$i");
-      echo fm_number1("",$T,'MinThingLevel',"",'',"MinThingLevel$i");
-      echo "<td>" . fm_select($CivMil,$T,'CivMil',0,'',"CivMil$i");
-      echo "<td>" . fm_select($MFN,$T,'Formula',1,'',"Formula$i");
-      echo fm_hidden("Description$i",$T['Description']);
+      echo "<tr><td><a href=TechEdit.php?id=$i>$i</a>";
+      echo "<td>" . $Tech_Cats[$T['Cat']];
+      echo "<td><a href=TechEdit.php?id=$i>" . $T['Name'] . "</a>";
+      echo "<td>" . $Fields[$T['Field']];
+      if ($CTs) echo "<td>" . $CTNs[$T['PreReqTech']];
+      echo "<td>" . $T['PreReqLevel'];
+      echo "<td>" . $T['Properties'];
+      echo "<td>" . $T['Slots'];
+      echo "<td>" . $T['MinThingLevel'];
+      echo "<td>" . $CivMil[$T['CivMil']];
+      echo "<td>" . ($T['Formula']>0 ? $MFN[$T['Formula']]:'');
       }   
 
-  $T = ['PreReqLevel'=>0,'Slots'=>0,'MinThingLevel'=>0, 'Cat'=>2];
-  echo "<tr><td><td>" . fm_select($Tech_Cats,$T,'Cat',0,'',"Cat0");
-  echo fm_text1("",$T,'Name',2,'','',"Name0");
-      echo "<td>" . fm_select($Fields,$T,'Field',1,'',"Field0");
-      if ($CTs) echo "<td>" . fm_select($CTNs,$T,'PreReqTech',0,'',"PreReqTech0");
-      echo fm_number1('',$T,'PreReqLevel','','',"PreReqLevel0");
-      echo fm_number1("",$T,'Properties','','',"Properties0");
-      echo fm_number1("",$T,'Slots','','',"Slots0");
-      echo fm_number1("",$T,'MinThingLevel','',"","MinThingLevel0");
-      echo "<td>" . fm_select($CivMil,$T,'CivMil',0,'',"CivMil0");
-      echo "<td>" . fm_select($MFN,$T,'Formula',1,'',"Formula0");
   echo "</tbody></table></div>\n";
 
-  echo "<h2><input type=submit name=Update value=Update></h2>";
+  echo "<h2><a href=TechEdit.php?id=0>New Tech</a></h2>";
   echo "</form></div>";
   dotail();
 ?>
