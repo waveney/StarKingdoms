@@ -80,9 +80,24 @@
         echo "<button class='floatright FullD' onclick=\"($('.FullD').toggle())\">Show Remains of Things</button>";
       }
       
+      echo "<p><h2><a href=Meetings.php?s=$Sid&ACTION=FRGROUND>Force Report for Ground Combat</a>, " .
+                  "<a href=Meetings.php?s=$Sid&ACTION=FRSPACE>Force Report for Space Combat</a></h2>";
  //     foreach($Facts as $Fid=>$F) {      
  //       if ($
       break;
+      
+    case 'FRGROUND':
+      $Sid = $_REQUEST['S'];
+      $N = Get_System($Sid);
+      ForceReport($Sid,31,1,0,-1,1);
+      break;
+          
+    case 'FRSPACE':
+      $Sid = $_REQUEST['S'];
+      $N = Get_System($Sid);
+      ForceReport($Sid,31,1,0,-1,1);
+      break;      
+          
     }
   }
   echo "<h1>Checking</h1>";

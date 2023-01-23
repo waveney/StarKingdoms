@@ -23,6 +23,7 @@
   
   echo "<h1>Technologies</h1>";
   echo "click on id to edit description<p>";
+  echo "Properties: 1=Ground Combat, 2=Space Combat, 4=Espionage<p>\n";
   echo "<form method=post action=TechList.php>";
 
   
@@ -35,6 +36,7 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Field</a>\n";
     if ($CTs) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>PreReq</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>PreReq Lvl</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Properties</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Slots</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Min Level</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Civ Mil</a>\n";
@@ -48,6 +50,7 @@
       echo "<td>" . fm_select($Fields,$T,'Field',0,'',"Field$i");
       if ($CTs) echo "<td>" . fm_select($CTNs,$T,'PreReqTech',0,'',"PreReqTech$i");
       echo fm_number1('',$T,'PreReqLevel','','',"PreReqLevel$i");
+      echo fm_number1("",$T,'Properties','','',"Properties$i");
       echo fm_number1("",$T,'Slots','','',"Slots$i");
       echo fm_number1("",$T,'MinThingLevel',"",'',"MinThingLevel$i");
       echo "<td>" . fm_select($CivMil,$T,'CivMil',0,'',"CivMil$i");
@@ -61,6 +64,7 @@
       echo "<td>" . fm_select($Fields,$T,'Field',1,'',"Field0");
       if ($CTs) echo "<td>" . fm_select($CTNs,$T,'PreReqTech',0,'',"PreReqTech0");
       echo fm_number1('',$T,'PreReqLevel','','',"PreReqLevel0");
+      echo fm_number1("",$T,'Properties','','',"Properties0");
       echo fm_number1("",$T,'Slots','','',"Slots0");
       echo fm_number1("",$T,'MinThingLevel','',"","MinThingLevel0");
       echo "<td>" . fm_select($CivMil,$T,'CivMil',0,'',"CivMil0");
