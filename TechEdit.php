@@ -51,6 +51,10 @@
       case 'Create':
         $Tid = Insert_db_post('Technologies', $T);
         break;
+      case 'Delete':
+        db_delete('Technologies',$Tid);
+        echo "Deleted " . $T['Name'] . "<p>";
+        dotail();
     }
   }
   
@@ -75,9 +79,11 @@
 
   if ($Tid) {
     echo "<h2><input type=submit name=ACTION value=Update> <input type=submit name=SHOW value=SHOW></h2>";
+    if (Access('God')) echo "<input type=submit name=ACTION value=Delete>";
   } else {
     echo "<h2><input type=submit name=ACTION value=Create></h2>";  
   }
+
   echo "</form></div>";
   echo "<H2><a href=TechList.php>Back to Tech List</a></h2>";
   dotail();
