@@ -2388,12 +2388,12 @@ function ProjectsCompleted($Pass) {
 
 function RefitProjectsComplete() {
 //  echo "Projects Complete is currently Manual<p>";  
-  ProjectsCompleted(0);
+  return ProjectsCompleted(0);
 }
 
 function ProjectsComplete() {
 //  echo "Projects Complete is currently Manual<p>";  
-  ProjectsCompleted(1);
+  return ProjectsCompleted(1);
 }
 
 function InstructionsComplete() {
