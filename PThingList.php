@@ -144,6 +144,10 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
   */
   
   $Things = Get_Things($Fid);
+  if (!empty($FACTION['HasPrisoners'])) {
+    $Held = Get_Things_Cond(0,"PrisonerOf=$Fid AND BuildState=3");
+    $Things = array_merge($Things,$Held);
+  }
   $ThingTypes = Get_ThingTypes();
   $Systems = Get_SystemRefs();
 //  $Techs = Get_Techs($Fid);
@@ -156,6 +160,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
   echo "<h1>Things</h1>";
   
   $ShowCats = ['All','Ships','Armies','Agents','Chars', 'Other'];
+  if (!empty($FACTION['HasPrisoners'])) $ShowCats[] = 'Prisoners';
   $Show['ThingShow'] = $Faction[$GM?'GMThingType':'ThingType'];
   $BuildCats = ['All','Plan','Building','Shakedown','Complete','Other'];
   $Build['BuildShow'] = $Faction[$GM?'GMThingBuild':'ThingBuild'];
@@ -199,8 +204,9 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
     $Name = $ThingTypes[$T['Type']]['Name'];
     if (!$Name) $Name = "Unknown Thing $Tid";
     
-
-    if ($Props & THING_HAS_SHIPMODULES) {
+    if ($T['Whose'] != $Fid) {
+      $RowClass = 'Prisoner';
+    } else if ($Props & THING_HAS_SHIPMODULES) {
       $RowClass = 'Ship';
     } else  if ($Props & THING_HAS_ARMYMODULES) {
       $RowClass = 'Army';
@@ -214,6 +220,12 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
 
     $BuildClass = ($T['BuildState']<4 ? $T['BuildState'] : 4);
 
+    if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
+      if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $T['Level'];
+      if ($Props & THING_HAS_GADGETS) $Logistics[2] += $T['Level'];
+      if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $T['Level'];
+    };
+    
     echo "\n<tr class='ThingList Thing_$RowClass Thing_Build$BuildClass'>";
     echo "<td><a href=" . ($T['BuildState']? "ThingEdit.php" : "ThingPlan.php") . "?id=$Tid>" . ($T['Name'] ? $T['Name'] : "Nameless" ) . "</a>";
     echo "<td>" . $T['Class'];
@@ -221,7 +233,15 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
     echo "<td>" . $T['Level'];
     echo "<td>" . $T['Orders'];
     echo "<td><center>" . (($Props & THING_HAS_HEALTH)? $T['CurHealth'] . ' / ' . $T['OrigHealth'] : "-");
-    echo "<td>" . $BuildState[$T['BuildState']];
+    if (!empty($T['PrisonerOf'])) {
+      echo "<td>Prisoner";
+      if (($T['Whose'] == $Fid) && (!$GM)) {
+        echo "<td><td><td><td>";
+        continue;
+      }         
+    } else {
+      echo "<td>" . $BuildState[$T['BuildState']];
+    }
     if ($Props & THING_MOVES_DIRECTLY) {
       echo "<td>" . $Systems[$T['SystemId']];
       echo "<td>Direct<td>";
@@ -274,12 +294,6 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
       if ($T['NebSensors'])  echo ' N';
     }
  //   echo "<td>" . (isset($Systems[$T['NewSystemId']]) ? $Systems[$T['NewSystemId']] :"") ;
-    
-    if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
-      if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $T['Level'];
-      if ($Props & THING_HAS_GADGETS) $Logistics[2] += $T['Level'];
-      if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $T['Level'];
-    };
     
   }
   if (Access('God'))  echo "<tr><td class=NotSide>Debug<td colspan=15 class=NotSide><textarea id=Debug></textarea>";  

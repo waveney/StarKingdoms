@@ -95,8 +95,6 @@ function Show_Thing(&$T,$Force=0) {
     $T['LinkCost'] = $Lc;
     Put_Thing($T);
   }
-
-//  echo "Note Movement does not yet work for armies moving by ship.<p>\n";
   
   if ($T['BuildState'] == 0) echo "Note the Tech level of this will be recorded when it is built<br>";
 
@@ -126,19 +124,23 @@ function Show_Thing(&$T,$Force=0) {
 
 // WHERE IS IT AND MOVEMENT
 
-
-
-  echo "<tr><td>Build State:<td>" . ($GM? fm_select($BuildState,$T,'BuildState') : $BuildState[$T['BuildState']]); 
-  if (isset($T['BuildState']) && $T['BuildState'] <= 1) {
-    if ($GM) echo fm_number1('Build Project',$T,'ProjectId');
-    if ($T['ProjectId']) {
-      $Proj = Get_Project($T['ProjectId']);
-      echo "<tr><td>See <a href=ProjEdit.php?id=" . $T['ProjectId'] . ">Project</a>";
-      echo "<tr><td>Status: " . $Project_Status[$Proj['Status']];
-      if ($Proj['TurnStart']) echo " Start Turn: " . $Proj['TurnStart'];
-      if ($Proj['TurnEnd']) echo " End Turn: " . $Proj['TurnEnd'];
+/*
+  if ($T['PrisonerOf']) {
+    echo "<tr><td>Prisoner";
+  } else {
+  */
+    echo "<tr><td>Build State:<td>" . ($GM? fm_select($BuildState,$T,'BuildState') : $BuildState[$T['BuildState']]); 
+    if (isset($T['BuildState']) && $T['BuildState'] <= 1) {
+      if ($GM) echo fm_number1('Build Project',$T,'ProjectId');
+      if ($T['ProjectId']) {
+        $Proj = Get_Project($T['ProjectId']);
+        echo "<tr><td>See <a href=ProjEdit.php?id=" . $T['ProjectId'] . ">Project</a>";
+        echo "<tr><td>Status: " . $Project_Status[$Proj['Status']];
+        if ($Proj['TurnStart']) echo " Start Turn: " . $Proj['TurnStart'];
+        if ($Proj['TurnEnd']) echo " End Turn: " . $Proj['TurnEnd'];
+      }
     }
-  } else if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
+  else if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
    
 // Note Special meaning of -ve LinkId numbers:
 // -1 On Board - SytemId = ThingId of Host
@@ -298,7 +300,8 @@ function Show_Thing(&$T,$Force=0) {
           }
 
           if ($NeedCargo) {
-            $OnBoard = Get_Things_Cond(0,"((LinkId=-1 OR LinkId=-3) AND SystemId=" . $X['id']);
+//          var_dump($X);
+            $OnBoard = Get_Things_Cond(0,"((LinkId=-1 OR LinkId=-3) AND SystemId=" . $X['id'] . ")");
             $Used = 0;
             foreach($OnBoard as $OB) if ($ThingProps[$OB['Type']]['Properties'] & THING_NEEDS_CARGOSPACE) $Used += $OB['Level'];
             if ($X['CargoSpace'] < $Used + $T['Level']) continue; // Space is used
@@ -375,6 +378,7 @@ function Show_Thing(&$T,$Force=0) {
   if ($GM) echo "<tr>" . fm_radio('Whose',$FactNames ,$T,'Whose','',1,'colspan=6','',$Fact_Colours,0); 
   if  ($tprops & THING_HAS_GADGETS) echo "<tr>" . fm_textarea("Gadgets",$T,'Gadgets',8,3);
   if  ($tprops & THING_HAS_LEVELS) echo "\n<tr>" . fm_text("Orders",$T,'Orders',2);
+  if ($GM) echo "<td>Prisoner of: " . fm_select($FactNames,$T,'PrisonerOf');
   echo "<tr>" . fm_textarea("Description\n(For others)",$T,'Description',8,2);
   echo "<tr>" . fm_textarea('Notes',$T,'Notes',8,2);
   echo "<tr>" . fm_textarea('Named Crew',$T,'NamedCrew',8,2);
@@ -436,14 +440,16 @@ function Show_Thing(&$T,$Force=0) {
   
   if ($GM) echo "<tr>" . fm_textarea('GM Notes',$T,'GM_Notes',8,2,'class=NotSide');
   
-  $History = preg_split("/\n/",$T['History']);
-  $RevHist = implode("\n",array_reverse($History));
+  if ($GM || empty($T['PrisonerOf'])) {
+    $History = preg_split("/\n/",$T['History']);
+    $RevHist = implode("\n",array_reverse($History));
   
-  if (isset($_REQUEST['EDHISTORY'])) {
-    echo "<tr>" . fm_textarea('History',$T,'History',8,2,'','','',($GM?'':'Readonly'));
-  } else {
+    if (isset($_REQUEST['EDHISTORY'])) {
+      echo "<tr>" . fm_textarea('History',$T,'History',8,2,'','','',($GM?'':'Readonly'));
+    } else {
 //    echo "<tr>" . fm_textarea('History',$T,'History',8,2,'','','',($GM?'':'Readonly'));
-    echo "<tr><td>History:<td colspan=8><textarea rows=2>$RevHist</textarea>";
+      echo "<tr><td>History:<td colspan=8><textarea rows=2>$RevHist</textarea>";
+    }
   }
   if ($tprops & THING_HAS_2_FACTIONS) echo "<tr>" . fm_radio('Other Faction',$FactNames ,$T,'OtherFaction','',1,'colspan=6','',$Fact_Colours,0); 
   if  ($tprops & (THING_HAS_MODULES | THING_HAS_ARMYMODULES | THING_HAS_HEALTH)) {
@@ -635,7 +641,7 @@ function Show_Thing(&$T,$Force=0) {
   $TTNames = Thing_Types_From_Names();
   $Moving = ($T['LinkId'] > 0);
   
-  if ($T['BuildState'] == 2 || $T['BuildState'] == 3) foreach ($ThingInstrs as $i=>$Ins) {
+  if (($T['BuildState'] == 2 || $T['BuildState'] == 3) && empty($T['PrisonerOf'])) foreach ($ThingInstrs as $i=>$Ins) {
 //  echo "Checking: $Ins<br>";
     switch ($Ins) {
     case 'None': // None

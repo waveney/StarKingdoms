@@ -3135,14 +3135,14 @@ function TidyUpMovements() {
   // Tidy 1 turn carry options
   $FFs = Gen_Get_Cond('FactionFaction','Props>0');
   foreach ($FFs as $F) {
-    if (($F['Props'] &15) == 2) $F['Props'] = ($F['Props']&0xfffffff0)+1;
-    if ((($F['Props']>>4) &15) == 2) $F['Props'] = ($F['Props']&0xffffff0f)+16;  
-    if ((($F['Props']>>8) &15) == 2) $F['Props'] = ($F['Props']&0xfffff0ff)+256;
-    if ((($F['Props']>>12) &15) == 2) $F['Props'] = ($F['Props']&0xffff0fff)+0x1000;  
-    if ((($F['Props']>>16) &15) == 2) $F['Props'] = ($F['Props']&0xfff0ffff)+0x10000;
-    if ((($F['Props']>>20) &15) == 2) $F['Props'] = ($F['Props']&0xff0fffff)+0x100000;
-    if ((($F['Props']>>24) &15) == 2) $F['Props'] = ($F['Props']&0xf0ffffff)+0x1000000;  
-    if ((($F['Props']>>28) &15) == 2) $F['Props'] = ($F['Props']&0x0fffffff)+0x10000000;  
+    if (($F['Props'] &15) == 1) $F['Props'] = ($F['Props']&0xfffffff0);
+    if ((($F['Props']>>4) &15) == 1) $F['Props'] = ($F['Props']&0xffffff0f);  
+    if ((($F['Props']>>8) &15) == 1) $F['Props'] = ($F['Props']&0xfffff0ff);
+    if ((($F['Props']>>12) &15) == 1) $F['Props'] = ($F['Props']&0xffff0fff);  
+    if ((($F['Props']>>16) &15) == 1) $F['Props'] = ($F['Props']&0xfff0ffff);
+    if ((($F['Props']>>20) &15) == 1) $F['Props'] = ($F['Props']&0xff0fffff);
+    if ((($F['Props']>>24) &15) == 1) $F['Props'] = ($F['Props']&0xf0ffffff);  
+    if ((($F['Props']>>28) &15) == 1) $F['Props'] = ($F['Props']&0x0fffffff);  
     Put_FactionFaction($F);  
   }
   
