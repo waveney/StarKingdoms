@@ -25,6 +25,90 @@
   
   $Homes = Get_ProjectHomes();
   $TTypes = Get_ThingTypes();
+  $ModTypes = Get_ModuleTypes();
+  $Techs = Get_Techs();
+
+function ForceReport($Sid,$Cat) {
+  global $Facts, $Homes, $TTypes, $ModTypes, $N, $Techs ;
+  $Things = Get_Things_Cond(0,"SystemId=$Sid ORDER BY Whose");
+  $LastF = $Home = $Control = 0;
+  $txt = $ftxt = '';
+  $TMsk = ($Cat=='G'?1:2);
+  $PlanMoon = [];
+  $Wid = 0;
+  
+  if ($Cat == 'G') {
+    $PTD = Get_PlanetTypes();  // ONLY works for single taget at present
+    $Planets = Get_Planets($Sid);
+    foreach($Planets as $Pl) {
+      if ($PTD[$Pl['Type']]['Hospitable']) {
+        $PlanMoon = $Pl;
+        $HomeType = $PTD[$Pl['Type']]['Name'];
+        $Control = (!empty($Pl['Control']) ? $Pl['Control'] : $N['Control']);
+//echo "Looking for " . $Pl['id'] . "<p>";
+        foreach ($Homes as $H) if (($H['ThingType'] == 1) && ($H['ThingId'] == $Pl['id'])) {
+          $Home = $H;
+          $World = Gen_Get_Cond1('Worlds',"ThingType=" . $H['ThingType'] . " AND ThingId=" . $H['ThingId']);
+// var_dump($World);
+          if (isset($World['id'])) $Wid = $World['id'];
+          break 2;
+        }
+        echo "Home not found";
+        break; // CHANGE For Multi targets
+      }
+    }
+  }
+  
+  echo "<h2>" . ($Cat =='G' ?'Ground':'Space') . " Force Report for " . $N['Ref'] . ($Cat =='G' ? " - " . $PlanMoon['Name'] . " ($HomeType)" :'') . "</h2>\n";
+  if ($Cat =='G' && $Wid) echo "<h2><a href=WorldEdit.php?ACTION=Militia&id=$Wid>Create /Update Militia</a></h2>";
+  
+  echo "<table border>";
+  echo "<tr><td>What<td>Type<td>Level<td>Health<td>Attack<td>Speed\n";
+  foreach($Things as $T) {
+    if ((($Cat == 'S') && (($TTypes[$T['Type']]['Properties'] & 8) != 0)) || 
+        (($Cat == 'G') && (($TTypes[$T['Type']]['Properties'] & 0x800020) != 0))) {
+
+      if ($LastF != $T['Whose']) {
+        if ($LastF) {
+          echo $ftxt . "<br>Total Firepower: $FirePower" . $txt;
+        }
+        $BD = 0;
+        $LastF = $T['Whose'];
+        $FirePower = 0;
+        $ftxt = "<tr><td colspan=6 style='background:" . $Facts[$LastF]['MapColour'] . "'><h2>" . $Facts[$LastF]['Name'] . "</h2><tr><td colspan=6>";
+        $txt = '';
+        
+        $FTs = Get_Faction_Techs($LastF);
+
+        foreach ($FTs as $FT) {
+          if (empty($FT['Tech_Id'])) continue;
+          $Tech = $Techs[$FT['Tech_Id']];
+          if ($Tech['Properties'] & $TMsk) $ftxt .= $Tech['Name'] . (($Tech['Cat'] == 0)? ( " Level: " . $FT['Level']) : '') . "<br>\n";
+        }
+      }
+      
+      $txt .= "<tr><td><a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a>";
+      
+      $Mods = Get_Modules($T['id']);
+      foreach($Mods as $M) {
+        if ($ModTypes[$M['Type']]['Leveled'] & 6) {
+          $txt .= "<br>" . $ModTypes[$M['Type']]['Name'] . (($ModTypes[$M['Type']]['Leveled'] & 1)?" Lvl:" . $M['Level'] :'') . " Num: " . $M['Number'] . "\n";
+        }
+      }
+      $Resc = 0;
+      $BD = Calc_Damage($T,$Resc);
+      $txt .= "<td>" . $TTypes[$T['Type']]['Name'] . "<td>" . $T['Level'];
+      $txt .= "<td>" . $T['CurHealth'] . " / " . $T['OrigHealth'] . "<td>$BD<td>" . 
+           (($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE)? "Speed: " . sprintf("%0.3g ",$T['Speed']) :'') ;
+      $FirePower += $BD;
+    }
+
+  }
+  if ($ftxt) echo $ftxt . "<br>Total Firepower: $FirePower" . $txt;
+  echo "</table>";
+}
+
+// Planetary Defences + Militia for Ground Combat
   
   $TurnP = '';
   if (isset($_REQUEST['TurnP'])) $TurnP = "&TurnP=1";
@@ -66,6 +150,7 @@
     }
   }
   
+//  var_dump($_REQUEST);
   
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
@@ -75,27 +160,30 @@
       $txt = SeeInSystem($Sid,31,1,0,-1,1);
       
       echo $txt;
-      
+
+      echo "Make sure you have unloaded troops BEFORE looking at the Ground Combat Report.<p>";
+      ForceReport($Sid,'G');
+      ForceReport($Sid,'S');
+                  
       if (preg_match('/<div class=FullD hidden>/',$txt,$mtch)) {
         echo "<button class='floatright FullD' onclick=\"($('.FullD').toggle())\">Show Remains of Things</button>";
       }
       
-      echo "<p><h2><a href=Meetings.php?s=$Sid&ACTION=FRGROUND>Force Report for Ground Combat</a>, " .
-                  "<a href=Meetings.php?s=$Sid&ACTION=FRSPACE>Force Report for Space Combat</a></h2>";
- //     foreach($Facts as $Fid=>$F) {      
- //       if ($
+
+//      echo "<p><h2><a href=Meetings.php?S=$Sid&ACTION=FRGROUND>Force Report for Ground Combat</a>, " .
+//                  "<a href=Meetings.php?S=$Sid&ACTION=FRSPACE>Force Report for Space Combat</a></h2>";
       break;
       
     case 'FRGROUND':
       $Sid = $_REQUEST['S'];
       $N = Get_System($Sid);
-      ForceReport($Sid,31,1,0,-1,1);
+      ForceReport($Sid,'G');
       break;
           
     case 'FRSPACE':
       $Sid = $_REQUEST['S'];
       $N = Get_System($Sid);
-      ForceReport($Sid,31,1,0,-1,1);
+      ForceReport($Sid,'S');
       break;      
           
     }

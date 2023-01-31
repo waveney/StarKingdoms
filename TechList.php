@@ -40,6 +40,7 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Min Level</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Civ Mil</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Formula</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Properties</a>\n";
     echo "</thead><tbody>";
 
     foreach($Ts as $T) {
@@ -55,6 +56,7 @@
       echo "<td>" . $T['MinThingLevel'];
       echo "<td>" . $CivMil[$T['CivMil']];
       echo "<td>" . ($T['Formula']>0 ? $MFN[$T['Formula']]:'');
+      
       }   
 
   echo "</tbody></table></div>\n";

@@ -840,6 +840,15 @@ function Update_Militia(&$W,&$Dists) {
     } else {
       echo "<h2>Militia already setup</h2>";
     }
+    foreach($Mils as $Ml) {
+      if ($Ml['OrigHealth'] != $Hlth) {
+        $Diff = $Hlth - $Ml['OrigHealth'];
+        $Ml['OrigHealth'] = $Hlth;
+        $Ml['CurHealth'] = min($Ml['CurHealth']+$Diff);
+        Put_Thing($Ml);
+      }
+    }
+    
   } else {
     $MNames = [];
 
