@@ -30,7 +30,7 @@
 
 function ForceReport($Sid,$Cat) {
   global $Facts, $Homes, $TTypes, $ModTypes, $N, $Techs ;
-  $Things = Get_Things_Cond(0,"SystemId=$Sid ORDER BY Whose");
+  $Things = Get_Things_Cond(0,"SystemId=$Sid AND ( BuildState=2 OR BuildState=3) ORDER BY Whose");
   $LastF = $Home = $Control = 0;
   $txt = $ftxt = '';
   $TMsk = ($Cat=='G'?1:2);
