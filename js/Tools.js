@@ -368,3 +368,27 @@ function ExpandTurns() {
   $('#HiddenTurns').addClass('InLine');
   $('#ExpandTurnsDots').hide();
 }
+
+function Do_Damage(id,fid) {
+debugger;
+  var shlth=document.getElementById("StartingHealth" + id).innerHTML;
+  var hlth=document.getElementById("CurHealth" + id).innerHTML;
+  var newhlth = Math.max(0,shlth - document.getElementById("Damage:" + id).value);
+  document.getElementById("CurHealth" + id).innerHTML = newhlth;
+  var change = hlth - newhlth;
+  
+  var Ctot = document.getElementById("DamTot" + fid).innerHTML;
+  document.getElementById("DamTot" + fid).innerHTML = +Ctot + change;
+}
+
+function Do_Destroy(id) {
+
+}
+
+function Do_Remove(id) {
+
+}
+
+function Do_WarpOut() {
+
+}

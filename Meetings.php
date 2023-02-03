@@ -27,9 +27,12 @@
   $TTypes = Get_ThingTypes();
   $ModTypes = Get_ModuleTypes();
   $Techs = Get_Techs();
+  $ThingProps = Thing_Type_Props();
+
+
 
 function ForceReport($Sid,$Cat) {
-  global $Facts, $Homes, $TTypes, $ModTypes, $N, $Techs ;
+  global $Facts, $Homes, $TTypes, $ModTypes, $N, $Techs, $ThingProps ;
   $Things = Get_Things_Cond(0,"SystemId=$Sid AND ( BuildState=2 OR BuildState=3) ORDER BY Whose");
   $LastF = $Home = $Control = 0;
   $txt = $ftxt = $htxt = $Battct = '';
@@ -63,22 +66,23 @@ function ForceReport($Sid,$Cat) {
   if ($Cat =='G' && $Wid) echo "<h2><a href=WorldEdit.php?ACTION=Militia&id=$Wid>Create /Update Militia</a></h2>";
   
   echo "<table border>";
-  echo "<tr><td>What<td>Type<td>Level<td>Health<td>Attack<td>Speed\n";
+  echo "<tr><td>What<td>Type<td>Level<td>Health<td>Attack<td>Speed<td>Actions\n";
   foreach($Things as $T) {
     if ((($Cat == 'S') && (($TTypes[$T['Type']]['Properties'] & 8) != 0)) || 
         (($Cat == 'G') && (($TTypes[$T['Type']]['Properties'] & 0x800020) != 0))) {
-
+      $Tid = $T['id'];
       if ($LastF != $T['Whose']) {
         if ($LastF) {
           echo $htxt;
-          if ($Bat) echo "Battle Tactics: Level $Bat ( $Battct ) <br>";
+          if ($Bat) echo "Battle Tactics: Effectively $Bat ( $Battct ) <br>";
           echo  $ftxt. "<br>Total Firepower: $FirePower" . $txt;
         }
         $BD = $Bat = 0;
         $LastF = $T['Whose'];
         $FirePower = 0;
-        $htxt = "<tr><td colspan=6 style='background:" . $Facts[$LastF]['MapColour'] . "'><h2>" . $Facts[$LastF]['Name'] . "</h2><tr><td colspan=6>";
+        $htxt = "<tr><td colspan=7 style='background:" . $Facts[$LastF]['MapColour'] . "'><h2>" . $Facts[$LastF]['Name'] . "</h2><tr><td colspan=7>";
         $txt = $Battct = $ftxt = '';
+        $txt .= "<br>Damage recieved: <span id=DamTot$LastF>0</span>";
         
         $FTs = Get_Faction_Techs($LastF);
 
@@ -136,17 +140,29 @@ function ForceReport($Sid,$Cat) {
       }
       $Resc = 0;
       $BD = Calc_Damage($T,$Resc);
+      $tprops = $ThingProps[$T['Type']];
+      
       $txt .= "<td>" . $TTypes[$T['Type']]['Name'] . "<td>" . $T['Level'];
-      $txt .= "<td>" . $T['CurHealth'] . " / " . $T['OrigHealth'] . "<td>$BD<td>" . 
+      $txt .= "<td><span id=StartingHealth$Tid hidden>" . $T['CurHealth'] . "</span><span id=CurHealth$Tid>" . $T['CurHealth'] . "</span> / <span id=OrigHealth$Tid>" .
+           $T['OrigHealth'] . "</span>" . "<td><span id=Attack$Tid>$BD</span><td>" . 
            (($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE)? "Speed: " . sprintf("%0.3g ",$T['Speed']) :'') ;
+/**/
+      $txt .=  fm_number1(" Do",$T,'Damage', ''," class=Num3 onchange=Do_Damage($Tid,$LastF)","Damage:$Tid") . " damage"; // . " <input type=button name=ACTION value=Damage onclick=Do_Damage($Tid,$LastF)>"; 
+      
+/*
+      $txt .=  " <input type=button name=ACTION value='Destroy (debris)'>" .
+           " <input type=button name=ACTION value='Remove (No debris)'>";
+      if ($tprops & THING_CAN_MOVE) $txt .=  " <input type=button name=ACTION value='Warp Out'>\n";
+//*/
+
       $FirePower += $BD;
     }
 
   }
   if ($htxt) {
     echo $htxt; 
-    if ($Bat) echo "Battle Tactics: Level $Bat ( $Battct ) <br>";
-    echo  $ftxt. "<br>Total Firepower: $FirePower" . $txt;
+    if ($Bat) echo "Battle Tactics: Effectively $Bat ( $Battct ) <br>";
+    echo  $ftxt. "<br>Total Firepower: <span id=FirePower:$LastF>$FirePower</span>" . $txt;
     echo "</table>";
   }  
 }
@@ -197,6 +213,22 @@ function ForceReport($Sid,$Cat) {
   
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
+    case 'Do ALL Damage':
+      foreach ($_REQUEST as $RN=>$RV) {
+        if ($RV && preg_match('/Damage:(\d*)/',$RN,$Mtch)) {
+          $Tid = $Mtch[1];
+//var_dump($Tid,$RN,$RV);
+          $T = Get_Thing($Tid);
+          $T['CurHealth'] = max(0,min($T['OrigHealth'],$T['CurHealth'] - $RV));
+          Put_Thing($T);
+          
+          // Report??
+        }
+      }
+    
+
+      // Deliberate fall through
+      
     case 'Check':
       $Sid = $_REQUEST['S'];
       $N = Get_System($Sid);
@@ -205,17 +237,26 @@ function ForceReport($Sid,$Cat) {
       echo $txt;
 
       echo "Make sure you have unloaded troops BEFORE looking at the Ground Combat Report.<p>";
-      ForceReport($Sid,'G');
-      ForceReport($Sid,'S');
-                  
+
       if (preg_match('/<div class=FullD hidden>/',$txt,$mtch)) {
         echo "<button class='floatright FullD' onclick=\"($('.FullD').toggle())\">Show Remains of Things</button>";
       }
+
+      echo "<form method=post action=Meetings.php?ACTION=Check&S=$Sid onkeydown=\"return event.key != 'Enter';\">";
+//      Register_AutoUpdate('Meetings',$Sid);
       
+      ForceReport($Sid,'G');
+      ForceReport($Sid,'S');
+
+      echo "<button type=submit name=ACTION value='Do ALL Damage'>Do All Damage</button>";
+      echo "</form>";
+                              
 
 //      echo "<p><h2><a href=Meetings.php?S=$Sid&ACTION=FRGROUND>Force Report for Ground Combat</a>, " .
 //                  "<a href=Meetings.php?S=$Sid&ACTION=FRSPACE>Force Report for Space Combat</a></h2>";
       break;
+      
+      
       
     case 'FRGROUND':
       $Sid = $_REQUEST['S'];
@@ -227,7 +268,7 @@ function ForceReport($Sid,$Cat) {
       $Sid = $_REQUEST['S'];
       $N = Get_System($Sid);
       ForceReport($Sid,'S');
-      break;      
+      break; 
           
     }
   }
