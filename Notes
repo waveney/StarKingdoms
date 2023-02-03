@@ -1,27 +1,15 @@
-Done
-* Research techs
-* Build Districts
-* Build Ships/Armies/ (Agents?)
-* Move Ships, Agents
-* Many automatable Traits
-* Auto progress from build/launch/Shakedown/use of Ships
-* Project display and managing
-* What Can I see 
-* Credit transfers
-* Introduce "Things" - Ships, Armies, Agents, stations, warp gates, outposts, embassies, asteroid mines etc.
-* Personisation of things (Crew, image etc)
-* User Guide (Partial)
-* Economy (Partial)
-* Colonisation, Deep space, Embassy creation
-* Most Projects
+TODO 
+1) Force Reports 
+  * Battle tactics effective value
+  * Multiple worlds in a system
+2) Prisoners
+3) Blockades Income
+  * Launching ships
+  * Minefields
+4) Salvage 
+  * Analyse wreckage
+5) Logistics off map
 
-Not Done
-* Agents - not ready
-* No intelligence operations
-* Most Traits
-* Combat
-* Credit Symbols
-* Back propogate names on control change
 
 
 Imeadiate todo list
@@ -32,25 +20,6 @@ Imeadiate todo list
 * Where is adanite?
 
 
-Known Faults
-* Where are things in system - messy in some cases
-* Move ships and survey levels muddle
-* Nebulae
-* Link ids and targets on movement orders
-* List of scans due - needs use and maintaining
-* Map update errors - may have found it now, x4
-
-* Load on PthingList
-* unload on pthinglist
-
-Nebula
-* Auto handle movement w N sensors, follow w/o sensors
-* Knowledge of links w N sensors
-* No sensors = blind
-* Warpout & surveys
-* Find Ye Map bug.
-* Select destinations
-* 
 
 Future Hooks:
 1) Players can be GMs etc in different games (untested)
@@ -58,7 +27,7 @@ Future Hooks:
 3) Projects can be abandoned and resumed later (penalty to be decided upon)
 4) Many things from Asteroid mines, Minefields etc can be "advanced", they appear the same to other factions, but get more money, delever more damage etc.
 5) Link Ids can be annoymised so you don't know what connects to what until you explore them
-6) 
+6) Most things can be leveled eg minefileds, outposts etc
 
 
 
@@ -168,28 +137,6 @@ Dance:
 3) Talk to Laura re standard messages
 
 
-MineFields
 
-Y 1 Minesweppers
-2 Mines on Anomalies
-2A Anomaly locations
-Y 3 Making on Links
-Y 4 Making on Planets/Moons
-Y 5 Reporting where they are
-Y 6 Damage when moving along links
-7 Damage when moving to planets/moons
-Y 8 Reset the link/planet mine data
-9 Shakedowns
-
-Collab Construction
-Collab Anomallies
-
-Warning: Undefined variable $FestTypes in /var/www/vhosts/www2.chippfolk.co.uk/httpdocs/int/AddPerf.php on line 32
-
-Warning: foreach() argument must be of type array|object, null given in /var/www/vhosts/www2.chippfolk.co.uk/httpdocs/int/AddPerf.php on line 32 
-
-Warning: openssl_decrypt(): IV passed is only 12 bytes long, cipher expects an IV of precisely 16 bytes, padding with \0 in /var/www/vhosts/www2.chippfolk.co.uk/httpdocs/int/fest.php on line 86 
-
-Warning: openssl_decrypt(): IV passed is only 12 bytes long, cipher expects an IV of precisely 16 bytes, padding with \0 in /var/www/vhosts/www2.chippfolk.co.uk/httpdocs/int/fest.php on line 86 Warning: Trying to access array offset on value of type null in /var/www/vhosts/www2.chippfolk.co.uk/httpdocs/int/Login.php on line 116 
 
 

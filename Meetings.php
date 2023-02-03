@@ -32,10 +32,10 @@ function ForceReport($Sid,$Cat) {
   global $Facts, $Homes, $TTypes, $ModTypes, $N, $Techs ;
   $Things = Get_Things_Cond(0,"SystemId=$Sid AND ( BuildState=2 OR BuildState=3) ORDER BY Whose");
   $LastF = $Home = $Control = 0;
-  $txt = $ftxt = '';
+  $txt = $ftxt = $htxt = $Battct = '';
   $TMsk = ($Cat=='G'?1:2);
   $PlanMoon = [];
-  $Wid = 0;
+  $Wid = $Bat = 0;
   
   if ($Cat == 'G') {
     $PTD = Get_PlanetTypes();  // ONLY works for single taget at present
@@ -70,20 +70,59 @@ function ForceReport($Sid,$Cat) {
 
       if ($LastF != $T['Whose']) {
         if ($LastF) {
-          echo $ftxt . "<br>Total Firepower: $FirePower" . $txt;
+          echo $htxt;
+          if ($Bat) echo "Battle Tactics: Level $Bat ( $Battct ) <br>";
+          echo  $ftxt. "<br>Total Firepower: $FirePower" . $txt;
         }
-        $BD = 0;
+        $BD = $Bat = 0;
         $LastF = $T['Whose'];
         $FirePower = 0;
-        $ftxt = "<tr><td colspan=6 style='background:" . $Facts[$LastF]['MapColour'] . "'><h2>" . $Facts[$LastF]['Name'] . "</h2><tr><td colspan=6>";
-        $txt = '';
+        $htxt = "<tr><td colspan=6 style='background:" . $Facts[$LastF]['MapColour'] . "'><h2>" . $Facts[$LastF]['Name'] . "</h2><tr><td colspan=6>";
+        $txt = $Battct = $ftxt = '';
         
         $FTs = Get_Faction_Techs($LastF);
 
         foreach ($FTs as $FT) {
           if (empty($FT['Tech_Id'])) continue;
+
           $Tech = $Techs[$FT['Tech_Id']];
-          if ($Tech['Properties'] & $TMsk) $ftxt .= $Tech['Name'] . (($Tech['Cat'] == 0)? ( " Level: " . $FT['Level']) : '') . "<br>\n";
+          if ($Tech['Properties'] & $TMsk) {
+            switch ($Tech['Name']) {
+            case 'Battle Tactics':
+              $Bat += $FT['Level'];
+              $Battct .= " Base: " . $FT['Level'];
+              continue 2; 
+            
+            case 'Combined Arms':
+              $Bat += 1;
+              $Battct .= ", Combined Arms +1 ";
+              break;
+            
+            case 'Battlefield Intelligence':
+              $Agents = Get_Things_Cond($LastF," Type=5 AND Class='Military' AND SystemId=" . $T['SystemId'] . " ORDER BY Level DESC");
+              if ($Agents) {
+                $Bi = ($Agents[0]['Level']/2);
+                $Bat += $Bi;
+                $Battct .= ", Battlefield Intelligence +$Bi ";
+              }
+              break;
+            
+            case 'Army Tactics - Arctic':
+            case 'Army Tactics - Desert':
+            case 'Army Tactics - Desolate':
+            case 'Army Tactics - Temperate':
+              if (strstr($Tech['Name'],$HomeType)) {
+                $Bat += 1;
+                $Battct .= ", " . $Tech['Name'] . " +1 ";
+                break;
+              }
+              continue 2;
+            
+            default:
+
+            }
+            $ftxt .= $Tech['Name'] . (($Tech['Cat'] == 0)? ( " Level: " . $FT['Level']) : '') . "<br>\n";
+          }
         }
       }
       
@@ -104,8 +143,12 @@ function ForceReport($Sid,$Cat) {
     }
 
   }
-  if ($ftxt) echo $ftxt . "<br>Total Firepower: $FirePower" . $txt;
-  echo "</table>";
+  if ($htxt) {
+    echo $htxt; 
+    if ($Bat) echo "Battle Tactics: Level $Bat ( $Battct ) <br>";
+    echo  $ftxt. "<br>Total Firepower: $FirePower" . $txt;
+    echo "</table>";
+  }  
 }
 
 // Planetary Defences + Militia for Ground Combat
