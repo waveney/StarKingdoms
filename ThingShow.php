@@ -291,6 +291,7 @@ function Show_Thing(&$T,$Force=0) {
         $TList = [];
         $FF = Get_FactionFactionsCarry($Fid);
         foreach($XPorts as $X) {
+          if ($X['BuildState'] < 2 || $X['BuildState'] > 3) continue;
           if ($NeedCargo && $X['CargoSpace'] < $T['Level']) continue; // Not big enough
           if ($ThingProps[$X['Type']] & THING_CANT_HAVENAMED) continue;
           if ($X['Whose'] != $Fid) {

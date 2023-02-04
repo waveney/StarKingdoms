@@ -1485,10 +1485,10 @@ function Economy() {
       $Name = $PH['Name'];
       $ECon = $H['Economy'] = Recalc_Economic_Rating($H,$W,$Fid);
       if ($W['Revolt']) {
-        $Econ = 0;
+        $ECon = 0;
         echo "It is in <b>Revolt</b> no income<br>\n";
       } else if ($W['Blockade'] && $Fid != 9) {
-        $Econ = 0;
+        $ECon = 0;
         echo "It is blockaded no income<br>\n";
       } else {
         $ECon = ceil(($ECon - $H['Devastation'])*$H['EconomyFactor']/100);
@@ -2119,7 +2119,7 @@ function ProjectsCompleted($Pass) {
 //  echo "Projects Complete is currently Manual<p>"; 
 // Pass 0 = Refits only, 1 = rest 
 
-  global $GAME,$GAMEID;
+  global $GAME,$GAMEID,$Currencies;
 
   $ProjTypes = Get_ProjectTypes();
   $Projects = Get_Projects_Cond("Status=1 AND Progress=ProgNeeded");

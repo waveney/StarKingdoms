@@ -113,10 +113,10 @@
       
       echo "$Name: Economic Value: $ECon <br>";
       if ($W['Revolt']) {
-        $Econ = 0;
+        $ECon = 0;
         echo "It is in Revolt no income<br>\n";
       } else if ($W['Blockade'] && $Fid != 9) {
-        $Econ = 0;
+        $ECon = 0;
         echo "It is blockaded no income<br>\n";
       } else {
         if ($H['Devastation']) {

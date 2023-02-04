@@ -264,9 +264,9 @@ function Income_Estimate($Fid) {
     $ECon = $H['Economy'] = Recalc_Economic_Rating($H,$W,$Fid);
       
     if ($W['Revolt']) {
-      $Econ = 0;
+      $ECon = 0;
     } else if ($W['Blockade'] && $Fid != 9) {
-      $Econ = 0;
+      $ECon = 0;
     } else {
 
       if ($H['Devastation']) {
