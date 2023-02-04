@@ -2373,7 +2373,7 @@ function ProjectsCompleted($Pass) {
         $Ad = Proj_Costs($P['Level'])[0];
         $Fact = Get_Faction($Fid);
         $Fact["Curreny$Cur"] += $Ad;
-        Put_Faction($Fid);
+        Put_Faction($Fact);
 
         $H = Get_ProjectHome($P['Home']);      
         switch ($H['ThingType']) {
@@ -2386,7 +2386,7 @@ function ProjectsCompleted($Pass) {
           case 3: // Thing
             $PH = Get_Thing($H['ThingId']);
             break;
-          }
+        }
         TurnLog($Fid,"Produced $Ad $LinkRes on " . $PH['Name']);              
       }
     break;
