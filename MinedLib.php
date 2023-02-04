@@ -43,7 +43,7 @@ function Recalc_Mined_locs() {
          
     case 5: //At Stargate
       $Li = 1;
-      $Ref = $SystemRs[$Mid['SystemId']];
+      $Ref = $SystemRs[$M['SystemId']];
       foreach($Links as &$lk) if ($lk['System1Ref'] == $Ref || $lk['System2Ref'] == $Ref) if ( (500+($li++)) == $WLoc ) break;
            
       if ($lk['System1Ref'] == $Ref) {

@@ -1243,8 +1243,11 @@ function ProjectProgressActions($Pay4=0) {
 
     $H = Get_ProjectHome($P['Home']);
     if (empty($H)) {
+          GMLog("<b>Project " . $P['id'] . " fails as the world does not exist.  </b><p>");
+          TurnLog($P['FactionId'], " <b>Project " . $P['Name'] . " fails as " . $PH['Name'] . " is no longer controlled by you.");
+
           Abandon_Project($P);
-          break;
+          continue;
     }
     $Revolt = 0;
     foreach($Worlds as $W) {
