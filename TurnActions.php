@@ -1235,12 +1235,24 @@ function ProjectProgressActions($Pay4=0) {
   $DistTypes = Get_DistrictTypes();
   $ThingTypes = Get_ThingTypes();
   $Factions = Get_Factions();
+  $Worlds = Get_Worlds();
 
   foreach ($Projects as $P) {
     if ($P['LastUpdate'] >= $GAME['Turn']) continue;
     GMLog("Updating project " . $P['id'] . " " . $P['Name']);
 
     $H = Get_ProjectHome($P['Home']);
+    if (empty($H)) {
+          Abandon_Project($P);
+          break;
+    }
+    $Revolt = 0;
+    foreach($Worlds as $W) {
+      if ($W['Revolt'] && ($W['ThingType'] == $H['ThingType']) && ($W['ThingId'] == $H['ThingId'])) {
+        $Revolt = 1;
+        break;
+      }
+    }
     if (isset($H['ThingType'])) switch ($H['ThingType']) {
       case 1: // Planet
         $PH = Get_Planet($H['ThingId']);
@@ -1391,19 +1403,23 @@ function ProjectProgressActions($Pay4=0) {
     $Bonus = 0;
     if (!empty($TurnStuff['Bonus'])) $Bonus = $TurnStuff['Bonus'];
 
-    $Acts = min($MaxActs,$P['ProgNeeded']-$P['Progress']);
+    $PActs = $Acts = min($MaxActs,$P['ProgNeeded']-$P['Progress']);
+    if ($Revolt) {
+      $Acts = 0;
+      TurnLog($P['FactionId'],'No normal progress on ' . $P['Name'] . " by because of <b>Revolt</b> ");    
+    }  
     if (preg_match('/Research/',$PT['Name'],$mtch) && Has_Trait($P['FactionId'],'Built for Construction and Logistics')) {
       $TechId = $P['ThingType'];
       $Tech = Get_Tech($TechId);
       if ($Tech['PreReqTech'] == 1 || $TechId == 1) {
-        $FreeRush = min(1,$Acts,$P['ProgNeeded']-$P['Progress']-$Acts-$Bonus);
+        $FreeRush = min(1,$PActs,$P['ProgNeeded']-$P['Progress']-$Acts-$Bonus);
         if ($FreeRush && $Pay4 == 0) {
           TurnLog($P['FactionId'],'Free Rush of ' . $P['Name'] . " by $FreeRush ");
         }
       } 
     }
     if (isset($TurnStuff['Rush'])) {
-      $Rush = min($TurnStuff['Rush'],$Acts,$P['ProgNeeded']-$P['Progress']-$Acts-$Bonus-$FreeRush);
+      $Rush = min($TurnStuff['Rush'],$PActs,$P['ProgNeeded']-$P['Progress']-$Acts-$Bonus-$FreeRush);
       if ($Rush) {
         if (isset($P['FreeRushes']) && $P['FreeRushes']>0) continue;
         if ($Pay4) {
@@ -1465,7 +1481,10 @@ function Economy() {
       $PH = Project_Home_Thing($H);
       $Name = $PH['Name'];
       $ECon = $H['Economy'] = Recalc_Economic_Rating($H,$W,$Fid);
-      if ($W['Blockade'] && $Fid != 9) {
+      if ($W['Revolt']) {
+        $Econ = 0;
+        echo "It is in <b>Revolt</b> no income<br>\n";
+      } else if ($W['Blockade'] && $Fid != 9) {
         $Econ = 0;
         echo "It is blockaded no income<br>\n";
       } else {

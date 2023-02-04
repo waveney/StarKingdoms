@@ -57,6 +57,7 @@ function ForceReport($Sid,$Cat) {
           break 2;
         }
         echo "Home not found";
+        $Home = $Wid = 0;
         break; // CHANGE For Multi targets
       }
     }
@@ -163,8 +164,8 @@ function ForceReport($Sid,$Cat) {
     echo $htxt; 
     if ($Bat) echo "Battle Tactics: Effectively $Bat ( $Battct ) <br>";
     echo  $ftxt. "<br>Total Firepower: <span id=FirePower:$LastF>$FirePower</span>" . $txt;
-    echo "</table>";
-  }  
+  }
+  echo "</table>";
 }
 
 // Planetary Defences + Militia for Ground Combat

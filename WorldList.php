@@ -57,6 +57,7 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Priority<br>Importance</a>\n";
   if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Conflict?</a>\n";
   if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Blockade?</a>\n";
+  if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Revolt?</a>\n";
   echo "</thead><tbody>";
   
   foreach ($Facts as $F) {
@@ -127,6 +128,7 @@
     echo "<td>" . $W['RelOrder'] . "\n";
     if ($GM) echo "<td>" . fm_checkbox("Conflict?", $W, 'Conflict','',"Conflict:99:" . $W['id']);
     if ($GM) echo "<td>" . fm_checkbox("Blockade?", $W, 'Blockade','',"Blockade:99:" . $W['id']);
+    if ($GM) echo "<td>" . fm_checkbox("Revolt?", $W, 'Revolt','',"Revolt:99:" . $W['id']);
   }
   echo "</table></div>\n";
   

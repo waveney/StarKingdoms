@@ -112,7 +112,10 @@
       $ECon = $H['Economy'] = Recalc_Economic_Rating($H,$W,$Fid);
       
       echo "$Name: Economic Value: $ECon <br>";
-      if ($W['Blockade'] && $Fid != 9) {
+      if ($W['Revolt']) {
+        $Econ = 0;
+        echo "It is in Revolt no income<br>\n";
+      } else if ($W['Blockade'] && $Fid != 9) {
         $Econ = 0;
         echo "It is blockaded no income<br>\n";
       } else {
