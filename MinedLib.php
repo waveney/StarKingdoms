@@ -9,7 +9,7 @@ function Recalc_Mined_locs() {
   $Moons = Gen_Get_Table('Moons', "ORDER BY OrbitalRadius");
   $SystemRs = Get_SystemRefs();
 
-  foreach ($Links as &$L) $L['FMined1'] = $L['FMined2'] = 0;
+  foreach ($Links as &$L) $L['FMinedA'] = $L['FMinedB'] = 0;
   foreach ($Planets as &$P) $P['FMined'] = 0;
   foreach ($Moons as &$Mn) $Mn['FMined'] = 0;
 
@@ -47,9 +47,9 @@ function Recalc_Mined_locs() {
       foreach($Links as &$lk) if ($lk['System1Ref'] == $Ref || $lk['System2Ref'] == $Ref) if ( (500+($li++)) == $WLoc ) break;
            
       if ($lk['System1Ref'] == $Ref) {
-        $lk['FMined1'] = $Mid;
+        $lk['FMinedA'] = $Mid;
       } else {
-        $lk['FMined2'] = $Mid;
+        $lk['FMinedB'] = $Mid;
       }
       break;
          
@@ -77,9 +77,9 @@ function Recalc_Mined_locs() {
   echo "Done Moons<p>";
   
   foreach($Links as &$L) {
-    if ($L['Mined1'] == 0 && $L['FMined1'] == 0 && $L['Mined2'] == 0 && $L['FMined2'] == 0) continue;
-    $L['Mined1'] = $M['FMined1'];    
-    $L['Mined2'] = $M['FMined2'];
+    if ($L['MinedA'] == 0 && $L['FMinedA'] == 0 && $L['MinedB'] == 0 && $L['FMinedB'] == 0) continue;
+    $L['MinedA'] = $M['FMinedA'];    
+    $L['MinedB'] = $M['FMinedB'];
     Put_Link($L);
   }
   echo "Done Links<p>";

@@ -303,7 +303,7 @@ function Show_Thing(&$T,$Force=0) {
 //          var_dump($X);
             $OnBoard = Get_Things_Cond(0,"((LinkId=-1 OR LinkId=-3) AND SystemId=" . $X['id'] . ")");
             $Used = 0;
-            foreach($OnBoard as $OB) if ($ThingProps[$OB['Type']]['Properties'] & THING_NEEDS_CARGOSPACE) $Used += $OB['Level'];
+            foreach($OnBoard as $OB) if ($ThingProps[$OB['Type']] & THING_NEEDS_CARGOSPACE) $Used += $OB['Level'];
             if ($X['CargoSpace'] < $Used + $T['Level']) continue; // Space is used
           }
           $TList[$X['id']] = $X['Name'];  

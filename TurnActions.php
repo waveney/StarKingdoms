@@ -1785,7 +1785,14 @@ function ShipMovements($Agents=0) {
       foreach ($MineChecks as $Dir=>$MC) {
         if ($L["Mined$MC"]) {
           $Mine = Get_Thing($L["Mined$MC"]);
-          if ($Mine) Do_Mine_Damage($T,$Mine, ($Dir == 'To'? $N : $OldN),1);
+          if ($Mine) {
+// echo "Mine Damage "; var_dump($T,$N,$OldN,$Dir); echo "<P>";
+            if ($Dir == 'To' ) {
+              Do_Mine_Damage($T,$Mine, $N,1);
+            } else {
+              Do_Mine_Damage($T,$Mine, $OldN,1);        
+            }
+          }
           if ($T['BuildState'] != 3) continue 2;
         }
       }
@@ -2544,9 +2551,9 @@ function InstructionsComplete() {
            foreach($LKs as $lk) if ( (500+($li++)) == $WLoc ) break;
            
            if ($lk['System1Ref'] == $N['Ref']) {
-             $lk['Mined1'] = $NT['id'];
+             $lk['MinedA'] = $NT['id'];
            } else {
-             $lk['Mined2'] = $NT['id'];
+             $lk['MinedB'] = $NT['id'];
            }
            Put_Link($lk);
            break;
@@ -2774,10 +2781,10 @@ function InstructionsComplete() {
              break;
              
            case 5: // Stargate
-             $Link = Gen_Get_Cond1('Links'," Mined1=$Mid OR Mined2=$Mid ");
+             $Link = Gen_Get_Cond1('Links'," MinedA=$Mid OR MinedB=$Mid ");
              if ($Link) {
-               if ($Link['Mined1'] == $Mid) $Link['Mined1'] = 0;
-               if ($Link['Mined2'] == $Mid) $Link['Mined2'] = 0;
+               if ($Link['MinedA'] == $Mid) $Link['MinedA'] = 0;
+               if ($Link['MinedB'] == $Mid) $Link['MinedB'] = 0;
                Put_Link($Link);
              }
              break;

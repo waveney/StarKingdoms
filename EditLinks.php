@@ -44,8 +44,8 @@
     echo "<td>" . fm_select($Ssys,$D,'System2Ref',0,'',"System2Ref$i");
     echo "<td>" . fm_select($LLs,$D,'Level',0,'',"Level$i");
     echo fm_number1('',$D,'UseCount','','',"UseCount$i");
-    echo fm_number1('',$D,'Mined1');
-    echo fm_number1('',$D,'Mined2');
+    echo fm_number1('',$D,'MinedA','','',"MinedA$i");
+    echo fm_number1('',$D,'MinedB','','',"MinedB$i");
 //    echo fm_number1("",$D,'Level','','',"Level$i");
   }
   $D = [];
