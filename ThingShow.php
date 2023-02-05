@@ -482,16 +482,16 @@ function Show_Thing(&$T,$Force=0) {
   }
   if ($tprops & THING_HAS_DISTRICTS) {
     $DTs = Get_DistrictTypeNames();
-    $Ds = Get_DistrictsT($tid);
+    $Dists = Get_DistrictsT($tid);
 
-    $NumDists = count($Ds);
+    $NumDists = count($Dists);
     $dc=0;
     $totdisc = 0;
 
     if ($GM) {
       if ($NumDists) echo "<tr><td rowspan=" . ceil(($NumDists+2)/2) . ">Districts:";
       
-      foreach ($Ds as $D) {
+      foreach ($Dists as $D) {
         $did = $D['id'];
         if (($dc++)%2 == 0)  echo "<tr>";
         echo "<td>" . fm_Select($DTs, $D , 'Type', 1,'',"DistrictType-$did") . fm_number1('', $D,'Number', '','',"DistrictNumber-$did");
@@ -508,7 +508,7 @@ function Show_Thing(&$T,$Force=0) {
     } else {
       if ($NumDists) echo "<tr><td rowspan=" . ceil(($NumDists+4)/4) . ">Districts:";
       
-      foreach ($Ds as $D) {
+      foreach ($Dists as $D) {
         $did = $D['id'];
         if (($dc++)%4 == 0)  echo "<tr>";
         echo "<td>" . $DTs[$D['Type']] . ": " . $D['Number'];
@@ -531,9 +531,9 @@ function Show_Thing(&$T,$Force=0) {
 //    $MTNs = [];
 //    foreach($DTs as $M) $MTNs[$M['id']] = $M['Name'];
     $MTNs = Get_Valid_Modules($T);
-    $Ds = Get_Modules($tid);
+    $Mods = Get_Modules($tid);
 
-    $NumMods = count($Ds);
+    $NumMods = count($Mods);
     $dc=0;
     $totmodc = 0;
     $BadMods = 0;
@@ -542,7 +542,7 @@ function Show_Thing(&$T,$Force=0) {
     if ($GM) { // TODO Allow for setting module levels 
       if ($NumMods) echo "<tr><td rowspan=" . ceil(($NumMods+2)/2) . ">Modules:";
   
-      foreach ($Ds as $D) {
+      foreach ($Mods as $D) {
         $did = $D['id'];
         if (($dc++)%2 == 0)  echo "<tr>";
         echo "<td>" . (isset($MTNs[$D['Type']])? fm_Select($MTNs, $D , 'Type', 1,'',"ModuleType-$did") : "<span class=red>INV:" .  
@@ -576,7 +576,7 @@ function Show_Thing(&$T,$Force=0) {
     } else {
       if ($NumMods) echo "<tr><td rowspan=" . ceil(($NumMods+4)/4) . ">Modules:";
   
-      foreach ($Ds as $D) {
+      foreach ($Mods as $D) {
 //        if ($D['Number'] == 0) continue;
         $did = $D['id'];
         if (($dc++)%4 == 0)  echo "<tr>";
@@ -632,13 +632,31 @@ function Show_Thing(&$T,$Force=0) {
     echo "<tr>" . fm_number('Sensors',$T,'Sensors') . fm_number('Sens Level',$T,'SensorLevel') . fm_number('Neb Sensors', $T,'NebSensors');
   }
   $SpecOrders = []; $SpecCount = 0;
-  $HasDeep = Get_ModulesType($tid,3);
-  if ($HasDeep && ($HasDeep[0]['Number'] > 0)) {
-    $HasDeep = $HasDeep[0]['Number'] * $HasDeep[0]['Level'];
-  } else {
-    $HasDeep = 0;
+  $HasDeep = $HasMinesweep = $HasSalvage = 0;
+  if ($tprops & THING_HAS_MODULES) {
+    foreach ($Mods as $M) {
+      $MName = $MTs[$M['Type']]['Name'];
+      switch ($MName) {
+      
+      case 'Deep Space Construction':
+        $HasDeep += $M['Number'] * $M['Level'];
+        break;
+        
+      case 'Minesweepers':
+        $HasMinesweep += $M['Number'] * $M['Level'];
+        break;
+        
+      case 'Salvage Rigs':
+      case 'Advanced Salvage Rig':
+        $HasSalvage += $M['Number'] * $M['Level'];
+        break;
+      
+      default:
+      }
+    }
   }
-  $HasMinesweep = Get_ModulesType($tid,23);
+
+// var_dump($HasDeep,$HasMinesweep,$HasSalvage);
   $TTNames = Thing_Types_From_Names();
   $Moving = ($T['LinkId'] > 0);
   
@@ -688,8 +706,8 @@ function Show_Thing(&$T,$Force=0) {
       $Loc = $T['SystemId'];
       $Homes = Gen_Get_Cond('ProjectHomes', "SystemId=$Loc AND Whose=$Fid");
       foreach ($Homes as $H) {
-        $Ds = Get_DistrictsH($H['id']);
-        if (isset($Ds[3])) break 2; // FOund a Shipyard
+        $LDists = Get_DistrictsH($H['id']);
+        if (isset($LDists[3])) break 2; // FOund a Shipyard
       }
       if (isset($N['id']) && Get_Things_Cond($Fid,"Type=" . $TTNames['Orbital Repair Yards'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) break; 
         // Orbital Shipyard     
@@ -701,8 +719,8 @@ function Show_Thing(&$T,$Force=0) {
       $Loc = $T['SystemId'];
       $Homes = Gen_Get_Cond('ProjectHomes', "SystemId=$Loc AND Whose=$Fid");
       foreach ($Homes as $H) {
-        $Ds = Get_DistrictsH($H['id']);
-        if (isset($Ds[2])) break 2; // FOund a Military District
+        $LDists = Get_DistrictsH($H['id']);
+        if (isset($LDists[2])) break 2; // FOund a Military District
       }
       continue 2;
     
@@ -882,7 +900,10 @@ function Show_Thing(&$T,$Force=0) {
       if (Get_Things_Cond(0,"Type=" . $TTNames['Deep Space Sensor'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one //???
       break;
 
-
+    case 'Salvage':
+      if ($Moving || !$HasSalvage) continue 2;  
+      break;
+    
     default: 
       continue 2;
       
@@ -1290,7 +1311,11 @@ function Show_Thing(&$T,$Force=0) {
       $Acts = $PTNs['Advanced Deep Space Sensors']['CompTarget'];
       break;
 
-
+    case 'Salvage':
+      $Acts = 1;
+      $Cost = -1;
+      break;
+      
     default: 
       break;
     }

@@ -148,7 +148,8 @@ function ForceReport($Sid,$Cat) {
            $T['OrigHealth'] . "</span>" . "<td><span id=Attack$Tid>$BD</span><td>" . 
            (($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE)? "Speed: " . sprintf("%0.3g ",$T['Speed']) :'') ;
 /**/
-      $txt .=  fm_number1(" Do",$T,'Damage', ''," class=Num3 onchange=Do_Damage($Tid,$LastF)","Damage:$Tid") . " damage"; // . " <input type=button name=ACTION value=Damage onclick=Do_Damage($Tid,$LastF)>"; 
+      $txt .=  fm_number1(" Do",$T,'Damage', ''," class=Num3 onchange=Do_Damage($Tid,$LastF)","Damage:$Tid") . " damage"; 
+      // . " <input type=button name=ACTION value=Damage onclick=Do_Damage($Tid,$LastF)>"; 
       
 /*
       $txt .=  " <input type=button name=ACTION value='Destroy (debris)'>" .

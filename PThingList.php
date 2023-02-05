@@ -286,8 +286,8 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
         $Up += $M['Number'];
       }
     }
-    if (($T['CurHealth'] < $T['OrigHealth']) && ($Props & THING_HAS_HEALTH)) $Up++;
-    echo "<td>$Up";
+    if (($T['CurHealth'] < $T['OrigHealth']) && ($Props & THING_HAS_HEALTH) && (($Props & THING_CAN_BE_SPLATED) == 0)) $Up++;
+    echo "<td>" . ($Up?$Up:'');
     
     if ($GM) { 
       echo "<td>" . (($T['Sensors'] ? ($T['Sensors'] . '*L' . $T['SensorLevel']) : ''));

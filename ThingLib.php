@@ -15,7 +15,7 @@ $BuildState = ['Planning','Building','Shakedown','Complete','Ex','Abandonded','M
 $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse Anomaly','Establish Embassy','Make Outpost','Make Asteroid Mine','Make Minefield',
                 'Make Orbital Repair Yard','Build Space Station','Expand Space Station','Make Deep Space Sensor','Make Advanced Asteroid Mine','Build Stargate',
                 'Make Planet Mine', 'Construct Command Relay Station', 'Repair Command Node','Build Planetary Mine','Dismantle Stargate','Disband','Transfer',
-                'Make Something','Make Warpgate','Retire','Stop Support','Make Advanced Minefield','Clear Minefield', 'Make Advanced Deep Space Sensor'];
+                'Make Something','Make Warpgate','Retire','Stop Support','Make Advanced Minefield','Clear Minefield', 'Make Advanced Deep Space Sensor','Salvage'];
 $Advance = ['','','Advanced ','Very Advanced ','Ultra Advanced ','Evolved '];
 $ValidMines = [0,1,0,1,0,1,0,0,0,0,0];
 
@@ -692,6 +692,9 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
   
 //  if ($T['id'] == 238) { echo "Here with outpost<br>"; var_dump($T); }
   $TTprops = $ThingTypes[$T['Type']]['Properties'];
+  
+  if ($T['CurHealth'] == 0 && ($TTprops & THING_CAN_BE_SPLATED)) return '';
+  
   $stm = (int) (~ (int)$T['SeenTypeMask']);
 //echo "Failed to see:" . $ThingTypes[$T['Type']]['SeenBy'] . ":$stm:" . $T['SeenTypeMask'] . ":$Eyes<p>";
 //var_dump($stm);
@@ -1006,6 +1009,24 @@ function Move_Thing_Within_Sys(&$T,$Dest,$InTurn) {
   }
   
   $T['WithinSysLoc'] = $Dest;
+}
+
+function Thing_Delete($tid) {
+      $T = Get_Thing($tid);
+      $Discs = Get_DistrictsT($tid);
+      if ($Discs) {
+        foreach ($Discs as $D) {
+          db_delete('Districts',$D['id']);
+        }
+      }
+      $Mods = Get_DistrictsT($tid);
+      if ($Mods) {
+        foreach ($Mods as $M) {
+          db_delete('Modules',$M['id']);
+        }
+      }
+
+      db_delete('Things',$tid);
 }
 
 ?>

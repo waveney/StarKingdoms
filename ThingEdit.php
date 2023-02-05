@@ -148,24 +148,12 @@ function New_Thing(&$T) {
     case 'Delete':
     case 'Remove Thing (No debris)':
     case 'DELETE' :
+
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
       Check_MyThing($T,$Fid);
-      $Discs = Get_DistrictsT($tid);
-      if ($Discs) {
-        foreach ($Discs as $D) {
-          db_delete('Districts',$D['id']);
-        }
-      }
-      $Mods = Get_DistrictsT($tid);
-      if ($Mods) {
-        foreach ($Mods as $M) {
-          db_delete('Modules',$M['id']);
-        }
-      }
-
-      db_delete('Things',$tid);
-
+      Thing_Delete($tid);
+ 
       echo "<h1>Deleted</h1>";
       echo "<h2><a href=PThingList.php>Back to Thing list</a></h2>";
       dotail();

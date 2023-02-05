@@ -42,8 +42,8 @@
              'Coded','No','Coded,M','Coded',
              'Coded,M','Coded','No', 'Coded,M',
              
-             'No','No','Coded','No',
-             'No','No','No','Coded,M', 
+             'No','Help','Coded','No',
+             'No','No','Help','Coded,M', 
              'Coded', 'No', 'Coded','Coded',
              'No','No','No','No',
              'Coded','Coded','Coded,M','Coded,M', 
@@ -1039,6 +1039,11 @@ function Instuctions() { // And other Instructions
       $T['Instruction'] = -$T['Instruction'];      
       break;
       
+    case 'Salvage':
+      $T['Instruction'] = -$T['Instruction'];      
+      break;
+    
+      
     default:
      
     }
@@ -2031,15 +2036,11 @@ function InstructionsProgress() {
       case 'Make Warpgate':
         $Prog = Has_Tech($T['Whose'],'Deep Space Construction');
         $Mods = Get_ModulesType($Tid, 3);
-//var_dump($T);exit;
-//var_dump($T['Progress'], $Prog, $Mods[0], $T['ActionsNeeded']);
-//echo "<br>" . $Prog*$Mods[0]['Number'] . "<p>";
         $ProgGain = $Prog*$Mods[0]['Number'];
         GMLog("$ProgGain progress on " . $ThingInstrs[abs($T['Instruction'])] . " for " . $Facts[$T['Whose']]['Name'] . ":" . $T['Name']);
 
 
         $T['Progress'] = min($T['ActionsNeeded'],$T['Progress']+$ProgGain);
-//var_dump($T['Progress']); exit;
         Put_Thing($T);
         break;
         
@@ -2080,7 +2081,15 @@ function InstructionsProgress() {
           }
           TurnLog($Fid,$T['Name'] . " is supposed to be analysing an anomaly - but there isn't one",$T);                    
         }
-        break;        
+        break;
+        
+      case 'Salvage':
+        $Prog = Has_Tech($T['Whose'],'Salvage Rigs');
+        GMLog("$Prog progress on " . $ThingInstrs[abs($T['Instruction'])] . " for " . $Facts[$T['Whose']]['Name'] . ":" . $T['Name']);
+        $T['Progress'] = min($T['ActionsNeeded'],$T['Progress']+$Prog);
+        Put_Thing($T);
+        break;
+    
       default: 
         break;
      }
@@ -2359,7 +2368,7 @@ function ProjectsCompleted($Pass) {
 
     case 'Decipher Alien Language':
     case 'Grow Modules' :    
-      GMLog("A project to " . $PT['Name'] . " has completed, this is not automated yet.  See <a href=ProjEdit.php?id=" . $P['id'] . ">Project</a>",1);
+      GMLog("A project to " . $PT['Name'] . " has completed (" . $P['Name'] . "), this is not automated yet.  See <a href=ProjEdit.php?id=" . $P['id'] . ">Project</a>",1);
       FollowUp($Fid,"A project to " . $PT['Name'] . " has completed, this is not automated yet.");
       break;
       
@@ -2431,11 +2440,13 @@ function InstructionsComplete() {
   $NeedColStage2 = 0;
   $Facts = Get_Factions();
   $TTNames = Thing_Types_From_Names();
+  $TTypes = Get_ThingTypes();
   
   foreach ($Things as $T) {
     $N = Get_System($T['SystemId']);
     $Tid = $T['id'];
     $Instr = $ThingInstrs[abs($T['Instruction'])];
+    
     switch ($Instr) {
     case 'Colonise':
       $P = Get_Planet($T['Spare1']);
@@ -2820,6 +2831,73 @@ function InstructionsComplete() {
          }
        } else {
          TurnLog($$T['Whose'],"There is no Minefield to remove in " . $N['Ref'] . " $LocText");       
+       }
+       break;
+       
+     case 'Salvage':  // Find all Ex things in space, go through each work out money, if have Wrecage analysis give that report as well
+       $Wrecks = Get_Things_Cond(0,"SystemId=" . $T['SystemId'] . " AND BuildState>3");
+       $Who = $T['Whose'];
+       $SalvageLevel = Has_Tech($Who,'Salvage Rigs');
+       $HasWreck = Has_Tech($Who,'Wreckage Analysis');
+       $TotMoney = 0;
+       $ModTypes = Get_ModuleTypes();
+       $DistTypes = Get_DistrictTypes();
+
+       $N = Get_System($T['SystemId']);
+
+       foreach ($Wrecks as $W) {
+         if (($TTypes[$W['Type']]['Properties'] & (THING_HAS_DISTRICTS + THING_HAS_SHIPMODULES)) != 0) {
+           $Money = 0;
+           $Wreck = [];
+           switch ($TTypes[$W['Type']]['Name']) {
+         
+           case 'Military Ship':
+           case 'Support Ship' :
+           case 'Civilian Ship' :
+           case 'Satellite Defences' :
+             $Money = 10*$W['Level']*$SalvageLevel;
+             if ($HasWreck) {
+               $Modules = Get_Modules($W['id']);
+               foreach ($Modules as $Mod) {
+                 $L = Has_Tech($Who,$ModTypes[$Mod['Type']]['BasedOn']);
+                 if ($L) {
+                   $Wreck[]= $Mod['Number'] . " " . $ModTypes[$Mod['Type']]['Name'] . " L$L";
+                 } else {
+                   $Wreck[]= $Mod['Number'] . " Unknown modules.";
+                 }
+               }
+            }
+           
+             Thing_Delete($W['id']);
+             break;
+         
+           case 'Space Station':
+             $Money = 10*$W['MaxDistricts']*$SalvageLevel;
+             if ($HasWreck) {
+               $Districts = Get_DistrictsT($W['id']);
+               foreach ($Districts as $D) {
+                 $Wreck[]= $D['Number'] . " " . $DistTypes[$D['Type']]['Name'];
+               }
+             }
+             Thing_Delete($W['id']);
+             break;
+                            
+           default:
+             break;
+           }
+           if ($Money) {
+             $TotMoney += $Money;
+             TurnLog($Who,"The wreckage of the " . (empty($W['Name'])? ("Unknown Thing #" . $W['id']) : $W['Name']) . 
+                " has been salvaged.  in " . $N['Ref'] . " Gaining " . Credit() . $Money );
+             if ($Wreck) TurnLog($Who, "It had: " . implode(', ', $Wreck));
+           }
+         }
+       }
+       if ($TotMoney) {
+         Spend_Credit($Who,- $TotMoney, "Salvage from " . $N['Ref']);
+       } else {
+         TurnLog($Who,"Salvage was attempted in " .  $N['Ref'] . " but there are no wrecks currently present.");
+         GMLog("Salvage was attempted in " .  $N['Ref'] . " by " . $Facts[$Who]['Name'] . " but there are no wrecks currently present.");
        }
      
        break;
