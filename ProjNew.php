@@ -233,6 +233,9 @@
                 }
               }
             }
+            
+            if (Has_Trait($Fid,"Military Society") && ($DTz['Name'] == 'Military')) $pc = Proj_Costs($Lvl-1);
+            
             echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Construction'] . 
                   "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $DTz['id'] . 
                   "&Name=" . base64_encode("Build " . $DTz['Name'] . " District $Lvl$Place") . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .

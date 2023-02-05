@@ -65,12 +65,13 @@
         exit;
       case 'Raise 1 Level':
 
+        $DTs = Get_DistrictTypes();
         $OldLvl = $P['Level'];
         $P['Level'] ++;
         $Newlvl = $P['Level'];
         $pc = Proj_Costs($Newlvl);
         if ( ($P['Type'] == 1) && (Has_Trait($P['FactionId'],"On the Shoulders of Giants"))) {
-          $DTs = Get_DistrictTypes();
+
           if ( $DTs[$P['ThingType']]['Name'] == 'Mining') {
             $pc[1] = 0; // Mining
           } else if ($Newlvl>1 ) {
@@ -81,6 +82,9 @@
             }
           }
         }
+        
+        if (Has_Trait($P['FactionId'],"Military Society") && ($DTs[$P['ThingType']]['Name'] == 'Military')) $pc = Proj_Costs($OldLvl);
+                    
         $Costs = $pc[1];
         $ProgN = $pc[0];
         $P['Costs'] = $Costs;
