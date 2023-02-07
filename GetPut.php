@@ -23,6 +23,8 @@ function Put_Faction(&$now) {
 
 function Get_Factions() {
   global $db,$GAMEID;
+  static $F;
+  if ($F) return $F;
   $res = $db->query("SELECT * FROM Factions WHERE GameId=$GAMEID ORDER BY id ");
   $F = [];
   if ($res) {

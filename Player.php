@@ -146,9 +146,28 @@ function ValidateTurn() {
         break;
     }
   }
+  $Facts = Get_Factions();
+  $Fs = [];
+  foreach($Facts as $F) {
+    if ($F['Player'] == $FACTION['Player']) {
+      $Fs[] = $F['id'];
+    }
+  }
 
-
+//var_dump($Fs);
   dostaffhead("Player Actions");
+
+  if (count($Fs) > 1) {
+    foreach($Fs as $Fid) {
+      $F = $Facts[$Fid];
+      echo "<a href=Access.php?id=$Fid&Key=" . $F['AccessKey'] . " style='background:" . $F['MapColour'] . "; color: " . ($F['MapText']?$F['MapText']:'black') . 
+         ";text-shadow: 2px 2px 3px white;padding:2px'><b>"  . $F['Name'] . "</b></a> ";
+    }
+
+    echo "<p>\n";
+  }
+
+
   echo "You can always get back here by clicking on 'Faction Menu' on the bar above.<br>\n";
   
   Player_Page();

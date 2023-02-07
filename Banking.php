@@ -21,6 +21,14 @@
   AddCurrencies();
   $Trade = TradeableCurrencies();
 
+
+  $FactList = [];
+  $FactList[-1] = "Other";
+  foreach ($Facts as $Fi=>$F) {
+    $FactList[$Fi] = $Factions[$Fi]['Name'];
+  }
+  
+
 //  var_dump($_REQUEST);
 
   $Turn = $GAME['Turn'];
@@ -62,10 +70,10 @@
         
 
         if (empty($_REQUEST['What'])) {
-          if (Spend_Credit($Fid,$B['Amount'],$B['YourRef'])) {
-            echo "<h2>Transfered  &#8373;" . $B['Amount'] . " for " . $B['YourRef'] . " to " . $Factions[$B['Recipient']]['Name'] . "</h2>";
+          if (Spend_Credit($Fid,$B['Amount'],$B['YourRef'],$B['Recipient'])) {
+            echo "<h2>Transfered  &#8373;" . $B['Amount'] . " for " . $B['YourRef'] . " to " . $FactList[$B['Recipient']] . "</h2>";
             if ($B['Recipient'] > 0) {
-              Spend_Credit($B['Recipient'], - $B['Amount'],$B['YourRef']);
+              Spend_Credit($B['Recipient'], - $B['Amount'],$B['YourRef'],$Fid);
             }
           } else {
             echo "<h2 class=Err>Transfer failed you only have&#8373;" . $Factions[$Fid]['Credits'] . "</h2>\n";
@@ -103,12 +111,6 @@
   
   dostaffhead("Banking");
   
-  $FactList = [];
-  $FactList[-1] = "Other";
-  foreach ($Facts as $Fi=>$F) {
-    $FactList[$Fi] = $Factions[$Fi]['Name'];
-  }
-  
   echo "<h1>" . $FACTION['Name'] . " - Banking - Turn $Turn</h1>\n";
   echo "<form method=post action=Banking.php>\n";
 
@@ -123,13 +125,16 @@
   echo "<input type=Submit Name=ACTION Value='Current Turn'>";
   echo "<input type=Submit Name=ACTION Value='Next Turn'><p>";
 
-  echo "<h2>Recent transactions - Look back <input type=number size=3 style='width:30px;' min=0 name=LookBack id=LookBack value=$LookBack  onchange=this.form.submit() > Turns</h2>";
+  echo "<h2>Recent transactions - Look back <input type=number size=3 style='width:30px;' min=0 name=LookBack id=LookBack " .
+       "value=$LookBack  onchange=this.form.submit() > Turns</h2>";
   $Creds = Get_CreditLogs($Fid,max($Turn-$LookBack,0),$Turn);
   echo "<div class=CLwrap><table class=CreditLog>";
-  echo "<thead><tr><td class=CLTurn>Turn<td class=CLCredit>Start<td class=CLCredit>Credit<td class=CLCredit>Debit<td class=CLCredit>end<td class=CLWhat>What</thead>\n<tbody>";
+  echo "<thead><tr><td class=CLTurn>Turn<td class=CLCredit>Start<td class=CLCredit>Credit<td class=CLCredit>Debit<td class=CLCredit>" .
+       "end<td class=CLWhat>What<td class=CLFrom>From / To</thead>\n<tbody>";
   foreach ($Creds as $C) echo "<tr><td class=CLTurn>" . $C['Turn'] . "<td class=CLCredit>" . $C['StartCredits'] . "<td class=CLCredit>" . 
                        ($C['Amount']<0 ? -$C['Amount'] . "<td class=CLCredit>" : "<td class=CLCredit>" . $C['Amount']) . 
-                      "<td class=CLCredit>" . $C['EndCredits'] . "<td class=CLWhat>" . $C['YourRef'] . "\n";
+                      "<td class=CLCredit>" . $C['EndCredits'] . "<td class=CLWhat>" . $C['YourRef'] . "<td class=CLFrom>" .
+                      ($C['FromWho']? $FactList[$C['FromWho']] :'' ) . "\n";
   echo "</tbody></table></div>\n";
   
    

@@ -139,6 +139,7 @@ function Player_Page() {
     }
     echo "<li><a href=FactionEdit.php>Faction Information</a> - Mostly read only once set up.\n";
     echo "<li><a href=FactionCarry.php>Allow Others Control</a> - To allow individuals and armies aboard, use of Warp gates and repairing.\n";
+    if ($GM) echo "<p><li>GM: <a href=SplitFaction.php?ACTION=Start>Split Faction</a>\n";
     break;
             
   case 'Turn Being Processed':
@@ -173,11 +174,11 @@ function Ships() {
   
 }
 
-function Spend_Credit($Who,$Amount,$Why) { // Ammount is negative to gain credits
+function Spend_Credit($Who,$Amount,$Why,$From='') { // Ammount is negative to gain credits
   global $GAME;
   $Fact = Get_Faction($Who);
   $StartC = $Fact['Credits'];
-  $CR = ['Whose'=>$Who, 'StartCredits'=>$StartC, 'Amount'=>$Amount, 'YourRef'=>$Why, 'Turn'=>$GAME['Turn']];
+  $CR = ['Whose'=>$Who, 'StartCredits'=>$StartC, 'Amount'=>$Amount, 'YourRef'=>$Why, 'Turn'=>$GAME['Turn'], 'FromWho'=>$From];
   if ($StartC-$Amount < 0) {
     $CR['Status'] = 0;
     Put_CreditLog($CR);

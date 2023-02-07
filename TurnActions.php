@@ -158,11 +158,11 @@ function CashTransfers() {
           Spend_Credit($B['Recipient'], - $B['Amount'],$B['YourRef']);
           TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " transfered " . Credit() . $B['Amount'] . " to you for " . $B['YourRef'] );
           GMLog('Cash transfer  to ' . $Facts[$B['Recipient']]['Name'] . ' of ' . $B['Amount'] . ' for ' . $B['YourRef']);           
-      } else if (Spend_Credit($B['FactionId'],$B['Amount'],$B['YourRef'])) {
+      } else if (Spend_Credit($B['FactionId'],$B['Amount'],$B['YourRef'],$B['Recipient'])) {
         TurnLog($B['FactionId'],"Transfered " . Credit() . $B['Amount'] . " for " . $B['YourRef'] . " to " . $Facts[$B['Recipient']]['Name']);
 
         if ($B['Recipient'] > 0) {
-          Spend_Credit($B['Recipient'], - $B['Amount'],$B['YourRef']);
+          Spend_Credit($B['Recipient'], - $B['Amount'],$B['YourRef'],$B['FactionId']);
           TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " transfered " . Credit() . $B['Amount'] . " to you for " . $B['YourRef'] );
         }
         GMLog('Cash transfer from ' . $Facts[$B['FactionId']]['Name']. ' to ' . $Facts[$B['Recipient']]['Name'] . ' of ' . $B['Amount'] . ' for ' . $B['YourRef']);     
@@ -224,7 +224,7 @@ function PayForStargates() {
   foreach($Things as $T) {
     $Cost = $T['LinkCost'];
     $Ref = $T['Name'] . " along link " . $T['LinkId'];
-    if (Spend_Credit($T['Whose'],$Cost,'Moving ' . $Ref)) {
+    if (Spend_Credit($T['Whose'],$Cost,'Moving ' . $Ref, $Facts[$LOWho])) {
       TurnLog($T['Whose'],"Transfered " . Credit() . $Cost . " for $Ref to " . $Facts[$LOWho]['Name']);
       $TotalPay += $Cost;
       $T['LinkPay'] = 2;

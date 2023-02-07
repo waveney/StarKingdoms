@@ -1,15 +1,17 @@
 TODO 
 1) Force Reports 
-  * Battle tactics effective value
   * Multiple worlds in a system
 2) Prisoners
 3) Blockades Income
   * Launching ships
   * Minefields
-4) Salvage 
-  * Analyse wreckage
 5) Logistics off map
-
+7) Terraforming
+9) Blockade busting
+10) Bombardment
+11) Sorting PThingList
+13) Split a Faction
+14) Logistics with no worlds
 
 
 Imeadiate todo list
@@ -31,6 +33,14 @@ Future Hooks:
 
 
 
+Create Faction / Select Existing
+Copy Knowledge (with cap)
+  Copy FactionFaction(Both ways), FactionLink, FactionSsystem, FactionAnolaly info
+Transfer Things -> List
+Transfer Places -> List
+Transfer Projects to follow Things/Places
+  Faction Turn may be confused - needs to follow projects
+Split Resources
 
 
 

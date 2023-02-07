@@ -25,7 +25,7 @@
   $Bs = Get_BankingFT($Fid,$GAME['Turn']);
   
   foreach($Bs as $B) {
-    $Spend += $B['Amount'];
+    if ($B['What'] == 0) $Spend += $B['Amount'];
     echo "Sending " . ($B['What'] == 0? ( Credit() . $B['Amount']) : ($B['Amount'] . " " . $Currencies[$B['What']] ))  . 
       " for " . $B['YourRef'] . " to " . $Facts[$B['Recipient']]['Name'] . "<br>";
   }

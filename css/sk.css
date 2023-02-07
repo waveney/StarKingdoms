@@ -85,6 +85,11 @@ table-layout: fixed;
 
 }
 
+.creditlog .CLFrom {
+  width:250px;
+}
+
+
 .CLWrap {
  height:200px; 
  display: block; 

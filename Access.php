@@ -31,7 +31,8 @@
   $USER['UserId'] =  $Fid;
 
   Check_Login();
-  Player_Page();
+//  Player_Page();
+  include("Player.php");
 
   dotail();
 ?>
