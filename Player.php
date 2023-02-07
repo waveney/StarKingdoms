@@ -114,7 +114,7 @@ function ValidateTurn() {
 }
 
 
-  A_Check('Player');
+  if (!isset($SkipAccessCheck)) A_Check('Player');
 //  dostaffhead("Player Actions");
   
   if (isset($_REQUEST['ACTION'])) {

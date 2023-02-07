@@ -32,6 +32,7 @@
 
   Check_Login();
 //  Player_Page();
+  $SkipAccessCheck = 1;
   include("Player.php");
 
   dotail();

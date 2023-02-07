@@ -62,7 +62,7 @@
   
   
   $Facts = Get_Faction_Names();
- 
+// var_dump($Facts);
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
       case 'Resolve' :
