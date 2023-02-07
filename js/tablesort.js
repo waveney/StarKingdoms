@@ -54,11 +54,16 @@ for(var i=0, len=rows.length; i<len; i++) {
 	  }
 	  arrayOfRows[i].value = celltext.substr(0,25).toLowerCase();
 	} else {
-	  var celltext = rows[i].getElementsByTagName("td")[sortColumn].innerHTML.replace(/<[^>]*>/g,"");
-	  switch(type) {
-		case "D": arrayOfRows[i].value = GetDateSortingKey(dateformat,celltext); break;
-		case "N": arrayOfRows[i].value = celltext.replace(/[^\.\-\+\d]/g,"").substr(0,25).toLowerCase();break;
-		default: arrayOfRows[i].value = celltext.substr(0,25).toLowerCase();
+	  var ct1 = rows[i].getElementsByTagName("td")[sortColumn];
+	  if (!ct1) {
+	    arrayOfRows[i].value = i;
+	  } else {
+  	  var celltext = ct1.innerHTML.replace(/<[^>]*>/g,"");
+	    switch(type) {
+		  case "D": arrayOfRows[i].value = GetDateSortingKey(dateformat,celltext); break;
+  		case "N": arrayOfRows[i].value = celltext.replace(/[^\.\-\+\d]/g,"").substr(0,25).toLowerCase();break;
+	  	default: arrayOfRows[i].value = celltext.substr(0,25).toLowerCase();
+		  }
 		}
 	}
 }
@@ -76,7 +81,7 @@ for(var i=0, len=arrayOfRows.length; i<len; i++) {
 	newTableBody.appendChild(rows[arrayOfRows[i].oldIndex].cloneNode(true));
 	}
 table.replaceChild(newTableBody,tbody);// replace->append for testing
-setTimout(function(){DoingTableSort = 0},1000);
+setTimeout(function(){DoingTableSort = 0},1000);
 } // function SortTable()
 
 function CompareRowOfText(a,b) {
