@@ -151,7 +151,7 @@
   }
 //  echo "<tr><td>Home World:<td colspan=4>";
 
-  if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
+  if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
   
   echo "</table>";
   

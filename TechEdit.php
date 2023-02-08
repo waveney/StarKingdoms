@@ -74,7 +74,7 @@
   echo "<tr>" . fm_number("Min Thing Level",$T,'MinThingLevel') . "<td>Civ /Mil:<td>" . fm_select($CivMil,$T,'CivMil');
   echo "<td>" . fm_select($MFN,$T,'Formula',1) . fm_number('Properties',$T,'Properties');
   echo "<tr>" . fm_textarea('Description',$T,'Description',8,20);
-  if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
+  if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "</tbody></table></div>\n";
 
   if ($Tid) {

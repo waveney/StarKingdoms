@@ -311,7 +311,7 @@ function Show_Home($Hid) {
     echo "<tr><td>Where:<td>" . fm_select($SysLocs, $H,'WithinSysLoc');
   }
   echo "<tr>" . fm_number('Properties ',$H,'Props');
-  if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
+  if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
   echo "</table><p>";
 }
 

@@ -50,7 +50,7 @@
   echo "<tr><td>GM 2<td>" . fm_select($Userlist,$GAME,'GM2',1);
   echo "<tr><td>GM 3<td>" . fm_select($Userlist,$GAME,'GM3',1);
     
-  if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
+  if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "</table></div>\n";
 
   echo "<Center><input type=Submit name=ACTION value='Create New Game'></center>\n";

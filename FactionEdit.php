@@ -108,7 +108,7 @@ function Show_Faction(&$F,$Mode) {
     echo "<tr>" . fm_date('Last Active',$F,'LastActive');
     echo fm_text('Access Key',$F,'AccessKey',3);
     echo "<a href=Access.php?id=$Fid&Key=" . $F['AccessKey'] . " ><b>Use</b></a>";
-    if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
+    if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   } else {
     echo "<tr><td>Home World<td colspan=6>";
     if (empty($F['HomeWorld']) || $F['HomeWorld']==0) {

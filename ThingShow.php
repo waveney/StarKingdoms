@@ -632,7 +632,7 @@ function Show_Thing(&$T,$Force=0) {
     echo "<tr>" . fm_number('Sensors',$T,'Sensors') . fm_number('Sens Level',$T,'SensorLevel') . fm_number('Neb Sensors', $T,'NebSensors');
   }
   $SpecOrders = []; $SpecCount = 0;
-  $HasDeep = $HasMinesweep = $HasSalvage = 0;
+  $HasDeep = $HasMinesweep = $HasSalvage = $HasTerraform = 0;
   if ($tprops & THING_HAS_MODULES) {
     foreach ($Mods as $M) {
       $MName = $MTs[$M['Type']]['Name'];
@@ -649,6 +649,10 @@ function Show_Thing(&$T,$Force=0) {
       case 'Salvage Rigs':
       case 'Advanced Salvage Rig':
         $HasSalvage += $M['Number'] * $M['Level'];
+        break;
+        
+      case 'Orbital Terraforming':
+        $HasTerraform  += $M['Number'] * $M['Level'];
         break;
       
       default:
@@ -902,6 +906,10 @@ function Show_Thing(&$T,$Force=0) {
 
     case 'Salvage':
       if ($Moving || !$HasSalvage) continue 2;  
+      break;
+    
+    case 'Terraform':
+      if ($Moving || !$HasTerraform) continue 2;
       break;
     
     default: 
@@ -1315,6 +1323,9 @@ function Show_Thing(&$T,$Force=0) {
       $Acts = 1;
       $Cost = -1;
       break;
+
+    case 'Terraform':
+    // World - Planet or Moon, Current size, target type
       
     default: 
       break;

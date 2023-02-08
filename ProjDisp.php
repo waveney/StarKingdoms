@@ -745,7 +745,7 @@
   echo "</table></form>";    
   
   echo "<table border>";
-  if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
+  if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "</table>";
   
   //<script>ToggleAllBut($FirstHome)</script>";

@@ -2945,7 +2945,7 @@ function CheckSurveyReports() {
     if (!$Started) {
       GMLog("<h2>Please review these scans, mark lower as needed</h2>\n");
       GMLog("<table border><tr><td>Faction<td>Where<td>Scan Level<td>Control\n");
-      if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
+      if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
       Register_AutoUpdate('ScansDue',0);
       $Started = 1;
     }
@@ -3485,7 +3485,7 @@ function Do_Turn() {
     echo "<tr>" . fm_number("Turn Number",$Sand,'TurnNumber');
     echo "<tr>" . fm_hex("Progress",$Sand,'Progress');
     echo "<tr>" . fm_textarea("Log",$Sand,'ActivityLog',8,5);
-    if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
+    if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
     echo "</table></form><p>\n";
   }
 

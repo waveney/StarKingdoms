@@ -51,7 +51,7 @@
   echo "<h2>Technologies</h2>\n";
   echo "Click on technologies name to Toggle showing the definition and examples\n<p>";
   
-//  if (Access('God')) echo "<table><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea></table>";  
+//  if (Access('God')) echo "<table></tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea></table>";  
   if ($Setup) {
     Register_AutoUpdate('FactTech',$Fid);
   }

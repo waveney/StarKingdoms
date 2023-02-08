@@ -215,7 +215,7 @@ function Show_System(&$N,$Mode=0) {
     echo "<tr>" . fm_text('2nd Star Type',$N,'Type2',2,"class=NotCSide");  
   }
 
-  if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
+  if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "<tr>" . fm_textarea('Notes',$N,'Notes',8,3);
   
   echo "</table></div>\n";
@@ -329,7 +329,7 @@ function Show_Planet(&$P,$Mode=0,$Buts=0) {
 
 //  $heat = $N['Luminosity']/(($P['OrbitalRadius']*1000)^2);
   echo "<tr><td>Heat:<td>" . RealHeat($N,$P); //sprintf("%0.2f", $heat) . "<td> = " . sprintf("%0.2f Earth", $heat*(1.496e11^2)/3.83e26);
-  if (Access('God')) echo "<td><a href=PlanEdit.php?id=$Pid&ACTION=RECALC>Recalc</a>";      
+  if (Access('God')) echo "</tbody><tfoot><td><a href=PlanEdit.php?id=$Pid&ACTION=RECALC>Recalc</a>";      
   if ($Mns) {
     echo "<tr><td>Editable Moons\n";
     foreach ($Mns as $M) {
@@ -445,7 +445,7 @@ function Show_Moon(&$M,$Mode=0) {
   echo "<tr><td>Add District Type<td>" . fm_Select($DTs, NULL , 'Number', 1,'',"DistrictTypeAdd-$Mid");
   echo fm_number(($M['ProjHome']?"<a href=ProjHomes.php?id=" . $M['ProjHome'] . ">Project Home</a>":"Project Home"),$M,'ProjHome');
 
-  if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
+  if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "</table></div></form>\n";
 }
 

@@ -70,7 +70,7 @@
     echo "<td>" . fm_radio('',$Boarding,$perms,2,'',0,'',"Set:2:" . $FF['id']);
     echo "<td>" . fm_radio('',$Boarding,$perms,3,'',0,'',"Set:3:" . $FF['id']);
   }
-  if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
+  if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
   echo "</table></div></form>\n";
   dotail();  
 ?>

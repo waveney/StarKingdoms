@@ -88,7 +88,7 @@
     echo fm_text1('',$FA,'Notes',7,'','',"Notes:$Fid");
     echo "</tr>\n";
   }
-  if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=8 class=NotSide><textarea id=Debug></textarea>";
+  if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=8 class=NotSide><textarea id=Debug></textarea>";
   
   echo "</table><p>\n";
   

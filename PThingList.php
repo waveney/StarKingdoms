@@ -296,7 +296,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
  //   echo "<td>" . (isset($Systems[$T['NewSystemId']]) ? $Systems[$T['NewSystemId']] :"") ;
     
   }
-  if (Access('God'))  echo "<tr><td class=NotSide>Debug<td colspan=15 class=NotSide><textarea id=Debug></textarea>";  
+  if (Access('God'))  echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=15 class=NotSide><textarea id=Debug></textarea>";  
   echo "</table></div onload=ListThingSetup($Fid,$GM," . ($GM?$Faction['GMThingType']:$Faction['ThingType']) . "," . 
        ($GM?$Faction['GMThingBuild']:$Faction['ThingBuild']) . ")>\n";
   
