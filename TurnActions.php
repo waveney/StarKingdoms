@@ -1211,7 +1211,7 @@ function InstuctionsStage2() { // And other Instructions
     }
   }
   
-  Done_Stage("Instuctions");
+  Done_Stage("Instuctions Stage 2");
   return 1;
 }
 
@@ -3339,25 +3339,6 @@ function EnableFactionsAccess() {
   GMLog("Turn number incremented<p>\n");
 
   return 1;
-}
-
-
-function Done_Stage($Name) {
-  global $Sand;  // If you need to add something, replace a spare if poss, then nothing breaks
-  global $Stages,$Coded;
-
-  $SName = preg_replace('/ /','',$Name);
-  for($S =0; $S <64 ; $S++) {
-    $act = $Stages[$S];
-    $act = preg_replace('/ /','',$act);
-    if ($SName == $act) break;
-  }
-
-  if ($S > 63) { 
-    GMLog("Stage $SName not found");
-  } else {
-    $Sand['Progress'] |= 1<<$S;
-  }// Deliberate drop through 
 }
 
 function Do_Turn() {

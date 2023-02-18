@@ -706,7 +706,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
       }
       if ($T['BuildState'] < 2 || $T['BuildState'] > 4) return ''; // Building or abandoned
       if ($LastWhose && $LastWhose!= $T['Whose']) $txt .= "<P>";
-      if (($T['BuildState'] == 4) || ($T['Type'] == 23)) { // Named Chars
+      if (($T['BuildState'] == 4) || (($T['Type'] == 23) && $GM)) { // Named Chars
         if ($GM) {
           $txt .= "<div class=FullD hidden>";
         } else {

@@ -60,5 +60,24 @@ function Report_Others($Who, $Where, $SeenBy, $Message) {
 }
 
 
+function Done_Stage($Name) {
+  global $Sand;  // If you need to add something, replace a spare if poss, then nothing breaks
+  global $Stages,$Coded;
+
+  $SName = preg_replace('/ /','',$Name);
+  for($S =0; $S <64 ; $S++) {
+    $act = $Stages[$S];
+    $act = preg_replace('/ /','',$act);
+    if ($SName == $act) break;
+  }
+
+  if ($S > 63) { 
+    GMLog("Stage $SName not found");
+  } else {
+    $Sand['Progress'] |= 1<<$S;
+  } 
+}
+
+
 
 ?>
