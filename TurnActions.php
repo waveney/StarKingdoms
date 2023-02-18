@@ -24,7 +24,7 @@
              'Agents Move Check', 'Agents Movements', 'Spare', 'Meetups',
              
              'Spare', 'Space Combat', 'Unload Troops', 'Spare', 
-             'Orbital Bombardment', 'Spare', 'Ground Combat', 'Devastation Selection', 
+             'Orbital Bombardment', 'Planetary Defence', 'Ground Combat', 'Devastation Selection', 
              'Devastation', 'Ownership Change', 'Project Progress', 'Instructions Progress', 
              'Spare', 'Espionage Missions Complete', 'Counter Espionage', 'Spare', 
              'Finish Shakedowns', 'Refit Projects Complete', 'Projects Complete', 'Instructions Complete', 

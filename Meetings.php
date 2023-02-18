@@ -71,6 +71,8 @@ function ForceReport($Sid,$Cat) {
   foreach($Things as $T) {
     if ((($Cat == 'S') && (($TTypes[$T['Type']]['Properties'] & 8) != 0)) || 
         (($Cat == 'G') && (($TTypes[$T['Type']]['Properties'] & 0x800020) != 0))) {
+      if (($T['CurHealth'] == 0) && ($T['Type'] == 20)) continue; // Skip Militia at zero
+      if ($T['PrisonerOf'] != 0) continue; // Prisoners
       $Tid = $T['id'];
       if ($LastF != $T['Whose']) {
         if ($LastF) {
@@ -83,7 +85,7 @@ function ForceReport($Sid,$Cat) {
         $FirePower = 0;
         $htxt = "<tr><td colspan=7 style='background:" . $Facts[$LastF]['MapColour'] . "'><h2>" . $Facts[$LastF]['Name'] . "</h2><tr><td colspan=7>";
         $txt = $Battct = $ftxt = '';
-        $txt .= "<br>Damage recieved: <span id=DamTot$LastF>0</span>";
+        $txt .= "<br>Damage recieved: <span id=DamTot$Cat$LastF>0</span>";
         
         $FTs = Get_Faction_Techs($LastF);
 
@@ -147,16 +149,8 @@ function ForceReport($Sid,$Cat) {
       $txt .= "<td><span id=StartingHealth$Tid hidden>" . $T['CurHealth'] . "</span><span id=CurHealth$Tid>" . $T['CurHealth'] . "</span> / <span id=OrigHealth$Tid>" .
            $T['OrigHealth'] . "</span>" . "<td><span id=Attack$Tid>$BD</span><td>" . 
            (($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE)? "Speed: " . sprintf("%0.3g ",$T['Speed']) :'') ;
-/**/
-      $txt .=  fm_number1(" Do",$T,'Damage', ''," class=Num3 onchange=Do_Damage($Tid,$LastF)","Damage:$Tid") . " damage"; 
-      // . " <input type=button name=ACTION value=Damage onclick=Do_Damage($Tid,$LastF)>"; 
+      $txt .=  fm_number1(" Do",$T,'Damage', ''," class=Num3 onchange=Do_Damage($Tid,$LastF,'$Cat')","Damage:$Tid") . " damage"; 
       
-/*
-      $txt .=  " <input type=button name=ACTION value='Destroy (debris)'>" .
-           " <input type=button name=ACTION value='Remove (No debris)'>";
-      if ($tprops & THING_CAN_MOVE) $txt .=  " <input type=button name=ACTION value='Warp Out'>\n";
-//*/
-
       $FirePower += $BD;
     }
 
@@ -222,6 +216,9 @@ function ForceReport($Sid,$Cat) {
 //var_dump($Tid,$RN,$RV);
           $T = Get_Thing($Tid);
           $T['CurHealth'] = max(0,min($T['OrigHealth'],$T['CurHealth'] - $RV));
+          if (($ThingProps[$T['Type']] & (THING_HAS_SHIPMODULES | THING_HAS_ARMYMODULES)) != 0) {
+            $T['BuildState'] = 4;
+          }
           Put_Thing($T);
           
           // Report??

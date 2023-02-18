@@ -369,7 +369,7 @@ function ExpandTurns() {
   $('#ExpandTurnsDots').hide();
 }
 
-function Do_Damage(id,fid) {
+function Do_Damage(id,fid,cat) {
 debugger;
   var shlth=document.getElementById("StartingHealth" + id).innerHTML;
   var hlth=document.getElementById("CurHealth" + id).innerHTML;
@@ -377,8 +377,8 @@ debugger;
   document.getElementById("CurHealth" + id).innerHTML = newhlth;
   var change = hlth - newhlth;
   
-  var Ctot = document.getElementById("DamTot" + fid).innerHTML;
-  document.getElementById("DamTot" + fid).innerHTML = +Ctot + change;
+  var Ctot = document.getElementById("DamTot" + cat + fid).innerHTML;
+  document.getElementById("DamTot" + cat + fid).innerHTML = +Ctot + change;
 }
 
 function Do_Destroy(id) {

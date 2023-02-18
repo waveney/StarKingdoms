@@ -712,7 +712,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
         } else {
           $txt .= "<div>";
         }
-        $txt .= "The remains of: ";
+        if ($T['BuildState'] == 4) $txt .= "The remains of: ";
       } else {
         $txt .= "<div>";
       }
@@ -810,7 +810,7 @@ function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0,$Mode=0) {
   return $txt;
 }
 
-function Update_Militia(&$W,&$Dists) {
+function Update_Militia(&$W,&$Dists,$NewOwn=0) {
   switch ($W['ThingType']) {
     case 1: // Planet
       $P = Get_Planet($W['ThingId']);
@@ -832,8 +832,9 @@ function Update_Militia(&$W,&$Dists) {
       return;
   }
   
+  $FactN = ($NewOwn?$NewOwn:$W['FactionId']);
   $Mils = Get_Things_COND(0,"Type=20 AND SystemId=$Sys AND WithinSysLoc=$loc ");
-  $Hlth = 40+Has_Tech($W['FactionId'],'Militia Training Techniques')*2;
+  $Hlth = 40+Has_Tech($FactN,'Militia Training Techniques')*2;
   
   $Dcount = 0;
   foreach($Dists as $D) $Dcount += ($D['Number'] * ($D['Type'] ==2?2:1));
@@ -845,10 +846,11 @@ function Update_Militia(&$W,&$Dists) {
       echo "<h2>Militia already setup</h2>";
     }
     foreach($Mils as $Ml) {
-      if ($Ml['OrigHealth'] != $Hlth) {
+      if (($Ml['OrigHealth'] != $Hlth) || ($Ml['Whose'] != $FactN)) {
         $Diff = $Hlth - $Ml['OrigHealth'];
         $Ml['OrigHealth'] = $Hlth;
         $Ml['CurHealth'] = min($Ml['CurHealth']+$Diff);
+        $Ml['Whose'] = $FactN;
         Put_Thing($Ml);
       }
     }
@@ -858,7 +860,7 @@ function Update_Militia(&$W,&$Dists) {
 
     foreach ($Mils as $Ml) $MNames[$Ml['Name']] = 1; // Didts & Dist2 give short cut to world and districts
     $M = ['Type'=>20, 'CurHealth'=>$Hlth, 'OrigHealth'=>$Hlth, 
-           'Whose'=>$W['FactionId'], 'SystemId'=>$Sys, 'WithinSysLoc'=>$loc, 'BuildState'=>3, 
+           'Whose'=>$FactN, 'SystemId'=>$Sys, 'WithinSysLoc'=>$loc, 'BuildState'=>3, 
            'Dist1'=> $W['ThingType'], 'Dist2'=>$W['ThingId'] ];
     $Mn = 1;
     for ($Mnum = count($Mils); $Mnum < $Dcount; $Mnum++) {

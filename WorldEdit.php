@@ -91,6 +91,20 @@
          Update_Militia($W,$Dists);
          echo "<h2>Militia Updated</h2>";
          break;
+       case 'XMilitia' : // Transfer to who?
+         $FactNames = Get_Faction_Names();
+         $Fact_Colours = Get_Faction_Colours();
+
+         echo "<form method=post action=WorldEdit.php?ACTION=XMilitia2>";
+         echo  fm_radio('Whose',$FactNames ,$_REQUEST,'Whose','',1,'','',$Fact_Colours,0);
+         echo "<input type=submit value='Transfer'>";
+         dotail();
+
+       case 'XMilitia2' : // Transfer
+         Update_Militia($W,$Dists,$_REQUEST['Whose']);
+         echo "<h2>Militia Updated</h2>";
+         break;
+         
        }
     }
     $NumDists = 0;
@@ -156,7 +170,7 @@
   echo "</table>";
   
   if (Access('GM')) {
-    echo "<h2><a href=WorldEdit.php?ACTION=Militia&id=$Wid>Update Militia</a>, ";
+    echo "<h2><a href=WorldEdit.php?ACTION=Militia&id=$Wid>Update Militia</a>, <a href=WorldEdit.php?ACTION=XMilitia&id=$Wid>Transfer Militia</a>,";
     if (!isset($H['id'])) {
       echo "No Home! - <a href=WorldEdit.php?ACTION=DELETE&id=$Wid>No Home! Delete?</a>, \n";
     } else {
