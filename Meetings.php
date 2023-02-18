@@ -241,7 +241,7 @@ function ForceReport($Sid,$Cat) {
       echo "Make sure you have unloaded troops BEFORE looking at the Ground Combat Report.<p>";
 
       if (preg_match('/<div class=FullD hidden>/',$txt,$mtch)) {
-        echo "<button class='floatright FullD' onclick=\"($('.FullD').toggle())\">Show Remains of Things</button>";
+        echo "<button class='floatright FullD' onclick=\"($('.FullD').toggle())\">Show Remains of Things and Named Characters</button>";
       }
 
       echo "<form method=post action=Meetings.php?ACTION=Check&S=$Sid onkeydown=\"return event.key != 'Enter';\">";
