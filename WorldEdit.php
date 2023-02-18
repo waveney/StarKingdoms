@@ -96,6 +96,7 @@
          $Fact_Colours = Get_Faction_Colours();
 
          echo "<form method=post action=WorldEdit.php?ACTION=XMilitia2>";
+         echo fm_hidden('id',$Wid);
          echo  fm_radio('Whose',$FactNames ,$_REQUEST,'Whose','',1,'','',$Fact_Colours,0);
          echo "<input type=submit value='Transfer'>";
          dotail();
@@ -103,6 +104,7 @@
        case 'XMilitia2' : // Transfer
          Update_Militia($W,$Dists,$_REQUEST['Whose']);
          echo "<h2>Militia Updated</h2>";
+         dotail();
          break;
          
        }
