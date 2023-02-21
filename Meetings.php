@@ -6,7 +6,7 @@
   include_once("SystemLib.php");
   include_once("ProjLib.php");
   include_once("HomesLib.php");
-    
+  include_once("TurnTools.php");    
   A_Check('GM');
 
 /* Get all systems and Factions
@@ -218,10 +218,12 @@ function ForceReport($Sid,$Cat) {
           $T['CurHealth'] = max(0,min($T['OrigHealth'],$T['CurHealth'] - $RV));
           if (($ThingProps[$T['Type']] & (THING_HAS_SHIPMODULES | THING_HAS_ARMYMODULES)) != 0) {
             $T['BuildState'] = 4;
+            // Anything aboard?
+            // Armies die, named characters -> FollowUps
           }
           Put_Thing($T);
           
-          // Report??
+          // Reports??
         }
       }
     

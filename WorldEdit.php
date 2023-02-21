@@ -98,12 +98,12 @@
          echo "<form method=post action=WorldEdit.php?ACTION=XMilitia2>";
          echo fm_hidden('id',$Wid);
          echo  fm_radio('Whose',$FactNames ,$_REQUEST,'Whose','',1,'','',$Fact_Colours,0);
-         echo "<input type=submit value='Transfer'>";
+         echo "<br><input type=submit value='Transfer'>";
          dotail();
 
        case 'XMilitia2' : // Transfer
          Update_Militia($W,$Dists,$_REQUEST['Whose']);
-         echo "<h2>Militia Updated</h2>";
+         echo "<h2>Militia Transfered and Updated</h2>";
          dotail();
          break;
          
@@ -172,7 +172,7 @@
   echo "</table>";
   
   if (Access('GM')) {
-    echo "<h2><a href=WorldEdit.php?ACTION=Militia&id=$Wid>Update Militia</a>, <a href=WorldEdit.php?ACTION=XMilitia&id=$Wid>Transfer Militia</a>,";
+    echo "<h2><a href=WorldEdit.php?ACTION=Militia&id=$Wid>Update Militia</a>, <a href=WorldEdit.php?ACTION=XMilitia&id=$Wid>Transfer Militia</a>, ";
     if (!isset($H['id'])) {
       echo "No Home! - <a href=WorldEdit.php?ACTION=DELETE&id=$Wid>No Home! Delete?</a>, \n";
     } else {

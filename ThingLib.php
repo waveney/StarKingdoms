@@ -681,7 +681,7 @@ function is_vowel(&$Text) {
 }
 
 function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
-  global $Advance;
+  global $Advance,$FACTION;
   static $ThingTypes;
   static $Factions;
   if (!$ThingTypes) $ThingTypes = Get_ThingTypes();
@@ -753,7 +753,12 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
         }
       }
       
-      if ($GM && !empty($T['Orders'])) $txt .= ", <span style='background:#ffd966;'>Orders: " . $T['Orders'] . "</span>";
+      if ($T['PrisonerOf']) {
+        if ($GM || $T['PrisonerOf'] == $FACTION['id']) {
+          $Fact = Get_Faction($T['PrisonerOf']);
+          $txt .= ", Prisoner Of: <span style='background:" . $Fact['MapColour'] . ">" . $Fact['Name'] . "</span>";
+        }
+      } else if ($GM && !empty($T['Orders'])) $txt .= ", <span style='background:#ffd966;'>Orders: " . $T['Orders'] . "</span>";
       if ($Images && !empty($T['Image'])) $txt .= " <img valign=top src=" . $T['Image'] . " height=100> ";
       
       if ($GM) {
@@ -811,6 +816,7 @@ function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0,$Mode=0) {
 }
 
 function Update_Militia(&$W,&$Dists,$NewOwn=0) {
+//var_dump($W,$Dists,$NewOwn);
   switch ($W['ThingType']) {
     case 1: // Planet
       $P = Get_Planet($W['ThingId']);
@@ -833,12 +839,12 @@ function Update_Militia(&$W,&$Dists,$NewOwn=0) {
   }
   
   $FactN = ($NewOwn?$NewOwn:$W['FactionId']);
-  $Mils = Get_Things_COND(0,"Type=20 AND SystemId=$Sys AND WithinSysLoc=$loc ");
+  $Mils = Get_Things_Cond(0,"Type=20 AND SystemId=$Sys AND WithinSysLoc=$loc ");
   $Hlth = 40+Has_Tech($FactN,'Militia Training Techniques')*2;
   
   $Dcount = 0;
   foreach($Dists as $D) $Dcount += ($D['Number'] * ($D['Type'] ==2?2:1));
-
+//echo count($Mils);
   if (count($Mils) >= $Dcount) {
     if (count($Mils) > $Dcount) {
       echo "<h2 class=Err>Too many setup...</h2>";
@@ -849,7 +855,7 @@ function Update_Militia(&$W,&$Dists,$NewOwn=0) {
       if (($Ml['OrigHealth'] != $Hlth) || ($Ml['Whose'] != $FactN)) {
         $Diff = $Hlth - $Ml['OrigHealth'];
         $Ml['OrigHealth'] = $Hlth;
-        $Ml['CurHealth'] = min($Ml['CurHealth']+$Diff);
+        $Ml['CurHealth'] = min($Ml['CurHealth']+$Diff,$Hlth );
         $Ml['Whose'] = $FactN;
         Put_Thing($Ml);
       }

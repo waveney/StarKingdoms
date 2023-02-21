@@ -37,10 +37,14 @@
   $Facts = Get_Factions();
   
   $Conflict = '';
-  if (isset($_REQUEST['CONFLICT'])) $Conflict = 1;
+  if (isset($_REQUEST['CONFLICT'])) $Conflict = $_REQUEST['CONFLICT'];
   echo "<h1>Worlds $xtra</h1>";
   Register_AutoUpdate('Worlds',0);
   echo "Click on the name to see districts, change the relative importance<p>\n";
+  if ($Conflict) {
+    if ($Conflict == 1 ) echo "<h2>ONLY SET Conflict/Blockade/Revolt Flags at this point</h2>";
+    if ($Conflict == 2 ) echo "<h2>CLEAR Conflict/Blockade/Revolt Flags at this point</h2>";
+  }
   
   $coln = 0;
   echo "<div class=tablecont><table id=indextable border width=100% style='min-width:1400px'>\n";
@@ -132,8 +136,16 @@
   }
   echo "</table></div>\n";
   
-  
-  if ($Conflict) echo "<h2><a href=TurnActions.php?ACTION=StageDone&Stage=DevastationSelection&S=44>Back To Turn Processing</a></h2>";
+  switch ($Conflict) {
+    case 1: 
+      echo "<h2><a href=TurnActions.php?ACTION=StageDone&Stage=DevastationSelection&S=44>Back To Turn Processing</a></h2>";
+      break;
+    case 2: 
+      echo "<h2><a href=TurnActions.php?ACTION=StageDone&Stage=ClearConflictFlags&S=58>Back To Turn Processing</a></h2>";
+      break;
+    default:
+      break;
+  }
   
   dotail();
 ?>

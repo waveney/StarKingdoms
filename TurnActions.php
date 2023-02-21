@@ -28,8 +28,8 @@
              'Devastation', 'Ownership Change', 'Project Progress', 'Instructions Progress', 
              'Spare', 'Espionage Missions Complete', 'Counter Espionage', 'Spare', 
              'Finish Shakedowns', 'Refit Projects Complete', 'Projects Complete', 'Instructions Complete', 
-             'Spare', 'Check Survey Reports', 'Give Survey Reports', 'Check Spot Anomalies', 
-             'Spot Anomalies', 'Militia Army Recovery', 'Generate Turns', 'Tidy Up Movements', 
+             'Check Survey Reports', 'Give Survey Reports', 'Check Spot Anomalies', 'Spot Anomalies', 
+             'Militia Army Recovery', 'Generate Turns', 'Tidy Up Movements', 'Clear Conflict Flags',
              'Save What Can Be Seen', 'Recalc Project Homes', 'Finish Turn Process', 
              'Check Follow Ups', 'Enable Factions Access'];
 
@@ -47,8 +47,8 @@
              'Coded', 'No', 'Coded','Coded',
              'No','No','No','No',
              'Coded','Coded','Coded,M','Coded,M', 
-             'No','Partial,M','Coded', 'Coded,M',
-             'Coded','Coded','No','Coded',
+             'Partial,M','Coded', 'Coded,M','Coded',
+             'Coded','No','Coded','Coded',
              'Coded','Coded','Coded',
              'Coded','Coded'];
 
@@ -1905,7 +1905,7 @@ function SpaceCombat() {
 
 
 function UnloadTroops() {
-  $Things = Get_Things_Cond(0,"(BuildState=2 OR BuildState=3) AND LinkId=-3"); // -4 has been converted on load to -3
+  $Things = Get_Things_Cond(0,"(BuildState=2 OR BuildState=3) AND ( LinkId=-3 OR LinkId=-4)"); // -4 should have been converted on load to -3 (in theory)
   $TTypes = Get_ThingTypes();
   $Facts = Get_Factions();
   
@@ -1947,7 +1947,7 @@ function GroundCombat() {
 
 function DevastationSelection() {
   GMLog("<h2>Please mark those worlds with combat on</h2>");
-  $_REQUEST['CONFLICT'] = 1; // Makes WorldList think its part of turn processing
+  $_REQUEST['CONFLICT'] = 1; // Makes WorldList think its part of turn processing - 1 for setting flags
   include_once("WorldList.php");
   return 1;
 
@@ -2381,7 +2381,7 @@ function ProjectsCompleted($Pass) {
 
         $Ad = Proj_Costs($P['Level'])[0];
         $Fact = Get_Faction($Fid);
-        $Fact["Curreny$Cur"] += $Ad;
+        $Fact["Currency$Cur"] += $Ad;
         Put_Faction($Fact);
 
         $H = Get_ProjectHome($P['Home']);      
@@ -3266,6 +3266,13 @@ function TidyUpMovements() {
   GMLog("Movements, 1 turn carry, district deltas Tidied Up<p>");  
   return 1;
 }
+
+function ClearConflictFlags() {
+  $_REQUEST['CONFLICT'] = 2; // Makes WorldList think its part of turn processing - 2 for clearing flags
+  include_once("WorldList.php");
+  return 1;  
+}
+
 
 function SaveWhatCanBeSeen() {
   global $db,$GAMEID,$GAME;
