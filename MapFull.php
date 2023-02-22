@@ -114,6 +114,7 @@
     $LinkShown = [];
   
     fwrite($Dot,"graph skmap {\n") ; //size=" . '"8,12!"' . "\n");
+    if ($typ) fwrite($Dot,"splines=true;\n");
 //  echo "BB";
 //  if (!$typ) fwrite($Dot, "[size=\"10,20!\"];\n");
   
