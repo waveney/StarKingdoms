@@ -748,7 +748,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
       }
  
 //var_dump($Locations);exit;
-      if ($T['SystemId'] > 0 && isset($T['WithinSysLoc']) && ($T['WithinSysLoc'] > 0)) {
+      if ($T['LinkId'] >= 0 && $T['SystemId'] > 0 && isset($T['WithinSysLoc']) && ($T['WithinSysLoc'] > 0)) {
         if (isset($Locations[$T['WithinSysLoc']])) {
           $txt .= " ( " . $Locations[$T['WithinSysLoc']] . " ) ";
         } else if ($GM) {
