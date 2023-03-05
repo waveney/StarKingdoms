@@ -438,7 +438,7 @@
         echo "<h2>Grow Modules</h2>";
 // var_dump($CurLevel);
         $ShipYards = $HDists[$Hi][3]['Number'];
-        $Grow = max((Has_Tech($Fid,'Ship Construction')-1), 1)*$ThingLevel; // Consider ship yards rather than the tech
+        $Grow = min(max((Has_Tech($Fid,'Ship Construction')-1), 1),$ThingLevel)*$ThingLevel; // Consider ship yards rather than the tech
         $pc = Proj_Costs(1);
         echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Grow Modules'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT" .
                 "&Name=" . base64_encode("Grow $Grow Modules" . $Place) . "&L=1&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .

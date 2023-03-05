@@ -116,9 +116,10 @@
       continue;
     }
     
-    $Recalc = Recalc_Economic_Rating($H,$W,$Fid);
+    if ($Conflit == 0) {
+      $Recalc = Recalc_Economic_Rating($H,$W,$Fid);
     
-    if ($Recalc != $H['Economy']) {
+      if ($Recalc != $H['Economy']) {
       echo "ECONOMY ERROR - SHOULD BE $Recalc <br>";
       var_dump($H,$W,$Fid);
     }

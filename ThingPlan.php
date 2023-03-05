@@ -242,7 +242,7 @@
       } 
     }
     
-    if ($tprops & THING_CAN_BECREATED) {
+    if ($tprops & THING_CAN_BE_CREATED) {
       // Offer location based on Sys/within  OR onboard thing Y
     }
 
@@ -256,7 +256,7 @@
   echo "</table>";
   Put_Thing($T);  
   if ($Valid) {
-    if ($tprops & THING_CAN_BECREATED) {
+    if ($tprops & THING_CAN_BE_CREATED) {
       echo "<h2><a href=ThingEdit.php?ACTION=CREATE&id=$Tid>Create</a></h2>";
     } else {
       if (isset($_REQUEST['Validate'])) {

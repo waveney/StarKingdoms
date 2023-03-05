@@ -26,7 +26,7 @@
              'Spare', 'Space Combat', 'Unload Troops', 'Spare', 
              'Orbital Bombardment', 'Planetary Defence', 'Ground Combat', 'Devastation Selection', 
              'Devastation', 'Ownership Change', 'Project Progress', 'Instructions Progress', 
-             'Spare', 'Espionage Missions Complete', 'Counter Espionage', 'Spare', 
+             'Spare', 'Espionage Missions Complete', 'Counter Espionage', 'Handle Co Op Projects', 
              'Finish Shakedowns', 'Refit Projects Complete', 'Projects Complete', 'Instructions Complete', 
              'Check Survey Reports', 'Give Survey Reports', 'Check Spot Anomalies', 'Spot Anomalies', 
              'Militia Army Recovery', 'Generate Turns', 'Tidy Up Movements', 'Clear Conflict Flags',
@@ -836,7 +836,7 @@ function Instuctions() { // And other Instructions
       $Who = $T['Whose'];
       $Loc = Within_Sys_Locs($N);
       $WSL = $T['WithinSysLoc'];
-      if ($T['NewSystemId'] == 0 && $T['NewSystemLoc'] != 0) $WSL = $T['NewSystemLoc'];
+      if ($T['NewSystemId'] == 0 && $T['NewLocation'] != 0) $WSL = $T['NewLocation'];
       $LocT = intdiv($WSL,100);
       if (!Spend_Credit($Who,$T['InstCost'],"Make Minefield in " . $N['Ref']) ) {
         $T['Progress'] = -1; // Stalled
@@ -845,7 +845,7 @@ function Instuctions() { // And other Instructions
 
       if ($ValidMines[$LocType] == 0 ) {
         $T['Progress'] = -1; // Stalled
-        TurnLog($Who,"An Asteroid Mine could not be made in " . $N['Ref'] . " " . $LocText);
+        TurnLog($Who,"A Minefield could not be made in " . $N['Ref'] . " " . $LocText);
       }
 
       $T['Instruction'] = -$T['Instruction'];
@@ -1210,7 +1210,8 @@ function InstuctionsStage2() { // And other Instructions
     break;
     }
   }
-  
+
+  Done_Stage("Instuctions");
   Done_Stage("Instuctions Stage 2");
   return 1;
 }
@@ -1947,6 +1948,7 @@ function GroundCombat() {
 
 function DevastationSelection() {
   GMLog("<h2>Please mark those worlds with combat on</h2>");
+  
   $_REQUEST['CONFLICT'] = 1; // Makes WorldList think its part of turn processing - 1 for setting flags
   include_once("WorldList.php");
   return 1;
@@ -2105,6 +2107,13 @@ function EspionageMissionsComplete() {
 
 function CounterEspionage() {
   GMLog("Counter Espionage is currently Manual<p>");
+  return 1;
+}
+
+function HandleCoOpProjects() {
+  GMLog("Now handle any co-op projects or instructions adding progress where needed.<p> " .
+        "This is needed for all activities cross faction and instructions that affect more than one thing.");
+  
   return 1;
 }
 
@@ -2597,7 +2606,7 @@ function InstructionsComplete() {
          
          
        } else {
-         TurnLog($Who,"An Minefield could not be made in " . $N['Ref'] . " " . $LocText);
+         TurnLog($Who,"A Minefield could not be made in " . $N['Ref'] . " " . $LocText);
        }
        break;
 

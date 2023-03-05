@@ -1094,10 +1094,10 @@ function Show_Thing(&$T,$Force=0) {
     case 'Make Minefield':
       echo "<tr><td><td colspan=6>Make sure you move to the location within the system you want to mine.  ";
       $WSL = $T['WithinSysLoc'];
-      if ($T['NewSystemId'] == 0 && $T['NewSystemLoc'] != 0) $WSL = $T['NewSystemLoc'];
+      if ($T['NewSystemId'] == 0 && $T['NewLocation'] != 0) $WSL = $T['NewLocation'];
       $LocT = intdiv($WSL,100);
       if ($ValidMines[$LocT] == 0 ) echo "<span class=Err> the current location is unsuitable.</span>";
-      if (Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 AND WithinSyssloc=" . $T['WithinSyssloc'])) {
+      if (Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 AND WithinSysLoc=" . $T['WithinSysLoc'])) {
         echo "<span class=Err>  There is already one here.</span>";
       }
       echo "<br>" . fm_text0("Name of Minefield",$T,'MakeName');
@@ -1108,11 +1108,11 @@ function Show_Thing(&$T,$Force=0) {
     case 'Make Advanced Minefield':
       echo "<tr><td><td colspan=6>Make sure you move to the location within the system you want to mine.  ";
       $WSL = $T['WithinSysLoc'];
-      if ($T['NewSystemId'] == 0 && $T['NewSystemLoc'] != 0) $WSL = $T['NewSystemLoc'];
+      if ($T['NewSystemId'] == 0 && $T['NewLocation'] != 0) $WSL = $T['NewLocation'];
       $LocT = intdiv($WSL,100);
 
       if ($ValidMines[$LocT] == 0 ) echo "<span class=Err> the current location is unsuitable.</span>";
-      if (Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 AND WithinSyssloc=" . $T['WithinSyssloc'])) {
+      if (Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 AND WithinSysLoc=" . $T['WithinSysLoc'])) {
         echo "<span class=Err>  There is already one here.</span>";
       }
       echo "<br>" . fm_text0("Name of Minefield",$T,'MakeName');
@@ -1373,7 +1373,7 @@ function Show_Thing(&$T,$Force=0) {
     if ($tprops & THING_CAN_MOVE) echo "  <input type=submit name=ACTION value='Warp Out'>\n";
     echo fm_number0(" Do",$T,'Damage', '',' class=Num3 ') . " <input type=submit name=ACTION value=Damage>\n";
   }
-  if (!$GM && ($tprops & THING_CAN_BECREATED)) echo "<input type=submit name=ACTION value='Delete'>";
+  if (!$GM && ($tprops & THING_CAN_BE_CREATED)) echo "<input type=submit name=ACTION value='Delete'>";
   if ($GM || empty($Fid)) {
     if (Access('God')) {
       echo "<h2><a href=ThingList.php>Back to Thing list</a> &nbsp; <input type=submit name=ACTION value=Duplicate> <input type=submit name=ACTION value='GM Recalc'></h2>";
