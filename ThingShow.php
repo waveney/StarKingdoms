@@ -11,7 +11,7 @@ include_once("PlayerLib.php");
 function Show_Thing(&$T,$Force=0) {
   include_once("ProjLib.php");
   global $BuildState,$GAME,$GAMEID,$FACTION;
-  global $Project_Status;
+  global $Project_Status,$Advance;
   global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$ThingInclrs, $InstrMsg, $ValidMines;
   global $Currencies;
   
@@ -109,7 +109,7 @@ function Show_Thing(&$T,$Force=0) {
     echo fm_number('Seen Mask',$T,'SeenTypeMask','class=NotSide','class=NotSide');
 //    if (Access('God') echo fm_number1('Turn Moved',$T,
   } else {
-    echo "<tr><td>Type:<td>" . $ttn[$T['Type']];
+    echo "<tr><td>Type:<td>" . ( (($tprops & THING_CAN_BE_ADVANCED) && $T['Level']>1)? $Advance[$T['Level']] : '' ) . $ttn[$T['Type']];
     if ($tprops & THING_HAS_LEVELS) echo "<td>Level: " . $T['Level'];
   }
   echo "<tr>" . fm_text('Name',$T,'Name',2);
