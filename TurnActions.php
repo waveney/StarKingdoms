@@ -224,7 +224,7 @@ function PayForStargates() {
   foreach($Things as $T) {
     $Cost = $T['LinkCost'];
     $Ref = $T['Name'] . " along link " . $T['LinkId'];
-    if (Spend_Credit($T['Whose'],$Cost,'Moving ' . $Ref, $Facts[$LOWho]['Name'])) {
+    if (Spend_Credit($T['Whose'],$Cost,'Moving ' . $Ref, $LOWho)) {
       TurnLog($T['Whose'],"Transfered " . Credit() . $Cost . " for $Ref to " . $Facts[$LOWho]['Name']);
       $TotalPay += $Cost;
       $T['LinkPay'] = 2;
