@@ -116,12 +116,13 @@
       continue;
     }
     
-    if ($Conflit == 0) {
+    if ($Conflict == 0) {
       $Recalc = Recalc_Economic_Rating($H,$W,$Fid);
     
       if ($Recalc != $H['Economy']) {
-      echo "ECONOMY ERROR - SHOULD BE $Recalc <br>";
-      var_dump($H,$W,$Fid);
+        echo "ECONOMY ERROR - SHOULD BE $Recalc <br>";
+        var_dump($H,$W,$Fid);
+      }
     }
         
     echo "<td>$type<td><a href=WorldEdit.php?id=" . $W['id'] . ">" . (empty($Name)? "Nameless": $Name) . "</a><td>" . (empty($Sys['Ref'])?"":$Sys['Ref'])  .
