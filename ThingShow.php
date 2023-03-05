@@ -105,7 +105,7 @@ function Show_Thing(&$T,$Force=0) {
   if ($GM) {
     echo "<tr class=NotSide><td class=NotSide>Id:<td class=NotSide>$tid<td class=NotSide>Game<td class=NotSide>$GAMEID<td class=NotSide>" . $GAME['Name'];
     echo "<tr><td>Type:<td>" . fm_select($ttn,$T,'Type',1); 
-    if ($tprops & THING_HAS_LEVELS) echo fm_number("Level",$T,'Level');
+    if (($tprops & THING_HAS_LEVELS) || ($tprops & THING_CAN_BE_ADVANCED)) echo fm_number("Level",$T,'Level');
     echo fm_number('Seen Mask',$T,'SeenTypeMask','class=NotSide','class=NotSide');
 //    if (Access('God') echo fm_number1('Turn Moved',$T,
   } else {

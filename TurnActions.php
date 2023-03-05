@@ -2771,6 +2771,8 @@ function InstructionsComplete() {
        $Name = $Facts[$Who]['Name'];
        GMLog("$Name has done a DSC make something of '" . $T['MakeName'] . "' in " . $N['Ref'] . " it took " . $T['Progress'] . 
              " actions this needs to be handled by the GMs.",1);
+       FollowUp($Who,"Has done a DSC make something of '" . $T['MakeName'] . "' in " . $N['Ref'] . " it took " . $T['Progress'] . 
+             " actions this needs to be handled by the GMs.");
        break;
      
      case 'Make Warpgate':

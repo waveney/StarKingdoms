@@ -632,6 +632,8 @@ function Thing_Duplicate($otid) {
   $T['MakeName'] ='';
   $T['CurHealth'] = $T['OrigHealth'];
   $T['PrisonerOf'] = 0;
+  $T['ProjHome'] = 0;
+
     
   $Fid = $T['Whose'];
  
