@@ -39,7 +39,7 @@
     echo "</div></h2>";
     if (file_exists("Turns/$GAMEID/" . $GAME['Turn'] . "/CouldM$Fid.html")) {
       echo "<br>";
-      echo "<h2>After Movement on Turn =&gt; <div id=ExpandTurnsDotsM class=InLine><b onclick=ExpandTurnsM()>...</b></div><div id=HiddenMTurns hidden>";
+      echo "<h2>After Movement on Turn =&gt; <div id=ExpandTurnsDotsM class=InLine><b onclick=ExpandTurnsM()>...</b></div><div id=HiddenTurnsM hidden>";
       for($turn=1; $turn <= $GAME['Turn']; $turn++) {
         if ($turn == ($GAME['Turn'] - 5)) echo "</div><div class=InLine>";
         if (file_exists("Turns/$GAMEID/$turn/CouldM$Fid.html")) echo " <a href=WhatCanIC.php?C=M&Turn=$turn>$turn</a>";

@@ -369,6 +369,11 @@ function ExpandTurns() {
   $('#ExpandTurnsDots').hide();
 }
 
+function ExpandTurnsM() {
+  $('#HiddenTurnsM').addClass('InLine');
+  $('#ExpandTurnsDotsM').hide();
+}
+
 function Do_Damage(id,fid,cat) {
 debugger;
   var shlth=document.getElementById("StartingHealth" + id).innerHTML;
