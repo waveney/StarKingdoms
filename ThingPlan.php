@@ -168,7 +168,7 @@
     echo "<tr>" . fm_text('Name',$T,'Name') . "<td><td" . (empty($T['Name'])? " class=Err" : "") . ">This is needed";
     if (empty($T['Name'])) $Valid = 0;
     echo "<tr>" . fm_text('Class',$T,'Class') . "<td><td>This is optional";
-
+    echo "<tr>" . fm_number('Priority',$T,'Priority') . "<td><td>This is optional - higher numbers appear at top of thing lists";
     echo "<tr><td rowspan=4 colspan=3><table><tr>";
     echo fm_DragonDrop(1,'Image','Thing',$Tid,$T,1,'',1,'','Thing');
     echo "</table><td>This is optional";

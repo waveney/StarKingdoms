@@ -143,7 +143,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
   Name, Class, What, sub cat, where, move, Level, Action
   */
   
-  $Things = Get_Things($Fid);
+  $Things = Get_Things_Cond($Fid, "id>0 ORDER BY Priority DESC");
   if (!empty($FACTION['HasPrisoners'])) {
     $Held = Get_Things_Cond(0,"PrisonerOf=$Fid AND BuildState=3");
     $Things = array_merge($Things,$Held);

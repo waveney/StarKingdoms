@@ -103,14 +103,16 @@ function Show_Thing(&$T,$Force=0) {
   echo fm_hidden('id',$tid);
   echo "<input type=submit name=ACTION value=Refresh hidden>";  
   if ($GM) {
-    echo "<tr class=NotSide><td class=NotSide>Id:<td class=NotSide>$tid<td class=NotSide>Game<td class=NotSide>$GAMEID<td class=NotSide>" . $GAME['Name'];
+    echo "<tr class=NotSide><td class=NotSide>Id: $tid<td class=NotSide>Game: $GAMEID - " . $GAME['Name'];
+    echo fm_number('Seen Mask',$T,'SeenTypeMask','class=NotSide','class=NotSide');
     echo "<tr><td>Type:<td>" . fm_select($ttn,$T,'Type',1); 
     if (($tprops & THING_HAS_LEVELS) || ($tprops & THING_CAN_BE_ADVANCED)) echo fm_number("Level",$T,'Level');
-    echo fm_number('Seen Mask',$T,'SeenTypeMask','class=NotSide','class=NotSide');
+    echo fm_number('Priority',$T,'Priority');
 //    if (Access('God') echo fm_number1('Turn Moved',$T,
   } else {
     echo "<tr><td>Type:<td>" . ( (($tprops & THING_CAN_BE_ADVANCED) && $T['Level']>1)? $Advance[$T['Level']] : '' ) . $ttn[$T['Type']];
     if ($tprops & THING_HAS_LEVELS) echo "<td>Level: " . $T['Level'];
+    echo fm_number('Priority',$T,'Priority');
   }
   echo "<tr>" . fm_text('Name',$T,'Name',2);
 
