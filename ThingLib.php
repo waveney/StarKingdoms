@@ -757,7 +757,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
       }
       
       if ($T['PrisonerOf']) {
-        if ($GM || $T['PrisonerOf'] == $FACTION['id']) {
+        if ($GM || (isset($FACTION['id']) && $T['PrisonerOf'] == $FACTION['id'])) {
           $Fact = Get_Faction($T['PrisonerOf']);
           $txt .= ", Prisoner Of: <span style='background:" . $Fact['MapColour'] . ">" . $Fact['Name'] . "</span>";
         }

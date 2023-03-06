@@ -402,7 +402,7 @@ function WhatCanBeSeenBy($Fid,$Mode=0) {
     foreach($Hosts as $Hid=>$H) {
       if (empty($H)) continue;
       $HostT = isset($MyThings[$Hid]) ? $MyThings[$Hid] : Get_Thing($Hid);
-      $txt .= "<h2>On Board " . $HostT['Name'] . " is:</h2>";
+      $txt .= "<h2>On Board " . (empty ($HostT['Name'])? "Unknown Thing" : $HostT['Name'])  . " is:</h2>";
       foreach($H as $Tid) {
         $T = Get_Thing($Tid);
         $txt .= SeeThing($T,$LastWhose,15,$T['Whose'],1,$Mode);

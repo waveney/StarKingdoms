@@ -21,7 +21,7 @@
              'Instuctions Stage 2', 'Clear Paid For', 'Agents Start Missions', 'Pay For Rushes', 
              'Spare', 'Economy', 'Spare', 'Direct Moves', 
              'Load Troops', 'Spare', 'Ship Move Check', 'Ship Movements', 
-             'Agents Move Check', 'Agents Movements', 'Spare', 'Meetups',
+             'Agents Move Check', 'Agents Movements', 'See After Move', 'Meetups',
              
              'Spare', 'Space Combat', 'Unload Troops', 'Spare', 
              'Orbital Bombardment', 'Planetary Defence', 'Ground Combat', 'Devastation Selection', 
@@ -40,7 +40,7 @@
              'Coded,M','Coded', 'No','Coded',
              'No','Coded','No','Coded',
              'Coded','No','Coded,M','Coded',
-             'Coded,M','Coded','No', 'Coded,M',
+             'Coded,M','Coded','Coded', 'Coded,M',
              
              'No','Help','Coded','No',
              'No','No','Help','Coded,M', 
@@ -1885,6 +1885,23 @@ function AgentsMoveCheck() {
 function AgentsMovements() {
   ShipMovements(1);
   return 1;
+}
+
+
+function SeeAfterMove() {
+  global $db,$GAMEID,$GAME;
+  // Save What can I see data
+  $Factions = Get_Factions();
+  foreach($Factions as $F) {
+    $Fid = $F['id'];
+    $CouldC = WhatCanBeSeenBy($Fid);
+    $CB = fopen("Turns/$GAMEID/" . $GAME['Turn'] . "/CouldM$Fid.html", "w");
+    fwrite($CB,$CouldC);
+    fclose($CB);
+    GMLog("Saved What could be seen for " . $F['Name']);
+  }
+  return 1;
+
 }
 
 function Meetups() {

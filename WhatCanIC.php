@@ -21,6 +21,8 @@
     }
   }
   
+  $File = "CouldC";
+  if (isset($_REQUEST['C'])) $File = "Could" . $_REQUEST['C'];
 
   echo "<div class=floatright><h2>";
   if ($GAME['Turn'] <5 ) {
@@ -29,20 +31,31 @@
       echo ", <a href=WhatCanIC.php?Y=$turn>$turn</a>";
     }
   } else {
-    echo "Older Turns =&gt; <div id=ExpandTurnsDots class=InLine><b onclick=ExpandTurns()>...</b></div><div id=HiddenTurns hidden>";
+    echo "End of Older Turns =&gt; <div id=ExpandTurnsDots class=InLine><b onclick=ExpandTurns()>...</b></div><div id=HiddenTurns hidden>";
     for($turn=1; $turn <= $GAME['Turn']; $turn++) {
       if ($turn == ($GAME['Turn'] - 5)) echo "</div><div class=InLine>";
-      if (file_exists("Turns/$GAMEID/$turn/CouldC$Fid.html")) echo " <a href=WhatCanIC.php?Turn=$turn>$turn</a>";
+      if (file_exists("Turns/$GAMEID/$turn/CouldC$Fid.html")) echo " <a href=WhatCanIC.php?C=C&Turn=$turn>$turn</a>";
+    }    
+    echo "</div></h2>";
+    if (file_exists("Turns/$GAMEID/" . $GAME['Turn'] . "/CouldM$Fid.html")) {
+      echo "<br>";
+      echo "<h2>After Movement on Turn =&gt; <div id=ExpandTurnsDotsM class=InLine><b onclick=ExpandTurnsM()>...</b></div><div id=HiddenMTurns hidden>";
+      for($turn=1; $turn <= $GAME['Turn']; $turn++) {
+        if ($turn == ($GAME['Turn'] - 5)) echo "</div><div class=InLine>";
+        if (file_exists("Turns/$GAMEID/$turn/CouldM$Fid.html")) echo " <a href=WhatCanIC.php?C=M&Turn=$turn>$turn</a>";
+      }  
+   
+      echo "</div></h2>";    
     }
-    echo "</div>";
   }
-  echo "</h2></div>";
+  echo "</div>";
 
     
   if (isset($_REQUEST['Turn'])) {
     $Turn = $_REQUEST['Turn'];
-    echo "<h1>What Could I See on Turn $Turn?</h1>";
-    $html = file_get_contents("Turns/$GAMEID/$Turn/CouldC$Fid.html");
+    $When = (($File == 'CouldC')? " at the end of " : " After Movement on ");
+    echo "<h1>What Could I See $When Turn $Turn?</h1>";
+    $html = file_get_contents("Turns/$GAMEID/$Turn/$File$Fid.html");
     $html = preg_replace('/Orders: .*?</',"<",$html);
     echo $html;
   } else {  
