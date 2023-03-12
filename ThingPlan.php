@@ -147,7 +147,7 @@
         }
       }
     }
-    echo fm_select($CList,null,'CDesign',1,' onchange=this.form.submit()'); 
+    echo fm_select($CList,null,'Design',1,' onchange=this.form.submit()'); 
     echo "<br>If it is in planning, it will be selected, otherwise it will copy the design.<p>\n";
     
     echo "<h2>OR design from scratch</h2>";
