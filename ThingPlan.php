@@ -126,7 +126,7 @@
   if ($Exist == 0) {
     echo "<form method=post action=ThingPlan.php?ACTION=COPY>";
     echo fm_hidden('id',$Tid) . fm_hidden('F',$Fid);
-    echo "<h2>Either start with:</h2>";
+    echo "<h2>Either start with Things:</h2>";
     $Things = Get_Things($Fid);
     $FList = [];
     foreach ($Things as $TT) {
@@ -134,8 +134,23 @@
     }
     echo fm_select($FList,null,'Design',1,' onchange=this.form.submit()'); 
     echo "<br>If it is in planning, it will be selected, otherwise it will copy the design.<p>\n";
+
+    echo "<h2>OR start with Classes:</h2>";
+
+    $CList = [];
+    $Classes = [];
+    foreach ($Things as $TT) {
+      if (!empty($ThingTypeNames[$TT['Type']]) && !empty($TT['Class'])) {
+        if (empty($Classes[$TT['Class']])) {
+          $CList[$TT['id']] = $TT['Class'] . " a level " . $TT['Level'] . " class of " . $ThingTypeNames[$TT['Type']];
+          $Classes[$TT['Class']] = 1;
+        }
+      }
+    }
+    echo fm_select($CList,null,'CDesign',1,' onchange=this.form.submit()'); 
+    echo "<br>If it is in planning, it will be selected, otherwise it will copy the design.<p>\n";
     
-    echo "<h2>Or design from scratch</h2>";
+    echo "<h2>OR design from scratch</h2>";
   }
 
   echo "<form method=post action=ThingPlan.php>";
