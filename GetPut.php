@@ -155,9 +155,9 @@ function Put_Link(&$now) {
 
 }
 
-function Get_LinksGame() {
+function Get_LinksGame($Extra='') {
   global $db,$GAMEID;
-  $res = $db->query("SELECT * FROM Links WHERE GameId=$GAMEID");
+  $res = $db->query("SELECT * FROM Links WHERE GameId=$GAMEID $Extra");
   $links = [];
   if ($res) {
     while ($ans = $res->fetch_assoc()) { $links[$ans['id']] = $ans; };

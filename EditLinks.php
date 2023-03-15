@@ -7,7 +7,8 @@
 
   dostaffhead("Manage Planet Types");
 // var_dump($_REQUEST);exit;
-  $DT=Get_LinksGame();
+
+  $DT=Get_LinksGame((isset($_REQUEST['USAGE'])?' ORDER BY UseCount DESC':''));
   if (UpdateMany('Links','Put_Link',$DT,1,'','','Level',0))  $DT=Get_LinksGame();
 
   $coln = 0;
@@ -21,6 +22,12 @@
   foreach($Systems as $S) $Ssys[$S] = $S;
   
   echo "Set Level to 0 to remove a link<p>";
+  
+  if (isset($_REQUEST['USAGE'])) {
+    echo "<h2><a href=EditLinks.php>Sort by Link Id</a></h2>\n";
+  } else {
+    echo "<h2><a href=EditLinks.php?USAGE>Sort by Usage</a></h2>\n";
+  };
   
   echo "<form method=post action=EditLinks.php>";
   echo "<div class=tablecont><table id=indextable border>\n";

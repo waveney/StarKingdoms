@@ -397,6 +397,7 @@ function Split_Resorces_A() {
   Put_Faction($NewF);
   
   echo "Setup the home world of " . $NewF['Name'] . " Manually afterwards (as well as Faction/Faction information).<p>";
+  echo "THEN Rebuild Project Homes, then Rebuild list of Worlds and colonies.<p>";
   echo "<h1>All Done (I hope)</h1>";
   dotail();
 
