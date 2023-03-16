@@ -48,6 +48,8 @@ class MigratingVm extends \Google\Collection
    * @var string[]
    */
   public $labels;
+  protected $lastReplicationCycleType = ReplicationCycle::class;
+  protected $lastReplicationCycleDataType = '';
   protected $lastSyncType = ReplicationSync::class;
   protected $lastSyncDataType = '';
   /**
@@ -202,6 +204,20 @@ class MigratingVm extends \Google\Collection
   public function getLabels()
   {
     return $this->labels;
+  }
+  /**
+   * @param ReplicationCycle
+   */
+  public function setLastReplicationCycle(ReplicationCycle $lastReplicationCycle)
+  {
+    $this->lastReplicationCycle = $lastReplicationCycle;
+  }
+  /**
+   * @return ReplicationCycle
+   */
+  public function getLastReplicationCycle()
+  {
+    return $this->lastReplicationCycle;
   }
   /**
    * @param ReplicationSync

@@ -84,6 +84,28 @@ class Firestore extends \Google\Service
                   'location' => 'query',
                   'type' => 'string',
                 ],
+              ],
+            ],'delete' => [
+              'path' => 'v1/{+name}',
+              'httpMethod' => 'DELETE',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'allowMissing' => [
+                  'location' => 'query',
+                  'type' => 'boolean',
+                ],
+                'etag' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'freeId' => [
+                  'location' => 'query',
+                  'type' => 'boolean',
+                ],
                 'validateOnly' => [
                   'location' => 'query',
                   'type' => 'boolean',
@@ -527,6 +549,16 @@ class Firestore extends \Google\Service
               'httpMethod' => 'POST',
               'parameters' => [
                 'database' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'runAggregationQuery' => [
+              'path' => 'v1/{+parent}:runAggregationQuery',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'parent' => [
                   'location' => 'path',
                   'type' => 'string',
                   'required' => true,

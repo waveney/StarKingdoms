@@ -25,10 +25,11 @@ class Operation extends \Google\Model
   public $done;
   protected $errorType = Status::class;
   protected $errorDataType = '';
+  public $error;
   /**
    * @var array[]
    */
-  public $metadata;
+  public $metadata = [];
   /**
    * @var string
    */
@@ -36,7 +37,7 @@ class Operation extends \Google\Model
   /**
    * @var array[]
    */
-  public $response;
+  public $response = [];
 
   /**
    * @param bool

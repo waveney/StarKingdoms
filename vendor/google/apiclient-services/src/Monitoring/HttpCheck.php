@@ -17,8 +17,11 @@
 
 namespace Google\Service\Monitoring;
 
-class HttpCheck extends \Google\Model
+class HttpCheck extends \Google\Collection
 {
+  protected $collection_key = 'acceptedResponseStatusCodes';
+  protected $acceptedResponseStatusCodesType = ResponseStatusCode::class;
+  protected $acceptedResponseStatusCodesDataType = 'array';
   protected $authInfoType = BasicAuthentication::class;
   protected $authInfoDataType = '';
   /**
@@ -29,6 +32,10 @@ class HttpCheck extends \Google\Model
    * @var string
    */
   public $contentType;
+  /**
+   * @var string
+   */
+  public $customContentType;
   /**
    * @var string[]
    */
@@ -41,6 +48,8 @@ class HttpCheck extends \Google\Model
    * @var string
    */
   public $path;
+  protected $pingConfigType = PingConfig::class;
+  protected $pingConfigDataType = '';
   /**
    * @var int
    */
@@ -58,6 +67,20 @@ class HttpCheck extends \Google\Model
    */
   public $validateSsl;
 
+  /**
+   * @param ResponseStatusCode[]
+   */
+  public function setAcceptedResponseStatusCodes($acceptedResponseStatusCodes)
+  {
+    $this->acceptedResponseStatusCodes = $acceptedResponseStatusCodes;
+  }
+  /**
+   * @return ResponseStatusCode[]
+   */
+  public function getAcceptedResponseStatusCodes()
+  {
+    return $this->acceptedResponseStatusCodes;
+  }
   /**
    * @param BasicAuthentication
    */
@@ -101,6 +124,20 @@ class HttpCheck extends \Google\Model
     return $this->contentType;
   }
   /**
+   * @param string
+   */
+  public function setCustomContentType($customContentType)
+  {
+    $this->customContentType = $customContentType;
+  }
+  /**
+   * @return string
+   */
+  public function getCustomContentType()
+  {
+    return $this->customContentType;
+  }
+  /**
    * @param string[]
    */
   public function setHeaders($headers)
@@ -141,6 +178,20 @@ class HttpCheck extends \Google\Model
   public function getPath()
   {
     return $this->path;
+  }
+  /**
+   * @param PingConfig
+   */
+  public function setPingConfig(PingConfig $pingConfig)
+  {
+    $this->pingConfig = $pingConfig;
+  }
+  /**
+   * @return PingConfig
+   */
+  public function getPingConfig()
+  {
+    return $this->pingConfig;
   }
   /**
    * @param int

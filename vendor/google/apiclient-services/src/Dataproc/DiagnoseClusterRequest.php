@@ -19,6 +19,59 @@ namespace Google\Service\Dataproc;
 
 class DiagnoseClusterRequest extends \Google\Model
 {
+  protected $diagnosisIntervalType = Interval::class;
+  protected $diagnosisIntervalDataType = '';
+  /**
+   * @var string
+   */
+  public $job;
+  /**
+   * @var string
+   */
+  public $yarnApplicationId;
+
+  /**
+   * @param Interval
+   */
+  public function setDiagnosisInterval(Interval $diagnosisInterval)
+  {
+    $this->diagnosisInterval = $diagnosisInterval;
+  }
+  /**
+   * @return Interval
+   */
+  public function getDiagnosisInterval()
+  {
+    return $this->diagnosisInterval;
+  }
+  /**
+   * @param string
+   */
+  public function setJob($job)
+  {
+    $this->job = $job;
+  }
+  /**
+   * @return string
+   */
+  public function getJob()
+  {
+    return $this->job;
+  }
+  /**
+   * @param string
+   */
+  public function setYarnApplicationId($yarnApplicationId)
+  {
+    $this->yarnApplicationId = $yarnApplicationId;
+  }
+  /**
+   * @return string
+   */
+  public function getYarnApplicationId()
+  {
+    return $this->yarnApplicationId;
+  }
 }
 
 // Adding a class alias for backwards compatibility with the previous class name.

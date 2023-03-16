@@ -81,7 +81,7 @@ class GoogleCloudRunV2Task extends \Google\Collection
   /**
    * @var string
    */
-  public $launchStage;
+  public $logUri;
   /**
    * @var int
    */
@@ -354,16 +354,16 @@ class GoogleCloudRunV2Task extends \Google\Collection
   /**
    * @param string
    */
-  public function setLaunchStage($launchStage)
+  public function setLogUri($logUri)
   {
-    $this->launchStage = $launchStage;
+    $this->logUri = $logUri;
   }
   /**
    * @return string
    */
-  public function getLaunchStage()
+  public function getLogUri()
   {
-    return $this->launchStage;
+    return $this->logUri;
   }
   /**
    * @param int

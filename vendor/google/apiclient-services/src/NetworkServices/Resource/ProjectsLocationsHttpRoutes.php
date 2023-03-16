@@ -26,7 +26,7 @@ use Google\Service\NetworkServices\Operation;
  * Typical usage is:
  *  <code>
  *   $networkservicesService = new Google\Service\NetworkServices(...);
- *   $httpRoutes = $networkservicesService->httpRoutes;
+ *   $httpRoutes = $networkservicesService->projects_locations_httpRoutes;
  *  </code>
  */
 class ProjectsLocationsHttpRoutes extends \Google\Service\Resource
@@ -89,7 +89,8 @@ class ProjectsLocationsHttpRoutes extends \Google\Service\Resource
    * @opt_param int pageSize Maximum number of HttpRoutes to return per call.
    * @opt_param string pageToken The value returned by the last
    * `ListHttpRoutesResponse` Indicates that this is a continuation of a prior
-   * `ListRouters` call, and that the system should return the next page of data.
+   * `ListHttpRoutes` call, and that the system should return the next page of
+   * data.
    * @return ListHttpRoutesResponse
    */
   public function listProjectsLocationsHttpRoutes($parent, $optParams = [])

@@ -17,6 +17,7 @@
 
 namespace Google\Service\Baremetalsolution\Resource;
 
+use Google\Service\Baremetalsolution\EvictVolumeRequest;
 use Google\Service\Baremetalsolution\ListVolumesResponse;
 use Google\Service\Baremetalsolution\Operation;
 use Google\Service\Baremetalsolution\ResizeVolumeRequest;
@@ -27,11 +28,26 @@ use Google\Service\Baremetalsolution\Volume;
  * Typical usage is:
  *  <code>
  *   $baremetalsolutionService = new Google\Service\Baremetalsolution(...);
- *   $volumes = $baremetalsolutionService->volumes;
+ *   $volumes = $baremetalsolutionService->projects_locations_volumes;
  *  </code>
  */
 class ProjectsLocationsVolumes extends \Google\Service\Resource
 {
+  /**
+   * Skips volume's cooloff and deletes it now. Volume must be in cooloff state.
+   * (volumes.evict)
+   *
+   * @param string $name Required. The name of the Volume.
+   * @param EvictVolumeRequest $postBody
+   * @param array $optParams Optional parameters.
+   * @return Operation
+   */
+  public function evict($name, EvictVolumeRequest $postBody, $optParams = [])
+  {
+    $params = ['name' => $name, 'postBody' => $postBody];
+    $params = array_merge($params, $optParams);
+    return $this->call('evict', [$params], Operation::class);
+  }
   /**
    * Get details of a single storage volume. (volumes.get)
    *
@@ -77,9 +93,7 @@ class ProjectsLocationsVolumes extends \Google\Service\Resource
    * @param array $optParams Optional parameters.
    *
    * @opt_param string updateMask The list of fields to update. The only currently
-   * supported fields are: `snapshot_auto_delete_behavior`
-   * `snapshot_schedule_policy_name` 'labels' 'snapshot_enabled'
-   * 'snapshot_reservation_detail.reserved_space_percent'
+   * supported fields are: 'labels'
    * @return Operation
    */
   public function patch($name, Volume $postBody, $optParams = [])

@@ -27,6 +27,10 @@ class NodePool extends \Google\Collection
   protected $configType = NodeConfig::class;
   protected $configDataType = '';
   /**
+   * @var string
+   */
+  public $etag;
+  /**
    * @var int
    */
   public $initialNodeCount;
@@ -48,6 +52,8 @@ class NodePool extends \Google\Collection
   public $name;
   protected $networkConfigType = NodeNetworkConfig::class;
   protected $networkConfigDataType = '';
+  protected $placementPolicyType = PlacementPolicy::class;
+  protected $placementPolicyDataType = '';
   /**
    * @var int
    */
@@ -64,6 +70,8 @@ class NodePool extends \Google\Collection
    * @var string
    */
   public $statusMessage;
+  protected $updateInfoType = UpdateInfo::class;
+  protected $updateInfoDataType = '';
   protected $upgradeSettingsType = UpgradeSettings::class;
   protected $upgradeSettingsDataType = '';
   /**
@@ -112,6 +120,20 @@ class NodePool extends \Google\Collection
   public function getConfig()
   {
     return $this->config;
+  }
+  /**
+   * @param string
+   */
+  public function setEtag($etag)
+  {
+    $this->etag = $etag;
+  }
+  /**
+   * @return string
+   */
+  public function getEtag()
+  {
+    return $this->etag;
   }
   /**
    * @param int
@@ -212,6 +234,20 @@ class NodePool extends \Google\Collection
     return $this->networkConfig;
   }
   /**
+   * @param PlacementPolicy
+   */
+  public function setPlacementPolicy(PlacementPolicy $placementPolicy)
+  {
+    $this->placementPolicy = $placementPolicy;
+  }
+  /**
+   * @return PlacementPolicy
+   */
+  public function getPlacementPolicy()
+  {
+    return $this->placementPolicy;
+  }
+  /**
    * @param int
    */
   public function setPodIpv4CidrSize($podIpv4CidrSize)
@@ -266,6 +302,20 @@ class NodePool extends \Google\Collection
   public function getStatusMessage()
   {
     return $this->statusMessage;
+  }
+  /**
+   * @param UpdateInfo
+   */
+  public function setUpdateInfo(UpdateInfo $updateInfo)
+  {
+    $this->updateInfo = $updateInfo;
+  }
+  /**
+   * @return UpdateInfo
+   */
+  public function getUpdateInfo()
+  {
+    return $this->updateInfo;
   }
   /**
    * @param UpgradeSettings

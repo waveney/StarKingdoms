@@ -44,6 +44,10 @@ class Table extends \Google\Model
   /**
    * @var string
    */
+  public $defaultRoundingMode;
+  /**
+   * @var string
+   */
   public $description;
   protected $encryptionConfigurationType = EncryptionConfiguration::class;
   protected $encryptionConfigurationDataType = '';
@@ -83,6 +87,10 @@ class Table extends \Google\Model
   public $location;
   protected $materializedViewType = MaterializedViewDefinition::class;
   protected $materializedViewDataType = '';
+  /**
+   * @var string
+   */
+  public $maxStaleness;
   protected $modelType = ModelDefinition::class;
   protected $modelDataType = '';
   /**
@@ -215,6 +223,20 @@ class Table extends \Google\Model
   public function getDefaultCollation()
   {
     return $this->defaultCollation;
+  }
+  /**
+   * @param string
+   */
+  public function setDefaultRoundingMode($defaultRoundingMode)
+  {
+    $this->defaultRoundingMode = $defaultRoundingMode;
+  }
+  /**
+   * @return string
+   */
+  public function getDefaultRoundingMode()
+  {
+    return $this->defaultRoundingMode;
   }
   /**
    * @param string
@@ -383,6 +405,20 @@ class Table extends \Google\Model
   public function getMaterializedView()
   {
     return $this->materializedView;
+  }
+  /**
+   * @param string
+   */
+  public function setMaxStaleness($maxStaleness)
+  {
+    $this->maxStaleness = $maxStaleness;
+  }
+  /**
+   * @return string
+   */
+  public function getMaxStaleness()
+  {
+    return $this->maxStaleness;
   }
   /**
    * @param ModelDefinition

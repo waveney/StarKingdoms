@@ -30,13 +30,13 @@ use Google\Service\Networkconnectivity\TestIamPermissionsResponse;
  * Typical usage is:
  *  <code>
  *   $networkconnectivityService = new Google\Service\Networkconnectivity(...);
- *   $spokes = $networkconnectivityService->spokes;
+ *   $spokes = $networkconnectivityService->projects_locations_spokes;
  *  </code>
  */
 class ProjectsLocationsSpokes extends \Google\Service\Resource
 {
   /**
-   * Creates a spoke in the specified project and location. (spokes.create)
+   * Creates a Network Connectivity Center spoke. (spokes.create)
    *
    * @param string $parent Required. The parent resource.
    * @param Spoke $postBody
@@ -63,7 +63,7 @@ class ProjectsLocationsSpokes extends \Google\Service\Resource
     return $this->call('create', [$params], GoogleLongrunningOperation::class);
   }
   /**
-   * Deletes the specified spoke. (spokes.delete)
+   * Deletes a Network Connectivity Center spoke. (spokes.delete)
    *
    * @param string $name Required. The name of the spoke to delete.
    * @param array $optParams Optional parameters.
@@ -88,7 +88,7 @@ class ProjectsLocationsSpokes extends \Google\Service\Resource
     return $this->call('delete', [$params], GoogleLongrunningOperation::class);
   }
   /**
-   * Gets details about the specified spoke. (spokes.get)
+   * Gets details about a Network Connectivity Center spoke. (spokes.get)
    *
    * @param string $name Required. The name of the spoke resource.
    * @param array $optParams Optional parameters.
@@ -131,8 +131,8 @@ class ProjectsLocationsSpokes extends \Google\Service\Resource
     return $this->call('getIamPolicy', [$params], Policy::class);
   }
   /**
-   * Lists the spokes in the specified project and location.
-   * (spokes.listProjectsLocationsSpokes)
+   * Lists the Network Connectivity Center spokes in a specified project and
+   * location. (spokes.listProjectsLocationsSpokes)
    *
    * @param string $parent Required. The parent resource.
    * @param array $optParams Optional parameters.
@@ -140,8 +140,7 @@ class ProjectsLocationsSpokes extends \Google\Service\Resource
    * @opt_param string filter An expression that filters the results listed in the
    * response.
    * @opt_param string orderBy Sort the results by a certain order.
-   * @opt_param int pageSize The maximum number of results per page that should be
-   * returned.
+   * @opt_param int pageSize The maximum number of results to return per page.
    * @opt_param string pageToken The page token.
    * @return ListSpokesResponse
    */
@@ -152,7 +151,7 @@ class ProjectsLocationsSpokes extends \Google\Service\Resource
     return $this->call('list', [$params], ListSpokesResponse::class);
   }
   /**
-   * Updates the parameters of the specified spoke. (spokes.patch)
+   * Updates the parameters of a Network Connectivity Center spoke. (spokes.patch)
    *
    * @param string $name Immutable. The name of the spoke. Spoke names must be
    * unique. They use the following form:

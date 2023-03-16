@@ -26,7 +26,7 @@ use Google\Service\NetworkServices\TcpRoute;
  * Typical usage is:
  *  <code>
  *   $networkservicesService = new Google\Service\NetworkServices(...);
- *   $tcpRoutes = $networkservicesService->tcpRoutes;
+ *   $tcpRoutes = $networkservicesService->projects_locations_tcpRoutes;
  *  </code>
  */
 class ProjectsLocationsTcpRoutes extends \Google\Service\Resource
@@ -89,7 +89,8 @@ class ProjectsLocationsTcpRoutes extends \Google\Service\Resource
    * @opt_param int pageSize Maximum number of TcpRoutes to return per call.
    * @opt_param string pageToken The value returned by the last
    * `ListTcpRoutesResponse` Indicates that this is a continuation of a prior
-   * `ListRouters` call, and that the system should return the next page of data.
+   * `ListTcpRoutes` call, and that the system should return the next page of
+   * data.
    * @return ListTcpRoutesResponse
    */
   public function listProjectsLocationsTcpRoutes($parent, $optParams = [])

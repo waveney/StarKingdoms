@@ -30,9 +30,17 @@ class Execution extends \Google\Model
   /**
    * @var string
    */
+  public $duration;
+  /**
+   * @var string
+   */
   public $endTime;
   protected $errorType = Error::class;
   protected $errorDataType = '';
+  /**
+   * @var string[]
+   */
+  public $labels;
   /**
    * @var string
    */
@@ -49,6 +57,8 @@ class Execution extends \Google\Model
    * @var string
    */
   public $state;
+  protected $statusType = Status::class;
+  protected $statusDataType = '';
   /**
    * @var string
    */
@@ -85,6 +95,20 @@ class Execution extends \Google\Model
   /**
    * @param string
    */
+  public function setDuration($duration)
+  {
+    $this->duration = $duration;
+  }
+  /**
+   * @return string
+   */
+  public function getDuration()
+  {
+    return $this->duration;
+  }
+  /**
+   * @param string
+   */
   public function setEndTime($endTime)
   {
     $this->endTime = $endTime;
@@ -109,6 +133,20 @@ class Execution extends \Google\Model
   public function getError()
   {
     return $this->error;
+  }
+  /**
+   * @param string[]
+   */
+  public function setLabels($labels)
+  {
+    $this->labels = $labels;
+  }
+  /**
+   * @return string[]
+   */
+  public function getLabels()
+  {
+    return $this->labels;
   }
   /**
    * @param string
@@ -165,6 +203,20 @@ class Execution extends \Google\Model
   public function getState()
   {
     return $this->state;
+  }
+  /**
+   * @param Status
+   */
+  public function setStatus(Status $status)
+  {
+    $this->status = $status;
+  }
+  /**
+   * @return Status
+   */
+  public function getStatus()
+  {
+    return $this->status;
   }
   /**
    * @param string

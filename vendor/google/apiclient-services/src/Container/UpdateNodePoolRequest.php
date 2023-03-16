@@ -26,6 +26,12 @@ class UpdateNodePoolRequest extends \Google\Collection
   public $clusterId;
   protected $confidentialNodesType = ConfidentialNodes::class;
   protected $confidentialNodesDataType = '';
+  /**
+   * @var string
+   */
+  public $etag;
+  protected $fastSocketType = FastSocket::class;
+  protected $fastSocketDataType = '';
   protected $gcfsConfigType = GcfsConfig::class;
   protected $gcfsConfigDataType = '';
   protected $gvnicType = VirtualNIC::class;
@@ -44,10 +50,14 @@ class UpdateNodePoolRequest extends \Google\Collection
    * @var string[]
    */
   public $locations;
+  protected $loggingConfigType = NodePoolLoggingConfig::class;
+  protected $loggingConfigDataType = '';
   /**
    * @var string
    */
   public $name;
+  protected $nodeNetworkConfigType = NodeNetworkConfig::class;
+  protected $nodeNetworkConfigDataType = '';
   /**
    * @var string
    */
@@ -60,12 +70,16 @@ class UpdateNodePoolRequest extends \Google\Collection
    * @var string
    */
   public $projectId;
+  protected $resourceLabelsType = ResourceLabels::class;
+  protected $resourceLabelsDataType = '';
   protected $tagsType = NetworkTags::class;
   protected $tagsDataType = '';
   protected $taintsType = NodeTaints::class;
   protected $taintsDataType = '';
   protected $upgradeSettingsType = UpgradeSettings::class;
   protected $upgradeSettingsDataType = '';
+  protected $windowsNodeConfigType = WindowsNodeConfig::class;
+  protected $windowsNodeConfigDataType = '';
   protected $workloadMetadataConfigType = WorkloadMetadataConfig::class;
   protected $workloadMetadataConfigDataType = '';
   /**
@@ -100,6 +114,34 @@ class UpdateNodePoolRequest extends \Google\Collection
   public function getConfidentialNodes()
   {
     return $this->confidentialNodes;
+  }
+  /**
+   * @param string
+   */
+  public function setEtag($etag)
+  {
+    $this->etag = $etag;
+  }
+  /**
+   * @return string
+   */
+  public function getEtag()
+  {
+    return $this->etag;
+  }
+  /**
+   * @param FastSocket
+   */
+  public function setFastSocket(FastSocket $fastSocket)
+  {
+    $this->fastSocket = $fastSocket;
+  }
+  /**
+   * @return FastSocket
+   */
+  public function getFastSocket()
+  {
+    return $this->fastSocket;
   }
   /**
    * @param GcfsConfig
@@ -200,6 +242,20 @@ class UpdateNodePoolRequest extends \Google\Collection
     return $this->locations;
   }
   /**
+   * @param NodePoolLoggingConfig
+   */
+  public function setLoggingConfig(NodePoolLoggingConfig $loggingConfig)
+  {
+    $this->loggingConfig = $loggingConfig;
+  }
+  /**
+   * @return NodePoolLoggingConfig
+   */
+  public function getLoggingConfig()
+  {
+    return $this->loggingConfig;
+  }
+  /**
    * @param string
    */
   public function setName($name)
@@ -212,6 +268,20 @@ class UpdateNodePoolRequest extends \Google\Collection
   public function getName()
   {
     return $this->name;
+  }
+  /**
+   * @param NodeNetworkConfig
+   */
+  public function setNodeNetworkConfig(NodeNetworkConfig $nodeNetworkConfig)
+  {
+    $this->nodeNetworkConfig = $nodeNetworkConfig;
+  }
+  /**
+   * @return NodeNetworkConfig
+   */
+  public function getNodeNetworkConfig()
+  {
+    return $this->nodeNetworkConfig;
   }
   /**
    * @param string
@@ -256,6 +326,20 @@ class UpdateNodePoolRequest extends \Google\Collection
     return $this->projectId;
   }
   /**
+   * @param ResourceLabels
+   */
+  public function setResourceLabels(ResourceLabels $resourceLabels)
+  {
+    $this->resourceLabels = $resourceLabels;
+  }
+  /**
+   * @return ResourceLabels
+   */
+  public function getResourceLabels()
+  {
+    return $this->resourceLabels;
+  }
+  /**
    * @param NetworkTags
    */
   public function setTags(NetworkTags $tags)
@@ -296,6 +380,20 @@ class UpdateNodePoolRequest extends \Google\Collection
   public function getUpgradeSettings()
   {
     return $this->upgradeSettings;
+  }
+  /**
+   * @param WindowsNodeConfig
+   */
+  public function setWindowsNodeConfig(WindowsNodeConfig $windowsNodeConfig)
+  {
+    $this->windowsNodeConfig = $windowsNodeConfig;
+  }
+  /**
+   * @return WindowsNodeConfig
+   */
+  public function getWindowsNodeConfig()
+  {
+    return $this->windowsNodeConfig;
   }
   /**
    * @param WorkloadMetadataConfig

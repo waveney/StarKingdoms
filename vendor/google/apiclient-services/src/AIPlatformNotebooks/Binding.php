@@ -22,10 +22,11 @@ class Binding extends \Google\Collection
   protected $collection_key = 'members';
   protected $conditionType = Expr::class;
   protected $conditionDataType = '';
+  public $condition;
   /**
    * @var string[]
    */
-  public $members;
+  public $members = [];
   /**
    * @var string
    */

@@ -17,6 +17,8 @@
 
 namespace Google\Service\Container\Resource;
 
+use Google\Service\Container\CompleteNodePoolUpgradeRequest;
+use Google\Service\Container\ContainerEmpty;
 use Google\Service\Container\CreateNodePoolRequest;
 use Google\Service\Container\ListNodePoolsResponse;
 use Google\Service\Container\NodePool;
@@ -32,11 +34,28 @@ use Google\Service\Container\UpdateNodePoolRequest;
  * Typical usage is:
  *  <code>
  *   $containerService = new Google\Service\Container(...);
- *   $nodePools = $containerService->nodePools;
+ *   $nodePools = $containerService->projects_locations_clusters_nodePools;
  *  </code>
  */
 class ProjectsLocationsClustersNodePools extends \Google\Service\Resource
 {
+  /**
+   * CompleteNodePoolUpgrade will signal an on-going node pool upgrade to
+   * complete. (nodePools.completeUpgrade)
+   *
+   * @param string $name The name (project, location, cluster, node pool id) of
+   * the node pool to complete upgrade. Specified in the format
+   * `projects/locations/clusters/nodePools`.
+   * @param CompleteNodePoolUpgradeRequest $postBody
+   * @param array $optParams Optional parameters.
+   * @return ContainerEmpty
+   */
+  public function completeUpgrade($name, CompleteNodePoolUpgradeRequest $postBody, $optParams = [])
+  {
+    $params = ['name' => $name, 'postBody' => $postBody];
+    $params = array_merge($params, $optParams);
+    return $this->call('completeUpgrade', [$params], ContainerEmpty::class);
+  }
   /**
    * Creates a node pool for a cluster. (nodePools.create)
    *
