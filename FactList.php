@@ -62,10 +62,11 @@
   echo "</tbody></table></div>\n";
 
 
-  echo "<h2><a href=FactionEdit.php?ACTION=NEW>New Faction</a> ";
+
   echo "<form method=post action=FactList.php>";
   echo fm_select($PlayerState,NULL,'TurnState') . "<input type=submit name=ACTION value='Set State'>";
   echo "</form></h2>\n";
-
+  echo "<h2><a href=FactionEdit.php?ACTION=NEW>New Faction</a> ";
+  
   dotail();
 ?>

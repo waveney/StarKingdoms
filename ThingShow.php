@@ -914,6 +914,10 @@ function Show_Thing(&$T,$Force=0) {
       if ($Moving || !$HasTerraform) continue 2;
       break;
     
+    case 'Stop Support':
+      if ($tprops & THING_NEEDS_SUPPORT) break;
+      continue 2;
+    
     default: 
       continue 2;
       
@@ -1329,6 +1333,7 @@ function Show_Thing(&$T,$Force=0) {
     case 'Terraform':
     // World - Planet or Moon, Current size, target type
       
+    case 'Stop Support':
     default: 
       break;
     }
