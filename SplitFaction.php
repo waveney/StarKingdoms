@@ -24,8 +24,9 @@ function Create_Faction_Q() {
   echo "<h1>Split Faction - Stage 1 - Into What?</h1>";
   
   echo "<table border>";
-  echo "<tr><td colspan=5>Select either one of these:" .fm_radio('', $FactNames ,$MT,'Nid','',1,'colspan=6','',$Fact_Colours,0);
-  echo "<br><input type=submit name=ACTION value='Existing Faction'>";
+  echo "<tr><td colspan=5><h1>Select either one of</h1>";
+  echo "<tr>" . fm_radio('These', $FactNames ,$MT,'Nid','',1,'colspan=6','',$Fact_Colours,0);
+  echo "<tr><td><input type=submit name=ACTION value='Existing Faction'>";
   echo "<tr><td colspan=5><h1>OR create a new faction</h1>";
   echo "<tr>" . fm_text('Name',$MT,'Name');
   echo "<tr>" . fm_text('Map Colour',$FACTION,'MapColour');
@@ -410,13 +411,16 @@ function Split_Resorces_A() {
   A_Check('GM');  // For now
 //  dostaffhead("Player Actions");
 
-  dostaffhead("Split Faction");
+  dostaffhead("Split Faction",['js/NoReturn.js']);
   echo "<form method=post action=SplitFaction.php>";  
   if (isset($_REQUEST['Nid'])) {
     $Nid = $_REQUEST['Nid'];
     $NewF = Get_Faction($Nid);
     echo fm_hidden('Nid',$Nid);
-  } 
+  } else if (empty($_REQUEST['ACTION']) || $_REQUEST['ACTION']!= 'Start') {
+    echo "<h1 class=Err>Lost what it was being split into - please restart from the begining</h1>";
+    dotail();
+  }
   
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
@@ -430,6 +434,7 @@ function Split_Resorces_A() {
         Create_Faction_A();
         
       case 'No Knowledge':
+        echo "<h1>NO KNOWLEDGE HAS BEEN COPIED</h1>";
         Transfer_Things_Q();
         
       case 'Copy Knowledge':
