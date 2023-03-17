@@ -89,7 +89,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
       $ThingProps = Thing_Type_Props();
       $tprops = $ThingProps[$T['Type']];
 
-      $ll = ($Lid>>0 ? $L['Level'] : 0);
+      $ll = ($Lid>>0 ? abs($L['Level']) : 0);
       $LOWho = GameFeature('LinkOwner',0);
 // var_dump($Lid,$LinkTypes[$ll]['Cost'],$LOWho,$T['LinkPay']);
       if ($Lid>0 && ($LinkTypes[$ll]['Cost'] > 0) && $LOWho && $LOWho != $T['Whose']) {
@@ -249,7 +249,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
     } else {
       echo "<td>" . ($T['LinkId'] >= 0 ? (empty($T['SystemId']) ?'': $Systems[$T['SystemId']]) : 'On Board');
       echo "<td>";
-      if ($T['Instruction']) echo $ThingInstrs[$T['Instruction']];
+      if ($T['Instruction']) echo $ThingInstrs[abs($T['Instruction'])];
       if (($T['Instruction'] == 0 || $T['Instruction'] == 5 ) && (($Props & THING_CAN_MOVE) && ( $T['BuildState'] == 3))) { 
         if ($T['LinkId'] >=0 && ($T['CurHealth'] > 0 || ($Props & THING_HAS_HEALTH) ==0)) {
           if ($Faction['TurnState'] == 1) {
@@ -258,7 +258,8 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
           }
           if ($T['LinkId'] > 0) {
             $L = Get_Link($T['LinkId']);
-            echo "<td style=color:" . $LinkTypes[$L['Level']]['Colour'] . " >Link #" . $T['LinkId'];
+            echo "<td style=color:" . $LinkTypes[abs($L['Level'])]['Colour'] . " >Link #" . $T['LinkId'];
+            if ($L['Level'] <0 ) echo "- Note under repair...";
             if ($T['NewSystemId'] && $T['TargetKnown'] || Has_Tech($T['Whose'],'Know All Links')) {
               echo "<td>" . $Systems[$T['NewSystemId']];
             } else {

@@ -189,7 +189,8 @@
           if (isset($LinkShown[$L['id']])) continue;
           $Fl = Get_FactionLinkFL($Faction, $L['id']);
           if (isset($Fl['id']) && $Fl['Known'] || $AllLinks) {
-            fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=\"" . $Levels[$L['Level']]['Colour'] . '"' . 
+            fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=\"" . $Levels[abs($L['Level'])]['Colour'] . '"' . 
+                   (($L['Level'] <0)? ' style=dotted ':'') . 
                    ($ShowLinks? " label=\"#" . $L['id'] . '"' : '') . " ];\n");
             $LinkShown[$L['id']]=1;
           } else {
@@ -197,7 +198,8 @@
             if (isset($FS['ScanLevel']) && $FS['ScanLevel']<2) continue;
             $rand = "B$ul";  // This kludge at least allows both ends to be displayed
             fwrite($Dot,"Unk$ul$rand [label=\"?\" shape=circle];\n");
-            fwrite($Dot,"$from -- Unk$ul$rand [color=\"" . $Levels[$L['Level']]['Colour'] . '"' . ($ShowLinks? " label=\"#" . $L['id'] . '"' : '') . " ];\n");
+            fwrite($Dot,"$from -- Unk$ul$rand [color=\"" . $Levels[abs($L['Level'])]['Colour'] . '"' . ($ShowLinks? " label=\"#" . $L['id'] . '"' : '') . 
+                   (($L['Level'] <0)? ' style=dotted ':'') . " ];\n");
             $ul++;
             if (isset($UnknownLink[$L['id']])) {
               $RedoMap = 1;
@@ -216,7 +218,8 @@
         $Links = Get_Links1end($from);
 
         foreach ($Links as $L) {
-          fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=\"" . $Levels[$L['Level']]['Colour'] . '"' . 
+          fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=\"" . $Levels[abs($L['Level'])]['Colour'] . '"' . 
+                   (($L['Level'] <0)? ' style=dotted ':'') . 
           ($typ?"":(" label=\"#" . $L['id'] . "\"")) . "];\n");
         }
       }

@@ -61,8 +61,6 @@
       
   echo "</tbody></table></div>\n";
 
-
-
   echo "<form method=post action=FactList.php>";
   echo fm_select($PlayerState,NULL,'TurnState') . "<input type=submit name=ACTION value='Set State'>";
   echo "</form></h2>\n";

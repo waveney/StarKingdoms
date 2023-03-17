@@ -157,7 +157,8 @@ function Node_Show($Fid,$Tid, $Lid, $N, $url='') {
     } else {
       Node_Show($Fid,$Tid, $Lid, $ON);
     }
-    fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . ' [color="' . $Levels[$L['Level']]['Colour'] . "\" label=\"#$Lid\" ];\n");
+    fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . ' [color="' . $Levels[abs($L['Level'])]['Colour'] . "\" label=\"#$Lid\" " .
+                              (($L['Level'] <0)? ' style=dotted ':'') . " ];\n");
   }
   
   ///show mini manp click -> PthingList & loc update info

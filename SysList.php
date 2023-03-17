@@ -57,7 +57,7 @@
     }
     $Who = Gen_Get_Cond('FactionSystem',"SystemId=$sid");
     $npc = 1;
-    foreach($Who as $W) if (!$Factions[$W['FactionId']]['NPC']) $npc = 0;
+    foreach($Who as $W) if (!isset($Factions[$W['FactionId']]) || (!$Factions[$W['FactionId']]['NPC'])) $npc = 0;
     echo "<td>" .($Who?($npc?"NPC only":"Yes"):"No");
   }
       

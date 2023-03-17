@@ -261,7 +261,7 @@ function Show_Thing(&$T,$Force=0) {
           echo "<tr><td colspan=3>This is unable to use links, it can move within the system.<br>Where in the system should it go? " . fm_select($Syslocs,$T,'WithinSysLoc');
         } else {
           if (($T['Instruction'] != 0) && ($T['Instruction'] != 5) && ($T['Instruction'] != 21) ) {
-            echo "<tr><td class=Err>Warning Busy doing:<td>" . $ThingInstrs[$T['Instruction']] . "<td class=Err>Moving will cancel";
+            echo "<tr><td class=Err>Warning Busy doing:<td>" . $ThingInstrs[abs($T['Instruction'])] . "<td class=Err>Moving will cancel";
           }
 
           if ($GM) {
@@ -920,6 +920,11 @@ function Show_Thing(&$T,$Force=0) {
       if ($tprops & THING_NEEDS_SUPPORT) break;
       continue 2;
     
+    case 'Link Repair': 
+      if ($Moving || !$HasDeep || !Has_Tech($Fid,'Stargate Construction')) continue 2;
+      break;
+    
+    
     default: 
       continue 2;
       
@@ -938,6 +943,7 @@ function Show_Thing(&$T,$Force=0) {
     echo "<tr>" . fm_radio('Special Instructions', $SpecOrders,$T,'Instruction','',1,' colspan=6 ','',$ThingInclrs);// . " under development don't use yet";
     switch ($ThingInstrs[abs($T['Instruction'])]) {
     case 'None': // None
+      $T['Dist1'] = $T['Dist2'] = 0;
       break;
 
     case 'Colonise': // Colonise
@@ -1313,7 +1319,7 @@ function Show_Thing(&$T,$Force=0) {
       $ProgShow = 2;
       break;
 
-    case 'End Support' :
+    case 'Stop Support':
       echo "Support for this will end at the beginning of the next turn.";
       break;
     
@@ -1334,8 +1340,16 @@ function Show_Thing(&$T,$Force=0) {
 
     case 'Terraform':
     // World - Planet or Moon, Current size, target type
+      break;
       
-    case 'Stop Support':
+    case 'Link Repair':
+      echo "<br>Link to Repair: " . fm_select($SelLinks,$T,'Dist1',0," style=color:" . $SelCols[$T['Dist1']] ,'',0,$SelCols) . " Refresh after selecting.";
+      $ProgShow = 1;
+      $LLevel = ($T['Dist1'] ?$Links[$T['Dist1']]['Level']:1);
+      $Acts = $PTNs['Link Repair']['CompTarget']*$LLevel;
+      break;
+      
+
     default: 
       break;
     }

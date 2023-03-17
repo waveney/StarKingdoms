@@ -381,10 +381,11 @@
       if ($LinkKnow['Known']) {
         $name = NameFind($L);
         if ($name) echo " ( $name ) ";
-        echo " to " . ReportEnd($ON) .  " level " . $LinkLevels[$L['Level']]['Colour'];
+        echo " to " . ReportEnd($ON) .  " level " . $LinkLevels[abs($L['Level'])]['Colour'];
       } else {
-        echo " to an unknown location.  Level " .  $LinkLevels[$L['Level']]['Colour'];
+        echo " to an unknown location.  Level " .  $LinkLevels[abs($L['Level'])]['Colour'];
       }
+      if ($L['Level'] < 0) echo " currently under repair";
     
     }
     echo "</ul><p>\n";

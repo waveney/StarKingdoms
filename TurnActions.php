@@ -843,7 +843,7 @@ function Instuctions() { // And other Instructions
         TurnLog($Who,"Could not afford to start a Minefield in " .$N['Ref'],$T);
       }
 
-      if ($ValidMines[$LocType] == 0 ) {
+      if ($ValidMines[$LocT] == 0 ) {
         $T['Progress'] = -1; // Stalled
         TurnLog($Who,"A Minefield could not be made in " . $N['Ref'] . " " . $LocText);
       }
@@ -1043,6 +1043,16 @@ function Instuctions() { // And other Instructions
       $T['Instruction'] = -$T['Instruction'];      
       break;
     
+    case 'Link Repair':
+      if (!Spend_Credit($T['Whose'],$T['InstCost'],"Link Repair #" . $T['Dist1']) ) {
+        $T['Progress'] = -1; // Stalled
+        TurnLog($T['Whose'],"Could not afford to start Link Repair in " .$N['Ref'],$T);
+      }
+      $T['Instruction'] = -$T['Instruction'];
+      $Link = Get_Link($T['Dist1']);
+      $Link['Level'] = -abs($Link['Level']);
+      Put_Link($Link);
+      break;
       
     default:
      
@@ -1719,14 +1729,16 @@ function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
       
       GMLog("<tr><td>" . $Facts[$Fid]['Name'] . "<td><a href=ThingEdit.php?id=$Tid>" . $T['Name']  . "<td>" . $T['Level']);
       if ($T['SystemId'] == $SR1['id']) {
-         GMLog("<td>" . $L['System1Ref'] . "<td style=color:" . $LinkLevels[$L['Level']]['Colour'] . ";>#$Lid<td>" . $L['System2Ref']);
+         GMLog("<td>" . $L['System1Ref'] . "<td style=color:" . $LinkLevels[abs($L['Level'])]['Colour'] . ";>#$Lid<td>" . $L['System2Ref']);
       } else {
-         GMLog("<td>" . $L['System2Ref'] . "<td style=color:" . $LinkLevels[$L['Level']]['Colour'] . ";>#$Lid<td>" . $L['System1Ref']);      
+         GMLog("<td>" . $L['System2Ref'] . "<td style=color:" . $LinkLevels[abs($L['Level'])]['Colour'] . ";>#$Lid<td>" . $L['System1Ref']);      
       }
 
 // var_dump($CheckNeeded,$T['LinkPay']);
       if ($L['Level'] ==1 || $T['LinkPay']<0 || ($LOWho>0 && $Fid == $LOWho)) {
         GMLog("<td>Free");
+      } elseif ($L['Level'] < 0) {
+        GMLog("<td class=Err>Under Repair");
       } elseif ($T['LinkPay'] > 0) {
         GMLog("<td>Yes");     
       } elseif ($CheckNeeded && isset($UsedLinks[$Lid][$T['Whose']]) && $UsedLinks[$Lid][$T['Whose']]) {
@@ -1769,7 +1781,7 @@ function ShipMovements($Agents=0) {
     if (isset($_REQUEST["Prevent$Tid"]) && $_REQUEST["Prevent$Tid"] ) {
       $Lid = $T['LinkId']; 
       $L = Get_Link($Lid);
-      TurnLog($Fid,$T['Name'] . " was <b>unable to take link</b> <span style=color:" . $LinkLevels[$L['Level']]['Colour'] . ">#$Lid </span> beause of " . 
+      TurnLog($Fid,$T['Name'] . " was <b>unable to take link</b> <span style=color:" . $LinkLevels[abs($L['Level'])]['Colour'] . ">#$Lid </span> beause of " . 
         (isset($_REQUEST["Reason$Tid"])? $_REQUEST["Reason$Tid"]:"Unknown reasons"), $T);       
       continue;
     }
@@ -1784,7 +1796,7 @@ function ShipMovements($Agents=0) {
             
       $L = Get_Link($Lid);
       if ($Agents == 0) {
-        $L['UseCount'] += $T['Level'];
+        $L['UseCount'] += abs($T['Level']);
         Put_Link($L);
       }
 
@@ -1851,7 +1863,7 @@ function ShipMovements($Agents=0) {
       if (!$Agents) Move_Thing_Within_Sys($T,0,$T['NewLocation']);
 //      SKLog("Moved to $pname along " . $LinkLevels[$L['Level']]['Colour']. " link #$Lid to " . $EndLocs[$T['NewLocation']]); 
       if ($Fid) {
-        TurnLog($Fid,$T['Name'] . " has moved from " . System_Name($OldN,$Fid) . " along <span style='color:" . $LinkLevels[$L['Level']]['Colour'] . 
+        TurnLog($Fid,$T['Name'] . " has moved from " . System_Name($OldN,$Fid) . " along <span style='color:" . $LinkLevels[abs($L['Level'])]['Colour'] . 
         ";'>link #$Lid </span>to $pname " .         ($T['NewLocation'] > 2?( " to " . $EndLocs[$T['NewLocation']]): ""),$T); 
       }
 //    $T['LinkId'] = 0;
@@ -2053,6 +2065,7 @@ function InstructionsProgress() {
       case 'Repair Command Node': // Not coded yet
       case 'Make Something': 
       case 'Make Warpgate':
+      case 'Link Repair':
         $Prog = Has_Tech($T['Whose'],'Deep Space Construction');
         $Mods = Get_ModulesType($Tid, 3);
         $ProgGain = $Prog*$Mods[0]['Number'];
@@ -2929,6 +2942,16 @@ function InstructionsComplete() {
        }
      
        break;
+     
+     case 'Link Repair':
+       $Link = Get_Link($T['Dist1']);
+       $Link['Level'] = abs($Link['Level']);
+       $Link['UseCount'] = 0;
+       Put_Link($Link);
+       TurnLog($T['Whose'],"Link " . $T['Dist1'] . " has been repaired.");
+       GMLog("Link " . $T['Dist1'] . " has been repaired.");
+       break;
+     
      
      default: 
        break;

@@ -16,7 +16,10 @@
 
   $LLevels = Get_LinkLevels();
   $LLs = [0=>''];
-  foreach($LLevels as $L) $LLs[$L['Level']] = $L['Name'];
+  foreach($LLevels as $L) {
+    $LLs[$L['Level']] = $L['Name'];
+    $LLs[-$L['Level']] = "Under Repair " . $L['Name'];
+  }
   $Systems = Get_SystemRefs();
   $Ssys = [];
   foreach($Systems as $S) $Ssys[$S] = $S;
