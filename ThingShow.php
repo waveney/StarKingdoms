@@ -183,9 +183,9 @@ function Show_Thing(&$T,$Force=0) {
         if ($Conf) $Conflict = $Conf[0]['Conflict'];
 
         if ($Host['LinkId']>0 && $Host['TargetKnown'] == 0) {
-          echo " You don't know where you are going to unlooad<br>";
+          echo " You don't know where you are going to unload<br>";
           if ($GM) {
-            if ($Lid == -1 || $Lid == -2) echo "<input type=submit name=ACTION value='Unload After Move>";
+            if ($Lid == -1 || $Lid == -2) echo "<input type=submit name=ACTION value='Unload After Move'>";
             echo "<input type=submit name=ACTION value='Unload Now'>\n";
           }
         } else {

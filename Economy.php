@@ -187,7 +187,7 @@
     }
     
     if ($MineFields) {
-      echo "Less $MineFields which cost 1 each<br>\n";    
+      echo "Less $MineFields Minefields which cost 1 each<br>\n";    
       $EconVal -= $MineFields;
     }
     
