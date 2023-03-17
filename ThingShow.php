@@ -187,7 +187,7 @@ function Show_Thing(&$T,$Force=0) {
           if ($GM) {
             if ($Lid == -1 || $Lid == -2) echo "<input type=submit name=ACTION value='Unload After Move'>";
             echo "<input type=submit name=ACTION value='Unload Now'>\n";
-          } else if ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ))) { 
+          } else if ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ) { 
             echo "<input type=submit name=ACTION value='Unload Now'>\n";         
           }
         } else {
