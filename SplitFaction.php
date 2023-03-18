@@ -134,11 +134,13 @@ function Create_Faction_A() {
   unset($NewF['id']);
   
   $Nid = Put_Faction($NewF);
+  echo fm_hidden('Nid',$Nid);
   Copy_Knowledge_Q();
 }
 
 function Existing_Faction_A() {
   global $Fid, $FACTION, $Nid, $NewF;
+  echo fm_hidden('Nid',$Nid);
   Copy_Knowledge_Q();
 }
 
