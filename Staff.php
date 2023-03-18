@@ -204,6 +204,7 @@
 //    $txt .= "<li><a href=AddFaction.php>Add Faction</a>\n";  
     $txt .= "<li><a href=FactionFaction.php>Faction knows faction?</a><p>\n";  
 
+/*
     $txt .= "<li><form method=Post action=PlayerMove.php class=staffform>";
       $txt .= "<input type=submit name=F value='Player Move' id=staffformid>" . 
                 fm_select($Facts,0,'F',1," onchange=this.form.submit()") . "</form>\n";
@@ -224,7 +225,7 @@
     $txt .= "<li><form method=Post action=ProjDisp.php class=staffform>";
       $txt .= "<input type=submit name=F value='Projects' id=staffformid>" . 
                 fm_select($Facts,0,'F',1," onchange=this.form.submit()") . "</form>\n";
-    
+    */
 //    if (Access('God')) $txt .= "<li><a href=Import.php>Import</a>\n";
     $txt .= "</ul>\n";
   }
@@ -245,9 +246,10 @@
     $txt .= "<p>\n";
 
 //    $txt .= "<li><a href=InstrList.php>List Instructions</a>\n";
-    $txt .= "<li><a href=TidyThings.php>Tidy up</a>  - Call this once a turn to remove unused temp entries<p>\n";
-    $txt .= "<li><a href=ModuleCheck.php>Check Things have modules</a>";    
     if (0 && Access('God')) {
+      $txt .= "<li><a href=TidyThings.php>Tidy up</a>  - Call this once a turn to remove unused temp entries<p>\n";
+      $txt .= "<li><a href=ModuleCheck.php>Check Things have modules</a>";    
+
       $txt .= "<li><a href=SetAllSensors.php>Set All Sensor data</a> - Bug Fix";
       $txt .= "<li><a href=SetAllSpeeds.php>Set All Speeds</a> - Bug Fix";
       $txt .= "<li><a href=HistoryFudge.php>Set History files</a> - Bug Fix";
@@ -264,7 +266,7 @@
     $txt .= $x;
     $txt .= "<ul>\n";
     $txt .= "<li><a href=TechShow.php>List Technologies</a>\n";
-    $txt .= "<li><a href=TechList.php>Edit Technologies</a>\n";
+    $txt .= "<li><a href=TechList.php>Edit Technologies</a><p>\n";
     $txt .= "<li><a href=ModuleList.php>List Module Types</a>\n";
     $txt .= "<li><a href=ModFormulae.php>List Module Formulas</a>\n";
     $txt .= "<p>";

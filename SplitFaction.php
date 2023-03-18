@@ -417,7 +417,7 @@ function Split_Resorces_A() {
     $Nid = $_REQUEST['Nid'];
     $NewF = Get_Faction($Nid);
     echo fm_hidden('Nid',$Nid);
-  } else if (empty($_REQUEST['ACTION']) || $_REQUEST['ACTION']!= 'Start') {
+  } else if (empty($_REQUEST['ACTION']) || ($_REQUEST['ACTION'] != 'Start' && $_REQUEST['ACTION'] != 'Create New' &&  $_REQUEST['ACTION'] != 'Existing Faction' )) {
     echo "<h1 class=Err>Lost what it was being split into - please restart from the begining</h1>";
     dotail();
   }

@@ -1521,6 +1521,7 @@ function Economy() {
         $EconVal += "$ECon\n";
       }
     }
+    $EccTxt .=  "<br>";
     $Things = Get_Things($Fid);
     foreach ($Things as $T) {
       if (empty($TTypes[$T['Type']])) continue;
