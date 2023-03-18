@@ -367,6 +367,10 @@ function WhatCanBeSeenBy($Fid,$Mode=0) {
  //echo "Adding " .$T['Name'] . " " .$T['id'] . " " . $T['SystemId'] . "<br>";
     $Eyes = EyesInSystem($Fid,$Sid);
     $Places[$Sid] = (empty($Places[$Sid])? $Eyes : ($Places[$Sid] | $Eyes));
+    $OthersOnBoard = Get_Things_Cond(0,"Whose!=$Fid AND $T[LinkId]<0 AND SystemId=" . $T['id']);
+    if ($OthersOnBoard) {
+      foreach($OthersOnBoard as $O) $Hosts[$T['id']][] = $O['id'];
+    }
   }
 
   $txt .= "Everything of yours and what they can see.<p>";
