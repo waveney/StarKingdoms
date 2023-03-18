@@ -417,7 +417,7 @@ function StartProjects() {
 //        Put_Thing($T);
         
         // Level of modules
-        RefitRepair($T); //Note this saves it
+        RefitRepair($T); //Note this saves it and the CURRENT levels of techs
         if ($TTypes[$T['Type']]['Properties'] & THING_HAS_MODULES ) {
           $Mods = Get_Modules($Tid);
           foreach($Mods as $M) {
@@ -2273,7 +2273,7 @@ function ProjectsCompleted($Pass) {
           GMLog($Facts[$Fid]['Name'] . "Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system",1);
         } else if ($P['ThingId']) {
           $T = Get_Thing($P['ThingId']);
-          RefitRepair($T);
+          RefitRepair($T,0,1,$P['FactionId']);
           TurnLog($P['FactionId'], $T['Name'] . " has been " . $PT['Name'] . "ed",$T);        
         }
       }
@@ -2284,7 +2284,7 @@ function ProjectsCompleted($Pass) {
           GMLog($Facts[$Fid]['Name'] . "Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system",1);
         } else {        
           $T = Get_Thing($Tid);
-          RefitRepair($T);
+          RefitRepair($T,0,1,$P['FactionId']);
           TurnLog($Fid, $T['Name'] . " has been " . $PT['Name'] . "ed",$T);
         }
       }
