@@ -38,7 +38,7 @@ function ForceReport($Sid,$Cat) {
   $txt = $ftxt = $htxt = $Battct = '';
   $TMsk = ($Cat=='G'?1:2);
   $PlanMoon = [];
-  $Wid = $Bat = 0;
+  $FirePower = $Wid = $Bat = 0;
   
   if ($Cat == 'G') {
     $PTD = Get_PlanetTypes();  // ONLY works for single taget at present
@@ -231,8 +231,18 @@ function ForceReport($Sid,$Cat) {
       // Deliberate fall through
       
     case 'Check':
-      $Sid = $_REQUEST['S'];
-      $N = Get_System($Sid);
+      if (isset($_REQUEST['S'])) {
+        $Sid = $_REQUEST['S'];
+        $N = Get_System($Sid);
+      } else if (isset($_REQUEST['R'])) {
+        $Ref = $_REQUEST['R'];
+        $N = Get_SystemR($Ref);
+        $Sid = $N['id'];
+      } else {
+        echo "Should Never Get Here";
+        exit;
+      }
+
       $txt = SeeInSystem($Sid,31,1,0,-1,1);
       
       echo $txt;

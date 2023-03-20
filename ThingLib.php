@@ -19,6 +19,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
                 'Terraform','Link Repair'];
 $Advance = ['','','Advanced ','Very Advanced ','Ultra Advanced ','Evolved '];
 $ValidMines = [0,1,0,1,0,1,0,0,0,0,0];
+$LinkStates = ['','Under Repair','In Safe Mode','Locked'];
 
 $ModFormulaes = [];
 $ModValues = [];
@@ -373,6 +374,7 @@ function Thing_Finished($Tid) {
 
 
 function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0 ) {
+  global $LinkStates;
   if ($Force) {
     $GM = 0;
   } else {
@@ -442,7 +444,7 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0 ) {
           continue;
 //          $LinkText = '?';
         }
-        $SelLinks[$L['id']] = "#" . $L['id'] . " to " . $LinkText;
+        $SelLinks[$L['id']] = "#" . $L['id'] . " to " . $LinkText . ($L['Status'] != 0) . " - " . $LinkStates[$L['Status']];
         $SelCols[$L['id']] = $LinkTypes[$L['Level']]['Colour'];
       }
     }

@@ -55,7 +55,11 @@ function Report_Others($Who, $Where, $SeenBy, $Message) {
     if ($F['id'] == $Who) continue;
     $Eyes = EyesInSystem($F['id'],$Where);
     if (($Eyes & $SeenBy) == 0) continue;
-    TurnLog($F['id'],"$Message by " . $Factions[$Who]['Name']);
+    if ($Who) {
+      TurnLog($F['id'],"$Message by " . $Factions[$Who]['Name']);
+    } else {
+      TurnLog($F['id'],$Message);
+    }
   }
 }
 
@@ -78,6 +82,12 @@ function Done_Stage($Name) {
   } 
 }
 
-
+function SetAllLinks($Ref, $Sid, $LinkState) {
+  $Lnks = Gen_Get_Cond('Links',"System1Ref='$Ref' OR System2Ref='$Ref'");
+  foreach ($Lnks as $L) {
+    $L['Status'] = $LinkState;
+    Put_Link($L);
+  }
+}
 
 ?>

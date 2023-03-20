@@ -9,7 +9,7 @@
 
   dostaffhead("Survey Report",["js/dropzone.js","css/dropzone.css" ]);
 
-  global $db, $GAME, $FACTION;
+  global $db, $GAME, $FACTION, $LinkStates;
   
 /*  Survey Levels
   0 - No info 
@@ -385,7 +385,7 @@
       } else {
         echo " to an unknown location.  Level " .  $LinkLevels[abs($L['Level'])]['Colour'];
       }
-      if ($L['Level'] < 0) echo " currently under repair";
+      if ($L['Status'] != 0) echo $LinkStates[$L['Status']];
     
     }
     echo "</ul><p>\n";

@@ -1050,7 +1050,7 @@ function Instuctions() { // And other Instructions
       }
       $T['Instruction'] = -$T['Instruction'];
       $Link = Get_Link($T['Dist1']);
-      $Link['Level'] = -abs($Link['Level']);
+      $Link['Status'] = 1;
       Put_Link($Link);
       break;
       
@@ -1686,7 +1686,7 @@ function LoadTroops() {
 }
 
 function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
-  global $GAME,$GAMEID;
+  global $GAME,$GAMEID,$LinkStates;
   $LinkLevels = Get_LinkLevels();
   $Things = Get_AllThings();
   $TTypes = Get_ThingTypes();
@@ -1738,8 +1738,8 @@ function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
 // var_dump($CheckNeeded,$T['LinkPay']);
       if ($L['Level'] ==1 || $T['LinkPay']<0 || ($LOWho>0 && $Fid == $LOWho)) {
         GMLog("<td>Free");
-      } elseif ($L['Level'] < 0) {
-        GMLog("<td class=Err>Under Repair");
+      } elseif ($L['Status'] != 0) {
+        GMLog("<td class=Err>" . $LinkStates[$L['Status']]);
       } elseif ($T['LinkPay'] > 0) {
         GMLog("<td>Yes");     
       } elseif ($CheckNeeded && isset($UsedLinks[$Lid][$T['Whose']]) && $UsedLinks[$Lid][$T['Whose']]) {
@@ -1760,70 +1760,108 @@ function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
 }
 
 function ShipMovements($Agents=0) {
-  global $GAME,$GAMEID;
+  global $GAME,$GAMEID,$LinkStates;
   // Foreach thing, do moves, generate list of new survey reports & levels, update "knowns" 
 
   if (!file_exists("Turns/" . $GAMEID . "/" . $GAME['Turn'])) $LF = mkdir("Turns/" . $GAMEID . "/" . $GAME['Turn'],0777,true);  
   
 //  $PotS = fopen("Turns/" . $GAMEID . "/" . $GAME['Turn'] . "/ScansDue", "a+");
   $LinkLevels = Get_LinkLevels();
-  $Things = Get_AllThings();
+  $Things = ($Agents ? Get_AllThings() : Gen_Get_Table('Things',"ORDER BY RAND()"));
   $TTypes = Get_ThingTypes();
   $Facts = Get_Factions();
+  $LOwner = GameFeature('LinkOwner',0);
+  $LinkState = array_flip($LinkStates);
   
   foreach ($Things as $T) {
     if ($T['BuildState'] <2 || $T['BuildState'] > 3 || $T['LinkId'] <= 0 || $T['Whose']==0 || $T['CurHealth']==0) continue;
     if (( $Agents == 0 &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER)) || 
         ( $Agents &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER) ==0 ) ) continue;
 
+    if ($T['LastMoved'] == $GAME['Turn']) continue; // Already done
+    
     $Tid = $T['id'];
     $Fid = $T['Whose'];
+    $Lid = $T['LinkId']; 
+    if ($Lid > 0) $L = Get_Link($Lid);
     
     if (isset($_REQUEST["Prevent$Tid"]) && $_REQUEST["Prevent$Tid"] ) {
-      $Lid = $T['LinkId']; 
-      $L = Get_Link($Lid);
       TurnLog($Fid,$T['Name'] . " was <b>unable to take link</b> <span style=color:" . $LinkLevels[abs($L['Level'])]['Colour'] . ">#$Lid </span> beause of " . 
         (isset($_REQUEST["Reason$Tid"])? $_REQUEST["Reason$Tid"]:"Unknown reasons"), $T);       
+      $T['LastMoved'] = $GAME['Turn'];
+      Put_Thing($T);
       continue;
     }
     
     if ($T['LinkId']>0 && $T['NewSystemId'] != $T['SystemId'] ) {
+      // if link out & not spider - cant move
+      
+      if (($L['Status'] > 0) && ($Fid != $LOwner)) {
+        TurnLog($Fid,$T['Name'] . " was <b>unable to take link</b> <span style=color:" . $LinkLevels[abs($L['Level'])]['Colour'] . ">#$Lid </span> beause it is " . 
+          $LinkStates[$L['Status']],$T);
+        $T['LastMoved'] = $GAME['Turn'];
+        Put_Thing($T);
+        continue;
+        
+      
+      }
       GMLog("Moving " . $T['Name']);
-
-      $Lid = $T['LinkId']; 
 
       $ShipScanLevel = Scanners($T);
       $ShipNebScanLevel = NebScanners($T);
-            
-      $L = Get_Link($Lid);
-      if ($Agents == 0) {
-        $L['UseCount'] += abs($T['Level']);
-        Put_Link($L);
-      }
 
       $SR1 = Get_SystemR($L['System1Ref']);      
       $SR2 = Get_SystemR($L['System2Ref']);           
- 
+            
+      if (($Agents == 0) && ($T['Whose'] != $LOwner)) {
+        $L['UseCount'] += $T['Level'];
+        if ($L['UseCount'] > 100) {// something breaks
+          $BadProb = $T['Level']*($L['UseCount'] - 100);
+          if (rand(0,100) > $BadProb) { // There she blows!!!!
+            $DamageDice = (abs($T['Level'])+1)*2;
+            GMLog("<span class=Red>LINK EXPLOSION on link " . $L['id'] . " from " . $L['System1Ref'] . " to " . $L['System2Ref'] );        
+            GMLog("Movement will be paused.  Do ($DamageDice D10) x 10 to everything (Include Outposts, Space Stations etc) in ");
+            GMLog("<a href=Meetings.php?ACTION=Check&R=" . $L['System1Ref'] . ">" . $L['System1Ref'] . "</a>");
+            GMLog("And <a href=Meetings.php?ACTION=Check&R=" . $L['System2Ref'] . ">" . $L['System2Ref'] . "</a>");
+            // Emergency lockdown both ends
+                        
+            SetAllLinks($L['System1Ref'], $SR1['id'],$LinkState['In Safe Mode']);
+            SetAllLinks($L['System2Ref'], $SR2['id'],$LinkState['In Safe Mode']);
+
+            Report_Others(0, $SR1['id'], 31, "Link #$Lid Exploded.  All other links in " . $L['System1Ref'] . " have been put in Safe Mode");
+            Report_Others(0, $SR2['id'], 31, "Link #$Lid Exploded.  All other links in " . $L['System2Ref'] . " have been put in Safe Mode");
+
+            // Remove the link!
+            
+            $L['GameId'] = - $L['GameId'];
+            Put_Link($L);
+            $SetBreak = 1;
+          }
+        }
+        Put_Link($L);
+      }
+
       if ($T['SystemId'] == $SR1['id']) {
         $Sid = $T['NewSystemId'] = $SR2['id'];
         $Ref = $SR2['Ref']; // Names...
         $N = $SR2;
         $OldSid = $SR1['id'];
         $OldN = $SR1;
-        $GFrom = 1;
-        $GTo = 2;
+        $GFrom = 'A';
+        $GTo = 'B';
       } else {
         $Sid = $T['NewSystemId'] = $SR1['id']; 
         $Ref = $SR1['Ref'];
         $N = $SR1;
         $OldSid = $SR2['id'];
         $OldN = $SR2;
-        $GFrom = 2;
-        $GTo = 1;
+        $GFrom = 'B';
+        $GTo = 'A';
       }
       
       $MineChecks = ['From'=>$GFrom, 'To'=>$GTo];
       foreach ($MineChecks as $Dir=>$MC) {
+//      var_dump($L);
         if ($L["Mined$MC"]) {
           $Mine = Get_Thing($L["Mined$MC"]);
           if ($Mine) {
@@ -1856,24 +1894,37 @@ function ShipMovements($Agents=0) {
       }
       
       // Leaving Minefields
-      if (!$Agents) Move_Thing_Within_Sys($T,0,1);
+      if (!$Agents) Move_Thing_Within_Sys($T,1,1);
 //      $N = Get_System($T['NewSystemId']);
       $EndLocs = Within_Sys_Locs($N);
       $T['SystemId'] = $T['NewSystemId'];
       $T['WithinSysLoc'] = $T['NewLocation'];
-      if (!$Agents) Move_Thing_Within_Sys($T,0,$T['NewLocation']);
+      if (!$Agents) Move_Thing_Within_Sys($T,$T['NewLocation'],1);
 //      SKLog("Moved to $pname along " . $LinkLevels[$L['Level']]['Colour']. " link #$Lid to " . $EndLocs[$T['NewLocation']]); 
       if ($Fid) {
-        TurnLog($Fid,$T['Name'] . " has moved from " . System_Name($OldN,$Fid) . " along <span style='color:" . $LinkLevels[abs($L['Level'])]['Colour'] . 
-        ";'>link #$Lid </span>to $pname " .         ($T['NewLocation'] > 2?( " to " . $EndLocs[$T['NewLocation']]): ""),$T); 
+        if (isset($SetBreak)) {
+          TurnLog($Fid,$T['Name'] . " attempted to move from " . System_Name($OldN,$Fid) . " along <span style='color:" . $LinkLevels[abs($L['Level'])]['Colour'] . 
+                  ";'>link #$Lid </span>to $pname " . ($T['NewLocation'] > 2?( " to " . $EndLocs[$T['NewLocation']]): "") . " unfortunately the link was " .
+                  "overloaded and exploded - see turn report" ,$T); 
+          $T['CurHealth'] = 0;
+          $T['SystemId'] = 0;
+        } else {
+          TurnLog($Fid,$T['Name'] . " has moved from " . System_Name($OldN,$Fid) . " along <span style='color:" . $LinkLevels[abs($L['Level'])]['Colour'] . 
+                  ";'>link #$Lid </span>to $pname " .         ($T['NewLocation'] > 2?( " to " . $EndLocs[$T['NewLocation']]): ""),$T); 
+        }
       }
 //    $T['LinkId'] = 0;
       $T['Instruction'] = 0;
+      $T['LastMoved'] = $GAME['Turn'];
       Put_Thing($T);
+      if (isset($SetBreak)) return 0; // Will need to come back in to finish movements after damage
     } else if ( $T['WithinSysLoc'] != $T['NewLocation'] && $T['NewLocation']>1) {
-      if (!$Agents) Move_Thing_Within_Sys($T,0,1);
-      $T['WithinSysLoc'] = $T['NewLocation'];
-      if (!$Agents) Move_Thing_Within_Sys($T,0,$T['NewLocation']);
+      if (!$Agents) {
+        Move_Thing_Within_Sys($T,1,1);
+        Move_Thing_Within_Sys($T,$T['NewLocation'],1);
+      } else {
+        $T['WithinSysLoc'] = $T['NewLocation'];
+      };
       $N = Get_System($T['SystemId']);
       $Sid = $T['SystemId'];
       $Fid = $T['Whose'];
@@ -1883,6 +1934,7 @@ function ShipMovements($Agents=0) {
       $EndLocs = Within_Sys_Locs($N);
 //      SKLog("Moved to " . $EndLocs[$T['NewLocation']] . " within $pname"); 
       if ($Fid) TurnLog($Fid,$T['Name'] . " moved to " . $EndLocs[$T['NewLocation']] .  " within $pname",$T); 
+      $T['LastMoved'] = $GAME['Turn'];
       Put_Thing($T);
     }        
     
@@ -2294,8 +2346,8 @@ function ProjectsCompleted($Pass) {
       $T = Get_Thing($P['ThingId']);
       $T['BuildState'] = 2; // Shakedown
       $WSL = ConstructLoc($P['Home'],0);
+      $T['WithinSysLoc'] = 1;
       Move_Thing_Within_Sys($T,$WSL,1);
-      $T['WithinSysLoc'] = $WSL;
       TurnLog($Fid, $T['Name'] . " has been lanched and will now start its shakedown cruise",$T);              
       Calc_Scanners($T);
       $T['ProjectId'] = 0;
@@ -2946,7 +2998,7 @@ function InstructionsComplete() {
      
      case 'Link Repair':
        $Link = Get_Link($T['Dist1']);
-       $Link['Level'] = abs($Link['Level']);
+       $Link['Status'] = 0;
        $Link['UseCount'] = 0;
        Put_Link($Link);
        TurnLog($T['Whose'],"Link " . $T['Dist1'] . " has been repaired.");

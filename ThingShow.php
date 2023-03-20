@@ -200,7 +200,7 @@ function Show_Thing(&$T,$Force=0) {
 //          echo "<input type=submit name=ACTION value='Unload on Turn'>\n";
 //          if ($Conflict) echo " <b>Conflict</b> ";
 //          echo "<input type=submit name=ACTION value='Unload Now'>\n";
-          echo "<br>Note: To unload AFTER moving, please put the movement order in for the transport before the Unload After Move order.<br>\n";
+          echo "<br>Note: To unload AFTER moving, please put the movement order in to the system for the transport before the Unload After Move order.<br>\n";
         }
       }
       if ($Lid == -2 || $Lid == -4) {
