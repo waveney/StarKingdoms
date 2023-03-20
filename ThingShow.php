@@ -72,8 +72,13 @@ function Show_Thing(&$T,$Force=0) {
   }
 */
 
+  if (!isset($Links[$T['LinkId']])) {
+    $T['LinkId'] = 0;
+    Put_Thing($T);
+  }
+
   echo "<form method=post id=mainform enctype='multipart/form-data' action=ThingEdit.php>";
-  
+
   $ll = ($T['LinkId']>0 ? $Links[$T['LinkId']]['Level'] : 0);
   $LOWho = GameFeature('LinkOwner',0);
   if ($Links && ($T['LinkId']>0) && ($LinkTypes[$ll]['Cost'] > 0) && $LOWho && $LOWho != $T['Whose']) {

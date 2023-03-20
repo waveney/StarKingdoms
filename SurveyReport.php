@@ -385,7 +385,7 @@
       } else {
         echo " to an unknown location.  Level " .  $LinkLevels[abs($L['Level'])]['Colour'];
       }
-      if ($L['Status'] != 0) echo $LinkStates[$L['Status']];
+      if ($L['Status'] != 0) echo " <span class=Red>" . $LinkStates[$L['Status']] . "</span>";
     
     }
     echo "</ul><p>\n";

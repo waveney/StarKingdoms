@@ -187,6 +187,8 @@
     $txt .= "<li><a href=GMTurnTxt.php>Follow Progress</a>\n";    
     $txt .= "<li><a href=Meetings.php>Systems with multiple Factions</a>\n";
     $txt .= "<li><a href=FollowUp.php>Turn Follow Ups needed</a>\n";
+    $txt .= "<li><a href=TurnSpecials.php>Turn Specials</a>\n";
+
     $txt .= "<p>";
     $txt .= "<li><a href=PayFaction.php>Pay Faction (Credit/SP)</a>\n";
     $txt .= "<li><a href=Payments.php>See Payments (Credit/SP)</a>\n";

@@ -32,6 +32,8 @@ See the node map of the systems you know about and links connecting them.<p>
 
 Click on a system to get a survey report.  If you have something there with eyes/camera, you will get appropriate lists.<p>
 
+If a link is dotted it is currently inoperative.<p>
+
 Note in this game we have link numbers with universal meaning, likewise for systems. I had planned to make it unknown until you travelled along/to them.<p>
 
 <h2>Technologies</h2>

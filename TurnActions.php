@@ -23,8 +23,8 @@
              'Load Troops', 'Spare', 'Ship Move Check', 'Ship Movements', 
              'Agents Move Check', 'Agents Movements', 'See After Move', 'Meetups',
              
-             'Spare', 'Space Combat', 'Unload Troops', 'Spare', 
-             'Orbital Bombardment', 'Planetary Defence', 'Ground Combat', 'Devastation Selection', 
+             'Spare', 'Space Combat', 'Unload Troops', 'Orbital Bombardment', 
+             'Spare', 'Planetary Defence', 'Ground Combat', 'Devastation Selection', 
              'Devastation', 'Ownership Change', 'Project Progress', 'Instructions Progress', 
              'Spare', 'Espionage Missions Complete', 'Counter Espionage', 'Handle Co Op Projects', 
              'Finish Shakedowns', 'Refit Projects Complete', 'Projects Complete', 'Instructions Complete', 
@@ -43,7 +43,7 @@
              'Coded,M','Coded','Coded', 'Coded,M',
              
              'No','Help','Coded','No',
-             'No','No','Help','Coded,M', 
+             'Coded,M','No','Help','Coded,M', 
              'Coded', 'No', 'Coded','Coded',
              'No','No','No','No',
              'Coded','Coded','Coded,M','Coded,M', 
@@ -1818,11 +1818,11 @@ function ShipMovements($Agents=0) {
         if ($L['UseCount'] > 100) {// something breaks
           $BadProb = $T['Level']*($L['UseCount'] - 100);
           if (rand(0,100) > $BadProb) { // There she blows!!!!
-            $DamageDice = (abs($T['Level'])+1)*2;
+            $DamageDice = (abs($L['Level'])+1)*2;
             GMLog("<span class=Red>LINK EXPLOSION on link " . $L['id'] . " from " . $L['System1Ref'] . " to " . $L['System2Ref'] );        
-            GMLog("Movement will be paused.  Do ($DamageDice D10) x 10 to everything (Include Outposts, Space Stations etc) in ");
-            GMLog("<a href=Meetings.php?ACTION=Check&R=" . $L['System1Ref'] . ">" . $L['System1Ref'] . "</a>");
-            GMLog("And <a href=Meetings.php?ACTION=Check&R=" . $L['System2Ref'] . ">" . $L['System2Ref'] . "</a>");
+            GMLog("Movement will be paused.  Do ($DamageDice D10) x 10 to everything (Including Outposts, Space Stations etc) in " .
+                  "<a href=Meetings.php?ACTION=Check&R=" . $L['System1Ref'] . ">" . $L['System1Ref'] . "</a> And " .
+                  "<a href=Meetings.php?ACTION=Check&R=" . $L['System2Ref'] . ">" . $L['System2Ref'] . "</a></span>");
             // Emergency lockdown both ends
                         
             SetAllLinks($L['System1Ref'], $SR1['id'],$LinkState['In Safe Mode']);
@@ -2019,6 +2019,11 @@ function UnloadTroops() {
 
 function OrbitalBombardment() {
   GMLog("Orbital Bombardment is currently Manual<p>");
+  return 1;
+}
+
+function PlanetaryDefence() {
+  GMLog("Planetary Defence is currently Manual<p>");
   return 1;
 }
 
