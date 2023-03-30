@@ -34,22 +34,22 @@
       $SR1 = Get_SystemR($L['System1Ref']);      
       $SR2 = Get_SystemR($L['System2Ref']);           
 
-            $DamageDice = (abs($L['Level'])+1)*2;
-            GMLog("<span class=Red>LINK EXPLOSION on link $Lid from " . $L['System1Ref'] . " to " . $L['System2Ref'] );        
-            GMLog("Movement will be paused.  Do ($DamageDice D10) x 10 to everything (Including Outposts, Space Stations etc) in " .
-                  "<a href=Meetings.php?ACTION=Check&R=" . $L['System1Ref'] . ">" . $L['System1Ref'] . "</a> And " .
-                  "<a href=Meetings.php?ACTION=Check&R=" . $L['System2Ref'] . ">" . $L['System2Ref'] . "</a></span>");
+      $DamageDice = (abs($L['Level'])+1)*2;
+      GMLog("<span class=Red>LINK EXPLOSION </span> on link $Lid from " . $L['System1Ref'] . " to " . $L['System2Ref'] );        
+      GMLog("Do ($DamageDice D10) x 10 to everything (Including Outposts, Space Stations etc) in " .
+            "<a href=Meetings.php?ACTION=Check&R=" . $L['System1Ref'] . ">" . $L['System1Ref'] . "</a> And " .
+            "<a href=Meetings.php?ACTION=Check&R=" . $L['System2Ref'] . ">" . $L['System2Ref'] . "</a>");
             // Emergency lockdown both ends
                         
-            SetAllLinks($L['System1Ref'], $SR1['id'],$LinkState['In Safe Mode']);
-            SetAllLinks($L['System2Ref'], $SR2['id'],$LinkState['In Safe Mode']);
+      SetAllLinks($L['System1Ref'], $SR1['id'],$LinkState['In Safe Mode']);
+      SetAllLinks($L['System2Ref'], $SR2['id'],$LinkState['In Safe Mode']);
 
-            Report_Others(0, $SR1['id'], 31, "Link #$Lid Exploded.  All other links in " . $L['System1Ref'] . " have been put in Safe Mode");
-            Report_Others(0, $SR2['id'], 31, "Link #$Lid Exploded.  All other links in " . $L['System2Ref'] . " have been put in Safe Mode");
+      Report_Others(0, $SR1['id'], 31, "Link #$Lid Exploded.  All other links in " . $L['System1Ref'] . " have been put in Safe Mode");
+      Report_Others(0, $SR2['id'], 31, "Link #$Lid Exploded.  All other links in " . $L['System2Ref'] . " have been put in Safe Mode");
 
             // Remove the link!
             
-            $L['GameId'] = - $L['GameId'];
+      $L['GameId'] = - $L['GameId'];
       Put_Link($L);
       echo "Link Exploded<p>";
       break;

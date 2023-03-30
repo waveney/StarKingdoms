@@ -32,7 +32,7 @@
     if (isset($Fid)) $Faction = Get_Faction($Fid);
   }
 
- // var_dump($_REQUEST);
+//var_dump($_REQUEST);
 
   if (isset($_REQUEST['id'])) {
     $Tid = $_REQUEST['id'];
@@ -75,7 +75,15 @@
     
     
     case 'COPY':
+      if (empty($_REQUEST['Design'])) {
+        if (empty($_REQUEST['CDesign'])) {
+          echo "<h1 class=Err>Design not found - Tell Richard what you did</h1>";
+          dotail();
+        }
+        $_REQUEST['Design'] = $_REQUEST['CDesign'];
+      }
       $OldT = Get_Thing($_REQUEST['Design']);
+//var_dump($OldT);
       $T = $OldT;      
       if (empty($OldT['BuildState'])) {
         db_delete('Things',$Tid);
@@ -99,7 +107,7 @@
   
   dostaffhead("Plan a thing",["js/ProjectTools.js", "js/dropzone.js","css/dropzone.css" ]);
  
-// var_dump($T);  
+ //var_dump($T);  
  
   $ThingTypes = Get_ThingTypes();
   $ThingTypeNames = [''];
@@ -147,7 +155,7 @@
         }
       }
     }
-    echo fm_select($CList,null,'Design',1,' onchange=this.form.submit()'); 
+    echo fm_select($CList,null,'CDesign',1,' onchange=this.form.submit()'); 
     echo "<br>If it is in planning, it will be selected, otherwise it will copy the design.<p>\n";
     
     echo "<h2>OR design from scratch</h2>";

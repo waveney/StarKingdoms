@@ -95,12 +95,13 @@ function New_Thing(&$T) {
           $Sys = Get_System($P['SystemId']);
           break;
     
-        case 3: // Thing
+        case 3: // Thing Handled in next section
+          continue 2;
           $T = Get_Thing($W['ThingId']);
           $type = $TTypes[$T['Type']]['Name'];
           $Name = $T['Name'];
           $Sys = Get_System($T['SystemId']);
-          break;
+          continue 2;
         }
     
         $H = Get_ProjectHome($W['Home']);
@@ -588,7 +589,8 @@ function New_Thing(&$T) {
   }
 
   if ($GM) {
-    echo "<h2>GM: <a href=ThingEdit.php?id=$tid&FORCE>This page in Player Mode</a>" . (Access('God')?", <a href=ThingEdit.php?id=$tid&EDHISTORY>Edit History</a>":"") . "</h2>";  
+    echo "<h2>GM: <a href=ThingEdit.php?id=$tid&FORCE>This page in Player Mode</a>" . 
+          (Access('God')?", <a href=ThingEdit.php?id=$tid&EDHISTORY>Edit History</a>":"") . "</h2>";  
   }
   if (empty($T)) {
     echo "<h2 class=Err>Sorry that thing is not found</2>";  

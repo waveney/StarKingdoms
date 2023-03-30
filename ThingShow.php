@@ -72,7 +72,7 @@ function Show_Thing(&$T,$Force=0) {
   }
 */
 
-  if (!isset($Links[$T['LinkId']])) {
+  if (($T['LinkId'] > 0) && (!isset($Links[$T['LinkId']]))) {
     $T['LinkId'] = 0;
     Put_Thing($T);
   }
@@ -385,6 +385,8 @@ function Show_Thing(&$T,$Force=0) {
     }
   }
   
+  if (Access('God')) echo "<tr><td>SystemId: " . $T['SystemId'] . "<td>LinkId: " . $T['LinkId'] . "<td>Locn: " . $T['WithinSysLoc'] . 
+     "<td>NewSystemId: " . $T['NewSystemId'] . "<td>New Locn: " . $T['NewLocation'];
   if ($GM) echo "<tr>" . fm_radio('Whose',$FactNames ,$T,'Whose','',1,'colspan=6','',$Fact_Colours,0); 
   if  ($tprops & THING_HAS_GADGETS) echo "<tr>" . fm_textarea("Gadgets",$T,'Gadgets',8,3);
   if  ($tprops & THING_HAS_LEVELS) echo "\n<tr>" . fm_text("Orders",$T,'Orders',2);

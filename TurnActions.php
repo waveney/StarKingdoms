@@ -1819,10 +1819,10 @@ function ShipMovements($Agents=0) {
           $BadProb = $T['Level']*($L['UseCount'] - 100);
           if (rand(0,100) > $BadProb) { // There she blows!!!!
             $DamageDice = (abs($L['Level'])+1)*2;
-            GMLog("<span class=Red>LINK EXPLOSION on link " . $L['id'] . " from " . $L['System1Ref'] . " to " . $L['System2Ref'] );        
+            GMLog("<span class=Red>LINK EXPLOSION</span> on link " . $L['id'] . " from " . $L['System1Ref'] . " to " . $L['System2Ref'] );        
             GMLog("Movement will be paused.  Do ($DamageDice D10) x 10 to everything (Including Outposts, Space Stations etc) in " .
                   "<a href=Meetings.php?ACTION=Check&R=" . $L['System1Ref'] . ">" . $L['System1Ref'] . "</a> And " .
-                  "<a href=Meetings.php?ACTION=Check&R=" . $L['System2Ref'] . ">" . $L['System2Ref'] . "</a></span>");
+                  "<a href=Meetings.php?ACTION=Check&R=" . $L['System2Ref'] . ">" . $L['System2Ref'] . "</a>");
             // Emergency lockdown both ends
                         
             SetAllLinks($L['System1Ref'], $SR1['id'],$LinkState['In Safe Mode']);
