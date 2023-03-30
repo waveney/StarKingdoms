@@ -148,7 +148,7 @@ function ValidateTurn() {
   }
   $Facts = Get_Factions();
   $Fs = [];
-  foreach($Facts as $F) {
+  if (isset($FACTION['Player'])) foreach($Facts as $F) {
     if ($F['Player'] == $FACTION['Player']) {
       $Fs[] = $F['id'];
     }

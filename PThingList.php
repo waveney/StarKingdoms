@@ -17,7 +17,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
       $Faction = &$FACTION;
     }
   } 
-  $GM = Access('GM');
+  $GM = Access('GM') && ! isset($_REQUEST['FORCE']) ;
   if ($GM) {
     if (isset( $_REQUEST['F'])) {
       $Fid = $_REQUEST['F'];
@@ -150,6 +150,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
   }
   $ThingTypes = Get_ThingTypes();
   $Systems = Get_SystemRefs();
+  $Factions = Get_Factions();
 //  $Techs = Get_Techs($Fid);
   $ModTypes = Get_ModuleTypes();
   foreach ($ModTypes as &$Mt) {
@@ -172,6 +173,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
   echo "Click on column heading to sort by column - toggles up/down<br>\n";
   echo "Ex things only show up under state <b>Other</b><br>\n";
   echo "If the Thing would benefit from refit/repair/re-equipping/reinforcing then the Refit has the number of modules (+1 if it needs repair as well)</br>";
+  if ($FACTION['HasPrisoners']) echo "The Prisoner Tab shows Prisoners YOU have<p>\n";
 //  echo "Use only ONE of the filters to the right<br>\n";
   
   $coln = 0;
@@ -231,7 +233,8 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
     echo "<td>" . $T['Class'];
     echo "<td>" . $Name;
     echo "<td>" . $T['Level'];
-    echo "<td>" . $T['Orders'];
+    echo "<td>" . (($RowClass == 'Prisoner') ? "<span style='background:" . $Factions[$T['Whose']]['MapColour'] . "'>[" . $Factions[$T['Whose']]['Name'] . "]</span>" :
+                 $T['Orders']);
     echo "<td><center>" . (($Props & THING_HAS_HEALTH)? $T['CurHealth'] . ' / ' . $T['OrigHealth'] : "-");
     if (!empty($T['PrisonerOf'])) {
       echo "<td>Prisoner";
@@ -247,7 +250,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
       echo "<td>Direct<td>";
       echo "<td>" . ($T['NewSystemId'] == 0? "" : $Systems[$T['NewSystemId']]); 
     } else {
-      echo "<td>" . ($T['LinkId'] >= 0 ? (empty($T['SystemId']) ?'': $Systems[$T['SystemId']]) : 'On Board');
+      echo "<td>" . ($T['LinkId'] >= 0 ? (empty($Systems[$T['SystemId']]) ?'': $Systems[$T['SystemId']]) : 'On Board');
       echo "<td>";
       if ($T['Instruction']) echo $ThingInstrs[abs($T['Instruction'])];
       if (($T['Instruction'] == 0 || $T['Instruction'] == 5 ) && (($Props & THING_CAN_MOVE) && ( $T['BuildState'] == 3))) { 

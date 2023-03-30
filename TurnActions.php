@@ -3413,6 +3413,7 @@ function RecalcProjectHomes() {
   }
   
   Recalc_Mined_locs();
+  Recalc_Prisoner_Counts();
   return 1;
 }
 

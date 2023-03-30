@@ -1043,4 +1043,25 @@ function Thing_Delete($tid) {
       db_delete('Things',$tid);
 }
 
+function Recalc_Prisoner_Counts() {
+  $Facts = Get_Factions();
+  $PCounts = [];
+  foreach ($Facts as $F) $PCounts[$F['id']] = 0;
+  $Prisoners = Get_Things_Cond(0,"PrisonerOf!=0");
+  foreach ($Prisoners as $P) {
+    $PCounts[$P['PrisonerOf']]++;
+  }
+  
+  foreach ($Facts as $F) {
+    if ($PCounts[$F['id']] > 0) {
+      $F['HasPrisoners'] = $PCounts[$F['id']];
+      Put_Faction($F);
+    } else if ($F['HasPrisoners'] > 0) {
+      $F['HasPrisoners'] = 0;
+      Put_Faction($F);
+    }
+  }
+  echo "Prisoners Reclaculated<p>";
+}
+
 ?>

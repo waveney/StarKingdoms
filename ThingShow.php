@@ -162,6 +162,8 @@ function Show_Thing(&$T,$Force=0) {
         if ($GM) {
           echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId',1);
           echo "<td>" . fm_select($Syslocs,$T,'WithinSysLoc');
+        } elseif ($T['PrisonerOf']) {
+          echo "<tr><td>Currently a Prisoner";
         } else {
           echo "<tr><td>Current System:<td>" . $N['Ref'] . "<td>" . $Syslocs[$T['WithinSysLoc']];    
         }
@@ -177,6 +179,8 @@ function Show_Thing(&$T,$Force=0) {
         if ($GM) {
           echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId',1);
           echo "<td>" . fm_select($Syslocs,$T,'WithinSysLoc');
+        } elseif ($T['PrisonerOf']) {
+          echo "<tr><td class=Err>Currently a Prisoner";
         } else {
           echo "<tr><td>Current System:<td>" . (empty($N)? 'Unknown' : $N['Ref']) . "<td>" . $Syslocs[$T['WithinSysLoc']];    
         }
@@ -276,6 +280,8 @@ function Show_Thing(&$T,$Force=0) {
             }
             echo "<br>Update this normally";
             echo "<td>To:  " . fm_select($NewSyslocs,$T,'NewLocation');
+          } elseif ($T['PrisonerOf']) {
+            // No Info provided
           } else {
             echo "<tr><td>Taking Link:<td>" . fm_select($SelLinks,$T,'LinkId',0," style=color:" . $SelCols[$T['LinkId']] ,'',0,$SelCols);
             if ($ll && $LinkTypes[$ll]['Cost'] && $LOWho && $LOWho != $T['Whose'] ) { 
