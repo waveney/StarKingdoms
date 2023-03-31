@@ -1408,6 +1408,7 @@ function Show_Thing(&$T,$Force=0) {
        " <input type=submit name=ACTION value='Remove Thing (No debris)'>";
     if ($tprops & THING_CAN_MOVE) echo "  <input type=submit name=ACTION value='Warp Out'>\n";
     echo fm_number0(" Do",$T,'Damage', '',' class=Num3 ') . " <input type=submit name=ACTION value=Damage>\n";
+    if ($T['PrisonerOf']) echo " <input type=submit name=ACTION value=Disarm>\n";
   }
   if (!$GM && ($tprops & THING_CAN_BE_CREATED)) echo "<input type=submit name=ACTION value='Delete'>";
   if ($GM || empty($Fid)) {

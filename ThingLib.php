@@ -345,7 +345,7 @@ function Calc_Damage(&$T,&$Rescat) {
   $Rescat = 0;
   foreach ($Mts as $mt) if ($mt['DefWep'] == 2 ) {
     foreach ($Ms as $M) if (($Mts[$M['Type']]['Name'] == $mt['Name']) && ($M['Number'] > 0)) { 
-      $dam = $M['Number'] * Mod_ValueSimple($M['Level'],$M['Type'],$Rescat);
+      $dam = ($M['Level'] > 0?$M['Number'] * Mod_ValueSimple($M['Level'],$M['Type'],$Rescat):0);
       $Dam += $dam;
     }
   }

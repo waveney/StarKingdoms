@@ -455,6 +455,19 @@ function New_Thing(&$T) {
       Put_Thing($T);
       break;
       
+    case 'Disarm':
+      $tid = $_REQUEST['id'];
+      $T = Get_Thing($tid);
+      $Mods = Get_Modules($tid);
+      foreach($Mods as $M) {
+        $M['Level'] = 0;
+        Put_Module($M);
+      }
+      
+      $T['CurHealth'] = min($T['CurHealth'],5*($T['Level']));
+      Put_Thing($T);
+      break;
+    
     
     case 'None' :
     default: 
