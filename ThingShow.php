@@ -300,7 +300,7 @@ function Show_Thing(&$T,$Force=0) {
         }
       }
 
-      if (($Lid == 0) && (($tprops & THING_CAN_BETRANSPORTED))) { 
+      if (($Lid == 0) && (($tprops & THING_CAN_BETRANSPORTED)) && (($T['PrisonerOf'] == 0) || ($T['PrisonerOf'] == $FACTION['id']))) { 
         $XPorts = Get_AllThingsAt($T['SystemId']);
         $NeedCargo = ($tprops & THING_NEEDS_CARGOSPACE);
         $TList = [];

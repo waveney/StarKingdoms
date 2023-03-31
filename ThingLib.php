@@ -673,6 +673,7 @@ function EyesInSystem($Fid,$Sid) { // Eyes 1 = in space, 2= sens, 4= neb sens, 8
   foreach ($MyThings as $T) {
     if ($T['SeenTypeMask']) continue;
     if (($Neb > 0) && ($T['NebSensors'] < $Neb)) continue;
+    if ($T['PrisonerOf']) continue;
     $Eyes |= $ThingTypes[$T['Type']]['Eyes'];
     if ($T['Sensors']) $Eyes |= 2;
     if ($T['NebSensors']) $Eyes != 4;
@@ -704,7 +705,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
   $stm = (int) (~ (int)$T['SeenTypeMask']);
 //echo "Failed to see:" . $ThingTypes[$T['Type']]['SeenBy'] . ":$stm:" . $T['SeenTypeMask'] . ":$Eyes<p>";
 //var_dump($stm);
-      if ($Fid >=0 && ($T['Whose'] != $Fid) && 
+      if ($Fid >=0 && ($T['Whose'] != $Fid) && ($T['PrisonerOf'] != $Fid) &&
           ((($ThingTypes[$T['Type']]['SeenBy'] & $stm & $Eyes) == 0 ))) {
 // echo "Failed to see:" . $ThingTypes[$T['Type']]['SeenBy'] . ":$stm:$Eyes<p>";
         return '';
