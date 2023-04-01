@@ -2543,11 +2543,11 @@ function InstructionsComplete() {
     $N = Get_System($T['SystemId']);
     $Tid = $T['id'];
     $Instr = $ThingInstrs[abs($T['Instruction'])];
+    $Who = $T['Whose'];    
     
     switch ($Instr) {
     case 'Colonise':
       $P = Get_Planet($T['Spare1']);
-      $Who = $T['Whose'];
       if ($N['Control'] != $Who) {
         if ($N['Control'] == 0) {
           $N['Control'] = $Who;
@@ -2613,7 +2613,6 @@ function InstructionsComplete() {
               'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
-       $Who = $T['Whose'];
        if ($N['Control'] != $Who) {
          $N['Control'] = $Who;
          Put_System($N);
@@ -2629,7 +2628,6 @@ function InstructionsComplete() {
               'Name'=>$T['MakeName']];
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
-       $Who = $T['Whose'];
        TurnLog($Who,"An Asteroid Mine has been made in " . $N['Ref']);
        Report_Others($T['Whose'], $T['SystemId'],2,"An Asteroid Mine has been made in " . $N['Ref']);
       break;
@@ -2637,7 +2635,6 @@ function InstructionsComplete() {
      case 'Make Advanced Minefield':
      case 'Make Minefield':
        $N = Get_System($T['SystemId']);
-       $Who = $T['Whose'];
        $Loc = Within_Sys_Locs($N);
        $WLoc = $T['WithinSysLoc'];
        $LocText = $Loc[$WLoc];
@@ -2703,7 +2700,6 @@ function InstructionsComplete() {
               'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
-       $Who = $T['Whose'];
        TurnLog($Who,"An Orbital Repair Yard has been made in " . $N['Ref']);
        Report_Others($T['Whose'], $T['SystemId'],2,"An Orbital Repair Yard has been made in " . $N['Ref']);
        break;
@@ -2717,7 +2713,6 @@ function InstructionsComplete() {
        Put_District($D);
        
        $N = Get_System($T['SystemId']);
-       $Who = $T['Whose'];
        TurnLog($Who,"A Space Station has been made in " . $N['Ref']);
        GMLog("A space station has been made in " . $N['Ref'] . " by " . $Facts[$Who]['Name'],1);
        Report_Others($T['Whose'], $T['SystemId'],2,"A Space Station has been made in " . $N['Ref']);
@@ -2741,7 +2736,6 @@ function InstructionsComplete() {
               'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
-       $Who = $T['Whose'];
        TurnLog($Who,"A Deep Space Sensor has been made in " . $N['Ref']);
        Report_Others($T['Whose'], $T['SystemId'],2,"A Deep Space Sensor has been made in " . $N['Ref']);
        break;
@@ -2751,7 +2745,6 @@ function InstructionsComplete() {
               'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName'], 'Level'=>2, 'NebSensors'=>2];
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
-       $Who = $T['Whose'];
        TurnLog($Who,"An Advanced Deep Space Sensor has been made in " . $N['Ref']);
        Report_Others($T['Whose'], $T['SystemId'],2,"A Deep Space Sensor has been made in " . $N['Ref']);
        break;
@@ -2803,13 +2796,11 @@ function InstructionsComplete() {
               'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
-       $Who = $T['Whose'];
        TurnLog($Who,"A Command Relay Station has been made in " . $N['Ref']);
        Report_Others($T['Whose'], $T['SystemId'],2,"A Command Relay Station has been made in " . $N['Ref']);
        break;
       
      case 'Repair Command Node': // Not coded yet
-       $Who = $T['Whose'];
        $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Beta Node'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 
               'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
        Put_Thing($NT);
@@ -2825,7 +2816,6 @@ function InstructionsComplete() {
 
      case 'Build Planetary Mine':
        $P = Get_Planet($T['Spare1']);
-       $Who = $T['Whose'];
        
        $D = ['HostType' =>1, 'HostId'=> $P['id'], 'Type'=> 9, 'Number'=>1, 'GameId'=>$GAME['id'], 'TurnStart'=>$GAME['Turn']];
        if ($D['Type'] == 0) $D['Type'] = 1;
@@ -2842,7 +2832,6 @@ function InstructionsComplete() {
        AddCurrencies();
        $LLs = Get_LinkLevels();
        $Lid = $T['Dist1'];
-       $Who = $T['Whose'];
        $SaveL = $L = Get_Link($Lid);
        $Lvl =$L['Level'];
        $L['System1Ref'] = $L['System2Ref'] = '';
@@ -2865,7 +2854,6 @@ function InstructionsComplete() {
        break;
 
      case 'Make Something': 
-       $Who = $T['Whose'];
        $Name = $Facts[$Who]['Name'];
        GMLog("$Name has done a DSC make something of '" . $T['MakeName'] . "' in " . $N['Ref'] . " it took " . $T['Progress'] . 
              " actions this needs to be handled by the GMs.",1);
@@ -2874,7 +2862,6 @@ function InstructionsComplete() {
        break;
      
      case 'Make Warpgate':
-       $Who = $T['Whose'];
        $NT = ['GameId'=>$GAME['id'], 'Type'=> 15, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc' => $T['WithinSysLoc'], 'Whose'=>$Who, 
               'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>($T['MakeName'] . " warp gate" )];
        Put_Thing($NT);
@@ -2885,7 +2872,6 @@ function InstructionsComplete() {
      case 'Clear Minefield':
        $Mines = Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 AND WithinSysLoc=" . $T['WithinSysLoc']);
        $N = Get_System($T['SystemId']);
-       $Who = $T['Whose'];
        $Loc = Within_Sys_Locs($N);
        $WLoc = $T['WithinSysLoc'];
        $LocText = $Loc[$WLoc];
@@ -2936,7 +2922,6 @@ function InstructionsComplete() {
        
      case 'Salvage':  // Find all Ex things in space, go through each work out money, if have Wrecage analysis give that report as well
        $Wrecks = Get_Things_Cond(0,"SystemId=" . $T['SystemId'] . " AND BuildState>3");
-       $Who = $T['Whose'];
        $SalvageLevel = Has_Tech($Who,'Salvage Rigs');
        $HasWreck = Has_Tech($Who,'Wreckage Analysis');
        $TotMoney = 0;
