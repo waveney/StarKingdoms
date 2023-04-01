@@ -2757,7 +2757,8 @@ function InstructionsComplete() {
        break;
 
      case 'Make Advanced Asteroid Mine':
-       if (($NT = Get_Things_Cond1(0,"Type=" . $TTNames['Asteroid Mine'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 "))) {
+       if (($NT = Get_Things_Cond(0,"Type=" . $TTNames['Asteroid Mine'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 "))) {
+         $NT = array_shift($NT);
          $NT['Level'] = 2;  // Generalise how?
          Put_Thing($NT);
          $N = Get_System($T['SystemId']);
