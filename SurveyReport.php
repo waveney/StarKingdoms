@@ -422,8 +422,8 @@
   
   echo "</div>";
   
-//  if ($GM) 
-  echo SeeInSystem($Sid,EyesInSystem($Fid,$Sid),0,1,0,$GM);
+//  if ($GM) $Sid,$Eyes,$heading=0,$Images=1,$Fid=0,$Mode=0)
+  echo SeeInSystem($Sid,EyesInSystem($Fid,$Sid),0,1,$FACTION['id'],$GM);
  
   
   if (Access('GM')) echo "<p><h2><a href=SysEdit.php?id=$Sid>Edit System</s></h2>";

@@ -464,6 +464,7 @@ function New_Thing(&$T) {
         Put_Module($M);
       }
       
+      $T['Gadgets'] = '';
       $T['CurHealth'] = min($T['CurHealth'],5*($T['Level']));
       Put_Thing($T);
       break;

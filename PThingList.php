@@ -29,7 +29,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
     if (isset($Fid)) $Faction = Get_Faction($Fid);
   }
 
-  dostaffhead("Things",["js/ProjectTools.js"]," onload=ListThingSetup($Fid,$GM," . ($GM?$Faction['GMThingType']:$Faction['ThingType']) . "," . 
+  dostaffhead("Things",["js/ProjectTools.js"]," onload=ListThingSetup(" . $FACTION['id'] . ",$GM," . ($GM?$FACTION['GMThingType']:$Faction['ThingType']) . "," . 
              ($GM?$Faction['GMThingBuild']:$Faction['ThingBuild']) . ")" );
 
   if ($GM && isset($Fid) && $Fid==0) {
@@ -197,6 +197,33 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
   
   $Logistics = [0,0,0]; // Ship, Army, Intelligence
   $LinkTypes = Get_LinkLevels();
+  $HasHomeLogistics = Has_Tech($Fid,'Simplified Home Logistics');
+  $FactionHome = 0;
+  if ($HasHomeLogistics) {
+    $Faction = Get_Faction($Fid);
+    $Home = $Faction['HomeWorld'];
+    if ($Home) {
+      $W = Get_World($Home);
+      if ($W) {
+        switch ($W['ThingType']) {
+          case 1: // Planet
+            $P = Get_Planet($W['ThingId']);
+            $FactionHome = $P['SystemId'];
+            break;
+          case 2: // Moon
+            $M = Get_Moon($W['ThingId']);
+            $P = Get_Planet($W['PlanetId']);
+            $FactionHome = $P['SystemId'];
+            break;
+          case 3: // Things
+            $TH = Get_Thing($W['ThingId']);
+            $FactionHome = $TH['SystemId'];
+            break;
+        }
+      }
+    }
+  }
+
   
   foreach ($Things as $T) {
     if (empty($T['Type'])) continue;
@@ -223,6 +250,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
     $BuildClass = ($T['BuildState']<4 ? $T['BuildState'] : 4);
 
     if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
+      if ($HasHomeLogistics && ($T['SystemId'] == $FactionHome)) $T['Level'] /=2;
       if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $T['Level'];
       if ($Props & THING_HAS_GADGETS) $Logistics[2] += $T['Level'];
       if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $T['Level'];
@@ -306,7 +334,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
   
   if ($Fid) {
     echo "<h1>Logistics</h1>";
-  
+    
     $LogAvail = LogisticalSupport($Fid);
   
     $LogCats = ['Ships','Armies','Agents'];

@@ -472,6 +472,7 @@ function Instuctions() { // And other Instructions
   $NeedColStage2 = 0;
   $Facts = Get_Factions();
   $Systems = Get_SystemRefs();
+  $TTNames = Thing_Types_From_Names();
  
   $PTs = Get_ProjectTypes();
   $TTypes = Get_ThingTypes();
@@ -892,7 +893,7 @@ function Instuctions() { // And other Instructions
           case 2: // Moon
             $Moon = Get_Moon($ph['ThingId']);
             $Plan = Get_Planet($Moon['PlanetId']);
-            $Cont = ($Moon['Control'] != 0 ? $Moon['Control'] : ($Plan['Control'] != 0 ? $Plan['Control'] : $N['Control']));
+            $Control = ($Moon['Control'] != 0 ? $Moon['Control'] : ($Plan['Control'] != 0 ? $Plan['Control'] : $N['Control']));
             if ($Control) {
               $List[]= $Moon['Name']  . " a moon of " . $Plan['Name'] . " controlled by " . $Facts[$Control]['Name'];
             } else {
@@ -1072,8 +1073,10 @@ function Instuctions() { // And other Instructions
 function InstuctionsStage2() { // And other Instructions
   global $ThingInstrs,$GAME;
   $Things = Get_Things_Cond(0,"Instruction!=0");
+  $TTNames = Thing_Types_From_Names();
   $Facts = Get_Factions();
   $NeedColStage3 = 0;
+echo "HERE";
   foreach ($Things as $T) {
     $Tid = $T['id'];
     $Fid = $T['Whose'];
@@ -1223,6 +1226,8 @@ function InstuctionsStage2() { // And other Instructions
 
   Done_Stage("Instuctions");
   Done_Stage("Instuctions Stage 2");
+global $Sand;
+var_dump($Sand);
   return 1;
 }
 
@@ -1491,6 +1496,36 @@ function Economy() {
   foreach ($Facts as $F) {
     $Fid = $F['id'];
     $Worlds = Get_Worlds($Fid);
+
+    $LinkTypes = Get_LinkLevels();
+    $HasHomeLogistics = Has_Tech($Fid,'Simplified Home Logistics');
+    $FactionHome = 0;
+    if ($HasHomeLogistics) {
+      $Faction = Get_Faction($Fid);
+      $Home = $Faction['HomeWorld'];
+      if ($Home) {
+        $W = Get_World($Home);
+        if ($W) {
+          switch ($W['ThingType']) {
+            case 1: // Planet
+              $P = Get_Planet($W['ThingId']);
+              $FactionHome = $P['SystemId'];
+              break;
+            case 2: // Moon
+              $M = Get_Moon($W['ThingId']);
+              $P = Get_Planet($W['PlanetId']);
+              $FactionHome = $P['SystemId'];
+              break;
+            case 3: // Things
+              $TH = Get_Thing($W['ThingId']);
+              $FactionHome = $TH['SystemId'];
+              break;
+          }
+        }
+      }
+    }
+
+
     $EconVal = 0;
     $EccTxt = "\nEconomy:\n";
     $OutPosts = $AstMines = $AstVal = $Embassies = $OtherEmbs = $MineFields = 0;
@@ -1581,6 +1616,7 @@ function Economy() {
       if (empty($T['Type'])) continue;
       $Props = $TTypes[$T['Type']]['Properties'];
       if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
+        if ($HasHomeLogistics && ($T['SystemId'] == $FACTION['HomeWorld'])) $T['Level'] /=2;
         if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $T['Level'];
         if ($Props & THING_HAS_GADGETS) $Logistics[2] += $T['Level'];
         if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $T['Level'];
@@ -2353,7 +2389,7 @@ function ProjectsCompleted($Pass) {
       $WSL = ConstructLoc($P['Home'],0);
       $T['WithinSysLoc'] = 1;
       Move_Thing_Within_Sys($T,$WSL,1);
-      TurnLog($Fid, $T['Name'] . " has been lanched and will now start its shakedown cruise",$T);              
+      TurnLog($Fid, $T['Name'] . " has been launched and will now start its shakedown cruise",$T);              
       Calc_Scanners($T);
       $T['ProjectId'] = 0;
       Put_Thing($T);

@@ -75,6 +75,7 @@ function Done_Stage($Name) {
     if ($SName == $act) break;
   }
 
+echo "Done $S<br>";
   if ($S > 63) { 
     GMLog("Stage $SName not found");
   } else {
