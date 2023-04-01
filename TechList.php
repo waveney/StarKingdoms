@@ -40,10 +40,10 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Min Level</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Civ Mil</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Formula</a>\n";
-    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Properties</a>\n";
     echo "</thead><tbody>";
 
     foreach($Ts as $T) {
+      if ($T['Properties'] & 8) continue;
       $i = $T['id'];
       echo "<tr><td><a href=TechEdit.php?id=$i>$i</a>";
       echo "<td>" . $Tech_Cats[$T['Cat']];

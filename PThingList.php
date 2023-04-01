@@ -255,7 +255,9 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
       if ($Props & THING_HAS_GADGETS) $Logistics[2] += $T['Level'];
       if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $T['Level'];
     };
-    
+  
+    foreach($Logistics as &$Log) $Log = floor($Log); 
+  
     echo "\n<tr class='ThingList Thing_$RowClass Thing_Build$BuildClass'>";
     echo "<td><a href=" . ($T['BuildState']? "ThingEdit.php" : "ThingPlan.php") . "?id=$Tid>" . ($T['Name'] ? $T['Name'] : "Nameless" ) . "</a>";
     echo "<td>" . $T['Class'];

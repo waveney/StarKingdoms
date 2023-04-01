@@ -1623,7 +1623,7 @@ function Economy() {
       };
     }
 
-  
+    foreach($Logistics as &$Log) $Log = floor($Log);   
     $LogAvail = LogisticalSupport($Fid);
     $LogCats = ['Ships','Armies','Agents'];
     
