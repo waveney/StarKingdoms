@@ -279,7 +279,7 @@ function Show_Thing(&$T,$Force=0) {
               echo fm_checkbox('Pay',$T,'LinkPay') . " " . Credit() . $T['LinkCost'];
             }
             echo "<br>Update this normally";
-            echo "<td>To:  " . fm_select($NewSyslocs,$T,'NewLocation');
+            echo "<td>To:  " . fm_select(($Lid>0?$NewSyslocs:$Syslocs),$T,'NewLocation');
           } elseif ($T['PrisonerOf']) {
             // No Info provided
           } else {
@@ -290,7 +290,7 @@ function Show_Thing(&$T,$Force=0) {
             if ($Lid > 0 && !strpos($SelLinks[$Lid],'?')) {
               echo "<td>To:  " . fm_select($NewSyslocs,$T,'NewLocation');
             } else {
-              echo "<td>Move to:  " . fm_select($NewSyslocs,$T,'NewLocation');          
+              echo "<td>Move to:  " . fm_select(($Lid>0?$NewSyslocs:$Syslocs),$T,'NewLocation');          
             }
           }
         }
