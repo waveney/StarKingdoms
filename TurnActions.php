@@ -1054,6 +1054,18 @@ function Instuctions() { // And other Instructions
       $Link['Status'] = 1;
       Put_Link($Link);
       break;
+
+    case 'Collaborative DSC': // Dist1 has Thing number being helped
+      $HT = Get_Thing($T['Dist1']);
+      if (empty($HT)) {
+        TurnLog($T['Whose'],$T['Name'] . " Could not do Collaborative DSC with unknown ship.",$T);      
+      } else if ($T['SystemId'] != $HT['SystemId']) {
+        TurnLog($T['Whose'],$T['Name'] . " Could not do Collaborative DSC with " . $HT['Name'] . " as not in the same system.",$T);
+        $T['Instruction'] = 0;
+      } else {
+        // Should work
+      }
+      break;
       
     default:
      
@@ -1226,8 +1238,8 @@ function InstuctionsStage2() { // And other Instructions
 
   Done_Stage("Instuctions");
   Done_Stage("Instuctions Stage 2");
-global $Sand;
-var_dump($Sand);
+//global $Sand;
+//var_dump($Sand);
   return 1;
 }
 
@@ -2169,6 +2181,21 @@ function InstructionsProgress() {
         $T['Progress'] = min($T['ActionsNeeded'],$T['Progress']+$ProgGain);
         Put_Thing($T);
         break;
+        
+      case 'Collaborative DSC': // Dist1 has Thing number being helped
+        $Prog = Has_Tech($T['Whose'],'Deep Space Construction');
+        $Mods = Get_ModulesType($Tid, 3);
+        $ProgGain = $Prog*$Mods[0]['Number'];
+        $HT = Get_Thing($T['Dist1']);
+        if ($HT && $HT['Instruction']) {
+          $HT['Progress'] = min($HT['ActionsNeeded'],$HT['Progress']+$ProgGain);        
+          GMLog("$ProgGain progress on " . $ThingInstrs[abs($HT['Instruction'])] . " for " . $Facts[$HT['Whose']]['Name'] . ":" . $HT['Name']);
+          TurnLog($HT['Whose'],$T['Name'] . " did $ProgGain towards completing " . $ThingInstrs[abs($HT['Instruction'])] . " by " . $HT['Name']);
+          TurnLog($T['Whose'],$T['Name'] . " did $ProgGain towards completing " . $ThingInstrs[abs($HT['Instruction'])] . " by " . $HT['Name']);
+
+          Put_Thing($HT);
+        }
+        break;      
         
       case 'Analyse Anomaly':
         $Aid = $T['ProjectId'];
