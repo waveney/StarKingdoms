@@ -943,12 +943,11 @@ function Show_Thing(&$T,$Force=0) {
       $HasColab = [];
       $Facts = Get_Factions();
       foreach($Facts as $OF)  $HasColab[$OF['id']] = Has_Tech($OF['id'],'Collaborative Deep Space Construction');
-      if (empty($HasColab[$Fid])) continue 2;
-//var_dump($HasColab);
+      $IHaveCollab = !(empty($HasColab[$Fid]));
       $OtherThings = Get_AllThingsAt($T['SystemId']);
       $OtherList = [];
       foreach($OtherThings as $OT) {
-        if (empty($HasColab[$OT['Whose']])) continue;
+        if (!$IHaveCollab && empty($HasColab[$OT['Whose']])) continue;
         if ($ThingProps[$OT['Type']] & THING_HAS_MODULES) {
           $OMods = Get_ModulesType($OT['id'],3);
           if (empty($OMods) || $OT['id'] == $T['id']) continue;
