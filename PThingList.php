@@ -250,10 +250,11 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
     $BuildClass = ($T['BuildState']<4 ? $T['BuildState'] : 4);
 
     if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
-      if ($HasHomeLogistics && ($T['SystemId'] == $FactionHome)) $T['Level'] /=2;
-      if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $T['Level'];
-      if ($Props & THING_HAS_GADGETS) $Logistics[2] += $T['Level'];
-      if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $T['Level'];
+      $ELevel = $T['Level'];
+      if ($HasHomeLogistics && ($T['SystemId'] == $FactionHome)) $ELevel /=2;
+      if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $ELevel;
+      if ($Props & THING_HAS_GADGETS) $Logistics[2] += $ELevel;
+      if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $ELevel;
     };
   
     foreach($Logistics as &$Log) $Log = floor($Log); 
