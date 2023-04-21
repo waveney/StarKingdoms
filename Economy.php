@@ -25,7 +25,7 @@
   $Bs = Get_BankingFT($Fid,$GAME['Turn']);
   $LinkTypes = Get_LinkLevels();
 
-  $HasHomeLogistics = Has_Tech($Fid,'Simplified Home Logistics');
+  $HasHomeLogistics = (Has_Tech($Fid,'Simplified Home Logistics') && Access('God'));
   $FactionHome = 0;
   if ($HasHomeLogistics) {
     $Faction = Get_Faction($Fid);
@@ -54,7 +54,7 @@
   
   foreach($Bs as $B) {
     if ($B['What'] == 0) $Spend += $B['Amount'];
-    echo "Sending " . ($B['What'] == 0? ( Credit() . $B['Amount']) : ($B['Amount'] . " " . $Currencies[$B['What']] ))  . 
+    echo "Sending " . ($B['What'] == 0? ( Credit() . $B['Amount']) : ($B['Amount'] . " " . $Currencies[$B['What']] )) . 
       " for " . $B['YourRef'] . " to " . $Facts[$B['Recipient']]['Name'] . "<br>";
   }
 
@@ -225,7 +225,7 @@
       if (empty($T['Type'])) continue;
       $Props = $TTypes[$T['Type']]['Properties'];
       if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
-        if ($HasHomeLogistics && ($T['SystemId'] == $FACTION['HomeWorld'])) $T['Level'] /=2;
+        if ($HasHomeLogistics && ($T['SystemId'] == $FactionHome)) $T['Level'] /=2;
         if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $T['Level'];
         if ($Props & THING_HAS_GADGETS) $Logistics[2] += $T['Level'];
         if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $T['Level'];

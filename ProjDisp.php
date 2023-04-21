@@ -9,7 +9,7 @@
   include_once("SystemLib.php");
   include_once("ProjLib.php");
   
-  global $FACTION;
+  global $FACTION,$ADDALL;
  
 // var_dump($_REQUEST);
 
@@ -673,7 +673,7 @@
       // TODO Warning
       
         echo "<td $BG id=ProjS$Turn:$Hi:$Di class='PHStart Group$Di Home$Hi' $Hide>\n";
-        if ($Turn >= $GAME['Turn']) {
+        if ($Turn >= $GAME['Turn'] && $ADDALL!='readonly') {
           $Warn = '';
           if (isset($Proj[$Turn - 1 ][$Hi][$Di]['Status']) && ($Proj[$Turn - 1 ][$Hi][$Di]['Status'] == 'Started' || $Proj[$Turn - 1][$Hi][$Di]['Status'] == 'Ongoing')) {
  //           $Warn = "onclick=\"return confirm('Do you want to abandon " . $Proj[$Turn-1][$Hi][$Di]['Name'] . '?\'"';

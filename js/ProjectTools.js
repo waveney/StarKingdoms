@@ -178,14 +178,6 @@ debugger;
   ListGM = GM;
   ListType = TType;
   ListBuild = TBuild;
-/*  if (TType) {
-    radiobtn = document.getElementById("ThingShow");
-    radiobtn.checked = true;
-  }
-  if (TBuild) {
-    radiobtn = document.getElementById("ThingBuild");
-    radiobtn.checked = true;  
-  }*/
   ThingListFilter();
 }
 

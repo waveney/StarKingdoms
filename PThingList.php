@@ -197,7 +197,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
   
   $Logistics = [0,0,0]; // Ship, Army, Intelligence
   $LinkTypes = Get_LinkLevels();
-  $HasHomeLogistics = Has_Tech($Fid,'Simplified Home Logistics');
+  $HasHomeLogistics = (Has_Tech($Fid,'Simplified Home Logistics') && Access('God'));
   $FactionHome = 0;
   if ($HasHomeLogistics) {
     $Faction = Get_Faction($Fid);
