@@ -192,7 +192,7 @@ function ForceReport($Sid,$Cat) {
     if ($T['BuildState'] <2 || $T['BuildState'] >3 || ($T['LinkId'] < 0 && $T['LinkId'] > -5)) continue; // Don't exist
     $Sid = $T['SystemId'];
     $Eyes = $TTypes[$T['Type']]['Eyes'];
-    $Hostile = ($TTypes[$T['Type']]['Properties'] & THING_IS_HOSTILE);
+    $Hostile = ($TTypes[$T['Type']]['Properties'] & THING_IS_HOSTILE) && ($T['PrisonerOf'] == 0);
     if (isset($Sys[$Sid][$T['Whose']])) {
       $Sys[$Sid][$T['Whose']] |= $Eyes;
     } else {
@@ -216,7 +216,7 @@ function ForceReport($Sid,$Cat) {
 //var_dump($Tid,$RN,$RV);
           $T = Get_Thing($Tid);
           $T['CurHealth'] = max(0,min($T['OrigHealth'],$T['CurHealth'] - $RV));
-          if (($ThingProps[$T['Type']] & (THING_HAS_SHIPMODULES | THING_HAS_ARMYMODULES)) != 0) {
+          if (($T['CurHealth'] == 0) && ($ThingProps[$T['Type']] & (THING_HAS_SHIPMODULES | THING_HAS_ARMYMODULES)) != 0) {
             $T['BuildState'] = 4;
             // Anything aboard?
             // Armies die, named characters -> FollowUps

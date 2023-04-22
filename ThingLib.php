@@ -48,6 +48,7 @@ define('THING_HAS_CONTROL',1048576);
 define('THING_NEEDS_SUPPORT',2097152);
 define('THING_IS_HOSTILE',4194304);
 define('THING_CAN_BE_SPLATED',8388608);
+define('THING_LEAVES_DEBRIS',16777216);
 
 function ModFormulaes() {
   global $ModFormulaes;

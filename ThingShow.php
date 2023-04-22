@@ -1436,8 +1436,9 @@ function Show_Thing(&$T,$Force=0) {
   echo "</table></div>\n";
   echo "<input type=submit name=ACTION value=Refresh>";
   if ($GM) {
-    echo "<input type=submit name=ACTION value='GM Refit'> <input type=submit name=ACTION value='Destroy Thing (Leave debris)'>" .
-       " <input type=submit name=ACTION value='Remove Thing (No debris)'>";
+    echo "<input type=submit name=ACTION value='GM Refit'> ";
+    if ($tprops & THING_LEAVES_DEBRIS) echo "<input type=submit name=ACTION value='Destroy Thing (Leave debris)'>";
+    echo "<input type=submit name=ACTION value='Remove Thing (No debris)'>";
     if ($tprops & THING_CAN_MOVE) echo "  <input type=submit name=ACTION value='Warp Out'>\n";
     echo fm_number0(" Do",$T,'Damage', '',' class=Num3 ') . " <input type=submit name=ACTION value=Damage>\n";
     if ($T['PrisonerOf']) echo " <input type=submit name=ACTION value=Disarm>\n";

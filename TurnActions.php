@@ -1871,8 +1871,11 @@ function ShipMovements($Agents=0) {
             GMLog("Movement will be paused.  Do ($DamageDice D10) x 10 to everything (Including Outposts, Space Stations etc) in " .
                   "<a href=Meetings.php?ACTION=Check&R=" . $L['System1Ref'] . ">" . $L['System1Ref'] . "</a> And " .
                   "<a href=Meetings.php?ACTION=Check&R=" . $L['System2Ref'] . ">" . $L['System2Ref'] . "</a>");
+            // Destroy Link
+            db_delete('Links',$L['id']);
+
             // Emergency lockdown both ends
-                        
+
             SetAllLinks($L['System1Ref'], $SR1['id'],$LinkState['In Safe Mode']);
             SetAllLinks($L['System2Ref'], $SR2['id'],$LinkState['In Safe Mode']);
 
