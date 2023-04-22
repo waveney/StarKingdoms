@@ -40,7 +40,13 @@ function TurnLog($Fid,$text,&$T=0) {
      $LF[$Fid] = fopen("Turns/$GAMEID/" . $GAME['Turn'] . "/$Fid.txt", "a+");
   }
   fwrite($LF[$Fid],"$text\n");
-  if ($T) $T['History'] .= "Turn#" . ($GAME['Turn']) . ": " . $text . "\n";
+  if ($T) {
+    if (isset($T['History'])) {
+      $T['History'] .= "Turn#" . ($GAME['Turn']) . ": " . $text . "\n";
+    } else {
+      $T['History'] = "Turn#" . ($GAME['Turn']) . ": " . $text . "\n";
+    }
+  }
 }
 
 function Report_Others($Who, $Where, $SeenBy, $Message) {
