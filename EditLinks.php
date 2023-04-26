@@ -12,6 +12,20 @@
   $DT=Get_LinksGame((isset($_REQUEST['USAGE'])?' ORDER BY UseCount DESC':''));
   if (UpdateMany('Links','Put_Link',$DT,1,'','','Level',0))  $DT=Get_LinksGame();
 
+  if (isset($_REQUEST['ACTION'])) {
+    switch ($_REQUEST['ACTION']) {
+    case 'Clear Safe Mode':
+      foreach($DT as $D) {
+        if ( $D['Status'] == 2) {
+          $D['Status'] = 0;
+          Put_Link($D);
+        }
+      }
+      $DT=Get_LinksGame();
+      break;
+    }
+  }
+
   $coln = 0;
 
 
@@ -74,6 +88,7 @@
 //  echo "<td><input type=text name=Level0 value=0>"; 
   echo "</table></div>\n";
   echo "<input type=submit name=Update value=Update>\n";
+  echo "<input type=submit name=ACTION value='Clear Safe Mode'>\n";
   echo "</form></div>";
 
   dotail();
