@@ -41,7 +41,9 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Sys 1</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Sys 2</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Level</a>\n";
+
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Status</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Weight</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Usage</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Mined 1</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Mined 2</a>\n";
@@ -56,17 +58,19 @@
     echo "<td>" . fm_select($Ssys,$D,'System2Ref',0,'',"System2Ref$i");
     echo "<td>" . fm_select($LLs,$D,'Level',0,'',"Level$i");
     echo "<td>" . fm_select($LinkStates,$D,'Status',0,'',"Status$i");
+    echo fm_number1('',$D,'Weight','','',"Weight$i");
     echo fm_number1('',$D,'UseCount','','',"UseCount$i");
     echo fm_number1('',$D,'MinedA','','',"MinedA$i");
     echo fm_number1('',$D,'MinedB','','',"MinedB$i");
 //    echo fm_number1("",$D,'Level','','',"Level$i");
   }
-  $D = [];
+  $D = ['Weight'=>1];
   echo "<tr><td><td><input type=number name=GameId0 value=$GAMEID>"; 
     echo "<td>" . fm_select($Ssys,$D,'System1Ref0');
     echo "<td>" . fm_select($Ssys,$D,'System2Ref0');
     echo "<td>" . fm_select($LLs,$D,'Level',0,'',"Level0");
     echo "<td>" . fm_select($LinkStates,$D,'Status',0,'',"Status0");
+    echo fm_number1('',$D,'Weight','','',"Weight0");
 //  echo "<td><input type=text name=Level0 value=0>"; 
   echo "</table></div>\n";
   echo "<input type=submit name=Update value=Update>\n";

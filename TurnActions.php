@@ -1863,9 +1863,9 @@ function ShipMovements($Agents=0) {
             
       if (($Agents == 0) && ($T['Whose'] != $LOwner)) {
         $L['UseCount'] += $T['Level'];
-        if ($L['UseCount'] > 100) {// something breaks
-          $BadProb = $T['Level']*($L['UseCount'] - 100);
-          if (rand(0,100) > $BadProb) { // There she blows!!!!
+        if ($L['UseCount'] > 100*$L['Weight']) {// something breaks
+          $BadProb = $T['Level']*($L['UseCount'] - 100*$L['Weight']);
+          if (rand(0,100*$L['Weight']) > $BadProb) { // There she blows!!!!
             $DamageDice = (abs($L['Level'])+1)*2;
             GMLog("<span class=Red>LINK EXPLOSION</span> on link " . $L['id'] . " from " . $L['System1Ref'] . " to " . $L['System2Ref'] );        
             GMLog("Movement will be paused.  Do ($DamageDice D10) x 10 to everything (Including Outposts, Space Stations etc) in " .
