@@ -53,7 +53,7 @@
 
     if (count($Games)>1) echo "<h2>Select Game: " . GameList($Games);
   } else { // Not God
-    $Games = Gen_Get_Cond('Games', "GM1=$usr OR GM2=$usr OR GM3=$usr");
+    $Games = Gen_Get_Cond('Games', "GM1=$Usr OR GM2=$Usr OR GM3=$Usr");
 
     if ($Usr != $GAME['GM1'] && $Usr != $GAME['GM2'] && $Usr != $GAME['GM3']) {
       // Not GM of this game
