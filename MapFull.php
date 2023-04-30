@@ -189,7 +189,7 @@
           if (isset($LinkShown[$L['id']])) continue;
           $Fl = Get_FactionLinkFL($Faction, $L['id']);
           if (isset($Fl['id']) && $Fl['Known'] || $AllLinks) {
-            fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=\"" . $Levels[abs($L['Level'])]['Colour'] . " penwidth=" . $L['Weight'] .
+            fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=\"" . $Levels[abs($L['Level'])]['Colour'] . "\" penwidth=" . $L['Weight'] .
                    (($L['Level'] <0 || $L['Status'] > 0)? ' style=dotted ':'') . 
                    ($ShowLinks? " label=\"#" . $L['id'] . '"' : '') . " ];\n");
             $LinkShown[$L['id']]=1;
@@ -250,7 +250,7 @@
       fwrite($Dot,"Historical [shape=box style=filled fillcolor=white penwidth=2 color=\"CadetBlue\"" .
           ($typ?" pos=\"" . $HexLegPos[$ls][0] . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");  
       $ls++;  
-      fwrite($Dot,"ZZ99 [shape=box style=filled fillcolor=yellow penwidth=2 " . NodeLab("Interest","Other") . 
+      fwrite($Dot,"ZZ99 [shape=box style=filled fillcolor=yellow Epenwidth=2 " . NodeLab("Interest","Other") . 
           ($typ?" pos=\"" . $HexLegPos[$ls][0] . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");  
       $ls++;  
     }
