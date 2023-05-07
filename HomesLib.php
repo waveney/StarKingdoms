@@ -523,7 +523,7 @@ function ConstructLoc($Hid,$Posn=0) {
       $Planets = Get_Planets($Plan['SystemId']);
       $mi = 1;
       foreach ($Planets as $P) {
-        $Moons = Get_Moons($P['PlanetId']);
+        $Moons = Get_Moons($P['id']);
         foreach($Moons as $M) {
           if ($M['id'] == $Moon['id']) return 300+$mi + ($Posn?100:0);
           $mi++;
