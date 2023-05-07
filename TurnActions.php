@@ -86,9 +86,10 @@ function CheckTurnsReady() {
 
 function RemoveUnsupportedMinefields() {
   global $ThingInstrs;
+  $Rev_Insts = array_flip($ThingInstrs);
   $Facts = Get_Factions();
   $TTypes = Get_ThingTypes();
-  $Things = Get_Things_Cond(0,"Instruction=" . $ThingInstrs['Stop Support']);
+  $Things = Get_Things_Cond(0,"Instruction=" . $Rev_Insts['Stop Support']);
 
   foreach ($Things as $T) {
     $Tid = $T['id'];
