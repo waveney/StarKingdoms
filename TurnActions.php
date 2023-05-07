@@ -1008,7 +1008,7 @@ function Instuctions() { // And other Instructions
       $T['CurInst'] = 0;
       $T['MakeName'] ='';
       
-      if ($TTypes[$T['Type']] & THING_HAS_CONTROL) {
+      if ($TTypes[$T['Type']]['Properties'] & THING_HAS_CONTROL) {
         Control_Propogate($T['SystemId'],$T['Whose']);
       }
       break;
