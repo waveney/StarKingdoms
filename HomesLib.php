@@ -513,7 +513,7 @@ function ConstructLoc($Hid,$Posn=0) {
       $Pi = 1;
       foreach ($Planets as $P) {
         if ($P['id'] == $Planet['id']) return $Pi + 100 + ($Posn?100:0);
-        $pi++;
+        $Pi++;
       }
       return 0;
           

@@ -527,7 +527,7 @@ function RefitRepair(&$T,$Save=1,$KeepTechLvl=0,$Other=0) {
   Calc_Scanners($T);
   $T['CurHealth'] = $T['OrigHealth'] = $Health;
   $T['Speed'] = $Engines*$Elvl/$T['Level'] +1;
-  if ($Save) Put_Thing($T);
+  Put_Thing($T);
   return $Etxt;
 }
 

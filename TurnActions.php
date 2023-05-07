@@ -418,7 +418,7 @@ function StartProjects() {
 //        Put_Thing($T);
         
         // Level of modules
-        RefitRepair($T); //Note this saves it and the CURRENT levels of techs
+        RefitRepair($T,1); //Note this saves it and the CURRENT levels of techs
         if ($TTypes[$T['Type']]['Properties'] & THING_HAS_MODULES ) {
           $Mods = Get_Modules($Tid);
           foreach($Mods as $M) {
