@@ -22,6 +22,8 @@ class SnippetExtraInfoSnippetCandidateInfo extends \Google\Collection
   protected $collection_key = 'snippet';
   protected $boldedRangesType = QualitySnippetsTruncationSnippetBoldedRange::class;
   protected $boldedRangesDataType = 'array';
+  protected $extendedSnippetType = SnippetExtraInfoSnippetCandidateInfoExtendedSnippet::class;
+  protected $extendedSnippetDataType = '';
   /**
    * @var int
    */
@@ -66,6 +68,20 @@ class SnippetExtraInfoSnippetCandidateInfo extends \Google\Collection
   public function getBoldedRanges()
   {
     return $this->boldedRanges;
+  }
+  /**
+   * @param SnippetExtraInfoSnippetCandidateInfoExtendedSnippet
+   */
+  public function setExtendedSnippet(SnippetExtraInfoSnippetCandidateInfoExtendedSnippet $extendedSnippet)
+  {
+    $this->extendedSnippet = $extendedSnippet;
+  }
+  /**
+   * @return SnippetExtraInfoSnippetCandidateInfoExtendedSnippet
+   */
+  public function getExtendedSnippet()
+  {
+    return $this->extendedSnippet;
   }
   /**
    * @param int

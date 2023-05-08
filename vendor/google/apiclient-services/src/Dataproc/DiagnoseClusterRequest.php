@@ -17,8 +17,9 @@
 
 namespace Google\Service\Dataproc;
 
-class DiagnoseClusterRequest extends \Google\Model
+class DiagnoseClusterRequest extends \Google\Collection
 {
+  protected $collection_key = 'yarnApplicationIds';
   protected $diagnosisIntervalType = Interval::class;
   protected $diagnosisIntervalDataType = '';
   /**
@@ -26,9 +27,17 @@ class DiagnoseClusterRequest extends \Google\Model
    */
   public $job;
   /**
+   * @var string[]
+   */
+  public $jobs;
+  /**
    * @var string
    */
   public $yarnApplicationId;
+  /**
+   * @var string[]
+   */
+  public $yarnApplicationIds;
 
   /**
    * @param Interval
@@ -59,6 +68,20 @@ class DiagnoseClusterRequest extends \Google\Model
     return $this->job;
   }
   /**
+   * @param string[]
+   */
+  public function setJobs($jobs)
+  {
+    $this->jobs = $jobs;
+  }
+  /**
+   * @return string[]
+   */
+  public function getJobs()
+  {
+    return $this->jobs;
+  }
+  /**
    * @param string
    */
   public function setYarnApplicationId($yarnApplicationId)
@@ -71,6 +94,20 @@ class DiagnoseClusterRequest extends \Google\Model
   public function getYarnApplicationId()
   {
     return $this->yarnApplicationId;
+  }
+  /**
+   * @param string[]
+   */
+  public function setYarnApplicationIds($yarnApplicationIds)
+  {
+    $this->yarnApplicationIds = $yarnApplicationIds;
+  }
+  /**
+   * @return string[]
+   */
+  public function getYarnApplicationIds()
+  {
+    return $this->yarnApplicationIds;
   }
 }
 

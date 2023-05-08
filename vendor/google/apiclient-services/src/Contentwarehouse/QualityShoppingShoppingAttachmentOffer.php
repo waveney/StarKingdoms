@@ -35,6 +35,10 @@ class QualityShoppingShoppingAttachmentOffer extends \Google\Collection
   /**
    * @var string[]
    */
+  public $gtinValue;
+  /**
+   * @var string[]
+   */
   public $imageId;
   protected $inferredImagesType = ShoppingWebentityShoppingAnnotationInferredImage::class;
   protected $inferredImagesDataType = 'array';
@@ -118,6 +122,20 @@ class QualityShoppingShoppingAttachmentOffer extends \Google\Collection
   public function getFingerprintOfOfferUrls()
   {
     return $this->fingerprintOfOfferUrls;
+  }
+  /**
+   * @param string[]
+   */
+  public function setGtinValue($gtinValue)
+  {
+    $this->gtinValue = $gtinValue;
+  }
+  /**
+   * @return string[]
+   */
+  public function getGtinValue()
+  {
+    return $this->gtinValue;
   }
   /**
    * @param string[]
