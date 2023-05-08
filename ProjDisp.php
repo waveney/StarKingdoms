@@ -13,7 +13,12 @@
  
 // var_dump($_REQUEST);
 
-  $HomeColours = ['#ff99ff', '#ccffff', '#ccffcc', '#ffffcc', '#ffcccc', '#e6ccff', '#cce6ff', '#ffd9b3', '#ecc6c6', '#ecc6d6', '#d6b3ff', '#d1e0e0', '#d6ff99' ];
+  $HomeColours = ['#ff99ff', '#ccffff', '#ccffcc', '#ffffcc', '#ffcccc', '#e6ccff', '#cce6ff', '#ffd9b3', '#ecc6c6', '#ecc6d6', '#d6b3ff', '#d1e0e0', '#d6ff99',
+     '#ffb3ff', '#b3b3ff', '#b3ffff', '#b3ffb3', '#ffffb3', '#ffb3b3', '#ecc6c6', '#ffb3cc', '#ffb3d9', '#ecc6d9', '#ffb3ff', '#ecc6ec', '#ecb3ff', '#e0b3ff',
+     '#d9b3ff', '#d1d1e0', '#c6c6ec', '#b3b3ff', '#b3ccff', '#c2d1f0', '#c6d9ec', '#b3d9ff', '#d1e0e0', '#c6ecd9', '#d9ffb3', '#e5e5cc', '#e0e0d1', '#ecd9c6',
+     '#ffd9b3', '#ffe6b3', '#ffc6b3', '#ffccb3', 
+  
+   ];
 
   A_Check('Player');    
   $Fid = 0;

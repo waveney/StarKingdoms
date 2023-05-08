@@ -280,7 +280,7 @@ function Recalc_Project_Homes($Logf=0, $Silent=0) {
   foreach ($KnownHomes as &$H) {
     if (isset($H['Inuse']) && $H['Inuse']) continue;
       if (!$Silent) echo "Would delete Home " . $H['id'] . "<br>";
-//    db_delete('ProjectHomes',$H['id']);
+    db_delete('ProjectHomes',$H['id']);
   }
   
   if (!$Silent) echo "Project Homes Rebuilt<p>";

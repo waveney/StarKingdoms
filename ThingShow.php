@@ -1191,7 +1191,7 @@ function Show_Thing(&$T,$Force=0) {
       $SS = (Get_Things_Cond($Fid,"Type=" . $TTNames['Space Station'] . " AND SystemId=" . $N['id'] . " AND BuildState=3"))[0];
       
       if (empty($SS)) {
-        echo "Tell Richrd something hs gone wrong with this<p>";
+        echo "Tell Richard something hs gone wrong with this<p>";
         break;
       }     
       

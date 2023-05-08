@@ -2922,10 +2922,10 @@ function InstructionsComplete() {
 
      case 'Make Something': 
        $Name = $Facts[$Who]['Name'];
-       GMLog("$Name has done a DSC make something of '" . $T['MakeName'] . "' in " . $N['Ref'] . " it took " . $T['Progress'] . 
-             " actions this needs to be handled by the GMs.",1);
-       FollowUp($Who,"Has done a DSC make something of '" . $T['MakeName'] . "' in " . $N['Ref'] . " it took " . $T['Progress'] . 
-             " actions this needs to be handled by the GMs.");
+       GMLog("$Name - <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a> has done a DSC make something of '" . $T['MakeName'] . "' in " . $N['Ref'] . 
+             " it took " . $T['Progress'] . " actions this needs to be handled by the GMs.",1);
+       FollowUp($Who,"<a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a> Has done a DSC make something of '" . $T['MakeName'] . "' in " . $N['Ref'] . 
+             " it took " . $T['Progress'] . " actions this needs to be handled by the GMs.");
        break;
      
      case 'Make Warpgate':
