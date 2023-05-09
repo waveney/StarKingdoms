@@ -148,7 +148,7 @@ function CashTransfers() {
   global $GAME,$Currencies;
   
   $Facts = Get_Factions();
-  $Facts[-1]['Name'] = "Other";
+  $Facts[-1]['Name'] = $Facts[0]['Name'] = "Other";
   $Bs = Get_BankingFT(0,$GAME['Turn']);
   AddCurrencies();
   
@@ -157,8 +157,10 @@ function CashTransfers() {
     if ($B['What'] == 0) {
       if ($B['FactionId'] == 0) {
           Spend_Credit($B['Recipient'], - $B['Amount'],$B['YourRef']);
-          TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " transfered " . Credit() . $B['Amount'] . " to you for " . $B['YourRef'] );
-          GMLog('Cash transfer  to ' . $Facts[$B['Recipient']]['Name'] . ' of ' . $B['Amount'] . ' for ' . $B['YourRef']);           
+          if ($B['Recipient'] > 0) {
+            TurnLog($B['Recipient'],  $Facts[$B['FactionId']]['Name'] . " transfered " . Credit() . $B['Amount'] . " to you for " . $B['YourRef'] );
+            GMLog('Cash transfer  to ' . $Facts[$B['Recipient']]['Name'] . ' of ' . $B['Amount'] . ' for ' . $B['YourRef']);           
+          }
       } else if (Spend_Credit($B['FactionId'],$B['Amount'],$B['YourRef'],$B['Recipient'])) {
         TurnLog($B['FactionId'],"Transfered " . Credit() . $B['Amount'] . " for " . $B['YourRef'] . " to " . $Facts[$B['Recipient']]['Name']);
 
@@ -201,6 +203,11 @@ function CashTransfers() {
           TurnLog($B['Recipient'],  "Gained " . $B['Amount'] . " of " . $Currencies[$B['What']] . " for " . $B['YourRef'] );
         }      
       }
+    }
+    
+    if ($B['DecayRate']) {
+      $B['Amount'] -= $B['DecayRate'];
+      if ($B['Amount']<=0) $B['EndTurn'] = $GAME['Turn'];
     }
     $B['DoneTurn'] = $GAME['Turn'];
     Put_Banking($B);

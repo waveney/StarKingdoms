@@ -30,6 +30,7 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Amount</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Start Turn</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>End Turn</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Decay Rate</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Reference</a>\n";
   echo "</thead><tbody>";
 
@@ -41,6 +42,7 @@
     echo fm_number1('',$B,'Amount','','',"Amount$i");
     echo fm_number1('',$B,'StartTurn','','',"StartTurn$i");
     echo fm_number1('',$B,'EndTurn','','',"EndTurn$i");
+    echo fm_number1('',$B,'DecayRate','','',"DecayRate$i");
     echo fm_text1('',$B,'YourRef',1,'','',"YourRef$i");
   }
   echo "</table>\n";
