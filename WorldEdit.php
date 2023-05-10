@@ -55,6 +55,7 @@
   $Fid = $W['FactionId'];
   $DTs = Get_DistrictTypes();
   $DistTypes = 0;
+  $SysId = 0;
 
   $H = Get_ProjectHome($W['Home']);
   if (isset($H['id'])) {
@@ -67,6 +68,7 @@
         $type = $PlanetTypes[$P['Type']]['Name'];
         if ($PlanetTypes[$P['Type']]['Append']) $type .= " Planet";
         $Name = $P['Name'];
+        $SysId = $P['SystemId'];
         break;
         
       case 2: /// Moon
@@ -74,12 +76,15 @@
         $type = $PlanetTypes[$M['Type']]['Name'];
         if ($PlanetTypes[$M['Type']]['Append']) $type .= " Moon";
         $Name = $M['Name'];
+        $P = Get_Planet($M['PlanetId']);
+        $SysId = $P['SystemId'];
         break;
     
       case 3: // Thing
         $WH = $T = Get_Thing($W['ThingId']);
         $type = $TTypes[$T['Type']]['Name'];
         $Name = $T['Name'];
+        $SysId = $T['SystemId'];
         break;
     }
     
@@ -145,6 +150,14 @@
       if ($NeedDelta) {
         echo fm_number1("Delta",$D,'Delta',''," min=-$NeedDelta max=$NeedDelta ","Dist:Delta:" . $D['id']);
         $DeltaSum += $D['Delta'];
+      }
+      if ( ($DTs[$D['Type']]['Name'] == 'Intelligence') && Has_Tech($Fid,'Defensive Integillgence' )) {
+              $Agents = Get_Things_Cond1($Fid," Type=5 AND Class='Military' AND SystemId=$SystId ORDER BY Level DESC");
+              if ($Agents) {
+                $Bi = ($Agents['Level']/2);
+                echo " ( +$Bi From Defensive Integillgence)";
+              }
+         
       }
     }
     if ($NeedDelta && $DeltaSum != 0) {
