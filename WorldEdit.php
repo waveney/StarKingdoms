@@ -152,9 +152,9 @@
         $DeltaSum += $D['Delta'];
       }
       if ( ($DTs[$D['Type']]['Name'] == 'Intelligence') && Has_Tech($Fid,'Defensive Integillgence' )) {
-              $Agents = Get_Things_Cond1($Fid," Type=5 AND Class='Military' AND SystemId=$SystId ORDER BY Level DESC");
+              $Agents = Get_Things_Cond($Fid," Type=5 AND Class='Military' AND SystemId=$SystId ORDER BY Level DESC");
               if ($Agents) {
-                $Bi = ($Agents['Level']/2);
+                $Bi = ($Agents[0]['Level']/2);
                 echo " ( +$Bi From Defensive Integillgence)";
               }
          
