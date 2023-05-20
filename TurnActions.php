@@ -102,7 +102,7 @@ function RemoveUnsupportedMinefields() {
 
     db_delete('Things',$Tid);
 
-    $SysLocs = WithinSysLocs($T['SystemId']);
+    $SysLocs = Within_Sys_Locs($T['SystemId']);
     $LocText = $SysLocs[$T['WithinSysLoc']];
     $TName = $TTypes[$T['Type']]['Name'];
     TurnLog($Who,"The $TName " . $T['Name'] . " in " . $SystemRefs[$T['SystemId']] . " $LocText has been removed.");
@@ -2815,7 +2815,7 @@ function InstructionsComplete() {
        break;
 
      case 'Make Advanced Deep Space Sensor':
-       $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Advanced Deep Space Sensor'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 
+       $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Deep Space Sensor'], 'Level'=> 2, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'], 
               'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName'], 'Level'=>2, 'NebSensors'=>2];
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
@@ -3422,13 +3422,6 @@ function TidyUpMovements() {
     Put_FactionFaction($F);  
   }
   
-  // Tidy up 1 turn District Deltas
-  $Ds = Gen_Get_Cond("Districts","Delta!=0");
-  foreach($Ds as $D) {
-    $D['Delta'] = 0;
-    Put_District($D);
-  }
-
   // Tidy up Scans due ?
 
 
@@ -3494,6 +3487,13 @@ function FinishTurnProcess() {
 }
 
 function CheckFollowUps() {
+  // Tidy up 1 turn District Deltas
+  $Ds = Gen_Get_Cond("Districts","Delta!=0");
+  foreach($Ds as $D) {
+    $D['Delta'] = 0;
+    Put_District($D);
+  }
+
   $_REQUEST['TurnP'] = 1; // Makes FollowUps think its part of turn processing
   include_once("FollowUp.php");
   return 1;
