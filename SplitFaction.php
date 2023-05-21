@@ -181,7 +181,7 @@ function Copy_Knowledge_A() {
     foreach($FSs as $FS) {
       unset($FS['id']);
       $FS['FactionId'] = $Nid;
-      $NFS = Get_FactionSystemFS($Nid,$FS['PlanetId']);
+      $NFS = Get_FactionSystemFS($Nid,$FS['Planet']);
       if (empty($NFS['id'])) Put_FactionPlanet($FS);
     }
   }
