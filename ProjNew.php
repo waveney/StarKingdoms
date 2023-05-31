@@ -586,21 +586,6 @@
         }
       }
 
-      $Factions = Get_Factions(); 
-      $FFdata = Get_FactionFactionsCarry($Fid);
-      foreach($FFdata as $FC) {
-        if ($FC['Props'] & 0xf000) {
-          $OThings = Get_Things_Cond($FC['FactionId1']," SystemId=$HSys AND ( BuildState=3 OR BuildState=2) AND Level<=$MaxLvl "); // Warp Gates
-          foreach ($OThings as $T) {
-            if ($TTs[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) {
-              $RepShips[$T['id']] = $T['Name'] . " - level " . $T['Level'] . " (" . $Factions[$T['Whose']]['Name'] . ")";
-              if ($T['Level'] == 1) $Level1++;
-              $Count++;
-            }
-          }
-        }
-      }
- 
       
       $pc = Proj_Costs(1);
       if ($Count) {
@@ -690,6 +675,21 @@
             $Count++;
           }
 //        }
+      }
+
+      $Factions = Get_Factions(); 
+      $FFdata = Get_FactionFactionsCarry($Fid);
+      foreach($FFdata as $FC) {
+        if ($FC['Props'] & 0xf000) {
+          $OThings = Get_Things_Cond($FC['FactionId1']," SystemId=$HSys AND ( BuildState=3 OR BuildState=2) AND Level<=$MaxLvl "); // Warp Gates
+          foreach ($OThings as $T) {
+            if ($TTs[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) {
+              $RepShips[$T['id']] = $T['Name'] . " - level " . $T['Level'] . " (" . $Factions[$T['Whose']]['Name'] . ")";
+              if ($T['Level'] == 1) $Level1++;
+              $Count++;
+            }
+          }
+        }
       }
       
       $pc = Proj_Costs(1);
