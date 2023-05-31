@@ -667,6 +667,8 @@
       $RepShips = [];
       $Level1 = 0;
       $Count = 0;
+      $MaxLvl = Has_Tech($Fid,'Ship Construction');
+
       foreach ($Things as $T) {
         if ($TTs[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) {
 //          if ($T['WithinSysLoc'] < 2 || $T['WithinSysLoc'] == $HLoc || $T['WithinSysLoc'] == ($HLoc-100)) {
