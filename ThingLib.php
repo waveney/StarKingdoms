@@ -471,7 +471,7 @@ function Calc_Scanners(&$T) {
   $Cryo = Get_ModulesType($T['id'],$MTNames['Cryo Pods']);
   $T['Sensors'] = (($mods && ($mods[0]['Number']>0))?$mods[0]['Number']:0);
   $T['SensorLevel'] = (($mods && ($mods[0]['Level']>0))?$mods[0]['Level']:0);
-  $T['NebSensors'] = (($nebs && ($nebs[0]['Number']>0))?$nebs[0]['Number']:0);
+  $T['NebSensors'] = ( (($nebs && ($nebs[0]['Number']>0))?$nebs[0]['Number']:(($T['Type'] == 9 && $T['Level'] > 1)?($T['Level']-1):0)));
   $T['CargoSpace'] = ( (($Cargo && ($Cargo[0]['Number']>0))?$Cargo[0]['Number']*($Cargo[0]['Level']+1):0) +
                        (($Cryo  && ($Cryo[0]['Number']>0))?$Cryo[0]['Number']*($Cryo[0]['Level']+3):0));
   if (($Deep = Get_ModulesType($T['id'],$MTNames['Deep Space Construction'] )) && ($Deep[0]['Number']>0)) {
