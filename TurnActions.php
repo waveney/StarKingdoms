@@ -1053,13 +1053,16 @@ function Instuctions() { // And other Instructions
       break;
     
     case 'Link Repair':
+// var_dump($T);
       if (!Spend_Credit($T['Whose'],$T['InstCost'],"Link Repair #" . $T['Dist1']) ) {
         $T['Progress'] = -1; // Stalled
         TurnLog($T['Whose'],"Could not afford to start Link Repair in " .$N['Ref'],$T);
+        break;
       }
       $T['Instruction'] = -$T['Instruction'];
       $Link = Get_Link($T['Dist1']);
       $Link['Status'] = 1;
+//var_dump($Link);
       Put_Link($Link);
       break;
 
@@ -1792,10 +1795,11 @@ function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
       }
 
 // var_dump($CheckNeeded,$T['LinkPay']);
-      if ($L['Level'] ==1 || $T['LinkPay']<0 || ($LOWho>0 && $Fid == $LOWho)) {
-        GMLog("<td>Free");
-      } elseif ($L['Status'] != 0) {
+       
+      if ($L['Status'] != 0) {
         GMLog("<td class=Err>" . $LinkStates[$L['Status']]);
+      } else if ($L['Level'] ==1 || $T['LinkPay']<0 || ($LOWho>0 && $Fid == $LOWho)) {
+        GMLog("<td>Free");
       } elseif ($T['LinkPay'] > 0) {
         GMLog("<td>Yes");     
       } elseif ($CheckNeeded && isset($UsedLinks[$Lid][$T['Whose']]) && $UsedLinks[$Lid][$T['Whose']]) {
@@ -1880,7 +1884,7 @@ function ShipMovements($Agents=0) {
                   "<a href=Meetings.php?ACTION=Check&R=" . $L['System1Ref'] . ">" . $L['System1Ref'] . "</a> And " .
                   "<a href=Meetings.php?ACTION=Check&R=" . $L['System2Ref'] . ">" . $L['System2Ref'] . "</a>");
             // Destroy Link
-            db_delete('Links',$L['id']);
+//            db_delete('Links',$L['id']);
 
             // Emergency lockdown both ends
 
@@ -2404,7 +2408,7 @@ function ProjectsCompleted($Pass) {
           GMLog($Facts[$Fid]['Name'] . "Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system",1);
         } else if ($P['ThingId']) {
           $T = Get_Thing($P['ThingId']);
-          RefitRepair($T,1,1,$P['FactionId']);
+          RefitRepair($T,1,0,$P['FactionId']);
           TurnLog($P['FactionId'], $T['Name'] . " has been " . $PT['Name'] . "ed",$T);        
         }
       }
@@ -2415,7 +2419,7 @@ function ProjectsCompleted($Pass) {
           GMLog($Facts[$Fid]['Name'] . "Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system",1);
         } else {        
           $T = Get_Thing($Tid);
-          RefitRepair($T,1,1,$P['FactionId']);
+          RefitRepair($T,1,0,$P['FactionId']);
           TurnLog($Fid, $T['Name'] . " has been " . $PT['Name'] . "ed",$T);
         }
       }

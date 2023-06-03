@@ -290,7 +290,7 @@ function Max_Modules(&$T) {
     if ($T['Level'] > 2 && Has_Trait($T['Whose'],'Really Big')) $v += $T['Level']*$T['Level']*$T['Level'];
     if ($TTs['Name'] == 'Satellite Defences') $v += $T['Level'];
     if ($TTs['Name'] == 'Planetary Defence Force') {
-      if (Has_Trait($Fid,"Strong military")) {
+      if (Has_Trait($T['Whose'],"Strong military")) {
         $v *= 2;
       } else {
         $v += $T['Level'];

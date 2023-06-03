@@ -72,7 +72,7 @@ function Show_Thing(&$T,$Force=0) {
   }
 */
 
-  if (($T['LinkId'] > 0) && (!isset($Links[$T['LinkId']]))) {
+  if ((($T['LinkId'] ?? 0) > 0) && (!isset($Links[$T['LinkId']]))) {
     $T['LinkId'] = 0;
     Put_Thing($T);
   }
@@ -157,7 +157,7 @@ function Show_Thing(&$T,$Force=0) {
 // -5 Not Used
 // -6 Direct Move to NewSystemId, NewWithinSys without links   
    
-    $Lid = $T['LinkId'];
+    $Lid = ($T['LinkId'] ?? 0);
     if ($tprops & THING_MOVES_DIRECTLY) {
         if ($GM) {
           echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId',1);
@@ -463,7 +463,7 @@ function Show_Thing(&$T,$Force=0) {
   if ($GM) echo "<tr>" . fm_textarea('GM Notes',$T,'GM_Notes',8,2,'class=NotSide');
   
   if ($GM || empty($T['PrisonerOf'])) {
-    $History = preg_split("/\n/",$T['History']);
+    $History = preg_split("/\n/",($T['History'] ?? ''));
     $RevHist = implode("\n",array_reverse($History));
   
     if (isset($_REQUEST['EDHISTORY'])) {
@@ -1343,7 +1343,7 @@ function Show_Thing(&$T,$Force=0) {
       
     case 'Make Something':  // Generic making AKA Analyse for academic 
       echo "<br>These projects will be defined by a GM<br>";
-      echo fm_text0("Name project - meaningfull to you and the GM:",$T,'MakeName',2);
+      echo fm_text0("Name project - meaningfull to you and the GM",$T,'MakeName',2);
       echo fm_number0('Actions Needed',$T,'ActionsNeeded');
       $Acts = $T['ActionsNeeded'];
       if (empty($T['MakeName']) || $T['ActionsNeeded'] == 0) {
@@ -1430,7 +1430,7 @@ function Show_Thing(&$T,$Force=0) {
   if (Access('God')) { 
     echo "<tr><td>Instruction:<td>" . fm_select($ThingInstrs,$T,'Instruction') . "<td>Stored: "  . fm_select($ThingInstrs,$T,'CurInst');
     echo fm_number1('Dist1',$T,'Dist1') . fm_number1('Dist2',$T,'Dist2') . fm_number1('Spare1',$T,'Spare1');
-    if ($T['ProjectId'] && $T['BuildState'] > 1) echo "<tr>" . fm_number('Prog/Anom Id',$T,'ProjectId') . "<td colspan=2>Reminder progress from Anomaly itself";
+    if (($T['ProjectId'] ?? 0) && $T['BuildState'] > 1) echo "<tr>" . fm_number('Prog/Anom Id',$T,'ProjectId') . "<td colspan=2>Reminder progress from Anomaly itself";
     echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
   }
   echo "</table></div>\n";
@@ -1441,7 +1441,7 @@ function Show_Thing(&$T,$Force=0) {
     echo "<input type=submit name=ACTION value='Remove Thing (No debris)'>";
     if ($tprops & THING_CAN_MOVE) echo "  <input type=submit name=ACTION value='Warp Out'>\n";
     echo fm_number0(" Do",$T,'Damage', '',' class=Num3 ') . " <input type=submit name=ACTION value=Damage>\n";
-    if ($T['PrisonerOf']) echo " <input type=submit name=ACTION value=Disarm>\n";
+    if (($T['PrisonerOf'] ?? 0)) echo " <input type=submit name=ACTION value=Disarm>\n";
   }
   if (!$GM && ($tprops & THING_CAN_BE_CREATED)) echo "<input type=submit name=ACTION value='Delete'>";
   if ($GM || empty($Fid)) {
