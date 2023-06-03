@@ -25,7 +25,7 @@
       }
         
       // Faction Systems
-      $Ns = Gen_Get_Cond('FactionSystems',"LOWER(Name) LIKE '%$Name%'");
+      $Ns = Gen_Get_Cond('FactionSystem',"LOWER(Name) LIKE '%$Name%'");
       if ($Ns) {
         echo "<h2>Factions name for Systems with that name</h2>";
         foreach($Ns as $FN) {

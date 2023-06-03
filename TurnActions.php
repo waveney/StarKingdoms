@@ -707,7 +707,7 @@ function Instuctions() { // And other Instructions
         if (!$FA || ($FA['State'] == 0) ) {
           $Sys = Get_System($T['SystemId']);
           TurnLog($T['Whose'], $T['Name'] . " is supposed to be analysing an anomaly - but you don't know of one here",$T);
-          GMLog($Facts[$T['Whose']]['Name'] . " - " . $T['Name'] . " is supposed to be analysing an anomaly - but you don't know of one at" . $Sys['Ref']);
+          GMLog($Facts[$T['Whose']]['Name'] . " - " . $T['Name'] . " is supposed to be analysing an anomaly - but you don't know of one at " . $Sys['Ref']);
           $T['Instruction'] = $T['ProjectId'] = 0;
           Put_Thing($T);
           break;
