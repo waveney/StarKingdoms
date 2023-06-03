@@ -40,7 +40,8 @@
             "<a href=Meetings.php?ACTION=Check&R=" . $L['System1Ref'] . ">" . $L['System1Ref'] . "</a> And " .
             "<a href=Meetings.php?ACTION=Check&R=" . $L['System2Ref'] . ">" . $L['System2Ref'] . "</a>");
             // Emergency lockdown both ends
-                        
+
+      db_delete('Links',$L['id']);                        
       SetAllLinks($L['System1Ref'], $SR1['id'],$LinkState['In Safe Mode']);
       SetAllLinks($L['System2Ref'], $SR2['id'],$LinkState['In Safe Mode']);
 
@@ -52,8 +53,6 @@
       $L['GameId'] = - $L['GameId'];
       Put_Link($L);
       echo "Link Exploded<p>";
-      break;
-    
     }
   }
   
