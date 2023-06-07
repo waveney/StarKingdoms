@@ -32,6 +32,7 @@ function New_Thing(&$T) {
     if (!empty($FACTION)) $Fid = $FACTION['id'];
   } else {
     $Fid = $FACTION['id'];
+    if ($FACTION['TurnState'] > 2) Player_Page();
   }
 
 

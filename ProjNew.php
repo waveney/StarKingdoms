@@ -17,6 +17,7 @@
     } else {
       $Fid = $FACTION['id'];
       $Faction = &$FACTION;
+      if (!Access('GM') && $Faction['TurnState'] > 2) Player_Page();
     }
   } 
   if (Access('GM') ) {

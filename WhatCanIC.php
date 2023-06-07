@@ -12,6 +12,7 @@
   dostaffhead("What can I see");
   if (isset($FACTION)) {
     $Fid = $FACTION['id'];
+    if ( $FACTION['TurnState'] > 2) Player_Page();
   } else if ($GM) {
     if (isset($_REQUEST['id'])) {
       $Fid = $_REQUEST['id'];
@@ -19,6 +20,8 @@
       $Fid = 0;
       echo "<h2>Note you are here without a faction...</h2>\n";
     }
+  } else {
+    if ( $FACTION['TurnState'] > 2) Player_Page();
   }
   
   $File = "CouldC";

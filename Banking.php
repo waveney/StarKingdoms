@@ -13,7 +13,10 @@
   CheckFaction('Banking',$Fid);
 
   $GM = Access('GM');
-  if (!$GM) Put_Faction($FACTION);
+  if (!$GM) {
+    if ($FACTION['TurnState'] > 2) Player_Page();      
+    Put_Faction($FACTION);
+  }
 
   $Factions = Get_Factions();
   $Facts = Get_FactionFactions($Fid);

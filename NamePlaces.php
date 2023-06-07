@@ -32,6 +32,7 @@
   A_Check('Player');
 
   $GM = Access('GM');
+  if (!$GM && $F['TurnState'] > 2) Player_Page();    
   
   echo "<h1>Name places you are aware of</h1>";
   echo "You can't name places you haven't been to.<p>You can have your own name for a System or Planet even if you don't control the system.<p>";

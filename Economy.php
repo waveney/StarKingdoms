@@ -12,7 +12,9 @@
   AddCurrencies();
   
   A_Check('Player');  
-  
+
+  if (!Access('GM') && $FACTION['TurnState'] > 2) Player_Page();    
+ 
   $Spend = 0;
   echo "<h1>Economy for this coming turn</h1>\n";
   

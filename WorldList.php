@@ -28,7 +28,8 @@
   }
   A_Check('Player');  
 //  CheckFaction('WorldList',$Fid);
-    
+
+  if (!Access('GM') && $Faction['TurnState'] > 2) Player_Page();    
   dostaffhead("List of Worlds and Colonies",["js/ProjectTools.js"]);
   
   $Worlds = Get_Worlds($Fid);

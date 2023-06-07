@@ -52,6 +52,7 @@
     dotail();
   }
   
+  if (!$GM && $Faction['TurnState'] > 2) Player_Page();    
   dostaffhead("Display Projects for faction",["js/ProjectTools.js"]);
   
   $OpenHi = $OpenDi = -99;

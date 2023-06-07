@@ -25,6 +25,8 @@
       $Fid = $_REQUEST['id'];
     }
     if (isset($Fid)) $Faction = Get_Faction($Fid);
+  } else {
+    if ($Faction['TurnState'] > 2) Player_Page();      
   }
 
   dostaffhead("Carry Control",["js/ProjectTools.js"]);

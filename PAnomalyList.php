@@ -23,6 +23,8 @@
       $Fid = $_REQUEST['id'];
     }
     if (isset($Fid)) $Faction = Get_Faction($Fid);
+  } else {
+    if ($FACTION['TurnState'] > 2) Player_Page();      
   }
 
   dostaffhead("List Anomalies");
