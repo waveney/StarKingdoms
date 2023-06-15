@@ -35,7 +35,9 @@
   }
   
   if ($FACTION) $Faction = $FACTION['id'];
-  if (!Access('GM') && $Faction['TurnState'] > 2) Player_Page();
+  $Fact = Get_Faction($Faction);
+  
+  if (!Access('GM') && $Fact['TurnState'] > 2) Player_Page();
 
   $typ='';
   if (isset($_REQUEST['Hex'])) {
