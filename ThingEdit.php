@@ -92,6 +92,7 @@ function New_Thing(&$T) {
           $M = Get_Moon($W['ThingId']);
           $type = $PlanetTypes[$M['Type']]['Name'];
           if ($PlanetTypes[$M['Type']]['Append']) $type .= " Moon";
+          $P = Get_Planet($M['PlanetId']);
           $Name = $M['Name'];
           $Sys = Get_System($P['SystemId']);
           break;
