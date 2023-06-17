@@ -9,7 +9,8 @@
   
   global $FACTION,$GAME,$Project_Status;
   
-  if (Access('GM') ) {
+  $GM = Access('GM');
+  if ($GM ) {
     A_Check('GM');
     $Fid = $_REQUEST['id'];
     $Faction = Get_Faction($Fid);
@@ -26,6 +27,7 @@
   if (isset($_REQUEST['id'])) {
     $Prid = $_REQUEST['id'];
     $P = Get_Project($Prid);
+    if (!$GM && $P['GMLock']) fm_addall('READONLY');
   } else { 
     echo "No Project given";
     dotail();
@@ -157,6 +159,7 @@
     echo "<tr><td>Project Type<td>" . fm_select($ProjTypeNames,$P,'Type');
     echo fm_text("Project Name",$P,'Name',2);
     echo "<tr>" . fm_number('Level',$P,'Level') . "<td>Status<td>" . fm_select($Project_Status,$P,'Status');
+    echo "<td class=NotSide>" . fm_checkbox('GM Lock',$P,'GMLock');
     echo "<tr>" . fm_number("Turn Start",$P,'TurnStart') . fm_number('Turn Ended', $P, 'TurnEnd');
     echo "<tr>" . fm_number("Where",$P,'Home') . "<td>" . $PH['Name'] . " in " . NameFind($System);
     echo "<td>" . fm_checkbox('GM Override',$P,'GMOverride') . " Set to override maxrush";

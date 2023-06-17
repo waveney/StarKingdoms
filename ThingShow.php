@@ -951,12 +951,13 @@ function Show_Thing(&$T,$Force=0) {
       $OtherThings = Get_AllThingsAt($T['SystemId']);
       $OtherList = [];
       foreach($OtherThings as $OT) {
-        if (!$IHaveCollab && empty($HasColab[$OT['Whose']])) continue;
-        if ($ThingProps[$OT['Type']] & THING_HAS_MODULES) {
-          $OMods = Get_ModulesType($OT['id'],3);
-          if (empty($OMods) || $OT['id'] == $T['id']) continue;
-          $OtherList[$OT['id']] = $OT['Name'];
-        } 
+        if (($OT['Whose'] == $Fid) || $IHaveCollab || $HasColab[$OT['Whose']]) {
+          if ($ThingProps[$OT['Type']] & THING_HAS_MODULES) {
+            $OMods = Get_ModulesType($OT['id'],3);
+            if (empty($OMods) || $OT['id'] == $T['id']) continue;
+            $OtherList[$OT['id']] = $OT['Name'];
+          } 
+        }
       }
 //var_dump($OtherList);
       if (empty($OtherList)) continue 2; // Nothing to collaborate with
