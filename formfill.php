@@ -37,7 +37,7 @@
     case (preg_match('/District(\w*)-(\d*)/',$field,$mtch)?true:false):
       $N = Get_District($mtch[2]);
 //var_dump($N,$Value,$mtch);
-      if ($Value && $mtch[1] != 'Type') { 
+      if ($Value || $mtch[1] != 'Type') { 
         $N[$mtch[1]] = $Value;     
         echo Put_District($N);
       } else { 

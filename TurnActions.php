@@ -1977,7 +1977,7 @@ function ShipMovements($Agents=0) {
         }
       }
 //    $T['LinkId'] = 0;
-      $T['Instruction'] = 0;
+      if ($T['Instruction'] != 0 && !Has_Tech($Fid,'Stargate Construction') ) $T['Instruction'] = 0;
       $T['LastMoved'] = $GAME['Turn'];
       Put_Thing($T);
       if (isset($SetBreak)) return 0; // Will need to come back in to finish movements after damage
@@ -3018,11 +3018,11 @@ function InstructionsComplete() {
            case 'Support Ship' :
            case 'Civilian Ship' :
            case 'Satellite Defences' :
-             $Money = 10*$W['Level']*$SalvageLevel;
+             $Money = min(10*$W['Level']*$SalvageLevel,$ProjCosts($W['Level'])[1]*0.9);
              if ($HasWreck) {
                $Modules = Get_Modules($W['id']);
                foreach ($Modules as $Mod) {
-                 $L = Has_Tech($Who,$ModTypes[$Mod['Type']]['BasedOn']);
+                 $L = Has_Tech($W['Whose'],$ModTypes[$Mod['Type']]['BasedOn']);
                  if ($L) {
                    $Wreck[]= $Mod['Number'] . " " . $ModTypes[$Mod['Type']]['Name'] . " L$L";
                  } else {
@@ -3035,7 +3035,7 @@ function InstructionsComplete() {
              break;
          
            case 'Space Station':
-             $Money = 10*$W['MaxDistricts']*$SalvageLevel;
+             $Money = min(10*$W['MaxDistricts']*$SalvageLevel,$ProjCosts($W['MaxDistricts'])[1]*0.9);
              if ($HasWreck) {
                $Districts = Get_DistrictsT($W['id']);
                foreach ($Districts as $D) {

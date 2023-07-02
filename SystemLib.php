@@ -309,10 +309,10 @@ function Show_Planet(&$P,$Mode=0,$Buts=0) {
   echo fm_hidden('id',$Pid);
   echo "<tr class=NotSide><td class=NotSide>Id:<td class=NotSide>$Pid<td class=NotSide>Game<td class=NotSide>$GAMEID" .
        "<td class=NotSide>" . $GAME['Name'] . fm_text('System Ref',$N,'Ref',1,"class=NotSide");
-  echo "<tr>" . fm_radio('Control',$FactNames ,$P,'Control','',1,'colspan=6','',$Fact_Colours,0); 
-  echo "<tr>" . fm_text('Name',$P,'Name',8);  // TODO Image
+  echo "<tr>" . fm_radio('Control',$FactNames ,$P,'Control','',1,'colspan=5','',$Fact_Colours,0); 
+  echo "<tr>" . fm_text('Name',$P,'Name',4);  // TODO Image
   echo "<tr>" . fm_text('Short Name',$P,'ShortName') . fm_number('Attributes',$P,'Attributes') . "<td>1=Hide" . fm_number('Mined',$P,'Mined');
-  echo "<tr>" . fm_textarea('Description',$P,'Description',8,3);
+  echo "<tr>" . fm_textarea('Description',$P,'Description',4,3);
   echo "<tr><td>Type:<td>" . fm_Select($PTNs,$P,'Type',1) . fm_number('Minerals',$P,'Minerals',1,"class=NotCSide"); 
   echo fm_number('Moons',$P,'Moons',1,"class=NotCSide");
   
@@ -355,7 +355,7 @@ function Show_Planet(&$P,$Mode=0,$Buts=0) {
   
   foreach ($Ds as $D) {
     $did = $D['id'];
-    if ($dc++%4 == 0)  echo "<tr>";
+    if ($dc++%3 == 0)  echo "<tr>";
     echo "<td>" . fm_Select($DTs, $D , 'Type', 1,'',"DistrictType-$did") . fm_number1('', $D,'Number', '',' class=Num3 ',"DistrictNumber-$did");
     echo fm_number0("&Delta; ",$D,'Delta','',' class=Num3 ',"DistrictDelta-$did");
     };

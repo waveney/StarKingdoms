@@ -60,7 +60,8 @@
     
     foreach ($Techs as $T) {
 //      echo "Checking "  . $T['Name'] . " Against " . $CT['Name']
-      if ($T['Cat']>0 && ($T['PreReqTech'] == $CT['id']) && ((($T['Properties']&8) == 0) || Access('God'))) {
+      if (($T['Cat']>0) && ($T['PreReqTech'] == $CT['id'])) {
+        if ((($T['Properties']&8) == 8) && !Access('God')) continue;
 //        echo "Found " . $T['Name'] . "<br>";
         Show_Tech($T,$CTNs,$FACTION,$TechFacts,0,$Setup,1); //,' hidden');
       }

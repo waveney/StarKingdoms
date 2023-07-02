@@ -38,7 +38,7 @@
     "Who are you?<p>";
     dotail();
   }
-  if (!Access('GM') && $Faction['TurnState'] > 2) Player_Page();    
+  if (!Access('GM') && $FACTION['TurnState'] > 2) Player_Page();    
   
   echo "<div class=floatright><h2>";
   if ($GAME['Turn'] <5 ) {
