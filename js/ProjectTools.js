@@ -229,7 +229,7 @@ debugger;
     $(".Thing_Build1").show();
     $(".Thing_Build2").show();
     $(".Thing_Build3").show();
-    $(".Thing_Build4").show();
+    $(".Thing_Build4").hide();
     return;
   case "1":
     $(".Thing_Build0").show();

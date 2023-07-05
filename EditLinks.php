@@ -36,7 +36,8 @@
     $LLs[-$L['Level']] = "Under Repair " . $L['Name'];
   }
   $Systems = Get_SystemRefs();
-  $Ssys = [];
+  $Ssys = [0=>''];
+  
   foreach($Systems as $S) $Ssys[$S] = $S;
   
   echo "Set Level to 0 to remove a link<p>";
