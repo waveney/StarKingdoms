@@ -587,7 +587,7 @@ function Instuctions() { // And other Instructions
            GMLog("<p><a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a> is warping out - Please Choose which gate:");
            GMLog(fm_select($GLocs,$_REQUEST,'G',0,'',"G" . $T['id']));
            GMLog("<p>");
-           db_delete_cond('ScansDue','ThingId=$Tid AND Turn=' . $GAME['Turn']);
+           db_delete_cond('ScansDue',"ThingId=$Tid AND Turn=" . $GAME['Turn']);
            break;
          } else {
            $T['SystemId'] = $Gates[0]['SystemId'];
