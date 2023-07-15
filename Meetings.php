@@ -63,7 +63,8 @@ function ForceReport($Sid,$Cat) {
     }
   }
   
-  echo "<h2>" . ($Cat =='G' ?'Ground':'Space') . " Force Report for " . $N['Ref'] . ($Cat =='G' ? " - " . $PlanMoon['Name'] . " ($HomeType)" :'') . "</h2>\n";
+  echo "<h2>" . ($Cat =='G' ?'Ground':'Space') . " Force Report for " . $N['Ref'] . ($Cat =='G' ? " - " . ($PlanMoon['Name'] ?? 'Nameless') .
+       " ($HomeType)" :'') . "</h2>\n";
   if ($Cat =='G' && $Wid) echo "<h2><a href=WorldEdit.php?ACTION=Militia&id=$Wid>Create /Update Militia</a></h2>";
   
   echo "<table border>";

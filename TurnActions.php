@@ -3018,7 +3018,7 @@ function InstructionsComplete() {
            case 'Support Ship' :
            case 'Civilian Ship' :
            case 'Satellite Defences' :
-             $Money = min(10*$W['Level']*$SalvageLevel,$ProjCosts($W['Level'])[1]*0.9);
+             $Money = min(10*$W['Level']*$SalvageLevel,ProjCosts($W['Level'])[1]*0.9);
              if ($HasWreck) {
                $Modules = Get_Modules($W['id']);
                foreach ($Modules as $Mod) {
