@@ -88,6 +88,7 @@
         case 'Rebuild and Repair':  
         case 'Grow Modules' :    
         case 'Produce Adianite' :
+
           if (isset($_REQUEST['Sel'])) $Sel = $_REQUEST['Sel'];
           $Level = $_REQUEST['L'];
           $Costs = $_REQUEST['C'];
@@ -246,7 +247,14 @@
             break;
           }
           break;
-          
+ 
+        case 'Seek Enemy Agents' :
+          $Level = $_REQUEST['Level'];
+          $pc = Proj_Costs($Level);
+          $Costs = $pc[1];
+          $ProgN = $pc[0];
+          $Name = 'Seek Enemy Agents';
+          break;                    
           
           /* These are treated as Instructions now */
         case 'Decommission Ship':

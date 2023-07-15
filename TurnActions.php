@@ -2454,6 +2454,7 @@ function ProjectsCompleted($Pass) {
       $Xfr2 = $P['ThingId'];
       $XFact = Get_Faction($Xfr2);
       $Have = Has_Tech($Xfr2,$Tech['id']);
+//      var_dump($Tech,$XFact);
       if ($Tech['Cat'] == 0) {
         if ($Have >= $Level) {
           TurnLog($Fid, "You tried to share " . $Tech['Name'] . " at level $Level. with " . $XFact['Name'] . " They already know it.");                      
@@ -2589,10 +2590,13 @@ function ProjectsCompleted($Pass) {
     case 'Advanced Deep Space Sensors':
     case 'Build Advanced Asteroid Mining Facility':
     case 'Unknown' :
+    case 'Seek Enemy Agents' :
 
     default:
-      GMLog("A project to " . $PT['Name'] . " has completed, this is not automated yet.  See <a href=ProjEdit.php?id=" . $P['id'] . ">Project</a>",1);
-      FollowUp($Fid,"A project to " . $PT['Name'] . " has completed, this is not automated yet.  See <a href=ProjEdit.php?id=" . $P['id'] . ">Project</a>");
+      GMLog("A project to " . $PT['Name'] . " at level " . $P['Level'] . 
+            " has completed, this is not automated yet.  See <a href=ProjEdit.php?id=" . $P['id'] . ">Project</a>",1);
+      FollowUp($Fid,"A project to " . $PT['Name'] . " at level " . $P['Level'] . 
+            " has completed, this is not automated yet.  See <a href=ProjEdit.php?id=" . $P['id'] . ">Project</a>");
     }
   }
   
@@ -2852,7 +2856,8 @@ function InstructionsComplete() {
        $Lid = Put_Link($NewLink);
        TurnLog($T['Whose'], "<span style=color:" . $LL['Colour'] . ">Link#$Lid </span>has been created between " . $Systems[$T['SystemId']] . " and " .
                $Systems[$T['Dist2']]);
-       GMLog("A new " . $LL['Colour'] . " level " . $T['Dist1'] . " link #$Lid </span> has been made between " . $Systems[$T['SystemId']] . " and " . $Systems[$T['Dist2']]);
+       GMLog("A new " . $LL['Colour'] . " level " . $T['Dist1'] . " link #$Lid </span> has been made between " . $Systems[$T['SystemId']] . " and " .
+              $Systems[$T['Dist2']]);
        $FL = ['LinkId'=>$Lid, 'FactionId'=>$T['Whose'],'Known'=>1];
        Put_FactionLink($FL);
        Report_Others($T['Whose'], $T['SystemId'],2,"A new " . $LL['Colour'] . " level " . $T['Dist1'] . " link #$Lid </span> has been made in " . $N['Ref']);

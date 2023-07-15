@@ -633,28 +633,32 @@
                 "&Name=" . base64_encode("Research Intelligence Operations $Lvl$Place"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
                 "Research Intelligence Operations $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
     
-      $Rbuts = [];
-      $FactTechs = Get_Faction_Techs($Fid, $Turn);
-      $Techs = Get_TechsByCore($Fid);
-      foreach ($Techs as $T) {
-        if ($T['Cat'] == 0 ||  (isset($FactTechs[$T['id']]) && $FactTechs[$T['id']]['Level'])) continue;
-        if (!isset($FactTechs[$T['PreReqTech']])) continue;
-        if ($T['PreReqTech']!=4) continue;
-        if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
+        $Rbuts = [];
+        $FactTechs = Get_Faction_Techs($Fid, $Turn);
+        $Techs = Get_TechsByCore($Fid);
+        foreach ($Techs as $T) {
+          if ($T['Cat'] == 0 ||  (isset($FactTechs[$T['id']]) && $FactTechs[$T['id']]['Level'])) continue;
+          if (!isset($FactTechs[$T['PreReqTech']])) continue;
+          if ($T['PreReqTech']!=4) continue;
+          if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
 
-        $Lvl = $T['PreReqLevel'];
-        $pc = Proj_Costs($Lvl);
-        $Rbuts[] = "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Supplemental Intelligence Tech'] . 
+          $Lvl = $T['PreReqLevel'];
+          $pc = Proj_Costs($Lvl);
+          $Rbuts[] = "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Supplemental Intelligence Tech'] . 
                 "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $T['id'] .
                 "&Name=" . base64_encode("Research " . $T['Name'] . $Place) . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
                 "Research " . $T['Name'] . "; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
-      }
+        }
    
-     if ($Rbuts) {
-       echo "<h2>Research Supplimental Intelligence Technology</h2>";
-       foreach ($Rbuts as $rb) echo $rb;
-     }
-    
+        if ($Rbuts) {
+          echo "<h2>Research Supplimental Intelligence Technology</h2>";
+          foreach ($Rbuts as $rb) echo $rb;
+        }
+      echo  "<h2>Seek Enemy Agents</h2>";
+        echo "</form><form method=post action=ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Seek Enemy Agents'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT>";
+        echo fm_number0('Level',$_REQUEST,'Level');
+        echo "<button class=projtype type=submit>Seek</button></form>";
+
       break;
 
   case 'Orbital Repair':
@@ -724,7 +728,7 @@
     
   echo "</form><h2>Post It Note</h2>\n";
   echo "Block off some time and money for a project you can't yet do.<p>\n";
-  echo "<form method=post action= ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Post It'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT>";
+  echo "<form method=post action=ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Post It'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT>";
   echo fm_number0('Level',$_REQUEST,'Level') . fm_text0("Message",$_REQUEST,'PostItTxt');
   echo "<button class=postit type=submit>Post it</button>";
   echo "</form><p>"; 
