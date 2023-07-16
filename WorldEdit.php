@@ -151,11 +151,11 @@
         echo fm_number1("Delta",$D,'Delta',''," min=-$NeedDelta max=$NeedDelta ","Dist:Delta:" . $D['id']);
         $DeltaSum += $D['Delta'];
       }
-      if ( ($DTs[$D['Type']]['Name'] == 'Intelligence') && Has_Tech($Fid,'Defensive Integillgence' )) {
+      if ( ($DTs[$D['Type']]['Name'] == 'Intelligence') && Has_Tech($Fid,'Defensive Intelligence' )) {
               $Agents = Get_Things_Cond($Fid," Type=5 AND Class='Military' AND SystemId=$SysId ORDER BY Level DESC");
               if ($Agents) {
                 $Bi = ($Agents[0]['Level']/2);
-                echo " ( +$Bi From Defensive Integillgence)";
+                echo " ( +$Bi From Defensive Intelligence)";
               }
          
       }

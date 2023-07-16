@@ -2428,6 +2428,15 @@ function ProjectsCompleted($Pass) {
     case 'Construct Ship':
       $T = Get_Thing($P['ThingId']);
       $T['BuildState'] = 2; // Shakedown
+      if (empty($T['SystemId'])) {
+//        $Where = Where_Is_Home($P['Home']);
+//        $T['SystemId'] = $Where[0];
+//        if (empty($T['SystemId'])) {
+          GMLog("Ship: <a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . $T['Name'] . "</a> has no System Setup - Call Richard...");
+          FollowUp($Fid,"Ship: <a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . $T['Name'] . "</a> has no System Setup - Call Richard...");
+//        }
+      }
+      
       $WSL = ConstructLoc($P['Home'],0);
       $T['WithinSysLoc'] = 1;
       Move_Thing_Within_Sys($T,$WSL,1);

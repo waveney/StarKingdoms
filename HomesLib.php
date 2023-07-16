@@ -352,7 +352,7 @@ function Recalc_Worlds($Silent=0) {
           $T = Get_Thing($H['ThingId']);
           if (($TTypes[$T['Type']]['Properties'] & THING_HAS_DISTRICTS) == 0) continue 2;
           $Fid = $T['Whose'];
-          $Minerals = (($TTypes[$T['Type']]['Properties'] & THING_HAS_MINERALS)?10: 0);
+          $Minerals = (($TTypes[$T['Type']]['Properties'] & THING_HAS_MINERALS)?100: 0);
           $ThisBio = -1;
           break;
         }
@@ -400,7 +400,7 @@ function Recalc_Worlds($Silent=0) {
         }
         if (($TTypes[$T['Type']]['Properties'] & THING_HAS_DISTRICTS) == 0) continue 2;
         $Fid = $T['Whose'];
-        $Minerals = (($TTypes[$T['Type']]['Properties'] & THING_HAS_MINERALS)?10: 0);
+        $Minerals = (($TTypes[$T['Type']]['Properties'] & THING_HAS_MINERALS)?100: 0);
         $ThisBio = -1;
         break;
     }
