@@ -123,6 +123,7 @@ function Player_Page() {
     echo "<p><li><a href=WhatCanIC.php>What Things can I See?</a>\n";
     echo "<li><a href=WorldList.php>Worlds and Colonies</a> - High Level info only\n";  
     echo "<li><a href=NamePlaces.php>Name Places</a> - Systems, Planets etc\n";      
+    echo "<li><a href=PScanList.php>Systems and Scans</a>\n";      
     echo "<li><a href=PAnomalyList.php>Anomalies that have been seen</a><p>\n";      
     echo "<li><a href=ProjDisp.php>Projects</a>\n";
     echo "<li><a href=PThingList.php>List of Things</a> - List of Things (Ships, Armies, Agents, Space stations etc)";
@@ -198,25 +199,25 @@ function Gain_Science($Who,$What,$Amount,$Why) { // Ammount is negative to gain 
   $Fact = Get_Faction($Who);
   switch ($What) {
   case 1: 
-    $Fact['PhysicsSP'] += $Amount;
+    $Fact['PhysicsSP'] = ($Fact['PhysicsSP'] ?? 0) + $Amount;
     break;
   case 2: 
-    $Fact['EngineeringSP'] += $Amount;
+    $Fact['EngineeringSP'] = ($Fact['EngineeringSP'] ?? 0) + $Amount;
     break;
   case 3: 
-    $Fact['XenologySP'] += $Amount;
+    $Fact['XenologySP'] = ($Fact['XenologySP'] ?? 0) + $Amount;
     break;
   case 4: // Random
     for($sp =1; $sp <= $Amount; $sp++) {
       switch (rand(1,3)) {
       case 1: 
-        $Fact['PhysicsSP'] ++;
+        $Fact['PhysicsSP'] = ($Fact['PhysicsSP'] ?? 0) + 1;
         break;
       case 2: 
-        $Fact['EngineeringSP'] ++;
+        $Fact['EngineeringSP'] = ($Fact['EngineeringSP'] ?? 0) + 1;
         break;
       case 3: 
-        $Fact['XenologySP'] ++;
+        $Fact['XenologySP'] = ($Fact['XenologySP'] ?? 0) + $Amount + 1;
         break;
       }
     }
