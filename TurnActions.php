@@ -3049,7 +3049,7 @@ function InstructionsComplete() {
              break;
          
            case 'Space Station':
-             $Money = min(10*$W['MaxDistricts']*$SalvageLevel,$ProjCosts($W['MaxDistricts'])[1]*0.9);
+             $Money = min(10*$W['MaxDistricts']*$SalvageLevel,ProjCosts($W['MaxDistricts'])[1]*0.9);
              if ($HasWreck) {
                $Districts = Get_DistrictsT($W['id']);
                foreach ($Districts as $D) {
