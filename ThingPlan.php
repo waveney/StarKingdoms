@@ -273,6 +273,9 @@
     if (isset($T['DesignValid']) && $T['DesignValid'] != $Valid) {
       $T['DesignValid'] = $Valid;
     }
+  } else {
+    echo "</table></form>";
+    dotail();
   }
 
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";    
