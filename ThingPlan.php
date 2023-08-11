@@ -280,7 +280,7 @@
 
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";    
   echo "</table>";
-  Put_Thing($T);  
+  Put_Thing($T);
   if ($Valid) {
     if ($tprops & THING_CAN_BE_CREATED) {
       echo "<h2><a href=ThingEdit.php?ACTION=CREATE&id=$Tid>Create</a></h2>";

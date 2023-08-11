@@ -50,6 +50,16 @@ define('THING_IS_HOSTILE',4194304);
 define('THING_CAN_BE_SPLATED',8388608);
 define('THING_LEAVES_DEBRIS',16777216);
 
+define('LINK_ON_BOARD',-1);
+define('LINK_BOARDING',-2);
+define('LINK_UNLOAD',-3);
+define('LINK_LOAD_AND_UNLOAD',-4);
+define('LINK_VALUE_UNUSED',-5);
+define('LINK_DIRECTMOVE',-6);
+define('LINK_FOLLOW',-7);
+
+
+
 function ModFormulaes() {
   global $ModFormulaes;
   if ($ModFormulaes) return $ModFormulaes;
@@ -664,11 +674,15 @@ function Thing_Duplicate($otid) {
   return $T;
 }
 
-function EyesInSystem($Fid,$Sid) { // Eyes 1 = in space, 2= sens, 4= neb sens, 8=ground
+function EyesInSystem($Fid,$Sid,$Of=0) { // Eyes 1 = in space, 2= sens, 4= neb sens, 8=ground
 //var_dump($Fid,$Sid);
   $Neb = $Eyes = 0;
   $ThingTypes = Get_ThingTypes();
-  $MyThings = Get_Things_Cond($Fid," SystemId=$Sid AND (BuildState=2 OR BuildState=3)");
+  if ($Of) {
+    $MyThings = [ Get_Thing($Of) ];
+  } else {
+    $MyThings = Get_Things_Cond($Fid," SystemId=$Sid AND (BuildState=2 OR BuildState=3)");
+  }
   $N = Get_System($Sid);
   if ($N) $Neb = $N['Nebulae'];
 
@@ -689,7 +703,7 @@ function is_vowel(&$Text) {
   return strpos(" aeiou",strtolower(substr($Text,0,1)));
 }
 
-function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
+function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
   global $Advance,$FACTION;
   static $ThingTypes;
   static $Factions;
@@ -714,18 +728,20 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
         return '';
       }
       if ($T['BuildState'] < 2 || $T['BuildState'] > 4) return ''; // Building or abandoned
-      if ($LastWhose && $LastWhose!= $T['Whose']) $txt .= "<P>";
-      if (($T['BuildState'] == 4) || (($T['Type'] == 23) && $GM)) { // Named Chars
-        if ($GM) {
-          $txt .= "<div class=FullD hidden>";
+      if ($Div && $LastWhose && $LastWhose!= $T['Whose']) $txt .= "<P>";
+      if ($Div) {
+        if (($T['BuildState'] == 4) || (($T['Type'] == 23) && $GM)) { // Named Chars
+          if ($GM) {
+            $txt .= "<div class=FullD hidden>";
+          } else {
+            $txt .= "<div>";
+          }
+          if ($T['BuildState'] == 4) $txt .= "The remains of: ";
         } else {
           $txt .= "<div>";
         }
-        if ($T['BuildState'] == 4) $txt .= "The remains of: ";
-      } else {
-        $txt .= "<div>";
       }
-        
+       
       if ($T['Whose'] || $GM) {
         $txt .= ((($Fid < 0) || ($Fid == $T['Whose']) || $GM )?( "<a href=ThingEdit.php?id=" . $T['id'] . ">" . 
                 (empty($T['Name'])?"Unnamed":$T['Name']) . "</a>") : $T['Name'] ) . " a";
@@ -743,7 +759,11 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
       if ($T['Whose']) {
         $Who = ($Factions[$T['Whose']]['Adjective']?$Factions[$T['Whose']]['Adjective']:$Factions[$T['Whose']]['Name']);
         if ($RawA && is_vowel($Who)) $txt .= "n";      
-        $txt .= " <span style='background:" . $Factions[$T['Whose']]['MapColour'] . "'>$Who</span>";
+        if ($Div) {
+          $txt .= " <span style='background:" . $Factions[$T['Whose']]['MapColour'] . "'>$Who</span>";
+        } else {
+          $txt .= " $Who";
+        }
         $RawA = 0;
       }
       if (($T['Whose'] == $Fid) && ($TTprops & THING_CAN_BE_ADVANCED) && ($T['Level'] > 1)) $txt .= ' ' . $Advance[$T['Level']];
@@ -754,7 +774,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
       }
  
 //var_dump($Locations);exit;
-      if ($T['LinkId'] >= 0 && $T['SystemId'] > 0 && isset($T['WithinSysLoc']) && ($T['WithinSysLoc'] > 0)) {
+      if ($Div && $T['LinkId'] >= 0 && $T['SystemId'] > 0 && isset($T['WithinSysLoc']) && ($T['WithinSysLoc'] > 0)) {
         if (isset($Locations[$T['WithinSysLoc']])) {
           $txt .= " ( " . $Locations[$T['WithinSysLoc']] . " ) ";
         } else if ($GM) {
@@ -783,8 +803,8 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0) {
         if ($T['NebSensors']) $txt .= "N, ";
         $txt .= ")";
       }
-      $txt .= "<br clear=all>\n";
-      if ($GM) $txt .= "</div>";
+      if ($Images) $txt .= "<br clear=all>\n";
+      if ($GM && $Div) $txt .= "</div>";
       $LastWhose = $T['Whose'];
 // if ($T['id'] == 238) echo "Txt is:$txt<p>";
    return $txt;

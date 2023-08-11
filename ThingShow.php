@@ -19,7 +19,7 @@ function Show_Thing(&$T,$Force=0) {
                  'lightgreen','lightpink','lightblue','lightyellow','bisque','#99ffcc','#b3b3ff',
                  'lightgreen','lightpink','lightblue','lightyellow','bisque','#99ffcc','#b3b3ff'];
 
-  $tid = $T['id'];
+  $Tid = $T['id'];
   
   if ($Force) {
     $GM = 0;
@@ -104,11 +104,11 @@ function Show_Thing(&$T,$Force=0) {
   if ($T['BuildState'] == 0) echo "Note the Tech level of this will be recorded when it is built<br>";
 
   echo "<div class=tablecont><table width=90% border class=SideTable>\n";
-  Register_AutoUpdate('Thing',$tid);
-  echo fm_hidden('id',$tid);
+  Register_AutoUpdate('Thing',$Tid);
+  echo fm_hidden('id',$Tid);
   echo "<input type=submit name=ACTION value=Refresh hidden>";  
   if ($GM) {
-    echo "<tr class=NotSide><td class=NotSide>Id: $tid<td class=NotSide>Game: $GAMEID - " . $GAME['Name'];
+    echo "<tr class=NotSide><td class=NotSide>Id: $Tid<td class=NotSide>Game: $GAMEID - " . $GAME['Name'];
     echo fm_number('Seen Mask',$T,'SeenTypeMask','class=NotSide','class=NotSide');
     echo "<tr><td>Type:<td>" . fm_select($ttn,$T,'Type',1); 
     if (($tprops & THING_HAS_LEVELS) || ($tprops & THING_CAN_BE_ADVANCED)) echo fm_number("Level",$T,'Level');
@@ -122,7 +122,7 @@ function Show_Thing(&$T,$Force=0) {
   echo "<tr>" . fm_text('Name',$T,'Name',2);
 
   echo "<td rowspan=4 colspan=4><table><tr>";
-    echo fm_DragonDrop(1,'Image','Thing',$tid,$T,1,'',1,'','Thing');
+    echo fm_DragonDrop(1,'Image','Thing',$Tid,$T,1,'',1,'','Thing');
   echo "</table>";
 
 
@@ -175,7 +175,7 @@ function Show_Thing(&$T,$Force=0) {
       if ($Lid<0 && Access('God') ) {
         echo fm_number0("Lid",$T,'LinkId') . fm_number1("SysId",$T,'SystemId');
       }
-      if ($Lid >= 0 || $Lid == -2 || $Lid == -4) { // Insystem
+      if ($Lid >= 0 || $Lid == LINK_BOARDING || $Lid == LINK_LOAD_AND_UNLOAD) { // Insystem
         if ($GM) {
           echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId',1);
           echo "<td>" . fm_select($Syslocs,$T,'WithinSysLoc');
@@ -184,9 +184,16 @@ function Show_Thing(&$T,$Force=0) {
         } else {
           echo "<tr><td>Current System:<td>" . (empty($N)? 'Unknown' : $N['Ref']) . "<td>" . $Syslocs[$T['WithinSysLoc']];    
         }
+      } else if ($Lid == LINK_FOLLOW ) {
+        $Fol = Get_Thing($T['NewSystemId']);
+        $LastWhose = 0;
+        $tting = SeeThing($Fol,$LastWhose,7,$Fid,0,0,0);
+        echo "<tr><td colspan=3>Following: " . "<span style='background:" . $Fact_Colours[$Fol['Whose']] . "'>" . 
+             SeeThing($Fol,$LastWhose,7,$Fid,0,0,0) . "</span>";
+        echo "<input type=submit name=ACTION value='Cancel Follow'>\n";
       } else { // On Board
         $Host = Get_Thing($T['SystemId']);
-        echo "<tr><td colspan=3>In: " . $Host['Name'];
+        echo "<tr><td colspan=3>In: $Lid" . $Host['Name'];
         $Conflict = 0; 
         $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
         if ($Conf) $Conflict = $Conf[0]['Conflict'];
@@ -200,7 +207,8 @@ function Show_Thing(&$T,$Force=0) {
             echo "<input type=submit name=ACTION value='Unload Now'>\n";         
           }
         } else {
-          if ($Lid == -1 || $Lid == -2) if ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ) echo "<input type=submit name=ACTION value='Unload After Move'>\n";
+          if ($Lid == -1 || $Lid == -2) if ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ) 
+            echo "<input type=submit name=ACTION value='Unload After Move'>\n";
           if ($GM || (!$Conflict && ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ))) { 
             echo "<input type=submit name=ACTION value='Unload Now'>\n";         
           } else {
@@ -267,25 +275,38 @@ function Show_Thing(&$T,$Force=0) {
       if ((($tprops & THING_CAN_MOVE)) && $Lid >= 0) {
 
         if (($T['BuildState'] == 2) || ($T['CurHealth'] == 0) || empty($SelLinks) ) { // Shakedown or just warped out
-          echo "<tr><td colspan=3>This is unable to use links, it can move within the system.<br>Where in the system should it go? " . fm_select($Syslocs,$T,'WithinSysLoc');
+          echo "<tr><td colspan=3>This is unable to use links, it can move within the system.<br>Where in the system should it go? " . 
+                fm_select($Syslocs,$T,'WithinSysLoc');
         } else {
           if (($T['Instruction'] != 0) && ($T['Instruction'] != 5) && ($T['Instruction'] != 21) ) {
             echo "<tr><td class=Err>Warning Busy doing:<td>" . $ThingInstrs[abs($T['Instruction'])] . "<td class=Err>Moving will cancel";
           }
 
           if ($GM) {
-            echo "<tr><td>Taking Link:<td>" . fm_select($SelLinks,$T,'LinkId',0," style=color:" . $SelCols[$T['LinkId']] ,'',0,$SelCols);
-            if ($ll>0 && $LinkTypes[$ll]['Cost'] && $LOWho && $LOWho != $T['Whose'] ) { 
-              echo fm_checkbox('Pay',$T,'LinkPay') . " " . Credit() . $T['LinkCost'];
-            }
-            echo "<br>Update this normally";
-            if ($Lid > 0) {
-              echo "<td>To:  " . fm_select($NewSyslocs,$T,'NewLocation');
+            if ($Lid == LINK_FOLLOW) { // Never used...
+              echo "<tr><td>Following:<td>";
+              $Fol = $T['NewSystemId'];
+              $FThing = Get_Thing($Fol);
+              echo "<a href=ThingEdit.php?id=$Fol>$Fol</a><td>" . $FThing['Name'] . " (" . $FactNames[$Fthing['Whose']] . " )";
             } else {
-              echo "<td>To:  " . fm_select($Syslocs,$T,'NewLocation');
+              echo "<tr><td>Taking Link:<td>" . fm_select($SelLinks,$T,'LinkId',0," style=color:" . $SelCols[$T['LinkId']] ,'',0,$SelCols);
+              if ($ll>0 && $LinkTypes[$ll]['Cost'] && $LOWho && $LOWho != $T['Whose'] ) { 
+                echo fm_checkbox('Pay',$T,'LinkPay') . " " . Credit() . $T['LinkCost'];
+              }
+              echo "<br>Update this normally";
+              if ($Lid > 0) {
+                echo "<td>To:  " . fm_select($NewSyslocs,$T,'NewLocation');
+              } else {
+                echo "<td>To:  " . fm_select($Syslocs,$T,'NewLocation');
+              }
             }
           } elseif ($T['PrisonerOf']) {
             // No Info provided
+          } else if ($Lid == LINK_FOLLOW) {
+            echo "<tr><td>Following:<td>";
+            $Fol = $T['NewSystemId'];
+            $FThing = Get_Thing($Fol);
+            echo "<a href=ThingEdit.php?id=$Fol>$Fol</a><td>" . $FThing['Name'] . " (" . $FactNames[$Fthing['Whose']] . " )";
           } else {
             echo "<tr><td>Taking Link:<td>" . fm_select($SelLinks,$T,'LinkId',0," style=color:" . $SelCols[$T['LinkId']] ,'',0,$SelCols);
             if ($ll && $LinkTypes[$ll]['Cost'] && $LOWho && $LOWho != $T['Whose'] ) { 
@@ -302,6 +323,34 @@ function Show_Thing(&$T,$Force=0) {
           echo "<input type=submit name=ACTION value='Cancel Move'>\n";
           $NeedOr = 1;
         }
+        if (GameFeature('Follow') && ($tprops & THING_CAN_MOVE )) {
+          global $db;
+          $ThisSys = $T['SystemId'];
+          $Eyes = EyesInSystem($Fid,$ThisSys,$Tid);
+          if ($Eyes) {
+            $OtherShips = $db->query("SELECT t.* FROM Things t, ThingTypes tt WHERE t.type=tt.id AND (tt.Properties&0x100)!=0 AND t.SystemId=$ThisSys AND Whose!=$Fid");
+            if ($OtherShips) {
+              $List = [];
+              $Colrs = [];
+              $LastWhose = 0;
+              while ($Thing = $OtherShips->fetch_array()) {
+                $Ttxt = SeeThing($Thing,$LastWhose,$Eyes,$Fid,0,0,0); 
+                if ($Ttxt) {
+                  $List[$Thing['id']] = $Ttxt;
+                  $Colrs[$Thing['id']] = $Fact_Colours[$Thing['Whose']];
+                }
+              }
+              if ($List) {
+                echo "<td>Or Follow:<td colspan=2>";
+                echo fm_select($List,$T,'FollowId',blank:1,Raw:1,BGColour:$Colrs);
+//            echo fm_radio('',$List,$_REQUEST,'ToFollow',tabs:0,colours:$Colrs, extra4:' onchange=this.form.submit()');
+              } else {
+                echo "<td>Nothing to follow";
+              }
+            }
+          }
+        }
+       
       }
 
       if (($Lid == 0) && (($tprops & THING_CAN_BETRANSPORTED)) && (($T['PrisonerOf'] == 0) || ($T['PrisonerOf'] == $FACTION['id']))) { 
@@ -340,55 +389,15 @@ function Show_Thing(&$T,$Force=0) {
           echo "<tr><td>No Transport Avail";
         }
       } else if (($Lid < -1) && (($tprops & THING_CAN_BETRANSPORTED))) {
-/*
-      if ($Lid == -2 || $Lid == -4) {
-        $Host = Get_Thing($T['NewSystemId']);
-        echo "<tr><td colspan=3>Loading on to: <b>" . $Host['Name'] . "</b> on the turn";
-    
-        if ($Lid == -4) {
-          echo " and then unloading ";
-        
-          $HostId = $T['NewSytemId'];
-          $H = Get_Thing($HostId);        
-          $Hlid = $H['LinkId'];
-          if ($Hlid > 0) {
-            $Dest = $H['NewSystemId'];
-          } else if ($Hlid == 0 || $Hlid == -2 || $Hlid == -4) {
-            $Dest = $H['SystemId'];
-          } else {
-            $HostId = $H['SystemId'];
-            $H = Get_Thing($HostId);        
-            $Hlid = $H['LinkId'];
-            if ($Hlid > 0) {
-              $Dest = $H['NewSystemId'];
-            } else if ($Hlid == 0) {
-              $Dest = $H['SystemId'];
-            } else {
-              $Dest = 0;
-            }
-          }
-          if ($Dest) {
-            $TN = Get_System($Dest);
-            $Locs = Within_Sys_Locs($TN);
-            echo "<b>" . $TN['Ref'] . " - " . $finallocs[$T['NewLocation']] . "</b> "; 
-          }
-        }
-//to what
 
-      } else {        
-//        $Conflict = 0; 
-//        $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
-//        if ($Conf) $Conflict = $Conf[0]['Conflict'];
-*/
-
-        if ($Lid == -2)  if ($GM || $Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ) echo "<input type=submit name=ACTION value='Unload on Turn'>\n";
-//      }
+        if ($Lid == LINK_BOARDING)  
+          if ($GM || $Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ) echo "<input type=submit name=ACTION value='Unload on Turn'>\n";
      
-        if ($Lid == -2) { 
+        if ($Lid == LINK_BOARDING) { 
           echo "<input type=submit name=ACTION value='Cancel Load'>\n";
-        } else if ($Lid == -3) { 
+        } else if ($Lid == LINK_UNLOAD) { 
           echo "<input type=submit name=ACTION value='Cancel Unload'>\n";
-        } else if ($Lid == -4) { 
+        } else if ($Lid == LINK_LOAD_AND_UNLOAD) { 
           echo "<input type=submit name=ACTION value='Cancel Load and Unload'>\n";
         }
       }
@@ -405,8 +414,8 @@ function Show_Thing(&$T,$Force=0) {
   echo "<tr>" . fm_textarea('Notes',$T,'Notes',8,2);
   echo "<tr>" . fm_textarea('Named Crew',$T,'NamedCrew',8,2);
   
-  $Have = Get_Things_Cond(0," (LinkId=-1 OR LinkId=-3) AND SystemId=$tid ");
-  $Having = Get_Things_Cond(0," (LinkId=-2 OR LinkId=-4) AND NewSystemId=$tid ");
+  $Have = Get_Things_Cond(0," (LinkId=-1 OR LinkId=-3) AND SystemId=$Tid ");
+  $Having = Get_Things_Cond(0," (LinkId=-2 OR LinkId=-4) AND NewSystemId=$Tid ");
   
   if ($Have || $Having) {
     echo "<tr><td>Carrying:<td colspan=6>Note: To Unload after moving PLEASE put the move order in for the transport first.<br>";
@@ -503,7 +512,7 @@ function Show_Thing(&$T,$Force=0) {
   }
   if ($tprops & THING_HAS_DISTRICTS) {
     $DTs = Get_DistrictTypeNames();
-    $Dists = Get_DistrictsT($tid);
+    $Dists = Get_DistrictsT($Tid);
 
     $NumDists = count($Dists);
     $dc=0;
@@ -520,7 +529,7 @@ function Show_Thing(&$T,$Force=0) {
       };
 
 
-      echo "<tr><td>Add District Type<td>" . fm_Select($DTs, NULL , 'Number', 1,'',"DistrictTypeAdd-$tid");
+      echo "<tr><td>Add District Type<td>" . fm_Select($DTs, NULL , 'Number', 1,'',"DistrictTypeAdd-$Tid");
       echo fm_number("Max Districts",$T,'MaxDistricts');
       echo fm_number(($T['ProjHome']?"<a href=ProjHomes.php?id=" . $T['ProjHome'] . ">Project Home</a>":"Project Home"),$T,'ProjHome');
 
@@ -552,7 +561,7 @@ function Show_Thing(&$T,$Force=0) {
 //    $MTNs = [];
 //    foreach($DTs as $M) $MTNs[$M['id']] = $M['Name'];
     $MTNs = Get_Valid_Modules($T);
-    $Mods = Get_Modules($tid);
+    $Mods = Get_Modules($Tid);
 
     $NumMods = count($Mods);
     $dc=0;
@@ -580,7 +589,7 @@ function Show_Thing(&$T,$Force=0) {
           $T['SensorLevel'] = $D['Level'];
         } else if ($D['Type'] == 9) $T['NebSensors'] = $D['Number'];
       }
-      echo "<tr><td>Add Module Type<td>" . fm_Select($MTNs, NULL , 'Number', 1,'',"ModuleTypeAdd-$tid");
+      echo "<tr><td>Add Module Type<td>" . fm_Select($MTNs, NULL , 'Number', 1,'',"ModuleTypeAdd-$Tid");
       echo fm_number1("Max Modules",$T,'MaxModules','',' class=Num3 ');
       if ($tprops & THING_HAS_CIVSHIPMODS) {
 //        echo fm_number1("Deep Space",$T,'HasDeepSpace');
@@ -694,7 +703,7 @@ function Show_Thing(&$T,$Force=0) {
 
     case 'Colonise': // Colonise
       if ((($Moving || $tprops & THING_HAS_CIVSHIPMODS) == 0 ) ) continue 2;
-      if (!Get_ModulesType($tid,10)) continue 2;
+      if (!Get_ModulesType($Tid,10)) continue 2;
 
       $PlTs = Get_PlanetTypes();
       $Ps = Get_Planets($N['id']);
@@ -763,7 +772,7 @@ function Show_Thing(&$T,$Force=0) {
       continue 2; // NOt yet
       
     case 'Establish Embassy': // Establish Embassy
-      if (!Get_ModulesType($tid,22) || empty($N) ) continue 2;  // Check if have Embassy & at homeworld
+      if (!Get_ModulesType($Tid,22) || empty($N) ) continue 2;  // Check if have Embassy & at homeworld
       if (!isset($N['id'])) continue 2;
       if (Get_Things_Cond($Fid,"Type=" . $TTNames['Embassy'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
       $Facts = Get_Factions();
@@ -888,7 +897,7 @@ function Show_Thing(&$T,$Force=0) {
       
     case 'Build Planetary Mine': // Zabanian special
       if ((($Moving || $tprops & THING_HAS_CIVSHIPMODS) == 0 ) ) continue 2;
-      if (!Get_ModulesType($tid,25)) continue 2;
+      if (!Get_ModulesType($Tid,25)) continue 2;
       break;
     
     case 'Transfer':
@@ -1037,7 +1046,7 @@ function Show_Thing(&$T,$Force=0) {
       $DTs = Get_DistrictTypes();
       foreach ($DTs as $D) if ($D['Props'] &1) $PrimeMods[$D['id']] = $D['Name'];
       echo "<br>District to Establish:" . fm_select($PrimeMods,$T,'Dist1');
-      if (Get_ModulesType($tid,27)) echo "<br>Second District (must be different):" .fm_select($PrimeMods,$T,'Dist2');
+      if (Get_ModulesType($Tid,27)) echo "<br>Second District (must be different):" .fm_select($PrimeMods,$T,'Dist2');
       $ProgShow = 1;
       $Cost = -1;
       break;
@@ -1224,6 +1233,12 @@ function Show_Thing(&$T,$Force=0) {
       if (empty($LLCols[$T['Dist1']])) $T['Dist1'] = 0;
 //var_dump($T['Dist1'],$LLMenu,$LLCols);
       echo fm_select($LLMenu,$T,'Dist1',0," style=color:" . $LLCols[$T['Dist1']],'',0,$LLCols ) . " to: " . fm_select($Systems,$T,'Dist2');
+      $factor = 1;
+      if (empty($T['Dist2'])) $T['Dist2'] = 1;
+//      if (Has_Trait($Who,"Grow Modules") && ($T['Dist2'] != 1)) {
+//        echo "<br>" . fm_number('Strength',$T,'Dist2');
+// WORK IN PROGRESS
+
       $ProgShow = 1;
       if ($T['Dist1']) {
         $LL = $LinkLevels[$T['Dist1']];
@@ -1383,10 +1398,32 @@ function Show_Thing(&$T,$Force=0) {
       break;
       
     case 'Link Repair':
+      if (empty($T['Dist2'])) $T['Dist2'] = 1;
+      $factor = 1;
       echo "<br>Link to Repair: " . fm_select($SelLinks,$T,'Dist1',0," style=color:" . $SelCols[$T['Dist1']] ,'',0,$SelCols) . " Refresh after selecting.";
+      if (Has_Trait($Who,"Grow Modules") && ($T['Dist2'] != 1)) {
+        $Link = Get_Link($T['Dist1']);
+        $LL = $LinkLevels[$T['Dist1']];
+        $LinkRes = GameFeature('LinkResource',0);
+        if ($LinkRes && $Link['Level'] != $T['Dist2']) {
+          AddCurrencies();
+          $Cur = 0;
+          foreach ($Currencies as $Ci => $C) if ( $C == $LinkRes) $Cur = $Ci;
+          if ( $T['Progress'] == 0) {
+            if ($Faction["Currency" . (6 - $Cur)] >= ($xtra = $LL['MakeCost']*($Link['Level'] - $T['Dist2']))) {
+              echo "Will use " . $xtra . " $LinkRes<br>";
+            } else {
+              echo "<span class=Err>Warning needs more $LinkRes than you have </span>";
+            }
+          }       
+        echo "<br>" . fm_number('Strength',$T,'Dist2');
+        }
+      } else {
+        $factor = 2;
+      }
       $ProgShow = 1;
       $LLevel = ($T['Dist1'] ?$Links[$T['Dist1']]['Level']:1);
-      $Acts = $PTNs['Link Repair']['CompTarget']*$LLevel;
+      $Acts = $PTNs['Link Repair']['CompTarget']*$LLevel*$T['Dist2']*$factor;
       break;
       
     case 'Collaborative DSC':
@@ -1447,7 +1484,8 @@ function Show_Thing(&$T,$Force=0) {
   if (!$GM && ($tprops & THING_CAN_BE_CREATED)) echo "<input type=submit name=ACTION value='Delete'>";
   if ($GM || empty($Fid)) {
     if (Access('God')) {
-      echo "<h2><a href=ThingList.php>Back to Thing list</a> &nbsp; <input type=submit name=ACTION value=Duplicate> <input type=submit name=ACTION value='GM Recalc'></h2>";
+      echo "<h2><a href=ThingList.php>Back to Thing list</a> &nbsp; <input type=submit name=ACTION value=Duplicate> " .
+           "<input type=submit name=ACTION value='GM Recalc'></h2>";
     }
   } else {
     echo "<h2><a href=PThingList.php?id=$Fid>Back to Thing list</a></h2>";

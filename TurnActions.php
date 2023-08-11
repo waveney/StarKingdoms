@@ -16,7 +16,7 @@
   
   $Stages = ['Check Turns Ready', 'Spare', 'Start Turn Process', 
              'Save All Locations', 'Remove Unsupported Minefields', 'Cash Transfers', 'Spare',
-             'Spare', 'Pay For Stargates', 'Spare', 'Scientific Breakthroughs', 
+             'Follow', 'Pay For Stargates', 'Spare', 'Scientific Breakthroughs', 
              'Start Projects', 'Spare', 'Spare', 'Instuctions', 
              'Instuctions Stage 2', 'Clear Paid For', 'Agents Start Missions', 'Pay For Rushes', 
              'Spare', 'Economy', 'Spare', 'Direct Moves', 
@@ -214,6 +214,42 @@ function CashTransfers() {
   }
   
   GMLog("All Cash trasfered complete.<br>\n");
+  return 1;
+}
+
+function Follow() {
+  // find everything with a follow order
+  // Do follows if possible, if not set again needed
+  // If again needed and depth < Limit repeat
+  $Factions = Get_Factions();  
+  $Depth = $Again = 0;
+  do {
+    $Again = 0;
+    $Things = Get_Things_Cond(0," LinkId=" . LINK_FOLLOW);
+    foreach ($Things as $T) {
+      $Folid = $T['NewSystemId'];
+      $Fol = Get_Thing($Folid);
+      if ($Fol) {
+        if ($Fol['LinkId'] >= 0) {
+          $T['LinkId'] = $Fol['LinkId'];
+          $T['LinkCost'] = $Fol['LinkCost'];
+          $T['LinkPay'] = 1;
+          $T['NewSystemId'] = $Fol['NewSystemId'];
+          Put_Thing($T);
+          GMLog($T['Name'] . " ( " . $Factions[$T['Whose']]['Name'] . " ) is following " . $Fol['Name'] . " ( " . $Factions[$Fol['Whose']]['Name'] . " )" );
+        } else {
+          $Again = 1;
+        }
+      } else {
+          $T['LinkId'] = 0;     
+      }
+    }
+  } while ($Again && $Depth++ < 10);
+  
+  if ($Again) {
+    GMLog("Follows aborted after $Depth");
+  }
+  GMLog("Follows evaluated.<br>\n");
   return 1;
 }
 

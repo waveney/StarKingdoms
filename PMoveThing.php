@@ -173,6 +173,36 @@ function Node_Show($Fid,$Tid, $Lid, $N, $url='') {
   echo "<img src=cache/Movemap$Fid.png?$Rand maxwidth=100% usemap='#skmovemap'>";
   readfile("cache/Movemap$Fid.map");
   
+  if (GameFeature('Follow')) {
+    $Eyes = EyesInSystem($Fid,$ThisSys,$Tid);
+    $Facts = Get_Factions();
+    if ($Eyes) {
+      $OtherShips = $db->query("SELECT t.* FROM Things t, ThingTypes tt WHERE t.type=tt.id AND (tt.Properties&0x100)!=0 AND t.SystemId=$ThisSys AND Whose!=$Fid");
+      if ($OtherShips) {
+        $List = [];
+        $Colrs = [];
+        $LastWhose = 0;
+        while ($Thing = $OtherShips->fetch_array()) {
+          $Ttxt = SeeThing($Thing,$LastWhose,$Eyes,$Fid,0,0,0); //$Thing['Name'] type Class, whose SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0)
+          if ($Ttxt) {
+            $List[$Thing['id']] = $Ttxt;
+            $Colrs[$Thing['id']] = $Facts[$Thing['Whose']]['MapColour'];
+          }
+        }
+        if ($List) {
+          echo "<P><h2>Or Follow:</h2>";
+          echo "<form method=post action=PThingList.php?ACTION=FOLLOW&T=$Tid>";
+//          echo fm_select($List,$_REQUEST,'ToFollow',blank:1,Raw:1,optclass:$Colrs);
+          echo fm_radio('',$List,$_REQUEST,'ToFollow',tabs:0,colours:$Colrs, extra4:' onchange=this.form.submit()');
+          //$extra='',$tabs=1,$extra2='',$field2='',$colours=0,$multi=0,$extra3='',$extra4='')
+//          echo "<input type=submit value=Follow></form>";
+        } else {
+          echo "<h2>Nothing to follow</h2>";
+        }
+      }
+    }
+  }
+  
   echo "<h2><a href=PThingList.php?ACTION=CANCELMOVE&T=$Tid>Cancel Move Order</a></h2>\n"; 
   dotail();
   

@@ -721,7 +721,56 @@
       } else {
         echo "No ships are currently near the yard that need repairing<p>";
       }
+      break;
 
+  case 'Training Camp':
+      echo "<h2>Re-equip and Reinforce Army</h2>"; 
+      echo "You can only do this to armies on the same planet.<p>";
+      $HSys = $Homes[$Hi]['SystemId'];
+      $HLoc = $Homes[$Hi]['WithinSysLoc'];
+      $TTs = Get_ThingTypes();
+      $Things = Get_Things_Cond($Fid," SystemId=$HSys AND BuildState=3 "); // Get all things at xx then filter  by type == Ship & WithinSysLoc
+      $RepShips = [];
+      $Level1 = 0;
+      $Count = 0;
+      foreach ($Things as $T) {
+        if ($TTs[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES) {
+          if ($T['WithinSysLoc'] == $HLoc ) {
+            $RepShips[$T['id']] = $T['Name'] . " - level " . $T['Level'];
+            if ($T['Level'] == 1) $Level1++;
+            $Count++;
+          }
+        }
+      }
+
+      
+      $pc = Proj_Costs(1);
+      if ($Count) {
+        if ($Count == 1) {
+          foreach ($RepShips as $tid=>$Name) { 
+            echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Re-equip and Reinforce'] .
+                "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=$tid" .
+                "&Name=" . base64_encode("Re-equip and Reinforce " . $Name ) . "&L=1&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .  
+                "Refit and Repair $Name $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+          }
+        } else if ($Level1 < 2) {
+          echo "</form><form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Re-equip and Reinforce'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT'>";
+          echo "Select the army to Re-equip and Reinforce: " . fm_select($RepShips, $_REQUEST, 'Sel', 0) ;
+          echo "<button class=projtype type=submit>Re-equip and Reinforce</button></form>";
+        } else {
+          echo "</form><form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Re-equip and Reinforce'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT'>";
+          echo "You may select <b>2</b> level 1 Army or 1 Army of level 2 or more. (For PCs and Linux hold down Ctrl to select 2nd army)<p>";
+          echo "Select the ship to Re-equip and Reinforce: " . fm_select($RepShips, $_REQUEST, 'Sel', 0, ' multiple ','Sel2[]') ;
+          echo "<button class=projtype type=submit>Re-equip and Reinforce</button><form>";
+        }
+          
+      } else {
+        echo "No armies are currently there<p>";
+      }
+
+
+      break;
+      
   
   
     }  

@@ -134,6 +134,17 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
       Put_Thing($T);      
       break;
     
+    case 'FOLLOW':
+      $Tid = $_REQUEST['T'];
+      $T = Get_Thing($Tid);
+      $Follow = $_REQUEST['ToFollow'] ?? 0;
+      if ($Follow) {
+        $T['LinkId'] = LINK_FOLLOW;
+        $T['NewSystemId'] = $Follow;
+        Put_Thing($T);
+      }
+      break;
+    
     
     
     }
@@ -281,11 +292,11 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
       echo "<td>Direct<td>";
       echo "<td>" . ($T['NewSystemId'] == 0? "" : $Systems[$T['NewSystemId']]); 
     } else {
-      echo "<td>" . ($T['LinkId'] >= 0 ? (empty($Systems[$T['SystemId']]) ?'': $Systems[$T['SystemId']]) : 'On Board');
+      echo "<td>" . ((($T['LinkId'] >= 0) || ($T['LinkId'] == LINK_FOLLOW )) ? (empty($Systems[$T['SystemId']]) ?'': $Systems[$T['SystemId']]) : 'On Board');
       echo "<td>";
       if ($T['Instruction']) echo $ThingInstrs[abs($T['Instruction'])];
       if (($T['Instruction'] == 0 || $T['Instruction'] == 5 ) && (($Props & THING_CAN_MOVE) && ( $T['BuildState'] == 3))) { 
-        if ($T['LinkId'] >=0 && ($T['CurHealth'] > 0 || ($Props & THING_HAS_HEALTH) ==0)) {
+        if ( (($T['LinkId'] >=0 ) || ($T['LinkId'] == LINK_FOLLOW) )&& ($T['CurHealth'] > 0 || ($Props & THING_HAS_HEALTH) ==0)) {
           if ($Faction['TurnState'] == 1) {
             echo " <a href=PMoveThing.php?id=" . $T['id'] . ">Move</a>";
           } else {
@@ -299,11 +310,13 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
             } else {
               echo "<td> ? ";
             }
+          } elseif ($T['LinkId'] == LINK_FOLLOW ) {
+            echo "<td>Following<td>?";
           } else {
-            echo "<td><td>";
+            echo "<td>" . $T['LinkId'] . "<td>";
           }
         } else {
-          echo "<td><td>";
+          echo "<td>a<td>";
         }
       } else {
         if ($GM && ($Props & THING_HAS_HEALTH) && ($Props & THING_CAN_BE_SPLATED) && ($T['CurHealth']>0)) {

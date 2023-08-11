@@ -153,6 +153,11 @@
       }
       exit;
 
+    case 'FollowId':
+      $N = Get_Thing($id);    
+      $N['NewSystemId'] = $Value;
+      $N['LinkId'] = -7;
+      echo 'FORCELOADCHANGE54321:NOW' . Put_Thing($N);      
     }
 
     $N = Get_Thing($id);
@@ -200,12 +205,13 @@
         }
       $N['TargetKnown'] = $Known; 
     } 
+    echo Put_Thing($N);
     if ($field == 'Type' || $field == 'Instruction' ) { // || $field == 'Level') {
       echo 'FORCELOADCHANGE54321:NOW';
     } else if ( $field == 'LinkId' ) {  //|| ($field == 'Name' && strlen($Value) < 2)) {
       echo 'FORCERELOAD54321:NOW';
     }
-    echo Put_Thing($N);
+
     exit;
   
   case 'FactTech' :

@@ -228,6 +228,7 @@ function New_Thing(&$T) {
       }
       break;
     
+    case 'Cancel Follow':
     case 'Cancel Move':
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
