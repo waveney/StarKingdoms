@@ -2582,7 +2582,7 @@ function ProjectsCompleted($Pass) {
           break;
         }
 
-      $H['Devastation'] = min(0,$H['Devastation']-2);
+      $H['Devastation'] = max(0,$H['Devastation']-2);
       Put_ProjectHome($H);
       TurnLog($Fid,"The has been Rebuilding and Repair on " . $PH['Name']);      
       break;
@@ -2725,7 +2725,7 @@ function InstructionsComplete() {
              TurnLog($T['Whose'], $T['Name'] . " Anomaly study on " . $A['Name'] . " has been completed - See sperate response from the GMs for what you get");
              GMLog($Facts[$Fid]['Name'] . " has completed anomaly study : <a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . 
                    "</a> has been completed - give them the reward.");
-             FollowUp($Fid,[$Fid]['Name'] . " has completed anomaly study : <a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . 
+             FollowUp($Fid,$Facts[$Fid]['Name'] . " has completed anomaly study : <a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . 
                    "</a> has been completed - give them the reward.");
              $T['ProjectId'] = 0;
            }

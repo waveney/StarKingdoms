@@ -27,7 +27,8 @@ function ValidateTurn() {
       $Tid = $P['ThingId'];
       if ($Tid == 0) {
         dostaffhead("Player Actions");
-        echo "<h2 class=Err>Warning - your project: <a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a> is level " . $P['Level'] . " trying to make an unknown thing</h2>\n";
+        echo "<h2 class=Err>Warning - your project: <a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a> is level " . $P['Level'] . 
+             " trying to make an unknown thing</h2>\n";
         $Valid = 0;               
         continue;
       }
@@ -36,8 +37,9 @@ function ValidateTurn() {
 
       if (empty($T)) {
         dostaffhead("Player Actions");
-        echo "<h2 class=Err>Warning - your project: <a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a> is level " . $P['Level'] . " trying to make an unknown thing</h2>\n";
-        $Valid = 0;               
+        echo "<h2 class=Err>Warning - your project: <a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a> is level " . $P['Level'] . 
+             " trying to make an unknown thing</h2>\n";
+        $Valid = 0;
       } else if ($P['Level'] != $T['Level']) {
         if ($P['Level'] < $T['Level']) {
           dostaffhead("Player Actions");
