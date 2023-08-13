@@ -538,7 +538,7 @@ function RefitRepair(&$T,$Save=1,$KeepTechLvl=0,$Other=0) {
   $Health = Calc_Health($T,$KeepTechLvl,$Other);
   Calc_Scanners($T);
   $T['CurHealth'] = $T['OrigHealth'] = $Health;
-  $T['Speed'] = $Engines*$Elvl/$T['Level'] +1;
+  $T['Speed'] =  (($TTypes[$T['Type']]['Properties']&THING_CAN_MOVE)? $Engines*$Elvl/$T['Level'] +1 :0);
   Put_Thing($T);
   return $Etxt;
 }

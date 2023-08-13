@@ -50,7 +50,7 @@ function New_Thing(&$T) {
       New_Thing($T);
       break;
        
-    case 'Create' : // Old code
+    case 'Create' : // From New Thing 
       if (!isset($_POST['SystemId'])) {
         echo "No System Given";
         New_Thing($_POST);
@@ -58,6 +58,8 @@ function New_Thing(&$T) {
       $_POST['GameId'] = $GAMEID;
       $_POST['NewSystemId'] = $_POST['SystemId'];
       $tid = Insert_db_post('Things',$T);
+      $T = Get_Thing($tid); // Re-read to get defaults
+      RefitRepair($T);
       $T['id'] = $tid;
        
       if ($T['Type'] == 6) { // Outpost
