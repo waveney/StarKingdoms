@@ -53,15 +53,20 @@
   }
   echo "</div>";
 
+ //     if (preg_match('/<div class=FullD hidden>/',$txt,$mtch)) {
+
+ //     }
     
   if (isset($_REQUEST['Turn'])) {
     $Turn = $_REQUEST['Turn'];
     $When = (($File == 'CouldC')? " at the end of " : " After Movement on ");
+    echo "<button class='floatright FullD' onclick=\"($('.FullD').toggle())\">Show Remains of Things</button>";
     echo "<h1>What Could I See $When Turn $Turn?</h1>";
     $html = file_get_contents("Turns/$GAMEID/$Turn/$File$Fid.html");
     $html = preg_replace('/Orders: .*?</',"<",$html);
     echo $html;
   } else {  
+    echo "<button class='floatright FullD' onclick=\"($('.FullD').toggle())\">Show Remains of Things</button>";
     echo "<h1>What Can I See Now?</h1>";
     echo WhatCanBeSeenBy($Fid);
   }

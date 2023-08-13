@@ -736,7 +736,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
           } else {
             $txt .= "<div>";
           }
-          if ($T['BuildState'] == 4) $txt .= "The remains of: ";
+          if ($T['BuildState'] >= 4) $txt .= "<div class=FullD hidden>The remains of: ";
         } else {
           $txt .= "<div>";
         }
@@ -804,7 +804,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
         $txt .= ")";
       }
       if ($Images) $txt .= "<br clear=all>\n";
-      if ($GM && $Div) $txt .= "</div>";
+      if ($Div) $txt .= "</div>";
       $LastWhose = $T['Whose'];
 // if ($T['id'] == 238) echo "Txt is:$txt<p>";
    return $txt;

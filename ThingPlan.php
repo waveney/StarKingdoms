@@ -221,6 +221,7 @@
       echo "<tr><th><b>Module type</b><th><b>Number</b><th><b>Slots per Module</b><th><b>Comments</b>";
       $Elvl = 1;
       $Engines = 0;
+      $Weapons = 0;
 
       foreach ($MTs as $Mti=>$Mtype) {
         if (isset($MTNs[$Mti])) {

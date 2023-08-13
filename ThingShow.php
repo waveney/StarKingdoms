@@ -182,7 +182,7 @@ function Show_Thing(&$T,$Force=0) {
         } elseif ($T['PrisonerOf']) {
           echo "<tr><td class=Err>Currently a Prisoner";
         } else {
-          echo "<tr><td>Current System:<td>" . (empty($N)? 'Unknown' : $N['Ref']) . "<td>" . $Syslocs[$T['WithinSysLoc']];    
+          echo "<tr><td>Current System:<td>" . (empty($N)? 'Unknown' : $N['Ref']) . "<td>" . ($Syslocs[$T['WithinSysLoc'] ?? 0] ?? 'Deep Space');    
         }
       } else if ($Lid == LINK_FOLLOW ) {
         $Fol = Get_Thing($T['NewSystemId']);
@@ -1458,7 +1458,9 @@ function Show_Thing(&$T,$Force=0) {
       } else {
         echo " Progress " . $T['Progress'] . ' / ' . $T['ActionsNeeded'];
       }
-      if ($Cost>0 && ($T['Progress'] == 0)) echo " - Will cost " . Credit() . fm_number0('',$T,'InstCost') . " this turn";
+      if ($Cost>0 && ($T['Progress'] == 0)) {
+        echo " - Will cost " . Credit() . ($GM?fm_number0('',$T,'InstCost'):$T['InstCost']) . " this turn";
+      }
       if ($T['Instruction'] != $T['CurInst']) {
         $T['CurInst'] = $T['Instruction'];
         $T['Progress'] = 0;

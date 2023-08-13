@@ -313,10 +313,10 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
           } elseif ($T['LinkId'] == LINK_FOLLOW ) {
             echo "<td>Following<td>?";
           } else {
-            echo "<td>" . $T['LinkId'] . "<td>";
+            echo "<td><td>";
           }
         } else {
-          echo "<td>a<td>";
+          echo "<td><td>";
         }
       } else {
         if ($GM && ($Props & THING_HAS_HEALTH) && ($Props & THING_CAN_BE_SPLATED) && ($T['CurHealth']>0)) {
