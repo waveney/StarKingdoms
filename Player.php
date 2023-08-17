@@ -5,9 +5,15 @@
   include_once("PlayerLib.php");
   global $PlayerState,$PlayerStates;
 
-function ValidateTurn() {
+function ValidateTurn($For = 0) {
   global $FACTION,$GAME;
-  $Fid = $FACTION['id'];
+  if ($For) {
+    $Fid = $For;
+    $Fact = Get_Faction($Fid);
+  } else {
+    $Fid = $FACTION['id'];
+    $Fact = $FACTION;
+  }
   $Turn = $GAME['Turn'];
   $Valid = 1;
 
@@ -55,7 +61,117 @@ function ValidateTurn() {
       }
     }
   }
-  
+ 
+ /* 
+  $Things = Get_Things_Cond($Fid,"Instruction!=0") {
+  foreach ($Things as $T) {
+    switch ($T['Instruction']) {
+    switch ($ThingInstrs[abs($T['Instruction'])]) {
+      case 'Colonise':
+        $Prog = Has_Tech($T['Whose'], 'Planetary Construction');
+        $Mods = Get_ModulesType($Tid, 10);
+        if ($Prog*$Mods[0]['Number'] == 0) {
+          GMLog("Colonisation by <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "Has zero progress - Tell Richard");
+          FollowUp($T['Whose'],"Colonisation by <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "Has zero progress - Tell Richard");
+        }
+        break;
+      case 'Make Outpost':
+      case 'Make Asteroid Mine':
+      case 'Make Minefield':
+      case 'Make Orbital Repair Yard':
+      case 'Build Space Station':
+      case 'Expand Space Station' :
+      case 'Make Adbanced Deep Space Sensor':
+      case 'Make Deep Space Sensor':
+      case 'Make Advanced Asteroid Mine':
+      case 'Dismantle Stargate':
+        // specified?
+      case 'Build Stargate':
+      case 'Make Planet Mine':
+      case 'Construct Command Relay Station':
+      case 'Repair Command Node': // Not coded yet
+      case 'Make Something': 
+      case 'Make Warpgate':
+      case 'Link Repair':
+        $Prog = Has_Tech($T['Whose'],'Deep Space Construction');
+        $Mods = Get_ModulesType($Tid, 3);
+        $ProgGain = $Prog*$Mods[0]['Number'];
+        GMLog("$ProgGain progress on " . $ThingInstrs[abs($T['Instruction'])] . " for " . $Facts[$T['Whose']]['Name'] . ":" . $T['Name']);
+
+
+        $T['Progress'] = min($T['ActionsNeeded'],$T['Progress']+$ProgGain);
+        Put_Thing($T);
+        break;
+        
+      case 'Collaborative DSC': // Dist1 has Thing number being helped
+        $Prog = Has_Tech($T['Whose'],'Deep Space Construction');
+        $Mods = Get_ModulesType($Tid, 3);
+        $ProgGain = $Prog*$Mods[0]['Number'];
+        $HT = Get_Thing($T['Dist1']);
+        if ($HT && $HT['Instruction']) {
+          $HT['Progress'] = min($HT['ActionsNeeded'],$HT['Progress']+$ProgGain);        
+          GMLog("$ProgGain progress on " . $ThingInstrs[abs($HT['Instruction'])] . " for " . $Facts[$HT['Whose']]['Name'] . ":" . $HT['Name']);
+          TurnLog($HT['Whose'],$T['Name'] . " did $ProgGain towards completing " . $ThingInstrs[abs($HT['Instruction'])] . " by " . $HT['Name']);
+          TurnLog($T['Whose'],$T['Name'] . " did $ProgGain towards completing " . $ThingInstrs[abs($HT['Instruction'])] . " by " . $HT['Name']);
+
+          Put_Thing($HT);
+        }
+        break;      
+        
+      case 'Analyse Anomaly':
+        $Aid = $T['ProjectId'];
+        $Fid = $T['Whose'];
+        if ($Aid) {
+          $A = Get_Anomaly($Aid);
+          $FAs = Gen_Get_Cond('FactionAnomaly',"FactionId=$Fid AND AnomalyId=$Aid");
+          if ($FAs) {
+            $FA = $FAs[0];
+            $Pro = $T['Sensors']*$T['SensorLevel'];
+            $T['Progress'] = $FA['Progress'] = min($FA['Progress']+$Pro, $A['AnomalyLevel']);
+            Gen_Put('FactionAnomaly',$FA);
+            Put_Thing($T);
+            TurnLog($Fid,$T['Name'] . " did $Pro towards completing anomaly " . $A['Name'] . " now at " . $FA['Progress'] . " / " . $A['AnomalyLevel'],$T);
+          } else {
+            TurnLog($Fid, $T['Name'] . " is supposed to be analysing an anomaly - but there isn't one selected",$T);
+          }
+        } else { // No anomaly is there one here?
+          $Anoms = Gen_Get_Cond('Anomalies',"SystemId=" . $T['SystemId']);
+          if ($Anoms) {
+            foreach($Anoms as $A) {
+              $Aid = $A['id'];
+              $FAs = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
+              if (empty($FAs[0]['id'])) continue;
+              $FA = $FAs[0];
+              if ($FA['Progress'] < $A['AnomalyLevel']) {
+                $Pro = $T['Sensors']*$T['SensorLevel'];
+                $T['Progress'] = $FA['Progress'] = min($FA['Progress']+$Pro, $A['AnomalyLevel']);
+                Gen_Put('FactionAnomaly',$FA);
+                $T['ProjectId'] = $Aid;
+                Put_Thing($T);
+                TurnLog($Fid,$T['Name'] . " did $Pro towards completing anomaly " . $A['Name'] . " now at " . $FA['Progress'] . " / " . $A['AnomalyLevel'],$T);
+              }
+              break 2;
+            }
+          }
+          TurnLog($Fid,$T['Name'] . " is supposed to be analysing an anomaly - but there isn't one",$T);                    
+        }
+        break;
+        
+      case 'Salvage':
+        $Prog = Has_Tech($T['Whose'],'Salvage Rigs');
+        GMLog("$Prog progress on " . $ThingInstrs[abs($T['Instruction'])] . " for " . $Facts[$T['Whose']]['Name'] . ":" . $T['Name']);
+        $T['Progress'] = min($T['ActionsNeeded'],$T['Progress']+$Prog);
+        Put_Thing($T);
+        break;
+    
+      default: 
+        break;
+     }
+   }
+    
+    }
+  }
+  */
   if (Has_Trait($Fid, 'This can be optimised')) {
     $Ws = Get_Worlds($Fid);
     $TTypes = Get_ThingTypes();

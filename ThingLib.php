@@ -689,9 +689,10 @@ function EyesInSystem($Fid,$Sid,$Of=0) { // Eyes 1 = in space, 2= sens, 4= neb s
 //var_dump($MyThings);
   foreach ($MyThings as $T) {
     if ($T['SeenTypeMask']) continue;
-    if (($Neb > 0) && ($T['NebSensors'] < $Neb)) continue;
+    $eye = $ThingTypes[$T['Type']]['Eyes'];
+    if (($Neb > 0) && ($T['NebSensors'] < $Neb) && (($eye&4 ==0)) continue;
     if ($T['PrisonerOf']) continue;
-    $Eyes |= $ThingTypes[$T['Type']]['Eyes'];
+    $Eyes |= $eye;
     if ($T['Sensors']) $Eyes |= 2;
     if ($T['NebSensors']) $Eyes != 4;
   }

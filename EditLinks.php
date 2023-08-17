@@ -9,7 +9,7 @@
   dostaffhead("Manage Planet Types");
 // var_dump($_REQUEST);exit;
 
-  $DT=Get_LinksGame((isset($_REQUEST['USAGE'])?' ORDER BY UseCount DESC':''));
+  $DT=Get_LinksGame((isset($_REQUEST['USAGE'])?' ORDER BY (UseCount/Weight) DESC':''));
   if (UpdateMany('Links','Put_Link',$DT,1,'','','Level',0))  $DT=Get_LinksGame();
 
   if (isset($_REQUEST['ACTION'])) {
@@ -45,7 +45,7 @@
   if (isset($_REQUEST['USAGE'])) {
     echo "<h2><a href=EditLinks.php>Sort by Link Id</a></h2>\n";
   } else {
-    echo "<h2><a href=EditLinks.php?USAGE>Sort by Usage</a></h2>\n";
+    echo "<h2><a href=EditLinks.php?USAGE>Sort by Wear</a></h2>\n";
   };
   
   echo "<form method=post action=EditLinks.php>";
@@ -59,7 +59,8 @@
 
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Status</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Weight</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Usage</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Usage</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Wear</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Mined 1</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Mined 2</a>\n";
 
@@ -75,6 +76,7 @@
     echo "<td>" . fm_select($LinkStates,$D,'Status',0,'',"Status$i");
     echo fm_number1('',$D,'Weight','','',"Weight$i");
     echo fm_number1('',$D,'UseCount','','',"UseCount$i");
+    echo "<td>" . ($D['UseCount']/$D['Weight']);
     echo fm_number1('',$D,'MinedA','','',"MinedA$i");
     echo fm_number1('',$D,'MinedB','','',"MinedB$i");
 //    echo fm_number1("",$D,'Level','','',"Level$i");
