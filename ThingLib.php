@@ -690,7 +690,7 @@ function EyesInSystem($Fid,$Sid,$Of=0) { // Eyes 1 = in space, 2= sens, 4= neb s
   foreach ($MyThings as $T) {
     if ($T['SeenTypeMask']) continue;
     $eye = $ThingTypes[$T['Type']]['Eyes'];
-    if (($Neb > 0) && ($T['NebSensors'] < $Neb) && (($eye&4 ==0)) continue;
+    if (($Neb > 0) && ($T['NebSensors'] < $Neb) && (($eye&4 ==0))) continue;
     if ($T['PrisonerOf']) continue;
     $Eyes |= $eye;
     if ($T['Sensors']) $Eyes |= 2;
@@ -734,10 +734,11 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
         if (($T['BuildState'] == 4) || (($T['Type'] == 23) && $GM)) { // Named Chars
           if ($GM) {
             $txt .= "<div class=FullD hidden>";
+          } elseif ($T['BuildState'] >= 4) {
+            $txt .= "<div class=FullD hidden>The remains of: ";
           } else {
             $txt .= "<div>";
           }
-          if ($T['BuildState'] >= 4) $txt .= "<div class=FullD hidden>The remains of: ";
         } else {
           $txt .= "<div>";
         }
