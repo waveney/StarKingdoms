@@ -1871,6 +1871,12 @@ function ShipMovements($Agents=0) {
   
   foreach ($Things as $T) {
     if ($T['BuildState'] <2 || $T['BuildState'] > 3 || $T['LinkId'] <= 0 || $T['Whose']==0 || $T['CurHealth']==0) continue;
+/*    if ($Agents == 0 && ($T['LinkId'] <= 0) {
+      if (($TTypes[$T['Type']]['Properties'] & THING_CAN_BETRANSPORTED)) {
+        
+      }
+      continue;
+    }*/
     if (( $Agents == 0 &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER)) || 
         ( $Agents &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER) ==0 ) ) continue;
 

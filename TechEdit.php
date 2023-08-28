@@ -64,7 +64,11 @@
   echo "Properties: 1=Ground Combat, 2=Space Combat, 4=Espionage, 8=Hide<p>\n";
   echo "<form method=post id=mainform enctype='multipart/form-data' action=TechEdit.php>";
   echo "<div class=tablecont><table width=90% border class=SideTable>\n";
-  if ($Tid) Register_AutoUpdate('Tech',$Tid);
+  if ($Tid) {
+    Register_AutoUpdate('Tech',$Tid);
+  } else {
+    $T['Cat'] = 2;
+  }
   echo fm_hidden('id',$Tid);
 
   echo "<tr><td>Id:$Tid<td>" .  fm_select($Tech_Cats,$T,'Cat') . fm_text("Name",$T,'Name',2);

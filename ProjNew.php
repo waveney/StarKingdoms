@@ -104,6 +104,7 @@
 //var_dump($PTi);
   
   $ThingTypes = Get_ThingTypes();
+  $GM = Access('GM');
   
   $DiCall = $_REQUEST['Di'];
   $Di = abs($DiCall);
@@ -221,6 +222,7 @@
           
 //var_dump($DTz);
 // TODO bug if you already have that level in the pipeline - Add check to Turns Ready          
+            if (($Lvl >= $DTz['MaxNum']) && (!$GM)) continue;
             $Lvl++;
             $pc = Proj_Costs($Lvl);
             if (Has_Trait($Fid,"On the Shoulders of Giants")) {

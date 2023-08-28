@@ -24,6 +24,7 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Properties</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Enabling Tech</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Gate</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Max Number</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Notes</a>\n";
   echo "</thead><tbody>";
   foreach($DT as $D) {
@@ -32,12 +33,14 @@
     echo fm_number1('',$D,'Props','','',"Props$i");
     echo "<td>" . fm_select($TechNames,$D,'BasedOn',1,'',"BasedOn$i");
     echo fm_text1("",$D,'Gate',1,'','',"Gate$i");
+    echo fm_number1('',$D,'MaxNum','','',"MaxNum$i");
     echo fm_text1('',$D,'Notes',1,'','',"Notes$i");
   }
   echo "<tr><td><td><input type=text name=Name0 >";
   echo "<td><input type=number name=Props0 >";
   echo "<td>" . fm_select($TechNames,$D,'BasedOn',1,'',"BasedOn0");
   echo "<td><input type=text name=Gate0 >";
+  echo "<td><input type=number name=MaxNum0 >";
   echo "<td><input type=text name=Notes0 >";
   echo "</table></div>\n";
   echo "<input type=submit name=Update value=Update>\n";

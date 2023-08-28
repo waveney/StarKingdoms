@@ -123,7 +123,7 @@ function Player_Page() {
     echo "<p><li><a href=WhatCanIC.php>What Things can I See?</a>\n";
     echo "<li><a href=WorldList.php>Worlds and Colonies</a> - High Level info only\n";  
     echo "<li><a href=NamePlaces.php>Name Places</a> - Systems, Planets etc\n";      
-    echo "<li><a href=PScanList.php>Systems and Scans</a>\n";      
+//    echo "<li><a href=PScanList.php>Systems and Scans</a>\n";      
     echo "<li><a href=PAnomalyList.php>Anomalies that have been seen</a><p>\n";      
     echo "<li><a href=ProjDisp.php>Projects</a>\n";
     echo "<li><a href=PThingList.php>List of Things</a> - List of Things (Ships, Armies, Agents, Space stations etc)";
