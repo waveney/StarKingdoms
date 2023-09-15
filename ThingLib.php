@@ -787,7 +787,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
       if ($T['PrisonerOf']) {
         if ($GM || (isset($FACTION['id']) && $T['PrisonerOf'] == $FACTION['id'])) {
           $Fact = Get_Faction($T['PrisonerOf']);
-          $txt .= ", Prisoner Of: <span style='background:" . $Fact['MapColour'] . ">" . $Fact['Name'] . "</span>";
+          $txt .= ", Prisoner Of: <span style='background:" . $Fact['MapColour'] . "'>" . $Fact['Name'] . "</span>";
         }
       } else if ($GM && !empty($T['Orders'])) $txt .= ", <span style='background:#ffd966;'>Orders: " . $T['Orders'] . "</span>";
       if ($Images && !empty($T['Image'])) $txt .= " <img valign=top src=" . $T['Image'] . " height=100> ";

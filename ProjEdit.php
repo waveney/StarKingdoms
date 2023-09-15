@@ -219,7 +219,8 @@
   if ($when > 0 || $GM )  {
     echo "<input type=submit name=ACTION value=Delete> ";
     if ($PProps & 128) {
-      if (($P['Type'] == 1) && ($P['Level'] == $DistTypes[$P['ThingType']]['MaxNum'] ) && !$GM) {
+      if (($P['Type'] == 1) && ($P['Level'] >= $DistTypes[$P['ThingType']]['MaxNum'] )) {
+        if ($GM) echo "Not allowed (GM only): <input type=submit name=ACTION value='Raise 1 Level'>";
       } else {
         echo "<input type=submit name=ACTION value='Raise 1 Level'>";
       }

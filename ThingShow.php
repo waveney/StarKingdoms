@@ -842,7 +842,7 @@ function Show_Thing(&$T,$Force=0) {
 
     case 'Make Deep Space Sensor':
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Deep Space Sensors') || empty($N) ) continue 2;
-      if (Get_Things_Cond(0,"Type=" . $TTNames['Deep Space Sensor'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
+//      if (Get_Things_Cond(0,"Type=" . $TTNames['Deep Space Sensor'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
       break;
 
     case 'Build Stargate':
@@ -931,7 +931,7 @@ function Show_Thing(&$T,$Force=0) {
 
     case 'Make Advanced Deep Space Sensor':
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Advanced Deep Space Sensors') || empty($N) ) continue 2;
-      if (Get_Things_Cond(0,"Type=" . $TTNames['Deep Space Sensor'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one //???
+//      if (Get_Things_Cond(0,"Type=" . $TTNames['Deep Space Sensor'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one //???
       break;
 
     case 'Salvage':
@@ -989,7 +989,9 @@ function Show_Thing(&$T,$Force=0) {
 // var_dump($PTNs);
     
     $ProgShow = $Cost = $Acts = 0;
-    echo "<tr>" . fm_radio('Special Instructions', $SpecOrders,$T,'Instruction','',1,' colspan=6 ','',$ThingInclrs);// . " under development don't use yet";
+    echo "<tr>" . fm_radio('Special Instructions', $SpecOrders,$T,'Instruction','',1,' colspan=6 ','',$ThingInclrs);
+    
+    if ($Moving && $HasDeep) echo " Note <span class=Red>Moving</span>, so no DSC instructions are show";
     switch ($ThingInstrs[abs($T['Instruction'])]) {
     case 'None': // None
       $T['Dist1'] = $T['Dist2'] = 0;

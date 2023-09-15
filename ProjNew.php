@@ -222,7 +222,10 @@
           
 //var_dump($DTz);
 // TODO bug if you already have that level in the pipeline - Add check to Turns Ready          
-            if (($Lvl >= $DTz['MaxNum']) && (!$GM)) continue;
+            if (($Lvl >= $DTz['MaxNum'])) {
+              if (!$GM) continue;
+              echo "Not allowed (GM only):";
+            }
             $Lvl++;
             $pc = Proj_Costs($Lvl);
             if (Has_Trait($Fid,"On the Shoulders of Giants")) {

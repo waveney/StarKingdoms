@@ -36,6 +36,7 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Gate</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Eyes</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>SeenBy</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Max Level</a>\n";
     echo "</thead><tbody>";
 
     foreach($Ts as $T) {
@@ -46,14 +47,16 @@
       echo fm_text1("",$T,'Gate',1,'','',"Gate$i");
       echo fm_number1('',$T,'Eyes','','',"Eyes$i");
       echo fm_number1('',$T,'SeenBy','','',"SeenBy$i");
+      echo fm_number1('',$T,'MaxLvl','','',"MaxLvl$i");
       }   
 
-  $T = [];
+  $T = ['MaxLvl'=>1000000];
   echo "<tr><td>" . fm_text1("",$T,'Name',1,'','',"Name0");
       echo fm_hex1('',$T,'Properties','','',"Properties0");
       echo fm_text1("",$T,'Gate',1,'','',"Gate0");
       echo fm_number1('',$T,'Eyes','','',"Eyes0");
       echo fm_number1('',$T,'SeenBy','','',"SeenBy0");
+      echo fm_number1('',$T,'MaxLvl','','',"MaxLvl0");
   echo "</tbody></table></div>\n";
 
   echo "<h2><input type=submit name=Update value=Update></h2>";

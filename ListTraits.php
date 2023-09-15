@@ -10,6 +10,7 @@
   dostaffhead("All Traits");
   
   echo "<h1>List of all Traits</h1>";
+  echo "Game No : Faction.<b>A</b> = Automated<P>";
   
   $Factions = Gen_Get_Cond('Factions','id>0');
   foreach($Factions as $F) {

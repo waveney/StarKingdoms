@@ -471,7 +471,9 @@ function Recalc_Economic_Rating(&$H,&$W,$Fid,$Turn=0) {
     if ($DTs[$D['Type']]['Props'] & 1) $NumPrime += $D['Number'];
     if ($DTs[$D['Type']]['Props'] & 4) $Mines += $D['Number'];
   }
-  return (Has_Trait($Fid,'No customers')?($NumPrime - $NumCom):$NumPrime)*$NumCom*2  + min($W['Minerals'],$NumPrime) + min($W['Minerals'],$Mines*2);
+  $MinFact = (Has_Tech($Fid,'Improved Mining')?1.5:1);
+  return (Has_Trait($Fid,'No customers')?($NumPrime - $NumCom):$NumPrime)*$NumCom*2  
+         + min($W['Minerals'] * $MinFact,$NumPrime) + min($W['Minerals'] * $MinFact,$Mines*2* $MinFact);
 }
 
 function Project_Home_Thing(&$H) {

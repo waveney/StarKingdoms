@@ -129,7 +129,7 @@
   echo "<h1>Plan a Thing</h1>";
   echo "This is to design or modify a ship/army/agent etc to later build if you want to.";
 
-  if (Access('GM')) echo "<h2><a href=ThingEdit.php?id=$Tid>GM: Thing Editing</a></h2>\n";
+  if (($GM = Access('GM'))) echo "<h2><a href=ThingEdit.php?id=$Tid>GM: Thing Editing</a></h2>\n";
 
   if ($Exist == 0) {
     echo "<form method=post action=ThingPlan.php?ACTION=COPY>";
@@ -182,7 +182,8 @@
     }
   
     if ($tprops & THING_HAS_LEVELS) {
-      echo "<tr>" . fm_number('Level',$T,'Level','','min=1 max=10');
+      $MaxLvl = ($GM?1000000:$ThingTypes[$T['Type']]['MaxLvl']);
+      echo "<tr>" . fm_number('Level',$T,'Level','','min=1 max=$MaxLvl');
       if ($T['Level'] > $Limit) {
         $CanMake = 0;
         echo "<td><td class=Err>Note this is higher level than you can currently make";
