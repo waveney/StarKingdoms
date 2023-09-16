@@ -273,8 +273,11 @@ function Get_Valid_Modules(&$T,$Other=0) {
         if (($tprop & THING_HAS_ARMYMODULES) == 0) continue; // Armies
       } else if ($M['CivMil'] <= 4) {
         if ($tprop & THING_HAS_SHIPMODULES) { 
-          if ($ModuleCats[$M['CivMil']] == 'Military Ship' && ($tprop & THING_HAS_MILSHIPMODS) ==0 ) continue;
-          if ($ModuleCats[$M['CivMil']] == 'Civilian Ship' && ($tprop & THING_HAS_CIVSHIPMODS) ==0) continue;
+          if (($M['Name'] == 'Sensors') && Has_Tech($T['Whose'],'Military Sensors')) { // Valid
+          } else {
+            if ($ModuleCats[$M['CivMil']] == 'Military Ship' && ($tprop & THING_HAS_MILSHIPMODS) ==0 ) continue;
+            if ($ModuleCats[$M['CivMil']] == 'Civilian Ship' && ($tprop & THING_HAS_CIVSHIPMODS) ==0) continue;
+          }
         } else {
           continue;
         }
@@ -538,7 +541,7 @@ function RefitRepair(&$T,$Save=1,$KeepTechLvl=0,$Other=0) {
   $Health = Calc_Health($T,$KeepTechLvl,$Other);
   Calc_Scanners($T);
   $T['CurHealth'] = $T['OrigHealth'] = $Health;
-  $T['Speed'] =  (($TTypes[$T['Type']]['Properties']&THING_CAN_MOVE)? $Engines*$Elvl/$T['Level'] +1 :0);
+  $T['Speed'] =  ((($TTypes[$T['Type']]['Properties'] ?? 0)&THING_CAN_MOVE)? $Engines*$Elvl/$T['Level'] +1 :0);
   Put_Thing($T);
   return $Etxt;
 }

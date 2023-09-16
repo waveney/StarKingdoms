@@ -598,17 +598,18 @@ function Instuctions() { // And other Instructions
       if ($T['Dist1']) {
         $Gate = Get_Thing($T['Dist1']);
         if (isset($Gate['Type']) && $Gate['Type'] == 15) {
-          $T['SystemId'] = $Gates['SystemId'];
-          $T['WithinSysLoc'] = $Gates['WithinSysLoc'];
+          $T['SystemId'] = $Gate['SystemId'];
+          $T['WithinSysLoc'] = $Gate['WithinSysLoc'];
           $T['CurHealth'] = $T['LinkId'] = 0;
-          TurnLog($T['Whose']," The " . $T['Name'] . " has warped back.  It now needs repair before it can be used again",$T);         
+          TurnLog($T['Whose']," The " . $T['Name'] . " has warped back.  It now needs repair before it can be used again",$T);  
+          GMlog("The " . $Facts[$T['Whose']]['Name'] . " - " . $T['Name'] . " has warped back to: " . $Systems[$T['SystemId']] );       
           break;
         }
       }
-       $Gates = Get_Things_Cond($T['Whose'],' Type=15'); // Warp Gates
-       if ($Gates) {
-         if (isset($Gates[1])) { // Multiple Gates
-           $GLocs = [];
+      $Gates = Get_Things_Cond($T['Whose'],' Type=15'); // Warp Gates
+      if ($Gates) {
+        if (isset($Gates[1])) { // Multiple Gates
+          $GLocs = [];
            $FirstG = 0;
            foreach ($Gates as $G) {
              $N = Get_System($G['SystemId']);
@@ -1133,6 +1134,7 @@ function InstuctionsStage2() { // And other Instructions
   global $ThingInstrs,$GAME;
   $Things = Get_Things_Cond(0,"Instruction!=0");
   $TTNames = Thing_Types_From_Names();
+  $Systems = Get_SystemRefs();
   $Facts = Get_Factions();
   $NeedColStage3 = 0;
 //echo "HERE";
@@ -1153,6 +1155,7 @@ function InstuctionsStage2() { // And other Instructions
       $T['WithinSysLoc'] = $Gate['WithinSysLoc'];
       $T['CurHealth'] = $T['LinkId'] = 0;
       TurnLog($T['Whose']," The " . $T['Name'] . " has warped back.  It now needs repair before it can be used again",$T);   
+      GMlog("The " . $Facts[$T['Whose']]['Name'] . " - " . $T['Name'] . " has warped back to: " . $Systems[$T['SystemId']] );       
       $T['Instruction'] = 0;            
       Put_Thing($T);
       break;
