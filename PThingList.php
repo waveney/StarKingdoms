@@ -185,6 +185,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
   echo "Ex things only show up under state <b>Other</b><br>\n";
   echo "If the Thing would benefit from refit/repair/re-equipping/reinforcing then the Refit has the number of modules (+1 if it needs repair as well)</br>";
   if ($FACTION['HasPrisoners']) echo "The Prisoner Tab shows Prisoners YOU have<p>\n";
+  if ($GM) echo "Notes: <B>N</b> - GM Notes, Coloured start of name = hidden control<P>";
 //  echo "Use only ONE of the filters to the right<br>\n";
   
   $coln = 0;
@@ -204,6 +205,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Moving to</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Refit?</a>\n";
   if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Sensors</a>\n";
+  if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Notes</a>\n";
   echo "</thead><tbody>";
   
   $Logistics = [0,0,0]; // Ship, Army, Intelligence
@@ -340,6 +342,11 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
     if ($GM) { 
       echo "<td>" . (($T['Sensors'] ? ($T['Sensors'] . '*L' . $T['SensorLevel']) : ''));
       if ($T['NebSensors'])  echo ' N';
+      
+      echo "<td>";
+      if ($T['GM_Notes']) echo "<b>N</b> ";
+      if ($T['HiddenControl']) echo "<span style='background:" , $Factions[$T['HiddenControl']]['MapColour'] . "'>" . 
+        substr($Factions[$T['HiddenControl']]['Name'],0,3) . "</span> ";
     }
  //   echo "<td>" . (isset($Systems[$T['NewSystemId']]) ? $Systems[$T['NewSystemId']] :"") ;
     

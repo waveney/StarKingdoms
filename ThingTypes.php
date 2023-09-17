@@ -24,6 +24,7 @@
        "100000=Has Control, 200000=Needs Support, 400000=Hostile, 800000=Can Splat, 1000000=Can Leave Debris<br>\n";
   echo "Eyes:  1 = in space, 2= sens, 4= neb sens, 8=ground 1, 16 ground 2 etc<br>\n"; // TODO no ground differntion yet 
   echo "SeenBy: What Eyes can see this<br>\n";
+  echo "Game 0 = All, N = Game N<br>";
   echo "<form method=post action=ThingTypes.php>";
 
   
@@ -37,6 +38,7 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Eyes</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>SeenBy</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Max Level</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Game</a>\n";
     echo "</thead><tbody>";
 
     foreach($Ts as $T) {
@@ -48,6 +50,7 @@
       echo fm_number1('',$T,'Eyes','','',"Eyes$i");
       echo fm_number1('',$T,'SeenBy','','',"SeenBy$i");
       echo fm_number1('',$T,'MaxLvl','','',"MaxLvl$i");
+      echo fm_number1('',$T,'GameId','','',"GameId$i");
       }   
 
   $T = ['MaxLvl'=>1000000];
@@ -57,6 +60,7 @@
       echo fm_number1('',$T,'Eyes','','',"Eyes0");
       echo fm_number1('',$T,'SeenBy','','',"SeenBy0");
       echo fm_number1('',$T,'MaxLvl','','',"MaxLvl0");
+      echo fm_number1('',$T,'GameId','','',"GameId0");
   echo "</tbody></table></div>\n";
 
   echo "<h2><input type=submit name=Update value=Update></h2>";
