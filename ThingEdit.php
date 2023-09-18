@@ -608,8 +608,8 @@ function New_Thing(&$T) {
   }
 
   if ($GM) {
-    echo "<h2>GM: <a href=ThingEdit.php?id=$tid&FORCE>This page in Player Mode</a>" . 
-          (Access('God')?", <a href=ThingEdit.php?id=$tid&EDHISTORY>Edit History</a>":"") . "</h2>";  
+    echo "<h2>GM: <a href=ThingEdit.php?id=$tid&FORCE>This page in Player Mode</a>";
+//          (Access('God')?", <a href=ThingEdit.php?id=$tid&EDHISTORY>Edit History</a>":"") . "</h2>";  
   }
   if (empty($T)) {
     echo "<h2 class=Err>Sorry that thing is not found</2>";  

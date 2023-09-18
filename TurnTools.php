@@ -41,11 +41,13 @@ function TurnLog($Fid,$text,&$T=0) {
   }
   fwrite($LF[$Fid],"$text\n");
   if ($T) {
-    if (isset($T['History'])) {
+    $rec = ['ThingId'=>$T['id'],'TurnNum'=>$GAME['Turn'],'Text'=>$text];
+    Gen_Put('ThingHistory',$rec);
+/*    if (isset($T['History'])) {
       $T['History'] .= "Turn#" . ($GAME['Turn']) . ": " . $text . "\n";
     } else {
       $T['History'] = "Turn#" . ($GAME['Turn']) . ": " . $text . "\n";
-    }
+    }*/
   }
 }
 

@@ -251,7 +251,7 @@
     $txt .= "<p>\n";
 
 //    $txt .= "<li><a href=InstrList.php>List Instructions</a>\n";
-    if (0 && Access('God')) {
+    if (1 && Access('God')) {
       $txt .= "<li><a href=TidyThings.php>Tidy up</a>  - Call this once a turn to remove unused temp entries<p>\n";
       $txt .= "<li><a href=ModuleCheck.php>Check Things have modules</a>";    
 
@@ -259,6 +259,7 @@
       $txt .= "<li><a href=SetAllSpeeds.php>Set All Speeds</a> - Bug Fix";
       $txt .= "<li><a href=HistoryFudge.php>Set History files</a> - Bug Fix";
       $txt .= "<li><a href=FixAnomaly.php>Fix Anomaly records</a> - Bug Fix";
+      $txt .= "<li><a href=ConvertHistory.php>Convert History Format</a>";
     }
     if (Access('God')) {
 

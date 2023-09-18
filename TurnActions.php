@@ -644,7 +644,7 @@ function Instuctions() { // And other Instructions
       $Lvl = $T['Level'];
       $T['BuildState'] = -1;
       $T['SystemId'] = 0;
-      $T['History'] .= "Decommissioned";
+//      $T['History'] .= "Decommissioned";
       $T['Instruction'] = 0;
       $cash = 10*$Lvl*Has_Tech($T['Whose'],'Ship Construction');
       TurnLog($T['Whose'], "The " . $T['Name'] . " has been decommisioned gaining you " . Credit() . $cash, $T);
@@ -670,7 +670,7 @@ function Instuctions() { // And other Instructions
       $Lvl = $T['Level'];
       $T['BuildState'] = -1;
       $T['SystemId'] = 0;
-      $T['History'] .= "Disbanded";
+//      $T['History'] .= "Disbanded";
       $T['Instruction'] = 0;
       $cash = 10*$Lvl*Has_Tech($T['Whose'],'Military Organisation');
       TurnLog($T['Whose'], "The " . $T['Name'] . " has been disbanded gaining you " . Credit() . $cash, $T);
@@ -708,7 +708,7 @@ function Instuctions() { // And other Instructions
       $Lvl = $T['Level'];
       $T['BuildState'] = -1;
       $T['SystemId'] = 0;
-      $T['History'] .= "Retired";
+//      $T['History'] .= "Retired";
       $T['Instruction'] = 0;
       if ($IntDist) {
         $cash = 10*$Lvl*Has_Tech($T['Whose'],'Intelligence Operations');
