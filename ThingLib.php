@@ -101,6 +101,7 @@ function Mod_ValueSimple($tl,$modtypeid,&$Rescat) {
   $mt = Get_ModuleType($modtypeid);
   $mf = Get_ModFormula($mt['Formula']);
   
+  if ($mf['Name'] == 'None') return 0;
   if (Access('GM') && !isset($mf['Num2x'])) echo "Report Module formula error $modtypeid<p>";
   if ($mf['Num2x']) {
     $v = ($mf['Num1x'] + $tl) * $mf['Num2x'];
