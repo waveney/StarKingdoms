@@ -251,7 +251,7 @@
     $txt .= "<p>\n";
 
 //    $txt .= "<li><a href=InstrList.php>List Instructions</a>\n";
-    if (1 && Access('God')) {
+    if (0 && Access('God')) {
       $txt .= "<li><a href=TidyThings.php>Tidy up</a>  - Call this once a turn to remove unused temp entries<p>\n";
       $txt .= "<li><a href=ModuleCheck.php>Check Things have modules</a>";    
 

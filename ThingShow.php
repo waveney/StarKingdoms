@@ -476,9 +476,9 @@ function Show_Thing(&$T,$Force=0) {
   if ($GM) echo "<tr>" . fm_textarea('GM Notes',$T,'GM_Notes',8,2,'class=NotSide');
   
   if ($GM || empty($T['PrisonerOf'])) {
-    $History = preg_split("/\n/",($T['History'] ?? ''));
-    $RevHist = implode("\n",array_reverse($History));
-    $Hist = '';
+    $Hist = $RevHist = '';
+//    $History = preg_split("/\n/",($T['History'] ?? ''));
+//    $RevHist = implode("\n",array_reverse($History));
     
     $NewHist = Gen_Get_Cond('ThingHistory',"ThingId=$Tid ORDER BY id ASC");
     if ($NewHist) foreach($NewHist as $NH) {
@@ -486,7 +486,7 @@ function Show_Thing(&$T,$Force=0) {
     }
   
     if (isset($_REQUEST['EDHISTORY'])) {
-      echo "<tr>" . fm_textarea('History',$T,'History',8,2,'','','',($GM?'':'Readonly'));
+      echo "<tr>" . fm_textarea('History',$T,'History',8,2,'','','',($GM?'':'Readonly')); // NO LONGER WORKS
     } else {
 //    echo "<tr>" . fm_textarea('History',$T,'History',8,2,'','','',($GM?'':'Readonly'));
       echo "<tr><td>History:<td colspan=8><textarea rows=2>$Hist$RevHist</textarea>";

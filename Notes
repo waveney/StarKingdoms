@@ -24,7 +24,10 @@ TODO
 38) Validate Dismantle Stargate (And other instructions)
 39) Nebulae and Anomalies
 40) Thing TYpe for ignore on Meetups
-
+42)
+43) MCB Cost when making things
+45) Thing - edit history
+46) Turn Text edit
 
 
 Future Hooks:
@@ -34,6 +37,7 @@ Future Hooks:
 4) Many things from Asteroid mines, Minefields etc can be "advanced", they appear the same to other factions, but get more money, delever more damage etc.
 5) Link Ids can be annoymised so you don't know what connects to what until you explore them
 6) Most things can be leveled eg minefileds, outposts etc
+7) The Logistics cost of units at Home can be halved (Always or by a tech)
 
 
 
@@ -203,6 +207,7 @@ Zvezda Glacier (Lednik Zvezda) – Caucasus
 5) There are also 2 new militia armies.  (New Military district)
 6) Note the intelligence defence is now effectively 3+2= 5 
 7) Ships they can be refitted in orbital repair yards, freeing up the shipyards for new ships.  Could I develop something equivalent for armies?  (All but 1 army is in need of refitting)
+
 
 
 
