@@ -17,6 +17,11 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
                 'Make Planet Mine', 'Construct Command Relay Station', 'Repair Command Node','Build Planetary Mine','Dismantle Stargate','Disband','Transfer',
                 'Make Something','Make Warpgate','Retire','Stop Support','Make Advanced Minefield','Clear Minefield', 'Make Advanced Deep Space Sensor','Salvage',
                 'Terraform','Link Repair','Collaborative DSC'];
+$IntructProps = [0,0,0,0,0,0,1,1,1,
+                 1,1,1,1,1,1,
+                 1,1,1,1,1,0,0,
+                 1,1,0,0,1,0,1,1,
+                 0,1,0]; // 1 = DSC
 $Advance = ['','','Advanced ','Very Advanced ','Ultra Advanced ','Evolved '];
 $ValidMines = [0,1,0,1,0,1,0,0,0,0,0];
 $LinkStates = ['','Under Repair','In Safe Mode','Locked'];

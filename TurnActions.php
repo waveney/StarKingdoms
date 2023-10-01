@@ -26,10 +26,10 @@
              'Spare', 'Space Combat', 'Unload Troops', 'Orbital Bombardment', 
              'Spare', 'Planetary Defence', 'Ground Combat', 'Devastation Selection', 
              'Devastation', 'Ownership Change', 'Project Progress', 'Instructions Progress', 
-             'Spare', 'Espionage Missions Complete', 'Counter Espionage', 'Handle Co Op Projects', 
+             'Collaborative Progress', 'Espionage Missions Complete', 'Counter Espionage', 'Handle Co Op Projects', 
              'Finish Shakedowns', 'Refit Projects Complete', 'Projects Complete', 'Instructions Complete', 
              'Check Survey Reports', 'Give Survey Reports', 'Check Spot Anomalies', 'Spot Anomalies', 
-             'Militia Army Recovery', 'Generate Turns', 'Tidy Up Movements', 'Clear Conflict Flags',
+             'Militia Army Recovery', 'Generate Turns', 'Tidy Ups', 'Clear Conflict Flags',
              'Save What Can Be Seen', 'Recalc Project Homes', 'Finish Turn Process', 
              'Check Follow Ups', 'Enable Factions Access'];
 
@@ -45,7 +45,7 @@
              'No','Help','Coded','No',
              'Coded,M','No','Help','Coded,M', 
              'Coded', 'No', 'Coded','Coded',
-             'No','No','No','No',
+             'Coded', 'No','No','No',
              'Coded','Coded','Coded,M','Coded,M', 
              'Partial,M','Coded', 'Coded,M','Coded',
              'Coded','No','Coded','Coded',
@@ -531,7 +531,7 @@ function Instuctions() { // And other Instructions
     $N = Get_System($T['SystemId']);
     $Tid = $T['id'];
     // Mark new Instructions
-    if ($T['Instruction'] != $T['CurInst']) {
+    if (abs($T['Instruction']) != $T['CurInst']) {
       $T['CurInst'] = $T['Instruction'];
       $T['Progress'] = 0;
     }
@@ -1678,7 +1678,7 @@ function Economy() {
       if (empty($T['Type'])) continue;
       $Props = $TTypes[$T['Type']]['Properties'];
       if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
-        if ($HasHomeLogistics && ($T['SystemId'] == $FACTION['HomeWorld'])) $T['Level'] /=2;
+        if ($HasHomeLogistics && ($T['SystemId'] == $Facts[$T['Whose']]['HomeWorld'])) $T['Level'] /=2;
         if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $T['Level'];
         if ($Props & THING_HAS_GADGETS) $Logistics[2] += $T['Level'];
         if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $T['Level'];
@@ -2196,9 +2196,8 @@ function ProjectProgress() {
 }
 
 function InstructionsProgress() {
-  global $ThingInstrs;
+  global $ThingInstrs,$IntructProps;
   $Things = Get_Things_Cond(0,"Instruction!=0");
-  $NeedColStage2 = 0;
   $Facts = Get_Factions();
   
   foreach ($Things as $T) {
@@ -2237,23 +2236,32 @@ function InstructionsProgress() {
         $ProgGain = $Mods[0]['Level']*$Mods[0]['Number'];
         GMLog("$ProgGain progress on " . $ThingInstrs[abs($T['Instruction'])] . " for " . $Facts[$T['Whose']]['Name'] . ":" . $T['Name']);
 
-
         $T['Progress'] = min($T['ActionsNeeded'],$T['Progress']+$ProgGain);
         Put_Thing($T);
         break;
         
       case 'Collaborative DSC': // Dist1 has Thing number being helped
+        break; // Now in second pass
 //        $Prog = Has_Tech($T['Whose'],'Deep Space Construction');
         $Mods = Get_ModulesType($Tid, 3);
         $ProgGain = $Mods[0]['Level']*$Mods[0]['Number'];
         $HT = Get_Thing($T['Dist1']);
-        if ($HT && $HT['Instruction']) {
-          $HT['Progress'] = min($HT['ActionsNeeded'],$HT['Progress']+$ProgGain);        
-          GMLog("$ProgGain progress on " . $ThingInstrs[abs($HT['Instruction'])] . " for " . $Facts[$HT['Whose']]['Name'] . ":" . $HT['Name']);
-          TurnLog($HT['Whose'],$T['Name'] . " did $ProgGain towards completing " . $ThingInstrs[abs($HT['Instruction'])] . " by " . $HT['Name']);
-          TurnLog($T['Whose'],$T['Name'] . " did $ProgGain towards completing " . $ThingInstrs[abs($HT['Instruction'])] . " by " . $HT['Name']);
-
-          Put_Thing($HT);
+        if ($HT) {
+          if ($HT['Instruction'] && ($IntructProps[abs($HT['Instruction'])] & 1)) {
+            $HT['Progress'] = min($HT['ActionsNeeded'],$HT['Progress']+$ProgGain);        
+            GMLog("$ProgGain progress on " . $ThingInstrs[abs($HT['Instruction'])] . " for " . $Facts[$HT['Whose']]['Name'] . ":" . $HT['Name'] . " Now at " .
+            $HT['Progress'] . " / " . $HT['ActionsNeeded']);
+          
+            TurnLog($HT['Whose'],$T['Name'] . " did $ProgGain towards completing " . $ThingInstrs[abs($HT['Instruction'])] . " by " . $HT['Name'] . " Now at " .
+            $HT['Progress'] . " / " . $HT['ActionsNeeded']);
+            if ($HT['Whose'] != $T['Whose']) {
+              TurnLog($T['Whose'],$T['Name'] . " did $ProgGain towards completing " . $ThingInstrs[abs($HT['Instruction'])] . " by " . $HT['Name']);
+            }
+            Put_Thing($HT);
+          }
+          else {
+            TurnLog($T['Whose'], $T['Name'] . " Was collacorating with " . $HT['Name'] . ", but " . $HT['Name'] . " is not doing any DSC.");
+          }
         }
         break;      
         
@@ -2310,6 +2318,47 @@ function InstructionsProgress() {
 
   return 1;
 }
+
+function CollaborativeProgress() {
+  global $ThingInstrs,$IntructProps;
+  $Things = Get_Things_Cond(0,"Instruction!=0");
+  $Facts = Get_Factions();
+  
+  foreach ($Things as $T) {
+    $Tid = $T['id'];
+    switch ($ThingInstrs[abs($T['Instruction'])]) {
+      case 'Collaborative DSC': // Dist1 has Thing number being helped
+//        $Prog = Has_Tech($T['Whose'],'Deep Space Construction');
+        $Mods = Get_ModulesType($Tid, 3);
+        $ProgGain = $Mods[0]['Level']*$Mods[0]['Number'];
+        $HT = Get_Thing($T['Dist1']);
+        if ($HT) {
+          if ($HT['Instruction'] && ($IntructProps[abs($HT['Instruction'])] & 1)) {
+            $HT['Progress'] = min($HT['ActionsNeeded'],$HT['Progress']+$ProgGain);        
+            GMLog("$ProgGain progress on " . $ThingInstrs[abs($HT['Instruction'])] . " for " . $Facts[$HT['Whose']]['Name'] . ":" . $HT['Name'] . " Now at " .
+            $HT['Progress'] . " / " . $HT['ActionsNeeded']);
+          
+            TurnLog($HT['Whose'],$T['Name'] . " did $ProgGain towards completing " . $ThingInstrs[abs($HT['Instruction'])] . " by " . $HT['Name'] . " Now at " .
+            $HT['Progress'] . " / " . $HT['ActionsNeeded']);
+            if ($HT['Whose'] != $T['Whose']) {
+              TurnLog($T['Whose'],$T['Name'] . " did $ProgGain towards completing " . $ThingInstrs[abs($HT['Instruction'])] . " by " . $HT['Name']);
+            }
+            Put_Thing($HT);
+          }
+          else {
+            TurnLog($T['Whose'], $T['Name'] . " Was collacorating with " . $HT['Name'] . ", but " . $HT['Name'] . " is not doing any DSC.");
+          }
+        }
+        break;      
+      default: 
+        break;
+     }
+   }
+
+  return 1;
+}
+
+
 
 function EspionageMissionsComplete() {
   GMLog("Espionage Missions Complete	is currently Manual<p>");
@@ -3456,7 +3505,7 @@ function FixFudge() { // Tempcode called to fix thi9ngs
 
 }
 
-function TidyUpMovements() {
+function TidyUps() {
   global $db,$GAMEID,$GAME;
   
   $res = $db->query("UPDATE Things SET LinkId=0, LinkPay=0, LinkCost=0 WHERE LinkId>0 AND GameId=$GAMEID"); 
@@ -3486,6 +3535,15 @@ function TidyUpMovements() {
   }
   
   // Tidy up Scans due ?
+  
+  // Tidy up continuing Instructions
+  
+  $Things = Get_Things_Cond(0,"Instruction<0");
+  foreach ($Things as $T) {
+    $T['Instruction'] = abs($T['Instruction']);
+    Put_Thing($T);
+  }
+  GMLog("Instructions fields reset for continued use<p>");
 
 
   GMLog("Movements, 1 turn carry, district deltas Tidied Up<p>");  
