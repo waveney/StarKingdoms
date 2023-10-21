@@ -480,7 +480,7 @@ function Show_Thing(&$T,$Force=0) {
 //    $History = preg_split("/\n/",($T['History'] ?? ''));
 //    $RevHist = implode("\n",array_reverse($History));
     
-    $NewHist = Gen_Get_Cond('ThingHistory',"ThingId=$Tid ORDER BY id ASC");
+    $NewHist = Gen_Get_Cond('ThingHistory',"ThingId=$Tid ORDER BY id DESC");
     if ($NewHist) foreach($NewHist as $NH) {
       $Hist .= "Turn#" . $NH['TurnNum'] . " " . $NH['Text'] . "\n";
     }
