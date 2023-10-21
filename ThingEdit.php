@@ -222,7 +222,7 @@ function New_Thing(&$T) {
           $T['TargetKnown'] = 1;
           $T['History'] .= "Warped out to " . $T['SystemId'] . " reduced to 0 health\n";
           Put_Thing($T);
-          db_delete_cond('ScansDue','ThingId=$tid AND Turn=' . $GAME['Turn']);
+          db_delete_cond('ScansDue',"ThingId=$tid AND Turn=" . $GAME['Turn']);
           break;
         }
       } else {
