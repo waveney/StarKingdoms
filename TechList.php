@@ -43,7 +43,7 @@
     echo "</thead><tbody>";
 
     foreach($Ts as $T) {
-      if ($T['Properties'] & 8) continue;
+      if (($T['Properties'] & 8) && !isset($_REQUEST['ALL'])) continue;
       $i = $T['id'];
       echo "<tr><td><a href=TechEdit.php?id=$i>$i</a>";
       echo "<td>" . $Tech_Cats[$T['Cat']];

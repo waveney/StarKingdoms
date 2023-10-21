@@ -343,8 +343,8 @@ function Calc_Health(&$T,$KeepTechLvl=0,$Other=0) {
           $Health += $Mhlth;        
       } else {
         $based = $Mts[$M['Type']]['BasedOn'];
-        if ($l = Has_Tech($Other,$based)) {
-          if ($Techs[$based]['Cat'] == 1) {
+        if ($based && ($l = Has_Tech($Other,$based))) {
+          if ($Techs[$based]['Cat'] >= 1) {
             $l = Has_Tech($Other,$Techs[$based]['PreReqTech']);
           }
           $Mhlth = $M['Number'] * Mod_ValueSimple($l+$Plus,$M['Type'],$Rescat);
@@ -965,7 +965,7 @@ function Gates_Avail($Fid) {
 function Do_Mine_Damage(&$T,&$Mine,&$N=0,$InTurn=0) { // Needs changes
 // Do damage and report
 
-  if (Get_ModulesType($T,23)) return;
+  if (Get_ModulesType($T['id'],23)) return;
   $Dsc = Has_Tech($Mine['Whose'],'Deep Space Construction');
   $Dam = $Dsc * $Mine['Level']*5;
   if (empty($N)) $N = Get_System($Mine['SystemId']);

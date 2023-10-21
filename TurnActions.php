@@ -890,6 +890,8 @@ function Instuctions() { // And other Instructions
       }
 
       if ($ValidMines[$LocT] == 0 ) {
+        $LocText = $Loc[$T['WithinSysLoc']];
+
         $T['Progress'] = -1; // Stalled
         TurnLog($Who,"A Minefield could not be made in " . $N['Ref'] . " " . $LocText);
       }

@@ -92,7 +92,7 @@
       $RCost =  (Rush_Cost($Fid) * $PT['Rush']);
       if ($RCost > 0 && $P['Status']<2) {
         $Spend += $RCost;
-        echo "Spendng &#8373; $RCost to rush " . $P['Name'] . " by " . $PT['Rush'] . "<br>";
+        echo "Spending &#8373; $RCost to rush " . $P['Name'] . " by " . $PT['Rush'] . "<br>";
       }
     }
   }
