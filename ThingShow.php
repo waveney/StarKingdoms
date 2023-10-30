@@ -1199,7 +1199,7 @@ function Show_Thing(&$T,$Force=0) {
       $PrimeMods = [];
       $DTs = Get_DistrictTypes();
       $MaxDeep = Has_Tech($Fid,'Deep Space Construction')*2;
-      foreach ($DTs as $D) if ($D['Props'] &1) $PrimeMods[$D['id']] = $D['Name'];
+      foreach ($DTs as $D) if (($D['Props'] & 16) && ((eval("return " . $D['Gate'] . ";" )))) $PrimeMods[$D['id']] = $D['Name'];
       echo "<tr><td><td colspan=6>" . (($GM || $T['Progress'] == 0)? fm_number0('How many districts:',$T,'Dist1',''," max=$MaxDeep "): ("<td>Districts: " . $T['Dist1']));
       echo " First District:" . fm_select($PrimeMods,$T,'Dist2',1);
       echo "<br>" . fm_text0("Name of Space Station",$T,'MakeName');
