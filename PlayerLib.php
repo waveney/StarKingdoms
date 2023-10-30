@@ -4,8 +4,8 @@
 include_once("sk.php");
 include_once("GetPut.php");
 
-$PlayerState = ['Setup', 'Turn Planning' , 'Turn Submitted', 'Turn Being Processed'];
-$PlayerStateColours = ['Orange','lightblue','LightGreen','pink'];
+$PlayerState = ['Setup', 'Turn Planning' , 'Turn Submitted', 'Turn Being Processed','Frozen'];
+$PlayerStateColours = ['Orange','lightblue','LightGreen','pink','White'];
 $PlayerStates = array_flip($PlayerState);
 
 $Currencies = ['Credits','Physics Science Points','Engineering Science Points','Xenology Science Points','General Science Points'];

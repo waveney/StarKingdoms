@@ -100,6 +100,8 @@
   $Nodes = Get_Systems(); 
   $Levels = Get_LinkLevels();
   $Factions = Get_Factions(); 
+  $Historical = 0;
+  $OtherInt = 0;
 
   while ($RedoMap) {
     $Dot = fopen("cache/Fullmap$Faction$typ.dot","w+");
@@ -148,13 +150,17 @@
         $Factions[$N['Control']]['Seen']=1;
       } else if ($N['Category']) {
         $Colour = ($Faction?"White":$CatCols[$N['Category']]);
+        if ($Colour == 'Yellow') $OtherInt = 1;
       } else {
         $Colour = "White";
       }
     
       if ($Hide) $NodeName = '';
       $BdrColour = "Black";
-      if ($Faction == 0 && $N['HistoricalControl']) $BdrColour = $Factions[$N['HistoricalControl']]['MapColour'];
+      if ($Faction == 0 && $N['HistoricalControl']) {
+        $BdrColour = $Factions[$N['HistoricalControl']]['MapColour'];
+        $Historical = 1;
+      }
     
       if ($typ) $atts .= " shape=box pos=\"" . ($N['GridX']+(5-$N['GridY'])/2) . "," . (9-$N['GridY']) . "!\"";
       $atts .= "  shape=box style=filled fillcolor=\"$Colour\" color=\"$BdrColour\"";
@@ -250,12 +256,16 @@
     };
   
     if (!$Faction) {
-      fwrite($Dot,"Historical [shape=box style=filled fillcolor=white penwidth=2 color=\"CadetBlue\"" .
-          ($typ?" pos=\"" . $HexLegPos[$ls][0] . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");  
-      $ls++;  
-      fwrite($Dot,"ZZ99 [shape=box style=filled fillcolor=yellow Epenwidth=2 " . NodeLab("Interest","Other") . 
-          ($typ?" pos=\"" . $HexLegPos[$ls][0] . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");  
-      $ls++;  
+      if ($Historical) {
+        fwrite($Dot,"Historical [shape=box style=filled fillcolor=white penwidth=2 color=\"CadetBlue\"" .
+            ($typ?" pos=\"" . $HexLegPos[$ls][0] . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");  
+        $ls++;  
+      }
+      if ($OtherInt) {
+        fwrite($Dot,"ZZ99 [shape=box style=filled fillcolor=yellow Epenwidth=2 " . NodeLab("Interest","Other") . 
+            ($typ?" pos=\"" . $HexLegPos[$ls][0] . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");  
+        $ls++;  
+      }
     }
 
     fwrite($Dot,"}\n"); 
