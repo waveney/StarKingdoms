@@ -262,7 +262,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
 
     $BuildClass = ($T['BuildState']<4 ? $T['BuildState'] : 4);
 
-    if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
+    if (($T['BuildState'] == 2 || $T['BuildState'] == 3) && ($RowClass != 'Prisoner')) {
       $ELevel = $T['Level'];
       if ($HasHomeLogistics && ($T['SystemId'] == $FactionHome)) $ELevel /=2;
       if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $ELevel;
