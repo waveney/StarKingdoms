@@ -392,7 +392,7 @@ function Split_Resorces_A() {
       $What = $Mtch[1];
       if ($Val > $FACTION[$What]) $Val = $FACTION[$What];
       $FACTION[$What] = max(0,$FACTION[$What] - $Val);
-      $NewF[$What] += $Val;
+      $NewF[$What] = $Val;
     }
   }
   Put_Faction($FACTION);
