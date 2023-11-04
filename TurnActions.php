@@ -1903,14 +1903,18 @@ function ShipMovements($Agents=0) {
     if ($T['LinkId']>0 && $T['NewSystemId'] != $T['SystemId'] ) {
       // if link out & not spider - cant move
       
-      if (($L['Status'] > 0) && ($Fid != $LOwner)) {
-        TurnLog($Fid,$T['Name'] . " was <b>unable to take link</b> <span style=color:" . $LinkLevels[abs($L['Level'])]['Colour'] . ">#$Lid </span> beause it is " . 
+      if ($L && ($L['Status'] > 0) && ($Fid != $LOwner)) {
+        TurnLog($Fid,$T['Name'] . " was <b>unable to take link</b> <span style=color:" . $LinkLevels[abs($L['Level'])]['Colour'] . ">#$Lid </span> because it is " . 
           $LinkStates[$L['Status']],$T);
         $T['LastMoved'] = $GAME['Turn'];
         Put_Thing($T);
         continue;
-        
-      
+      } else if (!$L) {
+        GMLog("Not Moving " . $T['Name']);
+        TurnLog($Fid,$T['Name'] . " was <b>unable to take link</b>#$Lid because it no longer exists",$T);
+        $T['LastMoved'] = $GAME['Turn'];
+        Put_Thing($T);
+        continue;      
       }
       GMLog("Moving " . $T['Name']);
 
@@ -1918,7 +1922,9 @@ function ShipMovements($Agents=0) {
       $ShipNebScanLevel = NebScanners($T);
 
       $SR1 = Get_SystemR($L['System1Ref']);      
-      $SR2 = Get_SystemR($L['System2Ref']);           
+      $SR2 = Get_SystemR($L['System2Ref']);
+      
+           
             
       if (($Agents == 0) && ($T['Whose'] != $LOwner)) {
         $L['UseCount'] += $T['Level'];
