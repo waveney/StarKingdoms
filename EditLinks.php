@@ -76,7 +76,7 @@
     echo "<td>" . fm_select($LinkStates,$D,'Status',0,'',"Status$i");
     echo fm_number1('',$D,'Weight','','',"Weight$i");
     echo fm_number1('',$D,'UseCount','','',"UseCount$i");
-    echo "<td>" . ($D['UseCount']/$D['Weight']);
+    echo "<td>" . ($D['UseCount']/max($D['Weight'],1));
     echo fm_number1('',$D,'MinedA','','',"MinedA$i");
     echo fm_number1('',$D,'MinedB','','',"MinedB$i");
 //    echo fm_number1("",$D,'Level','','',"Level$i");

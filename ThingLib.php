@@ -344,7 +344,7 @@ function Calc_Health(&$T,$KeepTechLvl=0,$Other=0) {
       } else {
         $based = $Mts[$M['Type']]['BasedOn'];
         if ($based && ($l = Has_Tech($Other,$based))) {
-          if ($Techs[$based]['Cat'] >= 1) {
+          if ((($Techs[$based]['Cat'])??0) >= 1) {
             $l = Has_Tech($Other,$Techs[$based]['PreReqTech']);
           }
           $Mhlth = $M['Number'] * Mod_ValueSimple($l+$Plus,$M['Type'],$Rescat);
