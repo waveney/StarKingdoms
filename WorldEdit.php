@@ -134,7 +134,11 @@
   if ($GM) echo "<tr><td>Id:<td>$Wid\n";
   echo "<tr>" . fm_text('Name',$WH,'Name',3,'','',"Name:" . $W['ThingType'] . ":" . $W['ThingId']);
   echo "<tr>" . fm_textarea('Description',$WH,'Description',8,3,'','', "Description:" . $W['ThingType'] . ":" . $W['ThingId']);
-  echo "<tr><td>Minerals<td>" . $W['Minerals'];
+  if ($GM) {
+    echo "<tr>" . fm_number("Minerals", $W, 'Minerals');
+  } else {
+     echo "<tr><td>Minerals<td>" . $W['Minerals'];
+  }
   echo "<tr>" . fm_number("Relative Importance", $W, 'RelOrder');
 /*
   if ($GM) {

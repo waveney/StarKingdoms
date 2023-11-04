@@ -164,7 +164,7 @@
       $EconVal += $ECon;
     }
     echo "<p>";
-    $Things = Get_Things($Fid);
+    $Things = Get_Things_Cond($Fid,'BuildState=3');
     foreach ($Things as $T) {
       if (empty($TTypes[$T['Type']])) continue;
       switch ($TTypes[$T['Type']]['Name']) {
@@ -192,7 +192,7 @@
       }
     }
 
-    $OtherTs = Get_Things_Cond(0,"Type=17 AND OtherFaction=$Fid");
+    $OtherTs = Get_Things_Cond(0,"Type=17 AND OtherFaction=$Fid AND BuildState=3");
     foreach($OtherTs as $OT) {
       $OtherEmbs++;
       $OtherEmbVal += $OT['Level'];
