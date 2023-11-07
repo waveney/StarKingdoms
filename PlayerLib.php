@@ -267,13 +267,15 @@ function Income_Estimate($Fid) {
       
     if ($W['Revolt']) {
       $ECon = 0;
-    } else if ($W['Blockade'] && $Fid != 9) {
-      $ECon = 0;
     } else {
-
       if ($H['Devastation']) {
         $ECon = $ECon - $H['Devastation'];
       }
+    
+      if ($W['Blockade'] ) { //&& $Fid != 9) {
+        $ECon /= 2;
+      }
+
       $ECon = ceil($ECon*$H['EconomyFactor']/100);
     }
     $EconVal += $ECon;

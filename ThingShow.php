@@ -54,7 +54,7 @@ function Show_Thing(&$T,$Force=0) {
 
   $Systems = Get_SystemRefs();
   $T['MaxModules'] = Max_Modules($T);
-  if  (($tprops & THING_HAS_MODULES) && ($T['PrisonerOf'] == 0)) $T['OrigHealth'] = Calc_Health($T,1);
+  if  (($tprops & THING_HAS_MODULES) && ($T['PrisonerOf'] == 0)) [$T['OrigHealth'],$T['ShieldPoints']] = Calc_Health($T,1);
 
   if (($T['BuildState'] == 3) && ($tprops & THING_CAN_MOVE) && ($T['CurHealth'] > 0)) { // Complete Only
     $res = Moves_4_Thing($T,$Force, ($tprops & (THING_HAS_GADGETS | THING_CAN_BETRANSPORTED)), $N);
@@ -194,31 +194,36 @@ function Show_Thing(&$T,$Force=0) {
         echo "<input type=submit name=ACTION value='Cancel Follow'>\n";
       } else { // On Board
         $Host = Get_Thing($T['SystemId']);
-        echo "<tr><td colspan=3>In: $Lid" . $Host['Name'];
-        $Conflict = 0; 
-        $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
-        if ($Conf) $Conflict = $Conf[0]['Conflict'];
+        if ($Host) {
+          echo "<tr><td colspan=3>In: $Lid" . $Host['Name'];
+          $Conflict = 0; 
+          $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
+          if ($Conf) $Conflict = $Conf[0]['Conflict'];
 
-        if ($Host['LinkId']>0 && $Host['TargetKnown'] == 0) {
-          echo " You don't know where you are going to unload afterwards<br>";
-          if ($GM) {
-            if ($Lid == -1 || $Lid == -2) echo "<input type=submit name=ACTION value='Unload After Move'>";
-            echo "<input type=submit name=ACTION value='Unload Now'>\n";
-          } else if ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ) { 
-            echo "<input type=submit name=ACTION value='Unload Now'>\n";         
-          }
-        } else {
-          if ($Lid == -1 || $Lid == -2) if ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ) 
-            echo "<input type=submit name=ACTION value='Unload After Move'>\n";
-          if ($GM || (!$Conflict && ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ))) { 
-            echo "<input type=submit name=ACTION value='Unload Now'>\n";         
+          if ($Host['LinkId']>0 && $Host['TargetKnown'] == 0) {
+            echo " You don't know where you are going to unload afterwards<br>";
+            if ($GM) {
+              if ($Lid == -1 || $Lid == -2) echo "<input type=submit name=ACTION value='Unload After Move'>";
+              echo "<input type=submit name=ACTION value='Unload Now'>\n";
+            } else if ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ) { 
+              echo "<input type=submit name=ACTION value='Unload Now'>\n";         
+            }
           } else {
-            echo " - Only the transport owner can unload you";
-          }
+            if ($Lid == -1 || $Lid == -2) if ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ) 
+              echo "<input type=submit name=ACTION value='Unload After Move'>\n";
+            if ($GM || (!$Conflict && ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ))) { 
+              echo "<input type=submit name=ACTION value='Unload Now'>\n";         
+            } else {
+              echo " - Only the transport owner can unload you";
+            }
 //          echo "<input type=submit name=ACTION value='Unload on Turn'>\n";
 //          if ($Conflict) echo " <b>Conflict</b> ";
 //          echo "<input type=submit name=ACTION value='Unload Now'>\n";
-          echo "<br>Note: To unload AFTER moving, please put the movement order in to the system for the transport before the Unload After Move order.<br>\n";
+            echo "<br>Note: To unload AFTER moving, please put the movement order in to the system for the transport before the Unload After Move order.<br>\n";
+          }
+        } else {
+          echo "<tr><td colspan=3>In limbo... (Richard can fix)";
+          if (Access('God')) $T['SystemId'] = $T['LinkId'] = 0;
         }
       }
       if ($Lid == -2 || $Lid == -4) {
@@ -496,11 +501,14 @@ function Show_Thing(&$T,$Force=0) {
   if  ($tprops & (THING_HAS_MODULES | THING_HAS_ARMYMODULES | THING_HAS_HEALTH)) {
     if ($GM) {
       echo "<tr>" . fm_number('Orig Health',$T,'OrigHealth');
+
       if ($T['CurHealth'] > 0) {
-        echo fm_number('Cur Health',$T,'CurHealth');
+        echo fm_number1('Cur Health',$T,'CurHealth');
       } else {
-        echo fm_number('Cur Health',$T,'CurHealth',' class=Err ');      
+        echo fm_number1('Cur Health',$T,'CurHealth',' class=Err ');      
       }
+      echo fm_number1('Shield Points',$T,'ShieldPoints', '', ' class=Num3 ');
+      echo fm_number1('Current Shield',$T,'CurShield', '', ' class=Num3 ');
     } else {
       echo "<tr><td>Original Health: " . $T['OrigHealth'];
       if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
@@ -510,6 +518,7 @@ function Show_Thing(&$T,$Force=0) {
           echo "<td class=Err>Current Health: <b>0</b>";
         }
       }
+      if ($T['ShieldPoints']) echo "<td>Shield Points: " . $T['ShieldPoints'];
     }
     
     $Resc =0;
@@ -1001,7 +1010,7 @@ function Show_Thing(&$T,$Force=0) {
     $ProgShow = $Cost = $Acts = 0;
     echo "<tr>" . fm_radio('Special Instructions', $SpecOrders,$T,'Instruction','',1,' colspan=6 ','',$ThingInclrs);
     
-    if ($Moving && $HasDeep) echo " Note <span class=Red>Moving</span>, so no DSC instructions are show";
+    if ($Moving && $HasDeep) echo " Note <span class=Red>Moving</span>, so no DSC instructions are shown";
     switch ($ThingInstrs[abs($T['Instruction'])]) {
     case 'None': // None
       $T['Dist1'] = $T['Dist2'] = 0;
@@ -1492,14 +1501,21 @@ function Show_Thing(&$T,$Force=0) {
     if ($tprops & THING_LEAVES_DEBRIS) echo "<input type=submit name=ACTION value='Destroy Thing (Leave debris)'>";
     echo "<input type=submit name=ACTION value='Remove Thing (No debris)'>";
     if ($tprops & THING_CAN_MOVE) echo "  <input type=submit name=ACTION value='Warp Out'>\n";
-    echo fm_number0(" Do",$T,'Damage', '',' class=Num3 ') . " <input type=submit name=ACTION value=Damage>\n";
+    if ($T['CurShield']) {
+      echo fm_number0(" Do",$T,'Damage', '',' class=Num3 ') . " <input type=submit name=ACTION value=Damage>\n";    
+      echo fm_number0(" Do",$T,'HullDamage', '',' class=Num3 ') . " <input type=submit name=ACTION value='Hull Damage'>\n";
+    } else {
+      echo fm_number0(" Do",$T,'Damage', '',' class=Num3 ') . " <input type=submit name=ACTION value=Damage>\n";
+    }
     if (($T['PrisonerOf'] ?? 0)) echo " <input type=submit name=ACTION value=Disarm>\n";
   }
   if (!$GM && ($tprops & THING_CAN_BE_CREATED)) echo "<input type=submit name=ACTION value='Delete'>";
   if ($GM || empty($Fid)) {
     if (Access('God')) {
       echo "<h2><a href=ThingList.php>Back to Thing list</a> &nbsp; <input type=submit name=ACTION value=Duplicate> " .
-           "<input type=submit name=ACTION value='GM Recalc'></h2>";
+           "<input type=submit name=ACTION value='GM Recalc'>";
+      if ($HasSalvage) echo "<input type=submit name=ACTION value='Salvage'>";
+      echo "</h2>";
     }
   } else {
     echo "<h2><a href=PThingList.php?id=$Fid>Back to Thing list</a></h2>";

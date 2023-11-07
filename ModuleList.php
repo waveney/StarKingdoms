@@ -8,7 +8,7 @@
   dostaffhead("List Module Types");
 
   global $db, $GAME, $ModuleCats;
-  $DefWep = ['','Defence','Weapon'];
+  $DefWep = ['','Defence','Weapon','Shield'];
 
   $MTs = Get_ModuleTypes();
   if (UpdateMany('ModuleTypes','Put_ModuleType',$MTs,0))    $MTs = Get_ModuleTypes();

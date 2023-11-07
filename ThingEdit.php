@@ -194,6 +194,7 @@ function New_Thing(&$T) {
       $T['CurHealth'] = 0;
       $T['BuildState'] = 4;  // Ex
       Put_Thing($T);
+      Empty_Thing($T);
       break;
 
     case 'Warp Out':
@@ -454,7 +455,27 @@ function New_Thing(&$T) {
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
       Check_MyThing($T,$Fid);
-      $Dam = $_REQUEST['Damage'];
+      $RDam = $Dam = $_REQUEST['Damage'];
+      echo "<h2>" . $T['Name'];
+      if ($T['CurShield']) {
+        $shldD = min($T['CurShield'],$Dam);
+        $T['CurShield'] = $T['CurShield'] - $shldD;
+        $RDam -= $shldD;
+        echo " - Shields took $shldD damage ";
+      }
+      if ($RDam) {
+        $T['CurHealth'] = min(max(0,$T['CurHealth'] - $RDam), $T['OrigHealth']);
+        echo " - Ship took $RDam damage ";
+      }
+      echo "</h2>";
+      Put_Thing($T);
+      break;
+      
+    case 'Hull Damage':
+      $tid = $_REQUEST['id'];
+      $T = Get_Thing($tid);
+      Check_MyThing($T,$Fid);
+      $Dam = $_REQUEST['HullDamage'];
       $T['CurHealth'] = min(max(0,$T['CurHealth'] - $Dam), $T['OrigHealth']);
       echo "<h2>" . $T['Name'] . " has received $Dam dammage</h2>";
       Put_Thing($T);
@@ -474,6 +495,83 @@ function New_Thing(&$T) {
       Put_Thing($T);
       break;
     
+    case 'Salvage' : // As in turn action called by GM for wierd cases (eg you forgot)
+      include_once("TurnTools.php");
+      include_once("ProjLib.php");
+      $TTypes = Get_ThingTypes();
+      echo "Doing Salvage<br>";
+      $tid = $_REQUEST['id'];
+      $T = Get_Thing($tid);
+      $Who = $T['Whose'];
+      
+       $Wrecks = Get_Things_Cond(0,"SystemId=" . $T['SystemId'] . " AND BuildState>3");
+       $SalvageLevel = Has_Tech($Who,'Salvage Rigs');
+       $HasWreck = Has_Tech($Who,'Wreckage Analysis');
+       $TotMoney = 0;
+       $ModTypes = Get_ModuleTypes();
+       $DistTypes = Get_DistrictTypes();
+
+       $N = Get_System($T['SystemId']);
+//var_dump($Wrecks);
+       foreach ($Wrecks as $W) {
+         if (($TTypes[$W['Type']]['Properties'] & (THING_HAS_DISTRICTS + THING_HAS_SHIPMODULES)) != 0) {
+           $Money = 0;
+           $Wreck = [];
+           switch ($TTypes[$W['Type']]['Name']) {
+         
+           case 'Military Ship':
+           case 'Support Ship' :
+           case 'Civilian Ship' :
+           case 'Satellite Defences' :
+             $Money = min(10*$W['Level']*$SalvageLevel,Proj_Costs($W['Level'])[1]*0.9);
+             if ($HasWreck) {
+               $Modules = Get_Modules($W['id']);
+               foreach ($Modules as $Mod) {
+                 $L = Has_Tech($W['Whose'],$ModTypes[$Mod['Type']]['BasedOn']);
+                 if ($L) {
+                   $Wreck[]= $Mod['Number'] . " " . $ModTypes[$Mod['Type']]['Name'] . " L$L";
+                 } else {
+                   $Wreck[]= $Mod['Number'] . " Unknown modules.";
+                 }
+               }
+            }
+           
+             Thing_Delete($W['id']);
+             break;
+         
+           case 'Space Station':
+             $Money = min(10*$W['MaxDistricts']*$SalvageLevel,Proj_Costs($W['MaxDistricts'])[1]*0.9);
+             if ($HasWreck) {
+               $Districts = Get_DistrictsT($W['id']);
+               foreach ($Districts as $D) {
+                 $Wreck[]= $D['Number'] . " " . $DistTypes[$D['Type']]['Name'];
+               }
+             }
+             Thing_Delete($W['id']);
+             break;
+                            
+           default:
+             break;
+           }
+           if ($Money) {
+             $TotMoney += $Money;
+             TurnLog($Who,"The wreckage of the " . (empty($W['Name'])? ("Unknown Thing #" . $W['id']) : $W['Name']) . 
+                " has been salvaged.  in " . $N['Ref'] . " Gaining " . Credit() . $Money );
+             if ($Wreck) TurnLog($Who, "It had: " . implode(', ', $Wreck));
+           }
+         }
+       }
+
+       if ($TotMoney) {
+         Spend_Credit($Who,- $TotMoney, "Salvage from " . $N['Ref']);
+         echo "Salvaged a total of " . Credit() . $TotMoney . "<p>";
+       } else {
+         TurnLog($Who,"Salvage was attempted in " .  $N['Ref'] . " but there are no wrecks currently present.");
+         echo "Salvage was attempted in " .  $N['Ref'] . " but there are no wrecks currently present.<p>";
+       }
+       break;
+
+
     
     case 'None' :
     default: 

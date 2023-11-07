@@ -126,6 +126,16 @@ function StartTurnProcess() {
     $LF = mkdir("Turns/$GAMEID/" . $GAME['Turn'],0777,true);
   }
   
+/*
+  $Things = Get_AllThings();
+  foreach ($Things as $T) {
+    if ($T['CurHealth'] && ($T['StartHealth'] != $T['CurHealth'])) {
+      $T['StartHealth'] = $T['CurHealth'];
+      Put_Thing($T);
+    }
+  }
+*/
+  
   GMLog("Started Turn Processing");
   return 1;
 }
@@ -1597,19 +1607,27 @@ function Economy() {
       $H = Get_ProjectHome($W['Home']);
       if (empty($H)) continue;
       $PH = Project_Home_Thing($H);
+      if (!$PH) continue;
       $Name = $PH['Name'];
       $ECon = $H['Economy'] = Recalc_Economic_Rating($H,$W,$Fid);
       if ($W['Revolt']) {
         $ECon = 0;
         echo "It is in <b>Revolt</b> no income<br>\n";
-      } else if ($W['Blockade'] && $Fid != 9) {
-        $ECon = 0;
-        echo "It is blockaded no income<br>\n";
       } else {
-        $ECon = ceil(($ECon - $H['Devastation'])*$H['EconomyFactor']/100);
+        if ($H['Devastation']) {
+          $ECon = $ECon - $H['Devastation'];
+          $EccTxt .= " It has devastation reducing it to: $ECon <br>\n";
+        }
+
+        if ($W['Blockade'] ) { //&& $Fid != 9) {
+          $ECon /= 2;
+          $EccTxt .=  "It is blockaded income is halved<br>\n";
+        } else {
+          $ECon = ceil(($ECon - $H['Devastation'])*$H['EconomyFactor']/100);
+        }
       } 
-      if ($ECon <0) {
-          $EccTxt .= "$Name: 0\n";
+      if ($ECon <=0 && $Name) {
+          $EccTxt .= "$Name: None\n";
       } else {
         $EccTxt .= "$Name: $ECon " . ($H['Devastation']? " after devastation effect of -" . $H['Devastation'] : "");
         if ($H['EconomyFactor'] < 100) {
@@ -1619,6 +1637,7 @@ function Economy() {
         }
         $EconVal += "$ECon\n";
       }
+      echo "\n";
     }
     $EccTxt .=  "<br>";
     $Things = Get_Things_Cond($Fid,'BuildState=3');
@@ -1903,13 +1922,13 @@ function ShipMovements($Agents=0) {
     if ($T['LinkId']>0 && $T['NewSystemId'] != $T['SystemId'] ) {
       // if link out & not spider - cant move
       
-      if ($L && ($L['Status'] > 0) && ($Fid != $LOwner)) {
+      if ($L && ($L['Status'] > 0) && ($Fid != $LOwner) && ($L['GameId']>0)) {
         TurnLog($Fid,$T['Name'] . " was <b>unable to take link</b> <span style=color:" . $LinkLevels[abs($L['Level'])]['Colour'] . ">#$Lid </span> because it is " . 
           $LinkStates[$L['Status']],$T);
         $T['LastMoved'] = $GAME['Turn'];
         Put_Thing($T);
         continue;
-      } else if (!$L) {
+      } else if (!$L || ($L['GameId'] < 0)) {
         GMLog("Not Moving " . $T['Name']);
         TurnLog($Fid,$T['Name'] . " was <b>unable to take link</b>#$Lid because it no longer exists",$T);
         $T['LastMoved'] = $GAME['Turn'];
@@ -3425,7 +3444,7 @@ function MilitiaArmyRecovery() {
 //  GMLog("Militia Recovery is currently Manual<p>");
 //  GMLog("Also Self Repair Armour<p>");
   
-  $Things = Get_Things_Cond(0,"(CurHealth>0 OR (CurHealth=0 AND Type=20)) AND CurHealth!=OrigHealth");
+  $Things = Get_Things_Cond(0,"(CurHealth>0 OR (CurHealth=0 AND Type=20)) AND (CurHealth<OrigHealth OR CurShield<ShieldPoints)");
   $TTypes = Get_ThingTypes();
   $MTypes = Get_ModuleTypes();
   $MTNs = Mod_Types_From_Names($MTypes);
@@ -3485,7 +3504,16 @@ function MilitiaArmyRecovery() {
           GMLog("<a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a> recovered $Rep health");
         }
       }
-    }  
+    }
+    
+    if ($T['CurShield'] < $T['ShieldPoints']) {
+      $T['CurShield'] = $T['ShieldPoints'];
+
+      if ($T['Whose']) TurnLog($T['Whose'],$T['Name'] . " Shields Recovered",$T);
+      GMLog("<a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a> Shields Recovered");
+
+      Put_Thing($T);
+    }
      
   }
   

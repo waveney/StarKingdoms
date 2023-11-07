@@ -332,15 +332,20 @@ function Calc_Health(&$T,$KeepTechLvl=0,$Other=0) {
   if ($Other == 0) $Other = $T['Whose'];
   if (Has_Trait($Other,'Thick Skinned')) $Plus =1;
   $Health = 5*($T['Level']+$Plus);
+  $Shield = 0;
   $Ms = Get_Modules($T['id']);
   $Mts = Get_ModuleTypes();
   $Techs = Get_Techs($Other);
   $Rescat = 0;
-  foreach ($Mts as $mt) if ($mt['DefWep'] == 1 ) {
+  foreach ($Mts as $mt) if (($mt['DefWep'] == 1 ) || ($mt['DefWep'] == 3 )) {
     foreach ($Ms as $M) if (($Mts[$M['Type']]['Name'] == $mt['Name']) && ($M['Number'] > 0)) { 
       if ($KeepTechLvl) {
           $Mhlth = $M['Number'] * Mod_ValueSimple($M['Level']+$Plus,$M['Type'],$Rescat);
-          $Health += $Mhlth;        
+          if ($mt['DefWep'] == 1 ) {
+            $Health += $Mhlth;        
+          } else {
+            $Shield += $Mhlth;                  
+          }
       } else {
         $based = $Mts[$M['Type']]['BasedOn'];
         if ($based && ($l = Has_Tech($Other,$based))) {
@@ -348,13 +353,17 @@ function Calc_Health(&$T,$KeepTechLvl=0,$Other=0) {
             $l = Has_Tech($Other,$Techs[$based]['PreReqTech']);
           }
           $Mhlth = $M['Number'] * Mod_ValueSimple($l+$Plus,$M['Type'],$Rescat);
-          $Health += $Mhlth;
+          if ($mt['DefWep'] == 1 ) {
+            $Health += $Mhlth;        
+          } else {
+            $Shield += $Mhlth;                  
+          }
         }
       }
     }
   }
     
-  return $Health;
+  return [$Health,$Shield];
 }
 
 function Calc_Damage(&$T,&$Rescat) { 
@@ -544,9 +553,11 @@ function RefitRepair(&$T,$Save=1,$KeepTechLvl=0,$Other=0) {
     }
   }
 // Repair
-  $Health = Calc_Health($T,$KeepTechLvl,$Other);
+  [$Health,$Sld] = Calc_Health($T,$KeepTechLvl,$Other);
   Calc_Scanners($T);
+//  var_dump($Health,$Sld);
   $T['CurHealth'] = $T['OrigHealth'] = $Health;
+  $T['CurShield'] = $T['ShieldPoints'] = $Sld;
   $T['Speed'] =  ((($TTypes[$T['Type']]['Properties'] ?? 0)&THING_CAN_MOVE)? $Engines*$Elvl/$T['Level'] +1 :0);
   Put_Thing($T);
   return $Etxt;
@@ -1062,22 +1073,44 @@ function Move_Thing_Within_Sys(&$T,$Dest,$InTurn) {
   $T['WithinSysLoc'] = $Dest;
 }
 
-function Thing_Delete($tid) {
-      $T = Get_Thing($tid);
-      $Discs = Get_DistrictsT($tid);
-      if ($Discs) {
-        foreach ($Discs as $D) {
-          db_delete('Districts',$D['id']);
-        }
-      }
-      $Mods = Get_DistrictsT($tid);
-      if ($Mods) {
-        foreach ($Mods as $M) {
-          db_delete('Modules',$M['id']);
-        }
-      }
+function Empty_Thing(&$T) {
+  $Tid = $T['id'];
+  $Have = Get_Things_Cond(0," (LinkId=-1 OR LinkId=-3) AND SystemId=$Tid ");
 
-      db_delete('Things',$tid);
+  if ($Have) {
+    foreach($Have as $CT) {
+      $CTi = $CT['id'];
+      if ($CT['Type'] != 23) {
+        $InnerHave =  Get_Things_Cond(0," (LinkId=-1 OR LinkId=-3) AND SystemId=$CTi ");
+        if ($InnerHave) {
+          foreach($InnerHave as $InId=>$Inner) {
+            FollowUp($Inner['Whose'], "<a href=ThingEdit.php?id=$InId>" . $Inner['Name'] . "</a> was on board " . $T['Name'] . " when it was destoyed.");
+          }
+        }
+        db_delete('Things',$CTi);
+      } else {
+        FollowUp($CT['Whose'], "<a href=ThingEdit.php?id=$CTi>" . $CT['Name'] . "</a> was on board " . $T['Name'] . " when it was destoyed.");                
+      }
+    }
+  }
+}
+
+function Thing_Delete($tid) {
+  $T = Get_Thing($tid);
+  $Discs = Get_DistrictsT($tid);
+  if ($Discs) {
+    foreach ($Discs as $D) {
+      db_delete('Districts',$D['id']);
+    }
+  }
+  $Mods = Get_DistrictsT($tid);
+  if ($Mods) {
+    foreach ($Mods as $M) {
+      db_delete('Modules',$M['id']);
+    }
+  }
+  Empty_Thing($T);
+  db_delete('Things',$tid);
 }
 
 function Recalc_Prisoner_Counts() {

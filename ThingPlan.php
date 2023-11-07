@@ -255,8 +255,9 @@
       fm_hidden('HighestModule',$Mti);
       echo "<td id=CurrentModules" . ($totmodc > $T['MaxModules'] ? " class=ERR":"") . ">$totmodc\n";
       if ($totmodc > $T['MaxModules'] ) $Valid = 0;
-      $T['OrigHealth'] = Calc_Health($T);
+      [$T['OrigHealth'],$T['ShieldPoints']] = Calc_Health($T);
       echo "<tr><td>Health/Hull<td>" . $T['OrigHealth'] . "<td><td>At current Tech Levels";
+      if ($T['ShieldPoints']) echo "<tr><td>Shields<td>" . $T['ShieldPoints'] . "<td><td>At current Tech Levels";
       $ResC = 0;
       $BaseDam = Calc_Damage($T, $ResC);
       if ($tprops & (THING_HAS_ARMYMODULES | THING_HAS_MILSHIPMODS )) echo "<tr><td>Basic Damage<td>$BaseDam<td><td>At current Tech Levels.  Before special weapons etc";

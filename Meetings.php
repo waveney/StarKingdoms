@@ -148,7 +148,9 @@ function ForceReport($Sid,$Cat) {
       
       $txt .= "<td>" . $TTypes[$T['Type']]['Name'] . "<td>" . $T['Level'];
       $txt .= "<td><span id=StartingHealth$Tid hidden>" . $T['CurHealth'] . "</span><span id=CurHealth$Tid>" . $T['CurHealth'] . "</span> / <span id=OrigHealth$Tid>" .
-           $T['OrigHealth'] . "</span>" . "<td><span id=Attack$Tid>$BD</span><td>" . 
+           $T['OrigHealth'] . "</span>";
+      if ($T['ShieldPoints']) $txt .= " (" . $T['CurShield'] . "/" . $T['ShieldPoints'] . " )";
+      $txt .= "<td><span id=Attack$Tid>$BD</span><td>" . 
            (($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE)? "Speed: " . sprintf("%0.3g ",$T['Speed']) :'') ;
       $txt .=  fm_number1(" Do",$T,'Damage', ''," class=Num3 onchange=Do_Damage($Tid,$LastF,'$Cat')","Damage:$Tid") . " damage"; 
       
@@ -211,16 +213,30 @@ function ForceReport($Sid,$Cat) {
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
     case 'Do ALL Damage':
+//    var_dump($_REQUEST);
+      $IgnoreShield = ($_REQUEST['IgnoreShield'] ?? 0);
       foreach ($_REQUEST as $RN=>$RV) {
         if ($RV && preg_match('/Damage:(\d*)/',$RN,$Mtch)) {
           $Tid = $Mtch[1];
 //var_dump($Tid,$RN,$RV);
           $T = Get_Thing($Tid);
-          $T['CurHealth'] = max(0,min($T['OrigHealth'],$T['CurHealth'] - $RV));
+          $RDam = $Dam = $RV;
+          if (($IgnoreShield == 0) && $T['CurShield']) {
+            $shldD = min($T['CurShield'],$Dam);
+            $T['CurShield'] = $T['CurShield'] - $shldD;
+            $RDam -= $shldD;
+          }
+          if ($RDam) {
+            $T['CurHealth'] = min(max(0,$T['CurHealth'] - $RDam), $T['OrigHealth']);
+          }
+
           if (($T['CurHealth'] == 0) && ($ThingProps[$T['Type']] & (THING_HAS_SHIPMODULES | THING_HAS_ARMYMODULES)) != 0) {
             $T['BuildState'] = 4;
-            // Anything aboard?
-            // Armies die, named characters -> FollowUps
+            TurnLog($T['Whose'],$T['Name'] . " took $RV damage and has been destroyed\n",$T);
+            GMLog($T['Name'] . " took $RV damage and has been destroyed\n",$T);
+            Empty_Thing($T);
+          } else {
+            TurnLog($T['Whose'],$T['Name'] . " took $RV damage\n",$T);
           }
           Put_Thing($T);
           
@@ -250,11 +266,16 @@ function ForceReport($Sid,$Cat) {
 
       echo "Make sure you have unloaded troops BEFORE looking at the Ground Combat Report.<p>";
 
+
+      echo "<form method=post action=Meetings.php?ACTION=Check&S=$Sid onkeydown=\"return event.key != 'Enter';\">";
+      
+      $_REQUEST['IgnoreShield'] = 0;
+      echo "<h2>" . fm_checkbox('Bipass shields - (eg missiles)',$_REQUEST,'IgnoreShield') . "</h2><p>";
       if (preg_match('/<div class=FullD hidden>/',$txt,$mtch)) {
         echo "<button class='floatright FullD' onclick=\"($('.FullD').toggle())\">Show Remains of Things and Named Characters</button>";
       }
 
-      echo "<form method=post action=Meetings.php?ACTION=Check&S=$Sid onkeydown=\"return event.key != 'Enter';\">";
+
 //      Register_AutoUpdate('Meetings',$Sid);
       
       ForceReport($Sid,'G');
