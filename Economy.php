@@ -153,7 +153,7 @@
         }
         if ($W['Blockade']) { // && $Fid != 9) {
           $ECon /=2 ;
-          echo ", It is blockaded income is halved";
+          echo ", It is blockaded income is halved to $ECon";
         }
         if ($H['EconomyFactor'] < 100) {
           $ECon = ceil($ECon*$H['EconomyFactor']/100);

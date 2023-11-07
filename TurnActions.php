@@ -1621,7 +1621,7 @@ function Economy() {
 
         if ($W['Blockade'] ) { //&& $Fid != 9) {
           $ECon /= 2;
-          $EccTxt .=  "It is blockaded income is halved<br>\n";
+          $EccTxt .=  "  It is blockaded income is halved  to $ECon\n";
         } else {
           $ECon = ceil(($ECon - $H['Devastation'])*$H['EconomyFactor']/100);
         }
