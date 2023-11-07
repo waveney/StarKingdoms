@@ -561,7 +561,10 @@ function RefitRepair(&$T,$Save=1,$KeepTechLvl=0,$Other=0) {
   if ($KeepTechLvl == 0) {
     $T['CurHealth'] = $Health;
     $T['CurShield'] = $Sld;
-  }
+  } else {
+    $T['CurHealth'] = min($T['CurHealth'],$Health);
+    $T['CurShield'] = $Sld;
+  }    
   $T['Speed'] =  ((($TTypes[$T['Type']]['Properties'] ?? 0)&THING_CAN_MOVE)? $Engines*$Elvl/$T['Level'] +1 :0);
   Put_Thing($T);
   return $Etxt;
