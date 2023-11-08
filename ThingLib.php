@@ -1092,11 +1092,17 @@ function Empty_Thing(&$T) {
         if ($InnerHave) {
           foreach($InnerHave as $InId=>$Inner) {
             FollowUp($Inner['Whose'], "<a href=ThingEdit.php?id=$InId>" . $Inner['Name'] . "</a> was on board " . $T['Name'] . " when it was destoyed.");
+            $Inner['LinkId'] = 0;
+            $Inner['SystemId'] = GameFeature('Limbo',0);
+            Put_Thing($Inner);
           }
         }
         db_delete('Things',$CTi);
       } else {
         FollowUp($CT['Whose'], "<a href=ThingEdit.php?id=$CTi>" . $CT['Name'] . "</a> was on board " . $T['Name'] . " when it was destoyed.");                
+        $CT['LinkId'] = 0;
+        $CT['SystemId'] = GameFeature('Limbo',0);
+        Put_Thing($CT);
       }
     }
   }

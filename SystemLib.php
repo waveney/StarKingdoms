@@ -69,7 +69,7 @@ function Dynamic_Update(&$N,$Tinc=0) {
 
 function RealWorld(&$Data,$fld) {
     $Star = (isset($Data['SystemId'])?1:0);
-    $val = $Data[$fld];
+    $val = $Data[$fld] ?? 0;
     $Acc = "%0.2f";
     if (isset($Data['Flags']) && ($Data['Flags'] &1)) $Acc="%0.8f";
     switch ($fld) {
