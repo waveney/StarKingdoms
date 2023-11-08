@@ -344,7 +344,8 @@ function Calc_Health(&$T,$KeepTechLvl=0,$Other=0) {
           if ($mt['DefWep'] == 1 ) {
             $Health += $Mhlth;        
           } else {
-            $Shield += $Mhlth;                  
+            $Shield += $Mhlth;
+            $Health +=  $M['Number'] * 15;
           }
       } else {
         $based = $Mts[$M['Type']]['BasedOn'];
@@ -357,6 +358,7 @@ function Calc_Health(&$T,$KeepTechLvl=0,$Other=0) {
             $Health += $Mhlth;        
           } else {
             $Shield += $Mhlth;                  
+            $Health +=  $M['Number'] * 15;
           }
         }
       }
