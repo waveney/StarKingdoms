@@ -25,6 +25,7 @@
       $Fid = $_REQUEST['id'];
     }
     if (isset($Fid)) $Faction = Get_Faction($Fid);
+    if (isset($_REQUEST['FORCE'])) $GM = 0;
   }
   A_Check('Player');  
 //  CheckFaction('WorldList',$Fid);
@@ -60,9 +61,13 @@
   if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Economy<br>Modifier</a>\n";
   if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Whose</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Priority<br>Importance</a>\n";
-  if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Conflict?</a>\n";
-  if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Blockade?</a>\n";
-  if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Revolt?</a>\n";
+  if ($GM) {
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Conflict?</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Blockade?</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Revolt?</a>\n";
+  } else {
+    echo "<th>Status"; 
+  }
   echo "</thead><tbody>";
   
   foreach ($Facts as $F) {
@@ -133,9 +138,22 @@
       if (isset($W['HomeOf'])) echo " <b>(Home)</b>";
     }
     echo "<td>" . $W['RelOrder'] . "\n";
-    if ($GM) echo "<td>" . fm_checkbox("Conflict?", $W, 'Conflict','',"Conflict:99:" . $W['id']);
-    if ($GM) echo "<td>" . fm_checkbox("Blockade?", $W, 'Blockade','',"Blockade:99:" . $W['id']);
-    if ($GM) echo "<td>" . fm_checkbox("Revolt?", $W, 'Revolt','',"Revolt:99:" . $W['id']);
+    
+    if ($GM) {
+      echo "<td>" . fm_checkbox("Conflict?", $W, 'Conflict','',"Conflict:99:" . $W['id']);
+      echo "<td>" . fm_checkbox("Blockade?", $W, 'Blockade','',"Blockade:99:" . $W['id']);
+      echo "<td>" . fm_checkbox("Revolt?", $W, 'Revolt','',"Revolt:99:" . $W['id']);
+    } else {
+      $Stat = [];
+      if ($W['Conflict']) $Stat[]= 'Conflict';
+      if ($W['Blockade']) $Stat[]= 'Blockade';
+      if ($W['Revolt'])   $Stat[]= 'Revolt';
+      if ($Stat) {
+        echo "<td class=Red>" . implode(', ',$Stat);
+      } else {
+        echo "<td>";
+      }
+    }
   }
   echo "</table></div>\n";
   
