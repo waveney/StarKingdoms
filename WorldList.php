@@ -5,6 +5,8 @@
   include_once("ProjLib.php");
   include_once("HomesLib.php");
    
+
+  dostaffhead("List of Worlds and Colonies",["js/ProjectTools.js"]);
   $Fid = 0;
   $xtra = '';
   if (Access('Player')) {
@@ -25,13 +27,17 @@
       $Fid = $_REQUEST['id'];
     }
     if (isset($Fid)) $Faction = Get_Faction($Fid);
-    if (isset($_REQUEST['FORCE'])) $GM = 0;
+    if (isset($_REQUEST['FORCE'])) {
+      $GM = 0;
+    } else {
+      if ($Fid) echo "<h2>GM: <a href=WorldList.php?id=$Fid&FORCE>This page in Player Mode</a></h2>";
+    }
   }
   A_Check('Player');  
 //  CheckFaction('WorldList',$Fid);
 
   if (!Access('GM') && $Faction['TurnState'] > 2) Player_Page();    
-  dostaffhead("List of Worlds and Colonies",["js/ProjectTools.js"]);
+
   
   $Worlds = Get_Worlds($Fid);
   $PlanetTypes = Get_PlanetTypes();
