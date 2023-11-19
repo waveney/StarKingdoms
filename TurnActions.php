@@ -1108,8 +1108,26 @@ function Instuctions() { // And other Instructions
         TurnLog($T['Whose'],"Could not afford to start Link Repair in " .$N['Ref'],$T);
         break;
       }
+      $Link = Get_Link($T['Dist1']); 
+      if ($Link['Weight'] < $T['Dist2']) { // Need to spend aidianite
+        $LinkLevels = Get_LinkLevels();
+       
+        $LL = $LinkLevels[$Link[['Level']]];
+        $LinkRes = GameFeature('LinkResource',0);
+        if ($LinkRes) {
+          AddCurrencies();
+          $Cur = 0;
+          foreach ($Currencies as $Ci => $C) if ( $C == $LinkRes) $Cur = $Ci;
+          if (!Gain_Currency($T['Whose'],$Cur,-$LL['MakeCost'],"Strengthening " . $T['Dist1'] . " from " . $Systems[$T['SystemId']] . 
+              " to " . $Systems[$T['Dist2']] . " at Strength " . $T['Dist2'])) {
+            TurnLog($T['Whose'],"Could not aford the $LinkRes to Strengthen " . $T['Dist1'] . " from " . $Systems[$T['SystemId']] . 
+                    " to " . $Systems[$T['Dist2'] ]. " at Strength " . $T['Dist2']); 
+            $T['Progress'] = -1; // Stalled
+          }  
+        }      
+      }     
+      
       $T['Instruction'] = -$T['Instruction'];
-      $Link = Get_Link($T['Dist1']);
       $Link['Status'] = 1;
 //var_dump($Link);
       Put_Link($Link);
@@ -3179,7 +3197,7 @@ function InstructionsComplete() {
              }
              Thing_Delete($W['id']);
              break;
-                            
+
            default:
              break;
            }
@@ -3197,19 +3215,18 @@ function InstructionsComplete() {
          TurnLog($Who,"Salvage was attempted in " .  $N['Ref'] . " but there are no wrecks currently present.");
          GMLog("Salvage was attempted in " .  $N['Ref'] . " by " . $Facts[$Who]['Name'] . " but there are no wrecks currently present.");
        }
-     
        break;
-     
+
      case 'Link Repair':
        $Link = Get_Link($T['Dist1']);
        $Link['Status'] = 0;
        $Link['UseCount'] = 0;
+       $Link['Weight'] = $T['Dist2'];
        Put_Link($Link);
        TurnLog($T['Whose'],"Link " . $T['Dist1'] . " has been repaired.");
-       GMLog("Link " . $T['Dist1'] . " has been repaired.");
+       GMLog("Link " . $T['Dist1'] . " has been repaired at Strength " . $T['Dist2']);
        break;
-     
-     
+
      default: 
        break;
      }

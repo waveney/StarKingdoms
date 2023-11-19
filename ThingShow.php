@@ -1423,23 +1423,24 @@ function Show_Thing(&$T,$Force=0) {
     case 'Link Repair':
       if (empty($T['Dist2'])) $T['Dist2'] = 1;
       $factor = 1;
-      echo "<br>Link to Repair: " . fm_select($SelLinks,$T,'Dist1',0," style=color:" . $SelCols[$T['Dist1']] ,'',0,$SelCols) . " Refresh after selecting.";
-      if (Has_Trait($Who,"Grow Modules") && ($T['Dist2'] != 1)) {
+      echo "<br>Link to Repair: " . fm_select($SelLinks,$T,'Dist1',0," style=color:" . $SelCols[$T['Dist1']] ,'',0,$SelCols) . " <b>Refresh</b> after selecting.";
+      if (Has_Trait($Fid,"Grow Modules") && $T['Dist1']) {
+        echo fm_number0('  Strength',$T,'Dist2') . " <b>Refresh</b> after selecting. ";
         $Link = Get_Link($T['Dist1']);
-        $LL = $LinkLevels[$T['Dist1']];
+        $LinkLevels = Get_LinkLevels();
+        $LL = $LinkLevels[$Link['Level']];
         $LinkRes = GameFeature('LinkResource',0);
         if ($LinkRes && $Link['Level'] != $T['Dist2']) {
           AddCurrencies();
           $Cur = 0;
           foreach ($Currencies as $Ci => $C) if ( $C == $LinkRes) $Cur = $Ci;
           if ( $T['Progress'] == 0) {
-            if ($Faction["Currency" . (6 - $Cur)] >= ($xtra = $LL['MakeCost']*($Link['Level'] - $T['Dist2']))) {
+            if ($Faction["Currency" . (6 - $Cur)] >= ($xtra = $LL['MakeCost']*($T['Dist2'] - $Link['Weight']))) {
               echo "Will use " . $xtra . " $LinkRes<br>";
             } else {
               echo "<span class=Err>Warning needs more $LinkRes than you have </span>";
             }
-          }       
-        echo "<br>" . fm_number('Strength',$T,'Dist2');
+          }
         }
       } else {
         $factor = 2;
