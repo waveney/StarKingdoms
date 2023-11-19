@@ -16,18 +16,15 @@ TODO
    * REports to factions
    * Carried things on destruction
 31) Collabaritive DSC
-32) Instructions Stage 2 bug
 34) Oribital Repair yards not working
 35) Link Weights - repair& construct
-36) Generic other for DSC constructs (Replace space telescope, diner, etc)
-37) Training Camps
 38) Validate Dismantle Stargate (And other instructions)
 39) Nebulae and Anomalies
 40) Thing TYpe for ignore on Meetups
-42)
 43) MCB Cost when making things
 45) Thing - edit history
 46) Turn Text edit
+50)
 
 
 Future Hooks:
@@ -51,6 +48,7 @@ Major General Khodorkovsky #28 - head invasion 2
 Kolonel Ramzan Kadyrov #332 - Military Fleet 
 Kolonel Slovyansky #388 - Civilian fleet 
 Kolonel Kirill Stremousov #425 - Arachni
+Kommander Vladimir Saldo #1026 - Permafrost
 Major Nikitovich #6,257 - wombles
 Major Tsymbaliuk #8,238 - fongari
 Major Sergi Peskov #7,551 - Sedranna

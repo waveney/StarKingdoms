@@ -835,6 +835,14 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
         if ($BD) $txt .= "Dam: " . $BD . ($Resc? "<b>*</b>":'') . ", ";
         if ($T['NebSensors']) $txt .= "N, ";
         $txt .= ")";
+      } else {
+        if ($TTprops & THING_HAS_HEALTH) {
+          if ($T['CurHealth']*10 <= $T['OrigHealth']) { 
+            $txt .= " - Badly Damaged ";
+          } else if ($T['CurHealth']*2 <= $T['OrigHealth']) { 
+            $txt .= " - Damaged ";
+          }
+        }        
       }
       if ($Images) $txt .= "<br clear=all>\n";
       if ($Div) $txt .= "</div>";

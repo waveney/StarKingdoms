@@ -45,7 +45,7 @@ function Check_Login() {
 }
 
 function Set_User() {
-  global $db,$USER,$USERID,$AccessType,$YEAR,$CALYEAR,$FACTION;
+  global $db,$USER,$USERID,$AccessType,$YEAR,$CALYEAR,$FACTION,$GAME,$GAMEID;
   if (isset($USER)) return;
   $USER = array();
   $USERID = 0;
@@ -57,6 +57,11 @@ function Set_User() {
     $USER['Subtype'] = $crumbs[0];
     $USER['AccessLevel'] = $crumbs[1];
     $FACTIONID = $USER['UserId'] = $crumbs[2];
+    $Game = ($crumbs[3] ?? 1);
+    if ($Game != $GAMEID) {
+      echo "Richard you have a bug...";
+      // TODO Not current game...
+    }
     $FACTION = Get_Faction($FACTIONID);
     if ($USERID) return;
 //    $USER = array();

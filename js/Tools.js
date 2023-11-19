@@ -376,14 +376,46 @@ function ExpandTurnsM() {
 
 function Do_Damage(id,fid,cat) {
 debugger;
-  var shlth=document.getElementById("StartingHealth" + id).innerHTML;
-  var hlth=document.getElementById("CurHealth" + id).innerHTML;
-  var newhlth = Math.max(0,shlth - document.getElementById("Damage:" + id).value);
-  document.getElementById("CurHealth" + id).innerHTML = newhlth;
-  var change = hlth - newhlth;
+  var StateOf = document.getElementById("OrigData" + id).value;
+  var Stats = StateOf.split(":");
+  var IgnoreShield = document.querySelector('#IgnoreShield').checked;
+    
+  var CurHealth = +Stats[0];
+  var OrigHealth = +Stats[1];
+  var ActDamage = OrigDamage = +Stats[2];
+  if (Stats[3]) {
+    var CurShield = +Stats[3];
+    var ShieldPoints = +Stats[4];
+  } else {
+    CurShield = ShieldPoints = 0;
+  }
+  
+  var Damage = OrigDam = (document.getElementById("Damage:" + id).value - ActDamage);
+  
+  if (Damage > 0 && ShieldPoints && CurShield && !IgnoreShield) {
+    var ShDam = Math.min(CurShield,Damage);
+    CurShield -= ShDam;
+    Damage -= ShDam;
+    ActDamage += ShDam;
+  }
+ 
+  if (Damage > 0) {
+    var HullDam = Math.min(CurHealth,Damage);
+    CurHealth -= HullDam;
+    Damage -= HullDam;
+    ActDamage += HullDam;
+  }
+  
+  document.getElementById("OrigData" + id).value = CurHealth + ':' + OrigHealth  + ':' + ActDamage + ':' + CurShield  + ':' + ShieldPoints;
+  if (ShieldPoints) {
+    document.getElementById("StateOf" + id).innerHTML = CurHealth + ' / ' + OrigHealth + ' (' + CurShield  + '/' + ShieldPoints + ') ';
+  } else {
+    document.getElementById("StateOf" + id).innerHTML = CurHealth + ' / ' + OrigHealth;  
+  }
   
   var Ctot = document.getElementById("DamTot" + cat + fid).innerHTML;
-  document.getElementById("DamTot" + cat + fid).innerHTML = +Ctot + change;
+  document.getElementById("DamTot" + cat + fid).innerHTML = + Ctot + ActDamage - OrigDamage; 
+  
 }
 
 function Do_Destroy(id) {

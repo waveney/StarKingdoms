@@ -383,6 +383,8 @@ function Show_Thing(&$T,$Force=0) {
           }
           $TList[$X['id']] = $X['Name'];  
         }
+        
+      
 
         if ($TList) {
           echo "<tr><td colspan=3>" . ($NeedOr?" <b>Or</b> ":'') . "Board: " . fm_select($TList,$T,'BoardPlace') . "<input type=submit name=ACTION value='Load on Turn'>";

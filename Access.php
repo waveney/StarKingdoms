@@ -22,7 +22,7 @@
   
   if ($F['AccessKey'] != $key) Error_Page("Sorry - This is not the right key");
 
-  $Cake = sprintf("%s:%d:%06d",'Player',$Access_Type['Player'],$Fid ); 
+  $Cake = sprintf("%s:%d:%06d:%d",'Player',$Access_Type['Player'],$Fid,$GAMEID ); 
   $biscuit = openssl_encrypt($Cake,'aes-128-ctr','Quarterjack',0,'BrianMBispHarris');
   setcookie('SKD',$biscuit,0,'/');
   $_COOKIE['SKD'] = $biscuit;

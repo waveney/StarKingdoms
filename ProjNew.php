@@ -318,6 +318,7 @@
                 "Produce 4 units of Adianite $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";  
       
       } 
+
     break;
       
   case 'Academic':

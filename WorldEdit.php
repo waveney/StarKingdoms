@@ -150,6 +150,7 @@
   if ($NumDists) {
     if ($NumDists) echo "<tr><td rowspan=" . ($DistTypes+1) . ">Districts:";
     foreach ($Dists as $D) {
+      if ($D['Number'] == 0) continue;
       echo "<tr><td>" . $DTs[$D['Type']]['Name'] . ": " . $D['Number'];
       if ($NeedDelta) {
         echo fm_number1("Delta",$D,'Delta',''," min=-$NeedDelta max=$NeedDelta ","Dist:Delta:" . $D['id']);

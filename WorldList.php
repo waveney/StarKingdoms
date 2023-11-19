@@ -62,7 +62,7 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Where</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Minerals</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Current<br>Economy</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Current<br>Economic Value</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Devastation</a>\n";
   if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Economy<br>Modifier</a>\n";
   if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Whose</a>\n";

@@ -146,11 +146,11 @@ function ForceReport($Sid,$Cat) {
       $BD = Calc_Damage($T,$Resc);
       $tprops = $ThingProps[$T['Type']];
       
+      $txt .= fm_hidden("OrigData$Tid",implode(":",[$T['CurHealth'], $T['OrigHealth'],0,$T['CurShield'],$T['ShieldPoints']]));
       $txt .= "<td>" . $TTypes[$T['Type']]['Name'] . "<td>" . $T['Level'];
-      $txt .= "<td><span id=StartingHealth$Tid hidden>" . $T['CurHealth'] . "</span><span id=CurHealth$Tid>" . $T['CurHealth'] . "</span> / <span id=OrigHealth$Tid>" .
-           $T['OrigHealth'] . "</span>";
-      if ($T['ShieldPoints']) $txt .= " (" . $T['CurShield'] . "/" . $T['ShieldPoints'] . " )";
-      $txt .= "<td><span id=Attack$Tid>$BD</span><td>" . 
+      $txt .= "<td><span id=StateOf$Tid>" . $T['CurHealth'] . " / " . $T['OrigHealth'];
+      if ($T['ShieldPoints']) $txt .= " (" . $T['CurShield'] . "/" . $T['ShieldPoints'] . ") ";
+      $txt .= "</span><td><span id=Attack$Tid>$BD</span><td>" . 
            (($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE)? "Speed: " . sprintf("%0.3g ",$T['Speed']) :'') ;
       $txt .=  fm_number1(" Do",$T,'Damage', ''," class=Num3 onchange=Do_Damage($Tid,$LastF,'$Cat')","Damage:$Tid") . " damage"; 
       
