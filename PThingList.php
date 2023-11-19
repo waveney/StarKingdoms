@@ -17,7 +17,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
       $Faction = &$FACTION;
     }
   } 
-  $GM = Access('GM') && ! isset($_REQUEST['FORCE']) ;
+  $GM = (Access('GM') && ! isset($_REQUEST['FORCE'])) ;
   if ($GM) {
     if (isset( $_REQUEST['F'])) {
       $Fid = $_REQUEST['F'];
@@ -26,6 +26,9 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
     } else if (isset( $_REQUEST['id'])) {
       $Fid = $_REQUEST['id'];
     }
+    if (isset($Fid)) $Faction = Get_Faction($Fid);
+  } else {
+    $Fid = $_REQUEST['id'];
     if (isset($Fid)) $Faction = Get_Faction($Fid);
   }
 

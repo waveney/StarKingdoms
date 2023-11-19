@@ -800,10 +800,12 @@ function Show_Thing(&$T,$Force=0) {
       foreach ($Facts as $F) {
         if ($F['id'] == $T['Whose'] || $F['HomeWorld'] == 0) continue;
         $W = Get_World($F['HomeWorld']);
-        $H = Get_ProjectHome($W['Home']);
-        if ($H['SystemId'] == $T['SystemId']) {
-          $T['OtherFaction'] = $F['id'];
-          break 2;
+        if ($W) {
+          $H = Get_ProjectHome($W['Home']);
+          if ($H && ($H['SystemId'] == $T['SystemId'])) {
+            $T['OtherFaction'] = $F['id'];
+            break 2;
+          }
         }
       }
       continue 2;
