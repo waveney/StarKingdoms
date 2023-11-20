@@ -27,7 +27,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
       $Fid = $_REQUEST['id'];
     }
     if (isset($Fid)) $Faction = Get_Faction($Fid);
-  } else {
+  } else if (!($Fid ?? 0)) {
     $Fid = $_REQUEST['id'] ?? $_REQUEST['F'] ?? $_REQUEST['f'] ?? 0;
     if (isset($Fid)) $Faction = Get_Faction($Fid);
   }

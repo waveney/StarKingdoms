@@ -2704,9 +2704,7 @@ function ProjectsCompleted($Pass) {
         foreach ($Currencies as $Ci => $C) if ( $C == $LinkRes) $Cur = $Ci;
 
         $Ad = Proj_Costs($P['Level'])[0];
-        $Fact = Get_Faction($Fid);
-        $Fact["Currency$Cur"] += $Ad;
-        Put_Faction($Fact);
+        Gain_Currency($Fid,$Cur,$Ad,'Producing Adianite');
 
         $H = Get_ProjectHome($P['Home']);      
         switch ($H['ThingType']) {
