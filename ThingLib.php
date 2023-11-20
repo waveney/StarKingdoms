@@ -986,7 +986,7 @@ function Gates_Avail($Fid) {
   foreach($FFdata as $FC) {
     if ($FC['Props'] & 0xf00) {
       $OGates = Get_Things_Cond($FC['FactionId1'],' Type=15 AND BuildState=3'); // Warp Gates
-      if (!empty($OwnGates)) $Gates = array_merge($Gates,$OGates); 
+      if (!empty($OGates)) $Gates = array_merge($Gates,$OGates); 
     }
   }
   return $Gates;
