@@ -31,7 +31,7 @@
         $PTD[$pt]['MCount']++;
         }
       }
-    if (!$Ps && ($N['Flags']&2 == 0)) { 
+    if (!$Ps && (($N['Flags']&2) == 0)) { 
       $unpop++;
       echo "Unpopulated system:  <a href=SysEdit.php?R=" . $N['Ref'] . ">" . $N['Ref'] . "</a><p> ";
       }
