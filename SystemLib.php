@@ -158,7 +158,7 @@ function Show_System(&$N,$Mode=0) {
   if ($Mode) {
     echo "<span class=NotSide>Fields marked are not visible to factions.</span>";
     echo "  <span class=NotCSide>Marked are visible if set, but not changeable by factions.</span>";
-    echo "Flags: 1=Dynamic<br>\n";
+    echo " Flags: 1=Dynamic, 2=Off Map<br>\n";
   }
   
   $FactNames = Get_Faction_Names();
