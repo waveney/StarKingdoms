@@ -368,10 +368,12 @@ function Show_Thing(&$T,$Force=0) {
           if ($X['BuildState'] < 2 || $X['BuildState'] > 3) continue;
           if ($NeedCargo && $X['CargoSpace'] < $T['Level']) continue; // Not big enough
           if ($ThingProps[$X['Type']] & THING_CANT_HAVENAMED) continue;
-          if ($X['Whose'] != $Fid) {
+          if (($X['Whose'] == $Fid) || (($T['PrisonerOf'] == $FACTION['id'] ) && (($X['Whose'] == $FACTION['id'])))) { 
+            // Full through
+          } else {
             $Carry = (empty($FF[$X['Whose']])? 0 : $FF[$X['Whose']]['Props']);
             if (!$NeedCargo) $Carry >>= 4;
-            if (($Carry&15) < 2) continue; // Don't carry Anoth#r8yPwd
+            if (($Carry&15) < 2) continue; // Don't carry Another
           }
 
           if ($NeedCargo) {
