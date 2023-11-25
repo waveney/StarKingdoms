@@ -1393,6 +1393,14 @@ function Gen_Get_Table($Table, $Cond='') {
   return $Ts;
 }
 
+function Gen_Get_Basic_Table($Table, $Cond='') {
+  global $db,$GAME,$GAMEID;
+  $Ts = [];
+  $res = $db->query("SELECT * FROM $Table " . ($Cond? "WHERE $Cond" :""));
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
+  return $Ts;
+}
+
 function Gen_Select($Clause) {
   global $db;
   $Ts = [];

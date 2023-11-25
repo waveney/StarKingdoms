@@ -16,6 +16,16 @@
   $CTNs = [];
   $CTNs[0] = '';
   foreach ($CTs as $T) $CTNs[$T['id']] = $T['Name'];
+  $UseCount = [];
+  
+  $Facts = Get_Factions();
+  $Techuses = Gen_Get_Basic_Table('FactionTechs');
+  
+  foreach ($Techuses as $T) {
+    if (!isset($Facts[$T['Faction_Id']])) continue;
+    $Tec = $T['Tech_Id'];
+    $UseCount[$Tec] = ($UseCount[$Tec] ?? 0) + 1;
+  }
 
   $MFN = ModFormulaes();
 //var_dump($CTNs);
@@ -40,6 +50,7 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Min Level</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Civ Mil</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Formula</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Usage</a>\n";
     echo "</thead><tbody>";
 
     foreach($Ts as $T) {
@@ -56,6 +67,7 @@
       echo "<td>" . $T['MinThingLevel'];
       echo "<td>" . $CivMil[$T['CivMil']];
       echo "<td>" . ($T['Formula']>0 ? $MFN[$T['Formula']]:'');
+      echo "<td>" . ($UseCount[$i] ?? 0);
       
       }   
 
