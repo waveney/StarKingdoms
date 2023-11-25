@@ -22,7 +22,7 @@
   $Techuses = Gen_Get_Basic_Table('FactionTechs');
   
   foreach ($Techuses as $T) {
-    if (!isset($Facts[$T['Faction_Id']])) continue;
+    if (($T['Faction_Id']==0) || (!isset($Facts[$T['Faction_Id']]))) continue;
     $Tec = $T['Tech_Id'];
     $UseCount[$Tec] = ($UseCount[$Tec] ?? 0) + 1;
   }
