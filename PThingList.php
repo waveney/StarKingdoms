@@ -107,7 +107,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
           echo "<h2>You are taking a <span style='color:" . $LinkTypes[$ll]['Colour'] . "'>" . $LinkTypes[$ll]['Name'] .
             "</span> link do you need to pay " . credit() . "$Lc to " . $LOwner['Name'] . " for this? ";
          
-          echo fm_hidden('LinkCost', $Lc) . fm_hidden('T',$T['id']) . "<input type=submit Name=ACTION value='Pay on Turn'>";
+          echo fm_hidden('LinkCost', $Lc) . fm_hidden('T',$T['id']) . fm_submit("ACTION",'Pay on Turn',0);
           echo "</h2>\n";
           echo "</form>";
         }

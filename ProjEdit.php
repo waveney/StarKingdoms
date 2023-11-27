@@ -214,20 +214,18 @@
   if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   
   echo "</table><h2>";
-  echo "<input type=submit Name=Ignore value=Ignore hidden>";
-  if ($when >=0) echo "<input type=submit name=ACTION value='Abandon Project'> ";
+  echo fm_submit("Ignore","Ignore",0," hidden");
+  if ($when >=0) echo fm_submit("ACTION",'Abandon Project',0) . " ";
   if ($when > 0 || $GM )  {
-    echo "<input type=submit name=ACTION value=Delete> ";
+    echo fm_submit("ACTION",'Delete',0) . " ";
     if ($PProps & 128) {
       if (($P['Type'] == 1) && ($P['Level'] >= $DistTypes[$P['ThingType']]['MaxNum'] )) {
         if ($GM) echo "Not allowed (GM only): <input type=submit name=ACTION value='Raise 1 Level'>";
       } else {
-        echo "<input type=submit name=ACTION value='Raise 1 Level'>";
+        echo fm_submit("ACTION",'Raise 1 Level',0);
       }
     }
   }
-//  if ($when == 0 || Access('GM') )  echo "<input type=submit name=ACTION value=Suspend> ";
-//  if ($P['Status'] == 4)  echo "<input type=submit name=ACTION value=Resume> ";
   echo "</h2>";
   echo "</form>";
   

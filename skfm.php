@@ -317,6 +317,13 @@ function fm_pence1($desc,&$data,$field,$extra1='',$extra2='',$field2='') {
   return $str . " $ADDALL>";
 }
 
+
+function fm_submit($Name,$Value,$tab=1,$extra='') {
+  global $ADDALL,$AutoADD,$AutoAfter;
+  if (preg_match('/readonly/',$ADDALL)) return '';
+  return ($tab?"<td>":'') . "<input type=submit name=$Name value=$Value extra $ADDALL>";
+}
+
 function Disp_CB($what) {
   echo "<td>" . ($what?'Y':'');
 }

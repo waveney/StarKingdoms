@@ -281,7 +281,7 @@ function ForceReport($Sid,$Cat) {
       ForceReport($Sid,'G');
       ForceReport($Sid,'S');
 
-      echo "<button type=submit name=ACTION value='Do ALL Damage'>Do All Damage</button>";
+      echo fm_submit("ACTION",'Do ALL Damage',0);
       echo "</form>";
                               
 

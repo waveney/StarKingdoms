@@ -20,7 +20,7 @@ function New_Thing(&$T) {
   echo "<tr>" . fm_radio('Whose',$FactNames ,$T,'Whose','',1,'colspan=6','',$Fact_Colours,0); 
   echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId');
   echo "<tr><td>BuildState:<td>" . fm_select($BuildState,$T,'BuildState');
-  echo "<tr><td><td><input type=submit name=ACTION value=Create>\n";
+  echo "<tr><td>" . fm_submit("ACTION","Create");
   echo "</table></form>";
   dotail();
 }

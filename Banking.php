@@ -163,7 +163,7 @@
       echo "<td><a href=BankEdit.php?id=" . $B['id'] . ">" . $B['YourRef'] . "</a>";
       echo "<td>" . $B['StartTurn'];
       echo "<td>" . ($B['EndTurn']? $B['EndTurn']: $B['StartTurn']);
-      if ($Turn >= $GAME['Turn']) echo "<td><input type=submit name=DELETE" . $B['id'] . " value=Cancel >";
+      if ($Turn >= $GAME['Turn']) echo fm_submit("DELETE" . $B['id'],"Cancel");
     }
     echo "</table><p>\n";
   } else if ($Turn >= $GAME['Turn'])  {
@@ -191,8 +191,7 @@
   if ($CCount>1) echo "<tr>" . fm_radio('Currency',$Currens,$_REQUEST,'What','',1,'colspan=2');
   echo "<tr>" . fm_number('Amount',$_REQUEST,'Amount');
   echo "<tr>" . fm_text('Your Reference',$_REQUEST,'YourRef') . "<td>Will be seen by both parties";
-  echo "<tr><td><td><input type=submit name=ACTION value='Transfer Now'>\n";
-    echo "  <td><input type=submit name=ACTION value='Transfer on Turn'>\n";
+  echo "<tr><td>" . fm_submit("ACTION",'Transfer Now') . fm_submit("ACTION",'Transfer on Turn');
   echo "</table></form>";
 
   echo "<form method=post action=Banking.php>\n";
@@ -204,7 +203,7 @@
   echo "<tr>" . fm_number('Start Turn', $_REQUEST,'StartTurn'); 
   echo "<tr>" . fm_number('Last Turn', $_REQUEST,'EndTurn') . "<td>Leave blank for a one off payment";
   echo "<tr>" . fm_text('Your Reference',$_REQUEST,'YourRef') . "<td>Will be seen by both parties";
-  echo "<tr><td><td><input type=submit name=ACTION value='Setup'>\n";
+  echo "<tr><td>" . fm_submit("ACTION",'Setup');
   echo "</table></form>";
   
   echo "<form method=post action=Banking.php>\n";

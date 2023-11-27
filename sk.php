@@ -355,8 +355,9 @@ function dostaffhead($title,$extras=[],$bodyextra='') {
   }
   $head_done = 1;
   
-  if (isset($FACTION['TurnState']) && $FACTION['TurnState'] >1 && (!Access('GM'))) fm_addall('readonly');
-
+  if (isset($FACTION['TurnState']) && $FACTION['TurnState'] >1 ) {
+    if (($FACTION['TurnState'] == 4 ) || (!Access('GM'))) fm_addall('readonly');
+  }
 }
 
 // No Banner

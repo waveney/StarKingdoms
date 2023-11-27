@@ -107,6 +107,7 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$Thi
     foreach($Breaks as $Br) {
       echo "<tr><td>" . $TechCats[$Br['Field']][0] . "<td>" . $Ts[$Br['TechId']]['Name'] . "<td>" . $Br['Level'] . "<td>" . $Br['Cost'];
       
+    if ($Faction['TurnState'] == 4 ) continue;
       if ($Br['DoneTurn']) {
         echo "<td>Already Done";
       } else {
@@ -128,6 +129,7 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$Thi
     
     if (($Avail[$Fld] - $Used[$Fld]) < 5) continue;
     
+    if ($Faction['TurnState'] == 4 ) continue;
   
     echo "<h2>Research Core Technology</h2>";
       foreach ($CTs as $TT) {

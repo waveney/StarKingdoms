@@ -213,14 +213,14 @@
   echo "<tr>" . fm_text('Current Moon Name',$dat,'mname') . "- so it can be found";
   $val = (empty($dat['Name'])? '' : "value='" . $dat['Name'] . "'" );
   echo "<tr><td>Name to assign:<td><input type=text name=Name $val onchange=this.form.submit()>";
-  echo "<input type=submit Name=ACTION Value='Assign Name'>";
+  echo fm_submit("ACTION","Assign Name"); 
 
   echo "<tr><td>Private Label assign:<td><input type=text name=Label $val onchange=this.form.submit()>";
-  echo "<input type=submit Name=ACTION Value='Assign Label'>";  
-  echo "<input type=submit name=ACTION value='Remove Label'>";
+  echo fm_submit("ACTION","Assign Label");  
+  echo fm_submit("ACTION","Remove Label");
   echo "</form></table><p>";
   
-  if ($Force) echo "<input type=submit value=SET>";
+  if ($Force) echo fm_submit("ACTION","SET"); 
     
   dotail();
 
