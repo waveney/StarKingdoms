@@ -3521,7 +3521,7 @@ function MilitiaArmyRecovery() {
       }
     }
     
-    if ($T['CurShield'] < $T['ShieldPoints']) {
+    if ($T['CurShield'] != $T['ShieldPoints']) {
       $T['CurShield'] = $T['ShieldPoints'];
 
       if ($T['Whose']) TurnLog($T['Whose'],$T['Name'] . " Shields Recovered",$T);
