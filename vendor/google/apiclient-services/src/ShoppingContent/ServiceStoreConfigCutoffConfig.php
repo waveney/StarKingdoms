@@ -19,8 +19,16 @@ namespace Google\Service\ShoppingContent;
 
 class ServiceStoreConfigCutoffConfig extends \Google\Model
 {
+  /**
+   * @var ServiceStoreConfigCutoffConfigLocalCutoffTime
+   */
+  public $localCutoffTime;
   protected $localCutoffTimeType = ServiceStoreConfigCutoffConfigLocalCutoffTime::class;
   protected $localCutoffTimeDataType = '';
+  /**
+   * @var bool
+   */
+  public $noDeliveryPostCutoff;
   /**
    * @var string
    */
@@ -39,6 +47,20 @@ class ServiceStoreConfigCutoffConfig extends \Google\Model
   public function getLocalCutoffTime()
   {
     return $this->localCutoffTime;
+  }
+  /**
+   * @param bool
+   */
+  public function setNoDeliveryPostCutoff($noDeliveryPostCutoff)
+  {
+    $this->noDeliveryPostCutoff = $noDeliveryPostCutoff;
+  }
+  /**
+   * @return bool
+   */
+  public function getNoDeliveryPostCutoff()
+  {
+    return $this->noDeliveryPostCutoff;
   }
   /**
    * @param string

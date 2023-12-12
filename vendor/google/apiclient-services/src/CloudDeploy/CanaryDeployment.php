@@ -25,6 +25,18 @@ class CanaryDeployment extends \Google\Collection
    */
   public $percentages;
   /**
+   * @var Postdeploy
+   */
+  public $postdeploy;
+  protected $postdeployType = Postdeploy::class;
+  protected $postdeployDataType = '';
+  /**
+   * @var Predeploy
+   */
+  public $predeploy;
+  protected $predeployType = Predeploy::class;
+  protected $predeployDataType = '';
+  /**
    * @var bool
    */
   public $verify;
@@ -42,6 +54,34 @@ class CanaryDeployment extends \Google\Collection
   public function getPercentages()
   {
     return $this->percentages;
+  }
+  /**
+   * @param Postdeploy
+   */
+  public function setPostdeploy(Postdeploy $postdeploy)
+  {
+    $this->postdeploy = $postdeploy;
+  }
+  /**
+   * @return Postdeploy
+   */
+  public function getPostdeploy()
+  {
+    return $this->postdeploy;
+  }
+  /**
+   * @param Predeploy
+   */
+  public function setPredeploy(Predeploy $predeploy)
+  {
+    $this->predeploy = $predeploy;
+  }
+  /**
+   * @return Predeploy
+   */
+  public function getPredeploy()
+  {
+    return $this->predeploy;
   }
   /**
    * @param bool

@@ -24,6 +24,14 @@ class VmwareVsphereConfig extends \Google\Collection
    * @var string
    */
   public $datastore;
+  /**
+   * @var string[]
+   */
+  public $hostGroups;
+  /**
+   * @var VmwareVsphereTag[]
+   */
+  public $tags;
   protected $tagsType = VmwareVsphereTag::class;
   protected $tagsDataType = 'array';
 
@@ -40,6 +48,20 @@ class VmwareVsphereConfig extends \Google\Collection
   public function getDatastore()
   {
     return $this->datastore;
+  }
+  /**
+   * @param string[]
+   */
+  public function setHostGroups($hostGroups)
+  {
+    $this->hostGroups = $hostGroups;
+  }
+  /**
+   * @return string[]
+   */
+  public function getHostGroups()
+  {
+    return $this->hostGroups;
   }
   /**
    * @param VmwareVsphereTag[]

@@ -38,7 +38,7 @@ use Google\Service\GKEOnPrem\VmwareCluster;
 class ProjectsLocationsVmwareClusters extends \Google\Service\Resource
 {
   /**
-   * Creates a new VMware cluster in a given project and location.
+   * Creates a new VMware user cluster in a given project and location.
    * (vmwareClusters.create)
    *
    * @param string $parent Required. The parent of the project and location where
@@ -119,6 +119,11 @@ class ProjectsLocationsVmwareClusters extends \Google\Service\Resource
    * Format:
    * "projects/{project}/locations/{location}/vmwareClusters/{vmware_cluster}"
    * @param array $optParams Optional parameters.
+   *
+   * @opt_param string view View for VMware user cluster. When `BASIC` is
+   * specified, only the cluster resource name and admin cluster membership are
+   * returned. The default/unset value `CLUSTER_VIEW_UNSPECIFIED` is the same as
+   * `FULL', which returns the complete cluster configuration details.
    * @return VmwareCluster
    */
   public function get($name, $optParams = [])

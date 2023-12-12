@@ -20,10 +20,6 @@ namespace Google\Service\GKEHub;
 class Scope extends \Google\Model
 {
   /**
-   * @var bool
-   */
-  public $allMemberships;
-  /**
    * @var string
    */
   public $createTime;
@@ -32,9 +28,21 @@ class Scope extends \Google\Model
    */
   public $deleteTime;
   /**
+   * @var string[]
+   */
+  public $labels;
+  /**
    * @var string
    */
   public $name;
+  /**
+   * @var string[]
+   */
+  public $namespaceLabels;
+  /**
+   * @var ScopeLifecycleState
+   */
+  public $state;
   protected $stateType = ScopeLifecycleState::class;
   protected $stateDataType = '';
   /**
@@ -46,20 +54,6 @@ class Scope extends \Google\Model
    */
   public $updateTime;
 
-  /**
-   * @param bool
-   */
-  public function setAllMemberships($allMemberships)
-  {
-    $this->allMemberships = $allMemberships;
-  }
-  /**
-   * @return bool
-   */
-  public function getAllMemberships()
-  {
-    return $this->allMemberships;
-  }
   /**
    * @param string
    */
@@ -89,6 +83,20 @@ class Scope extends \Google\Model
     return $this->deleteTime;
   }
   /**
+   * @param string[]
+   */
+  public function setLabels($labels)
+  {
+    $this->labels = $labels;
+  }
+  /**
+   * @return string[]
+   */
+  public function getLabels()
+  {
+    return $this->labels;
+  }
+  /**
    * @param string
    */
   public function setName($name)
@@ -101,6 +109,20 @@ class Scope extends \Google\Model
   public function getName()
   {
     return $this->name;
+  }
+  /**
+   * @param string[]
+   */
+  public function setNamespaceLabels($namespaceLabels)
+  {
+    $this->namespaceLabels = $namespaceLabels;
+  }
+  /**
+   * @return string[]
+   */
+  public function getNamespaceLabels()
+  {
+    return $this->namespaceLabels;
   }
   /**
    * @param ScopeLifecycleState

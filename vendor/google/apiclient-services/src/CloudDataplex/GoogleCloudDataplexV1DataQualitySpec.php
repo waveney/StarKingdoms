@@ -21,9 +21,19 @@ class GoogleCloudDataplexV1DataQualitySpec extends \Google\Collection
 {
   protected $collection_key = 'rules';
   /**
+   * @var GoogleCloudDataplexV1DataQualitySpecPostScanActions
+   */
+  public $postScanActions;
+  protected $postScanActionsType = GoogleCloudDataplexV1DataQualitySpecPostScanActions::class;
+  protected $postScanActionsDataType = '';
+  /**
    * @var string
    */
   public $rowFilter;
+  /**
+   * @var GoogleCloudDataplexV1DataQualityRule[]
+   */
+  public $rules;
   protected $rulesType = GoogleCloudDataplexV1DataQualityRule::class;
   protected $rulesDataType = 'array';
   /**
@@ -31,6 +41,20 @@ class GoogleCloudDataplexV1DataQualitySpec extends \Google\Collection
    */
   public $samplingPercent;
 
+  /**
+   * @param GoogleCloudDataplexV1DataQualitySpecPostScanActions
+   */
+  public function setPostScanActions(GoogleCloudDataplexV1DataQualitySpecPostScanActions $postScanActions)
+  {
+    $this->postScanActions = $postScanActions;
+  }
+  /**
+   * @return GoogleCloudDataplexV1DataQualitySpecPostScanActions
+   */
+  public function getPostScanActions()
+  {
+    return $this->postScanActions;
+  }
   /**
    * @param string
    */

@@ -19,22 +19,40 @@ namespace Google\Service\MigrationCenterAPI;
 
 class ReportSummaryAssetAggregateStats extends \Google\Model
 {
-  protected $assetAgeType = ReportSummaryChartData::class;
-  protected $assetAgeDataType = '';
+  /**
+   * @var ReportSummaryHistogramChartData
+   */
+  public $coreCountHistogram;
   protected $coreCountHistogramType = ReportSummaryHistogramChartData::class;
   protected $coreCountHistogramDataType = '';
+  /**
+   * @var ReportSummaryHistogramChartData
+   */
+  public $memoryBytesHistogram;
   protected $memoryBytesHistogramType = ReportSummaryHistogramChartData::class;
   protected $memoryBytesHistogramDataType = '';
-  protected $memoryUtilizationType = ReportSummaryChartData::class;
-  protected $memoryUtilizationDataType = '';
+  /**
+   * @var ReportSummaryUtilizationChartData
+   */
+  public $memoryUtilizationChart;
   protected $memoryUtilizationChartType = ReportSummaryUtilizationChartData::class;
   protected $memoryUtilizationChartDataType = '';
+  /**
+   * @var ReportSummaryChartData
+   */
+  public $operatingSystem;
   protected $operatingSystemType = ReportSummaryChartData::class;
   protected $operatingSystemDataType = '';
+  /**
+   * @var ReportSummaryHistogramChartData
+   */
+  public $storageBytesHistogram;
   protected $storageBytesHistogramType = ReportSummaryHistogramChartData::class;
   protected $storageBytesHistogramDataType = '';
-  protected $storageUtilizationType = ReportSummaryChartData::class;
-  protected $storageUtilizationDataType = '';
+  /**
+   * @var ReportSummaryUtilizationChartData
+   */
+  public $storageUtilizationChart;
   protected $storageUtilizationChartType = ReportSummaryUtilizationChartData::class;
   protected $storageUtilizationChartDataType = '';
   /**
@@ -54,20 +72,6 @@ class ReportSummaryAssetAggregateStats extends \Google\Model
    */
   public $totalStorageBytes;
 
-  /**
-   * @param ReportSummaryChartData
-   */
-  public function setAssetAge(ReportSummaryChartData $assetAge)
-  {
-    $this->assetAge = $assetAge;
-  }
-  /**
-   * @return ReportSummaryChartData
-   */
-  public function getAssetAge()
-  {
-    return $this->assetAge;
-  }
   /**
    * @param ReportSummaryHistogramChartData
    */
@@ -95,20 +99,6 @@ class ReportSummaryAssetAggregateStats extends \Google\Model
   public function getMemoryBytesHistogram()
   {
     return $this->memoryBytesHistogram;
-  }
-  /**
-   * @param ReportSummaryChartData
-   */
-  public function setMemoryUtilization(ReportSummaryChartData $memoryUtilization)
-  {
-    $this->memoryUtilization = $memoryUtilization;
-  }
-  /**
-   * @return ReportSummaryChartData
-   */
-  public function getMemoryUtilization()
-  {
-    return $this->memoryUtilization;
   }
   /**
    * @param ReportSummaryUtilizationChartData
@@ -151,20 +141,6 @@ class ReportSummaryAssetAggregateStats extends \Google\Model
   public function getStorageBytesHistogram()
   {
     return $this->storageBytesHistogram;
-  }
-  /**
-   * @param ReportSummaryChartData
-   */
-  public function setStorageUtilization(ReportSummaryChartData $storageUtilization)
-  {
-    $this->storageUtilization = $storageUtilization;
-  }
-  /**
-   * @return ReportSummaryChartData
-   */
-  public function getStorageUtilization()
-  {
-    return $this->storageUtilization;
   }
   /**
    * @param ReportSummaryUtilizationChartData

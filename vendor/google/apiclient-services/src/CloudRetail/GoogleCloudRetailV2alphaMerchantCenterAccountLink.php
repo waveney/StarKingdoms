@@ -24,6 +24,10 @@ class GoogleCloudRetailV2alphaMerchantCenterAccountLink extends \Google\Collecti
    * @var string
    */
   public $branchId;
+  /**
+   * @var GoogleCloudRetailV2alphaMerchantCenterAccountLinkMerchantCenterFeedFilter[]
+   */
+  public $feedFilters;
   protected $feedFiltersType = GoogleCloudRetailV2alphaMerchantCenterAccountLinkMerchantCenterFeedFilter::class;
   protected $feedFiltersDataType = 'array';
   /**
@@ -50,6 +54,10 @@ class GoogleCloudRetailV2alphaMerchantCenterAccountLink extends \Google\Collecti
    * @var string
    */
   public $projectId;
+  /**
+   * @var string
+   */
+  public $source;
   /**
    * @var string
    */
@@ -166,6 +174,20 @@ class GoogleCloudRetailV2alphaMerchantCenterAccountLink extends \Google\Collecti
   public function getProjectId()
   {
     return $this->projectId;
+  }
+  /**
+   * @param string
+   */
+  public function setSource($source)
+  {
+    $this->source = $source;
+  }
+  /**
+   * @return string
+   */
+  public function getSource()
+  {
+    return $this->source;
   }
   /**
    * @param string

@@ -121,7 +121,7 @@ class ProjectsLocationsCollectionsDataStoresBranchesDocuments extends \Google\Se
    * jects/{project}/locations/{location}/collections/{collection}/dataStores/{dat
    * a_store}/branches/{branch}`. Use `default_branch` as the branch ID, to list
    * documents under the default branch. If the caller does not have permission to
-   * list Documentss under this branch, regardless of whether or not this branch
+   * list Documents under this branch, regardless of whether or not this branch
    * exists, a `PERMISSION_DENIED` error is returned.
    * @param array $optParams Optional parameters.
    *
@@ -164,13 +164,12 @@ class ProjectsLocationsCollectionsDataStoresBranchesDocuments extends \Google\Se
     return $this->call('patch', [$params], GoogleCloudDiscoveryengineV1betaDocument::class);
   }
   /**
-   * Permanently deletes all selected Documents under a branch. This process is
-   * asynchronous. If the request is valid, the removal will be enquired and
-   * processed offlines. Depending on the number of Documents, this operation
-   * could take hours to complete. Before the operation completes, some Documents
-   * may still be returned by DocumentService.GetDocument or
-   * DocumentService.ListDocuments. To get a sample of Documents that would be
-   * deleted, set PurgeDocumentsRequest.force to false. (documents.purge)
+   * Permanently deletes all selected Documents in a branch. This process is
+   * asynchronous. Depending on the number of Documents to be deleted, this
+   * operation can take hours to complete. Before the delete operation completes,
+   * some Documents might still be returned by DocumentService.GetDocument or
+   * DocumentService.ListDocuments. To get a list of the Documents to be deleted,
+   * set PurgeDocumentsRequest.force to false. (documents.purge)
    *
    * @param string $parent Required. The parent resource name, such as `projects/{
    * project}/locations/{location}/collections/{collection}/dataStores/{data_store

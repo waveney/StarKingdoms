@@ -20,6 +20,10 @@ namespace Google\Service\Apigee;
 class GoogleCloudApigeeV1Organization extends \Google\Collection
 {
   protected $collection_key = 'environments';
+  /**
+   * @var GoogleCloudApigeeV1AddonsConfig
+   */
+  public $addonsConfig;
   protected $addonsConfigType = GoogleCloudApigeeV1AddonsConfig::class;
   protected $addonsConfigDataType = '';
   /**
@@ -71,6 +75,10 @@ class GoogleCloudApigeeV1Organization extends \Google\Collection
    */
   public $description;
   /**
+   * @var bool
+   */
+  public $disableVpcPeering;
+  /**
    * @var string
    */
   public $displayName;
@@ -98,6 +106,10 @@ class GoogleCloudApigeeV1Organization extends \Google\Collection
    * @var string
    */
   public $projectId;
+  /**
+   * @var GoogleCloudApigeeV1Properties
+   */
+  public $properties;
   protected $propertiesType = GoogleCloudApigeeV1Properties::class;
   protected $propertiesDataType = '';
   /**
@@ -112,6 +124,10 @@ class GoogleCloudApigeeV1Organization extends \Google\Collection
    * @var string
    */
   public $state;
+  /**
+   * @var string
+   */
+  public $subscriptionPlan;
   /**
    * @var string
    */
@@ -304,6 +320,20 @@ class GoogleCloudApigeeV1Organization extends \Google\Collection
     return $this->description;
   }
   /**
+   * @param bool
+   */
+  public function setDisableVpcPeering($disableVpcPeering)
+  {
+    $this->disableVpcPeering = $disableVpcPeering;
+  }
+  /**
+   * @return bool
+   */
+  public function getDisableVpcPeering()
+  {
+    return $this->disableVpcPeering;
+  }
+  /**
    * @param string
    */
   public function setDisplayName($displayName)
@@ -456,6 +486,20 @@ class GoogleCloudApigeeV1Organization extends \Google\Collection
   public function getState()
   {
     return $this->state;
+  }
+  /**
+   * @param string
+   */
+  public function setSubscriptionPlan($subscriptionPlan)
+  {
+    $this->subscriptionPlan = $subscriptionPlan;
+  }
+  /**
+   * @return string
+   */
+  public function getSubscriptionPlan()
+  {
+    return $this->subscriptionPlan;
   }
   /**
    * @param string

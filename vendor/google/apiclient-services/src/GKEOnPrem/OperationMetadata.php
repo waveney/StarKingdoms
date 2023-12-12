@@ -24,6 +24,10 @@ class OperationMetadata extends \Google\Model
    */
   public $apiVersion;
   /**
+   * @var bool
+   */
+  public $controlPlaneDisconnected;
+  /**
    * @var string
    */
   public $createTime;
@@ -31,6 +35,12 @@ class OperationMetadata extends \Google\Model
    * @var string
    */
   public $endTime;
+  /**
+   * @var OperationProgress
+   */
+  public $progress;
+  protected $progressType = OperationProgress::class;
+  protected $progressDataType = '';
   /**
    * @var bool
    */
@@ -67,6 +77,20 @@ class OperationMetadata extends \Google\Model
     return $this->apiVersion;
   }
   /**
+   * @param bool
+   */
+  public function setControlPlaneDisconnected($controlPlaneDisconnected)
+  {
+    $this->controlPlaneDisconnected = $controlPlaneDisconnected;
+  }
+  /**
+   * @return bool
+   */
+  public function getControlPlaneDisconnected()
+  {
+    return $this->controlPlaneDisconnected;
+  }
+  /**
    * @param string
    */
   public function setCreateTime($createTime)
@@ -93,6 +117,20 @@ class OperationMetadata extends \Google\Model
   public function getEndTime()
   {
     return $this->endTime;
+  }
+  /**
+   * @param OperationProgress
+   */
+  public function setProgress(OperationProgress $progress)
+  {
+    $this->progress = $progress;
+  }
+  /**
+   * @return OperationProgress
+   */
+  public function getProgress()
+  {
+    return $this->progress;
   }
   /**
    * @param bool

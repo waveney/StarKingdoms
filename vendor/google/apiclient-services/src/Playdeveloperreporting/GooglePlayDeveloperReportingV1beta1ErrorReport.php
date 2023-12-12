@@ -20,6 +20,16 @@ namespace Google\Service\Playdeveloperreporting;
 class GooglePlayDeveloperReportingV1beta1ErrorReport extends \Google\Model
 {
   /**
+   * @var GooglePlayDeveloperReportingV1beta1DeviceModelSummary
+   */
+  public $deviceModel;
+  protected $deviceModelType = GooglePlayDeveloperReportingV1beta1DeviceModelSummary::class;
+  protected $deviceModelDataType = '';
+  /**
+   * @var string
+   */
+  public $eventTime;
+  /**
    * @var string
    */
   public $issue;
@@ -27,6 +37,12 @@ class GooglePlayDeveloperReportingV1beta1ErrorReport extends \Google\Model
    * @var string
    */
   public $name;
+  /**
+   * @var GooglePlayDeveloperReportingV1beta1OsVersion
+   */
+  public $osVersion;
+  protected $osVersionType = GooglePlayDeveloperReportingV1beta1OsVersion::class;
+  protected $osVersionDataType = '';
   /**
    * @var string
    */
@@ -36,6 +52,34 @@ class GooglePlayDeveloperReportingV1beta1ErrorReport extends \Google\Model
    */
   public $type;
 
+  /**
+   * @param GooglePlayDeveloperReportingV1beta1DeviceModelSummary
+   */
+  public function setDeviceModel(GooglePlayDeveloperReportingV1beta1DeviceModelSummary $deviceModel)
+  {
+    $this->deviceModel = $deviceModel;
+  }
+  /**
+   * @return GooglePlayDeveloperReportingV1beta1DeviceModelSummary
+   */
+  public function getDeviceModel()
+  {
+    return $this->deviceModel;
+  }
+  /**
+   * @param string
+   */
+  public function setEventTime($eventTime)
+  {
+    $this->eventTime = $eventTime;
+  }
+  /**
+   * @return string
+   */
+  public function getEventTime()
+  {
+    return $this->eventTime;
+  }
   /**
    * @param string
    */
@@ -63,6 +107,20 @@ class GooglePlayDeveloperReportingV1beta1ErrorReport extends \Google\Model
   public function getName()
   {
     return $this->name;
+  }
+  /**
+   * @param GooglePlayDeveloperReportingV1beta1OsVersion
+   */
+  public function setOsVersion(GooglePlayDeveloperReportingV1beta1OsVersion $osVersion)
+  {
+    $this->osVersion = $osVersion;
+  }
+  /**
+   * @return GooglePlayDeveloperReportingV1beta1OsVersion
+   */
+  public function getOsVersion()
+  {
+    return $this->osVersion;
   }
   /**
    * @param string

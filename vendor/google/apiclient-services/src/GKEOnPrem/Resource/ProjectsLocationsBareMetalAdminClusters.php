@@ -40,9 +40,9 @@ class ProjectsLocationsBareMetalAdminClusters extends \Google\Service\Resource
   /**
    * Creates a new bare metal admin cluster in a given project and location. The
    * API needs to be combined with creating a bootstrap cluster to work. See:
-   * https://cloud.google.com/anthos/clusters/docs/bare-metal/latest/installing
-   * /creating-clusters/create-admin-cluster-api#prepare_bootstrap_environment
-   * (bareMetalAdminClusters.create)
+   * https://cloud.google.com/anthos/clusters/docs/bare-
+   * metal/latest/installing/creating-clusters/create-admin-cluster-
+   * api#prepare_bootstrap_environment (bareMetalAdminClusters.create)
    *
    * @param string $parent Required. The parent of the project and location where
    * the cluster is created in. Format: "projects/{project}/locations/{location}"
@@ -90,6 +90,11 @@ class ProjectsLocationsBareMetalAdminClusters extends \Google\Service\Resource
    * Format: "projects/{project}/locations/{location}/bareMetalAdminClusters/{bare
    * _metal_admin_cluster}"
    * @param array $optParams Optional parameters.
+   *
+   * @opt_param string view View for bare metal admin cluster. When `BASIC` is
+   * specified, only the cluster resource name and membership are returned. The
+   * default/unset value `CLUSTER_VIEW_UNSPECIFIED` is the same as `FULL', which
+   * returns the complete cluster configuration details.
    * @return BareMetalAdminCluster
    */
   public function get($name, $optParams = [])
@@ -258,6 +263,13 @@ class ProjectsLocationsBareMetalAdminClusters extends \Google\Service\Resource
    * @opt_param string etag The current etag of the bare metal admin cluster. If
    * an etag is provided and does not match the current etag of the cluster,
    * deletion will be blocked and an ABORTED error will be returned.
+   * @opt_param bool ignoreErrors If set to true, the unenrollment of a bare metal
+   * admin cluster resource will succeed even if errors occur during unenrollment.
+   * This parameter can be used when you want to unenroll admin cluster resource
+   * and the on-prem admin cluster is disconnected / unreachable. WARNING: Using
+   * this parameter when your admin cluster still exists may result in a deleted
+   * GCP admin cluster but existing resourcelink in on-prem admin cluster and
+   * membership.
    * @opt_param bool validateOnly Validate the request without actually doing any
    * updates.
    * @return Operation

@@ -19,12 +19,32 @@ namespace Google\Service\CloudDataplex;
 
 class GoogleCloudDataplexV1DataScanEvent extends \Google\Model
 {
+  /**
+   * @var string
+   */
+  public $createTime;
+  /**
+   * @var GoogleCloudDataplexV1DataScanEventDataProfileResult
+   */
+  public $dataProfile;
   protected $dataProfileType = GoogleCloudDataplexV1DataScanEventDataProfileResult::class;
   protected $dataProfileDataType = '';
+  /**
+   * @var GoogleCloudDataplexV1DataScanEventDataProfileAppliedConfigs
+   */
+  public $dataProfileConfigs;
   protected $dataProfileConfigsType = GoogleCloudDataplexV1DataScanEventDataProfileAppliedConfigs::class;
   protected $dataProfileConfigsDataType = '';
+  /**
+   * @var GoogleCloudDataplexV1DataScanEventDataQualityResult
+   */
+  public $dataQuality;
   protected $dataQualityType = GoogleCloudDataplexV1DataScanEventDataQualityResult::class;
   protected $dataQualityDataType = '';
+  /**
+   * @var GoogleCloudDataplexV1DataScanEventDataQualityAppliedConfigs
+   */
+  public $dataQualityConfigs;
   protected $dataQualityConfigsType = GoogleCloudDataplexV1DataScanEventDataQualityAppliedConfigs::class;
   protected $dataQualityConfigsDataType = '';
   /**
@@ -43,6 +63,12 @@ class GoogleCloudDataplexV1DataScanEvent extends \Google\Model
    * @var string
    */
   public $message;
+  /**
+   * @var GoogleCloudDataplexV1DataScanEventPostScanActionsResult
+   */
+  public $postScanActionsResult;
+  protected $postScanActionsResultType = GoogleCloudDataplexV1DataScanEventPostScanActionsResult::class;
+  protected $postScanActionsResultDataType = '';
   /**
    * @var string
    */
@@ -68,6 +94,20 @@ class GoogleCloudDataplexV1DataScanEvent extends \Google\Model
    */
   public $type;
 
+  /**
+   * @param string
+   */
+  public function setCreateTime($createTime)
+  {
+    $this->createTime = $createTime;
+  }
+  /**
+   * @return string
+   */
+  public function getCreateTime()
+  {
+    return $this->createTime;
+  }
   /**
    * @param GoogleCloudDataplexV1DataScanEventDataProfileResult
    */
@@ -179,6 +219,20 @@ class GoogleCloudDataplexV1DataScanEvent extends \Google\Model
   public function getMessage()
   {
     return $this->message;
+  }
+  /**
+   * @param GoogleCloudDataplexV1DataScanEventPostScanActionsResult
+   */
+  public function setPostScanActionsResult(GoogleCloudDataplexV1DataScanEventPostScanActionsResult $postScanActionsResult)
+  {
+    $this->postScanActionsResult = $postScanActionsResult;
+  }
+  /**
+   * @return GoogleCloudDataplexV1DataScanEventPostScanActionsResult
+   */
+  public function getPostScanActionsResult()
+  {
+    return $this->postScanActionsResult;
   }
   /**
    * @param string

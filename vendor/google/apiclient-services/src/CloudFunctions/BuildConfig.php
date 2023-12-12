@@ -43,10 +43,22 @@ class BuildConfig extends \Google\Model
    * @var string
    */
   public $runtime;
+  /**
+   * @var Source
+   */
+  public $source;
   protected $sourceType = Source::class;
   protected $sourceDataType = '';
+  /**
+   * @var SourceProvenance
+   */
+  public $sourceProvenance;
   protected $sourceProvenanceType = SourceProvenance::class;
   protected $sourceProvenanceDataType = '';
+  /**
+   * @var string
+   */
+  public $sourceToken;
   /**
    * @var string
    */
@@ -163,6 +175,20 @@ class BuildConfig extends \Google\Model
   public function getSourceProvenance()
   {
     return $this->sourceProvenance;
+  }
+  /**
+   * @param string
+   */
+  public function setSourceToken($sourceToken)
+  {
+    $this->sourceToken = $sourceToken;
+  }
+  /**
+   * @return string
+   */
+  public function getSourceToken()
+  {
+    return $this->sourceToken;
   }
   /**
    * @param string

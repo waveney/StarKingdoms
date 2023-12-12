@@ -21,6 +21,8 @@ use Google\Service\SecurityCommandCenter\GoogleCloudSecuritycenterV1SecurityHeal
 use Google\Service\SecurityCommandCenter\ListDescendantSecurityHealthAnalyticsCustomModulesResponse;
 use Google\Service\SecurityCommandCenter\ListSecurityHealthAnalyticsCustomModulesResponse;
 use Google\Service\SecurityCommandCenter\SecuritycenterEmpty;
+use Google\Service\SecurityCommandCenter\SimulateSecurityHealthAnalyticsCustomModuleRequest;
+use Google\Service\SecurityCommandCenter\SimulateSecurityHealthAnalyticsCustomModuleResponse;
 
 /**
  * The "customModules" collection of methods.
@@ -162,6 +164,25 @@ class ProjectsSecurityHealthAnalyticsSettingsCustomModules extends \Google\Servi
     $params = ['name' => $name, 'postBody' => $postBody];
     $params = array_merge($params, $optParams);
     return $this->call('patch', [$params], GoogleCloudSecuritycenterV1SecurityHealthAnalyticsCustomModule::class);
+  }
+  /**
+   * Simulates a given SecurityHealthAnalyticsCustomModule and Resource.
+   * (customModules.simulate)
+   *
+   * @param string $parent Required. The relative resource name of the
+   * organization, project, or folder. For more information about relative
+   * resource names, see [Relative Resource Name](https://cloud.google.com/apis/de
+   * sign/resource_names#relative_resource_name) Example:
+   * `organizations/{organization_id}`
+   * @param SimulateSecurityHealthAnalyticsCustomModuleRequest $postBody
+   * @param array $optParams Optional parameters.
+   * @return SimulateSecurityHealthAnalyticsCustomModuleResponse
+   */
+  public function simulate($parent, SimulateSecurityHealthAnalyticsCustomModuleRequest $postBody, $optParams = [])
+  {
+    $params = ['parent' => $parent, 'postBody' => $postBody];
+    $params = array_merge($params, $optParams);
+    return $this->call('simulate', [$params], SimulateSecurityHealthAnalyticsCustomModuleResponse::class);
   }
 }
 

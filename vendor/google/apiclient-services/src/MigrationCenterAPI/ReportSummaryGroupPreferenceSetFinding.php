@@ -20,6 +20,12 @@ namespace Google\Service\MigrationCenterAPI;
 class ReportSummaryGroupPreferenceSetFinding extends \Google\Model
 {
   /**
+   * @var ReportSummaryComputeEngineFinding
+   */
+  public $computeEngineFinding;
+  protected $computeEngineFindingType = ReportSummaryComputeEngineFinding::class;
+  protected $computeEngineFindingDataType = '';
+  /**
    * @var string
    */
   public $description;
@@ -27,35 +33,75 @@ class ReportSummaryGroupPreferenceSetFinding extends \Google\Model
    * @var string
    */
   public $displayName;
-  protected $machineFindingType = ReportSummaryMachineFinding::class;
-  protected $machineFindingDataType = '';
+  /**
+   * @var VirtualMachinePreferences
+   */
+  public $machinePreferences;
   protected $machinePreferencesType = VirtualMachinePreferences::class;
   protected $machinePreferencesDataType = '';
+  /**
+   * @var Money
+   */
+  public $monthlyCostCompute;
   protected $monthlyCostComputeType = Money::class;
   protected $monthlyCostComputeDataType = '';
+  /**
+   * @var Money
+   */
+  public $monthlyCostNetworkEgress;
   protected $monthlyCostNetworkEgressType = Money::class;
   protected $monthlyCostNetworkEgressDataType = '';
+  /**
+   * @var Money
+   */
+  public $monthlyCostOsLicense;
   protected $monthlyCostOsLicenseType = Money::class;
   protected $monthlyCostOsLicenseDataType = '';
+  /**
+   * @var Money
+   */
+  public $monthlyCostOther;
   protected $monthlyCostOtherType = Money::class;
   protected $monthlyCostOtherDataType = '';
+  /**
+   * @var Money
+   */
+  public $monthlyCostStorage;
   protected $monthlyCostStorageType = Money::class;
   protected $monthlyCostStorageDataType = '';
+  /**
+   * @var Money
+   */
+  public $monthlyCostTotal;
   protected $monthlyCostTotalType = Money::class;
   protected $monthlyCostTotalDataType = '';
   /**
-   * @var string
+   * @var ReportSummarySoleTenantFinding
    */
-  public $preferredRegion;
+  public $soleTenantFinding;
+  protected $soleTenantFindingType = ReportSummarySoleTenantFinding::class;
+  protected $soleTenantFindingDataType = '';
   /**
-   * @var string
+   * @var ReportSummaryVmwareEngineFinding
    */
-  public $pricingTrack;
-  /**
-   * @var string
-   */
-  public $topPriority;
+  public $vmwareEngineFinding;
+  protected $vmwareEngineFindingType = ReportSummaryVmwareEngineFinding::class;
+  protected $vmwareEngineFindingDataType = '';
 
+  /**
+   * @param ReportSummaryComputeEngineFinding
+   */
+  public function setComputeEngineFinding(ReportSummaryComputeEngineFinding $computeEngineFinding)
+  {
+    $this->computeEngineFinding = $computeEngineFinding;
+  }
+  /**
+   * @return ReportSummaryComputeEngineFinding
+   */
+  public function getComputeEngineFinding()
+  {
+    return $this->computeEngineFinding;
+  }
   /**
    * @param string
    */
@@ -83,20 +129,6 @@ class ReportSummaryGroupPreferenceSetFinding extends \Google\Model
   public function getDisplayName()
   {
     return $this->displayName;
-  }
-  /**
-   * @param ReportSummaryMachineFinding
-   */
-  public function setMachineFinding(ReportSummaryMachineFinding $machineFinding)
-  {
-    $this->machineFinding = $machineFinding;
-  }
-  /**
-   * @return ReportSummaryMachineFinding
-   */
-  public function getMachineFinding()
-  {
-    return $this->machineFinding;
   }
   /**
    * @param VirtualMachinePreferences
@@ -197,46 +229,32 @@ class ReportSummaryGroupPreferenceSetFinding extends \Google\Model
     return $this->monthlyCostTotal;
   }
   /**
-   * @param string
+   * @param ReportSummarySoleTenantFinding
    */
-  public function setPreferredRegion($preferredRegion)
+  public function setSoleTenantFinding(ReportSummarySoleTenantFinding $soleTenantFinding)
   {
-    $this->preferredRegion = $preferredRegion;
+    $this->soleTenantFinding = $soleTenantFinding;
   }
   /**
-   * @return string
+   * @return ReportSummarySoleTenantFinding
    */
-  public function getPreferredRegion()
+  public function getSoleTenantFinding()
   {
-    return $this->preferredRegion;
+    return $this->soleTenantFinding;
   }
   /**
-   * @param string
+   * @param ReportSummaryVmwareEngineFinding
    */
-  public function setPricingTrack($pricingTrack)
+  public function setVmwareEngineFinding(ReportSummaryVmwareEngineFinding $vmwareEngineFinding)
   {
-    $this->pricingTrack = $pricingTrack;
+    $this->vmwareEngineFinding = $vmwareEngineFinding;
   }
   /**
-   * @return string
+   * @return ReportSummaryVmwareEngineFinding
    */
-  public function getPricingTrack()
+  public function getVmwareEngineFinding()
   {
-    return $this->pricingTrack;
-  }
-  /**
-   * @param string
-   */
-  public function setTopPriority($topPriority)
-  {
-    $this->topPriority = $topPriority;
-  }
-  /**
-   * @return string
-   */
-  public function getTopPriority()
-  {
-    return $this->topPriority;
+    return $this->vmwareEngineFinding;
   }
 }
 

@@ -27,7 +27,15 @@ class GoogleCloudConnectorsV1AuthConfigOauth2AuthCodeFlow extends \Google\Collec
   /**
    * @var string
    */
+  public $authUri;
+  /**
+   * @var string
+   */
   public $clientId;
+  /**
+   * @var GoogleCloudConnectorsV1Secret
+   */
+  public $clientSecret;
   protected $clientSecretType = GoogleCloudConnectorsV1Secret::class;
   protected $clientSecretDataType = '';
   /**
@@ -60,6 +68,20 @@ class GoogleCloudConnectorsV1AuthConfigOauth2AuthCodeFlow extends \Google\Collec
   public function getAuthCode()
   {
     return $this->authCode;
+  }
+  /**
+   * @param string
+   */
+  public function setAuthUri($authUri)
+  {
+    $this->authUri = $authUri;
+  }
+  /**
+   * @return string
+   */
+  public function getAuthUri()
+  {
+    return $this->authUri;
   }
   /**
    * @param string

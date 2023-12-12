@@ -19,12 +19,34 @@ namespace Google\Service\GKEOnPrem;
 
 class VmwareAdminLoadBalancerConfig extends \Google\Model
 {
+  /**
+   * @var VmwareAdminF5BigIpConfig
+   */
+  public $f5Config;
   protected $f5ConfigType = VmwareAdminF5BigIpConfig::class;
   protected $f5ConfigDataType = '';
+  /**
+   * @var VmwareAdminManualLbConfig
+   */
+  public $manualLbConfig;
   protected $manualLbConfigType = VmwareAdminManualLbConfig::class;
   protected $manualLbConfigDataType = '';
+  /**
+   * @var VmwareAdminMetalLbConfig
+   */
+  public $metalLbConfig;
   protected $metalLbConfigType = VmwareAdminMetalLbConfig::class;
   protected $metalLbConfigDataType = '';
+  /**
+   * @var VmwareAdminSeesawConfig
+   */
+  public $seesawConfig;
+  protected $seesawConfigType = VmwareAdminSeesawConfig::class;
+  protected $seesawConfigDataType = '';
+  /**
+   * @var VmwareAdminVipConfig
+   */
+  public $vipConfig;
   protected $vipConfigType = VmwareAdminVipConfig::class;
   protected $vipConfigDataType = '';
 
@@ -69,6 +91,20 @@ class VmwareAdminLoadBalancerConfig extends \Google\Model
   public function getMetalLbConfig()
   {
     return $this->metalLbConfig;
+  }
+  /**
+   * @param VmwareAdminSeesawConfig
+   */
+  public function setSeesawConfig(VmwareAdminSeesawConfig $seesawConfig)
+  {
+    $this->seesawConfig = $seesawConfig;
+  }
+  /**
+   * @return VmwareAdminSeesawConfig
+   */
+  public function getSeesawConfig()
+  {
+    return $this->seesawConfig;
   }
   /**
    * @param VmwareAdminVipConfig

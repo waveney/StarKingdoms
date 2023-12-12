@@ -19,9 +19,33 @@ namespace Google\Service\CloudDeploy;
 
 class Metadata extends \Google\Model
 {
+  /**
+   * @var AutomationRolloutMetadata
+   */
+  public $automation;
+  protected $automationType = AutomationRolloutMetadata::class;
+  protected $automationDataType = '';
+  /**
+   * @var CloudRunMetadata
+   */
+  public $cloudRun;
   protected $cloudRunType = CloudRunMetadata::class;
   protected $cloudRunDataType = '';
 
+  /**
+   * @param AutomationRolloutMetadata
+   */
+  public function setAutomation(AutomationRolloutMetadata $automation)
+  {
+    $this->automation = $automation;
+  }
+  /**
+   * @return AutomationRolloutMetadata
+   */
+  public function getAutomation()
+  {
+    return $this->automation;
+  }
   /**
    * @param CloudRunMetadata
    */

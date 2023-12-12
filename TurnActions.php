@@ -35,7 +35,7 @@
 
   $Coded =  ['Coded','No','Coded',
              'Coded','Coded','Coded', 'No',
-             'No','Coded','No','Coded',
+             'Coded','Coded','No','Coded',
              'Partial,M','No','No','Coded,M',
              'Coded,M','Coded', 'No','Coded',
              'No','Coded','No','Coded',
@@ -1112,7 +1112,7 @@ function Instuctions() { // And other Instructions
       if ($Link['Weight'] < $T['Dist2']) { // Need to spend aidianite
         $LinkLevels = Get_LinkLevels();
        
-        $LL = $LinkLevels[$Link[['Level']]];
+        $LL = $LinkLevels[$Link['Level']];
         $LinkRes = GameFeature('LinkResource',0);
         if ($LinkRes) {
           AddCurrencies();
@@ -2445,7 +2445,7 @@ function ProjectsCompleted($Pass) {
   global $GAME,$GAMEID,$Currencies;
 
   $ProjTypes = Get_ProjectTypes();
-  $Projects = Get_Projects_Cond("Status=1 AND Progress=ProgNeeded");
+  $Projects = Get_Projects_Cond("Status=1 AND Progress>=ProgNeeded");
   foreach ($Projects as $P) {
     $PT = $ProjTypes[$P['Type']];
     

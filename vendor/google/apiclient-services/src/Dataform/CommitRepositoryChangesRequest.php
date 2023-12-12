@@ -19,10 +19,22 @@ namespace Google\Service\Dataform;
 
 class CommitRepositoryChangesRequest extends \Google\Model
 {
+  /**
+   * @var CommitMetadata
+   */
+  public $commitMetadata;
   protected $commitMetadataType = CommitMetadata::class;
   protected $commitMetadataDataType = '';
+  /**
+   * @var FileOperation[]
+   */
+  public $fileOperations;
   protected $fileOperationsType = FileOperation::class;
   protected $fileOperationsDataType = 'map';
+  /**
+   * @var string
+   */
+  public $requiredHeadCommitSha;
 
   /**
    * @param CommitMetadata
@@ -51,6 +63,20 @@ class CommitRepositoryChangesRequest extends \Google\Model
   public function getFileOperations()
   {
     return $this->fileOperations;
+  }
+  /**
+   * @param string
+   */
+  public function setRequiredHeadCommitSha($requiredHeadCommitSha)
+  {
+    $this->requiredHeadCommitSha = $requiredHeadCommitSha;
+  }
+  /**
+   * @return string
+   */
+  public function getRequiredHeadCommitSha()
+  {
+    return $this->requiredHeadCommitSha;
   }
 }
 

@@ -10,7 +10,7 @@
   dostaffhead("All Traits");
   
   echo "<h1>List of all Traits</h1>";
-  echo "Game No : Faction.<b>A</b> = Automated<P>";
+  echo "Game No : Faction <b>(A)</b> = Automated<P>";
   
   $Factions = Gen_Get_Cond('Factions','id>0');
   foreach($Factions as $F) {
@@ -29,7 +29,7 @@
     $use = 0;
     foreach($TraitUse as $Use) {
       [$Fid,$TN,$Auto] = $Use;
-      echo ($use++?', ':'') . "<a href=FactionEdit.php?F=Fid>" . $Facts[$Fid]['GameId']  . ':' . $Facts[$Fid]['Name'] . ($Auto?" <b>A</b>":'') . "</a>";
+      echo ($use++?', ':'') . "<a href=FactionEdit.php?F=$Fid>" . $Facts[$Fid]['GameId']  . ':' . $Facts[$Fid]['Name'] . ($Auto?" <b>(A)</b>":'') . "</a>";
     }
   }
   

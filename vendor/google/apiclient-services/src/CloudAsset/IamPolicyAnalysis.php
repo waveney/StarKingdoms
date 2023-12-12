@@ -20,16 +20,26 @@ namespace Google\Service\CloudAsset;
 class IamPolicyAnalysis extends \Google\Collection
 {
   protected $collection_key = 'nonCriticalErrors';
+  /**
+   * @var IamPolicyAnalysisQuery
+   */
+  public $analysisQuery;
   protected $analysisQueryType = IamPolicyAnalysisQuery::class;
   protected $analysisQueryDataType = '';
+  /**
+   * @var IamPolicyAnalysisResult[]
+   */
+  public $analysisResults;
   protected $analysisResultsType = IamPolicyAnalysisResult::class;
   protected $analysisResultsDataType = 'array';
-  protected $deniedAccessesType = DeniedAccess::class;
-  protected $deniedAccessesDataType = 'array';
   /**
    * @var bool
    */
   public $fullyExplored;
+  /**
+   * @var IamPolicyAnalysisState[]
+   */
+  public $nonCriticalErrors;
   protected $nonCriticalErrorsType = IamPolicyAnalysisState::class;
   protected $nonCriticalErrorsDataType = 'array';
 
@@ -60,20 +70,6 @@ class IamPolicyAnalysis extends \Google\Collection
   public function getAnalysisResults()
   {
     return $this->analysisResults;
-  }
-  /**
-   * @param DeniedAccess[]
-   */
-  public function setDeniedAccesses($deniedAccesses)
-  {
-    $this->deniedAccesses = $deniedAccesses;
-  }
-  /**
-   * @return DeniedAccess[]
-   */
-  public function getDeniedAccesses()
-  {
-    return $this->deniedAccesses;
   }
   /**
    * @param bool

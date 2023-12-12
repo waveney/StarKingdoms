@@ -20,6 +20,12 @@ namespace Google\Service\Dataflow;
 class WorkerMessage extends \Google\Model
 {
   /**
+   * @var DataSamplingReport
+   */
+  public $dataSamplingReport;
+  protected $dataSamplingReportType = DataSamplingReport::class;
+  protected $dataSamplingReportDataType = '';
+  /**
    * @var string[]
    */
   public $labels;
@@ -27,19 +33,57 @@ class WorkerMessage extends \Google\Model
    * @var string
    */
   public $time;
+  /**
+   * @var WorkerHealthReport
+   */
+  public $workerHealthReport;
   protected $workerHealthReportType = WorkerHealthReport::class;
   protected $workerHealthReportDataType = '';
+  /**
+   * @var WorkerLifecycleEvent
+   */
+  public $workerLifecycleEvent;
   protected $workerLifecycleEventType = WorkerLifecycleEvent::class;
   protected $workerLifecycleEventDataType = '';
+  /**
+   * @var WorkerMessageCode
+   */
+  public $workerMessageCode;
   protected $workerMessageCodeType = WorkerMessageCode::class;
   protected $workerMessageCodeDataType = '';
+  /**
+   * @var ResourceUtilizationReport
+   */
+  public $workerMetrics;
   protected $workerMetricsType = ResourceUtilizationReport::class;
   protected $workerMetricsDataType = '';
+  /**
+   * @var WorkerShutdownNotice
+   */
+  public $workerShutdownNotice;
   protected $workerShutdownNoticeType = WorkerShutdownNotice::class;
   protected $workerShutdownNoticeDataType = '';
+  /**
+   * @var WorkerThreadScalingReport
+   */
+  public $workerThreadScalingReport;
   protected $workerThreadScalingReportType = WorkerThreadScalingReport::class;
   protected $workerThreadScalingReportDataType = '';
 
+  /**
+   * @param DataSamplingReport
+   */
+  public function setDataSamplingReport(DataSamplingReport $dataSamplingReport)
+  {
+    $this->dataSamplingReport = $dataSamplingReport;
+  }
+  /**
+   * @return DataSamplingReport
+   */
+  public function getDataSamplingReport()
+  {
+    return $this->dataSamplingReport;
+  }
   /**
    * @param string[]
    */

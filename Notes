@@ -2,9 +2,7 @@ TODO
 1) Force Reports 
   * Multiple worlds in a system
 5) Prisoners
-6) Blockades Income
-  * Launching ships
-  * Minefields
+6) Blockades & Launching ships
 9) Terraforming - Action input no actions in code
 12) Blockade busting
 14) Bombardment
@@ -15,8 +13,6 @@ TODO
 24) Meetings
    * REports to factions
    * Carried things on destruction
-31) Collabaritive DSC
-34) Oribital Repair yards not working
 35) Link Weights - repair& construct
 38) Validate Dismantle Stargate (And other instructions)
 39) Nebulae and Anomalies
@@ -24,7 +20,7 @@ TODO
 43) MCB Cost when making things
 45) Thing - edit history
 46) Turn Text edit
-50)
+50) 
 
 
 Future Hooks:
@@ -41,18 +37,19 @@ Future Hooks:
 
 Mammots
 
-Field Marshal Sergi Lavroski   #1
-General Javikske #13
+Field Marshal Sergi Lavroski   #1 - Dead
+Field Marshal Javikske #1
 Major General Vladivosky  #25 - head invasion 1
-Major General Khodorkovsky #28 - head invasion 2
+Major General Khodorkovsky #28 - head invasion 2 - Dead
 Kolonel Ramzan Kadyrov #332 - Military Fleet 
 Kolonel Slovyansky #388 - Civilian fleet 
 Kolonel Kirill Stremousov #425 - Arachni
 Kommander Vladimir Saldo #1026 - Permafrost
-Major Nikitovich #6,257 - wombles
+Kolonel Nikitovich #625 - wombles
 Major Tsymbaliuk #8,238 - fongari
 Major Sergi Peskov #7,551 - Sedranna
 Major Vyacheslav Gladkov #5,645 - Kalipolis
+Major Vitaliy Barabash #8,346 - Ratfolk
 Kaptain Gavrileski  #19,283,746 - on Nebula Explorer (runt)
 Kaptain Kachanov #18,809,007 - On Deep space
 

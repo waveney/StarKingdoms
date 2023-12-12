@@ -17,8 +17,15 @@
 
 namespace Google\Service\GKEOnPrem;
 
-class BareMetalVersionInfo extends \Google\Model
+class BareMetalVersionInfo extends \Google\Collection
 {
+  protected $collection_key = 'dependencies';
+  /**
+   * @var UpgradeDependency[]
+   */
+  public $dependencies;
+  protected $dependenciesType = UpgradeDependency::class;
+  protected $dependenciesDataType = 'array';
   /**
    * @var bool
    */
@@ -28,6 +35,20 @@ class BareMetalVersionInfo extends \Google\Model
    */
   public $version;
 
+  /**
+   * @param UpgradeDependency[]
+   */
+  public function setDependencies($dependencies)
+  {
+    $this->dependencies = $dependencies;
+  }
+  /**
+   * @return UpgradeDependency[]
+   */
+  public function getDependencies()
+  {
+    return $this->dependencies;
+  }
   /**
    * @param bool
    */

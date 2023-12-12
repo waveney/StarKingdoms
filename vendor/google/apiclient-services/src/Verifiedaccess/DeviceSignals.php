@@ -36,6 +36,10 @@ class DeviceSignals extends \Google\Collection
    * @var bool
    */
   public $chromeRemoteDesktopAppBlocked;
+  /**
+   * @var CrowdStrikeAgent
+   */
+  public $crowdStrikeAgent;
   protected $crowdStrikeAgentType = CrowdStrikeAgent::class;
   protected $crowdStrikeAgentDataType = '';
   /**
@@ -130,6 +134,10 @@ class DeviceSignals extends \Google\Collection
    * @var bool
    */
   public $thirdPartyBlockingEnabled;
+  /**
+   * @var string
+   */
+  public $trigger;
   /**
    * @var string
    */
@@ -530,6 +538,20 @@ class DeviceSignals extends \Google\Collection
   public function getThirdPartyBlockingEnabled()
   {
     return $this->thirdPartyBlockingEnabled;
+  }
+  /**
+   * @param string
+   */
+  public function setTrigger($trigger)
+  {
+    $this->trigger = $trigger;
+  }
+  /**
+   * @return string
+   */
+  public function getTrigger()
+  {
+    return $this->trigger;
   }
   /**
    * @param string
