@@ -78,6 +78,28 @@
   echo "<tr>" . fm_number("Min Thing Level",$T,'MinThingLevel') . "<td>Civ /Mil:<td>" . fm_select($CivMil,$T,'CivMil');
   echo "<td>" . fm_select($MFN,$T,'Formula',1) . fm_number('Properties',$T,'Properties');
   echo "<tr>" . fm_textarea('Description',$T,'Description',8,20);
+  
+  echo "<tr><td>Known by:<td colspan=5>";
+  
+  $Techuses = Gen_Get_Cond('FactionTechs',"Tech_Id=$Tid ORDER BY Level DESC");
+  $Facts = Get_Factions();
+  
+  if ($Techuses) {
+    foreach ($Techuses as $Tu) {
+      if (($Tu['Faction_Id']==0) || (!isset($Facts[$Tu['Faction_Id']])) || ($Facts[$Tu['Faction_Id']]['Listed'] ?? 0)) continue;
+      if ($Tu['Level'] == 0) {
+        echo "(<span style=background:" . $Facts[$Tu['Faction_Id']]['MapColour'] . ">" . $Facts[$Tu['Faction_Id']]['Name'] . "</span>), ";
+      } else {
+        echo "<span style=background:" . $Facts[$Tu['Faction_Id']]['MapColour'] . ">" . $Facts[$Tu['Faction_Id']]['Name'] . "</span> - L" . $Tu['Level'] . ", ";      
+      }
+      $Facts[$Tu['Faction_Id']]['Listed'] = 1;
+    }
+  } else {
+    echo "Not known by any Faction";
+  }
+  
+  
+  
   if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "</tbody></table></div>\n";
 
