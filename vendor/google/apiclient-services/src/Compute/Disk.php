@@ -24,16 +24,8 @@ class Disk extends \Google\Collection
    * @var string
    */
   public $architecture;
-  /**
-   * @var DiskAsyncReplication
-   */
-  public $asyncPrimaryDisk;
   protected $asyncPrimaryDiskType = DiskAsyncReplication::class;
   protected $asyncPrimaryDiskDataType = '';
-  /**
-   * @var DiskAsyncReplicationList[]
-   */
-  public $asyncSecondaryDisks;
   protected $asyncSecondaryDisksType = DiskAsyncReplicationList::class;
   protected $asyncSecondaryDisksDataType = 'map';
   /**
@@ -44,16 +36,12 @@ class Disk extends \Google\Collection
    * @var string
    */
   public $description;
-  /**
-   * @var CustomerEncryptionKey
-   */
-  public $diskEncryptionKey;
   protected $diskEncryptionKeyType = CustomerEncryptionKey::class;
   protected $diskEncryptionKeyDataType = '';
   /**
-   * @var GuestOsFeature[]
+   * @var bool
    */
-  public $guestOsFeatures;
+  public $enableConfidentialCompute;
   protected $guestOsFeaturesType = GuestOsFeature::class;
   protected $guestOsFeaturesDataType = 'array';
   /**
@@ -100,10 +88,6 @@ class Disk extends \Google\Collection
    * @var string
    */
   public $options;
-  /**
-   * @var DiskParams
-   */
-  public $params;
   protected $paramsType = DiskParams::class;
   protected $paramsDataType = '';
   /**
@@ -130,12 +114,12 @@ class Disk extends \Google\Collection
    * @var string[]
    */
   public $resourcePolicies;
-  /**
-   * @var DiskResourceStatus
-   */
-  public $resourceStatus;
   protected $resourceStatusType = DiskResourceStatus::class;
   protected $resourceStatusDataType = '';
+  /**
+   * @var bool
+   */
+  public $satisfiesPzi;
   /**
    * @var bool
    */
@@ -168,10 +152,6 @@ class Disk extends \Google\Collection
    * @var string
    */
   public $sourceImage;
-  /**
-   * @var CustomerEncryptionKey
-   */
-  public $sourceImageEncryptionKey;
   protected $sourceImageEncryptionKeyType = CustomerEncryptionKey::class;
   protected $sourceImageEncryptionKeyDataType = '';
   /**
@@ -181,11 +161,15 @@ class Disk extends \Google\Collection
   /**
    * @var string
    */
-  public $sourceSnapshot;
+  public $sourceInstantSnapshot;
   /**
-   * @var CustomerEncryptionKey
+   * @var string
    */
-  public $sourceSnapshotEncryptionKey;
+  public $sourceInstantSnapshotId;
+  /**
+   * @var string
+   */
+  public $sourceSnapshot;
   protected $sourceSnapshotEncryptionKeyType = CustomerEncryptionKey::class;
   protected $sourceSnapshotEncryptionKeyDataType = '';
   /**
@@ -296,6 +280,20 @@ class Disk extends \Google\Collection
   public function getDiskEncryptionKey()
   {
     return $this->diskEncryptionKey;
+  }
+  /**
+   * @param bool
+   */
+  public function setEnableConfidentialCompute($enableConfidentialCompute)
+  {
+    $this->enableConfidentialCompute = $enableConfidentialCompute;
+  }
+  /**
+   * @return bool
+   */
+  public function getEnableConfidentialCompute()
+  {
+    return $this->enableConfidentialCompute;
   }
   /**
    * @param GuestOsFeature[]
@@ -580,6 +578,20 @@ class Disk extends \Google\Collection
   /**
    * @param bool
    */
+  public function setSatisfiesPzi($satisfiesPzi)
+  {
+    $this->satisfiesPzi = $satisfiesPzi;
+  }
+  /**
+   * @return bool
+   */
+  public function getSatisfiesPzi()
+  {
+    return $this->satisfiesPzi;
+  }
+  /**
+   * @param bool
+   */
   public function setSatisfiesPzs($satisfiesPzs)
   {
     $this->satisfiesPzs = $satisfiesPzs;
@@ -716,6 +728,34 @@ class Disk extends \Google\Collection
   public function getSourceImageId()
   {
     return $this->sourceImageId;
+  }
+  /**
+   * @param string
+   */
+  public function setSourceInstantSnapshot($sourceInstantSnapshot)
+  {
+    $this->sourceInstantSnapshot = $sourceInstantSnapshot;
+  }
+  /**
+   * @return string
+   */
+  public function getSourceInstantSnapshot()
+  {
+    return $this->sourceInstantSnapshot;
+  }
+  /**
+   * @param string
+   */
+  public function setSourceInstantSnapshotId($sourceInstantSnapshotId)
+  {
+    $this->sourceInstantSnapshotId = $sourceInstantSnapshotId;
+  }
+  /**
+   * @return string
+   */
+  public function getSourceInstantSnapshotId()
+  {
+    return $this->sourceInstantSnapshotId;
   }
   /**
    * @param string

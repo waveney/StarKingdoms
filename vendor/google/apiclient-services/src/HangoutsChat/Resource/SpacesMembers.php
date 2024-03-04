@@ -55,6 +55,7 @@ class SpacesMembers extends \Google\Service\Resource
    * @param Membership $postBody
    * @param array $optParams Optional parameters.
    * @return Membership
+   * @throws \Google\Service\Exception
    */
   public function create($parent, Membership $postBody, $optParams = [])
   {
@@ -80,6 +81,7 @@ class SpacesMembers extends \Google\Service\Resource
    * `spaces/{space}/members/{member}` or `spaces/{space}/members/app`.
    * @param array $optParams Optional parameters.
    * @return Membership
+   * @throws \Google\Service\Exception
    */
   public function delete($name, $optParams = [])
   {
@@ -108,6 +110,7 @@ class SpacesMembers extends \Google\Service\Resource
    * email of the Google Chat user.
    * @param array $optParams Optional parameters.
    * @return Membership
+   * @throws \Google\Service\Exception
    */
   public function get($name, $optParams = [])
   {
@@ -159,12 +162,17 @@ class SpacesMembers extends \Google\Service\Resource
    * page. When paginating, all other parameters provided should match the call
    * that provided the page token. Passing different values to the other
    * parameters might lead to unexpected results.
+   * @opt_param bool showGroups Optional. When `true`, also returns memberships
+   * associated with a Google Group, in addition to other types of memberships. If
+   * a filter is set, Google Group memberships that don't match the filter
+   * criteria aren't returned.
    * @opt_param bool showInvited Optional. When `true`, also returns memberships
    * associated with invited members, in addition to other types of memberships.
    * If a filter is set, invited memberships that don't match the filter criteria
    * aren't returned. Currently requires [user
    * authentication](https://developers.google.com/chat/api/guides/auth/users).
    * @return ListMembershipsResponse
+   * @throws \Google\Service\Exception
    */
   public function listSpacesMembers($parent, $optParams = [])
   {

@@ -19,10 +19,6 @@ namespace Google\Service\Pubsub;
 
 class CloudStorageConfig extends \Google\Model
 {
-  /**
-   * @var AvroConfig
-   */
-  public $avroConfig;
   protected $avroConfigType = AvroConfig::class;
   protected $avroConfigDataType = '';
   /**
@@ -48,11 +44,11 @@ class CloudStorageConfig extends \Google\Model
   /**
    * @var string
    */
-  public $state;
+  public $serviceAccountEmail;
   /**
-   * @var TextConfig
+   * @var string
    */
-  public $textConfig;
+  public $state;
   protected $textConfigType = TextConfig::class;
   protected $textConfigDataType = '';
 
@@ -139,6 +135,20 @@ class CloudStorageConfig extends \Google\Model
   public function getMaxDuration()
   {
     return $this->maxDuration;
+  }
+  /**
+   * @param string
+   */
+  public function setServiceAccountEmail($serviceAccountEmail)
+  {
+    $this->serviceAccountEmail = $serviceAccountEmail;
+  }
+  /**
+   * @return string
+   */
+  public function getServiceAccountEmail()
+  {
+    return $this->serviceAccountEmail;
   }
   /**
    * @param string

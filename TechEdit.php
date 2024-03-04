@@ -76,7 +76,8 @@
        "<td>Core Techs only - must have one of these";
   echo "<tr><td>Other Pre Reqs<td>" . fm_select($TechNames,$T,'PreReqTech2',1) . "<td>" . fm_select($TechNames,$T,'PreReqTech3',1) ;
   echo "<tr>" . fm_number("Min Thing Level",$T,'MinThingLevel') . "<td>Civ /Mil:<td>" . fm_select($CivMil,$T,'CivMil');
-  echo "<td>" . fm_select($MFN,$T,'Formula',1) . fm_number('Properties',$T,'Properties');
+//  echo "<td>" . fm_select($MFN,$T,'Formula',1) . 
+  echo fm_number('Properties',$T,'Properties');
   echo "<tr>" . fm_textarea('Description',$T,'Description',8,20);
   
   echo "<tr><td>Known by:<td colspan=5>";

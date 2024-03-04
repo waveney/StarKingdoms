@@ -48,6 +48,7 @@ class FoldersSecurityHealthAnalyticsSettingsCustomModules extends \Google\Servic
    * @param GoogleCloudSecuritycenterV1SecurityHealthAnalyticsCustomModule $postBody
    * @param array $optParams Optional parameters.
    * @return GoogleCloudSecuritycenterV1SecurityHealthAnalyticsCustomModule
+   * @throws \Google\Service\Exception
    */
   public function create($parent, GoogleCloudSecuritycenterV1SecurityHealthAnalyticsCustomModule $postBody, $optParams = [])
   {
@@ -67,6 +68,7 @@ class FoldersSecurityHealthAnalyticsSettingsCustomModules extends \Google\Servic
    * /customModules/{customModule}"
    * @param array $optParams Optional parameters.
    * @return SecuritycenterEmpty
+   * @throws \Google\Service\Exception
    */
   public function delete($name, $optParams = [])
   {
@@ -84,6 +86,7 @@ class FoldersSecurityHealthAnalyticsSettingsCustomModules extends \Google\Servic
    * stomModules/{customModule}"
    * @param array $optParams Optional parameters.
    * @return GoogleCloudSecuritycenterV1SecurityHealthAnalyticsCustomModule
+   * @throws \Google\Service\Exception
    */
   public function get($name, $optParams = [])
   {
@@ -108,6 +111,7 @@ class FoldersSecurityHealthAnalyticsSettingsCustomModules extends \Google\Servic
    * @opt_param string pageToken The value returned by the last call indicating a
    * continuation
    * @return ListSecurityHealthAnalyticsCustomModulesResponse
+   * @throws \Google\Service\Exception
    */
   public function listFoldersSecurityHealthAnalyticsSettingsCustomModules($parent, $optParams = [])
   {
@@ -132,6 +136,7 @@ class FoldersSecurityHealthAnalyticsSettingsCustomModules extends \Google\Servic
    * @opt_param string pageToken The value returned by the last call indicating a
    * continuation
    * @return ListDescendantSecurityHealthAnalyticsCustomModulesResponse
+   * @throws \Google\Service\Exception
    */
   public function listDescendant($parent, $optParams = [])
   {
@@ -156,8 +161,12 @@ class FoldersSecurityHealthAnalyticsSettingsCustomModules extends \Google\Servic
    * @param GoogleCloudSecuritycenterV1SecurityHealthAnalyticsCustomModule $postBody
    * @param array $optParams Optional parameters.
    *
-   * @opt_param string updateMask The list of fields to update.
+   * @opt_param string updateMask The list of fields to be updated. The only
+   * fields that can be updated are `enablement_state` and `custom_config`. If
+   * empty or set to the wildcard value `*`, both `enablement_state` and
+   * `custom_config` are updated.
    * @return GoogleCloudSecuritycenterV1SecurityHealthAnalyticsCustomModule
+   * @throws \Google\Service\Exception
    */
   public function patch($name, GoogleCloudSecuritycenterV1SecurityHealthAnalyticsCustomModule $postBody, $optParams = [])
   {
@@ -177,6 +186,7 @@ class FoldersSecurityHealthAnalyticsSettingsCustomModules extends \Google\Servic
    * @param SimulateSecurityHealthAnalyticsCustomModuleRequest $postBody
    * @param array $optParams Optional parameters.
    * @return SimulateSecurityHealthAnalyticsCustomModuleResponse
+   * @throws \Google\Service\Exception
    */
   public function simulate($parent, SimulateSecurityHealthAnalyticsCustomModuleRequest $postBody, $optParams = [])
   {

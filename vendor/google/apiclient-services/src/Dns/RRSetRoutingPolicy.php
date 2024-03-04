@@ -19,26 +19,18 @@ namespace Google\Service\Dns;
 
 class RRSetRoutingPolicy extends \Google\Model
 {
-  /**
-   * @var RRSetRoutingPolicyGeoPolicy
-   */
-  public $geo;
   protected $geoType = RRSetRoutingPolicyGeoPolicy::class;
   protected $geoDataType = '';
   /**
    * @var string
    */
-  public $kind;
+  public $healthCheck;
   /**
-   * @var RRSetRoutingPolicyPrimaryBackupPolicy
+   * @var string
    */
-  public $primaryBackup;
+  public $kind;
   protected $primaryBackupType = RRSetRoutingPolicyPrimaryBackupPolicy::class;
   protected $primaryBackupDataType = '';
-  /**
-   * @var RRSetRoutingPolicyWrrPolicy
-   */
-  public $wrr;
   protected $wrrType = RRSetRoutingPolicyWrrPolicy::class;
   protected $wrrDataType = '';
 
@@ -55,6 +47,20 @@ class RRSetRoutingPolicy extends \Google\Model
   public function getGeo()
   {
     return $this->geo;
+  }
+  /**
+   * @param string
+   */
+  public function setHealthCheck($healthCheck)
+  {
+    $this->healthCheck = $healthCheck;
+  }
+  /**
+   * @return string
+   */
+  public function getHealthCheck()
+  {
+    return $this->healthCheck;
   }
   /**
    * @param string

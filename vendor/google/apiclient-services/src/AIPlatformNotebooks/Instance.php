@@ -32,10 +32,6 @@ class Instance extends \Google\Collection
    * @var bool
    */
   public $disableProxyAccess;
-  /**
-   * @var GceSetup
-   */
-  public $gceSetup;
   protected $gceSetupType = GceSetup::class;
   protected $gceSetupDataType = '';
   /**
@@ -73,11 +69,11 @@ class Instance extends \Google\Collection
   /**
    * @var string
    */
-  public $updateTime;
+  public $thirdPartyProxyUrl;
   /**
-   * @var UpgradeHistoryEntry[]
+   * @var string
    */
-  public $upgradeHistory;
+  public $updateTime;
   protected $upgradeHistoryType = UpgradeHistoryEntry::class;
   protected $upgradeHistoryDataType = 'array';
 
@@ -248,6 +244,20 @@ class Instance extends \Google\Collection
   public function getState()
   {
     return $this->state;
+  }
+  /**
+   * @param string
+   */
+  public function setThirdPartyProxyUrl($thirdPartyProxyUrl)
+  {
+    $this->thirdPartyProxyUrl = $thirdPartyProxyUrl;
+  }
+  /**
+   * @return string
+   */
+  public function getThirdPartyProxyUrl()
+  {
+    return $this->thirdPartyProxyUrl;
   }
   /**
    * @param string

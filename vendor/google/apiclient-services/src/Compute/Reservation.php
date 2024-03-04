@@ -19,6 +19,8 @@ namespace Google\Service\Compute;
 
 class Reservation extends \Google\Model
 {
+  protected $aggregateReservationType = AllocationAggregateReservation::class;
+  protected $aggregateReservationDataType = '';
   /**
    * @var string
    */
@@ -47,10 +49,6 @@ class Reservation extends \Google\Model
    * @var string[]
    */
   public $resourcePolicies;
-  /**
-   * @var AllocationResourceStatus
-   */
-  public $resourceStatus;
   protected $resourceStatusType = AllocationResourceStatus::class;
   protected $resourceStatusDataType = '';
   /**
@@ -61,16 +59,8 @@ class Reservation extends \Google\Model
    * @var string
    */
   public $selfLink;
-  /**
-   * @var ShareSettings
-   */
-  public $shareSettings;
   protected $shareSettingsType = ShareSettings::class;
   protected $shareSettingsDataType = '';
-  /**
-   * @var AllocationSpecificSKUReservation
-   */
-  public $specificReservation;
   protected $specificReservationType = AllocationSpecificSKUReservation::class;
   protected $specificReservationDataType = '';
   /**
@@ -86,6 +76,20 @@ class Reservation extends \Google\Model
    */
   public $zone;
 
+  /**
+   * @param AllocationAggregateReservation
+   */
+  public function setAggregateReservation(AllocationAggregateReservation $aggregateReservation)
+  {
+    $this->aggregateReservation = $aggregateReservation;
+  }
+  /**
+   * @return AllocationAggregateReservation
+   */
+  public function getAggregateReservation()
+  {
+    return $this->aggregateReservation;
+  }
   /**
    * @param string
    */

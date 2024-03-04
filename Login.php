@@ -192,9 +192,10 @@ function NewPasswd() {
       Login(Logon()); // No Return    
     case 'LOGOUT' :
       $USER = 0;
-      setcookie('WMFF2',0,1,'/');
-      if (@ $CONF['testing']) Login();
-      include_once("../index.php"); 
+      setcookie('SKC2',0,1,'/');
+      Login();
+//      if (@ $CONF['testing']) Login();
+//      include_once("../index.php"); 
       exit;
     case 'LIMITED' :
       Login(Limited()); // No Return;

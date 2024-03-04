@@ -49,7 +49,7 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Slots</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Min Level</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Civ Mil</a>\n";
-    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Formula</a>\n";
+//    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Formula</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Usage</a>\n";
     echo "</thead><tbody>";
 
@@ -66,7 +66,7 @@
       echo "<td>" . $T['Slots'];
       echo "<td>" . $T['MinThingLevel'];
       echo "<td>" . $CivMil[$T['CivMil']];
-      echo "<td>" . ($T['Formula']>0 ? $MFN[$T['Formula']]:'');
+//      echo "<td>" . ($T['Formula']>0 ? $MFN[$T['Formula']]:'');
       echo "<td>" . ($UseCount[$i] ?? 0);
       
       }   

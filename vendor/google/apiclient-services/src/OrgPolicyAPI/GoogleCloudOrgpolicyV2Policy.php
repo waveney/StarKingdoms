@@ -19,26 +19,18 @@ namespace Google\Service\OrgPolicyAPI;
 
 class GoogleCloudOrgpolicyV2Policy extends \Google\Model
 {
-  /**
-   * @var GoogleCloudOrgpolicyV2AlternatePolicySpec
-   */
-  public $alternate;
   protected $alternateType = GoogleCloudOrgpolicyV2AlternatePolicySpec::class;
   protected $alternateDataType = '';
-  /**
-   * @var GoogleCloudOrgpolicyV2PolicySpec
-   */
-  public $dryRunSpec;
   protected $dryRunSpecType = GoogleCloudOrgpolicyV2PolicySpec::class;
   protected $dryRunSpecDataType = '';
   /**
    * @var string
    */
-  public $name;
+  public $etag;
   /**
-   * @var GoogleCloudOrgpolicyV2PolicySpec
+   * @var string
    */
-  public $spec;
+  public $name;
   protected $specType = GoogleCloudOrgpolicyV2PolicySpec::class;
   protected $specDataType = '';
 
@@ -69,6 +61,20 @@ class GoogleCloudOrgpolicyV2Policy extends \Google\Model
   public function getDryRunSpec()
   {
     return $this->dryRunSpec;
+  }
+  /**
+   * @param string
+   */
+  public function setEtag($etag)
+  {
+    $this->etag = $etag;
+  }
+  /**
+   * @return string
+   */
+  public function getEtag()
+  {
+    return $this->etag;
   }
   /**
    * @param string

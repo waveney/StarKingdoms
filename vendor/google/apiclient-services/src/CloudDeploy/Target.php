@@ -24,16 +24,14 @@ class Target extends \Google\Collection
    * @var string[]
    */
   public $annotations;
-  /**
-   * @var AnthosCluster
-   */
-  public $anthosCluster;
   protected $anthosClusterType = AnthosCluster::class;
   protected $anthosClusterDataType = '';
   /**
    * @var string
    */
   public $createTime;
+  protected $customTargetType = CustomTarget::class;
+  protected $customTargetDataType = '';
   /**
    * @var string[]
    */
@@ -46,26 +44,14 @@ class Target extends \Google\Collection
    * @var string
    */
   public $etag;
-  /**
-   * @var ExecutionConfig[]
-   */
-  public $executionConfigs;
   protected $executionConfigsType = ExecutionConfig::class;
   protected $executionConfigsDataType = 'array';
-  /**
-   * @var GkeCluster
-   */
-  public $gke;
   protected $gkeType = GkeCluster::class;
   protected $gkeDataType = '';
   /**
    * @var string[]
    */
   public $labels;
-  /**
-   * @var MultiTarget
-   */
-  public $multiTarget;
   protected $multiTargetType = MultiTarget::class;
   protected $multiTargetDataType = '';
   /**
@@ -76,10 +62,6 @@ class Target extends \Google\Collection
    * @var bool
    */
   public $requireApproval;
-  /**
-   * @var CloudRunLocation
-   */
-  public $run;
   protected $runType = CloudRunLocation::class;
   protected $runDataType = '';
   /**
@@ -136,6 +118,20 @@ class Target extends \Google\Collection
   public function getCreateTime()
   {
     return $this->createTime;
+  }
+  /**
+   * @param CustomTarget
+   */
+  public function setCustomTarget(CustomTarget $customTarget)
+  {
+    $this->customTarget = $customTarget;
+  }
+  /**
+   * @return CustomTarget
+   */
+  public function getCustomTarget()
+  {
+    return $this->customTarget;
   }
   /**
    * @param string[]

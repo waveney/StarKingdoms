@@ -56,6 +56,7 @@ class Dialogflow extends \Google\Service
   public $projects_locations_agents_flows_pages;
   public $projects_locations_agents_flows_transitionRouteGroups;
   public $projects_locations_agents_flows_versions;
+  public $projects_locations_agents_generators;
   public $projects_locations_agents_intents;
   public $projects_locations_agents_sessions;
   public $projects_locations_agents_sessions_entityTypes;
@@ -345,6 +346,16 @@ class Dialogflow extends \Google\Service
                   'type' => 'boolean',
                 ],
               ],
+            ],'export' => [
+              'path' => 'v3/{+parent}/entityTypes:export',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
             ],'get' => [
               'path' => 'v3/{+name}',
               'httpMethod' => 'GET',
@@ -357,6 +368,16 @@ class Dialogflow extends \Google\Service
                 'languageCode' => [
                   'location' => 'query',
                   'type' => 'string',
+                ],
+              ],
+            ],'import' => [
+              'path' => 'v3/{+parent}/entityTypes:import',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
                 ],
               ],
             ],'list' => [
@@ -699,6 +720,16 @@ class Dialogflow extends \Google\Service
               ],
             ],'matchIntent' => [
               'path' => 'v3/{+session}:matchIntent',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'session' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'serverStreamingDetectIntent' => [
+              'path' => 'v3/{+session}:serverStreamingDetectIntent',
               'httpMethod' => 'POST',
               'parameters' => [
                 'session' => [
@@ -1205,6 +1236,98 @@ class Dialogflow extends \Google\Service
           ]
         ]
     );
+    $this->projects_locations_agents_generators = new Dialogflow\Resource\ProjectsLocationsAgentsGenerators(
+        $this,
+        $this->serviceName,
+        'generators',
+        [
+          'methods' => [
+            'create' => [
+              'path' => 'v3/{+parent}/generators',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'languageCode' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+              ],
+            ],'delete' => [
+              'path' => 'v3/{+name}',
+              'httpMethod' => 'DELETE',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'force' => [
+                  'location' => 'query',
+                  'type' => 'boolean',
+                ],
+              ],
+            ],'get' => [
+              'path' => 'v3/{+name}',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'languageCode' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+              ],
+            ],'list' => [
+              'path' => 'v3/{+parent}/generators',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'languageCode' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'pageSize' => [
+                  'location' => 'query',
+                  'type' => 'integer',
+                ],
+                'pageToken' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+              ],
+            ],'patch' => [
+              'path' => 'v3/{+name}',
+              'httpMethod' => 'PATCH',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'languageCode' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'updateMask' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+              ],
+            ],
+          ]
+        ]
+    );
     $this->projects_locations_agents_intents = new Dialogflow\Resource\ProjectsLocationsAgentsIntents(
         $this,
         $this->serviceName,
@@ -1345,6 +1468,16 @@ class Dialogflow extends \Google\Service
               ],
             ],'matchIntent' => [
               'path' => 'v3/{+session}:matchIntent',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'session' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'serverStreamingDetectIntent' => [
+              'path' => 'v3/{+session}:serverStreamingDetectIntent',
               'httpMethod' => 'POST',
               'parameters' => [
                 'session' => [
