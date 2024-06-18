@@ -1,6 +1,8 @@
 {
     "require": {
         "erusev/parsedown": "^1.7",
-        "google/apiclient": "^2.0"
+        "google/apiclient": "^2.0",
+        "phpmailer/phpmailer": "^6.9",
+        "html2text/html2text": "^4.3"
     }   
 }

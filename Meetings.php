@@ -6,23 +6,23 @@
   include_once("SystemLib.php");
   include_once("ProjLib.php");
   include_once("HomesLib.php");
-  include_once("TurnTools.php");    
+  include_once("TurnTools.php");
   A_Check('GM');
 
 /* Get all systems and Factions
 
-  Go through each Home - record systems 
-  
+  Go through each Home - record systems
+
   Go through each Things - record systems
 
-  For each system with more than 1 faction - report (Embassy?) - simple list and details button - details == WWhatCanIC  
+  For each system with more than 1 faction - report (Embassy?) - simple list and details button - details == WWhatCanIC
 */
 
   dostaffhead("Meetups");
-  
+
   $Systems = Get_Systems();
   $Facts = Get_Factions();
-  
+
   $Homes = Get_ProjectHomes();
   $TTypes = Get_ThingTypes();
   $ModTypes = Get_ModuleTypes();
@@ -39,7 +39,7 @@ function ForceReport($Sid,$Cat) {
   $TMsk = ($Cat=='G'?1:2);
   $PlanMoon = [];
   $FirePower = $Wid = $Bat = 0;
-  
+
   if ($Cat == 'G') {
     $PTD = Get_PlanetTypes();  // ONLY works for single taget at present
     $Planets = Get_Planets($Sid);
@@ -62,15 +62,15 @@ function ForceReport($Sid,$Cat) {
       }
     }
   }
-  
+
   echo "<h2>" . ($Cat =='G' ?'Ground':'Space') . " Force Report for " . $N['Ref'] . ($Cat =='G' ? " - " . ($PlanMoon['Name'] ?? 'Nameless') .
        " ($HomeType)" :'') . "</h2>\n";
   if ($Cat =='G' && $Wid) echo "<h2><a href=WorldEdit.php?ACTION=Militia&id=$Wid>Create /Update Militia</a></h2>";
-  
+
   echo "<table border>";
   echo "<tr><td>What<td>Type<td>Level<td>Health<td>Attack<td>Speed<td>Actions\n";
   foreach($Things as $T) {
-    if ((($Cat == 'S') && (($TTypes[$T['Type']]['Properties'] & 8) != 0)) || 
+    if ((($Cat == 'S') && (($TTypes[$T['Type']]['Properties'] & 8) != 0)) ||
         (($Cat == 'G') && (($TTypes[$T['Type']]['Properties'] & 0x800020) != 0))) {
       if (($T['CurHealth'] == 0) && ($T['Type'] == 20)) continue; // Skip Militia at zero
       if ($T['PrisonerOf'] != 0) continue; // Prisoners
@@ -87,7 +87,7 @@ function ForceReport($Sid,$Cat) {
         $htxt = "<tr><td colspan=7 style='background:" . $Facts[$LastF]['MapColour'] . "'><h2>" . $Facts[$LastF]['Name'] . "</h2><tr><td colspan=7>";
         $txt = $Battct = $ftxt = '';
         $txt .= "<br>Damage recieved: <span id=DamTot$Cat$LastF>0</span>";
-        
+
         $FTs = Get_Faction_Techs($LastF);
 
         foreach ($FTs as $FT) {
@@ -99,13 +99,13 @@ function ForceReport($Sid,$Cat) {
             case 'Battle Tactics':
               $Bat += $FT['Level'];
               $Battct .= " Base: " . $FT['Level'];
-              continue 2; 
-            
+              continue 2;
+
             case 'Combined Arms':
               $Bat += 1;
               $Battct .= ", Combined Arms +1 ";
               break;
-            
+
             case 'Battlefield Intelligence':
               $Agents = Get_Things_Cond($LastF," Type=5 AND Class='Military' AND SystemId=" . $T['SystemId'] . " ORDER BY Level DESC");
               if ($Agents) {
@@ -114,7 +114,7 @@ function ForceReport($Sid,$Cat) {
                 $Battct .= ", Battlefield Intelligence +$Bi ";
               }
               break;
-            
+
             case 'Army Tactics - Arctic':
             case 'Army Tactics - Desert':
             case 'Army Tactics - Desolate':
@@ -125,7 +125,7 @@ function ForceReport($Sid,$Cat) {
                 break;
               }
               continue 2;
-            
+
             default:
 
             }
@@ -133,9 +133,9 @@ function ForceReport($Sid,$Cat) {
           }
         }
       }
-      
+
       $txt .= "<tr><td><a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a>";
-      
+
       $Mods = Get_Modules($T['id']);
       foreach($Mods as $M) {
         if ($ModTypes[$M['Type']]['Leveled'] & 6) {
@@ -145,21 +145,21 @@ function ForceReport($Sid,$Cat) {
       $Resc = 0;
       $BD = Calc_Damage($T,$Resc);
       $tprops = $ThingProps[$T['Type']];
-      
+
       $txt .= fm_hidden("OrigData$Tid",implode(":",[$T['CurHealth'], $T['OrigHealth'],0,$T['CurShield'],$T['ShieldPoints']]));
       $txt .= "<td>" . $TTypes[$T['Type']]['Name'] . "<td>" . $T['Level'];
       $txt .= "<td><span id=StateOf$Tid>" . $T['CurHealth'] . " / " . $T['OrigHealth'];
       if ($T['ShieldPoints']) $txt .= " (" . $T['CurShield'] . "/" . $T['ShieldPoints'] . ") ";
-      $txt .= "</span><td><span id=Attack$Tid>$BD</span><td>" . 
+      $txt .= "</span><td><span id=Attack$Tid>$BD</span><td>" .
            (($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE)? "Speed: " . sprintf("%0.3g ",$T['Speed']) :'') ;
-      $txt .=  fm_number1(" Do",$T,'Damage', ''," class=Num3 onchange=Do_Damage($Tid,$LastF,'$Cat')","Damage:$Tid") . " damage"; 
-      
+      $txt .=  fm_number1(" Do",$T,'Damage', ''," class=Num3 onchange=Do_Damage($Tid,$LastF,'$Cat')","Damage:$Tid") . " damage";
+
       $FirePower += $BD;
     }
 
   }
   if ($htxt) {
-    echo $htxt; 
+    echo $htxt;
     if ($Bat) echo "Battle Tactics: Effectively $Bat ( $Battct ) <br>";
     echo  $ftxt. "<br>Total Firepower: <span id=FirePower:$LastF>$FirePower</span>" . $txt;
   }
@@ -167,10 +167,10 @@ function ForceReport($Sid,$Cat) {
 }
 
 // Planetary Defences + Militia for Ground Combat
-  
+
   $TurnP = '';
   if (isset($_REQUEST['TurnP'])) $TurnP = "&TurnP=1";
-  
+
   foreach($Homes as $H) {
     switch ($H['ThingType']) {
     case 1: // Planet
@@ -187,13 +187,17 @@ function ForceReport($Sid,$Cat) {
     }
     $Sys[$Sid][$H['Whose']] = 1024;
   }
-  
+
 //  echo "Checked Homes<p>";
-  
+
   $Things = Get_AllThings();
+  $Hostiles = [];
+  $Mtch = [];
+
   foreach ($Things as $T){
     if ($T['BuildState'] <2 || $T['BuildState'] >3 || ($T['LinkId'] < 0 && $T['LinkId'] > -5)) continue; // Don't exist
     $Sid = $T['SystemId'];
+    $Sys = Get_System($Sid);
     $Eyes = $TTypes[$T['Type']]['Eyes'];
     $Hostile = ($TTypes[$T['Type']]['Properties'] & THING_IS_HOSTILE) && ($T['PrisonerOf'] == 0);
     if (isset($Sys[$Sid][$T['Whose']])) {
@@ -207,9 +211,9 @@ function ForceReport($Sid,$Cat) {
       $Hostiles[$Sid][$T['Whose']] = $Hostile;
     }
   }
-  
+
 //  var_dump($_REQUEST);
-  
+
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
     case 'Do ALL Damage':
@@ -239,14 +243,14 @@ function ForceReport($Sid,$Cat) {
             TurnLog($T['Whose'],$T['Name'] . " took $RV damage\n",$T);
           }
           Put_Thing($T);
-          
+
           // Reports??
         }
       }
-    
+
 
       // Deliberate fall through
-      
+
     case 'Check':
       if (isset($_REQUEST['S'])) {
         $Sid = $_REQUEST['S'];
@@ -261,55 +265,56 @@ function ForceReport($Sid,$Cat) {
       }
 
       $txt = SeeInSystem($Sid,31,1,0,-1,1);
-      
+
       echo $txt;
 
       echo "Make sure you have unloaded troops BEFORE looking at the Ground Combat Report.<p>";
 
 
       echo "<form method=post action=Meetings.php?ACTION=Check&S=$Sid onkeydown=\"return event.key != 'Enter';\">";
-      
+
       $_REQUEST['IgnoreShield'] = 0;
       echo "<h2>" . fm_checkbox('Bipass shields - (eg missiles)',$_REQUEST,'IgnoreShield') . "</h2><p>";
+      $mtch = [];
       if (preg_match('/<div class=FullD hidden>/',$txt,$mtch)) {
         echo "<button class='floatright FullD' onclick=\"($('.FullD').toggle())\">Show Remains of Things and Named Characters</button>";
       }
 
 
 //      Register_AutoUpdate('Meetings',$Sid);
-      
+
       ForceReport($Sid,'G');
       ForceReport($Sid,'S');
 
       echo fm_submit("ACTION",'Do ALL Damage',0);
       echo "</form>";
-                              
+
 
 //      echo "<p><h2><a href=Meetings.php?S=$Sid&ACTION=FRGROUND>Force Report for Ground Combat</a>, " .
 //                  "<a href=Meetings.php?S=$Sid&ACTION=FRSPACE>Force Report for Space Combat</a></h2>";
       break;
-      
-      
-      
+
+
+
     case 'FRGROUND':
       $Sid = $_REQUEST['S'];
       $N = Get_System($Sid);
       ForceReport($Sid,'G');
       break;
-          
+
     case 'FRSPACE':
       $Sid = $_REQUEST['S'];
       $N = Get_System($Sid);
       ForceReport($Sid,'S');
-      break; 
-          
+      break;
+
     }
   }
   echo "<h1>Checking</h1>";
 
   echo "<span class=NotHostile>Factions</span> thus marked have only Never Hostile Things<p>";
 //  echo "Checked Things<p>";
-  
+
   foreach ($Systems as $N) {
     $Sid = $N['id'];
     $NumF = 0;
@@ -336,18 +341,18 @@ function ForceReport($Sid,$Cat) {
             echo $F['Name'] . " , ";
           } else {
 //echo "NOT HOSTILE ";
-            echo "<span class=NotHostile>" . $F['Name'] . "</span> , ";          
+            echo "<span class=NotHostile>" . $F['Name'] . "</span> , ";
           }
         }
       }
       echo "<br>";
-    }   
+    }
   }
-  
+
   echo "<P>Scan Finished<p>";
-  
+
   if ($TurnP) echo "<h2><a href=TurnActions.php?ACTION=StageDone&Stage=Meetups&S=35>Back To Turn Processing</a></h2>";
-  
+
   dotail();
-  
+
 ?>

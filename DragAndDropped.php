@@ -1,4 +1,4 @@
-<?php 
+<?php
 // Set uploaded fields in data
 include_once("sk.php");
 include_once("skfm.php");
@@ -58,12 +58,12 @@ default:
   exit;
 }
 
-if (!$Data) { 
-  echo fm_DragonDrop(0,$Type,$Cat,$id,$Data,$Mode,"No Data found to update - $Type - $Cat - $Id ",1,'',$Class);
+if (!$Data) {
+  echo fm_DragonDrop(0,$Type,$Cat,$id,$Data,$Mode,"No Data found to update - $Type - $Cat - $id ",1,'',$Class);
   exit;
 }
 
-//TODO paths bellow only work for per year data not fixed eg PA 
+//TODO paths bellow only work for per year data not fixed eg PA
 
 // Existing file?
 if (isset($DDd['path'])) {

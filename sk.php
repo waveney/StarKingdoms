@@ -41,7 +41,7 @@ function Check_Login() {
         }
       }
     }
-  } 
+  }
 }
 
 function Set_User() {
@@ -76,12 +76,12 @@ function Access($level,$subtype=0,$thing=0) {
   Set_User();
   if (!isset($USER['AccessLevel'])) return 0;
   if ($USER['AccessLevel'] < $want) return 0;
-  
+
   if ($USER['AccessLevel'] > $want+1) return 1;
 
   switch  ($USER['AccessLevel']) {
 
-  case $Access_Type['Player'] : 
+  case $Access_Type['Player'] :
     if (!$subtype) return 1;
     if ($USER['Subtype'] == 'Other' && $subtype == 'Act') {}
     elseif ($USER['Subtype'] != $subtype) return 0;
@@ -90,7 +90,7 @@ function Access($level,$subtype=0,$thing=0) {
   case $Access_Type['Observer'] :
     if (!$subtype) return $USER['AccessLevel'] >= $want;
     if (isset($USER[$subtype]) && $USER[$subtype]) return 1;
-    return 0; 
+    return 0;
 
 
   case $Access_Type['GM'] :
@@ -98,10 +98,10 @@ function Access($level,$subtype=0,$thing=0) {
     if (isset($USER[$subtype]) && $USER[$subtype]) return 1;
     return 0;
 
-  case $Access_Type['SysAdmin'] : 
+  case $Access_Type['SysAdmin'] :
     return 1;
 
-  case $Access_Type['Internal'] : 
+  case $Access_Type['Internal'] :
     return 1;
 
   default:
@@ -111,11 +111,11 @@ function Access($level,$subtype=0,$thing=0) {
 
 
 /*
-  If not in session 
+  If not in session
     If Yale then
       Find User from Yale, start session
       if not found - Login page
-    else 
+    else
       Login page
   endif
   if AccessOK return
@@ -149,6 +149,7 @@ function UserSetPref($pref,$val) {
 function UserGetPref($pref) {
   global $USER,$USERID;
   if (!$USER || !isset($USER['Prefs'])) return 0;
+  $rslt = [];
   if (preg_match("/$pref\:(.*)\n/",$USER['Prefs'],$rslt)) return trim($rslt[1]);
   return 0;
 }
@@ -204,9 +205,9 @@ function Error_Page ($message) {
     $ErrorMessage = "Something went very wrong... - $message";
     include_once('Staff.php');  // Should be good
     exit;                        // Just in case
-    
+
   default:
-    include_once("Staff.php"); 
+    include_once("Staff.php");
   }
 }
 
@@ -222,6 +223,7 @@ $GAMEID = $GAME['id'];
 
 function First_Sent($stuff) {
   $onefifty=substr($stuff,0,150);
+  $m = '';
   return (preg_match('/^(.*?[.!?])\s/s',$onefifty,$m) ? $m[1] : $onefifty);
 }
 
@@ -231,9 +233,9 @@ function munge_array(&$thing) {
 }
 
 function Send_SysAdmin_Email($Subject,&$data=0) {
-  include_once("Email.php");
+  include_once("OldCode/Email.php");
   $dat = json_encode($data);
-  NewSendEmail(0,0,'richard@wavwebs.com',$Subject,$dat);  
+  NewSendEmail(0,0,'richard@wavwebs.com',$Subject,$dat);
 }
 
 $head_done = 0;
@@ -269,12 +271,12 @@ function dohead($title,$extras=[],$Banner='',$BannerOptions=' ') {
     include_once("files/Newheader.php");
   } else {
     include_once("skfiles/header.php");
-  }  
+  }
   if ($extras) doextras($extras);
   echo "</head><body>\n";
 
   if ($AdvancedHeaders) {
-    echo "<div class=contentlim>";  
+    echo "<div class=contentlim>";
     include_once("files/Newnavigation.php");
 
     if ($Banner) {
@@ -295,14 +297,14 @@ function dohead($title,$extras=[],$Banner='',$BannerOptions=' ') {
       echo "<div class='NullBanner'></div>";  // Not shure this is needed
     }
   } else {
-    echo "<div class=contentlim>";  
+    echo "<div class=contentlim>";
     include_once("skfiles/navigation.php");
   }
-  echo "<div class=mainwrapper><div class=maincontent>";  
+  echo "<div class=mainwrapper><div class=maincontent>";
   $head_done = 1;
 }
 
-//  No Banner 
+//  No Banner
 function doheadpart($title,$extras=[]) {
   global $head_done,$GAMESYS,$CONF,$AdvancedHeaders,$GAME;
   if ($head_done) return;
@@ -310,13 +312,13 @@ function doheadpart($title,$extras=[]) {
   $pfx="";
   if (isset($CONF['TitlePrefix'])) $pfx = $CONF['TitlePrefix'];
   echo "<html><head>";
-  echo "<title>$pfx " . $GAMES['Name'] . " | $title</title>\n";
+  echo "<title>$pfx " . $GAME['Name'] . " | $title</title>\n";
   if ($AdvancedHeaders) {
     include_once("files/Newheader.php");
   } else {
     include_once("skfiles/header.php");
-  }  
-  
+  }
+
   if ($extras) doextras($extras);
   $head_done = 1;
 }
@@ -324,9 +326,9 @@ function doheadpart($title,$extras=[]) {
 // No Banner
 function dostaffhead($title,$extras=[],$bodyextra='') {
   global $head_done,$GAMESYS,$CONF,$AdvancedHeaders,$GAME,$FACTION;
-  
+
   LogEverything();
-  
+
   if ($head_done) return;
   $V=$GAMESYS['V'];
   $pfx="";
@@ -341,7 +343,7 @@ function dostaffhead($title,$extras=[],$bodyextra='') {
     echo "<meta http-equiv='cache-control' content=no-cache>";
     echo "</head><body>\n";
     include_once("files/Newnavigation.php");
-    echo "<div class=content>";  
+    echo "<div class=content>";
   } else {
     include_once("skfiles/header.php");
     include_once("skgame.php");
@@ -349,19 +351,19 @@ function dostaffhead($title,$extras=[],$bodyextra='') {
     echo "<meta http-equiv='cache-control' content=no-cache>";
     echo "</head><body $bodyextra>\n";
 
-    include_once("skfiles/navigation.php"); 
+    include_once("skfiles/navigation.php");
 
     echo "<div class=content>";
   }
   $head_done = 1;
-  
+
   if (isset($FACTION['TurnState']) && $FACTION['TurnState'] >1 ) {
     if (($FACTION['TurnState'] == 4 ) || (!Access('GM'))) fm_addall('readonly');
   }
 }
 
 // No Banner
-function dominimalhead($title,$extras=[]) { 
+function dominimalhead($title,$extras=[]) {
   global $head_done,$GAMESYS,$CONF,$AdvancedHeaders,$GAME;
   $V=$GAMESYS['V'];
   $pfx="";

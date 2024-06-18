@@ -4,7 +4,7 @@
 
   dostaffhead("Add/Change User");
   include_once("UserLib.php");
-  global $FESTSYS,$Sections;
+  global $FESTSYS,$Sections,$Access_Levels,$Access_Type;
 
   Set_User_Help();
 
@@ -32,7 +32,7 @@
           $User['Roll'] = 'No Access' . date(' j/m/Y');
           $User['Contacts'] = 0;
           foreach ($Sections as $sec) $User[$sec] = 0;
-          $a = Put_User($User);                 
+          $a = Put_User($User);
         }
       } else {
         Update_db_post('FestUsers',$User);
@@ -74,7 +74,7 @@
     echo "<tr>" . fm_text('Roll',$User,'Roll',3);
     echo "<tr>" . fm_text('Relative Order',$User,'RelOrder',3);
     echo "<tr><td>No Tasks (test users only) " . fm_checkbox('',$User,'NoTasks');
-    echo "<tr><td>Access Level<td>" . fm_select($Access_Levels,$User,'AccessLevel',0,'','',$USER['AccessLevel']);
+    echo "<tr><td>Access Level<td>" . fm_select($Access_Levels,$User,'AccessLevel',0,'','',$User['AccessLevel']);
     echo "<tr>" . fm_text('Image', $User,'Image',3);
 //    echo "<tr>" . fm_radio('Show on Contacts Page',$User_Public_Vis,$User,'Contacts');
 /*
@@ -101,9 +101,9 @@
     echo "<input type=submit name=ACTION value='Set Password'>\n";
 
     echo "<input type=submit name=ACTION value='Remove Access' " .
-                  "onClick=\"javascript:return confirm('are you sure you want to remove this user?');\"></form> "; 
+                  "onClick=\"javascript:return confirm('are you sure you want to remove this user?');\"></form> ";
     echo "<h2><a href=Welcome?U=$unum>Send Welcome Email with New Password Link</a> , \n";
-  } else { 
+  } else {
     echo "<Center><input type=Submit name=Create value='Create'></center>\n";
     echo "</form>\n<h2>";
   }

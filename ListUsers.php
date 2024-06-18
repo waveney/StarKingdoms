@@ -1,7 +1,9 @@
 <?php
   include_once("sk.php");
   include_once("GetPut.php");
-  
+
+  global $USER;
+
   if (isset($_REQUEST['FULL'])) {
     $Full = 1;
     A_Check('God','Users');
@@ -13,6 +15,7 @@
   dostaffhead("List Starkingdom Users");
 //  include_once("DocLib.php");
   include_once("UserLib.php");
+  global $Access_Levels;
 
   $Users = Get_People();
 
@@ -31,7 +34,7 @@
 //  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Abrev</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Login</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Email</a>\n";
-//  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Phone</a>\n";  
+//  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Phone</a>\n";
 //  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Fest Email</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Access Level</a>\n";
 //  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Roll</a>\n";
@@ -42,7 +45,7 @@
 //    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Last Access</a>\n";
 //    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Test User</a>\n";
 //    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Show</a>\n";
-//    foreach ($Sections as $sec) 
+//    foreach ($Sections as $sec)
 //      echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>$sec</a>\n";
     }
   echo "</thead><tbody>";
@@ -58,16 +61,16 @@
     echo "<td>" . $usr['Login'] . "<td>" . $usr['Email'] . "<td>" . $Access_Levels[$usr['AccessLevel']];
 //    echo "<td>" . $usr['Roll'] . "<td>" . $usr['RelOrder'] ;
     if (feature('ShowContactPhotos')) {
-      echo "<td>"; 
+      echo "<td>";
       if ($usr['Image']) echo "<img src='" . $usr['Image'] . "' width=50>";
       }
 //    echo "<td>" . $User_Public_Vis[$usr['Contacts']];
-  
-//    if ($Full) { 
+
+//    if ($Full) {
 //      echo "<td>";
 //      if ($usr['LastAccess']) echo date('d/m/y H:i:s',$usr['LastAccess']);
 //      echo "<td>";
-//      if ($usr['NoTasks']) echo "Y";   
+//      if ($usr['NoTasks']) echo "Y";
 //      echo "<td>";
 //      if ($usr['Contacts']) echo "Y";
 //      foreach ($Sections as $sec) {
@@ -76,7 +79,7 @@
     }
 
   echo "</tbody></table></div>\n";
-  
+
   if ($Full) echo "<h2><a href=AddUser.php>Add User</a></a>";
 
   dotail();

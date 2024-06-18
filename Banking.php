@@ -14,13 +14,13 @@
 
   $GM = Access('GM');
   if (!$GM) {
-    if ($FACTION['TurnState'] > 2) Player_Page();      
+    if ($FACTION['TurnState'] > 2) Player_Page();
     Put_Faction($FACTION);
   }
 
   $Factions = Get_Factions();
   $Facts = Get_FactionFactions($Fid);
-  
+
   AddCurrencies();
   $Trade = TradeableCurrencies();
 
@@ -30,7 +30,7 @@
   foreach ($Facts as $Fi=>$F) {
     $FactList[$Fi] = $Factions[$Fi]['Name'];
   }
-  
+
 
 //  var_dump($_REQUEST);
 
@@ -47,14 +47,14 @@
         $Turn = max(1,$Turn -1);
         break;
       case 'Current Turn' :
-        $Turn = $GAME['Turn'];    
+        $Turn = $GAME['Turn'];
         break;
       case 'Transfer on Turn' :
       case 'Setup' :
-        $BankRec = ['FactionId'=>$Fid, 'Recipient'=>$_REQUEST['Recipient'], 'Amount'=>$_REQUEST['Amount'], 
-                    'StartTurn'=> $_REQUEST['StartTurn'], 'EndTurn' => (empty( $_REQUEST['EndTurn'])? $_REQUEST['StartTurn'] : $_REQUEST['EndTurn']), 
+        $BankRec = ['FactionId'=>$Fid, 'Recipient'=>$_REQUEST['Recipient'], 'Amount'=>$_REQUEST['Amount'],
+                    'StartTurn'=> $_REQUEST['StartTurn'], 'EndTurn' => (empty( $_REQUEST['EndTurn'])? $_REQUEST['StartTurn'] : $_REQUEST['EndTurn']),
                     'YourRef' => $_REQUEST['YourRef'],'What'=>(isset($_REQUEST['What'])?$_REQUEST['What']:0) ];
-        
+
         if (empty($BankRec['YourRef'])) $BankRec['YourRef'] = "Unspecified";
         Put_Banking($BankRec);
         $_REQUEST['Recipient'] = '';
@@ -66,11 +66,11 @@
       case 'Transfer Now' :
 
         dostaffhead("Banking");
-        $B = ['FactionId'=>$Fid, 'Recipient'=>$_REQUEST['Recipient'], 'Amount'=>$_REQUEST['Amount'], 
-                    'StartTurn'=> $_REQUEST['StartTurn'], 'EndTurn' => (empty( $_REQUEST['EndTurn'])? $_REQUEST['StartTurn'] : $_REQUEST['EndTurn']), 
+        $B = ['FactionId'=>$Fid, 'Recipient'=>$_REQUEST['Recipient'], 'Amount'=>$_REQUEST['Amount'],
+                    'StartTurn'=> $_REQUEST['StartTurn'], 'EndTurn' => (empty( $_REQUEST['EndTurn'])? $_REQUEST['StartTurn'] : $_REQUEST['EndTurn']),
                     'YourRef' => $_REQUEST['YourRef'], 'What'=>(isset($_REQUEST['What'])?$_REQUEST['What']:0)];
         if (empty($BankRec['YourRef'])) $BankRec['YourRef'] = "Unspecified";
-        
+
 
         if (empty($_REQUEST['What'])) {
           if (Spend_Credit($Fid,$B['Amount'],$B['YourRef'],$B['Recipient'])) {
@@ -97,7 +97,9 @@
 
     foreach($_REQUEST as $Ri=>$R) {
 //echo "Checking $Ri<br>";
-      if (preg_match('/DELETE(\d*)/',$Ri,$mtch)) {
+        $mtch = [];
+
+        if (preg_match('/DELETE(\d*)/',$Ri,$mtch)) {
         $brecid = $mtch[1];
         $Bank = Get_Banking($brecid);
         if ($Bank['StartTurn'] >= $GAME['Turn']) {
@@ -110,10 +112,10 @@
       }
     }
   }
-          
-  
+
+
   dostaffhead("Banking");
-  
+
   echo "<h1>" . $FACTION['Name'] . " - Banking - Turn $Turn</h1>\n";
   echo "<form method=post action=Banking.php>\n";
 
@@ -123,7 +125,7 @@
   if ($Turn >= $GAME['Turn']) Register_Autoupdate('FactionTurn',$FTid);
   echo fm_hidden('Turn',$Turn);
   echo "<h2>Current credits: " . $FACTION['Credits'] . "</h2>\n";
-  
+
   if ($Turn > 1) echo "<input type=Submit Name=ACTION Value='Prev Turn'>";
   echo "<input type=Submit Name=ACTION Value='Current Turn'>";
   echo "<input type=Submit Name=ACTION Value='Next Turn'><p>";
@@ -134,19 +136,19 @@
   echo "<div class=CLwrap><table class=CreditLog>";
   echo "<thead><tr><td class=CLTurn>Turn<td class=CLCredit>Start<td class=CLCredit>Credit<td class=CLCredit>Debit<td class=CLCredit>" .
        "end<td class=CLWhat>What<td class=CLFrom>From / To</thead>\n<tbody>";
-  foreach ($Creds as $C) echo "<tr><td class=CLTurn>" . $C['Turn'] . "<td class=CLCredit>" . $C['StartCredits'] . "<td class=CLCredit>" . 
-                       ($C['Amount']<0 ? -$C['Amount'] . "<td class=CLCredit>" : "<td class=CLCredit>" . $C['Amount']) . 
+  foreach ($Creds as $C) echo "<tr><td class=CLTurn>" . $C['Turn'] . "<td class=CLCredit>" . $C['StartCredits'] . "<td class=CLCredit>" .
+                       ($C['Amount']<0 ? -$C['Amount'] . "<td class=CLCredit>" : "<td class=CLCredit>" . $C['Amount']) .
                       "<td class=CLCredit>" . $C['EndCredits'] . "<td class=CLWhat>" . $C['YourRef'] . "<td class=CLFrom>" .
                       ($C['FromWho']? $FactList[$C['FromWho']] :'' ) . "\n";
   echo "</tbody></table></div>\n";
-  
-   
-  
+
+
+
   echo "<h2>Bank transfers for this turn:</h2>\n";
   $Banks = Get_BankingFT($Fid,$Turn);
-  
+
   // Look for other currencies
-  
+
   $OtherC = 0;
   foreach ($Banks as $B) if ($B['What']>0) $OtherC=1;
 
@@ -172,7 +174,7 @@
     echo "None were set up on turn $Turn.<p>\n";
   }
   echo "</form>";
-  
+
   $Currens = [];
   $CCount = 0;
   foreach ($Currencies as $idx=>$CName) {
@@ -181,7 +183,7 @@
       $CCount++;
     }
   }
-  
+
   if (empty($_REQUEST['StartTurn'])) $_REQUEST['StartTurn'] = $Turn;
   echo "<form method=post action=Banking.php>\n";
   echo "<h2>Setup One Off Transfer</h2>";
@@ -200,21 +202,21 @@
   echo "<tr><td>To:<td>" . fm_select($FactList,$_REQUEST,'Recipient') . "<td>Select <b>Other</b> for RP actions";
   if ($CCount>1) echo "<tr>" . fm_radio('Currency',$Currens,$_REQUEST,'What','',1,'colspan=2');
   echo "<tr>" . fm_number('Amount',$_REQUEST,'Amount');
-  echo "<tr>" . fm_number('Start Turn', $_REQUEST,'StartTurn'); 
+  echo "<tr>" . fm_number('Start Turn', $_REQUEST,'StartTurn');
   echo "<tr>" . fm_number('Last Turn', $_REQUEST,'EndTurn') . "<td>Leave blank for a one off payment";
   echo "<tr>" . fm_text('Your Reference',$_REQUEST,'YourRef') . "<td>Will be seen by both parties";
   echo "<tr><td>" . fm_submit("ACTION",'Setup');
   echo "</table></form>";
-  
+
   echo "<form method=post action=Banking.php>\n";
   echo "<h2>Other expected income</h2>\n";
   echo "What do expect from others, and amount - may stop annoying nag messages that you have overspent in your plans. No other effect. These are not checked<p>";
   echo "<table border>";
   echo "<tr>" . fm_textarea("Description",$_REQUEST,'IncomeText',2,2);
   echo "<tr>" . fm_number('Amount',$_REQUEST,'IncomeAmount');
-  
+
   echo "</table></form>";
-  
+
 //  Player_Page();
-  dotail();  
+  dotail();
 ?>

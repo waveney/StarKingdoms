@@ -4,6 +4,7 @@
   include_once("ThingLib.php");
   include_once("ProjLib.php");
   include_once("HomesLib.php");
+  global $FACTION;
 
   $Fid = 0;
   $xtra = '';
@@ -14,10 +15,10 @@
     } else {
       $Fid = $FACTION['id'];
       $Faction = &$FACTION;
-      
+
       $NeedDelta = Has_Trait($Fid,'This can be optimised');
     }
-  } 
+  }
   if ($GM = Access('GM') ) {
     A_Check('GM');
     if (isset( $_REQUEST['F'])) {
@@ -36,7 +37,7 @@
 
   if (isset($_REQUEST['ACTION'])) { // Pre Home actions
     switch ($_REQUEST['ACTION']) {
-      case 'DELETE': 
+      case 'DELETE':
         db_delete('Worlds',$Wid);
         echo "<h2>Deleted</h2>";
         dotail();
@@ -61,7 +62,7 @@
   if (isset($H['id'])) {
     $Dists = Get_DistrictsH($H['id']);
 
-// var_dump($Dists);  
+// var_dump($Dists);
     switch ($W['ThingType']) {
       case 1: //Planet
         $WH = $P = Get_Planet($W['ThingId']);
@@ -70,7 +71,7 @@
         $Name = $P['Name'];
         $SysId = $P['SystemId'];
         break;
-        
+
       case 2: /// Moon
         $WH = $M = Get_Moon($W['ThingId']);
         $type = $PlanetTypes[$M['Type']]['Name'];
@@ -79,7 +80,7 @@
         $P = Get_Planet($M['PlanetId']);
         $SysId = $P['SystemId'];
         break;
-    
+
       case 3: // Thing
         $WH = $T = Get_Thing($W['ThingId']);
         $type = $TTypes[$T['Type']]['Name'];
@@ -87,9 +88,9 @@
         $SysId = $T['SystemId'];
         break;
     }
-    
 
-  
+
+
     if (isset($_REQUEST['ACTION'])) { // Post home actions
       switch ($_REQUEST['ACTION']) {
        case 'Militia' :
@@ -111,7 +112,7 @@
          echo "<h2>Militia Transfered and Updated</h2>";
          dotail();
          break;
-         
+
        }
     }
     $NumDists = 0;
@@ -162,7 +163,7 @@
                 $Bi = ($Agents[0]['Level']/2);
                 echo " ( +$Bi From Defensive Intelligence)";
               }
-         
+
       }
     }
     if ($NeedDelta && $DeltaSum != 0) {
@@ -178,17 +179,17 @@
   echo "<tr><td>Economy:<td>" . $H['Economy'];
   if ($H['Devastation']) {
     if ($H['Devastation'] <= $NumDists) {
-      echo "<tr><td>Devastation:<td>" . $H['Devastation'] . " If this ever goes higher than the number of districts ($NumDists), districts will be lost."; 
+      echo "<tr><td>Devastation:<td>" . $H['Devastation'] . " If this ever goes higher than the number of districts ($NumDists), districts will be lost.";
     } else {
-      echo "<tr><td class=Err>Devastation:<td class=Err>" . $H['Devastation'] . "  This is higher than the number of districts ($NumDists), districts will be lost.";     
+      echo "<tr><td class=Err>Devastation:<td class=Err>" . $H['Devastation'] . "  This is higher than the number of districts ($NumDists), districts will be lost.";
     }
   }
 //  echo "<tr><td>Home World:<td colspan=4>";
 
-  if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
-  
+  if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
+
   echo "</table>";
-  
+
   if (Access('GM')) {
     echo "<h2><a href=WorldEdit.php?ACTION=Militia&id=$Wid>Update Militia</a>, <a href=WorldEdit.php?ACTION=XMilitia&id=$Wid>Transfer Militia</a>, ";
     if (!isset($H['id'])) {
@@ -198,6 +199,6 @@
     }
     echo "</h2>\n";
   }
-  
+
   dotail();
 ?>

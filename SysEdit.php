@@ -2,17 +2,18 @@
   include_once("sk.php");
   include_once("GetPut.php");
   include_once("SystemLib.php");
-  
+
   A_Check('GM');
 
   dostaffhead("Edit System",["js/dropzone.js","css/dropzone.css" ]);
 
   global $db, $GAME, $GAMEID;
-  
+
   function PTrim(&$N,&$things,$what,$saveas=0) {
     if (!isset($things[$what])) return;
     if (!$saveas) $saveas=$what;
     $orig = $things[$what];
+    $mtch = [];
     if (preg_match('/([\d\.]*) x 10<sup>(\d*)</',$orig,$mtch)) {
 //var_dump($mtch);
       $num = $mtch[1] * 10**$mtch[2];
@@ -28,24 +29,24 @@
   function Auto_Populate(&$N) {
     $sid = $N['id'];
     $seed = time();
- 
+
     $attempt = 0;
     do {
       $seed += 123456;
       $Html_Req = "https://donjon.bin.sh/scifi/system/index.cgi?seed=$seed&binary=Random&n-planets=Few&cmd=Create";
       if ((($seed%3 == 0)) || (isset($N['Category']) && $N['Category'] )) $Html_Req .= "&force_terran=1";
-    
+
 //    echo "$Html_Req<p>";
       $html = file_get_contents($Html_Req);
     } while (strstr($html,'Red Dwarf') && $attempt++ < 5);
-    
+
 // echo htmlspecialchars($html); // exit;
-    
+
     $tabrows = explode("<tr", $html);
     array_shift($tabrows);
     array_pop($tabrows);
 //echo "<P>Rows:" . count($tabrows) . "<p>";
-    
+
     $tabrows[] = ' class="section"';
 //var_dump($tabrows);
 //exit;
@@ -59,7 +60,7 @@
     foreach ($tabrows as $tab) {
 
 //echo "<br>Evaluating " . htmlspecialchars($tab) . "<br>";
- 
+
       preg_match_all('/\<td.*?\>(.*?)\<\/td\>/',$tab,$tdsarray);
       $tds = (isset($tdsarray[1])?$tdsarray[1]:[]) ;
 
@@ -73,7 +74,7 @@ echo "No tds<p>";
 }*/
 
       switch (substr($tab,8,5)) {
-      
+
       case 'secti':
         if ($state ==2) {
 
@@ -100,11 +101,11 @@ echo "No tds<p>";
             }
           } else { // Is a Planet
             $P['Name'] = $things['Title'];
-            $PlanTypeXlate = ['Terrestrial World'=>'Temperate', 'Rock Planet'=>'Rock', 'Gas Giant'=>'Gas', 'Asteroid Belt'=>'Asteroid Belt', 
+            $PlanTypeXlate = ['Terrestrial World'=>'Temperate', 'Rock Planet'=>'Rock', 'Gas Giant'=>'Gas', 'Asteroid Belt'=>'Asteroid Belt',
                               'Neptunian Planet'=>'Ice Giant', 'Jovian Planet'=>'Gas Giant', 'Chthonian Planet' => 'Molten', 'Ice Planet'=>'Ice'];
-          
+
             $pt = (isset($PlanTypeXlate[$things['Type']])? $PlanTypeXlate[$things['Type']] : 'Other Planet');
-            if (isset($N2Ps[$pt])) {            
+            if (isset($N2Ps[$pt])) {
               $P['Type'] = $N2Ps[$pt];
               if ($pt == 'Other Planet') $P['Name'] .= $things['Type'];
             } else {
@@ -138,37 +139,39 @@ echo "No tds<p>";
             if (!isset($P['Gravity']) || $P['Gravity']==0) {
               $P['Gravity'] = 6 + rand(1,100)/20;
             }
-            
+
             Put_Planet($P);
-                                    
+
             $P = $things = [];
-                  
+
           }
-        } // Save 
+        } // Save
         $things = [];
         if (isset($tds[0])) {
+          $img = '';
           if (preg_match('/img src="(.*?)"/',$tds[0],$img)) {
             $things['Image'] = "https://donjon.bin.sh" . $img[1];
           }
         }
         if (isset($tds[2])) {
-          if (preg_match('/>(..*?)</',$tds[2],$tight)) {        
+          $tight = [];
+          if (preg_match('/>(..*?)</',$tds[2],$tight)) {
             $things['Title'] = $tight[1];
           } else {
             $things['Title'] = $tds[2];
           }
         } else {
-          $things['Title'] = 'Unknown';         
+          $things['Title'] = 'Unknown';
         }
         $state = 1;
         break;
-        
+
       default:
         $state = 2;
         if (isset($tds[1])) $things[$tds[0]] = $tds[1];
         break;
       }
-   
+
     }
 //  var_dump($N);
   if (isset($N['Type2']) && strlen($N['Type2'] > 5) && $N['Mass2'] > $N['Mass']) {
@@ -176,7 +179,7 @@ echo "No tds<p>";
     Swap($N['Radius'], $N['Radius2']);
     Swap($N['Mass'], $N['Mass2']);
     Swap($N['Temperature'], $N['Temperature2']);
-    Swap($N['Luminosity'], $N['Luminosity2']);    
+    Swap($N['Luminosity'], $N['Luminosity2']);
     Swap($N['Image'], $N['Image2']);
   }
 
@@ -205,34 +208,34 @@ echo "No tds<p>";
 
   if (!isset($N)) $N = Get_System($Sysid);
   $Factions = Get_Factions();
-  
+
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
     case 'Add Planet' :
       $plan = ['SystemId'=>$Sysid];
       Put_Planet($plan);
       break;
-      
+
     case 'Auto Populate' :
       Auto_Populate($N);
       break;
-      
+
     case 'Delete Planets' :
       db_delete_cond('Planets',"SystemId=$Sysid");
       break;
-      
+
     case 'Delete System' :
       db_delete_cond('Planets',"SystemId=$Sysid");
       db_delete('Systems',$Sysid);
       echo "<h2><a href=SysList.php>List of Systems</a></h2>";
       dotail();
       break;
-      
+
     case 'RECALC' :
       $N['Period'] = ((2*pi()*sqrt(($N['Distance']*1000)**3/(($N['Mass']+ $N['Mass2'])*6.7e-11)))/3600);
       Put_System($N);
       break;
-      
+
     case 'Redo Moons' :
       $Planets = Get_Planets($Sysid);
       $PTD = Get_PlanetTypes();
@@ -241,15 +244,15 @@ echo "No tds<p>";
           $P['Moons'] = (($P['OrbitalRadius']/1.496e8)**2 * $P['Gravity'] * $PTD[$P['Type']]['MoonFactor'])/($P['Period']/100);
         }
         Put_Planet($P);
-      }  
-      
-    default: 
+      }
+
+    default:
       break;
     }
   }
-  
-  
+
+
   Show_System($N,1);
-    
+
   dotail();
 ?>

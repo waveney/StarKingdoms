@@ -2,6 +2,7 @@
   include_once("sk.php");
   include_once("GetPut.php");
   /* Remove any Participant overlay */
+  global $FACTION;
 
   A_Check('GM');
 
@@ -16,7 +17,7 @@
   dostaffhead("SK Pages", ["/js/jquery.typeahead.min.js", "/css/jquery.typeahead.min.css", "/js/Staff.js"]);
 
 
-  global $GAME, $Heads;
+  global $GAME, $Heads,$VERSION;
   $Heads = [];
 
   function SKTable($Section,$Heading,$cols=1) {
@@ -35,20 +36,20 @@
     $ColNum+=$cols;
     return $txt;
   }
-  
+
   function GameList(&$Games) {
     $GL = [];
     foreach(array_reverse($Games) as $G) $GL[$G['id']] = $G['id'] . ":" . $G['Name'];
     return $GL;
   }
 
-  global $USER,$GAME;
-  if (isset($ErrorMessage)) echo "<h2 class=ERR>$ErrorMessage</h2>";
+  global $USER,$GAME,$ErrorMessage,$GAMESYS;
+  if (!empty($ErrorMessage)) echo "<h2 class=ERR>$ErrorMessage</h2>";
 
   $Usr = $USER['id'];
-    
+
   if (Access('God')) {
-  
+
     $Games =Gen_Get_Cond('Games','TRUE');
 
     if (count($Games)>1) echo "<h2>Select Game: " . GameList($Games);
@@ -59,8 +60,8 @@
       // Not GM of this game
     }
   }
-  
-  
+
+
   $Facts = Get_Faction_Names();
 // var_dump($Facts);
   if (isset($_REQUEST['ACTION'])) {
@@ -71,7 +72,7 @@
         break;
     }
   }
-  
+
 //echo php_ini_loaded_file() . "<P>";
   echo "<div class=floatright><h2>";
   if ($GAME['Turn'] <5 ) {
@@ -91,11 +92,11 @@
   echo "</h2></div>";
 
   echo "<h2>SK Pages - " . (isset($GAME['Name'])?$GAME['Name']:"Star Kingdoms" ) . "</h2>\n";
-  
+
   $Factions = Get_Factions();
   foreach($Factions as $F) {
     $Fid = $F['id'];
-    echo "<a href=Access.php?id=$Fid&Key=" . $F['AccessKey'] . " style='background:" . $F['MapColour'] . "; color: " . ($F['MapText']?$F['MapText']:'black') . 
+    echo "<a href=Access.php?id=$Fid&Key=" . $F['AccessKey'] . " style='background:" . $F['MapColour'] . "; color: " . ($F['MapText']?$F['MapText']:'black') .
          ";text-shadow: 2px 2px 3px white;padding:2px'><b>"  . $F['Name'] . "</b></a> ";
   }
 
@@ -108,9 +109,9 @@
       echo $G['What'] . " - <a href=Staff.php?ACTION=Resolve&id=" . $G['id'] . ">Resolved</a>";
     }
   }
-  
+
   $txt = "<div class=tablecont><table border width=100% class=Staff style='min-width:800px'>\n";
-   
+
   if ($x = SKTable('Docs','Document Storage')) {
     $txt .= $x;
       $txt .= "<ul>\n";
@@ -124,13 +125,13 @@
 
       if (Access('SysAdmin')) {
         $txt .= "<p>";
-        $txt .= "<li class=smalltext><a href=DirRebuild?SC>Scan Directories - Report File/Database discrepancies</a>";    
+        $txt .= "<li class=smalltext><a href=DirRebuild?SC>Scan Directories - Report File/Database discrepancies</a>";
 //      $txt .= "<li><a href=DirRebuild?FI>Rebuild Directorys - Files are YEARDATA</a>";
 //      $txt .= "<li><a href=DirRebuild?DB>Rebuild Directorys - Database is YEARDATA</a>";
       }
       $txt .= "</ul>\n";
     }
-    
+
 // *********************** Maps ****************************************************
   if ($x = SKTable('Any','Maping')) {
     $txt .= $x;
@@ -139,14 +140,14 @@
     $txt .= "<li><a href=MapShow.php?Hex>Hex Map Show</a>\n<p>";
 
     $txt .= "<li><form method=Post action=MapFull.php class=staffform>";
-      $txt .= "<input type=submit name=f value='Map Show for' id=staffformid>" . 
+      $txt .= "<input type=submit name=f value='Map Show for' id=staffformid>" .
                 fm_select($Facts,0,'f',1," onchange=this.form.submit()") . "</form>\n";
 
     $txt .= "<li><form method=Post action=MapFull.php?Hex&Links=0 class=staffform>";
-      $txt .= "<input type=submit name=f1 value='Hex Map for' id=staffformid>" . 
+      $txt .= "<input type=submit name=f1 value='Hex Map for' id=staffformid>" .
                 fm_select($Facts,0,'f1',1," onchange=this.form.submit()") . "</form>\n";
 
-    
+
     $txt .= "<li><a href=MapFull.php>Full Map Generate</a>\n";
     $txt .= "<li><a href=MapFull.php?Hex>Hex Map Generate</a>\n<p>";
     if (0 && Access('God')) {
@@ -155,9 +156,9 @@
       $txt .= "<li><a href=MapFromCSV.php>Map from CSV</a>\n";
     }
     $txt .= "<p>";
-    $txt .= "<li><a href=LinkLevels.php>Link Levels</a>\n";  
-    $txt .= "<li><a href=EditLinks.php>Edit Links</a>\n";  
-    $txt .= "<li><a href=LinksStatus.php>Link Status</a>\n";  
+    $txt .= "<li><a href=LinkLevels.php>Link Levels</a>\n";
+    $txt .= "<li><a href=EditLinks.php>Edit Links</a>\n";
+    $txt .= "<li><a href=LinksStatus.php>Link Status</a>\n";
     $txt .= "</ul><p>\n";
   }
 
@@ -171,11 +172,11 @@
     $txt .= "<li><a href=WhereIs.php>Where is a name?</a>\n";
     $txt .= "<P>";
     $txt .= "<li><a href=DTList.php>List District Types</a>\n";
-    $txt .= "<li><a href=PlanetTypes.php>Planet Types</a>\n";  
-    $txt .= "<li><a href=PlanetStats.php>Planet Stats</a>\n";  
+    $txt .= "<li><a href=PlanetTypes.php>Planet Types</a>\n";
+    $txt .= "<li><a href=PlanetStats.php>Planet Stats</a>\n";
     $txt .= "<p>";
-    $txt .= "<li><a href=WorldList.php>List Worlds and colonies</a>\n";  
-    $txt .= "<li><a href=WorldMake.php>Rebuild list of Worlds and colonies</a>\n";  
+    $txt .= "<li><a href=WorldList.php>List Worlds and colonies</a>\n";
+    $txt .= "<li><a href=WorldMake.php>Rebuild list of Worlds and colonies</a>\n";
     $txt .= "</ul>\n";
   }
 
@@ -185,7 +186,7 @@
     $txt .= "<ul>\n";
  //   $txt .= "<li><a href=PlayerStates.php>Player States</a>\n";
     $txt .= "<li><a href=TurnActions.php>Turn Actions</a>\n";
-    $txt .= "<li><a href=GMTurnTxt.php>Follow Progress</a>\n";    
+    $txt .= "<li><a href=GMTurnTxt.php>Follow Progress</a>\n";
     $txt .= "<li><a href=Meetings.php>Systems with multiple Factions</a>\n";
     $txt .= "<li><a href=FollowUp.php>Turn Follow Ups needed</a>\n";
     $txt .= "<li><a href=TurnSpecials.php>Turn Specials</a>\n";
@@ -204,29 +205,29 @@
     $txt .= $x;
     $txt .= "<ul>\n";
     $txt .= "<li><a href=FactList.php>List Factions</a>\n";
-//    $txt .= "<li><a href=AddFaction.php>Add Faction</a>\n";  
-    $txt .= "<li><a href=FactionFaction.php>Faction knows faction?</a><p>\n";  
+//    $txt .= "<li><a href=AddFaction.php>Add Faction</a>\n";
+    $txt .= "<li><a href=FactionFaction.php>Faction knows faction?</a><p>\n";
 
 /*
     $txt .= "<li><form method=Post action=PlayerMove.php class=staffform>";
-      $txt .= "<input type=submit name=F value='Player Move' id=staffformid>" . 
+      $txt .= "<input type=submit name=F value='Player Move' id=staffformid>" .
                 fm_select($Facts,0,'F',1," onchange=this.form.submit()") . "</form>\n";
 
     $txt .= "<li><form method=Post action=TechShow.php class=staffform>";
-      $txt .= "<input type=submit name=F value='List Technologies' id=staffformid>" . 
+      $txt .= "<input type=submit name=F value='List Technologies' id=staffformid>" .
                 fm_select($Facts,0,'F',1," onchange=this.form.submit()") . "</form>\n";
-    
+
     $txt .= "<li><form method=Post action=TechShow.php?SETUP class=staffform>";
-      $txt .= "<input type=submit name=F value='Edit Technologies' id=staffformid>" . 
+      $txt .= "<input type=submit name=F value='Edit Technologies' id=staffformid>" .
                 fm_select($Facts,0,'F',1," onchange=this.form.submit()") . "</form>\n";
-    
-    $txt .= "<li><a href=SurveyRequest.php>Survey Request</a>\n";    
+
+    $txt .= "<li><a href=SurveyRequest.php>Survey Request</a>\n";
     $txt .= "<li><form method=Post action=FactionName.php class=staffform>";
-      $txt .= "<input type=submit name=F value='Name Things' id=staffformid>" . 
+      $txt .= "<input type=submit name=F value='Name Things' id=staffformid>" .
                 fm_select($Facts,0,'F',1," onchange=this.form.submit()") . "</form>\n";
 
     $txt .= "<li><form method=Post action=ProjDisp.php class=staffform>";
-      $txt .= "<input type=submit name=F value='Projects' id=staffformid>" . 
+      $txt .= "<input type=submit name=F value='Projects' id=staffformid>" .
                 fm_select($Facts,0,'F',1," onchange=this.form.submit()") . "</form>\n";
     */
 //    if (Access('God')) $txt .= "<li><a href=Import.php>Import</a>\n";
@@ -239,21 +240,21 @@
     $txt .= "<ul>\n";
     $F = ['F'=>-1];
     $txt .= "<li><form method=Post action=PThingList.php class=staffform>";
-      $txt .= "<input type=submit name=F value='Thing List' id=staffformid>" . 
+      $txt .= "<input type=submit name=F value='Thing List' id=staffformid>" .
                 fm_select($Facts,$F,'F',1," onchange=this.form.submit()") . "</form>\n";
-    
+
     $txt .= "<p>\n";
-    $txt .= "<li><a href=ThingTypes.php>Thing Types</a>\n";          
-    $txt .= "<li><a href=ThingList.php>Thing list</a>\n";          
+    $txt .= "<li><a href=ThingTypes.php>Thing Types</a>\n";
+    $txt .= "<li><a href=ThingList.php>Thing list</a>\n";
     $txt .= "<li><a href=ThingEdit.php?ACTION=NEW>New Thing</a>";
     $txt .= "<li><a href=Prisoners.php?ACTION=RECALC>Recalc Prisoners</a>";
-//    $txt .= "<li><a href=ThingStats.php>Thing Statistics</a>";    
+//    $txt .= "<li><a href=ThingStats.php>Thing Statistics</a>";
     $txt .= "<p>\n";
 
 //    $txt .= "<li><a href=InstrList.php>List Instructions</a>\n";
     if (0 && Access('God')) {
       $txt .= "<li><a href=TidyThings.php>Tidy up</a>  - Call this once a turn to remove unused temp entries<p>\n";
-      $txt .= "<li><a href=ModuleCheck.php>Check Things have modules</a>";    
+      $txt .= "<li><a href=ModuleCheck.php>Check Things have modules</a>";
 
       $txt .= "<li><a href=SetAllSensors.php>Set All Sensor data</a> - Bug Fix";
       $txt .= "<li><a href=SetAllSpeeds.php>Set All Speeds</a> - Bug Fix";
@@ -277,12 +278,12 @@
     $txt .= "<li><a href=ModFormulae.php>List Module Formulas</a>\n";
     $txt .= "<p>";
 
-    $txt .= "<li><a href=AnomalyList.php>Anomalies</a>\n";          
+    $txt .= "<li><a href=AnomalyList.php>Anomalies</a>\n";
     $txt .= "<p>";
-    if (0)    $txt .= "<li><a href=AnomalyImport.php>Anomaly Import</a>\n";          
+    if (0)    $txt .= "<li><a href=AnomalyImport.php>Anomaly Import</a>\n";
     $txt .= "<p>";
-    
-//    $txt .= "<li><a href=DeepSpace.php>Deep Space Projects</a>\n";          
+
+//    $txt .= "<li><a href=DeepSpace.php>Deep Space Projects</a>\n";
     $txt .= "</ul>\n";
   }
 
@@ -311,7 +312,7 @@
       $txt .= "<li><a href=AddUser.php>Add User</a>";
       $txt .= "<li><a href=ListUsers.php?FULL>List All Users</a>";
     } else {
-      $txt .= "<li><a href=ListUsers.php>List Group Users</a>";    
+      $txt .= "<li><a href=ListUsers.php>List Group Users</a>";
     }
     $txt .= "<li><a href=ListTraits.php>List All Traits</a>\n";
     $txt .= "</ul><p>\n";
@@ -329,6 +330,16 @@
       $txt .= "<li><a href=ListBugs.php>List Bugs/Feature requests</a><p>\n";
     }
 
+    if (Access('God')) {
+       if ($VERSION != ($GAMESYS['CurVersion'] ?? 0)) {
+        foreach(glob("../Schema/*.sql") as $sql) {
+          if (filemtime($sql) > $GAMESYS['VersionDate']) {
+            $xtra = " style='color:red;font-size:28;font-weight:bold;'";
+            break;
+          }
+        }
+      }
+    }
     if (0 && Access('God')) $txt .= "<li><a href=TEmailProformas.php>EMail Proformas</a>";
     if (0 && Access('God')) $txt .= "<li><a href=AdminGuide.php>Admin Guide</a> \n";
     if (Access('GM')) {

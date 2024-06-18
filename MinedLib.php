@@ -19,15 +19,15 @@ function Recalc_Mined_locs() {
     $Mid = $M['id'];
     $WLoc = $M['WithinSysLoc'];
     $LocType = intdiv($WLoc,100);
-         
+
     switch ($LocType) {
     case 1: //Orbiting Planet
       $Pi = 1;
       foreach($Planets as &$P) if ($P['SystemId'] == $M['SystemId']) if ( (100+($Pi++)) == $WLoc ) break;
-           
+
       $P['FMined'] = $Mid;
       break;
-         
+
     case 3: //Orbiting Moon
       $Mi = 1;
       foreach($Planets as &$P) {
@@ -40,26 +40,26 @@ function Recalc_Mined_locs() {
         echo "Could not find home for Mine $Mid<P>";
       }
       break;
-         
+
     case 5: //At Stargate
-      $Li = 1;
+      $li = 1;
       $Ref = $SystemRs[$M['SystemId']];
       foreach($Links as &$lk) if ($lk['System1Ref'] == $Ref || $lk['System2Ref'] == $Ref) if ( (500+($li++)) == $WLoc ) break;
-           
+
       if ($lk['System1Ref'] == $Ref) {
         $lk['FMinedA'] = $Mid;
       } else {
         $lk['FMinedB'] = $Mid;
       }
       break;
-         
+
     default:
            // Should not get here (yet)
-    } 
+    }
   }
-  
+
   echo "Scanned all Mines, now generating data<p>";
-  
+
   foreach($Planets as &$P) {
     if ($P['Mined'] == 0 && $P['FMined'] == 0) continue;
     $P['Mined'] = $P['FMined'];
@@ -67,7 +67,7 @@ function Recalc_Mined_locs() {
   }
 
   echo "Done Planets<p>";
-  
+
   foreach($Moons as &$M) {
     if ($M['Mined'] == 0 && $M['FMined'] == 0) continue;
     $M['Mined'] = $M['FMined'];
@@ -75,15 +75,15 @@ function Recalc_Mined_locs() {
   }
 
   echo "Done Moons<p>";
-  
+
   foreach($Links as &$L) {
     if ($L['MinedA'] == 0 && $L['FMinedA'] == 0 && $L['MinedB'] == 0 && $L['FMinedB'] == 0) continue;
-    $L['MinedA'] = $M['FMinedA'];    
+    $L['MinedA'] = $M['FMinedA'];
     $L['MinedB'] = $M['FMinedB'];
     Put_Link($L);
   }
   echo "Done Links<p>";
-  
+
 }
 
 

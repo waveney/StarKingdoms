@@ -15,6 +15,7 @@ function Date_BestGuess($txt) {
   $daysOfM = array(31,28,31,30,31,30,31,31,30,31,30,31);
   $ts = '';
   $yr = $day = $mnth = 0;
+  $mtch = [];
 
   if (preg_match('/(\d+)\/(\d+)\/?(\d+)?( +.*)?/',$txt,$mtch)) {
     $day = $mtch[1];
@@ -43,7 +44,7 @@ function Date_BestGuess($txt) {
     if (preg_match('/ (\d*:\d*)/',$lctxt,$mtch)) {
       $ts = $mtch[1];
     }
-  } 
+  }
 
   $Toff=0;
   if ($ts) {
@@ -70,6 +71,7 @@ function Time_BestGuess($txt,$MINS=0,$morethan=0) {
   $lt = preg_replace('/\s+/', '', $lt);
   $hr = $min = 0;
   if (!$txt) return $txt;
+  $mtch = [];
   if (preg_match('/(\d+):(\d+) *?(\a\a)/',$lt,$mtch)) {
     $hr = $mtch[1];
     if ($mtch[3] == 'pm') $hr+=12;
@@ -106,7 +108,7 @@ function Time_BestGuess($txt,$MINS=0,$morethan=0) {
           } else {
              if ($hr < 10) $hr+=12;
           }
-          $min = -$n1;          
+          $min = -$n1;
         }
         break;
 
@@ -120,7 +122,7 @@ function Time_BestGuess($txt,$MINS=0,$morethan=0) {
 
       case 'mins':
       case 'min':
-        $min = $n1; 
+        $min = $n1;
         break;
 
       case 'hr':
@@ -142,8 +144,8 @@ function Time_BestGuess($txt,$MINS=0,$morethan=0) {
         break;
     }
   } else if (preg_match('/(\d+)/',$lt,$mtch)) {
-    if ($MINS) { 
-      $min = $mtch[1]; 
+    if ($MINS) {
+      $min = $mtch[1];
     } else if ($morethan) {
       $hr = $mtch[1];
       if ($hr*100 < $morethan) $hr+=12;
@@ -155,7 +157,7 @@ function Time_BestGuess($txt,$MINS=0,$morethan=0) {
     $w1 = $mtch[1];
     if ($w1 == 'midday') $hr = 12;
     if ($w1 == 'midnight') $hr = 24;
-  } else { 
+  } else {
     echo "Unknown format of time ... $lt<p>\n";
     return -1;
   }
@@ -194,7 +196,7 @@ function timeadd2real($time,$plus) { // both times and plus is in 24 hour format
 }
 
 function timereal($time) {
-  return (int)($time/100)*60 + $time%100; 
+  return (int)($time/100)*60 + $time%100;
 }
 
 function timeformat($time) {
@@ -225,7 +227,7 @@ function Parse_DateInputs(&$feilds) {
 function Days2Festival() {
   global $YEARDATA,$YEAR;
   $now = time();
-  
+
   $your_date = strtotime("$YEAR-" . $YEARDATA['MonthFri'] . "-" . ($YEARDATA['DateFri'] + $YEARDATA['FirstDay']));
   $datediff = $your_date - $now;
 

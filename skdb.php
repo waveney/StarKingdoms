@@ -47,7 +47,7 @@ function Update_db($table,&$old,&$new,$proced=1) {
 
   $Flds = table_fields($table);
   $indxname = (isset($TableIndexes[$table])?$TableIndexes[$table]:'id');
-//var_dump($indxname);  
+//var_dump($indxname);
   $newrec = "UPDATE $table SET ";
   $fcnt = 0;
 
@@ -63,7 +63,7 @@ echo "<p>$newrec<p>";*/
       } elseif ($ftype == 'tinyint' || $ftype == 'smallint') {
         $dbform = 0;
         if ($new[$fname]) {
-          if ((string)(int)$new[$fname] = $new[$fname]) { $dbform = $new[$fname]; } else { $dbform = 1; };
+          if ((string)(int)$new[$fname] = $new[$fname]) { $dbform = $new[$fname]; } else { $dbform = 1; }
         }
       } else {
         $dbform = $new[$fname];
@@ -83,7 +83,7 @@ echo "<p>$newrec<p>";*/
             if ($fcnt++ > 0) { $newrec .= " , "; }
           $newrec .= " $fname=0";
         }
-      } 
+      }
     }
   }
 
@@ -106,7 +106,7 @@ echo "<p>Here: $proced And: $fcnt<p>";*/
   }
 }
 
-function Update_db_post($table, &$data, $proced=1) { 
+function Update_db_post($table, &$data, $proced=1) {
   return Update_db($table,$data,$_POST,$proced);
 }
 
@@ -125,7 +125,7 @@ function Insert_db($table, &$from, &$data=0, $proced=1) {
 if (isset($from[$fname])) echo "T1 (" . $from[$fname] . ") ";
 if ($from[$fname] != '') echo "T2 ";
 if ($indxname!=$fname) echo "T3 "; */
-    if (isset($from[$fname]) && $from[$fname] != '' && $indxname!=$fname ) { 
+    if (isset($from[$fname]) && $from[$fname] != '' && $indxname!=$fname ) {
       if ($fcnt++ > 0) { $newrec .= " , "; }
       if ($ftype == 'text') {
         $dbform = addslashes($from[$fname]);
@@ -134,7 +134,7 @@ if ($indxname!=$fname) echo "T3 "; */
       } elseif ($ftype == "tinyint" || $ftype == 'smallint') {
         $dbform = 0;
         if ($from[$fname]) {
-          if ((string)(int)$from[$fname] = $from[$fname]) { $dbform = $from[$fname]; } else { $dbform = 1; };
+          if ((string)(int)$from[$fname] = $from[$fname]) { $dbform = $from[$fname]; } else { $dbform = 1; }
         }
         if ($data) $data[$fname] = $dbform;
         $newrec .= " $fname=$dbform ";
@@ -164,7 +164,7 @@ if ($indxname!=$fname) echo "T3 "; */
 
 function Insert_db_post($table,&$data,$proced=1) {
   $data['Dummy'] = 1;
-  return Insert_db($table,$_POST,$data,$proced);  
+  return Insert_db($table,$_POST,$data,$proced);
 }
 
 function db_delete($table,$entry) {
@@ -196,49 +196,37 @@ function db_get($table,$cond) {
 function Get_GAMESYS() {
   global $db,$GAMESYS;
   $res = $db->query("SELECT * FROM MasterData");
-  if ($res) return $res->fetch_assoc();
+  $GAMESYS = $res->fetch_assoc();
+  if ($res) return $GAMESYS;
 }
 
+global $VERSION;
 $GAMESYS = Get_GAMESYS();
 $CALYEAR = gmdate('Y');
 $GAME = $GAMESYS['CurGame'];  //$GAME can be overridden
 include_once("Version.php");
 $GAMESYS['V'] = $CALYEAR . ".$VERSION";
 
-function Feature($Name,$default='') {  // Return value of feature if set from GAMESYS
-  static $Features;
-  global $GAMESYS;
-  if (!$Features) {
-    $Features = [];
-    foreach (explode("\n",$GAMESYS['Features']) as $i=>$feat) {
-      $Dat = explode(":",$feat,4);
-      if ($Dat[0] && isset($Dat[1])) {
-        $Features[$Dat[0]] = trim($Dat[1]);
-      } elseif ($Dat[0] && isset($Dat[4])) {
-        $Features[$Dat[0]] = trim($Dat[4]);
-      }
-    }
+$_GameFeatures = $_Features = [];
+
+function Feature($Name,$default='') {  // Return value of feature if set Game data value overrides system value
+  global $GAMESYS,$GAME,$_GameFeatures,$_Features;
+  if (!$_Features) {
+    $_Features = parse_ini_string($GAMESYS['Features']?? '');
+    $_GameFeatures = parse_ini_string($GAME['GameFeatures'] ?? '');
   }
-  if (isset($Features[$Name])) return $Features[$Name];
-  return $default;
+  return $_GameFeatures[$Name] ?? ($_Features[$Name] ?? $default);
 }
 
-function GameFeature($Name,$default='') {  // Return value of feature if set from GAMESYS
-  static $Features;
-  global $GAME;
-  if (!$Features) {
-    $Features = [];
-    foreach (explode("\n",$GAME['Features']) as $i=>$feat) {
-      $Dat = explode(":",$feat,4);
-      if ($Dat[0] && isset($Dat[1])) {
-        $Features[$Dat[0]] = trim($Dat[1]);
-      } elseif ($Dat[0] && isset($Dat[4])) {
-        $Features[$Dat[0]] = trim($Dat[4]);
-      }
-    }
-  }
-  if (isset($Features[$Name])) return $Features[$Name];
-  return $default;
+function Feature_Reset() {
+  global $_GameFeatures,$GAME,$_Features,$FESTSYS;
+  $_GameFeatures = parse_ini_string($GAME['GameFeatures'] ?? '');
+  $_Features = parse_ini_string($FESTSYS['Features']?? '');
+}
+
+
+function GameFeature($Name,$default='') {
+  return Feature($Name,$default);
 }
 
 function Capability($Name,$default='') {  // Return value of Capability if set from GAMESYS
@@ -329,7 +317,6 @@ function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$M
       Insert_db($table,$t);
     }
     return 1;
-  } 
+  }
 }
-?>
 

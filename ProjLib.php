@@ -13,7 +13,7 @@ function Proj_Costs($lvl) {
 
 function Rush_Cost($who) {
   if (Has_Trait($who,'Bike-Shedders')) return 100;
-  return 75; 
+  return 75;
 }
 
 global $Project_Status,$Project_Statuses;
@@ -24,7 +24,7 @@ function  Where_Is_Home($PH,$Set=0) {
   $Home = Get_ProjectHome($PH);
 // var_dump("Home",$Home);echo "<p>";
   switch ($Home['ThingType']) {
-  case '1': // Planet 
+  case '1': // Planet
     if (!$Set) return [$Home['SystemId'],$Home['WithinSysLoc']];
     $P = Get_Planet($Home['ThingId']);
     $N['id'] = $P['SystemId'];
@@ -76,14 +76,14 @@ function Project_Finished(&$P,$Turn) {  // CODE ON HOLD
         if ($D['Type'] == $P['ThingType']) {
           $D['Number']++;
           Put_District($D);
-          TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");         
+          TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");
           break 2;
         }
       }
       $D = ['HostType'=>$H['ThingType'], 'HostId'=>$PH['id'], 'Type'=>$P['ThingType'], 'Number'=>1, 'GameId' => $GAMEID];
       Put_District($D);
       break;
-      
+
     case 'Research Planetary Construction':
     case 'Research Core Technology':
     case 'Research Supplemental Technology':
@@ -95,7 +95,7 @@ function Project_Finished(&$P,$Turn) {  // CODE ON HOLD
     case 'Research Supplemental Intelligence Tech':
     case 'Research Supplemental Planetary Construction Tech':
       $Tid = $P['ThingType'];
-      $CTech = Get_Faction_TechFT($Fid,$Tid);
+      $CTech = Get_Faction_TechFT($P['FactionId'],$Tid);
       $Tech = Get_Tech($Tid);
       if ($Tech['Cat'] == 0) { // Core
         if ($CTech['Level'] < $P['Level']) {
@@ -111,7 +111,7 @@ function Project_Finished(&$P,$Turn) {  // CODE ON HOLD
         break;
       }
       break;
-      
+
     case 'Train Army':
     case 'Train Agent':
     case 'Construct Ship':
@@ -121,7 +121,7 @@ function Project_Finished(&$P,$Turn) {  // CODE ON HOLD
         Put_Thing($T);
       }
       break;
-        
+
     case 'Construct Warp Gate':
     case 'Decommission Ship':
     case 'Build Outpost':
@@ -138,18 +138,18 @@ function Project_Finished(&$P,$Turn) {  // CODE ON HOLD
     case 'Share Technology':
     case 'Analyse':
     case 'Decipher Alien Language':
-    case 'Rebuild and Repair':  
-    case 'Refit and Repair': 
+    case 'Rebuild and Repair':
+    case 'Refit and Repair':
     default:
       break;  // No action
-    
+
 
     }
 }
 
 function Abandon_Project(&$P) {
   global $Project_Status, $Project_Statuses;
-  
+
   $P['Status'] = $Project_Statuses['Cancelled'];
   Put_Project($P);
 }

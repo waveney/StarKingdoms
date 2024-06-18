@@ -1,29 +1,29 @@
 <?php
   include_once("sk.php");
   include_once("GetPut.php");
-  
+
   global $FACTION;
-  
+
   if (Access('GM') ) {
     A_Check('GM');
   } else if (Access('Player')) {
     if (!$FACTION) {
       Error_Page("Sorry you need to be a GM or a Player to access this");
     }
- 
+
 
   }
   dostaffhead("Full Map");
- //var_dump($_REQUEST, $_COOKIE);  
+ //var_dump($_REQUEST, $_COOKIE);
 
   A_Check('Player');
   $ShowLinks = 1;
   if (isset($_REQUEST['Links'])) $ShowLinks = $_REQUEST['Links'];
 
   $CatCols = ["white","grey", "Yellow"];
-  eval("\$HexLegPos=" . GameFeature('HexLegPos','') . ";" ); 
+  eval("\$HexLegPos=" . GameFeature('HexLegPos','') . ";" );
 // var_dump($HexLegPos);exit;
-  
+
   if (isset($_REQUEST['f'])) {
     $Faction = $_REQUEST['f'];
   } else   if (isset($_REQUEST['F'])) {
@@ -33,16 +33,16 @@
   } else {
     $Faction = 0;
   }
-  
+
   if ($FACTION) $Faction = $FACTION['id'];
   $Fact = Get_Faction($Faction);
-  
+
   if (!Access('GM') && $Fact['TurnState'] > 2) Player_Page();
 
   $typ='';
   if (isset($_REQUEST['Hex'])) {
     if (Access('GM')) {
-      $typ = 'Hex';   
+      $typ = 'Hex';
     } elseif (Access('Player')) {
       if (Has_Tech($Faction,'Astral Mapping')) {
         echo "Found Hex...";
@@ -63,14 +63,14 @@
     $ret = ' label="';
     if ($Prefix) $ret .= "$Prefix\n";
     if ($len > 8) {
-      $words = explode(' ',$txt); 
+      $words = explode(' ',$txt);
       $numwrds = count($words);
       if ($numwrds > 1) {
         $sp = round(($len+1)/2);
         $nxt = (($len&1)?1:-1);
         $i = 1;
         while ($sp > 0) {
-          if (substr($txt,$sp,1) == ' ') { 
+          if (substr($txt,$sp,1) == ' ') {
             $txt = substr($txt,0,$sp) . "\n" . substr($txt,$sp);
             $len = max($sp,$len-$sp);
             break;
@@ -91,15 +91,17 @@
 
 // echo "<h1>Faction $Faction</h1>";
   global $db, $GAME;
-  
+
+  $HexLegPos = eval(Feature('HexLegPos'));
+
   $RedoMap = 1;
 //  $Dot = fopen("cache/Fullmap$Faction$typ.dot","w+");
 //  if (!$Dot) { echo "Could not create dot file<p>"; dotail(); };
 
 
-  $Nodes = Get_Systems(); 
+  $Nodes = Get_Systems();
   $Levels = Get_LinkLevels();
-  $Factions = Get_Factions(); 
+  $Factions = Get_Factions();
   $Historical = 0;
   $OtherInt = 0;
 
@@ -107,22 +109,22 @@
     $Dot = fopen("cache/Fullmap$Faction$typ.dot","w+");
     if (!$Dot) { echo "Could not create dot file<p>"; dotail(); };
 //  ftruncate($Dot,0);  // Needed for redoing logic
-  
+
  // echo "AA";
-  
+
     $RedoMap = 0;
-    
+
     $NebF = 0;
     $ShownNodes = [];
     $LinkSown = [];
     $UnknownLink = [];
     $LinkShown = [];
-  
+
     fwrite($Dot,"graph skmap {\n") ; //size=" . '"8,12!"' . "\n");
     if ($typ) fwrite($Dot,"splines=true;\n");
 //  echo "BB";
 //  if (!$typ) fwrite($Dot, "[size=\"10,20!\"];\n");
-  
+
     foreach ($Nodes as $N) {
       if (!ctype_alnum($N['Ref'])) continue;
       if (!isset($N['GridX']) || ( $N['GridX'] == 0 && $N['GridY'] == 0)) continue;
@@ -143,7 +145,7 @@
         }
       }
       $atts = "";
- 
+
       $Colour = "white";
       if ($N['Control'] && !$Hide) {
         $Colour = $Factions[$N['Control']]['MapColour'];
@@ -154,14 +156,14 @@
       } else {
         $Colour = "White";
       }
-    
+
       if ($Hide) $NodeName = '';
       $BdrColour = "Black";
       if ($Faction == 0 && $N['HistoricalControl']) {
         $BdrColour = $Factions[$N['HistoricalControl']]['MapColour'];
         $Historical = 1;
       }
-    
+
       if ($typ) $atts .= " shape=box pos=\"" . ($N['GridX']+(5-$N['GridY'])/2) . "," . (9-$N['GridY']) . "!\"";
       $atts .= "  shape=box style=filled fillcolor=\"$Colour\" color=\"$BdrColour\"";
       if ($NodeName) {
@@ -169,28 +171,28 @@
       }
       if ($N['Nebulae']) { $atts .= " penwidth=" . (2+$N['Nebulae']*2); $NebF = 1; }
       else { $atts .= " penwidth=2"; }
-   
+
       if ($Faction) {
         $atts .= " href=\"/SurveyReport.php?R=" . $N['Ref'] . '" ';
-      
+
         if (!empty($FS['Xlabel'])) $atts .= " xlabel=\"" . $FS['Xlabel'] . '" ';
       } else {
         $atts .= " href=\"/SysEdit.php?N=" . $N['id'] . '" ';
       }
-    
+
       fwrite($Dot,$N['Ref'] . " [$atts ];\n");
       $ShownNodes[$N['Ref']]= 1;
     }
-  
+
 
     if ($Faction) {
       $ul = 1;
       $AllLinks = Has_Tech($Faction,'Know All Links');
       foreach($Nodes as $N) {
         $from = $N['Ref'];
-      
+
         $FS = Get_FactionSystemFS($Faction,$N['id']);
- 
+
         $Links = Get_Links($from);
         if (!isset( $ShownNodes[$N['Ref']])) continue;
         $Neb = $N['Nebulae'];
@@ -199,7 +201,7 @@
           $Fl = Get_FactionLinkFL($Faction, $L['id']);
           if (isset($Fl['id']) && $Fl['Known'] || $AllLinks) {
             fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=\"" . $Levels[abs($L['Level'])]['Colour'] . "\" penwidth=" . $L['Weight'] .
-                   (($L['Level'] <0 || $L['Status'] > 0)? ' style=dotted ':'') . 
+                   (($L['Level'] <0 || $L['Status'] > 0)? ' style=dotted ':'') .
                    ($ShowLinks? " label=\"#" . $L['id'] . '"' : '') . " ];\n");
             $LinkShown[$L['id']]=1;
           } else {
@@ -207,7 +209,7 @@
             if (isset($FS['ScanLevel']) && $FS['ScanLevel']<2) continue;
             $rand = "B$ul";  // This kludge at least allows both ends to be displayed
             fwrite($Dot,"Unk$ul$rand [label=\"?\" shape=circle];\n");
-            fwrite($Dot,"$from -- Unk$ul$rand [color=\"" . $Levels[abs($L['Level'])]['Colour'] . '"' . ($ShowLinks? " label=\"#" . $L['id'] . '"' : '') 
+            fwrite($Dot,"$from -- Unk$ul$rand [color=\"" . $Levels[abs($L['Level'])]['Colour'] . '"' . ($ShowLinks? " label=\"#" . $L['id'] . '"' : '')
                    . " penwidth=" . $L['Weight'] .
                    (($L['Level'] <0 || $L['Status'] > 0)? ' style=dotted ':'') . " ];\n");
             $ul++;
@@ -228,13 +230,13 @@
         $Links = Get_Links1end($from);
 
         foreach ($Links as $L) {
-          fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=\"" . $Levels[abs($L['Level'])]['Colour'] . '"' . 
+          fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=\"" . $Levels[abs($L['Level'])]['Colour'] . '"' .
                    (($L['Level'] <0 || $L['Status'] > 0)? ' style=dotted ':'') . " penwidth=" . $L['Weight'] .
           ($typ?"":(" label=\"#" . $L['id'] . "\"")) . "];\n");
         }
       }
     }
-  
+
 //  fwrite($Dot,"}\n");
 //  fwrite($Dot,"graph legend {\n");
     $ls=0;
@@ -245,7 +247,7 @@
         $ls++;
       }
     }
-  
+
     if ($NebF) {
       if ($typ) {
         fwrite($Dot,"Nebulae [shape=box style=filled fillcolor=white penwidth=3" . ($typ?" pos=\"" . $HexLegPos[$ls][0] . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");
@@ -254,30 +256,30 @@
       }
       $ls++;
     };
-  
+
     if (!$Faction) {
       if ($Historical) {
         fwrite($Dot,"Historical [shape=box style=filled fillcolor=white penwidth=2 color=\"CadetBlue\"" .
-            ($typ?" pos=\"" . $HexLegPos[$ls][0] . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");  
-        $ls++;  
+            ($typ?" pos=\"" . $HexLegPos[$ls][0] . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");
+        $ls++;
       }
       if ($OtherInt) {
-        fwrite($Dot,"ZZ99 [shape=box style=filled fillcolor=yellow Epenwidth=2 " . NodeLab("Interest","Other") . 
-            ($typ?" pos=\"" . $HexLegPos[$ls][0] . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");  
-        $ls++;  
+        fwrite($Dot,"ZZ99 [shape=box style=filled fillcolor=yellow Epenwidth=2 " . NodeLab("Interest","Other") .
+            ($typ?" pos=\"" . $HexLegPos[$ls][0] . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");
+        $ls++;
       }
     }
 
-    fwrite($Dot,"}\n"); 
+    fwrite($Dot,"}\n");
     fclose($Dot);
   } // Redo Loop
 
-    
+
 //  echo "<H1>Dot File written</h1>";
-  
-  if ($typ) {  
+
+  if ($typ) {
     exec("fdp -Tpng -n cache/Fullmap$Faction$typ.dot > cache/Fullmap$Faction$typ.png");
-    exec("fdp -Tcmapx -n cache/Fullmap$Faction$typ.dot > cache/Fullmap$Faction$typ.map");    
+    exec("fdp -Tcmapx -n cache/Fullmap$Faction$typ.dot > cache/Fullmap$Faction$typ.map");
 //    exec("fdp -Timap -n cache/Fullmap$Faction$typ.dot > cache/Fullmap$Faction$typ.imap");
 //    exec("fdp -Tsvg -n cache/Fullmap$Faction$typ.dot > cache/Fullmap$Faction$typ.svg");
   } else {
@@ -291,10 +293,10 @@
   $Rand = rand(1,100000);
   echo "<img src=cache/Fullmap$Faction$typ.png?$Rand maxwidth=100% usemap='#skmap'>";
   readfile("cache/Fullmap$Faction$typ.map");
-  
+
 //  echo "<object type='image/svg+xml' data=cache/Fullmap$Faction$typ.svg?$Rand maxwidth=100%></object>";
 //  echo "<svg type='image/svg+xml' data=cache/Fullmap$Faction$typ.svg?$Rand maxwidth=100%></svg>";
 
-  
+
   dotail();
 ?>

@@ -5,10 +5,11 @@
   $Value = $_POST['V'];
   $id    = $_POST['I'];
   $type  = $_POST['D'];
-  
+  $mtch = [];
+
   global $GAME,$GAMEID;
 
-//var_dump($_POST);  
+//var_dump($_POST);
 // Special returns @x@ changes id to x, #x# sets feild to x, !x! important error message
   switch ($type) {
   case 'System' :
@@ -16,7 +17,7 @@
     $N[$field] = $Value;
     echo Put_System($N);
     exit;
-    
+
   case 'Planet' :
   case 'Moon' :
     switch ($field) {
@@ -37,14 +38,14 @@
     case (preg_match('/District(\w*)-(\d*)/',$field,$mtch)?true:false):
       $N = Get_District($mtch[2]);
 //var_dump($N,$Value,$mtch);
-      if ($Value || $mtch[1] != 'Type') { 
-        $N[$mtch[1]] = $Value;     
+      if ($Value || $mtch[1] != 'Type') {
+        $N[$mtch[1]] = $Value;
         echo Put_District($N);
-      } else { 
+      } else {
         echo 'FORCERELOAD54321:NOW' . db_delete('Districts',$mtch[2]);
       }
       exit;
-    
+
     default:
       if ($type == 'Planet') {
         $N = Get_Planet($id);
@@ -53,23 +54,23 @@
       } else {
         $N = Get_Moon($id);
         $N[$field] = $Value;
-        echo Put_Moon($N);  
+        echo Put_Moon($N);
       }
       exit;
     }
-    
+
   case 'Link' :
     $N = Get_Link($id);
     $N[$field] = $Value;
     echo Put_Link($N);
     exit;
-  
+
   case 'Tech' :
     $N = Get_Tech($id);
     $N[$field] = $Value;
     echo Put_Tech($N);
     exit;
-  
+
   case 'Thing' : // Will need some complex handling for districts, modules and subtype
     switch ($field) {
     case (preg_match('/DistrictTypeAdd-(.*)/',$field,$mtch)?true:false):
@@ -87,10 +88,10 @@
 
     case (preg_match('/District(\w*)-(\d*)/',$field,$mtch)?true:false):
       $N = Get_District($mtch[2]);
-      if ($Value && $mtch[1] != 'Type') { 
-        $N[$mtch[1]] = $Value;     
+      if ($Value && $mtch[1] != 'Type') {
+        $N[$mtch[1]] = $Value;
         echo 'FORCERELOAD54321:NOW' . Put_District($N);
-      } else { 
+      } else {
         echo 'FORCERELOAD54321:NOW' . db_delete('Districts',$mtch[2]);
       }
       exit;
@@ -125,7 +126,7 @@
       } else {
         $N= ['Type'=>$mtch[1],'ThingId'=>$id, 'Number'=>$Value];
       }
-      //echo 'FORCELOADCHANGE54321:NOW' . 
+      //echo 'FORCELOADCHANGE54321:NOW' .
       echo Put_Module($N);
 //      echo "REPLACE_ID_WITH:ModuleNumber-$mid ";
       exit;
@@ -133,43 +134,43 @@
     case (preg_match('/Module(\w*)-(\d*)/',$field,$mtch)?true:false):
 //echo "In right place "; var_dump($mtch);
       $N = Get_Module($mtch[2]);
-      if ($Value && ($mtch[1] == 'Type')) { 
-        $N[$mtch[1]] = $Value;   
+      if ($Value && ($mtch[1] == 'Type')) {
+        $N[$mtch[1]] = $Value;
         echo 'FORCERELOAD54321:NOW' . Put_Module($N);
-      } else if ($mtch[1] == 'Remove') { 
+      } else if ($mtch[1] == 'Remove') {
        if ($N['Type'] == 3) {
           $T = Get_Thing($id);
           $T['HasDeepSpace'] = 0;
           Put_Thing($T);
         }
 //echo "About to delete: "; var_dump( $mtch);
-      //  echo 'FORCELOADCHANGE54321:NOW' . 
+      //  echo 'FORCELOADCHANGE54321:NOW' .
         echo db_delete('Modules',$mtch[2]);
-      } else { 
-        $N[$mtch[1]] = $Value;     
+      } else {
+        $N[$mtch[1]] = $Value;
 //var_dump($N);
-        //echo 'FORCELOADCHANGE54321:NOW' . 
+        //echo 'FORCELOADCHANGE54321:NOW' .
         echo Put_Module($N);
       }
       exit;
 
     case 'FollowId':
-      $N = Get_Thing($id);    
+      $N = Get_Thing($id);
       $N['NewSystemId'] = $Value;
       $N['LinkId'] = -7;
-      echo 'FORCELOADCHANGE54321:NOW' . Put_Thing($N);      
+      echo 'FORCELOADCHANGE54321:NOW' . Put_Thing($N);
     }
 
     $N = Get_Thing($id);
     if ($field == 'Instruction' && $N['Instruction'] != $Value) {
       $N['Progress'] = 0;
-    }  
-    
+    }
+
     $N[$field] = $Value;
     if ($field == 'LinkId') {
       $L = Get_Link($Value);
       $SYS1 = Get_SystemR($L['System1Ref']);
-      $SYS2 = Get_SystemR($L['System2Ref']);      
+      $SYS2 = Get_SystemR($L['System2Ref']);
       if ($N['SystemId'] == $SYS1['id']) {
         $N['NewSystemId'] = $SYS2['id'];
         $FSN = $SYS2;
@@ -179,10 +180,10 @@
       }
       $N['NewLocation'] = 1;
 
-      $NearNeb = $N['Nebulae'];      
+      $NearNeb = $N['Nebulae'];
       $Fid = $N['Whose'];
       $Known = 1;
-      // Handle link knowledge - KLUDGE 
+      // Handle link knowledge - KLUDGE
       $FL = Get_FactionLinkFL($Fid,$L['id']);
       $FarNeb = $FSN['Nebulae'];
       $FS = Get_FactionSystemFS($Fid,$FSN['id']);
@@ -196,15 +197,15 @@
           } else {
               $Known = 0;
           }
-        } else if ($NS['NebScanned'] >= $NearNeb) { // In a Neb...
+        } else if ($FS['NebScanned'] >= $NearNeb) { // In a Neb...
           if (!isset($FS['id'])) {
               $Known = 0;
           }
-        } else { 
+        } else {
           echo "Error!"; exit;// Can't see that link
         }
-      $N['TargetKnown'] = $Known; 
-    } 
+      $N['TargetKnown'] = $Known;
+    }
     echo Put_Thing($N);
     if ($field == 'Type' || $field == 'Instruction' ) { // || $field == 'Level') {
       echo 'FORCELOADCHANGE54321:NOW';
@@ -213,7 +214,7 @@
     }
 
     exit;
-  
+
   case 'FactTech' :
     if (preg_match('/Tech(\d*)/',$field,$mtch)?true:false) {
       $N = Get_Faction_TechFT($id,$mtch[1]);
@@ -229,11 +230,11 @@
         db_delete('FactionTechs',$mtch[1]);
       }
       exit;
-    } 
+    }
     echo "Unknown... $field";
     exit;
-   
-  
+
+
   case 'Faction' :
     if ($field == 'LastActive') {
       include_once("DateTime.php");
@@ -243,26 +244,26 @@
     $N[$field] = $Value;
     echo Put_Faction($N);
     exit;
-  
-    
+
+
   case 'District' :
     $N = Get_District($id);
     $N[$field] = $Value;
     echo Put_District($N);
     exit;
-  
+
   case 'Game' :
     $N = Get_Game($id);
     $N[$field] = $Value;
     echo Put_Game($N);
     exit;
-  
+
   case 'Turn' :
     $N = Get_Turn($id);
     $N[$field] = ($field == 'Progress')?hexdec($Value):$Value;
     echo Put_Turn($N);
     exit;
-    
+
   case 'Projects' :
     // id is Fid
     if (preg_match('/Rush(\d*):(\d*)/',$field,$mtch)?true:false) {
@@ -270,30 +271,30 @@
       $Proj = $mtch[2];
       $N = Get_ProjectTurnPT($Proj,$Turn);
       $N['Rush'] = $Value;
-//       echo 'FORCELOADCHANGE54321:NOW' . 
+//       echo 'FORCELOADCHANGE54321:NOW' .
       Put_ProjectTurn($N);
     }
     exit;
-    
+
    case 'Project' : // Note this is for ProjEdit, see above for per turn rushing
     $N = Get_Project($id);
     $N[$field] = $Value;
     echo Put_Project($N);
     exit;
-  
+
    case 'ProjectHome' : // Note this is for ProjEdit, see above for per turn rushing
     $N = Get_ProjectHome($id);
     $N[$field] = $Value;
     echo Put_ProjectHome($N);
     exit;
- 
+
 
   case 'FFaction' :
     if (preg_match('/Know(\d*):(\d*)/',$field,$mtch)?true:false) {
-    
+
       if ($Value) {
         $FF = ['FactionId1'=> $mtch[1], 'FactionId2'=> $mtch[2]];
-        return Put_FactionFaction($FF); 
+        return Put_FactionFaction($FF);
       } else {
         return db_delete_cond('FactionFaction', "FactionId1=" . $mtch[1] . " AND FactionId2=" . $mtch[2]);
       }
@@ -311,26 +312,26 @@
       echo Put_FactionFaction($N);
     }
     exit;
-    
+
   case 'Banking':
     $N = Get_Banking($id);
     $N[$field] = $Value;
     echo Put_Banking($N);
     exit;
-  
- 
+
+
    case 'FactionTurn':
     $N = Get_FactionTurn($id);
     $N[$field] = $Value;
     echo Put_FactionTurn($N);
     exit;
-  
+
    case 'ProjectHome':
     $N = Get_ProjectHome($id);
     $N[$field] = $Value;
     echo Put_ProjectHome($N);
     exit;
-  
+
    case 'Anomaly':
     if ((preg_match('/(\w*):(\d*)/',$field,$mtch)?true:false)) {
       $N = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$id AND FactionId=" . $mtch[2]);
@@ -349,8 +350,8 @@
       echo Put_Anomaly($N);
     }
     exit;
-   
-  
+
+
    case 'Worlds':
 //var_dump($_REQUEST);
     if ((preg_match('/(\w*):(\d*):(\d*)/',$field,$mtch)?true:false)) {
@@ -377,14 +378,14 @@
       exit;
     } else if ((preg_match('/Dist:(\w*):(\d*)/',$field,$mtch)?true:false)) {
       $N = Get_District($mtch[2]);
-      $N[$mtch[1]] = $Value;      
-      return Put_District($N);   
+      $N[$mtch[1]] = $Value;
+      return Put_District($N);
     }
     $N = Get_World($id);
     $N[$field] = $Value;
     echo Put_World($N);
     exit;
-  
+
   case 'ScansDue':
 //       var_dump($_REQUEST);
     if ((preg_match('/(\w*):(\d*)/',$field,$mtch)?true:false)) {
@@ -398,10 +399,10 @@
   default:
     echo "Not setup $type for Auto Edit";
     break;
-// Need to add stuff for control etc and names in faction_system as well    
-  
-    exit;  
-     
+// Need to add stuff for control etc and names in faction_system as well
+
+    exit;
+
   }
 ?>
 

@@ -4,7 +4,9 @@
   include_once("SystemLib.php");
   include_once("vendor/erusev/parsedown/Parsedown.php");
 
-  A_Check('Player');  
+  global $FACTION;
+
+  A_Check('Player');
   if (Access('Player')) {
     if (!$FACTION) {
       if (!Access('GM') ) Error_Page("Sorry you need to be a GM or a Player to access this");
@@ -12,7 +14,7 @@
       $Fid = $FACTION['id'];
       $Faction = &$FACTION;
     }
-  } 
+  }
   $GM = Access('GM');
   if ($GM) {
     if (isset( $_REQUEST['F'])) {
@@ -24,16 +26,16 @@
     }
     if (isset($Fid)) $Faction = Get_Faction($Fid);
   } else {
-    if ($FACTION['TurnState'] > 2) Player_Page();      
+    if ($FACTION['TurnState'] > 2) Player_Page();
   }
 
   dostaffhead("List Anomalies");
-  
+
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
     case 'MOVE':
       break;
-    } 
+    }
   }
 
   global $db, $GAME, $AnomalyStates, $GAMEID;
@@ -42,7 +44,7 @@
   $FAs = Gen_Get_Cond('FactionAnomaly',"FactionId=$Fid AND State>0");
 
   $Parsedown = new Parsedown();
-    
+
 
   if ($FAs) {
     $coln = 0;
@@ -52,7 +54,7 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Where</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>State</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Progress</a>\n";
-    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Description</a>\n";  
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Description</a>\n";
     echo "</thead><tbody>";
 
     foreach($FAs as $FA) {
@@ -67,9 +69,9 @@
     echo "</tbody></table></div>";
   } else {
     echo "<h2>You haven't found any yet</h2>\n";
-  
+
   }
-  
+
   dotail();
 ?>
 

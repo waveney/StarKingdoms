@@ -3,9 +3,11 @@
   include_once("GetPut.php");
   include_once("ThingLib.php");
   include_once("ThingShow.php");
-  
+
 function New_Thing(&$T) {
   global $BuildState;
+  global $FACTION;
+
   $ttn = Thing_Type_Names();
   $FactNames = Get_Faction_Names();
   $Fact_Colours = Get_Faction_Colours();
@@ -17,13 +19,14 @@ function New_Thing(&$T) {
   echo "<table><tr><td>Type:<td>" . fm_select($ttn,$T,'Type');
   echo "<tr>" . fm_text("Name",$T,'Name');
   echo "<tr>" . fm_number("Level",$T,'Level');
-  echo "<tr>" . fm_radio('Whose',$FactNames ,$T,'Whose','',1,'colspan=6','',$Fact_Colours,0); 
+  echo "<tr>" . fm_radio('Whose',$FactNames ,$T,'Whose','',1,'colspan=6','',$Fact_Colours,0);
   echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId');
   echo "<tr><td>BuildState:<td>" . fm_select($BuildState,$T,'BuildState');
   echo "<tr><td>" . fm_submit("ACTION","Create");
   echo "</table></form>";
   dotail();
 }
+  global $FACTION;
 
   $Force = (isset($_REQUEST['FORCE'])?1:0);
   $GM = Access('GM');
@@ -39,9 +42,10 @@ function New_Thing(&$T) {
   dostaffhead("Edit and Create Things",["js/dropzone.js","css/dropzone.css" ]);
 
   global $db, $GAME, $GAMEID,$BuildState;
-  
+
 // START HERE
 //  var_dump($_REQUEST);
+  $mtch = [];
 
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
@@ -49,8 +53,8 @@ function New_Thing(&$T) {
       $T = ['Level'=>1, 'BuildState'=>3, 'LinkId'=>0];
       New_Thing($T);
       break;
-       
-    case 'Create' : // From New Thing 
+
+    case 'Create' : // From New Thing
       if (!isset($_POST['SystemId'])) {
         echo "No System Given";
         New_Thing($_POST);
@@ -61,7 +65,7 @@ function New_Thing(&$T) {
       $T = Get_Thing($tid); // Re-read to get defaults
       RefitRepair($T);
       $T['id'] = $tid;
-       
+
       if ($T['Type'] == 6) { // Outpost
         $N = Get_System($T['SystemId']);
         $N['Control'] = $T['Whose'];
@@ -69,7 +73,7 @@ function New_Thing(&$T) {
         echo "<h2>System Control Updated</h2>\n";
       }
       break;
-      
+
     case 'CREATE' : // Named Chars
       echo "<h2>Choose a world to start on:</h2>\n";
       $Worlds = Get_Worlds($Fid);
@@ -89,7 +93,7 @@ function New_Thing(&$T) {
           $Name = $P['Name'];
           $Sys = Get_System($P['SystemId']);
           break;
-        
+
         case 2: /// Moon
           $M = Get_Moon($W['ThingId']);
           $type = $PlanetTypes[$M['Type']]['Name'];
@@ -98,7 +102,7 @@ function New_Thing(&$T) {
           $Name = $M['Name'];
           $Sys = Get_System($P['SystemId']);
           break;
-    
+
         case 3: // Thing Handled in next section
           continue 2;
           $T = Get_Thing($W['ThingId']);
@@ -107,13 +111,13 @@ function New_Thing(&$T) {
           $Sys = Get_System($T['SystemId']);
           continue 2;
         }
-    
+
         $H = Get_ProjectHome($W['Home']);
-        
+
         echo "<button class=projtype type=submit formaction=ThingEdit.php?ACTION=Select_World&Wid=" . $W['id'] . ">$Name</button><p>\n";
-        
+
       }
-      
+
       echo "<h2>Or a Thing to start in:</h2>\n";
       $Things = Get_Things($Fid);
       $TTypes = Get_ThingTypes();
@@ -121,10 +125,10 @@ function New_Thing(&$T) {
       foreach($Things as $T) {
         if ( empty($T['Name']) || $T['BuildState'] <1 || $T['BuildState'] > 3 || ( $TTypes[$T['Type']]['Properties'] & THING_CANT_HAVENAMED) ) continue;
         echo "<button class=projtype type=submit formaction=ThingEdit.php?ACTION=Select_Thing&Thing=" . $T['id'] . ">" . $T['Name'] . "</button><p>\n";
-      }  
+      }
       echo "</form>\n";
       dotail();
-      
+
     case 'Select_World' :
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
@@ -137,7 +141,7 @@ function New_Thing(&$T) {
       $T['BuildState'] = 3;
       Put_Thing($T);
       break;
-      
+
     case 'Select_Thing' :
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
@@ -149,7 +153,7 @@ function New_Thing(&$T) {
       $T['BuildState'] = 3;
       Put_Thing($T);
       break;
-     
+
     case 'Delete':
     case 'Remove Thing (No debris)':
     case 'DELETE' :
@@ -158,11 +162,11 @@ function New_Thing(&$T) {
       $T = Get_Thing($tid);
       Check_MyThing($T,$Fid);
       Thing_Delete($tid);
- 
+
       echo "<h1>Deleted</h1>";
       echo "<h2><a href=PThingList.php>Back to Thing list</a></h2>";
       dotail();
-       
+
     case 'Duplicate' :
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
@@ -170,21 +174,21 @@ function New_Thing(&$T) {
       $T = Thing_Duplicate($_REQUEST['id']);
       $tid = $T['id'];
       break;
-       
+
     case 'GM Refit' :
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
       Calc_Scanners($T);
       RefitRepair($T);
-      break;     
-     
+      break;
+
     case 'GM Recalc' :
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
       Calc_Scanners($T);
       RefitRepair($T,1,1);
-      break;     
-     
+      break;
+
     case 'Destroy Thing (Leave debris)':
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
@@ -230,7 +234,7 @@ function New_Thing(&$T) {
         echo "<h2 class=Err>No Warp Gates...</h2>\n";
       }
       break;
-    
+
     case 'Cancel Follow':
     case 'Cancel Move':
       $tid = $_REQUEST['id'];
@@ -238,8 +242,8 @@ function New_Thing(&$T) {
       Check_MyThing($T,$Fid);
       $T['LinkId'] = 0;
       Put_Thing($T);
-      break;            
-       
+      break;
+
     case 'Select Gate':
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
@@ -253,20 +257,20 @@ function New_Thing(&$T) {
       Put_Thing($T);
       break;
 
-    case 'UnloadAll' : // Not called 
-      // Need list of Worlds in location  - if only one select it - 
+    case 'UnloadAll' : // Not called
+      // Need list of Worlds in location  - if only one select it -
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
       Check_MyThing($T,$Fid);
       $Homes = Gen_Get_Cond('ProjectHomes', "SystemId=" . $T['SystemId']);
-      if (!Homes) { 
-      
+      if (!Homes) {
+
       } else if (count($Homes) == 1) {
-      
+
       } else {
-       
-      }  
-     
+
+      }
+
     case 'Load Now':
 // echo "<p>Here";
       $tid = $_REQUEST['id'];
@@ -282,7 +286,7 @@ function New_Thing(&$T) {
 //var_dump($T); exit;
       Put_Thing($T);
       break;
-     
+
     case 'Load on Turn':
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
@@ -296,8 +300,8 @@ function New_Thing(&$T) {
       $T['NewSystemId'] = $Hid;
       Put_Thing($T);
       break;
-    
-    case 'Unload Now': 
+
+    case 'Unload Now':
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
       $H = Get_Thing($T['SystemId']);
@@ -322,15 +326,15 @@ function New_Thing(&$T) {
       echo fm_select($Syslocs,$T,'WithinSysLoc');
       echo "<input type=submit name=ACTION value='Select Destination'>";
       dotail();
-      
+
     case 'Select Destination':
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
       Check_MyThing($T,$Fid);
       $T['WithinSysLoc'] = $_REQUEST['WithinSysLoc'];
-      Put_Thing($T);      
+      Put_Thing($T);
       break;
-      
+
     case 'Unload After Move':
     case 'Unload on Turn':
       $tid = $_REQUEST['id'];
@@ -352,10 +356,10 @@ function New_Thing(&$T) {
       $T['LinkId'] = $Lid;
       Put_Thing($T);
 
-      
+
       $HostId = (($Lid == -3 || $Lid == -1) ? $T['SystemId'] : $T['NewSystemId']);
       $H = Get_Thing($HostId);
-      
+
       if ($H['LinkId'] > 0) {
         $Dest = $H['NewSystemId'];
       } else if ($H['LinkId'] == 0) {
@@ -376,48 +380,48 @@ function New_Thing(&$T) {
       echo "<input type=submit name=ACTION value='Select Final Destination'>";
       echo "<p>\n<input type=submit name=ACTION value='Cancel'>\n";
       dotail();
-      
+
     case 'Select Final Destination':
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
       Check_MyThing($T,$Fid);
       $T['NewLocation'] = $_REQUEST['NewLocation'];
-      Put_Thing($T);      
+      Put_Thing($T);
       break;
-      
+
     case 'Cancel Load':
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
       Check_MyThing($T,$Fid);
       $T['LinkId'] = 0;
-      Put_Thing($T);      
-      break;      
-    
+      Put_Thing($T);
+      break;
+
     case 'Cancel Unload':
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
       Check_MyThing($T,$Fid);
       $T['LinkId'] = -1;
-      Put_Thing($T);      
-      break;      
-    
+      Put_Thing($T);
+      break;
+
     case 'Cancel Load and Unload':
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
       Check_MyThing($T,$Fid);
       $T['LinkId'] = 0;
-      Put_Thing($T);      
+      Put_Thing($T);
       break;
-      
+
     case 'Pay on Turn':
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
       Check_MyThing($T,$Fid);
       $T['LinkCost'] = $_REQUEST['LinkCost'];
       $T['LinkPay'] = 1;
-      Put_Thing($T);      
+      Put_Thing($T);
       break;
-      
+
     case 'Transfer Now':
       $Factions = Get_Factions();
       $tid = $_REQUEST['id'];
@@ -442,7 +446,7 @@ function New_Thing(&$T) {
       if ($TTypes[$T['Type']] & THING_HAS_CONTROL) {
         Control_Propogate($T['SystemId'],$T['Whose']);
       }
-      
+
       if ($TTypes[$T['Type']] & THING_CAN_DO_PROJECTS) {
         Recalc_Project_Homes(0,1); //Should be silent
         Recalc_Worlds(1);  // Should be silent
@@ -450,7 +454,7 @@ function New_Thing(&$T) {
 
       dotail();
       break;
-      
+
     case 'Damage':
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
@@ -470,7 +474,7 @@ function New_Thing(&$T) {
       echo "</h2>";
       Put_Thing($T);
       break;
-      
+
     case 'Hull Damage':
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
@@ -480,7 +484,7 @@ function New_Thing(&$T) {
       echo "<h2>" . $T['Name'] . " has received $Dam dammage</h2>";
       Put_Thing($T);
       break;
-      
+
     case 'Disarm':
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
@@ -489,12 +493,12 @@ function New_Thing(&$T) {
         $M['Level'] = 0;
         Put_Module($M);
       }
-      
+
       $T['Gadgets'] = '';
       $T['CurHealth'] = min($T['CurHealth'],5*($T['Level']));
       Put_Thing($T);
       break;
-    
+
     case 'Salvage' : // As in turn action called by GM for wierd cases (eg you forgot)
       include_once("TurnTools.php");
       include_once("ProjLib.php");
@@ -503,7 +507,7 @@ function New_Thing(&$T) {
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
       $Who = $T['Whose'];
-      
+
        $Wrecks = Get_Things_Cond(0,"SystemId=" . $T['SystemId'] . " AND BuildState>3");
        $SalvageLevel = Has_Tech($Who,'Salvage Rigs');
        $HasWreck = Has_Tech($Who,'Wreckage Analysis');
@@ -518,7 +522,7 @@ function New_Thing(&$T) {
            $Money = 0;
            $Wreck = [];
            switch ($TTypes[$W['Type']]['Name']) {
-         
+
            case 'Military Ship':
            case 'Support Ship' :
            case 'Civilian Ship' :
@@ -535,10 +539,10 @@ function New_Thing(&$T) {
                  }
                }
             }
-           
+
              Thing_Delete($W['id']);
              break;
-         
+
            case 'Space Station':
              $Money = min(10*$W['MaxDistricts']*$SalvageLevel,Proj_Costs($W['MaxDistricts'])[1]*0.9);
              if ($HasWreck) {
@@ -549,13 +553,13 @@ function New_Thing(&$T) {
              }
              Thing_Delete($W['id']);
              break;
-                            
+
            default:
              break;
            }
            if ($Money) {
              $TotMoney += $Money;
-             TurnLog($Who,"The wreckage of the " . (empty($W['Name'])? ("Unknown Thing #" . $W['id']) : $W['Name']) . 
+             TurnLog($Who,"The wreckage of the " . (empty($W['Name'])? ("Unknown Thing #" . $W['id']) : $W['Name']) .
                 " has been salvaged.  in " . $N['Ref'] . " Gaining " . Credit() . $Money );
              if ($Wreck) TurnLog($Who, "It had: " . implode(', ', $Wreck));
            }
@@ -572,9 +576,9 @@ function New_Thing(&$T) {
        break;
 
 
-    
+
     case 'None' :
-    default: 
+    default:
       break;
     }
   } else {
@@ -611,12 +615,12 @@ function New_Thing(&$T) {
         } else { // -5 = Direct
           $Sys = $T['NewSystemId'];
           $N = Get_System($Sys);
-          $tt = $T;          
+          $tt = $T;
         }
 
         switch ($RV) {
           case 'Unload Now':
-          
+
             $wsysloc = $_REQUEST["WithinSysLoc:$Hid"];
             $Syslocs = Within_Sys_Locs($N,0,0,0,1);
             $newloc = (isset($Syslocs[$wsysloc])? $Syslocs[$wsysloc] : 'Deep Space');
@@ -625,12 +629,12 @@ function New_Thing(&$T) {
               $H['SystemId'] = $Sys;
               $H['WithinSysLoc'] = $wsysloc;
               Put_Thing($H);
-              
+
               if (isset($_REQUEST['YES_SPACE'])) {
                 $Who = empty($FACTION['Name'])? "A GM " : $FACTION['Name'];
-                GMLog4Later("$Who has unloaded <a href=ThingEdit.php?id=$Hid>" . $H['Name'] . " in " . $N['Ref'] . " to $newloc"); 
+                GMLog4Later("$Who has unloaded <a href=ThingEdit.php?id=$Hid>" . $H['Name'] . " in " . $N['Ref'] . " to $newloc");
               }
-              
+
             } else {
               echo "<h2>Do your really mean to unload to $newloc?</h2>";
               echo "<form method=post action=ThingEdit.php>";
@@ -640,7 +644,7 @@ function New_Thing(&$T) {
             }
             $i = 1; // stop weird error
             break;
-                
+
           case 'Unload on Turn':
             $wsysloc = $_REQUEST["NewLocation:$Hid"];
             $Syslocs = Within_Sys_Locs($N,0,0,0,1);
@@ -663,7 +667,7 @@ function New_Thing(&$T) {
                 dotail();
               }
               break;
-            
+
             } else {
               echo "<h2>Please select where to unload " . $H['Name'] . "<h2>";
               echo "<form method=post action=ThingEdit.php>";
@@ -673,7 +677,7 @@ function New_Thing(&$T) {
               dotail();
             }
           break;
-          
+
         case 'Cancel Unload':
           if ($H['LinkId'] == -3) {
             $H['LinkId'] = -1;
@@ -681,12 +685,12 @@ function New_Thing(&$T) {
             $H['LinkId'] = -2;
           }
           Put_Thing($H);
-          break;  
+          break;
         }
       }
     }
   }
-  
+
   if (isset($T)) {
     $tid = $T['id'];
   } else if (isset($_REQUEST['id'])) {
@@ -707,10 +711,10 @@ function New_Thing(&$T) {
 
   if ($GM) {
     echo "<h2>GM: <a href=ThingEdit.php?id=$tid&FORCE>This page in Player Mode</a>";
-//          (Access('God')?", <a href=ThingEdit.php?id=$tid&EDHISTORY>Edit History</a>":"") . "</h2>";  
+//          (Access('God')?", <a href=ThingEdit.php?id=$tid&EDHISTORY>Edit History</a>":"") . "</h2>";
   }
   if (empty($T)) {
-    echo "<h2 class=Err>Sorry that thing is not found</2>";  
+    echo "<h2 class=Err>Sorry that thing is not found</2>";
   } elseif ($T['Whose'] != $Fid && !$GM) {
     echo "<h2 class=Err>Sorry that thing is not yours</2>";
   } else {
@@ -718,18 +722,18 @@ function New_Thing(&$T) {
   }
   if (($GM && !empty($tid)) || ($T['BuildState'] == 0)) echo "<br><p><br><p><h2><a href=ThingEdit.php?ACTION=DELETE&id=$tid>Delete Thing</a></h2>";
 
-  
+
   dotail();
-  
+
 ?>
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
+
+
+
+

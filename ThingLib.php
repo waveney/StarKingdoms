@@ -3,7 +3,7 @@
 include_once("sk.php");
 include_once("GetPut.php");
 include_once("vendor/erusev/parsedown/Parsedown.php");
-include_once("PlayerLib.php");  
+include_once("PlayerLib.php");
 
 global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$InstrMsg,$Advance,$ValidMines;
 
@@ -68,13 +68,13 @@ define('LINK_FOLLOW',-7);
 function ModFormulaes() {
   global $ModFormulaes;
   if ($ModFormulaes) return $ModFormulaes;
-  
+
   $MFs = Get_ModFormulaes();
-  
+
   foreach ($MFs as $M) {
     $f = $M['Num1x']?"(" . $M['Num1x'] . " +TL)":"TL";
     if ($M['Num2x']>1) $f = $f . "*" . $M['Num2x'];
-    if ($M['Num3x']) $f = "$f + " . $M['Num3x'];    
+    if ($M['Num3x']) $f = "$f + " . $M['Num3x'];
     $ModFormulaes[$M['id']] = $f;
   }
   return $ModFormulaes;
@@ -105,7 +105,7 @@ function Mod_ValueSimple($tl,$modtypeid,&$Rescat) {
 //echo "Mod Value of $tl, $modtypeid<p>";
   $mt = Get_ModuleType($modtypeid);
   $mf = Get_ModFormula($mt['Formula']);
-  
+
   if ($mf['Name'] == 'None') return 0;
   if (Access('GM') && !isset($mf['Num2x'])) echo "Report Module formula error $modtypeid<p>";
   if ($mf['Num2x']) {
@@ -141,9 +141,9 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0) {
       echo " <span class=Allow>( Allowed )</span>";
     }
   }
-  
+
   echo "</div></h2>";
-  
+
   if ($Setup) {
     if ($T['Cat'] == 0) {
       echo fm_number0("Levels",$FactTechs[$Tid],'Level','','',"Tech$Tid");
@@ -152,7 +152,7 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0) {
       if ($T['Cat'] == 2) echo fm_checkbox("Know about",$FactTechs[$Tid],'Level','',"Know$Tid");
     }
   }
- 
+
   switch ($T['Cat']) {
   case 0:
     echo "Core Technology.  Field: <b>" . $Fields[$T['Field']] . "</b><br>";
@@ -169,16 +169,16 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0) {
     if ($T['MinThingLevel']) echo "Size Limitation - Requires at least level " . $T['MinThingLevel'] . " ship<br>";
     break;
   }
-  
+
   if ($T['Slots']) echo "Uses " . $T['Slots'] . " module " . Plural($T['Slots'],"","slot","slots") . "  ";
   if ($T['CivMil']) echo "<b>" . $CivMil[$T['CivMil']] . " ships</b>";
   echo "<br>";
-  
+
   if (!$Descs) echo "<div id=TDesc$Tid hidden>";
   if ($T['Description']) echo  $Parsedown->text($T['Description']);
 
 //  if ($lvl == 0) {
-    if (!$Descs) echo "</div>";  
+    if (!$Descs) echo "</div>";
     echo "</div><p>";
 //  }
 
@@ -213,7 +213,7 @@ function Within_Sys_Locs(&$N,$PM=0,$Boarding=0,$Restrict=0,$Hab=0) {// $PM +ve =
   if (!isset($N['id'])) return $L;
   $Ps = Get_Planets($N['id']);
   $PTD = Get_PlanetTypes();
-  
+
   if ($Ps) {
     $pi = $mi = 1;
     foreach ($Ps as $P) {
@@ -244,19 +244,19 @@ function Within_Sys_Locs(&$N,$PM=0,$Boarding=0,$Restrict=0,$Hab=0) {// $PM +ve =
   $LKs = Get_Links($N['Ref']);
   $Li = 1;
   if ($Restrict !=1) foreach($LKs as $lk) $L[500+$Li++] = "At stargate to link " . $lk['id'];
-  
+
   if ($Boarding) {
     $Things = Get_ThingsAt($N['id']);
     $ThingTypes = Get_ThingTypes();
-    
+
     foreach ($Things as $T) {
       if (($ThingTypes[$T['Type']]['Properties'] & THING_HAS_DISTRICTS) || $T['CargoSpace'] >0) $L[1000+$T['id']] = "On " . $T['Name'];
     }
   }
-/*  
+/*
   $Anoms = Get_Anomolies($N['Ref']);
   $Ai = 1;
-  foreach($Anoms as $Anom) $L[600+$Ai++] = "At " . $Anoms['Name'];  
+  foreach($Anoms as $Anom) $L[600+$Ai++] = "At " . $Anoms['Name'];
   */
   return $L;
 }
@@ -278,7 +278,7 @@ function Get_Valid_Modules(&$T,$Other=0) {
       if ($ModuleCats[$M['CivMil']] == 'Army') {
         if (($tprop & THING_HAS_ARMYMODULES) == 0) continue; // Armies
       } else if ($M['CivMil'] <= 4) {
-        if ($tprop & THING_HAS_SHIPMODULES) { 
+        if ($tprop & THING_HAS_SHIPMODULES) {
           if (($M['Name'] == 'Sensors') && Has_Tech($T['Whose'],'Military Sensors')) { // Valid
           } else {
             if ($ModuleCats[$M['CivMil']] == 'Military Ship' && ($tprop & THING_HAS_MILSHIPMODS) ==0 ) continue;
@@ -328,7 +328,7 @@ function Calc_Health(&$T,$KeepTechLvl=0,$Other=0) {
   if ($T['Type'] == 20) { // Militia
     return 40 + Has_Tech($T['Whose'],'Militia Training Techniques')*2;
   }
-  
+
   if ($Other == 0) $Other = $T['Whose'];
   if (Has_Trait($Other,'Thick Skinned')) $Plus =1;
   $Health = 5*($T['Level']+$Plus);
@@ -338,11 +338,11 @@ function Calc_Health(&$T,$KeepTechLvl=0,$Other=0) {
   $Techs = Get_Techs($Other);
   $Rescat = 0;
   foreach ($Mts as $mt) if (($mt['DefWep'] == 1 ) || ($mt['DefWep'] == 3 )) {
-    foreach ($Ms as $M) if (($Mts[$M['Type']]['Name'] == $mt['Name']) && ($M['Number'] > 0)) { 
+    foreach ($Ms as $M) if (($Mts[$M['Type']]['Name'] == $mt['Name']) && ($M['Number'] > 0)) {
       if ($KeepTechLvl) {
           $Mhlth = $M['Number'] * Mod_ValueSimple($M['Level']+$Plus,$M['Type'],$Rescat);
           if ($mt['DefWep'] == 1 ) {
-            $Health += $Mhlth;        
+            $Health += $Mhlth;
           } else {
             $Shield += $Mhlth;
             $Health +=  $M['Number'] * 15;
@@ -355,20 +355,20 @@ function Calc_Health(&$T,$KeepTechLvl=0,$Other=0) {
           }
           $Mhlth = $M['Number'] * Mod_ValueSimple($l+$Plus,$M['Type'],$Rescat);
           if ($mt['DefWep'] == 1 ) {
-            $Health += $Mhlth;        
+            $Health += $Mhlth;
           } else {
-            $Shield += $Mhlth;                  
+            $Shield += $Mhlth;
             $Health +=  $M['Number'] * 15;
           }
         }
       }
     }
   }
-    
+
   return [$Health,$Shield];
 }
 
-function Calc_Damage(&$T,&$Rescat) { 
+function Calc_Damage(&$T,&$Rescat) {
 
   if ($T['Type'] ==20) return 8; // Militia
   $Dam = 0;
@@ -377,12 +377,12 @@ function Calc_Damage(&$T,&$Rescat) {
 
   $Rescat = 0;
   foreach ($Mts as $mt) if ($mt['DefWep'] == 2 ) {
-    foreach ($Ms as $M) if (($Mts[$M['Type']]['Name'] == $mt['Name']) && ($M['Number'] > 0)) { 
+    foreach ($Ms as $M) if (($Mts[$M['Type']]['Name'] == $mt['Name']) && ($M['Number'] > 0)) {
       $dam = ($M['Level'] > 0?$M['Number'] * Mod_ValueSimple($M['Level'],$M['Type'],$Rescat):0);
       $Dam += $dam;
     }
   }
-    
+
   return $Dam;
 }
 
@@ -399,7 +399,7 @@ function Calc_TechLevel($Fid,$MType) {
 }
 
 function Thing_Finished($Tid) {
-  $T = Get_Thing($tid);
+  $T = Get_Thing($Tid);
   $T['BuildState'] = 3;
   $T['CurHealth'] = $T['OrigHealth'];
   Put_Thing($T);
@@ -411,7 +411,7 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0 ) {
   if ($Force) {
     $GM = 0;
   } else {
-    $GM = Access('GM');    
+    $GM = Access('GM');
   }
   $KnownOnly=0;
   if ($T['LinkId'] <0) return [[],[],[]];
@@ -522,13 +522,13 @@ function RefitRepair(&$T,$Save=1,$KeepTechLvl=0,$Other=0) {
 //  $Engines = (($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE)? 1:0);
   $Elvl = 1;
   $Engines = 0;
-  $Mods = Get_Modules($tid); 
+  $Mods = Get_Modules($tid);
   $Etxt = "";
   $VMTs = Get_Valid_Modules($T,$Other) ;
   if ($Mods) {
     foreach ($Mods as $M) {
       if ($KeepTechLvl) {
-        if ($M['Type'] == 5) { 
+        if ($M['Type'] == 5) {
           $Engines = $M['Number'];
           $Elvl = $M['Level'];
         }
@@ -537,7 +537,7 @@ function RefitRepair(&$T,$Save=1,$KeepTechLvl=0,$Other=0) {
       if (isset($VMTs[$M['Type']])) {
         $Lvl = Calc_TechLevel(($Other?$Other:$T['Whose']),$M['Type']);
         if ($Lvl) {
-          if ($M['Type'] == 5) { 
+          if ($M['Type'] == 5) {
             $Engines = $M['Number'];
             $Elvl = $Lvl;
           }
@@ -550,7 +550,7 @@ function RefitRepair(&$T,$Save=1,$KeepTechLvl=0,$Other=0) {
         }
       } else {
           $Etxt .= abs($M['Number']) . " " . $MTypes[$M['Type']]['Name'] . Plural($M['Number']," Modules"," Module"," Modules") . " inactive as unknown tech";
-          $M['Number'] = - abs($M['Number']);      
+          $M['Number'] = - abs($M['Number']);
       }
     }
   }
@@ -566,7 +566,7 @@ function RefitRepair(&$T,$Save=1,$KeepTechLvl=0,$Other=0) {
   } else {
     $T['CurHealth'] = min($T['CurHealth'],$Health);
     $T['CurShield'] = $Sld;
-  }    
+  }
   $T['Speed'] =  ((($TTypes[$T['Type']]['Properties'] ?? 0)&THING_CAN_MOVE)? $Engines*$Elvl/$T['Level'] +1 :0);
   Put_Thing($T);
   return $Etxt;
@@ -581,7 +581,7 @@ function LogisticalSupport($Fid) {  // Note this sets the Economic rating of all
 
   $ThingTypes = Get_ThingTypes();
   $DistTypes = Get_DistrictTypes();
-  
+
   foreach($PHomes as $H) {
 //    $PH['Economy'] = 0;
     $Commerce = 0;
@@ -608,7 +608,7 @@ function LogisticalSupport($Fid) {  // Note this sets the Economic rating of all
       $EndAct = 'Put_Thing';
       break;
     }
-    
+
     $Prime = $Mine = 0;
     $District_Type = [];
     foreach ($Dists as $D) {
@@ -651,7 +651,7 @@ function LogisticalSupport($Fid) {  // Note this sets the Economic rating of all
   if ($ln = Has_Tech($Fid,'Army Logistics')) $Logistics[1]  += 2*$ln;
   if ($ln = Has_Tech($Fid,'Intelligence Logistics')) $Logistics[2] += 2*$ln;
 //var_dump($Logistics);
-  return $Logistics;  
+  return $Logistics;
 }
 
 function Thing_Duplicate($otid) {
@@ -680,10 +680,10 @@ function Thing_Duplicate($otid) {
   if ($T['GM_Notes']) {
     $T['GM_Notes'] = "This thing has been copied from " . $T['Name'] . "- id: $otid with this note:\n" . $T['GM_Notes'];
   }
-    
+
   $Fid = $T['Whose'];
- 
-  $Dists = Get_DistrictsT($otid);      
+
+  $Dists = Get_DistrictsT($otid);
   if ($Dists) {
     foreach ($Dists as $D) {
       $D['HostId'] = $Tid;
@@ -691,7 +691,7 @@ function Thing_Duplicate($otid) {
       Insert_db('Districts',$D);
     }
   }
-  $Mods = Get_Modules($otid); 
+  $Mods = Get_Modules($otid);
   if ($Mods) {
     foreach ($Mods as $M) {
       $M['ThingId'] = $Tid;
@@ -742,15 +742,15 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
   if (!$ThingTypes) $ThingTypes = Get_ThingTypes();
   if (!$Factions) $Factions = Get_Factions();
   $Locations = Within_Sys_Locs_Id($T['SystemId']);
-  
+
   $txt = '';
   $RawA = 0;
-  
+
 //  if ($T['id'] == 238) { echo "Here with outpost<br>"; var_dump($T); }
   $TTprops = $ThingTypes[$T['Type']]['Properties'];
-  
+
   if ($T['CurHealth'] == 0 && ($TTprops & THING_CAN_BE_SPLATED)) return '';
-  
+
   $stm = (int) (~ (int)$T['SeenTypeMask']);
 //echo "Failed to see:" . $ThingTypes[$T['Type']]['SeenBy'] . ":$stm:" . $T['SeenTypeMask'] . ":$Eyes<p>";
 //var_dump($stm);
@@ -774,12 +774,12 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
           $txt .= "<div>";
         }
       }
-       
+
       if ($T['Whose'] || $GM) {
-        $txt .= ((($Fid < 0) || ($Fid == $T['Whose']) || $GM )?( "<a href=ThingEdit.php?id=" . $T['id'] . ">" . 
+        $txt .= ((($Fid < 0) || ($Fid == $T['Whose']) || $GM )?( "<a href=ThingEdit.php?id=" . $T['id'] . ">" .
                 (empty($T['Name'])?"Unnamed":$T['Name']) . "</a>") : $T['Name'] ) . " a";
         $RawA = 1;
-      } 
+      }
       if ($TTprops & THING_HAS_LEVELS) {
         $txt .= " level " . $T['Level'] . " ";
         $RawA = 0;
@@ -791,7 +791,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
       }
       if ($T['Whose']) {
         $Who = ($Factions[$T['Whose']]['Adjective']?$Factions[$T['Whose']]['Adjective']:$Factions[$T['Whose']]['Name']);
-        if ($RawA && is_vowel($Who)) $txt .= "n";      
+        if ($RawA && is_vowel($Who)) $txt .= "n";
         if ($Div) {
           $txt .= " <span style='background:" . $Factions[$T['Whose']]['MapColour'] . "'>$Who</span>";
         } else {
@@ -805,7 +805,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
       } else {
         $txt .= " " . $ThingTypes[$T['Type']]['Name'];
       }
- 
+
 //var_dump($Locations);exit;
       if ($Div && $T['LinkId'] >= 0 && $T['SystemId'] > 0 && isset($T['WithinSysLoc']) && ($T['WithinSysLoc'] > 0)) {
         if (isset($Locations[$T['WithinSysLoc']])) {
@@ -814,7 +814,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
           $txt .= " ( Unknown Location " . $T['WithinSysLoc'] . " ) ";
         }
       }
-      
+
       if ($T['PrisonerOf']) {
         if ($GM || (isset($FACTION['id']) && $T['PrisonerOf'] == $FACTION['id'])) {
           $Fact = Get_Faction($T['PrisonerOf']);
@@ -822,27 +822,27 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
         }
       } else if ($GM && !empty($T['Orders'])) $txt .= ", <span style='background:#ffd966;'>Orders: " . $T['Orders'] . "</span>";
       if ($Images && !empty($T['Image'])) $txt .= " <img valign=top src=" . $T['Image'] . " height=100> ";
-      
+
       if ($GM) {
         $Resc =0;
         $BD = Calc_Damage($T,$Resc);
-           
+
         $txt .= " (";
         if ($TTprops & THING_HAS_HEALTH) {
           if ($TTprops & THING_CAN_MOVE) $txt .= "Speed: " . sprintf("%0.3g, ",$T['Speed']) ;
-          $txt .= "Health: " . $T['CurHealth'] . "/" . $T['OrigHealth'] . ", "; 
+          $txt .= "Health: " . $T['CurHealth'] . "/" . $T['OrigHealth'] . ", ";
         }
         if ($BD) $txt .= "Dam: " . $BD . ($Resc? "<b>*</b>":'') . ", ";
         if ($T['NebSensors']) $txt .= "N, ";
         $txt .= ")";
       } else {
         if ($TTprops & THING_HAS_HEALTH) {
-          if ($T['CurHealth']*10 <= $T['OrigHealth']) { 
+          if ($T['CurHealth']*10 <= $T['OrigHealth']) {
             $txt .= " - Badly Damaged ";
-          } else if ($T['CurHealth']*2 <= $T['OrigHealth']) { 
+          } else if ($T['CurHealth']*2 <= $T['OrigHealth']) {
             $txt .= " - Damaged ";
           }
-        }        
+        }
       }
       if ($Images) $txt .= "<br clear=all>\n";
       if ($Div) $txt .= "</div>";
@@ -860,13 +860,13 @@ function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0,$Mode=0) {
     if (!$Eyes) return '';
     $Things = Get_AllThingsAt($Sid);
     if (!$Things) return '';
-    
+
   $GM = (Access('GM') & $Mode);
 //    $ThingTypes = Get_ThingTypes();
-  
+
 //    $Factions = Get_Factions();
-    
-//if ($Sid == 4) var_dump ($Things); echo "XX<p>";   
+
+//if ($Sid == 4) var_dump ($Things); echo "XX<p>";
     $N = Get_System($Sid);
     if ($heading) {
        $Col = 'White';
@@ -874,7 +874,7 @@ function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0,$Mode=0) {
          $Fac = Get_Faction($N['Control']);
          $Col = $Fac['MapColour'];
        }
-       $txt .= "<h2 style='background:$Col;'>System " . System_Name($N,$Fid) . "</h2>"; 
+       $txt .= "<h2 style='background:$Col;'>System " . System_Name($N,$Fid) . "</h2>";
     } else {
        $txt .= "<h2>In the System is:</h2>";
     }
@@ -907,11 +907,11 @@ function Update_Militia(&$W,&$Dists,$NewOwn=0) {
       echo "Not yet available";
       return;
   }
-  
+
   $FactN = ($NewOwn?$NewOwn:$W['FactionId']);
   $Mils = Get_Things_Cond(0,"Type=20 AND SystemId=$Sys AND WithinSysLoc=$loc ");
   $Hlth = 40+Has_Tech($FactN,'Militia Training Techniques')*2;
-  
+
   $Dcount = 0;
   foreach($Dists as $D) $Dcount += ($D['Number'] * ($D['Type'] ==2?2:1));
 //echo count($Mils);
@@ -930,13 +930,13 @@ function Update_Militia(&$W,&$Dists,$NewOwn=0) {
         Put_Thing($Ml);
       }
     }
-    
+
   } else {
     $MNames = [];
 
     foreach ($Mils as $Ml) $MNames[$Ml['Name']] = 1; // Didts & Dist2 give short cut to world and districts
-    $M = ['Type'=>20, 'CurHealth'=>$Hlth, 'OrigHealth'=>$Hlth, 
-           'Whose'=>$FactN, 'SystemId'=>$Sys, 'WithinSysLoc'=>$loc, 'BuildState'=>3, 
+    $M = ['Type'=>20, 'CurHealth'=>$Hlth, 'OrigHealth'=>$Hlth,
+           'Whose'=>$FactN, 'SystemId'=>$Sys, 'WithinSysLoc'=>$loc, 'BuildState'=>3,
            'Dist1'=> $W['ThingType'], 'Dist2'=>$W['ThingId'] ];
     $Mn = 1;
     for ($Mnum = count($Mils); $Mnum < $Dcount; $Mnum++) {
@@ -981,12 +981,12 @@ function Gates_Avail($Fid) {
   $Gates = [];
   $OwnGates = Get_Things_Cond($Fid,' Type=15 AND BuildState=3'); // Warp Gates
   if (!empty($OwnGates)) $Gates = array_merge($Gates,$OwnGates);
-  
+
   $FFdata = Get_FactionFactionsCarry($Fid);
   foreach($FFdata as $FC) {
     if ($FC['Props'] & 0xf00) {
       $OGates = Get_Things_Cond($FC['FactionId1'],' Type=15 AND BuildState=3'); // Warp Gates
-      if (!empty($OGates)) $Gates = array_merge($Gates,$OGates); 
+      if (!empty($OGates)) $Gates = array_merge($Gates,$OGates);
     }
   }
   return $Gates;
@@ -999,7 +999,7 @@ function Do_Mine_Damage(&$T,&$Mine,&$N=0,$InTurn=0) { // Needs changes
   $Dsc = Has_Tech($Mine['Whose'],'Deep Space Construction');
   $Dam = $Dsc * $Mine['Level']*5;
   if (empty($N)) $N = Get_System($Mine['SystemId']);
-  
+
   if ($T['CurHealth'] > $Dam) {
     $T['CurHealth'] -= $Dam;
   } else {
@@ -1007,16 +1007,16 @@ function Do_Mine_Damage(&$T,&$Mine,&$N=0,$InTurn=0) { // Needs changes
   }
   Put_Thing($T);
   $N0 = 0;
-  
+
   $Locations = Within_Sys_Locs($N);
   $LocText = $Locations[$Mine['WithinSysLoc']];
-  
+
   if ($InTurn) {
-    TurnLog($T['Whose'],"The " . $T['Name'] . " has recieved $Dam damage from a minefield in " . $N['Ref'] . " $LocText " . 
+    TurnLog($T['Whose'],"The " . $T['Name'] . " has recieved $Dam damage from a minefield in " . $N['Ref'] . " $LocText " .
       ($T['BuildState'] > 3? " and has been destroyed." : ""),$T);
-    GMLog("The <a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a> took $Dam from a minefield in " . $N['Ref'] . " $LocText " . 
+    GMLog("The <a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a> took $Dam from a minefield in " . $N['Ref'] . " $LocText " .
       ($T['BuildState'] > 3? " and has been destroyed." : ""));
-    Report_Others($T['Whose'], $T['SystemId'],2,$T['Name'] . " has recieved damage from a minefield in " . $N['Ref'] . " $LocText " . 
+    Report_Others($T['Whose'], $T['SystemId'],2,$T['Name'] . " has recieved damage from a minefield in " . $N['Ref'] . " $LocText " .
       ($T['BuildState'] > 3? " and has been destroyed." : ""),$T);
       return "";
   } else {
@@ -1024,9 +1024,9 @@ function Do_Mine_Damage(&$T,&$Mine,&$N=0,$InTurn=0) { // Needs changes
     include_once("TurnTools.php");
     $msg = "The " . $T['Name'] . " has recieved $Dam damage from a minefield in " . $N['Ref'] . " $LocText " . ($T['BuildState'] > 3? " and has been destroyed." : "");
     TurnLog($T['Whose'],$msg,$T);
-    GMLog4Later("The <a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a> took $Dam from a minefield in " . $N['Ref'] . " $LocText " . 
+    GMLog4Later("The <a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a> took $Dam from a minefield in " . $N['Ref'] . " $LocText " .
       ($T['BuildState'] > 3? " and has been destroyed." : ""));
-    Report_Others($T['Whose'], $T['SystemId'],2,$T['Name'] . " has recieved damage from a minefield in " . $N['Ref'] . " $LocText " . 
+    Report_Others($T['Whose'], $T['SystemId'],2,$T['Name'] . " has recieved damage from a minefield in " . $N['Ref'] . " $LocText " .
       ($T['BuildState'] > 3? " and has been destroyed." : ""),$T);
     return $msg;
   }
@@ -1038,15 +1038,16 @@ function Move_Thing_Within_Sys(&$T,$Dest,$InTurn) {
 // Is there a mine here?
   $Mines = Get_Things_Cond(0,"Type=10 AND SystemId=" . $T['SystemId'] . " AND BuildState=3");
   if (empty($Mines)) return;
-  foreach($Mines as $i=>&$M) if ($M['WithinSysLoc']>500) unset($Mines[$i]); // 
+  foreach($Mines as $i=>&$M) if ($M['WithinSysLoc']>500) unset($Mines[$i]); //
   if (empty($Mines)) return;
-  
+  $N0 = 0;
+
 // From current to Deep space
   if ($WSL > 2 && $WSL < 500) {
     switch (intdiv($WSL,100)) {
     case 1: //Orbiting
     case 3:
-      break; 
+      break;
     case 2: //On
     case 4:
       foreach($Mines as $M) {
@@ -1056,7 +1057,7 @@ function Move_Thing_Within_Sys(&$T,$Dest,$InTurn) {
         }
       }
       break;
-          
+
     default:
     }
   }
@@ -1082,11 +1083,11 @@ function Move_Thing_Within_Sys(&$T,$Dest,$InTurn) {
         }
       }
       break;
-          
+
     default:
     }
   }
-  
+
   $T['WithinSysLoc'] = $Dest;
 }
 
@@ -1109,7 +1110,7 @@ function Empty_Thing(&$T) {
         }
         db_delete('Things',$CTi);
       } else {
-        FollowUp($CT['Whose'], "<a href=ThingEdit.php?id=$CTi>" . $CT['Name'] . "</a> was on board " . $T['Name'] . " when it was destoyed.");                
+        FollowUp($CT['Whose'], "<a href=ThingEdit.php?id=$CTi>" . $CT['Name'] . "</a> was on board " . $T['Name'] . " when it was destoyed.");
         $CT['LinkId'] = 0;
         $CT['SystemId'] = GameFeature('Limbo',0);
         Put_Thing($CT);
@@ -1144,7 +1145,7 @@ function Recalc_Prisoner_Counts() {
   foreach ($Prisoners as $P) {
     $PCounts[$P['PrisonerOf']]++;
   }
-  
+
   foreach ($Facts as $F) {
     if ($PCounts[$F['id']] > 0) {
       $F['HasPrisoners'] = $PCounts[$F['id']];

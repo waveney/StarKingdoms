@@ -33,9 +33,9 @@ function ValidateTurn($For = 0) {
       $Tid = $P['ThingId'];
       if ($Tid == 0) {
         dostaffhead("Player Actions");
-        echo "<h2 class=Err>Warning - your project: <a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a> is level " . $P['Level'] . 
+        echo "<h2 class=Err>Warning - your project: <a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a> is level " . $P['Level'] .
              " trying to make an unknown thing</h2>\n";
-        $Valid = 0;               
+        $Valid = 0;
         continue;
       }
       $T = Get_Thing($Tid);
@@ -43,26 +43,26 @@ function ValidateTurn($For = 0) {
 
       if (empty($T)) {
         dostaffhead("Player Actions");
-        echo "<h2 class=Err>Warning - your project: <a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a> is level " . $P['Level'] . 
+        echo "<h2 class=Err>Warning - your project: <a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a> is level " . $P['Level'] .
              " trying to make an unknown thing</h2>\n";
         $Valid = 0;
       } else if ($P['Level'] != $T['Level']) {
         if ($P['Level'] < $T['Level']) {
           dostaffhead("Player Actions");
-          echo "<h2 class=Err>Warning - your project: <a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a>  is level " . $P['Level'] . 
+          echo "<h2 class=Err>Warning - your project: <a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a>  is level " . $P['Level'] .
                " trying to make a level " . $T['Level'] . " thing</h2>\n";
-          $Valid = 0;          
+          $Valid = 0;
         } else {
           dostaffhead("Player Actions");
-          echo "<h2 class=Err>Warning - your project: <a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a>  is level " . $P['Level'] . 
+          echo "<h2 class=Err>Warning - your project: <a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a>  is level " . $P['Level'] .
                " trying to make a level " . $T['Level'] . " thing</h2>\n";
           $Valid = 0;
         }
       }
     }
   }
- 
- /* 
+
+ /*
   $Things = Get_Things_Cond($Fid,"Instruction!=0") {
   foreach ($Things as $T) {
     switch ($T['Instruction']) {
@@ -90,7 +90,7 @@ function ValidateTurn($For = 0) {
       case 'Make Planet Mine':
       case 'Construct Command Relay Station':
       case 'Repair Command Node': // Not coded yet
-      case 'Make Something': 
+      case 'Make Something':
       case 'Make Warpgate':
       case 'Link Repair':
         $Prog = Has_Tech($T['Whose'],'Deep Space Construction');
@@ -102,22 +102,22 @@ function ValidateTurn($For = 0) {
         $T['Progress'] = min($T['ActionsNeeded'],$T['Progress']+$ProgGain);
         Put_Thing($T);
         break;
-        
+
       case 'Collaborative DSC': // Dist1 has Thing number being helped
         $Prog = Has_Tech($T['Whose'],'Deep Space Construction');
         $Mods = Get_ModulesType($Tid, 3);
         $ProgGain = $Prog*$Mods[0]['Number'];
         $HT = Get_Thing($T['Dist1']);
         if ($HT && $HT['Instruction']) {
-          $HT['Progress'] = min($HT['ActionsNeeded'],$HT['Progress']+$ProgGain);        
+          $HT['Progress'] = min($HT['ActionsNeeded'],$HT['Progress']+$ProgGain);
           GMLog("$ProgGain progress on " . $ThingInstrs[abs($HT['Instruction'])] . " for " . $Facts[$HT['Whose']]['Name'] . ":" . $HT['Name']);
           TurnLog($HT['Whose'],$T['Name'] . " did $ProgGain towards completing " . $ThingInstrs[abs($HT['Instruction'])] . " by " . $HT['Name']);
           TurnLog($T['Whose'],$T['Name'] . " did $ProgGain towards completing " . $ThingInstrs[abs($HT['Instruction'])] . " by " . $HT['Name']);
 
           Put_Thing($HT);
         }
-        break;      
-        
+        break;
+
       case 'Analyse Anomaly':
         $Aid = $T['ProjectId'];
         $Fid = $T['Whose'];
@@ -153,22 +153,22 @@ function ValidateTurn($For = 0) {
               break 2;
             }
           }
-          TurnLog($Fid,$T['Name'] . " is supposed to be analysing an anomaly - but there isn't one",$T);                    
+          TurnLog($Fid,$T['Name'] . " is supposed to be analysing an anomaly - but there isn't one",$T);
         }
         break;
-        
+
       case 'Salvage':
         $Prog = Has_Tech($T['Whose'],'Salvage Rigs');
         GMLog("$Prog progress on " . $ThingInstrs[abs($T['Instruction'])] . " for " . $Facts[$T['Whose']]['Name'] . ":" . $T['Name']);
         $T['Progress'] = min($T['ActionsNeeded'],$T['Progress']+$Prog);
         Put_Thing($T);
         break;
-    
-      default: 
+
+      default:
         break;
      }
    }
-    
+
     }
   }
   */
@@ -187,14 +187,14 @@ function ValidateTurn($For = 0) {
         if ($PlanetTypes[$P['Type']]['Append']) $type .= " Planet";
         $Name = $P['Name'];
         break;
-        
+
       case 2: /// Moon
         $WH = $M = Get_Moon($W['ThingId']);
         $type = $PlanetTypes[$M['Type']]['Name'];
         if ($PlanetTypes[$M['Type']]['Append']) $type .= " Moon";
         $Name = $M['Name'];
         break;
-    
+
       case 3: // Thing
         $WH = $T = Get_Thing($W['ThingId']);
         $type = $TTypes[$T['Type']]['Name'];
@@ -218,23 +218,24 @@ function ValidateTurn($For = 0) {
       } elseif ($Used > 2) {
         dostaffhead("Player Actions");
         echo "<h2 class=Err>Warning - <b>This can be optimised</b> can only be used once on $Name</h2>";
-        $Valid = 0;                    
-      } elseif ($DeltaSum  != 0) { 
+        $Valid = 0;
+      } elseif ($DeltaSum  != 0) {
         dostaffhead("Player Actions");
         echo "<h2 class=Err>Warning - <b>This can be optimised</b> on $Name Does not Sum to Zero</h2>";
-        $Valid = 0;               
+        $Valid = 0;
       }
     }
   }
-  
-  
+
+
   return $Valid;
 }
 
+global $SkipAccessCheck;
 
   if (!isset($SkipAccessCheck)) A_Check('Player');
 //  dostaffhead("Player Actions");
-  
+
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
       case 'Submit' :  // TODO add checking of turn
@@ -245,22 +246,22 @@ function ValidateTurn($For = 0) {
         }
 
         $FACTION['TurnState'] = $PlayerStates['Turn Submitted'];
-        Put_Faction($FACTION);   
+        Put_Faction($FACTION);
         break;
 
       case 'SubmitForce' :  // Yes to submit unfinished
         $FACTION['TurnState'] = $PlayerStates['Turn Submitted'];
-        Put_Faction($FACTION);   
+        Put_Faction($FACTION);
         break;
-          
+
       case 'Unsub' :
         if ($FACTION['TurnState'] == $PlayerStates['Turn Submitted']) {
           $FACTION['TurnState'] = (($GAME['Turn'] == 0)? $PlayerStates['Setup']: $PlayerStates['Turn Planning']);
-          Put_Faction($FACTION);   
+          Put_Faction($FACTION);
         } else {
           echo "<h1 class=Err>Sorry, not allowed now</h1>";
         }
-    
+
         break;
     }
   }
@@ -278,7 +279,7 @@ function ValidateTurn($For = 0) {
   if (count($Fs) > 1) {
     foreach($Fs as $Fid) {
       $F = $Facts[$Fid];
-      echo "<a href=Access.php?id=$Fid&Key=" . $F['AccessKey'] . " style='background:" . $F['MapColour'] . "; color: " . ($F['MapText']?$F['MapText']:'black') . 
+      echo "<a href=Access.php?id=$Fid&Key=" . $F['AccessKey'] . " style='background:" . $F['MapColour'] . "; color: " . ($F['MapText']?$F['MapText']:'black') .
          ";text-shadow: 2px 2px 3px white;padding:2px'><b>"  . $F['Name'] . "</b></a> ";
     }
 
@@ -287,7 +288,7 @@ function ValidateTurn($For = 0) {
 
 
   echo "You can always get back here by clicking on 'Faction Menu' on the bar above.<br>\n";
-  
+
   Player_Page();
-  dotail();  
+  dotail();
 ?>

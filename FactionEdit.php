@@ -3,8 +3,10 @@
   include_once("GetPut.php");
   include_once("SystemLib.php");
   include_once("PlayerLib.php");
-    
-  A_Check('Player');  
+
+  global $FACTION,$GAMEID;
+
+  A_Check('Player');
   if (Access('Player')) {
     if (!$FACTION) {
       if (!Access('GM') ) Error_Page("Sorry you need to be a GM or a Player to access this");
@@ -12,7 +14,7 @@
       $Fid = $FACTION['id'];
       $F = &$FACTION;
     }
-  } 
+  }
   if (Access('GM') ) {
     A_Check('GM');
     if (isset( $_REQUEST['F'])) {
@@ -40,18 +42,18 @@ function Show_Faction(&$F,$Mode) {
   $PTs = Get_PlanetTypeNames();
   $GM = (isset($_REQUEST['FORCE'])?0:Access('GM'));
   $Setup = 0;
-  
+
   $ReadOnly = (($F['TurnState'] != 0) && !$GM)? " readonly " : "";// Readonly when out of setup
-  
+
   if (Access('God')) echo "You can only delete a faction with -99 credits<br>";
-  
+
   echo "<form method=post id=mainform enctype='multipart/form-data' action=FactionEdit.php>";
-  if ($GM) echo "<h2>GM: <a href=FactionEdit.php?id=$Fid&FORCE>This page in Player Mode</a></h2>";  
+  if ($GM) echo "<h2>GM: <a href=FactionEdit.php?id=$Fid&FORCE>This page in Player Mode</a></h2>";
   echo "<div class=tablecont><table width=90% border class=SideTable>\n";
   Register_AutoUpdate('Faction',$Fid);
   echo fm_hidden('id',$Fid);
   if ($GM) echo "<tr><td>Id:<td>$Fid<td>Game<td>$GAMEID<td>" . $GAME['Name'];
-  
+
   echo "<tr>" . fm_text('Faction Name',$F,'Name',2);
   echo "<td rowspan=4 colspan=4><table><tr>";
     echo fm_DragonDrop(1,'Image','Faction',$Fid,$F,1,'',1,'','Faction');
@@ -63,8 +65,8 @@ function Show_Faction(&$F,$Mode) {
   } else if ($F['Biosphere2']) {
     echo ", " .  $PTs[$F['Biosphere2']];
   } else if ($F['Biosphere3']) {
-    echo ", " .  $PTs[$F['Biosphere3']];    
-  } 
+    echo ", " .  $PTs[$F['Biosphere3']];
+  }
   echo "<tr>" . fm_text('Player Name',$F,'Player',2);
 
   echo "<tr><td>Player State:<td>" . (($GM)? fm_select($PlayerState,$F,'TurnState'): $PlayerState[$F['TurnState']]);
@@ -84,7 +86,7 @@ function Show_Faction(&$F,$Mode) {
     if ($Nam = GameFeature('Currency1')) echo "<tr><td>$Nam:<td>" . $F['Currency1'];
     if ($Nam = GameFeature('Currency2')) echo "<tr><td>$Nam:<td>" . $F['Currency2'];
     if ($Nam = GameFeature('Currency3')) echo "<tr><td>$Nam:<td>" . $F['Currency3'];
-  }  
+  }
   echo "<tr>" . fm_text('Adjective Name',$F,'Adjective',2) . "<td>To refer to your ships etc rather than your faction name - optional";
   echo "<tr>" . fm_text("Trait 1 Name",$F,'Trait1',2,'',$ReadOnly). "<td>Short name that is unique";
   echo "<td>" . ($GM ? fm_checkbox("Automated ",$F,'Trait1Automated') : ($F['Trait1Automated']? "Automated" : "Not Automated"));
@@ -95,12 +97,12 @@ function Show_Faction(&$F,$Mode) {
   echo "<tr>" . fm_text("Trait 3 Name",$F,'Trait3',2,'',$ReadOnly). "<td>Short name that is unique";
   echo "<td>" . ($GM ? fm_checkbox("Automated ",$F,'Trait3Automated') : ($F['Trait3Automated']? "Automated" : "Not Automated"));
   echo "<tr>" . fm_textarea('Description',$F,'Trait3Text',8,2);
-  
+
   echo "<tr>" . fm_textarea('Notes',$F,'Notes',8,2);
 
   if ($GM) {
     echo "<tr>" . fm_textarea('Features',$F,'Features',8,2);
-    echo "<tr>" . fm_textarea('GM_Notes',$F,'GM_Notes',8,2);  
+    echo "<tr>" . fm_textarea('GM_Notes',$F,'GM_Notes',8,2);
     echo "<tr>" . fm_text('Map Colour',$F,'MapColour') . fm_text('Map Text Colour',$F,'MapText') . fm_number('HomeWorld',$F,'HomeWorld');
     echo fm_number("Prisoner Count",$F,'HasPrisoners');
     echo "<tr>" . fm_number('Thing List Type', $F,'ThingType') . fm_number('List Build State', $F,'ThingBuild');
@@ -142,7 +144,7 @@ function Show_Faction(&$F,$Mode) {
     }
   }
   echo "</table></div>\n";
-  
+
   if (Access('God')) {
     echo "<input type=submit name=nothing value=nothing hidden>";
     echo "<center><form method=post action=FactionEdit.php>" . fm_hidden('id', $Fid) .
@@ -150,49 +152,49 @@ function Show_Faction(&$F,$Mode) {
     if ($F['Credits'] == -99) echo "<input type=submit name=ACTION value='Delete' class=Button onclick=\"return confirm('Are you sure?')\" >";
     echo "</form></center>";
   }
-  
+
 //  echo "<h2><a href=MapFull.php?F=$Fid>Faction Map</a></h2>";
 }
 
 // START HERE
 //  var_dump($_REQUEST);
 //  $F = Get_Faction($Fid);
-  
+
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
     case 'New Key' :
       $F['AccessKey'] = rand_string(40);
       Put_Faction($F);
       break;
-      
+
     case 'NEW':
       $F = [];
       echo "<form method=post action=FactionEdit.php?ACTION=Create>";
       echo "Name: <input type=text name=Name  onchange=this.form.submit()>";
       echo "</form>";
       dotail();
-      
+
     case 'Create':
       $F = ['Name'=> $_REQUEST['Name'], 'GameId'=>$GAMEID, 'AccessKey'=> rand_string(40)] ;
       $Fid = Put_Faction($F);
       $F = Get_Faction($Fid);
       break;
-      
+
     case 'Delete':
       db_delete('Factions',$Fid);
       echo "<h2>Faction deleted</h2>\n";
       dotail();
       break;
-           
-    default: 
+
+    default:
       break;
     }
   }
-  
-  
+
+
   Show_Faction($F,1);
-  
-  
-  
+
+
+
   dotail();
 ?>

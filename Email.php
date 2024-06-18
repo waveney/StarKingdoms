@@ -7,6 +7,15 @@ require 'vendor/phpmailer/phpmailer/src/Exception.php';
 require 'vendor/phpmailer/phpmailer/src/PHPMailer.php';
 require 'vendor/phpmailer/phpmailer/src/SMTP.php';
 
+define('EMAIL_SYS',0);
+define('EMAIL_DANCE',1);
+define('EMAIL_TRADE',2);
+define('EMAIL_INVOICE',3);
+define('EMAIL_USER',4);
+define('EMAIL_SIGNUP',5);
+define('EMAIL_VOL',6);
+define('EMAIL_MAILLIST',7);
+
 function Pretty_Print_To($to) {
   $str = '';
   if (is_array($to)) {
@@ -33,11 +42,15 @@ function Pretty_Print_To($to) {
               break;
           }
         } else {
-          $str .= "to: $too";
+          if (is_array($too)) {
+            $str .= "to wierd array:" . implode(", ", $too);
+          } else {
+            $str .= "to: $too";
+          }
         }
       }
     } else {
-      $str .= "to: " . $to[0] . (isset($to[1])? " &lt;" . $to[1] . "&gt; ":'');      
+      $str .= "to: " . $to[0] . (isset($to[1])? " &lt;" . $to[1] . "&gt; ":'');
     }
   } else {
     $str .= "to: " . $to;
@@ -59,52 +72,62 @@ function ConvertHtmlToText(&$body) {
 //$to can be single address, a [address, name] or [[to,address,name],[cc,addr,name],bcc,addr,name],replyto,addr,name]...]
 //$atts can be simple fie or [[file, name],[file,name]...]
 
-function NewSendEmail($SrcType,$SrcId,$to,$sub,&$letter,&$attachments=0,&$embeded=0,$from='') { 
-  global $FESTSYS,$CONF;
-  
-//  echo "Debug: " .( UserGetPref('EmailDebug')?2:0) . "<p>";
+function NewSendEmail($SrcType,$SrcId,$to,$sub,&$letter,&$attachments=0,&$embeded=0,$from='') {
+  global $CONF;
+
+//  echo "Debug: XXX" .( UserGetPref('EmailDebug')?2:0) . "<p>";
+//var_dump($sub,$attachments,$to);
+
+/*if (Access('SysAdmin')) {
+  echo "Calling NewSendEmail: ";
+  var_dump($to); echo "<P>";
+  var_dump($from); echo "<P>";
+}*/
   $Send = 1;
-  if (@ $CONF['testing']){
-    if (strstr($CONF['testing'],'@')) { 
+  if (!empty($CONF['testing'])){
+    if (strstr($CONF['testing'],'@')) {
       $to = $CONF['testing'];
-    } else {    
+    } else {
       echo "<p>Would send email to " . Pretty_Print_To($to);
       if ($from) echo "From: " . Pretty_Print_To($from);
       echo " with subject: $sub<p>Content:<p>$letter<p>\n";
-    
+      debug_print_backtrace();
+
       echo "Text: " . ConvertHtmlToText($letter);
       if ($attachments) {
+        if (!empty($CONF['testing'])) echo var_export($attachments);
         if (is_array($attachments)) {
           foreach ($attachments as $i=>$att) {
             if (is_array($att)) {
               if (isset($att[0])) {
                 echo "Would attach " . $att[0] . " as " . $att[1] . "<p>";
               } else {
-                echo "Would attach " . $att['AttFileName'] . "<p>";              
+                echo "Would attach " . $att . "<p>";
               }
             } else {
               echo "Would Attach " . $att . "<p>";
             }
-          }                 
+          }
         } else {
-          echo "Would attach $attachments<p>";       
+          echo "Would attach $attachments<p>";
         }
       }
       if ($embeded) {
+        if (!empty($CONF['testing'])) echo var_export($embeded);
         if (is_array($embeded)) {
           foreach ($embeded as $i=>$att) {
             if (is_array($att)) {
               if (isset($att[0])) {
                 echo "Would embed " . $att[0] . " as " . $att[1] . "<p>";
               } else {
-                echo "Would embed " . $att['AttFileName'] . "<p>";
+                echo "Would embed " . $att . "<p>";
               }
             } else {
-                echo "Would embed " . $att . "<p>";            
+                echo "Would embed " . $att . "<p>";
             }
-          }                 
+          }
         } else {
-          echo "Would embed $embeded<p>";       
+          echo "Would embed $embeded<p>";
         }
       }
     $Send = 0;
@@ -112,42 +135,57 @@ function NewSendEmail($SrcType,$SrcId,$to,$sub,&$letter,&$attachments=0,&$embede
 //    return;  // Under test this will then log, and not send
     }
   }
-  $From = $FESTSYS['SMTPuser'];
+  $From = Feature('SMTPuser');
   $Atts = [];
-  
+
+  $EmailFrom = Feature('EmailFromAllowed',0);
+  $EmailReplyTo = Feature('EmailReplyTo',0);
+
   $email = new PhpMailer(true);
   try {
     $email->SMTPDebug = ((Access('SysAdmin') && UserGetPref('EmailDebug'))?2:0);  // 2 general testing, 4 problems...
     $email->isSMTP();
-    $mailserv = $FESTSYS['HostURL'];
+    $mailserv = Feature('SMPTserver',Feature('HostURL'));
     if (Feature('SMTPsubdomain')) $mailserv = Feature('SMTPsubdomain') . "." . $mailserv;
     $email->Host = $mailserv;
     $email->SMTPAuth = true;
     $email->AuthType = 'LOGIN';
-    $email->From = $email->Username = $FESTSYS['SMTPuser'] . "@" . $FESTSYS['HostURL'];
-    $email->FromName = $FESTSYS['FestName'];
-    $email->Password = $FESTSYS['SMTPpwd'];
+    $email->From = $email->Username = $From;
+    $email->FromName = Feature('FestName');
+    $email->Password = Feature('SMTPpwd');
     $email->SMTPSecure = 'tls';
     $email->Port = 587;
-    $email->SMTPOptions = ['ssl' => [ 'verify_peer' => false, 'verify_peer_name' => false, 'allow_self_signed' => true]];
-    
-    if ($from) {
-      if (is_array($from)) {
-        $email->setFrom($from[0],$from[1]);
+
+    if ($EmailFrom) {
+      if ($from) {
+        if (is_array($from)) {
+          $email->setFrom($from[0],$from[1]);
+        } else {
+          $email->setFrom($from);
+        }
       } else {
-        $email->setFrom($from);
+        $email->setFrom(Feature('DefaultFrom','No-Reply@' . Feature('HostURL')));
+        if ($from) {
+          $EmailReplyTo = $from;
+        }
       }
+    } else if ($from) {
+      $EmailReplyTo = $from;
     }
-    
+
     if (is_array($to)) {
       if (is_array($to[0])) {
         foreach ($to as $i=>$too) {
           if (!isset($too[0])) continue;
-          $a = $too[1];
+          $a = str_replace(' ','',$too[1]);
           $n = (isset($too[2])?$too[2]:'');
           switch ($too[0]) {
             case 'to':
               $email->addAddress($a,$n);
+              if (empty($n)) {
+                trigger_error("Email address missing - $a - $n" );
+                exit;
+              }
               $To = "$n <$a>";
               break;
             case 'cc':
@@ -158,16 +196,19 @@ function NewSendEmail($SrcType,$SrcId,$to,$sub,&$letter,&$attachments=0,&$embede
               break;
             case 'replyto':
               $email->addReplyTo($a,$n);
+              $EmailReplyTo = 0;
               break;
             case 'from':
-              $email->setFrom($a,$n);
-              $From = "$n <$a>";
+              if ($EmailFrom) {
+                $email->setFrom($a,$n);
+                $From = "$n <$a>";
+              }
               break;
-          } 
+          }
         }
       } else {
         $email->addAddress($to[0],(isset($to[1])?$to[1]:''));
-        $To = $to[0];  
+        $To = $to[0];
       }
     } else {
       $email->addAddress($to);
@@ -177,6 +218,9 @@ function NewSendEmail($SrcType,$SrcId,$to,$sub,&$letter,&$attachments=0,&$embede
     $email->Body = $letter; // HTML format
     $email->AltBody = ConvertHtmlToText($letter); // Text format
 
+    if ($EmailReplyTo) $email->addReplyTo($EmailReplyTo,Feature('FestName'));
+
+
     if ($attachments) {
       if (is_array($attachments)) {
         foreach ($attachments as $i=>$att) {
@@ -184,15 +228,18 @@ function NewSendEmail($SrcType,$SrcId,$to,$sub,&$letter,&$attachments=0,&$embede
             if (isset($att[0])) {
               $email->addAttachment($att[0],$att[1]);
               $Atts[] = [$att[0],$att[1],0];
-            } else {
+            } elseif (isset($att['AttFileName'])) {
               $email->addAttachment($att['AttFileName']);
               $Atts[] = ["",$att['AttFileName'],0];
+            } else {
+              $email->addAttachment($att);
+              $Atts[] = ["",$att,0];
             }
-          } else {  
+          } else {
             $email->addAttachment($att);
             $Atts[] = ["",$att,0];
           }
-        }                 
+        }
       } else {
         $email->addAttachment($attachments);
         $Atts[] = ["",$attachments,0];
@@ -200,7 +247,7 @@ function NewSendEmail($SrcType,$SrcId,$to,$sub,&$letter,&$attachments=0,&$embede
     }
     if ($embeded) {
       if (is_array($embeded)) {
-        foreach ($embeded as $i=>$att) {  
+        foreach ($embeded as $i=>$att) {
           if (is_array($att)) {
             if (isset($att[0])) {
               $email->addEmbeddedImage($att[0],$att[1]);
@@ -215,13 +262,13 @@ function NewSendEmail($SrcType,$SrcId,$to,$sub,&$letter,&$attachments=0,&$embede
           }
         }
       } else {
-        $email->addEmbeddedImage($embeded,0);       
+        $email->addEmbeddedImage($embeded,0);
         $Atts[] = ["",$embeded,1];
       }
     }
 
     if ($Send) $email->Send();
-    
+
   } catch (Exception $e) {
     echo 'Message could not be sent. Mailer Error: ', $email->ErrorInfo;
   }
@@ -236,15 +283,17 @@ function NewSendEmail($SrcType,$SrcId,$to,$sub,&$letter,&$attachments=0,&$embede
   }
 }
 
-function Get_Email_Proformas() { 
+function Get_Email_Proformas() {
   global $db;
+  $full = [];
   $res = $db->query("SELECT * FROM EmailProformas ORDER BY SN ");
   if ($res) while ($typ = $res->fetch_assoc()) $full[$typ['id']] = $typ;
   return $full;
 }
 
-function Get_Email_Proformas_By_Name() { 
+function Get_Email_Proformas_By_Name() {
   global $db;
+  $full = [];
   $res = $db->query("SELECT * FROM EmailProformas ORDER BY SN ");
   if ($res) while ($typ = $res->fetch_assoc()) $full[$typ['SN']] = $typ;
   return $full;
@@ -252,6 +301,7 @@ function Get_Email_Proformas_By_Name() {
 
 function Get_Email_Proforma($id) {
   global $db;
+
   if (is_numeric($id)) {
     $res=$db->query("SELECT * FROM EmailProformas WHERE id=$id");
   } else {
@@ -261,7 +311,7 @@ function Get_Email_Proforma($id) {
     $ans = $res->fetch_assoc();
     return $ans;
   }
-  return 0; 
+  return 0;
 }
 
 function Put_Email_Proforma(&$now) {
@@ -271,33 +321,50 @@ function Put_Email_Proforma(&$now) {
 }
 
 function Parse_Proforma(&$Mess,$helper='',$helperdata=0,$Preview=0,&$attachments=0,&$embeded=[]) {
-  global $PLANYEAR,$YEARDATA,$FESTSYS,$USERID;
+  global $PLANYEAR,$YEARDATA,$USERID,$USER;
   static $attnum = 0;
   $Reps = [];
-  
-  while (preg_match('/\*(\w*)\*/',$Mess)) {
+  $Limit = 0;
+//echo "Passing <p>";
+
+  while (preg_match('/\*(.*?)\*/',$Mess)) {
+//echo "<p>Here<p>";
+    if ($Limit++ > 10) break; // Limit recursion to 10 deep
+    $Matches = [];
+    $mtch = [];
     if (preg_match_all('/\*(\S*)\*/',$Mess,$Matches)) {
       foreach($Matches[1] as $key) {
+//echo "Doing $key<br>";
         if (!isset($Reps[$key])) {
           switch ($key) {
-          case 'PLANYEAR': 
+          case 'PLANYEAR':
           case 'THISYEAR': // For historic proformas should be removed in time
+          case 'YEAR':
             $rep = $PLANYEAR;
             break;
-          case 'NEXTYEAR': 
+          case 'NEXTYEAR':
             $rep = $PLANYEAR+1;
             break;
           case 'DATES':
             $rep = FestDate($YEARDATA['FirstDay']) . " to " . FestDate($YEARDATA['LastDay'],'M') ;
             break;
+          case 'FESTDAY0':
+            $rep = FestDate($YEARDATA['FirstDay'],'L') ;
+            break;
           case 'FESTIVAL':
-            $rep = $FESTSYS['FestName'];
+            $rep = Feature('FestName');
             break;
           case 'HOST':
-            $rep = $FESTSYS['HostURL'];
+            $rep = Feature('HostURL');
+            break;
+          case 'TOWN':
+            $rep = Feature('FestHomeName');
+            break;
+          case 'ID':
+            $rep = ($helperdata['id'] ?? 0);
             break;
           case (preg_match('/MAILTO_(.*)/',$key,$mtch)?true:false):
-            $rep = "<a href='mailto:" . $mtch[1] . "@" . $FESTSYS['HostURL'] . "'>" . $mtch[1] . "@" . $FESTSYS['HostURL'] . "</a>";
+            $rep = "<a href='mailto:" . $mtch[1] . "@" . Feature('HostURL') . "'>" . $mtch[1] . "@" . Feature('HostURL') . "</a>";
             break;
           case (preg_match('/WEBINT(:.*)/',$key,$mtch)?true:false):
             $bits = preg_split('/:/',$mtch[1],3);
@@ -309,10 +376,22 @@ function Parse_Proforma(&$Mess,$helper='',$helperdata=0,$Preview=0,&$attachments
           case (preg_match('/WEB(:.*)/',$key,$mtch)?true:false):
             $bits = preg_split('/:/',$mtch[1],3);
             $url = '';
-            $txt = $FESTSYS['HostURL'];
+            $txt = Feature('HostURL');
             if (isset($bits[1])) $url = $bits[1];
             if (isset($bits[2])) { $txt = $bits[2]; $txt = preg_replace('/_/',' ',$txt); }
-            $rep = "<a href='https://" . $FESTSYS['HostURL'] . ($url? "/$url" : "") . "'>$txt</a>";
+            $url = preg_replace_callback('/\%(\S*?)\%/',function ($matches) use ($helper,$helperdata,$Preview,$attachments,$embeded) {
+                $rtxt = "*" . $matches[1] . "*";
+                Parse_Proforma($rtxt,$helper,$helperdata,$Preview,$attachments,$embeded);
+                return $rtxt;
+              }, $url);
+            $rep = "<a href='https://" . Feature('HostURL') . ($url? "/$url" : "") . "'>$txt</a>";
+            break;
+          case (preg_match('/URL(:.*)/',$key,$mtch)?true:false):
+            $bits = preg_split('/:/',$mtch[1],3);
+            $url = '';
+            if (isset($bits[1])) $url = $bits[1];
+            if (isset($bits[2])) { $txt = $bits[2]; $txt = preg_replace('/_/',' ',$txt); }
+            $rep = "<a href='https://$url'>$txt</a>";
             break;
           case (preg_match('/READFILE_(.*)/',$key,$mtch)?true:false):
             $file = file_get_contents($mtch[1]);
@@ -331,7 +410,7 @@ function Parse_Proforma(&$Mess,$helper='',$helperdata=0,$Preview=0,&$attachments
               Set_User();
               if (!$attnum) system("rm Temp/$USERID.*");
               $tf = $USERID . "." . $attnum . "." . time() . ".$sfx";
-              copy($mtch[1],"Temp/$tf");    
+              copy($mtch[1],"Temp/$tf");
               $rep = "<img src='Temp/$tf'>";
             } else {
               $rep = "<img src=cid:img_$attnum.$sfx>";
@@ -342,10 +421,28 @@ function Parse_Proforma(&$Mess,$helper='',$helperdata=0,$Preview=0,&$attachments
             $Prof = Get_Email_Proforma($mtch[1]);
             $rep = ($Prof?$Prof:("Unknown Email Proforma " . $mtch[1] . "<p>"));
             break;
+          case (preg_match('/FEAT:(.*)/',$key,$mtch)?true:false):
+            $bits = explode(':',$mtch[1]);
+            $rep = Feature($bits[0],($bits[1]??''));
+            break;
+          case 'SENDER':
+            $rep = (empty($USER['SN'])?"The *FESTNAME*":$USER['SN']);
+            break;
+          case (preg_match('/DAY(.*)/',$key,$mtch)?true:false):
+            $day = $mtch[1];
+            $rep = FestDate($day,'L');
+            break;
+          case (preg_match('/ATTACH_(.*)/',$key,$mtch)?true:false):
+            include_once("DocLib.php");
+            $fn = "Store" . File_FullName($mtch[1]);
+//            var_dump($fn);
+            $attachments[]= $fn;
+            $rep = ''; //$fn for testing
+            break;
 
           default:
- //var_dump($helper,$helperdata,$attachments,$embeded);
-            $rep = ($helper?$helper($key,$helperdata,$attachments,$embeded):"*$key*");
+// var_dump($helper,$helperdata,$attachments,$embeded);
+            $rep = ($helper?$helper($key,$helperdata,$attachments,$embeded):"@@$key@@");
             break;
           }
         $Reps[$key] =$rep;
@@ -359,43 +456,63 @@ function Parse_Proforma(&$Mess,$helper='',$helperdata=0,$Preview=0,&$attachments
 
     }
   }
-  
+
   $Mess = preg_replace('/(?<!<p>)\n\s*\n+\s*/mi',"\n\n<p>",$Mess);
 }
 
 
 // helper is a function that takes (THING,helperdata,atts) to return THING - not needed for generic fields typical THINGs are DETAILS, DEPOSIT...
-// if mescat > 30 chars it is assumed to be the proforma itself
+// if mescat > 40 chars it is assumed to be the proforma itself
 function Email_Proforma($Src,$SrcId,$to,$mescat,$subject,$helper='',$helperdata=0,$logfile='',&$attachments=0,$embeded=0,$from='') {
-  global $PLANYEAR,$YEARDATA,$FESTSYS;
-  if (strlen($mescat) < 30) {
+  global $PLANYEAR,$YEARDATA,$CONF;
+
+  if (strlen($mescat) < 40) {
     $Prof = Get_Email_Proforma($mescat);
     $Mess = ($Prof? $Prof['Body'] : "Unknown message $mescat ");
+    if (!$Prof && !empty($CONF['testing'])) debug_print_backtrace();
   } else {
     $Mess = $mescat;
   }
   Parse_Proforma($Mess,$helper,$helperdata,0,$attachments,$embeded);
-  
+//echo "<p>After Pass:"; var_dump($attachments);
   NewSendEmail($Src,$SrcId,$to,$subject,$Mess,$attachments,$embeded,$from);
-  
+//echo "<p>After Send:"; var_dump($attachments);
+  if (isset($Prof)) {
+    $Callback = $helper . "_Callback";
+//    echo "Got Here";
+    if (function_exists($Callback)) {
+      $Callback($mescat,$helperdata);
+    }
+  }
+
   if ($logfile) {
-    $logf = fopen("LogFiles/$logfile.txt","a");
-    fwrite($logf,"\n\nEmail to : " . Pretty_Print_To($to) . "Subject:$subject\n");
+    $logf = fopen("LogFiles/$logfile","a");
+    fwrite($logf,"\n\nOn:" . date('j M Y  H:i:s') . "\nEmail to : " . Pretty_Print_To($to) . "Subject:$subject\n");
     if ($from) fwrite($logf,"From: " . Pretty_Print_To($from));
     fwrite($logf,"\n\n$Mess");
 
     if ($attachments) {
+      fwrite($logf,"\n\nAttachments:\n\n");
+      fwrite($logf, var_export($attachments));
       if (is_array($attachments)) {
-        foreach ($attachments as $i=>$att) fwrite($logf," With attachment: " . $att[0] . " as " . $att[1] . "\n\n");
+        foreach ($attachments as $i=>$att) {
+          if (is_array($att)) {
+            fwrite($logf," With attachment: " . $att[0] . " as " . (empty($att[1])?"Unknown Attachment":$att[1]) . "\n\n");
+          } else {
+            fwrite($logf," With attachment: " . $att . "\n\n");
+          }
+        }
       } else {
-        fwrite($logf," With attachment $attachments\n\n");       
+        fwrite($logf," With attachment $attachments\n\n");
       }
     }
     if ($embeded) {
+      fwrite($logf,"\n\Embeded:\n\n");
+      fwrite($logf, var_export($embeded));
       if (is_array($embeded)) {
-        foreach ($embeded as $i=>$att) fwrite($logf," With embeded: " . $att[0] . " as " . $att[1] . "\n\n");
+        foreach ($embeded as $i=>$att) fwrite($logf," With embeded: " . $att[0] . " as " . (empty($att[1])?"Unknown embeded":$att[1]) . "\n\n");
       } else {
-        fwrite($logf," With embeded $embeded\n\n");       
+        fwrite($logf," With embeded $embeded\n\n");
       }
     }
 
@@ -407,8 +524,9 @@ function Email_Proforma($Src,$SrcId,$to,$mescat,$subject,$helper='',$helperdata=
 function Replace_Help($Area='',$Right=0) {
   $Reps = [
   ['*WHO*','First name of contact','All'],
+  ['*BIZ*','Business name','Trade,Sponsors'],
   ['*PLANYEAR*/*NEXTYEAR*','Year for the booking, Planyear+1','All'],
-  ['*DATES*','Dates of Saturday and Sunday','All'],
+  ['*DATES*','Dates of Festival From - to','All'],
   ['*LOCATION*','Location(s) of Pitches','Trade'],
   ['*PRICE*','Total Price quoted','Trade'],
   ['*LINK*','Personal Link for Participants','Trade, Volunteers, Performers'],
@@ -428,7 +546,8 @@ function Replace_Help($Area='',$Right=0) {
   ['*WEB:*/*WEB:URL:TEXT*','Website for Festival, URL - to follow website, TEXT - To be displayed (NO SPACES - any _ will appear as spaces)','All'],
   ['*WEBINT:URL:TEXT*','Website for the festival back end, URL/TEXT as above.  WEB is the same when they are part of the same server','All'],
   ['*MISSING*','Important information missing from a dance side','Dance'],
-  ['*SIDE*','Name of side','Dance'],
+  ['*PERF*','Name of performer','Dance,Music,Family,Ceilidh'],
+  ['*SIDE*','Name of side','Dance,Music,Family,Ceilidh'],
   ['*TICKBOX:b:TEXT*','Direct link to click a box, b=num(1-4)|Rec(eived)|..., TEXT to be displayed (NO SPACES - any _ will appear as spaces)','Dance,Music,Trade'],
   ['*TRADEMAP*','Trade location and Map info','Trade'],
   ['*WEBSITESTUFF*','Traders photo and product description prompt','Trade'],
@@ -440,12 +559,21 @@ function Replace_Help($Area='',$Right=0) {
   ['*COPY_name*','Copy Email Proforma name into the current message','All'],
   ['*PAYDAYS*','Days to pay an Invoice','Trade,Invoices'],
   ['*PAIDSOFAR*','Total Money Actually paid so far: Deposit and Balance','Trade'],
+  ['*URL:URL:Text*','URL (https:// is prepended, TEXT - To be displayed (NO SPACES - any _ will appear as spaces)','All'],
+  ['*DANCEORG*','Sign of for dance messages','Dance'],
+  ['*SENDER*','Name of sender - person clicking the email','All'],
+  ['*CONTRACT*','Attach Contract to the message','Performers'],
+  ['*COLLECTINFO*','Collection Information','Dance, Volunteers'],
+  ['*FEAT:Name:Default*','Include value of Feature(Name,Default)','All'],
+  ['*TRADEORG*','Organiser(s) of Trade','Trade'],
+  ['*DAYnn*','Date of Day nn of festival 0=Friday','All'],
+  ['*ATTACH_nn*','Attach File Number nn from the document store','All'],
   ];
 
   echo "<span " . ($Right?' class=floatright':'') . " id=largeredsubmit onclick=($('.HelpDiv').toggle()) >Click to toggle Standard Replacements Help</span>";
   echo "<div class=HelpDiv hidden>";
 
-  echo "<div class=tablecont><table border>\n";
+  echo "<div class=Scrolltable><table border>\n";
   echo "<tr><td>Code<td>What it does<td>Areas \n";
 
   foreach($Reps as $r) {
@@ -473,9 +601,7 @@ function Get_Email_Attachments($id) {
   if ($ans) while ($Att = $ans->fetch_assoc()) $Atts[] = $Att;
   return $Atts;
 }
-  
+
 function Get_Email_Log($id) {
   return db_get("EmailLog","id=$id");
 }
-
-?>

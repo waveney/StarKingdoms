@@ -27,10 +27,15 @@ class ComposerStaticInitcea580ec7c6ec0a8a02d9c125fdcac9a
             'Psr\\Http\\Client\\' => 16,
             'Psr\\Cache\\' => 10,
             'ParagonIE\\ConstantTime\\' => 23,
+            'PHPMailer\\PHPMailer\\' => 20,
         ),
         'M' => 
         array (
             'Monolog\\' => 8,
+        ),
+        'H' => 
+        array (
+            'Html2Text\\' => 10,
         ),
         'G' => 
         array (
@@ -73,9 +78,18 @@ class ComposerStaticInitcea580ec7c6ec0a8a02d9c125fdcac9a
         array (
             0 => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src',
         ),
+        'PHPMailer\\PHPMailer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
+        ),
         'Monolog\\' => 
         array (
             0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
+        ),
+        'Html2Text\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/html2text/html2text/src',
+            1 => __DIR__ . '/..' . '/html2text/html2text/test',
         ),
         'GuzzleHttp\\Psr7\\' => 
         array (

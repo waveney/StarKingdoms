@@ -1205,7 +1205,7 @@ button {
   display:inline;
 }
 
-input type=submit .smallsubmit {
+input[type="submit"] .smallsubmit {
   font-size:14px;
 }
 
