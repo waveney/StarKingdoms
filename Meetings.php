@@ -170,6 +170,10 @@ function ForceReport($Sid,$Cat) {
 
   $TurnP = '';
   if (isset($_REQUEST['TurnP'])) $TurnP = "&TurnP=1";
+  $Things = Get_AllThings();
+  $Sys = Get_Systems();
+  $Hostiles = [];
+  $Mtch = [];
 
   foreach($Homes as $H) {
     switch ($H['ThingType']) {
@@ -190,14 +194,9 @@ function ForceReport($Sid,$Cat) {
 
 //  echo "Checked Homes<p>";
 
-  $Things = Get_AllThings();
-  $Hostiles = [];
-  $Mtch = [];
-
   foreach ($Things as $T){
     if ($T['BuildState'] <2 || $T['BuildState'] >3 || ($T['LinkId'] < 0 && $T['LinkId'] > -5)) continue; // Don't exist
     $Sid = $T['SystemId'];
-    $Sys = Get_System($Sid);
     $Eyes = $TTypes[$T['Type']]['Eyes'];
     $Hostile = ($TTypes[$T['Type']]['Properties'] & THING_IS_HOSTILE) && ($T['PrisonerOf'] == 0);
     if (isset($Sys[$Sid][$T['Whose']])) {

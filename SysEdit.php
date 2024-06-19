@@ -29,6 +29,7 @@
   function Auto_Populate(&$N) {
     $sid = $N['id'];
     $seed = time();
+    $things = [];
 
     $attempt = 0;
     do {
@@ -57,10 +58,11 @@
 
 //var_dump($PTD);exit;
     $state = 0;
+
     foreach ($tabrows as $tab) {
 
 //echo "<br>Evaluating " . htmlspecialchars($tab) . "<br>";
-
+      $tdsarray = [];
       preg_match_all('/\<td.*?\>(.*?)\<\/td\>/',$tab,$tdsarray);
       $tds = (isset($tdsarray[1])?$tdsarray[1]:[]) ;
 
@@ -72,7 +74,6 @@ echo "tds are:";
 echo "No tds<p>";
 
 }*/
-
       switch (substr($tab,8,5)) {
 
       case 'secti':
