@@ -1,0 +1,181 @@
+.SReport {
+  width:800;
+}
+
+.SRName {
+  font-size:20;
+}
+
+.SRImage {
+  width:120;
+  height:120;
+
+}
+
+.SReport img {
+  float:right;
+  min-width:120;
+  height:120;
+  padding: 10px;
+} 
+
+.SReport li {
+  clear:both;
+
+}
+
+.TechDesc {
+  width:800;
+}
+
+.SuppTech {
+  margin-left:50;
+  width:750;
+}
+
+.TechLevel {
+  font-style:normal;
+  font-size:14px;
+  color:green;
+  display: inline;
+}
+
+.TechLevel .Allow {
+  color:Orange;
+}
+
+.TechLevel .NotAllow {
+  color:Red;
+}
+
+.Thin input {
+  width:50;
+}
+
+.creditlog tr {
+width: 100%;
+display: inline-table;
+table-layout: fixed;
+ background:lightgrey;
+}
+
+.creditlog table{
+ height:200px; 
+ display: table;
+ border: 2px solid black;
+ background:lightgrey;
+}
+
+.creditlog tbody{
+  overflow-y: scroll;      
+  height: 150px;
+
+  position: absolute;
+}
+
+.creditlog .CLTurn {
+  width:50px;
+}
+
+.creditlog .CLCredit {
+  width:100px;
+}
+
+.creditlog .CLWhat {
+
+}
+
+.creditlog .CLFrom {
+  width:250px;
+}
+
+
+.CLWrap {
+ height:200px; 
+ display: block; 
+}
+
+table td .GreyProject {
+  background-color:lightgrey;
+}  
+
+table td .GreenProject {
+  background-color:lightgreen;
+}
+
+.postit  {
+  background-color:yellow;
+  padding:3px;
+}
+
+.PHpostit {
+  background-color:yellow !important;
+  padding:3px;
+}
+
+.PHStart {
+  border-left: 3px solid black;
+  text-align:center;
+}
+
+.PHStatus {
+  border-right: 3px solid black;
+  text-align:center;
+}
+
+.PHStartButton {
+  padding-left:2;
+  padding-right:2;
+  font-size:14pt;
+}
+
+.ProjHome {
+  font-weight:bold;
+  background-color:lime;
+}
+
+.ProjHome.Homehidden {
+  background-color:red;
+  color:white;
+}
+
+.PHCost {
+  text-align:right;
+}
+
+.PHLevel {
+  text-align:center;
+}
+
+.PHTurn {
+  background-color:LemonChiffon;
+  text-align:right;
+}
+
+button.projtype  {
+  background-color:lightblue;
+  padding:3px;
+}
+
+
+
+.Green {
+  color:green;
+}
+
+.Num3 {
+  width:50; 
+}
+
+.ShowThingLevel {
+  width:50; 
+}
+
+input[type='radio'] {
+  Margin:12;
+  height:12;
+}
+
+.NotHostile {
+  color:green;
+}

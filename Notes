@@ -33,178 +33,36 @@ Future Hooks:
 7) The Logistics cost of units at Home can be halved (Always or by a tech)
 
 
+SKC y => Game n
+SKD y => game m
+
+If no cookie -> login page
+login -> (list of games)
+select game of list, player/GM access
+
+if game selected 
+  game live?  N -> read only
+  Y -> GM? N -> Player mode (SKD only)
+  Y -> GM mode (SKC only)
+
+Get game data
+  from game get code prefix
+  
+  src1 -> GAME1 source
+  
+  srcn -> Gamen source
+  
+  Can be multiple games per src
+  
+  modify .htaccess to redirect as appropriate
+  
+Core code
+  sk, skfm, skdb, Updatesystem, Login, ListUsers, AddUser, GetPut (Merge in)
+  CoreTools.js NEW
+  GameData? 
 
 
-Mammots
-
-Field Marshal Sergi Lavroski   #1 - Dead
-Field Marshal Javikske #1
-Major General Vladivosky  #25 - head invasion 1
-Major General Khodorkovsky #28 - head invasion 2 - Dead
-Kolonel Ramzan Kadyrov #332 - Military Fleet 
-Kolonel Slovyansky #388 - Civilian fleet 
-Kolonel Kirill Stremousov #425 - Arachni
-Kommander Vladimir Saldo #1026 - Permafrost
-Kolonel Nikitovich #625 - wombles
-Major Tsymbaliuk #8,238 - fongari
-Major Sergi Peskov #7,551 - Sedranna
-Major Vyacheslav Gladkov #5,645 - Kalipolis
-Major Vitaliy Barabash #8,346 - Ratfolk
-Kaptain Gavrileski  #19,283,746 - on Nebula Explorer (runt)
-Kaptain Kachanov #18,809,007 - On Deep space
-
-
-
-From: Major Tsymbaliuk #8,238
-To: Captain Ilku of the Fongari fleet
-It is good to meet you.  We are also unfamiliar with your people.  We do come from the Nebula.
-
-Kaptain Kachanov is not authorised to speak for the Mammotic Federation, the matter has been passed to me.
-
-We have recently met the Wombles and have been folowing them here.
-
-What size are you?  Mighty or puny?  I am 4.2 meters tall and 5.5 meters long - not counting my trunk.
-
-
-> From: Major Tsymbaliuk #8,238
-> To: Kolonel Slovyansky #388
->
-> Thank you sa.
->
->> From: Kolonel Slovyansky #388
->> To: Major Tsymbaliuk #8,238
->>
->> Sa, you have been volunteered to handle the fongari.
->>
->>> From: General Javikske #13
->>> To: Kolonel Slovyansky #388
->>>
->>> Only bother me with important facts.  Your problem.
->>>
->>>> From: Kolonel Slovyansky #388
->>>> To: General Javikske #13
->>>> 
->>>> Another faction to report
->>>> 
->>>>> From: Kaptain Kachanov #18,809,007
->>>>> to: Kolonel Slovyansky #388
->>>>>
->>>>> Sa, Faction contacting me, as requested pass matter up to you.
-
-
-Fasthosts: We limit the amount of email you can send to no more than 50 at once, no more than 50 within 10 minutes and no more than 1000 in 24 hours.
-
-VWX - Paramushir
-
-BEfore live:
-1) Mailing list stuff for Mailchimp
-2) Who/What/Format for contacts
-3) Emails live
-4) Analytics, Maps API
-
-When LIve:
-1) Sort out certs
-
-Dance:
-1) Talk to Laura re campsite etc
-2) Talk to Laura for system
-3) Talk to Laura re standard messages
-
-richardjproctor42@gmail.com
-
-
-Akkem Glacier (Akkemskiy Lednik) – Altai
-Anna Glacier (Lednik Anny) – Novaya Zemlya
-Anuchin Glacier (Lednik Anuchina) – Novaya Zemlya
-Arkhangel Bay Glacier (Lednik Arkhangel'skoy Guby) – Novaya Zemlya
-Baksan Glacier or Azau Glacier (Lednik Baksankiy) – Caucasus
-Belukha Glacier (Lednik Belukha) – Altaii
-Bezengi Glacier (Lednik Bezengi) – Caucasus
-Brounov Glacier (Lednik Brounova) – Novaya Zemlya
-Borzov Glacier (Lednik Borzova) – Novaya Zemlya
-Bull Glacier (Lednik Bull) – Novaya Zemlya
-Bunge Glacier (Lednik Bunge) – Novaya Zemlya
-Chayev Glacier (Lednik Chayeva) – Novaya Zemlya
-Chernishev Glacier (Lednik Chernishëva) – Novaya Zemlya
-Devdaraki – Caucasus (Georgia / Russia)
-Dezhnev Glacier (Lednik Dezhnëva) – Severnaya Zemlya
-Dykh-Kotyu-Bugoysu – Caucasus
-Gebler Glacier (Lednik Geblera) – Altai
-Glazov Glacier (Lednik Glazov) – Novaya Zemlya
-Goluboy Glacier (Lednik Goluboy) – Novaya Zemlya
-Great Taldurin Glacier (Bolshoy Taldurinskiy Lednik) – Altai
-Grotov Glacier (Lednik Grotov) – Severnaya Zemlya
-Inostrantsev Glacier (Lednik Inostrantseva) – Novaya Zemlya
-Karaugom Glacier- Caucasus
-Karbasnikov Glacier (Lednik Karbasnikova) – Novaya Zemlya
-Kirov Glacier (Lednik Kirova) – Franz Josef Land
-Kolka Glacier – Caucasus
-Krayniy Glacier (Lednik Krayniy) – Novaya Zemlya
-Kropotkin Glacier (Lednik Kropotkina) – Novaya Zemlya
-Kropotkin Glacier (Lednik Kropotkina) – Severnaya Zemlya
-Lakrua Glacier (Lednik Lakrua) – Novaya Zemlya
-Little Aktru Glacier (Maly Aktru Lednik) – Altai
-Little Fisht Glacier (Maly Fishtinsky Lednik) – Caucasus
-Mack Glacier (Lednik Maka) – Novaya Zemlya
-Maili Glacier – Caucasus
-Malyutka Glacier (Lednik Malyutka) – Severnaya Zemlya
-Mashey Glacier (Lednik Mashey) – Altai
-Middendorff Glacier (Lednik Middendorfa)[11] – Franz Josef Land
-Molochnyy Glacier (Lednik Molochnyy) – Franz Josef Land
-Molotov Glacier (Lednik Molotova) – Severnaya Zemlya
-Moschnyy Glacier (Lednik Moschnyy) – Novaya Zemlya
-Mushketov Glacier (Lednik Mushketova) – Severnaya Zemlya[12]
-Nansen Glacier (Lednik Nansena) – Novaya Zemlya
-Neponyatyy Glacier (Lednik Neponyatyy) – Severnaya Zemlya
-Niny Glacier (Lednik Niny) – Franz Josef Land[13]
-Nizkiy Glacier (Lednik Nizkiy) – Novaya Zemlya
-Nordenskiöld Glacier (Lednik Nordenshel'da) – Franz Josef Land
-Nordenskiöld Glacier (Lednik Nordenshel'da), group of four glaciers – Novaya Zemlya[14]
-Vershinsky Glacier (Lednik Vershinskogo)
-Novopashenny Glacier (Lednik Novopashennogo), also known as Lednik Sredniy[15]
-Rozhdestvensky Glacier (Lednik Rozhdestvenskogo)
-Roze Glacier (Lednik Roze)
-Obruchev Glacier (Lednik Obrucheva) – Franz Josef Land
-Otdel’nyy Glacier (Lednik Otdel’nyy) – Severnaya Zemlya
-Pavlov Glacier (Lednik Pavlova) – Novaya Zemlya
-Payer Glacier (Lednik Payyera) – Franz Josef Land
-Petersen Glacier (Lednik Petersena) – Novaya Zemlya
-Popov Glacier (Lednik Popova) – Novaya Zemlya
-Polisadov Glacier (Lednik Polisadova) – Novaya Zemlya
-Rikachev Glacier (Lednik Rykachëva) – Novaya Zemlya
-Semyonov-Tyan-Shansky Glacier (Lednik Semënova Tyan-Shanskogo) – Severnaya Zemlya
-Serp i Molot Glacier (Lednik Serp i Molot) – Novaya Zemlya
-Severnyy Glacier (Lednik Severnyy) – Novaya Zemlya
-Shirokiy Glacier (Lednik Shirokiy) – Novaya Zemlya
-Shokalsky Glacier (Lednik Shokal'skogo) – Novaya Zemlya
-Sonklar Glacier (Lednik Sonklar) – Franz Josef Land
-Sophia Glacier (Sofiyskiy Lednik) – Altai
-Stremitel’nyy Glacier (Lednik Stremitel’nyy) – Franz Josef Land
-Taisiya Glacier (Lednik Taisiya) – Novaya Zemlya
-Tseyskoe Glacier – Caucasus
-Ukoksky Glacier (Lednik Ukokskiy) – Altai
-Ushkovsky Glacier (Lednik Ushkovskiy) – Kamchatka[16]
-Velken Glacier (Lednik Vel'kena) – Novaya Zemlya
-Vera Glacier (Lednik Vera) – Novaya Zemlya
-Vitte Glacier (Lednik Vitte) – Novaya Zemlya
-Viz Glacier (Lednik Viz) – Franz Josef Land
-Vize Glacier (Lednik Vize) – Novaya Zemlya
-Voyekov Glacier (Lednik Voyekova) – Novaya Zemlya
-Worcester Glacier (Lednik Vuster) – Franz Josef Land
-Yuzhnyy Glacier (Lednik Yuzhnyy) – Novaya Zemlya
-Znamenityy Glacier (Lednik Znamenityy) – Franz Josef Land
-Zvezda Glacier (Lednik Zvezda) – Caucasus
-
-1) The Mammots have incoming 1 L2 transport and 2 L3 cruisers providing covering fire.   The aim is to get the troops to the planet then warp home, before the Wombles Close Range weapons can fire (on round 2)
-2) The Wombles are sending one ship in with troops using cryopods - do they have a penalty on first round?  (They used to)
-3) If my incoming fleet can target that ship as their target it would be poetic...
-4) On Planet, the most damaged division (Snowballs from Heaven) is not on the front line they are being protected by others/new armies (they are being Reequipped this turn)
-5) There are also 2 new militia armies.  (New Military district)
-6) Note the intelligence defence is now effectively 3+2= 5 
-7) Ships they can be refitted in orbital repair yards, freeing up the shipyards for new ships.  Could I develop something equivalent for armies?  (All but 1 army is in need of refitting)
-
-
-
+Per game code
 
 
 

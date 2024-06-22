@@ -1,0 +1,964 @@
+.ERR {
+  font-weight: bold;
+  color: red;
+}
+
+body {
+  font-family: Montserrat, Arial, Helvetica, sans-serif;
+}
+
+h2 {
+  font-weight: bold;
+  font-size:22px;
+  font-family: Montserrat, Arial, Helvetica, sans-serif;
+}
+
+table {
+  margin: 1 1 1 1;
+}
+
+th {
+  font-size:15px;
+  color:black;
+  font-family: Montserrat, Arial, Helvetica, sans-serif;
+}
+
+input {
+  font-size:15px;
+  margin:0 0 2 0;
+  padding:0 0 2 0;
+  border:solid 2px #f0f0f0;
+  color:black;
+}
+
+select {
+  margin:0 0 0 0;
+  padding:0px;
+}
+
+option {
+  margin:0 0 0 0;
+  padding:0px;
+  min-height:1em;
+}
+
+input[type=submit], .FakeButton, input[type=submit] .Button0 {
+  font-size:20px;
+  padding:5px;
+  border:2px;
+  border-color:white;
+  margin:2px;
+  background-color:#8234C6;
+  color:white;
+}
+
+input[type=submit] .Button1 {
+  font-size:20px;
+  padding:5px;
+  border:2px;
+  border-color:white;
+  margin:2px;
+  color:white;
+  background-color:#82f4C6;
+}
+input[type=submit] .Button2 {
+  font-size:20px;
+  padding:5px;
+  border:2px;
+  border-color:white;
+  margin:2px;
+  color:white;
+  background-color:#8234f6;
+}
+input[type=submit] .Button3 {
+  font-size:20px;
+  padding:5px;
+  border:2px;
+  border-color:white;
+  margin:2px;
+  color:white;
+  background-color:#f234C6;
+}
+
+.smallsubmit {
+  font-size:14px;
+}
+
+#greensubmit {
+  font-size:14px;
+  background-color:green;
+}
+
+#redsubmit {
+  font-size:14px;
+  background-color:red;
+}
+
+#largeredsubmit {
+  font-size:24px;
+  background-color:red;
+  color:white;
+  margin:10px;
+  padding:5;
+  border:10;
+}
+
+.partnavbutton {
+    padding:9.5px 10px;
+    background-color:#a30046;
+    color:white;
+    font-size:18px;
+    margin:0px;
+    transition:background 1s, color 1s;
+    -webkit-transition:background 1s, color 1s; /* Safari */
+}
+.partnavbutton:hover {
+    background-color:#005983;
+}
+
+select {
+  font-size:15px;
+  margin:0 0 0 0;
+  padding:0px;
+  border:solid 2px #f0f0f0;
+  color:black;
+}
+
+textarea {
+  font-size:15px;
+  margin:0 0 0 0;
+  padding:0px;
+  border:solid 2px #f0f0f0;
+  color:black;
+  background-color:#E0E0E0;
+}
+
+.SideTable td {
+  min-width:130px;
+}
+
+.Adv {
+}
+
+.NotSide {
+  background-color:khaki;
+}
+
+.NotCSide {
+  background-color:	#FFd6d1;
+}
+
+input[type=text] {
+  background-color:#E0E0E0;
+}
+
+input[type=number] {
+  background-color:#E0E0E0;
+}
+
+input[type=password] {
+  background-color:#E0E0E0;
+}
+
+.Stafftd {
+  vertical-align: top;
+}
+
+.BlueBack {
+  background-color:#005983;
+}
+
+.staffform {
+  font-size:12pt;
+  background-color:white;
+  padding:0px;
+  border:0px;
+  margin:0 0 0 0;
+}
+
+#staffformid, #Posterid {
+  font-size:13pt;
+  color: #EC038C;
+  background-color:white;
+  padding:0px;
+  border:0px;
+  margin:0 0 0 0;
+  font-weight:520;
+}
+
+.Vuse2 {
+  font-size:24px;
+}
+
+.Vuse3 {
+  font-size:15px;
+  margin:20px 0 0 50px;
+
+}
+
+.red {
+  color:red;
+}
+
+.blue {
+  color:blue;
+}
+
+.orange {
+  color:orange;
+}
+
+.brown {
+  color:sienna;
+}
+
+.BEGridWrapper {
+  width: 610px;
+  height: 600px;
+  position: fixed;
+  top:0;
+  left:0;
+  border: 1px solid #000;
+  background: #efefef;
+  overflow: hidden;
+}
+
+.BEGridContainer {
+  overflow-y: auto;
+  overflow-x: auto;
+  height: 600px;
+  width: 610px;
+  border: 1px solid #000;
+}
+
+.GridWrapper {
+  width: calc(100% - 385px); /*70vw;*/
+  height: 69vh;
+  position: fixed;
+  top:0;
+  left:0;
+  border: 1px solid #000;
+  background: #efefef;
+  overflow: hidden;
+}
+
+.GridWrapper1 {
+  border: 1px solid #000;
+  background: #efefef;
+  overflow: hidden;
+}
+
+#Grid, #Grid th, #Grid td {
+  padding:0;
+  margin:0;
+  margin-left:2;
+  padding-left:2;
+  border-radius:0;
+  border-collapse:collapse;
+}
+
+.smalltext {
+  font-size:12px;
+  margin-left:2;
+}
+
+.smallertext {
+  font-size:10px;
+  margin-left:2;
+}
+
+.GridContainer {
+  overflow-y: auto;
+  overflow-x: auto;
+  height: 70vh;
+  border: 1px solid #000;
+}
+
+.GridContainer1 {
+  overflow-y: auto;
+  overflow-x: auto;
+  border: 1px solid #000;
+}
+/*
+#Grid {
+  width: calc(100% - 360px); 
+  max-width: calc(100% - 360px);
+  height: 70vh;
+  max-height: 70vh;
+  overflow: hidden;
+}
+*/
+
+.SideListWrapper {
+  width: 370px;
+  height: 360px; 
+  overflow: hidden;
+  position: fixed;
+  top:0;
+  right:0;
+  border: 1px solid #000;
+  font-size:12px;
+}
+
+.SideListContainer {
+  overflow-y: auto;
+  height: 70vh; /* 440px; */
+  width: 370px; 
+  font-size:12px;
+}
+
+.SideListContainer td, .SideListContainer th, .SideListContainer table {
+  border-radius:0;
+  border-collapse:collapse;
+}
+
+.SideDrag {
+  background: #EEE;
+  border:1;
+  padding:2px;
+}
+
+.SideSelected {
+  background: #EEE;
+}
+
+.GridSelected {
+  background: #EEE;
+}
+
+.GridDrag {
+  background: #EEE;
+  border:1;
+  padding:2px;
+}
+
+.DPGridDisp {
+  font-size:12px;  
+  background:#eee;
+  min-height:15;
+  min-width:150px;
+  border-radius:0;
+  padding-left:2;
+}
+
+.DPGridDisp a {
+  color:black;
+  margin-left:2;
+}
+
+.DPNamed {
+  font-size:12px;
+  background:#ffEEaa;
+  color:black;
+  min-height:15;
+  min-width:150px;
+  margin:2;
+}
+
+.DPNotNamed {
+  font-size:12px;
+  background:#FED;
+  color:black;
+  min-height:15;
+  min-width:150px;
+}
+
+tr:nth-child(8n+1) .DPGridDisp {
+  background:white;
+}
+
+tr:nth-child(8n+2) .DPGridDisp {
+  background:white;
+}
+
+tr:nth-child(8n+3) .DPGridDisp {
+  background:white;
+}
+
+tr:nth-child(8n+4) .DPGridDisp {
+  background:white;
+}
+
+.SideName {
+  cursor: pointer;
+  font-size:12px;
+}
+
+div.whileDragging {
+    background-image: none;
+    background-color: black;
+    color: white;
+}
+
+.ErrorWrapper {
+  width: 50vw;
+  overflow: hidden;
+  position: fixed;
+  left:0;
+  bottom:0;
+  border: 1px solid #000;
+}
+
+.ErrorContainer {
+  overflow-y: auto;
+  height: 20vh;
+  width: 50vw;
+}
+
+.InfoWrapper {
+  width: 500px;
+  height: 29vh; 
+  max-height: 29vh; 
+  overflow: hidden;
+  position: fixed;
+  bottom:0;
+  right:0;
+  border: 1px solid #000;
+  background:white;
+}
+
+.InfoContainer {
+  overflow-y: auto;
+  width: 500px; 
+  height: 29vh; 
+}
+
+.DPControls {
+  width: 400px;
+  height:230px;
+  position: fixed;
+  left:50.1vw;
+  bottom:0;
+  border: 1px solid #000;
+}
+
+#Notes_Pane {
+  position: fixed;
+  top:71vh;
+  left: 5;
+  width: 70vw;
+  height:10vh;
+}
+
+input[type=button] {
+  font-size:18px;  
+}
+
+.DPGridGrey {
+  font-size:12px;  
+  background:#999;
+  padding:1 1 1 1;
+}
+
+tr:nth-child(8n+1) .DPGridGrey {
+  background:#aaa;
+}
+
+tr:nth-child(8n+2) .DPGridGrey {
+  background:#aaa;
+}
+
+tr:nth-child(8n+3) .DPGridGrey {
+  background:#aaa;
+}
+
+tr:nth-child(8n+4) .DPGridGrey {
+  background:#aaa;
+}
+
+tr:nth-child(10n+5) .DPGridGrey {
+  background:#aaa;
+}
+
+.DPGridTH {
+  min-width:150px;
+}
+
+
+div.dataTables_wrapper {
+  width: 610px;
+  height: 400px;
+  position: fixed;
+  top:0;
+  left:0;
+  border: 1px solid #000;
+  background: #efefef;
+  overflow: hidden;
+}
+
+.floatright {
+  padding-left:3px;
+  float:right; 
+}
+
+.floatleft {
+  padding-right:3px;
+  float:left; 
+  width: 400px;
+  max-width: 400px;
+}
+
+.custom-file-input::-webkit-file-upload-button {
+  visibility: hidden;
+}
+
+.custom-file-input::before {
+/*  content: 'Select some files'; */
+  display: inline-block;
+  background: -webkit-linear-gradient(top, #f9f9f9, #e3e3e3);
+  border: 1px solid #999;
+  border-radius: 3px;
+  padding: 5px 8px;
+  outline: none;
+  white-space: nowrap;
+  -webkit-user-select: none;
+  cursor: pointer;
+  text-shadow: 1px 1px #fff;
+  font-weight: 700;
+  font-size: 10pt;
+}
+
+.custom-file-input:hover::before {
+  border-color: black;
+}
+
+.custom-file-input:active::before {
+  background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+}
+
+.minwidth250 {
+  min-width:250px;
+}
+
+.botrightwrap {
+  position:relative;
+}
+
+.botrightcont {
+  position:absolute;
+  bottom:0;
+  right:0;
+}
+
+.imp {
+  color:red;
+  font-weight: bold;
+}
+
+.BGColour0 { background:#f96 !important; }
+.BGColour1 { background:#c6f !important; }
+.BGColour2 { background:#3cf !important; }
+.BGColour3 { background:#6f9 !important; }
+.BGColour4 { background:#fc6 !important; }
+.BGColour5 { background:#f3c !important; }
+.BGColour6 { background:#96f !important; }
+.BGColour7 { background:#6fc !important; }
+
+.adrlabbox {
+  width:250px;
+  min-width:250px;
+  max-width:250px;
+  height:154.5px;
+  min-height:154.5px;
+  max-height:154.5px;
+  font-size:14px;
+  overflow: hidden;
+  padding-left:15px;
+  padding-right:15px;
+}
+
+.adrlables {
+  min-width:800px;
+  max-width:800px;
+  table-layout: fixed;
+  overflow:hidden;
+  margin-bottom:2px;
+  padding: 0 0 0 0;
+}
+
+.adrlables tr td:nth-child(2) {
+  width:265px;
+  min-width:265px;
+  max-width:265px;
+}
+
+p {
+  max-width:100%;
+}
+
+.ProgDayHL, #ProgDayHL {
+  background-color:red;
+  color:white;
+  font-weight:bold;
+}
+
+.WMFF_FAQ {
+  width: 800px;
+  padding: 15px 15px 25px 15px;
+  margin:0 15px 0 0;
+}
+
+.WMFF_FAQ dd {
+  padding: 15px 15px 25px 15px;
+  margin:0 15px 0 0;
+}
+
+.WMFF_FAQ dt {
+  font-weight:bold;
+}
+
+#TLactsel a {
+  background: #005983;
+}
+
+#TLacts li {
+  padding: 3 3 3 3;
+  display:inline-block;
+  font-size:20px;
+  background:#a30046;
+  color:white;
+  margin: 3 3 3 3;
+}
+
+#TLacts a {
+  color:white;
+}
+
+#TLacts a:hover{
+  background: #005983;
+}
+
+#manyfiles {
+  width: 110px;
+} 
+
+input[type='file'] {
+  width: 100px;
+} 
+
+.TL_Minor {
+}
+
+.TL_Major td {
+  font-size:20px;
+}
+
+.TL_Critical td {
+  font-Size:24px;
+  font-weight:bold;
+  color:orange;
+}
+
+.Content900 {
+  width:900px;
+}
+
+.buttonlink {
+  font-size:20px;
+  padding:5px;
+  border:2px;
+  background-color:#8234C6;
+  color:white;
+}
+
+.buttonlink:visited {
+  color:white;
+}
+
+button {
+  font-size:11pt;
+}
+
+.minittl0 {
+  font-size:18px;
+  margin:0 0 -10px 0;
+  padding:0;
+  text-align:left;
+  color:#005c8f;
+  transition:opacity .5s, filter .5s;
+}
+
+.minittl1 {
+  font-size:20px;
+  margin:0 0 -10px 0;
+  padding:0;
+  text-align:left;
+  color:#005c8f;
+  transition:opacity .5s, filter .5s;
+}
+
+.minittl2 {
+  font-size:22px;
+  margin:0 0 -10px 0;
+  padding:0;
+  text-align:left;
+  color:#005c8f;
+  transition:opacity .5s, filter .5s;
+}
+
+.minittl3 {
+  font-size:24px;
+  margin:0 0 -10px 0;
+  padding:0;
+  text-align:left;
+  color:#005c8f;
+  transition:opacity .5s, filter .5s;
+}
+
+.minittl4 {
+  font-size:26px;
+  margin:0 0 -10px 0;
+  padding:0;
+  text-align:left;
+  color:#005c8f;
+  transition:opacity .5s, filter .5s;
+}
+
+.minittl5 {
+  font-size:28px;
+  margin:0 0 -10px 0;
+  padding:0;
+  text-align:left;
+  color:#005c8f;
+  transition:opacity .5s, filter .5s;
+}
+
+.minittl6 {
+  font-size:30px;
+  margin:0 0 -10px 0;
+  padding:0;
+  text-align:left;
+  color:#005c8f;
+  transition:opacity .5s, filter .5s;
+}
+
+.DevEmail {
+  margin: 20px;
+}
+
+.TSNotSub {
+  background:white;
+}
+
+.TSSubmit {
+  background:yellow;
+}
+
+.TSInvite {
+  background:lightyellow;
+}
+
+.TSDecline {
+  background:red;
+}
+
+.TSConf {
+  background:cyan;
+}
+
+.TSDeposit {
+  background:lightblue;
+}
+
+.TSPaid {
+  background:LightGreen;
+}
+
+.TSNoInsRA {
+  background:orange;
+}
+
+.TSCancel {
+  background:grey;
+}
+
+.TSRefunded {
+  background:grey;
+}
+
+.TSInvoice {
+  background:darkseagreen;
+}
+
+.TSWaitList {
+  background: #ffb380;
+}
+
+.TSRequote {
+  background:#e6d9b2;
+}
+
+.KeepTogether {
+  float:left;
+}
+
+#narrowtable {
+  width:500;
+}
+.botx {
+  position:absolute;
+  padding:0;
+  margin:0;
+  bottom:0;
+  right:0;
+  line-height:70%;
+}
+.DPETimes {
+  font-size:12px;  
+}
+.DPESide {
+  font-size:12px;  
+}
+.DPOvName {
+  margin:2px;
+  vertical-align:top;
+  font-size:13px;
+}
+#Poster {
+  width:1000px !important;
+  max-width:1000px !important;
+  font-size:18px;
+  background-color:white !important;
+}
+#Postertitle {
+  font-size:60px;
+  text-transform: uppercase;
+}
+#Poster h3 {
+  font-size:36px;
+}
+#Poster table {
+  width:100%; 
+}
+#Poster table th {
+  color:white;
+  border-radius:5px;
+  font-weight:normal;
+  font-family: Montserrat, Arial, Helvetica, sans-serif;
+  font-size:35px;
+}
+
+.ui-slider {
+  width: 200px;
+  padding-left: 5px; 
+  background:red;
+}
+
+.slider.ui-slider {
+  background:red;
+}
+
+.TL_NotYet.slider.ui-slider {
+  background:grey;
+}
+
+.slider .ui-slider-range { 
+  background: #00ff00; 
+}
+.slider.ui-widget-content .ui-state-default { background: Blue; }
+
+.BigSwitch {
+  font-size:30;
+  background:lightgreen;
+  color:Black;
+  min-width:400;
+}
+
+.BigSwitchSelected {
+  font-size:30;
+  background:OrangeRed;
+  color:Black;
+  min-width:400;
+}
+
+.ProfButton {
+  border-width:4;
+}
+
+.ProfSmallButton {
+  border-width:2;
+  font-size: 12px;
+}
+
+.BespokeBorder {
+  border-color:red;
+}
+
+div.scrollableY {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.img-overlay-wrap {
+  position: relative;
+  display: inline-block; /* <= shrinks container to image size */
+  transition: transform 150ms ease-in-out;
+  overflow: hidden;
+}
+
+.img-overlay-wrap img { /* <= optional, for responsiveness */
+   display: block;
+   height: auto;
+}
+
+.img-overlay-wrap svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.PitchWrap {
+  width: 550px;
+  height: 600px; 
+  overflow: hidden;
+  position: absolute;
+  top:100;
+  right:0;
+  border: 1px solid #000;
+  font-size:12px;
+}
+
+.PitchCont {
+  overflow-y: auto;
+  overflow-x: none;
+  height: 570px; 
+  width: 530px; 
+  font-size:12px;
+}
+
+.PitchCont td, .PitchCont th, .PitchCont table {
+  border-radius:0;
+  border-collapse:collapse;
+}
+
+table {
+  width:100%;
+  display: table;
+}
+
+.staff tr, .staff tbody {
+  width:100%;
+}
+
+.staff td {
+  width:33%;
+}
+
+.dz-clickable#UploadInsurance, .dz-clickable#UploadRiskAssessment,  .dz-clickable#UploadStagePA {
+  padding:1em;
+  min-height:80px;
+}
+
+.dz-clickable#UploadPhoto {
+  padding:1em;
+  min-height:60px;
+}
+
+.dz-message#UploadPhoto {
+  padding: 0;
+}
+

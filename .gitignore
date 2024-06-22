@@ -4,3 +4,5 @@ Turns/*
 images/*
 /nbproject/private/
 .settings/*
+.project
+src*/cache/*

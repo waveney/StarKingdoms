@@ -339,6 +339,8 @@
           }
         }
       }
+      $txt .= "<li><a href=src1/Staff.php>Source 1</a>\n";
+
     }
     if (0 && Access('God')) $txt .= "<li><a href=TEmailProformas.php>EMail Proformas</a>";
     if (0 && Access('God')) $txt .= "<li><a href=AdminGuide.php>Admin Guide</a> \n";
