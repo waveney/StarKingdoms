@@ -451,19 +451,18 @@
       $Dis[$Hi][] = $D;
       }
 
-//var_dump($Dis);exit;
 
     $Projs = Get_Projects($Hi);
-//var_dump($Projs); echo "<p>";
+
+//    var_dump($Projs);echo "BEFORE<p>";
 
     foreach ($Projs as &$P) {
-      if ($P['Status'] > 2 ) continue; // Cancelled, On Hold or Could not start
-//var_dump($P); echo "<P>";
+//      var_dump($P);
+      if (!isset($P['Status']) || ($P['Status'] > 2 )) continue; // Cancelled, On Hold or Could not start
       $TurnStuff = Get_ProjectTurns($P['id']);
       $TSi = 0;
       while (isset($TurnStuff[$TSi]['TurnNumber']) && ($TurnStuff[$TSi]['TurnNumber'] < $P['TurnStart'])) $TSi++;
 //
-//var_dump($TurnStuff); echo "<br>";
       $Pro = [];
       $Pro['id'] = $P['id'];
       $Pro['Type'] = $P['Type'];
@@ -508,11 +507,11 @@
 
 //var_dump($Pro, $ProjTypes[$P['Type']]);  echo "<p>";
         // Is there an existing project where this is going?
-        if (isset($Projs[$P['TurnStart']][$Hi][$Di]['id'])) {
-          $What = $Projs[$P['TurnStart']][$Hi][$Di]['id'];
+        if (isset($proj[$P['TurnStart']][$Hi][$Di]['id'])) {
+          $What = $proj[$P['TurnStart']][$Hi][$Di]['id'];
           for ($t = $P['TurnStart']; $t <= $P['TurnStart']+50; $t++) {
-            if (isset($Projs[$t][$Hi][$Di]['id']) && $Projs[$t][$Hi][$Di]['id'] == $What) {
-              $Projs[$t][$Hi][$Di] = [];
+            if (isset($proj[$t][$Hi][$Di]['id']) && $proj[$t][$Hi][$Di]['id'] == $What) {
+              $proj[$t][$Hi][$Di] = [];
             } else {
               break;
             }
@@ -588,7 +587,7 @@
           }
 */
 
-          $Projs[$t][$Hi][$Di] = $Pro;
+          $proj[$t][$Hi][$Di] = $Pro;
           $Pro['Cost'] = 0;
           if ($Pro['Status'] == 'Complete') break;
         }
@@ -660,7 +659,7 @@
     $RowClass = "ProjHide";
     $hide = ' hidden';
     if ($Turn >= ($GAME['Turn']-1) && $Turn < ($GAME['Turn']+9)) {
-        $RowClass = 'ProjShow';
+        $RowClass = 'projhow';
         $hide = '';
     }
 
@@ -688,10 +687,10 @@
         // TODO ids need setting...
       // TODO Warning
 
-        echo "<td $BG id=ProjS$Turn:$Hi:$Di class='PHStart Group$Di Home$Hi' $Hide>\n";
+        echo "<td $BG id=proj$Turn:$Hi:$Di class='PHStart Group$Di Home$Hi' $Hide>\n";
         if ($Turn >= $GAME['Turn'] && $ADDALL!='readonly') {
           $Warn = '';
-          if (isset($Projs[$Turn - 1 ][$Hi][$Di]['Status']) && ($Projs[$Turn - 1 ][$Hi][$Di]['Status'] == 'Started' || $Projs[$Turn - 1][$Hi][$Di]['Status'] == 'Ongoing')) {
+          if (isset($proj[$Turn - 1 ][$Hi][$Di]['Status']) && ($proj[$Turn - 1 ][$Hi][$Di]['Status'] == 'Started' || $proj[$Turn - 1][$Hi][$Di]['Status'] == 'Ongoing')) {
  //           $Warn = "onclick=\"return confirm('Do you want to abandon " . $Proj[$Turn-1][$Hi][$Di]['Name'] . '?\'"';
               $Action = "onclick='return NewProjectCheck($Turn,$Hi,$Di)' formaction=ProjNew.php?t=$Turn&Hi=$Hi&Di=$Di";
           } else {
@@ -699,22 +698,22 @@
           }
           echo "<button type=submit class=PHStartButton id=Start:STurn:$Hi:$Di $Action ><b>+</b>\n";
         }
-        if (isset($Projs[$Turn][$Hi][$Di]['Type'])) {
-          $PN = $Projs[$Turn][$Hi][$Di]['id'];
-          echo "\n<td $BG id=ProjN$Turn:$Hi:$Di class='PHName Home$Hi" . ($Projs[$Turn][$Hi][$Di]['Type'] == 38?" PHpostit ":"") . "'>" .
-                "<a href=ProjEdit.php?id=" . $Projs[$Turn][$Hi][$Di]['id'] . ">" .
-                $Projs[$Turn][$Hi][$Di]['Name'] . "</a>";
-          echo "\n<td $BG id=ProjL$Turn:$Hi:$Di class='PHLevel Group$Di Home$Hi' $Hide>" . $Projs[$Turn][$Hi][$Di]['Level'];
-          echo "\n<td $BG id=ProjC$Turn:$Hi:$Di class='PHCost Group$Di Home$Hi' $Hide>" . $Projs[$Turn][$Hi][$Di]['Cost'];
-          echo "\n<td $BG id=ProjR$Turn:$Hi:$Di class='PHRush Group$Di Home$Hi' $Hide>" . (($Turn < $GAME['Turn'])?$Projs[$Turn][$Hi][$Di]['Rush'] :
+        if (isset($proj[$Turn][$Hi][$Di]['Type'])) {
+          $PN = $proj[$Turn][$Hi][$Di]['id'];
+          echo "\n<td $BG id=ProjN$Turn:$Hi:$Di class='PHName Home$Hi" . ($proj[$Turn][$Hi][$Di]['Type'] == 38?" PHpostit ":"") . "'>" .
+                "<a href=ProjEdit.php?id=" . $proj[$Turn][$Hi][$Di]['id'] . ">" .
+                $proj[$Turn][$Hi][$Di]['Name'] . "</a>";
+          echo "\n<td $BG id=ProjL$Turn:$Hi:$Di class='PHLevel Group$Di Home$Hi' $Hide>" . $proj[$Turn][$Hi][$Di]['Level'];
+          echo "\n<td $BG id=ProjC$Turn:$Hi:$Di class='PHCost Group$Di Home$Hi' $Hide>" . $proj[$Turn][$Hi][$Di]['Cost'];
+          echo "\n<td $BG id=ProjR$Turn:$Hi:$Di class='PHRush Group$Di Home$Hi' $Hide>" . (($Turn < $GAME['Turn'])?$proj[$Turn][$Hi][$Di]['Rush'] :
                "<input type=number id=Rush$Turn:$PN name=Rush$Turn:$PN oninput=RushChange($Turn,$PN,$Hi,$Di," .
-               $Projs[$Turn][$Hi][$Di]['MaxRush'] . ") value=" . min($Projs[$Turn][$Hi][$Di]['Rush'],$Projs[$Turn][$Hi][$Di]['MaxRush'])  .
-               " min=0 max=" . ($Projs[$Turn][$Hi][$Di]['GMOverride']?20:$Projs[$Turn][$Hi][$Di]['MaxRush']) .">" );
+               $proj[$Turn][$Hi][$Di]['MaxRush'] . ") value=" . min($proj[$Turn][$Hi][$Di]['Rush'],$proj[$Turn][$Hi][$Di]['MaxRush'])  .
+               " min=0 max=" . ($proj[$Turn][$Hi][$Di]['GMOverride']?20:$proj[$Turn][$Hi][$Di]['MaxRush']) .">" );
 //          if (!empty($Proj[$Turn][$Hi][$Di]['Bonus'])) echo "<div id=ProjB$Turn:$Hi:$Di class='PHBonus hidden>" . $Proj[$Turn][$Hi][$Di]['Bonus'] . "</div>";
-          echo "\n<td $BG id=ProjP$Turn:$Hi:$Di class='PHProg Group$Di Home$Hi' $Hide>" . $Projs[$Turn][$Hi][$Di]['Progress'];
-          echo "\n<td $BG id=ProjT$Turn:$Hi:$Di class='PHStatus Group$Di Home$Hi' $Hide>" . $Projs[$Turn][$Hi][$Di]['Status'] . "";
+          echo "\n<td $BG id=ProjP$Turn:$Hi:$Di class='PHProg Group$Di Home$Hi' $Hide>" . $proj[$Turn][$Hi][$Di]['Progress'];
+          echo "\n<td $BG id=ProjT$Turn:$Hi:$Di class='PHStatus Group$Di Home$Hi' $Hide>" . $proj[$Turn][$Hi][$Di]['Status'] . "";
 
-          $TotCost += $Projs[$Turn][$Hi][$Di]['Cost'] + ( $Projs[$Turn][$Hi][$Di]['FreeRushes']?0:($Projs[$Turn][$Hi][$Di]['Rush']*Rush_Cost($Fid)));
+          $TotCost += $proj[$Turn][$Hi][$Di]['Cost'] + ( $proj[$Turn][$Hi][$Di]['FreeRushes']?0:($proj[$Turn][$Hi][$Di]['Rush']*Rush_Cost($Fid)));
 
         } else {
           echo "<td $BG id=ProjN$Turn:$Hi:$Di class='PHName Home$Hi'>";
@@ -749,7 +748,7 @@
     } else if ($Turn == $GAME['Turn']-1) {
       echo $FACTION['Credits'];
     } else { // Future
-//var_dump($Left,$Income,$TotCost,$Spend);
+//var_dump($Left,$Income,$TotCost,$Spend);\
       $Left = $Left + $Income - $TotCost - $Spend;
       if ($Left >=0 ) {
         echo $Left;

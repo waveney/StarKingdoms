@@ -21,6 +21,7 @@
   if (isset($_REQUEST['Links'])) $ShowLinks = $_REQUEST['Links'];
 
   $CatCols = ["white","grey", "Yellow"];
+  $HexLegPos = [];
   eval("\$HexLegPos=" . Feature('HexLegPos','[[0,0]]') . ";" );
 // var_dump($HexLegPos);exit;
 
@@ -92,6 +93,7 @@
 // echo "<h1>Faction $Faction</h1>";
   global $db, $GAME;
 
+  $HexLegPos = [];
   eval("\$HexLegPos=" . Feature('HexLegPos','[[0,0]]') . ";" );
 
   $RedoMap = 1;

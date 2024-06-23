@@ -5,4 +5,9 @@ images/*
 /nbproject/private/
 .settings/*
 .project
-src*/cache/*
+src*/cache
+src*/Turns
+src*/images
+src*/vendor
+src*/Schema
+
