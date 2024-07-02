@@ -1,6 +1,6 @@
 <?php
   include_once("sk.php");
-  A_Check('God','Users');
+  A_Check('GM','Users');
 
   dostaffhead("Add/Change User");
   include_once("UserLib.php");
@@ -8,10 +8,13 @@
 
   Set_User_Help();
 
+  $God = Access('God');
+
 
 //var_dump($_REQUEST);
 
-  echo "<h2>Add/Edit Fest Con Users</h2>\n";
+  echo "<h2>Add/Edit Users</h2>\n";
+  echo "Users need a full name, login name, most other things are irrelevant for sk.<p>";
   echo "<form method=post action='AddUser.php'>\n";
   if (isset($_POST['UserId'])) { /* Response to update button */
     $unum = $_POST['UserId'];
@@ -47,6 +50,7 @@
         echo "<h2 class=ERR>NO login GIVEN</h2>\n";
         $proc = 0;
       }
+      if (!Access('God')) $User['AccessLevel'] = $Access_Type['Player'];
       $unum = Insert_db_post('People',$User,$proc);
     }
   } elseif (isset($_GET['usernum']) && $_GET['usernum']) {
@@ -74,7 +78,11 @@
     echo "<tr>" . fm_text('Roll',$User,'Roll',3);
     echo "<tr>" . fm_text('Relative Order',$User,'RelOrder',3);
     echo "<tr><td>No Tasks (test users only) " . fm_checkbox('',$User,'NoTasks');
-    echo "<tr><td>Access Level<td>" . fm_select($Access_Levels,$User,'AccessLevel',0,'','',$User['AccessLevel']);
+    if (Access('God')) {
+      echo "<tr><td>Access Level<td>" . fm_select($Access_Levels,$User,'AccessLevel',0,'','',$User['AccessLevel']);
+    } else {
+      echo "<tr><td>Access Level<td>" . $Access_Type[$User['AccessLevel']];
+    }
     echo "<tr>" . fm_text('Image', $User,'Image',3);
 //    echo "<tr>" . fm_radio('Show on Contacts Page',$User_Public_Vis,$User,'Contacts');
 /*

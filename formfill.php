@@ -12,11 +12,6 @@
 //var_dump($_POST);
 // Special returns @x@ changes id to x, #x# sets feild to x, !x! important error message
   switch ($type) {
-  case 'System' :
-    $N = Get_System($id);
-    $N[$field] = $Value;
-    echo Put_System($N);
-    exit;
 
   case 'Planet' :
   case 'Moon' :
@@ -58,18 +53,6 @@
       }
       exit;
     }
-
-  case 'Link' :
-    $N = Get_Link($id);
-    $N[$field] = $Value;
-    echo Put_Link($N);
-    exit;
-
-  case 'Tech' :
-    $N = Get_Tech($id);
-    $N[$field] = $Value;
-    echo Put_Tech($N);
-    exit;
 
   case 'Thing' : // Will need some complex handling for districts, modules and subtype
     switch ($field) {
@@ -245,25 +228,6 @@
     echo Put_Faction($N);
     exit;
 
-
-  case 'District' :
-    $N = Get_District($id);
-    $N[$field] = $Value;
-    echo Put_District($N);
-    exit;
-
-  case 'Game' :
-    $N = Get_Game($id);
-    $N[$field] = $Value;
-    echo Put_Game($N);
-    exit;
-
-  case 'Turn' :
-    $N = Get_Turn($id);
-    $N[$field] = ($field == 'Progress')?hexdec($Value):$Value;
-    echo Put_Turn($N);
-    exit;
-
   case 'Projects' :
     // id is Fid
     if (preg_match('/Rush(\d*):(\d*)/',$field,$mtch)?true:false) {
@@ -275,19 +239,6 @@
       Put_ProjectTurn($N);
     }
     exit;
-
-   case 'Project' : // Note this is for ProjEdit, see above for per turn rushing
-    $N = Get_Project($id);
-    $N[$field] = $Value;
-    echo Put_Project($N);
-    exit;
-
-   case 'ProjectHome' : // Note this is for ProjEdit, see above for per turn rushing
-    $N = Get_ProjectHome($id);
-    $N[$field] = $Value;
-    echo Put_ProjectHome($N);
-    exit;
-
 
   case 'FFaction' :
     if (preg_match('/Know(\d*):(\d*)/',$field,$mtch)?true:false) {
@@ -313,26 +264,7 @@
     }
     exit;
 
-  case 'Banking':
-    $N = Get_Banking($id);
-    $N[$field] = $Value;
-    echo Put_Banking($N);
-    exit;
-
-
-   case 'FactionTurn':
-    $N = Get_FactionTurn($id);
-    $N[$field] = $Value;
-    echo Put_FactionTurn($N);
-    exit;
-
-   case 'ProjectHome':
-    $N = Get_ProjectHome($id);
-    $N[$field] = $Value;
-    echo Put_ProjectHome($N);
-    exit;
-
-   case 'Anomaly':
+  case 'Anomaly':
     if ((preg_match('/(\w*):(\d*)/',$field,$mtch)?true:false)) {
       $N = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$id AND FactionId=" . $mtch[2]);
       if (!$N) {
@@ -386,23 +318,23 @@
     echo Put_World($N);
     exit;
 
-  case 'ScansDue':
-//       var_dump($_REQUEST);
+  case 'GamePlayers':
+
+
+  case 'ScansDue': // Generic case of field:id
     if ((preg_match('/(\w*):(\d*)/',$field,$mtch)?true:false)) {
-      $N = Gen_Get('ScansDue',$mtch[2]);
+      $N = Gen_Get($type,$mtch[2]);
       $N[$mtch[1]] = $Value;
-//var_dump($N);
-      echo Gen_Put('ScansDue',$N);
+      echo Gen_Put($type,$N);
     }
     exit;
 
   default:
-    echo "Not setup $type for Auto Edit";
     break;
-// Need to add stuff for control etc and names in faction_system as well
-
-    exit;
-
   }
-?>
+  global $TableIndexes; // This handles most simple cases
+  $idx = (isset($TableIndexes[$type])?$TableIndexes[$type]:'id');
+  $N = Gen_Get($type,$id,$idx);
+  $N[$field] = $Value;
+  return Gen_Put($type,$N,$idx);
 

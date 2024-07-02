@@ -20,7 +20,7 @@ $Access_Type = array_flip($Access_Levels);
 
 $Months = ['','Jan','Feb','Mar','Apr','May','June','July','Aug','Sep','Oct','Nov','Dec'];
 $GameStatus = ['Planning','In Setup','Active','Historical'];
-$PlayerLevel = ['Player','GM'];
+$PlayerLevel = ['Player','GM','No Access'];
 
 
 date_default_timezone_set('GMT');
@@ -82,6 +82,8 @@ function Set_Faction() {
   if (empty($Person)) {
     if ($USER['AccessLevel'] < $Access_Type['God']) include_once("StarKingdoms.php");
     $GAME['FactionLevel'] = 0;
+  } if ($Person['Type'] == 2) { // No Access
+    Error_Page('You do not have access to this game - sorry');
   } else {
     $GAME['FactionLevel'] = ($Person['Type']??0);
   }
