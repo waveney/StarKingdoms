@@ -7,7 +7,7 @@
 
 
   global $PlayerState,$PlayerStates,$NewF;
-  Set_User();
+  Set_Faction();
   if (empty($FACTION)) {
     echo "NOT IN A FACTION";
     dotail();

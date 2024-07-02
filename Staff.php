@@ -3,19 +3,14 @@
   include_once("GetPut.php");
   /* Remove any Participant overlay */
   global $FACTION;
-
   A_Check('GM');
-
-  if (isset($_COOKIE['SKD'])) {
-    unset($_COOKIE['SKD']);
+  if (isset($_COOKIE['SKF'])) {
+    unset($_COOKIE['SKF']);
     unset($FACTION);
-    setcookie('SKD','',1,'/');
+    setcookie('SKF','',1,'/');
   }
 
-  $host= "https://" . $_SERVER['HTTP_HOST'];
-
   dostaffhead("SK Pages", ["/js/jquery.typeahead.min.js", "/css/jquery.typeahead.min.css", "/js/Staff.js"]);
-
 
   global $GAME, $Heads,$VERSION;
   $Heads = [];
@@ -284,6 +279,9 @@
     $txt .= "<p>";
 
 //    $txt .= "<li><a href=DeepSpace.php>Deep Space Projects</a>\n";
+
+    $txt .= "<li><a href=StarKingdoms.php>Other Games</a>\n";
+
     $txt .= "</ul>\n";
   }
 
@@ -311,6 +309,7 @@
     if (Access('GM')) {
       $txt .= "<li><a href=AddUser.php>Add User</a>";
       $txt .= "<li><a href=ListUsers.php?FULL>List All Users</a>";
+      $txt .= "<li><a href=GameUsers.php>Manage Users of Game</a> - Add them to the system first...";
     } else {
       $txt .= "<li><a href=ListUsers.php>List Group Users</a>";
     }

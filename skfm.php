@@ -659,27 +659,23 @@ function number2roman($num,$isUpper=true) {
 }
 
 
-function Sanitise($txt,$len=40,$cat='') {
+function Sanitise(&$txt,$len=40,$cat='') {
   $txt = trim($txt);
   if ($len && strlen($txt) > $len) $txt = substr($txt,$len);
   switch ($cat) {
-  case 'num':
-    $txt = preg_replace('/[^0-9]/','',$txt);
-    return $txt;
-  case 'email':
-    $txt = preg_replace('/[^a-zA-Z0-9@_.]/','',$txt);
-    return $txt;
-  default:
-    $txt = preg_replace('/[^a-zA-Z0-9_ ,.\']/','',$txt);
-    return $txt;
+    case 'num':
+      $txt = preg_replace('/[^0-9]/','',$txt);
+      return $txt;
+    case 'email':
+      $txt = preg_replace('/[^a-zA-Z0-9@_.]/','',$txt);
+      return $txt;
+    case 'txt':
+      $txt = preg_replace('/[^a-zA-Z0-9]/','',$txt);
+      return $txt;
+    default:
+      $txt = preg_replace('/[^a-zA-Z0-9_ ,.\'\/\\\\]/','',$txt);
+      return $txt;
   }
-}
-
-function Ordinal($n) {
-  $ends = array('th','st','nd','rd','th','th','th','th','th','th');
-
-  if (($n %100) >= 11 && ($n%100) <= 13) return 'th';
-  return $ends[$n % 10];
 }
 
 function SanitiseAll($Rules) {
@@ -689,6 +685,14 @@ function SanitiseAll($Rules) {
       $_REQUEST[$flds[0]] = Sanitise($_REQUEST[$flds[0]],(empty($flds[1])?40:$flds[1]),(empty($flds[2])?'':$flds[2]));
     }
   }
+}
+
+
+function Ordinal($n) {
+  $ends = array('th','st','nd','rd','th','th','th','th','th','th');
+
+  if (($n %100) >= 11 && ($n%100) <= 13) return 'th';
+  return $ends[$n % 10];
 }
 
 ?>

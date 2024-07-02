@@ -43,7 +43,7 @@
     return $GL;
   }
 
-  global $USER,$GAME,$ErrorMessage,$GAMESYS;
+  global $USER,$GAME,$GAMEID, $ErrorMessage,$GAMESYS;
   if (!empty($ErrorMessage)) echo "<h2 class=ERR>$ErrorMessage</h2>";
 
   $Usr = $USER['id'];
@@ -54,6 +54,7 @@
 
     if (count($Games)>1) echo "<h2>Select Game: " . GameList($Games);
   } else { // Not God
+//    $Perm
     $Games = Gen_Get_Cond('Games', "GM1=$Usr OR GM2=$Usr OR GM3=$Usr");
 
     if ($Usr != $GAME['GM1'] && $Usr != $GAME['GM2'] && $Usr != $GAME['GM3']) {
@@ -282,6 +283,7 @@
     $txt .= "<p>";
     if (0)    $txt .= "<li><a href=AnomalyImport.php>Anomaly Import</a>\n";
     $txt .= "<p>";
+    $txt .= "<li><a href=/StarKingdoms.php>Other Games</a>\n";
 
 //    $txt .= "<li><a href=DeepSpace.php>Deep Space Projects</a>\n";
     $txt .= "</ul>\n";
@@ -339,6 +341,8 @@
           }
         }
       }
+      $txt .= "<li><a href=../Staff.php>System Level</a>\n";
+
     }
     if (0 && Access('God')) $txt .= "<li><a href=TEmailProformas.php>EMail Proformas</a>";
     if (0 && Access('God')) $txt .= "<li><a href=AdminGuide.php>Admin Guide</a> \n";

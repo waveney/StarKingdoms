@@ -4,7 +4,9 @@
 
   include_once("skdb.php");
   include_once("skfm.php");
-$BUTTON = 0;
+  include_once("GetPut.php");
+
+  $BUTTON = 0;
 
 if (isset($_REQUEST['Y'])) $YEAR = $_REQUEST['Y'];
 if (isset($_REQUEST['B'])) $BUTTON = ($_REQUEST['B']+1) % 4;
@@ -16,12 +18,15 @@ if (isset($YEAR)) {
 $Access_Levels = ['','Participant','Observer','Player','GM','God','SysAdmin','Internal'];
 $Access_Type = array_flip($Access_Levels);
 
-// Perfname => [field to test, email address for,Capability name,budget,shortCode]
 $Months = ['','Jan','Feb','Mar','Apr','May','June','July','Aug','Sep','Oct','Nov','Dec'];
+$GameStatus = ['Planning','In Setup','Active','Historical'];
+$PlayerLevel = ['Player','GM'];
+
 
 date_default_timezone_set('GMT');
 function Check_Login() {
   global $db,$USER,$USERID,$AccessType,$YEAR,$CALYEAR,$FACTION;
+  if (!empty($USER)) return true;
   if (isset($_COOKIE['SKC2'])) {
     $res=$db->query("SELECT * FROM People WHERE Yale='" . $_COOKIE['SKC2'] . "'");
     if ($res) {
@@ -40,68 +45,65 @@ function Check_Login() {
           fwrite($logf,"\n\n");
         }
       }
+      return true;
     }
   }
+  include_once("Login.php");
+  Login("Please Login to Star Kingdoms");
+
+  return false;
 }
 
-function Set_User() {
-  global $db,$USER,$USERID,$AccessType,$YEAR,$CALYEAR,$FACTION,$GAME,$GAMEID;
-  if (isset($USER)) return;
-  $USER = array();
-  $USERID = 0;
-  if (isset($_COOKIE['SKD'])) {
-    include_once("GetPut.php");
-    $biscuit = $_COOKIE['SKD'];
-    $Cake = openssl_decrypt($biscuit,'aes-128-ctr','Quarterjack',0,'BrianMBispHarris');
-    $crumbs = explode(':',$Cake);
-    $USER['Subtype'] = $crumbs[0];
-    $USER['AccessLevel'] = $crumbs[1];
-    $FACTIONID = $USER['UserId'] = $crumbs[2];
-    $Game = ($crumbs[3] ?? 1);
-    if ($Game != $GAMEID) {
-      echo "Richard you have a bug...";
-      // TODO Not current game...
-    }
-    $FACTION = Get_Faction($FACTIONID);
-    if ($USERID) return;
-//    $USER = array();
-    $USERID = - $FACTIONID;
-  }
+function Set_Faction() {
+  global $FACTION,$FID,$GAME,$GAMEID,$USERID,$USER,$Access_Type ;
+  if (isset($FID)) return;
   Check_Login();
+
+  $FACTION = [];
+  $FID = 0;
+
+  // Set Game
+  if (isset($_COOKIE['SKG'])) {
+    $gid = $_COOKIE['SKG'];
+    if ($gid != $GAMEID) {
+      Get_Game($gid);
+    }
+  } else {
+    if ($USER['AccessLevel'] >= $Access_Type['God']) return;
+    include_once("StarKingdoms.php");
+  }
+
+  if (isset($_COOKIE['SKF'])) {
+    $FID = $_COOKIE['SKF'];
+    $FACTION = Get_Faction($FID);
+  }
+
+  $Person = Gen_Get_Cond1('GamePlayers', "GameId=$GAMEID AND PlayerId=$USERID");
+  if (empty($Person)) {
+    if ($USER['AccessLevel'] < $Access_Type['God']) include_once("StarKingdoms.php");
+    $GAME['FactionLevel'] = 0;
+  } else {
+    $GAME['FactionLevel'] = ($Person['Type']??0);
+  }
 }
 
-function Access($level,$subtype=0,$thing=0) {
-  global $Access_Type,$USER,$USERID;
-  $want = $Access_Type[$level];
-  Set_User();
-  if (!isset($USER['AccessLevel'])) return 0;
-  if ($USER['AccessLevel'] < $want) return 0;
+function Access($level,$subtype=0,$thing=0) { // VERY different from fest code now
+  global $Access_Type,$USER,$USERID,$GAMEID,$FACTION,$FID,$GAME;
+  Set_Faction();
+//  echo "XXX $level";
 
-  if ($USER['AccessLevel'] > $want+1) return 1;
+  if ($USER['AccessLevel'] >= $Access_Type['God']) return 1;
 
-  switch  ($USER['AccessLevel']) {
+  switch ($level) {
+  case 'Player':
+    return ($FACTION?1:0);
 
-  case $Access_Type['Player'] :
-    if (!$subtype) return 1;
-    if ($USER['Subtype'] == 'Other' && $subtype == 'Act') {}
-    elseif ($USER['Subtype'] != $subtype) return 0;
-    return $thing == $USERID;
+  case 'GM':
+    return ($GAME['FactionLevel']??0);
 
-  case $Access_Type['Observer'] :
-    if (!$subtype) return $USER['AccessLevel'] >= $want;
-    if (isset($USER[$subtype]) && $USER[$subtype]) return 1;
-    return 0;
-
-
-  case $Access_Type['GM'] :
-    if (!$subtype) return 1;
-    if (isset($USER[$subtype]) && $USER[$subtype]) return 1;
-    return 0;
-
-  case $Access_Type['SysAdmin'] :
-    return 1;
-
-  case $Access_Type['Internal'] :
+  case 'God':
+  case 'SysAdmin':
+  case 'Internal':
     return 1;
 
   default:
@@ -123,22 +125,13 @@ function Access($level,$subtype=0,$thing=0) {
 */
 
 function A_Check($level,$subtype=0,$thing=0) {
-  global $Access_Type,$USER,$USERID;
-  global $db;
-  Set_User();
-  if (!$USERID) {
-    include_once("Login.php");
-    Login();
-  }
   if (Access($level,$subtype,$thing)) return;
-//echo "Failed checking...";
-//exit;
   Error_Page("Insufficient Privilages");
 }
 
 function UserSetPref($pref,$val) {
   global $USER,$USERID;
-  Set_User();
+  Set_Faction();
   if (!$USERID) return; // No user
   $Prefs = $USER['Prefs'];
   if (!($NewPrefs = preg_replace("/$pref\:.*\n/","$pref:$val\n",$Prefs))) $NewPrefs = $Prefs .  "$pref:$val\n";
@@ -190,7 +183,7 @@ function Put_User(&$data,$Save_User=0) {
 
 function Error_Page ($message) {
   global $Access_Type,$USER,$USERID;
-  set_user();
+  Check_Login();
   if (isset($USER['AccessLevel'])) { $type = $USER['AccessLevel']; } else { $type = 0; }
 //  var_dump($USER);
 //  echo "$type<p>";
@@ -215,11 +208,15 @@ function Get_Game($y=0) {
   global $db,$GAME,$GAMESYS,$GAMEID;
   if (!$y) $y=$GAMESYS['CurGame'];
   $res = $db->query("SELECT * FROM Games WHERE id='$y'");
-  if ($res) return $res->fetch_assoc();
+  if ($res) {
+    $GAME = $res->fetch_assoc();
+    $GAMEID = $GAME['id'];
+  } else {
+    Error_Page("Game - $y not known");
+  }
 }
 
-$GAME = Get_Game();
-$GAMEID = $GAME['id'];
+Get_Game();
 
 function First_Sent($stuff) {
   $onefifty=substr($stuff,0,150);

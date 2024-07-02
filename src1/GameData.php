@@ -3,7 +3,7 @@
   include_once("GetPut.php");
 
   A_Check('God');
-  global $GAME,$GAMEID;
+  global $GAME,$GAMEID,$GameStatus;
 
   dostaffhead("General Game Settings");
 
@@ -26,6 +26,11 @@
 //      $ynum = $Gen['Year'];
       break;
 
+    case 'Key' :
+      $GAME['AccessKey'] = rand_string(40);
+      Gen_Put('Games',$GAME);
+      break;
+
     case 'Setup' :
 //      $Gen = [];
       $ynum = 0;
@@ -43,17 +48,19 @@
   echo fm_hidden('id',$GAMEID);
 
   echo "<tr><td>Id: $GAMEID" . fm_text('Name',$GAME,'Name');
-  echo "<tr>" . fm_number("Turn #",$GAME,'Turn') . "<td> 0 = Setup";
+  echo "<tr>" . fm_number("Turn #",$GAME,'Turn') . "<td>State:" . fm_select($GameStatus,$GAME,'Status');
+  echo "<tr><td>Access Key:<td colspan=3>" . $GAME['AccessKey'];
 
   echo "<tr>" . fm_textarea("Features",$GAME,'Features',10,20);
-  echo "<tr><td>GM 1<td>" . fm_select($Userlist,$GAME,'GM1',1);
-  echo "<tr><td>GM 2<td>" . fm_select($Userlist,$GAME,'GM2',1);
-  echo "<tr><td>GM 3<td>" . fm_select($Userlist,$GAME,'GM3',1);
+//  echo "<tr><td>GM 1<td>" . fm_select($Userlist,$GAME,'GM1',1);
+//  echo "<tr><td>GM 2<td>" . fm_select($Userlist,$GAME,'GM2',1);
+//  echo "<tr><td>GM 3<td>" . fm_select($Userlist,$GAME,'GM3',1);
 
   if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "</table></div>\n";
 
   echo "<Center><input type=Submit name=ACTION value='Create New Game'></center>\n";
+  if (Access('God')) echo "<a href=GameData.php?ACTION=Key>New Access Key</a>";
   echo "</form>\n";
 
   dotail();

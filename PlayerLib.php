@@ -14,11 +14,11 @@ global $PlayerState,$PlayerStates,$Currencies;
 
 function CheckFaction($Prog='Player',$Fid=0) {
   if (!Access('Player') && !Access('GM')) {
-    dostaffhead("Who are you?");    
+    dostaffhead("Who are you?");
     echo "<h2>Who are you?</h2>";
     echo "If you are are a player, reuse your personal link.<p>";
     echo "If you are a GM go to the login prompt and type your username and password.<p>";
-    dotail();  
+    dotail();
   }
   if (!$Fid) {
       dostaffhead("Faction needed");
@@ -70,10 +70,10 @@ function Player_Page() {
   global $FACTION,$PlayerState,$PlayerStates,$PlayerStateColours,$GAME;
 
 
-  dostaffhead("Things",["js/ProjectTools.js"]);  
+  dostaffhead("Things",["js/ProjectTools.js"]);
   $GM = Access('GM');
   $FF = 1; //FactionFeature('AllowActions',$GM);  // Eventually change GM to 1
-  
+
   if (empty($FACTION['id'])) {
     echo "<h1>No Faction Selected</h1>";
     dotail();
@@ -81,35 +81,35 @@ function Player_Page() {
 
   $Fid = $FACTION['id'];
   $FACTION['LastActive'] = time();
-  
+
   if (!$GM || $FACTION['NPC'] ) Put_Faction($FACTION);
-  
+
 //var_dump($PlayerState,$FACTION);
   echo "<h1>Player Actions: " . $FACTION['Name'] . "</h1>\n";
-  
+
   $TState = $PlayerState[$FACTION['TurnState']] ;
-    
+
   echo "<h2>Player state: <span style='background:" . $PlayerStateColours[$FACTION['TurnState']] . "'>$TState</span> Turn:" .
        $GAME['Turn'] . "</h2>";
   if ($GM || isset($_REQUEST['SEEALL'])) $TState = 'Turn Planning';
-  
+
   echo "<div class=Player>";
   if ((!$GM) && $TState == 'Turn Submitted') echo "<b>To change anything, cancel the turn submission first.</b><br>";
   echo "The only current actions are:";
   echo "<ul>";
 
   echo "<p><li><a href=UserGuide.php>User Guide</a><p>\n";
-  
+
 
   switch ($TState) {
   case 'Setup':
-    echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";    
+    echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";
     echo "<li><a href=Setup.php>Setup</a>\n";
-    echo "<li><a href=ThingSetup.php?T=Ships>Setup Ships</a>\n";    
-    echo "<li><a href=ThingSetup.php?T=Army>Setup Armys</a>\n";    
-    echo "<li><a href=ThingSetup.php?T=Agent>Setup Agents</a>\n";    
+    echo "<li><a href=ThingSetup.php?T=Ships>Setup Ships</a>\n";
+    echo "<li><a href=ThingSetup.php?T=Army>Setup Armys</a>\n";
+    echo "<li><a href=ThingSetup.php?T=Agent>Setup Agents</a>\n";
     break;
-  
+
   case 'Frozen':
     fm_addall('readonly');
   case 'Turn Submitted':
@@ -123,10 +123,10 @@ function Player_Page() {
     echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";
     if ($GM) echo "<li>GM: <a href=TechShow.php?SETUP&id=$Fid>Edit Technologies</a>\n";
     echo "<p><li><a href=WhatCanIC.php>What Things can I See?</a>\n";
-    echo "<li><a href=WorldList.php>Worlds and Colonies</a> - High Level info only\n";  
-    echo "<li><a href=NamePlaces.php>Name Places</a> - Systems, Planets etc\n";      
-//    echo "<li><a href=PScanList.php>Systems and Scans</a>\n";      
-    echo "<li><a href=PAnomalyList.php>Anomalies that have been seen</a><p>\n";      
+    echo "<li><a href=WorldList.php>Worlds and Colonies</a> - High Level info only\n";
+    echo "<li><a href=NamePlaces.php>Name Places</a> - Systems, Planets etc\n";
+//    echo "<li><a href=PScanList.php>Systems and Scans</a>\n";
+    echo "<li><a href=PAnomalyList.php>Anomalies that have been seen</a><p>\n";
     echo "<li><a href=ProjDisp.php>Projects</a>\n";
     echo "<li><a href=PThingList.php>List of Things</a> - List of Things (Ships, Armies, Agents, Space stations etc)";
      if ($PlayerState[$FACTION['TurnState']] != 'Frozen') echo "<li><a href=ThingPlan.php>Plan a Thing</a> - Planning Things (Ships, Armies, Agents, Space stations etc)";
@@ -144,18 +144,21 @@ function Player_Page() {
     echo "<li><a href=FactionCarry.php>Allow Others Access</a> - To allow individuals and armies aboard, use of Warp gates and repairing.\n";
     if ($GM) echo "<p><li>GM: <a href=SplitFaction.php?ACTION=Start>Split Faction</a>\n";
     break;
-            
+
   case 'Turn Being Processed':
     echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";
-    
+
     if ($GM) echo "<p><li><a href=Player.php?SEEALL>(GM) See All Actions</a>\n";
-    break;  
+    break;
 
   }
 
   echo "</ul>";
   echo "</div>";
-  
+
+  echo "<li><a href=../StarKingdoms.php>Index of Star Kingdom's Games</a>";
+
+
   dotail();
 
 }
@@ -169,12 +172,12 @@ function Has_Trait($fid,$Name) {
   }
   $Fact = Get_Faction($fid);
   if ($Fact['Trait1'] == $Name || $Fact['Trait2'] == $Name || $Fact['Trait3'] == $Name) return true;
-  return false; 
+  return false;
 }
 
 function Ships() {
   global $FACTION;
-  
+
 }
 
 function Spend_Credit($Who,$Amount,$Why,$From='') { // Ammount is negative to gain credits
@@ -189,7 +192,7 @@ function Spend_Credit($Who,$Amount,$Why,$From='') { // Ammount is negative to ga
   } else {
     $Fact['Credits'] -= $Amount;
     Put_Faction($Fact);
-    $CR['Status'] = 1;  
+    $CR['Status'] = 1;
     $CR['EndCredits'] = $Fact['Credits'];
     Put_CreditLog($CR);
     return 1;
@@ -200,36 +203,36 @@ function Gain_Science($Who,$What,$Amount,$Why) { // Ammount is negative to gain 
   global $GAME;
   $Fact = Get_Faction($Who);
   switch ($What) {
-  case 1: 
+  case 1:
     $Fact['PhysicsSP'] = ($Fact['PhysicsSP'] ?? 0) + $Amount;
     break;
-  case 2: 
+  case 2:
     $Fact['EngineeringSP'] = ($Fact['EngineeringSP'] ?? 0) + $Amount;
     break;
-  case 3: 
+  case 3:
     $Fact['XenologySP'] = ($Fact['XenologySP'] ?? 0) + $Amount;
     break;
   case 4: // Random
     for($sp =1; $sp <= $Amount; $sp++) {
       switch (rand(1,3)) {
-      case 1: 
+      case 1:
         $Fact['PhysicsSP'] = ($Fact['PhysicsSP'] ?? 0) + 1;
         break;
-      case 2: 
+      case 2:
         $Fact['EngineeringSP'] = ($Fact['EngineeringSP'] ?? 0) + 1;
         break;
-      case 3: 
+      case 3:
         $Fact['XenologySP'] = ($Fact['XenologySP'] ?? 0) + $Amount + 1;
         break;
       }
     }
   }
-  
+
 //  var_dump($Fact);
   Put_Faction($Fact);
 }
 
-function Gain_Currency($Who,$What,$Amount,$Why) { // Ammount is negative to gain 
+function Gain_Currency($Who,$What,$Amount,$Why) { // Ammount is negative to gain
   if ($What <=4) return 0; // Should be handled by spend_credit and Gain Science TODO generalise in long term
   global $GAME,$Currencies;
   $Fact = Get_Faction($Who);
@@ -243,7 +246,7 @@ function Gain_Currency($Who,$What,$Amount,$Why) { // Ammount is negative to gain
 
 function Link_Cost($Fid,$LinkLevel,$ShipLevel) {
   if ($LinkLevel == 1) return '';
-  
+
 }
 
 function Credit() {
@@ -252,10 +255,10 @@ function Credit() {
 
 function Income_Estimate($Fid) {
   include_once("ThingLib.php");
-  include_once("HomesLib.php");  
+  include_once("HomesLib.php");
 
   $TTypes = Get_ThingTypes();
-  
+
   $Worlds = Get_Worlds($Fid);
   $EconVal = 0;
   $OutPosts = $AstMines = $AstVal = $Embassies = $OtherEmbs = $MineFields = 0;
@@ -266,14 +269,14 @@ function Income_Estimate($Fid) {
     if (!$PH) continue;
 
     $ECon = $H['Economy'] = Recalc_Economic_Rating($H,$W,$Fid);
-      
+
     if ($W['Revolt']) {
       $ECon = 0;
     } else {
       if ($H['Devastation']) {
         $ECon = $ECon - $H['Devastation'];
       }
-    
+
       if ($W['Blockade'] ) { //&& $Fid != 9) {
         $ECon /= 2;
       }
@@ -290,20 +293,20 @@ function Income_Estimate($Fid) {
     case "Outpost":
       $OutPosts ++;
       break;
-      
+
     case "Asteroid Mine":
       $AstMines ++;
       $AstVal += $T['Level'];
       break;
-      
+
     case "Embassy":
       $Embassies ++;
       break;
-      
+
     case "Minefield":
       $MineFields ++;
       break;
-      
+
     default:
       continue 2;
     }
@@ -311,20 +314,20 @@ function Income_Estimate($Fid) {
 
   $OtherTs = Get_Things_Cond(0,"Type=17 AND OtherFaction=$Fid");
   foreach($OtherTs as $OT) $OtherEmbs++;
-    
+
   if ($OutPosts) $EconVal += $OutPosts*2;
 
   if ($AstMines) {
     $AstVal *= Has_Tech($Fid,'Deep Space Construction');
     $EconVal += $AstVal;
   }
-  if ($Embassies) $EconVal += $Embassies;    
+  if ($Embassies) $EconVal += $Embassies;
 
-  if ($OtherEmbs) $EconVal += $OtherEmbs;    
+  if ($OtherEmbs) $EconVal += $OtherEmbs;
 
-  if ($MineFields) $EconVal -= $MineFields;    
+  if ($MineFields) $EconVal -= $MineFields;
 
-  $Logistics = [0,0,0]; // Ship, Army, Intelligence  
+  $Logistics = [0,0,0]; // Ship, Army, Intelligence
   foreach ($Things as $T) {
     if (empty($T['Type'])) continue;
     $Props = $TTypes[$T['Type']]['Properties'];
@@ -335,17 +338,17 @@ function Income_Estimate($Fid) {
     };
   }
 
-  
+
   $LogAvail = LogisticalSupport($Fid);
   $LogCats = ['Ships','Armies','Agents'];
-    
+
   foreach ($LogCats as $i => $n) {
     if ($Logistics[$i]) {
       $pen = min(0,$LogAvail[$i]-$Logistics[$i]);
       if ($pen < 0) $EconVal += $pen;
     }
   }
-  return $EconVal*10;   
+  return $EconVal*10;
 }
 
 function WhatCanBeSeenBy($Fid,$Mode=0) {
@@ -353,14 +356,14 @@ function WhatCanBeSeenBy($Fid,$Mode=0) {
   $MyHomes = Get_ProjectHomes($Fid);
   $ThingTypes = Get_ThingTypes();
   $SRefs = Get_SystemRefs();
-  
+
   $Factions = Get_Factions();
-  
+
   $Places = [];
   $Hosts = [];
-  
+
   $txt = '';
-  
+
   foreach ($MyThings as $T) {
     if ($T['BuildState'] < 2 || $T['BuildState']> 3) continue; // Ignore things not in use
     $Sid = $T['SystemId'];
@@ -383,7 +386,7 @@ function WhatCanBeSeenBy($Fid,$Mode=0) {
 
   foreach ($MyHomes as $H) {
     switch ($H['ThingType']) {
-    case 1: 
+    case 1:
       $P = Get_Planet($H['ThingId']);
       $Sid = $P['SystemId'];
       break;
@@ -404,9 +407,9 @@ function WhatCanBeSeenBy($Fid,$Mode=0) {
     $Eyes = $Places[$Sid];
     $txt .= SeeInSystem($Sid,$Eyes,1,1,$Fid);
   }
- 
+
   $LastWhose = 0;
-  
+
   if (!empty($Hosts)) {
     foreach($Hosts as $Hid=>$H) {
       if (empty($H)) continue;
@@ -418,7 +421,7 @@ function WhatCanBeSeenBy($Fid,$Mode=0) {
       }
     }
   }
-  
+
   return $txt;
 }
 

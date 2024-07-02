@@ -57,12 +57,14 @@ Get game data
   modify .htaccess to redirect as appropriate
   
 Core code
-  sk, skfm, skdb, Updatesystem, Login, ListUsers, AddUser, GetPut (Merge in)
+  sk, skfm, skdb, Updatesystem, Login, ListUsers, AddUser, GetPut?
   CoreTools.js NEW
   GameData? 
 
 
 Per game code
 
+SKC2 - Who You are
+SKD - Current Game/Faction
 
 
