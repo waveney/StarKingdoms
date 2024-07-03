@@ -1,0 +1,20 @@
+CREATE TABLE `Moons` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `PlanetId` int NOT NULL,
+  `Name` text CHARACTER SET latin1 COLLATE latin1_bin NOT NULL,
+  `ShortName` text CHARACTER SET latin1 COLLATE latin1_bin,
+  `Radius` double NOT NULL,
+  `Gravity` double NOT NULL,
+  `Period` double NOT NULL,
+  `OrbitalRadius` double NOT NULL,
+  `Type` int NOT NULL DEFAULT '0',
+  `Control` int NOT NULL DEFAULT '0',
+  `Minerals` int NOT NULL DEFAULT '0',
+  `Description` text CHARACTER SET latin1 COLLATE latin1_bin,
+  `Image` text CHARACTER SET latin1 COLLATE latin1_bin,
+  `ProjHome` int NOT NULL DEFAULT '0',
+  `Attributes` int NOT NULL,
+  `Mined` int NOT NULL,
+  `GameId` int NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_bin;

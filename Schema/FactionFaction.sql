@@ -1,0 +1,7 @@
+CREATE TABLE `FactionFaction` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `FactionId1` int NOT NULL,
+  `FactionId2` int NOT NULL,
+  `Props` int NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_bin;

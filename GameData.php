@@ -6,6 +6,8 @@
   global $GAME,$GAMEID,$GameStatus;
 
   dostaffhead("General Game Settings");
+  echo "Game states: Planning - World creation, rules coding, no players<br>Setup - Players setting up, trait specials being coded<br>" .
+    "Active - In play<br>Historical - Game has ended, Readonly<p>\n";
 
   include_once("DateTime.php");
 
@@ -44,7 +46,7 @@
 
   echo "<form method=post>\n";
   echo "<div class=tablecont><table width=90% border>\n";
-  Register_AutoUpdate('Game',$GAMEID);
+  Register_AutoUpdate('Games',$GAMEID);
   echo fm_hidden('id',$GAMEID);
 
   echo "<tr><td>Id: $GAMEID" . fm_text('Name',$GAME,'Name');
@@ -59,7 +61,7 @@
   if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "</table></div>\n";
 
-  echo "<Center><input type=Submit name=ACTION value='Create New Game'></center>\n";
+//  echo "<Center><input type=Submit name=ACTION value='Create New Game'></center>\n";
   if (Access('God')) echo "<a href=GameData.php?ACTION=Key>New Access Key</a>";
   echo "</form>\n";
 

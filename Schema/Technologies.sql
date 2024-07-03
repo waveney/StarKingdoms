@@ -1,0 +1,20 @@
+CREATE TABLE `Technologies` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `Cat` int NOT NULL,
+  `Name` text CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `Field` int NOT NULL,
+  `Description` text CHARACTER SET latin1 COLLATE latin1_general_ci,
+  `PreReqTech` int DEFAULT NULL,
+  `PreReqLevel` int DEFAULT NULL,
+  `Slots` int DEFAULT NULL,
+  `MinThingLevel` int DEFAULT NULL,
+  `CivMil` int DEFAULT '0',
+  `Formula` int DEFAULT '0',
+  `DevState` int DEFAULT NULL,
+  `Notes` text CHARACTER SET latin1 COLLATE latin1_general_ci,
+  `PreReqTech2` int NOT NULL,
+  `PreReqTech3` int NOT NULL,
+  `Properties` int NOT NULL,
+  `NotBy` int NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;

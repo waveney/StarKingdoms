@@ -41,22 +41,6 @@
   global $USER,$GAME,$ErrorMessage,$GAMESYS;
   if (!empty($ErrorMessage)) echo "<h2 class=ERR>$ErrorMessage</h2>";
 
-  $Usr = $USER['id'];
-
-  if (Access('God')) {
-
-    $Games =Gen_Get_Cond('Games','TRUE');
-
-    if (count($Games)>1) echo "<h2>Select Game: " . GameList($Games);
-  } else { // Not God
-    $Games = Gen_Get_Cond('Games', "GM1=$Usr OR GM2=$Usr OR GM3=$Usr");
-
-    if ($Usr != $GAME['GM1'] && $Usr != $GAME['GM2'] && $Usr != $GAME['GM3']) {
-      // Not GM of this game
-    }
-  }
-
-
   $Facts = Get_Faction_Names();
 // var_dump($Facts);
   if (isset($_REQUEST['ACTION'])) {
@@ -346,6 +330,7 @@
     if (Access('GM')) {
 //      $txt .= "<li><a href=BannerManage>Manage Banners</a> \n";
       $txt .= "<li><a href=GameData.php>Game Settings</a> \n";
+      $txt .= "<li><a href=GameNew.php>Create New Game</a>\n";
 //      $txt .= "<li><a href=MasterData.php>Star Kingdoms System Data Settings</a> \n";
     }
     $txt .= "</ul>\n";
