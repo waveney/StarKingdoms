@@ -352,18 +352,26 @@ function Put_DistrictType(&$now) {
   return Update_db('DistrictTypes',$Cur,$now);
 }
 
-function Get_DistrictTypes() {
-  global $db,$GAMEID;
+function Get_DistrictTypes($All=0) {
+  global $db,$NOTBY;
   $Ts = [];
-  $res = $db->query("SELECT * FROM DistrictTypes");
+  if ($All) {
+    $res = $db->query("SELECT * FROM DistrictTypes");
+  } else {
+    $res = $db->query("SELECT * FROM DistrictTypes WHERE (NotBy&$NOTBY)=0");
+  }
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
   return $Ts;
 }
 
-function Get_DistrictTypeNames() {
-  global $db,$GAMEID;
+function Get_DistrictTypeNames($All=0) {
+  global $db,$NOTBY;
   $Ts = [];
-  $res = $db->query("SELECT * FROM DistrictTypes");
+  if ($All) {
+    $res = $db->query("SELECT * FROM DistrictTypes");
+  } else {
+    $res = $db->query("SELECT * FROM DistrictTypes WHERE (NotBy&$NOTBY)=0");
+  }
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans['Name'];
   return $Ts;
 }
@@ -461,18 +469,26 @@ function Put_PlanetType(&$now) {
   return Update_db('PlanetTypes',$Cur,$now);
 }
 
-function Get_PlanetTypes() {
-  global $db,$GAMEID;
+function Get_PlanetTypes($All=0) {
+  global $db,$NOTBY;
   $Ts = [];
-  $res = $db->query("SELECT * FROM PlanetTypes");
+  if ($All) {
+    $res = $db->query("SELECT * FROM PlanetTypes");
+  } else {
+    $res = $db->query("SELECT * FROM PlanetTypes WHERE (NotBy&$NOTBY)=0");
+  }
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
   return $Ts;
 }
 
-function Get_PlanetTypeNames() {
-  global $db,$GAMEID;
+function Get_PlanetTypeNames($All=0) {
+  global $db,$NOTBY;
   $Ts = [];
-  $res = $db->query("SELECT * FROM PlanetTypes");
+  if ($All) {
+    $res = $db->query("SELECT * FROM PlanetTypes");
+  } else {
+    $res = $db->query("SELECT * FROM PlanetTypes WHERE (NotBy&$NOTBY)=0");
+  }
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans['Name'];
   return $Ts;
 }
@@ -647,10 +663,14 @@ function Put_ModuleType(&$now) {
   }
 }
 
-function Get_ModuleTypes() {
-  global $db,$GAMEID;
+function Get_ModuleTypes($All=0) {
+  global $db,$NOTBY;
+  if ($All) {
+    $res = $db->query("SELECT * FROM ModuleTypes ORDER BY id");
+  } else {
+    $res = $db->query("SELECT * FROM ModuleTypes WHERE (NotBy&$NOTBY)=0 ORDER BY id");
+  }
   $Ms = [];
-  $res = $db->query("SELECT * FROM ModuleTypes ORDER BY id");
   if ($res) while ($ans = $res->fetch_assoc()) $Ms[$ans['id']] = $ans;
   return $Ms;
 }
@@ -717,36 +737,35 @@ function Get_Techs($Fact=0) {
   }
 }
 
-function Get_TechsByCore($Fact=0, $All=0) {
-  global $db,$GAMEID;
+function Get_TechsByCore($Fact=0, $All=0, $AllG=0) {
+  global $db,$NOTBY;
   $Ms = [];
-  if ($Fact == 0 || $All) {
-    $res = $db->query("SELECT * FROM Technologies ORDER BY PreReqTech, PreReqLevel, Name");
-    if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
-    return $Ms;
+  if ($Fact == 0 || $All || $AllG ) {
+    if ($AllG) {
+      $res = $db->query("SELECT * FROM Technologies ORDER BY PreReqTech, PreReqLevel, Name");
+    } else {
+      $res = $db->query("SELECT * FROM Technologies WHERE (NotBy&$NOTBY)=0 ORDER BY PreReqTech, PreReqLevel, Name");
+    }
   } else {
     $res = $db->query("SELECT DISTINCT t.* FROM Technologies t, FactionTechs ft WHERE " .
            "(t.Cat<2 OR (t.Cat=2 AND ft.Faction_Id=$Fact AND ft.Tech_Id=t.id)) ORDER BY t.PreReqTech, t.PreReqLevel, t.Name");
-    if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
-    return $Ms;
   }
-}
-
-
-
-
-function Get_CoreTechs() {
-  global $db,$GAMEID;
-  $Ms = [];
-  $res = $db->query("SELECT * FROM Technologies WHERE Cat=0 ORDER BY id");
   if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
   return $Ms;
 }
 
-function Get_CoreTechsByName() {
-  global $db,$GAMEID;
+function Get_CoreTechs($AllG=0) {
+  global $db,$NOTBY;
   $Ms = [];
-  $res = $db->query("SELECT * FROM Technologies WHERE Cat=0 ORDER BY Name");
+  $res = $db->query("SELECT * FROM Technologies WHERE Cat=0 " .($AllG?"AND (NotBy&$NOTBY)=0":'')  . " ORDER BY id");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
+  return $Ms;
+}
+
+function Get_CoreTechsByName($AllG=0) {
+  global $db,$NOTBY;
+  $Ms = [];
+  $res = $db->query("SELECT * FROM Technologies WHERE Cat=0 " .($AllG?"AND (NotBy&$NOTBY)=0":'')  . " ORDER BY Name");
   if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
   return $Ms;
 }
@@ -804,9 +823,9 @@ function Get_Faction_Techs($Fact,$Turn=0) {
 
 // Thing Types
 
-function Get_ThingType($id) {
-  global $db;
-  $res = $db->query("SELECT * FROM ThingTypes WHERE id=$id");
+function Get_ThingType($id,$AllG=0) {
+  global $db,$NOTBY;
+  $res = $db->query("SELECT * FROM ThingTypes WHERE id=$id" .($AllG?"AND (NotBy&$NOTBY)=0":'')  . " ");
   if ($res) if ($ans = $res->fetch_assoc()) return $ans;
   return [];
 }
@@ -828,26 +847,6 @@ function Get_ThingTypes() {
   $res = $db->query("SELECT * FROM  ThingTypes ");
   if ($res) while ($ans = $res->fetch_assoc()) $Ms[$ans['id']] = $ans;
   return $Ms;
-}
-
-function OLD_Has_Tech($fid,$name,$Base=0,$Turn=0) {// name can be id
-  global $db,$GAMEID;
-//echo "Has_Tech called with $fid, $name<p>";
-  if (is_numeric($name)) {
-    $res = $db->query("SELECT Level,Tech_Id FROM  FactionTechs WHERE Faction_Id=$fid AND Tech_Id=$name ");
-  } else {
-    $res = $db->query("SELECT ft.Level,ft.Tech_Id FROM  FactionTechs ft, Technologies t WHERE ft.Faction_Id=$fid AND ft.Tech_Id=t.id AND t.Name='$name' ");
-  }
-  if ($res) while ($ans = $res->fetch_assoc()) {
-    $Blvl = $ans['Level'];
-    if ($Base) return $Blvl;
-    $tec = Get_Tech($ans['Tech_Id']);
-    if ($tec['Cat'] == 0) return $Blvl;
-    $Blvl = Has_Tech($fid,$tec['PreReqTech'],1);
-    return $Blvl;
-  }
-//echo "Result is 0<p>";
-  return 0;
 }
 
 function Has_Tech($fid,$name,$turn=0) { // Turn==0 = now
@@ -1047,16 +1046,15 @@ function Get_Projects_Cond($Cond) {
 
 // Project Types
 function Get_ProjectType($id) {
-  global $db;
+  global $db,$NOTBY;
   $res = $db->query("SELECT * FROM ProjectTypes WHERE id=$id");
   if ($res) if ($ans = $res->fetch_assoc()) return $ans;
   return [];
 }
 
-function Get_ProjectTypes() {
-  global $db;
-  $Ts = [];
-  $res = $db->query("SELECT * FROM ProjectTypes");
+function Get_ProjectTypes($AllG=0) {
+  global $db,$NOTBY;
+  $res = $db->query("SELECT * FROM ProjectTypes " .($AllG?"WHERE (NotBy&$NOTBY)=0":'') );
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
   return $Ts;
 }
