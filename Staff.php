@@ -321,6 +321,12 @@
             break;
           }
         }
+
+        if ($xtra) {
+          $txt .= "<li><a href=UpdateSystem $xtra>Update the system after pull</a> \n";
+          $txt .= "<li class=smalltext><a href=UpdateSystem?MarkDone>Just mark done</a><p> \n";
+        }
+
       }
       $txt .= "<li><a href=src1/Staff.php>Source 1</a>\n";
 

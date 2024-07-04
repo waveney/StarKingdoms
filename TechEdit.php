@@ -93,9 +93,11 @@
     foreach ($Techuses as $Tu) {
       if (($Tu['Faction_Id']==0) || (!isset($Facts[$Tu['Faction_Id']])) || ($Facts[$Tu['Faction_Id']]['Listed'] ?? 0)) continue;
       if ($Tu['Level'] == 0) {
-        echo "(<span style=background:" . $Facts['GameId'] . ": " . $Facts[$Tu['Faction_Id']]['MapColour'] . ">" . $Facts[$Tu['Faction_Id']]['Name'] . "</span>), ";
+        echo "(<span style=background:" . $Facts[$Tu['Faction_Id']]['MapColour'] . ">" . $Facts[$Tu['Faction_Id']]['GameId'] . ": " .
+          $Facts[$Tu['Faction_Id']]['Name'] . "</span>), ";
       } else {
-        echo "<span style=background:" . $Facts['GameId'] . ": " . $Facts[$Tu['Faction_Id']]['MapColour'] . ">" . $Facts[$Tu['Faction_Id']]['Name'] . "</span> - L" . $Tu['Level'] . ", ";
+        echo "<span style=background:" . $Facts[$Tu['Faction_Id']]['MapColour'] . ">" . $Facts[$Tu['Faction_Id']]['GameId'] . ": " .
+          $Facts[$Tu['Faction_Id']]['Name'] . "</span> - L" . $Tu['Level'] . ", ";
       }
       $Facts[$Tu['Faction_Id']]['Listed'] = 1;
     }
