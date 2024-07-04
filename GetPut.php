@@ -21,11 +21,11 @@ function Put_Faction(&$now) {
   }
 }
 
-function Get_Factions($Force=0) {
+function Get_Factions($Force=0,$AllG=0) {
   global $db,$GAMEID;
   static $F;
   if ($F && !$Force) return $F;
-  $res = $db->query("SELECT * FROM Factions WHERE GameId=$GAMEID ORDER BY id ");
+  $res = $db->query("SELECT * FROM Factions " . ($AllG?'':"WHERE GameId=$GAMEID ") . " ORDER BY id ");
   $F = [];
   if ($res) {
     while ($ans = $res->fetch_assoc()) { $F[$ans['id']] = $ans; }

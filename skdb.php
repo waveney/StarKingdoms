@@ -339,7 +339,7 @@ function set_ShowGame($last=0) { // Overrides default above if not set by a Y ar
 
 // Works for simple tables
 // Deletes = 0 none, 1=one, 2=many
-function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$Mstr='Name',$MstrNot='',$Hexflds='') {
+function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$Mstr='Name',$MstrNot='',$Hexflds='',$MstrChk='') {
   global $TableIndexes;
   include_once("DateTime.php");
   $Flds = table_fields($table);
@@ -356,6 +356,7 @@ function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$M
       if ($i) {
         if (isset($_POST["$Mstr$i"]) && $_POST["$Mstr$i"] == $MstrNot) {
           if ($Deletes) {
+            if (!empty($MstrChk) && !isset($_POST["$MstrChk$i"])) continue;
 //          echo "Would delete " . $t[$indxname] . "<br>";
               db_delete($table,$t[$indxname]);
             if ($Deletes == 1) return 1;
