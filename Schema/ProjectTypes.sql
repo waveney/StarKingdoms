@@ -1,8 +1,8 @@
 CREATE TABLE `ProjectTypes` (
   `id` int NOT NULL AUTO_INCREMENT,
   `Category` int NOT NULL,
-  `Name` text CHARACTER SET latin1 COLLATE latin1_bin,
-  `Description` text CHARACTER SET latin1 COLLATE latin1_bin,
+  `Name` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `Description` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `StandardCosts` int NOT NULL DEFAULT '1',
   `Level` int NOT NULL,
   `Cost` int NOT NULL,
@@ -11,4 +11,4 @@ CREATE TABLE `ProjectTypes` (
   `BasedOn` int NOT NULL DEFAULT '0',
   `NotBy` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

@@ -4,9 +4,9 @@ CREATE TABLE `CreditLog` (
   `StartCredits` int NOT NULL,
   `Amount` int NOT NULL,
   `EndCredits` int NOT NULL,
-  `YourRef` text CHARACTER SET latin1 COLLATE latin1_bin NOT NULL,
+  `YourRef` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `Turn` int NOT NULL,
   `Status` int NOT NULL,
   `FromWho` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

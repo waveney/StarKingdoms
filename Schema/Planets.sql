@@ -4,15 +4,15 @@ CREATE TABLE `Planets` (
   `Size` int DEFAULT NULL,
   `Minerals` int NOT NULL DEFAULT '1',
   `SystemId` int NOT NULL,
-  `Description` text CHARACTER SET latin1 COLLATE latin1_general_ci,
-  `Notes` text CHARACTER SET latin1 COLLATE latin1_general_ci,
-  `Image` text CHARACTER SET latin1 COLLATE latin1_general_ci,
+  `Description` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `Notes` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `Image` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `OrbitalRadius` double DEFAULT NULL,
   `Period` double DEFAULT NULL,
   `Gravity` double DEFAULT NULL,
   `Radius` double DEFAULT NULL,
-  `Name` text CHARACTER SET latin1 COLLATE latin1_general_ci,
-  `ShortName` text CHARACTER SET latin1 COLLATE latin1_general_ci,
+  `Name` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `ShortName` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `Moons` int NOT NULL DEFAULT '0',
   `ProjHome` int NOT NULL DEFAULT '0',
   `Control` int NOT NULL,
@@ -20,4 +20,4 @@ CREATE TABLE `Planets` (
   `Mined` int NOT NULL,
   `GameId` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

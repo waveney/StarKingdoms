@@ -1,12 +1,12 @@
 CREATE TABLE `DistrictTypes` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `Name` text CHARACTER SET latin1 COLLATE latin1_bin NOT NULL,
+  `Name` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `Props` int NOT NULL DEFAULT '0',
   `SpaceUsed` int NOT NULL DEFAULT '1',
-  `Notes` text CHARACTER SET latin1 COLLATE latin1_bin,
+  `Notes` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `BasedOn` int NOT NULL DEFAULT '0',
-  `Gate` text CHARACTER SET latin1 COLLATE latin1_bin NOT NULL,
+  `Gate` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `MaxNum` int NOT NULL DEFAULT '1000000',
   `NotBy` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

@@ -3,7 +3,7 @@ CREATE TABLE `Turns` (
   `GameId` int NOT NULL,
   `TurnNumber` int NOT NULL DEFAULT '0',
   `Progress` bigint NOT NULL DEFAULT '0',
-  `ActivityLog` text CHARACTER SET latin1 COLLATE latin1_bin,
+  `ActivityLog` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `DateCompleted` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

@@ -8,11 +8,11 @@ CREATE TABLE `Projects` (
   `Status` int NOT NULL DEFAULT '0',
   `TurnStart` int NOT NULL DEFAULT '0',
   `TurnEnd` int NOT NULL DEFAULT '0',
-  `Notes` text CHARACTER SET latin1 COLLATE latin1_bin,
+  `Notes` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `ThingId` int NOT NULL DEFAULT '0',
   `ThingId2` int NOT NULL,
   `ThingType` int NOT NULL DEFAULT '0',
-  `Name` text CHARACTER SET latin1 COLLATE latin1_bin,
+  `Name` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `Costs` int NOT NULL DEFAULT '0',
   `ProgNeeded` int NOT NULL DEFAULT '0',
   `LastUpdate` int NOT NULL,
@@ -21,4 +21,4 @@ CREATE TABLE `Projects` (
   `FreeRushes` int NOT NULL,
   `GMLock` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

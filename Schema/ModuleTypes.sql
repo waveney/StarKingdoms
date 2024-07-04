@@ -1,11 +1,11 @@
 CREATE TABLE `ModuleTypes` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `Name` text CHARACTER SET latin1 COLLATE latin1_bin,
-  `Description` text CHARACTER SET latin1 COLLATE latin1_bin,
+  `Name` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `Description` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `CivMil` int NOT NULL,
   `BasedOn` int NOT NULL,
   `SpaceUsed` int NOT NULL DEFAULT '1',
-  `Notes` text CHARACTER SET latin1 COLLATE latin1_bin,
+  `Notes` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `FireOrder` int NOT NULL DEFAULT '5',
   `FireRate` int NOT NULL DEFAULT '1',
   `Formula` int DEFAULT '0',
@@ -14,4 +14,4 @@ CREATE TABLE `ModuleTypes` (
   `Leveled` int NOT NULL,
   `NotBy` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

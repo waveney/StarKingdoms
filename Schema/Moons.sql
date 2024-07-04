@@ -1,8 +1,8 @@
 CREATE TABLE `Moons` (
   `id` int NOT NULL AUTO_INCREMENT,
   `PlanetId` int NOT NULL,
-  `Name` text CHARACTER SET latin1 COLLATE latin1_bin NOT NULL,
-  `ShortName` text CHARACTER SET latin1 COLLATE latin1_bin,
+  `Name` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `ShortName` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `Radius` double NOT NULL,
   `Gravity` double NOT NULL,
   `Period` double NOT NULL,
@@ -10,11 +10,11 @@ CREATE TABLE `Moons` (
   `Type` int NOT NULL DEFAULT '0',
   `Control` int NOT NULL DEFAULT '0',
   `Minerals` int NOT NULL DEFAULT '0',
-  `Description` text CHARACTER SET latin1 COLLATE latin1_bin,
-  `Image` text CHARACTER SET latin1 COLLATE latin1_bin,
+  `Description` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `Image` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `ProjHome` int NOT NULL DEFAULT '0',
   `Attributes` int NOT NULL,
   `Mined` int NOT NULL,
   `GameId` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
