@@ -244,7 +244,7 @@
     if (preg_match('/Know(\d*):(\d*)/',$field,$mtch)?true:false) {
 
       if ($Value) {
-        $FF = ['FactionId1'=> $mtch[1], 'FactionId2'=> $mtch[2]];
+        $FF = ['FactionId1'=> $mtch[1], 'FactionId2'=> $mtch[2], 'GameId'=>$GAMEID];
         return Put_FactionFaction($FF);
       } else {
         return db_delete_cond('FactionFaction', "FactionId1=" . $mtch[1] . " AND FactionId2=" . $mtch[2]);

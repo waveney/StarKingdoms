@@ -1184,6 +1184,7 @@ function Put_FactionFaction(&$now) {
     $Cur = Get_FactionFaction($e);
     return Update_db('FactionFaction',$Cur,$now);
   } else {
+    $now['GameId'] = $GAMEID;
     return $now['id'] = Insert_db ('FactionFaction', $now );
   }
 }

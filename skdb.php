@@ -217,7 +217,7 @@ if ($from[$fname] != '') echo "T2 ";
 if ($indxname!=$fname) echo "T3 "; */
     if (isset($from[$fname]) && $from[$fname] != '' && $indxname!=$fname ) {
       if ($fcnt++ > 0) { $newrec .= " , "; }
-      if ($ftype == 'text') {
+      if ($ftype == 'text' || $ftype == 'mediumtext') {
         $dbform = addslashes($from[$fname]);
         if ($data) $data[$fname] = $dbform;
         $newrec .= " $fname=" . '"' . $dbform . '"';

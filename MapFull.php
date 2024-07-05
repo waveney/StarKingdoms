@@ -91,7 +91,7 @@
   }
 
 // echo "<h1>Faction $Faction</h1>";
-  global $db, $GAME;
+  global $db, $GAME,$GAMEID;
 
   $HexLegPos = [];
   eval("\$HexLegPos=" . Feature('HexLegPos','[[0,0]]') . ";" );

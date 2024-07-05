@@ -3577,7 +3577,7 @@ function TidyUps() {
   }
 
   // Tidy 1 turn carry options
-  $FFs = Gen_Get_Cond('FactionFaction','Props>0');
+  $FFs = Gen_Get_Cond('FactionFaction',"GameId=$GAMEID AND Props>0");
   foreach ($FFs as $F) {
     if (($F['Props'] &15) == 1) $F['Props'] = ($F['Props']&0xfffffff0);
     if ((($F['Props']>>4) &15) == 1) $F['Props'] = ($F['Props']&0xffffff0f);

@@ -37,6 +37,10 @@
         }
         setcookie('SKG',$Gid);
         $GAME = Get_Game($Gid);
+        mkdir("cache/$Gid",0777,1);
+        mkdir("Turns/$Gid",0777,1);
+        mkdir("images/$Gid",0777,1);
+
         $ErrorMessage = "Game $Gid : " . $ng['Name'] . " has been setup";
         include ("Staff.php"); // No return
         break;  // TODO

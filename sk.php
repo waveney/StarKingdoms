@@ -406,12 +406,12 @@ function Swap(&$a,&$b) {
 
 // Short term log of everything
 function LogEverything($Msg='') {
-  global $FACTION,$USER;
+  global $FACTION,$USER,$GAMEID;
   $req_dump = date("D d H:i:s ") . $_SERVER['SCRIPT_FILENAME'] . " " . print_r($_REQUEST, TRUE) . print_r($_COOKIE, TRUE);
   if (isset($FACTION['Name'])) $req_dump .= "Faction: " . $FACTION['Name'] . "\n";
   if (isset($USER['Login'])) $req_dump .= "GM: " . $USER['Login'] . "\n";
 
-  $fp = fopen('cache/$GAMEID/request.log', 'a');
+  $fp = fopen('cache/' . ($GAMEID??'0') . '/request.log', 'a');
   fwrite($fp, $req_dump);
   fclose($fp);
 }
