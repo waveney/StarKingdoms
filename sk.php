@@ -411,7 +411,7 @@ function LogEverything($Msg='') {
   if (isset($FACTION['Name'])) $req_dump .= "Faction: " . $FACTION['Name'] . "\n";
   if (isset($USER['Login'])) $req_dump .= "GM: " . $USER['Login'] . "\n";
 
-  $fp = fopen('cache/request.log', 'a');
+  $fp = fopen('cache/$GAMEID/request.log', 'a');
   fwrite($fp, $req_dump);
   fclose($fp);
 }

@@ -2,7 +2,7 @@
   include_once("sk.php");
   include_once("GetPut.php");
 
-  global $FACTION;
+  global $FACTION,$GAMEID;
 
   if (Access('GM') ) {
     A_Check('GM');
@@ -108,7 +108,7 @@
   $OtherInt = 0;
 
   while ($RedoMap) {
-    $Dot = fopen("cache/Fullmap$Faction$typ.dot","w+");
+    $Dot = fopen("cache/$GAMEID/Fullmap$Faction$typ.dot","w+");
     if (!$Dot) { echo "Could not create dot file<p>"; dotail(); };
 //  ftruncate($Dot,0);  // Needed for redoing logic
 
@@ -280,24 +280,24 @@
 //  echo "<H1>Dot File written</h1>";
 
   if ($typ) {
-    exec("fdp -Tpng -n cache/Fullmap$Faction$typ.dot > cache/Fullmap$Faction$typ.png");
-    exec("fdp -Tcmapx -n cache/Fullmap$Faction$typ.dot > cache/Fullmap$Faction$typ.map");
-//    exec("fdp -Timap -n cache/Fullmap$Faction$typ.dot > cache/Fullmap$Faction$typ.imap");
-//    exec("fdp -Tsvg -n cache/Fullmap$Faction$typ.dot > cache/Fullmap$Faction$typ.svg");
+    exec("fdp -Tpng -n cache/$GAMEID/Fullmap$Faction$typ.dot > cache/$GAMEID/Fullmap$Faction$typ.png");
+    exec("fdp -Tcmapx -n cache/$GAMEID/Fullmap$Faction$typ.dot > cache/$GAMEID/Fullmap$Faction$typ.map");
+    //    exec("fdp -Timap -n cache/$GAMEID/Fullmap$Faction$typ.dot > cache/$GAMEID/Fullmap$Faction$typ.imap");
+    //    exec("fdp -Tsvg -n cache/$GAMEID/Fullmap$Faction$typ.dot > cache/$GAMEID/Fullmap$Faction$typ.svg");
   } else {
-    exec("unflatten cache/Fullmap$Faction$typ.dot > cache/f.dot");
+    exec("unflatten cache/$GAMEID/Fullmap$Faction$typ.dot > cache/$GAMEID/f.dot");
 //    exec("dot -Tsvg cache/f.dot > cache/Fullmap$Faction.svg");
-    exec("dot -Tpng cache/f.dot > cache/Fullmap$Faction$typ.png");
-    exec("dot -Tcmapx cache/f.dot > cache/Fullmap$Faction$typ.map");
+    exec("dot -Tpng cache/$GAMEID/f.dot > cache/Fullmap$Faction$typ.png");
+    exec("dot -Tcmapx cache/$GAMEID/f.dot > cache/Fullmap$Faction$typ.map");
   }
 
 //  echo "<h2>dot run</h2>";
   $Rand = rand(1,100000);
-  echo "<img src=cache/Fullmap$Faction$typ.png?$Rand maxwidth=100% usemap='#skmap'>";
-  readfile("cache/Fullmap$Faction$typ.map");
+  echo "<img src=cache/$GAMEID/Fullmap$Faction$typ.png?$Rand maxwidth=100% usemap='#skmap'>";
+  readfile("cache/$GAMEID/Fullmap$Faction$typ.map");
 
-//  echo "<object type='image/svg+xml' data=cache/Fullmap$Faction$typ.svg?$Rand maxwidth=100%></object>";
-//  echo "<svg type='image/svg+xml' data=cache/Fullmap$Faction$typ.svg?$Rand maxwidth=100%></svg>";
+  //  echo "<object type='image/svg+xml' data=cache/$GAMEID/Fullmap$Faction$typ.svg?$Rand maxwidth=100%></object>";
+//  echo "<svg type='image/svg+xml' data=cache/$GAMEID/Fullmap$Faction$typ.svg?$Rand maxwidth=100%></svg>";
 
 
   dotail();
