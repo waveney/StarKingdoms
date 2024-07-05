@@ -4,6 +4,7 @@
   include_once("ThingLib.php");
   A_Check('GM');
 
+//  var_dump($_REQUEST);echo"<p>";
   global $NOTBY;
   dostaffhead("Manage Project Types");
 
@@ -22,7 +23,6 @@
   $Techs = Get_Techs($AllG);
   $TechNames = Tech_Names($Techs);
 
-
   if (UpdateMany('ProjectTypes','Put_ProjectType',$DT,0))  $DT=Get_ProjectTypes($AllG);
 
   $coln = 0;
@@ -33,6 +33,7 @@
   echo "Do NOT change the project names - code depends on them<p>";
 
   echo "<form method=post action=ProjTypes.php>";
+  if ($AllG) echo fm_hidden('AllGames',1);
   echo "<div class=tablecont><table id=indextable border>\n";
   echo "<thead><tr>";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Index</a>\n";
@@ -53,7 +54,7 @@
     $i = $Did = $D['id'];
     echo "<tr><td>$i";
     echo fm_text1("",$D,'Name',1,'','',"Name$i");
-    if ($AllG) echo fm_number1('',$D,'NotBy','','',"NotBy$i");
+    echo fm_notby($D,$i,$AllG);
     echo fm_number1("",$D,'Category','','',"Category$i");
     echo "<td>" . fm_basictextarea($D,'Description',1,1,"Description$i");
     echo fm_number1("",$D,'StandardCosts','','',"StandardCosts$i");

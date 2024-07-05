@@ -37,6 +37,7 @@
   echo "SeenBy: What Eyes can see this<br>\n";
   echo "Game 0 = All, N = Game N<br>";
   echo "<form method=post action=ThingTypes.php>";
+  if ($AllG) echo fm_hidden('AllGames',1);
 
 
     $coln = 0;
@@ -57,7 +58,7 @@
       $i = $T['id'];
       echo "<tr><td><a href=TechEdit.php?id=$i>$i</a>";
       echo fm_text1("",$T,'Name',1,'','',"Name$i");
-      if ($AllG) echo fm_number1('',$T,'NotBy','','',"NotBy$i");
+      echo fm_notby($T,$i,$AllG);
       echo fm_hex1('',$T,'Properties','','',"Properties$i");
       echo fm_text1("",$T,'Gate',1,'','',"Gate$i");
       echo fm_number1('',$T,'Eyes','','',"Eyes$i");

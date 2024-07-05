@@ -76,6 +76,9 @@ function Set_Faction() {
   if (isset($_COOKIE['SKF'])) {
     $FID = $_COOKIE['SKF'];
     $FACTION = Get_Faction($FID);
+  } else {
+    if ($USER['AccessLevel'] >= $Access_Type['God']) return;
+    include_once("StarKingdoms.php");
   }
 
   $Person = Gen_Get_Cond1('GamePlayers', "GameId=$GAMEID AND PlayerId=$USERID");
@@ -91,10 +94,11 @@ function Set_Faction() {
 
 function Access($level,$subtype=0,$thing=0) { // VERY different from fest code now
   global $Access_Type,$USER,$USERID,$GAMEID,$FACTION,$FID,$GAME;
+  Check_Login();
+  if ($USER['AccessLevel'] >= $Access_Type['God']) return 1;
+
   Set_Faction();
 //  echo "XXX $level";
-
-  if ($USER['AccessLevel'] >= $Access_Type['God']) return 1;
 
   switch ($level) {
   case 'Player':
@@ -213,7 +217,7 @@ function Get_Game($y=0) {
   if ($res) {
     $GAME = $res->fetch_assoc();
     $GAMEID = $GAME['id'];
-    $NOTBY = Feature('NotByMask',0);
+    $NOTBY = ~(Feature('NotByMask',0)+0);
   } else {
     Error_Page("Game - $y not known");
   }

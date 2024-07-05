@@ -23,6 +23,8 @@
   $coln = 0;
 
   echo "<form method=post action=PlanetTypes.php>";
+  if ($AllG) echo fm_hidden('AllGames',1);
+
   echo "<div class=tablecont><table id=indextable border>\n";
   echo "<thead><tr>";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Index</a>\n";
@@ -35,6 +37,7 @@
   foreach($DT as $D) {
     $i = $Did = $D['id'];
     echo "<tr><td>$i" . fm_text1("",$D,'Name',1,'','',"Name$i");
+
     if ($AllG) echo fm_number1('',$D,'NotBy','','',"NotBy$i");
     echo fm_number1("",$D,'Hospitable','','',"Hospitable$i");
     echo fm_number1("",$D,'MoonFactor','','',"MoonFactor$i");

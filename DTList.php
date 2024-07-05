@@ -30,6 +30,7 @@
   echo "Properties 1 = Prime, 2= Do projects, 4=Mining Income, 8=Don't have levels, 16=Valid on Space stations<p>\n";
 
   echo "<form method=post action=DTList.php>";
+  if ($AllG) echo fm_hidden('AllGames',1);
   echo "<div class=tablecont><table id=indextable border>\n";
   echo "<thead><tr>";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Index</a>\n";
@@ -44,7 +45,7 @@
   foreach($DT as $D) {
     $i = $Did = $D['id'];
     echo "<tr><td>$i" . fm_text1("",$D,'Name',1,'','',"Name$i");
-    if ($AllG) echo fm_number1('',$D,'NotBy','','',"NotBy$i");
+    echo fm_notby($D,$i,$AllG);
     echo fm_number1('',$D,'Props','','',"Props$i");
     echo "<td>" . fm_select($TechNames,$D,'BasedOn',1,'',"BasedOn$i");
     echo fm_text1("",$D,'Gate',1,'','',"Gate$i");

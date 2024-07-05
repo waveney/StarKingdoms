@@ -34,6 +34,7 @@
   echo "Fire order: 5 = normal, 1 early, 9 late, -1 not first round.  Fire rate 1= every round, 0=once, 5=once every 5 rounds, -2 double first round<p>";
   echo "Properties: 1 = Leveled, 2=Non Std Def, 4=Non Std Atk<p>";
   echo "<form method=post action=ModuleList.php>";
+  if ($AllG) echo fm_hidden('AllGames',1);
 
 
     $coln = 0;
@@ -59,7 +60,7 @@
       $i = $MT['id'];
       echo "<tr><td>$i" . fm_text1("",$MT,'Name',1,'','',"Name$i");
 //      echo "<td>" . fm_basictextarea($MT,'Description',1,2,'',"Description$i");
-      if ($AllG) echo fm_number1('',$MT,'NotBy','','',"NotBy$i");
+      echo fm_notby($MT,$i,$AllG);
       echo "<td>" . fm_select($ModuleCats,$MT,'CivMil',1,'',"CivMil$i");
       echo "<td>" . fm_select($DefWep,$MT,'DefWep',0,'',"DefWep$i");
       echo "<td>" . fm_select($TechNames,$MT,'BasedOn',1,'',"BasedOn$i");

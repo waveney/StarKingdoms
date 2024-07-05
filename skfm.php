@@ -695,4 +695,8 @@ function Ordinal($n) {
   return $ends[$n % 10];
 }
 
+function fm_notby(&$D,$i,$AllG=0) {
+  return fm_number1('',$D,'NotBy',($AllG?'':'hidden'),'',"NotBy$i");
+}
+
 ?>

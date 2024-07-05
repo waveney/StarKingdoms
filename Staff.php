@@ -314,6 +314,7 @@
     }
 
     if (Access('God')) {
+      $xtra = '';
        if ($VERSION != ($GAMESYS['CurVersion'] ?? 0)) {
         foreach(glob("../Schema/*.sql") as $sql) {
           if (filemtime($sql) > $GAMESYS['VersionDate']) {

@@ -47,6 +47,7 @@
   echo "click on id to edit description<p>";
   echo "Properties: 1=Ground Combat, 2=Space Combat, 4=Espionage<p>\n";
   echo "<form method=post action=TechList.php>";
+  if ($AllG) echo fm_hidden('AllGames',1);
 
 
     $coln = 0;
@@ -73,7 +74,7 @@
       echo "<tr><td><a href=TechEdit.php?id=$i>$i</a>";
       echo "<td>" . $Tech_Cats[$T['Cat']];
       echo "<td><a href=TechEdit.php?id=$i>" . $T['Name'] . "</a>";
-      if ($AllG) echo fm_number1('',$T,'NotBy','','',"NotBy$i");
+      if ($AllG) echo "<td>" . $T['NotBy'];
       echo "<td>" . $Fields[$T['Field']];
       if ($CTs) echo "<td>" . $CTNs[$T['PreReqTech']];
       echo "<td>" . $T['PreReqLevel'];

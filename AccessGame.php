@@ -2,15 +2,17 @@
 include_once("sk.php");
 include_once("GetPut.php");
 // include_once("Login.php");
-global $FACTION,$USER,$USERID,$GameStatus,$PlayerLevel,$CALYEAR,$FID;
+global $FACTION,$USER,$USERID,$GameStatus,$PlayerLevel,$CALYEAR,$FID,$GAME,$GAMEID;
 
 $God = Access('God');
-$Gid = $_REQUEST['G'] || 0;
+$Gid = ($_REQUEST['G'] ?? 0);
 
 $Game = Gen_Get('Games',$Gid);
 
 if ($God) {
   setcookie('SKG',$Gid);
+  $GAME=$Game;
+  $GAMEID = $Gid;
   include_once("Staff.php");
 }
 
@@ -20,6 +22,8 @@ if (!$Person) {
   Error_Page("You are not recorded as part of that game");
 }
 $USER['FactionLevel'] = $Person['Type'];
+$GAME=$Game;
+$GAMEID = $Gid;
 
 setcookie('SKG',$Gid);
 if ($Person['Type'] == 0) {

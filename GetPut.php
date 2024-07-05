@@ -757,7 +757,7 @@ function Get_TechsByCore($Fact=0, $All=0, $AllG=0) {
 function Get_CoreTechs($AllG=0) {
   global $db,$NOTBY;
   $Ms = [];
-  $res = $db->query("SELECT * FROM Technologies WHERE Cat=0 " .($AllG?"AND (NotBy&$NOTBY)=0":'')  . " ORDER BY id");
+  $res = $db->query("SELECT * FROM Technologies WHERE Cat=0 " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0")  . " ORDER BY id");
   if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
   return $Ms;
 }
@@ -765,7 +765,7 @@ function Get_CoreTechs($AllG=0) {
 function Get_CoreTechsByName($AllG=0) {
   global $db,$NOTBY;
   $Ms = [];
-  $res = $db->query("SELECT * FROM Technologies WHERE Cat=0 " .($AllG?"AND (NotBy&$NOTBY)=0":'')  . " ORDER BY Name");
+  $res = $db->query("SELECT * FROM Technologies WHERE Cat=0 " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0")  . " ORDER BY Name");
   if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
   return $Ms;
 }
@@ -825,7 +825,7 @@ function Get_Faction_Techs($Fact,$Turn=0) {
 
 function Get_ThingType($id,$AllG=0) {
   global $db,$NOTBY;
-  $res = $db->query("SELECT * FROM ThingTypes WHERE id=$id" .($AllG?"AND (NotBy&$NOTBY)=0":'')  . " ");
+  $res = $db->query("SELECT * FROM ThingTypes WHERE id=$id" . ($AllG?'':"WHERE (NotBy&$NOTBY)=0")  . " ");
   if ($res) if ($ans = $res->fetch_assoc()) return $ans;
   return [];
 }
@@ -1054,7 +1054,9 @@ function Get_ProjectType($id) {
 
 function Get_ProjectTypes($AllG=0) {
   global $db,$NOTBY;
-  $res = $db->query("SELECT * FROM ProjectTypes " .($AllG?"WHERE (NotBy&$NOTBY)=0":'') );
+//  var_dump($NOTBY);
+ // echo "SELECT * FROM ProjectTypes " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0") . "<p>";
+  $res = $db->query("SELECT * FROM ProjectTypes " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0") );
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
   return $Ts;
 }
