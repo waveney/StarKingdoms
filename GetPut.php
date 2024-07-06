@@ -724,14 +724,14 @@ function Put_Tech(&$now) {
 }
 
 function Get_Techs($Fact=0,$AllG=0) {
-  global $db,$GAMEID;
+  global $db,$GAMEID,$NOTBY;
   $Ms = [];
   if ($Fact == 0) {
-    $res = $db->query("SELECT * FROM Technologies " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0 ") . " ORDER BY id");
+    $res = $db->query("SELECT * FROM Technologies " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0 ") . " ORDER BY Cat,id");
     if ($res) while ($ans = $res->fetch_assoc()) $Ms[$ans['id']] = $ans;
     return $Ms;
   } else {
-    $res = $db->query("SELECT t.* FROM Technologies t, FactionTechs ft WHERE (t.Cat<2 OR (t.Cat=3 AND ft.Tech_Id=t.id)) ORDER BY t.id");
+    $res = $db->query("SELECT t.* FROM Technologies t, FactionTechs ft WHERE (t.Cat<2 OR (t.Cat=3 AND ft.Tech_Id=t.id)) ORDER BY cat,t.id");
     if ($res) while ($ans = $res->fetch_assoc()) $Ms[$ans['id']] = $ans;
     return $Ms;
   }
@@ -757,7 +757,7 @@ function Get_TechsByCore($Fact=0, $All=0, $AllG=0) {
 function Get_CoreTechs($AllG=0) {
   global $db,$NOTBY;
   $Ms = [];
-  $res = $db->query("SELECT * FROM Technologies WHERE Cat=0 " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0")  . " ORDER BY id");
+  $res = $db->query("SELECT * FROM Technologies WHERE Cat=0 " . ($AllG?'':"AND (NotBy&$NOTBY)=0")  . " ORDER BY id");
   if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
   return $Ms;
 }
@@ -765,7 +765,7 @@ function Get_CoreTechs($AllG=0) {
 function Get_CoreTechsByName($AllG=0) {
   global $db,$NOTBY;
   $Ms = [];
-  $res = $db->query("SELECT * FROM Technologies WHERE Cat=0 " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0")  . " ORDER BY Name");
+  $res = $db->query("SELECT * FROM Technologies WHERE Cat=0 " . ($AllG?'':"AND (NotBy&$NOTBY)=0")  . " ORDER BY Name");
   if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
   return $Ms;
 }
@@ -1022,6 +1022,7 @@ function Put_Project(&$now) {
     $Cur = Get_Project($e);
     return Update_db('Projects',$Cur,$now);
   } else {
+    $now['GameId'] = $GAMEID;
     return $now['id'] = Insert_db ('Projects', $now );
   }
 }
@@ -1035,10 +1036,10 @@ function Get_Projects($home) {
 }
 
 function Get_Projects_Cond($Cond) {
-  global $db;
+  global $db,$GAMEID;
   $Ts = [];
 // var_dump($Cond);
-  $res = $db->query("SELECT * FROM Projects WHERE $Cond ORDER BY FactionId, TurnStart");
+  $res = $db->query("SELECT * FROM Projects WHERE GameId=$GAMEID AND $Cond ORDER BY FactionId, TurnStart");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
   return $Ts;
 }

@@ -4,7 +4,7 @@
   include_once("ThingLib.php");
 
   A_Check('GM');
-  global $NOTBY;
+  global $NOTBY,$SETNOT;
 
   dostaffhead("List Module Types");
 
@@ -16,7 +16,7 @@
     // Button for cur game
     // Show current NotBy Mask
     echo "<div class=floatright><h2>Showing All Games - Switch to <a href=ModuleList.php>Current Game</a></h2></div>";
-    echo "The current NotBy Mask is : $NOTBY<p>\n";
+    echo "The current NotBy Mask is : $SETNOT<p>\n";
     $AllG = 1;
   } else {
     echo "<div class=floatright><h2>Showing current game -  Switch to <a href=ModuleList.php?AllGames>All Games</a></h2></div>";
@@ -75,8 +75,8 @@
   $MT = [];
   echo "<tr><td><td><input type=text name=Name0 >";
 //  echo "<td>" . fm_basictextarea($MT,'Description',1,2,'',"Description0");
-  echo fm_hidden('NotBy0',$NOTBY);
-  if ($AllG) echo "<td>$NOTBY";
+  echo fm_hidden('NotBy0',$SETNOT);
+  if ($AllG) echo "<td>$SETNOT";
   echo "<td>" . fm_select($ModuleCats,$MT,'CivMil',1,'',"CivMil0");
   echo "<td>" . fm_select($DefWep,$MT,'DefWep',0,'',"DefWep0");
   echo "<td>" . fm_select($TechNames,$MT,'BasedOn',1,'',"BasedOn0");

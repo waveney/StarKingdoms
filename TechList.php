@@ -4,7 +4,7 @@
   include_once("ThingLib.php");
 
   A_Check('GM');
-  global $NOTBY;
+  global $NOTBY,$SETNOT;
 
   dostaffhead("List Technoiologies");
 
@@ -16,14 +16,14 @@
     // Button for cur game
     // Show current NotBy Mask
     echo "<div class=floatright><h2>Showing All Games - Switch to <a href=TechList.php>Current Game</a></h2></div>";
-    echo "The current NotBy Mask is : $NOTBY<p>\n";
+    echo "The current NotBy Mask is : $SETNOT<p>\n";
     $AllG = 1;
   } else {
-    echo "<div class=floatright><h2>Showing current game -  Switch to <a href=TEchList.php?AllGames>All Games</a></h2></div>";
+    echo "<div class=floatright><h2>Showing current game -  Switch to <a href=TechList.php?AllGames>All Games</a></h2></div>";
   }
 
 
-  $Ts = Get_Techs($AllG);
+  $Ts = Get_Techs(0,$AllG);
 
   $CTs = Get_CoreTechs($AllG);
   $CTNs = [];
@@ -76,7 +76,14 @@
       echo "<td><a href=TechEdit.php?id=$i>" . $T['Name'] . "</a>";
       if ($AllG) echo "<td>" . $T['NotBy'];
       echo "<td>" . $Fields[$T['Field']];
-      if ($CTs) echo "<td>" . $CTNs[$T['PreReqTech']];
+      if ($CTs) {
+        if (isset($CTNs[$T['PreReqTech']])) {
+          echo "<td>" . $CTNs[$T['PreReqTech']];
+        } else {
+          echo "<td class=Err>UNKNOWN";
+
+        }
+      }
       echo "<td>" . $T['PreReqLevel'];
       echo "<td>" . $T['Properties'];
       echo "<td>" . $T['Slots'];

@@ -5,7 +5,7 @@
   A_Check('GM');
 
 //  var_dump($_REQUEST);echo"<p>";
-  global $NOTBY;
+  global $NOTBY,$SETNOT;
   dostaffhead("Manage Project Types");
 
   $AllG = 0;
@@ -13,7 +13,7 @@
     // Button for cur game
     // Show current NotBy Mask
     echo "<div class=floatright><h2>Showing All Games - Switch to <a href=ProjTypes.php>Current Game</a></h2></div>";
-    echo "The current NotBy Mask is : $NOTBY<p>\n";
+    echo "The current NotBy Mask is : $SETNOT<p>\n";
     $AllG = 1;
   } else {
     echo "<div class=floatright><h2>Showing current game -  Switch to <a href=ProjTypes.php?AllGames>All Games</a></h2></div>";
@@ -28,7 +28,8 @@
   $coln = 0;
 
   echo "Category 1=Academic,2=Ship Yard,4=Miltary,8=Intelligence,16=Construction, 32=Deep Space<p>";
-  echo "Props 1=Can Rush, 2=Thing, 4=Two things, 8=Other Faction, 16=Tight Loc match, 32=Instruction, 64=Don't Check Level, 128 Raise 1 Level, 256 Exist Things" .
+  echo "Props 1=Can Rush, 2=Thing, 4=Two things, 8=Other Faction, 16=Tight Loc match, 32=Instruction, 64=Don't Check Level, " .
+       "128 Raise 1 Level, 256 Exist Things, " .
        "512=Refit type action<p>";
   echo "Do NOT change the project names - code depends on them<p>";
 
@@ -66,8 +67,8 @@
   }
   $D = [];
   echo "<tr><td><td><input type=text name=Name0 >";
-  echo fm_hidden('NotBy0',$NOTBY);
-  if ($AllG) echo "<td>$NOTBY";
+  echo fm_hidden('NotBy0',$SETNOT);
+  if ($AllG) echo "<td>$SETNOT";
   echo fm_number1("",$D,'Category','','',"Category0");
     echo "<td>" . fm_basictextarea($D,'Description',1,1,"Description0");
     echo fm_number1("",$D,'StandardCosts','','',"StandardCosts0");

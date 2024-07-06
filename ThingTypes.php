@@ -4,7 +4,7 @@
   include_once("ThingLib.php");
 
   A_Check('GM');
-  global $NOTBY;
+  global $NOTBY,$SETNOT;
 
   dostaffhead("Thing Types");
 
@@ -17,7 +17,7 @@
     // Button for cur game
     // Show current NotBy Mask
     echo "<div class=floatright><h2>Showing All Games - Switch to <a href=ThingTypes.php>Current Game</a></h2></div>";
-    echo "The current NotBy Mask is : $NOTBY<p>\n";
+    echo "The current NotBy Mask is : $SETNOT<p>\n";
     $AllG = 1;
   } else {
     echo "<div class=floatright><h2>Showing current game -  Switch to <a href=ThingTypes.php?AllGames>All Games</a></h2></div>";
@@ -69,8 +69,8 @@
 
   $T = ['MaxLvl'=>1000000];
   echo "<tr><td>" . fm_text1("",$T,'Name',1,'','',"Name0");
-  echo fm_hidden('NotBy0',$NOTBY);
-  if ($AllG) echo "<td>$NOTBY";
+  echo fm_hidden('NotBy0',$SETNOT);
+  if ($AllG) echo "<td>$SETNOT";
   echo fm_hex1('',$T,'Properties','','',"Properties0");
       echo fm_text1("",$T,'Gate',1,'','',"Gate0");
       echo fm_number1('',$T,'Eyes','','',"Eyes0");

@@ -7,7 +7,7 @@
 
   dostaffhead("Edit Technoiology");
 
-  global $db, $GAME, $ModuleCats,$NOTBY;
+  global $db, $GAME, $ModuleCats,$NOTBY,$SETNOT;
   global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil;
 
 //  var_dump($_REQUEST);
@@ -25,10 +25,10 @@
 
   if ($Tid) {
     $T = Get_Tech($Tid);
-    $NotBy = $T['NotBy'];
+    $NotBy = ($T['NotBy']??0);
   } else {
     $T = [];
-    $NotBy = $NOTBY;
+    $NotBy = $SETNOT;
   }
   $CTs = Get_CoreTechs($NotBy);
   $CTNs = [];
@@ -67,14 +67,18 @@
   echo "<form method=post id=mainform enctype='multipart/form-data' action=TechEdit.php>";
   echo "<div class=tablecont><table width=90% border class=SideTable>\n";
   if ($Tid) {
-    Register_AutoUpdate('Tech',$Tid);
+    Register_AutoUpdate('Technologies',$Tid);
   } else {
     $T['Cat'] = 2;
     $T['NotBy'] = $NotBy;
   }
   echo fm_hidden('id',$Tid);
-
-  echo "<tr><td>Id:$Tid<td>" .  fm_select($Tech_Cats,$T,'Cat') . fm_text("Name",$T,'Name',2);
+  if (0 && Access('God')) {
+    echo fm_number1('Id',$T,'id');
+  } else {
+    echo "<tr><td>Id:$Tid";
+  }
+  echo "<td>" .  fm_select($Tech_Cats,$T,'Cat') . fm_text("Name",$T,'Name',2);
   echo fm_number('NotBy Mask',$T,'NotBy');
   echo "<tr><td>Feild:<td>" . fm_select($Fields,$T,'Field') . "<td>Pre Req Tech:" . fm_select($CTNs,$T,'PreReqTech') . fm_number1('Pre Req Level',$T,'PreReqLevel') .
        "<td>Core Techs only - must have one of these";
@@ -112,7 +116,10 @@
 
   if ($Tid) {
     echo "<h2><input type=submit name=ACTION value=Update> <input type=submit name=SHOW value=SHOW></h2>";
-    if (Access('God')) echo "<input type=submit name=ACTION value=Delete>";
+    if (Access('God')) {
+      echo "<input type=submit name=ACTION value=Delete>";
+    }
+
   } else {
     echo "<h2><input type=submit name=ACTION value=Create></h2>";
   }

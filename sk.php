@@ -211,13 +211,14 @@ function Error_Page ($message) {
 }
 
 function Get_Game($y=0) {
-  global $db,$GAME,$GAMESYS,$GAMEID,$NOTBY;
+  global $db,$GAME,$GAMESYS,$GAMEID,$NOTBY,$SETNOT;
   if (!$y) $y=$GAMESYS['CurGame'];
   $res = $db->query("SELECT * FROM Games WHERE id='$y'");
   if ($res) {
     $GAME = $res->fetch_assoc();
     $GAMEID = $GAME['id'];
-    $NOTBY = ~(Feature('NotByMask',0)+0);
+    $SETNOT = (Feature('NotByMask',0)+0);
+    $NOTBY = ~$SETNOT;
   } else {
     Error_Page("Game - $y not known");
   }

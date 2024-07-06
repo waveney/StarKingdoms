@@ -3,7 +3,7 @@
   include_once("GetPut.php");
   A_Check('GM');
 
-  global $NOTBY;
+  global $NOTBY,$SETNOT;
   dostaffhead("Manage Planet Types");
 
   $AllG = 0;
@@ -11,7 +11,7 @@
     // Button for cur game
     // Show current NotBy Mask
     echo "<div class=floatright><h2>Showing All Games - Switch to <a href=PlanetTypes.php>Current Game</a></h2></div>";
-    echo "The current NotBy Mask is : $NOTBY<p>\n";
+    echo "The current NotBy Mask is : $SETNOT<p>\n";
     $AllG = 1;
   } else {
     echo "<div class=floatright><h2>Showing current game -  Switch to <a href=PlanetTypes.php?AllGames>All Games</a></h2></div>";
@@ -44,7 +44,7 @@
     echo fm_number1("",$D,'Append','','',"Append$i");
   }
   echo "<tr><td><td><input type=text name=Name0 >";
-  if ($AllG) echo "<td>$NOTBY";
+  if ($AllG) echo "<td>$SETNOT";
   echo "<td><input type=number name=Props0 >";
   echo fm_number1('',$D,'Props','','',"Props$i");
   echo "<td><input type=number name=Hospitable0 value=0>";
