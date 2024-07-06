@@ -723,11 +723,11 @@ function Put_Tech(&$now) {
   }
 }
 
-function Get_Techs($Fact=0) {
+function Get_Techs($Fact=0,$AllG=0) {
   global $db,$GAMEID;
   $Ms = [];
   if ($Fact == 0) {
-    $res = $db->query("SELECT * FROM Technologies ORDER BY id");
+    $res = $db->query("SELECT * FROM Technologies " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0 ") . " ORDER BY id");
     if ($res) while ($ans = $res->fetch_assoc()) $Ms[$ans['id']] = $ans;
     return $Ms;
   } else {

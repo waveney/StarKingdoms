@@ -15,11 +15,11 @@
   if (isset($_REQUEST['AllGames'])) {
     // Button for cur game
     // Show current NotBy Mask
-    echo "<div class=floatright><h2>Showing All Games - Switch to <a href=DTList.php>Current Game</a></h2></div>";
+    echo "<div class=floatright><h2>Showing All Games - Switch to <a href=TechList.php>Current Game</a></h2></div>";
     echo "The current NotBy Mask is : $NOTBY<p>\n";
     $AllG = 1;
   } else {
-    echo "<div class=floatright><h2>Showing current game -  Switch to <a href=DTList.php?AllGames>All Games</a></h2></div>";
+    echo "<div class=floatright><h2>Showing current game -  Switch to <a href=TEchList.php?AllGames>All Games</a></h2></div>";
   }
 
 

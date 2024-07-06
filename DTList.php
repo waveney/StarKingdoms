@@ -27,7 +27,7 @@
 
   $coln = 0;
 
-  echo "Properties 1 = Prime, 2= Do projects, 4=Mining Income, 8=Don't have levels, 16=Valid on Space stations<p>\n";
+  echo "Properties 1 = Prime, 2= Do projects, 4=Mining Income, 8=Don't have levels, 16=Valid on Space stations, 32=Industrial<p>\n";
 
   echo "<form method=post action=DTList.php>";
   if ($AllG) echo fm_hidden('AllGames',1);

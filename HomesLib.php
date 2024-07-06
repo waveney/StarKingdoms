@@ -11,12 +11,12 @@ function Recalc_Project_Homes($Logf=0, $Silent=0) {
   $Facts = Get_Factions();
 
   $KnownHomes = [];
-    
+
   foreach($Facts as $F) {
     $Homes = Get_ProjectHomes($F['id']);
     if ($Homes) $KnownHomes = array_merge($KnownHomes,$Homes);
   }
-  
+
   $AllDists = Get_DistrictsAll();
 //var_dump($AllDists); exit;
   $PWithDists = $MWithDists = $TWithDists = [];
@@ -26,7 +26,7 @@ function Recalc_Project_Homes($Logf=0, $Silent=0) {
     case 1:
       $PWithDists[$D['HostId']] = 1;
       break;
-    case 2: 
+    case 2:
       $MWithDists[$D['HostId']] = 1;
       break;
     case 3:
@@ -35,15 +35,15 @@ function Recalc_Project_Homes($Logf=0, $Silent=0) {
     default:
     }
   }
-  
-//var_dump($KnownHomes); exit;  
+
+//var_dump($KnownHomes); exit;
 //var_dump($PWithDists);exit;
 //var_dump($MWithDists);exit;
   $Systems = Get_Systems();
   foreach ($Systems as &$N) {
     if ($N['Control']) {
       if (!$Silent) echo "Checking " . $N['Ref'] . "<br>\n";
-      
+
       $Planets = Get_Planets($N['id']);
       if ($Planets) {
         foreach ($Planets as &$P) {
@@ -79,12 +79,12 @@ function Recalc_Project_Homes($Logf=0, $Silent=0) {
                 }
               }
               if (!$doneP) {
-              // Has home defined but not found 
+              // Has home defined but not found
                 if (!$Silent) echo "Would Delete $PHi<p>";
-//              db_delete('ProjectHomes',$PHi);          
+//              db_delete('ProjectHomes',$PHi);
               }
             }
-            
+
             if (!$doneP) {
               $H = ['ThingType'=> 1, 'ThingId'=> $P['id'], 'Inuse'=>1, 'Whose'=>$Cont];
               $loc = Within_Sys_Locs($N,$P['id']);
@@ -127,7 +127,7 @@ function Recalc_Project_Homes($Logf=0, $Silent=0) {
                 Put_Planet($P);
               }
             }
-*/          
+*/
 
 //echo "Getting Moons of " . $P['Name'] . $P['id'] . "<p>";
           $Mns = Get_Moons($P['id']);
@@ -169,12 +169,12 @@ function Recalc_Project_Homes($Logf=0, $Silent=0) {
               $M['ProjHome'] = $H['id'];
               Put_Moon($M);
               continue;
-/*                
+/*
                 else { // No dists
                 echo "Would delete Moon home $MHi<p>";// WRONG
-//                  db_delete('ProjectHomes',$MHi);          
+//                  db_delete('ProjectHomes',$MHi);
                 }
-                
+
               } else {
                 if (isset($MWithDists[$M['id']])) {
                   $Dists = $MWithDists[$M['id']];
@@ -182,7 +182,7 @@ function Recalc_Project_Homes($Logf=0, $Silent=0) {
                   $Dists = 0;
                 }
 
-                $Dists = $MWithDists[$M['id']];              
+                $Dists = $MWithDists[$M['id']];
 //var_dump($Dists);
                 $Homeless = 1;
                 if ($Dists || $M['Control']) {
@@ -216,9 +216,9 @@ function Recalc_Project_Homes($Logf=0, $Silent=0) {
       }
     }
   }
-  
+
   $ThingTypes = Get_ThingTypes();
-  
+
   $Things = Get_AllThings();
   foreach ($Things as &$T) {
     if ($T['Type'] == 0) {
@@ -226,7 +226,7 @@ function Recalc_Project_Homes($Logf=0, $Silent=0) {
       if (!$Silent) echo "Deleted entry Null Thing " . $T['id'] . "<br>";
       continue;
     }
- 
+
     if ($T['BuildState'] < 2 || $T['BuildState'] > 3 ) continue;
 
     if (($ThingTypes[$T['Type']]['Properties'] & (THING_HAS_DISTRICTS + THING_CAN_DO_PROJECTS)) != 0 ) {
@@ -273,16 +273,16 @@ function Recalc_Project_Homes($Logf=0, $Silent=0) {
           }
         }
       }
-    }  
+    }
 
- 
+
   // Remove unused entries
   foreach ($KnownHomes as &$H) {
     if (isset($H['Inuse']) && $H['Inuse']) continue;
       if (!$Silent) echo "Would delete Home " . $H['id'] . "<br>";
     db_delete('ProjectHomes',$H['id']);
   }
-  
+
   if (!$Silent) echo "Project Homes Rebuilt<p>";
 }
 
@@ -311,7 +311,7 @@ function Show_Home($Hid) {
     echo "<tr><td>Where:<td>" . fm_select($SysLocs, $H,'WithinSysLoc');
   }
   echo "<tr>" . fm_number('Properties ',$H,'Props');
-  if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";  
+  if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "</table><p>";
 }
 
@@ -319,7 +319,7 @@ function Recalc_Worlds($Silent=0) {
   include_once("ThingLib.php");
   // Get all districts
   // Work out list of things that have them
-  // Go through each world 
+  // Go through each world
     // does it exist?  If so check minerals level and check its home numbber
     // If not create it
   // Any worldd without districts is removed - TODO
@@ -328,7 +328,7 @@ function Recalc_Worlds($Silent=0) {
   $Facts = Get_Factions();
   $Homes = Get_ProjectHomes();
   $TTypes = Get_ThingTypes();
-  
+
   foreach ($Homes as $H) {
     foreach ($Worlds as $Wi=>$W) {
       if ($W['ThingType'] == $H['ThingType'] && $W['ThingId'] == $H['ThingId']) {
@@ -348,7 +348,7 @@ function Recalc_Worlds($Silent=0) {
           $Minerals = $M['Minerals'];
           $ThisBio = $M['Type'];
           break;
-        case 3: // Thing 
+        case 3: // Thing
           $T = Get_Thing($H['ThingId']);
           if (($TTypes[$T['Type']]['Properties'] & THING_HAS_DISTRICTS) == 0) continue 2;
           $Fid = $T['Whose'];
@@ -356,13 +356,13 @@ function Recalc_Worlds($Silent=0) {
           $ThisBio = -1;
           break;
         }
-        $Bio = $Facts[$Fid]['Biosphere'];      
+        $Bio = $Facts[$Fid]['Biosphere'];
     // Find Project Home
-    
+
         $W['Home'] = $H['id'];
         $W['Minerals'] = $Minerals;
         $W['FactionId'] = $Fid;
- 
+
         Put_World($W);
 
         $Worlds[$Wi]['Done'] = 1;
@@ -392,7 +392,7 @@ function Recalc_Worlds($Silent=0) {
         $Minerals = $M['Minerals'];
         $ThisBio = $M['Type'];
         break;
-      case 3: // Thing 
+      case 3: // Thing
         $T = Get_Thing($H['ThingId']);
         if (empty($T)) {
           if (!$Silent) echo "Home " . $H['id'] . " is faulty!";
@@ -404,33 +404,33 @@ function Recalc_Worlds($Silent=0) {
         $ThisBio = -1;
         break;
     }
-    $Bio = $Facts[$Fid]['Biosphere'];      
+    $Bio = $Facts[$Fid]['Biosphere'];
     // Find Project Home
-    
-    $W = ['FactionId' => $Fid, 'Home' => $H['id'], 'Minerals' => $Minerals, 'RelOrder' => ($Bio == $ThisBio ? 100:80), 
+
+    $W = ['FactionId' => $Fid, 'Home' => $H['id'], 'Minerals' => $Minerals, 'RelOrder' => ($Bio == $ThisBio ? 100:80),
           'ThingType' => $H['ThingType'], 'ThingId'=>$H['ThingId'], 'Done'=>1 ];
     Put_World($W);
     $Worlds[$W['id']] = $W;
-    
+
     $Recalc = Recalc_Economic_Rating($H,$W,$Fid);
     if ($H['Economy'] != $Recalc) {
       $H['Economy'] = $Recalc;
       Put_ProjectHome($H);
     }
   }
-  
+
   foreach ($Worlds as $W) {
     if (empty($W['Done'])) {
       if (!$Silent) echo "World " . $W['id'] . " is not used - Delete?<br>\n";
     }
   }
-  
+
   foreach ($Facts as $F) {
     if (isset($F['HomeWorld']) && isset($Worlds[$F['HomeWorld']])) {
       if (!$Silent) echo "Faction " . $F['Name'] . " has a homeworld<br>\n";
       if (empty($Worlds[$F['HomeWorld']]['Done'])) if (!$Silent) echo "Faction " . $F['Name'] . " Homeworld Not USED!<br>\n";
     } else {
-      if (!$Silent) echo "Faction " . $F['Name'] . " does <b>NOT</b> have a homeworld<br>\n";    
+      if (!$Silent) echo "Faction " . $F['Name'] . " does <b>NOT</b> have a homeworld<br>\n";
       $HW = 0;
       $Ord = 0;
       foreach ($Worlds as $W) {
@@ -445,11 +445,11 @@ function Recalc_Worlds($Silent=0) {
         if (!$Silent) echo "Now setup<p>";
       } else {
        if (!$Silent)  echo "No Worlds for faction<p>";
-      }  
+      }
     }
   }
-  
-  
+
+
   if (!$Silent) echo "Worlds recalculted<p>\n";
 }
 
@@ -459,7 +459,7 @@ function Recalc_Economic_Rating(&$H,&$W,$Fid,$Turn=0) {
   $DTs = Get_DistrictTypes();
 
   $NumPrime = $Mines = 0;
-  $NumCom = 0;
+  $NumCom = 0; $NumInd = 0;
   if (!$Dists) return 0;
   foreach ($Dists as $D) {
     if ($D['Type'] == 0) {
@@ -470,10 +470,16 @@ function Recalc_Economic_Rating(&$H,&$W,$Fid,$Turn=0) {
     if ($D['Type'] == 1) $NumCom = $D['Number'];
     if ($DTs[$D['Type']]['Props'] & 1) $NumPrime += $D['Number'];
     if ($DTs[$D['Type']]['Props'] & 4) $Mines += $D['Number'];
+    if ($DTs[$D['Type']]['Props'] & 32) $NumInd += $D['Number'];
+
   }
   $MinFact = (Has_Tech($Fid,'Improved Mining')?1.5:1);
-  return (Has_Trait($Fid,'No customers')?($NumPrime - $NumCom):$NumPrime)*$NumCom*2  
+  if (feature('Industrial')) {
+    return $NumPrime*4 + $NumInd*$W['Minerals']*$MinFact;
+  } else {
+    return (Has_Trait($Fid,'No customers')?($NumPrime - $NumCom):$NumPrime)*$NumCom*2
          + min($W['Minerals'] * $MinFact,$NumPrime) + min($W['Minerals'] * $MinFact,$Mines*2* $MinFact);
+  }
 }
 
 function Project_Home_Thing(&$H) {
@@ -481,13 +487,13 @@ function Project_Home_Thing(&$H) {
   switch ($H['ThingType']) {
     case 1: // Planet
       return Get_Planet($H['ThingId']);
-          
+
     case 2: // Moon
       return Get_Moon($H['ThingId']);
-    
+
     case 3: // Thing
       return Get_Thing($H['ThingId']);
-    
+
   }
 }
 
@@ -495,14 +501,14 @@ function Control_Propogate($Sid,$Who) {
   // System Control & Name
   $N = Get_System($Sid);
   $N['Control'] = $Who;
-  
+
   $FS = Get_FactionSystemFS($Who,$Sid);
   if (!empty($FS['Name'])) {
     $N['Name'] = $FS['Name'];
     $N['ShortName'] = $FS['ShortName'];
   }
   Put_System($N);
-  
+
   // TODO Worlds within system
 }
 
@@ -518,7 +524,7 @@ function ConstructLoc($Hid,$Posn=0) {
         $Pi++;
       }
       return 0;
-          
+
     case 2: // Moon
       $Moon = Get_Moon($H['ThingId']);
       $Plan = Get_Planet($Moon['PlanetId']);
@@ -532,12 +538,12 @@ function ConstructLoc($Hid,$Posn=0) {
         }
       }
       return 0;
-      
+
     case 3: // Thing
       $T = Get_Thing($H['ThingId']);
       return $T['WithinSysLoc']; // Ignores Posn
   }
-    
+
 }
 
 
