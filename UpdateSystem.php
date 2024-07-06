@@ -5,7 +5,7 @@
 // Call Special Update if needed
 
   include_once("fest.php");
-  global $FESTSYS,$VERSION,$db;
+  global $GAMESYS,$VERSION,$db;
 
 // ********************** START HERE ***************************************************************
 
@@ -21,14 +21,14 @@
   $pfx = $Match[1];
   $Version = $Match[2];
 
-  if (($FESTSYS['CurVersion'] ?? 0) == $Version) {
+  if (($GAMESYS['CurVersion'] ?? 0) == $Version) {
     echo "The System is up to date - no actions taken<p>";
     dotail();
   }
 // Pre Database changes
 
   if (!isset($_REQUEST['MarkDone'])) {
-    for ($Ver = ($FESTSYS['CurVersion'] ?? 0); $Ver <= $Version; $Ver++) {
+    for ($Ver = ($GAMESYS['CurVersion'] ?? 0); $Ver <= $Version; $Ver++) {
       if (function_exists("PreUpdate$Ver")) {
         echo "Doing Pre update to Verion $pfx.$Ver<br>";
         ("PreUpdate$Ver")();
@@ -50,7 +50,7 @@
 
 // Post Database changes
 
-    for ($Ver = ($FESTSYS['CurVersion'] ?? 0); $Ver <= $Version; $Ver++) {
+    for ($Ver = ($GAMESYS['CurVersion'] ?? 0); $Ver <= $Version; $Ver++) {
       if (function_exists("PostUpdate$Ver")) {
         echo "Doing Post update to Verion $pfx.$Ver<br>";
         ("PostUpdate$Ver")();
@@ -58,8 +58,8 @@
     }
   }
   echo "Updated to Version $VERSION<p>";
-  $FESTSYS['CurVersion'] = $Version;
-  $FESTSYS['VersionDate'] = time();
-  Gen_Put('SystemData',$FESTSYS);
+  $GAMESYS['CurVersion'] = $Version;
+  $GAMESYS['VersionDate'] = time();
+  Gen_Put('MasterData',$GAMESYS);
   dotail();
 ?>

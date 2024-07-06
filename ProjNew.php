@@ -526,7 +526,7 @@
           $pc = Proj_Costs(1);
           if ($Count) {
             if ($Count == 1) {
-              foreach ($RepShips as $tid=>$Name) {
+              foreach ($RepShips as $tid=>$Name) { // TODO Levls of ships need tweaking
                 echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi[$RP] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=$tid" .
                 "&Name=" . base64_encode("$RP $Name" ) . "&L=1&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
                 "$RP $Name $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
@@ -551,7 +551,7 @@
 
 
       } else {
-        echo "<h2>Refit and Repair</h2>";
+        echo "<h2>Refit and Repair</h2>"; // OLD
 
         $HSys = $Homes[$Hi]['SystemId'];
         $HLoc = $Homes[$Hi]['WithinSysLoc'];

@@ -309,9 +309,9 @@ function Feature($Name,$default='') {  // Return value of feature if set Game da
 }
 
 function Feature_Reset() {
-  global $_GameFeatures,$GAME,$_Features,$FESTSYS;
+  global $_GameFeatures,$GAME,$_Features,$GAMESYS;
   $_GameFeatures = parse_ini_string($GAME['GameFeatures'] ?? '');
-  $_Features = parse_ini_string($FESTSYS['Features']?? '');
+  $_Features = parse_ini_string($GAMESYS['Features']?? '');
 }
 
 
