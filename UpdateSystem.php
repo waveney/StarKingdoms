@@ -4,7 +4,7 @@
 // push database Skema changes
 // Call Special Update if needed
 
-  include_once("fest.php");
+  include_once("sk.php");
   global $GAMESYS,$VERSION,$db;
 
 // ********************** START HERE ***************************************************************

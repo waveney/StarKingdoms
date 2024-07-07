@@ -334,12 +334,10 @@
     }
     if (0 && Access('God')) $txt .= "<li><a href=TEmailProformas.php>EMail Proformas</a>";
     if (0 && Access('God')) $txt .= "<li><a href=AdminGuide.php>Admin Guide</a> \n";
-    if (Access('GM')) {
 //      $txt .= "<li><a href=BannerManage>Manage Banners</a> \n";
-      $txt .= "<li><a href=GameData.php>Game Settings</a> \n";
-      $txt .= "<li><a href=GameNew.php>Create New Game</a>\n";
-//      $txt .= "<li><a href=MasterData.php>Star Kingdoms System Data Settings</a> \n";
-    }
+    $txt .= "<li><a href=GameData.php>Game Settings</a> \n";
+    $txt .= "<li><a href=GameNew.php>Create New Game</a>\n";
+    if (Access('God')) $txt .= "<li><a href=MasterData.php>Star Kingdoms System Data Settings</a> \n";
     $txt .= "</ul>\n";
   }
 
