@@ -21,8 +21,9 @@
   if (isset($_REQUEST['Links'])) $ShowLinks = $_REQUEST['Links'];
 
   $CatCols = ["white","grey", "Yellow"];
-  $HexLegPos = [];
-  eval("\$HexLegPos=" . Feature('HexLegPos','[[0,0]]') . ";" );
+  $HexLegPos = [[1,8],[1,7.5],[1,7],[1,6.5], [9.5,8],[9.5,7.5],[9.5,7],[9.5,6.5], [1,0],[1,0.5],[1,1],[1,1.5], [9.5,0],[9.5,0.5],[9.5,1.5],[9.5,2]]
+  ;
+ // eval("\$HexLegPos=" . Feature('HexLegPos','[[0,0]]') . ";" );
 // var_dump($HexLegPos);exit;
 
   if (isset($_REQUEST['f'])) {
@@ -93,8 +94,9 @@
 // echo "<h1>Faction $Faction</h1>";
   global $db, $GAME;
 
-  $HexLegPos = [];
-  eval("\$HexLegPos=" . Feature('HexLegPos','[[0,0]]') . ";" );
+  $HexLegPos = [[1,8],[1,7.5],[1,7],[1,6.5], [9.5,8],[9.5,7.5],[9.5,7],[9.5,6.5], [1,0],[1,0.5],[1,1],[1,1.5], [9.5,0],[9.5,0.5],[9.5,1.5],[9.5,2]]
+  ;
+ // eval("\$HexLegPos=" . Feature('HexLegPos','[[0,0]]') . ";" );
 
   $RedoMap = 1;
 //  $Dot = fopen("cache/Fullmap$Faction$typ.dot","w+");

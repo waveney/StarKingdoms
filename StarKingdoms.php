@@ -4,7 +4,7 @@ include_once("GetPut.php");
 // include_once("Login.php");
 global $FACTION,$USER,$USERID,$GameStatus,$PlayerLevel;
 
-debug_print_backtrace();
+// debug_print_backtrace();
 $God = Access('God');
 
 dostaffhead('Games');
