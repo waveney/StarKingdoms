@@ -2,7 +2,7 @@
 include_once("sk.php");
 include_once("GetPut.php");
 // include_once("Login.php");
-global $FACTION,$USER,$USERID,$GameStatus,$PlayerLevel,$CALYEAR,$FID,$GAME,$GAMEID;
+global $FACTION,$USER,$USERID,$GameStatus,$PlayerLevel,$FID,$GAME,$GAMEID;
 
 $God = Access('God');
 $Gid = ($_REQUEST['G'] ?? 0);

@@ -292,10 +292,9 @@ function Get_GAMESYS() {
 
 global $VERSION;
 $GAMESYS = Get_GAMESYS();
-$CALYEAR = gmdate('Y');
 $GAME = $GAMESYS['CurGame'];  //$GAME can be overridden
 include_once("Version.php");
-$GAMESYS['V'] = $CALYEAR . ".$VERSION";
+$GAMESYS['V'] = $VERSION;
 
 $_GameFeatures = $_Features = [];
 

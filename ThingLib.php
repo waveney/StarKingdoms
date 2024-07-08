@@ -913,7 +913,10 @@ function Update_Militia(&$W,&$Dists,$NewOwn=0) {
   $Hlth = 40+Has_Tech($FactN,'Militia Training Techniques')*2;
 
   $Dcount = 0;
-  foreach($Dists as $D) $Dcount += ($D['Number'] * ($D['Type'] ==2?2:1));
+  $DTs = Get_DistrictTypes();
+  foreach($Dists as $D) {
+    if (($DTs[$D['Type']]['Props'] &128) == 0) $Dcount += ($D['Number'] * ($D['Type'] ==2?2:1));
+  }
 //echo count($Mils);
   if (count($Mils) >= $Dcount) {
     if (count($Mils) > $Dcount) {

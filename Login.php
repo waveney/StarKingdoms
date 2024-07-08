@@ -10,7 +10,7 @@
   include_once("UserLib.php");
 
 function Logon(&$use=0) {
-  global $YEAR,$USER,$USERID,$CALYEAR;
+  global $YEAR,$USER,$USERID;
   $Rem = 0;
   if (!$use) {
     $user = $_POST['UserName'];
@@ -33,7 +33,7 @@ function Logon(&$use=0) {
     }
     if ($ans['AccessLevel']) {
       $ans['Yale'] = rand_string(40);
-      setcookie('SKC2',$ans['Yale'],($Rem ? mktime(0,0,0,1,1,$CALYEAR+1) : 0),'/' );
+      setcookie('SKC2',$ans['Yale'],($Rem ? mktime(0,0,0,1,1,gmdate('Y')+1) : 0),'/' );
       $_COOKIE['SKC2'] = $ans['Yale'];
       Put_User($ans);
 //echo "Set Yale as: " . $ans['Yale'] . "<p>";
@@ -144,7 +144,7 @@ function Login($errmsg='', $message='') {
 }
 
 function NewPasswd() {
-  global $YEAR,$USER,$USERID,$CALYEAR;
+  global $YEAR,$USER,$USERID;
   $user = $_REQUEST['UserId'];
   if (!$user) $user = $USERID;
   if (!($ans = Get_User($user) )) Login("User not known");

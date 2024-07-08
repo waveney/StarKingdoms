@@ -1055,8 +1055,7 @@ function Get_ProjectType($id) {
 
 function Get_ProjectTypes($AllG=0) {
   global $db,$NOTBY;
-//  var_dump($NOTBY);
- // echo "SELECT * FROM ProjectTypes " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0") . "<p>";
+  $Ts = [];
   $res = $db->query("SELECT * FROM ProjectTypes " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0") );
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
   return $Ts;
@@ -1070,6 +1069,60 @@ function Put_ProjectType(&$now) {
     return Update_db('ProjectTypes',$Cur,$now);
   } else {
     return $now['id'] = Insert_db ('ProjectTypes', $now );
+  }
+}
+
+// Org Types
+function Get_OrgType($id) {
+  global $db,$NOTBY;
+  $res = $db->query("SELECT * FROM OfficeTypes WHERE id=$id");
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
+  return [];
+}
+
+function Get_OrgTypes($AllG=0) {
+  global $db,$NOTBY;
+  $Ts = [];
+  $res = $db->query("SELECT * FROM OfficeTypes " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0") );
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
+  return $Ts;
+}
+
+function Put_OrgType(&$now) {
+  global $db,$GAMEID;
+  if (isset($now['id'])) {
+    $e=$now['id'];
+    $Cur = Get_OrgType($e);
+    return Update_db('OfficeTypes',$Cur,$now);
+  } else {
+    return $now['id'] = Insert_db ('OfficeTypes', $now );
+  }
+}
+
+// Org Operations
+function Get_OpType($id) {
+  global $db,$NOTBY;
+  $res = $db->query("SELECT * FROM OrgActions WHERE id=$id");
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
+  return [];
+}
+
+function Get_OpTypes($AllG=0) {
+  global $db,$NOTBY;
+  $Ts = [];
+  $res = $db->query("SELECT * FROM OrgActions " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0") );
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
+  return $Ts;
+}
+
+function Put_OpType(&$now) {
+  global $db,$GAMEID;
+  if (isset($now['id'])) {
+    $e=$now['id'];
+    $Cur = Get_OpType($e);
+    return Update_db('OrgActions',$Cur,$now);
+  } else {
+    return $now['id'] = Insert_db ('OrgActions', $now );
   }
 }
 

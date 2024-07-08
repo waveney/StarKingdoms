@@ -210,6 +210,8 @@
                 fm_select($Facts,0,'F',1," onchange=this.form.submit()") . "</form>\n";
     */
 //    if (Access('God')) $txt .= "<li><a href=Import.php>Import</a>\n";
+    $txt .= "<li><a href=ListTraits.php>List All Traits</a>\n";
+
     $txt .= "</ul>\n";
   }
 
@@ -278,14 +280,25 @@
     $txt .= "<li><a href=ProjHomes.php>List Project Homes</a><p>\n";
 
     $txt .= "<li><a href=RebuildHomes.php>Rebuild Project Homes</a>\n";
-    $txt .= "<li><a href=RebuildMines.php>Rebuild Mines Data</a>\n";
+    if (Feature('Mines')) $txt .= "<li><a href=RebuildMines.php>Rebuild Mines Data</a>\n";
     $txt .= "<p>";
 
 
     $txt .= "</ul>\n";
   }
 
-// *********************** Users  **************************************************************
+  // *********************** Misc *****************************************************************
+  if (feature('Orgs') && ($x = SKTable('Any','Organisations'))) {
+    $txt .= $x;
+    $txt .= "<ul>\n";
+    $txt .= "<li><a href=OpsList.php>List Operations</a><p>\n";
+    $txt .= "<li><a href=OrgTypes.php>Organisation Types</a>\n";
+    $txt .= "<li><a href=OpTypes.php>Operation Types</a>\n";
+    $txt .= "<p>";
+    $txt .= "</ul>\n";
+  }
+
+  // *********************** Users  **************************************************************
   if ($x = SKTable('Any','Users')) {
     $txt .= $x;
     $txt .= "<ul>\n";
@@ -297,7 +310,6 @@
     } else {
       $txt .= "<li><a href=ListUsers.php>List Group Users</a>";
     }
-    $txt .= "<li><a href=ListTraits.php>List All Traits</a>\n";
     $txt .= "</ul><p>\n";
   }
 
@@ -315,8 +327,8 @@
 
     if (Access('God')) {
       $xtra = '';
-       if ($VERSION != ($GAMESYS['CurVersion'] ?? 0)) {
-        foreach(glob("../Schema/*.sql") as $sql) {
+      if ($VERSION != ($GAMESYS['CurVersion'] ?? 0)) {
+        foreach(glob("Schema/*.sql") as $sql) {
           if (filemtime($sql) > $GAMESYS['VersionDate']) {
             $xtra = " style='color:red;font-size:28;font-weight:bold;'";
             break;

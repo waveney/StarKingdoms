@@ -13,5 +13,7 @@ CREATE TABLE `Links` (
   `Status` int NOT NULL,
   `Weight` int NOT NULL DEFAULT '1',
   `Whose` int NOT NULL,
+  `Instability` int NOT NULL,
+  `Concealment` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

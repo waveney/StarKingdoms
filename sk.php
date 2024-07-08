@@ -25,7 +25,7 @@ $PlayerLevel = ['Player','GM','No Access'];
 
 date_default_timezone_set('GMT');
 function Check_Login() {
-  global $db,$USER,$USERID,$AccessType,$YEAR,$CALYEAR,$FACTION;
+  global $db,$USER,$USERID,$AccessType,$YEAR,$FACTION;
   if (!empty($USER)) return true;
   if (isset($_COOKIE['SKC2'])) {
     $res=$db->query("SELECT * FROM People WHERE Yale='" . $_COOKIE['SKC2'] . "'");
