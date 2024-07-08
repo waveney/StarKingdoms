@@ -38,7 +38,7 @@
 
     chdir('Schema');
     $skema = system('skeema push 2>&1');
-    $skedit = preg_replace('/\n/','<br>\n',$skema);
+    $skedit = preg_replace("/\n/",'<br>\n',$skema);
     echo $skedit . "\n\n";
     chdir('..');
 

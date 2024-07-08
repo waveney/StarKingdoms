@@ -57,5 +57,8 @@ CREATE TABLE `Things` (
   `Priority` int NOT NULL,
   `LastMoved` int NOT NULL,
   `HiddenControl` int NOT NULL DEFAULT '0',
+  `Stability` double NOT NULL,
+  `Mobility` double NOT NULL,
+  `Evasion` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

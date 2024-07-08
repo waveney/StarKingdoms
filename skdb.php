@@ -345,7 +345,7 @@ function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$M
   $DateFlds = explode(',',$Dateflds);
   $TimeFlds = explode(',',$Timeflds);
   $HexFlds = explode(',',$Hexflds);
-  $indxname = (isset($TableIndexes[$table])?$TableIndexes[$table]:'id');
+  $indxname = ($TableIndexes[$table]??'id');
 
 //var_dump($_REQUEST);
 //return;
