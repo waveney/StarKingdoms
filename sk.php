@@ -24,7 +24,7 @@ $PlayerLevel = ['Player','GM','No Access'];
 
 
 date_default_timezone_set('GMT');
-function Check_Login() {
+function Check_Login($check=0) {
   global $db,$USER,$USERID,$AccessType,$YEAR,$FACTION;
   if (!empty($USER)) return true;
   if (isset($_COOKIE['SKC2'])) {
@@ -49,7 +49,7 @@ function Check_Login() {
     }
   }
   include_once("Login.php");
-  Login("Please Login to Star Kingdoms");
+  if ($check == 0) Login("Please Login to Star Kingdoms");
 
   return false;
 }

@@ -116,8 +116,8 @@ function Limited() {
 
 function Login($errmsg='', $message='') {
   global $db,$USER,$Access_Type,$GAME;
-  Check_Login();
-  //debug_print_backtrace();exit;
+  Check_Login(1);
+// debug_print_backtrace();exit;
   if (!empty($USER) && (($GAME['FactionLevel']??0) > $Access_Type['Participant'])) include_once ("Staff.php");
 
   dostaffhead("Staff Login");
@@ -177,7 +177,7 @@ function NewPasswd() {
 
 /* MAIN CODE HERE */
   global $USERID,$CONF;
-  Check_Login();
+  Check_Login(1);
   if(!isset($_GET['ACTION'])) {
     if (!isset($_POST['ACTION'])) Login(); // No Return
     $act = $_POST['ACTION'];
