@@ -50,9 +50,9 @@
 
   if (Access('God')) {
 
-    $Games =Gen_Get_Cond('Games','TRUE');
+ //   $Games =Gen_Get_Cond('Games','TRUE');
 
-    if (count($Games)>1) echo "<h2>Select Game: " . GameList($Games);
+ //   if (count($Games)>1) echo "<h2>Select Game: " . GameList($Games);
   } else { // Not God
 //    $Perm
     $Games = Gen_Get_Cond('Games', "GM1=$Usr OR GM2=$Usr OR GM3=$Usr");

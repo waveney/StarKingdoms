@@ -52,7 +52,7 @@
   echo "<tr><td>Id: $GAMEID" . fm_text('Name',$GAME,'Name');
   echo "<tr>" . fm_number("Turn #",$GAME,'Turn') . "<td>State:" . fm_select($GameStatus,$GAME,'Status');
   echo "<tr><td>Access Key:<td colspan=3>" . $GAME['AccessKey'];
-
+  echo "<tr>" . fm_text('Code Prefix',$GAME,'CodePrefix');
   echo "<tr>" . fm_textarea("Features",$GAME,'Features',10,20);
 //  echo "<tr><td>GM 1<td>" . fm_select($Userlist,$GAME,'GM1',1);
 //  echo "<tr><td>GM 2<td>" . fm_select($Userlist,$GAME,'GM2',1);

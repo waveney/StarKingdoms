@@ -16,6 +16,8 @@
   dostaffhead("Full Map");
  //var_dump($_REQUEST, $_COOKIE);
 
+  $LinkType = Feature('LinkMethod');
+
   A_Check('Player');
   $ShowLinks = 1;
   if (isset($_REQUEST['Links'])) $ShowLinks = $_REQUEST['Links'];

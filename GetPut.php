@@ -328,10 +328,10 @@ function Put_LinkLevel(&$now) {
   return Update_db('LinkLevel',$Cur,$now);
 }
 
-function Get_LinkLevels() {
-  global $db,$GAMEID;
+function Get_LinkLevels($AllG=0) {
+  global $db,$GAMEID,$NOTBY;
   $Lvls = [];
-  $res = $db->query("SELECT * FROM LinkLevel WHERE GameId=$GAMEID ORDER BY Level");
+  $res = $db->query("SELECT * FROM LinkLevel " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0 OR GameId=$GAMEID ") . " ORDER BY Level");
 //  var_dump($res);
   if ($res) while ($ans = $res->fetch_assoc()) $Lvls[$ans['Level']] = $ans;
   return $Lvls;
