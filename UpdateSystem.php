@@ -49,7 +49,7 @@
 
 
     chdir('Schema');
-    $skema = system('skeema push 2>&1');
+    $skema = shell_exec('skeema push');
     $skedit = preg_replace("/\n/","<br>\n",$skema);
     echo $skedit . "\n\n";
     fwrite($fp,"Skeema Update:\n$skedit\n\n");
