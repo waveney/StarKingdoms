@@ -9,10 +9,16 @@
   dostaffhead("Manage Planet Types");
 // var_dump($_REQUEST);exit;
 
-  $LinkMethod = Feature('LinkMethod','Gates'); // 'Gates','Wormhole'
+  $LinkMethod = Feature('LinkMethod','Gates'); // 'Gates','Wormholes'
+
+//  var_dump($_REQUEST);
 
   $DT=Get_LinksGame((isset($_REQUEST['USAGE'])?' ORDER BY (UseCount/Weight) DESC':''));
-  if (UpdateMany('Links','Put_Link',$DT,1,'','','Level',0))  $DT=Get_LinksGame();
+  if ($LinkMethod == 'Gates') {
+    if (UpdateMany('Links','Put_Link',$DT,1,'','','Level',0))  $DT=Get_LinksGame();
+  } else if ($LinkMethod == 'Wormholes') {
+    if (UpdateMany('Links','Put_Link',$DT,1,'','','Concealment',-1))  $DT=Get_LinksGame();
+  }
 
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
@@ -72,11 +78,18 @@
   } elseif ($LinkMethod == 'Wormholes') {
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Instability</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Concealment</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
   }
 
   echo "</thead><tbody>";
   foreach($DT as $D) {
     $i = $Did = $D['id'];
+
+    $NameB = $D['System1Ref'] . $D['Instability'] . $D['Concealment']. $D['System2Ref'];
+    if ($NameB != ($D['Name'] ?? '')) {
+      $D['Name'] = $NameB;
+      Put_Link($D);
+    }
 //  var_dump($D);exit;
 
     echo "<tr><td>$i" . fm_number1("",$D,'GameId','','',"GameId$i");
@@ -93,9 +106,10 @@
     } elseif ($LinkMethod == 'Wormholes') {
       echo fm_number1('',$D,'Instability','','',"Instability$i");
       echo fm_number1('',$D,'Concealment','','',"Concealment$i");
+      echo fm_text1('',$D,'Name',1,'','',"Name$i");
     }
   }
-  $D = ['Weight'=>1];
+  $D = ['Weight'=>1,'Concealment'=>-1];
   echo "<tr><td><td><input type=number name=GameId0 value=$GAMEID>";
     echo "<td>" . fm_select($Ssys,$D,'System1Ref0');
     echo "<td>" . fm_select($Ssys,$D,'System2Ref0');

@@ -55,7 +55,7 @@
     fwrite($fp,"Skeema Update:\n$skedit\n\n");
     chdir('..');
 
-    if (strstr('ERROR',$skedit)) {
+    if (strstr($skedit,'ERROR')) {
       echo "<p>The Database structure failed to update.<p>Update cancelled<p>";
       dotail();
     }

@@ -144,12 +144,14 @@ function Get_Link($id) {
 }
 
 function Put_Link(&$now) {
+  global $db,$GAMEID;
+  if (empty($now['Level'])) $now['Level'] = ($now['Concealment'] ?? 1);
   if (isset($now['id'])) {
     $e=$now['id'];
     $Cur = Get_Link($e);
     return Update_db('Links',$Cur,$now);
   } else {
-//var_dump($now); exit;
+    $now['GameId']=$GAMEID;
     return $now['id'] = Insert_db ('Links', $now );
   }
 
@@ -164,8 +166,6 @@ function Get_LinksGame($Extra='') {
     }
   return $links;
 }
-
-
 
 function Get_Links($sysref) {
   global $db,$GAMEID;
@@ -331,9 +331,8 @@ function Put_LinkLevel(&$now) {
 function Get_LinkLevels($AllG=0) {
   global $db,$GAMEID,$NOTBY;
   $Lvls = [];
-  $res = $db->query("SELECT * FROM LinkLevel " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0 OR GameId=$GAMEID ") . " ORDER BY Level");
-//  var_dump($res);
-  if ($res) while ($ans = $res->fetch_assoc()) $Lvls[$ans['Level']] = $ans;
+  $res = $db->query("SELECT * FROM LinkLevel " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0 ") . " ORDER BY Level");
+  if ($res) while ($ans = $res->fetch_assoc()) $Lvls[$AllG?$ans['id']:$ans['Level']] = $ans;
   return $Lvls;
 }
 
@@ -469,10 +468,10 @@ function Put_PlanetType(&$now) {
   return Update_db('PlanetTypes',$Cur,$now);
 }
 
-function Get_PlanetTypes($All=0) {
+function Get_PlanetTypes($AllG=0) {
   global $db,$NOTBY;
   $Ts = [];
-  if ($All) {
+  if ($AllG) {
     $res = $db->query("SELECT * FROM PlanetTypes");
   } else {
     $res = $db->query("SELECT * FROM PlanetTypes WHERE (NotBy&$NOTBY)=0");
@@ -481,10 +480,10 @@ function Get_PlanetTypes($All=0) {
   return $Ts;
 }
 
-function Get_PlanetTypeNames($All=0) {
+function Get_PlanetTypeNames($AllG=0) {
   global $db,$NOTBY;
   $Ts = [];
-  if ($All) {
+  if ($AllG) {
     $res = $db->query("SELECT * FROM PlanetTypes");
   } else {
     $res = $db->query("SELECT * FROM PlanetTypes WHERE (NotBy&$NOTBY)=0");

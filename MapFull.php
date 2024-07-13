@@ -2,7 +2,7 @@
   include_once("sk.php");
   include_once("GetPut.php");
 
-  global $FACTION,$GAMEID;
+  global $FACTION,$GAMEID,$LinkType,$USERID;
 
   if (Access('GM') ) {
     A_Check('GM');
@@ -19,6 +19,7 @@
   $LinkType = Feature('LinkMethod');
 
   A_Check('Player');
+  $GM = Access('GM');
   $ShowLinks = 1;
   if (isset($_REQUEST['Links'])) $ShowLinks = $_REQUEST['Links'];
 
@@ -40,15 +41,15 @@
   if ($FACTION) $Faction = $FACTION['id'];
   $Fact = Get_Faction($Faction);
 
-  if (!Access('GM') && $Fact['TurnState'] > 2) Player_Page();
+  if (!$GM && $Fact['TurnState'] > 2) Player_Page();
 
   $typ='';
   if (isset($_REQUEST['Hex'])) {
-    if (Access('GM')) {
+    if ($GM) {
       $typ = 'Hex';
     } elseif (Access('Player')) {
-      if (Has_Tech($Faction,'Astral Mapping')) {
-        echo "Found Hex...";
+      if (Has_Tech($Faction,'Astral Mapping') || Feature('MapsinHex')) {
+ //       echo "Found Hex...";
         $typ = 'Hex';
       }
     } else {
@@ -92,6 +93,23 @@
     return $ret . " fontsize=" . $FSize[$len] . " ";
   }
 
+  function LinkProps($L) {
+    global $GM,$LinkType,$Levels;
+
+    $Res = [1,'solid','#' . $L['id']];
+
+    if ($LinkType == 'Wormholes') {
+      $Res[2] = $L['Name'];
+      if ($GM) {
+        $Res[0] = (3-$L['Concealment']%3);
+        $Res[1] = ['solid','dashed','dotted'][min(2,intdiv($L['Concealment'],3))];
+      }
+    } else if ($LinkType == 'Gate') {
+      if ($L['Level'] <0 || $L['Status'] > 0) $Res[1] = 'dotted';
+    }
+    return $Res;
+  }
+
 // echo "<h1>Faction $Faction</h1>";
   global $db, $GAME,$GAMEID;
 
@@ -105,6 +123,7 @@
 
   $Nodes = Get_Systems();
   $Levels = Get_LinkLevels();
+// var_dump($Levels);
   $Factions = Get_Factions();
   $Historical = 0;
   $OtherInt = 0;
@@ -203,19 +222,21 @@
         foreach ($Links as $L) {
           if (isset($LinkShown[$L['id']])) continue;
           $Fl = Get_FactionLinkFL($Faction, $L['id']);
+          $Ldat = LinkProps($L);
           if (isset($Fl['id']) && $Fl['Known'] || $AllLinks) {
-            fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=\"" . $Levels[abs($L['Level'])]['Colour'] . "\" penwidth=" . $L['Weight'] .
-                   (($L['Level'] <0 || $L['Status'] > 0)? ' style=dotted ':'') .
-                   ($ShowLinks? " label=\"#" . $L['id'] . '"' : '') . " ];\n");
+            fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] .
+                   " [color=\"" . $Levels[abs($L['Level'])]['Colour'] .
+                   "\" penwidth=" . $Ldat[0] . " style=" . $Ldat[1] .
+                   ($ShowLinks? " label=\"" . $Ldat[2] . "\"": '') . " ];\n");
             $LinkShown[$L['id']]=1;
           } else {
             if ($Neb && $FS['NebScanned'] < $Neb) continue;
             if (isset($FS['ScanLevel']) && $FS['ScanLevel']<2) continue;
             $rand = "B$ul";  // This kludge at least allows both ends to be displayed
             fwrite($Dot,"Unk$ul$rand [label=\"?\" shape=circle];\n");
-            fwrite($Dot,"$from -- Unk$ul$rand [color=\"" . $Levels[abs($L['Level'])]['Colour'] . '"' . ($ShowLinks? " label=\"#" . $L['id'] . '"' : '')
-                   . " penwidth=" . $L['Weight'] .
-                   (($L['Level'] <0 || $L['Status'] > 0)? ' style=dotted ':'') . " ];\n");
+            fwrite($Dot,"$from -- Unk$ul$rand [color=\"" . $Levels[abs($L['Level'])]['Colour'] . '"' .
+              "\" penwidth=" . $Ldat[0] . " style=" . $Ldat[1] .
+              ($ShowLinks? " label=\"" . $Ldat[2] . "\"": '') . " ];\n");
             $ul++;
             if (isset($UnknownLink[$L['id']])) {
               $RedoMap = 1;
@@ -234,10 +255,12 @@
         $Links = Get_Links1end($from);
 
         foreach ($Links as $L) {
-          fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . " [color=\"" . $Levels[abs($L['Level'])]['Colour'] . '"' .
-                   (($L['Level'] <0 || $L['Status'] > 0)? ' style=dotted ':'') . " penwidth=" . $L['Weight'] .
-          ($typ?"":(" label=\"#" . $L['id'] . "\"")) . "];\n");
-        }
+          $Ldat = LinkProps($L);
+          fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] .
+            " [color=\"" . $Levels[abs($L['Level'])]['Colour'] .
+            "\" penwidth=" . $Ldat[0] . " style=" . $Ldat[1] .
+            ($ShowLinks? " label=\"" . $Ldat[2] . "\"": '') . " ];\n");
+         }
       }
     }
 
@@ -254,7 +277,8 @@
 
     if ($NebF) {
       if ($typ) {
-        fwrite($Dot,"Nebulae [shape=box style=filled fillcolor=white penwidth=3" . ($typ?" pos=\"" . $HexLegPos[$ls][0] . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");
+        fwrite($Dot,"Nebulae [shape=box style=filled fillcolor=white penwidth=3" .
+          ($typ?" pos=\"" . $HexLegPos[$ls][0] . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");
       } else {
         fwrite($Dot,"Nebulae [shape=box style=filled fillcolor=white penwidth=3];\n");
       }
@@ -287,10 +311,10 @@
     //    exec("fdp -Timap -n cache/$GAMEID/Fullmap$Faction$typ.dot > cache/$GAMEID/Fullmap$Faction$typ.imap");
     //    exec("fdp -Tsvg -n cache/$GAMEID/Fullmap$Faction$typ.dot > cache/$GAMEID/Fullmap$Faction$typ.svg");
   } else {
-    exec("unflatten cache/$GAMEID/Fullmap$Faction$typ.dot > cache/$GAMEID/f.dot");
+    exec("unflatten cache/$GAMEID/Fullmap$Faction$typ.dot > cache/$GAMEID/f$USERID.dot");
 //    exec("dot -Tsvg cache/f.dot > cache/Fullmap$Faction.svg");
-    exec("dot -Tpng cache/$GAMEID/f.dot > cache/Fullmap$Faction$typ.png");
-    exec("dot -Tcmapx cache/$GAMEID/f.dot > cache/Fullmap$Faction$typ.map");
+    exec("dot -Tpng cache/$GAMEID/f$USERID.dot > cache/$GAMEID/Fullmap$Faction$typ.png");
+    exec("dot -Tcmapx cache/$GAMEID/f$USERID.dot > cache/$GAMEID/Fullmap$Faction$typ.map");
   }
 
 //  echo "<h2>dot run</h2>";

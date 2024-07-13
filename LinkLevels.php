@@ -11,8 +11,6 @@
 
   $AllG = 0;
   if (isset($_REQUEST['AllGames'])) {
-    // Button for cur game
-    // Show current NotBy Mask
     echo "<div class=floatright><h2>Showing All Games - Switch to <a href=LinkLevels.php>Current Game</a></h2></div>";
     echo "The current NotBy Mask is : $SETNOT<p>\n";
     $AllG = 1;
@@ -22,7 +20,6 @@
 
   $DT=Get_LinkLevels($AllG);
   if (UpdateMany('LinkLevel','Put_LinkLevel',$DT,0))  $DT=Get_LinkLevels($AllG);
-
   $coln = 0;
 
   echo "<form method=post action=LinkLevels.php>";

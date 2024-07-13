@@ -11,14 +11,15 @@
   $Systems = Get_Systems();
   $Factions = Get_Factions();
 
-  
+
   if (!$Systems) {
     echo "<h2>No systems found</h2>";
+    echo "<h2><a href=SysEdit.php?ACTION=New>New System</a></h2>";
     dotail();
   }
-  
+
   echo "<h1>Systems</h1>";
-  
+
   $coln = 0;
   echo "<div class=tablecont><table id=indextable border width=100% style='min-width:1400px'>\n";
   echo "<thead><tr>";
@@ -45,7 +46,7 @@
     echo "<td>$Ctrl";
     echo "<td>$Name";
     echo "<td>$Neb";
-    echo "<td><a href=SurveyReport.php?id=$sid>Survey Report</a>"; // Generic 
+    echo "<td><a href=SurveyReport.php?id=$sid>Survey Report</a>"; // Generic
     echo "<td><a href=ThingList.php?AT=$Ref>Things in $Ref</a>\n";
     $Anoms = Gen_Get_Cond('Anomalies',"GameId=$GAMEID AND SystemId=$sid");
     echo "<td>";
@@ -53,17 +54,17 @@
       foreach($Anoms as $A) {
         $Aid = $A['id'];
         echo "<a href=AnomalyEdit.php?id=$Aid>$Aid</a> ";
-      } 
+      }
     }
     $Who = Gen_Get_Cond('FactionSystem',"SystemId=$sid");
     $npc = 1;
     foreach($Who as $W) if (!isset($Factions[$W['FactionId']]) || (!$Factions[$W['FactionId']]['NPC'])) $npc = 0;
     echo "<td>" .($Who?($npc?"NPC only":"Yes"):"No");
   }
-      
+
   echo "</tbody></table></div>\n";
-  
-  if (Access('God')) echo "<h2><a href=SysEdit.php?ACTION=New>New System</a></h2>";
+
+  if (Access('GM')) echo "<h2><a href=SysEdit.php?ACTION=New>New System</a></h2>";
 
 
   dotail();
