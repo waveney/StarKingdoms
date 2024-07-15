@@ -824,7 +824,7 @@ function Get_Faction_Techs($Fact,$Turn=0) {
 
 function Get_ThingType($id,$AllG=0) {
   global $db,$NOTBY;
-  $res = $db->query("SELECT * FROM ThingTypes WHERE id=$id" . ($AllG?'':"WHERE (NotBy&$NOTBY)=0")  . " ");
+  $res = $db->query("SELECT * FROM ThingTypes WHERE id=$id" . ($AllG?'':" AND (NotBy&$NOTBY)=0")  . " ");
   if ($res) if ($ans = $res->fetch_assoc()) return $ans;
   return [];
 }
@@ -840,12 +840,12 @@ function Put_ThingType(&$now) {
   }
 }
 
-function Get_ThingTypes() {
-  global $db,$GAMEID;
-  $Ms = [];
-  $res = $db->query("SELECT * FROM  ThingTypes ");
-  if ($res) while ($ans = $res->fetch_assoc()) $Ms[$ans['id']] = $ans;
-  return $Ms;
+function Get_ThingTypes($AllG) {
+  global $db,$NOTBY;
+  $Ts = [];
+  $res = $db->query("SELECT * FROM ThingTypes " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0") );
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
+  return $Ts;
 }
 
 function Has_Tech($fid,$name,$turn=0) { // Turn==0 = now
@@ -859,7 +859,7 @@ function Has_Tech($fid,$name,$turn=0) { // Turn==0 = now
   }
 
   if (empty($Tech)) {
-    echo "Has_Tech called with impossible tech $name";
+    if ($name != 0) echo "Has_Tech called with impossible tech $name";
     return 0;
   }
   if ($Tech['Cat'] ==0) {

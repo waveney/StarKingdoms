@@ -60,5 +60,7 @@ CREATE TABLE `Things` (
   `Stability` double NOT NULL,
   `Mobility` double NOT NULL,
   `Evasion` int NOT NULL,
+  `BluePrint` int NOT NULL,
+  `PreReq` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

@@ -8,7 +8,7 @@
 
   dostaffhead("Thing Types");
 
-  global $db, $GAME, $ModuleCats;
+  global $db, $GAME, $ModuleCats,$GAMEID;
   global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil;
 
 // var_dump($_REQUEST);
@@ -51,7 +51,7 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Eyes</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>SeenBy</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Max Level</a>\n";
-    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Game</a>\n";
+//    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Game</a>\n";
     echo "</thead><tbody>";
 
     foreach($Ts as $T) {
@@ -64,7 +64,7 @@
       echo fm_number1('',$T,'Eyes','','',"Eyes$i");
       echo fm_number1('',$T,'SeenBy','','',"SeenBy$i");
       echo fm_number1('',$T,'MaxLvl','','',"MaxLvl$i");
-      echo fm_number1('',$T,'GameId','','',"GameId$i");
+      echo fm_hidden("GameId$i",$T['GameId']);
       }
 
   $T = ['MaxLvl'=>1000000];
@@ -76,7 +76,7 @@
       echo fm_number1('',$T,'Eyes','','',"Eyes0");
       echo fm_number1('',$T,'SeenBy','','',"SeenBy0");
       echo fm_number1('',$T,'MaxLvl','','',"MaxLvl0");
-      echo fm_number1('',$T,'GameId','','',"GameId0");
+      echo fm_hidden("GameId0",$GAMEID);
   echo "</tbody></table></div>\n";
 
   echo "<h2><input type=submit name=Update value=Update></h2>";

@@ -7,7 +7,8 @@ include_once("PlayerLib.php");
 
 global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$InstrMsg,$Advance,$ValidMines;
 
-$ModuleCats = ['Ship','Civilian Ship','Support Ship','Military Ship','Army','Other'];
+//$ModuleCats = ['Ship','Civilian Ship','Support Ship','Military Ship','Army','Other','All'];
+$ModuleCats = ['Ship','Ship','Ship','Ship','Detachment','Other','All'];
 $Fields = ['Engineering','Physics','Xenology'];
 $Tech_Cats = ['Core','Supp','Non Std'];
 $CivMil = ['','Civilian','Military'];

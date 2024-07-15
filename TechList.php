@@ -30,6 +30,7 @@
   $CTNs[0] = '';
   foreach ($CTs as $T) $CTNs[$T['id']] = $T['Name'];
   $UseCount = [];
+  $CivMil = Feature('CivMilShips');
 
   $Facts = Get_Factions($AllG,$AllG);
   $Techuses = Gen_Get_Basic_Table('FactionTechs');
@@ -63,7 +64,7 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Properties</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Slots</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Min Level</a>\n";
-    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Civ Mil</a>\n";
+    if ($CivMil) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Civ Mil</a>\n";
 //    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Formula</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Usage</a>\n";
     echo "</thead><tbody>";
@@ -88,7 +89,7 @@
       echo "<td>" . $T['Properties'];
       echo "<td>" . $T['Slots'];
       echo "<td>" . $T['MinThingLevel'];
-      echo "<td>" . $CivMil[$T['CivMil']];
+      if ($CivMil) echo "<td>" . $CivMil[$T['CivMil']];
 //      echo "<td>" . ($T['Formula']>0 ? $MFN[$T['Formula']]:'');
       echo "<td>" . ($UseCount[$i] ?? 0);
 

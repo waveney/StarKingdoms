@@ -10,17 +10,18 @@
   global $db, $GAME;
   global $PlayerState,$PlayerStates,$PlayerStateColours;
   $Factions = Get_Factions();
-  
+
   if (!$Factions) {
     echo "<h2>No Factions found</h2>";
+    echo "<h2><a href=FactionEdit.php?ACTION=NEW>New Faction</a> ";
     dotail();
   }
-  
+
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
     case 'Set State':
       $NewState = $_REQUEST['TurnState'];
-      
+
       foreach ($Factions as &$F) {
         $F['TurnState'] = $NewState;
         Put_Faction($F);
@@ -31,7 +32,7 @@
   }
 
   echo "<h1>Factions</h1>";
-  
+
   $coln = 0;
   echo "<div class=tablecont><table id=indextable border width=100% style='min-width:1400px'>\n";
   echo "<thead><tr>";
@@ -58,13 +59,13 @@
     echo "<td>" . Income_Estimate($Fid);
     echo "<td><a href=Access.php?id=$Fid&Key=" . $F['AccessKey'] . " ><b>Use</b></a>";
   }
-      
+
   echo "</tbody></table></div>\n";
 
   echo "<form method=post action=FactList.php>";
   echo fm_select($PlayerState,NULL,'TurnState') . "<input type=submit name=ACTION value='Set State'>";
   echo "</form></h2>\n";
   echo "<h2><a href=FactionEdit.php?ACTION=NEW>New Faction</a> ";
-  
+
   dotail();
 ?>
