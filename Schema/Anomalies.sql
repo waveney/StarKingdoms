@@ -14,5 +14,8 @@ CREATE TABLE `Anomalies` (
   `StoryLevel` int NOT NULL,
   `OtherReq` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `Properties` int NOT NULL,
+  `Completion` text COLLATE utf8mb4_general_ci NOT NULL,
+  `CompletedBy` int NOT NULL,
+  `RemainUse` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

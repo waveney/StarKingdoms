@@ -8,8 +8,9 @@ global $FACTION,$USER,$USERID,$GameStatus,$PlayerLevel;
 $God = Access('God');
 
 dostaffhead('Games');
+global $ErrorMessage;
 
-if (empty($USERID)) Error_page("You need to be logged in...");
+if (isset($ErrorMessage)) echo "<h2 class=Err>$ErrorMessage</h2>\n";
 
 $AllGames = Gen_Get_All('Games'," ORDER BY id DESC");
 

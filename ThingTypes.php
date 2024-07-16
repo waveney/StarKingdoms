@@ -35,7 +35,7 @@
        "100000=Has Control, 200000=Needs Support, 400000=Hostile, 800000=Can Splat, 1000000=Can Leave Debris<br>\n";
   echo "Eyes:  1 = in space, 2= sens, 4= neb sens, 8=ground 1, 16 ground 2 etc<br>\n"; // TODO no ground differntion yet
   echo "SeenBy: What Eyes can see this<br>\n";
-  echo "Game 0 = All, N = Game N<br>";
+//  echo "Game 0 = All, N = Game N<br>";
   echo "<form method=post action=ThingTypes.php>";
   if ($AllG) echo fm_hidden('AllGames',1);
 

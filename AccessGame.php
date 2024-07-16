@@ -21,11 +21,12 @@ $Person = Gen_Get_Cond1('GamePlayers', "GameId=$Gid AND PlayerId=$USERID");
 if (!$Person) {
   Error_Page("You are not recorded as part of that game");
 }
-$USER['FactionLevel'] = $Person['Type'];
 $GAME=$Game;
+$GAME['FactionLevel'] = $Person['Type'];
 $GAMEID = $Gid;
 
 setcookie('SKG',$Gid);
+$_COOKIE['SKG'] = $Gid;
 if ($Person['Type'] == 0) {
   $User = $USER['Login'];
   $FACTION = Gen_Get_Cond1('Factions',"GameId=$Gid AND Player='$User'");

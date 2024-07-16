@@ -210,7 +210,7 @@ function Show_System(&$N,$Mode=0) {
     echo "<tr>" . fm_number('Luminosity',$N,'Luminosity2',1,"class=NotCSide") . "<td>W = " . RealWorld($N,'Luminosity2');
     echo "<tr>" . fm_number('Distance',$N,'Distance',1,"class=NotCSide step='any'") . "<td>Km = " . RealWorld($N,'Distance') ;
     echo "<tr>" . fm_number('Period',$N,'Period',1,"class=NotCSide step='any'") . "<td>Hr = " . RealWorld($N,'Period');
-    if (Access('God')) echo "<td><a href=SysEdit.php?id=$Sid&ACTION=RECALC>Recalc</a>";
+    if (Access('GM')) echo "<td><a href=SysEdit.php?id=$Sid&ACTION=RECALC>Recalc</a>";
   } elseif ($Mode) {
     echo "<tr>" . fm_text('2nd Star Type',$N,'Type2',2,"class=NotCSide");
   }
@@ -293,7 +293,7 @@ function Show_System(&$N,$Mode=0) {
   }
 
 
-  if (Access('God')) {
+  if (Access('GM')) {
     echo "<center><form method=post action=SysEdit.php>" . fm_hidden('id', $Sid) .
          "<input type=submit name=ACTION value='Add Planet' class=Button> ";
     if (!$Planets && $Mode==1) {
@@ -355,7 +355,7 @@ function Show_Planet(&$P,$Mode=0,$Buts=0) {
 
 //  $heat = $N['Luminosity']/(($P['OrbitalRadius']*1000)^2);
   echo "<tr><td>Heat:<td>" . RealHeat($N,$P); //sprintf("%0.2f", $heat) . "<td> = " . sprintf("%0.2f Earth", $heat*(1.496e11^2)/3.83e26);
-  if (Access('God')) echo "</tbody><tfoot><td><a href=PlanEdit.php?id=$Pid&ACTION=RECALC>Recalc</a>";
+  if (Access('GM')) echo "</tbody><tfoot><td><a href=PlanEdit.php?id=$Pid&ACTION=RECALC>Recalc</a>";
   if ($Mns) {
     echo "<tr><td>Editable Moons\n";
     foreach ($Mns as $M) {
@@ -399,7 +399,7 @@ function Show_Planet(&$P,$Mode=0,$Buts=0) {
          "<input type=submit name=NOACTION value='Back to System' class=Button> " .
          "</form></center>";
 
-    if (Access('God')) {
+    if (Access('GM')) {
       echo "<center>" .
            "<form method=post action=PlanEdit.php>" . fm_hidden('id', $Pid);
 

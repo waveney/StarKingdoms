@@ -38,7 +38,7 @@
           $a = Put_User($User);
         }
       } else {
-        Update_db_post('FestUsers',$User);
+        Update_db_post('People',$User);
       }
     } else { /* New User */
       $proc = 1;

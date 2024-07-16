@@ -275,6 +275,9 @@ global $SkipAccessCheck;
 
 //var_dump($Fs);
   dostaffhead("Player Actions");
+  global $ErrorMessage;
+
+  if (isset($ErrorMessage)) echo "<h2 class=Err>$ErrorMessage</h2>\n";
 
   if (count($Fs) > 1) {
     foreach($Fs as $Fid) {

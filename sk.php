@@ -68,6 +68,11 @@ function Set_Faction() {
     if ($gid != $GAMEID) {
       Get_Game($gid);
     }
+  } else if (isset($_REQUEST['G'])) {
+    $gid = $_REQUEST['G'];
+    if ($gid != $GAMEID) {
+      Get_Game($gid);
+    }
   } else {
     if ($USER['AccessLevel'] >= $Access_Type['God']) return;
     include_once("StarKingdoms.php");
@@ -110,7 +115,7 @@ function Access($level,$subtype=0,$thing=0) { // VERY different from fest code n
   case 'God':
   case 'SysAdmin':
   case 'Internal':
-    return 1;
+    return 0;
 
   default:
     return 0;
@@ -188,26 +193,13 @@ function Put_User(&$data,$Save_User=0) {
 }
 
 function Error_Page ($message) {
-  global $Access_Type,$USER,$USERID;
-  Check_Login();
-  if (isset($USER['AccessLevel'])) { $type = $USER['AccessLevel']; } else { $type = 0; }
-//  var_dump($USER);
-//  echo "$type<p>";
-  switch ($type) {
-  case $Access_Type['Player'] :
-    include_once("Staff.php");
-    exit;
+  global $Access_Type,$USER,$USERID,$FACTION;
+  Check_Login(); // Removes not login state
+  $ErrorMessage = "Something went very wrong... - $message";
 
-  case $Access_Type['GM'] :
-  case $Access_Type['SysAdmin'] :
-  case $Access_Type['God'] :
-    $ErrorMessage = "Something went very wrong... - $message";
-    include_once('Staff.php');  // Should be good
-    exit;                        // Just in case
-
-  default:
-    include_once("Staff.php");
-  }
+  if (!Access('GM')) include_once("Player.php");
+  if ($FACTION) include_once("Staff.php");
+  include_once("StarKingdoms.php");
 }
 
 function Get_Game($y=0) {
@@ -412,7 +404,11 @@ function LogEverything($Msg='') {
   if (isset($FACTION['Name'])) $req_dump .= "Faction: " . $FACTION['Name'] . "\n";
   if (isset($USER['Login'])) $req_dump .= "GM: " . $USER['Login'] . "\n";
 
-  $fp = fopen('cache/' . ($GAMEID??'0') . '/request.log', 'a');
+  if (empty($GAMEID)) {
+    $fp = fopen('cache/requestX.log', 'a');
+  } else{
+    $fp = fopen('cache/' . ($GAMEID??'0') . '/request.log', 'a');
+  }
   fwrite($fp, $req_dump);
   fclose($fp);
 }
