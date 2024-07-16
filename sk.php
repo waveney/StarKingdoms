@@ -87,7 +87,7 @@ function Set_Faction() {
   if (empty($Person)) {
     if ($USER['AccessLevel'] < $Access_Type['God']) include_once("StarKingdoms.php");
     $GAME['FactionLevel'] = 0;
-  } if ($Person['Type'] == 2) { // No Access
+  } else if ($Person['Type'] == 2) { // No Access
     Error_Page('You do not have access to this game - sorry');
   } else {
     $GAME['FactionLevel'] = ($Person['Type']??0);

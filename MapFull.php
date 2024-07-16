@@ -86,7 +86,7 @@
   function LinkProps($L) {
     global $GM,$LinkType,$Levels;
 
-    $Res = [1,'solid','#' . $L['id']];
+    $Res = [1,'solid','#' . $L['id'],14];
 
     if ($LinkType == 'Wormholes') {
       $Res[2] = $L['Name'];
@@ -97,6 +97,7 @@
     } else if ($LinkType == 'Gate') {
       if ($L['Level'] <0 || $L['Status'] > 0) $Res[1] = 'dotted';
     }
+    if (strlen($Res[2]) > 4) $Res[3] = 10;
     return $Res;
   }
 
@@ -217,7 +218,7 @@
             fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] .
                    " [color=\"" . $Levels[abs($L['Level'])]['Colour'] .
                    "\" penwidth=" . $Ldat[0] . " style=" . $Ldat[1] .
-                   ($ShowLinks? " label=\"" . $Ldat[2] . "\"": '') . " ];\n");
+                   ($ShowLinks? " fontsize=" . $Ldat[3] . " label=\"" . $Ldat[2] . "\"": '') . " ];\n");
             $LinkShown[$L['id']]=1;
           } else {
             if ($Neb && $FS['NebScanned'] < $Neb) continue;
@@ -226,7 +227,7 @@
             fwrite($Dot,"Unk$ul$rand [label=\"?\" shape=circle];\n");
             fwrite($Dot,"$from -- Unk$ul$rand [color=\"" . $Levels[abs($L['Level'])]['Colour'] . '"' .
               "\" penwidth=" . $Ldat[0] . " style=" . $Ldat[1] .
-              ($ShowLinks? " label=\"" . $Ldat[2] . "\"": '') . " ];\n");
+              ($ShowLinks? " fontsize=" . $Ldat[3] . " label=\"" . $Ldat[2] . "\"": '') . " ];\n");
             $ul++;
             if (isset($UnknownLink[$L['id']])) {
               $RedoMap = 1;
@@ -249,7 +250,7 @@
           fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] .
             " [color=\"" . $Levels[abs($L['Level'])]['Colour'] .
             "\" penwidth=" . $Ldat[0] . " style=" . $Ldat[1] .
-            ($ShowLinks? " label=\"" . $Ldat[2] . "\"": '') . " ];\n");
+            ($ShowLinks? " fontsize=" . $Ldat[3] . " label=\"" . $Ldat[2] . "\"": '') . " ];\n");
          }
       }
     }
