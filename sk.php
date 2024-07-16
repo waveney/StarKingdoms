@@ -81,9 +81,6 @@ function Set_Faction() {
   if (isset($_COOKIE['SKF'])) {
     $FID = $_COOKIE['SKF'];
     $FACTION = Get_Faction($FID);
-  } else {
-    if ($USER['AccessLevel'] >= $Access_Type['God']) return;
-    include_once("StarKingdoms.php");
   }
 
   $Person = Gen_Get_Cond1('GamePlayers', "GameId=$GAMEID AND PlayerId=$USERID");
@@ -103,19 +100,14 @@ function Access($level,$subtype=0,$thing=0) { // VERY different from fest code n
   if ($USER['AccessLevel'] >= $Access_Type['God']) return 1;
 
   Set_Faction();
-//  echo "XXX $level";
 
   switch ($level) {
   case 'Player':
+    if ($GAME['FactionLevel']??0) return 1;
     return ($FACTION?1:0);
 
   case 'GM':
     return ($GAME['FactionLevel']??0);
-
-  case 'God':
-  case 'SysAdmin':
-  case 'Internal':
-    return 0;
 
   default:
     return 0;

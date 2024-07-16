@@ -4,21 +4,11 @@
 
   global $FACTION,$GAMEID,$LinkType,$USERID;
 
-  if (Access('GM') ) {
-    A_Check('GM');
-  } else if (Access('Player')) {
-    if (!$FACTION) {
-      Error_Page("Sorry you need to be a GM or a Player to access this");
-    }
-
-
-  }
   dostaffhead("Full Map");
  //var_dump($_REQUEST, $_COOKIE);
 
   $LinkType = Feature('LinkMethod');
 
-  A_Check('Player');
   $GM = Access('GM');
   $ShowLinks = 1;
   if (isset($_REQUEST['Links'])) $ShowLinks = $_REQUEST['Links'];
