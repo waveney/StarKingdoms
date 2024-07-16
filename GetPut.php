@@ -822,9 +822,9 @@ function Get_Faction_Techs($Fact,$Turn=0) {
 
 // Thing Types
 
-function Get_ThingType($id,$AllG=0) {
+function Get_ThingType($id) {
   global $db,$NOTBY;
-  $res = $db->query("SELECT * FROM ThingTypes WHERE id=$id" . ($AllG?'':" AND (NotBy&$NOTBY)=0")  . " ");
+  $res = $db->query("SELECT * FROM ThingTypes WHERE id=$id");
   if ($res) if ($ans = $res->fetch_assoc()) return $ans;
   return [];
 }

@@ -137,7 +137,7 @@ function Update_db($table,&$old,&$new,$proced=1) {
 
   $Flds = table_fields($table);
   $indxname = (isset($TableIndexes[$table])?$TableIndexes[$table]:'id');
-//var_dump($indxname);
+//var_dump($indxname,$old);
   $newrec = "UPDATE $table SET ";
   $fcnt = 0;
 
@@ -183,7 +183,7 @@ debug_print_backtrace();
 echo "<p>Here: $proced And: $fcnt<p>";*/
   if ($proced && $fcnt) {
     $newrec .= " WHERE $indxname=" . $old[$indxname];
-//var_dump($newrec);
+//    var_dump($indxname,$newrec);
     $update = $db->query($newrec);
     $UpdateLog .= $newrec . "\n";
     if ($update) {
