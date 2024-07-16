@@ -278,7 +278,7 @@
 
     if (!$Faction) {
       if ($Historical) {
-        fwrite($Dot,"Historical [shape=box style=filled fillcolor=white penwidth=2 color=\"CadetBlue\"" .
+        fwrite($Dot,"Other [shape=box style=filled fillcolor=white penwidth=2 color=\"CadetBlue\"" . NodeLab("Control","Other") .
             ($typ?" pos=\"" . $HexLegPos[$ls][0] . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");
         $ls++;
       }
