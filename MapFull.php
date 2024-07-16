@@ -15,7 +15,7 @@
 
   $CatCols = ["white","grey", "Yellow"];
   $HexLegPos = [];
-  eval("\$HexLegPos=" . Feature('HexLegPos','[[0,0]]') . ";" );
+  eval("\$HexLegPos=" . Feature('LegPos','[[0,0]]') . ";" );
 // var_dump($HexLegPos);exit;
 
   if (isset($_REQUEST['f'])) {
@@ -105,8 +105,8 @@
   global $db, $GAME,$GAMEID;
 
   $HexLegPos = [];
-  eval("\$HexLegPos=" . Feature('HexLegPos','[[0,0]]') . ";" );
-
+  eval("\$HexLegPos=" . Feature('LegPos','[[0,0]]') . ";" );
+//var_dump($HexLegPos);
   $RedoMap = 1;
 //  $Dot = fopen("cache/Fullmap$Faction$typ.dot","w+");
 //  if (!$Dot) { echo "Could not create dot file<p>"; dotail(); };
