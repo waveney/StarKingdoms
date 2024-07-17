@@ -8,6 +8,7 @@
  //var_dump($_REQUEST, $_COOKIE);
 
   $LinkType = Feature('LinkMethod');
+  $XScale = Feature('XScale',1);
 
   $GM = Access('GM');
   $ShowLinks = 1;
@@ -178,7 +179,7 @@
         $Historical = 1;
       }
 
-      if ($typ) $atts .= " shape=box pos=\"" . ($N['GridX']+(5-$N['GridY'])/2) . "," . (9-$N['GridY']) . "!\"";
+      if ($typ) $atts .= " shape=box pos=\"" . ($N['GridX']*$XScale+(5-$N['GridY'])/2) . "," . (9-$N['GridY']) . "!\"";
       $atts .= "  shape=box style=filled fillcolor=\"$Colour\" color=\"$BdrColour\"";
       if ($NodeName) {
         $atts .= NodeLab($ShortName, $N['Ref']); //($Faction==0?$N['Ref']:""));
@@ -261,7 +262,7 @@
     foreach ($Factions as $F) {
       if (isset($F['Seen'])) {
         fwrite($Dot,"FF" . $F['id'] . " [shape=box style=filled fillcolor=\"" . $F['MapColour'] . '"' .
-            NodeLab($F['Name']) . ($typ?" pos=\"" . $HexLegPos[$ls][0] . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");
+          NodeLab($F['Name']) . ($typ?" pos=\"" . $HexLegPos[$ls][0]*$XScale . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");
         $ls++;
       }
     }
@@ -269,7 +270,7 @@
     if ($NebF) {
       if ($typ) {
         fwrite($Dot,"Nebulae [shape=box style=filled fillcolor=white penwidth=3" .
-          ($typ?" pos=\"" . $HexLegPos[$ls][0] . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");
+          ($typ?" pos=\"" . $HexLegPos[$ls][0]*$XScale . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");
       } else {
         fwrite($Dot,"Nebulae [shape=box style=filled fillcolor=white penwidth=3];\n");
       }
@@ -279,12 +280,12 @@
     if (!$Faction) {
       if ($Historical) {
         fwrite($Dot,"Other [shape=box style=filled fillcolor=white penwidth=2 color=\"CadetBlue\"" . NodeLab("Control","Other") .
-            ($typ?" pos=\"" . $HexLegPos[$ls][0] . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");
+          ($typ?" pos=\"" . $HexLegPos[$ls][0]*$XScale . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");
         $ls++;
       }
       if ($OtherInt) {
         fwrite($Dot,"ZZ99 [shape=box style=filled fillcolor=yellow Epenwidth=2 " . NodeLab("Interest","Other") .
-            ($typ?" pos=\"" . $HexLegPos[$ls][0] . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");
+          ($typ?" pos=\"" . $HexLegPos[$ls][0]*$XScale . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");
         $ls++;
       }
     }

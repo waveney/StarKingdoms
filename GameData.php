@@ -2,13 +2,14 @@
   include_once("sk.php");
   include_once("GetPut.php");
 
-  A_Check('God');
+  A_Check('GM');
   global $GAME,$GAMEID,$GameStatus;
 
   dostaffhead("General Game Settings");
   echo "Game states: Planning - World creation, rules coding, no players<br>Setup - Players setting up, trait specials being coded<br>" .
     "Active - In play<br>Historical - Game has ended, Readonly<p>\n";
 
+  echo "<h2 class=Err>DO NOT EDIT ANYTHING HERE UNLESS YOU <u>KNOW</u> WHAT YOU ARE DOING - In doubt ask Richard...</h2>";
   include_once("DateTime.php");
 
   echo "<div class='content'><h2>General Game Settings</h2>\n";
