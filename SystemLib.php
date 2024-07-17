@@ -187,11 +187,9 @@ function Show_System(&$N,$Mode=0) {
     echo fm_number1('Flags',$N,'Flags');
   echo "<tr>" . fm_textarea('Description',$N,'Description',8,3);
   echo "<tr>" . fm_text('Type',$N,'Type',2,"class=NotCSide") . "<td rowspan=6 colspan=3>";
-//  if ($N['Image']) echo "<img src='" . $N['Image'] . "'>";
   echo "<table><tr>";
     echo fm_DragonDrop(1,'Image','System',$Sid,$N,$Mode,'',1,'','System');
   echo "</table>";
-//  echo $N['Image'];
   echo "<tr>" . fm_text('Star Name',$N,'StarName',2);
   echo "<tr>" . fm_number('Radius',$N,'Radius',1,"class=NotCSide") . "<td>Km = " . RealWorld($N,'Radius');
   echo "<tr>" . fm_number('Mass',$N,'Mass',1,"class=NotCSide") . "<td>Kg = " . RealWorld($N,'Mass');
@@ -199,11 +197,9 @@ function Show_System(&$N,$Mode=0) {
   echo "<tr>" . fm_number('Luminosity',$N,'Luminosity',1,"class=NotCSide") . "<td>W = " . RealWorld($N,'Luminosity');
   if ($N['Type2']) {
     echo "<tr>" . fm_text('2nd Star Type',$N,'Type2',2,"class=NotCSide") . "<td rowspan=6 colspan=3>";
-//    if ($N['Image2']) echo "<img src='" . $N['Image2'] . "'>";
     echo "<table><tr>";
       echo fm_DragonDrop(1,'Image2','System2',$Sid,$N,$Mode,'',1,'','System');
     echo "</table>";
-//  echo $N['Image2'];
     echo "<tr>" . fm_text('Star Name',$N,'StarName2',2);
     echo "<tr>" . fm_number('Radius',$N,'Radius2',1,"class=NotCSide") . "<td>Km = " . RealWorld($N,'Radius2') ;
     echo "<tr>" . fm_number('Mass',$N,'Mass2',1,"class=NotCSide") . "<td>Kg = " . RealWorld($N,'Mass2');

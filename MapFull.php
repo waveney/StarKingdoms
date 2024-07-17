@@ -172,6 +172,8 @@
         $Colour = "White";
       }
 
+      if ($GM && $N['HistoricalControl']) $Factions[$N['HistoricalControl']]['Seen']=1;
+
       if ($Hide) $NodeName = '';
       $BdrColour = "Black";
       if ($Faction == 0 && $N['HistoricalControl']) {
