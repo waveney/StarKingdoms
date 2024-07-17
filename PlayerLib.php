@@ -91,7 +91,7 @@ function Player_Page() {
 
   echo "<h2>Player state: <span style='background:" . $PlayerStateColours[$FACTION['TurnState']] . "'>$TState</span> Turn:" .
        $GAME['Turn'] . "</h2>";
-  if ($GM || isset($_REQUEST['SEEALL'])) $TState = 'Turn Planning';
+  if (($GM && $TState != 'Setup') || isset($_REQUEST['SEEALL'])) $TState = 'Turn Planning';
 
   echo "<div class=Player>";
   if ((!$GM) && $TState == 'Turn Submitted') echo "<b>To change anything, cancel the turn submission first.</b><br>";
@@ -100,18 +100,20 @@ function Player_Page() {
 
   echo "<p><li><a href=UserGuide.php>User Guide</a><p>\n";
 
-
   switch ($TState) {
   case 'Setup':
     echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";
-    echo "<li><a href=Setup.php>Setup</a>\n";
+    echo "<li>Setup Faction<li>Setup Ships<li>Setup $ARMY" . "s";
+  /*
+   *
+    echo "<li><a href=Setup.php>Setup Faction</a>\n";
     echo "<li><a href=ThingSetup.php?T=Ships>Setup Ships</a>\n";
     echo "<li><a href=ThingSetup.php?T=Army>Setup $ARMY" . "s</a>\n";
-    echo "<li><a href=ThingSetup.php?T=Agent>Setup Agents</a>\n";
+    if (Feature('Agents')) echo "<li><a href=ThingSetup.php?T=Agent>Setup Agents</a>\n";
+    echo "<p>"; */
     break;
 
   case 'Frozen':
-    fm_addall('readonly');
   case 'Turn Submitted':
     if (!$GM) fm_addall('readonly');
   case 'Turn Planning':

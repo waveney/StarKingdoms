@@ -201,6 +201,7 @@ function Get_Game($y=0) {
   if ($res) {
     $GAME = $res->fetch_assoc();
     $GAMEID = $GAME['id'];
+    Feature_Reset();
     $SETNOT = (Feature('NotByMask',0)+0);
     $NOTBY = ~$SETNOT;
     $ARMY = Feature('Army','Army');

@@ -27,6 +27,13 @@
 
   $USER['AccessLevel'] = $Access_Type['Player'];
 
+  $Gid = $F['GameId'];
+  if ($Gid != $GAMEID) {
+    setcookie('SKG',$Gid);
+    $_COOKIE['SKG'] = $Gid;
+    Get_Game($Gid);
+  }
+
 //  Player_Page();
   $SkipAccessCheck = 1;
   include("Player.php");
