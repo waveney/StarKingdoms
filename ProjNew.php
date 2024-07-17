@@ -9,7 +9,7 @@
   include_once("SystemLib.php");
   include_once("ProjLib.php");
 
-  global $FACTION;
+  global $FACTION,$ARMY;
 
   if (Access('Player')) {
     if (!$FACTION) {
@@ -614,11 +614,11 @@
         break;
       }
   case 'Military':
-      echo "<h2>Train an Army</h2>";
+      echo "<h2>Train a $ARMY</h2>";
 //      echo "Not yet<p>";
-      echo "This action is to build an already designed Army.  If you want a new design please go to <a href=ThingPlan.php>The Thing Planning Tool</a> first.<p>\n";
-      echo "<button class=projtype type=submit formaction='ProjNew.php?ACTION=NEWARMY&id=$Fid&p=" . $PTi['Train Army'] .
-           "&t=$Turn&Hi=$Hi&Di=$Di$pl&DT=$DT'>Train a new army$Place</button><p>";
+      echo "This action is to build an already designed $ARMY.  If you want a new design please go to <a href=ThingPlan.php>The Thing Planning Tool</a> first.<p>\n";
+      echo "<button class=projtype type=submit formaction='ProjNew.php?ACTION=NEWARMY&id=$Fid&p=" . $PTi["Train $ARMY"] .
+           "&t=$Turn&Hi=$Hi&Di=$Di$pl&DT=$DT'>Train a new $ARMY$Place</button><p>";
 
 
       echo "<h2>Research Military Organisation</h2><p>";
@@ -641,19 +641,19 @@
 
         $Lvl = $T['PreReqLevel'];
         $pc = Proj_Costs($Lvl);
-        $Rbuts[] = "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Supplemental Army Tech'] .
+        $Rbuts[] = "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi["Research Supplemental $ARMY Tech"] .
                 "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $T['id'] .
                 "&Name=" . base64_encode("Research " . $T['Name'] .  $Place) . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
                 "Research " . $T['Name'] . "; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
       }
 
      if ($Rbuts) {
-       echo "<h2>Research Supplimental Army Technology</h2>";
+       echo "<h2>Research Supplimental $ARMY Technology</h2>";
        foreach ($Rbuts as $rb) echo $rb;
      }
 
 
-      echo "<h2>Re-equip and Reinforce Army</h2>"; // THIS MUST be AFTER the simple buttons as the form gets lost
+      echo "<h2>Re-equip and Reinforce $ARMY</h2>"; // THIS MUST be AFTER the simple buttons as the form gets lost
       echo "You can only do this to armies on the same planet.<p>";
       $HSys = $Homes[$Hi]['SystemId'];
       $HLoc = $Homes[$Hi]['WithinSysLoc'];
@@ -684,11 +684,11 @@
           }
         } else if ($Level1 < 2) {
           echo "</form><form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Re-equip and Reinforce'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT'>";
-          echo "Select the army to Re-equip and Reinforce: " . fm_select($RepShips, $_REQUEST, 'Sel', 0) ;
+          echo "Select the $ARMY to Re-equip and Reinforce: " . fm_select($RepShips, $_REQUEST, 'Sel', 0) ;
           echo "<button class=projtype type=submit>Re-equip and Reinforce</button></form>";
         } else {
           echo "</form><form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Re-equip and Reinforce'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT'>";
-          echo "You may select <b>2</b> level 1 Army or 1 Army of level 2 or more. (For PCs and Linux hold down Ctrl to select 2nd army)<p>";
+          echo "You may select <b>2</b> level 1 $ARMY or 1 $ARMY of level 2 or more. (For PCs and Linux hold down Ctrl to select 2nd $ARMY)<p>";
           echo "Select the ship to Re-equip and Reinforce: " . fm_select($RepShips, $_REQUEST, 'Sel', 0, ' multiple ','Sel2[]') ;
           echo "<button class=projtype type=submit>Re-equip and Reinforce</button><form>";
         }
@@ -809,7 +809,7 @@
       break;
 
   case 'Training Camp':
-      echo "<h2>Re-equip and Reinforce Army</h2>";
+      echo "<h2>Re-equip and Reinforce $ARMY</h2>";
       echo "You can only do this to armies on the same planet.<p>";
       $HSys = $Homes[$Hi]['SystemId'];
       $HLoc = $Homes[$Hi]['WithinSysLoc'];
@@ -840,11 +840,11 @@
           }
         } else if ($Level1 < 2) {
           echo "</form><form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Re-equip and Reinforce'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT'>";
-          echo "Select the army to Re-equip and Reinforce: " . fm_select($RepShips, $_REQUEST, 'Sel', 0) ;
+          echo "Select the $ARMY to Re-equip and Reinforce: " . fm_select($RepShips, $_REQUEST, 'Sel', 0) ;
           echo "<button class=projtype type=submit>Re-equip and Reinforce</button></form>";
         } else {
           echo "</form><form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Re-equip and Reinforce'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT'>";
-          echo "You may select <b>2</b> level 1 Army or 1 Army of level 2 or more. (For PCs and Linux hold down Ctrl to select 2nd army)<p>";
+          echo "You may select <b>2</b> level 1 $ARMY or 1 $ARMY of level 2 or more. (For PCs and Linux hold down Ctrl to select 2nd $ARMY)<p>";
           echo "Select the ship to Re-equip and Reinforce: " . fm_select($RepShips, $_REQUEST, 'Sel', 0, ' multiple ','Sel2[]') ;
           echo "<button class=projtype type=submit>Re-equip and Reinforce</button><form>";
         }

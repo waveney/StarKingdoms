@@ -67,7 +67,7 @@ function FactionFeature($Name,$default='') {  // Return value of feature if set 
 }
 
 function Player_Page() {
-  global $FACTION,$PlayerState,$PlayerStates,$PlayerStateColours,$GAME;
+  global $FACTION,$PlayerState,$PlayerStates,$PlayerStateColours,$GAME,$ARMY;
 
 
   dostaffhead("Things",["js/ProjectTools.js"]);
@@ -106,7 +106,7 @@ function Player_Page() {
     echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";
     echo "<li><a href=Setup.php>Setup</a>\n";
     echo "<li><a href=ThingSetup.php?T=Ships>Setup Ships</a>\n";
-    echo "<li><a href=ThingSetup.php?T=Army>Setup Armys</a>\n";
+    echo "<li><a href=ThingSetup.php?T=Army>Setup $ARMY" . "s</a>\n";
     echo "<li><a href=ThingSetup.php?T=Agent>Setup Agents</a>\n";
     break;
 

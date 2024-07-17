@@ -195,7 +195,7 @@ function Error_Page ($message) {
 }
 
 function Get_Game($y=0) {
-  global $db,$GAME,$GAMESYS,$GAMEID,$NOTBY,$SETNOT;
+  global $db,$GAME,$GAMESYS,$GAMEID,$NOTBY,$SETNOT,$ARMY;
   if (!$y) $y=$GAMESYS['CurGame'];
   $res = $db->query("SELECT * FROM Games WHERE id='$y'");
   if ($res) {
@@ -203,6 +203,7 @@ function Get_Game($y=0) {
     $GAMEID = $GAME['id'];
     $SETNOT = (Feature('NotByMask',0)+0);
     $NOTBY = ~$SETNOT;
+    $ARMY = Feature('Army','Army');
   } else {
     Error_Page("Game - $y not known");
   }

@@ -52,7 +52,7 @@ function  Where_Is_Home($PH,$Set=0) {
 }
 
 function Project_Finished(&$P,$Turn) {  // CODE ON HOLD
-  global $GAME,$GAMEID;
+  global $GAME,$GAMEID,$ARMY;
   $ProjTypes = Get_ProjectTypes();
   switch ($ProjTypes[$P['Type']]['Name']) {
     case 'Construction':
@@ -90,7 +90,7 @@ function Project_Finished(&$P,$Turn) {  // CODE ON HOLD
     case 'Research Ship Construction':
     case 'Research Supplemental ship Tech':
     case 'Research Military Organisation':
-    case 'Research Supplemental Army Tech':
+    case "Research Supplemental $ARMY Tech":
     case 'Research Intelligence Operations':
     case 'Research Supplemental Intelligence Tech':
     case 'Research Supplemental Planetary Construction Tech':
@@ -112,7 +112,7 @@ function Project_Finished(&$P,$Turn) {  // CODE ON HOLD
       }
       break;
 
-    case 'Train Army':
+    case "Train $ARMY":
     case 'Train Agent':
     case 'Construct Ship':
       $T = Get_Thing($P['ThingId']);

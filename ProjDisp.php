@@ -9,7 +9,7 @@
   include_once("SystemLib.php");
   include_once("ProjLib.php");
 
-  global $FACTION,$ADDALL,$GAME;
+  global $FACTION,$ADDALL,$GAME,$ARMY;
 
 // var_dump($_REQUEST);
 
@@ -81,7 +81,7 @@
         case 'Research Ship Construction':
         case 'Research Supplemental ship Tech':
         case 'Research Military Organisation':
-        case 'Research Supplemental Army Tech':
+        case "Research Supplemental $ARMY Tech":
         case 'Research Intelligence Operations':
         case 'Research Supplemental Intelligence Tech':
         case 'Research Supplemental Planetary Construction Tech':
@@ -119,7 +119,7 @@
               $T2 = Get_Thing($TthingId2);
             }
           } else {
-            echo "<h2 class=Err>You must select an army</h2>\n";
+            echo "<h2 class=Err>You must select an $ARMY</h2>\n";
             $Valid = 0;
             break;
           }
@@ -179,7 +179,7 @@
           break;
 
         case 'Construct Ship':
-        case 'Train Army':
+        case "Train $ARMY":
         case 'Train Agent':
           $T = Get_Thing($_REQUEST['ThingId']);
           if ($T['BuildState'] > 0) {
@@ -187,7 +187,7 @@
           }
           $Level = $T['Level'];
           $pc = Proj_Costs($Level);
-          if ($ProjTypes[$Ptype]['Name'] == 'Train Army' && Has_Tech($Fid,'Efficient Robot Construction')) $pc[0] = max(1, $pc[0] - $T['Level']);
+          if ($ProjTypes[$Ptype]['Name'] == "Train $ARMY" && Has_Tech($Fid,'Efficient Robot Construction')) $pc[0] = max(1, $pc[0] - $T['Level']);
           if ($ProjTypes[$Ptype]['Name'] == 'Construct Ship' && Has_Tech($Fid,'Space Elevator')) $pc[0] = max(1, $pc[0] - $T['Level']);
           $Costs = $pc[1];
           $ProgN = $pc[0];

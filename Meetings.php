@@ -32,7 +32,7 @@
 
 
 function ForceReport($Sid,$Cat) {
-  global $Facts, $Homes, $TTypes, $ModTypes, $N, $Techs, $ThingProps ;
+  global $Facts, $Homes, $TTypes, $ModTypes, $N, $Techs, $ThingProps,$ARMY ;
   $Things = Get_Things_Cond(0,"SystemId=$Sid AND ( BuildState=2 OR BuildState=3) ORDER BY Whose");
   $LastF = $Home = $Control = 0;
   $txt = $ftxt = $htxt = $Battct = '';
@@ -115,10 +115,10 @@ function ForceReport($Sid,$Cat) {
               }
               break;
 
-            case 'Army Tactics - Arctic':
-            case 'Army Tactics - Desert':
-            case 'Army Tactics - Desolate':
-            case 'Army Tactics - Temperate':
+            case "$ARMY Tactics - Arctic":
+            case "$ARMY Tactics - Desert":
+            case "$ARMY Tactics - Desolate":
+            case "$ARMY Tactics - Temperate":
               if (strstr($Tech['Name'],$HomeType)) {
                 $Bat += 1;
                 $Battct .= ", " . $Tech['Name'] . " +1 ";

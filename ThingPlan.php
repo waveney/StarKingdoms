@@ -7,9 +7,9 @@
   include_once("ThingLib.php");
   include_once("PlayerLib.php");
   include_once("ProjLib.php");
-  
-  global $FACTION,$GAME;
-  A_Check('Player');    
+
+  global $FACTION,$GAME,$ARMY;
+  A_Check('Player');
   $Fid = 0;
   if (Access('Player')) {
     if (!$FACTION) {
@@ -47,11 +47,11 @@
     $Tid = Put_Thing($T);
     $Exist = 0;
   }
-  
+
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
     case 'Delete':
-    
+
        dostaffhead("Delete Plan");
        $tid = $_REQUEST['id'];
        $Discs = Get_DistrictsT($tid);
@@ -72,8 +72,8 @@
        echo "<h1>Deleted</h1>";
        echo "<h2><a href=PThingList.php>Back to Thing list</a></h2>";
        dotail();
-    
-    
+
+
     case 'COPY':
       if (empty($_REQUEST['Design'])) {
         if (empty($_REQUEST['CDesign'])) {
@@ -84,7 +84,7 @@
       }
       $OldT = Get_Thing($_REQUEST['Design']);
 //var_dump($OldT);
-      $T = $OldT;      
+      $T = $OldT;
       if (empty($OldT['BuildState'])) {
         db_delete('Things',$Tid);
         $Tid = $T['id'];
@@ -94,21 +94,21 @@
         $T['BuildState'] = $T['NewSystemId'] = $T['SystemId'] = 0;
         Put_Thing($T);
       }
-      $Exist = 1; 
+      $Exist = 1;
       break;
-      
+
     case 'Remove Module' :
       $Tid = $_REQUEST['id'];
       $Mid = $_REQUEST['Mid'];
-      db_delete('Modules',$Mid);     
+      db_delete('Modules',$Mid);
       break;
     }
   }
-  
+
   dostaffhead("Plan a thing",["js/ProjectTools.js", "js/dropzone.js","css/dropzone.css" ]);
- 
- //var_dump($T);  
- 
+
+ //var_dump($T);
+
   $ThingTypes = Get_ThingTypes();
   $ThingTypeNames = [''];
   foreach ($ThingTypes as $Ti=>$TT) {
@@ -125,9 +125,9 @@
   Calc_Damage($T,$ResC);
   Calc_Scanners($T);
 
-// var_dump($ThingTypeNames);exit;  
+// var_dump($ThingTypeNames);exit;
   echo "<h1>Plan a Thing</h1>";
-  echo "This is to design or modify a ship/army/agent etc to later build if you want to.";
+  echo "This is to design or modify a ship/$ARMY etc to later build if you want to.";
 
   if (($GM = Access('GM'))) echo "<h2><a href=ThingEdit.php?id=$Tid>GM: Thing Editing</a></h2>\n";
 
@@ -140,7 +140,7 @@
     foreach ($Things as $TT) {
       if (!empty($ThingTypeNames[$TT['Type']])) $FList[$TT['id']] = $TT['Name'] . " a level " . $TT['Level'] . " " . $ThingTypeNames[$TT['Type']];
     }
-    echo fm_select($FList,null,'Design',1,' onchange=this.form.submit()'); 
+    echo fm_select($FList,null,'Design',1,' onchange=this.form.submit()');
     echo "<br>If it is in planning, it will be selected, otherwise it will copy the design.<p>\n";
 
     echo "<h2>OR start with Classes:</h2>";
@@ -155,9 +155,9 @@
         }
       }
     }
-    echo fm_select($CList,null,'CDesign',1,' onchange=this.form.submit()'); 
+    echo fm_select($CList,null,'CDesign',1,' onchange=this.form.submit()');
     echo "<br>If it is in planning, it will be selected, otherwise it will copy the design.<p>\n";
-    
+
     echo "<h2>OR design from scratch</h2>";
   }
 
@@ -169,7 +169,7 @@
   echo "<table border>";
   echo "<tr><td>Planning a:<td>" . fm_select($ThingTypeNames, $T,'Type');
   if ($T['Type']) {
-  
+
     $Limit = 0;
     if ($tprops & THING_HAS_LEVELS) {
       if ($tprops & THING_HAS_SHIPMODULES) {
@@ -180,7 +180,7 @@
         $Limit = Has_Tech($Fid,'Intelligence Operations');
       }
     }
-  
+
     if ($tprops & THING_HAS_LEVELS) {
       $MaxLvl = ($GM?1000000:$ThingTypes[$T['Type']]['MaxLvl']);
       echo "<tr>" . fm_number('Level',$T,'Level','','min=1 max=$MaxLvl');
@@ -196,8 +196,8 @@
     echo "<tr><td rowspan=4 colspan=3><table><tr>";
     echo fm_DragonDrop(1,'Image','Thing',$Tid,$T,1,'',1,'','Thing');
     echo "</table><td>This is optional";
-    echo "<tr><tr><tr>";   
-    
+    echo "<tr><tr><tr>";
+
     if ($tprops & THING_HAS_MODULES) {
     echo "<tr><td>Maximum Module Slots<td id=MaxModules>" . $T['MaxModules'];
       $MTs = Get_ModuleTypes();
@@ -207,7 +207,7 @@
 //    foreach($DTs as $M) $MTNs[$M['id']] = $M['Name'];
       $MTNs = Get_Valid_Modules($T);
       $Ms = Get_Modules($Tid);
-    
+
       $MMs = [];
       foreach ($Ms as $MM) $MMs[$MM['Type']] = $MM;
 
@@ -217,7 +217,7 @@
       $BadMods = 0;
 
 // var_dump($MTNs, $Ms, $MMs);
-      $ZZnull = []; 
+      $ZZnull = [];
       $MTs = Get_ModuleTypes();
       echo "<tr><th><b>Module type</b><th><b>Number</b><th><b>Slots per Module</b><th><b>Comments</b>";
       $Elvl = 1;
@@ -244,7 +244,7 @@
           $Valid = 0;
           $totmodc += $MMs[$Mti]['Number'] * $MTs[$Mti]['SpaceUsed'];
         }
-        
+
          if ($Mti == 5) { // Engines
            $Elvl = Calc_TechLevel($T['Whose'],$Mti);
            if (isset($MMs[$Mti]['Number'])) $Engines = $MMs[$Mti]['Number'];
@@ -265,9 +265,9 @@
         $T['Speed'] = $Engines*$Elvl/$T['Level'] +1;
         echo "<tr><td>Speed:<td>" . sprintf('%0.3g',$T['Speed']) . "<td><td>At current Tech Levels";
       if ($T['CargoSpace']) echo "<tr><td>Cargo Capacity:<td>" . $T['CargoSpace'] . "<td><td>At current Tech Levels";
-      } 
+      }
     }
-    
+
     if ($tprops & THING_CAN_BE_CREATED) {
       // Offer location based on Sys/within  OR onboard thing Y
     }
@@ -281,7 +281,7 @@
     dotail();
   }
 
-  if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";    
+  if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "</table>";
   Put_Thing($T);
   if ($Valid) {
@@ -292,7 +292,7 @@
         if ($CanMake) {
           echo "<h2 class=Green>Design is valid</h2>";
         } else {
-          echo "<h2 class=Green>Design is valid, but can't currently be made</h2>";       
+          echo "<h2 class=Green>Design is valid, but can't currently be made</h2>";
         }
         if (($tprops & THING_HAS_MODULES) && ($totmodc < $T['MaxModules'] )) {
           echo "<h2>Though it can have " . ( $T['MaxModules'] - $totmodc). " more modules</h2>\n";
@@ -311,13 +311,13 @@
   echo "</form>";
   dotail();
   // type, Level
-  
-  // Name and class 
-  
+
+  // Name and class
+
   // Modules
-  
+
   // totals, armout, basic damage
-  
+
   // Save for later
 
 ?>

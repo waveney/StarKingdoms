@@ -2447,7 +2447,7 @@ function ProjectsCompleted($Pass) {
 //  echo "Projects Complete is currently Manual<p>";
 // Pass 0 = Refits only, 1 = rest
 
-  global $GAME,$GAMEID,$Currencies,$Facts;
+  global $GAME,$GAMEID,$Currencies,$Facts,$ARMY;
 
   $ProjTypes = Get_ProjectTypes();
   $Projects = Get_Projects_Cond("Status=1 AND Progress>=ProgNeeded");
@@ -2508,7 +2508,7 @@ function ProjectsCompleted($Pass) {
     case 'Research Ship Construction':
     case 'Research Supplemental ship Tech':
     case 'Research Military Organisation':
-    case 'Research Supplemental Army Tech':
+    case "Research Supplemental $ARMY Tech":
     case 'Research Intelligence Operations':
     case 'Research Supplemental Intelligence Tech':
     case 'Research Supplemental Planetary Construction Tech':
@@ -2590,7 +2590,7 @@ function ProjectsCompleted($Pass) {
       Put_Thing($T);
       break;
 
-    case 'Train Army':
+    case "Train $ARMY":
     case 'Train Agent':
       $T = Get_Thing($P['ThingId']);
       $T['BuildState'] = 3; // Complete
