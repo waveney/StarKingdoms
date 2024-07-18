@@ -183,7 +183,8 @@ function Show_System(&$N,$Mode=0) {
   echo "<tr>" . fm_radio('Control',$FactNames ,$N,'Control','',1,'colspan=6','',$Fact_Colours,0);
   echo "<tr>" . fm_text('Name',$N,'Name',4);
   if (Feature ('OtherControl') && $Mode) echo "<td class=NotSide colspan=2>Other Control: " . fm_select($FactNames,$N,'HistoricalControl');
-  echo "<tr>" . fm_text('Short Name',$N,'ShortName') . fm_text1('Nebulae',$N,'Nebulae',1,"class=NotCSide"). fm_number1('Category',$N,'Category',1,"class=NotSide") ;
+  echo "<tr>" . fm_text('Short Name',$N,'ShortName') . fm_text1('Nebulae',$N,'Nebulae',1,"class=NotCSide") .
+     fm_number1('Category',$N,'Category',1,"class=NotSide") ;
     echo fm_number1('Flags',$N,'Flags');
   echo "<tr>" . fm_textarea('Description',$N,'Description',8,3);
   echo "<tr>" . fm_text('Type',$N,'Type',2,"class=NotCSide") . "<td rowspan=6 colspan=3>";

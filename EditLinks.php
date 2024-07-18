@@ -92,7 +92,7 @@
     }
 //  var_dump($D);exit;
 
-    echo "<tr><td>$i" . fm_number1("",$D,'GameId','','',"GameId$i");
+    echo "<tr><td>$i";// . fm_number1("",$D,'GameId','','',"GameId$i");
     echo "<td>" . fm_select($Ssys,$D,'System1Ref',0,'',"System1Ref$i");
     echo "<td>" . fm_select($Ssys,$D,'System2Ref',0,'',"System2Ref$i");
     if ($LinkMethod == 'Gates') {
@@ -110,7 +110,7 @@
     }
   }
   $D = ['Weight'=>1,'Concealment'=>-1];
-  echo "<tr><td><td><input type=number name=GameId0 value=$GAMEID>";
+  echo "<tr><td>"; //<td><input type=number name=GameId0 value=$GAMEID>";
     echo "<td>" . fm_select($Ssys,$D,'System1Ref0');
     echo "<td>" . fm_select($Ssys,$D,'System2Ref0');
     if ($LinkMethod == 'Gates') {

@@ -429,3 +429,15 @@ function Do_Remove(id) {
 function Do_WarpOut() {
 
 }
+
+function SetSysLoc(Sys,Loc,res) {
+  debugger;
+  var sid = document.getElementById(Sys).value;
+  var yearval = (document.getElementById('Year') ? (document.getElementById('Year').value || 0) : 0); // May be redundant
+  var typeval = document.getElementById('AutoType').value;
+  var refval = document.getElementById('AutoRef').value;
+  
+  $.get("sysloc.php", {'D' : typeval, 'F' : res, 'I' : refval, 'S' : sid} , function(rslt) {
+    $('#AnomalyLoc').html(rslt);
+  })
+}
