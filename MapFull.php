@@ -87,16 +87,18 @@
   function LinkProps($L) {
     global $GM,$LinkType,$Levels;
 
-    $Res = [1,'solid','#' . $L['id'],14];
+    $Res = [1,'solid','#' . $L['id'],14,'black'];
 
     if ($LinkType == 'Wormholes') {
       $Res[2] = $L['Name'];
       if ($GM) {
-        $Res[0] = (3-$L['Concealment']%3);
-        $Res[1] = ['solid','dashed','dotted'][min(2,intdiv($L['Concealment'],3))];
+        $Res[0] = (3-$L['Instability']%3);
+        $Res[1] = ['solid','dashed','dotted'][min(2,intdiv($L['Instability'],3))];
       }
+      $Res[4] = $Levels[$L['Concealment']]['Colour'];
     } else if ($LinkType == 'Gate') {
       if ($L['Level'] <0 || $L['Status'] > 0) $Res[1] = 'dotted';
+      $Res[4] = '"' . $Levels[abs($L['Level'])]['Colour'] . '"';
     }
     if (strlen($Res[2]) > 4) $Res[3] = 10;
     return $Res;
@@ -260,33 +262,36 @@
 
 //  fwrite($Dot,"}\n");
 //  fwrite($Dot,"graph legend {\n");
+
+    $LegendShape = Feature('LegendShape','box');
+// var_dump($LegendShape);
     $ls=0;
     foreach ($Factions as $F) {
       if (isset($F['Seen'])) {
-        fwrite($Dot,"FF" . $F['id'] . " [shape=box style=filled fillcolor=\"" . $F['MapColour'] . '"' .
-          NodeLab($F['Name']) . ($typ?" pos=\"" . $HexLegPos[$ls][0]*$XScale . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");
+        fwrite($Dot,"FF" . $F['id'] . " [shape=$LegendShape style=filled fillcolor=\"" . $F['MapColour'] . '"' .
+          NodeLab($F['Name']) . ($typ?" penwidth=2 pos=\"" . $HexLegPos[$ls][0]*$XScale . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");
         $ls++;
       }
     }
 
     if ($NebF) {
       if ($typ) {
-        fwrite($Dot,"Nebulae [shape=box style=filled fillcolor=white penwidth=3" .
+        fwrite($Dot,"Nebulae [shape=$LegendShape style=filled fillcolor=white penwidth=3" .
           ($typ?" pos=\"" . $HexLegPos[$ls][0]*$XScale . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");
       } else {
-        fwrite($Dot,"Nebulae [shape=box style=filled fillcolor=white penwidth=3];\n");
+        fwrite($Dot,"Nebulae [shape=$LegendShape style=filled fillcolor=white penwidth=3];\n");
       }
       $ls++;
     };
 
     if (!$Faction) {
       if ($Historical) {
-        fwrite($Dot,"Other [shape=box style=filled fillcolor=white penwidth=2 color=\"CadetBlue\"" . NodeLab("Control","Other") .
+        fwrite($Dot,"Other [shape=$LegendShape style=filled fillcolor=white penwidth=2 color=\"CadetBlue\"" . NodeLab("Control","Other") .
           ($typ?" pos=\"" . $HexLegPos[$ls][0]*$XScale . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");
         $ls++;
       }
       if ($OtherInt) {
-        fwrite($Dot,"ZZ99 [shape=box style=filled fillcolor=yellow Epenwidth=2 " . NodeLab("Interest","Other") .
+        fwrite($Dot,"ZZ99 [shape=$LegendShape style=filled fillcolor=yellow Epenwidth=2 " . NodeLab("Interest","Other") .
           ($typ?" pos=\"" . $HexLegPos[$ls][0]*$XScale . "," . $HexLegPos[$ls][1] . "!\"" : "") . "];\n");
         $ls++;
       }
