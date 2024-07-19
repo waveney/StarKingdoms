@@ -64,7 +64,7 @@
   echo "<div class=tablecont><table id=indextable border>\n";
   echo "<thead><tr>";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Index</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Game</a>\n";
+//  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Game</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Sys 1</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Sys 2</a>\n";
   if ($LinkMethod == 'Gates') {
@@ -92,7 +92,7 @@
     }
 //  var_dump($D);exit;
 
-    echo "<tr><td>$i";// . fm_number1("",$D,'GameId','','',"GameId$i");
+    echo "<tr><td>$i" . fm_hidden("GameId$i",$D["GameId"]);
     echo "<td>" . fm_select($Ssys,$D,'System1Ref',0,'',"System1Ref$i");
     echo "<td>" . fm_select($Ssys,$D,'System2Ref',0,'',"System2Ref$i");
     if ($LinkMethod == 'Gates') {
@@ -110,7 +110,7 @@
     }
   }
   $D = ['Weight'=>1,'Concealment'=>-1];
-  echo "<tr><td>"; //<td><input type=number name=GameId0 value=$GAMEID>";
+  echo "<tr><td>" . fm_hidden('GameId0',$GAMEID);
     echo "<td>" . fm_select($Ssys,$D,'System1Ref0');
     echo "<td>" . fm_select($Ssys,$D,'System2Ref0');
     if ($LinkMethod == 'Gates') {
@@ -120,6 +120,7 @@
     } elseif ($LinkMethod == 'Wormholes') {
       echo fm_number1('',$D,'Instability','','',"Instability0");
       echo fm_number1('',$D,'Concealment','','',"Concealment0");
+      echo "<td>Name is auto generated";
     }
 //  echo "<td><input type=text name=Level0 value=0>";
   echo "</table></div>\n";

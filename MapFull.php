@@ -92,7 +92,7 @@
     if ($LinkType == 'Wormholes') {
       $Res[2] = $L['Name'];
       if ($GM) {
-        $Res[0] = (3-$L['Instability']%3);
+        $Res[0] = (($L['Instability']+1)%3);
         $Res[1] = ['solid','dashed','dotted'][min(2,intdiv($L['Instability'],3))];
       }
       $Res[4] = $Levels[$L['Concealment']]['Colour'];
@@ -221,8 +221,8 @@
           $Ldat = LinkProps($L);
           if (isset($Fl['id']) && $Fl['Known'] || $AllLinks) {
             fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] .
-                   " [color=\"" . $Levels[abs($L['Level'])]['Colour'] .
-                   "\" penwidth=" . $Ldat[0] . " style=" . $Ldat[1] .
+                   " [color=" . $Ldat[4] .
+                   " penwidth=" . $Ldat[0] . " style=" . $Ldat[1] .
                    ($ShowLinks? " fontsize=" . $Ldat[3] . " label=\"" . $Ldat[2] . "\"": '') . " ];\n");
             $LinkShown[$L['id']]=1;
           } else {
@@ -230,8 +230,8 @@
             if (isset($FS['ScanLevel']) && $FS['ScanLevel']<2) continue;
             $rand = "B$ul";  // This kludge at least allows both ends to be displayed
             fwrite($Dot,"Unk$ul$rand [label=\"?\" shape=circle];\n");
-            fwrite($Dot,"$from -- Unk$ul$rand [color=\"" . $Levels[abs($L['Level'])]['Colour'] . '"' .
-              "\" penwidth=" . $Ldat[0] . " style=" . $Ldat[1] .
+            fwrite($Dot,"$from -- Unk$ul$rand [color=" . $Ldat[4] .
+              " penwidth=" . $Ldat[0] . " style=" . $Ldat[1] .
               ($ShowLinks? " fontsize=" . $Ldat[3] . " label=\"" . $Ldat[2] . "\"": '') . " ];\n");
             $ul++;
             if (isset($UnknownLink[$L['id']])) {
@@ -253,8 +253,8 @@
         foreach ($Links as $L) {
           $Ldat = LinkProps($L);
           fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] .
-            " [color=\"" . $Levels[abs($L['Level'])]['Colour'] .
-            "\" penwidth=" . $Ldat[0] . " style=" . $Ldat[1] .
+            " [color=" . $Ldat[4] .
+            " penwidth=" . $Ldat[0] . " style=" . $Ldat[1] .
             ($ShowLinks? " fontsize=" . $Ldat[3] . " label=\"" . $Ldat[2] . "\"": '') . " ];\n");
          }
       }
