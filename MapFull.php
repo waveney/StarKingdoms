@@ -84,15 +84,17 @@
     return $ret . " fontsize=" . $FSize[$len] . " ";
   }
 
+  $lfs = Feature('LinkFontSize',10);
   function LinkProps($L) {
-    global $GM,$LinkType,$Levels;
+    global $GM,$LinkType,$Levels,$lfs;
+
 
     $Res = [1,'solid','#' . $L['id'],14,'black'];
 
     if ($LinkType == 'Wormholes') {
       $Res[2] = $L['Name'];
       if ($GM) {
-        $Res[0] = (($L['Instability']+1)%3);
+        $Res[0] = ($L['Instability']%3)+1;
         $Res[1] = ['solid','dashed','dotted'][min(2,intdiv($L['Instability'],3))];
       }
       $Res[4] = $Levels[$L['Concealment']]['Colour'];
@@ -100,7 +102,7 @@
       if ($L['Level'] <0 || $L['Status'] > 0) $Res[1] = 'dotted';
       $Res[4] = '"' . $Levels[abs($L['Level'])]['Colour'] . '"';
     }
-    if (strlen($Res[2]) > 4) $Res[3] = 10;
+    if (strlen($Res[2]) > 4) $Res[3] = $lfs;
     return $Res;
   }
 
