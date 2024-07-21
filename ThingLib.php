@@ -244,7 +244,7 @@ function Within_Sys_Locs(&$N,$PM=0,$Boarding=0,$Restrict=0,$Hab=0) {// $PM +ve =
   if ($PM) return 0;
   $LKs = Get_Links($N['Ref']);
   $Li = 1;
-  if ($Restrict !=1) foreach($LKs as $lk) $L[500+$Li++] = "At stargate to link " . $lk['id'];
+  if ($Restrict !=1) foreach($LKs as $lk) $L[500+$Li++] = "At " . Feature('LinkRefText','stargate to link') . " " . $lk['id'];
 
   if ($Boarding) {
     $Things = Get_ThingsAt($N['id']);

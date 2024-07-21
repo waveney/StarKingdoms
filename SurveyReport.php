@@ -362,7 +362,7 @@
 
   if ($SurveyLevel > 1) {
     $Ls = Get_Links($Ref);
-    echo "<BR CLEAR=ALL><h2>There are Stargates to:</h2><ul>\n";
+    echo "<BR CLEAR=ALL><h2>There are " . Feature('LinkRefText','Stargates') . " to:</h2><ul>\n";
     $GM = Access('GM');
 
     foreach ($Ls as $L) {

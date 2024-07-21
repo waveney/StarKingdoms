@@ -298,7 +298,6 @@ function PayForStargates() {
   }
 
   GMLog("Finished paying for stargates");
-//  GMLog("Pay For Stargates are currently Manual<p>");
   return 1;
 }
 
@@ -2905,7 +2904,7 @@ function InstructionsComplete() {
            }
            break;
 
-         case 5: //At Stargate
+         case 5: //At Link
            $LKs = Get_Links($N['Ref']);
            $li = 1;
            foreach($LKs as $lk) if ( (500+($li++)) == $WLoc ) break;
@@ -3133,7 +3132,7 @@ function InstructionsComplete() {
              }
              break;
 
-           case 5: // Stargate
+           case 5: // Link
              $Link = Gen_Get_Cond1('Links'," MinedA=$Mid OR MinedB=$Mid ");
              if ($Link) {
                if ($Link['MinedA'] == $Mid) $Link['MinedA'] = 0;

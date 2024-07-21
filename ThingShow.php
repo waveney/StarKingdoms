@@ -161,15 +161,24 @@ function Show_Thing(&$T,$Force=0) {
     $Lid = ($T['LinkId'] ?? 0);
     if ($tprops & THING_MOVES_DIRECTLY) {
         if ($GM) {
-          echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId',1);
-          echo "<td>" . fm_select($Syslocs,$T,'WithinSysLoc');
+          echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId',1,' onchange=SetSysLoc("SystemId","WithinNow","WithinSysLoc")');
+          if ($T['SystemId']??0) {
+            echo "<td id=WithinNow>" . fm_select($Syslocs,$T,'WithinSysLoc');
+          } else {
+            echo "<td id=WithinNow>";
+          }
         } elseif ($T['PrisonerOf']) {
           echo "<tr><td>Currently a Prisoner";
         } else {
           echo "<tr><td>Current System:<td>" . $N['Ref'] . "<td>" . $Syslocs[$T['WithinSysLoc']];
         }
       $T['LinkId'] = -6;
-      echo "<tr><td>New System:<td>" . fm_select($Systems,$T,'NewSystemId',1);
+      echo "<tr><td>New System:<td>" . fm_select($Systems,$T,'NewSystemId',1,' onchange=SetSysLoc("NewSystemId","WithinNew","NewLocation")');
+      if ($T['SystemId']??0) {
+        echo "<td id=WithinNew>" . fm_select($Syslocs,$T,'NewLocation');
+      } else {
+        echo "<td id=WithinNew>";
+      }
     // TODO NewLocation
     } else {
 // if ($GM) echo "Lid:$Lid SystemId:" . $T['SystemId']; // TEST CODE DELIBARATELY STILL BEING USED - GM ONLY

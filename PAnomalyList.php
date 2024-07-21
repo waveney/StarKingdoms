@@ -38,7 +38,7 @@
     }
   }
 
-  global $db, $GAME, $AnomalyStates, $GAMEID;
+  global $db, $GAME, $FAnomalyStates, $GAMEID;
 
   $AnStateCols = ['White','Lightgreen','Yellow','Pink'];
   $FAs = Gen_Get_Cond('FactionAnomaly',"FactionId=$Fid AND State>0");
@@ -62,7 +62,7 @@
       $A = Get_Anomaly($Aid);
       if (empty($A['Name'])) continue;
       $N = Get_System($A['SystemId']);
-      echo "<tr><td>" . $A['Name'] . "<td>" . $N['Ref'] . "<td style='Background:" . $AnStateCols[$FA['State']] . ";'>" . $AnomalyStates[$FA['State']] . "<td>";
+      echo "<tr><td>" . $A['Name'] . "<td>" . $N['Ref'] . "<td style='Background:" . $AnStateCols[$FA['State']] . ";'>" . $FAnomalyStates[$FA['State']] . "<td>";
       echo $FA['Progress'] . " / " . $A['AnomalyLevel'] . "<td colspan=4>" .  $Parsedown->text($A['Description']);
 //      echo "</tr>";
     }

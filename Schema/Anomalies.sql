@@ -18,5 +18,9 @@ CREATE TABLE `Anomalies` (
   `CompletedBy` int NOT NULL,
   `RemainUse` int NOT NULL,
   `WithinSysLoc` int NOT NULL,
+  `ChainedOn1` int NOT NULL,
+  `ChainedOn2` int NOT NULL,
+  `ChainedOn3` int NOT NULL,
+  `ChainedOn4` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

@@ -3,9 +3,10 @@
 /* $SurveyLevels = [0=>'Blind',1=>'No Sensors', 2=>'Minimal Scan', 3=>'A bit better', 4=>'Most Things', 5=>'Full Scan no control',
                  6=>'Full Scan under control', 10=>'GM Only']; */
  $SurveyLevels = [0=>'Blind', 1=>'No Sensors', 3=>'Unable to Scan', 5=>'Full Scan', 10=>'GM Only'];
- $AnomalyStates = [-1=>'Can Find', 0=>'Unknown', 1=>'Found', 2=>'Can Analyse', 3=> 'Analysed'];
+ $FAnomalyStates = [-1=>'Can Find', 0=>'Unknown', 1=>'Found', 2=>'Can Analyse', 3=> 'Analysed'];
+ $GAnomStates = ['Open','One Use','Completed','Removed'];
 
-global $SurveyLevels,$AnomalyStates;
+ global $SurveyLevels,$FAnomalyStates,$GAnomStates;
 
 
 // System common code

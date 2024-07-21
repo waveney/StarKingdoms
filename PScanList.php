@@ -6,7 +6,7 @@
 
   dostaffhead("Move Things",["js/dropzone.js","css/dropzone.css" ]);
 
-  global $db, $GAME, $GAMEID, $BuildState, $Factions, $Dot, $AnomalyStates, $AnStateCols;
+  global $db, $GAME, $GAMEID, $BuildState, $Factions, $Dot, $FAnomalyStates, $AnStateCols;
   global $FACTION;
 
   include_once("vendor/erusev/parsedown/Parsedown.php");
@@ -58,7 +58,7 @@
       $A = Get_Anomaly($Aid);
       if (empty($A['Name'])) continue;
       $N = Get_System($A['SystemId']);
-      echo "<tr><td>" . $A['Name'] . "<td>" . $N['Ref'] . "<td style='Background:" . $AnStateCols[$FA['State']] . ";'>" . $AnomalyStates[$FA['State']] . "<td>";
+      echo "<tr><td>" . $A['Name'] . "<td>" . $N['Ref'] . "<td style='Background:" . $AnStateCols[$FA['State']] . ";'>" . $FAnomalyStates[$FA['State']] . "<td>";
       echo $FA['Progress'] . " / " . $A['AnomalyLevel'] . "<td colspan=4>" .  $Parsedown->text($A['Description']);
 //      echo "</tr>";
     }

@@ -6,7 +6,7 @@
   include_once("PlayerLib.php");
   include_once("SystemLib.php");
 
-  global $FACTION,$GAME,$GAMEID,$AnomalyStates;
+  global $FACTION,$GAME,$GAMEID,$FAnomalyStates,$GAnomStates;
 
   A_Check('GM');
 
@@ -43,6 +43,11 @@
     dotail();
   }
 
+  $As = Gen_Get_Cond('Anomalies',"GameId=$GAMEID ORDER BY SystemId");
+  $OtherAnoms = [];
+  foreach ($As as $i=>$OA) if ($i != $Aid) $OtherAnoms[$i] = $OA['Name'] . " ($i)";
+
+
   echo "<h1>Anomaly Edit</h1>\n";
   echo "Note for Factions: Known - Seen the Anomaly, Analysed - Done it.  Can Analyse - to enable analysis when there are Other requirements - no effect when none.<p>\n";
   $Facts = Get_Factions();
@@ -55,7 +60,7 @@
 
   echo "<tr><td>Anomaly Id:<td>$Aid" . fm_number("Game",$A,'GameId');
   echo "<tr>" . fm_text("Anomaly Name", $A,'Name',4);
-  echo "<tr>" . fm_number('Scan Level',$A,'ScanLevel') .  fm_number('Anomaly Level',$A,'AnomalyLevel');
+  echo "<tr>" . fm_number('Scan Level',$A,'ScanLevel') .  "<td>-1 for invisible" . fm_number('Anomaly Level',$A,'AnomalyLevel');
   echo "<tr><td>Location:<td>" . fm_select($Systems,$A,'SystemId',1,' onchange=SetSysLoc("SystemId","AnomalyLoc","WithinSysLoc")');
   if ($A['SystemId']??0) {
     $N = Get_System($A['SystemId']);
@@ -76,15 +81,19 @@
   echo "<tr>" . fm_textarea('Notes',$A,'Notes',8,3,'class=NotSide');
   echo "<tr>" . fm_textarea('Reward',$A,'Reward',8,2,'class=NotSide');
   echo "<tr>" . fm_textarea('Comments',$A,'Comments',8,2,'class=NotSide');
-  echo "<tr>" . fm_textarea('Other Requirements',$A,'OtherReq',6,1) . "<td>Refresh after change";
-  echo "<tr><td>" . fm_checkbox("Limit Factions",$A,'Properties') . "<td>Refresh after change" .
-    fm_number('Complete',$A,'Complete') .  fm_number('Story Level',$A,'StoryLevel');
+  echo "<tr>" . fm_textarea('Other Requirements',$A,'OtherReq',6,1);
+  echo "<tr><td>" . fm_checkbox("Limit Factions",$A,'Properties') . "<td>Refresh after change" .  fm_number('Story Level',$A,'StoryLevel');
+  echo "<td colspan=4>Chained (on completion): " . fm_select($OtherAnoms,$A,'ChainedOn1',1) . ", " .
+    fm_select($OtherAnoms,$A,'ChainedOn2',1) . ", " . fm_select($OtherAnoms,$A,'ChainedOn3',1) . ", " .
+    fm_select($OtherAnoms,$A,'ChainedOn4',1);
+  echo "<tr>" . fm_radio('Status',$GAnomStates,$A,'Complete','',1,'colspan=6') .
+                "One Use - Complete after analysis, Completed - resolved, Removed - No longer completeable";
 
   echo "<tr><td colspan=8><h2>Factions:</h2>";
   echo "<tr><td>Faction<td colspan=3>State<td>Progress<td colspan=7>Notes\n";
 
-  if (empty($A['OtherReq'])) unset($AnomalyStates[2]);
-  if (empty($A['Properties'])) unset($AnomalyStates[-1]);
+  if (empty($A['OtherReq'])) unset($FAnomalyStates[2]);
+  if (empty($A['Properties'])) unset($FAnomalyStates[-1]);
 
   foreach ($Facts as $F) {
     $Fid = $F['id'];
@@ -92,7 +101,7 @@
     if ($FA) $FA = $FA[0];
     echo "<form method=post action=AnomalyEdit.php>";
     echo "<tr><td style='background:" . $F['MapColour'] . ";'>" . $F['Name'];
-    echo "<td colspan=3>". fm_radio('',$AnomalyStates,$FA,'State','',0,'',"State:$Fid");
+    echo "<td colspan=3>". fm_radio('',$FAnomalyStates,$FA,'State','',0,'',"State:$Fid");
     echo fm_number1('',$FA,'Progress','','',"Progress:$Fid");
     echo fm_text1('',$FA,'Notes',7,'','',"Notes:$Fid");
     echo "</tr>\n";
