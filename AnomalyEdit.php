@@ -5,12 +5,14 @@
   include_once("ThingLib.php");
   include_once("PlayerLib.php");
   include_once("SystemLib.php");
+  include_once("vendor/erusev/parsedown/Parsedown.php");
 
   global $FACTION,$GAME,$GAMEID,$FAnomalyStates,$GAnomStates;
 
   A_Check('GM');
 
   dostaffhead("Edit an Anomaly");
+  $Parsedown = new Parsedown();
 
 //var_dump($_REQUEST);
   if (isset($_REQUEST['ACTION'])) {
@@ -29,6 +31,16 @@
         echo "<h2>Anomaly: " . $A['Name'] . " has been deleted</h2>";
         echo "<h2><a href=AnomalyList.php>Back to Anomaly List</a></h2>\n";
         dotail();
+
+      case 'View':
+        $Aid = $_REQUEST['id'];
+        $A = Get_Anomaly($Aid);
+
+        echo "<h2>Description:</h2>";
+        echo $Parsedown -> text($A['Description']);
+        echo "<h2>Completion:</h2>";
+        echo $Parsedown -> text($A['Completion']);
+        break;
 
       default:
     }
@@ -76,11 +88,11 @@
     }
   }
 
-  echo "<tr>" . fm_textarea("Description",$A,'Description',8,4);
-  echo "<tr>" . fm_textarea("Completion",$A,'Completion',8,4);
-  echo "<tr>" . fm_textarea('Notes',$A,'Notes',8,3,'class=NotSide');
-  echo "<tr>" . fm_textarea('Reward',$A,'Reward',8,2,'class=NotSide');
-  echo "<tr>" . fm_textarea('Comments',$A,'Comments',8,2,'class=NotSide');
+  echo "<tr>" . fm_textarea("Description",$A,'Description',6,4);
+  echo "<tr>" . fm_textarea("Completion",$A,'Completion',6,4);
+  echo "<tr>" . fm_textarea('Notes',$A,'Notes',6,3,'class=NotSide');
+  echo "<tr>" . fm_textarea('Reward',$A,'Reward',6,2,'class=NotSide');
+  echo "<tr>" . fm_textarea('Comments',$A,'Comments',6,2,'class=NotSide');
   echo "<tr>" . fm_textarea('Other Requirements',$A,'OtherReq',6,1);
   echo "<tr><td>" . fm_checkbox("Limit Factions",$A,'Properties') . "<td>Refresh after change" .  fm_number('Story Level',$A,'StoryLevel');
   echo "<td colspan=4>Chained (on completion): " . fm_select($OtherAnoms,$A,'ChainedOn1',1) . ", " .
@@ -103,14 +115,14 @@
     echo "<tr><td style='background:" . $F['MapColour'] . ";'>" . $F['Name'];
     echo "<td colspan=3>". fm_radio('',$FAnomalyStates,$FA,'State','',0,'',"State:$Fid");
     echo fm_number1('',$FA,'Progress','','',"Progress:$Fid");
-    echo fm_text1('',$FA,'Notes',7,'','',"Notes:$Fid");
+    echo fm_text1('',$FA,'Notes',5,'','',"Notes:$Fid");
     echo "</tr>\n";
   }
-  if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=8 class=NotSide><textarea id=Debug></textarea>";
+  if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=6 class=NotSide><textarea id=Debug></textarea>";
 
   echo "</table><p>\n";
 
-  echo "<input type=submit name=ACTION value=Refresh> <input type=submit name=ACTION value=Delete>\n";
+  echo "<input type=submit name=ACTION value=View> <input type=submit name=ACTION value=Refresh> <input type=submit name=ACTION value=Delete>\n";
   echo "<h2><a href=AnomalyList.php>Back to Anomaly List</a></h2>\n";
 
   dotail();

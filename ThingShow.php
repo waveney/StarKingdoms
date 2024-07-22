@@ -127,9 +127,11 @@ function Show_Thing(&$T,$Force=0) {
   echo "</table>";
 
 
-
-  echo "<tr>" . fm_text('Class',$T,'Class',2);
-
+  if (Feature('BluePrints') && ($T['BluePrint']??0) && !$GM ){
+    echo "<tr><td>Class:<td>" . $T['Class'];
+  } else {
+    echo "<tr>" . fm_text('Class',$T,'Class',2);
+  }
 // WHERE IS IT AND MOVEMENT
 
 /*
@@ -147,9 +149,11 @@ function Show_Thing(&$T,$Force=0) {
         if ($Proj['TurnStart']) echo " Start Turn: " . $Proj['TurnStart'];
         if ($Proj['TurnEnd']) echo " End Turn: " . $Proj['TurnEnd'];
       }
-    }
-  else if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
-
+    } else if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
+      if ($GM && Feature('BluePrints')) {
+        echo fm_number1('Blue Print',$T,'BluePrint','','min=-100 max=10000');
+        if ($T['BluePrint']) echo "<a href=ThingEdit.php?i=" . $T['BluePrint'] . ">View</a>";
+      }
 // Note Special meaning of -ve LinkId numbers:
 // -1 On Board - SytemId = ThingId of Host
 // -2 Boarding on Turn NewSystemId = ThingId of Host
@@ -158,79 +162,79 @@ function Show_Thing(&$T,$Force=0) {
 // -5 Not Used
 // -6 Direct Move to NewSystemId, NewWithinSys without links
 
-    $Lid = ($T['LinkId'] ?? 0);
-    if ($tprops & THING_MOVES_DIRECTLY) {
-        if ($GM) {
-          echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId',1,' onchange=SetSysLoc("SystemId","WithinNow","WithinSysLoc")');
-          if ($T['SystemId']??0) {
-            echo "<td id=WithinNow>" . fm_select($Syslocs,$T,'WithinSysLoc');
-          } else {
-            echo "<td id=WithinNow>";
-          }
-        } elseif ($T['PrisonerOf']) {
-          echo "<tr><td>Currently a Prisoner";
-        } else {
-          echo "<tr><td>Current System:<td>" . $N['Ref'] . "<td>" . $Syslocs[$T['WithinSysLoc']];
-        }
-      $T['LinkId'] = -6;
-      echo "<tr><td>New System:<td>" . fm_select($Systems,$T,'NewSystemId',1,' onchange=SetSysLoc("NewSystemId","WithinNew","NewLocation")');
-      if ($T['SystemId']??0) {
-        echo "<td id=WithinNew>" . fm_select($Syslocs,$T,'NewLocation');
-      } else {
-        echo "<td id=WithinNew>";
-      }
-    // TODO NewLocation
-    } else {
-// if ($GM) echo "Lid:$Lid SystemId:" . $T['SystemId']; // TEST CODE DELIBARATELY STILL BEING USED - GM ONLY
-      if ($Lid<0 && Access('God') ) {
-        echo fm_number0("Lid",$T,'LinkId') . fm_number1("SysId",$T,'SystemId');
-      }
-      if ($Lid >= 0 || $Lid == LINK_BOARDING || $Lid == LINK_LOAD_AND_UNLOAD) { // Insystem
-        if ($GM) {
-          echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId',1);
-          echo "<td>" . fm_select($Syslocs,$T,'WithinSysLoc');
-        } elseif ($T['PrisonerOf']) {
-          echo "<tr><td class=Err>Currently a Prisoner";
-        } else {
-          echo "<tr><td>Current System:<td>" . (empty($N)? 'Unknown' : $N['Ref']) . "<td>" . ($Syslocs[$T['WithinSysLoc'] ?? 0] ?? 'Deep Space');
-        }
-      } else if ($Lid == LINK_FOLLOW ) {
-        $Fol = Get_Thing($T['NewSystemId']);
-        $LastWhose = 0;
-        $tting = SeeThing($Fol,$LastWhose,7,$Fid,0,0,0);
-        echo "<tr><td colspan=3>Following: " . "<span style='background:" . $Fact_Colours[$Fol['Whose']] . "'>" .
-             SeeThing($Fol,$LastWhose,7,$Fid,0,0,0) . "</span>";
-        echo fm_submit("ACTION",'Cancel Follow',0);
-      } else { // On Board
-        $Host = Get_Thing($T['SystemId']);
-        if ($Host) {
-          echo "<tr><td colspan=3>In: $Lid" . $Host['Name'];
-          $Conflict = 0;
-          $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
-          if ($Conf) $Conflict = $Conf[0]['Conflict'];
-
-          if ($Host['LinkId']>0 && $Host['TargetKnown'] == 0) {
-            echo " You don't know where you are going to unload afterwards<br>";
-            if ($GM) {
-              if ($Lid == -1 || $Lid == -2) echo fm_submit("ACTION",'Unload After Move',0);
-              echo fm_submit("ACTION",'Unload Now',0);
-            } else if ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ) {
-              echo fm_submit("ACTION",'Unload Now',0);
-            }
-          } else {
-            if ($Lid == -1 || $Lid == -2) if ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] )
-              echo fm_submit("ACTION",'Unload After Move',0);
-            if ($GM || (!$Conflict && ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ))) {
-              echo fm_submit("ACTION",'Unload Now',0);
+      $Lid = ($T['LinkId'] ?? 0);
+      if ($tprops & THING_MOVES_DIRECTLY) {
+          if ($GM) {
+            echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId',1,' onchange=SetSysLoc("SystemId","WithinNow","WithinSysLoc")');
+            if ($T['SystemId']??0) {
+              echo "<td id=WithinNow>" . fm_select($Syslocs,$T,'WithinSysLoc');
             } else {
-              echo " - Only the transport owner can unload you";
+              echo "<td id=WithinNow>";
             }
-            echo "<br>Note: To unload AFTER moving, please put the movement order in to the system for the transport before the Unload After Move order.<br>\n";
+          } elseif ($T['PrisonerOf']) {
+            echo "<tr><td>Currently a Prisoner";
+          } else {
+            echo "<tr><td>Current System:<td>" . $N['Ref'] . "<td>" . $Syslocs[$T['WithinSysLoc']];
           }
+        $T['LinkId'] = -6;
+        echo "<tr><td>New System:<td>" . fm_select($Systems,$T,'NewSystemId',1,' onchange=SetSysLoc("NewSystemId","WithinNew","NewLocation")');
+        if ($T['SystemId']??0) {
+          echo "<td id=WithinNew>" . fm_select($Syslocs,$T,'NewLocation');
         } else {
-          echo "<tr><td colspan=3>In limbo... (Richard can fix)";
-          if (Access('God')) $T['SystemId'] = $T['LinkId'] = 0;
+          echo "<td id=WithinNew>";
         }
+      // TODO NewLocation
+      } else {
+  // if ($GM) echo "Lid:$Lid SystemId:" . $T['SystemId']; // TEST CODE DELIBARATELY STILL BEING USED - GM ONLY
+        if ($Lid<0 && Access('God') ) {
+          echo fm_number0("Lid",$T,'LinkId') . fm_number1("SysId",$T,'SystemId');
+        }
+        if ($Lid >= 0 || $Lid == LINK_BOARDING || $Lid == LINK_LOAD_AND_UNLOAD) { // Insystem
+          if ($GM) {
+            echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId',1);
+            echo "<td>" . fm_select($Syslocs,$T,'WithinSysLoc');
+          } elseif ($T['PrisonerOf']) {
+            echo "<tr><td class=Err>Currently a Prisoner";
+          } else {
+            echo "<tr><td>Current System:<td>" . (empty($N)? 'Unknown' : $N['Ref']) . "<td>" . ($Syslocs[$T['WithinSysLoc'] ?? 0] ?? 'Deep Space');
+          }
+        } else if ($Lid == LINK_FOLLOW ) {
+          $Fol = Get_Thing($T['NewSystemId']);
+          $LastWhose = 0;
+          $tting = SeeThing($Fol,$LastWhose,7,$Fid,0,0,0);
+          echo "<tr><td colspan=3>Following: " . "<span style='background:" . $Fact_Colours[$Fol['Whose']] . "'>" .
+               SeeThing($Fol,$LastWhose,7,$Fid,0,0,0) . "</span>";
+          echo fm_submit("ACTION",'Cancel Follow',0);
+        } else { // On Board
+          $Host = Get_Thing($T['SystemId']);
+          if ($Host) {
+            echo "<tr><td colspan=3>In: $Lid" . $Host['Name'];
+            $Conflict = 0;
+            $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
+            if ($Conf) $Conflict = $Conf[0]['Conflict'];
+
+            if ($Host['LinkId']>0 && $Host['TargetKnown'] == 0) {
+              echo " You don't know where you are going to unload afterwards<br>";
+              if ($GM) {
+                if ($Lid == -1 || $Lid == -2) echo fm_submit("ACTION",'Unload After Move',0);
+                echo fm_submit("ACTION",'Unload Now',0);
+              } else if ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ) {
+                echo fm_submit("ACTION",'Unload Now',0);
+              }
+            } else {
+              if ($Lid == -1 || $Lid == -2) if ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] )
+                echo fm_submit("ACTION",'Unload After Move',0);
+              if ($GM || (!$Conflict && ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ))) {
+                echo fm_submit("ACTION",'Unload Now',0);
+              } else {
+                echo " - Only the transport owner can unload you";
+              }
+              echo "<br>Note: To unload AFTER moving, please put the movement order in to the system for the transport before the Unload After Move order.<br>\n";
+            }
+          } else {
+            echo "<tr><td colspan=3>In limbo... (Richard can fix)";
+            if (Access('God')) $T['SystemId'] = $T['LinkId'] = 0;
+          }
       }
       if ($Lid == -2 || $Lid == -4) {
         $Host = Get_Thing($T['NewSystemId']);
@@ -754,7 +758,8 @@ function Show_Thing(&$T,$Force=0) {
       break;
 
     case 'Voluntary Warp Home': // Warp Home
-      if ((($tprops & THING_HAS_SHIPMODULES) == 0 ) || ($T['CurHealth'] == 0) || (($tprops & THING_CAN_MOVE) == 0) || ($T['BuildState'] != 3) ) continue 2;
+      if (!Feature('WarpOut') || (( $tprops & THING_HAS_SHIPMODULES) == 0 ) ||
+         ($T['CurHealth'] == 0) || (($tprops & THING_CAN_MOVE) == 0) || ($T['BuildState'] != 3) ) continue 2;
       $Gates = Gates_Avail($T['Whose']);
 
       if (empty($Gates)) {
@@ -1512,7 +1517,7 @@ function Show_Thing(&$T,$Force=0) {
     echo fm_submit("ACTION",'GM Refit',0);
     if ($tprops & THING_LEAVES_DEBRIS) echo fm_submit("ACTION",'Destroy Thing (Leave debris)',0);
     echo fm_submit("ACTION",'Remove Thing (No debris)',0);
-    if ($tprops & THING_CAN_MOVE) echo fm_submit("ACTION",'Warp Out',0);
+    if (Feature('WarpOut') && $tprops & THING_CAN_MOVE) echo fm_submit("ACTION",'Warp Out',0);
     if ($T['CurShield']) {
       echo fm_number0(" Do",$T,'Damage', '',' class=Num3 ') . fm_submit("ACTION","Damage",0);
       echo fm_number0(" Do",$T,'HullDamage', '',' class=Num3 ') . fm_submit("ACTION","Hull Damage",0);

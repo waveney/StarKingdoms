@@ -168,7 +168,7 @@ function Player_Page() {
 function Has_Trait($fid,$Name) {
   global $FACTION;
   if ($fid == 0) {
-    if (!isset($FACTION)) return false;
+    if (!isset($FACTION) || empty($FACTION)) return false;
     if ($FACTION['Trait1'] == $Name || $FACTION['Trait2'] == $Name || $FACTION['Trait3'] == $Name) return true;
     return false;
   }

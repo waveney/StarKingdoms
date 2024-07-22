@@ -498,7 +498,7 @@ function NebScanners(&$T) {
 
 function Calc_Scanners(&$T) {
   $MTNames = Gen_Get_Names_Flip('ModuleTypes');
-  $mods = Get_ModulesType($T['id'],$MTNames['Sensors']);
+  $mods = Get_ModulesType($T['id'],$MTNames['Sensors']) + Get_ModulesType($T['id'],$MTNames['Planetary Survey Corps']);
   $nebs = Get_ModulesType($T['id'],$MTNames['Nebula Sensors']);
   $Cargo = Get_ModulesType($T['id'],$MTNames['Cargo Space']);
   $Cryo = Get_ModulesType($T['id'],$MTNames['Cryo Pods']);
@@ -1160,6 +1160,25 @@ function Recalc_Prisoner_Counts() {
     }
   }
   echo "Prisoners Reclaculated<p>";
+}
+
+function BluePrintList($Lvl=10000,$Props='') {
+  global $GAMEID,$db;
+  $BPlst = [];
+  if ($Props) {
+    $res = $db->query("SELECT T.* FROM Things T, ThingTypes Y WHERE T.GameId=$GAMEID AND T.Type=Y.id AND (Y.Props&$Props)!=0");
+    if ($res) {
+      while ($ans = $res->fetch_assoc()) { $BPlst[$ans['id']] = $ans; };
+    }
+  } else {
+    $BPs = Gen_Get_Cond('Things',"GameId=$GAMEID AND Level<$Lvl AND BluePrint<0");
+    if ($BPs) foreach($BPs as $i=>$BP) $BPList[$i] = $BP['Name'];
+  }
+
+  foreach($BPlst as $i=>$BP) if ($BP['GatedOn']) {
+
+  }
+  return $BPList;
 }
 
 ?>

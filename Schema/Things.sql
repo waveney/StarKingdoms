@@ -62,5 +62,7 @@ CREATE TABLE `Things` (
   `Evasion` int NOT NULL,
   `BluePrint` int NOT NULL,
   `PreReq` int NOT NULL,
+  `HiddenClass` text COLLATE utf8mb4_general_ci NOT NULL,
+  `GatedOn` text COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

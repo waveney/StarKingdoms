@@ -2770,6 +2770,9 @@ function InstructionsComplete() {
   $Facts = Get_Factions();
   $TTNames = Thing_Types_From_Names();
   $TTypes = Get_ThingTypes();
+  $Parsedown = new Parsedown();
+  $Systems = [];
+
 
   foreach ($Things as $T) {
     $N = Get_System($T['SystemId']);
@@ -2827,12 +2830,46 @@ function InstructionsComplete() {
            if ($FA['Progress'] >= $A['AnomalyLevel'] && $FA['State'] != 3) {
              $FA['State'] = 3;
              Gen_Put('FactionAnomaly',$FA);
-             TurnLog($T['Whose'], $T['Name'] . " Anomaly study on " . $A['Name'] . " has been completed - See sperate response from the GMs for what you get");
+             TurnLog($Fid , $T['Name'] . " Anomaly study on " . $A['Name'] .
+               " has been completed - See sperate response from the GMs for what you get");
+             if (!empty($A['Completion'])) {
+               TurnLog($Fid ,"Completion Text: " . $Parsedown -> text($A['Completion']) );
+               $ctxt = '';
+             } else {
+               $ctxt = "  AND the completion text.";
+             }
              GMLog($Facts[$Fid]['Name'] . " has completed anomaly study : <a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] .
-                   "</a> has been completed - give them the reward.");
+                   "</a> has been completed - give them the reward.  $ctxt");
              FollowUp($Fid,$Facts[$Fid]['Name'] . " has completed anomaly study : <a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] .
-                   "</a> has been completed - give them the reward.");
+                   "</a> has been completed - give them the reward. $ctxt");
              $T['ProjectId'] = 0;
+
+             if ($A['Complete'] == 1) {
+               $A['Complete'] = 2;
+               Put_Anomaly($A);
+             }
+
+             for ($i=1; $i<=4; $i++) {
+               if (!empty($A["ChainedOn$i"])) {
+                 if (empty($Systems)) $Systems = Get_SystemRefs();
+
+                 $Xid = $A["ChainedOn$i"];
+                 $FA = Gen_Get_Cond1('FactionAnomaly',"FactionId=$Fid AND AnomalyId=$Xid");
+                 if (!$FA) {
+                   $FA = ['FactionId'=>$Fid, 'AnomalyId'=>$Xid, 'State' =>2,  'Notes'=>''];
+                 } else {
+                   if ($FA['State'] >=2) continue;
+                   $FA['State'] = 2;
+                 }
+                 Gen_Put('FactionAnomaly',$FA);
+                 $XA = Get_Anomaly($Xid);
+
+                 TurnLog($Fid , "Completing " . $A['Name'] . " has opened up another anomaly that could be studied: " . $XA['Name'] .
+                   " in " . $Systems[$XA['SystemId']] . "\n" .  $Parsedown->text($XA['Description']) .
+                   "\nIt will take " . $XA['AnomalyLevel'] . " scan level actions to complete.\n\n");
+                 GMLog($Facts[$Fid]['Name'], "Have been told about anomaly " . $XA['Name']);
+               }
+             }
            }
          } else {
            continue 2; // elsewhere
@@ -2999,7 +3036,7 @@ function InstructionsComplete() {
        break;
 
      case 'Build Stargate':
-       $Systems = Get_SystemRefs();
+       if (empty($Systems)) $Systems = Get_SystemRefs();
        $LinkLevels = Get_LinkLevels();
        $LL = $LinkLevels[$T['Dist1']];
        $NewLink = ['GameId'=>$GAME['id'], 'System1Ref'=>$Systems[$T['SystemId']], 'System2Ref'=> $Systems[$T['Dist2']], 'Level'=>$T['Dist1']];
@@ -3060,7 +3097,7 @@ function InstructionsComplete() {
        break; // The making homes and worlds in a later stage completes the colonisation I hope
 
      case 'Dismantle Stargate' :
-       $Systems = Get_Systems();
+       if (empty($Systems)) $Systems = Get_SystemRefs();
        global $Currencies;
        AddCurrencies();
        $LLs = Get_LinkLevels();
@@ -3409,47 +3446,52 @@ function SpotAnomalies() {
   $Facts = Get_Factions();
   $Systems = Get_SystemRefs();
   $Parsedown = new Parsedown();
+  $TTypes = Get_ThingTypes();
 
-  $Anoms = Gen_Get_Cond('Anomalies',"GameId=$GAMEID ORDER BY SystemId, ScanLevel");
+  $Anoms = Gen_Get_Cond('Anomalies',"GameId=$GAMEID AND ScanLevel>=0 ORDER BY SystemId, ScanLevel");
   foreach($Anoms as $A) {
     $Aid = $A['id'];
     $Sid = $A['SystemId'];
     $ScanNeed = $A['ScanLevel'];
+    $OnPlanet = (($A['WithinSysLoc']%100 ==2) || ($A['WithinSysLoc']%100 ==4));
 
     $Things = Get_Things_Cond(0,"SystemId=$Sid AND SensorLevel>=$ScanNeed ORDER BY Whose, SensorLevel DESC");
     $LastWho = 0;
     $LastAn = 0;
     foreach($Things as $T) {
+      if (( $OnPlanet && (($TTypes[$T['Type']]['Props'] & THING_HAS_ARMYMODULES) > 0)) ||
+          (!$OnPlanet && (($TTypes[$T['Type']]['Props'] & THING_HAS_SHIPMODULES) > 0 ))) {
 // if ($Aid == 45) echo "Checking " . $T['id'] . "<br>";
-      if ($T['Whose'] != $LastWho) {
-        $LastWho = $T['Whose'];
-        $LastAn = 0;
-        $FA = Gen_Get_Cond('FactionAnomaly',"FactionId=$LastWho AND AnomalyId=$Aid");
-        if ($FA) {
-          $FA = $FA[0];
-        } else {
-          $FA = ['FactionId'=>$LastWho, 'AnomalyId'=>$Aid, 'State'=>0, 'Notes'=>''];
+        if ($T['Whose'] != $LastWho) {
+          $LastWho = $T['Whose'];
+          $LastAn = 0;
+          $FA = Gen_Get_Cond('FactionAnomaly',"FactionId=$LastWho AND AnomalyId=$Aid");
+          if ($FA) {
+            $FA = $FA[0];
+          } else {
+            $FA = ['FactionId'=>$LastWho, 'AnomalyId'=>$Aid, 'State'=>0, 'Notes'=>''];
+          }
         }
-      }
-      $Tid = $T['id'];
-      if ((($A['Properties'] == 0) && (($FA['State'] == 0) && ($LastAn != $Aid))) ||
-          (($A['Properties'] == 1) && (($FA['State'] == -1) && ($LastAn != $Aid)))) {
+        $Tid = $T['id'];
+        if ((($A['Properties'] == 0) && (($FA['State'] == 0) && ($LastAn != $Aid))) ||
+            (($A['Properties'] == 1) && (($FA['State'] == -1) && ($LastAn != $Aid)))) {
 
-        if ( !isset($_REQUEST["Prevent$Tid"]) || $_REQUEST["Prevent$Tid"]!='on')  {
+          if ( !isset($_REQUEST["Prevent$Tid"]) || $_REQUEST["Prevent$Tid"]!='on')  {
 
-          TurnLog($LastWho,"You have spotted an anomaly: " . $A['Name'] . " in " . $Systems[$Sid] . "\n" .  $Parsedown->text($A['Description']) .
-                "\nIt will take " . $A['AnomalyLevel'] . " scan level actions to complete.\n\n");
+            TurnLog($LastWho,"You have spotted an anomaly: " . $A['Name'] . " in " . $Systems[$Sid] . "\n" .  $Parsedown->text($A['Description']) .
+                  "\nIt will take " . $A['AnomalyLevel'] . " scan level actions to complete.\n\n");
 
-          GMLog($Facts[$T['Whose']]['Name'] . " have just spotted anomaly: <a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . "</a> in " .
-                $Systems[$Sid] . " from the " . $T['Name'] );
-          $FA['State'] = 1;
-// var_dump($FA);
-          Gen_Put('FactionAnomaly',$FA);
+            GMLog($Facts[$T['Whose']]['Name'] . " have just spotted anomaly: <a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . "</a> in " .
+                  $Systems[$Sid] . " from the " . $T['Name'] );
+            $FA['State'] = 1;
+  // var_dump($FA);
+            Gen_Put('FactionAnomaly',$FA);
+          }
+          $LastAn = $Aid;
+          continue;
+        } else { // Already known
+
         }
-        $LastAn = $Aid;
-        continue;
-      } else { // Already known
-
       }
     }
   }
