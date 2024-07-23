@@ -110,7 +110,7 @@ function Show_Thing(&$T,$Force=0) {
   if ($GM) {
     echo "<tr class=NotSide><td class=NotSide>Id: $Tid<td class=NotSide>Game: $GAMEID - " . $GAME['Name'];
     echo fm_number('Seen Mask',$T,'SeenTypeMask','class=NotSide','class=NotSide');
-//    echo "<td colspan=2>Hidden Control: " . fm_select($FactNames,$T,'HiddenControl');
+    if (feature('HiddenControl')) echo "<td colspan=2>Hidden Control: " . fm_select($FactNames,$T,'HiddenControl');
     echo "<tr><td>Type:<td>" . fm_select($ttn,$T,'Type',1);
     if (($tprops & THING_HAS_LEVELS) || ($tprops & THING_CAN_BE_ADVANCED)) echo fm_number("Level",$T,'Level');
     echo fm_number('Priority',$T,'Priority');
@@ -152,7 +152,13 @@ function Show_Thing(&$T,$Force=0) {
     } else if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
       if ($GM && Feature('BluePrints')) {
         echo fm_number1('Blue Print',$T,'BluePrint','','min=-100 max=10000') ;
-        if ($T['BluePrint']) echo "<a href=ThingEdit.php?i=" . $T['BluePrint'] . ">View</a>";
+        if ($T['BluePrint'] > 0) {
+          echo "<a href=ThingEdit.php?i=" . $T['BluePrint'] . ">View</a>";
+        } else if ($T['BluePrint'] < 0) {
+          echo "Is a Blue Print";
+        } else  {
+          echo "No Blue Print";
+        }
       }
 // Note Special meaning of -ve LinkId numbers:
 // -1 On Board - SytemId = ThingId of Host
@@ -344,7 +350,8 @@ function Show_Thing(&$T,$Force=0) {
           $ThisSys = $T['SystemId'];
           $Eyes = EyesInSystem($Fid,$ThisSys,$Tid);
           if ($Eyes) {
-            $OtherShips = $db->query("SELECT t.* FROM Things t, ThingTypes tt WHERE t.type=tt.id AND (tt.Properties&0x100)!=0 AND t.SystemId=$ThisSys AND Whose!=$Fid");
+            $OtherShips = $db->query("SELECT t.* FROM Things t, ThingTypes tt WHERE t.GameId=$GAMEID AND ".
+                           "t.type=tt.id AND (tt.Properties&0x100)!=0 AND t.SystemId=$ThisSys AND Whose!=$Fid");
             if ($OtherShips) {
               $List = [];
               $Colrs = [];
@@ -609,7 +616,7 @@ function Show_Thing(&$T,$Force=0) {
         if (($dc++)%2 == 0)  echo "<tr>";
         echo "<td>" . (isset($MTNs[$D['Type']])? fm_Select($MTNs, $D , 'Type', 1,'',"ModuleType-$did") : "<span class=red>INV:" .
                       fm_Select($MNs, $D , 'Type', 1,'',"ModuleType-$did") . "</span>" )
-                    . fm_number1('Level', $D,'Level', '', ' class=Num3 ',"ModuleLevel-$did") . ' # '
+                    . (($MTs[$D['Type']]['Leveled']&1) ? fm_number1('Level', $D,'Level', '', ' class=Num3 ',"ModuleLevel-$did") :'') . ' # '
                     . fm_number0('', $D,'Number', '',' class=Num3 ',"ModuleNumber-$did")
                     . "<button id=ModuleRemove-$did onclick=AutoInput('ModuleRemove-$did')>R</button>";
         if ($D['Number'] < 0) echo " <b>Inactive</b>";

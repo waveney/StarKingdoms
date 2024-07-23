@@ -13,17 +13,17 @@ function New_Thing(&$T) {
   $Fact_Colours = Get_Faction_Colours();
   $Systems = Get_SystemRefs();
   $BPs = BluePrintList(10000);
-//  $BPs = array_shift($BPs,'');
+//$BPs[-1] = 'Is a Blueprint';
+//  array_unshift($BPs,[-1 =>'Is a Blueprint']);
   if (!isset($T['Whose'])) $T['Whose'] = 0;
-
   echo "<h1>Create Thing:</h1>";
   echo "<form method=post action=ThingEdit.php>";
   echo "<table><tr><td>Type:<td>" . fm_select($ttn,$T,'Type');
   echo "<tr>" . fm_text("Name",$T,'Name');
-  echo "<tr>" . fm_select('Blue Print',$T,'BluePrint',1);
+  echo "<tr><td>Blue print:<td>" . fm_select($BPs,$T,'BluePrint',1);
   echo "<tr>" . fm_number("Level",$T,'Level');
   echo "<tr>" . fm_radio('Whose',$FactNames ,$T,'Whose','',1,'colspan=6','',$Fact_Colours,0);
-  echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId');
+  echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId',1);
   echo "<tr><td>BuildState:<td>" . fm_select($BuildState,$T,'BuildState');
   echo "<tr><td>" . fm_submit("ACTION","Create");
   echo "</table></form>";

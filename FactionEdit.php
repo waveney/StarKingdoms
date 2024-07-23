@@ -58,17 +58,19 @@ function Show_Faction(&$F,$Mode) {
   $cls = (($PlayerState[$F['TurnState']] == 'Setup')?'':' class=NotCSide');
 
   echo "<tr>" . fm_text('Faction Name',$F,'Name',2);
-  echo "<td rowspan=4 colspan=4><table><tr>";
+  echo "<td rowspan=3 colspan=4><table><tr>";
     echo fm_DragonDrop(1,'Image','Faction',$Fid,$F,1,'',1,'','Faction');
   echo "</table>";
 
   echo "<tr><td $cls>Native BioSphere<td colspan=2 $cls>" . (($GM || $Setup)?fm_select($PTs,$F,'Biosphere',1): $PTs[$F['Biosphere']]);
   if ($GM) {
     echo ", " . fm_select($PTs,$F,'Biosphere2',1) . ", " . fm_select($PTs,$F,'Biosphere3',1);
-  } else if ($F['Biosphere2']) {
-    echo ", " .  $PTs[$F['Biosphere2']];
-  } else if ($F['Biosphere3']) {
-    echo ", " .  $PTs[$F['Biosphere3']];
+  } else if (feature('MultiBiosphere')) {
+    if ($F['Biosphere2']) {
+      echo ", " .  $PTs[$F['Biosphere2']];
+    } else if ($F['Biosphere3']) {
+      echo ", " .  $PTs[$F['Biosphere3']];
+    }
   }
   echo "<tr>" . fm_text('Player Name',$F,'Player',2,$cls);
 

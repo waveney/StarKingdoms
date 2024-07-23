@@ -20,7 +20,7 @@
   }
 
   $DT=Get_ProjectTypes($AllG);
-  $Techs = Get_Techs($AllG);
+  $Techs = Get_Techs(0,$AllG);
   $TechNames = Tech_Names($Techs);
 
   if (UpdateMany('ProjectTypes','Put_ProjectType',$DT,0))  $DT=Get_ProjectTypes($AllG);

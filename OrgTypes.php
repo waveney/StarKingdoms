@@ -20,7 +20,7 @@
   }
 
   $DTs=Get_OrgTypes($AllG);
-//  $Techs = Get_Techs($AllG);
+//  $Techs = Get_Techs(0,$AllG);
 //  $TechNames = Tech_Names($Techs);
 
   if (UpdateMany('OfficeTypes','Put_OrgType',$DTs,0))  $DTs=Get_OrgTypes($AllG);

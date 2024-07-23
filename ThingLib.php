@@ -306,17 +306,21 @@ function Max_Modules(&$T) {
   $ThingTypes = Get_ThingTypes();
   $TTs = $ThingTypes[$T['Type']];
   if (!empty($TTs['Properties']) && ($TTs['Properties'] & THING_HAS_MODULES)) {
-    $v = [0,4,12,24,40,60,84,112,144,180,220][$T['Level']];
-    if ($T['Type'] == 2) $v = $v*3/4; // Support Ship
-    if (Has_Tech($T['Whose'], 'Compact Ship Design') && $T['Level'] > 1 && ($TTs['Properties'] & THING_HAS_SHIPMODULES)) $v += $T['Level'];
-    if ($T['Level'] > 2 && Has_Trait($T['Whose'],'Really Big')) $v += $T['Level']*$T['Level']*$T['Level'];
-    if ($TTs['Name'] == 'Satellite Defences') $v += $T['Level'];
-    if ($TTs['Name'] == 'Planetary Defence Force') {
-      if (Has_Trait($T['Whose'],"Strong military")) {
-        $v *= 2;
-      } else {
-        $v += $T['Level'];
+    if (Feature('StarCluster')) {
+      $v = [0,4,12,24,40,60,84,112,144,180,220][$T['Level']];
+      if ($T['Type'] == 2) $v = $v*3/4; // Support Ship
+      if (Has_Tech($T['Whose'], 'Compact Ship Design') && $T['Level'] > 1 && ($TTs['Properties'] & THING_HAS_SHIPMODULES)) $v += $T['Level'];
+      if ($T['Level'] > 2 && Has_Trait($T['Whose'],'Really Big')) $v += $T['Level']*$T['Level']*$T['Level'];
+      if ($TTs['Name'] == 'Satellite Defences') $v += $T['Level'];
+      if ($TTs['Name'] == 'Planetary Defence Force') {
+        if (Has_Trait($T['Whose'],"Strong military")) {
+          $v *= 2;
+        } else {
+          $v += $T['Level'];
+        }
       }
+    } else {
+      $v = [0,6,16,32,56,88,128,176,232,296,368][$T['Level']];
     }
     return $v;
   }
@@ -1164,7 +1168,7 @@ function Recalc_Prisoner_Counts() {
 
 function BluePrintList($Lvl=10000,$Props='') {
   global $GAMEID,$db;
-  $BPlst = [];
+  $BPlst = [-1 =>'Is a Blueprint'];
   if ($Props) {
     $res = $db->query("SELECT T.* FROM Things T, ThingTypes Y WHERE T.GameId=$GAMEID AND T.Type=Y.id AND (Y.Props&$Props)!=0");
     if ($res) {
@@ -1172,13 +1176,13 @@ function BluePrintList($Lvl=10000,$Props='') {
     }
   } else {
     $BPs = Gen_Get_Cond('Things',"GameId=$GAMEID AND Level<$Lvl AND BluePrint<0");
-    if ($BPs) foreach($BPs as $i=>$BP) $BPList[$i] = $BP['Name'];
+    if ($BPs) foreach($BPs as $i=>$BP) $BPLst[$i] = $BP['Name'];
   }
 
-  foreach($BPlst as $i=>$BP) if ($BP['GatedOn']) {
+  foreach($BPlst as $i=>$BP) if ($BP['GatedOn']??0) {
     if (!eval("return " . $BP['GatedOn'] . ";" )) unset($BPlst[$i]);
   }
-  return $BPList;
+  return $BPlst;
 }
 
 ?>

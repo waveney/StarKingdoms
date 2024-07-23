@@ -192,7 +192,6 @@ function Node_Show($Fid,$Tid, $Lid, $N, $url='') {
         if ($List) {
           echo "<P><h2>Or Follow:</h2>";
           echo "<form method=post action=PThingList.php?ACTION=FOLLOW&T=$Tid>";
-//          echo fm_select($List,$_REQUEST,'ToFollow',blank:1,Raw:1,optclass:$Colrs);
           echo fm_radio('',$List,$_REQUEST,'ToFollow',tabs:0,colours:$Colrs, extra4:' onchange=this.form.submit()');
           //$extra='',$tabs=1,$extra2='',$field2='',$colours=0,$multi=0,$extra3='',$extra4='')
 //          echo "<input type=submit value=Follow></form>";

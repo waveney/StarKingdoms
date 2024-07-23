@@ -22,7 +22,7 @@
   $DT=Get_DistrictTypes($AllG);
   if (UpdateMany('DistrictTypes','Put_DistrictType',$DT,1))  $DT=Get_DistrictTypes($AllG);
 
-  $Techs = Get_Techs($AllG);
+  $Techs = Get_Techs(0,$AllG);
   $TechNames = Tech_Names($Techs);
 
   $coln = 0;

@@ -23,7 +23,7 @@
   $OTs = Get_OrgTypes($AllG);
   $OTNs = [];
   foreach ($OTs as $i=>$OT) $OTNs[$i] = $OT['Name'];
-//  $Techs = Get_Techs($AllG);
+//  $Techs = Get_Techs(0,$AllG);
 //  $TechNames = Tech_Names($Techs);
 
   if (UpdateMany('OfficeTypes','Put_OpType',$DTs,0))  $DTs=Get_OpTypes($AllG);
