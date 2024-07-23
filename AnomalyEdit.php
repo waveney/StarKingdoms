@@ -64,8 +64,8 @@
   echo "Note for Factions: Known - Seen the Anomaly, Analysed - Done it.  Can Analyse - to enable analysis when there are Other requirements - no effect when none.<p>\n";
   $Facts = Get_Factions();
   $Systems = Get_SystemRefs();
-
-  $Others = Gen_Get_Cond('Anomalies',"SystemId=" . $A['SystemId'] . " AND id!=$Aid");
+  $Others = [];
+  if ($A['SystemId']) $Others = Gen_Get_Cond('Anomalies',"SystemId=" . $A['SystemId'] . " AND id!=$Aid");
   echo "<form method=post action=AnomalyEdit.php><table border>";
   Register_Autoupdate("Anomaly",$Aid);
   echo fm_hidden('id',$Aid);
@@ -82,7 +82,7 @@
     echo "<td id=AnomalyLoc>";
   }
   if ($Others) {
-    echo "<tr><td>Other Anomalies here:<td colspan=8>";
+    echo "<tr><td>Other Anomalies here:<td colspan=6>";
     foreach($Others as $O) {
       echo "<a href=AnomalyEdit.php?id=" . $O['id'] . ">" . $O['Name'] ."</a><br>";
     }
@@ -108,6 +108,7 @@
   if (empty($A['Properties'])) unset($FAnomalyStates[-1]);
 
   foreach ($Facts as $F) {
+    if ($F{'NoAnomalies'}) continue;
     $Fid = $F['id'];
     $FA = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
     if ($FA) $FA = $FA[0];

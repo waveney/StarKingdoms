@@ -5,7 +5,7 @@
   include_once("PlayerLib.php");
   include_once("ThingLib.php");
 
-global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$ThingInclrs;
+global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$ThingInclrs,$GAMEID;
 
 //var_dump($_COOKIE,$_REQUEST);
   A_Check('Player');
@@ -158,7 +158,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
   Name, Class, What, sub cat, where, move, Level, Action
   */
 
-  $Things = Get_Things_Cond($Fid, "id>0 ORDER BY Priority DESC");
+  $Things = Get_Things_Cond($Fid, "id>0 AND GameId=$GAMEID ORDER BY Priority DESC");
   if (!empty($FACTION['HasPrisoners'])) {
     $Held = Get_Things_Cond(0,"PrisonerOf=$Fid AND BuildState=3");
     $Things = array_merge($Things,$Held);
@@ -177,9 +177,9 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
 
   $ShowCats = ['All','Ships','Armies','Agents','Chars', 'Other'];
   if (!empty($FACTION['HasPrisoners'])) $ShowCats[] = 'Prisoners';
-  $Show['ThingShow'] = $Faction[$GM?'GMThingType':'ThingType'];
+  $Show['ThingShow'] = ($Faction[$GM?'GMThingType':'ThingType'] ?? 0);
   $BuildCats = ['All','Plan','Building','Shakedown','Complete','Other'];
-  $Build['BuildShow'] = $Faction[$GM?'GMThingBuild':'ThingBuild'];
+  $Build['BuildShow'] = ($Faction[$GM?'GMThingBuild':'ThingBuild'] ?? 0);
 
   echo "<div class=floatright ><b>" . fm_radio("Show",$ShowCats,$Show,'ThingShow',' onchange=ThingListFilter()') . "<br>";
   echo fm_radio("Build State",$BuildCats, $Build,'BuildShow',' onchange=ThingListFilter()') . "</b></div>";
@@ -244,10 +244,10 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
 
   foreach ($Things as $T) {
     if (empty($T['Type'])) continue;
-    $Props = $ThingTypes[$T['Type']]['Properties'];
+    $Props = ($ThingTypes[$T['Type']]['Properties']??0);
 
     $Tid = $T['id'];
-    $Name = $ThingTypes[$T['Type']]['Name'];
+    $Name = ($ThingTypes[$T['Type']]['Name']??'Unknown');
     if (!$Name) $Name = "Unknown Thing $Tid";
 
     if ($T['Whose'] != $Fid) {
@@ -281,8 +281,8 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
     echo "<td>" . $T['Class'];
     echo "<td>" . $Name;
     echo "<td>" . $T['Level'];
-    echo "<td>" . (($RowClass == 'Prisoner') ? "<span style='background:" . $Factions[$T['Whose']]['MapColour'] . "'>[" . $Factions[$T['Whose']]['Name'] . "]</span>" :
-                 $T['Orders']);
+    echo "<td>" . (($RowClass == 'Prisoner') ? "<span style='background:" . ($Factions[$T['Whose']]['MapColour']??'white') . "'>[" .
+                 ($Factions[$T['Whose']]['Name']??'Unknown') . "]</span>" : $T['Orders']);
     echo "<td><center>" . (($Props & THING_HAS_HEALTH)? $T['CurHealth'] . ' / ' . $T['OrigHealth'] : "-");
     if (!empty($T['PrisonerOf'])) {
       echo "<td>Prisoner";
@@ -303,7 +303,7 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
       if ($T['Instruction']) echo $ThingInstrs[abs($T['Instruction'])];
       if (($T['Instruction'] == 0 || $T['Instruction'] == 5 ) && (($Props & THING_CAN_MOVE) && ( $T['BuildState'] == 3))) {
         if ( (($T['LinkId'] >=0 ) || ($T['LinkId'] == LINK_FOLLOW) )&& ($T['CurHealth'] > 0 || ($Props & THING_HAS_HEALTH) ==0)) {
-          if ($Faction['TurnState'] == 1) {
+          if (($Faction['TurnState']??0) == 1) {
             echo " <a href=PMoveThing.php?id=" . $T['id'] . ">Move</a>";
           } else {
           }
@@ -334,8 +334,8 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
     $Modules = Get_Modules($Tid);
     $Up = 0;
     foreach ($Modules as $M) {
-      $Mt = $ModTypes[$M['Type']];
-      if (($Mt['Leveled'] & 1) == 0) continue;
+      $Mt = ($ModTypes[$M['Type']]??0);
+      if ((($Mt['Leveled']??0) & 1) == 0) continue;
       if ($M['Level'] < $Mt['Target']) {
         $Up += $M['Number'];
       }
@@ -356,8 +356,8 @@ global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildSta
 
   }
   if (Access('God'))  echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=15 class=NotSide><textarea id=Debug></textarea>";
-  echo "</table></div onload=ListThingSetup($Fid,$GM," . ($GM?$Faction['GMThingType']:$Faction['ThingType']) . "," .
-       ($GM?$Faction['GMThingBuild']:$Faction['ThingBuild']) . ")>\n";
+  echo "</table></div onload=ListThingSetup($Fid,$GM," . ($GM?($Faction['GMThingType']??0):$Faction['ThingType']) . "," .
+       ($GM?($Faction['GMThingBuild']??0):$Faction['ThingBuild']) . ")>\n";
 
   if ($Fid) {
     echo "<h1>Logistics</h1>";

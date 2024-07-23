@@ -12,12 +12,15 @@ function New_Thing(&$T) {
   $FactNames = Get_Faction_Names();
   $Fact_Colours = Get_Faction_Colours();
   $Systems = Get_SystemRefs();
+  $BPs = BluePrintList(10000);
+//  $BPs = array_shift($BPs,'');
   if (!isset($T['Whose'])) $T['Whose'] = 0;
 
   echo "<h1>Create Thing:</h1>";
   echo "<form method=post action=ThingEdit.php>";
   echo "<table><tr><td>Type:<td>" . fm_select($ttn,$T,'Type');
   echo "<tr>" . fm_text("Name",$T,'Name');
+  echo "<tr>" . fm_select('Blue Print',$T,'BluePrint',1);
   echo "<tr>" . fm_number("Level",$T,'Level');
   echo "<tr>" . fm_radio('Whose',$FactNames ,$T,'Whose','',1,'colspan=6','',$Fact_Colours,0);
   echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId');
@@ -50,7 +53,7 @@ function New_Thing(&$T) {
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
     case 'NEW' :
-      $T = ['Level'=>1, 'BuildState'=>3, 'LinkId'=>0];
+      $T = ['Level'=>1, 'BuildState'=>3, 'LinkId'=>0, 'BluePrint'=>0];
       New_Thing($T);
       break;
 

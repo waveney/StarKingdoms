@@ -1176,7 +1176,7 @@ function BluePrintList($Lvl=10000,$Props='') {
   }
 
   foreach($BPlst as $i=>$BP) if ($BP['GatedOn']) {
-
+    if (!eval("return " . $BP['GatedOn'] . ";" )) unset($BPlst[$i]);
   }
   return $BPList;
 }

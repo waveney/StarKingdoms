@@ -151,7 +151,7 @@ function Show_Thing(&$T,$Force=0) {
       }
     } else if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
       if ($GM && Feature('BluePrints')) {
-        echo fm_number1('Blue Print',$T,'BluePrint','','min=-100 max=10000');
+        echo fm_number1('Blue Print',$T,'BluePrint','','min=-100 max=10000') ;
         if ($T['BluePrint']) echo "<a href=ThingEdit.php?i=" . $T['BluePrint'] . ">View</a>";
       }
 // Note Special meaning of -ve LinkId numbers:

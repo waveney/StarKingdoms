@@ -3462,6 +3462,7 @@ function SpotAnomalies() {
       if (( $OnPlanet && (($TTypes[$T['Type']]['Props'] & THING_HAS_ARMYMODULES) > 0)) ||
           (!$OnPlanet && (($TTypes[$T['Type']]['Props'] & THING_HAS_SHIPMODULES) > 0 ))) {
 // if ($Aid == 45) echo "Checking " . $T['id'] . "<br>";
+        if ($Facts[$T['Whose']]['NoAnomalies']) continue;
         if ($T['Whose'] != $LastWho) {
           $LastWho = $T['Whose'];
           $LastAn = 0;

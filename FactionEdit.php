@@ -76,7 +76,7 @@ function Show_Faction(&$F,$Mode) {
     (($GM)? fm_select($PlayerState,$F,'TurnState'): $PlayerState[$F['TurnState']]);
 
   if ($GM) {
-    echo "<td class=NotSide>" . fm_checkbox("NPC",$F,'NPC');
+    echo "<td class=NotSide" . fm_checkbox("NPC",$F,'NPC') . "<td class=NotSide" . fm_checkbox('No Anomalies',$F,'NoAnomalies');
     echo "<tr>" . fm_number('Credits',$F,'Credits',' class=NotCSide') . fm_number('Physics Points', $F,'PhysicsSP',' class=NotCSide');
     echo "<tr>" . fm_number('Engineering Points', $F,'EngineeringSP',' class=NotCSide') .
       fm_number('Xenology Points', $F,'XenologySP',' class=NotCSide');
