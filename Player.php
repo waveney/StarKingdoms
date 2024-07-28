@@ -69,7 +69,7 @@ function ValidateTurn($For = 0) {
     switch ($ThingInstrs[abs($T['Instruction'])]) {
       case 'Colonise':
         $Prog = Has_Tech($T['Whose'], 'Planetary Construction');
-        $Mods = Get_ModulesType($Tid, 10);
+        $Mods = Get_ModulesType($Tid, 'Colonisation Gear');
         if ($Prog*$Mods[0]['Number'] == 0) {
           GMLog("Colonisation by <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "Has zero progress - Tell Richard");
           FollowUp($T['Whose'],"Colonisation by <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "Has zero progress - Tell Richard");
@@ -94,7 +94,7 @@ function ValidateTurn($For = 0) {
       case 'Make Warpgate':
       case 'Link Repair':
         $Prog = Has_Tech($T['Whose'],'Deep Space Construction');
-        $Mods = Get_ModulesType($Tid, 3);
+        $Mods = Get_ModulesType($Tid, 'Deep Space Construction');
         $ProgGain = $Prog*$Mods[0]['Number'];
         GMLog("$ProgGain progress on " . $ThingInstrs[abs($T['Instruction'])] . " for " . $Facts[$T['Whose']]['Name'] . ":" . $T['Name']);
 
@@ -105,7 +105,7 @@ function ValidateTurn($For = 0) {
 
       case 'Collaborative DSC': // Dist1 has Thing number being helped
         $Prog = Has_Tech($T['Whose'],'Deep Space Construction');
-        $Mods = Get_ModulesType($Tid, 3);
+        $Mods = Get_ModulesType($Tid, 'Deep Space Construction');
         $ProgGain = $Prog*$Mods[0]['Number'];
         $HT = Get_Thing($T['Dist1']);
         if ($HT && $HT['Instruction']) {

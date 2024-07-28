@@ -2,7 +2,7 @@
   include_once("sk.php");
   include_once("GetPut.php");
   include_once("ThingLib.php");
-  
+
   A_Check('GM');
 
   dostaffhead("List Things",["js/ProjectTools.js"]," onload=ListThingSetup(0,1,0,0)");
@@ -11,7 +11,7 @@
 
   $Systems = Get_SystemRefs();
   $Factions = Get_Factions();
-  
+
   if (isset($_REQUEST['AT'])) {
     $Sids = array_flip($Systems);
     if (isset($Sids[$_REQUEST['AT']])) {
@@ -27,7 +27,7 @@
   }
 //  $ThingTypes = Thing_Type_Names();
   $ThingTypes = Get_ThingTypes();
-    
+
   if (!$Things) {
     echo "<h2>No Things found</h2>";
     echo "<h2><a href=ThingEdit.php?ACTION=NEW>New Thing</a></h2>";
@@ -38,13 +38,13 @@
   $Show['ThingShow'] = 0;
   $BuildCats = ['All','Plan','Building','Shakedown','Complete','Other'];
   $Build['BuildShow'] = 0;
-  
+
   echo "<div class=floatright ><b>" . fm_radio("Show",$ShowCats,$Show,'ThingShow',' onchange=ThingListFilter()') . "<br><br>";
   echo fm_radio("Build State",$BuildCats,$Build,'BuildShow',' onchange=ThingListFilter()') . "</b></div>";
 
   echo "<h1>Things $xtra</h1>";
   echo "Clicking on the id takes you to GM level edit access, clickinging on Planning takes you to player level Plan access<br>\n";
-  
+
   $coln = 0;
   echo "<div class=tablecont><table id=indextable border width=100% style='min-width:1400px'>\n";
   echo "<thead><tr>";
@@ -98,7 +98,7 @@
     } else  if ($ThingTypes[$T['Type']]['Name'] == 'Named Character') {
       $RowClass = 'Chars';
     } else {
-      $RowClass = 'Other';  
+      $RowClass = 'Other';
     }
 
 
@@ -114,18 +114,18 @@
       $Host = Get_Thing($T['SystemId']);
       echo "<td>On:<td>" . $Host['Name'];
     } else if ($T['LinkId'] == -6) {
-      echo "<td><a href=ThingList.php?AT=$Ref>$Ref</a><td>$Loc";      
+      echo "<td><a href=ThingList.php?AT=$Ref>$Ref</a><td>$Loc";
     }
-    
+
     echo "<td><a href=ThingEdit.php?id=$tid>$Name</a>";
-    echo "<td>" . ($who? $Factions[$T['Whose']]['Name'] : "");
+    echo "<td>" . ($T['BluePrint']<0?'Blue Print':($who? $Factions[$T['Whose']]['Name'] : ""));
     echo "<td>" . $ThingInstrs[$T['Instruction']];
     echo "<td>" . ($T['BuildState']? $BuildState[$T['BuildState']] : "<a href=ThingPlan.php?F=" . $T['Whose'] . "&id=$tid>Planning</a>" );
     echo "<td>" . sprintf('%0.3g',$T['Speed']);
 
   }
-      
-  echo "</tbody></table></div onload=ListThingSetup(0,1,0,0)>\n";  
+
+  echo "</tbody></table></div onload=ListThingSetup(0,1,0,0)>\n";
 
   echo "<h2><a href=ThingEdit.php?ACTION=NEW>New Thing</a></h2>";
 

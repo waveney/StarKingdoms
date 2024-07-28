@@ -108,7 +108,7 @@
   if (empty($A['Properties'])) unset($FAnomalyStates[-1]);
 
   foreach ($Facts as $F) {
-    if ($F{'NoAnomalies'}) continue;
+    if ($F['NoAnomalies']) continue;
     $Fid = $F['id'];
     $FA = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
     if ($FA) $FA = $FA[0];

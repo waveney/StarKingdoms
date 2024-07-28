@@ -441,3 +441,15 @@ function SetSysLoc(Sys,Loc,res) {
     $('#AnomalyLoc').html(rslt);
   })
 }
+
+function ListSelection(event,evid,Listshowid,xclass='') {
+  debugger;
+  var ListSel = document.getElementById(evid).value;  
+  $("[id^=" + Listshowid + "]").hide();
+  if ((lshowed = $("#" + Listshowid + ListSel))) {
+    lshowed.show();
+    if (xclass) $("." +xclass).hide();
+  } else {
+    if (xclass) $("." +xclass).show();
+  }
+}

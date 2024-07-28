@@ -153,7 +153,7 @@ function Show_Thing(&$T,$Force=0) {
       if ($GM && Feature('BluePrints')) {
         echo fm_number1('Blue Print',$T,'BluePrint','','min=-100 max=10000') ;
         if ($T['BluePrint'] > 0) {
-          echo "<a href=ThingEdit.php?i=" . $T['BluePrint'] . ">View</a>";
+          echo "<a href=ThingEdit.php?id=" . $T['BluePrint'] . ">View</a>";
         } else if ($T['BluePrint'] < 0) {
           echo "Is a Blue Print";
         } else  {
@@ -601,7 +601,14 @@ function Show_Thing(&$T,$Force=0) {
 //    foreach($DTs as $M) $MTNs[$M['id']] = $M['Name'];
     $MTNs = Get_Valid_Modules($T);
     $Mods = Get_Modules($Tid);
+    if (($Blue = ($T['BluePrint']>0))) {
+      $BMods = Get_Modules($T['BluePrint']);
+    }
+    $FlexUsed = 0;
+    $FlexAvailD = ($Blue?Get_ModulesType($Tid,'Flexible'):0);
+    $FlexAvail = ($FlexAvailD?$FlexAvailD['Number']:0);
 
+ //   var_dump($BMods);
     $NumMods = count($Mods);
     $dc=0;
     $totmodc = 0;
@@ -616,17 +623,20 @@ function Show_Thing(&$T,$Force=0) {
         if (($dc++)%2 == 0)  echo "<tr>";
         echo "<td>" . (isset($MTNs[$D['Type']])? fm_Select($MTNs, $D , 'Type', 1,'',"ModuleType-$did") : "<span class=red>INV:" .
                       fm_Select($MNs, $D , 'Type', 1,'',"ModuleType-$did") . "</span>" )
-                    . (($MTs[$D['Type']]['Leveled']&1) ? fm_number1('Level', $D,'Level', '', ' class=Num3 ',"ModuleLevel-$did") :'') . ' # '
+                    . (($MTs[$D['Type']]['Leveled']&1) ? fm_number1('Level', $D,'Level', '', ' class=Num3 ',"ModuleLevel-$did") :'<td>') . ' # '
                     . fm_number0('', $D,'Number', '',' class=Num3 ',"ModuleNumber-$did")
+                    . (($Blue && !empty($BMods[$D['Type']]))? '(' . $BMods[$D['Type']]['Number'] . ') ' :'')
                     . "<button id=ModuleRemove-$did onclick=AutoInput('ModuleRemove-$did')>R</button>";
+
+        if ( $Blue && !empty($BMods[$D['Type']])) $FlexUsed += ($D['Number'] - $BMods[$D['Type']]['Number']);
         if ($D['Number'] < 0) echo " <b>Inactive</b>";
         if (!isset($MTNs[$D['Type']])) $BadMods += $D['Number'];
         $totmodc += $D['Number'] * $MTs[$D['Type']]['SpaceUsed'];
 
-        if ($D['Type'] == 4) {
+/*        if ($D['Type'] == 4) {
           $T['Sensors'] = $D['Number'];
           $T['SensorLevel'] = $D['Level'];
-        } else if ($D['Type'] == 9) $T['NebSensors'] = $D['Number'];
+        } else if ($D['Type'] == 9) $T['NebSensors'] = $D['Number'];*/
       }
       echo "<tr><td>Add Module Type<td>" . fm_Select($MTNs, NULL , 'Number', 1,'',"ModuleTypeAdd-$Tid");
       echo fm_number1("Max Modules",$T,'MaxModules','',' class=Num3 ');
@@ -634,15 +644,18 @@ function Show_Thing(&$T,$Force=0) {
 //        echo fm_number1("Deep Space",$T,'HasDeepSpace');
         echo fm_number1("Cargo Space",$T,'CargoSpace');
       }
+      //var_dump($FlexUsed,$FlexAvail)
       if ($totmodc > $T['MaxModules']) {
         echo "<td class=Err>($totmodc) TOO MANY MODULES\n";
       } elseif ($BadMods) {
         echo "<td class=Err>$BadMods INVALID MODULES\n";
+      } else if ($T['BluePrint'] > 0 && ($FlexAvail != $FlexUsed)){
+        echo "<td class=Err>$FlexAvail Flex slots avail, $FlexUsed Flex used.\n";
       } else {
         echo "<td>Module space used: $totmodc";
       }
       echo "<td>Speed: " . sprintf('%0.3g',$T['Speed']);
-    } else {
+    } else { // Player Mode
       if ($NumMods) echo "<tr><td rowspan=" . ceil(($NumMods+4)/4) . ">Modules:";
 
       foreach ($Mods as $D) {
@@ -742,7 +755,7 @@ function Show_Thing(&$T,$Force=0) {
 
     case 'Colonise': // Colonise
       if ((($Moving || $tprops & THING_HAS_CIVSHIPMODS) == 0 ) ) continue 2;
-      if (!Get_ModulesType($Tid,10)) continue 2;
+      if (!Get_ModulesType($Tid,'Colonisation Gear')) continue 2;
 
       $PlTs = Get_PlanetTypes();
       $Ps = Get_Planets($N['id']);
@@ -812,7 +825,7 @@ function Show_Thing(&$T,$Force=0) {
       continue 2; // NOt yet
 
     case 'Establish Embassy': // Establish Embassy
-      if (!Get_ModulesType($Tid,22) || empty($N) ) continue 2;  // Check if have Embassy & at homeworld
+      if (!Get_ModulesType($Tid,'Diplomatic Facilities') || empty($N) ) continue 2;  // Check if have Embassy & at homeworld
       if (!isset($N['id'])) continue 2;
       if (Get_Things_Cond($Fid,"Type=" . $TTNames['Embassy'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
       $Facts = Get_Factions();
@@ -939,7 +952,7 @@ function Show_Thing(&$T,$Force=0) {
 
     case 'Build Planetary Mine': // Zabanian special
       if ((($Moving || $tprops & THING_HAS_CIVSHIPMODS) == 0 ) ) continue 2;
-      if (!Get_ModulesType($Tid,25)) continue 2;
+      if (!Get_ModulesType($Tid,'Advanced Salvage Rig ')) continue 2; // WRONG
       break;
 
     case 'Transfer':
@@ -1004,7 +1017,7 @@ function Show_Thing(&$T,$Force=0) {
       foreach($OtherThings as $OT) {
         if (($OT['Whose'] == $Fid) || $IHaveCollab || $HasColab[$OT['Whose']]) {
           if ($ThingProps[$OT['Type']] & THING_HAS_MODULES) {
-            $OMods = Get_ModulesType($OT['id'],3);
+            $OMods = Get_ModulesType($OT['id'],'Deep Space Construction');
             if (empty($OMods) || $OT['id'] == $T['id']) continue;
             $OtherList[$OT['id']] = $OT['Name'];
           }
@@ -1090,7 +1103,7 @@ function Show_Thing(&$T,$Force=0) {
       $DTs = Get_DistrictTypes();
       foreach ($DTs as $D) if ($D['Props'] &1) $PrimeMods[$D['id']] = $D['Name'];
       echo "<br>District to Establish:" . fm_select($PrimeMods,$T,'Dist1');
-      if (Get_ModulesType($Tid,27)) echo "<br>Second District (must be different):" .fm_select($PrimeMods,$T,'Dist2');
+      if (Get_ModulesType($Tid,'Self Repairing Robot Armour')) echo "<br>Second District (must be different):" .fm_select($PrimeMods,$T,'Dist2'); // TODO WRONG
       $ProgShow = 1;
       $Cost = -1;
       break;

@@ -610,15 +610,20 @@ function Get_Modules($Thing) {
   global $db,$GAMEID;
   $Ms = [];
   $res = $db->query("SELECT * FROM Modules WHERE ThingId=$Thing");
-  if ($res) while ($ans = $res->fetch_assoc()) $Ms[$ans['id']] = $ans;
+  if ($res) while ($ans = $res->fetch_assoc()) $Ms[$ans['Type']] = $ans;
   return $Ms;
 }
 
 function Get_ModulesType($Thing,$Type) {
   global $db,$GAMEID;
+  static $MTNames = [];
   $Ms = [];
+  if (!is_numeric($Type) ){
+    if (empty($MTNames )) $MTNames = Gen_Get_Names_Flip('ModuleTypes');
+    $Type = ($MTNames[$Type]??0);
+  }
   $res = $db->query("SELECT * FROM Modules WHERE ThingId=$Thing AND Type=$Type");
-  if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
+  if ($res) $Ms = $res->fetch_assoc();
   return $Ms;
 }
 

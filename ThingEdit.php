@@ -9,19 +9,22 @@ function New_Thing(&$T) {
   global $FACTION;
 
   $ttn = Thing_Type_Names();
+  $ttypes = Get_ThingTypes();
   $FactNames = Get_Faction_Names();
   $Fact_Colours = Get_Faction_Colours();
   $Systems = Get_SystemRefs();
   $BPs = BluePrintList(10000);
-//$BPs[-1] = 'Is a Blueprint';
-//  array_unshift($BPs,[-1 =>'Is a Blueprint']);
   if (!isset($T['Whose'])) $T['Whose'] = 0;
   echo "<h1>Create Thing:</h1>";
   echo "<form method=post action=ThingEdit.php>";
-  echo "<table><tr><td>Type:<td>" . fm_select($ttn,$T,'Type');
+  echo "<table><tr><td>Type:<td>" . fm_select($ttn,$T,'Type',0," onchange=ListSelection(event,'Type','BPSet','Tlevel')");
   echo "<tr>" . fm_text("Name",$T,'Name');
-  echo "<tr><td>Blue print:<td>" . fm_select($BPs,$T,'BluePrint',1);
-  echo "<tr>" . fm_number("Level",$T,'Level');
+  foreach ($ttypes as $i=>$tt) {
+    if (($tt['Properties'] & THING_HAS_BLUEPRINTS) && !empty($BPs[$i])) {
+      echo "<tr id=BPSet$i hidden><td>Blue print:<td>" . fm_select($BPs[$i],$T,'BluePrint',1);
+    }
+  }
+  echo "<tr class=Tlevel>" . fm_number("Level",$T,'Level');
   echo "<tr>" . fm_radio('Whose',$FactNames ,$T,'Whose','',1,'colspan=6','',$Fact_Colours,0);
   echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId',1);
   echo "<tr><td>BuildState:<td>" . fm_select($BuildState,$T,'BuildState');
@@ -60,20 +63,37 @@ function New_Thing(&$T) {
     case 'Create' : // From New Thing
       if (!isset($_POST['SystemId'])) {
         echo "No System Given";
-        New_Thing($_POST);
+        New_Thing($_POST); // TODO fix 4 Blue
       }
-      $_POST['GameId'] = $GAMEID;
-      $_POST['NewSystemId'] = $_POST['SystemId'];
-      $tid = Insert_db_post('Things',$T);
+      if ($_POST['BluePrint'] > 0) {
+        $T = Thing_Duplicate($_POST['BluePrint']);
+        $T['Class'] = $T['Name'];
+        $T['Name'] = $_POST['Name'];
+        $T['NewSystemId'] = $T['SystemId'] = $_POST['SystemId'];
+        $T['Whose'] = $_POST['Whose'];
+        $T['BuildState'] = $_POST['BuildState'];
+        $T['BluePrint'] = $_POST['BluePrint'];
+        Put_Thing($T);
+        $tid = $T['id'];
+      } else {
+        $_POST['GameId'] = $GAMEID;
+        $_POST['NewSystemId'] = $_POST['SystemId'];
+        $tid = Insert_db_post('Things',$T);
+      }
       $T = Get_Thing($tid); // Re-read to get defaults
+
       RefitRepair($T);
       $T['id'] = $tid;
 
-      if ($T['Type'] == 6) { // Outpost
+      if (Feature('OutpostsControl') && ($T['Type'] == 6)) { // Outpost - TODO change after discord
         $N = Get_System($T['SystemId']);
         $N['Control'] = $T['Whose'];
         Put_System($N);
         echo "<h2>System Control Updated</h2>\n";
+      }
+
+      if (Get_ModulesType($tid,'Flexible')) {
+        echo "<h2 class=Err>WARNING this has flexible modules...</h2>";
       }
       break;
 
@@ -713,7 +733,7 @@ function New_Thing(&$T) {
   }
 
   if ($GM) {
-    echo "<h2>GM: <a href=ThingEdit.php?id=$tid&FORCE>This page in Player Mode</a>";
+    echo "<h2>GM: <a href=ThingEdit.php?id=$tid&FORCE>This page in Player Mode</a></h2>";
 //          (Access('God')?", <a href=ThingEdit.php?id=$tid&EDHISTORY>Edit History</a>":"") . "</h2>";
   }
   if (empty($T)) {

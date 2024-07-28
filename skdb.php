@@ -48,7 +48,7 @@ function Gen_Get_All($Table, $extra='', $idx='id') {
 function Gen_Get_Cond($Table,$Cond, $idx='id') {
   global $db;
   $Ts = [];
-  //  var_dump($Cond);
+//    var_dump($Cond);
   $res = $db->query("SELECT * FROM $Table WHERE $Cond");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans[$idx]] = $ans;
   return $Ts;
@@ -56,8 +56,6 @@ function Gen_Get_Cond($Table,$Cond, $idx='id') {
 
 function Gen_Get_Cond1($Table,$Cond) {
   global $db;
-  //  var_dump($Cond);
-  //  $Q = "SELECT * FROM $Table WHERE $Cond";var_dump("Q=",$Q);
   $res = $db->query("SELECT * FROM $Table WHERE $Cond LIMIT 1");
   if ($res) {
     $ans = $res->fetch_assoc();

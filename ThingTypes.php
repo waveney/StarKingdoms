@@ -32,7 +32,8 @@
        "100=Normal Move, 200=Army Move, 400= Two Factions, 800=Inherit Minerals,<br>" .
        "1000=Can be Advanced, 2000=Instant Create, 4000=Need Cargo Space, 8000=No Named Chars, " .
        "10000=Do Projects (Wo Dists), 20000=Direct Move, 40000=Move 2nd, 80000=Has Health<br>" .
-       "100000=Has Control, 200000=Needs Support, 400000=Hostile, 800000=Can Splat, 1000000=Can Leave Debris<br>\n";
+       "100000=Has Control, 200000=Needs Support, 400000=Hostile, 800000=Can Splat, 1000000=Can Leave Debris," .
+       "2000000=Is Small, 4000000=Blueprints<p>\n";
   echo "Eyes:  1 = in space, 2= sens, 4= neb sens, 8=ground 1, 16 ground 2 etc<br>\n"; // TODO no ground differntion yet
   echo "SeenBy: What Eyes can see this<br>\n";
 //  echo "Game 0 = All, N = Game N<br>";

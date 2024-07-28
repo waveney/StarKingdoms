@@ -2255,7 +2255,7 @@ function InstructionsProgress() {
     switch ($ThingInstrs[abs($T['Instruction'])]) {
       case 'Colonise':
         $Prog = Has_Tech($T['Whose'], 'Planetary Construction');
-        $Mods = Get_ModulesType($Tid, 10);
+        $Mods = Get_ModulesType($Tid, 'Colonisation Gear');
         if ($Prog*$Mods[0]['Number'] == 0) {
           GMLog("Colonisation by <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "Has zero progress - Tell Richard");
           FollowUp($T['Whose'],"Colonisation by <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "Has zero progress - Tell Richard");
@@ -2281,8 +2281,8 @@ function InstructionsProgress() {
       case 'Make Warpgate':
       case 'Link Repair':
 //        $Prog = Has_Tech($T['Whose'],'Deep Space Construction');
-        $Mods = Get_ModulesType($Tid, 3);
-        $ProgGain = $Mods[0]['Level']*$Mods[0]['Number'];
+        $Mods = Get_ModulesType($Tid, 'Deep Space Construction');
+        $ProgGain = $Mods['Level']*$Mods['Number'];
         GMLog("$ProgGain progress on " . $ThingInstrs[abs($T['Instruction'])] . " for " . $Facts[$T['Whose']]['Name'] . ":" . $T['Name']);
 
         $T['Progress'] = min($T['ActionsNeeded'],$T['Progress']+$ProgGain);
@@ -2292,8 +2292,8 @@ function InstructionsProgress() {
       case 'Collaborative DSC': // Dist1 has Thing number being helped
         break; // Now in second pass
 //        $Prog = Has_Tech($T['Whose'],'Deep Space Construction');
-        $Mods = Get_ModulesType($Tid, 3);
-        $ProgGain = $Mods[0]['Level']*$Mods[0]['Number'];
+        $Mods = Get_ModulesType($Tid, 'Deep Space Construction');
+        $ProgGain = $Mods['Level']*$Mods['Number'];
         $HT = Get_Thing($T['Dist1']);
         if ($HT) {
           if ($HT['Instruction'] && ($IntructProps[abs($HT['Instruction'])] & 1)) {
@@ -2378,8 +2378,8 @@ function CollaborativeProgress() {
     switch ($ThingInstrs[abs($T['Instruction'])]) {
       case 'Collaborative DSC': // Dist1 has Thing number being helped
 //        $Prog = Has_Tech($T['Whose'],'Deep Space Construction');
-        $Mods = Get_ModulesType($Tid, 3);
-        $ProgGain = $Mods[0]['Level']*$Mods[0]['Number'];
+        $Mods = Get_ModulesType($Tid, 'Deep Space Construction');
+        $ProgGain = $Mods['Level']*$Mods['Number'];
         $HT = Get_Thing($T['Dist1']);
         if ($HT) {
           if ($HT['Instruction'] && ($IntructProps[abs($HT['Instruction'])] & 1)) {
@@ -2795,7 +2795,7 @@ function InstructionsComplete() {
       $D = ['HostType' =>1, 'HostId'=> $P['id'], 'Type'=> $T['Dist1'], 'Number'=>1, 'GameId'=>$GAME['id'], 'TurnStart'=>$GAME['Turn']];
       if ($D['Type'] == 0) $D['Type'] = 1;
       Put_District($D);
-      if (Get_ModulesType($Tid,27) && $T['Dist2']) {
+      if (Get_ModulesType($Tid,'Self Repairing Robot Armour') && $T['Dist2']) {
         $D1 = ['HostType' =>1, 'HostId'=> $P['id'], 'Type'=> $T['Dist2'], 'Number'=>1, 'GameId'=>$GAME['id'], 'TurnStart'=>$GAME['Turn']];
         Put_District($D1);
       }
@@ -3540,8 +3540,8 @@ function MilitiaArmyRecovery() {
 
     if ($TTypes[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) {
       $Self = Get_ModulesType($T['id'],$MTNs['Self-Repairing Armour']);
-      if (isset($Self[0])) {
-        $Rep = $Self[0]['Number']*$Self[0]['Level']*2;
+      if (isset($Self['Number'])) {
+        $Rep = $Self['Number']*$Self['Level']*2;
         $T['CurHealth'] = min($T['OrigHealth'],$T['CurHealth']+$Rep);
         Put_Thing($T);
         if ($T['Whose']) TurnLog($T['Whose'],$T['Name'] . " recovered $Rep health",$T);

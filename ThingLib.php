@@ -55,6 +55,9 @@ define('THING_NEEDS_SUPPORT',2097152);
 define('THING_IS_HOSTILE',4194304);
 define('THING_CAN_BE_SPLATED',8388608);
 define('THING_LEAVES_DEBRIS',16777216);
+define('THING_IS_SMALL',33554432);
+define('THING_HAS_BLUEPRINTS',67108864);
+
 
 define('LINK_ON_BOARD',-1);
 define('LINK_BOARDING',-2);
@@ -321,6 +324,7 @@ function Max_Modules(&$T) {
       }
     } else {
       $v = [0,6,16,32,56,88,128,176,232,296,368][$T['Level']];
+      if ($TTs['Properties'] & THING_IS_SMALL ) $v -= $T['Level'];
     }
     return $v;
   }
@@ -501,18 +505,18 @@ function NebScanners(&$T) {
 }
 
 function Calc_Scanners(&$T) {
-  $MTNames = Gen_Get_Names_Flip('ModuleTypes');
-  $mods = Get_ModulesType($T['id'],$MTNames['Sensors']) + Get_ModulesType($T['id'],$MTNames['Planetary Survey Corps']);
-  $nebs = Get_ModulesType($T['id'],$MTNames['Nebula Sensors']);
-  $Cargo = Get_ModulesType($T['id'],$MTNames['Cargo Space']);
-  $Cryo = Get_ModulesType($T['id'],$MTNames['Cryo Pods']);
-  $T['Sensors'] = (($mods && ($mods[0]['Number']>0))?$mods[0]['Number']:0);
-  $T['SensorLevel'] = (($mods && ($mods[0]['Level']>0))?$mods[0]['Level']:0);
-  $T['NebSensors'] = ( (($nebs && ($nebs[0]['Number']>0))?$nebs[0]['Number']:(($T['Type'] == 9 && $T['Level'] > 1)?($T['Level']-1):0)));
-  $T['CargoSpace'] = ( (($Cargo && ($Cargo[0]['Number']>0))?$Cargo[0]['Number']*($Cargo[0]['Level']+1):0) +
-                       (($Cryo  && ($Cryo[0]['Number']>0))?$Cryo[0]['Number']*($Cryo[0]['Level']+3):0));
-  if (($Deep = Get_ModulesType($T['id'],$MTNames['Deep Space Construction'] )) && ($Deep[0]['Number']>0)) {
-    $T['HasDeepSpace'] = $Deep[0]['Number']*$Deep[0]['Level'];
+  $mods = Get_ModulesType($T['id'],'Sensors');
+  $psurv = Get_ModulesType($T['id'],'Planetary Survey Corps');
+  $nebs = Get_ModulesType($T['id'],'Nebula Sensors');
+  $Cargo = Get_ModulesType($T['id'],'Cargo Space');
+  $Cryo = Get_ModulesType($T['id'],'Cryo Pods');
+  $T['Sensors'] = (($mods && ($mods['Number']>0))?$mods['Number']:0)  + (($psurv && ($psurv['Number']>0))?$psurv['Number']:0) ;
+  $T['SensorLevel'] = (($mods && ($mods['Level']>0))?$mods['Level']:0);
+  $T['NebSensors'] = ( (($nebs && ($nebs['Number']>0))?$nebs['Number']:(($T['Type'] == 9 && $T['Level'] > 1)?($T['Level']-1):0)));
+  $T['CargoSpace'] = ( (($Cargo && ($Cargo['Number']>0))?$Cargo['Number']*($Cargo['Level']+1):0) +
+                       (($Cryo  && ($Cryo['Number']>0))?$Cryo['Number']*($Cryo['Level']+3):0));
+  if (($Deep = Get_ModulesType($T['id'],'Deep Space Construction' )) && ($Deep['Number']>0)) {
+    $T['HasDeepSpace'] = $Deep['Number']*$Deep['Level'];
   }else {
     $T['HasDeepSpace'] = 0;
   }
@@ -1003,7 +1007,7 @@ function Gates_Avail($Fid) {
 function Do_Mine_Damage(&$T,&$Mine,&$N=0,$InTurn=0) { // Needs changes
 // Do damage and report
 
-  if (Get_ModulesType($T['id'],23)) return;
+  if (Get_ModulesType($T['id'],'Minesweepers')) return;
   $Dsc = Has_Tech($Mine['Whose'],'Deep Space Construction');
   $Dam = $Dsc * $Mine['Level']*5;
   if (empty($N)) $N = Get_System($Mine['SystemId']);
@@ -1168,19 +1172,25 @@ function Recalc_Prisoner_Counts() {
 
 function BluePrintList($Lvl=10000,$Props='') {
   global $GAMEID,$db;
-  $BPlst = [-1 =>'Is a Blueprint'];
+  $BPlst = [];
   if ($Props) {
-    $res = $db->query("SELECT T.* FROM Things T, ThingTypes Y WHERE T.GameId=$GAMEID AND T.Type=Y.id AND (Y.Props&$Props)!=0");
+    $res = $db->query("SELECT T.* FROM Things T, ThingTypes Y WHERE T.GameId=$GAMEID AND Level<$Lvl AND T.Type=Y.id AND (Y.Props&$Props)!=0");
     if ($res) {
-      while ($ans = $res->fetch_assoc()) { $BPlst[$ans['id']] = $ans; };
+      while ($BP = $res->fetch_assoc()) {
+        if (($BP['GatedOn']??0) && !eval("return " . $BP['GatedOn'] . ";" )) continue;
+        $tt = $BP['Type'];
+        if (empty($BPlst[$tt])) $BPlst[$tt][-1] = 'Is a Blueprint';
+        $BPlst[$tt][$BP['id']] = $BP['Name'];
+      };
     }
   } else {
     $BPs = Gen_Get_Cond('Things',"GameId=$GAMEID AND Level<$Lvl AND BluePrint<0");
-    if ($BPs) foreach($BPs as $i=>$BP) $BPLst[$i] = $BP['Name'];
-  }
-
-  foreach($BPlst as $i=>$BP) if ($BP['GatedOn']??0) {
-    if (!eval("return " . $BP['GatedOn'] . ";" )) unset($BPlst[$i]);
+    foreach($BPs as $i=>$BP) {
+      if (($BP['GatedOn']??0) && !eval("return " . $BP['GatedOn'] . ";" )) continue;
+      $tt = $BP['Type'];
+      if (empty($BPlst[$tt])) $BPlst[$tt][-1] = 'Is a Blueprint';
+      $BPlst[$tt][$BP['id']] = $BP['Name'];
+    };
   }
   return $BPlst;
 }
