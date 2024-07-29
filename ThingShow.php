@@ -445,6 +445,7 @@ function Show_Thing(&$T,$Force=0) {
 
   $Have = Get_Things_Cond(0," (LinkId=-1 OR LinkId=-3) AND SystemId=$Tid ");
   $Having = Get_Things_Cond(0," (LinkId=-2 OR LinkId=-4) AND NewSystemId=$Tid ");
+  $Slots = Feature('ModuleSlots');
 
   if ($Have || $Having) {
     echo "<tr><td>Carrying:<td colspan=6>Note: To Unload after moving PLEASE put the move order in for the transport first.<br>";
@@ -631,7 +632,7 @@ function Show_Thing(&$T,$Force=0) {
         if ( $Blue && !empty($BMods[$D['Type']])) $FlexUsed += ($D['Number'] - $BMods[$D['Type']]['Number']);
         if ($D['Number'] < 0) echo " <b>Inactive</b>";
         if (!isset($MTNs[$D['Type']])) $BadMods += $D['Number'];
-        $totmodc += $D['Number'] * $MTs[$D['Type']]['SpaceUsed'];
+        $totmodc += $D['Number'] * ($Slots?$MTs[$D['Type']]['SpaceUsed']:1);
 
 /*        if ($D['Type'] == 4) {
           $T['Sensors'] = $D['Number'];
@@ -689,7 +690,7 @@ function Show_Thing(&$T,$Force=0) {
           echo ". <span class=Blue> Note you have Level: $CLvl </span>";
         }
         if (!isset($MTNs[$D['Type']])) $BadMods += $D['Number'];
-        $totmodc += $D['Number'] * $MTs[$D['Type']]['SpaceUsed'];
+        $totmodc += $D['Number'] * ($Slots?$MTs[$D['Type']]['SpaceUsed']:1);
         };
 
       if ($totmodc > $T['MaxModules']) {

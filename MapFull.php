@@ -118,11 +118,31 @@
 
 
   $Nodes = Get_Systems();
+  $PlanetTypes = Get_PlanetTypes();
+  foreach($Nodes as $ref=>$N){
+    $Sid = $N['id'];
+    $Planets = Get_Planets($Sid);
+    $Nodes[$ref]['Hospitable'] = 0;
+    foreach ($Planets as $Pid=>$P) {
+      if ($PlanetTypes[$P['Type']]['Hospitable']) {
+        $Nodes[$ref]['Hospitable']++;
+      }
+      $Moons = Get_Moons($Pid);
+      foreach ($Moons as $Mid=>$M) {
+        if ($PlanetTypes[$M['Type']]['Hospitable']) {
+          $Nodes[$ref]['Hospitable']++;
+        }
+      }
+    }
+  }
+
   $Levels = Get_LinkLevels();
 // var_dump($Levels);
   $Factions = Get_Factions();
   $Historical = 0;
   $OtherInt = 0;
+  $HabitableShape = Feature('HabitableShape','box');
+  $InHabitableShape = Feature('InHabitableShape','box');
 
   while ($RedoMap) {
     $Dot = fopen("cache/$GAMEID/Fullmap$Faction$typ.dot","w+");
@@ -185,8 +205,10 @@
         $Historical = 1;
       }
 
-      if ($typ) $atts .= " shape=box pos=\"" . ($N['GridX']*$XScale+(5-$N['GridY'])/2) . "," . (9-$N['GridY']) . "!\"";
-      $atts .= "  shape=box style=filled fillcolor=\"$Colour\" color=\"$BdrColour\"";
+      $atts .= " shape=" . ($N['Hospitable']?$HabitableShape:$InHabitableShape);
+      if ($typ) $atts .=
+          " pos=\"" . ($N['GridX']*$XScale+(5-$N['GridY'])/2) . "," . (9-$N['GridY']) . "!\"";
+      $atts .= " style=filled fillcolor=\"$Colour\" color=\"$BdrColour\"";
       if ($NodeName) {
         $atts .= NodeLab($ShortName, $N['Ref']); //($Faction==0?$N['Ref']:""));
       }

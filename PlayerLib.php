@@ -89,6 +89,7 @@ function Player_Page() {
 
   $TState = $PlayerState[$FACTION['TurnState']] ;
 
+
   echo "<h2>Player state: <span style='background:" . $PlayerStateColours[$FACTION['TurnState']] . "'>$TState</span> Turn:" .
        $GAME['Turn'] . "</h2>";
   if (($GM && $TState != 'Setup') || isset($_REQUEST['SEEALL'])) $TState = 'Turn Planning';
@@ -112,7 +113,7 @@ function Player_Page() {
     echo "<li><a href=ThingSetup.php?T=Army>Setup $ARMY" . "s</a>\n";
     if (Feature('Agents')) echo "<li><a href=ThingSetup.php?T=Agent>Setup Agents</a>\n";
     echo "<p>"; */
-    break;
+    if (!Access('God')) break;
 
   case 'Frozen':
   case 'Turn Submitted':

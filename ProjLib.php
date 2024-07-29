@@ -89,7 +89,7 @@ function Project_Finished(&$P,$Turn) {  // CODE ON HOLD
     case 'Research Supplemental Technology':
     case 'Research Ship Construction':
     case 'Research Supplemental ship Tech':
-    case 'Research Military Organisation':
+    case ('Research ' . Feature('MilTech')):
     case "Research Supplemental $ARMY Tech":
     case 'Research Intelligence Operations':
     case 'Research Supplemental Intelligence Tech':

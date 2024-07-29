@@ -54,10 +54,10 @@ function Check_Login($check=0) {
   return false;
 }
 
-function Set_Faction() {
+function Set_Faction($clog=1) {
   global $FACTION,$FID,$GAME,$GAMEID,$USERID,$USER,$Access_Type ;
   if (isset($FID)) return;
-  Check_Login();
+  if ($clog) Check_Login();
 
   $FACTION = [];
   $FID = 0;
@@ -74,7 +74,13 @@ function Set_Faction() {
       Get_Game($gid);
     }
   } else {
-    if ($USER['AccessLevel'] >= $Access_Type['God']) return;
+    if ($USER['AccessLevel'] >= $Access_Type['God']) {
+      if (isset($_COOKIE['SKF'])) {
+        $FID = $_COOKIE['SKF'];
+        $FACTION = Get_Faction($FID);
+      }
+      return;
+    }
     include_once("StarKingdoms.php");
   }
 
@@ -97,7 +103,10 @@ function Set_Faction() {
 function Access($level,$subtype=0,$thing=0) { // VERY different from fest code now
   global $Access_Type,$USER,$USERID,$GAMEID,$FACTION,$FID,$GAME;
   Check_Login();
-  if ($USER['AccessLevel'] >= $Access_Type['God']) return 1;
+  if ($USER['AccessLevel'] >= $Access_Type['God']) {
+    Set_Faction(0);
+    return 1;
+  }
 
   Set_Faction();
 

@@ -855,6 +855,11 @@ function Get_ThingTypes($AllG=0) {
 
 function Has_Tech($fid,$name,$turn=0) { // Turn==0 = now
   global $db,$GAME;
+  if (empty($fid)) {
+    var_dump($fid,$name);
+    debug_print_backtrace();
+    return 0;
+  }
   if (is_numeric($name)) {
     $Tech = Get_Tech($name);
   } else {
@@ -879,13 +884,14 @@ function Has_Tech($fid,$name,$turn=0) { // Turn==0 = now
       if ($res && ($ans = $res->fetch_assoc())) $lvl = $ans['Level'];
     }
 */
+//    var_dump(1,$fid,$name,$lvl);
     return $lvl;
   }
 
   // Supp Tech
-  $res = $db->query("SELECT Level FROM  FactionTechs WHERE Faction_Id=$fid AND Tech_Id=$name AND StartTurn>=$turn");
-  if (!$res || !($ans = $res->fetch_assoc())) return 0; // Don'y have it
-  if ($ans['Level'] == 0) return 0;
+  $res = $db->query("SELECT Level FROM  FactionTechs WHERE Faction_Id=$fid AND Tech_Id=$name ");
+  if (!$res || !($ans = $res->fetch_assoc())) {/*var_dump(2,$fid,$name);*/ return 0;} // Don'y have it
+  if ($ans['Level'] == 0) {/*var_dump(4,$fid,$name);*/ return 0;}
 
   $lvl = 0;
   $Based = $Tech['PreReqTech'];
@@ -899,6 +905,8 @@ function Has_Tech($fid,$name,$turn=0) { // Turn==0 = now
     if ($res && ($ans = $res->fetch_assoc())) $lvl = $ans['Level'];
   }
 */
+//  var_dump(3,$fid,$name,$lvl);
+
   return $lvl;
 }
 

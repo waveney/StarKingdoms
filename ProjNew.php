@@ -39,7 +39,7 @@
       case 'NEWSHIP':
         $Limit = Has_Tech($Fid,'Ship Construction');
       case 'NEWARMY':
-        if ($_REQUEST['ACTION'] == 'NEWARMY') $Limit = Has_Tech($Fid,'Military Organisation');
+        if ($_REQUEST['ACTION'] == 'NEWARMY') $Limit = Has_Tech($Fid,Feature('MilTech'));
       case 'NEWAGENT':
          if ($_REQUEST['ACTION'] == 'NEWAGENT') $Limit = Has_Tech($Fid,'Intelligence Operations');
         $Ptype = $_REQUEST['p'];
@@ -621,14 +621,15 @@
            "&t=$Turn&Hi=$Hi&Di=$Di$pl&DT=$DT'>Train a new $ARMY$Place</button><p>";
 
 
-      echo "<h2>Research Military Organisation</h2><p>";
+      echo "<h2>Research " . Feature('MilTech') . "</h2><p>";
         $OldPc = Has_Tech($Fid,8, $Turn);
         $Lvl = $OldPc+1;
         $pc = Proj_Costs($Lvl);
-        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Military Organisation'] .
+        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" .
+                $PTi['Research ' . Feature('MilTech')] .
                 "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=8" .
-                "&Name=" . base64_encode("Research Military Organisation $Lvl$Place") . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Research Military Organisation $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+                "&Name=" . base64_encode("Research " . Feature('MilTech') . " on $Lvl$Place") . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
+                "Research " . Feature('MilTech') . " $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
 
       $Rbuts = [];
       $FactTechs = Get_Faction_Techs($Fid);

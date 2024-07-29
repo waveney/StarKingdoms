@@ -5,10 +5,9 @@ include_once("GetPut.php");
 include_once("vendor/erusev/parsedown/Parsedown.php");
 include_once("PlayerLib.php");
 
-global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$InstrMsg,$Advance,$ValidMines;
+global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$InstrMsg,$Advance,$ValidMines,$ARMY;
 
-//$ModuleCats = ['Ship','Civilian Ship','Support Ship','Military Ship','Army','Other','All'];
-$ModuleCats = ['Ship','Ship','Ship','Ship','Detachment','Other','All'];
+$ModuleCats = ['Ship','Civilian Ship','Support Ship','Military Ship',$ARMY,'Other','All'];
 $Fields = ['Engineering','Physics','Xenology'];
 $Tech_Cats = ['Core','Supp','Non Std'];
 $CivMil = ['','Civilian','Military'];
@@ -270,33 +269,23 @@ function Within_Sys_Locs_Id($Nid,$PM=0,$Boarding=0,$Restrict=0,$Hab=0) {// $PM +
   return Within_Sys_Locs($N,$PM,$Boarding,$Restrict,$Hab);
 }
 
-function Get_Valid_Modules(&$T,$Other=0) {
-  global $ModuleCats;
+function Get_Valid_Modules(&$T,$Who=0) {
+  global $ModuleCats,$ARMY;
   $MTs = Get_ModuleTypes();
-  if ($Other == 0) $Other = $T['Whose'];
+  if ($Who == 0) $Who = $T['Whose'];
   $VMT = [];
   $ThingProps = Thing_Type_Props();
   $tprop = (empty($ThingProps[$T['Type']] )?0: $ThingProps[$T['Type']] ) ;
   foreach ($MTs as $M) {
-    if ($T['Whose']) {
-      if ($ModuleCats[$M['CivMil']] == 'Army') {
-        if (($tprop & THING_HAS_ARMYMODULES) == 0) continue; // Armies
-      } else if ($M['CivMil'] <= 4) {
-        if ($tprop & THING_HAS_SHIPMODULES) {
-          if (($M['Name'] == 'Sensors') && Has_Tech($T['Whose'],'Military Sensors')) { // Valid
-          } else {
-            if ($ModuleCats[$M['CivMil']] == 'Military Ship' && ($tprop & THING_HAS_MILSHIPMODS) ==0 ) continue;
-            if ($ModuleCats[$M['CivMil']] == 'Civilian Ship' && ($tprop & THING_HAS_CIVSHIPMODS) ==0) continue;
-          }
-        } else {
-          continue;
-        }
-      } else {
-        continue;
-      }
-      $l = Has_Tech($Other,$M['BasedOn']);
+    if ($M['MinShipLevel'] > $T['Level']) continue;
+    if (($ModuleCats[$M['CivMil']] == $ARMY) && (($tprop & THING_HAS_ARMYMODULES) == 0)) continue; // Armies
+    if (($M['CivMil'] <= 4) && (($tprop & THING_HAS_SHIPMODULES) ==0 )) continue; // Ships
+    if ($ModuleCats[$M['CivMil']] == 'Military Ship' && ($tprop & THING_HAS_MILSHIPMODS) ==0 ) continue;
+    if ($ModuleCats[$M['CivMil']] == 'Civilian Ship' && ($tprop & THING_HAS_CIVSHIPMODS) ==0) continue;
+
+    if ($Who) {
+      $l = Has_Tech($Who,$M['BasedOn']);
       if (!$l) continue;
-      if ($M['MinShipLevel'] > $T['Level']) continue;
     }
     $VMT[$M['id']] = $M['Name'];
   }
@@ -1170,7 +1159,7 @@ function Recalc_Prisoner_Counts() {
   echo "Prisoners Reclaculated<p>";
 }
 
-function BluePrintList($Lvl=10000,$Props='') {
+function BluePrintList($Lvl=10000,$Props='',$WithISA=1) {
   global $GAMEID,$db;
   $BPlst = [];
   if ($Props) {
@@ -1179,7 +1168,7 @@ function BluePrintList($Lvl=10000,$Props='') {
       while ($BP = $res->fetch_assoc()) {
         if (($BP['GatedOn']??0) && !eval("return " . $BP['GatedOn'] . ";" )) continue;
         $tt = $BP['Type'];
-        if (empty($BPlst[$tt])) $BPlst[$tt][-1] = 'Is a Blueprint';
+        if ($WithISA && empty($BPlst[$tt])) $BPlst[$tt][-1] = 'Is a Blueprint';
         $BPlst[$tt][$BP['id']] = $BP['Name'];
       };
     }
@@ -1188,7 +1177,7 @@ function BluePrintList($Lvl=10000,$Props='') {
     foreach($BPs as $i=>$BP) {
       if (($BP['GatedOn']??0) && !eval("return " . $BP['GatedOn'] . ";" )) continue;
       $tt = $BP['Type'];
-      if (empty($BPlst[$tt])) $BPlst[$tt][-1] = 'Is a Blueprint';
+      if ($WithISA && empty($BPlst[$tt])) $BPlst[$tt][-1] = 'Is a Blueprint';
       $BPlst[$tt][$BP['id']] = $BP['Name'];
     };
   }

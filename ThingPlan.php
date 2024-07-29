@@ -32,7 +32,12 @@
     if (isset($Fid)) $Faction = Get_Faction($Fid);
   }
 
-//var_dump($_REQUEST);
+  if (!$FACTION)  Error_Page("Sorry you need a Faction to access this");
+
+  $Blue = Feature('BluePrints');
+  $Slots = Feature('ModuleSlots');
+  $SPad = ($Slots?'<td>':'');
+  //  var_dump($Fid,$FACTION);
 
   if (isset($_REQUEST['id'])) {
     $Tid = $_REQUEST['id'];
@@ -110,9 +115,11 @@
  //var_dump($T);
 
   $ThingTypes = Get_ThingTypes();
-  $ThingTypeNames = [''];
+  $ThingTypeNames = [];
   foreach ($ThingTypes as $Ti=>$TT) {
-    if ($TT['Name'] && ($T['Type'] == $Ti || (is_numeric($TT['Gate'])? ($TT['Gate'] >0? (Has_Tech($Fid,$TT['Gate'])): false) : eval("return " . $TT['Gate'] . ";" )))) {
+    if ($TT['Name'] && ($T['Type'] == $Ti ||
+         (is_numeric($TT['Gate'])? ($TT['Gate'] >1? (($res = Has_Tech($Fid,$TT['Gate']))): ($TT['Gate'] ==1)) :
+           eval("return " . $TT['Gate'] . ";" )))) {
       $ThingTypeNames[$Ti] = $TT['Name'];
     }
   }
@@ -143,22 +150,46 @@
     echo fm_select($FList,null,'Design',1,' onchange=this.form.submit()');
     echo "<br>If it is in planning, it will be selected, otherwise it will copy the design.<p>\n";
 
-    echo "<h2>OR start with Classes:</h2>";
-
-    $CList = [];
-    $Classes = [];
-    foreach ($Things as $TT) {
-      if (!empty($ThingTypeNames[$TT['Type']]) && !empty($TT['Class'])) {
-        if (empty($Classes[$TT['Class']])) {
-          $CList[$TT['id']] = $TT['Class'] . " a level " . $TT['Level'] . " class of " . $ThingTypeNames[$TT['Type']];
-          $Classes[$TT['Class']] = 1;
+    if ($Blue) {
+      echo "<h2>OR start with a Blue Print:</h2>";
+      $LimA = Has_Tech($Fid,'Military Theory');
+      $LimS = Has_Tech($Fid,'	Ship Construction');
+      $BPs = BluePrintList(max($LimA,$LimS)+1,'',0);
+      $Direct = [];
+//      var_dump($ThingTypeNames);
+      foreach($ThingTypeNames as $TT=>$Name) {
+        if (!empty($BPs[$TT])) {
+          echo "<tr><td>A $Name: <td>" . fm_select($BPs[$TT],null,'CDesign',1,' onchange=this.form.submit()');
+        } else if (($ThingTypes[$TT]['Properties'] & THING_HAS_BLUEPRINTS) ==0) {
+          $Direct[] = $TT;
         }
       }
-    }
-    echo fm_select($CList,null,'CDesign',1,' onchange=this.form.submit()');
-    echo "<br>If it is in planning, it will be selected, otherwise it will copy the design.<p>\n";
 
-    echo "<h2>OR design from scratch</h2>";
+      if ($Direct) {
+        echo "<p><h2>OR Plan A:</h2>";
+        foreach ($Direct as $di) {
+          echo "<button type=submit name=Direct value=$di>" .  $ThingTypeNames[$di] . "</button><br>";
+        }
+      }
+      dotail();
+    } else {
+      echo "<h2>OR start with Classes:</h2>";
+
+      $CList = [];
+      $Classes = [];
+      foreach ($Things as $TT) {
+        if (!empty($ThingTypeNames[$TT['Type']]) && !empty($TT['Class'])) {
+          if (empty($Classes[$TT['Class']])) {
+            $CList[$TT['id']] = $TT['Class'] . " a level " . $TT['Level'] . " class of " . $ThingTypeNames[$TT['Type']];
+            $Classes[$TT['Class']] = 1;
+          }
+        }
+      }
+      echo fm_select($CList,null,'CDesign',1,' onchange=this.form.submit()');
+      echo "<br>If it is in planning, it will be selected, otherwise it will copy the design.<p>\n";
+
+      echo "<h2>OR design from scratch</h2>";
+    }
   }
 
   echo "<form method=post action=ThingPlan.php>";
@@ -167,7 +198,7 @@
   $T['MaxModules'] = Max_Modules($T);
   // Sanitise thing type names
   echo "<table border>";
-  echo "<tr><td>Planning a:<td>" . fm_select($ThingTypeNames, $T,'Type');
+  echo "<tr><td>Planning a:<td>" . (Feature('BluePrints')?$ThingTypeNames[ $T['Type']] :fm_select($ThingTypeNames, $T,'Type'));
   if ($T['Type']) {
 
     $Limit = 0;
@@ -175,25 +206,33 @@
       if ($tprops & THING_HAS_SHIPMODULES) {
         $Limit = Has_Tech($Fid,'Ship Construction');
       } else if ($tprops & THING_HAS_ARMYMODULES) {
-        $Limit = Has_Tech($Fid,'Military Organisation');
+        $Limit = Has_Tech($Fid,Feature('MilTech'));
       } else if ($tprops & THING_HAS_GADGETS) {
         $Limit = Has_Tech($Fid,'Intelligence Operations');
       }
     }
 
     if ($tprops & THING_HAS_LEVELS) {
-      $MaxLvl = ($GM?1000000:$ThingTypes[$T['Type']]['MaxLvl']);
-      echo "<tr>" . fm_number('Level',$T,'Level','','min=1 max=$MaxLvl');
+      $MaxLvl = $GM?1000000:(Feature('MaxLevel',$ThingTypes[$T['Type']]['MaxLvl']));
+      if ($tprops & THING_HAS_BLUEPRINTS ) {
+        echo "<tr><td>Level:<td>" . $T['Level'];
+      } else {
+        echo "<tr>" . fm_number('Level',$T,'Level','','min=1 max=$MaxLvl');
+      }
       if ($T['Level'] > $Limit) {
         $CanMake = 0;
         echo "<td><td class=Err>Note this is higher level than you can currently make";
       }
     }
-    echo "<tr>" . fm_text('Name',$T,'Name') . "<td><td" . (empty($T['Name'])? " class=Err" : "") . ">This is needed";
+    echo "<tr>" . fm_text('Name',$T,'Name') . "$SPad<td" . (empty($T['Name'])? " class=Err" : "") . ">This is needed";
     if (empty($T['Name'])) $Valid = 0;
-    echo "<tr>" . fm_text('Class',$T,'Class') . "<td><td>This is optional";
-    echo "<tr>" . fm_number('Priority',$T,'Priority') . "<td><td>This is optional - higher numbers appear at top of thing lists";
-    echo "<tr><td rowspan=4 colspan=3><table><tr>";
+    if ($tprops & THING_HAS_BLUEPRINTS ) {
+      echo "<tr><td>Class:<td>" . $T['Class'];
+    } else {
+      echo "<tr>" . fm_text('Class',$T,'Class') . "$SPad<td>This is optional";
+    }
+    echo "<tr>" . fm_number('Priority',$T,'Priority') . "$SPad<td>This is optional - higher numbers appear at top of thing lists";
+    echo "<tr><td rowspan=4 colspan=" . ($Slots?3:2) . "><table><tr>";
     echo fm_DragonDrop(1,'Image','Thing',$Tid,$T,1,'',1,'','Thing');
     echo "</table><td>This is optional";
     echo "<tr><tr><tr>";
@@ -219,7 +258,7 @@
 // var_dump($MTNs, $Ms, $MMs);
       $ZZnull = [];
       $MTs = Get_ModuleTypes();
-      echo "<tr><th><b>Module type</b><th><b>Number</b><th><b>Slots per Module</b><th><b>Comments</b>";
+      echo "<tr><th><b>Module type</b><th><b>Number</b>" . ($Slots?"<th><b>Slots per Module</b>":'') . "<th><b>Comments</b>";
       $Elvl = 1;
       $Engines = 0;
       $Weapons = 0;
@@ -234,7 +273,7 @@
           } else  {
             echo "<tr>" . fm_number($MT,$ZZnull,'Number','','min=0',"ModuleAddType-$Mti");
           }
-          echo "<td>" . $Mtype['SpaceUsed'];
+          if ($Slots) echo "<td>" . $Mtype['SpaceUsed'];
         } else if (isset($MMs[$Mti]) && $MMs[$Mti]['Number']>0) {
           echo "<tr>" . fm_number($Mtype['Name'],$MMs[$Mti],'Number','','min=0',"ModuleNumber-" . $MMs[$Mti]['id']);
           echo "<td>" . $Mtype['SpaceUsed'];
@@ -256,15 +295,15 @@
       echo "<td id=CurrentModules" . ($totmodc > $T['MaxModules'] ? " class=ERR":"") . ">$totmodc\n";
       if ($totmodc > $T['MaxModules'] ) $Valid = 0;
       [$T['OrigHealth'],$T['ShieldPoints']] = Calc_Health($T);
-      echo "<tr><td>Health/Hull<td>" . $T['OrigHealth'] . "<td><td>At current Tech Levels";
-      if ($T['ShieldPoints']) echo "<tr><td>Shields<td>" . $T['ShieldPoints'] . "<td><td>At current Tech Levels";
+      echo "<tr><td>Health/Hull<td>" . $T['OrigHealth'] . "$SPad<td>At current Tech Levels";
+      if ($T['ShieldPoints']) echo "<tr><td>Shields<td>" . $T['ShieldPoints'] . "$SPad<td>At current Tech Levels";
       $ResC = 0;
       $BaseDam = Calc_Damage($T, $ResC);
-      if ($tprops & (THING_HAS_ARMYMODULES | THING_HAS_MILSHIPMODS )) echo "<tr><td>Basic Damage<td>$BaseDam<td><td>At current Tech Levels.  Before special weapons etc";
+      if ($tprops & (THING_HAS_ARMYMODULES | THING_HAS_MILSHIPMODS )) echo "<tr><td>Basic Damage<td>$BaseDam$SPad<td>At current Tech Levels.  Before special weapons etc";
       if ((($tprops & THING_CAN_MOVE) != 0) && (($tprops & THING_HAS_SHIPMODULES) != 0)) {
         $T['Speed'] = $Engines*$Elvl/$T['Level'] +1;
-        echo "<tr><td>Speed:<td>" . sprintf('%0.3g',$T['Speed']) . "<td><td>At current Tech Levels";
-      if ($T['CargoSpace']) echo "<tr><td>Cargo Capacity:<td>" . $T['CargoSpace'] . "<td><td>At current Tech Levels";
+        echo "<tr><td>Speed:<td>" . sprintf('%0.3g',$T['Speed']) . "$SPad<td>At current Tech Levels";
+      if ($T['CargoSpace']) echo "<tr><td>Cargo Capacity:<td>" . $T['CargoSpace'] . "$SPad<td>At current Tech Levels";
       }
     }
 

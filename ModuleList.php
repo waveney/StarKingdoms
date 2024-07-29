@@ -26,9 +26,9 @@
   if (UpdateMany('ModuleTypes','Put_ModuleType',$MTs,0))    $MTs = Get_ModuleTypes($AllG);
 
   $Techs = Get_Techs(0,$AllG);
-  $TechNames = Tech_Names($Techs);
+  $TechNames = Tech_Names($Techs,$AllG);
   $Forms = ModFormulaes();
-
+  $Slots = Feature('ModuleSlots');
 
   echo "<h1>Module Types</h1>";
   echo "Fire order: 5 = normal, 1 early, 9 late, -1 not first round.  Fire rate 1= every round, 0=once, 5=once every 5 rounds, -2 double first round<p>";
@@ -47,7 +47,7 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>CMA</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Wep / Def</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Based on</a>\n";
-    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Space</a>\n";
+    if ($Slots) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Space</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Min Ship Lvl</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>FireOrd</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>FireRate</a>\n";
@@ -64,7 +64,7 @@
       echo "<td>" . fm_select($ModuleCats,$MT,'CivMil',1,'',"CivMil$i");
       echo "<td>" . fm_select($DefWep,$MT,'DefWep',0,'',"DefWep$i");
       echo "<td>" . fm_select($TechNames,$MT,'BasedOn',1,'',"BasedOn$i");
-      echo fm_number1("",$MT,'SpaceUsed','','',"SpaceUsed$i");
+      if ($Slots) echo fm_number1("",$MT,'SpaceUsed','','',"SpaceUsed$i");
       echo fm_number1("",$MT,'MinShipLevel','','',"MinShipLevel$i");
       echo fm_number1("",$MT,'FireOrder','','',"FireOrder$i") . fm_number1("",$MT,'FireRate',"",'',"FireRate$i");
       echo "<td>" . fm_select($Forms,$MT,'Formula',1,'',"Formula$i");
@@ -80,7 +80,7 @@
   echo "<td>" . fm_select($ModuleCats,$MT,'CivMil',1,'',"CivMil0");
   echo "<td>" . fm_select($DefWep,$MT,'DefWep',0,'',"DefWep0");
   echo "<td>" . fm_select($TechNames,$MT,'BasedOn',1,'',"BasedOn0");
-  echo fm_number1("",$MT,'SpaceUsed','','',"SpaceUsed0");
+  if ($Slots) echo fm_number1("",$MT,'SpaceUsed','','',"SpaceUsed0");
   echo fm_number1("",$MT,'MinShipLevel','','',"MinShipLevel0");
   echo fm_number1("",$MT,'FireOrder',"",'',"FireOrder0") . fm_number1("",$MT,'FireRate',"",'',"FireRate0");
   echo "<td>" . fm_select($Forms,$MT,'Formula',1,'',"Formula0");

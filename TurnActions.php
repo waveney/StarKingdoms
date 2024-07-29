@@ -683,7 +683,7 @@ function Instuctions() { // And other Instructions
       $T['SystemId'] = 0;
 //      $T['History'] .= "Disbanded";
       $T['Instruction'] = 0;
-      $cash = 10*$Lvl*Has_Tech($T['Whose'],'Military Organisation');
+      $cash = 10*$Lvl*Has_Tech($T['Whose'],Feature('MilTech'));
       TurnLog($T['Whose'], "The " . $T['Name'] . " has been disbanded gaining you " . Credit() . $cash, $T);
       Spend_Credit($T['Whose'],-$cash,"Disbanded " . $T['Name']);
       GMLog($Facts[$T['Whose']]['Name'] . " - " . $T['Name'] . " has been disbanded");
@@ -2506,7 +2506,7 @@ function ProjectsCompleted($Pass) {
     case 'Research Supplemental Technology':
     case 'Research Ship Construction':
     case 'Research Supplemental ship Tech':
-    case 'Research Military Organisation':
+    case ('Research ' . Feature('MilTech')):
     case "Research Supplemental $ARMY Tech":
     case 'Research Intelligence Operations':
     case 'Research Supplemental Intelligence Tech':
