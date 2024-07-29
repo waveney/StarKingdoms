@@ -143,6 +143,7 @@
   $OtherInt = 0;
   $HabitableShape = Feature('HabitableShape','box');
   $InHabitableShape = Feature('InHabitableShape','box');
+  $MultiHabitableShape = Feature('MultiHabitableShape',$HabitableShape);
 
   while ($RedoMap) {
     $Dot = fopen("cache/$GAMEID/Fullmap$Faction$typ.dot","w+");
@@ -205,7 +206,7 @@
         $Historical = 1;
       }
 
-      $atts .= " shape=" . ($N['Hospitable']?$HabitableShape:$InHabitableShape);
+      $atts .= " shape=" . ($N['Hospitable']?(($N['Hospitable']>1)?$MultiHabitableShape:$HabitableShape):$InHabitableShape);
       if ($typ) $atts .=
           " pos=\"" . ($N['GridX']*$XScale+(5-$N['GridY'])/2) . "," . (9-$N['GridY']) . "!\"";
       $atts .= " style=filled fillcolor=\"$Colour\" color=\"$BdrColour\"";

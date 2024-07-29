@@ -2,23 +2,23 @@
   include_once("sk.php");
   include_once("GetPut.php");
   include_once("SystemLib.php");
-  
+
   A_Check('GM');
 
   dostaffhead("Planet Statistics");
 
-  global $db, $GAME;
+  global $db, $GAME,$GAMEID;
 
   $PTD = Get_PlanetTypes();
   $Systems = Get_Systems();
   $unpop = 0;
-  
+
   foreach ($Systems as $N) {
     $Sid = $N['id'];
     $Ps = Get_Planets($Sid);
     foreach ($Ps as $P) {
       $pt = $P['Type'];
-      if (!isset($PTD[$pt]['Count'])) { 
+      if (!isset($PTD[$pt]['Count'])) {
         $PTD[$pt]['Count']=0;
         $PTD[$pt]['Where']='';
       }
@@ -31,12 +31,12 @@
         $PTD[$pt]['MCount']++;
         }
       }
-    if (!$Ps && (($N['Flags']&2) == 0)) { 
+    if (!$Ps && (($N['Flags']&2) == 0)) {
       $unpop++;
       echo "Unpopulated system:  <a href=SysEdit.php?R=" . $N['Ref'] . ">" . $N['Ref'] . "</a><p> ";
       }
     }
-  
+
   echo "<table border=1><tr><td>Type<td>Number Planets<td>Number Moons<td>Hospitable<td>Where\n";
   foreach($PTD as $PT) {
     if (!isset($PT['Count'])) $PT['Count']=0;
