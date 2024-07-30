@@ -22,6 +22,7 @@
   if (UpdateMany('LinkLevel','Put_LinkLevel',$DT,0))  $DT=Get_LinkLevels($AllG);
   $coln = 0;
 
+  echo "Default Colour=Black, Width=1, Style=Solid.  These may be overriden by Instability values<p>";
   echo "<form method=post action=LinkLevels.php>";
   echo "<div class=tablecont><table id=indextable border>\n";
   echo "<thead><tr>";
@@ -30,6 +31,8 @@
   if ($AllG) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>NotBy</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Level</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Colour</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Width</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Style</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Game</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Cost</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Agent Cost</a>\n";
@@ -40,22 +43,26 @@
     echo "<tr><td>$i" . fm_text1("",$D,'Name',1,'','',"Name$i");
     echo fm_notby($D,$i,$AllG);
 
-    echo fm_number1("",$D,'Level','','',"Level$i");
+    echo fm_number1("",$D,'Level','','min=0 max=100',"Level$i");
     echo fm_text1("",$D,'Colour',1,'','',"Colour$i");
-    echo fm_number1("",$D,'GameId','','',"GameId$i");
-    echo fm_number1("",$D,'Cost','','',"Cost$i");
-    echo fm_number1("",$D,'AgentCost','','',"AgentCost$i");
-    echo fm_number1("",$D,'MakeCost','','',"MakeCost$i");
+    echo fm_number1("",$D,'Width','','min=0 max=10',"Width$i");
+    echo fm_text1("",$D,'Style',1,'','',"Style$i");
+    echo fm_number1("",$D,'GameId','','min=0 max=100',"GameId$i");
+    echo fm_number1("",$D,'Cost','','min=0 max=100',"Cost$i");
+    echo fm_number1("",$D,'AgentCost','','min=0 max=100',"AgentCost$i");
+    echo fm_number1("",$D,'MakeCost','','min=0 max=10000',"MakeCost$i");
   }
   echo "<tr><td><td><input type=text name=Name0 >";
   echo fm_hidden('NotBy0',$SETNOT);
   if ($AllG) echo "<td>$SETNOT";
-  echo "<td><input type=number name=Level0 value=0>";
+  echo "<td><input type=number name=Level0 value=0 max=100 min=0>";
   echo "<td><input type=text name=Colour0 >";
-  echo "<td><input type=number name=GameId0 value=$GAMEID>";
-  echo "<td><input type=number name=Cost0 value=0>";
-  echo "<td><input type=number name=AgentCost0 value=0>";
-  echo "<td><input type=number name=MakeCost0 value=0>";
+  echo "<td><input type=number name=Width0 value=0 max=10 min=0>";
+  echo "<td><input type=text name=Style0 >";
+  echo "<td><input type=number name=GameId0 value=$GAMEID min=0 max=100>";
+  echo "<td><input type=number name=Cost0 value=0 max=100 min=0>";
+  echo "<td><input type=number name=AgentCost0 value=0 max=100 min=0>";
+  echo "<td><input type=number name=MakeCost0 value=0 max=10000 min=0>";
   echo "</table></div>\n";
   echo "<input type=submit name=Update value=Update>\n";
   echo "</form></div>";

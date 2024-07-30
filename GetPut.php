@@ -336,6 +336,27 @@ function Get_LinkLevels($AllG=0) {
   return $Lvls;
 }
 
+function Get_LinkInstaLevel($id) {
+  global $db;
+  $res = $db->query("SELECT * FROM LinkInstaLevel WHERE id=$id");
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
+  return [];
+}
+
+function Put_LinkInstaLevel(&$now) {
+  $e=$now['id'];
+  $Cur = Get_LinkInstaLevel($e);
+  return Update_db('LinkInstaLevel',$Cur,$now);
+}
+
+function Get_LinkInstaLevels($AllG=0) {
+  global $db,$GAMEID,$NOTBY;
+  $Lvls = [];
+  $res = $db->query("SELECT * FROM LinkInstaLevel " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0 ") . " ORDER BY Instability");
+  if ($res) while ($ans = $res->fetch_assoc()) $Lvls[$AllG?$ans['id']:$ans['Instability']] = $ans;
+  return $Lvls;
+}
+
 // District Types
 
 function Get_DistrictType($id) {

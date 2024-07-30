@@ -85,19 +85,22 @@
   }
 
   $lfs = Feature('LinkFontSize',10);
-  function LinkProps($L) {
-    global $GM,$LinkType,$Levels,$lfs;
+  function LinkPropSet($def,$Conc,$Insta,$Tst) {
+    if ($Insta != $Tst) return $Insta;
+    if ($Conc != $Tst) return $Conc;
+    return $def;
+  }
 
+  function LinkProps($L) {
+    global $GM,$LinkType,$Levels,$lfs,$InstaLevels;
 
     $Res = [1,'solid','#' . $L['id'],14,'black'];
 
     if ($LinkType == 'Wormholes') {
       $Res[2] = $L['Name'];
-      if ($GM) {
-        $Res[0] = ($L['Instability']%3)+1;
-        $Res[1] = ['solid','dashed','dotted'][min(2,intdiv($L['Instability'],3))];
-      }
-      $Res[4] = $Levels[$L['Concealment']]['Colour'];
+      $Res[0] = LinkPropSet(1,$Levels[$L['Concealment']]['Width'],$InstaLevels[$L['Instability']]['Width'],0);
+      $Res[1] = LinkPropSet('solid',$Levels[$L['Concealment']]['Style'],$InstaLevels[$L['Instability']]['Style'],'');
+      $Res[4] = LinkPropSet('black',$Levels[$L['Concealment']]['Colour'],$InstaLevels[$L['Instability']]['Colour'],'');
     } else if ($LinkType == 'Gate') {
       if ($L['Level'] <0 || $L['Status'] > 0) $Res[1] = 'dotted';
       $Res[4] = '"' . $Levels[abs($L['Level'])]['Colour'] . '"';
@@ -137,7 +140,8 @@
   }
 
   $Levels = Get_LinkLevels();
-// var_dump($Levels);
+  $InstaLevels = Get_LinkInstaLevels();
+  // var_dump($Levels);
   $Factions = Get_Factions();
   $Historical = 0;
   $OtherInt = 0;

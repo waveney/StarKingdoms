@@ -269,7 +269,7 @@
 //    foreach ($MTNs as $Mti=> $MT) {
           if (isset($MMs[$Mti])) {
             echo "<tr>" . fm_number($MT,$MMs[$Mti],'Number','','min=0',"ModuleNumber-" . $MMs[$Mti]['id']);
-            $totmodc += $MMs[$Mti]['Number'] * $MTs[$Mti]['SpaceUsed'];
+            $totmodc += $MMs[$Mti]['Number'] * ($Slots?$MTs[$Mti]['SpaceUsed']:1);
           } else  {
             echo "<tr>" . fm_number($MT,$ZZnull,'Number','','min=0',"ModuleAddType-$Mti");
           }

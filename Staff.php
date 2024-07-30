@@ -136,6 +136,7 @@
     }
     $txt .= "<p>";
     $txt .= "<li><a href=LinkLevels.php>Link Levels</a>\n";
+    $txt .= "<li><a href=LinkInstaLevels.php>Link Instability Levels</a>\n";
     $txt .= "<li><a href=EditLinks.php>Edit Links</a>\n";
     $txt .= "<li><a href=LinksStatus.php>Link Status</a>\n";
     $txt .= "</ul><p>\n";
