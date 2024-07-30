@@ -44,9 +44,8 @@
     echo fm_number1("",$D,'Append','','',"Append$i");
   }
   echo "<tr><td><td><input type=text name=Name0 >";
+  echo fm_hidden('NotBy0',$SETNOT);
   if ($AllG) echo "<td>$SETNOT";
-  echo "<td><input type=number name=Props0 >";
-  echo fm_number1('',$D,'Props','','',"Props$i");
   echo "<td><input type=number name=Hospitable0 value=0>";
   echo "<td><input type=number name=MoonFactor0 value=0>";
   echo "<td><input type=number name=Append0 value=0>";
