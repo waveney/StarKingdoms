@@ -7,7 +7,7 @@
 
   dostaffhead("List Module Types");
 
-  global $db, $GAME, $ModuleCats;
+  global $db, $GAME;
 
   $MFs = Get_ModFormulaes();
   $MFN = ModFormulaes();
@@ -16,7 +16,7 @@
     $MFs = Get_ModFormulaes();
     $MFN = ModFormulaes();
 // var_dump($MFs); var_dump($MFN);
-  }   
+  }
 
   $CTs = Get_CoreTechsByName();
   $CTNs = [];
@@ -27,7 +27,7 @@
   echo "<h1>Module Fomulas</h1>";
   echo "<form method=post action=ModFormulae.php>";
 
-  
+
     $coln = 0;
     echo "<div class=tablecont><table id=indextable border width=100% style='min-width:1400px'>\n";
     echo "<thead><tr>";
@@ -50,7 +50,7 @@
       echo fm_number1("",$M,'Num3x','','',"Num3x$i");
       echo "<td>" . fm_select($CTNs,$M,'BaseTech',0,'',"BaseTech$i");
 //      echo fm_number1("",$M,'BaseTech','','',"BaseTech$i"); // Will be select later
-      }   
+      }
 
 
   echo "<tr><td>";
@@ -60,7 +60,7 @@
   echo fm_number1("",$M,'Num2x','','',"Num2x0");
   echo fm_number1("",$M,'Num3x','','',"Num3x0");
   echo "<td>" . fm_select($CTNs,$M,'BaseTech',0,'',"BaseTech0");
-//  echo fm_number1("",$M,'BaseTech','','',"BaseTech0");     
+//  echo fm_number1("",$M,'BaseTech','','',"BaseTech0");
 
   echo "</tbody></table></div>\n";
 

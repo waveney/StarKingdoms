@@ -5,9 +5,8 @@ include_once("GetPut.php");
 include_once("vendor/erusev/parsedown/Parsedown.php");
 include_once("PlayerLib.php");
 
-global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$InstrMsg,$Advance,$ValidMines,$ARMY;
+global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$InstrMsg,$Advance,$ValidMines,$ARMY;
 
-$ModuleCats = ['Ship','Civilian Ship','Support Ship','Military Ship',$ARMY,'Other','All'];
 $Fields = ['Engineering','Physics','Xenology'];
 $Tech_Cats = ['Core','Supp','Non Std'];
 $CivMil = ['','Civilian','Military'];
@@ -124,7 +123,7 @@ function Mod_ValueSimple($tl,$modtypeid,&$Rescat) {
 
 
 function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0) {
-  global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil;
+  global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil;
   static $AllTechs;
   if (empty($AllTechs)) $AllTechs = Get_Techs(0);
   $Tid = $T['id'];
@@ -269,14 +268,20 @@ function Within_Sys_Locs_Id($Nid,$PM=0,$Boarding=0,$Restrict=0,$Hab=0) {// $PM +
   return Within_Sys_Locs($N,$PM,$Boarding,$Restrict,$Hab);
 }
 
+function ModuleCats() {
+  global $ARMY;
+  return ['Ship','Civilian Ship','Support Ship','Military Ship',$ARMY,'Other','All'];
+}
+
 function Get_Valid_Modules(&$T,$Who=0) {
-  global $ModuleCats,$ARMY;
+  global $ARMY;
+  $ModuleCats = ModuleCats();
   $MTs = Get_ModuleTypes();
   if ($Who == 0) $Who = $T['Whose'];
   $VMT = [];
   $ThingProps = Thing_Type_Props();
   $tprop = (empty($ThingProps[$T['Type']] )?0: $ThingProps[$T['Type']] ) ;
-  foreach ($MTs as $M) {
+  foreach ($MTs as $Mi=>$M) {
     if ($M['MinShipLevel'] > $T['Level']) continue;
     if (($ModuleCats[$M['CivMil']] == $ARMY) && (($tprop & THING_HAS_ARMYMODULES) == 0)) continue; // Armies
     if (($M['CivMil'] <= 4) && (($tprop & THING_HAS_SHIPMODULES) ==0 )) continue; // Ships
@@ -388,6 +393,7 @@ function Calc_TechLevel($Fid,$MType) {
   $Mts = Get_ModuleTypes();
   $Techs = Get_Techs();
   $based = $Mts[$MType]['BasedOn'];
+  if ($based == 0) return 0;
   if ($l = Has_Tech($Fid,$based)) {
     if ($Techs[$based]['Cat'] == 1) {
       $l = Has_Tech($Fid,$Techs[$based]['PreReqTech']);
@@ -653,7 +659,8 @@ function LogisticalSupport($Fid) {  // Note this sets the Economic rating of all
 }
 
 function Thing_Duplicate($otid) {
-  $T = Get_Thing($otid);
+  global $FACTION;
+  $OrigT = $T = Get_Thing($otid);
   unset($T['id']);
   $T['Name'] = "Copy of " . $T['Name'];
   $T['id'] = $Tid = Insert_db('Things',$T);
@@ -677,6 +684,11 @@ function Thing_Duplicate($otid) {
   $T['ProjHome'] = 0;
   if ($T['GM_Notes']) {
     $T['GM_Notes'] = "This thing has been copied from " . $T['Name'] . "- id: $otid with this note:\n" . $T['GM_Notes'];
+  }
+  if ($T['BluePrint'] < 0) {
+    $T['BluePrint'] = $otid;
+    $T['Whose'] = ($FACTION['id'] ?? 0);
+    $T['Class'] = $OrigT['Name'];
   }
 
   $Fid = $T['Whose'];

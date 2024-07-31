@@ -8,8 +8,9 @@
 
   dostaffhead("List Module Types");
 
-  global $db, $GAME, $ModuleCats;
+  global $db, $GAME;
   $DefWep = ['','Defence','Weapon','Shield'];
+  $ModuleCats = ModuleCats();
 
   $AllG = 0;
   if (isset($_REQUEST['AllGames'])) {
@@ -27,6 +28,7 @@
 
   $Techs = Get_Techs(0,$AllG);
   $TechNames = Tech_Names($Techs,$AllG);
+  $TechNames[0] = 'Nothing';
   $Forms = ModFormulaes();
   $Slots = Feature('ModuleSlots');
 

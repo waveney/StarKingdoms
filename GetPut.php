@@ -882,6 +882,7 @@ function Has_Tech($fid,$name,$turn=0) { // Turn==0 = now
     return 0;
   }
   if (is_numeric($name)) {
+    if ($name == 0) return 1;
     $Tech = Get_Tech($name);
   } else {
     $res = $db->query("SELECT * FROM Technologies WHERE Name='$name'");

@@ -37,7 +37,8 @@
   $Blue = Feature('BluePrints');
   $Slots = Feature('ModuleSlots');
   $SPad = ($Slots?'<td>':'');
-  //  var_dump($Fid,$FACTION);
+
+//  var_dump($Fid,$FACTION);
 
   if (isset($_REQUEST['id'])) {
     $Tid = $_REQUEST['id'];
@@ -52,6 +53,8 @@
     $Tid = Put_Thing($T);
     $Exist = 0;
   }
+
+//  var_dump($Fid);
 
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
@@ -95,6 +98,7 @@
         $Tid = $T['id'];
       } else {
         $T = Thing_Duplicate($_REQUEST['Design']);
+        $T['Whose'] = $Fid;
         $Tid = $T['id'];
         $T['BuildState'] = $T['NewSystemId'] = $T['SystemId'] = 0;
         Put_Thing($T);
@@ -263,6 +267,7 @@
       $Engines = 0;
       $Weapons = 0;
 
+
       foreach ($MTs as $Mti=>$Mtype) {
         if (isset($MTNs[$Mti])) {
           $MT = $MTNs[$Mti];
@@ -276,12 +281,12 @@
           if ($Slots) echo "<td>" . $Mtype['SpaceUsed'];
         } else if (isset($MMs[$Mti]) && $MMs[$Mti]['Number']>0) {
           echo "<tr>" . fm_number($Mtype['Name'],$MMs[$Mti],'Number','','min=0',"ModuleNumber-" . $MMs[$Mti]['id']);
-          echo "<td>" . $Mtype['SpaceUsed'];
+          if ($Slots) echo "<td>" . $Mtype['SpaceUsed'];
           echo "<td><span class=Err>This module is not allowed on this type of thing</span>\n";
           echo fm_hidden('Mid',$MMs[$Mti]['id']);
           echo "<input type=submit name=ACTION value='Remove Module'>";
           $Valid = 0;
-          $totmodc += $MMs[$Mti]['Number'] * $MTs[$Mti]['SpaceUsed'];
+          $totmodc += $MMs[$Mti]['Number'] * ($Slots?$MTs[$Mti]['SpaceUsed']:1);
         }
 
          if ($Mti == 5) { // Engines

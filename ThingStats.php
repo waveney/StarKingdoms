@@ -7,8 +7,7 @@
 
   dostaffhead("Thing Types");
 
-  global $db, $GAME, $ModuleCats;
-  global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil;
+  global $db, $GAME, $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil;
 
 // var_dump($_REQUEST);
 
@@ -16,17 +15,17 @@
   if (UpdateMany('ThingTypes','Put_ThingType',$Ts,1,'','','Name','','Properties')) $Ts = Get_ThingTypes();
 
   echo "<h1>Thing Types</h1>";
-  
+
   echo "Props (Hex) 1=Districts, 2=Modules, 4=Leveled, 8=Ship, 10=Gadgets, 20=Army, 40=Mil, 80=Civil, " .
        "100=Normal Move, 200=Army Move, 400= Two Factions, 800=Inherit Minerals,<br>" .
        "1000=Can be Advanced, 2000=Instant Create, 4000=Need Cargo Space, 8000=No Named Chars, " .
        "10000=Do Projects (Wo Dists), 20000=Direct Move, 40000=Move 2nd, 80000=Has Health<br>" .
        "100000=Has Control, 200000=Needs Support, 400000=Hostile, 800000=Can Splat, 1000000=Can Leave Debris<br>\n";
-  echo "Eyes:  1 = in space, 2= sens, 4= neb sens, 8=ground 1, 16 ground 2 etc<br>\n"; // TODO no ground differntion yet 
+  echo "Eyes:  1 = in space, 2= sens, 4= neb sens, 8=ground 1, 16 ground 2 etc<br>\n"; // TODO no ground differntion yet
   echo "SeenBy: What Eyes can see this<br>\n";
   echo "<form method=post action=ThingTypes.php>";
 
-  
+
     $coln = 0;
     echo "<div class=tablecont><table id=indextable border width=100% style='min-width:1400px'>\n";
     echo "<thead><tr>";
@@ -46,7 +45,7 @@
       echo fm_text1("",$T,'Gate',1,'','',"Gate$i");
       echo fm_number1('',$T,'Eyes','','',"Eyes$i");
       echo fm_number1('',$T,'SeenBy','','',"SeenBy$i");
-      }   
+      }
 
   $T = [];
   echo "<tr><td>" . fm_text1("",$T,'Name',1,'','',"Name0");

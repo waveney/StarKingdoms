@@ -12,7 +12,7 @@ function Show_Thing(&$T,$Force=0) {
   include_once("ProjLib.php");
   global $BuildState,$GAME,$GAMEID,$FACTION;
   global $Project_Status,$Advance;
-  global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$ThingInclrs, $InstrMsg, $ValidMines;
+  global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$ThingInclrs, $InstrMsg, $ValidMines;
   global $Currencies;
 
   $ThingInclrs = ['white','lightgreen','lightpink','lightblue','lightyellow','bisque','#99ffcc','#b3b3ff',

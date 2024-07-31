@@ -8,8 +8,7 @@
 
   dostaffhead("List Technoiologies");
 
-  global $db, $GAME, $ModuleCats;
-  global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil;
+  global $db, $GAME, $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil;
 
   $AllG = 0;
   if (isset($_REQUEST['AllGames'])) {

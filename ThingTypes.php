@@ -8,8 +8,8 @@
 
   dostaffhead("Thing Types");
 
-  global $db, $GAME, $ModuleCats,$GAMEID;
-  global $ModuleCats,$ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil;
+  global $db, $GAME, $GAMEID;
+  global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil;
 
 // var_dump($_REQUEST);
   $AllG = 0;
