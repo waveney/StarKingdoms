@@ -23,16 +23,14 @@
     }
   }
   if ($Fid == 0 && Access('GM') ) {
-    A_Check('GM');
     if (isset( $_REQUEST['F'])) {
       $Fid = $_REQUEST['F'];
     } else if (isset( $_REQUEST['f'])) {
       $Fid = $_REQUEST['f'];
     }
-    if (isset($Fid)) $Faction = Get_Faction($Fid);
+    if (isset($Fid)) $FACTION = $Faction = Get_Faction($Fid);
   }
 
-  if (!$FACTION)  Error_Page("Sorry you need a Faction to access this");
 
   $Blue = Feature('BluePrints');
   $Slots = Feature('ModuleSlots');
@@ -44,9 +42,9 @@
     $Tid = $_REQUEST['id'];
     $T = Get_Thing($Tid);
     $Exist = 1;
-    if (empty($Fid)) {
+    if (empty($Fid) && Access('GM')) {
       $Fid = $T['Whose'];
-      $Faction = Get_Faction($Fid);
+      $FACTION = $Faction = Get_Faction($Fid);
     }
   } else {
     $T = ['Whose'=>$Fid, 'BuildState'=>0, 'Type'=> 0, 'Level'=>1];
@@ -54,7 +52,8 @@
     $Exist = 0;
   }
 
-//  var_dump($Fid);
+  if (!$FACTION)  Error_Page("Sorry you need a Faction to access this");
+  //  var_dump($Fid);
 
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
@@ -235,7 +234,7 @@
     } else {
       echo "<tr>" . fm_text('Class',$T,'Class') . "$SPad<td>This is optional";
     }
-    echo "<tr>" . fm_number('Priority',$T,'Priority') . "$SPad<td>This is optional - higher numbers appear at top of thing lists";
+    echo "<tr>" . fm_number('Priority',$T,'Priority') . "$SPad<td colspan=3>This is optional - higher numbers appear at top of thing lists";
     echo "<tr><td rowspan=4 colspan=" . ($Slots?3:2) . "><table><tr>";
     echo fm_DragonDrop(1,'Image','Thing',$Tid,$T,1,'',1,'','Thing');
     echo "</table><td>This is optional";
@@ -249,38 +248,74 @@
 //    $MTNs = [];
 //    foreach($DTs as $M) $MTNs[$M['id']] = $M['Name'];
       $MTNs = Get_Valid_Modules($T);
-      $Ms = Get_Modules($Tid);
+      $MMs = Get_Modules($Tid);
 
-      $MMs = [];
-      foreach ($Ms as $MM) $MMs[$MM['Type']] = $MM;
-
-      $NumMods = count($Ms);
       $dc=0;
       $totmodc = 0;
       $BadMods = 0;
+      $FlexM = 0;
+      $IsBlue =  ($T['BluePrint']>0);
+      if ($IsBlue) {
+        $BP = Get_Thing($T['BluePrint']);
+        $BMs = Get_Modules($T['BluePrint']);
+        $Flex = Get_ModulesType($T['BluePrint'],'Flexible');
+        $FlexM = $Flex['Number']??0;
+      }
 
 // var_dump($MTNs, $Ms, $MMs);
       $ZZnull = [];
       $MTs = Get_ModuleTypes();
-      echo "<tr><th><b>Module type</b><th><b>Number</b>" . ($Slots?"<th><b>Slots per Module</b>":'') . "<th><b>Comments</b>";
+      echo "<tr><th><b>Module type</b>" .($IsBlue?'<th><b>Orig Number</b>':'') . ($FlexM?"<th><b>Number</b>":'') .
+           ($Slots?"<th><b>Slots per Module</b>":'') . "<th><b>Comments</b>";
       $Elvl = 1;
       $Engines = 0;
       $Weapons = 0;
 
+      // Count Used slots
+      $TotUsed = 0;
+      foreach ($MTs as $Mti=>$Mtype) {
+        if (isset($MMs[$Mti])) {
+          if ($MTs[$Mti]['Name'] == 'Flexible') continue;
+          $TotUsed += $MMs[$Mti]['Number'];
+        }
+      }
+
+      $SpareFlex = $T['MaxModules'] - $TotUsed;
+      echo fm_hidden('MaxSlots',$T['MaxModules']);
 
       foreach ($MTs as $Mti=>$Mtype) {
         if (isset($MTNs[$Mti])) {
           $MT = $MTNs[$Mti];
 //    foreach ($MTNs as $Mti=> $MT) {
+          echo "<tr><td>$MT:";
+
+          if ($MT == 'Flexible') {
+            echo "<td id=FlexSpace>$FlexM<td>Space left: <span id=UnusedFlex " . ($SpareFlex<0?'class=Err':'') . ">$SpareFlex</span>";
+            continue;
+          }
+
           if (isset($MMs[$Mti])) {
-            echo "<tr>" . fm_number($MT,$MMs[$Mti],'Number','','min=0',"ModuleNumber-" . $MMs[$Mti]['id']);
+            $min=0;
+            if ($IsBlue) {
+              $min = ($BMs[$Mti]['Number']??0);
+              $max = $min+$FlexM;
+              echo "<td>$min";
+            }
+            if ($FlexM) echo fm_number1('',$MMs[$Mti],'Number','',"min=$min max=$max onchange=CheckModSpace()","ModuleNumber-" . $MMs[$Mti]['id']);
             $totmodc += $MMs[$Mti]['Number'] * ($Slots?$MTs[$Mti]['SpaceUsed']:1);
           } else  {
-            echo "<tr>" . fm_number($MT,$ZZnull,'Number','','min=0',"ModuleAddType-$Mti");
+            if ($IsBlue) echo '<td>0';
+            if ($FlexM) {
+              echo fm_number1('',$ZZnull,'Number','',"min=0 max=$FlexM  onchange=CheckModSpace()","ModuleAddType-$Mti");
+            } else {
+              echo "<td>" . $MMs[$Mti]['NUmber'];
+            }
           }
           if ($Slots) echo "<td>" . $Mtype['SpaceUsed'];
         } else if (isset($MMs[$Mti]) && $MMs[$Mti]['Number']>0) {
-          echo "<tr>" . fm_number($Mtype['Name'],$MMs[$Mti],'Number','','min=0',"ModuleNumber-" . $MMs[$Mti]['id']);
+          echo "<tr><td>" . $Mtype['Name'];
+          if ($FlexM) echo "<td>0";
+          echo fm_number1('',$MMs[$Mti],'Number','','min=0',"ModuleNumber-" . $MMs[$Mti]['id']);
           if ($Slots) echo "<td>" . $Mtype['SpaceUsed'];
           echo "<td><span class=Err>This module is not allowed on this type of thing</span>\n";
           echo fm_hidden('Mid',$MMs[$Mti]['id']);
@@ -296,19 +331,22 @@
       }
 
       echo "<tr><td><td><td><tr><td>Modules slots used:";
-      fm_hidden('HighestModule',$Mti);
-      echo "<td id=CurrentModules" . ($totmodc > $T['MaxModules'] ? " class=ERR":"") . ">$totmodc\n";
+      echo fm_hidden('HighestModule',$Mti);
+
+      echo "<td id=CurrentModules" . ($totmodc > $T['MaxModules'] ? " class=Err":"") . ">$totmodc\n";
       if ($totmodc > $T['MaxModules'] ) $Valid = 0;
       [$T['OrigHealth'],$T['ShieldPoints']] = Calc_Health($T);
-      echo "<tr><td>Health/Hull<td>" . $T['OrigHealth'] . "$SPad<td>At current Tech Levels";
-      if ($T['ShieldPoints']) echo "<tr><td>Shields<td>" . $T['ShieldPoints'] . "$SPad<td>At current Tech Levels";
+      echo "<tr><td>Health/Hull<td>" . $T['OrigHealth'] . "$SPad<td colspan=3>At current Tech Levels";
+      if ($T['ShieldPoints']) echo "<tr><td>Shields<td>" . $T['ShieldPoints'] . "$SPad<td colspan=3>At current Tech Levels";
       $ResC = 0;
       $BaseDam = Calc_Damage($T, $ResC);
-      if ($tprops & (THING_HAS_ARMYMODULES | THING_HAS_MILSHIPMODS )) echo "<tr><td>Basic Damage<td>$BaseDam$SPad<td>At current Tech Levels.  Before special weapons etc";
+      if ($tprops & (THING_HAS_ARMYMODULES | THING_HAS_MILSHIPMODS )) {
+         echo "<tr><td>Basic Damage<td>$BaseDam$SPad<td colspan=3>At current Tech Levels.  Before special weapons etc";
+      }
       if ((($tprops & THING_CAN_MOVE) != 0) && (($tprops & THING_HAS_SHIPMODULES) != 0)) {
         $T['Speed'] = $Engines*$Elvl/$T['Level'] +1;
-        echo "<tr><td>Speed:<td>" . sprintf('%0.3g',$T['Speed']) . "$SPad<td>At current Tech Levels";
-      if ($T['CargoSpace']) echo "<tr><td>Cargo Capacity:<td>" . $T['CargoSpace'] . "$SPad<td>At current Tech Levels";
+        echo "<tr><td>Speed:<td>" . sprintf('%0.3g',$T['Speed']) . "$SPad<td colspan=3>At current Tech Levels";
+      if ($T['CargoSpace']) echo "<tr><td>Cargo Capacity:<td>" . $T['CargoSpace'] . "$SPad<td colspan=3>At current Tech Levels";
       }
     }
 

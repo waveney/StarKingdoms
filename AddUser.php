@@ -43,11 +43,11 @@
     } else { /* New User */
       $proc = 1;
       if (!isset($_POST['Name'])) {
-        echo "<h2 class=ERR>NO NAME GIVEN</h2>\n";
+        echo "<h2 class=Err>NO NAME GIVEN</h2>\n";
         $proc = 0;
       }
       if ($proc && !isset($_POST['Login'])) {
-        echo "<h2 class=ERR>NO login GIVEN</h2>\n";
+        echo "<h2 class=Err>NO login GIVEN</h2>\n";
         $proc = 0;
       }
       if (!Access('God')) $User['AccessLevel'] = $Access_Type['Player'];

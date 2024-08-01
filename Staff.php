@@ -39,7 +39,7 @@
   }
 
   global $USER,$GAME,$ErrorMessage,$GAMESYS;
-  if (!empty($ErrorMessage)) echo "<h2 class=ERR>$ErrorMessage</h2>";
+  if (!empty($ErrorMessage)) echo "<h2 class=Err>$ErrorMessage</h2>";
 
   $Facts = Get_Faction_Names();
 // var_dump($Facts);

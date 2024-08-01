@@ -643,7 +643,7 @@ function Get_ModulesType($Thing,$Type) {
     if (empty($MTNames )) $MTNames = Gen_Get_Names_Flip('ModuleTypes');
     $Type = ($MTNames[$Type]??0);
   }
-  $res = $db->query("SELECT * FROM Modules WHERE ThingId=$Thing AND Type=$Type");
+  $res = $db->query("SELECT * FROM Modules WHERE ThingId=$Thing AND Type=$Type LIMIT 1");
   if ($res) $Ms = $res->fetch_assoc();
   return $Ms;
 }

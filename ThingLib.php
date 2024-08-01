@@ -334,7 +334,7 @@ function Calc_Health(&$T,$KeepTechLvl=0,$Other=0) {
 
   if ($Other == 0) $Other = $T['Whose'];
   if (Has_Trait($Other,'Thick Skinned')) $Plus =1;
-  $Health = 5*($T['Level']+$Plus);
+  $Health = (Feature('BaseHealth')?5*($T['Level']+$Plus):0);
   $Shield = 0;
   $Ms = Get_Modules($T['id']);
   $Mts = Get_ModuleTypes();
@@ -571,7 +571,7 @@ function RefitRepair(&$T,$Save=1,$KeepTechLvl=0,$Other=0) {
     $T['CurHealth'] = min($T['CurHealth'],$Health);
     $T['CurShield'] = $Sld;
   }
-  $T['Speed'] =  ((($TTypes[$T['Type']]['Properties'] ?? 0)&THING_CAN_MOVE)? $Engines*$Elvl/$T['Level'] +1 :0);
+  $T['Speed'] =  ((($TTypes[$T['Type']]['Properties'] ?? 0)&THING_CAN_MOVE)? $Engines*$Elvl/$T['Level'] + Feature('BaseSpeed',0) :0);
   Put_Thing($T);
   return $Etxt;
 }

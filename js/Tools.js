@@ -253,7 +253,7 @@ function Set_ColBlobs(Blobs,MaxBlob) {
 }
 
 function AutoInput(f,after) {
-  debugger;
+//  debugger;
   var newval = document.getElementById(f).value;
   var id = f;
   if (document.getElementById(f).newid ) id = document.getElementById(f).newid;
@@ -452,4 +452,30 @@ function ListSelection(event,evid,Listshowid,xclass='') {
   } else {
     if (xclass) $("." +xclass).show();
   }
+}
+
+function CheckModSpace() {
+  debugger;
+  var slots = 0;
+  // Count Space used
+  $("[id^=ModuleNumber").each(function(nam) {
+    slots += Number(this.value);
+    });
+  var flexm = document.getElementById('FlexSpace').innerHTML;  
+  var maxslots = document.getElementById('MaxSlots').value;
+  var spare = maxslots-slots;
+  // Update display
+  $('#UnusedFlex').html(spare);
+  $('#CurrentModules').html(slots);
+  if (spare < 0) {
+    $('#UnusedFlex').addClass('Err');
+  } else {
+    $('#UnusedFlex').removeClass('Err');
+  }
+  if (slots > maxslots) {
+    $('#CurrentModules').addClass('Err');
+  } else {
+    $('#CurrentModules').removeClass('Err');
+  }
+
 }

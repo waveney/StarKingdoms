@@ -194,7 +194,7 @@ function Put_User(&$data,$Save_User=0) {
 }
 
 function Error_Page ($message) {
-  global $Access_Type,$USER,$USERID,$FACTION;
+  global $Access_Type,$USER,$USERID,$FACTION,$ErrorMessage;
   Check_Login(); // Removes not login state
   $ErrorMessage = "Something went very wrong... - $message";
 

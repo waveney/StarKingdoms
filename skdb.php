@@ -188,7 +188,7 @@ echo "<p>Here: $proced And: $fcnt<p>";*/
 //      echo "<h2>$table Updated - $newrec</h2>\n";
 //      echo "<h2>$table Updated</h2>\n";
     } else {
-      echo "<h2 class=ERR>An error occoured: ((($newrec))) " . $db->error . "</h2>";
+      echo "<h2 class=Err>An error occoured: ((($newrec))) " . $db->error . "</h2>";
     }
     return $update;
   }
@@ -244,7 +244,7 @@ if ($indxname!=$fname) echo "T3 "; */
       $from[$indxname]=$snum;
       return $snum;
     } else {
-      echo "<h2 class=ERR>An error occoured: ((($newrec))) " . $db->error . "</h2>";
+      echo "<h2 class=Err>An error occoured: ((($newrec))) " . $db->error . "</h2>";
     }
   }
   return 0;

@@ -83,7 +83,7 @@ function Set_Password($user,$msg='') {
       $rand_hash = $ans['AccessKey'];
     }
 
-    if ($msg) echo "<h2 class=ERR>$msg</h2>\n";
+    if ($msg) echo "<h2 class=Err>$msg</h2>\n";
     echo "Min length is 8.  Password must have a digit, a lower case character, an uppercase and a special character<p>";
     echo "<form method=post action=Login.php>";
     echo "<div class=tablecont><table>";
@@ -122,7 +122,7 @@ function Login($errmsg='', $message='') {
 
   dostaffhead("Staff Login");
 
-  if ($errmsg) echo "<h2 class=ERR>$errmsg</h2>";
+  if ($errmsg) echo "<h2 class=Err>$errmsg</h2>";
   if ($message) echo "<h2>$message</h2>";
 
   echo "<form method=post action=Login.php>";

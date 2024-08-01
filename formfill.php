@@ -101,13 +101,13 @@
         $T['HasDeepSpace'] = 1;
         Put_Thing($T);
       }
-      $Ns = Get_ModulesType($id,$mtch[1]);
+      $MTi = $mtch[1];
+      $N = Get_ModulesType($id,$MTi);
 //var_dump($Ns);
-      if ($Ns) {
-        $N = $Ns[0];
+      if ($N) {
         $N['Number'] = $Value;
       } else {
-        $N= ['Type'=>$mtch[1],'ThingId'=>$id, 'Number'=>$Value];
+        $N= ['Type'=>$MTi,'ThingId'=>$id, 'Number'=>$Value];
       }
       //echo 'FORCELOADCHANGE54321:NOW' .
       echo Put_Module($N);
