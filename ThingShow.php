@@ -110,6 +110,7 @@ function Show_Thing(&$T,$Force=0) {
   if ($GM) {
     echo "<tr class=NotSide><td class=NotSide>Id: $Tid<td class=NotSide>Game: $GAMEID - " . $GAME['Name'];
     echo fm_number('Seen Mask',$T,'SeenTypeMask','class=NotSide','class=NotSide');
+    if ($T['BluePrint']<0) echo fm_text1('Gated On',$T,'GatedOn',2,'class=NotSide');
     if (feature('HiddenControl')) echo "<td colspan=2>Hidden Control: " . fm_select($FactNames,$T,'HiddenControl');
     echo "<tr><td>Type:<td>" . fm_select($ttn,$T,'Type',1);
     if (($tprops & THING_HAS_LEVELS) || ($tprops & THING_CAN_BE_ADVANCED)) echo fm_number("Level",$T,'Level');
@@ -129,8 +130,12 @@ function Show_Thing(&$T,$Force=0) {
 
   if (Feature('BluePrints') && ($T['BluePrint']??0) && !$GM ){
     echo "<tr><td>Class:<td>" . $T['Class'];
-  } else {
+    if ($T['HiddenClass']) echo "<td>Actually: " . $T['HiddenClass'];
+  } else if (!$GM) {
     echo "<tr>" . fm_text('Class',$T,'Class',2);
+  } else {
+    echo "<tr>" . fm_text('Class',$T,'Class');
+    echo fm_text1('Hidden Class',$T,'HiddenClass');
   }
 // WHERE IS IT AND MOVEMENT
 
@@ -306,7 +311,7 @@ function Show_Thing(&$T,$Force=0) {
 
 
       $NeedOr = 0;
-      if ((($tprops & THING_CAN_MOVE)) && $Lid >= 0) {
+      if ((($tprops & THING_CAN_MOVE)) && ($Lid >= 0) && ($T['BuildState']>1) && $T['SystemId']) {
 
         if (($T['BuildState'] == 2) || ($T['CurHealth'] == 0) || empty($SelLinks) ) { // Shakedown or just warped out
           echo "<tr><td colspan=3>This is unable to use links, it can move within the system.<br>Where in the system should it go? " .
@@ -533,15 +538,15 @@ function Show_Thing(&$T,$Force=0) {
   if ($tprops & THING_HAS_2_FACTIONS) echo "<tr>" . fm_radio('Other Faction',$FactNames ,$T,'OtherFaction','',1,'colspan=6','',$Fact_Colours,0);
   if  ($tprops & (THING_HAS_MODULES | THING_HAS_ARMYMODULES | THING_HAS_HEALTH)) {
     if ($GM) {
-      echo "<tr>" . fm_number('Orig Health',$T,'OrigHealth');
+      echo "<tr>" . fm_number1('Orig Health',$T,'OrigHealth','','min=0 max=10000');
 
       if (($T['CurHealth'] > 0) || ($T['BuildState'] <2)) {
-        echo fm_number1('Cur Health',$T,'CurHealth');
+        echo fm_number1('Cur Health',$T,'CurHealth','','min=0 max=10000');
       } else {
-        echo fm_number1('Cur Health',$T,'CurHealth',' class=Err ');
+        echo fm_number1('Cur Health',$T,'CurHealth',' class=Err ','min=0 max=10000');
       }
-      echo fm_number1('Shield Points',$T,'ShieldPoints', '', ' class=Num3 ');
-      echo fm_number1('Current Shield',$T,'CurShield', '', ' class=Num3 ');
+      echo fm_number1('Shield Points',$T,'ShieldPoints', '', 'min=0 max=10000 class=Num3 ');
+      echo fm_number1('Current Shield',$T,'CurShield', '', 'min=0 max=10000 class=Num3 ');
     } else {
       echo "<tr><td>Original Health: " . $T['OrigHealth'];
       if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
@@ -556,11 +561,13 @@ function Show_Thing(&$T,$Force=0) {
 
     $Resc =0;
     $BD = Calc_Damage($T,$Resc);
+    Calc_Evasion($T);
     if ($Resc) {
-      echo "<td>Basic Damage: $BD<td>There are other weapons";
+      echo "<td>Basic Damage: $BD - There are other weapons";
     } else {
       echo "<td>Damage: $BD";
     }
+    echo fm_number1('Evasion',$T,'Evasion','','min=0 max=10000');
   }
   if ($tprops & THING_HAS_DISTRICTS) {
     $DTs = Get_DistrictTypeNames();

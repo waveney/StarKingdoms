@@ -52,7 +52,8 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Eyes</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>SeenBy</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Max Level</a>\n";
-//    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Game</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Evasion Mod</a>\n";
+    //    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Game</a>\n";
     echo "</thead><tbody>";
 
     foreach($Ts as $T) {
@@ -62,21 +63,23 @@
       echo fm_notby($T,$i,$AllG);
       echo fm_hex1('',$T,'Properties','','',"Properties$i");
       echo fm_text1("",$T,'Gate',1,'','',"Gate$i");
-      echo fm_number1('',$T,'Eyes','','',"Eyes$i");
-      echo fm_number1('',$T,'SeenBy','','',"SeenBy$i");
-      echo fm_number1('',$T,'MaxLvl','','',"MaxLvl$i");
+      echo fm_number1('',$T,'Eyes','','min=0 max=100',"Eyes$i");
+      echo fm_number1('',$T,'SeenBy','','min=0 max=100',"SeenBy$i");
+      echo fm_number1('',$T,'MaxLvl','','min=0 max=100',"MaxLvl$i");
+      echo fm_number1('',$T,'EvasionMod','','min=0 max=100',"EvasionMod$i");
       echo fm_hidden("GameId$i",$T['GameId']);
       }
 
-  $T = ['MaxLvl'=>1000000];
+  $T = ['MaxLvl'=>10];
   echo "<tr><td>" . fm_text1("",$T,'Name',1,'','',"Name0");
   echo fm_hidden('NotBy0',$SETNOT);
   if ($AllG) echo "<td>$SETNOT";
   echo fm_hex1('',$T,'Properties','','',"Properties0");
       echo fm_text1("",$T,'Gate',1,'','',"Gate0");
-      echo fm_number1('',$T,'Eyes','','',"Eyes0");
-      echo fm_number1('',$T,'SeenBy','','',"SeenBy0");
-      echo fm_number1('',$T,'MaxLvl','','',"MaxLvl0");
+      echo fm_number1('',$T,'Eyes','','min=0 max=100',"Eyes0");
+      echo fm_number1('',$T,'SeenBy','','min=0 max=100',"SeenBy0");
+      echo fm_number1('',$T,'MaxLvl','','min=0 max=100',"MaxLvl0");
+      echo fm_number1('',$T,'EvasionMod','','min=0 max=100',"EvasionMod0");
       echo fm_hidden("GameId0",$GAMEID);
   echo "</tbody></table></div>\n";
 

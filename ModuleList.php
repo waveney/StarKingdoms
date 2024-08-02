@@ -55,6 +55,7 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>FireRate</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Formula</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Properties</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Evasion Mod</a>\n";
 
     echo "</thead><tbody>";
 
@@ -66,12 +67,13 @@
       echo "<td>" . fm_select($ModuleCats,$MT,'CivMil',1,'',"CivMil$i");
       echo "<td>" . fm_select($DefWep,$MT,'DefWep',0,'',"DefWep$i");
       echo "<td>" . fm_select($TechNames,$MT,'BasedOn',1,'',"BasedOn$i");
-      if ($Slots) echo fm_number1("",$MT,'SpaceUsed','','',"SpaceUsed$i");
-      echo fm_number1("",$MT,'MinShipLevel','','',"MinShipLevel$i");
-      echo fm_number1("",$MT,'FireOrder','','',"FireOrder$i") . fm_number1("",$MT,'FireRate',"",'',"FireRate$i");
+      if ($Slots) echo fm_number1("",$MT,'SpaceUsed','','min=0 max=10',"SpaceUsed$i");
+      echo fm_number1("",$MT,'MinShipLevel','','min=0 max=10',"MinShipLevel$i");
+      echo fm_number1("",$MT,'FireOrder','','min=0 max=10',"FireOrder$i") . fm_number1("",$MT,'FireRate',"",'min=0 max=10',"FireRate$i");
       echo "<td>" . fm_select($Forms,$MT,'Formula',1,'',"Formula$i");
       echo fm_number1("",$MT,'Leveled','','',"Leveled$i");
-      }
+      echo fm_number1("",$MT,'EvasionMod','','min=0 max=100',"EvasionMod$i");
+    }
 
 
   $MT = [];
@@ -82,11 +84,12 @@
   echo "<td>" . fm_select($ModuleCats,$MT,'CivMil',1,'',"CivMil0");
   echo "<td>" . fm_select($DefWep,$MT,'DefWep',0,'',"DefWep0");
   echo "<td>" . fm_select($TechNames,$MT,'BasedOn',1,'',"BasedOn0");
-  if ($Slots) echo fm_number1("",$MT,'SpaceUsed','','',"SpaceUsed0");
-  echo fm_number1("",$MT,'MinShipLevel','','',"MinShipLevel0");
-  echo fm_number1("",$MT,'FireOrder',"",'',"FireOrder0") . fm_number1("",$MT,'FireRate',"",'',"FireRate0");
+  if ($Slots) echo fm_number1("",$MT,'SpaceUsed','','min=0 max=10',"SpaceUsed0");
+  echo fm_number1("",$MT,'MinShipLevel','','min=0 max=10',"MinShipLevel0");
+  echo fm_number1("",$MT,'FireOrder',"",'min=0 max=10',"FireOrder0") . fm_number1("",$MT,'FireRate',"",'min=0 max=10',"FireRate0");
   echo "<td>" . fm_select($Forms,$MT,'Formula',1,'',"Formula0");
-  echo fm_number1("",$MT,'Leveled','','',"Leveled0");
+  echo fm_number1("",$MT,'Leveled','','min=0 max=100',"Leveled0");
+  echo fm_number1("",$MT,'EvasionMod','','min=0 max=100',"EvasionMod0");
   echo "</tbody></table></div>\n";
 
   echo "<h2><input type=submit name=Update value=Update></h2>";

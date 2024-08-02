@@ -499,7 +499,7 @@ function NebScanners(&$T) {
   return floor($T['NebSensors'] * $T['SensorLevel'] / 2);
 }
 
-function Calc_Scanners(&$T) {
+function Calc_Scanners(&$T) { // And lots of other attributes
   $mods = Get_ModulesType($T['id'],'Sensors');
   $psurv = Get_ModulesType($T['id'],'Planetary Survey Corps');
   $nebs = Get_ModulesType($T['id'],'Nebula Sensors');
@@ -515,6 +515,21 @@ function Calc_Scanners(&$T) {
   }else {
     $T['HasDeepSpace'] = 0;
   }
+}
+
+function Calc_Evasion(&$T) {
+  $MTypes = Get_ModuleTypes();
+  $TTypes = Get_ThingTypes();
+  $MMs = Get_Modules($T['id']);
+
+  $ev = max(0,(5-$T['Level'])*10);
+  $ev += $TTypes[$T['Type']]['EvasionMod'];
+
+  foreach ($MMs as $M) {
+    $ev += $MTypes[$M['Type']]['EvasionMod']*$M['Number'];
+  }
+
+  $T['Evasion'] = max(0,min($ev,80));
 }
 
 function RefitRepair(&$T,$Save=1,$KeepTechLvl=0,$Other=0) {
@@ -562,6 +577,7 @@ function RefitRepair(&$T,$Save=1,$KeepTechLvl=0,$Other=0) {
 // Repair
   [$Health,$Sld] = Calc_Health($T,$KeepTechLvl,$Other);
   Calc_Scanners($T);
+  Calc_Evasion($T);
 //  var_dump($Health,$Sld);
   $T['OrigHealth'] = $Health;
   $T['ShieldPoints'] = $Sld;
