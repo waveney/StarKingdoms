@@ -2,13 +2,13 @@
 
 
 // SelectAll/None for any page - 
-function ToolSelectAll(e) {
+function ToolSelectAll() {
   $(".SelectAllAble").prop("checked",$("#SelectAll").prop("checked"));
 }
 
 var SelTools;
 
-function ToolSelect(e,c) { // e= event, c = colnum
+function ToolSelect() { // e= event, c = colnum
   debugger;
 // 1 Parse SelTools if not already parsed
 // 2 Find each check value
@@ -23,7 +23,7 @@ function ToolSelect(e,c) { // e= event, c = colnum
 }
 
 
-function PCatSel(e) {
+function PCatSel() {
   $('[id^=MPC_').hide();
   var selectedOption = $("input:radio[name=PCAT]:checked").val()
   $('#MPC_' + selectedOption).show();
@@ -68,7 +68,7 @@ function RemoveSticky() {
   $('.stick').removeClass('stick');  
 }
 
-function NoHoverSticky(e) {
+function NoHoverSticky() {
   $('.active').removeClass('active');
 }
 
@@ -88,7 +88,7 @@ function NavStick(e) { // Toggle sticking of menus
   }
 }
 
-function NavSetPosn(e,labl) {
+function NavSetPosn(_e,labl) {
   // Find Actual width of div labl, position child half of width to the left
   var lablwid = $("#MenuParent" + labl).outerWidth();
   $("#MenuChild" + labl).css({"margin-left":(( lablwid-$('.dropdown-content').width())/2) });
@@ -190,7 +190,7 @@ var isAdvancedUpload = function() {
   return (('draggable' in div) || ('ondragstart' in div && 'ondrop' in div)) && 'FormData' in window && 'FileReader' in window;
 }();
 
-function InvoiceCatChange(e,v) {
+function InvoiceCatChange(_e,v) {
 //  debugger;
   $('.InvOrg1').hide();
   $('.InvOrg2').hide();
@@ -418,11 +418,11 @@ debugger;
   
 }
 
-function Do_Destroy(id) {
+function Do_Destroy() {
 
 }
 
-function Do_Remove(id) {
+function Do_Remove() {
 
 }
 
@@ -430,10 +430,10 @@ function Do_WarpOut() {
 
 }
 
-function SetSysLoc(Sys,Loc,res) {
+function SetSysLoc(Sys,_Loc,res) {
   debugger;
   var sid = document.getElementById(Sys).value;
-  var yearval = (document.getElementById('Year') ? (document.getElementById('Year').value || 0) : 0); // May be redundant
+//  var yearval = (document.getElementById('Year') ? (document.getElementById('Year').value || 0) : 0); // May be redundant
   var typeval = document.getElementById('AutoType').value;
   var refval = document.getElementById('AutoRef').value;
   
@@ -442,7 +442,7 @@ function SetSysLoc(Sys,Loc,res) {
   })
 }
 
-function ListSelection(event,evid,Listshowid,xclass='') {
+function ListSelection(_event,evid,Listshowid,xclass='') {
   debugger;
   var ListSel = document.getElementById(evid).value;  
   $("[id^=" + Listshowid + "]").hide();
@@ -458,10 +458,10 @@ function CheckModSpace() {
   debugger;
   var slots = 0;
   // Count Space used
-  $("[id^=ModuleNumber").each(function(nam) {
+  $("[id^=ModuleNumber").each(function() {
     slots += Number(this.value);
     });
-  var flexm = document.getElementById('FlexSpace').innerHTML;  
+//  var flexm = document.getElementById('FlexSpace').innerHTML;  
   var maxslots = document.getElementById('MaxSlots').value;
   var spare = maxslots-slots;
   // Update display

@@ -92,7 +92,7 @@
       $OldT = Get_Thing($_REQUEST['Design']);
 //var_dump($OldT);
       $T = $OldT;
-      if (empty($OldT['BuildState'])) {
+      if ((empty($OldT['BuildState'])) && ($OldT['BluePrint'] >= 0)) {
         db_delete('Things',$Tid);
         $Tid = $T['id'];
       } else {
@@ -130,11 +130,12 @@
   $tprops = (empty($T['Type'])? 0: $ThingProps[$T['Type']]);
   $Valid = $CanMake = 1;
   $ResC =0;
-  RefitRepair($T,0);
-  Calc_Health($T);
-  Calc_Damage($T,$ResC);
-  Calc_Scanners($T);
-
+  if ($T['Whose'] && $T['Whose'] == $FACTION['id']) {
+    RefitRepair($T,0);
+    Calc_Health($T);
+    Calc_Damage($T,$ResC);
+    Calc_Scanners($T);
+  }
 // var_dump($ThingTypeNames);exit;
   echo "<h1>Plan a Thing</h1>";
   echo "This is to design or modify a ship/$ARMY etc to later build if you want to.";
@@ -308,7 +309,7 @@
             if ($FlexM) {
               echo fm_number1('',$ZZnull,'Number','',"min=0 max=$FlexM  onchange=CheckModSpace()","ModuleAddType-$Mti");
             } else {
-              echo "<td>" . $MMs[$Mti]['NUmber'];
+              echo "<td>" . ($MMs[$Mti]['Number']??0);
             }
           }
           if ($Slots) echo "<td>" . $Mtype['SpaceUsed'];

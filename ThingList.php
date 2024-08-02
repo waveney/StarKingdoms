@@ -7,10 +7,12 @@
 
   dostaffhead("List Things",["js/ProjectTools.js"]," onload=ListThingSetup(0,1,0,0)");
 
-  global $db, $GAME,$BuildState,$ThingInstrs;
+  global $db, $GAME,$BuildState,$ThingInstrs,$GAMEID;
+  $Blue = isset($_REQUEST['Blue']);
 
   $Systems = Get_SystemRefs();
   $Factions = Get_Factions();
+  $xtra = '';
 
   if (isset($_REQUEST['AT'])) {
     $Sids = array_flip($Systems);
@@ -21,9 +23,10 @@
       echo "<h2>No Location " .  $_REQUEST['AT'] . "</h2>";
       dotail();
     }
+  } else if ($Blue) {
+      $Things = Gen_Get_Cond('Things',"BluePrint<0 AND GameId=$GAMEID");
   } else {
-    $Things = Get_AllThings();
-    $xtra = '';
+      $Things = Get_AllThings();
   }
 //  $ThingTypes = Thing_Type_Names();
   $ThingTypes = Get_ThingTypes();

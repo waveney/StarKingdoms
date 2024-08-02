@@ -227,6 +227,7 @@
 
     $txt .= "<p>\n";
     $txt .= "<li><a href=ThingTypes.php>Thing Types</a>\n";
+    $txt .= "<li><a href=ThingList.php?Blue>Blue Prints list</a>\n";
     $txt .= "<li><a href=ThingList.php>Thing list</a>\n";
     $txt .= "<li><a href=ThingEdit.php?ACTION=NEW>New Thing</a>";
     $txt .= "<li><a href=Prisoners.php?ACTION=RECALC>Recalc Prisoners</a>";

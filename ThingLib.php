@@ -520,6 +520,7 @@ function Calc_Scanners(&$T) {
 function RefitRepair(&$T,$Save=1,$KeepTechLvl=0,$Other=0) {
   if (empty($T['Level']) ) return 0;
 // Refit
+// var_dump($T);
   $TTypes = Get_ThingTypes();
   $MTypes = Get_ModuleTypes();
   $tid = $T['id'];
@@ -1196,4 +1197,17 @@ function BluePrintList($Lvl=10000,$Props='',$WithISA=1) {
   return $BPlst;
 }
 
+function BlueShow(&$T,$GM=0) {
+  if ($T['BluePrint'] > 0) {
+    echo "BluePrint: ";
+    if ($GM) {
+      echo fm_number0('',$T,'BluePrint','','min=-1 max=100000');
+    }
+    echo "<a href=ThingEdit.php?id=" . $T['BluePrint'] . ">View</a>";
+  } else if ($T['BluePrint'] < 0) {
+    echo "Is a Blue Print";
+  } else  {
+    echo "No Blue Print";
+  }
+}
 ?>

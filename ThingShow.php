@@ -149,17 +149,13 @@ function Show_Thing(&$T,$Force=0) {
         if ($Proj['TurnStart']) echo " Start Turn: " . $Proj['TurnStart'];
         if ($Proj['TurnEnd']) echo " End Turn: " . $Proj['TurnEnd'];
       }
-    } else if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
+    }
+    if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
       if ($GM && Feature('BluePrints')) {
         echo fm_number1('Blue Print',$T,'BluePrint','','min=-100 max=10000') ;
-        if ($T['BluePrint'] > 0) {
-          echo "<a href=ThingEdit.php?id=" . $T['BluePrint'] . ">View</a>";
-        } else if ($T['BluePrint'] < 0) {
-          echo "Is a Blue Print";
-        } else  {
-          echo "No Blue Print";
-        }
+        BlueShow($T,$GM);
       }
+    }
 // Note Special meaning of -ve LinkId numbers:
 // -1 On Board - SytemId = ThingId of Host
 // -2 Boarding on Turn NewSystemId = ThingId of Host
@@ -172,7 +168,10 @@ function Show_Thing(&$T,$Force=0) {
       if ($tprops & THING_MOVES_DIRECTLY) {
           if ($GM) {
             echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId',1,' onchange=SetSysLoc("SystemId","WithinNow","WithinSysLoc")');
-            if ($T['SystemId']??0) {
+            if ($T['BuildState'] < 2) {
+              echo "<td>";
+              BlueShow($T,$GM);
+            } else if ($T['SystemId']??0) {
               echo "<td id=WithinNow>" . fm_select($Syslocs,$T,'WithinSysLoc');
             } else {
               echo "<td id=WithinNow>";
@@ -184,7 +183,10 @@ function Show_Thing(&$T,$Force=0) {
           }
         $T['LinkId'] = -6;
         echo "<tr><td>New System:<td>" . fm_select($Systems,$T,'NewSystemId',1,' onchange=SetSysLoc("NewSystemId","WithinNew","NewLocation")');
-        if ($T['SystemId']??0) {
+        if ($T['BuildState'] < 2) {
+          echo "<td>";
+          BlueShow($T,$GM);
+        } else if ($T['SystemId']??0) {
           echo "<td id=WithinNew>" . fm_select($Syslocs,$T,'NewLocation');
         } else {
           echo "<td id=WithinNew>";
@@ -198,11 +200,21 @@ function Show_Thing(&$T,$Force=0) {
         if ($Lid >= 0 || $Lid == LINK_BOARDING || $Lid == LINK_LOAD_AND_UNLOAD) { // Insystem
           if ($GM) {
             echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId',1);
-            echo "<td>" . fm_select($Syslocs,$T,'WithinSysLoc');
+            echo "<td>";
+            if ($T['BuildState']> 2 ) {
+              echo fm_select($Syslocs,$T,'WithinSysLoc');
+            } else {
+              BlueShow($T,$GM);
+            }
           } elseif ($T['PrisonerOf']) {
             echo "<tr><td class=Err>Currently a Prisoner";
           } else {
-            echo "<tr><td>Current System:<td>" . (empty($N)? 'Unknown' : $N['Ref']) . "<td>" . ($Syslocs[$T['WithinSysLoc'] ?? 0] ?? 'Deep Space');
+            echo "<tr><td>Current System:<td>" . (empty($N)? 'Unknown' : $N['Ref']) . "<td>";
+            if ($T['BuildState']> 2 ) {
+              echo ($Syslocs[$T['WithinSysLoc'] ?? 0] ?? 'Deep Space');
+            } else {
+              BlueShow($T,$GM);
+            }
           }
         } else if ($Lid == LINK_FOLLOW ) {
           $Fol = Get_Thing($T['NewSystemId']);
@@ -345,7 +357,7 @@ function Show_Thing(&$T,$Force=0) {
           echo fm_submit("ACTION",'Cancel Move',0);
           $NeedOr = 1;
         }
-        if (GameFeature('Follow') && ($tprops & THING_CAN_MOVE )) {
+        if (Feature('Follow') && ($tprops & THING_CAN_MOVE )) {
           global $db;
           $ThisSys = $T['SystemId'];
           $Eyes = EyesInSystem($Fid,$ThisSys,$Tid);
@@ -428,20 +440,20 @@ function Show_Thing(&$T,$Force=0) {
         }
       }
     }
-  }
 
-  if (Access('God')) echo "<tr><td>SystemId: " . $T['SystemId'] . "<td>LinkId: " . $T['LinkId'] . "<td>Locn: " . $T['WithinSysLoc'] .
-     "<td>NewSystemId: " . $T['NewSystemId'] . "<td>New Locn: " . $T['NewLocation'];
+
   if ($GM) echo "<tr>" . fm_radio('Whose',$FactNames ,$T,'Whose','',1,'colspan=6','',$Fact_Colours,0);
   if  ($tprops & THING_HAS_GADGETS) echo "<tr>" . fm_textarea("Gadgets",$T,'Gadgets',8,3);
   if  ($tprops & THING_HAS_LEVELS) echo "\n<tr>" . fm_text("Orders",$T,'Orders',2);
   if ($GM) {
     echo "<td>Prisoner of: " . fm_select($FactNames,$T,'PrisonerOf');
     echo "<td colspan=2>Hidden Control: " . fm_select($FactNames,$T,'HiddenControl');
+    if (Access('God')) echo "<tr><td>GOD!:<td>SystemId: " . $T['SystemId'] . "<td>LinkId: " . $T['LinkId'] . "<td>Locn: " . $T['WithinSysLoc'] .
+    "<td>NewSystemId: " . $T['NewSystemId'] . "<td>New Locn: " . $T['NewLocation'];
   }
   echo "<tr>" . fm_textarea("Description\n(For others)",$T,'Description',8,2);
   echo "<tr>" . fm_textarea('Notes',$T,'Notes',8,2);
-  echo "<tr>" . fm_textarea('Named Crew',$T,'NamedCrew',8,2);
+  if (Feature('NamedCrew')) echo "<tr>" . fm_textarea('Named Crew',$T,'NamedCrew',8,2);
 
   $Have = Get_Things_Cond(0," (LinkId=-1 OR LinkId=-3) AND SystemId=$Tid ");
   $Having = Get_Things_Cond(0," (LinkId=-2 OR LinkId=-4) AND NewSystemId=$Tid ");
@@ -523,7 +535,7 @@ function Show_Thing(&$T,$Force=0) {
     if ($GM) {
       echo "<tr>" . fm_number('Orig Health',$T,'OrigHealth');
 
-      if ($T['CurHealth'] > 0) {
+      if (($T['CurHealth'] > 0) || ($T['BuildState'] <2)) {
         echo fm_number1('Cur Health',$T,'CurHealth');
       } else {
         echo fm_number1('Cur Health',$T,'CurHealth',' class=Err ');
@@ -626,13 +638,16 @@ function Show_Thing(&$T,$Force=0) {
                       fm_Select($MNs, $D , 'Type', 1,'',"ModuleType-$did") . "</span>" )
                     . (($MTs[$D['Type']]['Leveled']&1) ? fm_number1('Level', $D,'Level', '', ' class=Num3 ',"ModuleLevel-$did") :'<td>') . ' # '
                     . fm_number0('', $D,'Number', '',' class=Num3 ',"ModuleNumber-$did")
-                    . (($Blue && !empty($BMods[$D['Type']]))? '(' . $BMods[$D['Type']]['Number'] . ') ' :'')
+                    . (($Blue && !empty($BMods[$D['Type']]))? "<span class=Blue>(" . $BMods[$D['Type']]['Number'] . ')</span> ' :'')
                     . "<button id=ModuleRemove-$did onclick=AutoInput('ModuleRemove-$did')>R</button>";
 
-        if ( $Blue && !empty($BMods[$D['Type']])) $FlexUsed += ($D['Number'] - $BMods[$D['Type']]['Number']);
+        if ( $Blue) {
+          $FlexUsed += $D['Number'];
+          if (isset($D['Type']) && isset($BMods[$D['Type']])) $FlexUsed -= ($BMods[$D['Type']]['Number']??0);
+        }
         if ($D['Number'] < 0) echo " <b>Inactive</b>";
         if (!isset($MTNs[$D['Type']])) $BadMods += $D['Number'];
-        $totmodc += $D['Number'] * ($Slots?$MTs[$D['Type']]['SpaceUsed']:1);
+        if (($MTs[$D['Type']]['Leveled']&8) == 0 ) $totmodc += $D['Number'] * ($Slots?$MTs[$D['Type']]['SpaceUsed']:1);
 
 /*        if ($D['Type'] == 4) {
           $T['Sensors'] = $D['Number'];
@@ -690,7 +705,7 @@ function Show_Thing(&$T,$Force=0) {
           echo ". <span class=Blue> Note you have Level: $CLvl </span>";
         }
         if (!isset($MTNs[$D['Type']])) $BadMods += $D['Number'];
-        $totmodc += $D['Number'] * ($Slots?$MTs[$D['Type']]['SpaceUsed']:1);
+        if (($MTs[$D['Type']]['Leveled']&8) == 0 ) $totmodc += $D['Number'] * ($Slots?$MTs[$D['Type']]['SpaceUsed']:1);
         };
 
       if ($totmodc > $T['MaxModules']) {

@@ -877,8 +877,10 @@ function Get_ThingTypes($AllG=0) {
 function Has_Tech($fid,$name,$turn=0) { // Turn==0 = now
   global $db,$GAME;
   if (empty($fid)) {
-    var_dump($fid,$name);
-    debug_print_backtrace();
+    if (Access('God') && !isset($_REQUEST['FORCE'])) {
+      var_dump($fid,$name);
+      debug_print_backtrace();
+    }
     return 0;
   }
   if (is_numeric($name)) {

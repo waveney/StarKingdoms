@@ -200,10 +200,6 @@ input[type=password] {
   color:red;
 }
 
-.blue {
-  color:blue;
-}
-
 .orange {
   color:orange;
 }
@@ -962,3 +958,6 @@ table {
   padding: 0;
 }
 
+.Blue {
+	 color:blue;
+}
