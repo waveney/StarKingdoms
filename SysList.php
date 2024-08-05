@@ -19,15 +19,15 @@
   }
 
   $Links = Get_LinksGame();
-//  var_dump($Systems);
 //var_dump($SRefs);
 //var_dump($Links);
-  foreach($Systems as &$N) $N['LinkCount'] = 0;
+  foreach($Systems as $r=>$N) $Systems[$r]['LinkCount'] = 0;
   foreach($Links as $L) {
     $Systems[$L['System1Ref']]['LinkCount']++;
     $Systems[$L['System2Ref']]['LinkCount']++;
   }
 
+// var_dump($Systems);
 
 
   echo "<h1>Systems</h1>";
@@ -46,7 +46,8 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Links</a>\n";
   echo "</thead><tbody>";
 
-  foreach($Systems as $N) {
+  foreach($Systems as $r=>$N) {
+ //   var_dump($r, $N);
     $sid = $N['id'];
     $Name = $Ref = $N['Ref'];
     $Cont = $N['Control'];
