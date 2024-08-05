@@ -127,8 +127,8 @@
                 fm_select($Facts,0,'f1',1," onchange=this.form.submit()") . "</form>\n";
 
 
-    $txt .= "<li><a href=MapFull.php>Full Map Generate</a>\n";
-    $txt .= "<li><a href=MapFull.php?Hex>Hex Map Generate</a>\n<p>";
+    $txt .= "<li><a href=MapFull.php?Links=0>Full Map Generate</a>\n";
+    $txt .= "<li><a href=MapFull.php?Hex&Links=0>Hex Map Generate</a>\n<p>";
     if (0 && Access('God')) {
       $txt .= "<li><a href=MapEdit.php>Map Edit</a><p>\n";
       $txt .= "<li><a href=MapValid.php>Map Validation</a>\n";

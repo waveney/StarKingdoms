@@ -10,13 +10,25 @@
 
   $Systems = Get_Systems();
   $Factions = Get_Factions();
-
+//  $SRefs = array_flip(Get_SystemRefs());
 
   if (!$Systems) {
     echo "<h2>No systems found</h2>";
     echo "<h2><a href=SysEdit.php?ACTION=New>New System</a></h2>";
     dotail();
   }
+
+  $Links = Get_LinksGame();
+//  var_dump($Systems);
+//var_dump($SRefs);
+//var_dump($Links);
+  foreach($Systems as &$N) $N['LinkCount'] = 0;
+  foreach($Links as $L) {
+    $Systems[$L['System1Ref']]['LinkCount']++;
+    $Systems[$L['System2Ref']]['LinkCount']++;
+  }
+
+
 
   echo "<h1>Systems</h1>";
 
@@ -31,6 +43,7 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Things</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Anomalies</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Visited?</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Links</a>\n";
   echo "</thead><tbody>";
 
   foreach($Systems as $N) {
@@ -60,6 +73,7 @@
     $npc = 1;
     foreach($Who as $W) if (!isset($Factions[$W['FactionId']]) || (!$Factions[$W['FactionId']]['NPC'])) $npc = 0;
     echo "<td>" .($Who?($npc?"NPC only":"Yes"):"No");
+    echo "<td>" . $N['LinkCount'];
   }
 
   echo "</tbody></table></div>\n";
