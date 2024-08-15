@@ -1969,7 +1969,7 @@ function ShipMovements($Agents=0) {
 
       if (($Agents == 0) && ($T['Whose'] != $LOwner)) {
         $L['UseCount'] += $T['Level'];
-        if ($L['UseCount'] > 100*$L['Weight']) {// something breaks
+        if (Feature('LinksExplode') && ($L['UseCount'] > 100*$L['Weight'])) {// something breaks
           $BadProb = $T['Level']*($L['UseCount'] - 100*$L['Weight']);
           if (rand(0,100*$L['Weight']) > $BadProb) { // There she blows!!!!
             $DamageDice = (abs($L['Level'])+1)*2;
@@ -2035,8 +2035,9 @@ function ShipMovements($Agents=0) {
 
       if ($Fid) {
         $FS = Get_FactionSystemFS($Fid,$Sid);
-        if (!isset($FS['id']) || $FS['ScanLevel'] < ($ShipScanLevel?5:1) || $FS['NebScanned']<$ShipNebScanLevel) {
-          $SP = ['FactionId'=>$Fid, 'Sys'=> $Sid, 'Scan'=>($ShipScanLevel?5:1), 'Neb'=>$ShipNebScanLevel, 'Turn'=>$GAME['Turn'], 'ThingId'=>$T['id']];
+        if (!isset($FS['id']) || ($FS['ScanLevel'] < $ShipScanLevel) || ($FS['NebScanned']<$ShipNebScanLevel)) {
+          $SP = ['FactionId'=>$Fid, 'Sys'=> $Sid, 'Scan'=>$ShipScanLevel, 'Neb'=>$ShipNebScanLevel,
+                 'Turn'=>$GAME['Turn'], 'ThingId'=>$T['id']];
 
           Insert_db('ScansDue', $SP);
         }

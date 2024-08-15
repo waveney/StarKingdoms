@@ -13,7 +13,7 @@ function Show_Thing(&$T,$Force=0) {
   global $BuildState,$GAME,$GAMEID,$FACTION;
   global $Project_Status,$Advance;
   global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$ThingInclrs, $InstrMsg, $ValidMines;
-  global $Currencies;
+  global $Currencies,$InstrNotBy,$NOTBY;
 
   $ThingInclrs = ['white','lightgreen','lightpink','lightblue','lightyellow','bisque','#99ffcc','#b3b3ff',
                  'lightgreen','lightpink','lightblue','lightyellow','bisque','#99ffcc','#b3b3ff',
@@ -43,7 +43,8 @@ function Show_Thing(&$T,$Force=0) {
   } elseif ($T['NewSystemId']) {
     $NN = Get_System($T['NewSystemId']);
     $FS = Get_FactionSystemFS($Fid,$T['NewSystemId']);
-    if (($FS['ScanLevel'] >= 3) && ($NN['Nebulae'] <= $FS['NebScanned'])) {
+    $Sl = ($NN['Nebulae']?$FS['NebScanned']:$FS['ScanLevel']);
+    if ($Sl) {
       $NewSyslocs = Within_Sys_Locs($NN);
     } else {
       $NewSyslocs = [];
@@ -233,7 +234,8 @@ function Show_Thing(&$T,$Force=0) {
           if ($Host) {
             echo "<tr><td colspan=3>In: $Lid" . $Host['Name'];
             $Conflict = 0;
-            $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
+            $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] .
+                    " AND W.Home=PH.id AND W.Conflict=1");
             if ($Conf) $Conflict = $Conf[0]['Conflict'];
 
             if ($Host['LinkId']>0 && $Host['TargetKnown'] == 0) {
@@ -252,7 +254,8 @@ function Show_Thing(&$T,$Force=0) {
               } else {
                 echo " - Only the transport owner can unload you";
               }
-              echo "<br>Note: To unload AFTER moving, please put the movement order in to the system for the transport before the Unload After Move order.<br>\n";
+              echo "<br>Note: To unload AFTER moving, please put the movement order in to the system for the" .
+                "transport before the Unload After Move order.<br>\n";
             }
           } else {
             echo "<tr><td colspan=3>In limbo... (Richard can fix)";
@@ -294,7 +297,9 @@ function Show_Thing(&$T,$Force=0) {
           $DN = Get_System($Dest);
           $FS = Get_FactionSystemFS($Fid,$Dest);
 // var_dump($FS,$Fid,$Dest);
-          if (isset($FS['ScanLevel']) && $FS['ScanLevel'] >=3) {
+          $Sl = ($DN['Nebulae']?$FS['NebScanned']:$FS['ScanLevel']);
+
+          if ($Sl) {
             $finallocs = Within_Sys_Locs($DN);
             if (!isset($finallocs[$T['NewLocation']]) ) {
               $T['NewLocation'] = 0;
@@ -770,6 +775,9 @@ function Show_Thing(&$T,$Force=0) {
   $Moving = ($T['LinkId'] > 0);
 
   if (($T['BuildState'] == 2 || $T['BuildState'] == 3) && empty($T['PrisonerOf'])) foreach ($ThingInstrs as $i=>$Ins) {
+
+    if (($InstrNotBy[$i] & $NOTBY) !=0) continue; // Not in this game
+
 //  echo "Checking: $Ins<br>";
     switch ($Ins) {
     case 'None': // None
@@ -1050,7 +1058,13 @@ function Show_Thing(&$T,$Force=0) {
       if (empty($OtherList)) continue 2; // Nothing to collaborate with
       break;
 
+    case 'Space Survey':
+      if ($Moving || (($tprops & THING_HAS_SHIPMODULES) ==0) || ($T['Sensors']==0) ) continue 2;
+      break;
 
+    case 'Planetary Survey':
+      if ($Moving || (($tprops & THING_HAS_ARMYMODULES) ==0) || ($T['Sensors']==0) ) continue 2;
+      break;
 
     default:
       continue 2;
@@ -1513,6 +1527,12 @@ function Show_Thing(&$T,$Force=0) {
       echo "<br>Select ship to collaborate with.  If they are not doing anything, nothing happens. " . fm_select($DList,$T,'Dist1');
       break;
 
+    case 'Space Survey':
+      break;
+
+    case 'Planetary Survey':
+    break;
+
 
     default:
       break;
@@ -1570,13 +1590,18 @@ function Show_Thing(&$T,$Force=0) {
     if (($T['PrisonerOf'] ?? 0)) echo fm_submit("ACTION","Disarm",0);
   }
   if (!$GM && ($tprops & THING_CAN_BE_CREATED)) echo fm_submit("ACTION","Delete",0);
-  if ($GM || empty($Fid)) {
-    if (Access('God')) {
-      echo "<h2><a href=ThingList.php>Back to Thing list</a> &nbsp; " . fm_submit("ACTION","Duplicate",0) . fm_submit("ACTION","GM Recalc",0);
-      if ($HasSalvage) echo fm_submit("ACTION","Salvage",0);
-      echo "</h2>";
+  if ($GM) {
+    echo "<h2>";
+    if (empty($Fid)){
+      echo "<a href=ThingList.php>Back to Thing list</a> ";
+    } else {
+      echo "<a href=PThingList.php?id=$Fid>Back to Thing list</a>";
     }
-  } else {
+
+    echo " &nbsp; " . fm_submit("ACTION","Duplicate",0) . fm_submit("ACTION","GM Recalc",0);
+    if ($HasSalvage) echo fm_submit("ACTION","Salvage",0);
+    echo "</h2>";
+  } else if (!empty($Fid)) {
     echo "<h2><a href=PThingList.php?id=$Fid>Back to Thing list</a></h2>";
   }
   Put_Thing($T);

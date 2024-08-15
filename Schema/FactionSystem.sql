@@ -8,6 +8,8 @@ CREATE TABLE `FactionSystem` (
   `ShortName` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `NebScanned` int NOT NULL DEFAULT '0',
   `Xlabel` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `MaxScan` int NOT NULL,
+  `MaxScan` int NOT NULL COMMENT 'Not Used',
+  `PassiveScan` int NOT NULL,
+  `PassiveNebScan` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

@@ -7,6 +7,10 @@
   $type  = $_POST['D'];
   $mtch = [];
 
+  if (strchr($Value,'"')) {
+    $Value = addslashes($Value);
+  }
+
   global $GAME,$GAMEID;
 
 //var_dump($_POST);

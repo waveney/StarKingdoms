@@ -58,7 +58,7 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
     if ($AllG) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>NotBy</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Field</a>\n";
-    if ($CTs) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>PreReq</a>\n";
+    if ($CTs) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>PreReq</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>PreReq Lvl</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Properties</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Slots</a>\n";

@@ -3,7 +3,8 @@
 /* $SurveyLevels = [0=>'Blind',1=>'No Sensors', 2=>'Minimal Scan', 3=>'A bit better', 4=>'Most Things', 5=>'Full Scan no control',
                  6=>'Full Scan under control', 10=>'GM Only']; */
  $SurveyLevels = [0=>'Blind', 1=>'No Sensors', 3=>'Unable to Scan', 5=>'Full Scan', 10=>'GM Only'];
- $FAnomalyStates = [-1=>'Can Find', 0=>'Unknown', 1=>'Found', 2=>'Can Analyse', 3=> 'Analysed'];
+ $FAnomalyStates = [-1=>'Can Find', 0=>'Unknown', 1=>'Found', 2=>'Can Analyse',
+                     3=> 'Analysed, Reward unclaimed', 4=> 'Analysed, Reward Claimed'];
  $GAnomStates = ['Open','One Use','Completed','Removed'];
 
  global $SurveyLevels,$FAnomalyStates,$GAnomStates;
@@ -289,6 +290,18 @@ function Show_System(&$N,$Mode=0) {
       $Aid = $A['id'];
       echo "<a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . "</a></br>";
     }
+  }
+
+  $FactionSys = Gen_Get_Cond('FactionSystem',"SystemId=$Sid");
+  if ($FactionSys) {
+    echo "<h2>Factions Knowledge</h2>";
+    echo "<table border><tr><td>Faction<td>Passive Scan Level<td>Active Scan Level";
+    if ($N['Nebula']) echo "<td>Passive Nebula Scan<td>Active Nebula Scan";
+    foreach ($FactionSys as $FS) {
+      echo "<tr><td>" . $Facts[$FS['FactionId']]['Name'] . "<td>" . $FS['PassiveScan'] . "<td>" . $FS['ScanLevel'];
+      if ($N['Nebula']) echo "<td>" . $FS['PassiveNebScan'] . "<td>" . $FS['NebScanned'];
+    }
+    echo "</table>";
   }
 
 

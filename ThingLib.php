@@ -15,12 +15,18 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
                 'Make Orbital Repair Yard','Build Space Station','Expand Space Station','Make Deep Space Sensor','Make Advanced Asteroid Mine','Build Stargate',
                 'Make Planet Mine', 'Construct Command Relay Station', 'Repair Command Node','Build Planetary Mine','Dismantle Stargate','Disband','Transfer',
                 'Make Something','Make Warpgate','Retire','Stop Support','Make Advanced Minefield','Clear Minefield', 'Make Advanced Deep Space Sensor','Salvage',
-                'Terraform','Link Repair','Collaborative DSC'];
+                'Terraform','Link Repair','Collaborative DSC','Space Survey','Planetary Survey'];
 $IntructProps = [0,0,0,0,0,0,1,1,1,
                  1,1,1,1,1,1,
                  1,1,1,1,1,0,0,
                  1,1,0,0,1,0,1,1,
-                 0,1,0]; // 1 = DSC
+                 0,1,0,0,0]; // 1 = DSC
+$InstrNotBy =   [0,1,1,0,0,1,0,1,0,
+                 0,0,0,0,0,1,
+                 1,1,1,1,1,0,0,
+                 0,1,0,1,1,1,0,0,
+                 0,1,0,2,2];
+
 $Advance = ['','','Advanced ','Very Advanced ','Ultra Advanced ','Evolved '];
 $ValidMines = [0,1,0,1,0,1,0,0,0,0,0];
 $LinkStates = ['','Under Repair','In Safe Mode','Locked'];
@@ -245,7 +251,10 @@ function Within_Sys_Locs(&$N,$PM=0,$Boarding=0,$Restrict=0,$Hab=0) {// $PM +ve =
   if ($PM) return 0;
   $LKs = Get_Links($N['Ref']);
   $Li = 1;
-  if ($Restrict !=1) foreach($LKs as $lk) $L[500+$Li++] = "At " . Feature('LinkRefText','stargate to link') . " " . $lk['id'];
+  if (feature('LinksValidLocations') && $Restrict !=1) foreach($LKs as $lk) { // Code currently goes wrong if concealed links used
+    if (1) $L[500+$Li] = "At " . Feature('LinkRefText','stargate to link') . " " . $lk['id'];
+    $Li++;
+  }
 
   if ($Boarding) {
     $Things = Get_ThingsAt($N['id']);

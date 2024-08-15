@@ -51,7 +51,7 @@
       echo "<h1>Unknown system</h1>\n";
       dotail();
     }
-    $SurveyLevel = $FS['ScanLevel'];  // (isset($ScanSurveyXlate[$FS['ScanLevel']]) ? $ScanSurveyXlate[$FS['ScanLevel']] : 0);
+    $SurveyLevel = $FS['ScanLevel'];  // if nebula look for nebscan level
 
   } else { // GM access
     if (isset($_REQUEST['V'])) {
@@ -59,7 +59,7 @@
     } else if (Access('GM')) {
       $SurveyLevel = 10;
     } else {
-      $SurveyLevel = 2;
+      $SurveyLevel = 0;
     }
 
     if (isset($_REQUEST['F'])) {
@@ -71,7 +71,8 @@
 
     if (isset($_REQUEST['M']) && $Fid ) {
       $FS = Get_FactionSystemFS($Fid,$Sid);
-      if (isset($_REQUEST['L'])) $FS['ScanLevel'] = (!isset($FS['ScanLevel']) ? $SurveyLevel : ($FS['ScanLevel'] < $SurveyLevel ? $FS['ScanLevel']: $SurveyLevel));
+      $FS['ScanLevel'] = ($_REQUEST['L']?? $SurveyLevel);
+      if (isset($_REQUEST['N'])) $FS['NebScanned'] = ($_REQUEST['N']?? $SurveyLevel);
       Put_FactionSystem($FS);
     }
   }

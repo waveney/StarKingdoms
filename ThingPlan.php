@@ -157,7 +157,7 @@
     if ($Blue) {
       echo "<h2>OR start with a Blue Print:</h2>";
       $LimA = Has_Tech($Fid,'Military Theory');
-      $LimS = Has_Tech($Fid,'	Ship Construction');
+      $LimS = Has_Tech($Fid,'Ship Construction');
       $BPs = BluePrintList(max($LimA,$LimS)+1,'',0);
       $Direct = [];
 //      var_dump($ThingTypeNames);

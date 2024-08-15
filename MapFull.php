@@ -7,7 +7,7 @@
   dostaffhead("Full Map");
  //var_dump($_REQUEST, $_COOKIE);
 
-  $LinkType = Feature('LinkMethod');
+  $LinkType = Feature('LinkMethod','Gates');
   $Scale = ($_REQUEST['Scale']??1);
   $XScale = Feature('XScale',1)*$Scale;
   $ShowLinks = ($_REQUEST['Links']??1);
@@ -180,7 +180,7 @@
         $FS = Get_FactionSystemFS($Faction, $N['id']);
         if ($N['Control'] != $Faction) {
           if (!isset($FS['id'])) continue;
-          if ($FS['ScanLevel'] > 1) {
+          if (($FS['PassiveScan'] > 0) || ($FS['PassiveNebScan'] > 0)) {
             if ($FS['Name']) $ShortName = $NodeName = $FS['Name'];
             if ($FS['ShortName']) $ShortName = $FS['ShortName'];
           } else {
@@ -255,8 +255,13 @@
                    ($ShowLinks? " fontsize=" . $Ldat[3] . " label=\"" . $Ldat[2] . "\"": '') . " ];\n");
             $LinkShown[$L['id']]=1;
           } else {
-            if ($Neb && $FS['NebScanned'] < $Neb) continue;
-            if (isset($FS['ScanLevel']) && $FS['ScanLevel']<2) continue;
+            if ($LinkType == 'Gates') {
+              if ($Neb && $FS['NebScanned'] < $Neb) continue;
+              if (isset($FS['ScanLevel']) && $FS['ScanLevel']<2) continue; // Wrong now wont fix unless Gates reused
+            } elseif ($LinkType == 'Wormholes') {
+              if (($L['Concealment'] > 0) && !isset($Fl['id'])) continue;
+            } else continue;
+
             $rand = "B$ul";  // This kludge at least allows both ends to be displayed
             fwrite($Dot,"Unk$ul$rand [label=\"?\" shape=circle];\n");
             fwrite($Dot,"$from -- Unk$ul$rand [color=" . $Ldat[4] .

@@ -208,7 +208,7 @@
         $DNames = [];
 //var_dump($HDists[$Hi]);
         foreach ($DTs as $DTz) {
-          if (eval("return " . $DTz['Gate'] . ";" )) { // ($DT['BasedOn'] == 0 || Has_tech($Fid,$DT['BasedOn'], $Turn)) {
+          if (eval("return " . $DTz['Gate'] . ";" )) {
             $DNames[$DTz['id']] = $DTz['Name'];
 
             $Lvl = 0;
@@ -280,7 +280,7 @@
 
 
     echo "<h2>Research Planetary Construction</h2><p>";
-      $OldPc = Has_Tech($Fid,3, $Turn);
+      $OldPc = Has_Tech($Fid,3);
       $Lvl = $OldPc+1;
       $pc = Proj_Costs($Lvl);
       echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Planetary Construction'] .
@@ -622,7 +622,7 @@
 
 
       echo "<h2>Research " . Feature('MilTech') . "</h2><p>";
-        $OldPc = Has_Tech($Fid,8, $Turn);
+        $OldPc = Has_Tech($Fid,8);
         $Lvl = $OldPc+1;
         $pc = Proj_Costs($Lvl);
         echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" .
@@ -711,7 +711,7 @@
 
 
       echo "<h2>Research Intelligence Operations</h2><p>";
-        $OldPc = Has_Tech($Fid,4, $Turn);
+        $OldPc = Has_Tech($Fid,4);
         $Lvl = $OldPc+1;
         $pc = Proj_Costs($Lvl);
         echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Intelligence Operations'] .
