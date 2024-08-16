@@ -215,6 +215,11 @@ function Show_System(&$N,$Mode=0) {
     echo "<tr>" . fm_text('2nd Star Type',$N,'Type2',2,"class=NotCSide");
   }
 
+  if (Feature('SysTraits')) {
+    echo "<tr>" . fm_text('Trait',$N,'Trait',2) . "<td>" . fm_checkbox('Automated',$N,'TraitAuto');
+    echo "<tr>" . fm_textarea('Description',$N,'TraitDesc',5,2);
+  }
+
   if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "<tr>" . fm_textarea('Notes',$N,'Notes',8,3);
 
@@ -401,6 +406,11 @@ function Show_Planet(&$P,$Mode=0,$Buts=0) {
   echo "<tr><td>Add District Type<td>" . fm_Select($DTs, NULL , 'Number', 1,'',"DistrictTypeAdd-$Pid");
   echo fm_number(($P['ProjHome']?"<a href=ProjHomes.php?id=" . $P['ProjHome'] . ">Project Home</a>":"Project Home"),$P,'ProjHome');
 
+  if (Feature('SysTraits')) {
+    echo "<tr>" . fm_text('Trait',$P,'Trait',2) . "<td>" . fm_checkbox('Automated',$P,'TraitAuto');
+    echo "<tr>" . fm_textarea('Description',$P,'TraitDesc',5,2);
+  }
+
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "</table></div></form>\n";
 
@@ -482,6 +492,11 @@ function Show_Moon(&$M,$Mode=0) {
 
   echo "<tr><td>Add District Type<td>" . fm_Select($DTs, NULL , 'Number', 1,'',"DistrictTypeAdd-$Mid");
   echo fm_number(($M['ProjHome']?"<a href=ProjHomes.php?id=" . $M['ProjHome'] . ">Project Home</a>":"Project Home"),$M,'ProjHome');
+
+  if (Feature('SysTraits')) {
+    echo "<tr>" . fm_text('Trait',$M,'Trait',2) . "<td>" . fm_checkbox('Automated',$M,'TraitAuto');
+    echo "<tr>" . fm_textarea('Description',$M,'TraitDesc',5,2);
+  }
 
   if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "</table></div></form>\n";

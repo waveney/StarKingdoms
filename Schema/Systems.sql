@@ -29,5 +29,8 @@ CREATE TABLE `Systems` (
   `StarName` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `StarName2` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `Flags` int NOT NULL,
+  `Trait` text COLLATE utf8mb4_general_ci NOT NULL,
+  `TraitDesc` text COLLATE utf8mb4_general_ci NOT NULL,
+  `TraitAuto` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
