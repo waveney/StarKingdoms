@@ -216,7 +216,7 @@ function Show_System(&$N,$Mode=0) {
   }
 
   if (Feature('SysTraits')) {
-    echo "<tr>" . fm_text('Trait',$N,'Trait',2) . "<td>" . fm_checkbox('Automated',$N,'TraitAuto');
+    echo "<tr>" . fm_text('Trait',$N,'Trait',2) . "<td>" . fm_checkbox('Automated',$N,'TraitAuto') . fm_Number('Concealment',$N,'TraitConceal');
     echo "<tr>" . fm_textarea('Description',$N,'TraitDesc',5,2);
   }
 
@@ -407,7 +407,7 @@ function Show_Planet(&$P,$Mode=0,$Buts=0) {
   echo fm_number(($P['ProjHome']?"<a href=ProjHomes.php?id=" . $P['ProjHome'] . ">Project Home</a>":"Project Home"),$P,'ProjHome');
 
   if (Feature('SysTraits')) {
-    echo "<tr>" . fm_text('Trait',$P,'Trait',2) . "<td>" . fm_checkbox('Automated',$P,'TraitAuto');
+    echo "<tr>" . fm_text('Trait',$P,'Trait',2) . "<td>" . fm_checkbox('Automated',$P,'TraitAuto') . fm_Number('Concealment',$P,'TraitConceal');
     echo "<tr>" . fm_textarea('Description',$P,'TraitDesc',5,2);
   }
 
@@ -494,7 +494,7 @@ function Show_Moon(&$M,$Mode=0) {
   echo fm_number(($M['ProjHome']?"<a href=ProjHomes.php?id=" . $M['ProjHome'] . ">Project Home</a>":"Project Home"),$M,'ProjHome');
 
   if (Feature('SysTraits')) {
-    echo "<tr>" . fm_text('Trait',$M,'Trait',2) . "<td>" . fm_checkbox('Automated',$M,'TraitAuto');
+    echo "<tr>" . fm_text('Trait',$M,'Trait',2) . "<td>" . fm_checkbox('Automated',$M,'TraitAuto') . fm_Number('Concealment',$M,'TraitConceal');
     echo "<tr>" . fm_textarea('Description',$M,'TraitDesc',5,2);
   }
 
