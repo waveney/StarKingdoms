@@ -216,8 +216,12 @@ function Show_System(&$N,$Mode=0) {
   }
 
   if (Feature('SysTraits')) {
-    echo "<tr>" . fm_text('Trait',$N,'Trait',2) . "<td>" . fm_checkbox('Automated',$N,'TraitAuto') . fm_Number('Concealment',$N,'TraitConceal');
-    echo "<tr>" . fm_textarea('Description',$N,'TraitDesc',5,2);
+    echo "<tr>" . fm_text('Trait',$N,'Trait1',2) . "<td>" . fm_checkbox('Automated',$N,'Trait1Auto') . fm_Number('Concealment',$N,'Trait1Conceal');
+    echo "<tr>" . fm_textarea('Description',$N,'Trait1Desc',5,2);
+    echo "<tr>" . fm_text('Trait',$N,'Trait2',2) . "<td>" . fm_checkbox('Automated',$N,'Trait2Auto') . fm_Number('Concealment',$N,'Trait2Conceal');
+    echo "<tr>" . fm_textarea('Description',$N,'Trait2Desc',5,2);
+    echo "<tr>" . fm_text('Trait',$N,'Trait3',2) . "<td>" . fm_checkbox('Automated',$N,'Trait3Auto') . fm_Number('Concealment',$N,'Trait3Conceal');
+    echo "<tr>" . fm_textarea('Description',$N,'Trait3Desc',5,2);
   }
 
   if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
@@ -407,8 +411,12 @@ function Show_Planet(&$P,$Mode=0,$Buts=0) {
   echo fm_number(($P['ProjHome']?"<a href=ProjHomes.php?id=" . $P['ProjHome'] . ">Project Home</a>":"Project Home"),$P,'ProjHome');
 
   if (Feature('SysTraits')) {
-    echo "<tr>" . fm_text('Trait',$P,'Trait',2) . "<td>" . fm_checkbox('Automated',$P,'TraitAuto') . fm_Number('Concealment',$P,'TraitConceal');
-    echo "<tr>" . fm_textarea('Description',$P,'TraitDesc',5,2);
+    echo "<tr>" . fm_text('Trait',$P,'Trait1',2) . "<td>" . fm_checkbox('Automated',$P,'Trait1Auto') . fm_Number('Concealment',$P,'Trait1Conceal');
+    echo "<tr>" . fm_textarea('Description',$P,'Trait1Desc',5,2);
+    echo "<tr>" . fm_text('Trait',$P,'Trait2',2) . "<td>" . fm_checkbox('Automated',$P,'Trait2Auto') . fm_Number('Concealment',$P,'Trait2Conceal');
+    echo "<tr>" . fm_textarea('Description',$P,'Trait2Desc',5,2);
+    echo "<tr>" . fm_text('Trait',$P,'Trait3',2) . "<td>" . fm_checkbox('Automated',$P,'Trait3Auto') . fm_Number('Concealment',$P,'Trait3Conceal');
+    echo "<tr>" . fm_textarea('Description',$P,'Trait3Desc',5,2);
   }
 
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
@@ -494,8 +502,12 @@ function Show_Moon(&$M,$Mode=0) {
   echo fm_number(($M['ProjHome']?"<a href=ProjHomes.php?id=" . $M['ProjHome'] . ">Project Home</a>":"Project Home"),$M,'ProjHome');
 
   if (Feature('SysTraits')) {
-    echo "<tr>" . fm_text('Trait',$M,'Trait',2) . "<td>" . fm_checkbox('Automated',$M,'TraitAuto') . fm_Number('Concealment',$M,'TraitConceal');
-    echo "<tr>" . fm_textarea('Description',$M,'TraitDesc',5,2);
+    echo "<tr>" . fm_text('Trait',$M,'Trait1',2) . "<td>" . fm_checkbox('Automated',$M,'Trait1Auto') . fm_Number('Concealment',$M,'Trait1Conceal');
+    echo "<tr>" . fm_textarea('Description',$M,'Trait1Desc',5,2);
+    echo "<tr>" . fm_text('Trait',$M,'Trait2',2) . "<td>" . fm_checkbox('Automated',$M,'Trait2Auto') . fm_Number('Concealment',$M,'Trait2Conceal');
+    echo "<tr>" . fm_textarea('Description',$M,'Trait2Desc',5,2);
+    echo "<tr>" . fm_text('Trait',$M,'Trait3',2) . "<td>" . fm_checkbox('Automated',$M,'Trait3Auto') . fm_Number('Concealment',$M,'Trait3Conceal');
+    echo "<tr>" . fm_textarea('Description',$M,'Trait3Desc',5,2);
   }
 
   if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";

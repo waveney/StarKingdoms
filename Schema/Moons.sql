@@ -16,9 +16,9 @@ CREATE TABLE `Moons` (
   `Attributes` int NOT NULL,
   `Mined` int NOT NULL,
   `GameId` int NOT NULL,
-  `Trait` text COLLATE utf8mb4_general_ci NOT NULL,
-  `TraitDesc` text COLLATE utf8mb4_general_ci NOT NULL,
-  `TraitAuto` int NOT NULL,
-  `TraitConceal` int NOT NULL,
+  `Trait1` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `Trait1Desc` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `Trait1Auto` int NOT NULL,
+  `Trait1Conceal` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
