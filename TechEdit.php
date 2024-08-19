@@ -53,6 +53,14 @@
       case 'Create':
         $Tid = Insert_db_post('Technologies', $T);
         break;
+      case 'Duplicate':
+        $Newt = $T;
+        $Newt['Name'] = "Copy of " . $T['Name'];
+        $Newt['id'] = 0;
+        unset($T);
+        $Tid = Insert_db('Technologies', $Newt);
+        $T = Get_Tech($Tid);
+        break;
       case 'Delete':
         db_delete('Technologies',$Tid);
         echo "Deleted " . $T['Name'] . "<p>";
@@ -119,6 +127,7 @@
     if (Access('God')) {
       echo "<input type=submit name=ACTION value=Delete>";
     }
+    echo "<input type=submit name=ACTION value=Duplicate>";
 
   } else {
     echo "<h2><input type=submit name=ACTION value=Create></h2>";
