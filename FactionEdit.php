@@ -98,13 +98,13 @@ function Show_Faction(&$F,$Mode) {
 
   echo "<tr>" . fm_text('Adjective Name',$F,'Adjective',2) . "<td>To refer to your ships etc rather than your faction name - optional";
   echo "<tr>" . fm_text("Trait 1 Name",$F,'Trait1',2,$cls,$ReadOnly). "<td>Short name that is unique";
-  echo "<td $cls>" . ($GM ? fm_checkbox("Automated ",$F,'Trait1Automated') : ($F['Trait1Automated']? "Automated" : "Not Automated"));
+  echo "<td $cls>" . ($GM ? fm_checkbox("Automated ",$F,'Trait1Auto') . fm_number('Concealment',$F,'Trait1Conceal') : ($F['Trait1Auto']? "Automated" : "Not Automated"));
   echo "<tr>" . fm_textarea('Description',$F,'Trait1Text',8,2,$cls);
   echo "<tr>" . fm_text("Trait 2 Name",$F,'Trait2',2, $cls,$ReadOnly). "<td>Short name that is unique";
-  echo "<td $cls>" . ($GM ? fm_checkbox("Automated ",$F,'Trait2Automated') : ($F['Trait2Automated']? "Automated" : "Not Automated"));
+  echo "<td $cls>" . ($GM ? fm_checkbox("Automated ",$F,'Trait2Auto') . fm_number('Concealment',$F,'Trait2Conceal') : ($F['Trait2Auto']? "Automated" : "Not Automated"));
   echo "<tr>" . fm_textarea('Description',$F,'Trait2Text',8,2,$cls);
   echo "<tr>" . fm_text("Trait 3 Name",$F,'Trait3',2, $cls,$ReadOnly). "<td>Short name that is unique";
-  echo "<td $cls>" . ($GM ? fm_checkbox("Automated ",$F,'Trait3Automated') : ($F['Trait3Automated']? "Automated" : "Not Automated"));
+  echo "<td $cls>" . ($GM ? fm_checkbox("Automated ",$F,'Trait3Auto') . fm_number('Concealment',$F,'Trait3Conceal') : ($F['Trait3Auto']? "Automated" : "Not Automated"));
   echo "<tr>" . fm_textarea('Description',$F,'Trait3Text',8,2,$cls);
 
   echo "<tr>" . fm_textarea('Notes',$F,'Notes',8,2);

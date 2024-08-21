@@ -41,5 +41,8 @@ CREATE TABLE `Factions` (
   `GMThingBuild` int NOT NULL,
   `HasPrisoners` int NOT NULL,
   `NoAnomalies` int NOT NULL,
+  `Trait1Conceal` int NOT NULL,
+  `Trait2Conceal` int NOT NULL,
+  `Trait3Conceal` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

@@ -918,6 +918,12 @@ function Has_Tech($fid,$name) {
   return $lvl;
 }
 
+function Has_GTrait(&$Data,$Name) {
+  if (empty($Data)) return false;
+  if ($Data['Trait1'] == $Name || $Data['Trait2'] == $Name || $Data['Trait3'] == $Name) return true;
+  return false;
+}
+
 // Get Game in sk.php
 
 function Put_Game($now) {
