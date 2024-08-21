@@ -23,7 +23,7 @@
 //  $Techs = Get_Techs(0,$AllG);
 //  $TechNames = Tech_Names($Techs);
 
-  if (UpdateMany('OfficeTypes','Put_OrgType',$DTs,0))  $DTs=Get_OrgTypes($AllG);
+  if (UpdateMany('OfficeTypes','Put_OrgType',$DTs,1))  $DTs=Get_OrgTypes($AllG);
 
   $coln = 0;
 
