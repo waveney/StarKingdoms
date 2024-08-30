@@ -9,5 +9,6 @@ CREATE TABLE `Worlds` (
   `Conflict` int NOT NULL,
   `Blockade` int NOT NULL,
   `Revolt` int NOT NULL,
+  `GameId` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

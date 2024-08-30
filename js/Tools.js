@@ -252,14 +252,14 @@ function Set_ColBlobs(Blobs,MaxBlob) {
   }
 }
 
-function AutoInput(f,after) {
+function AutoInput(f, sfx='', after='') {
 //  debugger;
   var newval = document.getElementById(f).value;
   var id = f;
   if (document.getElementById(f).newid ) id = document.getElementById(f).newid;
   var yearval = (document.getElementById('Year') ? (document.getElementById('Year').value || 0) : 0);
-  var typeval = document.getElementById('AutoType').value;
-  var refval = document.getElementById('AutoRef').value;
+  var typeval = document.getElementById('AutoType' +sfx).value;
+  var refval = document.getElementById('AutoRef' +sfx).value;
   $.post("formfill.php", {'D':typeval, 'F':id, 'V':newval, 'Y':yearval, 'I':refval}, function( data ) {
     var elem = document.getElementById(f);
     var m = data.match(/^\s*?@(.*)@/);
@@ -293,13 +293,13 @@ function AutoInput(f,after) {
   });
 }
 
-function AutoCheckBoxInput(f) {
+function AutoCheckBoxInput(f,sfx='') {
 //  debugger;
   var cbval = document.getElementById(f).checked;
   var newval = (cbval?1:0); 
   var yearval = (document.getElementById('Year') ? (document.getElementById('Year').value || 0) : 0);
-  var typeval = document.getElementById('AutoType').value;
-  var refval = document.getElementById('AutoRef').value;
+  var typeval = document.getElementById('AutoType' + sfx).value;
+  var refval = document.getElementById('AutoRef' + sfx).value;
   var dbg = document.getElementById('Debug');
   if (dbg) {
     $.post("formfill.php", {'D':typeval, 'F':f, 'V':newval, 'Y':yearval, 'I':refval}, function( data ) { $('#Debug').html( data)});
@@ -308,12 +308,12 @@ function AutoCheckBoxInput(f) {
   }
 }
 
-function AutoRadioInput(f,i) {
+function AutoRadioInput(f,i, sfx='') {
   debugger;
   var newval = document.getElementById(f+i).value;
   var yearval = (document.getElementById('Year') ? (document.getElementById('Year').value || 0) : 0);
-  var typeval = document.getElementById('AutoType').value;
-  var refval = document.getElementById('AutoRef').value;
+  var typeval = document.getElementById('AutoType' + sfx).value;
+  var refval = document.getElementById('AutoRef' + sfx).value;
   var dbg = document.getElementById('Debug');
   if (dbg) {
     $.post("formfill.php", {'D':typeval, 'F':f, 'V':newval, 'Y':yearval, 'I':refval}, function( data ) { $('#Debug').html( data);

@@ -105,14 +105,9 @@ function Player_Page() {
   switch ($TState) {
   case 'Setup':
     echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";
-    echo "<li>Setup Faction<li>Setup Ships<li>Setup $ARMY" . "s";
-  /*
-   *
-    echo "<li><a href=Setup.php>Setup Faction</a>\n";
-    echo "<li><a href=ThingSetup.php?T=Ships>Setup Ships</a>\n";
-    echo "<li><a href=ThingSetup.php?T=Army>Setup $ARMY" . "s</a>\n";
-    if (Feature('Agents')) echo "<li><a href=ThingSetup.php?T=Agent>Setup Agents</a>\n";
-    echo "<p>"; */
+    echo "<li><a href=SetupFaction.php>Faction Setup<a>\n";
+    echo "<li><a href=PThingList.php>List of Things</a> - List of Things (Ships, Armies, Space stations etc)";
+    echo "<li><a href=ThingPlan.php>Plan a Thing</a> - Planning Things (Ships, Armies, Space stations etc)";
     if (!Access('God')) break;
 
   case 'Frozen':

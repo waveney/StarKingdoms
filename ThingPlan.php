@@ -82,25 +82,31 @@
 
 
     case 'COPY':
-      if (empty($_REQUEST['Design'])) {
-        if (empty($_REQUEST['CDesign'])) {
-          echo "<h1 class=Err>Design not found - Tell Richard what you did</h1>";
-          dotail();
-        }
-        $_REQUEST['Design'] = $_REQUEST['CDesign'];
-      }
-      $OldT = Get_Thing($_REQUEST['Design']);
-//var_dump($OldT);
-      $T = $OldT;
-      if ((empty($OldT['BuildState'])) && ($OldT['BluePrint'] >= 0)) {
-        db_delete('Things',$Tid);
-        $Tid = $T['id'];
+      if (isset($_REQUEST['Create'])) { // Named chars only (I think)
+        $T = ['Whose' => $Fid, 'Type'=>$_REQUEST['Create']];
+        $Tid = Put_Thing($T);
       } else {
-        $T = Thing_Duplicate($_REQUEST['Design']);
-        $T['Whose'] = $Fid;
-        $Tid = $T['id'];
-        $T['BuildState'] = $T['NewSystemId'] = $T['SystemId'] = 0;
-        Put_Thing($T);
+
+        if (empty($_REQUEST['Design'])) {
+          if (empty($_REQUEST['CDesign'])) {
+            echo "<h1 class=Err>Design not found - Tell Richard what you did</h1>";
+            dotail();
+          }
+          $_REQUEST['Design'] = $_REQUEST['CDesign'];
+        }
+        $OldT = Get_Thing($_REQUEST['Design']);
+  //var_dump($OldT);
+        $T = $OldT;
+        if ((empty($OldT['BuildState'])) && ($OldT['BluePrint'] >= 0)) {
+          db_delete('Things',$Tid);
+          $Tid = $T['id'];
+        } else {
+          $T = Thing_Duplicate($_REQUEST['Design']);
+          $T['Whose'] = $Fid;
+          $Tid = $T['id'];
+          $T['BuildState'] = $T['NewSystemId'] = $T['SystemId'] = 0;
+          Put_Thing($T);
+        }
       }
       $Exist = 1;
       break;
@@ -172,7 +178,7 @@
       if ($Direct) {
         echo "<p><h2>OR Plan A:</h2>";
         foreach ($Direct as $di) {
-          echo "<button type=submit name=Direct value=$di>" .  $ThingTypeNames[$di] . "</button><br>";
+          echo "<button type=submit name=Create value=$di>" .  $ThingTypeNames[$di] . "</button><br>";
         }
       }
       dotail();

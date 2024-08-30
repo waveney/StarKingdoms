@@ -529,7 +529,7 @@ function UniqueRef($sid) {
 //debug_print_backtrace();
 //  echo "Sid is $sid<p>";
   $cid = str_split(sprintf('%d', ($sid+54321)*48205429));
-  if (isset($FACTION)) { $fid = str_split(sprintf('%d', ($FACTION['id']+12345)*303272303));
+  if (isset($FACTION['id'])) { $fid = str_split(sprintf('%d', ($FACTION['id']+12345)*303272303));
   } else { $fid = str_split(substr(time() . "1",6,6)*303272303); }
 
   return $GAMEID . $cid[5] . $fid[5] . $cid[6] . $fid[6] . $cid[7] . $fid[7];

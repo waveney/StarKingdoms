@@ -1907,7 +1907,6 @@ function ShipMovements($Agents=0) {
 
   if (!file_exists("Turns/" . $GAMEID . "/" . $GAME['Turn'])) $LF = mkdir("Turns/" . $GAMEID . "/" . $GAME['Turn'],0777,true);
 
-//  $PotS = fopen("Turns/" . $GAMEID . "/" . $GAME['Turn'] . "/ScansDue", "a+");
   $LinkLevels = Get_LinkLevels();
   $Things = ($Agents ? Get_AllThings() : Gen_Get_Table('Things',"ORDER BY RAND()"));
   $TTypes = Get_ThingTypes();
@@ -3309,7 +3308,7 @@ function CheckSurveyReports() {
     if ($FS['ScanLevel'] >= $S['Scan']) continue;
     if (!$Started) {
       GMLog("<h2>Please review these scans, mark lower as needed</h2>\n");
-      GMLog("<table border><tr><td>Faction<td>Where<td>Scan Level<td>Control\n");
+      GMLog("<table border><tr><td>Faction<td>Where<td>Scan Level<td>Type<td>Control\n");
       if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
       Register_AutoUpdate('ScansDue',0);
       $Started = 1;

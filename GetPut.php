@@ -783,7 +783,7 @@ function Get_CoreTechs($AllG=0) {
   global $db,$NOTBY;
   $Ms = [];
   $res = $db->query("SELECT * FROM Technologies WHERE Cat=0 " . ($AllG?'':"AND (NotBy&$NOTBY)=0")  . " ORDER BY id");
-  if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
+  if ($res) while ($ans = $res->fetch_assoc()) $Ms[$ans['id']] = $ans;
   return $Ms;
 }
 
@@ -791,7 +791,7 @@ function Get_CoreTechsByName($AllG=0) {
   global $db,$NOTBY;
   $Ms = [];
   $res = $db->query("SELECT * FROM Technologies WHERE Cat=0 " . ($AllG?'':"AND (NotBy&$NOTBY)=0")  . " ORDER BY Name");
-  if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
+  if ($res) while ($ans = $res->fetch_assoc()) $Ms[$ans['id']] = $ans;
   return $Ms;
 }
 
@@ -1164,7 +1164,7 @@ function Get_ProjectHome($id) {
 function Get_ProjectHomes($who=0) {
   global $db,$GAMEID;
   $Ts = [];
-  $res = $db->query("SELECT * FROM ProjectHomes" . ($who?" WHERE Whose=$who":""));
+  $res = $db->query("SELECT * FROM ProjectHomes WHERE GameId=$GAMEID " . ($who?" AND Whose=$who":""));
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
   return $Ts;
 }
@@ -1176,6 +1176,7 @@ function Put_ProjectHome(&$now) {
     $Cur = Get_ProjectHome($e);
     return Update_db('ProjectHomes',$Cur,$now);
   } else {
+    $now['GameId'] = $GAMEID;
     return $now['id'] = Insert_db ('ProjectHomes', $now );
   }
 }
@@ -1366,14 +1367,15 @@ function Put_World(&$now) {
     $Cur = Get_World($e);
     return Update_db('Worlds',$Cur,$now);
   } else {
+    $now['GameId'] = $GAMEID;
     return $now['id'] = Insert_db ('Worlds', $now );
   }
 }
 
 function Get_Worlds($Fid=0) {
-  global $db;
+  global $db,$GAMEID;
   $Ts = [];
-  $res = $db->query("SELECT * FROM Worlds " . ($Fid?" WHERE FactionId=$Fid ":" ") . " ORDER By FactionId, RelOrder DESC");
+  $res = $db->query("SELECT * FROM Worlds WHERE GameId=$GAMEID " . ($Fid?" AND FactionId=$Fid ":" ") . " ORDER By FactionId, RelOrder DESC");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
   return $Ts;
 }

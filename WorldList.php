@@ -11,7 +11,7 @@
   $Fid = 0;
   $xtra = '';
   if (Access('Player')) {
-    if (!isset($FACTION)) {
+    if (!isset($FACTION['id'])) {
       if (!Access('GM') ) Error_Page("Sorry you need to be a GM or a Player to access this");
     } else {
       $Fid = $FACTION['id'];
@@ -91,7 +91,7 @@
   }
 
   foreach ($Worlds as $W) {
-
+var_dump($W);
     echo "<tr>";
     if ($GM) echo "<td><a href=WorldEdit.php?id=" . $W['id'] . ">" . $W['id'] . "</a>";
     switch ($W['ThingType']) {

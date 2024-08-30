@@ -128,7 +128,7 @@ function Mod_ValueSimple($tl,$modtypeid,&$Rescat) {
 }
 
 
-function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0) {
+function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0,$MaxLvl=10) {
   global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil;
   static $AllTechs;
   if (empty($AllTechs)) $AllTechs = Get_Techs(0);
@@ -139,7 +139,7 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0) {
   echo "<div class=$Class><h2 onclick=Toggle('TDesc$Tid')>" . $T['Name'];
   echo "<div class=TechLevel>";
 
-  if ($Fact && $T['Cat']==0 && isset($FactTechs[$T['id']]) ) echo " ( at Level " . $FactTechs[$T['id']]['Level'] . " )";
+  if ($Fact && $T['Cat']==0 && isset($FactTechs[$T['id']]['Level']) ) echo " ( at Level " . $FactTechs[$T['id']]['Level'] . " )";
   if ($Fact && $T['Cat']>0) {
     if (isset($FactTechs[$T['id']]) && $FactTechs[$Tid]['Level'] ) {
       echo " ( Known )";
@@ -154,7 +154,7 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0) {
 
   if ($Setup) {
     if ($T['Cat'] == 0) {
-      echo fm_number0("Levels",$FactTechs[$Tid],'Level','','',"Tech$Tid");
+      echo fm_number0("Level",$FactTechs[$Tid],'Level',''," min=0 max=$MaxLvl","Tech$Tid");
     } else {
       echo fm_checkbox("Have",$FactTechs[$Tid],'Level','',"Tech$Tid");
       if ($T['Cat'] == 2) echo fm_checkbox("Know about",$FactTechs[$Tid],'Level','',"Know$Tid");
@@ -290,12 +290,15 @@ function Get_Valid_Modules(&$T,$Who=0) {
   $VMT = [];
   $ThingProps = Thing_Type_Props();
   $tprop = (empty($ThingProps[$T['Type']] )?0: $ThingProps[$T['Type']] ) ;
+//  var_dump($tprop,$Who);
   foreach ($MTs as $Mi=>$M) {
+ //   var_dump($M['Name'],$M['CivMil']); // ,$ModuleCats[$M['CivMil']],(($tprop & THING_HAS_ARMYMODULES)));
     if ($M['MinShipLevel'] > $T['Level']) continue;
     if (($ModuleCats[$M['CivMil']] == $ARMY) && (($tprop & THING_HAS_ARMYMODULES) == 0)) continue; // Armies
-    if (($M['CivMil'] <= 4) && (($tprop & THING_HAS_SHIPMODULES) ==0 )) continue; // Ships
+    if (($M['CivMil'] < 4) && (($tprop & THING_HAS_SHIPMODULES) ==0 )) continue; // Ships
     if ($ModuleCats[$M['CivMil']] == 'Military Ship' && ($tprop & THING_HAS_MILSHIPMODS) ==0 ) continue;
     if ($ModuleCats[$M['CivMil']] == 'Civilian Ship' && ($tprop & THING_HAS_CIVSHIPMODS) ==0) continue;
+
 
     if ($Who) {
       $l = Has_Tech($Who,$M['BasedOn']);
@@ -529,6 +532,7 @@ function Calc_Scanners(&$T) { // And lots of other attributes
 function Calc_Evasion(&$T) {
   $MTypes = Get_ModuleTypes();
   $TTypes = Get_ThingTypes();
+  if (!isset($TTypes[$T['Type']])) return 0;
   $MMs = Get_Modules($T['id']);
 
   $ev = max(0,(5-$T['Level'])*10);

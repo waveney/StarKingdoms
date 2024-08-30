@@ -65,7 +65,7 @@ function New_Thing(&$T) {
         echo "No System Given";
         New_Thing($_POST); // TODO fix 4 Blue
       }
-      if ($_POST['BluePrint'] > 0) {
+      if (($_POST['BluePrint']??0) > 0) {
         $T = Thing_Duplicate($_POST['BluePrint']);
         $T['Class'] = $T['Name'];
         $T['Name'] = $_POST['Name'];

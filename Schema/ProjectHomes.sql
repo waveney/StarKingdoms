@@ -9,5 +9,6 @@ CREATE TABLE `ProjectHomes` (
   `Devastation` int NOT NULL,
   `EconomyFactor` int NOT NULL DEFAULT '100',
   `Props` int NOT NULL,
+  `GameId` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

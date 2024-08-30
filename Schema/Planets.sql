@@ -16,6 +16,7 @@ CREATE TABLE `Planets` (
   `Moons` int NOT NULL DEFAULT '0',
   `ProjHome` int NOT NULL DEFAULT '0',
   `Control` int NOT NULL,
+  `HistoricalControl` int NOT NULL,
   `Attributes` int NOT NULL,
   `Mined` int NOT NULL,
   `GameId` int NOT NULL,
