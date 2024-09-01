@@ -91,7 +91,7 @@
   }
 
   foreach ($Worlds as $W) {
-var_dump($W);
+// var_dump($W);
     echo "<tr>";
     if ($GM) echo "<td><a href=WorldEdit.php?id=" . $W['id'] . ">" . $W['id'] . "</a>";
     switch ($W['ThingType']) {

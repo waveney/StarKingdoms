@@ -46,7 +46,7 @@
       $SurveyLevel = $FS['ScanLevel'];  // if nebula look for nebscan level
       $PlanetLevel = $SurveyLevel;
     } else {
-      $SurveyLevel =
+      $SurveyLevel =0;
     }
 
   } else { // GM access

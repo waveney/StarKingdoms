@@ -211,7 +211,9 @@
                 fm_select($Facts,0,'F',1," onchange=this.form.submit()") . "</form>\n";
     */
 //    if (Access('God')) $txt .= "<li><a href=Import.php>Import</a>\n";
-    $txt .= "<li><a href=ListTraits.php>List All Traits</a>\n";
+    $txt .= "<li><a href=ListTraits.php>List All Traits</a><p>\n";
+
+    $txt .= "<li><a href=ListSocial.php>List Social Principles</a><p>\n";
 
     $txt .= "</ul>\n";
   }

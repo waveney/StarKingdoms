@@ -45,6 +45,32 @@
       }
       exit;
 
+    case (preg_match('/OfficeTypeAdd-(.*)/',$field,$mtch)?true:false):
+      $N = (($type == 'Planet')?Get_Planet($id):Get_Moon($id));
+      $Home = $N['ProjHome'];
+      $Ds = Get_Offices($Home);
+      foreach ($Ds as $D) {
+        if ($D['Type'] == $Value) {
+          $D['Number']++;
+          echo 'FORCERELOAD54321:NOW' . Put_Office($D);
+          exit;
+        }
+      }
+      $N= ['Type'=>$Value,'Home'=>$Home,'Number'=>1, 'GameId'=>$GAMEID];
+      echo 'FORCERELOAD54321:NOW' . Put_Office($N);
+      exit;
+
+    case (preg_match('/Office(\w*)-(\d*)/',$field,$mtch)?true:false):
+      $N = Get_Office($mtch[2]);
+      //var_dump($N,$Value,$mtch);
+      if ($Value || $mtch[1] != 'Type') {
+        $N[$mtch[1]] = $Value;
+        echo Put_Office($N);
+      } else {
+        echo 'FORCERELOAD54321:NOW' . db_delete('Offices',$mtch[2]);
+      }
+      exit;
+
     default:
       if ($type == 'Planet') {
         $N = Get_Planet($id);
@@ -326,6 +352,7 @@
 
 
   case 'ScansDue': // Generic case of field:id
+  case 'SocialPrinciples':
     if ((preg_match('/(\w*):(\d*)/',$field,$mtch)?true:false)) {
       $N = Gen_Get($type,$mtch[2]);
       $N[$mtch[1]] = $Value;

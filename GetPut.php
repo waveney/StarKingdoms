@@ -33,11 +33,11 @@ function Get_Factions($Force=0,$AllG=0) {
   return $F;
 }
 
-function Get_Faction_Names() {
+function Get_Faction_Names($None=1) {
   global $db,$GAMEID;
   $res = $db->query("SELECT * FROM Factions WHERE GameId=$GAMEID ORDER BY id ");
   $F = [];
-  $F[0] = "None";
+  if ($None) $F[0] = "None";
   if ($res) {
     while ($ans = $res->fetch_assoc()) { $F[$ans['id']] = $ans['Name']; }
     }
@@ -1149,6 +1149,62 @@ function Put_OpType(&$now) {
     return Update_db('OrgActions',$Cur,$now);
   } else {
     return $now['id'] = Insert_db ('OrgActions', $now );
+  }
+}
+
+// Offices
+function Get_Office($id) {
+  global $db,$NOTBY;
+  $res = $db->query("SELECT * FROM OrgActions WHERE id=$id");
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
+  return [];
+}
+
+function Get_Offices($Home=0) {
+  global $db,$NOTBY,$GAMEID;
+  $Ts = [];
+  $res = $db->query("SELECT * FROM Offices WHERE " . ($Home?"Home=$Home":"GameId=$GAMEID") );
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
+  return $Ts;
+}
+
+function Put_Office(&$now) {
+  global $db,$GAMEID;
+  if (isset($now['id'])) {
+    $e=$now['id'];
+    $Cur = Get_Office($e);
+    return Update_db('Offices',$Cur,$now);
+  } else {
+    $now['GameId'] = $GAMEID;
+    return $now['id'] = Insert_db ('Offices', $now );
+  }
+}
+
+// Social Principles
+function Get_SocialP($id) {
+  global $db,$NOTBY;
+  $res = $db->query("SELECT * FROM SocialPrinciples WHERE id=$id");
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
+  return [];
+}
+
+function Get_SocialPs($World=0,$xtra = '') {
+  global $db,$NOTBY,$GAMEID;
+  $Ts = [];
+  $res = $db->query("SELECT * FROM SocialPrinciples WHERE " . ($World?"World=$World":"GameId=$GAMEID") . $xtra);
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
+  return $Ts;
+}
+
+function Put_SocialP(&$now) {
+  global $db,$GAMEID;
+  if (isset($now['id'])) {
+    $e=$now['id'];
+    $Cur = Get_SocialP($e);
+    return Update_db('SocialPrinciples',$Cur,$now);
+  } else {
+    $now['GameId'] = $GAMEID;
+    return $now['id'] = Insert_db ('SocialPrinciples', $now );
   }
 }
 

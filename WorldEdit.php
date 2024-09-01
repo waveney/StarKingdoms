@@ -57,10 +57,19 @@
   $DTs = Get_DistrictTypes();
   $DistTypes = 0;
   $SysId = 0;
+  $Facts = Get_Factions();
 
   $H = Get_ProjectHome($W['Home']);
+//  var_dump($H);
+
   if (isset($H['id'])) {
+    if ($H['ThingType'] == 0 || $H['ThingId'] == 0 ) {
+      echo "<h2 class=Err>There is a fault with Project Home " . $H['id'] . " Tell Richard</h2>";
+
+    }
+
     $Dists = Get_DistrictsH($H['id']);
+    $SocPs = Get_SocialPs($W['id']);
 
 // var_dump($Dists);
     switch ($W['ThingType']) {
@@ -86,6 +95,9 @@
         $type = $TTypes[$T['Type']]['Name'];
         $Name = $T['Name'];
         $SysId = $T['SystemId'];
+        break;
+      default: // Error
+        echo "<h2 class=Err>There is a fault with World " . $W['id'] . " Tell Richard</h2>";
         break;
     }
 
@@ -152,12 +164,13 @@
     if ($NumDists) echo "<tr><td rowspan=" . ($DistTypes+1) . ">Districts:";
     foreach ($Dists as $D) {
       if ($D['Number'] == 0) continue;
-      echo "<tr><td>" . $DTs[$D['Type']]['Name'] . ": " . $D['Number'];
+//      var_dump($D);
+      echo "<tr><td>" . ($DTs[$D['Type']]['Name'] ?? 'Illegal') . ": " . $D['Number'];
       if ($NeedDelta) {
         echo fm_number1("Delta",$D,'Delta',''," min=-$NeedDelta max=$NeedDelta ","Dist:Delta:" . $D['id']);
         $DeltaSum += $D['Delta'];
       }
-      if ( ($DTs[$D['Type']]['Name'] == 'Intelligence') && Has_Tech($Fid,'Defensive Intelligence' )) {
+      if ( (($DTs[$D['Type']]['Name']??0) == 'Intelligence') && Has_Tech($Fid,'Defensive Intelligence' )) {
               $Agents = Get_Things_Cond($Fid," Type=5 AND Class='Military' AND SystemId=$SysId ORDER BY Level DESC");
               if ($Agents) {
                 $Bi = ($Agents[0]['Level']/2);
@@ -172,6 +185,20 @@
   } else {
     echo "<tr><td>No Districts currently\n";
   }
+
+  if ($SocPs) {
+    echo "<tr><td rowspan=" . count($SocPs) . ">Social\nPrinciples:";
+    $NumSp = 0;
+    foreach ($SocPs as $SP) {
+      if ($NumSp++) echo "<tr>";
+      echo "<td>" . $SP['Principle'] . " - Adherence " . $SP['Value'];
+      if ($GM) echo " (" . ($Facts[$SP['Whose']]['Name']??'Unknown') . ")";
+    }
+  } else {
+    echo "<tr><td colsan=2>No Social Principles Currently\n";
+  }
+
+
   $H['Economy'] = Recalc_Economic_Rating($H,$W,$Fid);
   if (isset($H['id'])) Put_ProjectHome($H);
 

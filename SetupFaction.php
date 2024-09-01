@@ -50,7 +50,7 @@ function SetupStage1() {
   $DTypes = Get_DistrictTypes();
   $SCredits = Feature('StartCredits',450);
 
-  echo "<h1>Your Faction</h1><table border>";
+  echo "<h1>Stage 1/6 - Your Faction</h1><table border>";
   echo "<form method=post>";
   Register_AutoUpdate('Faction', $Fid);
   echo "<tr>" . fm_text('Faction Name',$F,'Name',2);
@@ -90,7 +90,7 @@ function SetupStage2() {
   $CoreTechs = Get_CoreTechs();
   $CTechs = Get_Faction_Techs($Fid);
 
-  echo "<hr><h1>Starting Technologies</h1>\n";
+  echo "<hr><h1>Stage 2/6 - Starting Technologies</h1>\n";
 //  echo "Click on technologies name to Toggle showing the definition and examples\n<p>";
   echo "Raise the level of " . Feature('SetupNumberTechs', 2) . " techs - checking will be by GM's eyes<p>";
 
@@ -122,7 +122,7 @@ function SetupStage3() {
   echo "<form method=post>";
 
 
-  echo "<hr><h1>Your Home World</h1>";
+  echo "<hr><h1>Stage 3/6 - Your Home World</h1>";
 
   // Find Homeworld(s) if multiple find one with highest importance
 //var_dump($F);
@@ -225,15 +225,6 @@ function SetupStage3() {
     // Note no treatment for Moons or Things - get those setup by hand
 // var_dump("xx",$ThingType,$ThingId);
     if ($ThingType == 1) {
-      $Ds = Get_DistrictsP($ThingId);
-      if (empty($Ds)) { // Make standard disctricts
-        foreach ($DTypes as $di=>$DT) if ($DT['Props']&1) {
-          $D = ['HostType'=>$ThingType, 'HostId' => $ThingId, 'GameId'=>$GAMEID, 'Type'=>$di, 'Number' =>($DT['Name'] == 'Industrial'?2:1)];
-          Put_District($D);
-        }
-
-        $Ds = Get_DistrictsP($ThingId);
-      }
       $Place = Get_Planet($ThingId);
       $Table = 'Planets';
       $Put_Fn = 'Put_Planet';
@@ -241,23 +232,34 @@ function SetupStage3() {
       $System = Get_System($SysId);
 
       $Place['Minerals'] = 3;
-      Put_Planet($Place);
       $ThingType = 1;
 
       $PH = ['HostType'=>1, 'HostId' => $ThingId, 'GameId'=>$GAMEID, 'Whose'=>$Fid, 'SystemId' =>$HomeSys,
         'WithinSysLoc' => $Pidx*200, 'EconomyFactor' => 100];
 
       $PHnumber = Put_ProjectHome($PH);
+      $Place['ProjHome'] = $PHnumber;
 
       $World = ['ThingType'=>1, 'ThingId' => $ThingId, 'GameId'=>$GAMEID, 'FactionId'=>$Fid, 'Home' => $PHnumber, 'RelOrder' => 100,
         'Minerals' => 3];
 
       $Wnumber = Put_World($World);
 
+      Put_Planet($Place);
       $F['HomeWorld'] = $Wnumber;
       Put_Faction($F);
 
     }
+  }
+
+  $Ds = Get_DistrictsP($ThingId);
+  if (empty($Ds)) { // Make standard disctricts
+    foreach ($DTypes as $di=>$DT) if ($DT['Props']&1) {
+      $D = ['HostType'=>$ThingType, 'HostId' => $ThingId, 'GameId'=>$GAMEID, 'Type'=>$di, 'Number' =>($DT['Name'] == 'Industrial'?2:1)];
+      Put_District($D);
+    }
+
+    $Ds = Get_DistrictsP($ThingId);
   }
 
   echo "<table border>";
@@ -265,6 +267,26 @@ function SetupStage3() {
   echo "<tr>" . fm_text('Planet Name', $Place,'Name',2);
   echo "<tr>" . fm_text('Planetary Trait',$Place,'Trait1',2);
   echo "<tr>" . fm_textarea('Description',$Place,'Trait1Desc',5,2);
+  echo "<tr><td colspan=6>Districts: (Industial is 2, one other should be level 2 - checking of this is by GM eyes.";
+  foreach ($Ds as $D) {
+    $did = $D['id'];
+    echo "<tr><td>" . $DTypes[$D['Type']]['Name'] . fm_number1('', $D,'Number', '',' class=Num3 min=0 max=5',"DistrictNumber-$did");
+  };
+
+  $Offices = Gen_Get_Cond('Offices',"Home=$Home");
+
+  $OTypes = Get_OrgTypes();
+  $OtNames = [];
+  foreach ($OTypes as $i=>$O) $OtNames[$i] = $O['Name'];
+/*
+  if ($Offices) {
+    foreach ($Offices as $O) {
+      echo "<tr><td>Organisational Office:<td>" . fm_select($OtNames,$O,'Type');
+
+  } else {
+    echo "<tr><td>Add Organisational Office:<td>" ;
+  }
+*/
   echo "</table>";
 
   if ($ThingType <3 && $Place['Type'] != $F['Biosphere'])
@@ -272,7 +294,7 @@ function SetupStage3() {
 
 
   echo "<h2><a href=SetupFaction.php?STAGE=2>Back to stage 2 - Your Technologies</a> - " .
-    "<a href=SetupFaction.php?STAGE=4>Forward to stage 4 - Your System</a></h2>";
+    "<a href=SetupFaction.php?STAGE=4>Forward to stage 4 - Social Principles</a></h2>";
   dotail();
 }
 
@@ -281,27 +303,33 @@ function SetupStage4() {
   $PTypes = Get_PlanetTypes();
   $DTypes = Get_DistrictTypes();
 
-  echo "<form method=post>";
-
   $Wid = $F['HomeWorld'];
-  if (empty($Wid) ) {
-    echo "<h2 class=err>You need your homewold setup first</h2>";
-    dotail();
+  $World = Get_World($Wid);
+  $Hid = $World['Home'];
+  $Home = Get_ProjectHome($Hid);
+
+  echo "<h1>Stage 4/6 - Social Principles</h1>";
+
+  echo "<form method=post>";
+  Register_AutoUpdate('SocialPrinciples',0);
+  $SPs = Get_SocialPs($Wid);
+  if (empty($SPs)) {
+    for ($i=3;$i>0;$i--) {
+      $S = ['World'=>$Wid,'Whose'=>$Fid,'Value'=>$i];
+      Put_SocialP($S);
+    }
+    $SPs = Get_SocialPs($Wid);
+  }
+  echo "<table border>";
+
+  foreach($SPs as $si=>$S) {
+    echo "<tr><td>Adherence: " . $S['Value'] . fm_text('Principle',$S,'Principle',4,'','',"Principle:$si");
   }
 
-  $World = Get_World($Wid);
-  $Home = Get_ProjectHome($World['Home']);
-  $SysId = $Home['SystemId'];
-  $System = Get_System($SysId);
+  echo "</table>";
 
-  Register_AutoUpdate('Systems',$SysId);
-  echo "<table border>";
-  echo "<tr>" . fm_text('System Name', $System,'Name',2);
-
-  echo "</table><p>";
-
-  echo "<h2><a href=SetupFaction.php?STAGE=4>Back to stage 3 - Your World</a> - " .
-    "<a href=SetupFaction.php?STAGE=5>Forward to stage 5 - Starting Things and oddments</a></h2>";
+  echo "<h2><a href=SetupFaction.php?STAGE=3>Back to stage 4 - Your Home World</a> - " .
+    "<a href=SetupFaction.php?STAGE=5>Forward to stage 5 - Your System</a></h2>";
   dotail();
 }
 
@@ -312,7 +340,40 @@ function SetupStage5() {
 
   echo "<form method=post>";
 
-  echo "<h1>Starting Ships and $ARMY" ."s</h1>";
+  echo "<h1>Stage 4/5 - System Name</h1>";
+//var_dump($F);
+  $Wid = $F['HomeWorld'];
+  if (empty($Wid) ) {
+    echo "<h2 class=err>You need your homeworld setup first</h2>";
+    dotail();
+  }
+
+  $World = Get_World($Wid);
+//var_dump($World);
+  $Hid = $World['Home'];
+  $Home = Get_ProjectHome($Hid);
+  $SysId = $Home['SystemId'];
+  $System = Get_System($SysId);
+
+  Register_AutoUpdate('Systems',$SysId);
+  echo "<table border>";
+  echo "<tr>" . fm_text('System Name', $System,'Name',2);
+
+  echo "</table><p>";
+
+  echo "<h2><a href=SetupFaction.php?STAGE=4&HOME=$Hid>Back to stage 4 - Social Principles</a> - " .
+    "<a href=SetupFaction.php?STAGE=6>Forward to stage 6 - Starting Things and oddments</a></h2>";
+  dotail();
+}
+
+function SetupStage6() {
+  global $F, $Fid, $GAME, $FACTION, $GAMEID, $ARMY, $PTs;
+  $PTypes = Get_PlanetTypes();
+  $DTypes = Get_DistrictTypes();
+
+  echo "<form method=post>";
+
+  echo "<h1>Stage 5/5 - Starting Ships and $ARMY" ."s</h1>";
 
   echo "Use the <a href=ThingPlan.php>Plan a Thing Tool</a> to plan them.  They will be created when the game starts.<p>";
 
