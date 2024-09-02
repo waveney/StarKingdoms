@@ -176,6 +176,12 @@ function SetupStage3() {
       dotail();
     } else if (count($HomeList) > 1 ) {
       echo "<h2 class=Err>The system can't find a single home world - contact the GMs</h2>";
+
+      if (Access('GM')) {
+
+
+      }
+
       dotail();
     }
 
@@ -222,7 +228,7 @@ function SetupStage3() {
       $ThingType = 1;
 
     }
-    // Note no treatment for Moons or Things - get those setup by hand
+    // Note no treatment for Things - get those setup by hand
 // var_dump("xx",$ThingType,$ThingId);
     if ($ThingType == 1) {
       $Place = Get_Planet($ThingId);
@@ -241,6 +247,33 @@ function SetupStage3() {
       $Place['ProjHome'] = $PHnumber;
 
       $World = ['ThingType'=>1, 'ThingId' => $ThingId, 'GameId'=>$GAMEID, 'FactionId'=>$Fid, 'Home' => $PHnumber, 'RelOrder' => 100,
+        'Minerals' => 3];
+
+      $Wnumber = Put_World($World);
+
+      Put_Planet($Place);
+      $F['HomeWorld'] = $Wnumber;
+      Put_Faction($F);
+
+    } else if ($ThingType == 2) { // Moon
+      $Place = Get_Moon($ThingId);
+      $Table = 'Moons';
+      $Put_Fn = 'Put_Moon';
+      $Plan = Get_Planet($Place['PlanetId']);
+
+      $SysId = $Plan['SystemId'];
+      $System = Get_System($SysId);
+
+      $Place['Minerals'] = 3;
+      $ThingType = 1;
+
+      $PH = ['HostType'=>2, 'HostId' => $ThingId, 'GameId'=>$GAMEID, 'Whose'=>$Fid, 'SystemId' =>$HomeSys,
+        'WithinSysLoc' => $Pidx*400, 'EconomyFactor' => 100];
+
+      $PHnumber = Put_ProjectHome($PH);
+      $Place['ProjHome'] = $PHnumber;
+
+      $World = ['ThingType'=>2, 'ThingId' => $ThingId, 'GameId'=>$GAMEID, 'FactionId'=>$Fid, 'Home' => $PHnumber, 'RelOrder' => 100,
         'Minerals' => 3];
 
       $Wnumber = Put_World($World);

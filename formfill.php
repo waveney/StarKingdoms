@@ -17,11 +17,11 @@
 // Special returns @x@ changes id to x, #x# sets feild to x, !x! important error message
   switch ($type) {
 
-  case 'Planet' :
-  case 'Moon' :
+  case 'Planets' :
+  case 'Moons' :
     switch ($field) {
     case (preg_match('/DistrictTypeAdd-(.*)/',$field,$mtch)?true:false):
-      $Ds = ($type == 'Planet')?Get_DistrictsP($id):Get_DistrictsM($id);
+      $Ds = ($type == 'Planets')?Get_DistrictsP($id):Get_DistrictsM($id);
       foreach ($Ds as $D) {
         if ($D['Type'] == $Value) {
           $D['Number']++;
@@ -29,8 +29,9 @@
           exit;
         }
       }
-      $N= ['Type'=>$Value,'HostId'=>$mtch[1],'Number'=>1, 'HostType' => ($type == 'Planet'?1:2), 'GameId'=>$GAMEID];
-      $N['HostType'] = ($type == 'Planet'?1:2);
+
+      $N= ['Type'=>$Value,'HostId'=>$mtch[1],'Number'=>1, 'HostType' => ($type == 'Planets'?1:2), 'GameId'=>$GAMEID];
+      $N['HostType'] = ($type == 'Planets'?1:2);
       echo 'FORCERELOAD54321:NOW' . Put_District($N);
       exit;
 
@@ -46,7 +47,7 @@
       exit;
 
     case (preg_match('/OfficeTypeAdd-(.*)/',$field,$mtch)?true:false):
-      $N = (($type == 'Planet')?Get_Planet($id):Get_Moon($id));
+      $N = (($type == 'Planets')?Get_Planet($id):Get_Moon($id));
       $Home = $N['ProjHome'];
       $Ds = Get_Offices($Home);
       foreach ($Ds as $D) {
@@ -72,7 +73,7 @@
       exit;
 
     default:
-      if ($type == 'Planet') {
+      if ($type == 'Planets') {
         $N = Get_Planet($id);
         $N[$field] = $Value;
         echo Put_Planet($N);
