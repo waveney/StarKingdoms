@@ -41,7 +41,7 @@ function Recalc_Project_Homes($Logf=0, $Silent=0) {
 //var_dump($MWithDists);exit;
   $Systems = Get_Systems();
   foreach ($Systems as &$N) {
-    if ($N['Control']) {
+    if ($N['Control'] || $N['HistoricalControl']) {
       if (!$Silent) echo "Checking " . $N['Ref'] . "<br>\n";
 
       $Planets = Get_Planets($N['id']);
