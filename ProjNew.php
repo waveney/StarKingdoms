@@ -99,6 +99,7 @@
   $Homes = Get_ProjectHomes($Fid);
   $DistTypes = Get_DistrictTypes();
   $ProjTypes = Get_ProjectTypes();
+  $OrgTypes = Get_OrgTypes();
   $PTi = [];
   foreach ($ProjTypes as $PT) $PTi[$PT['Name']] = $PT['id'];
 //var_dump($PTi);
@@ -113,6 +114,7 @@
 
   $PHx = 1;
   $Dis = [];
+  $Offices = [];
   $MaxDists = 0;
   $ThingLevel = 1;
   foreach ($Homes as &$H) {
@@ -149,6 +151,8 @@
       $Sid = $PH['SystemId'];
       break;
     }
+
+
     //TODO Construction and Districts...
 
     if ($NoC != 1) $Dists[] = ['HostType'=>-1, 'HostId' => $PH['id'], 'Type'=> -1, 'Number'=>0, 'id'=>-$PH['id']];
@@ -169,6 +173,12 @@
     }
 
   $Turn = $_REQUEST['t'];
+
+  $World = Gen_Get_Cond1('Worlds',"Home=$Hi");
+  if ($World) {
+    $Offices = Get_OfficesByType($World['id']);
+  }
+
 
   $Stage = (isset($_REQUEST['STAGE'])? $_REQUEST['STAGE'] : 0);
 
@@ -193,17 +203,19 @@
   case 'Construction':
   case 'Industrial' :
     echo "<h2>Select Construction Project:</h2><p>";
-      $CurDists = 0;
+    $CurOff = $CurDists = 0;
       if ($MaxDists > 0) {
 
         foreach ($HDists[$Hi] as $DD) if ($DD['Type'] > 0) $CurDists += $DD['Number'];
+        $CurOff = Count($Offices);
 
         echo "Maximum Districts: $MaxDists<br>Current Districts: $CurDists<br>";
+        if (Feature('Orgs')) echo "Offices: $CurOff<br>";
       }
 
 //         echo "Maximum Districts: $MaxDists<br>Current Districts: $CurDists<br>";
 
-      if ($MaxDists==0 || ($CurDists < $MaxDists)) {
+      if ($MaxDists==0 || (($CurOff + $CurDists) < $MaxDists)) {
         $DTs = Get_DistrictTypes();
         $DNames = [];
 //var_dump($HDists[$Hi]);
@@ -250,6 +262,22 @@
 
           }
         }
+
+        if (Feature('Orgs')) {
+          echo "<h2>Build Offices</h2>";
+          $Lvl = count($Offices)+1;
+          $pc = Proj_Costs($Lvl);
+          foreach($OrgTypes as $ot=>$O) {
+            if ($Offices[$ot]??0) continue;
+ //           $Ord = ($Offices[$ot]??0)+1;
+            echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Construction'] .
+            "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=-$ot" .
+            "&Name=" . base64_encode("Build " . $O['Name'] . " Office $Place") .
+            "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
+            "Build " . $O['Name'] . " Office; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>\n";
+
+          }
+        }
       }
 
 
@@ -272,10 +300,6 @@
         echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Construct Warp Gate'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=0" .
                   "&Name=" . base64_encode("Build Warp Gate$Place"). "&L=4&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
                   "Build Warp Gate $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
-      }
-      if (Feature('Orgs')) {
-        echo "<h2>Construct Office</h2>";
-        echo "TODO";
       }
 
 

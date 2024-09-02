@@ -191,8 +191,8 @@
     $NumSp = 0;
     foreach ($SocPs as $SP) {
       if ($NumSp++) echo "<tr>";
-      echo "<td>" . $SP['Principle'] . " - Adherence " . $SP['Value'];
-      if ($GM) echo " (" . ($Facts[$SP['Whose']]['Name']??'Unknown') . ")";
+      echo "<td>" . $SP['Principle'] . "<td>Adherence: " . $SP['Value'];
+      if ($GM) echo "<td style='background:" . ($Facts[$SP['Whose']]['MapColour']??'White') . "'>" . ($Facts[$SP['Whose']]['Name']??'Unknown');
     }
   } else {
     echo "<tr><td colsan=2>No Social Principles Currently\n";

@@ -1160,11 +1160,19 @@ function Get_Office($id) {
   return [];
 }
 
-function Get_Offices($Home=0) {
+function Get_Offices($World=0,$xtra='') {
   global $db,$NOTBY,$GAMEID;
   $Ts = [];
-  $res = $db->query("SELECT * FROM Offices WHERE " . ($Home?"Home=$Home":"GameId=$GAMEID") );
+  $res = $db->query("SELECT * FROM Offices WHERE " . (World?"World=$World":"GameId=$GAMEID") . $xtra);
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
+  return $Ts;
+}
+
+function Get_OfficesByType($World,$xtra='') {
+  global $db,$NOTBY,$GAMEID;
+  $Ts = [];
+  $res = $db->query("SELECT * FROM Offices WHERE World=$World $xtra");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['Type']] = $ans;
   return $Ts;
 }
 
