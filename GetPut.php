@@ -1163,7 +1163,7 @@ function Get_Office($id) {
 function Get_Offices($World=0,$xtra='') {
   global $db,$NOTBY,$GAMEID;
   $Ts = [];
-  $res = $db->query("SELECT * FROM Offices WHERE " . (World?"World=$World":"GameId=$GAMEID") . $xtra);
+  $res = $db->query("SELECT * FROM Offices WHERE " . ($World?"World=$World":"GameId=$GAMEID") . $xtra);
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
   return $Ts;
 }

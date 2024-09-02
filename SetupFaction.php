@@ -50,7 +50,7 @@ function SetupStage1() {
   $DTypes = Get_DistrictTypes();
   $SCredits = Feature('StartCredits',450);
 
-  echo "<h1>Stage 1/6 - Your Faction</h1><table border>";
+  echo "<h1>Stage 1/7 - Your Faction</h1><table border>";
   echo "<form method=post>";
   Register_AutoUpdate('Faction', $Fid);
   echo "<tr>" . fm_text('Faction Name',$F,'Name',2);
@@ -90,7 +90,7 @@ function SetupStage2() {
   $CoreTechs = Get_CoreTechs();
   $CTechs = Get_Faction_Techs($Fid);
 
-  echo "<hr><h1>Stage 2/6 - Starting Technologies</h1>\n";
+  echo "<hr><h1>Stage 2/7 - Starting Technologies</h1>\n";
 //  echo "Click on technologies name to Toggle showing the definition and examples\n<p>";
   echo "Raise the level of " . Feature('SetupNumberTechs', 2) . " techs - checking will be by GM's eyes<p>";
 
@@ -122,7 +122,7 @@ function SetupStage3() {
   echo "<form method=post>";
 
 
-  echo "<hr><h1>Stage 3/6 - Your Home World</h1>";
+  echo "<hr><h1>Stage 3/7 - Your Home World</h1>";
 
   // Find Homeworld(s) if multiple find one with highest importance
 //var_dump($F);
@@ -273,11 +273,6 @@ function SetupStage3() {
     echo "<tr><td>" . $DTypes[$D['Type']]['Name'] . fm_number1('', $D,'Number', '',' class=Num3 min=0 max=5',"DistrictNumber-$did");
   };
 
-  $Offices = Gen_Get_Cond('Offices',"Home=$Home");
-
-  $OTypes = Get_OrgTypes();
-  $OtNames = [];
-  foreach ($OTypes as $i=>$O) $OtNames[$i] = $O['Name'];
 /*
   if ($Offices) {
     foreach ($Offices as $O) {
@@ -308,7 +303,7 @@ function SetupStage4() {
   $Hid = $World['Home'];
   $Home = Get_ProjectHome($Hid);
 
-  echo "<h1>Stage 4/6 - Social Principles</h1>";
+  echo "<h1>Stage 4/7 - Social Principles</h1>";
 
   echo "<form method=post>";
   Register_AutoUpdate('SocialPrinciples',0);
@@ -340,7 +335,7 @@ function SetupStage5() {
 
   echo "<form method=post>";
 
-  echo "<h1>Stage 4/5 - System Name</h1>";
+  echo "<h1>Stage 4/7 - System Name</h1>";
 //var_dump($F);
   $Wid = $F['HomeWorld'];
   if (empty($Wid) ) {
@@ -361,8 +356,8 @@ function SetupStage5() {
 
   echo "</table><p>";
 
-  echo "<h2><a href=SetupFaction.php?STAGE=4&HOME=$Hid>Back to stage 4 - Social Principles</a> - " .
-    "<a href=SetupFaction.php?STAGE=6>Forward to stage 6 - Starting Things and oddments</a></h2>";
+  echo "<h2><a href=SetupFaction.php?STAGE=4>Back to stage 4 - Social Principles</a> - " .
+    "<a href=SetupFaction.php?STAGE=6>Forward to stage 6 - Office</a></h2>";
   dotail();
 }
 
@@ -373,17 +368,50 @@ function SetupStage6() {
 
   echo "<form method=post>";
 
-  echo "<h1>Stage 5/5 - Starting Ships and $ARMY" ."s</h1>";
+  echo "<h1>Stage 6/7 - Starting Office</h1>";
+  $Wid = $F['HomeWorld'];
+  $Offices = Get_Offices($Wid);
+
+  if (!$Offices) {
+    $Off = ['Type'=>1, 'World'=>$Wid, 'Whose'=>$Fid, 'Number'=>1];
+    Put_Office($Off);
+  } else if (count($Offices) == 1) {
+    $Off = array_pop($Offices);
+  } else {
+    echo "This world has more than one office - can't be managed with this tool<p>";
+    echo "<h2><a href=SetupFaction.php?STAGE=5>Back to stage 5 - System Name</a> - " .
+      "<a href=SetupFaction.php?STAGE=7>Forward to stage 7 - Starting Things and oddments</a></h2>";
+    dotail();
+
+  }
+  Register_AutoUpdate('Offices',$Off['id']);
+
+  $OTypes = [];
+  $OrgTypes = Get_OrgTypes();
+  foreach ($OrgTypes as $oi=>$O) $OTypes[$oi] = $O['Name'];
+
+  echo "Office Type: " . fm_select($OTypes,$Off,'Type') . "<p>\n";
+
+
+  echo "<h2><a href=SetupFaction.php?STAGE=5>Back to stage 5 - System Name</a> - " .
+    "<a href=SetupFaction.php?STAGE=7>Forward to stage 7 - Starting Things and oddments</a></h2>";
+  dotail();
+}
+
+function SetupStage7() {
+  global $F, $Fid, $GAME, $FACTION, $GAMEID, $ARMY, $PTs;
+  $PTypes = Get_PlanetTypes();
+  $DTypes = Get_DistrictTypes();
+
+  echo "<form method=post>";
+
+  echo "<h1>Stage 7/7 - Starting Ships and $ARMY" ."s</h1>";
 
   echo "Use the <a href=ThingPlan.php>Plan a Thing Tool</a> to plan them.  They will be created when the game starts.<p>";
 
   echo "Use the <a href=PThingList.php>List of Things</a> to see what you have planned.<p>";
 
-  echo "<h1>Social Priciples and Starting Organisation</h1>";
-
-  echo "To be Written<p>";
-
-  echo "<h2><a href=SetupFaction.php?STAGE=4>Back to stage 4 - Your World</a> - ";
+  echo "<h2><a href=SetupFaction.php?STAGE=6>Back to stage 6 - Office</a> - ";
 
   echo "<h1>Automated Setup is complete</h1>";
   echo "There will probably be discussions with the GMs about your traits and social principles.<p>";
