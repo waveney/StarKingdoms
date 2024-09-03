@@ -371,6 +371,8 @@ function SetupStage5() {
   echo "<form method=post>";
 
   echo "<h1>Stage 4/" . STAGES . " - System Names</h1>";
+  echo "This is optional, move on if you want to.<p>";
+
 //var_dump($F);
   $Wid = $F['HomeWorld'];
   if (empty($Wid) ) {
@@ -443,6 +445,7 @@ function SetupStage7() {
   echo "<form method=post>";
 
   echo "<h1>Stage 7/" . STAGES . " - Other Planets</h1>";
+  echo "This is optional, move on if you want to.<p>";
 
   $Wid = $FACTION['HomeWorld'];
   $World = Get_World($Wid);
@@ -485,6 +488,16 @@ function SetupStage8() {
   echo "There will probably be discussions with the GMs about your traits and social principles.<p>";
   dotail();
 }
+
+  echo "Setup is an " . STAGES . " stage process:<br>" .
+       "Stage 1 - Your Faction<br>\n" .
+       "Stage 2 - Your Technologies<br>\n" .
+       "Stage 3 - Your Home World<br>\n" .
+       "Stage 4 - Social Principles<br>\n" .
+       "Stage 5 - System Names<br>\n" .
+       "Stage 6 - Offices<br>\n" .
+       "Stage 7 - Other Planet Names<br>\n" .
+       "Stage 8 - Starting Things and Oddments<p>\n";
 
   "SetupStage$Stage"();
 
