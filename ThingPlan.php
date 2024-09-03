@@ -51,7 +51,7 @@
     $Tid = Put_Thing($T);
     $Exist = 0;
   }
-
+// var_dump($_REQUEST);
   if (!$FACTION)  Error_Page("Sorry you need a Faction to access this");
   //  var_dump($Fid);
 
@@ -86,15 +86,25 @@
         $T = ['Whose' => $Fid, 'Type'=>$_REQUEST['Create']];
         $Tid = Put_Thing($T);
       } else {
-
-        if (empty($_REQUEST['Design'])) {
-          if (empty($_REQUEST['CDesign'])) {
+        $Des = '';
+        $mtch = [];
+        if (!empty($_REQUEST['Design'])) {
+          $Des = $_REQUEST['Design'];
+        } else {
+          foreach ($_REQUEST as $L=>$R) {
+ //           echo "$R<p>";
+            if (preg_match('/CDesign\d*/',$L,$mtch) && $R) {
+              $Des = $R;
+              break;
+            }
+          }
+          if (empty($Des)) {
             echo "<h1 class=Err>Design not found - Tell Richard what you did</h1>";
             dotail();
           }
-          $_REQUEST['Design'] = $_REQUEST['CDesign'];
+          $_REQUEST['Design'] = $Des;
         }
-        $OldT = Get_Thing($_REQUEST['Design']);
+        $OldT = Get_Thing($Des);
   //var_dump($OldT);
         $T = $OldT;
         if ((empty($OldT['BuildState'])) && ($OldT['BluePrint'] >= 0)) {
@@ -169,7 +179,7 @@
 //      var_dump($ThingTypeNames);
       foreach($ThingTypeNames as $TT=>$Name) {
         if (!empty($BPs[$TT])) {
-          echo "<tr><td>A $Name: <td>" . fm_select($BPs[$TT],null,'CDesign',1,' onchange=this.form.submit()');
+          echo "<tr><td>A $Name: <td>" . fm_select($BPs[$TT],null,"CDesign$TT",1,' onchange=this.form.submit()') . "<p>";
         } else if (($ThingTypes[$TT]['Properties'] & THING_HAS_BLUEPRINTS) ==0) {
           $Direct[] = $TT;
         }
