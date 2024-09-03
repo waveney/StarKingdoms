@@ -157,6 +157,8 @@
     $txt .= "<p>";
     $txt .= "<li><a href=WorldList.php>List Worlds and colonies</a>\n";
     $txt .= "<li><a href=WorldMake.php>Rebuild list of Worlds and colonies</a>\n";
+    if (Access('God')) $txt .= "<li><a href=FixMinerals.php>Fix Minerals</a>\n";
+
     $txt .= "</ul>\n";
   }
 

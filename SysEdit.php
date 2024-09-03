@@ -131,7 +131,7 @@ echo "No tds<p>";
               else if ($heat < 1.5) { $P['Type'] = $N2Ps['Temperate']; }
               else if ($heat < 2.5) { $P['Type'] = $N2Ps['Desert']; }
               else { $P['Type'] = $N2Ps['Desolate']; };
-              $P['Minerals'] = ($N['Category']?10:rand(5,15));
+              $P['Minerals'] = ($N['Category']?10:(($P['Type'] == $N2Ps['Asteroid Belt'])?Minerals4AsteroidBelt():Minerals4Planet()));
             }
 
             if (isset($P['Gravity']) && isset($P['Period']) && $P['Period']) {

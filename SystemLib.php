@@ -9,10 +9,22 @@
 
  global $SurveyLevels,$FAnomalyStates,$GAnomStates;
 
+ function Minerals4Planet() {
+   if (Feature('Minerals')) {
+     return eval(Feature('Minerals'));
+   }
+   return [1,1,2,2,2,3,3,3,4][rand(1,8)];
+ }
 
+ function Minerals4AsteroidBelt() {
+   if (Feature('AsteroidMinerals')) {
+     return eval(Feature('AsteroidMinerals'));
+   }
+   return rand(1,5);
+ }
 // System common code
 
-function Dynamic_Update(&$N,$Tinc=0) {
+function Dynamic_Update(&$N,$Tinc=0)  {
   global $GAME;
   // Period and distance dynamic update based on Turn number and date
   ///  Called as part of Turn Actions and every showing of system
