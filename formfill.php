@@ -351,6 +351,18 @@
 
   case 'GamePlayers':
 
+  case 'Generic' : // General case of table:field:id
+    if ((preg_match('/(\w*):(\w*):(\d*)/',$field,$mtch)?true:false)) {
+      $t = $mtch[1];
+      $f = $mtch[2];
+      $i = $mtch[3];
+
+      $N = Gen_Get($t,$i);
+      $N[$f] = $Value;
+      echo Gen_Put($t,$N);
+    }
+    exit;
+
 
   case 'ScansDue': // Generic case of field:id
   case 'SocialPrinciples':
