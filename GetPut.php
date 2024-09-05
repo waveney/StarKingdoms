@@ -1152,6 +1152,33 @@ function Put_OpType(&$now) {
   }
 }
 
+// Branch Types
+function Get_BranchType($id) {
+  global $db,$NOTBY;
+  $res = $db->query("SELECT * FROM BranchTypes WHERE id=$id");
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
+  return [];
+}
+
+function Get_BranchTypes($AllG=0) {
+  global $db,$NOTBY;
+  $Ts = [];
+  $res = $db->query("SELECT * FROM BranchTypes " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0") );
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
+  return $Ts;
+}
+
+function Put_BranchType(&$now) {
+  global $db,$GAMEID;
+  if (isset($now['id'])) {
+    $e=$now['id'];
+    $Cur = Get_BranchType($e);
+    return Update_db('BranchTypes',$Cur,$now);
+  } else {
+    return $now['id'] = Insert_db ('OrgActions', $now );
+  }
+}
+
 // Offices
 function Get_Office($id) {
   global $db,$NOTBY;

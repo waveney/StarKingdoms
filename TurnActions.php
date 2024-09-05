@@ -1352,12 +1352,27 @@ function ProjectProgressActions($Pay4=0) {
   $ThingTypes = Get_ThingTypes();
   $Factions = Get_Factions();
   $Worlds = Get_Worlds();
+  $Homes = Get_ProjectHomes();
 
   foreach ($Projects as $P) {
     if ($P['LastUpdate'] >= $GAME['Turn']) continue;
     GMLog("Updating project " . $P['id'] . " " . $P['Name']);
 
-    $H = Get_ProjectHome($P['Home']);
+    $H = $Homes[$P['Home']];
+    $Wid = 0;
+    $Fid = $P['Whose'];
+    foreach($Worlds as $W) {
+      if ($W['Home'] == $P['Home']) {
+        $Wid = $W['id'];
+        break;
+      }
+    }
+    if ($Wid == 0) {
+      echo "<h2 class=Err>Something went wrong - can't find world for project " . $P['id'] . " call Richard...</h2>";
+      exit;
+    }
+    $W = $Worlds[$Wid];
+
     if (empty($H)) {
           GMLog("<b>Project " . $P['id'] . " fails as the world does not exist.  </b><p>");
           TurnLog($P['FactionId'], " <b>Project " . $P['Name'] . " fails as " . $P['Name'] . " is no longer controlled by you.");
@@ -1365,13 +1380,8 @@ function ProjectProgressActions($Pay4=0) {
           Abandon_Project($P);
           continue;
     }
-    $Revolt = 0;
-    foreach($Worlds as $W) {
-      if ($W['Revolt'] && ($W['ThingType'] == $H['ThingType']) && ($W['ThingId'] == $H['ThingId'])) {
-        $Revolt = 1;
-        break;
-      }
-    }
+    $Revolt = $W['Revolt'];
+
     if (isset($H['ThingType'])) switch ($H['ThingType']) {
       case 1: // Planet
         $PH = Get_Planet($H['ThingId']);
@@ -1437,7 +1447,7 @@ function ProjectProgressActions($Pay4=0) {
     if ($PT['Category'] & 16) { // Construction
 
       $Fact = Get_Faction($P['FactionId']);
-      $MaxActs = Has_Tech($P['FactionId'],3);
+      $MaxActs = PlanConst($Fid,$Wid);
 
       if (!isset($H['ThingType'])) {
         GMLog("<b>Confused state for project " . $P['id'] . "</b><p>");
@@ -1448,11 +1458,9 @@ function ProjectProgressActions($Pay4=0) {
       switch ($H['ThingType']) {
         case 1: // Planet
           $PH = Get_Planet($H['ThingId']);
-          if (($PH['Type'] != $Fact['Biosphere']) && ($PH['Type'] != $Fact['Biosphere2']) && ($PH['Type'] != $Fact['Biosphere3'])) $MaxActs-=1;
           break;
         case 2: // Moon
           $PH = Get_Moon($H['ThingId']);
-          if (($PH['Type'] != $Fact['Biosphere']) && ($PH['Type'] != $Fact['Biosphere2']) && ($PH['Type'] != $Fact['Biosphere3'])) $MaxActs-=1;
           break;
         case 3: // Thing
           $PH = Get_Thing($H['ThingId']);
@@ -2450,6 +2458,7 @@ function ProjectsCompleted($Pass) {
 
   $ProjTypes = Get_ProjectTypes();
   $Projects = Get_Projects_Cond("Status=1 AND Progress>=ProgNeeded");
+  $OTypes = Get_OrgTypes();
   foreach ($Projects as $P) {
     $PT = $ProjTypes[$P['Type']];
 
@@ -2474,30 +2483,37 @@ function ProjectsCompleted($Pass) {
         FollowUp($Fid, "Construction Project " . $P['id'] . " Does not have a valid home");
         break;
       }
-      switch ($H['ThingType']) {
-        case 1: // Planet
-          $PH = Get_Planet($H['ThingId']);
-          $Dists = Get_DistrictsP($H['ThingId'],1);
-          break;
-        case 2: // Moon
-          $PH = Get_Moon($H['ThingId']);
-          $Dists = Get_DistrictsM($H['ThingId'],1);
-          break;
-        case 3: // Thing
-          $PH = Get_Thing($H['ThingId']);
-          $Dists = Get_DistrictsT($H['ThingId'],1);
-          break;
+
+      if ($P['ThingType']> 0){ // District
+        switch ($H['ThingType']) {
+          case 1: // Planet
+            $PH = Get_Planet($H['ThingId']);
+            $Dists = Get_DistrictsP($H['ThingId'],1);
+            break;
+          case 2: // Moon
+            $PH = Get_Moon($H['ThingId']);
+            $Dists = Get_DistrictsM($H['ThingId'],1);
+            break;
+          case 3: // Thing
+            $PH = Get_Thing($H['ThingId']);
+            $Dists = Get_DistrictsT($H['ThingId'],1);
+            break;
+          }
+        if ($Dists) foreach($Dists as $D) {
+          if ($D['Type'] == $P['ThingType']) {
+            $D['Number']++;
+            Put_District($D);
+            TurnLog($Fid,'Project ' . $P['Name'] . " is complete");
+            break 2;
+          }
         }
-      if ($Dists) foreach($Dists as $D) {
-        if ($D['Type'] == $P['ThingType']) {
-          $D['Number']++;
-          Put_District($D);
-          TurnLog($Fid,'Project ' . $P['Name'] . " is complete");
-          break 2;
-        }
+        $D = ['HostType'=>$H['ThingType'], 'HostId'=>$PH['id'], 'Type'=>$P['ThingType'], 'Number'=>1, 'GameId' => $GAMEID];
+        Put_District($D);
+      } else { // Office
+        $World = Gen_Get_Cond1('Worlds',"Home=" . $P['Home']);
+        $Off = ['Type' => -$P['ThingType'], 'World'=>$World['id'], 'Whose'=>$P['Whose'], 'Number'=>1];
+        Put_Office($Off);
       }
-      $D = ['HostType'=>$H['ThingType'], 'HostId'=>$PH['id'], 'Type'=>$P['ThingType'], 'Number'=>1, 'GameId' => $GAMEID];
-      Put_District($D);
       TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");
       break;
 

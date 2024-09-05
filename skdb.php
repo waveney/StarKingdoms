@@ -337,7 +337,7 @@ function set_ShowGame($last=0) { // Overrides default above if not set by a Y ar
 // Works for simple tables
 // Deletes = 0 none, 1=one, 2=many
 function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$Mstr='Name',$MstrNot='',$Hexflds='',$MstrChk='') {
-  global $TableIndexes;
+  global $TableIndexes,$GAMEID;
   include_once("DateTime.php");
   $Flds = table_fields($table);
   $DateFlds = explode(',',$Dateflds);
@@ -381,7 +381,13 @@ function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$M
           }
 //          var_dump($recpres,$t);exit;
 //          return;
-          if ($recpres) $Putfn($t);
+          if ($recpres) {
+            if ($Putfn) {
+              $Putfn($t);
+            } else {
+              Gen_Put($table,$t);
+            }
+          }
         }
       }
     }
@@ -401,7 +407,7 @@ function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$M
           }
         }
       }
-//var_dump($t); exit;
+      $t['GameId'] = $GAMEID;
       Insert_db($table,$t);
     }
     return 1;

@@ -203,6 +203,8 @@
   case 'Construction':
   case 'Industrial' :
     echo "<h2>Select Construction Project:</h2><p>";
+
+    $PlanCon = PlanConst($Fid,$World['id']);
     $CurOff = $CurDists = 0;
       if ($MaxDists > 0) {
 
@@ -220,6 +222,7 @@
         $DNames = [];
 //var_dump($HDists[$Hi]);
         foreach ($DTs as $DTz) {
+          if (($D['Number']??0) > $PlanCon) continue;
           if (eval("return " . $DTz['Gate'] . ";" )) {
             $DNames[$DTz['id']] = $DTz['Name'];
 
@@ -263,7 +266,7 @@
           }
         }
 
-        if (Feature('Orgs')) {
+        if (Feature('Orgs') && count($Offices) < $PlanCon) {
           echo "<h2>Build Offices</h2>";
           $Lvl = count($Offices)+1;
           $pc = Proj_Costs($Lvl);

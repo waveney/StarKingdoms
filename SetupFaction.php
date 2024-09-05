@@ -396,7 +396,7 @@ function SetupStage5() {
   echo "</table><p>";
 
   echo "<h2><a href=SetupFaction.php?STAGE=4>Back to stage 4 - Social Principles</a> - " .
-    "<a href=SetupFaction.php?STAGE=6>Forward to stage 6 - Office</a></h2>";
+    "<a href=SetupFaction.php?STAGE=6>Forward to stage 6 - Starting Organisation</a></h2>";
   dotail();
 }
 
@@ -407,30 +407,28 @@ function SetupStage6() {
 
   echo "<form method=post>";
 
-  echo "<h1>Stage 6/" . STAGES . " - Starting Office</h1>";
+  echo "<h1>Stage 6/" . STAGES . " - Starting Organisation</h1>";
+  echo "The office for this will be created on your home world.<p>";
   $Wid = $F['HomeWorld'];
-  $Offices = Get_Offices($Wid);
 
-  if (!$Offices) {
-    $Off = ['Type'=>1, 'World'=>$Wid, 'Whose'=>$Fid, 'Number'=>1];
+  $Org = Gen_Get_Cond1('Organisations', "Whose=$Fid");
+
+  if (!$Org) {
+    $Org = ['Whose'=>$Fid,'GameId'=>$GAMEID];
+    Gen_Put('Organisations',$Org);
+    $Org = Gen_Get_Cond1('Organisations', "Whose=$Fid");
+    $Off = ['Type'=>1, 'World'=>$Wid, 'Whose'=>$Fid, 'Number'=>1,'OrgType'=>0];
     Put_Office($Off);
-  } else if (count($Offices) == 1) {
-    $Off = array_pop($Offices);
-  } else {
-    echo "This world has more than one office - can't be managed with this tool<p>";
-    echo "<h2><a href=SetupFaction.php?STAGE=5>Back to stage 5 - System Name</a> - " .
-      "<a href=SetupFaction.php?STAGE=7>Forward to stage 7 - Starting Things and oddments</a></h2>";
-    dotail();
-
   }
-  Register_AutoUpdate('Offices',$Off['id']);
-
   $OTypes = [];
   $OrgTypes = Get_OrgTypes();
   foreach ($OrgTypes as $oi=>$O) $OTypes[$oi] = $O['Name'];
 
-  echo "Office Type: " . fm_select($OTypes,$Off,'Type') . "<p>\n";
-
+  Register_AutoUpdate('Organisations',$Org['id']);
+  echo "<table><tr><td>Organisation Type:<td>" . fm_select($OTypes,$Org,'OrgType');
+  echo "<tr>" . fm_text('Organisation Name',$Org,'Name',4);
+  echo "<tr>" . fm_textarea('Description:<br>(Optional)',$Org,'Description',4,4);
+  echo "</table><p>";
 
   echo "<h2><a href=SetupFaction.php?STAGE=5>Back to stage 5 - System Name</a> - " .
     "<a href=SetupFaction.php?STAGE=7>Forward to stage 7 - Other Planets</a></h2>";
@@ -464,7 +462,7 @@ function SetupStage7() {
     echo "None to name";
   }
 
-  echo "<h2><a href=SetupFaction.php?STAGE=6>Back to stage 6 - Offices</a> - " .
+  echo "<h2><a href=SetupFaction.php?STAGE=6>Back to stage 6 - Starting Organisation</a> - " .
     "<a href=SetupFaction.php?STAGE=8>Forward to stage 8 - Starting Things and oddments</a></h2>";
   dotail();
 }
@@ -495,7 +493,7 @@ function SetupStage8() {
        "Stage 3 - Your Home World<br>\n" .
        "Stage 4 - Social Principles<br>\n" .
        "Stage 5 - System Names<br>\n" .
-       "Stage 6 - Offices<br>\n" .
+       "Stage 6 - Starting Organisation<br>\n" .
        "Stage 7 - Other Planet Names<br>\n" .
        "Stage 8 - Starting Things and Oddments<p>\n";
 

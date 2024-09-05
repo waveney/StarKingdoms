@@ -122,6 +122,8 @@ function Player_Page() {
     echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";
     echo "<p><li><a href=WhatCanIC.php>What Things can I See?</a>\n";
     echo "<li><a href=WorldList.php>Worlds and Colonies</a> - High Level info only\n";
+    echo "<li><a href=OrgList.php>Organisations</a>\n";
+
     echo "<li><a href=NamePlaces.php>Name Places</a> - Systems, Planets etc\n";
 //    echo "<li><a href=PScanList.php>Systems and Scans</a>\n";
     echo "<li><a href=PAnomalyList.php>Anomalies that have been seen</a><p>\n";
@@ -423,5 +425,42 @@ function WhatCanBeSeenBy($Fid,$Mode=0) {
   return $txt;
 }
 
+function PlanConst($Fid,$worldid) { // Effective Plan Construction
+  global $FACTION;
+  $PTypes = Get_PlanetTypes();
 
-?>
+  $PC = Has_Tech($Fid,"Planetary Construction");
+
+  if ($worldid == $FACTION['HomeWorld']) $PC++;
+  $World = Get_World($worldid);
+
+  switch ($World['ThingType']) {
+    case 1: // Planet
+      $P = Get_Planet($World['ThingId']);
+      $Target = $P['Type'];
+      break;
+
+    case 2: // Moon
+      $P = Get_Moon($World['ThingId']);
+      $Target = $P['Type'];
+      break;
+
+    case 3: // Thing
+      $Target = $FACTION['BioSphere'];
+      break;
+  }
+
+  if (($Target != $FACTION['BioSphere']) && ($Target != $FACTION['BioSphere2']) && ($Target != $FACTION['BioSphere3'])) {
+    if ($Target == 4) {
+      $PC-=2;
+    } else {
+      $PC--;
+    }
+  }
+  if (($Target == 2) && Has_Tech($Fid,"Construction Techniques (Arctic)")) $PC++;
+  if (($Target == 5) && Has_Tech($Fid,"Construction Techniques (Temperate)")) $PC++;
+  if (($Target == 6) && Has_Tech($Fid,"Construction Techniques (Desert)")) $PC++;
+  if (($Target == 16) && Has_Tech($Fid,"Construction Techniques (Water)")) $PC++;
+  if (($Target == 4) && Has_Tech($Fid,"Construction Techniques (Desolate)")) $PC+=2;
+  return max(0,$PC);
+}

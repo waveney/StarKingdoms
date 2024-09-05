@@ -299,7 +299,9 @@
     $txt .= "<ul>\n";
     $txt .= "<li><a href=OpsList.php>List Operations</a><p>\n";
     $txt .= "<li><a href=OrgTypes.php>Organisation Types</a>\n";
+    $txt .= "<li><a href=BranchTypes.php>Branch Types</a>\n";
     $txt .= "<li><a href=OpTypes.php>Operation Types</a>\n";
+    $txt .= "<li><a href=OrgList.php>List of all Organisations</a>\n";
     $txt .= "<p>";
     $txt .= "</ul>\n";
   }
