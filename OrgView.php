@@ -16,6 +16,7 @@ if (!$GM && $Org['Whose']!= $FACTION['id']) {
 
 $Fid = $Org['Whose'];
 $OrgTypes = Get_OrgTypes();
+$BTypes = Get_BranchTypes();
 
 $Offices = Gen_Get_Cond('Offices',"Organisation=$OrgId");
 $Branches = Gen_Get_Cond('Branches',"Organisation=$OrgId");
@@ -82,7 +83,7 @@ if ($Branches) {
         $Where = $T['Name'] . " in " . System_Name($Sys,$Fid);
         break;
     }
-    echo "<ul>$Where";
+    echo "<ul>". $BTypes[$B['Type']]['Name'] . " at $Where" ;
   }
 } else {
   echo "None Found<p>";

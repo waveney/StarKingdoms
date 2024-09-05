@@ -27,7 +27,7 @@ if (UpdateMany('BranchTypes','Put_BranchType',$Ts,1,'','','Name','','Props')) $T
 
 echo "<h1>Branch Types</h1>";
 
-echo "Props (Hex) 1\n";
+echo "Props (Hex) 1 =Hidden, 2=No Space\n";
 
 echo "<form method=post action=BranchTypes.php>";
 if ($AllG) echo fm_hidden('AllGames',1);
@@ -40,7 +40,7 @@ $coln = 0;
 echo "<div class=tablecont><table id=indextable border width=100% style='min-width:1400px'>\n";
 echo "<thead><tr>";
 echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>id</a>\n";
-echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
+echo "<th colspan=2><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
 if ($AllG) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>NotBy</a>\n";
 echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Properties</a>\n";
 echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>OrgType</a>\n";
@@ -49,14 +49,14 @@ echo "</thead><tbody>";
 foreach($Ts as $T) {
   $i = $T['id'];
   echo "<tr><td>$i";
-  echo fm_text1("",$T,'Name',1,'','',"Name$i");
+  echo fm_text1("",$T,'Name',2,'','',"Name$i");
   echo fm_notby($T,$i,$AllG);
   echo fm_hex1('',$T,'Props','','',"Props$i");
   echo "<td>" . fm_select($OrgTypeNames, $T,'OrgType',0,'',"OrgType$i");
  }
 
 $T = [];
-echo "<tr><td>" . fm_text1("",$T,'Name',1,'','',"Name0");
+echo "<tr><td>" . fm_text1("",$T,'Name',2,'','',"Name0");
 echo fm_hidden('NotBy0',$SETNOT);
 if ($AllG) echo "<td>$SETNOT";
 echo fm_hex1('',$T,'Props','','',"Props0");

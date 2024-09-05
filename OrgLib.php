@@ -23,3 +23,10 @@ function Recalc_Offices() { // Recount offices for each org
 
   foreach ($Orgs as &$O) Gen_Put('Organisations',$O);
 }
+
+function SocPrinciples($Fid) {
+  $SocPs = Gen_Get_Cond('SocialPrinciples',"Whose=$Fid");
+  $A = [];
+  foreach ($SocPs as $i=>$P) $A[$i] = $P['Principle'];
+  return $A;
+}
