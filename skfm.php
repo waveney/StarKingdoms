@@ -649,7 +649,8 @@ function number2roman($num,$isUpper=true) {
         $matches = intval($n / $number);
 
         /*** assign the roman char * $matches ***/
-        $res .= str_repeat($roman, $matches);
+        $res .= str_repeat($roman, $matches);$Bid = $_REQUEST['id'];
+
 
         /*** substract from the number ***/
         $n = $n % $number;
@@ -701,4 +702,9 @@ function fm_notby(&$D,$i,$AllG=0) {
   return fm_number1('',$D,'NotBy',($AllG?'':'hidden'),'',"NotBy$i");
 }
 
-?>
+function NamesList(&$D,$fld='Name') {
+  $L = [];
+  foreach ($D as $i=>$R) $L[$i] = $R[$fld];
+  return $L;
+}
+

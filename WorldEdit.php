@@ -4,7 +4,7 @@
   include_once("ThingLib.php");
   include_once("ProjLib.php");
   include_once("HomesLib.php");
-  global $FACTION;
+  global $FACTION,$GAMEID;
 
   $Fid = 0;
   $xtra = '';
@@ -198,6 +198,31 @@
     echo "<tr><td colsan=2>No Social Principles Currently\n";
   }
 
+  $Branches = Gen_Get_Cond('Branches', "HostType=" . $W['ThingType'] . " AND HostId=" . $W['ThingId'] );
+  $BTypes = Get_BranchTypes();
+
+  if ($Branches) {
+    $Show = 0;
+    if ($GM) {
+      $Show = 1;
+    } else {
+      foreach ($Branches as $bi=>$B) if (($B['Whose']== $Fid) || (($BTypes[$B['Type']]['Props']&1)==0)) { $Show = 1; break;}
+    }
+    if ($Show) {
+      echo "<tr><td>Branches:<td>";
+      $OrgTypes = Get_OrgTypes();
+      $Orgs = Gen_Get_Cond('Organisations',"GameId=$GAMEID");
+      foreach ($Branches as $bi=>$B) {
+        if ($GM || ($B['Whose']== $Fid) || (($BTypes[$B['Type']]['Props']&1)==0)) {
+          echo "A <b>" . $BTypes[$B['Type']]['Name'] . "</b> of the <b>" . $Orgs[$B['Organisation']]['Name'] .
+               "</b> ( " . $OrgTypes[$Orgs[$B['Organisation']]['OrgType']]['Name'] . " ) - " .
+               "<span style='background:" . $Facts[$B['Whose']]['MapColour'] . "'>" . $Facts[$B['Whose']]['Name'] . "</span>";
+          if (($BTypes[$B['Type']]['Props']&1) != 0) echo " [Hidden]";
+          echo "<br>";
+        }
+      }
+    }
+  }
 
   $H['Economy'] = Recalc_Economic_Rating($H,$W,$Fid);
   if (isset($H['id'])) Put_ProjectHome($H);
@@ -224,6 +249,8 @@
     } else {
       echo "<a href=ProjHomes.php?ACTION=EDIT&id=" . $H['id'] .">Goto Project Home</a>";
     }
+    echo ", <a href=BranchEdit.php?Action=Add&W=$Wid>Add Branch</a>";
+    echo ", <a href=OfficeEdit.php?Action=Add&W=$Wid>Add Office</a>";
     echo "</h2>\n";
   }
 
