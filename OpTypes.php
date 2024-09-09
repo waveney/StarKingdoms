@@ -35,6 +35,7 @@
   echo "Do NOT change the Op names - code depends on them<p>";
 
   echo "<form method=post>";
+  Register_AutoUpdate('OrgActions', 0);
   if ($AllG) echo fm_hidden('AllGames',1);
   echo "<div class=tablecont><table id=indextable border>\n";
   echo "<thead><tr>";
@@ -49,10 +50,10 @@
   if ($DTs) foreach($DTs as $D) {
     $i = $Did = $D['id'];
     echo "<tr><td>$i";
-    echo fm_text1("",$D,'Name',1,'','',"Name$i");
+    echo fm_text1("",$D,'Name',1,'','',"Name:$i");
     echo fm_notby($D,$i,$AllG);
-    echo "<td>" . fm_select($OTNs,$D,'Office',1,'',"Office$i");
-    echo fm_number1("",$D,'Props','','',"Props$i");
+    echo "<td>" . fm_select($OTNs,$D,'Office',1,'',"Office:$i");
+    echo fm_number1("",$D,'Props','','',"Props:$i");
     echo "<td>" . fm_basictextarea($D,'Description',3,3,'',"Description$i");
   }
   $D = [];
@@ -60,13 +61,13 @@
   echo fm_hidden('NotBy0',$SETNOT);
   if ($AllG) echo "<td>$SETNOT";
 
-  echo "<td>" . fm_select($OTNs,$D,'Office',1,'',"Office0");
-  echo fm_number1("",$D,'Props','','',"Props0");
-  echo "<td>" . fm_basictextarea($D,'Description',3,3,'',"Description0");
+  echo "<td>" . fm_select($OTNs,$D,'Office',1,'',"Office:0");
+  echo fm_number1("",$D,'Props','','',"Props:0");
+  echo "<td>" . fm_basictextarea($D,'Description',3,3,'',"Description:0");
+  if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "</table></div>\n";
   echo "<input type=submit name=Update value=Update>\n";
   echo "</form></div>";
 
   dotail();
 
-?>

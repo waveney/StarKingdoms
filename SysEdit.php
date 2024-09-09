@@ -246,6 +246,10 @@ echo "No tds<p>";
         }
         Put_Planet($P);
       }
+    case 'ADDFACT' :
+      $FS = ['FactionId'=>$_REQUEST['F'], 'SystemId'=>$Sysid];
+      Put_FactionSystem($FS);
+      break;
 
     default:
       break;

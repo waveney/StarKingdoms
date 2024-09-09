@@ -317,14 +317,18 @@ function Show_System(&$N,$Mode=0) {
   if ($FactionSys) {
     echo "<h2>Factions Knowledge</h2>";
     echo "<table border><tr><td>Faction<td>Passive Scan Level<td>Active Scan Level";
-    if ($N['Nebula']) echo "<td>Passive Nebula Scan<td>Active Nebula Scan";
+    if ($N['Nebula']??0) echo "<td>Passive Nebula Scan<td>Active Nebula Scan";
     foreach ($FactionSys as $FS) {
       echo "<tr><td>" . $Facts[$FS['FactionId']]['Name'] . "<td>" . $FS['PassiveScan'] . "<td>" . $FS['ScanLevel'];
-      if ($N['Nebula']) echo "<td>" . $FS['PassiveNebScan'] . "<td>" . $FS['NebScanned'];
+      if ($N['Nebula']??0) echo "<td>" . $FS['PassiveNebScan'] . "<td>" . $FS['NebScanned'];
     }
     echo "</table>";
   }
-
+  if (Access('God')) {
+    echo "<h2>Add Faction Knowledge</h2>";
+    echo "<tr><td>" . fm_select($FactNames,$_REQUEST,'F');
+    echo "<td><input type=submit name=ACTION value=ADDFACT>\n";
+  }
 
   if (Access('GM')) {
     echo "<center><form method=post action=SysEdit.php>" . fm_hidden('id', $Sid) .

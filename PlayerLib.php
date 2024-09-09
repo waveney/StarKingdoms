@@ -128,6 +128,7 @@ function Player_Page() {
 //    echo "<li><a href=PScanList.php>Systems and Scans</a>\n";
     echo "<li><a href=PAnomalyList.php>Anomalies that have been seen</a><p>\n";
     echo "<li><a href=ProjDisp.php>Projects</a>\n";
+    if (Feature('Orgs')) echo "<li><a href=OpsDisp.php>Operations</a>\n";
     echo "<li><a href=PThingList.php>List of Things</a> - List of Things (Ships, Armies, Agents, Space stations etc)";
      if ($PlayerState[$FACTION['TurnState']] != 'Frozen') echo "<li><a href=ThingPlan.php>Plan a Thing</a> - Planning Things (Ships, Armies, Agents, Space stations etc)";
     if ($FACTION['PhysicsSP'] >=5 || $FACTION['EngineeringSP'] >=5 || $FACTION['XenologySP'] >=5 ) echo "<li><a href=SciencePoints.php>Spend Science Points</a>";
