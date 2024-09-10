@@ -11,20 +11,28 @@ $Fields = ['Engineering','Physics','Xenology'];
 $Tech_Cats = ['Core','Supp','Non Std'];
 $CivMil = ['','Civilian','Military'];
 $BuildState = ['Planning','Building','Shakedown','Complete','Ex','Abandonded','Missing In Action','Captured'];
-$ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse Anomaly','Establish Embassy','Make Outpost','Make Asteroid Mine','Make Minefield',
-                'Make Orbital Repair Yard','Build Space Station','Expand Space Station','Make Deep Space Sensor','Make Advanced Asteroid Mine','Build Stargate',
-                'Make Planet Mine', 'Construct Command Relay Station', 'Repair Command Node','Build Planetary Mine','Dismantle Stargate','Disband','Transfer',
-                'Make Something','Make Warpgate','Retire','Stop Support','Make Advanced Minefield','Clear Minefield', 'Make Advanced Deep Space Sensor','Salvage',
+$ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse Anomaly','Establish Embassy','Make Outpost',
+                'Make Asteroid Mine','Make Minefield',
+                'Make Orbital Repair Yard','Build Space Station','Expand Space Station','Make Deep Space Sensor',
+                'Make Advanced Asteroid Mine','Build Stargate',
+                'Make Planet Mine', 'Construct Command Relay Station', 'Repair Command Node','Build Planetary Mine',
+                'Dismantle Stargate','Disband','Transfer',
+                'Make Something','Make Warpgate','Retire','Stop Support','Make Advanced Minefield','Clear Minefield',
+                'Make Advanced Deep Space Sensor','Salvage',
                 'Terraform','Link Repair','Collaborative DSC','Space Survey','Planetary Survey'];
 $IntructProps = [0,0,0,0,0,0,1,1,1,
                  1,1,1,1,1,1,
                  1,1,1,1,1,0,0,
                  1,1,0,0,1,0,1,1,
                  0,1,0,0,0]; // 1 = DSC
-$InstrNotBy =   [0,1,1,0,0,1,0,1,0,
-                 0,0,0,0,0,1,
-                 1,1,1,1,1,0,0,
-                 0,1,0,1,1,1,0,0,
+$InstrNotBy =   [0,1,1,0,0,1,0,
+                 1,0,
+                 0,0,0,0,
+                 0,1,
+                 1,1,1,1,
+                 1,0,1,
+                 0,1,0,1,1,1,
+                 0,0,
                  0,1,0,2,2];
 
 $Advance = ['','','Advanced ','Very Advanced ','Ultra Advanced ','Evolved '];

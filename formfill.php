@@ -13,7 +13,7 @@
 
   global $GAME,$GAMEID;
 
-//var_dump($_POST);
+// var_dump($_POST);
 // Special returns @x@ changes id to x, #x# sets feild to x, !x! important error message
   switch ($type) {
 
@@ -367,6 +367,7 @@
   case 'ScansDue': // Generic case of field:id
   case 'SocialPrinciples':
   case 'OrgActions':
+  case 'Organisations':
     if ((preg_match('/(\w*):(\d*)/',$field,$mtch)?true:false)) {
       $N = Gen_Get($type,$mtch[2]);
       $N[$mtch[1]] = $Value;

@@ -40,12 +40,13 @@
 
   $FactNames = Get_Faction_Names();
 
-  $Orgs = Gen_Get_Cond('Organisations',($GM?"GameId=$GAMEID":"Whose=$Fid"));
+  $Orgs = Gen_Get_Cond('Organisations',"( GameId=$GAMEID" . ($GM?" ) ":"AND Whose=$Fid ) "));
+// var_dump($Orgs);
   $OrgTypes = Get_OrgTypes();
   $OrgTypeNames = [];
   foreach ($OrgTypes as $i=>$Ot) $OrgTypeNames[$i] = $Ot['Name'];
   $Facts = Get_Factions();
-  if (UpdateMany('Organisations','Put_ThingType',$Orgs,1,'','','Name','','Properties'))
+  if (UpdateMany('Organisations','Put_ThingType',$Orgs,1,'','','Name','','Properties','',':'))
     $Orgs = Gen_Get_Cond('Organisations',($GM?"GameId=$GAMEID":"Whose=$Fid"));
 
   $SocPs = [];
@@ -65,44 +66,45 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Offices</a>\n";
   echo "</thead><tbody>";
 
-  foreach ($Orgs as $oi=>$O) {
+  foreach ($Orgs as $i=>$O) {
     $Of = $O['Whose'];
     echo "<tr>";
-    if ($GM) echo "<td>$oi";
+    if ($GM) echo "<td>$i";
     if ($GM) {
-      echo "<td>" . fm_select($OrgTypeNames,$O,'OrgType',0,'',"OrgType$i");
+      echo "<td>" . fm_select($OrgTypeNames,$O,'OrgType',0,'',"OrgType:$i");
     } else {
       echo "<td>" . $OrgTypeNames[$O['OrgType']];
     }
-    echo fm_text1('',$O,'Name',4,'','',"Name$i");
-    echo "<br>" . fm_basictextarea($O, 'Description',5,4,'',"Description$i");
+    echo fm_text1('',$O,'Name',4,'','',"Name:$i");
+    echo "<br>" . fm_basictextarea($O, 'Description',5,4,'',"Description:$i");
     if (!isset($SocPs[$Of])) $SocPs[$Of] = SocPrinciples($Of);
     if ($GM) {
-      echo "<br>Social Principle (Religious / Ideological Orgs only)" . fm_select($SocPs[$Of],$O,'SocialPrinciple',1,'',"SocialPrinciple$i");
+      echo "<br>Social Principle (Religious / Ideological Orgs only)" . fm_select($SocPs[$Of],$O,'SocialPrinciple',1,'',"SocialPrinciple:$i");
     } else {
       if ($O['OrgType'] == 5) echo "<br>Social Principle (Religious / Ideological Orgs only): " . $SocPs[$Of];
     }
-    if ($GM) echo "<td>" . fm_select($FactNames,$O,'Whose',1,'',"Whose$i");
-    echo "<td>" . $O['OfficeCount'] . "<br><a href=OrgView.php?id=$oi>View</a>";
+    if ($GM) echo "<td>" . fm_select($FactNames,$O,'Whose',1,'',"Whose:$i");
+    echo "<td>" . $O['OfficeCount'] . "<br><a href=OrgView.php?id=$i>View</a>";
   }
   $O = [];
   echo "<tr><td>";
   if ($GM) echo "<td>";
-  echo fm_select($OrgTypeNames,$O,'OrgType',0,'',"OrgType0");
-  echo fm_text1('',$O,'Name0',4,'','placeholder="New Organisation Name"');
-  echo "<br>" . fm_basictextarea($O, 'Description0',5,4,'placeholder="New Organisation Description"');
+  echo fm_select($OrgTypeNames,$O,'OrgType',0,'',"OrgType:0");
+  echo fm_text1('',$O,'Name:0',4,'','placeholder="New Organisation Name"');
+  echo "<br>" . fm_basictextarea($O, 'Description:0',5,4,'placeholder="New Organisation Description"');
   if ($GM) {
     echo "Set up a Social Principle (if appropriate) after creating the Organisation";
   } else {
     if (!isset($SocPs[$Fid])) $SocPs[$Fid] = SocPrinciples($Fid);
-    echo "<br>Social Priniple (Religious / Ideological only)" . fm_select($SocPs[$Fid],$O,'SocialPrinciple0');
+    echo "<br>Social Priniple (Religious / Ideological only)" . fm_select($SocPs[$Fid],$O,'SocialPrinciple:0');
   }
   if ($GM) {
-    echo "<td>" . fm_select($FactNames,$O,'Whose0',1);
+    echo "<td>" . fm_select($FactNames,$O,'Whose:0',1);
   } else {
-    echo fm_hidden('Whose0',$Fid);
+    echo fm_hidden('Whose:0',$Fid);
   }
-  echo fm_hidden('GameId0',$GAMEID);
+  echo fm_hidden('GameId:0',$GAMEID);
+  if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "</table>";
   echo "<h2><input type=submit name=Update value='Add New Organisation'></h2>";
 

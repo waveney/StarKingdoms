@@ -26,7 +26,7 @@
 //  $Techs = Get_Techs(0,$AllG);
 //  $TechNames = Tech_Names($Techs);
 
-  if (UpdateMany('OrgActions','Put_OpType',$DTs,0))  $DTs=Get_OpTypes($AllG);
+  if (UpdateMany('OrgActions','Put_OpType',$DTs,0,'','','','','','',':'))  $DTs=Get_OpTypes($AllG);
 
   $coln = 0;
 
@@ -54,7 +54,7 @@
     echo fm_notby($D,$i,$AllG);
     echo "<td>" . fm_select($OTNs,$D,'Office',1,'',"Office:$i");
     echo fm_number1("",$D,'Props','','',"Props:$i");
-    echo "<td>" . fm_basictextarea($D,'Description',3,3,'',"Description$i");
+    echo "<td>" . fm_basictextarea($D,'Description',3,3,'',"Description:$i");
   }
   $D = [];
   echo "<tr><td><td><input type=text name=Name0 >";

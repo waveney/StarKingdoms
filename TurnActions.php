@@ -15,18 +15,18 @@
   global $Stages,$Coded;
 
   $Stages = ['Check Turns Ready', 'Spare', 'Start Turn Process',
-             'Save All Locations', 'Remove Unsupported Minefields', 'Cash Transfers', 'Spare',
-             'Follow', 'Pay For Stargates', 'Spare', 'Scientific Breakthroughs',
+    'Save All Locations', 'Spare' /*'Remove Unsupported Minefields'*/, 'Spare' /*'Cash Transfers'*/, 'Spare',
+             'Follow' /*'Pay For Stargates'*/, 'Spare', 'Scientific Breakthroughs',
              'Start Projects', 'Start Operations', 'Start Operations Stage 2', 'Instuctions',
              'Instuctions Stage 2', 'Clear Paid For', 'Spare'/*'Agents Start Missions'*/, 'Pay For Rushes',
              'Spare', 'Economy', 'Spare', 'Direct Moves',
              'Load Troops', 'Spare', 'Ship Move Check', 'Ship Movements',
              'Spare', 'Spare' /*'Agents Move Check', 'Agents Movements'*/, 'See After Move', 'Meetups',
 
-             'Space Combat', 'Unload Troops', 'Orbital Bombardment', 'Planetary Defence',
+             'Space Combat', 'Unload Troops', 'Planetary Defence', 'Orbital Bombardment',
              'Ground Combat', 'Devastation Selection', 'Devastation', 'Ownership Change',
              'Project Progress', 'Operations Progress', 'Instructions Progress','Collaborative Progress',
-             'Spare', 'Spare', /*'Espionage Missions Complete', 'Counter Espionage',*/ 'Handle Co Op Projects', 'Finish Shakedowns',
+    'Spare', 'Spare', /*'Espionage Missions Complete', 'Counter Espionage',*/ 'Handle Co Op Projects', 'Spare' /*'Finish Shakedowns'*/,
              'Refit Projects Complete', 'Projects Complete','Operations Complete',  'Instructions Complete',
              'Check Survey Reports', 'Give Survey Reports', 'Check Spot Anomalies', 'Spot Anomalies',
              'Militia Army Recovery', 'Generate Turns', 'Tidy Ups', 'Clear Conflict Flags',
