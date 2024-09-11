@@ -406,11 +406,13 @@ function Get_District($id) {
 }
 
 function Put_District(&$now) {
+  global $db,$GAMEID,$GAME;
   if (isset($now['id'])) {
     $e=$now['id'];
     $Cur = Get_District($e);
     return Update_db('Districts',$Cur,$now);
   } else {
+    $now['GameId'] = $GAMEID;
     return $now['id'] = Insert_db ('Districts', $now );
   }
 }

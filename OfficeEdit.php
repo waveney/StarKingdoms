@@ -42,7 +42,7 @@ if (isset($_REQUEST['Action'])) {
       break;
 
     case 'Create':
-      $B = [];
+      $_POST['GameId'] = $GAMEID;
       $Oid = insert_db_post('Offices',$B);
       break;
 

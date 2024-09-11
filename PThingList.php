@@ -178,7 +178,11 @@
   $ShowCats = ['All','Ships','Armies','Agents','Chars', 'Other'];
   if (!empty($FACTION['HasPrisoners'])) $ShowCats[] = 'Prisoners';
   $Show['ThingShow'] = ($Faction[$GM?'GMThingType':'ThingType'] ?? 0);
-  $BuildCats = ['All','Plan','Building','Shakedown','Complete','Other'];
+  if (Feature('Shakedown')) {
+    $BuildCats = ['All','Plan','Building','Shakedown','Complete','Other'];
+  } else {
+    $BuildCats = [0=>'All',1=>'Plan',2=>'Building',4=>'Complete',5=>'Other'];
+  }
   $Build['BuildShow'] = ($Faction[$GM?'GMThingBuild':'ThingBuild'] ?? 0);
 
   echo "<div class=floatright ><b>" . fm_radio("Show",$ShowCats,$Show,'ThingShow',' onchange=ThingListFilter()') . "<br>";

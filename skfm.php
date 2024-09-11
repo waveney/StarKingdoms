@@ -708,3 +708,7 @@ function NamesList(&$D,$fld='Name') {
   return $L;
 }
 
+function Cancel_AutoUpdate() {
+  global $ADDALL,$AutoADD,$AutoAfter,$AutoType;
+  $AutoADD = 0;
+}

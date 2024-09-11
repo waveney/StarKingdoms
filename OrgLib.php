@@ -34,14 +34,11 @@ function SocPrinciples($Fid) {
 }
 
 function Link_Search($Sys,$lnks) { // Part of Op_Level (Recusive)
-  global $Min,$Target,$SysLnks,$Depth,$BeenHere;
+  global $Min,$Targets,$SysLnks,$Depth,$BeenHere;
 echo "LS: $Sys, $lnks<p>";
 //var_dump($BeenHere);
-echo "A";
-  if (isset($Target[$Sys])) return $lnks;
-  echo "A";
   if ($lnks > $Depth) return -2;
-  echo "A";
+  if (isset($Targets[$Sys])) return $lnks;
   if ($BeenHere[$Sys] || ($lnks>=$Min)) return -3;
   echo "A";
   $BeenHere[$Sys] = $lnks+1;
@@ -65,7 +62,7 @@ echo "E$Any=";
 }
 
 function Op_Level($Orgid,$Sys,$Mod=0) {
-  global $Min,$Target,$SysLnks,$Depth,$BeenHere;
+  global $Min,$Targets,$SysLnks,$Depth,$BeenHere;
   // Get list off all systems with worlds of Factions and all locations of branches (ignore duplicates eg Outpost/planet)
 
   // get all faction link knowledge
@@ -127,7 +124,7 @@ function Op_Level($Orgid,$Sys,$Mod=0) {
   }
 
   // Targets should now identify the systems it needs to reach
- // var_dump($Targets,$SKnown);
+//  var_dump($Targets,$SKnown);
   if (isset($Targets[$Sys])) return 0; // Range 0
 
   // Make double linked list of links to systems

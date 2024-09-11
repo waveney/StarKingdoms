@@ -31,10 +31,9 @@ function Gen_Put($Table, &$now, $idx='id') {
     $e=$now[$idx];
     $Cur = Gen_Get($Table,$e,$idx);
 
-    return Update_db($Table,$Cur,$now);
-  } else {
-    return $now[$idx] = Insert_db ($Table, $now );
+    if ($Cur) return Update_db($Table,$Cur,$now);
   }
+  return $now[$idx] = Insert_db ($Table, $now );
 }
 
 function Gen_Get_All($Table, $extra='', $idx='id') {

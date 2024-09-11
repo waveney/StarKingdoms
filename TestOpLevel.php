@@ -8,6 +8,13 @@ global $FACTION,$GAMEID;
 
 dostaffhead('Testing 1 2 3');
 
-echo Op_Level(1,81,-1);
+$Tests = [[35,80,0],[35,81,0],[35,83,0]];
+
+foreach ($Tests as $i=>$T) {
+  $Res = Op_Level($T[0],$T[1],$T[2]);
+  echo "<p>Result $i: $Res<p>";
+
+}
+
 
 dotail();

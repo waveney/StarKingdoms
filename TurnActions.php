@@ -2586,7 +2586,7 @@ function ProjectsCompleted($Pass) {
 
     case 'Construct Ship':
       $T = Get_Thing($P['ThingId']);
-      $T['BuildState'] = 2; // Shakedown
+      $T['BuildState'] = (Feature('Shakedowns')?2:3); // Shakedown
       if (empty($T['SystemId'])) {
 //        $Where = Where_Is_Home($P['Home']);
 //        $T['SystemId'] = $Where[0];
@@ -2599,7 +2599,7 @@ function ProjectsCompleted($Pass) {
       $WSL = ConstructLoc($P['Home'],0);
       $T['WithinSysLoc'] = 1;
       Move_Thing_Within_Sys($T,$WSL,1);
-      TurnLog($Fid, $T['Name'] . " has been launched and will now start its shakedown cruise",$T);
+      TurnLog($Fid, $T['Name'] . " has been launched" . (Feature('Shakedowns')?" and will now start its shakedown cruise":''),$T);
       Calc_Scanners($T);
       $T['ProjectId'] = 0;
       Put_Thing($T);

@@ -58,6 +58,7 @@
   $DistTypes = 0;
   $SysId = 0;
   $Facts = Get_Factions();
+  $SocPs = [];
 
   $H = Get_ProjectHome($W['Home']);
 //  var_dump($H);
@@ -145,6 +146,9 @@
   echo fm_hidden('id', $Wid);
   echo "<table border>";
   if ($GM) echo "<tr><td>Id:<td>$Wid\n";
+  if (Access('God')) {
+    echo "<tr>" . fm_number('ThingType',$W,'ThingType') . fm_number('ThingId',$W,'ThingId');
+  }
   echo "<tr>" . fm_text('Name',$WH,'Name',3,'','',"Name:" . $W['ThingType'] . ":" . $W['ThingId']);
   echo "<tr>" . fm_textarea('Description',$WH,'Description',8,3,'','', "Description:" . $W['ThingType'] . ":" . $W['ThingId']);
   if ($GM) {
@@ -213,6 +217,7 @@
       $OrgTypes = Get_OrgTypes();
       $Orgs = Gen_Get_Cond('Organisations',"GameId=$GAMEID");
       foreach ($Branches as $bi=>$B) {
+        var_dump($B);
         if ($GM || ($B['Whose']== $Fid) || (($BTypes[$B['Type']]['Props']&1)==0)) {
           echo "A <b>" . $BTypes[$B['Type']]['Name'] . "</b> of the <b>" . $Orgs[$B['Organisation']]['Name'] .
                "</b> ( " . $OrgTypes[$Orgs[$B['Organisation']]['OrgType']]['Name'] . " ) - " .
@@ -227,13 +232,13 @@
   $H['Economy'] = Recalc_Economic_Rating($H,$W,$Fid);
   if (isset($H['id'])) Put_ProjectHome($H);
 
-  if (!empty($WH['MaxDistricts'])) echo "<td>Max Districts: " . $WH['MaxDistricts'];
+  if (!empty($W['MaxDistricts'])) echo "<td>Max Districts: " . $WH['MaxDistricts'];
   echo "<tr><td>Economy:<td>" . $H['Economy'];
-  if ($H['Devastation']) {
-    if ($H['Devastation'] <= $NumDists) {
+  if ($W['Devastation']??0) {
+    if ($W['Devastation'] <= $NumDists) {
       echo "<tr><td>Devastation:<td>" . $H['Devastation'] . " If this ever goes higher than the number of districts ($NumDists), districts will be lost.";
     } else {
-      echo "<tr><td class=Err>Devastation:<td class=Err>" . $H['Devastation'] . "  This is higher than the number of districts ($NumDists), districts will be lost.";
+      echo "<tr><td class=Err>Devastation:<td class=Err>" . $W['Devastation'] . "  This is higher than the number of districts ($NumDists), districts will be lost.";
     }
   }
 //  echo "<tr><td>Home World:<td colspan=4>";

@@ -369,9 +369,11 @@
   case 'OrgActions':
   case 'Organisations':
     if ((preg_match('/(\w*):(\d*)/',$field,$mtch)?true:false)) {
-      $N = Gen_Get($type,$mtch[2]);
-      $N[$mtch[1]] = $Value;
-      echo Gen_Put($type,$N);
+      if ($mtch[2]) {
+        $N = Gen_Get($type,$mtch[2]);
+        $N[$mtch[1]] = $Value;
+        echo Gen_Put($type,$N);
+      }
     }
     exit;
 

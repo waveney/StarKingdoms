@@ -37,7 +37,7 @@ function Recalc_Project_Homes($Logf=0, $Silent=0) {
   }
 
 //var_dump($KnownHomes); exit;
-//var_dump($PWithDists);exit;
+//var_dump($PWithDists);
 //var_dump($MWithDists);exit;
   $Systems = Get_Systems();
   foreach ($Systems as &$N) {
@@ -47,7 +47,7 @@ function Recalc_Project_Homes($Logf=0, $Silent=0) {
       $Planets = Get_Planets($N['id']);
       if ($Planets) {
         foreach ($Planets as &$P) {
-// if ($N['Ref'] == 'RSS') echo "Check Planet: " . $P['id'] . " - " . $P['Name'] . "<br>";
+ if ($N['Ref'] == 'MAA') echo "Check Planet: " . $P['id'] . " - " . $P['Name'] . "<br>";
           $doneP = 0;
 
           $Cont = $P['Control'];

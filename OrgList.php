@@ -32,6 +32,18 @@
     } else {
       if ($Fid) echo "<h2>GM: <a href=OrgList.php?id=$Fid&FORCE>This page in Player Mode</a></h2>";
     }
+
+    if (isset($_REQUEST['ACTION']))
+      switch ($_REQUEST['ACTION']) {
+        case 'Delete':
+          $id = $_REQUEST['i'];
+          $Org = Gen_Get('Organisations',$id);
+          $Org['GameId'] = - $GAMEID;
+          Gen_Put('Organisations',$Org);
+          echo "<h2>Organisations $id has been removed</h2>";
+          break;
+    }
+
   }
   A_Check('Player');
 //  CheckFaction('WorldList',$Fid);
@@ -83,7 +95,10 @@
     } else {
       if ($O['OrgType'] == 5) echo "<br>Social Principle (Religious / Ideological Orgs only): " . $SocPs[$Of];
     }
-    if ($GM) echo "<td>" . fm_select($FactNames,$O,'Whose',1,'',"Whose:$i");
+    if ($GM) {
+      echo "<td>" . fm_select($FactNames,$O,'Whose',1,'',"Whose:$i");
+      echo "<br><a href=OrgList.php?ACTION=Delete&i=$i>Delete</a>";
+    }
     echo "<td>" . $O['OfficeCount'] . "<br><a href=OrgView.php?id=$i>View</a>";
   }
   $O = [];

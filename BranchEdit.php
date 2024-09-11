@@ -23,14 +23,17 @@ if (isset($_REQUEST['Action'])) {
     case 'Add':
       $Wid = $_REQUEST['W'];
       $World = Get_World($Wid);
+      $AOrgs = Gen_Get_Cond('Organisations',"GameId=$GAMEID");
+      $AOrgList = NamesList($AOrgs);
 
       echo "<table border>";
       $B = [];
-      echo "Select who and branch type.  Click Create and it will then ask for the organisation.<p>";
+      echo "Select who and branch type and Organisation.<p>";
       echo fm_hidden('HostType',$World['ThingType']) . fm_hidden('HostId',$World['ThingId']);
       echo "<tr><td>Whose:<td>" . fm_select($FactNames,$B,'Whose');
       echo "<tr><td>Branch Type:<td>" . fm_select($BTypeNames,$B,'Type');
       echo "<tr>" . fm_text('Name (not yet used)',$B,'Name');
+      echo "<tr><td>Organisation:<td>" . fm_select($AOrgList,$B,'Organisation',1);
       echo "</table><br><input type=Submit name=Action value=Create><p>";
 
       dotail();
@@ -104,7 +107,7 @@ echo "<tr><td>Whose:<td>" . fm_select($FactNames,$B,'Whose');
 echo "<tr><td>Branch Type:<td>" . fm_select($BTypeNames,$B,'Type');
 echo "<tr>" . fm_text('Name (not yet used)',$B,'Name');
 echo "<tr><td>Organisation:<td>" . fm_select($OrgList,$B,'Organisation',1);
-if ($Org) echo "<tr><td>Org is type:<td>" . $OrgTypes[$Org['OrgType']]['Name'] . "<td>Refresh page if Org changed";
+if ($Org) echo "<tr><td>Org is type:<td>" . ($OrgTypes[$Org['OrgType']]['Name']??'Unknown') . "<td>Refresh page if Org changed";
 echo "<tr><td>Location:<td>$Where<td>Only changeable by Richard";
 echo "</table>";
 
