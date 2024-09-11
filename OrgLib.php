@@ -124,7 +124,7 @@ function Op_Level($Orgid,$Sys,$Mod=0) {
   }
 
   // Targets should now identify the systems it needs to reach
-//  var_dump($Targets,$SKnown);
+  if (isset($_REQUEST['SHOWTARGS'])) var_dump($Targets,$SKnown);
   if (isset($Targets[$Sys])) return 0; // Range 0
 
   // Make double linked list of links to systems

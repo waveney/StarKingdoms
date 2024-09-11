@@ -99,7 +99,7 @@ switch ($B['HostType']) {
     break;
 }
 
-echo "<table border\>";
+echo "<table border>";
 Register_AutoUpdate('Branches', $Bid);
 echo "<tr><td>id: $Bid";
 if (Access('God')) echo fm_number('Host Type',$B,'HostType') . fm_number('Host Id',$B,'HostId');

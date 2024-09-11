@@ -303,6 +303,7 @@
     $txt .= "<li><a href=OpTypes.php>Operation Types</a>\n";
     $txt .= "<li><a href=OrgList.php>List of all Organisations</a>\n";
     $txt .= "<li><a href=OfficeList.php>List of all Offices</a>\n";
+    $txt .= "<li><a href=BranchList.php>List of all Branches</a>\n";
     $txt .= "<p>";
     $txt .= "</ul>\n";
   }
