@@ -414,7 +414,7 @@ function SetupStage6() {
   $Org = Gen_Get_Cond1('Organisations', "Whose=$Fid");
 
   if (!$Org) {
-    $Org = ['Whose'=>$Fid,'GameId'=>$GAMEID];
+    $Org = ['Whose'=>$Fid,'GameId'=>$GAMEID,'RelOrder'=>100];
     Gen_Put('Organisations',$Org);
     $Org = Gen_Get_Cond1('Organisations', "Whose=$Fid");
     $Off = ['Type'=>1, 'World'=>$Wid, 'Whose'=>$Fid, 'Number'=>1,'OrgType'=>0,'Organisation'=>$Org['id']];

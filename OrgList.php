@@ -39,6 +39,7 @@
           $id = $_REQUEST['i'];
           $Org = Gen_Get('Organisations',$id);
           $Org['GameId'] = - $GAMEID;
+          $Org['Whose'] = - $Org['Whose'];
           Gen_Put('Organisations',$Org);
           echo "<h2>Organisations $id has been removed</h2>";
           break;
@@ -52,7 +53,7 @@
 
   $FactNames = Get_Faction_Names();
 
-  $Orgs = Gen_Get_Cond('Organisations',"( GameId=$GAMEID" . ($GM?" ) ":"AND Whose=$Fid ) "));
+  $Orgs = Gen_Get_Cond('Organisations',"( GameId=$GAMEID" . ($GM?" ) ":"AND Whose=$Fid ) ORDER BY RelOrder DESC"));
 // var_dump($Orgs);
   $OrgTypes = Get_OrgTypes();
   $OrgTypeNames = [];
@@ -74,6 +75,7 @@
   if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Id</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Type</a>\n";
   echo "<th colspan=4><a href=javascript:SortTable(" . $coln++ . ",'T')>Name and description</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Relative Order</a>\n";
   if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Whose</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Offices</a>\n";
   echo "</thead><tbody>";
@@ -95,6 +97,7 @@
     } else {
       if ($O['OrgType'] == 5) echo "<br>Social Principle (Religious / Ideological Orgs only): " . $SocPs[$Of];
     }
+    echo fm_number1('',$O,'RelOrder','','',"RelOrder:$i");
     if ($GM) {
       echo "<td>" . fm_select($FactNames,$O,'Whose',1,'',"Whose:$i");
       echo "<br><a href=OrgList.php?ACTION=Delete&i=$i>Delete</a>";
@@ -113,6 +116,7 @@
     if (!isset($SocPs[$Fid])) $SocPs[$Fid] = SocPrinciples($Fid);
     echo "<br>Social Priniple (Religious / Ideological only)" . fm_select($SocPs[$Fid],$O,'SocialPrinciple:0');
   }
+  echo fm_number1('',$O,'RelOrder','','',"RelOrder:0");
   if ($GM) {
     echo "<td>" . fm_select($FactNames,$O,'Whose:0',1);
   } else {

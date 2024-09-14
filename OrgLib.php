@@ -2,6 +2,9 @@
 include_once("sk.php");
 include_once("GetPut.php");
 
+define('OPER_LEVEL',0xf);
+define('OPER_HIDDEN',0x10);
+
 function Recalc_Offices() { // Recount offices for each org
   global $GAMEID;
   $Offs = Gen_Get_All('Offices', " WHERE GameId=$GAMEID");
@@ -153,4 +156,13 @@ function Op_Level($Orgid,$Sys,$Mod=0) {
   $Min = 100;
   $Min = Link_Search($Sys,0);
   return $Min;// ($Min>99?-1:$Min);
+}
+
+function OrgColours() {
+  static $Cols = [];
+  if (empty($Cols)) {
+    $OTypes = Get_OrgTypes();
+    $Cols = NamesList($OTypes,'Colour');
+  }
+  return $Cols;
 }

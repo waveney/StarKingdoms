@@ -46,7 +46,7 @@
 //  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>CompTarget</a>\n";
 //  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Cost</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Props</a>\n";
-//  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Based On</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Colour</a>\n";
 
 
   echo "</thead><tbody>";
@@ -63,7 +63,7 @@
 //    echo fm_number1("",$D,'CompTarget','','',"CompTarget$i");
 //    echo fm_number1("",$D,'Cost','','',"Cost$i");
     echo fm_number1("",$D,'Props','','',"Props$i");
-//    echo "<td>" . fm_select($TechNames,$D,'BasedOn',1,'',"BasedOn$i");
+    echo fm_text1("",$D,'Colour',1,'','',"Colour$i");
   }
   $D = [];
   echo "<tr><td><td><input type=text name=Name0 >";
@@ -77,8 +77,8 @@
 //    echo fm_number1("",$D,'CompTarget','','',"CompTarget0");
 //    echo fm_number1("",$D,'Cost','','',"Cost0");
     echo fm_number1("",$D,'Props','','',"Props0");
-//    echo "<td>" . fm_select($TechNames,$D,'BasedOn',1,'',"BasedOn0");
-  echo "</table></div>\n";
+    echo "<td><input type=text name=Colour0 >";
+    echo "</table></div>\n";
   echo "<input type=submit name=Update value=Update>\n";
   echo "</form></div>";
 

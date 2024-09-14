@@ -1127,6 +1127,33 @@ function Put_OrgType(&$now) {
   }
 }
 
+// Operations
+function Get_Operation($id) {
+  global $db,$NOTBY;
+  $res = $db->query("SELECT * FROM Operations WHERE id=$id");
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
+  return [];
+}
+
+function Get_Operations($Fid) {
+  global $db,$NOTBY,$GAMEID;
+  $Ts = [];
+  $res = $db->query("SELECT * FROM Operations " . ($Fid? "WHERE Whose=$Fid " : "WHERE GameId=$GAMEID") );
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
+  return $Ts;
+}
+
+function Put_Operation(&$now) {
+  global $db,$GAMEID;
+  if (isset($now['id'])) {
+    $e=$now['id'];
+    $Cur = Get_Operation($e);
+    return Update_db('Operastion',$Cur,$now);
+  } else {
+    return $now['id'] = Insert_db ('Operations', $now );
+  }
+}
+
 // Org Operations
 function Get_OpType($id) {
   global $db,$NOTBY;
