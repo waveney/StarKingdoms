@@ -344,7 +344,7 @@ function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$M
   $HexFlds = explode(',',$Hexflds);
   $indxname = ($TableIndexes[$table]??'id');
 
-//var_dump($_REQUEST);
+// var_dump($Sep,$Mstr,$MstrNot);
 //return;
   if (isset($_POST{'Update'})) {
     if ($data) foreach($data as $t) {
@@ -394,7 +394,7 @@ function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$M
       $t = array();
       foreach ($Flds as $fld=>$ftyp) {
         if ($fld == $indxname) continue;
-        if (isset($_POST[$fld . "0"])) {
+        if (isset($_POST["$fld$Sep" . "0"])) {
           if (in_array($fld,$DateFlds)) {
             $t[$fld] = Date_BestGuess($_POST["$fld$Sep" . "0"]);
           } else if (in_array("$fld$Sep",$TimeFlds)) {
@@ -407,6 +407,7 @@ function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$M
         }
       }
       $t['GameId'] = $GAMEID;
+//      var_dump($t);
       Insert_db($table,$t);
     }
     return 1;

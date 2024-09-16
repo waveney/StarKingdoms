@@ -8,6 +8,7 @@
   include_once("PlayerLib.php");
   include_once("SystemLib.php");
   include_once("ProjLib.php");
+  include_once("OrgLib.php");
 
   global $FACTION,$ADDALL,$GAME,$ARMY;
 

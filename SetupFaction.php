@@ -370,7 +370,7 @@ function SetupStage5() {
 
   echo "<form method=post>";
 
-  echo "<h1>Stage 4/" . STAGES . " - System Names</h1>";
+  echo "<h1>Stage 5/" . STAGES . " - System Names</h1>";
   echo "This is optional, move on if you want to.<p>";
 
 //var_dump($F);
@@ -386,12 +386,41 @@ function SetupStage5() {
   $Home = Get_ProjectHome($Hid);
   $SysId = $Home['SystemId'];
   $System = Get_System($SysId);
+  $ScanLevel = Has_Tech($Fid,'Sensors');
+
+  // Setup Faction System and Faction Link knowledge
+  $CSys = Gen_Get_Cond('Systems',"( Control=$Fid OR HistoricalControl=$Fid )");
+  $Refs = [];
+  foreach ($CSys as $Si=>$S) {
+    $FS = Get_FactionSystemFS($Fid,$Si);
+    if (!isset($FS['id'])) Put_FactionSystem($FS);
+    $Ref[$S['Ref']] = $Si;
+  }
+  if (count($CSys) > 1) {
+    foreach ($CSys as $Si=>$S) {
+      $Lnks[$Si] = Get_Links($S['Ref']);
+
+//      var_dump($Lnks[$Si]);
+      foreach($Lnks[$Si] as $L) {
+//        echo "Checking " . $L['id'] . " From " . $L['System1Ref'] . " to " .  $L['System2Ref']. "<br>";
+        if (isset($Ref[$L['System1Ref']]) && isset($Ref[$L['System2Ref']]) && $ScanLevel >= $L['Concealment']) {
+//          echo "Got Here... ScanLevel ". $L['Concealment'] . "<p>";
+          $FL = Get_FactionLinkFL($Fid,$L['id']);
+          if (!isset($FL['id'])) {
+            $FL['Known'] = 1;
+            Put_FactionLink($FL);
+          }
+        }
+      }
+    }
+  }
+
 
   Register_AutoUpdate('Systems',$SysId);
   echo "<table border>";
   echo "<tr>" . fm_text('System Name', $System,'Name',2);
   echo "<tr>" . fm_text('Star Name',$System, 'StarName',2);
-  if ($System['Mass2']>0) "<tr>" . fm_text('Companion Name',$System, 'StarName2',2);
+  if ($System['Mass2']>0) "<tr>" . fm_text('Companion Star Name',$System, 'StarName2',2);
 
   echo "</table><p>";
 

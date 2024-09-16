@@ -26,12 +26,12 @@
 //  $Techs = Get_Techs(0,$AllG);
 //  $TechNames = Tech_Names($Techs);
 
-  if (UpdateMany('OrgActions','Put_OpType',$DTs,0,'','','','','','',':'))  $DTs=Get_OpTypes($AllG);
+  if (UpdateMany('OrgActions','Put_OpType',$DTs,0,'','','Name','','','',':'))  $DTs=Get_OpTypes($AllG);
 
   $coln = 0;
 
 //  echo "Category 1=Academic,2=Ship Yard,4=Miltary,8=Intelligence,16=Construction, 32=Deep Space<p>";
-  echo "Props: 4 lower bits: 0 = Operation is at Level, 1 = +1, 2 = +2, 4=+X 8 = +2X.  Bit 5 = Hidden<p>";
+  echo "Props: 4 lower bits: 0 = Operation is at Level, 1 = +1, 2 = +2, 4=+X 8 = +2X.  Bit 5 = Tech Select, Bit 6 = SocPrin<p>";
   echo "Do NOT change the Op names - code depends on them<p>";
 
   echo "<form method=post>";
@@ -44,6 +44,7 @@
   if ($AllG) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>NotBy</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Organisation</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Props</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Gate</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Description</a>\n";
 
   echo "</thead><tbody>";
@@ -54,15 +55,17 @@
     echo fm_notby($D,$i,$AllG);
     echo "<td>" . fm_select($OTNs,$D,'Office',1,'',"Office:$i");
     echo fm_number1("",$D,'Props','','',"Props:$i");
+    echo fm_text1("",$D,'Gate',1,'','',"Gate:$i");
     echo "<td>" . fm_basictextarea($D,'Description',3,3,'',"Description:$i");
   }
   $D = [];
-  echo "<tr><td><td><input type=text name=Name0 >";
-  echo fm_hidden('NotBy0',$SETNOT);
+  echo "<tr><td><td><input type=text name='Name:0' >";
+  echo fm_hidden('NotBy:0',$SETNOT);
   if ($AllG) echo "<td>$SETNOT";
 
   echo "<td>" . fm_select($OTNs,$D,'Office',1,'',"Office:0");
   echo fm_number1("",$D,'Props','','',"Props:0");
+  echo fm_text1("",$D,'Gate',1,'','',"Gate:0");
   echo "<td>" . fm_basictextarea($D,'Description',3,3,'',"Description:0");
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "</table></div>\n";

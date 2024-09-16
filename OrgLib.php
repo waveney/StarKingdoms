@@ -3,7 +3,8 @@ include_once("sk.php");
 include_once("GetPut.php");
 
 define('OPER_LEVEL',0xf);
-define('OPER_HIDDEN',0x10);
+define('OPER_TECH',0x10);
+define('OPER_SOCP',0x20);
 
 function Recalc_Offices() { // Recount offices for each org
   global $GAMEID;
@@ -38,29 +39,29 @@ function SocPrinciples($Fid) {
 
 function Link_Search($Sys,$lnks) { // Part of Op_Level (Recusive)
   global $Min,$Targets,$SysLnks,$Depth,$BeenHere;
-echo "LS: $Sys, $lnks<p>";
+//echo "LS: $Sys, $lnks<p>";
 //var_dump($BeenHere);
   if ($lnks > $Depth) return -2;
   if (isset($Targets[$Sys])) return $lnks;
   if ($BeenHere[$Sys] || ($lnks>=$Min)) return -3;
-  echo "A";
+//  echo "A";
   $BeenHere[$Sys] = $lnks+1;
   // if ($Sys)
-  echo "A";
+//  echo "A";
   $Any = 0;
   foreach ($SysLnks[$Sys] as $Si) {
-    echo "B$Si";
+ //   echo "B$Si";
     if ($BeenHere[$Si]??99) continue;
-    echo "C";
+ //   echo "C";
     $D = Link_Search($Si,$lnks+1);
-echo "<br>D$D=$Min=";
+//echo "<br>D$D=$Min=";
     if (($D >= 0) && ($D < $Min)) {
       $Min = $D;
       $Any = 1;
     }
   }
   $BeenHere[$Sys] = 0;
-echo "E$Any=";
+//echo "E$Any=";
   return $Min;
 }
 

@@ -8,6 +8,7 @@
   include_once("PlayerLib.php");
   include_once("SystemLib.php");
   include_once("ProjLib.php");
+  include_once("OrgLib.php");
 
   global $FACTION,$ARMY;
 
@@ -32,7 +33,13 @@
     if (isset($Fid)) $Faction = Get_Faction($Fid);
   }
 
-  dostaffhead("New Projects for faction");
+  $OpCosts = Feature('OperationCosts');
+  $OpRushs = Feature('OperationRushes');
+
+  $OpTypes = Get_OpTypes();
+  $OrgTypes = Get_OrgTypes();
+
+  dostaffhead("New Operations for faction");
 
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
@@ -94,115 +101,147 @@
 
 
 
-  echo "<h1>New Project</h1>";
+  echo "<h1>New Operation</h1>";
+
+  echo "This is a short term bodge, A better way should follow...<p>";
+
+  $Orgs = Gen_Get_Cond('Organisations',"( Whose=$Fid AND OfficCount>0) ");
 
   $Homes = Get_ProjectHomes($Fid);
   $DistTypes = Get_DistrictTypes();
   $ProjTypes = Get_ProjectTypes();
   $OrgTypes = Get_OrgTypes();
+
   $PTi = [];
   foreach ($ProjTypes as $PT) $PTi[$PT['Name']] = $PT['id'];
-//var_dump($PTi);
 
   $ThingTypes = Get_ThingTypes();
   $GM = Access('GM');
 
-  $DiCall = $_REQUEST['Di'];
-  $Di = abs($DiCall);
-  $Hi = $_REQUEST['Hi'];
-  $NoC = 0;
-
-  $PHx = 1;
-  $Dis = [];
-  $Offices = [];
-  $MaxDists = 0;
-  $ThingLevel = 1;
-  foreach ($Homes as &$H) {
-    $Hix = $H['id'];
-    $NoC = 0;
-    switch ($H['ThingType']) {
-    case 1: // Planet
-      $PH = Get_Planet($H['ThingId']);
-      $Dists = Get_DistrictsP($H['ThingId']);
-      $Sid = $PH['SystemId'];
-      break;
-    case 2: // Moon
-      $PH = Get_Moon($H['ThingId']);
-      $Dists = Get_DistrictsM($H['ThingId']);
-      $Plan = Get_Planet($PH['PlanetId']);
-      $Sid = $Plan['SystemId'];
-      break;
-    case 3: // Thing
-      $PH = Get_Thing($H['ThingId']);
-      if ($ThingTypes[$PH['Type']]['Properties'] & THING_CAN_DO_PROJECTS) {
-        $ORY = 0;
-        foreach($DistTypes as $DT) if ($DT['Name'] == 'Orbital Repair') $ORY = $DT['id'];
-        $Dists = [$ORY=>['HostType'=>3,'HostId'=>$PH['id'],'Type'=>$ORY,'Number'=>1, 'id'=>-1]];
-        $NoC = 1;
-        break;
-      }
-      $Dists = Get_DistrictsT($H['ThingId']);
-      if (!$Dists) {
-        $H['Skip'] = 1;
-        continue 2;  // Remove things without districts
-      }
-      $MaxDists = $PH['MaxDistricts'];
-      $ThingLevel = $PH['Level'];
-      $Sid = $PH['SystemId'];
-      break;
-    }
-
-
-    //TODO Construction and Districts...
-
-    if ($NoC != 1) $Dists[] = ['HostType'=>-1, 'HostId' => $PH['id'], 'Type'=> -1, 'Number'=>0, 'id'=>-$PH['id']];
-    foreach ($Dists as &$D) {
-      if ($D['Type'] > 0 && (($DistTypes[$D['Type']]['Props'] &2) == 0)) continue;
-      if (($D['Type'] < 0) && ($PH['Type'] != $Faction['Biosphere']) &&
-         ($PH['Type'] != $Faction['Biosphere2']) && ($PH['Type'] != $Faction['Biosphere3']) && (Has_Tech($Fid,3)<2)) continue;
-      $Dix = $D['id'];
-
-      if (($Hi == $Hix) && ($DiCall == $Dix)) {
-        $HDists[$Hix] = $Dists;
-        break 2;  // $D is now the relevant one
-      }
-      $Dis[$Hix][] = $Dix;
-      }
-
-    $HDists[$Hix] = $Dists;
-    }
+  $OrgId = $_REQUEST['O'];
+  $Org = Gen_Get('Organisations',$OrgId);
+  $OffType = $Org['OrgType'];
 
   $Turn = $_REQUEST['t'];
 
-  $World = Gen_Get_Cond1('Worlds',"Home=$Hi");
-  if ($World) {
-    $Offices = Get_OfficesByType($World['id']);
-  }
-
-
-  $Stage = (isset($_REQUEST['STAGE'])? $_REQUEST['STAGE'] : 0);
-
-  $Where =  ($D['Type'] > 0 ? $DistTypes[$D['Type']]['Name'] : 'Construction');
-
-  $Place = " on " . $PH['Name'];
-  $pl = "&pl=" . base64_encode($Place);
-
-// echo "ZZ: $Where<p>";
-
-//var_dump($HDists);
+  $OpTypes = Gen_Get_Cond('OrgActions',"Office=$OffType");
+  $Stage = ($_REQUEST['Stage']??0);
+  $op = ($_REQUEST['p']??0);
+  $Wh = ($_REQUEST['W']??0);
 
   echo "<form method=post action=ProjNew.php>";
-  echo fm_hidden('t',$Turn) . fm_hidden('Hi',$Hi) . fm_hidden('Di',$Di) . fm_hidden('DT',$D['Type']);
-  $DT = $D['Type'];
+  echo fm_hidden('t',$Turn) . fm_hidden('O',$OrgId) . fm_hidden('Stage',$Stage+1);
 
-//echo "DT = $DT<p>";
-// echo "Doinfg $Where<p>";
-  switch ($Where) {
+  switch ($Stage) {
+    case 0: //Select Op Type
+      echo "<h2>Select Operation</h2>";
+      foreach ($Optypes as $opi=>$OP) {
+        if ($OP['Gate'] && !eval("return " . $OP['Gate'] . ";" )) continue;
+        echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=1&p=$opi>" . $OP['Name'] . "</button><br>\n";
+      }
+      break;
+    case 1: // Where
+      echo "<h2>Selected: " . $Optypes[$op]['Name'] . "</h2>\n";
+      $SRefs = Get_SystemRefs();
+      $FSs = Gen_Get_Cond('FactionSystems', "FactionId=$Fid");
+      $WRefs = [];
+      foreach ($FSs as $FS) {
+        $WRefs[$FS['SystemId']] = $SRefs[$FS['SystemId']];
+      }
+      asort($WRefs);
+
+      echo "<h2>Select the Target System</h2>";
+      foreach ($WRefs as $Wi=>$Ref) {
+        echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=2&p=$op&W=$Wi>$Ref</button> \n";
+      }
+      break;
+
+    case 2: // Planet or Outpost
+      $TSys = Get_System($Wh);
+      $TFid = $TSys['Control'];
+      echo "<h2>Selected: " . $Optypes[$op]['Name'] . " in " . System_Name($TSys,$Fid) . "</h2>\n";
+
+      $OutPs = Get_Things_Cond($Fid,"Type=" . $TTNames['Outpost'] . " AND SystemId=$Wh AND BuildState=3");
+      if ($OutPs) {
+        if (count($OutPs >1)) {
+          echo "<h2 class=Err>There are multiple Outposts there - let the GM's know...</h2>";
+          GMLog4Later("There are multiple Outposts in " . $TSys['Ref']);
+          break;
+        }
+        $EBs = Gen_Get_Cond('Branches', " HostType=3 ")
+      }
 
 
-  case 'Construction':
-  case 'Industrial' :
-    echo "<h2>Select Construction Project:</h2><p>";
+    case 4: // Secondary Questions
+      $TSys = Get_System($Wh);
+      $TFid = $TSys['Control'];
+      $Head = 1;
+      echo "<h2>Selected: " . $Optypes[$op]['Name'] . " in " . System_Name($TSys,$Fid) . "</h2>\n";
+
+      if ($Optypes[$op]['Props'] & OPER_TECH) {
+        echo "<h2>Select Technology to Share:</h2>\n";
+
+        $Shares = [];
+        foreach ($CTs as $TT) {
+          $Tid = $TT['id'];
+          for($Lvl = 1; $Lvl <= $FactTechs[$Tid]['Level']; $Lvl++) {
+            $Shares["$Tid:$Lvl"] = $TT['Name'] . " at level $Lvl";
+          }
+        }
+
+        foreach ($Techs as $T) {
+          if ($T['Cat'] == 0 || !isset($FactTechs[$T['id']]) ) continue;
+          if (!isset($FactTechs[$T['PreReqTech']]) ) continue;
+          $Tid = $T['id'];
+          $Lvl = $T['PreReqLevel'];
+          if ($Lvl < 1) continue;
+          $Shares["$Tid:$Lvl"] = $T['Name'] . " at level $Lvl";
+        }
+
+        echo "Tecnology: " . fm_select($Shares,$_REQUEST,"Tech2Share") . " share with: " .fm_select($FactList,$_REQUEST,"ShareWith",1);
+        echo "<button class=projtype type=submit>Share</button>";
+        echo "</form><p>";
+
+
+      } else if ($Optypes[$op]['Props'] & OPER_SOCP) {
+
+      }
+      // Drop through
+
+    case 5: // Complete /Restart/ etc
+      $TSys = Get_System($Wh);
+      $Level = 0;
+      if (!isset($Head)) {
+        // Selected info
+      }
+
+      $Mod = ($Optypes[$op]['Props'] & OPER_LEVEL);
+      if ($Mod &4) $Mod = $Level;
+      if ($Mod &8) $Mod = $Level*2;
+
+      $BaseLevel = Op_Level($Orgid,$Wh,$Mod);
+
+
+  }
+  echo "<h2><a href=OrgDisp.php?id=$Fid>Cancel</a></h2>\n";
+  dotail();
+
+
+  switch ($OrgTypes[$Org['OrgType']]['ShortName']) {
+
+
+    case 'Science' :
+
+
+
+
+    case 'Trade' :
+    case 'Military' :
+    case 'Intel' :
+    case 'Religious' :
+
+
+      echo "<h2>Select Construction Project:</h2><p>";
 
     $PlanCon = PlanConst($Fid,$World['id']);
     $CurOff = $CurDists = 0;
@@ -394,39 +433,7 @@
       if (Feature('TechSharing')) {
         echo "<h2>Share Technology</h2>";
 
-//      echo "This is manual at present. Please put this in your turn orders<p>";
-        echo "</form>";
-        echo "<form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Share Technology'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT'>";
-
-        $Shares = [];
-        foreach ($CTs as $TT) {
-          $Tid = $TT['id'];
-          for($Lvl = 1; $Lvl <= $FactTechs[$Tid]['Level']; $Lvl++) {
-            $pc = Proj_Costs($Lvl-1);
-            $Shares["$Tid:$Lvl"] = $TT['Name'] . " at level $Lvl; Cost " . $pc[1] . " Needs " . $pc[0] . " progress";
-          }
-        }
-
-        foreach ($Techs as $T) {
-          if ($T['Cat'] == 0 || !isset($FactTechs[$T['id']]) ) continue;
-          if (!isset($FactTechs[$T['PreReqTech']]) ) continue;
-          $Tid = $T['id'];
-          $Lvl = $T['PreReqLevel'];
-          if ($Lvl < 1) continue;
-          $pc = Proj_Costs($Lvl-1);
-          $Shares["$Tid:$Lvl"] = $T['Name'] . " at level $Lvl; Cost " . $pc[1] . " Needs " . $pc[0] . " progress";
-        }
-
-        $Factions = Get_Factions();
-        $Facts = Get_FactionFactions($Fid);
-        $FactList = [];
-        foreach ($Facts as $Fi=>$F) {
-          $FactList[$Fi] = $Factions[$Fi]['Name'];
-        }
-        echo "Tecnology: " . fm_select($Shares,$_REQUEST,"Tech2Share") . " share with: " .fm_select($FactList,$_REQUEST,"ShareWith",1);
-        echo "<button class=projtype type=submit>Share</button>";
-        echo "</form><p>";
-      }
+       }
     echo "<h2>Analyse</h2>";
       echo "These projects will be defined by a GM<p>";
       echo "<form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Analyse'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT'>";

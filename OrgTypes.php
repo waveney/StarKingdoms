@@ -26,7 +26,7 @@
   if (UpdateMany('OfficeTypes','Put_OrgType',$DTs,1))  $DTs=Get_OrgTypes($AllG);
 
   $coln = 0;
-
+echo "Do NOT change the shortnames - code depends on them<p>";
 //  echo "Category 1=Academic,2=Ship Yard,4=Miltary,8=Intelligence,16=Construction, 32=Deep Space<p>";
   echo "Props TBD<p>";
   echo "Do NOT change the Org short names - code depends on them<p>";
