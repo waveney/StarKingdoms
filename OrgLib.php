@@ -5,6 +5,13 @@ include_once("GetPut.php");
 define('OPER_LEVEL',0xf);
 define('OPER_TECH',0x10);
 define('OPER_SOCP',0x20);
+define('OPER_OUTPOST',0x40);
+define('OPER_CREATE_OUTPOST',0x80);
+define('OPER_SOCPTARGET',0x100);
+
+
+define('BRANCH_HIDDEN',1);
+define('Branch_NOSPACE',2);
 
 function Recalc_Offices() { // Recount offices for each org
   global $GAMEID;
@@ -167,3 +174,29 @@ function OrgColours() {
   }
   return $Cols;
 }
+
+function WorldFromSystem($Sid,$Fid=0) {
+  $Ps = Get_Planets($Sid);
+  $PTypes = Get_PlanetTypes();
+  $Hab = [];
+  $Planet = 0;
+  foreach ($Ps as $P) {
+    if ($Fid && ($P['Control']==$Fid)) {
+      $Planet = $P;
+      break;
+    }
+    if ($PTypes[$P['Type']]['Hospitable']) $Hab[] = $P;
+  }
+  if (!$Planet) {
+    if ( count($Hab) == 1) {
+      $Planet = $Hab[0];
+    } else {
+      return 0;
+    }
+  }
+
+  $World = Gen_Get_Cond1('Worlds', "ThingType=1 AND ThingId=" . $Planet['id']);
+  return $World['id'];
+}
+
+

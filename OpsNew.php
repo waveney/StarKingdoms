@@ -41,58 +41,11 @@
 
   dostaffhead("New Operations for faction");
 
+  var_dump($_REQUEST);
+
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
-      case 'NEWSHIP':
-        $Limit = Has_Tech($Fid,'Ship Construction');
-      case 'NEWARMY':
-        if ($_REQUEST['ACTION'] == 'NEWARMY') $Limit = Has_Tech($Fid,Feature('MilTech'));
-      case 'NEWAGENT':
-         if ($_REQUEST['ACTION'] == 'NEWAGENT') $Limit = Has_Tech($Fid,'Intelligence Operations');
-        $Ptype = $_REQUEST['p'];
-        $Turn = $_REQUEST['t'];
-        $Hi = $_REQUEST['Hi'];
-        $Di = $_REQUEST['Di'];
-        $DT = $_REQUEST['DT'];
-        $Place = base64_decode($_REQUEST['pl']);
-
-        $TTypes = Get_ThingTypes();
-        $Things = Get_Things_Cond($Fid, 'DesignValid=1 ');
-        if ($_REQUEST['ACTION'] == 'NEWSHIP') {
-          foreach ($Things as $Tid=>$T) if (($T['Type'] == 0) || (($TTypes[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) == 0)) unset($Things[$Tid]);
-        } else if ($_REQUEST['ACTION'] == 'NEWARMY') {
-          foreach ($Things as $Tid=>$T) if (($T['Type'] == 0) || (($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES) == 0)) unset($Things[$Tid]);
-        } else if ($_REQUEST['ACTION'] == 'NEWAGENT') {
-          foreach ($Things as $Tid=>$T) if (($T['Type'] == 0) || (($TTypes[$T['Type']]['Properties'] & THING_HAS_GADGETS) == 0)) unset($Things[$Tid]);
-        }
-
-        if (!$Things) {
-          echo "<h2>Sorry you do not have any plans for these - go to <a href=ThingPlan.php?F=$Fid>Thing Planning</a> first</h2>";
-          break;
-        }
-
-        $NameList = [];
-        foreach ($Things as $T) {
-          if ($T['Level'] > $Limit) continue;
-          $pc = Proj_Costs($T['Level']);
-          if ($_REQUEST['ACTION'] == 'NEWARMY' && Has_Tech($Fid,'Efficient Robot Construction')) $pc[0] = max(1, $pc[0] - $T['Level']);
-          if ($_REQUEST['ACTION'] == 'NEWSHIP' && Has_Tech($Fid,'Space Elevator')) $pc[0] = max(1, $pc[0] - $T['Level']);
-          $NameList[$T['id']] = $T['Name'] . (empty($T['Class'])?'': ", a " . $T['Class']) . " ( Level " . $T['Level'] . " ); $Place;" .
-            "Cost: " . $pc[1] .  " Needs " . $pc[0] . " progress";
-          }
-
-        if ($NameList) {
-          echo "<h2>Select a deign to make</h2>";
-          echo "If it is in planning, you are build that, if already built then it will be a copy.<br>";
-
-          echo "<form method=post action=ProjDisp.php?ACTION=NEW&id=$Fid&p=$Ptype&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT>";
-          echo fm_select($NameList,$_REQUEST,'ThingId',1," onchange=this.form.submit()") . "\n<br>";
-        } else {
-          echo "<h2>Sorry you do not have any plans for these - go to <a href=ThingPlan.php?F=$Fid>Thing Planning</a> first</h2>";
-        }
-        echo "<h2><a href=ProjDisp.php?id=$Fid>Cancel</a></h2>\n";
-        dotail();
-
+      default:
       break;
 
     }
@@ -103,14 +56,15 @@
 
   echo "<h1>New Operation</h1>";
 
-  echo "This is a short term bodge, A better way should follow...<p>";
+//  echo "This is a short term bodge, A better way should follow...<p>";
 
-  $Orgs = Gen_Get_Cond('Organisations',"( Whose=$Fid AND OfficCount>0) ");
+  $Orgs = Gen_Get_Cond('Organisations',"( Whose=$Fid AND OfficeCount>0) ");
 
   $Homes = Get_ProjectHomes($Fid);
   $DistTypes = Get_DistrictTypes();
   $ProjTypes = Get_ProjectTypes();
   $OrgTypes = Get_OrgTypes();
+  $Facts = Get_Factions();
 
   $PTi = [];
   foreach ($ProjTypes as $PT) $PTi[$PT['Name']] = $PT['id'];
@@ -126,24 +80,33 @@
 
   $OpTypes = Gen_Get_Cond('OrgActions',"Office=$OffType");
   $Stage = ($_REQUEST['Stage']??0);
-  $op = ($_REQUEST['p']??0);
+  $op = ($_REQUEST['op']??0);
   $Wh = ($_REQUEST['W']??0);
+  $TechId = $_REQUEST['Te']??0;
+  $TechLevel = $_REQUEST['TL']??0;
+  $SP = $_REQUEST['SP']??0;
+
 
   echo "<form method=post action=ProjNew.php>";
-  echo fm_hidden('t',$Turn) . fm_hidden('O',$OrgId) . fm_hidden('Stage',$Stage+1);
+ // echo fm_hidden('t',$Turn) . fm_hidden('O',$OrgId) . fm_hidden('Stage',$Stage+1) . fm_hidden('p',$op) . fm_hidden('W',$Wh);
 
   switch ($Stage) {
     case 0: //Select Op Type
-      echo "<h2>Select Operation</h2>";
-      foreach ($Optypes as $opi=>$OP) {
+      echo "<h2>Select Operation:</h2>";
+ //     var_dump($OpTypes);
+      foreach ($OpTypes as $opi=>$OP) {
         if ($OP['Gate'] && !eval("return " . $OP['Gate'] . ";" )) continue;
-        echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=1&p=$opi>" . $OP['Name'] . "</button><br>\n";
+        echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=1&op=$opi'>" . $OP['Name'] . "</button> " .
+             $OP['Description'] . "<br>\n";
       }
+
+      echo "<p>\n";
       break;
+
     case 1: // Where
-      echo "<h2>Selected: " . $Optypes[$op]['Name'] . "</h2>\n";
+      echo "<h2>Selected: " . $OpTypes[$op]['Name'] . "</h2>\n" . $OpTypes[$op]['Description'] . "<p>";
       $SRefs = Get_SystemRefs();
-      $FSs = Gen_Get_Cond('FactionSystems', "FactionId=$Fid");
+      $FSs = Gen_Get_Cond('FactionSystem', "FactionId=$Fid");
       $WRefs = [];
       foreach ($FSs as $FS) {
         $WRefs[$FS['SystemId']] = $SRefs[$FS['SystemId']];
@@ -152,758 +115,150 @@
 
       echo "<h2>Select the Target System</h2>";
       foreach ($WRefs as $Wi=>$Ref) {
-        echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=2&p=$op&W=$Wi>$Ref</button> \n";
+        echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=2&op=$op&W=$Wi'>$Ref</button> \n";
       }
       break;
 
     case 2: // Planet or Outpost
       $TSys = Get_System($Wh);
       $TFid = $TSys['Control'];
-      echo "<h2>Selected: " . $Optypes[$op]['Name'] . " in " . System_Name($TSys,$Fid) . "</h2>\n";
+      $Head = 1;
+      // If Needs existing out post and none reject
+      // if adds to outpost and outpost at max reject
 
-      $OutPs = Get_Things_Cond($Fid,"Type=" . $TTNames['Outpost'] . " AND SystemId=$Wh AND BuildState=3");
-      if ($OutPs) {
-        if (count($OutPs >1)) {
-          echo "<h2 class=Err>There are multiple Outposts there - let the GM's know...</h2>";
-          GMLog4Later("There are multiple Outposts in " . $TSys['Ref']);
+      echo "<h2>Selected: " . $OpTypes[$op]['Name'] . " in " . System_Name($TSys,$Fid) . "</h2>\n";
+
+      if ($OpTypes[$op]['Props'] & OPER_OUTPOST) {
+        $TTYpes = Get_ThingTypes();
+        $TTNames = NamesList($TTYpes);
+        $OutPs = Get_Things_Cond($Fid,"Type=" . $TTNames['Outpost'] . " AND SystemId=$Wh AND BuildState=3");
+        if ($OutPs) {
+          if (count($OutPs >1)) {
+            echo "<h2 class=Err>There are multiple Outposts there - let the GM's know...</h2>";
+            GMLog4Later("There are multiple Outposts in " . $TSys['Ref']);
+            break;
+          }
+          if (($OpTypes[$op]['Props'] & OPER_CREATE_OUTPOST)) {
+            $Tid = $OutPs[0]['id'];
+            $EBs = Gen_Get_Cond('Branches', " HostType=3 AND HostId=$Tid");
+
+            $MaxB = HasTech($OutPs[0]['Whose'],'Offworld Construction');
+            foreach ($EBs as $B) if ($B['Props'] & BRANCH_NOSPACE) $MaxB--;
+
+            if ($MaxB >= $EBs) {
+              echo "The Outpost is full";
+              break;
+            }
+          }
+        } else if (!($OpTypes[$op]['Props'] & OPER_CREATE_OUTPOST)) { // No out post and can't create
+          echo "There is not currently an Outpost there, this operation can't create one.<p>";
           break;
         }
-        $EBs = Gen_Get_Cond('Branches', " HostType=3 ")
       }
-
+      // Drop through
 
     case 4: // Secondary Questions
       $TSys = Get_System($Wh);
       $TFid = $TSys['Control'];
+      if (!$Head) echo "<h2>Selected: " . $OpTypes[$op]['Name'] . " in " . System_Name($TSys,$Fid) . "</h2>\n";
       $Head = 1;
-      echo "<h2>Selected: " . $Optypes[$op]['Name'] . " in " . System_Name($TSys,$Fid) . "</h2>\n";
 
-      if ($Optypes[$op]['Props'] & OPER_TECH) {
-        echo "<h2>Select Technology to Share:</h2>\n";
+      if ($OpTypes[$op]['Props'] & OPER_TECH) {
+        $With = $TSys['Control'];
+        $FactTechs = Get_Faction_Techs($With);
+        $MyTechs = Get_Faction_Techs($Fid);
 
-        $Shares = [];
+        echo "<h2>Select Technology to Share with: " . $Facts[$With]['Name'] . "</h2>\n";
+        $CTs = Get_CoreTechsByName();
+
         foreach ($CTs as $TT) {
           $Tid = $TT['id'];
-          for($Lvl = 1; $Lvl <= $FactTechs[$Tid]['Level']; $Lvl++) {
-            $Shares["$Tid:$Lvl"] = $TT['Name'] . " at level $Lvl";
+          if ($MyTechs[$Tid] > $FactTechs[$Tid]) {
+            $Lvl = $FactTechs[$Tid]+1;
+            echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&T=$Tid&TL=$Lvl'>" .
+                 $TT['Name'] . " at level $Lvl</button> \n";
           }
         }
 
-        foreach ($Techs as $T) {
+        foreach ($MyTechs as $T) {
           if ($T['Cat'] == 0 || !isset($FactTechs[$T['id']]) ) continue;
           if (!isset($FactTechs[$T['PreReqTech']]) ) continue;
           $Tid = $T['id'];
           $Lvl = $T['PreReqLevel'];
           if ($Lvl < 1) continue;
-          $Shares["$Tid:$Lvl"] = $T['Name'] . " at level $Lvl";
+          echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&Te=$Tid&TL=$Lvl'>" .
+               $TT['Name'] . " at level $Lvl</button> \n";
         }
+        break;
 
-        echo "Tecnology: " . fm_select($Shares,$_REQUEST,"Tech2Share") . " share with: " .fm_select($FactList,$_REQUEST,"ShareWith",1);
-        echo "<button class=projtype type=submit>Share</button>";
-        echo "</form><p>";
+      } else if ($OpTypes[$op]['Props'] & OPER_SOCP) {
+        if ($OpTypes[$op]['Props'] & OPER_SOCPTARGET) { // Target SocP
+          $With = $TSys['Control'];
+          $World = WorldFromSystem($Wh);
+          $SocPs = Get_SocialPs($World);
+          if ($SocPs) {
+            echo "<h2>Please Select the Social Principle you are hitting:</h2>";
+            foreach ($SocPs as $Si=>$SPr) {
+              echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=2&op=$op&W=$Wh&SP=$Si'>" .
+                   $SPr['Principle'] . "</button> \n";
 
+            }
+          }
+          // Need to remove those not visable as too low
 
-      } else if ($Optypes[$op]['Props'] & OPER_SOCP) {
+        } else { // Your SocP - no actions at this stage (I think)
+
+        }
 
       }
       // Drop through
 
     case 5: // Complete /Restart/ etc
       $TSys = Get_System($Wh);
+      $TFid = $TSys['Control'];
       $Level = 0;
+      $Name =  $OpTypes[$op]['Name'] . " in " . System_Name($TSys,$Fid) ;
+
       if (!isset($Head)) {
-        // Selected info
+        echo "<h2>Selected: " . $OpTypes[$op]['Name'] . " in " . System_Name($TSys,$Fid) . "</h2>\n";
+        if ($TechId) {
+          $Tech = Get_Tech($TechId);
+          echo "Tech:" . $Tech['Name'];
+          $Name .= "Tech: " . $Tech['Name'] ;
+          if ($Tech['Cat'] == 0) {
+            echo " at Level $TechLevel<p>";
+            $Name .= " L$TechLevel";
+          }
+          $Level = $TechLevel;
+        }
+        if (SP) {
+          $SocP = Get_SocialP($SP);
+          echo "Principle:" . $SocP['Principle'];
+          $Level = $SocP['Value'];
+          $Name .= " Principle: " . $SocP['Principle'];
+
+        }
       }
 
-      $Mod = ($Optypes[$op]['Props'] & OPER_LEVEL);
+      $Mod = ($OpTypes[$op]['Props'] & OPER_LEVEL);
       if ($Mod &4) $Mod = $Level;
       if ($Mod &8) $Mod = $Level*2;
 
-      $BaseLevel = Op_Level($Orgid,$Wh,$Mod);
+      if (Access('God')) echo "Operation modifier before distance = $Mod<p>";
+
+      $BaseLevel = Op_Level($OrgId,$Wh,$Mod);
+
+      $ProgNeed = Proj_Costs($BaseLevel)[0];
+
+      echo "This operation will be at level $BaseLevel (Needing $ProgNeed progress).  You currently do " . $Org['OfficeCount'] . " progress per turn.<p>";
+
+      echo "<button class=projtype type=submit " .
+           "formaction='OpsDisp.php?ACTION=NEW&t=$Turn&O=$OrgId&op=$op&W=$Wh&SP=$SP&Te=$TechId&TL=$TechLevel&N=" .
+           base64_encode("$Name") . "&L=$BaseLevel&PN=$ProgNeed'>$Name</button> \n";
+
 
 
   }
-  echo "<h2><a href=OrgDisp.php?id=$Fid>Cancel</a></h2>\n";
+  echo "<h2><a href=OpsNew.php?t=$Turn&O=$OrgId>Back to start</a> , <a href=OrgDisp.php?id=$Fid>Cancel</a></h2>\n";
   dotail();
 
-
-  switch ($OrgTypes[$Org['OrgType']]['ShortName']) {
-
-
-    case 'Science' :
-
-
-
-
-    case 'Trade' :
-    case 'Military' :
-    case 'Intel' :
-    case 'Religious' :
-
-
-      echo "<h2>Select Construction Project:</h2><p>";
-
-    $PlanCon = PlanConst($Fid,$World['id']);
-    $CurOff = $CurDists = 0;
-      if ($MaxDists > 0) {
-
-        foreach ($HDists[$Hi] as $DD) if ($DD['Type'] > 0) $CurDists += $DD['Number'];
-        $CurOff = Count($Offices);
-
-        echo "Maximum Districts: $MaxDists<br>Current Districts: $CurDists<br>";
-        if (Feature('Orgs')) echo "Offices: $CurOff<br>";
-      }
-
-//         echo "Maximum Districts: $MaxDists<br>Current Districts: $CurDists<br>";
-
-      if ($MaxDists==0 || (($CurOff + $CurDists) < $MaxDists)) {
-        $DTs = Get_DistrictTypes();
-        $DNames = [];
-//var_dump($HDists[$Hi]);
-        foreach ($DTs as $DTz) {
-          if (($D['Number']??0) > $PlanCon) continue;
-          if (eval("return " . $DTz['Gate'] . ";" )) {
-            $DNames[$DTz['id']] = $DTz['Name'];
-
-            $Lvl = 0;
-
-            foreach ($HDists[$Hi] as $D) {
-//echo "<br>Checking "; var_dump($D);
-              if ($D['Type'] == $DTz['id']) {
-                $Lvl = $D['Number']-$D['Delta'];
-                break;
-              }
-            }
-
-//var_dump($DTz);
-// TODO bug if you already have that level in the pipeline - Add check to Turns Ready
-            if (($Lvl >= $DTz['MaxNum'])) {
-              if (!$GM) continue;
-              echo "Not allowed (GM only):";
-            }
-            $Lvl++;
-            $pc = Proj_Costs($Lvl);
-            if (Has_Trait($Fid,"On the Shoulders of Giants")) {
-              if ($DTz['Name'] == 'Mining') {
-                $pc[1] = 0; // Mining
-              } else if ($Lvl>1 ) {
-                $HomeW = $FACTION['HomeWorld'];
-                $World = Get_World($HomeW);
-                if ($World['Home'] == $Hi) {
-                  $pc = Proj_Costs($Lvl-1);
-                }
-              }
-            }
-
-            if (Has_Trait($Fid,"Military Society") && ($DTz['Name'] == 'Military')) $pc = Proj_Costs($Lvl-1);
-
-            echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Construction'] .
-                  "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $DTz['id'] .
-                  "&Name=" . base64_encode("Build " . $DTz['Name'] . " District $Lvl$Place") . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                  "Build " . $DTz['Name'] . " District $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>\n";
-
-          }
-        }
-
-        if (Feature('Orgs') && count($Offices) < $PlanCon) {
-          echo "<h2>Build Offices</h2>";
-          $Lvl = count($Offices)+1;
-          $pc = Proj_Costs($Lvl);
-          foreach($OrgTypes as $ot=>$O) {
-            if ($Offices[$ot]??0) continue;
- //           $Ord = ($Offices[$ot]??0)+1;
-            echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Construction'] .
-            "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=-$ot" .
-            "&Name=" . base64_encode("Build " . $O['Name'] . " Office $Place") .
-            "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-            "Build " . $O['Name'] . " Office; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>\n";
-
-          }
-        }
-      }
-
-
-      // find devestation locally if > 0 then
-      // show project
-      $H = $Homes[$Hi];
-      if ($H['Devastation'] > 0) {
-      echo "<h2>Rebuild and Repair</h2>";
-        $pc = Proj_Costs(1);
-        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Rebuild and Repair'] .
-                  "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $DTz['id'] .
-                  "&Name=" . base64_encode("Rebuild and Repair") . "&L=1&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                  "Rebuild and Repair $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>\n";
-      }
-
-      if (Feature('WarpGates')) {
-        echo "<h2>Construct Warp Gate</h2>";
-
-        $pc = Proj_Costs(4);
-        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Construct Warp Gate'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=0" .
-                  "&Name=" . base64_encode("Build Warp Gate$Place"). "&L=4&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                  "Build Warp Gate $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
-      }
-
-
-    echo "<h2>Research Planetary Construction</h2><p>";
-      $OldPc = Has_Tech($Fid,3);
-      $Lvl = $OldPc+1;
-      $pc = Proj_Costs($Lvl);
-      echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Planetary Construction'] .
-                "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=3" .
-                "&Name=" . base64_encode("Research Planetary Construction $Lvl$Place"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Research Planetary Construction $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
-
-
-
-      $Rbuts = [];
-      $FactTechs = Get_Faction_Techs($Fid, $Turn);
-      $Techs = Get_TechsByCore($Fid);
-      foreach ($Techs as $T) {
-        if ($T['Cat'] == 0 || (isset($FactTechs[$T['id']]) && $FactTechs[$T['id']]['Level'])) continue;
-        if (!isset($FactTechs[$T['PreReqTech']])) continue;
-        if ($T['PreReqTech']!=3) continue;
-        if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
-
-        $Lvl = $T['PreReqLevel'];
-        $pc = Proj_Costs($Lvl);
-        $Rbuts[] = "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Supplemental Planetary Construction Tech'] .
-                "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $T['id'] .
-                "&Name=" . base64_encode("Research " . $T['Name'] . $Place) . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Research " . $T['Name'] . "; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
-      }
-
-      if ($Rbuts) {
-        echo "<h2>Research Supplimental Planetary Construction Technology</h2>";
-        foreach ($Rbuts as $rb) echo $rb;
-      }
-
-      if (Has_Tech($Fid,'Adianite Production Methods')) {
-        $Lvl = 1;
-        $pc = Proj_Costs($Lvl);
-        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Produce Adianite'] .
-                "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=3" .
-                "&Name=" . base64_encode("Produce 1 unit of Adianite $Lvl$Place"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Produce 1 unit of Adianite $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
-        $Lvl = 2;
-        $pc = Proj_Costs($Lvl);
-        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Produce Adianite'] .
-                "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=3" .
-                "&Name=" . base64_encode("Produce 4 units of Adianite $Lvl$Place"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Produce 4 units of Adianite $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
-
-      }
-
-    break;
-
-  case 'Academic':
-
-    echo "<h2>Research Core Technology</h2>";
-      $FactTechs = Get_Faction_Techs($Fid, $Turn);
-      $CTs = Get_CoreTechsByName();
-      foreach ($CTs as $TT) {
-        if (isset($FactTechs[$TT['id']]['Level'])) {
-          $Lvl = $FactTechs[$TT['id']]['Level']+1;
-        } else {
-          $Lvl = 1;
-        }
-        $pc = Proj_Costs($Lvl);
-        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" .
-                $PTi['Research Core Technology'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $TT['id'] .
-                "&Name=" . base64_encode("Research " . $TT['Name'] . " $Lvl$Place"). "&L=$Lvl&C=" . $pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Research " . $TT['Name'] . " $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
-        }
-
-    echo "<h2>Research Supplimental Technology</h2>";
-      $Techs = Get_TechsByCore($Fid);
-      foreach ($Techs as $T) {
-        if ($T['Cat'] == 0 || (isset($FactTechs[$T['id']]) && $FactTechs[$T['id']]['Level'])) continue;
-        if (!isset($FactTechs[$T['PreReqTech']]) ) continue;
-        if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
-        if ($T['PreReqTech2'] && ((! isset($FactTechs[$T['PreReqTech2']])) || $FactTechs[$T['PreReqTech2']]== 0)) continue;
-        if ($T['PreReqTech3'] && ((! isset($FactTechs[$T['PreReqTech3']])) || $FactTechs[$T['PreReqTech3']]== 0)) continue;
-        $Lvl = $T['PreReqLevel'];
-        $pc = Proj_Costs($Lvl);
-        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Supplemental Technology'] .
-                "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $T['id'] .
-                "&Name=" . base64_encode("Research " . $T['Name'] . $Place) . "&L=$Lvl&C=" . $pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Research " . $T['Name'] . "; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
-      }
-
-      if (Feature('TechSharing')) {
-        echo "<h2>Share Technology</h2>";
-
-       }
-    echo "<h2>Analyse</h2>";
-      echo "These projects will be defined by a GM<p>";
-      echo "<form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Analyse'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT'>";
-      echo "Name of project - meaningfull to you and the GM:" . fm_text0('',$_REQUEST,'AnalyseText'). fm_number0(' Level ',$_REQUEST,'Level');
-      echo "<button class=projtype type=submit>Analyse</button>";
-      echo "</form><p>";
-
-
-//    echo "<h2>Decipher Alien Language</h2>";
-//    echo "Not in this game<p>";
-      break;
-
-
-  case 'Shipyard':
-      echo "<h2>Build a Ship</h2>";
-
-      echo "This action is to build an already designed ship.  If you want a new design please go to <a href=ThingPlan.php>The Thing Planning Tool</a> first.<p>\n";
-      echo "<button class=projtype type=submit formaction='ProjNew.php?ACTION=NEWSHIP&id=$Fid&p=10&t=$Turn&Hi=$Hi&Di=$Di$pl&DT=$DT'>Build a new ship$Place</button><p>";
-
-
-
-      echo "<h2>Research Ship Construction</h2><p>";
-        $OldPc = Has_Tech($Fid,7);
-        $Lvl = $OldPc+1;
-        $pc = Proj_Costs($Lvl);
-        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Ship Construction'] .
-                "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=7" .
-                "&Name=" . base64_encode("Research Ship Construction $Lvl$Place"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Research Ship Construction $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
-
-      $Rbuts = [];
-      $FactTechs = Get_Faction_Techs($Fid, $Turn);
-      $Techs = Get_TechsByCore($Fid);
-      foreach ($Techs as $T) {
-        if ($T['Cat'] == 0 || (isset($FactTechs[$T['id']]) && $FactTechs[$T['id']]['Level'])) continue;
-        if (!isset($FactTechs[$T['PreReqTech']])) continue;
-        if ($T['PreReqTech']!=7) continue;
-        if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
-
-        $Lvl = $T['PreReqLevel'];
-        $pc = Proj_Costs($Lvl);
-        $Rbuts[] = "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Supplemental ship Tech'] .
-                "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $T['id'] .
-                "&Name=" . base64_encode("Research " . $T['Name'] . $Place) . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Research " . $T['Name'] . "; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
-      }
-
-      if ($Rbuts) {
-        echo "<h2>Research Supplimental Ship Technology</h2>";
-        foreach ($Rbuts as $rb) echo $rb;
-      }
-
-      if (Has_Trait($Fid,'Grow Modules')) {
-        echo "<h2>Grow Modules</h2>";
-// var_dump($CurLevel);
-        $ShipYards = $HDists[$Hi][3]['Number'];
-        $Grow = min(max((Has_Tech($Fid,'Ship Construction')-1), 1),$ThingLevel)*$ThingLevel; // Consider ship yards rather than the tech
-        $pc = Proj_Costs(1);
-        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Grow Modules'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT" .
-                "&Name=" . base64_encode("Grow $Grow Modules" . $Place) . "&L=1&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Grow $Grow Modules " . "; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
-
-        echo "<h2>Grow Districts</h2>";
-          $DTs = Get_DistrictTypes();
-          foreach([3,5] as $DTp) {
-            $Lvl = 0;
-
-            foreach ($HDists[$Hi] as $D) {
-              if ($D['Type'] == $DTp) {
-                $Lvl = $D['Number'];
-                break;
-              }
-            }
-
-            $Lvl++;
-            $pc = Proj_Costs($Lvl);
-            echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Grow District'] . "&t=$Turn&Hi=$Hi&Di=$Di&Sel=$DTp&DT=$DT" .
-                  "&Name=" . base64_encode("Build " . $DTs[$DTp]['Name'] . " District $Lvl$Place") . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                  "Build " . $DTs[$DTp]['Name'] . " District $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
-
-          }
-      }
-      if (Feature('RefitRepairSep')) {// THIS MUST be AFTER the simple buttons as the form gets lost
-        $RRPs = ['Refit','Repair'];
-
-        $HSys = $Homes[$Hi]['SystemId'];
-        $HLoc = $Homes[$Hi]['WithinSysLoc'];
-        $TTs = Get_ThingTypes();
-        $Things = Get_Things_Cond($Fid," SystemId=$HSys AND ( BuildState=3 OR BuildState=2) "); // Get all things at xx then filter  by type == Ship & WithinSysLoc
-        $RepShips = [];
-        $Level1 = 0;
-        $Count = 0;
-        $MaxLvl = Has_Tech($Fid,'Ship Construction');
-
-
-        foreach ($Things as $T) {
-          if (($TTs[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) && ($T['Level'] <= $MaxLvl)) {
-            //          if ($T['WithinSysLoc'] < 2 || $T['WithinSysLoc'] == $HLoc || $T['WithinSysLoc'] == ($HLoc-100)) {
-            $RepShips[$T['id']] = $T['Name'] . " - level " . $T['Level'];
-            if ($T['Level'] == 1) $Level1++;
-            $Count++;
-          }
-          //        }
-        }
-
-
-        $Factions = Get_Factions();
-        $FFdata = Get_FactionFactionsCarry($Fid);
-        foreach($FFdata as $FC) {
-          if ($FC['Props'] & 0xf000) {
-            $OThings = Get_Things_Cond($FC['FactionId1']," SystemId=$HSys AND ( BuildState=3 OR BuildState=2) AND Level<=$MaxLvl "); // Warp Gates
-            foreach ($OThings as $T) {
-              if ($TTs[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) {
-                $RepShips[$T['id']] = $T['Name'] . " - level " . $T['Level'] . " (" . $Factions[$T['Whose']]['Name'] . ")";
-                if ($T['Level'] == 1) $Level1++;
-                $Count++;
-              }
-            }
-          }
-        }
-
-        foreach($RRPs as $RP){
-
-          $pc = Proj_Costs(1);
-          if ($Count) {
-            if ($Count == 1) {
-              foreach ($RepShips as $tid=>$Name) { // TODO Levls of ships need tweaking
-                echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi[$RP] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=$tid" .
-                "&Name=" . base64_encode("$RP $Name" ) . "&L=1&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "$RP $Name $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
-              }
-            } else if ($Level1 < 2) {
-              echo "</form><form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi[$RP] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT'>";
-              echo "Select the ship to $RP: " . fm_select($RepShips, $_REQUEST, 'Sel', 0) ;
-              echo "<button class=projtype type=submit>$RP</button></form>";
-            } else {
-              echo "</form><form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi[$RP] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT'>";
-              echo "You may select <b>2</b> level 1 ships or 1 ship of level 2 or more. (For PCs and Linux hold down Ctrl to select 2nd ship)<p>";
-              echo "Select the ship to $RP: " . fm_select($RepShips, $_REQUEST, 'Sel', 0, ' multiple ','Sel2[]') ;
-              echo "<button class=projtype type=submit>$RP</button><form>";
-            }
-
-          } else {
-            echo "No ships are currently near the yard that need $RP" . "ing<p>";
-          }
-        }
-        break;
-
-
-
-      } else {
-        echo "<h2>Refit and Repair</h2>"; // OLD
-
-        $HSys = $Homes[$Hi]['SystemId'];
-        $HLoc = $Homes[$Hi]['WithinSysLoc'];
-        $TTs = Get_ThingTypes();
-        $Things = Get_Things_Cond($Fid," SystemId=$HSys AND ( BuildState=3 OR BuildState=2) "); // Get all things at xx then filter  by type == Ship & WithinSysLoc
-        $RepShips = [];
-        $Level1 = 0;
-        $Count = 0;
-        $MaxLvl = Has_Tech($Fid,'Ship Construction');
-
-        foreach ($Things as $T) {
-          if (($TTs[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) && ($T['Level'] <= $MaxLvl)) {
-  //          if ($T['WithinSysLoc'] < 2 || $T['WithinSysLoc'] == $HLoc || $T['WithinSysLoc'] == ($HLoc-100)) {
-              $RepShips[$T['id']] = $T['Name'] . " - level " . $T['Level'];
-              if ($T['Level'] == 1) $Level1++;
-              $Count++;
-            }
-  //        }
-        }
-
-        $Factions = Get_Factions();
-        $FFdata = Get_FactionFactionsCarry($Fid);
-        foreach($FFdata as $FC) {
-          if ($FC['Props'] & 0xf000) {
-            $OThings = Get_Things_Cond($FC['FactionId1']," SystemId=$HSys AND ( BuildState=3 OR BuildState=2) AND Level<=$MaxLvl "); // Warp Gates
-            foreach ($OThings as $T) {
-              if ($TTs[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) {
-                $RepShips[$T['id']] = $T['Name'] . " - level " . $T['Level'] . " (" . $Factions[$T['Whose']]['Name'] . ")";
-                if ($T['Level'] == 1) $Level1++;
-                $Count++;
-              }
-            }
-          }
-        }
-
-
-        $pc = Proj_Costs(1);
-        if ($Count) {
-          if ($Count == 1) {
-            foreach ($RepShips as $tid=>$Name) {
-              echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Refit and Repair'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=$tid" .
-                  "&Name=" . base64_encode("Refit and Repair " . $Name ) . "&L=1&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                  "Refit and Repair $Name $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
-            }
-          } else if ($Level1 < 2) {
-            echo "</form><form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Refit and Repair'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT'>";
-            echo "Select the ship to refit and repair: " . fm_select($RepShips, $_REQUEST, 'Sel', 0) ;
-            echo "<button class=projtype type=submit>Refit and Repair</button></form>";
-          } else {
-            echo "</form><form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Refit and Repair'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT'>";
-            echo "You may select <b>2</b> level 1 ships or 1 ship of level 2 or more. (For PCs and Linux hold down Ctrl to select 2nd ship)<p>";
-            echo "Select the ship to refit and repair: " . fm_select($RepShips, $_REQUEST, 'Sel', 0, ' multiple ','Sel2[]') ;
-            echo "<button class=projtype type=submit>Refit and Repair</button><form>";
-          }
-
-        } else {
-          echo "No ships are currently near the yard that need repairing<p>";
-        }
-
-        break;
-      }
-  case 'Military':
-      echo "<h2>Train a $ARMY</h2>";
-//      echo "Not yet<p>";
-      echo "This action is to build an already designed $ARMY.  If you want a new design please go to <a href=ThingPlan.php>The Thing Planning Tool</a> first.<p>\n";
-      echo "<button class=projtype type=submit formaction='ProjNew.php?ACTION=NEWARMY&id=$Fid&p=" . $PTi["Train $ARMY"] .
-           "&t=$Turn&Hi=$Hi&Di=$Di$pl&DT=$DT'>Train a new $ARMY$Place</button><p>";
-
-
-      echo "<h2>Research " . Feature('MilTech') . "</h2><p>";
-        $OldPc = Has_Tech($Fid,8);
-        $Lvl = $OldPc+1;
-        $pc = Proj_Costs($Lvl);
-        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" .
-                $PTi['Research ' . Feature('MilTech')] .
-                "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=8" .
-                "&Name=" . base64_encode("Research " . Feature('MilTech') . " on $Lvl$Place") . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Research " . Feature('MilTech') . " $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
-
-      $Rbuts = [];
-      $FactTechs = Get_Faction_Techs($Fid);
-      $Techs = Get_TechsByCore($Fid);
-      foreach ($Techs as $T) {
-        if ($T['Cat'] == 0 ||  (isset($FactTechs[$T['id']]) && $FactTechs[$T['id']]['Level'])) continue;
-        if (!isset($FactTechs[$T['PreReqTech']])) continue;
-        if ($T['PreReqTech']!=8) continue;
-        if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
-
-        $Lvl = $T['PreReqLevel'];
-        $pc = Proj_Costs($Lvl);
-        $Rbuts[] = "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi["Research Supplemental $ARMY Tech"] .
-                "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $T['id'] .
-                "&Name=" . base64_encode("Research " . $T['Name'] .  $Place) . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Research " . $T['Name'] . "; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
-      }
-
-     if ($Rbuts) {
-       echo "<h2>Research Supplimental $ARMY Technology</h2>";
-       foreach ($Rbuts as $rb) echo $rb;
-     }
-
-
-      echo "<h2>Re-equip and Reinforce $ARMY</h2>"; // THIS MUST be AFTER the simple buttons as the form gets lost
-      echo "You can only do this to armies on the same planet.<p>";
-      $HSys = $Homes[$Hi]['SystemId'];
-      $HLoc = $Homes[$Hi]['WithinSysLoc'];
-      $TTs = Get_ThingTypes();
-      $Things = Get_Things_Cond($Fid," SystemId=$HSys AND BuildState=3 "); // Get all things at xx then filter  by type == Ship & WithinSysLoc
-      $RepShips = [];
-      $Level1 = 0;
-      $Count = 0;
-      foreach ($Things as $T) {
-        if ($TTs[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES) {
-          if ($T['WithinSysLoc'] == $HLoc ) {
-            $RepShips[$T['id']] = $T['Name'] . " - level " . $T['Level'];
-            if ($T['Level'] == 1) $Level1++;
-            $Count++;
-          }
-        }
-      }
-
-
-      $pc = Proj_Costs(1);
-      if ($Count) {
-        if ($Count == 1) {
-          foreach ($RepShips as $tid=>$Name) {
-            echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Re-equip and Reinforce'] .
-                "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=$tid" .
-                "&Name=" . base64_encode("Re-equip and Reinforce " . $Name ) . "&L=1&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Refit and Repair $Name $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
-          }
-        } else if ($Level1 < 2) {
-          echo "</form><form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Re-equip and Reinforce'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT'>";
-          echo "Select the $ARMY to Re-equip and Reinforce: " . fm_select($RepShips, $_REQUEST, 'Sel', 0) ;
-          echo "<button class=projtype type=submit>Re-equip and Reinforce</button></form>";
-        } else {
-          echo "</form><form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Re-equip and Reinforce'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT'>";
-          echo "You may select <b>2</b> level 1 $ARMY or 1 $ARMY of level 2 or more. (For PCs and Linux hold down Ctrl to select 2nd $ARMY)<p>";
-          echo "Select the ship to Re-equip and Reinforce: " . fm_select($RepShips, $_REQUEST, 'Sel', 0, ' multiple ','Sel2[]') ;
-          echo "<button class=projtype type=submit>Re-equip and Reinforce</button><form>";
-        }
-
-      } else {
-        echo "No armies are currently there<p>";
-      }
-
-
-      break;
-
-  case 'Intelligence':
-      echo "<h2>Train an Agent</h2>";
-//      echo "Not yet<p>";
-      echo "This action is to build an already designed Agent.  If you want a new design please go to <a href=ThingPlan.php>The Thing Planning Tool</a> first.<p>\n";
-      echo "<button class=projtype type=submit formaction='ProjNew.php?ACTION=NEWAGENT&id=$Fid&p=" . $PTi['Train Agent'] .
-           "&t=$Turn&Hi=$Hi&Di=$Di$pl&DT=$DT'>Train an agent$Place</button><p>";
-
-
-
-      echo "<h2>Research Intelligence Operations</h2><p>";
-        $OldPc = Has_Tech($Fid,4);
-        $Lvl = $OldPc+1;
-        $pc = Proj_Costs($Lvl);
-        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Intelligence Operations'] .
-                "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=4" .
-                "&Name=" . base64_encode("Research Intelligence Operations $Lvl$Place"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Research Intelligence Operations $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
-
-        $Rbuts = [];
-        $FactTechs = Get_Faction_Techs($Fid, $Turn);
-        $Techs = Get_TechsByCore($Fid);
-        foreach ($Techs as $T) {
-          if ($T['Cat'] == 0 ||  (isset($FactTechs[$T['id']]) && $FactTechs[$T['id']]['Level'])) continue;
-          if (!isset($FactTechs[$T['PreReqTech']])) continue;
-          if ($T['PreReqTech']!=4) continue;
-          if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
-
-          $Lvl = $T['PreReqLevel'];
-          $pc = Proj_Costs($Lvl);
-          $Rbuts[] = "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Supplemental Intelligence Tech'] .
-                "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $T['id'] .
-                "&Name=" . base64_encode("Research " . $T['Name'] . $Place) . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Research " . $T['Name'] . "; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
-        }
-
-        if ($Rbuts) {
-          echo "<h2>Research Supplimental Intelligence Technology</h2>";
-          foreach ($Rbuts as $rb) echo $rb;
-        }
-      echo  "<h2>Seek Enemy Agents</h2>";
-        echo "</form><form method=post action=ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Seek Enemy Agents'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT>";
-        echo fm_number0('Level',$_REQUEST,'Level');
-        echo "<button class=projtype type=submit>Seek</button></form>";
-
-      break;
-
-  case 'Orbital Repair':
-      echo "<h2>Refit and Repair</h2>"; // THIS MUST be AFTER the simple buttons as the form gets lost
-
-      echo "You can only do this to ships at the same planet.<p>";
-      $HSys = $Homes[$Hi]['SystemId'];
-      $HLoc = $Homes[$Hi]['WithinSysLoc'];
-      $TTs = Get_ThingTypes();
-      $Things = Get_Things_Cond($Fid," SystemId=$HSys AND ( BuildState=3 OR BuildState=2) "); // Get all things at xx then filter  by type == Ship & WithinSysLoc
-      $RepShips = [];
-      $Level1 = 0;
-      $Count = 0;
-      $MaxLvl = Has_Tech($Fid,'Ship Construction');
-
-      foreach ($Things as $T) {
-        if ($TTs[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) {
-//          if ($T['WithinSysLoc'] < 2 || $T['WithinSysLoc'] == $HLoc || $T['WithinSysLoc'] == ($HLoc-100)) {
-            $RepShips[$T['id']] = $T['Name'] . " - level " . $T['Level'];
-            if ($T['Level'] == 1) $Level1++;
-            $Count++;
-          }
-//        }
-      }
-
-      $Factions = Get_Factions();
-      $FFdata = Get_FactionFactionsCarry($Fid);
-      foreach($FFdata as $FC) {
-        if ($FC['Props'] & 0xf000) {
-          $OThings = Get_Things_Cond($FC['FactionId1']," SystemId=$HSys AND ( BuildState=3 OR BuildState=2) AND Level<=$MaxLvl "); // Warp Gates
-          foreach ($OThings as $T) {
-            if ($TTs[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) {
-              $RepShips[$T['id']] = $T['Name'] . " - level " . $T['Level'] . " (" . $Factions[$T['Whose']]['Name'] . ")";
-              if ($T['Level'] == 1) $Level1++;
-              $Count++;
-            }
-          }
-        }
-      }
-
-      $pc = Proj_Costs(1);
-      if ($Count) {
-        if ($Count == 1) {
-          foreach ($RepShips as $tid=>$Name) {
-            echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Refit and Repair'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=$tid" .
-                "&Name=" . base64_encode("Refit and Repair " . $Name ) . "&L=1&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Refit and Repair $Name $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
-          }
-        } else if ($Level1 < 2) {
-          echo "</form><form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Refit and Repair'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT'>";
-          echo "Select the ship to refit and repair: " . fm_select($RepShips, $_REQUEST, 'Sel', 0) ;
-          echo "<button class=projtype type=submit>Refit and Repair</button></form>";
-        } else {
-          echo "</form><form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Refit and Repair'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT'>";
-          echo "You may select <b>2</b> level 1 ships or 1 ship of level 2 or more. (For PCs and Linux hold down Ctrl to select 2nd ship)<p>";
-          echo "Select the ship to refit and repair: " . fm_select($RepShips, $_REQUEST, 'Sel', 0, ' multiple ','Sel2[]') ;
-          echo "<button class=projtype type=submit>Refit and Repair</button><form>";
-        }
-
-      } else {
-        echo "No ships are currently near the yard that need repairing<p>";
-      }
-      break;
-
-  case 'Training Camp':
-      echo "<h2>Re-equip and Reinforce $ARMY</h2>";
-      echo "You can only do this to armies on the same planet.<p>";
-      $HSys = $Homes[$Hi]['SystemId'];
-      $HLoc = $Homes[$Hi]['WithinSysLoc'];
-      $TTs = Get_ThingTypes();
-      $Things = Get_Things_Cond($Fid," SystemId=$HSys AND BuildState=3 "); // Get all things at xx then filter  by type == Ship & WithinSysLoc
-      $RepShips = [];
-      $Level1 = 0;
-      $Count = 0;
-      foreach ($Things as $T) {
-        if ($TTs[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES) {
-          if ($T['WithinSysLoc'] == $HLoc ) {
-            $RepShips[$T['id']] = $T['Name'] . " - level " . $T['Level'];
-            if ($T['Level'] == 1) $Level1++;
-            $Count++;
-          }
-        }
-      }
-
-
-      $pc = Proj_Costs(1);
-      if ($Count) {
-        if ($Count == 1) {
-          foreach ($RepShips as $tid=>$Name) {
-            echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Re-equip and Reinforce'] .
-                "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=$tid" .
-                "&Name=" . base64_encode("Re-equip and Reinforce " . $Name ) . "&L=1&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Refit and Repair $Name $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
-          }
-        } else if ($Level1 < 2) {
-          echo "</form><form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Re-equip and Reinforce'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT'>";
-          echo "Select the $ARMY to Re-equip and Reinforce: " . fm_select($RepShips, $_REQUEST, 'Sel', 0) ;
-          echo "<button class=projtype type=submit>Re-equip and Reinforce</button></form>";
-        } else {
-          echo "</form><form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Re-equip and Reinforce'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT'>";
-          echo "You may select <b>2</b> level 1 $ARMY or 1 $ARMY of level 2 or more. (For PCs and Linux hold down Ctrl to select 2nd $ARMY)<p>";
-          echo "Select the ship to Re-equip and Reinforce: " . fm_select($RepShips, $_REQUEST, 'Sel', 0, ' multiple ','Sel2[]') ;
-          echo "<button class=projtype type=submit>Re-equip and Reinforce</button><form>";
-        }
-
-      } else {
-        echo "No armies are currently there<p>";
-      }
-
-
-      break;
-
-
-
-    }
-
-  echo "</form><h2>Post It Note</h2>\n";
-  echo "Block off some time and money for a project you can't yet do.<p>\n";
-  echo "<form method=post action=ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Post It'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT>";
-  echo fm_number0('Level',$_REQUEST,'Level') . fm_text0("Message",$_REQUEST,'PostItTxt');
-  echo "<button class=postit type=submit>Post it</button>";
-  echo "</form><p>";
-
-  echo "<h2><a href=ProjDisp.php?id=$Fid>Cancel</a></h2>\n";
-  echo "</form>";
-
-  dotail();
-?>

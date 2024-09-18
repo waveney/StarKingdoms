@@ -31,7 +31,8 @@
   $coln = 0;
 
 //  echo "Category 1=Academic,2=Ship Yard,4=Miltary,8=Intelligence,16=Construction, 32=Deep Space<p>";
-  echo "Props: 4 lower bits: 0 = Operation is at Level, 1 = +1, 2 = +2, 4=+X 8 = +2X.  Bit 5 = Tech Select, Bit 6 = SocPrin<p>";
+  echo "Props: 4 lower bits: 0 = Operation is at Level, 1 = +1, 2 = +2, 4=+X 8 = +2X.  16 = Tech Select, 32 = SocPrin, 64=Outpost, " .
+       "128=Outpost Create<p>";
   echo "Do NOT change the Op names - code depends on them<p>";
 
   echo "<form method=post>";

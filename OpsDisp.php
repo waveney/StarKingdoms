@@ -10,7 +10,7 @@
   include_once("ProjLib.php");
   include_once("OrgLib.php");
 
-  global $FACTION,$ADDALL,$GAME,$ARMY;
+  global $FACTION,$ADDALL,$GAME,$ARMY,$GAMEID;
 
 // var_dump($_REQUEST);
 
@@ -50,7 +50,7 @@
     } else if (isset( $_REQUEST['id'])) {
       $Fid = $_REQUEST['id'];
     }
-    CheckFaction('ProjDisp',$Fid);
+    CheckFaction('OpsDisp',$Fid);
 
     if (isset($Fid)) $Faction = Get_Faction($Fid);
   }
@@ -72,194 +72,28 @@
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {  // TODO This code is DREADFUL needs redoing
       case 'NEW':
-        $Optype = $_REQUEST['p'];
+        $Optype = $_REQUEST['op'];
         $Turn = $_REQUEST['t'];
         $OrgId = $_REQUEST['O'];
-        $DT = (isset($_REQUEST['DT'])? $_REQUEST['DT'] : 0);
+        $SP = $_REQUEST['SP']??0;
+        $Wh = $_REQUEST['W']??0;
+        $Te = $_REQUEST['Te']??0;
+        $TL = $_REQUEST['TL']??0;
+        $Name = base64_decode($_REQUEST['N']??0);
+        $Level = $_REQUEST['L']??0;
+        $ProgN = $_REQUEST['PN']??0;
+        $Costs = $_REQUEST['C']??0;
+
         $Valid = 1;
         $FreeRush = 0;
 
-        switch ($OpTypes[$Optype]['Name']) {
-        case 'Construction':
-        case 'Grow District':
-        case 'Research Planetary Construction':
-        case 'Research Core Technology':
-        case 'Research Supplemental Technology':
-        case 'Research Ship Construction':
-        case 'Research Supplemental ship Tech':
-        case ('Research ' . Feature('MilTech')):
-        case "Research Supplemental $ARMY Tech":
-        case 'Research Intelligence Operations':
-        case 'Research Supplemental Intelligence Tech':
-        case 'Research Supplemental Planetary Construction Tech':
-        case 'Construct Warp Gate':
-        case 'Decipher Alien Language':
-        case 'Rebuild and Repair':
-        case 'Grow Modules' :
-        case 'Produce Adianite' :
-
-          if (isset($_REQUEST['Sel'])) $Sel = $_REQUEST['Sel'];
-          $Level = $_REQUEST['L'];
-          $Costs = $_REQUEST['C'];
-          $ProgN = $_REQUEST['PN'];
-          $Name = base64_decode($_REQUEST['Name']);
-          break;
-
-        case 'Re-equip and Reinforce':
-          $Level = 1;
-          $TthingId2 = 0;
-          if (isset($_REQUEST['Sel'])) {
-            $TthingId = $_REQUEST['Sel'];
-          } else if (isset($_REQUEST['Sel2'])) {
-            $Sels = $_REQUEST['Sel2'];
-            $Count = count($Sels);
-            if ($Count == 0 || $Count>2) {
-              echo "<h2 class=Err>You must select 1 (or up to two level 1 armies)</h2>\n";
-              $Valid = 0;
-              break;
-            }
-            if ($Count == 1) {
-              $TthingId = $Sels[0];
-            } else {
-              $TthingId =$Sels[0];
-              $TthingId2 = $Sels[1];
-              $T2 = Get_Thing($TthingId2);
-            }
-          } else {
-            echo "<h2 class=Err>You must select an $ARMY</h2>\n";
-            $Valid = 0;
-            break;
-          }
-          $T1 = Get_Thing($TthingId);
-
-          if (isset($_REQUEST['Name'])) {
-            $Name = base64_decode($_REQUEST['Name']);
-          } else {
-            $T1 = Get_Thing($TthingId);
-            $Name = "Re-equip and Reinforce " . $T1['Name'];
-            if ($TthingId2) $Name .= " and " . $T2['Name'];
-          }
-
-          $pc = Proj_Costs(1);
-          $Costs = $pc[1];
-          $ProgN = $pc[0];
-          break;
-
-        case 'Refit and Repair':
-          $Level = 1;
-          $TthingId2 = 0;
-          if (isset($_REQUEST['Sel'])) {
-            $TthingId = $_REQUEST['Sel'];
-          } else if (isset($_REQUEST['Sel2'])) {
-            $Sels = $_REQUEST['Sel2'];
-            $Count = count($Sels);
-            if ($Count == 0 || $Count>2) {
-              echo "<h2 class=Err>You must select 1 (or up to two level 1 ships)</h2>\n";
-              $Valid = 0;
-              break;
-            }
-            if ($Count == 1) {
-              $TthingId = $Sels[0];
-            } else {
-              $TthingId =$Sels[0];
-              $TthingId2 = $Sels[1];
-              $T2 = Get_Thing($TthingId2);
-            }
-          } else {
-            echo "<h2 class=Err>You must select a ship</h2>\n";
-            $Valid = 0;
-            break;
-          }
-          $T1 = Get_Thing($TthingId);
-
-          if (isset($_REQUEST['Name'])) {
-            $Name = base64_decode($_REQUEST['Name']);
-          } else {
-            $T1 = Get_Thing($TthingId);
-            $Name = "Refit and Repair " . $T1['Name'];
-            if ($TthingId2) $Name .= " and " . $T2['Name'];
-          }
-
-          $pc = Proj_Costs(1);
-          $Costs = $pc[1];
-          $ProgN = $pc[0];
-          break;
-
-         case 'Share Technology':
-          $Tech2S = $_REQUEST['Tech2Share'];
-          preg_match('/(\d*):(\d*)/',$Tech2S,$mtch);
-          $With = $_REQUEST["ShareWith"];
-          $Level = $mtch[2];
-          $pc = Proj_Costs($Level-1);
-          $Costs = $pc[1];
-          $ProgN = $pc[0];
-          $Sel = $mtch[1];
-          $Tech = Get_Tech($Sel);
-          $Fact = Get_Faction($With);
-          $Name = "Share " . $Tech['Name'] . " at level $Level with " . $Fact['Name'];
-          if (Get_Things_Cond($Fid, " Type=17 AND OtherFaction=$With ")) {
-            $FreeRush=1;
-          }
-          break;
-
-        case 'Analyse':
-          $Level = $_REQUEST['Level'];
-          $Name = $_REQUEST['AnalyseText'];
-          if (empty($Name)) {
-            echo "<h2 class=Err>No project name given</h2>";
-            $Valid = 0;
-            break;
-          }
-          $pc = Proj_Costs($Level);
-          $Costs = $pc[1];
-          $ProgN = $pc[0];
-          break;
-
-        case 'Post It':
-          $Level = $_REQUEST['Level'];
-          $pc = Proj_Costs($Level);
-          $Costs = $pc[1];
-          $ProgN = $pc[0];
-          $Name = $_REQUEST['PostItTxt'];
-          if (empty($Name)) {
-            echo "<h2 class=Err>No message given</h2>";
-            $Valid = 0;
-            break;
-          }
-          break;
-
-        case 'Seek Enemy Agents' :
-          $Level = $_REQUEST['Level'];
-          $pc = Proj_Costs($Level);
-          $Costs = $pc[1];
-          $ProgN = $pc[0];
-          $Name = 'Seek Enemy Agents';
-          break;
-
-          /* These are treated as Instructions now */
-        case 'Decommission Ship':
-        case 'Build Outpost':
-        case 'Build Asteroid Mining Facility':
-        case 'Build Minefield':
-        case 'Build Orbital Shipyard':
-        case 'Build Space Station':
-        case 'Extend Space Station':
-        case 'Deep Space Sensors':
-        case 'Build Advanced Asteroid Mining Facility':
-        case 'Unknown' :
-          break;
-        default:
-        }
-
         if ($Valid) {
           $OldPro = Get_OperationAt($OrgId, $Turn);
-// var_dump($OldPro);
-          $Pro = ['FactionId'=>$Fid, 'Type'=>$Optype, 'Level'=> $Level, 'OrgId'=>$OrgId, 'Progress'=>0, 'Status'=>0, 'TurnStart'=>$Turn, 'Name'=>$Name,
-                  'Costs' => $Costs, 'ProgNeeded' => $ProgN, 'BuildState'=>0, 'DType' => $DT, 'FreeRushes'=>$FreeRush];
-          if (isset($With)) $Pro['ThingId'] = $With;
-          if (isset($Sel)) $Pro['ThingType'] = $Sel;
-          if (isset($TthingId)) $Pro['ThingId'] = $TthingId;
-          if (isset($TthingId2)) $Pro['ThingId2'] = $TthingId2;
+          $Pro = ['Whose'=>$Fid, 'Type'=>$Optype, 'Level'=> $Level, 'OrgId'=>$OrgId, 'Progress'=>0, 'Status'=>0, 'TurnStart'=>$Turn,
+                  'Name'=>$Name, 'Costs' => $Costs, 'ProgNeeded' => $ProgN, 'Status'=>0, 'FreeRushes'=>$FreeRush,
+                  'SystemId'=>$Wh, 'Para1' => ($SP?$SP:$Te), 'Para2' => $TL, 'GameId'=>$GAMEID,
+
+          ];
 
           if (isset($OldPro['id'])) {
             $Pro['id'] = $OldPro['id'];
@@ -313,18 +147,19 @@
   $ShowOtherCat = 0;
 
   $Opers = Get_Operations($Fid);
-
+var_dump($Opers);
 //    var_dump($Projs);echo "BEFORE<p>";
   $PHx = 0;
 
   foreach ($Opers as &$O) {
-    $OrgId = $O['Organisation'];
+    $OrgId = $O['OrgId'];
     $Org = $Orgs[$OrgId];
     if ($Org['OfficeCount']==0) continue;
 
 //     var_dump($O);
     if (!isset($O['Status']) || ($O['Status'] > 2 )) continue; // Cancelled, On Hold or Could not start
-    $TurnStuff = Get_OperationTurns($O['id']);
+    $TurnStuff = Gen_Get_Cond('OperationTurn', " OperationId=" . $O['id'] . " ORDER BY TurnNumber");
+
     $TSi = 0;
     $PHx++;
     while (isset($TurnStuff[$TSi]['TurnNumber']) && ($TurnStuff[$TSi]['TurnNumber'] < $O['TurnStart'])) $TSi++;
@@ -332,7 +167,7 @@
     $Pro = [];
     $Pro['id'] = $O['id'];
     $Pro['Type'] = $O['Type'];
-    $Pro['Name'] = $O['Name']; // $ProjTypes[$O['Type']]['Name'];
+    $Pro['Name'] =  $O['Name']; // $ProjTypes[$O['Type']]['Name'];
     $Pro['Level'] = $O['Level'];
     $Pro['Cost'] = $O['Costs'];
     $Pro['Acts'] = $O['ProgNeeded'];
@@ -489,7 +324,7 @@ foreach ($Orgs as $OrgId=>$O) {
       if (isset($proj[$Turn][$OrgId]['Type'])) {
         $PN = $proj[$Turn][$OrgId]['id'];
         echo "\n<td $BG id=ProjN$Turn:$OrgId: class='PHName Home$OrgId" . ($proj[$Turn][$OrgId]['Type'] == 38?" PHpostit ":"") . "'>" .
-              "<a href=ProjEdit.php?id=" . $proj[$Turn][$OrgId]['id'] . ">" .
+              "<a href=OperEdit.php?id=" . $proj[$Turn][$OrgId]['id'] . ">" .
               $proj[$Turn][$OrgId]['Name'] . "</a>";
         echo "\n<td $BG id=ProjL$Turn:$OrgId: class='PHLevel Group$OrgId Home$OrgId' $Hide>" . $proj[$Turn][$OrgId]['Level'];
         if ($OpCosts) echo "\n<td $BG id=ProjC$Turn:$OrgId: class='PHCost Group$OrgId Home$OrgId' $Hide>" . $proj[$Turn][$OrgId]['Cost'];

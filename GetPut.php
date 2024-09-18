@@ -1030,14 +1030,7 @@ function Get_Project($id) {
 
 function Get_ProjectAt($Home,$DT,$Start) {
   global $db;
-/*  if ($Dist==0 || $Dist>5) return [];
-  if ($Dist < 0) {
-     $Cat = 1;
-  } else {
-    $Cat = [-1=>1,1=>64,2=>4,3=>2,4=>8,5=>1][$Dist]; // Convert from Distict numbers to category mask in project types
-  }*/
-//echo "SELECT p.* FROM Projects p ProjectTypes t WHERE p.Home=$Home AND p.TurnStart=$Start AND t.id=p.Type AND DType=$DT<p>";
-  $res = $db->query("SELECT p.* FROM Projects p, ProjectTypes t WHERE p.Home=$Home AND p.TurnStart=$Start AND t.id=p.Type AND DType=$DT") ; // t.Category=$Cat");
+  $res = $db->query("SELECT p.* FROM Projects p, ProjectTypes t WHERE p.Home=$Home AND p.TurnStart=$Start AND t.id=p.Type AND DType=$DT") ;
   if ($res) if ($ans = $res->fetch_assoc()) return $ans;
   return [];
 }
@@ -1135,7 +1128,14 @@ function Get_Operation($id) {
   return [];
 }
 
-function Get_Operations($Fid) {
+function Get_OperationAt($OrgId,$Start) {
+  global $db;
+  $res = $db->query("SELECT * FROM Operations WHERE OrgId=$OrgId AND TurnStart=$Start ") ;
+  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
+  return [];
+}
+
+function Get_Operations($Fid=0) {
   global $db,$NOTBY,$GAMEID;
   $Ts = [];
   $res = $db->query("SELECT * FROM Operations " . ($Fid? "WHERE Whose=$Fid " : "WHERE GameId=$GAMEID") );
@@ -1148,7 +1148,7 @@ function Put_Operation(&$now) {
   if (isset($now['id'])) {
     $e=$now['id'];
     $Cur = Get_Operation($e);
-    return Update_db('Operastion',$Cur,$now);
+    return Update_db('Operations',$Cur,$now);
   } else {
     return $now['id'] = Insert_db ('Operations', $now );
   }
