@@ -217,6 +217,7 @@ function Get_Game($y=0) {
   } else {
     Error_Page("Game - $y not known");
   }
+  return $GAME;
 }
 
 Get_Game();

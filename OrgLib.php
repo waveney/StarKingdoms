@@ -48,7 +48,7 @@ function Link_Search($Sys,$lnks) { // Part of Op_Level (Recusive)
   global $Min,$Targets,$SysLnks,$Depth,$BeenHere;
 //echo "LS: $Sys, $lnks<p>";
 //var_dump($BeenHere);
-  if ($lnks > $Depth) return -2;
+  if ($lnks > 20) return -2;
   if (isset($Targets[$Sys])) return $lnks;
   if ($BeenHere[$Sys] || ($lnks>=$Min)) return -3;
 //  echo "A";
@@ -89,7 +89,7 @@ function Op_Level($Orgid,$Sys,$Mod=0) {
   $SKnown = [];
   foreach($SKnown1 as &$K) $SKnown[$K['SystemId']] = $K;
   $Links = Get_LinksGame();
-  $Depth = $Org['OfficeCount']-$Mod;
+//  $Depth = $Org['OfficeCount']-$Mod;
 
 // var_dump($Links, $LKnown,$SKnown1,$SKnown);
   if (!isset($SKnown[$Sys])) return -1; // Unknown target system

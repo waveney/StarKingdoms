@@ -5,7 +5,7 @@
   A_Check('GM');
   global $GAME,$GAMEID,$GameStatus;
 
-  dostaffhead("General Game Settings");
+  dostaffhead("General Game Settings",["js/dropzone.js","css/dropzone.css" ]);
   echo "Game states: Planning - World creation, rules coding, no players<br>Setup - Players setting up, trait specials being coded<br>" .
     "Active - In play<br>Historical - Game has ended, Readonly<p>\n";
 
@@ -58,12 +58,18 @@
 //  echo "<tr><td>GM 1<td>" . fm_select($Userlist,$GAME,'GM1',1);
 //  echo "<tr><td>GM 2<td>" . fm_select($Userlist,$GAME,'GM2',1);
 //  echo "<tr><td>GM 3<td>" . fm_select($Userlist,$GAME,'GM3',1);
+  echo "<tr><td rowspan=4 colspan=4><table><tr>";
+  echo fm_DragonDrop(1,'Image','Game',$GAMEID,$GAME,1,'',1,'','');
+  echo "</table>";
 
   if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "</table></div>\n";
 
 //  echo "<Center><input type=Submit name=ACTION value='Create New Game'></center>\n";
   if (Access('God')) echo "<a href=GameData.php?ACTION=Key>New Access Key</a>";
+
+
+//  function fm_DragonDrop($Call, $Type,$Cat,$id,&$Data,$Mode=0,$Mess='',$Cond=1,$tddata1='',$tdclass='',$hide=0) {
   echo "</form>\n";
 
   dotail();

@@ -41,7 +41,7 @@
 
   dostaffhead("New Operations for faction");
 
-  var_dump($_REQUEST);
+//  var_dump($_REQUEST);
 
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
@@ -241,12 +241,20 @@
       }
 
       $Mod = ($OpTypes[$op]['Props'] & OPER_LEVEL);
-      if ($Mod &4) $Mod = $Level;
-      if ($Mod &8) $Mod = $Level*2;
+//      var_dump($Mod,$Level);
+      if ($Mod >4) {
+        if ($Mod &4) $Mod = $Level;
+        if ($Mod &8) $Mod = $Level*2;
+      }
 
-      if (Access('God')) echo "Operation modifier before distance = $Mod<p>";
+      $BaseLevel = Op_Level($OrgId,$Wh);
 
-      $BaseLevel = Op_Level($OrgId,$Wh,$Mod);
+      echo "This operation is at a level of $BaseLevel from distance.  ";
+      if ($Mod) {
+        $BaseLevel += $Mod;
+
+        echo "With modifiers of +$Mod making the operation level $BaseLevel.<p>";
+      }
 
       $ProgNeed = Proj_Costs($BaseLevel)[0];
 

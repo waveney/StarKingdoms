@@ -147,7 +147,7 @@
   $ShowOtherCat = 0;
 
   $Opers = Get_Operations($Fid);
-var_dump($Opers);
+// var_dump($Opers);
 //    var_dump($Projs);echo "BEFORE<p>";
   $PHx = 0;
 

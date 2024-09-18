@@ -9,11 +9,12 @@
 //  if (isset($FESTSYS['Analytics'])) echo "<script>" . $FESTSYS['Analytics'] . "</script>";
   echo "<link href=/skfiles/style.css?V=$V type=text/css rel=stylesheet />";
   echo "<link href=/skfiles/dropdown.css?V=$V type=text/css rel=stylesheet />\n";
+  echo '<link id="favicon" rel="shortcut icon" type="image/jpg" href="' . $GAME['Image'] . '" />';
 
 ?>
 
     <script src="/js/jquery-3.2.1.min.js"></script>
-<?php    
+<?php
 //    <link href="/files/themes.css" type="text/css" rel="stylesheet" />
 //    <script src="/js/lightbox.js"></script>
 //    <link href="/css/lightbox.css" rel="stylesheet" />

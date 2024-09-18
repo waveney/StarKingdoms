@@ -23,7 +23,7 @@
     $Faction = &$FACTION;
   }
 
-  dostaffhead("Edit a Project");
+  dostaffhead("Edit an Operation");
 
   if (isset($_REQUEST['id'])) {
     $Oid = $_REQUEST['id'];
@@ -38,7 +38,7 @@
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
       case 'Delete':
-        db_delete('Projects',$Oid);
+        db_delete('Operations',$Oid);
         echo "<h1>Deleted</h1>";
         db_delete_cond('OperationTurn',"OperationId=$Oid");
         echo "<h2><a href=OpsDisp.php>Back to Operations Display</a>";
@@ -48,7 +48,7 @@
         exit;
       case 'Abandon Project':
         if ($O['Status'] == 0) { // Never started
-          db_delete('Projects',$Oid);
+          db_delete('Operations',$Oid);
           echo "<h1>Deleted</h1>";
           db_delete_cond('OperationTurn',"OperationId=$Oid");
           echo "<h2><a href=OpsDisp.php>Back to Operations Display</a>";

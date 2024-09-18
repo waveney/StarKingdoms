@@ -13,7 +13,7 @@ function Archive_Stack($loc,$pth,$id) {
   rename($loc,"$pth/Old$hist.$id.$sfx");
 }
 
-  global $DDdata,$GAMEID;
+  global $DDdata,$GAMEID,$GAME;
 //********************************* START HERE **************************************************************
 
 $Type = $_REQUEST['Type'];
@@ -46,6 +46,11 @@ case 'Thing':
 case 'Moon':
   $Data = Get_Moon($id);
   $Put = 'Put_Moon';
+  break;
+
+case 'Game':
+  $Data =  Get_Game($id);
+  $Put = 'Put_Game';
   break;
 
 case 'Faction':
@@ -104,6 +109,7 @@ if (is_numeric($DDd['SetValue'])) {
 } else {
   $Data[$Type] = $DDd['SetValue'];
 }
+// var_dump($Data);
 $Put($Data);
 
 if ($files) {
