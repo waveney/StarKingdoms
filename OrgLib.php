@@ -7,7 +7,9 @@ define('OPER_TECH',0x10);
 define('OPER_SOCP',0x20);
 define('OPER_OUTPOST',0x40);
 define('OPER_CREATE_OUTPOST',0x80);
-define('OPER_SOCPTARGET',0x100);
+define('OPER_BRANCH',0x100);
+define('OPER_HIDDEN',0x200);
+define('OPER_SOCPTARGET',0x400);
 
 
 define('BRANCH_HIDDEN',1);
@@ -199,4 +201,9 @@ function WorldFromSystem($Sid,$Fid=0) {
   return $World['id'];
 }
 
-
+function HabPlanetFromSystem($Sid) {
+  $PTypes = Get_PlanetTypes();
+  $Ps = Get_Planets($Sid);
+  foreach ($Ps as $P) if ($PTypes[$P['Type']]['Hospitable']) return $P['id'];
+  return 0;
+}

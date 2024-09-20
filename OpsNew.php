@@ -150,12 +150,35 @@
               break;
             }
           }
+
+          if ($OpTypes[$op]['Props'] & OPER_BRANCH) {
+            $AllReady = Gen_Get_Cond('Branches'," HostType=3 AND HostId=$Tid AND OrgId=$OrgId" );
+            if ($AllReady) {
+              echo "There is already a branch of " . $Org['Name'] . " at that oupost.<p>";
+              break;
+            }
+          }
         } else if (!($OpTypes[$op]['Props'] & OPER_CREATE_OUTPOST)) { // No out post and can't create
           echo "There is not currently an Outpost there, this operation can't create one.<p>";
           break;
         }
+      } else if ($OpTypes[$op]['Props'] & OPER_BRANCH) {
+        $Plan = HabPlanetFromSystem($Wh);
+        if ($Plan) {
+          $AllReady = Gen_Get_Cond('Branches'," HostType=1 AND HostId=$Plan AND OrgId=$OrgId" );
+          if ($AllReady) {
+            $P = Get_Planet($Plan);
+            echo "There is already a branch of " . $Org['Name'] . " on " . $P['Name'] . " in " . System_Name($TSys,$Fid) . "</h2>\n";
+            break;
+          }
+        } else {
+          echo "There is no planet in " . System_Name($TSys,$Fid) . " that can support a Branch.<p>\n";
+          break;
+        }
+
       }
       // Drop through
+
 
     case 4: // Secondary Questions
       $TSys = Get_System($Wh);
@@ -231,7 +254,7 @@
           }
           $Level = $TechLevel;
         }
-        if (SP) {
+        if ($SP) {
           $SocP = Get_SocialP($SP);
           echo "Principle:" . $SocP['Principle'];
           $Level = $SocP['Value'];

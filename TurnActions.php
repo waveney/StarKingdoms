@@ -8,6 +8,7 @@
   include_once("HomesLib.php");
   include_once("BattleLib.php");
   include_once("TurnTools.php");
+  include_once("OrgLib.php");
   include_once("vendor/erusev/parsedown/Parsedown.php");
 
   A_Check('GM');
@@ -511,6 +512,179 @@ function StartProjects() {
   }
   return 1;
 }
+
+function StartOperations() {
+  global $GAME,$GAMEID;
+
+  $Facts = Get_Factions();
+  $OpTypes = Get_OpTypes();
+  $Operations = Gen_Get_Cond('Operations', "GameId=$GAMEID AND Status=0 AND TurnStart=" . $GAME['Turn']);
+  $OrgTypes = Get_OrgTypes();
+  $NeedColStage2 = 0;
+  $TTYpes = Get_ThingTypes();
+  $TTNames = NamesList($TTYpes);
+  $Orgs = Gen_Get_Cond('Organisations',"GameId=$GAMEID");
+
+  foreach ($Operations as $Oid=>$O) {
+    $Fid = $O['Whose'];
+    $Otp = $OpTypes[$O['Type']]['Props'];
+    $Wh = $O['SystemId'];
+    $Sys = Get_System($Wh);
+    $TWho = $Sys['Control'];
+    $OrgId = $O['OrgId'];
+
+    if ($Otp & OPER_OUTPOST) {
+      $OutPs = Get_Things_Cond($Fid,"Type=" . $TTNames['Outpost'] . " AND SystemId=$Wh AND BuildState=3");
+      if ($OutPs) {
+        if (count($OutPs >1)) {
+          GMLog("There are multiple Outposts in " . $Sys['Ref'] . " - Tell Richard");
+          exit;
+        }
+        if (($Otp & OPER_CREATE_OUTPOST)) {
+          $Tid = $OutPs[0]['id'];
+          $EBs = Gen_Get_Cond('Branches', " HostType=3 AND HostId=$Tid");
+
+          $MaxB = HasTech($OutPs[0]['Whose'],'Offworld Construction');
+          foreach ($EBs as $B) if ($B['Props'] & BRANCH_NOSPACE) $MaxB--;
+
+          if ($MaxB >= $EBs) {
+            $O['Status'] = 5; // Not Started
+            TurnLog($Fid,'Not Starting ' . $O['Name'] . " as the Outpost is full");
+            GMLog('Not Starting ' . $O['Name'] . " as the <a href=ThingEdit.php?id=$Tid>Outpost</a> is full");
+            Put_Operation($O);
+            break;
+          }
+        }
+
+        if ($Otp & OPER_BRANCH) {
+          $AllReady = Gen_Get_Cond('Branches'," HostType=3 AND HostId=$Tid AND OrgId=$OrgId" );
+          if ($AllReady) {
+            $O['Status'] = 5; // Not Started
+            TurnLog($Fid,'Not Starting ' . $O['Name'] . " as there is already a branch there");
+            Put_Operation($O);
+            break;
+          }
+        }
+      } else if (!($Otp & OPER_CREATE_OUTPOST)) { // No out post and can't create
+        $O['Status'] = 5; // Not Started
+        TurnLog($Fid,'Not Starting ' . $O['Name'] . " There is not currently an Outpost there, this operation can't create one");
+        Put_Operation($O);
+        break;
+      }
+    } else if ($Otp & OPER_BRANCH) {
+      $Plan = HabPlanetFromSystem($Wh);
+      if ($Plan) {
+        $AllReady = Gen_Get_Cond('Branches'," HostType=1 AND HostId=$Plan AND OrgId=$OrgId" );
+        if ($AllReady) {
+          $P = Get_Planet($Plan);
+          $O['Status'] = 5; // Not Started
+          TurnLog($Fid,'Not Starting ' . $O['Name'] . " There is already a branch of " . $Orgs[$OrgId]['Name'] . " on " . $P['Name'] . " in " .
+                  System_Name($Sys,$Fid) );
+          Put_Operation($O);
+          break;
+        }
+      } else {
+        $O['Status'] = 5; // Not Started
+        TurnLog($Fid,"There is no planet in " . System_Name($Sys,$Fid) . " that can support a Branch" );
+        Put_Operation($O);
+        break;
+      }
+    }
+
+    if (($Otp & OPER_BRANCH) && !($Otp & OPER_HIDDEN ) ){
+      if ($NeedColStage2 == 0) {
+        GMLog("<form method=post action=TurnActions.php?ACTION=Process&S=15>");
+        $NeedColStage2 = 1;
+      }
+      GMLog($Facts[$Fid]['Name'] . " is seting up a branch of  " . $Orgs[$O['OrgId']]['Name'] .
+           " (" . $OrgTypes[$OrgId]['Name'] . " ) it is controlled by " . ($Facts[$Sys['Control']]['Name']??'Nobody') .
+           " - Allow? " . fm_YesNo("Org$Oid",1, "Reason to reject") . "\n<br>");
+    }
+
+    $Level = 0;
+    if ($Otp & OPER_TECH ) {
+
+      $Tech = Get_Tech($O['Para1']);
+      $Got = Has_Tech($TWho,$O['Para1']);
+      if ($Got && $Got>= $O['Para2']) {
+        // Target already has tech
+        $O['Status'] = 5; // Finished
+        TurnLog($Fid,'Not Starting sharing ' . $Tech['Name'] . " as it is already known by " . $Facts[$TWho]['Name']);
+        GMLog($Facts[$Fid]['Name'] . ' Not Starting sharing ' . $$Tech['Name'] . " as it is already known by " . $Facts[$TWho]['Name']);
+        Put_Operation($O);
+      }
+      $Level = $O['Para2'];
+    }
+
+    if ($Otp & OPER_SOCPTARGET) {
+      $SocP = Get_SocialP($O['Para1']);
+      $Level = $SocP['Value'];
+    }
+
+
+    $Mod = ($Otp & OPER_LEVEL);
+    if ($Mod >4) {
+      if ($Mod &4) $Mod = $Level;
+      if ($Mod &8) $Mod = $Level*2;
+    }
+
+    $BaseLevel = Op_Level($OrgId,$Wh) + $Mod;
+
+    if ($BaseLevel != $O['Level']) {
+      $ProgNeed = Proj_Costs($BaseLevel)[0];
+
+      TurnLog($Fid,'WARNING operation ' . $O['Name'] . " with the " . $Orgs[$O['OrgId']]['Name'] . " is actually level $BaseLevel not " .
+        $O['Level'] . " and now needs " . $O['ProgNeeded'] . " progress.");
+
+    }
+    $O['Status'] = 1;// Started
+    TurnLog($Fid,"Operation " . $O['Name'] . " has started for organisation " . $Orgs[$O['OrgId']]['Name']);
+    Put_Operation($O);
+  }
+  if ($NeedColStage2) {
+    echo "<input type=submit name=Ignore value=Checked>\n";
+
+    dotail();
+  }
+  return 2;
+}
+
+function StartOperationsStage2() {  // Making branches is checked
+  global $GAME,$GAMEID;
+
+  $Facts = Get_Factions();
+  $OpTypes = Get_OpTypes();
+  $Operations = Gen_Get_Cond('Operations', "GameId=$GAMEID AND Status=0 AND TurnStart=" . $GAME['Turn']);
+  $OrgTypes = Get_OrgTypes();
+  $NeedColStage2 = 0;
+  $TTYpes = Get_ThingTypes();
+  $TTNames = NamesList($TTYpes);
+  $Orgs = Gen_Get_Cond('Organisations',"GameId=$GAMEID");
+
+  foreach ($Operations as $Oid=>$O) {
+
+    if (!isset($_REQUEST["Org$Oid"])) continue;
+    $Ans = $_REQUEST["Org$Oid"];
+
+    $Fid = $O['Whose'];
+    $Otp = $OpTypes[$O['Type']]['Props'];
+    $Wh = $O['SystemId'];
+    $Sys = Get_System($Wh);
+    $TWho = $Sys['Control'];
+
+    if ($Ans == "on") {
+      $O['State'] = 1;
+      TurnLog($Fid,"Operation " . $O['Name'] . " has started for organisation " . $Orgs[$O['OrgId']]['Name']);
+    } else {
+      TurnLog($Fid, "Operation " . $O['Name'] . "was not started because " . $_REQUEST["ReasonOrg$Oid"]??"Unknown");
+      $O['State'] = 5;
+    }
+    Put_Operation($O);
+  }
+  GMLog("<br>All Operations started<p>");
+  return 1;
+}
+
 
 /*
 $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse Anomaly','Establish Embassy','Make Outpost','Make Asteroid Mine','Make Minefield',
@@ -2252,6 +2426,21 @@ function ProjectProgress() {
   return 1;
 }
 
+function OperationsProgress() {
+  global $GAME,$GAMEID;
+
+  $OpTypes = Get_OpTypes();
+  $Operations = Gen_Get_Cond('Operations', "GameId=$GAMEID AND Status=1" );
+  $Orgs = Gen_Get_Cond('Organisations',"GameId=$GAMEID");
+
+  foreach ($Operations as $Oid=>$O) {
+    $O['Progress'] += $Orgs[$O['OrgId']]['OfficeCount'];
+    Put_Operation($O);
+  }
+  GMLog("All Operations Progressed<p>");
+  return 1;
+}
+
 function InstructionsProgress() {
   global $ThingInstrs,$IntructProps;
   $Things = Get_Things_Cond(0,"Instruction!=0");
@@ -2777,6 +2966,32 @@ function RefitProjectsComplete() {
 function ProjectsComplete() {
 //  echo "Projects Complete is currently Manual<p>";
   return ProjectsCompleted(1);
+}
+
+function OperationsComplete() {
+  global $GAME,$GAMEID;
+
+  $Facts = Get_Factions();
+  $OpTypes = Get_OpTypes();
+  $Operations = Gen_Get_Cond('Operations', "GameId=$GAMEID AND Status=1 AND Progress>ProgNeeded");
+  $OrgTypes = Get_OrgTypes();
+  $TTYpes = Get_ThingTypes();
+  $TTNames = NamesList($TTYpes);
+  $Orgs = Gen_Get_Cond('Organisations',"GameId=$GAMEID");
+
+  foreach ($Operations as $Oid=>$O) {
+    $Fid = $O['Whose'];
+    $Otp = $OpTypes[$O['Type']]['Props'];
+    $Wh = $O['SystemId'];
+    $Sys = Get_System($Wh);
+    $TWho = $Sys['Control'];
+
+    switch ($O['Type']) {
+    default:
+      GMLog("Operation " . $O['Name'] . " has completed, this is not automated yet.  See <a href=OperEdit.php?id=$Oid>Operation</a>",1);
+      FollowUp($Fid,"Operation " . $O['Name'] . " has completed, this is not automated yet.  See <a href=OperEdit.php?id=$Oid>Operation</a>");
+    }
+  }
 }
 
 function InstructionsComplete() {

@@ -24,7 +24,7 @@ $Branches = Gen_Get_Cond('Branches',"Organisation=$OrgId");
 dostaffhead("Organisation");
 
 echo "<h1>" . $Org['Name'] . "</h1>";
-echo "Type: <b>" . $OrgTypes[$Org['OrgType']]['Name'] . "</b> Organisation <p>";
+echo "Type: <b>" . ($OrgTypes[$Org['OrgType']]['Name']??'Unknown') . "</b> Organisation <p>";
 
 echo "Decription: <p>" . $Org['Description'];
 echo "<h2>Offices:</h2>";
