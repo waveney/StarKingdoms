@@ -2973,7 +2973,7 @@ function OperationsComplete() {
 
   $Facts = Get_Factions();
   $OpTypes = Get_OpTypes();
-  $Operations = Gen_Get_Cond('Operations', "GameId=$GAMEID AND Status=1 AND Progress>ProgNeeded");
+  $Operations = Gen_Get_Cond('Operations', "GameId=$GAMEID AND Status=1 AND Progress>=ProgNeeded");
   $OrgTypes = Get_OrgTypes();
   $TTYpes = Get_ThingTypes();
   $TTNames = NamesList($TTYpes);

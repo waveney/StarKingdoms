@@ -34,5 +34,13 @@ CREATE TABLE `Systems` (
   `Trait1Auto` int NOT NULL,
   `Trait1Conceal` int NOT NULL,
   `HabPlanet` int NOT NULL,
+  `Trait2` text COLLATE utf8mb4_general_ci NOT NULL,
+  `Trait2Desc` text COLLATE utf8mb4_general_ci NOT NULL,
+  `Trait2Auto` int NOT NULL,
+  `Trait2Conceal` int NOT NULL,
+  `Trait3` text COLLATE utf8mb4_general_ci NOT NULL,
+  `Trait3Desc` text COLLATE utf8mb4_general_ci NOT NULL,
+  `Trait3Auto` int NOT NULL,
+  `Trait3Conceal` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

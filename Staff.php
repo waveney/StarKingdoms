@@ -154,6 +154,8 @@
     $txt .= "<li><a href=DTList.php>List District Types</a>\n";
     $txt .= "<li><a href=PlanetTypes.php>Planet Types</a>\n";
     $txt .= "<li><a href=PlanetStats.php>Planet Stats</a>\n";
+    $txt .= "<li><a href=PlanetTraits.php>Planet Traits</a>\n";
+
     $txt .= "<p>";
     $txt .= "<li><a href=WorldList.php>List Worlds and colonies</a>\n";
     $txt .= "<li><a href=WorldMake.php>Rebuild list of Worlds and colonies</a>\n";
@@ -213,7 +215,7 @@
                 fm_select($Facts,0,'F',1," onchange=this.form.submit()") . "</form>\n";
     */
 //    if (Access('God')) $txt .= "<li><a href=Import.php>Import</a>\n";
-    $txt .= "<li><a href=ListTraits.php>List All Traits</a><p>\n";
+    $txt .= "<li><a href=ListTraits.php>List All Faction Traits</a><p>\n";
 
     $txt .= "<li><a href=ListSocial.php>List Social Principles</a><p>\n";
 

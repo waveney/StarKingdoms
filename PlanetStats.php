@@ -41,7 +41,8 @@
   foreach($PTD as $PT) {
     if (!isset($PT['Count'])) $PT['Count']=0;
     if (!isset($PT['MCount'])) $PT['MCount']=0;
-    echo "<tr><td>" . $PT['Name'] . "<td>" . $PT['Count'] . "<td>" . $PT['MCount'] . "<td>" . $PT['Hospitable'] . "<td>" . (isset($PT['Where'])?$PT['Where']:"");
+    echo "<tr><td>" . $PT['Name'] . "<td>" . $PT['Count'] . "<td>" . $PT['MCount'] . "<td>" . ['','Yes'][$PT['Hospitable']] .
+         "<td>" . (isset($PT['Where'])?$PT['Where']:"");
   }
   if ($unpop) echo "<tr><td>Unpopulated<td>$unpop<td>\n";
   echo "</table>";

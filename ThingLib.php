@@ -19,12 +19,14 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
                 'Dismantle Stargate','Disband','Transfer',
                 'Make Something','Make Warpgate','Retire','Stop Support','Make Advanced Minefield','Clear Minefield',
                 'Make Advanced Deep Space Sensor','Salvage',
-                'Terraform','Link Repair','Collaborative DSC','Space Survey','Planetary Survey'];
+                'Terraform','Link Repair','Collaborative DSC','Space Survey','Planetary Survey','Collaborative Planetary Construction',
+                'Collaborative Space Construction',
+];
 $IntructProps = [0,0,0,0,0,0,1,1,1,
                  1,1,1,1,1,1,
                  1,1,1,1,1,0,0,
                  1,1,0,0,1,0,1,1,
-                 0,1,0,0,0]; // 1 = DSC
+                 0,1,0,0,0,0,1,2]; // 1 = DSC
 $InstrNotBy =   [0,1,1,0,0,1,0,
                  1,0,
                  0,0,0,0,
@@ -33,7 +35,7 @@ $InstrNotBy =   [0,1,1,0,0,1,0,
                  1,0,1,
                  0,1,0,1,1,1,
                  0,0,
-                 0,1,0,2,2];
+                 0,1,0,2,2,2,2];
 
 $Advance = ['','','Advanced ','Very Advanced ','Ultra Advanced ','Evolved '];
 $ValidMines = [0,1,0,1,0,1,0,0,0,0,0];
