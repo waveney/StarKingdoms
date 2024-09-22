@@ -18,8 +18,8 @@
   $Stages = ['Check Turns Ready', 'Spare', 'Start Turn Process',
     'Save All Locations', 'Spare' /*'Remove Unsupported Minefields'*/, 'Spare' /*'Cash Transfers'*/, 'Spare',
              'Follow' /*'Pay For Stargates'*/, 'Spare', 'Scientific Breakthroughs',
-             'Start Projects', 'Start Operations', 'Start Operations Stage 2', 'Instuctions',
-             'Instuctions Stage 2', 'Clear Paid For', 'Spare'/*'Agents Start Missions'*/, 'Pay For Rushes',
+             'Start Projects', 'Start Operations', 'Start Operations Stage 2', 'Instructions',
+             'Instructions Stage 2', 'Clear Paid For', 'Spare'/*'Agents Start Missions'*/, 'Pay For Rushes',
              'Spare', 'Economy', 'Spare', 'Direct Moves',
              'Load Troops', 'Spare', 'Ship Move Check', 'Ship Movements',
              'Spare', 'Spare' /*'Agents Move Check', 'Agents Movements'*/, 'See After Move', 'Meetups',
@@ -593,7 +593,7 @@ function StartOperations() {
 
     if (($Otp & OPER_BRANCH) && !($Otp & OPER_HIDDEN ) ){
       if ($NeedColStage2 == 0) {
-        GMLog("<form method=post action=TurnActions.php?ACTION=Process&S=15>");
+        GMLog("<form method=post action=TurnActions.php?ACTION=Process&S=Instructions>");
         $NeedColStage2 = 1;
       }
       GMLog($Facts[$Fid]['Name'] . " is seting up a branch of  " . $Orgs[$O['OrgId']]['Name'] .
@@ -692,7 +692,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
                 'DSC Special'];
 */
 
-function Instuctions() { // And other Instructions
+function Instructions() { // And other Instructions
   global $ThingInstrs,$GAME;
   global $Currencies,$ValidMines;
   global $FACTION;
@@ -724,51 +724,19 @@ function Instuctions() { // And other Instructions
     if ($T['Progress']>0 || $T['Instruction']<0) continue;
 
     switch ($ThingInstrs[$T['Instruction']]) {
+
     case 'Colonise': // Colonise
     case 'Build Planetary Mine':
-
       $P = Get_Planet($T['Spare1']);
-      if (empty($P)) { // Refind the planet we need
-        $Fid = $T['Whose'];
-        $PTs = Get_PlanetTypes();
-        $Ps = Get_Planets($N['id']);
-        $Hab_dome = Has_Tech($Fid,'Habitation Domes');
-        $HabPs = [];
-        foreach($Ps as $P) {
-          if (!$PTs[$P['Type']]['Hospitable']) continue;
-          if (Get_DistrictsP($P['id'])) continue; // Someone already there
-          if (($P['Type'] == $FACTION['Biosphere']) || ($P['Type'] != $FACTION['Biosphere2']) || ($P['Type'] != $FACTION['Biosphere3'])) {
-            $HabPs[$P['id']] = [$P,3];
-          }
-          if ($P['Type'] == 4 ) {
-            if (!$Hab_dome) continue;
-            $HabPs[$P['id']] = [$P,10];
-          } else {
-            $HabPs[$P['id']] = [$P,6];
-          }
-        }
-        if (empty($HabPs)) {
-          GMLog("<h2>Planet not found - Tell Richard</h2>",1);
-          var_dump($T);
-          exit;
-        }
-
-
-        [$P,$Acts] = array_shift($HabPs);
-        $T['Spare1'] = $P['id'];
-        $T['ActionsNeeded'] = $Acts;
-      }
-
       if ($N['Control'] > 0 && $N['Control'] != $T['Whose']) {  // Colonising system under control of others
         if ($NeedColStage2 == 0) {
-          GMLog("<form method=post action=TurnActions.php?ACTION=Process&S=15>");
+          GMLog("<form method=post action=TurnActions.php?ACTION=Process&S=Instructions>");
           $NeedColStage2 = 1;
         }
         GMLog($Facts[$T['Whose']]['Name'] . " colonising " . $N['Ref'] . " it is controlled by " . $Facts[$N['Control']]['Name'] .
                " - Allow? " . fm_YesNo("Col$Tid",1, "Reason to reject") . "\n<br>");
         break;
       }
-
 
       if (($ThingInstrs[$T['Instruction']]) == 'Colonise') {
         TurnLog($T['Whose'],"The " . $T['Name'] . " is colonising " . $P['Name'] . " in " . $N['Ref'] ,$T);
@@ -802,7 +770,7 @@ function Instuctions() { // And other Instructions
              if ($FirstG == 0) $FirstG = $G['id'];
            }
            if ($NeedColStage2 == 0) {
-             GMLog("<form method=post action=TurnActions.php?ACTION=Process&S=15>");
+             GMLog("<form method=post action=TurnActions.php?ACTION=Process&S=Instructions>");
              $NeedColStage2 = 1;
            }
            $_REQUEST['G'] = $FirstG;
@@ -935,7 +903,7 @@ function Instuctions() { // And other Instructions
           break;
         } else if ( ($FA['State'] == 1) && $A['OtherReq']) {
            if ($NeedColStage2 == 0) {
-             echo "<form method=post action=TurnActions.php?ACTION=Process&S=15>";
+             echo "<form method=post action=TurnActions.php?ACTION=Process&S=Instructions>";
              $NeedColStage2 = 1;
            }
            GMLog("<p><a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a> is starting to analyse anomaly <a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] .
@@ -965,7 +933,7 @@ function Instuctions() { // And other Instructions
               break 2;
             } else if ($FA['State'] == 1 && !empty($A['OtherReq'])) {
               if ($NeedColStage2 == 0) {
-                echo "<form method=post action=TurnActions.php?ACTION=Process&S=15>";
+                echo "<form method=post action=TurnActions.php?ACTION=Process&S=Instructions>";
                 $NeedColStage2 = 1;
               }
               $T['ProjectId'] = $Aid;
@@ -984,7 +952,7 @@ function Instuctions() { // And other Instructions
 
     case 'Establish Embassy':
       if ($NeedColStage2 == 0) {
-        echo "<form method=post action=TurnActions.php?ACTION=Process&S=15>";
+        echo "<form method=post action=TurnActions.php?ACTION=Process&S=Instructions>";
         $NeedColStage2 = 1;
       }
       GMLog($Facts[$T['Whose']]['Name'] . " setting up an Embassy in " . $N['Ref'] . " - Allow? " . fm_YesNo("Emb$Tid",1, "Reason to reject") . "\n<br>");
@@ -1028,7 +996,7 @@ function Instuctions() { // And other Instructions
         break;
       }
       if ($NeedColStage2 == 0) {
-        GMLog("<form method=post action=TurnActions.php?ACTION=Process&S=15>");
+        GMLog("<form method=post action=TurnActions.php?ACTION=Process&S=Instructions>");
         $NeedColStage2 = 1;
       }
 
@@ -1106,7 +1074,7 @@ function Instuctions() { // And other Instructions
         break;
       }
       if ($NeedColStage2 == 0) {
-        GMLog("<form method=post action=TurnActions.php?ACTION=Process&S=15>");
+        GMLog("<form method=post action=TurnActions.php?ACTION=Process&S=Instructions>");
         $NeedColStage2 = 1;
       }
 
@@ -1335,7 +1303,7 @@ function Instuctions() { // And other Instructions
   return 2;
 }
 
-function InstuctionsStage2() { // And other Instructions
+function InstructionsStage2() { // And other Instructions
   global $ThingInstrs,$GAME;
   global $FACTION;
 
@@ -1421,35 +1389,6 @@ function InstuctionsStage2() { // And other Instructions
 // var_dump($_REQUEST);
 
       $P = Get_Planet($T['Spare1']);
-      if (empty($P)) { // Refind the planet we need
-        $Fid = $T['Whose'];
-        $PTs = Get_PlanetTypes();
-        $Ps = Get_Planets($N['id']);
-        $Hab_dome = Has_Tech($Fid,'Habitation Domes');
-        $HabPs = [];
-        foreach($Ps as $P) {
-          if (!$PTs[$P['Type']]['Hospitable']) continue;
-          if (Get_DistrictsP($P['id'])) continue; // Someone already there
-          if (($P['Type'] == $FACTION['Biosphere']) || ($P['Type'] != $FACTION['Biosphere2']) || ($P['Type'] != $FACTION['Biosphere3'])) {
-            $HabPs[$P['id']] = [$P,3];
-          }
-          if ($P['Type'] == 4 ) {
-            if (!$Hab_dome) continue;
-            $HabPs[$P['id']] = [$P,10];
-          } else {
-            $HabPs[$P['id']] = [$P,6];
-          }
-        }
-        if (empty($HabPs)) {
-          GMLog("<h2>Planet not found - Tell Richard</h2>",1);
-          var_dump($T);
-          exit;
-        }
-
-        [$P,$Acts] = array_shift($HabPs);
-        $T['Spare1'] = $P['id'];
-        $T['ActionsNeeded'] = $Acts;
-      }
 
       if ($N['Control'] > 0 && $N['Control'] != $T['Whose']) {  // Colonising system under control of others
         if (!isset($_REQUEST["Col$Tid"]) ||  $_REQUEST["Col$Tid"] != "on") {
@@ -1493,8 +1432,8 @@ function InstuctionsStage2() { // And other Instructions
     }
   }
 
-  Done_Stage("Instuctions");
-  Done_Stage("Instuctions Stage 2");
+  Done_Stage("Instructions");
+  Done_Stage("Instructions Stage 2");
 //global $Sand;
 //var_dump($Sand);
   return 1;
@@ -2451,13 +2390,12 @@ function InstructionsProgress() {
     $Tid = $T['id'];
     switch ($ThingInstrs[abs($T['Instruction'])]) {
       case 'Colonise':
-        $Prog = Has_Tech($T['Whose'], 'Planetary Construction');
-        $Mods = Get_ModulesType($Tid, 'Colonisation Gear');
-        if ($Prog*$Mods[0]['Number'] == 0) {
+        $Prog = $T['Dist2'];
+        if ($Prog == 0) {
           GMLog("Colonisation by <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "Has zero progress - Tell Richard");
           FollowUp($T['Whose'],"Colonisation by <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "Has zero progress - Tell Richard");
         }
-        $T['Progress'] = min($T['ActionsNeeded'],($T['Progress']+$Prog*$Mods[0]['Number']));
+        $T['Progress'] = min($T['ActionsNeeded'],($T['Progress']+$Prog)); // Progress stored in Dist2
         Put_Thing($T);
         break;
       case 'Make Outpost':
@@ -2573,6 +2511,7 @@ function CollaborativeProgress() {
   foreach ($Things as $T) {
     $Tid = $T['id'];
     switch ($ThingInstrs[abs($T['Instruction'])]) {
+      case 'Collaborative Space Construction' :
       case 'Collaborative DSC': // Dist1 has Thing number being helped
 //        $Prog = Has_Tech($T['Whose'],'Deep Space Construction');
         $Mods = Get_ModulesType($Tid, 'Deep Space Construction');
@@ -2596,6 +2535,46 @@ function CollaborativeProgress() {
           }
         }
         break;
+
+      case 'Collaborative Planetary Construction' :
+        $Mods = Get_ModulesType($Tid, 'Engineering Corps');
+        $ProgGain = $Mods['Level']*$Mods['Number']; // For all except colonise
+        $HT = Get_Thing($T['Dist1']);
+        if ($HT) {
+          if ($HT['Instruction'] && ($IntructProps[abs($HT['Instruction'])] & 1)) {
+            if ($HT['Instruction'] == 1) { // Colonise
+              $Fact = $Facts[$HT['Whose']];
+              $Plan = $HT['Spare1'];
+              Get_Planet($Plan);
+              if (($P['Type'] == $Fact['Biosphere']) || ($P['Type'] == $Fact['Biosphere2']) || ($P['Type'] == $Fact['Biosphere3'])) {
+                $LMod = 0;
+              } else if ($P['Type'] == 4 ) {
+                $LMod = -2;
+              } else {
+                $LMod = -1;
+              }
+              $ProgGain = max(0,$Mods['Level']+$LMod)*$Mods['Number'];
+            }
+            $HT['Progress'] = min($HT['ActionsNeeded'],$HT['Progress']+$ProgGain);
+            GMLog("$ProgGain progress on " . $ThingInstrs[abs($HT['Instruction'])] . " for " . $Facts[$HT['Whose']]['Name'] . ":" . $HT['Name'] . " Now at " .
+              $HT['Progress'] . " / " . $HT['ActionsNeeded']);
+
+            TurnLog($HT['Whose'],$T['Name'] . " did $ProgGain towards completing " . $ThingInstrs[abs($HT['Instruction'])] . " by " . $HT['Name'] . " Now at " .
+              $HT['Progress'] . " / " . $HT['ActionsNeeded']);
+            if ($HT['Whose'] != $T['Whose']) {
+              TurnLog($T['Whose'],$T['Name'] . " did $ProgGain towards completing " . $ThingInstrs[abs($HT['Instruction'])] . " by " . $HT['Name']);
+            }
+            Put_Thing($HT);
+          }
+          else {
+            TurnLog($T['Whose'], $T['Name'] . " Was collacorating with " . $HT['Name'] . ", but " . $HT['Name'] . " is not doing any DSC.");
+          }
+        }
+        break;
+
+
+
+
       default:
         break;
      }
@@ -3003,6 +2982,8 @@ function InstructionsComplete() {
   $TTypes = Get_ThingTypes();
   $Parsedown = new Parsedown();
   $Systems = [];
+  $DTypes = Get_DistrictTypes();
+  $DTypeNames = NameList($DTypes);
 
 
   foreach ($Things as $T) {
@@ -3024,12 +3005,14 @@ function InstructionsComplete() {
       Put_Planet($P);
 
       $D = ['HostType' =>1, 'HostId'=> $P['id'], 'Type'=> $T['Dist1'], 'Number'=>1, 'GameId'=>$GAME['id'], 'TurnStart'=>$GAME['Turn']];
-      if ($D['Type'] == 0) $D['Type'] = 1;
+//      if ($D['Type'] == 0) $D['Type'] = 1;
+      $D['Type'] = array_flip($DTypeNames)['industrial'];
       Put_District($D);
+      /*
       if (Get_ModulesType($Tid,'Self Repairing Robot Armour') && $T['Dist2']) {
         $D1 = ['HostType' =>1, 'HostId'=> $P['id'], 'Type'=> $T['Dist2'], 'Number'=>1, 'GameId'=>$GAME['id'], 'TurnStart'=>$GAME['Turn']];
         Put_District($D1);
-      }
+      }*/
 
 
       TurnLog($Who,$P['Name'] . " on " . $N['Ref'] . " has been colonised");
@@ -3553,7 +3536,7 @@ function CheckSurveyReports() {
   }
   if ($Started) {
     GMLog("</table>\n");
-    GMLog("<h2><a href=TurnActions.php?ACTION=StageDone&Stage=CheckSurveyReports&=54>When Happy click here</a></h2>");
+    GMLog("<h2><a href=TurnActions.php?ACTION=StageDone&Stage=CheckSurveyReports>When Happy click here</a></h2>");
     dotail();
   }
   return 1;
@@ -4005,8 +3988,29 @@ function Do_Turn() {
       $S++; // Deliberate drop through
 
     case 'Process':
-      $act = $Stages[$S];
-      $act = preg_replace('/ /','',$act);
+      if (is_numeric($S)) {
+        $act = $Stages[$S];
+        $act = preg_replace('/ /','',$act);
+      } else {
+        $SName = $_REQUEST['S'];
+        $SName = preg_replace('/ /','',$SName);
+        for($S =0; $S <64 ; $S++) {
+          $act = $Stages[$S];
+          $act = preg_replace('/ /','',$act);
+          if ($SName == $act) break;
+        }
+        var_dump($S);
+        if ($S > 63) {
+          GMLog("Stage $SName not found");
+          break;
+        } else {
+          $Sand['Progress'] |= 1<<$S;
+        }
+        SKLog("Completed " . $Stages[$S]);
+        $S++;
+        $act = $Stages[$S];
+        $act = preg_replace('/ /','',$act);
+      }
       GMLog("Would call $act<p>");
       if (!is_callable($act)) {
         GMLog("<class Err>$act not yet written</span><p>");

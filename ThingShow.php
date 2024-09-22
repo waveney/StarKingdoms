@@ -742,7 +742,7 @@ function Show_Thing(&$T,$Force=0) {
     echo "<tr>" . fm_number('Sensors',$T,'Sensors') . fm_number('Sens Level',$T,'SensorLevel') . fm_number('Neb Sensors', $T,'NebSensors');
   }
   $SpecOrders = []; $SpecCount = 0;
-  $HasDeep = $HasMinesweep = $HasSalvage = $HasTerraform = 0;
+  $HasDeep = $HasPlanet = $HasMinesweep = $HasSalvage = $HasTerraform = $EngCorpLevel = 0;
   if ($tprops & THING_HAS_MODULES) {
     foreach ($Mods as $M) {
       $MName = $MTs[$M['Type']]['Name'];
@@ -765,6 +765,11 @@ function Show_Thing(&$T,$Force=0) {
         $HasTerraform  += $M['Number'] * $M['Level'];
         break;
 
+      case 'Engineering Corps' :
+        $HasPlanet  += $M['Number'];
+        $EngCorpLevel = $M['Level'];
+
+
       default:
       }
     }
@@ -785,24 +790,22 @@ function Show_Thing(&$T,$Force=0) {
 
 
     case 'Colonise': // Colonise
-      if ((($Moving || $tprops & THING_HAS_CIVSHIPMODS) == 0 ) ) continue 2;
-      if (!Get_ModulesType($Tid,'Colonisation Gear')) continue 2;
-
+//      if ((($Moving || $tprops & THING_HAS_CIVSHIPMODS) == 0 ) ) continue 2;
+      if (!$HasPlanet) continue 2;
       $PlTs = Get_PlanetTypes();
       $Ps = Get_Planets($N['id']);
       $Hab_dome = Has_Tech($Fid,'Habitation Domes');
+      $Hab_Climate = Has_Tech($Fid,'Climate Control');
       $HabPs = [];
       foreach($Ps as $P) {
         if (!$PlTs[$P['Type']]['Hospitable']) continue;
         if (Get_DistrictsP($P['id'])) continue; // Someone already there
         if (($P['Type'] == $FACTION['Biosphere']) || ($P['Type'] == $FACTION['Biosphere2']) || ($P['Type'] == $FACTION['Biosphere3'])) {
-          $HabPs[$P['id']] = [$P['Name'],$P['Type'],3];
-        }
-        if ($P['Type'] == 4 ) {
-          if (!$Hab_dome) continue ;
-          $HabPs[$P['id']] = [$P['Name'],$P['Type'],10];
+          $HabPs[$P['id']] = [$P['Name'],$P['Type'],0];
+        } else if ($P['Type'] == 4 ) {
+          if ($Hab_dome) $HabPs[$P['id']] = [$P['Name'],$P['Type'],-2];
         } else {
-          $HabPs[$P['id']] = [$P['Name'],$P['Type'],6];
+          if ($Hab_Climate) $HabPs[$P['id']] = [$P['Name'],$P['Type'],-1];
         }
       }
       if (empty($HabPs)) continue 2;
@@ -1036,12 +1039,13 @@ function Show_Thing(&$T,$Force=0) {
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Stargate Construction')) continue 2;
       break;
 
+    case 'Collaborative Space Construction':
     case 'Collaborative DSC':
       if ($Moving || !$HasDeep || empty($N) ) continue 2;
       // if has colab || other faction at same loc has colab
       $HasColab = [];
       $Facts = Get_Factions();
-      foreach($Facts as $OF)  $HasColab[$OF['id']] = Has_Tech($OF['id'],'Collaborative Deep Space Construction');
+      foreach($Facts as $OF)  $HasColab[$OF['id']] = Has_Tech($OF['id'],'Collaborative Construction');
       $IHaveCollab = !(empty($HasColab[$Fid]));
       $OtherThings = Get_AllThingsAt($T['SystemId']);
       $OtherList = [];
@@ -1054,7 +1058,31 @@ function Show_Thing(&$T,$Force=0) {
           }
         }
       }
-//var_dump($OtherList);
+      //var_dump($OtherList);
+      if (empty($OtherList)) continue 2; // Nothing to collaborate with
+      break;
+
+    case 'Collaborative Planetary Construction':
+      if ($Moving || !$HasPlanet|| empty($N) ) continue 2;
+      // if has colab || other faction at same loc has colab
+      $HasColab = [];
+      $Facts = Get_Factions();
+      foreach($Facts as $OF)  $HasColab[$OF['id']] = Has_Tech($OF['id'],'Collaborative Construction');
+      $IHaveCollab = !(empty($HasColab[$Fid]));
+      $OtherThings = Get_AllThingsAt($T['SystemId']);
+      $OtherList = [];
+      foreach($OtherThings as $OT) {
+        if ($OT['Whose'] != 0) {
+          if (($OT['Whose'] == $Fid) || $IHaveCollab || $HasColab[$OT['Whose']]) {
+            if ( ($ThingProps[$OT['Type']] & THING_HAS_MODULES)) {
+              $OMods = Get_ModulesType($OT['id'],'Engineering Corps');
+              if (empty($OMods) || $OT['id'] == $T['id']) continue;
+              $OtherList[$OT['id']] = $OT['Name'];
+            }
+          }
+        }
+      }
+      //var_dump($OtherList);
       if (empty($OtherList)) continue 2; // Nothing to collaborate with
       break;
 
@@ -1093,17 +1121,17 @@ function Show_Thing(&$T,$Force=0) {
       $PlTs = Get_PlanetTypes();
       $Ps = Get_Planets($N['id']);
       $Hab_dome = Has_Tech($Fid,'Habitation Domes');
+      $Hab_Climate = Has_Tech($Fid,'Climate Control');
       $HabPs = [];
       foreach($Ps as $P) {
         if (!$PlTs[$P['Type']]['Hospitable']) continue;
         if (Get_DistrictsP($P['id'])) continue; // Someone already there
         if (($P['Type'] == $FACTION['Biosphere']) || ($P['Type'] == $FACTION['Biosphere2']) || ($P['Type'] == $FACTION['Biosphere3'])) {
-          $HabPs[$P['id']] = [$P['Name'],$P['Type'],3];
+          $HabPs[$P['id']] = [$P['Name'],$P['Type'],0];
         } else if ($P['Type'] == 4 ) {
-          if (!$Hab_dome) continue;
-          $HabPs[$P['id']] = [$P['Name'],$P['Type'],10];
+          if ($Hab_dome) $HabPs[$P['id']] = [$P['Name'],$P['Type'],-2];
         } else {
-          $HabPs[$P['id']] = [$P['Name'],$P['Type'],6];
+          if ($Hab_Climate) $HabPs[$P['id']] = [$P['Name'],$P['Type'],-1];
         }
       }
 
@@ -1115,9 +1143,11 @@ function Show_Thing(&$T,$Force=0) {
       if ($NumPs == 1) {
         foreach ($HabPs as $Plid=>$data) {
           $P = $Ps[$Plid];
-          $Acts = $data[2];
+          $ConLevel = Feature('BaseColonise',16) + $P['ColonyTweak'];
+          $Prog = $HasPlanet * ($EngCorpLevel + $data[2]);
+
           echo "<tr><td><td colspan=6>Colonising: " . $P['Name'] . " a " . $PlTs[$P['Type']]['Name'] . ($PlTs[$P['Type']]['Append']?' Planet':'') .
-             " will take " . $data[2] . " actions"; // TODO Moons
+             " will take $ConLevel actions, this will do $Prog actions per turn."; // TODO Moons
           $T['Spare1'] = $Plid;
 
           break;
@@ -1128,19 +1158,27 @@ function Show_Thing(&$T,$Force=0) {
         $i = 1;
         foreach ($HabPs as $Plid=>$data) {
           $P = $Ps[$Plid];
-          $Plans[$Plid] = $P['Name'] . " a " . $PlTs[$P['Type']]['Name'] . ($PlTs[$P['Type']]['Append']?'Planet':'') . " will take " . $data[2] . " actions"; // TODO Moons
+          $ConLevel = Feature('BaseColonise',16) + $P['ColonyTweak'];
+          $Prog = $HasPlanet * ($EngCorpLevel + $data[2]);
+          $Plans[$Plid] = $P['Name'] . " a " . $PlTs[$P['Type']]['Name'] . ($PlTs[$P['Type']]['Append']?'Planet':'') .
+             " will take $ConLevel actions, this will do $Prog actions per turn."; // TODO Moons
           $Cols[$Plid] = $ThingInclrs[$i++];
 
         }
 //    echo "<tr>" . fm_radio('Special Instructions', $SpecOrders,$T,'Instruction','',1,' colspan=6 ','',$ThingInclrs) . " under development don't use yet";
         echo fm_radio('Colonising',$Plans,$T,'Spare1','',0,'','',$Cols);
       }
+      /* Old Code
       if ($T['Spare1']) $Acts = $HabPs[$T['Spare1']][2];
       $PrimeMods = [];
       $DTs = Get_DistrictTypes();
       foreach ($DTs as $D) if ($D['Props'] &1) $PrimeMods[$D['id']] = $D['Name'];
       echo "<br>District to Establish:" . fm_select($PrimeMods,$T,'Dist1');
       if (Get_ModulesType($Tid,'Self Repairing Robot Armour')) echo "<br>Second District (must be different):" .fm_select($PrimeMods,$T,'Dist2'); // TODO WRONG
+      */
+
+      $Acts = $ConLevel;
+      $T['Dist2'] = $Prog;  // Spare1 = Planet, Dist2 = Prog/turn
       $ProgShow = 1;
       $Cost = -1;
       break;
@@ -1521,9 +1559,16 @@ function Show_Thing(&$T,$Force=0) {
       $Acts = $PTNs['Link Repair']['CompTarget']*$LLevel*$T['Dist2']*$factor;
       break;
 
+    case 'Collaborative Space Construction':
     case 'Collaborative DSC':
       $DList = [0=>''] + $OtherList;
- //var_dump($DList);
+      //var_dump($DList);
+      echo "<br>Select ship to collaborate with.  If they are not doing anything, nothing happens. " . fm_select($DList,$T,'Dist1');
+      break;
+
+    case 'Collaborative Planetary Construction':
+      $DList = [0=>''] + $OtherList;
+      //var_dump($DList);
       echo "<br>Select ship to collaborate with.  If they are not doing anything, nothing happens. " . fm_select($DList,$T,'Dist1');
       break;
 

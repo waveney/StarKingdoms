@@ -1,8 +1,8 @@
 CREATE TABLE `ThingTypes` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `Name` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `Name` mediumtext COLLATE utf8mb4_general_ci NOT NULL,
   `Properties` int NOT NULL DEFAULT '0',
-  `Gate` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `Gate` mediumtext COLLATE utf8mb4_general_ci NOT NULL,
   `Eyes` int NOT NULL,
   `SeenBy` int NOT NULL,
   `MaxLvl` int NOT NULL DEFAULT '10',

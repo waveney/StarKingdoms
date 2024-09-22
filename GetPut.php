@@ -603,7 +603,7 @@ function Get_Things_Cond($Fact=0,$Cond) {
   global $db,$GAMEID;
   $Ts = [];
 // echo "SELECT * FROM Things WHERE " . ($Fact? " Whose=$Fact AND $Cond " : $Cond);
-  $res = $db->query("SELECT * FROM Things WHERE " . ($Fact? " Whose=$Fact AND $Cond " : $Cond));
+  $res = $db->query("SELECT * FROM Things WHERE GameId=$GAMEID AND " . ($Fact? " Whose=$Fact AND $Cond " : $Cond));
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
   return $Ts;
 }
