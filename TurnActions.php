@@ -1697,7 +1697,7 @@ function PayForRushes() {
 
 
 function Economy() {
-  global $db,$GAMEID;
+  global $db,$GAMEID,$LogistCost;
   // TWork out economies and generate income for each faction.
   // Blockades, theft and new things affect - this needs to be done BEFORE projects complete
 //  echo "The Economy is currently Manual<p>";
@@ -1793,7 +1793,12 @@ function Economy() {
 
       case "Asteroid Mine":
         $AstMines ++;
-        $AstVal += $T['Level'];
+        if (Feature('AstmineDSC')) {
+          $AstVal += $T['Level'];
+        } else {
+          $Plan = Get_Planet($T['Dist1']);
+          $AstVal += $Plan['Minerals']*$T['Level'];
+        }
         break;
 
       case "Embassy":
@@ -1819,7 +1824,7 @@ function Economy() {
       $EconVal += $OutPosts*2;
     }
     if ($AstMines) {
-      $AstVal *= Has_Tech($Fid,'Deep Space Construction');
+      if (Feature('AstmineDSC')) $AstVal *= Has_Tech($Fid,'Deep Space Construction');
       $EccTxt .= "Plus $AstMines Asteroid Mines worth a total of $AstVal\n";
       $EconVal += $AstVal;
     }
@@ -1843,9 +1848,9 @@ function Economy() {
       $Props = $TTypes[$T['Type']]['Properties'];
       if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
         if ($HasHomeLogistics && ($T['SystemId'] == $Facts[$T['Whose']]['HomeWorld'])) $T['Level'] /=2;
-        if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $T['Level'];
-        if ($Props & THING_HAS_GADGETS) $Logistics[2] += $T['Level'];
-        if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $T['Level'];
+        if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $LogistCost[$T['Level']];
+        if ($Props & THING_HAS_GADGETS) $Logistics[2] += $LogistCost[$T['Level']];
+        if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $LogistCost[$T['Level']];
       };
     }
 
@@ -2545,7 +2550,7 @@ function CollaborativeProgress() {
             if ($HT['Instruction'] == 1) { // Colonise
               $Fact = $Facts[$HT['Whose']];
               $Plan = $HT['Spare1'];
-              Get_Planet($Plan);
+              $P = Get_Planet($Plan);
               if (($P['Type'] == $Fact['Biosphere']) || ($P['Type'] == $Fact['Biosphere2']) || ($P['Type'] == $Fact['Biosphere3'])) {
                 $LMod = 0;
               } else if ($P['Type'] == 4 ) {
@@ -3105,10 +3110,48 @@ function InstructionsComplete() {
        Report_Others($T['Whose'], $T['SystemId'],2,"An outpost has been made in " . $N['Ref']);
        break;
 
+     case 'Make Advanced Asteroid Mine':
+       if (($NT = Get_Things_Cond(0,"Type=" . $TTNames['Asteroid Mine'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 "))) {
+         $NT = array_shift($NT);
+         $NT['Level'] = 2;  // Generalise how?
+         Put_Thing($NT);
+         $N = Get_System($T['SystemId']);
+         TurnLog($Who,"An Asteroid Mine has been upgraded in " . $N['Ref']);
+         break;
+       }
+         // else Drop through
      case 'Make Asteroid Mine':
-       $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Asteroid Mine'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'Whose'=>$T['Whose'],
-              'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'],
-              'Name'=>$T['MakeName']];
+       $Asts = [];
+       $Ps = Get_Planets($N['id']);
+       foreach ($Ps as $P) if ($P['Type'] == 3) $Asts[$P['id']]= $P;
+       if (empty($Asts)) {
+         TurnLog($Who,"Can't find an asteroid belt to mine in " . $N['Ref']);
+         GMLog($Facts[$Who]['Name'] . " Can't find an asteroid belt to mine in " . $N['Ref']);
+         break;
+       }
+       $Exist = Get_Things_Cond(0,"Type=" . $TTNames['Asteroid Mine'] . " AND SystemId=" . $N['id'] . " AND BuildState=3");
+       if ($Exist || count($Asts) <= count($Exist))  {
+         TurnLog($Who,"The asteroid " . Plural($Asts,'','belt','belts') . " in " . $N['Ref'] . " are already mined");
+         GMLog($Facts[$Who]['Name'] . " The asteroid " . Plural($Asts,'','belt','belts') . " in " . $N['Ref'] . " are already mined");
+         break;
+       }
+       if ($Exist) foreach ($Exist as $E) unset($Asts[$E['Dist1']]);
+       $Best = $Mine = 0;
+       foreach ($Asts as $A) if ($A['Minerals'] > $Best) {
+         $Best = $A['Minerals'];
+         $Mine = $A['id'];
+       }
+       if ($Best == 0) {
+         TurnLog($Who,"The asteroid belt in " . $N['Ref'] . " has no minerals");
+         GMLog($Facts[$Who]['Name'] . " The asteroid belt in " . $N['Ref'] . " has no minerals");
+         break;
+       }
+       $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Asteroid Mine'], 'Level'=> (($Instr == 'Make Asteroid Mine')?1:2),
+         'SystemId'=>$T['SystemId'], 'Whose'=>$T['Whose'],
+         'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'],
+         'Name'=>$T['MakeName'],'Dist1'=>$Mine];
+
+
        Put_Thing($NT);
        $N = Get_System($T['SystemId']);
        TurnLog($Who,"An Asteroid Mine has been made in " . $N['Ref']);
@@ -3232,22 +3275,6 @@ function InstructionsComplete() {
        Report_Others($T['Whose'], $T['SystemId'],2,"A Deep Space Sensor has been made in " . $N['Ref']);
        break;
 
-     case 'Make Advanced Asteroid Mine':
-       if (($NT = Get_Things_Cond(0,"Type=" . $TTNames['Asteroid Mine'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 "))) {
-         $NT = array_shift($NT);
-         $NT['Level'] = 2;  // Generalise how?
-         Put_Thing($NT);
-         $N = Get_System($T['SystemId']);
-         TurnLog($Who,"An Asteroid Mine has been upgraded in " . $N['Ref']);
-       } else {
-         $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Asteroid Mine'], 'Level'=> 2, 'SystemId'=>$T['SystemId'],
-                'Whose'=>$T['Whose'], 'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
-         Put_Thing($NT);
-         $N = Get_System($T['SystemId']);
-         TurnLog($Who,"An Advanced Asteroid Mine has been made in " . $N['Ref']);
-         Report_Others($T['Whose'], $T['SystemId'],2,"An Asteroid Mine has been made in " . $N['Ref']);
-       }
-       break;
 
      case 'Build Stargate':
        if (empty($Systems)) $Systems = Get_SystemRefs();

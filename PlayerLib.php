@@ -257,6 +257,7 @@ function Credit() {
 function Income_Estimate($Fid) {
   include_once("ThingLib.php");
   include_once("HomesLib.php");
+  global $LogistCost;
 
   $TTypes = Get_ThingTypes();
 
@@ -297,7 +298,12 @@ function Income_Estimate($Fid) {
 
     case "Asteroid Mine":
       $AstMines ++;
-      $AstVal += $T['Level'];
+      if (Feature('AstmineDSC')) {
+        $AstVal += $T['Level'];
+      } else {
+        $Plan = Get_Planet($T['Dist1']);
+        $AstVal += $Plan['Minerals']*$T['Level'];
+      }
       break;
 
     case "Embassy":
@@ -319,7 +325,7 @@ function Income_Estimate($Fid) {
   if ($OutPosts) $EconVal += $OutPosts*2;
 
   if ($AstMines) {
-    $AstVal *= Has_Tech($Fid,'Deep Space Construction');
+    if (Feature('AstmineDSC')) $AstVal *= Has_Tech($Fid,'Deep Space Construction');
     $EconVal += $AstVal;
   }
   if ($Embassies) $EconVal += $Embassies;
@@ -333,9 +339,9 @@ function Income_Estimate($Fid) {
     if (empty($T['Type'])) continue;
     $Props = $TTypes[$T['Type']]['Properties'];
     if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
-      if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $T['Level'];
-      if ($Props & THING_HAS_GADGETS) $Logistics[2] += $T['Level'];
-      if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $T['Level'];
+      if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $LogistCost[$T['Level']];
+      if ($Props & THING_HAS_GADGETS) $Logistics[2] += $LogistCost[$T['Level']];
+      if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $LogistCost[$T['Level']];
     };
   }
 

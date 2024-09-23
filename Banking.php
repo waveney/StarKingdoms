@@ -27,10 +27,11 @@
 
   $FactList = [];
   $FactList[-1] = "Other";
-  foreach ($Facts as $Fi=>$F) {
-    $FactList[$Fi] = $Factions[$Fi]['Name'];
+  if (!Feature('Banking') && !$GM) {
+    foreach ($Facts as $Fi=>$F) {
+      $FactList[$Fi] = $Factions[$Fi]['Name'];
+    }
   }
-
 
 //  var_dump($_REQUEST);
 
@@ -143,7 +144,6 @@
   echo "</tbody></table></div>\n";
 
 
-
   echo "<h2>Bank transfers for this turn:</h2>\n";
   $Banks = Get_BankingFT($Fid,$Turn);
 
@@ -208,14 +208,16 @@
   echo "<tr><td>" . fm_submit("ACTION",'Setup');
   echo "</table></form>";
 
-  echo "<form method=post action=Banking.php>\n";
-  echo "<h2>Other expected income</h2>\n";
-  echo "What do expect from others, and amount - may stop annoying nag messages that you have overspent in your plans. No other effect. These are not checked<p>";
-  echo "<table border>";
-  echo "<tr>" . fm_textarea("Description",$_REQUEST,'IncomeText',2,2);
-  echo "<tr>" . fm_number('Amount',$_REQUEST,'IncomeAmount');
+  if (Feature('IncomeCheck')) {
+    echo "<form method=post action=Banking.php>\n";
+    echo "<h2>Other expected income</h2>\n";
+    echo "What do expect from others, and amount - may stop annoying nag messages that you have overspent in your plans. No other effect. These are not checked<p>";
+    echo "<table border>";
+    echo "<tr>" . fm_textarea("Description",$_REQUEST,'IncomeText',2,2);
+    echo "<tr>" . fm_number('Amount',$_REQUEST,'IncomeAmount');
 
-  echo "</table></form>";
+    echo "</table></form>";
+  }
 
 //  Player_Page();
   dotail();

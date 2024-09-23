@@ -45,7 +45,7 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Std Costs</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Level</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>CompTarget</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Cost</a>\n";
+ // echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Cost</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Props</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Based On</a>\n";
 
@@ -61,7 +61,7 @@
     echo fm_number1("",$D,'StandardCosts','','',"StandardCosts$i");
     echo fm_number1("",$D,'Level','','',"Level$i");
     echo fm_number1("",$D,'CompTarget','','',"CompTarget$i");
-    echo fm_number1("",$D,'Cost','','',"Cost$i");
+ //   echo fm_number1("",$D,'Cost','','',"Cost$i");
     echo fm_number1("",$D,'Props','','',"Props$i");
     echo "<td>" . fm_select($TechNames,$D,'BasedOn',1,'',"BasedOn$i");
   }
@@ -74,7 +74,7 @@
     echo fm_number1("",$D,'StandardCosts','','',"StandardCosts0");
     echo fm_number1("",$D,'Level','','',"Level0");
     echo fm_number1("",$D,'CompTarget','','',"CompTarget0");
-    echo fm_number1("",$D,'Cost','','',"Cost0");
+//    echo fm_number1("",$D,'Cost','','',"Cost0");
     echo fm_number1("",$D,'Props','','',"Props0");
     echo "<td>" . fm_select($TechNames,$D,'BasedOn',1,'',"BasedOn0");
   echo "</table></div>\n";

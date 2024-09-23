@@ -26,7 +26,7 @@ $IntructProps = [0,0,0,0,0,0,1,1,1,
                  1,1,1,1,1,1,
                  1,1,1,1,1,0,0,
                  1,1,0,0,1,0,1,1,
-                 0,1,0,0,0,0,1,2]; // 1 = DSC
+                 0,1,0,0,0,0,1,2]; // 1 = DSC, 2= Pc
 $InstrNotBy =   [0,0,1,0,0,1,0,
                  1,0,
                  0,0,0,0,
@@ -35,43 +35,45 @@ $InstrNotBy =   [0,0,1,0,0,1,0,
                  1,0,1,
                  0,1,0,1,1,1,
                  0,0,
-                 0,1,0,2,2,2,2];
+                 0,1,0,2,2,2,
+                 2];
 
 $Advance = ['','','Advanced ','Very Advanced ','Ultra Advanced ','Evolved '];
 $ValidMines = [0,1,0,1,0,1,0,0,0,0,0];
 $LinkStates = ['','Under Repair','In Safe Mode','Locked'];
+$LogistCost = [0,1,3,6,10,15,21,28,36,45,55,66,78,91];
 
 $ModFormulaes = [];
 $ModValues = [];
 
 define('THING_HAS_DISTRICTS',1);
-define('THING_HAS_MODULES',2);
-define('THING_HAS_LEVELS',4);
+define('THING_HAS_MODULES',  2);
+define('THING_HAS_LEVELS',   4);
 define('THING_HAS_SHIPMODULES',8);
-define('THING_HAS_GADGETS',16);
+define('THING_HAS_GADGETS',    16);
 define('THING_HAS_ARMYMODULES',32);
 define('THING_HAS_MILSHIPMODS',64);
 define('THING_HAS_CIVSHIPMODS',128);
-define('THING_CAN_MOVE',256);
-define('THING_CAN_BETRANSPORTED',512);
-define('THING_HAS_2_FACTIONS',1024);
-define('THING_HAS_MINERALS',2048);
-define('THING_CAN_BE_ADVANCED',4096);
-define('THING_CAN_BE_CREATED',8192);
-define('THING_NEEDS_CARGOSPACE',16384);
-define('THING_CANT_HAVENAMED',32768);
-define('THING_CAN_DO_PROJECTS',65536);
-define('THING_MOVES_DIRECTLY',131072);
-define('THING_MOVES_AFTER',262144);
-define('THING_HAS_HEALTH',524288);
-define('THING_HAS_CONTROL',1048576);
-define('THING_NEEDS_SUPPORT',2097152);
-define('THING_IS_HOSTILE',4194304);
-define('THING_CAN_BE_SPLATED',8388608);
-define('THING_LEAVES_DEBRIS',16777216);
-define('THING_IS_SMALL',33554432);
-define('THING_HAS_BLUEPRINTS',67108864);
-
+define('THING_CAN_MOVE',           0x100);
+define('THING_CAN_BETRANSPORTED',  0x200);
+define('THING_HAS_2_FACTIONS',     0x400);
+define('THING_HAS_MINERALS',       0x800);
+define('THING_CAN_BE_ADVANCED',   0x1000);
+define('THING_CAN_BE_CREATED',    0x2000);
+define('THING_NEEDS_CARGOSPACE',  0x4000);
+define('THING_CANT_HAVENAMED',    0x8000);
+define('THING_CAN_DO_PROJECTS',  0x10000);
+define('THING_MOVES_DIRECTLY',   0x20000);
+define('THING_MOVES_AFTER',      0x40000);
+define('THING_HAS_HEALTH',       0x80000);
+define('THING_HAS_CONTROL',     0x100000);
+define('THING_NEEDS_SUPPORT',   0x200000);
+define('THING_IS_HOSTILE',      0x400000);
+define('THING_CAN_BE_SPLATED',  0x800000);
+define('THING_LEAVES_DEBRIS',  0x1000000);
+define('THING_IS_SMALL',       0x2000000);
+define('THING_HAS_BLUEPRINTS', 0x4000000);
+define('THING_NEEDS_PLANET',   0x8000000);
 
 define('LINK_ON_BOARD',-1);
 define('LINK_BOARDING',-2);
@@ -655,6 +657,7 @@ function LogisticalSupport($Fid) {  // Note this sets the Economic rating of all
 
     $Prime = $Mine = 0;
     $District_Type = [];
+    $LogisticMult = Feature('LogisticMultiplier',5);
     foreach ($Dists as $D) {
       if ($D['Type'] == 0) continue;
       if ($DistTypes[$D['Type']]['Props'] &1) {
@@ -668,13 +671,13 @@ function LogisticalSupport($Fid) {  // Note this sets the Economic rating of all
         $Commerce+=$D['Number'];
         break;
       case 'Military' :
-        $Logistics[1]+= $D['Number']*3;
+        $Logistics[1]+= $D['Number']*$LogisticMult;
         break;
       case 'Shipyard' :
-        $Logistics[0]+= $D['Number']*3;
+        $Logistics[0]+= $D['Number']*$LogisticMult;
         break;
       case 'Intelligence' :
-        $Logistics[2]+= $D['Number']*3;
+        $Logistics[2]+= $D['Number']*$LogisticMult;
         break;
       case 'Mining':
         $Mine += $D['Number'];

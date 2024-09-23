@@ -116,6 +116,8 @@ function Show_Thing(&$T,$Force=0) {
     echo "<tr><td>Type:<td>" . fm_select($ttn,$T,'Type',1);
     if (($tprops & THING_HAS_LEVELS) || ($tprops & THING_CAN_BE_ADVANCED)) echo fm_number("Level",$T,'Level');
     echo fm_number('Priority',$T,'Priority');
+    if ($tprops & THING_NEEDS_PLANET)
+      echo fm_number1('Planet',$T,'Dist1') . ($T['Dist1']? "<td><a href=PlanEdit.php?id=" . $T['Dist1'] . ">Visit</a>":'');
 //    if (Access('God') echo fm_number1('Turn Moved',$T,
   } else {
     echo "<tr><td>Type:<td>" . ( (($tprops & THING_CAN_BE_ADVANCED) && $T['Level']>1)? $Advance[$T['Level']] : '' ) . $ttn[$T['Type']];
@@ -884,17 +886,25 @@ function Show_Thing(&$T,$Force=0) {
 
     case 'Make Asteroid Mine':
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Asteroid Mining') || empty($N) ) continue 2;
-      if (Get_Things_Cond(0,"Type=" . $TTNames['Asteroid Mine'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
+      $Asts = [];
       $Ps = Get_Planets($N['id']);
-      foreach ($Ps as $P) if ($P['Type'] == 3) break 2;
-      continue 2; // No field
+      foreach ($Ps as $P) if ($P['Type'] == 3) $Asts[]= $P;
+      if (empty($Asts)) continue 2;
+
+      $Exist = Get_Things_Cond(0,"Type=" . $TTNames['Asteroid Mine'] . " AND SystemId=" . $N['id'] . " AND BuildState=3");
+      if ($Exist || count($Asts) <= count($Exist)) continue 2;
+      break 2;
 
     case 'Make Advanced Asteroid Mine':
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Advanced Asteroid Mining') || empty($N) ) continue 2;
-      if (Get_Things_Cond(0,"Type=" . $TTNames['Asteroid Mine'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 AND Level>2")) continue 2; // Already have one
+      $Asts = [];
       $Ps = Get_Planets($N['id']);
-      foreach ($Ps as $P) if ($P['Type'] == 3) break 2;
-      continue 2; // No field
+      foreach ($Ps as $P) if ($P['Type'] == 3) $Asts[]= $P;
+      if (empty($Asts)) continue 2;
+
+      $Exist = Get_Things_Cond(0,"Type=" . $TTNames['Asteroid Mine'] . " AND SystemId=" . $N['id'] . " AND BuildState=3");
+      if ($Exist || count($Asts) <= count($Exist)) continue 2;
+      break 2;
 
     case 'Make Minefield':
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Mine Layers') || empty($N) ) continue 2;

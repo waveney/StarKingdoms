@@ -5,7 +5,7 @@
   include_once("PlayerLib.php");
   include_once("ThingLib.php");
 
-  global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$ThingInclrs,$GAMEID;
+  global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$ThingInclrs,$GAMEID,$LogistCost;
 
 //var_dump($_COOKIE,$_REQUEST);
   A_Check('Player');
@@ -273,9 +273,9 @@
     if (($T['BuildState'] == 2 || $T['BuildState'] == 3) && ($RowClass != 'Prisoner')) {
       $ELevel = $T['Level'];
       if ($HasHomeLogistics && ($T['SystemId'] == $FactionHome)) $ELevel /=2;
-      if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $ELevel;
-      if ($Props & THING_HAS_GADGETS) $Logistics[2] += $ELevel;
-      if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $ELevel;
+      if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $LogistCost[$ELevel];
+      if ($Props & THING_HAS_GADGETS) $Logistics[2] += $LogistCost[$ELevel];
+      if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $LogistCost[$ELevel];
     };
 
     foreach($Logistics as &$Log) $Log = floor($Log);

@@ -3,25 +3,25 @@
   include_once("GetPut.php");
   include_once("ThingLib.php");
   include_once("PlayerLib.php");
-  include_once("HomesLib.php");  
-  
+  include_once("HomesLib.php");
+
   dostaffhead("Move Things",["js/dropzone.js","css/dropzone.css" ]);
 
-  global $FACTION, $GAME, $GAMEID, $db, $Currencies;
+  global $FACTION, $GAME, $GAMEID, $db, $Currencies,$LogistCost;
   $Fid = $FACTION['id'];
   AddCurrencies();
-  
-  A_Check('Player');  
 
-  if (!Access('GM') && $FACTION['TurnState'] > 2) Player_Page();    
- 
+  A_Check('Player');
+
+  if (!Access('GM') && $FACTION['TurnState'] > 2) Player_Page();
+
   $Spend = 0;
   echo "<h1>Economy for this coming turn</h1>\n";
-  
+
   echo "<h2>Current Credits: &#8373;" . $FACTION['Credits'] . "</h2>";
-  
+
   echo "<h2>Projected Expentiture</h2>";
-  
+
   $Facts = Get_Factions();
   $Facts[-1]['Name'] = "Other";
   $Bs = Get_BankingFT($Fid,$GAME['Turn']);
@@ -53,37 +53,37 @@
       }
     }
   }
-  
+
   foreach($Bs as $B) {
     if ($B['What'] == 0) $Spend += $B['Amount'];
-    echo "Sending " . ($B['What'] == 0? ( Credit() . $B['Amount']) : ($B['Amount'] . " " . $Currencies[$B['What']] )) . 
+    echo "Sending " . ($B['What'] == 0? ( Credit() . $B['Amount']) : ($B['Amount'] . " " . $Currencies[$B['What']] )) .
       " for " . $B['YourRef'] . " to " . $Facts[$B['Recipient']]['Name'] . "<br>";
   }
 
   echo "<P>";
-  
+
   $Projects =  Get_Projects_Cond(" FactionId=$Fid AND TurnStart=" . $GAME['Turn'] . " AND Costs!=0 AND Status=0");
-  
+
   foreach($Projects as $P) {
     $Spend += $P['Costs'];
     echo "Starting " . $P['Name'] . " costs " . Credit() . $P['Costs'] . "<br>";
   }
-  
+
   echo "<P>";
-  
+
   $Things = Get_Things_Cond($Fid," Instruction!=0 AND Progress=0 AND InstCost!=0 ");
 
   $DeepSpace = 0;
   foreach($Things as $T) {
     $DeepSpace += $T['InstCost'];
   }
-  
+
   if ($DeepSpace) {
     echo "Starting " . count($Things) . " Deep Space Constructions, costing " . Credit() . $DeepSpace . "<p>";
     $Spend += $DeepSpace;
   }
-  
-  $res = $db->query("SELECT pt.* FROM ProjectTurn pt, Projects p WHERE pt.TurnNumber=". $GAME['Turn'] . 
+
+  $res = $db->query("SELECT pt.* FROM ProjectTurn pt, Projects p WHERE pt.TurnNumber=". $GAME['Turn'] .
        " AND pt.ProjectId=p.id AND p.FactionId=$Fid AND pt.Rush>0 AND p.TurnStart<=" . $GAME['Turn'] . " AND p.Status<2");
   if ($res) {
     while ($PT = $res->fetch_assoc()) {
@@ -96,7 +96,7 @@
       }
     }
   }
-  
+
   $AllLinks = Get_LinksGame();
   $LLevels = Get_LinkLevels();
   $Things = Get_Things_Cond($Fid,"LinkId>0 AND LinkCost>0 AND LinkPay>0");
@@ -104,31 +104,31 @@
   foreach($Things as $T) {
     if ($LLevels[$AllLinks[$T['LinkId']]['Level']]['Cost'] == 0) continue;
     $LinkCosts += $T['LinkCost'];
-  }  
+  }
   if ($LinkCosts) {
     echo "Using " . count($Things) . " " . Plural($Things,'Link','Link','Links') . " costing " . Credit() . $LinkCosts . "<p>";
     $Spend += $LinkCosts;
   }
-  
+
   $left = $FACTION['Credits'] - $Spend;
   echo "<h2>Total Expenditure " . Credit() . "$Spend leaving with " . Credit() . (($left < 0)? "<span class=red>$left</span>" : $left) . "</h2>";
   if ($left < 0) {
     echo "Some actions will fail - you need to rethink your turn.<p>The expected figure below assume you have 0 credits at this point.<p>\n";
     $Spend = $FACTION['Credits'];
   }
-/*  
+/*
   Current Credits
-  
+
   Projected expenditure on projects and rushing
 
   Payments (to players & arachni)
 
   Expected remaining
-*/  
+*/
   echo "<h2>Projected Income</h2>\n";
 
   $TTypes = Get_ThingTypes();
-  
+
     $Worlds = Get_Worlds($Fid);
     $EconVal = $EmbVal = $OtherEmbVal = $OutPVal = 0;
     $OutPosts = $AstMines = $AstVal = $Embassies = $OtherEmbs = $MineFields = 0;
@@ -137,11 +137,11 @@
       if (!$H) continue;
       $PH = Project_Home_Thing($H);
       if (!$PH) continue;
-      
+
       $Name = $PH['Name'];
       if (!$Name) continue;
       $ECon = $H['Economy'] = Recalc_Economic_Rating($H,$W,$Fid);
-      
+
       echo "$Name: Economic Value: $ECon ";
       if ($W['Revolt']) {
         $ECon = 0;
@@ -175,21 +175,26 @@
         $OutPosts ++;
         $OutPVal += $T['Level'];
         break;
-      
+
       case "Asteroid Mine":
         $AstMines ++;
-        $AstVal += $T['Level'];
+        if (Feature('AstmineDSC')) {
+          $AstVal += $T['Level'];
+        } else {
+          $Plan = Get_Planet($T['Dist1']);
+          $AstVal += $Plan['Minerals']*$T['Level'];
+        }
         break;
-      
+
       case "Embassy":
         $Embassies ++;
         $EmbVal += $T['Level'];
         break;
-      
+
       case "Minefield":
         $MineFields ++;
         break;
-      
+
       default:
         continue 2;
       }
@@ -200,48 +205,48 @@
       $OtherEmbs++;
       $OtherEmbVal += $OT['Level'];
     }
-    
+
     if ($OutPosts) {
       echo "Plus $OutPosts Outposts worth 2 each<br>\n";
       $EconVal += $OutPVal*2;
     }
     if ($AstMines) {
-      $AstVal *= Has_Tech($Fid,'Deep Space Construction');
+      if (Feature('AstmineDSC')) $AstVal *= Has_Tech($Fid,'Deep Space Construction');
       echo "Plus $AstMines Asteroid Mines worth a total of $AstVal<br>\n";
       $EconVal += $AstVal;
     }
     if ($Embassies) {
       echo "Plus $Embassies of your Embassies worth 1 each<br>\n";
-      $EconVal += $EmbVal;    
+      $EconVal += $EmbVal;
     }
     if ($OtherEmbs) {
       echo "Plus $OtherEmbs of other Factions Embassies worth 1 each<br>\n";
-      $EconVal += $OtherEmbVal;    
+      $EconVal += $OtherEmbVal;
     }
-    
+
     if ($MineFields) {
-      echo "Less $MineFields Minefields which cost 1 each<br>\n";    
+      echo "Less $MineFields Minefields which cost 1 each<br>\n";
       $EconVal -= $MineFields;
     }
-    
+
     echo "<p>";
-    $Logistics = [0,0,0]; // Ship, Army, Intelligence  
+    $Logistics = [0,0,0]; // Ship, Army, Intelligence
     foreach ($Things as $T) {
       if (empty($T['Type'])) continue;
       $Props = $TTypes[$T['Type']]['Properties'];
       if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
         if ($HasHomeLogistics && ($T['SystemId'] == $FactionHome)) $T['Level'] /=2;
-        if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $T['Level'];
-        if ($Props & THING_HAS_GADGETS) $Logistics[2] += $T['Level'];
-        if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $T['Level'];
+        if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $LogistCost[$T['Level']];
+        if ($Props & THING_HAS_GADGETS) $Logistics[2] += $LogistCost[$T['Level']];
+        if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $LogistCost[$T['Level']];
       };
     }
 
     foreach($Logistics as &$Log) $Log = floor($Log);
-  
+
     $LogAvail = LogisticalSupport($Fid);
     $LogCats = ['Ships','Armies','Agents'];
-    
+
     foreach ($LogCats as $i => $n) {
       if ($Logistics[$i]) {
         $pen = min(0,$LogAvail[$i]-$Logistics[$i]);
@@ -251,14 +256,14 @@
         }
       }
     }
-    
+
     echo "<p>Total Economy is $EconVal worth " . Credit() . $EconVal*10 . "<p>\n";
 
 //  echo "Estimated Income is : " . Income_Estimate($Fid);
-  
+
   $Final =  $FACTION['Credits'] - $Spend + $EconVal*10;
   echo "<h2>Expected End Credits is &#8373;" . ($Final < 0? "<span class=Red>$Final</span>":$Final) .  "</h2>";
-  
+
   if ($FACTION['PhysicsSP'] >0 || $FACTION['EngineeringSP'] > 0 || $FACTION['XenologySP'] > 0 ) {
     echo "<h2>You also have these Science points</h2>";
     if ($FACTION['PhysicsSP']) echo "Physics Science Points: " . $FACTION['PhysicsSP'] . "<br>";
@@ -269,7 +274,7 @@
   if (($Nam = GameFeature('Currency1')) && $FACTION['Currency1']) echo "$Nam: " . $FACTION['Currency1'] . "<br>";
   if (($Nam = GameFeature('Currency2')) && $FACTION['Currency2']) echo "$Nam: " . $FACTION['Currency2'] . "<br>";
   if (($Nam = GameFeature('Currency3')) && $FACTION['Currency3']) echo "$Nam: " . $FACTION['Currency3'] . "<br>";
-  
+
   dotail();
-  
+
 ?>
