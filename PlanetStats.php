@@ -24,6 +24,7 @@
       }
       $PTD[$pt]['Count']++;
       $PTD[$pt]['Where'] .= ' <a href=SysEdit.php?R=' . $N['Ref'] . ">" . $N['Ref'] . "</a> ";
+      if ($P['Minerals']) $PTD[$pt]['Where'] .= '(' . $P['Minerals'] . ')';
       $Ms = Get_Moons($P['id']);
       foreach ($Ms as $M) {
         $pt = $M['Type'];

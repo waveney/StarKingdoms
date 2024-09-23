@@ -229,7 +229,7 @@ var Dropzone = function (_Emitter) {
 
         /**
          * The name of the file param that gets transferred.
-         * **NOTE**: If you have the option  `uploadMultiple` set to `true`, then
+         * n ot e  If you have the option  `uploadMultiple` set to `true`, then
          * Dropzone will append `[]` to the name.
          */
         paramName: "file",
