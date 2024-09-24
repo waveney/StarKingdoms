@@ -134,7 +134,7 @@
 
       if ($Recalc != $H['Economy']) {
         echo "ECONOMY ERROR - SHOULD BE $Recalc <br>";
-        var_dump($H,$W,$Fid);
+        var_dump($H,$W,$Fid);  //OK
       }
     }
 

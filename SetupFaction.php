@@ -501,6 +501,8 @@ function SetupStage8() {
   $PTypes = Get_PlanetTypes();
   $DTypes = Get_DistrictTypes();
 
+  $F['Horizon'] = 1;
+  Put_Faction($F);
   echo "<form method=post>";
 
   echo "<h1>Stage 8/" . STAGES . " - Starting Ships and $ARMY" ."s</h1>";

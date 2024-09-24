@@ -880,7 +880,7 @@ function Has_Tech($fid,$name) {
   global $db,$GAME;
   if (empty($fid)) {
     if (Access('God') && !isset($_REQUEST['FORCE'])) {
-      var_dump($fid,$name);
+      var_dump($fid,$name); //OK
       debug_print_backtrace();
     }
     return 0;

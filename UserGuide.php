@@ -4,15 +4,17 @@
   global $FACTION,$GAMEID,$USER;
   include_once("GetPut.php");
   include_once("PlayerLib.php");
-  
+
   dostaffhead("User Guide");
-  
+
 ?>
 <div style=max-width:800>
 <H1>User Guide - Players</h1>
 
+This is terribly out of date.  It wasn't up to date by the end of last game either.  You have been warned.<p>
+
 <h2>Basic Principles</h2>
-Players don't need to login.  Once you have followed your faction's link a session cookie is used to identify you.<p>
+Once you have logged in you can access any game of SK in the system.  I make no promisses that old games still work.  (I now their are issues)<p>
 
 There is far more than I describe here, but this is what you can do now/near term.<p>
 
@@ -21,11 +23,18 @@ Anywhere there is a table, you can click on a column to sort by that column.  Cl
 <h2>Player States</h2>
 There are four states:
 <ul>
-<li>Setup - what it says.  Not yet written
+<li>Setup - what it says.
 <li>Turn Planning - Do and see everything
 <li>Turn Submitted - You think you are ready.  Players can't change anything in this state, but you can easily revert to Turn Planning.
 <li>Turn Being Processed - GM's lockdown.  Most features not accessible.
 </ul>
+
+<h2>Setup</h2>
+The tool will take you through many stages, some simple some more complex.  Some may not appear to do anything, but may be setting data up for you
+behind the scenes.  Once you have done a stage you can go backwards and forwards changing things and/or re-running the tool.<p>
+
+Once you have reached the end you can plan things (ships, detachments and named characters) - these will be automatically created for you once the game acually starts.
+The list things tool is avilable, but not other tools listed below.<p>
 
 <h2>Maps</h2>
 See the node map of the systems you know about and links connecting them.<p>
@@ -85,7 +94,7 @@ The display sometimes gets confused. If that happens go to your Faction Menu and
 
 Note: This does not <b>YET</b> handle techs, districts etc changing over the period you are planning projects.<p>
 
-On the right is a ROUGH idea to your forward credits.  It does not allow for other uses of credits (such as for Deep space and paying other factions).  
+On the right is a ROUGH idea to your forward credits.  It does not allow for other uses of credits (such as for Deep space and paying other factions).
 It does not allow for income from other factions and the building of districts, thing and technologies that gain you income.<p>
 
 
@@ -179,14 +188,14 @@ Ask, I may not have realised you want to do it.<p>
 Warning - I have a terrible record of saying no, then doing it a few hours later.<p>
 
 <h1>User Guide - GM</h1>
-GM's do need to log in.  They have lots more features, and can also act as Players as well.<p>
+They have lots more features, and can also act as Players as well.<p>
 
-It is hypothetically possible for a player in one game to be a GM in another (not tested).<p>
+It is hypothetically possible for a player in one game to be a GM in another.<p>
 
 Most User Guide to be written for this<p>
 
 <h1>Technical bits - if you are interested</h1>
-Mostly written in php (20K lines), some javascript (1700 lines), some css.  About 44 tables at time of writting of this paragraph.<p>
+Mostly written in php (30K lines), some javascript (5000 lines), some css.  About 61 tables at time of writting of this paragraph.<p>
 
 Graphics by GraphViz.<p>
 Uses the star system generator at <a href=https://donjon.bin.sh/scifi/system/index.cgi>https://donjon.bin.sh/scifi/system/index.cgi</a> to initially populate the map.<p>

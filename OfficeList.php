@@ -41,6 +41,7 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Organisation</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Whose</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>World</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Number</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
   echo "</thead><tbody>";
 
@@ -50,13 +51,14 @@
     echo "<td>" . fm_select($OrgNames,$O,'Organisation',1,'',"Offices:Organisation:$i");
     echo "<td>" . fm_select($FactNames,$O,'Whose',1,'',"Offices:Whose:$i");
     echo fm_number1('',$O,'World','','',"Offices:World:$i");
+    echo fm_number1('',$O,'Number','','',"Offices:Number:$i");
     echo fm_text1('',$O,'Name',4,'','',"Offices:Name:$i");
   }
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "</table>";
  // echo "<h2><input type=submit name=Update value='Add New Office'></h2>";
 
-  echo "GM Note: The count of offices is reset next time <b>Rebuild list of Worlds and colonies</b> is run.<p>";
+  echo "GM Note: The count of offices and the indications of type etc are reset next time <b>Rebuild list of Worlds and colonies</b> is run.<p>";
 
   echo "</form></div>";
   dotail();

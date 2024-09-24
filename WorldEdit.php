@@ -217,7 +217,7 @@
       $OrgTypes = Get_OrgTypes();
       $Orgs = Gen_Get_Cond('Organisations',"GameId=$GAMEID");
       foreach ($Branches as $bi=>$B) {
-        var_dump($B);
+ //       var_dump($B);
         if ($GM || ($B['Whose']== $Fid) || (($BTypes[$B['Type']]['Props']&1)==0)) {
           echo "A <b>" . $BTypes[$B['Type']]['Name'] . "</b> of the <b>" . $Orgs[$B['Organisation']]['Name'] .
                "</b> ( " . $OrgTypes[$Orgs[$B['Organisation']]['OrgType']]['Name'] . " ) - " .

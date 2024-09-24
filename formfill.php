@@ -337,7 +337,7 @@
         return Put_World($N);
       }
       echo "ERROR";
-      var_dump($_REQUEST);
+      var_dump($_REQUEST); //OK
       exit;
     } else if ((preg_match('/Dist:(\w*):(\d*)/',$field,$mtch)?true:false)) {
       $N = Get_District($mtch[2]);

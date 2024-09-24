@@ -99,15 +99,16 @@ function Player_Page() {
   echo "The only current actions are:";
   echo "<ul>";
 
-  echo "<p><li><a href=UserGuide.php>User Guide</a><p>\n";
+  echo "<p><li><a href=UserGuide.php>User Guide</a> - Warning this is VERY OUT OF DATE...<p>\n";
   if ($GM) echo "<li>GM: <a href=TechShow.php?SETUP&id=$Fid>Edit Technologies</a>\n";
 
   switch ($TState) {
   case 'Setup':
     echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";
     echo "<li><a href=SetupFaction.php>Faction Setup<a>\n";
-    echo "<li><a href=PThingList.php>List of Things</a> - List of Things (Ships, Armies, Space stations etc)";
-    echo "<li><a href=ThingPlan.php>Plan a Thing</a> - Planning Things (Ships, Armies, Space stations etc)";
+    if (!$GM && $FACTION['Horizon'] == 0) break; // This prevents access to things until setup completed
+    echo "<li><a href=PThingList.php>List of Things</a> - List of Things (Ships, Armies, Named Characters, Space stations etc)";
+    echo "<li><a href=ThingPlan.php>Plan a Thing</a> - Planning Things (Ships, Armies, Named Characters, Space stations etc)";
     if (!Access('God')) break;
 
   case 'Frozen':
@@ -129,11 +130,12 @@ function Player_Page() {
     echo "<li><a href=PAnomalyList.php>Anomalies that have been seen</a><p>\n";
     echo "<li><a href=ProjDisp.php>Projects</a>\n";
     if (Feature('Orgs')) echo "<li><a href=OpsDisp.php>Operations</a>\n";
-    echo "<li><a href=PThingList.php>List of Things</a> - List of Things (Ships, Armies, Agents, Space stations etc)";
-     if ($PlayerState[$FACTION['TurnState']] != 'Frozen') echo "<li><a href=ThingPlan.php>Plan a Thing</a> - Planning Things (Ships, Armies, Agents, Space stations etc)";
+    echo "<li><a href=PThingList.php>List of Things</a> - List of Things (Ships, Armies, Named Characters, Space stations etc)";
+    if ($PlayerState[$FACTION['TurnState']] != 'Frozen')
+       echo "<li><a href=ThingPlan.php>Plan a Thing</a> - Planning Things (Ships, Armies, Named Characters, Space stations etc)";
     if ($FACTION['PhysicsSP'] >=5 || $FACTION['EngineeringSP'] >=5 || $FACTION['XenologySP'] >=5 ) echo "<li><a href=SciencePoints.php>Spend Science Points</a>";
     echo "<P><li><a href=Economy.php>Economy</a>";
-    echo "<li><a href=Banking.php>Banking</a> - Sending credits to others and statements<p>";
+    echo "<li><a href=Banking.php>Banking</a><p>";
     echo "<li><a href=PlayerTurnTxt.php>Turn Actions Automated Response Text</a>";
 //    echo "<li><a href=PlayerTurn.php>Submit Player Turn text</a> - For now a link to a Google Docs file.<p>\n";
     if ($PlayerState[$FACTION['TurnState']] == 'Turn Planning') {

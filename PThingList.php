@@ -5,8 +5,9 @@
   include_once("PlayerLib.php");
   include_once("ThingLib.php");
 
-  global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$ThingInclrs,$GAMEID,$LogistCost;
+  global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$ThingInclrs,$GAMEID,$LogistCost,$ARMY;
 
+  $Fid = 0;
 //var_dump($_COOKIE,$_REQUEST);
   A_Check('Player');
   if (Access('Player')) {
@@ -175,7 +176,7 @@
 
   echo "<h1>Things</h1>";
 
-  $ShowCats = ['All','Ships','Armies','Agents','Chars', 'Other'];
+  $ShowCats = ['All','Ships',$ARMY,'','Chars', 'Other'];
   if (!empty($FACTION['HasPrisoners'])) $ShowCats[] = 'Prisoners';
   $Show['ThingShow'] = ($Faction[$GM?'GMThingType':'ThingType'] ?? 0);
   if (Feature('Shakedown')) {

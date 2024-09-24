@@ -175,6 +175,8 @@
       $LimA = Has_Tech($Fid,'Military Theory');
       $LimS = Has_Tech($Fid,'Ship Construction');
       $BPs = BluePrintList(max($LimA,$LimS)+1,'',0);
+
+ //     var_dump($BPs);
       $Direct = [];
 //      var_dump($ThingTypeNames);
       foreach($ThingTypeNames as $TT=>$Name) {

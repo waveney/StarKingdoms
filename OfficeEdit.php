@@ -36,6 +36,7 @@ if (isset($_REQUEST['Action'])) {
 
     case 'New Here':
       $Oid = $_REQUEST['AutoRefOffices'];
+      $B['Number'] = 1;
       $B = Gen_Get('Offices',$Oid);
       unset($B['id']);
       $Oid = Gen_Put('Offices',$B);
@@ -43,6 +44,7 @@ if (isset($_REQUEST['Action'])) {
 
     case 'Create':
       $_POST['GameId'] = $GAMEID;
+      $_Post['Number'] = 1;
       $Oid = insert_db_post('Offices',$B);
       break;
 

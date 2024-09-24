@@ -325,7 +325,7 @@ function Get_Valid_Modules(&$T,$Who=0) {
 function Max_Modules(&$T) {
   if (empty($T['Type'])) return 0;
   $ThingTypes = Get_ThingTypes();
-  $TTs = $ThingTypes[$T['Type']];
+  $TTs = ($ThingTypes[$T['Type']]??0);
   if (!empty($TTs['Properties']) && ($TTs['Properties'] & THING_HAS_MODULES)) {
     if (Feature('StarCluster')) {
       $v = [0,4,12,24,40,60,84,112,144,180,220][$T['Level']];

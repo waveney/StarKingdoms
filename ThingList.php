@@ -7,7 +7,7 @@
 
   dostaffhead("List Things",["js/ProjectTools.js"]," onload=ListThingSetup(0,1,0,0)");
 
-  global $db, $GAME,$BuildState,$ThingInstrs,$GAMEID;
+  global $db, $GAME,$BuildState,$ThingInstrs,$GAMEID,$ARMY;
   $Blue = isset($_REQUEST['Blue']);
 
   $Systems = Get_SystemRefs();
@@ -37,7 +37,7 @@
     dotail();
   }
 
-  $ShowCats = ['All','Ships','Armies','Agents','Chars', 'Other'];
+  $ShowCats = ['All','Ships',$ARMY,'','Chars', 'Other'];
   $Show['ThingShow'] = 0;
   $BuildCats = ['All','Plan','Building','Shakedown','Complete','Other'];
   $Build['BuildShow'] = 0;
@@ -90,15 +90,15 @@
         $Loc = $Locs[$T['WithinSysLoc']];
       }
     }
-
-    $Props = $ThingTypes[$T['Type']]['Properties'];
+//var_dump($T);
+    $Props = ($ThingTypes[$T['Type']]['Properties']??0);
     if ($Props & THING_HAS_SHIPMODULES) {
       $RowClass = 'Ship';
     } else  if ($Props & THING_HAS_ARMYMODULES) {
       $RowClass = 'Army';
     } else  if ($Props & THING_HAS_GADGETS) {
       $RowClass = 'Agent';
-    } else  if ($ThingTypes[$T['Type']]['Name'] == 'Named Character') {
+    } else  if (($ThingTypes[$T['Type']]['Name']??'') == 'Named Character') {
       $RowClass = 'Chars';
     } else {
       $RowClass = 'Other';
@@ -109,7 +109,7 @@
 
     echo "<tr class='ThingList Thing_$RowClass Thing_Build$BuildClass'><td><a href=ThingEdit.php?id=$tid>$tid</a>";
 
-    echo "<td>" . $ThingTypes[$T['Type']]['Name'] . "<td>" . $T['Level'];
+    echo "<td>" . ($ThingTypes[$T['Type']]['Name']??'Unknown') . "<td>" . $T['Level'];
     echo "<td><center>" . (($Props & THING_HAS_HEALTH)? $T['CurHealth'] . ' / ' . $T['OrigHealth'] : "-");
     if ($T['LinkId'] >= 0 || $T['LinkId'] == -2 || $T['LinkId'] == -4 || ($T['LinkId'] == -6)) {
       echo "<td><a href=ThingList.php?AT=$Ref>$Ref</a><td>$Loc";
