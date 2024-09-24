@@ -101,7 +101,7 @@ function SetupStage2() {
   foreach ($CoreTechs as $Ti=>$CT) {
 //    var_dump($Ti, $CT['Name'],$CTechs[$Ti]);
     if (!isset($CTechs[$Ti])) {
-      $Tec = ['FactionId'=> $Fid, 'Tech_Id'=>$Ti, 'Level' =>1];
+      $Tec = ['Faction_Id'=> $Fid, 'Tech_Id'=>$Ti, 'Level' =>1];
       Put_Faction_Tech($Tec);
       $CTechs[$Ti] = $Tec;
 //      var_dump($CT['Name'],$Tec);
