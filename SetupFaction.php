@@ -501,6 +501,9 @@ function SetupStage7() {
   echo "<h1>Stage 7/" . STAGES . " - Other Planets</h1>";
   echo "This is optional, move on if you want to.<p>";
 
+  echo "In your system there are a random number of Planets (With boring names I, II , IV etc).  " .
+       "You have already named one at Stage 3.  Here you can name them all - its just flavour text.<p>";
+
   $Wid = $FACTION['HomeWorld'];
   $World = Get_World($Wid);
   if ($World['ThingType'] == 1) {// Only Planets for now
