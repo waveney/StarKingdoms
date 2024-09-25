@@ -1,4 +1,5 @@
 <?php
+include_once("Profile.php");
 
 // Things far handling projects
 
@@ -19,6 +20,7 @@ function Rush_Cost($who) {
 global $Project_Status,$Project_Statuses;
 $Project_Status = [0=>'Planned',1=>'Started', 2=>'Finished',3=>'Cancelled', 4=>'On Hold', 5=>'Not Started'];
 $Project_Statuses = array_flip($Project_Status);
+prof_flag("projlib1");
 
 function  Where_Is_Home($PH,$Set=0) {
   $Home = Get_ProjectHome($PH);
@@ -50,6 +52,7 @@ function  Where_Is_Home($PH,$Set=0) {
     return 0;
   }
 }
+prof_flag("projlib2");
 
 function Project_Finished(&$P,$Turn) {  // CODE ON HOLD
   global $GAME,$GAMEID,$ARMY;
@@ -146,6 +149,7 @@ function Project_Finished(&$P,$Turn) {  // CODE ON HOLD
 
     }
 }
+prof_flag("projlib3");
 
 function Abandon_Project(&$P) {
   global $Project_Status, $Project_Statuses;
@@ -153,5 +157,6 @@ function Abandon_Project(&$P) {
   $P['Status'] = $Project_Statuses['Cancelled'];
   Put_Project($P);
 }
+prof_flag("projlib4");
 
 ?>
