@@ -1,16 +1,21 @@
 <?php
 
 // Plan a thing type - Ship, Army, Agent, Other
+include_once("Profile.php");
+prof_flag("Start");
 
   include_once("sk.php");
+  prof_flag("sk");
   include_once("GetPut.php");
+  prof_flag("getput");
   include_once("ThingLib.php");
+  prof_flag("tlib");
   include_once("PlayerLib.php");
+  prof_flag("plib");
   include_once("ProjLib.php");
-  include_once("Profile.php");
+  prof_flag("projlib");
 
   global $FACTION,$GAME,$ARMY;
-  prof_flag("Start");
   A_Check('Player');
   $Fid = 0;
   if (Access('Player')) {
