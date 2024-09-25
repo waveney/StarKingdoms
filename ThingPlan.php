@@ -1,19 +1,14 @@
 <?php
 
 // Plan a thing type - Ship, Army, Agent, Other
-include_once("Profile.php");
-prof_flag("Start");
+//include_once("Profile.php");
+//prof_flag("Start");
 
   include_once("sk.php");
-  prof_flag("sk");
   include_once("GetPut.php");
-  prof_flag("getput");
   include_once("ThingLib.php");
-  prof_flag("tlib");
   include_once("PlayerLib.php");
-  prof_flag("plib");
   include_once("ProjLib.php");
-  prof_flag("projlib");
 
   global $FACTION,$GAME,$ARMY;
   A_Check('Player');
@@ -37,7 +32,7 @@ prof_flag("Start");
     }
     if (isset($Fid)) $FACTION = $Faction = Get_Faction($Fid);
   }
-  prof_flag("Fid");
+//  prof_flag("Fid");
 
 
   $Blue = Feature('BluePrints');
@@ -62,7 +57,7 @@ prof_flag("Start");
 // var_dump($_REQUEST);
   if (!$FACTION)  Error_Page("Sorry you need a Faction to access this");
   //  var_dump($Fid);
-  prof_flag("b4 action");
+//  prof_flag("b4 action");
 
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
@@ -87,7 +82,7 @@ prof_flag("Start");
 
        echo "<h1>Deleted</h1>";
        echo "<h2><a href=PThingList.php>Back to Thing list</a></h2>";
-       if (Access('God')) prof_print();
+ //      if (Access('God')) prof_print();
        dotail();
 
 
@@ -138,7 +133,7 @@ prof_flag("Start");
       break;
     }
   }
-  prof_flag("b4head");
+//  prof_flag("b4head");
 
   dostaffhead("Plan a thing",["js/ProjectTools.js", "js/dropzone.js","css/dropzone.css" ]);
 
@@ -164,7 +159,7 @@ prof_flag("Start");
     Calc_Scanners($T);
   }
 // var_dump($ThingTypeNames);exit;
-  prof_flag('Heading');
+//  prof_flag('Heading');
   echo "<h1>Plan a Thing</h1>";
   echo "This is to design or modify a ship/$ARMY etc to later build if you want to.";
 
@@ -180,7 +175,6 @@ prof_flag("Start");
       if (!empty($ThingTypeNames[$TT['Type']])) $FList[$TT['id']] = $TT['Name'] . " a level " . $TT['Level'] . " " . $ThingTypeNames[$TT['Type']];
     }
 
-    prof_flag('Things');
     echo fm_select($FList,null,'Design',1,' onchange=this.form.submit()');
     echo "<br>If it is in planning, it will be selected, otherwise it will copy the design.<p>\n";
 
@@ -189,7 +183,6 @@ prof_flag("Start");
       $LimA = Has_Tech($Fid,'Military Theory');
       $LimS = Has_Tech($Fid,'Ship Construction');
       $BPs = BluePrintList(max($LimA,$LimS)+1,'',0);
-      prof_flag('BPs');
 
  //     var_dump($BPs);
       $Direct = [];
@@ -201,7 +194,6 @@ prof_flag("Start");
           $Direct[] = $TT;
         }
       }
-      prof_flag('Given BP options');
 
       if ($Direct) {
         echo "<p><h2>OR Plan A:</h2>";
@@ -209,9 +201,9 @@ prof_flag("Start");
           echo "<button type=submit name=Create value=$di>" .  $ThingTypeNames[$di] . "</button><br>";
         }
       }
-      prof_flag('Finish');
+//      prof_flag('Finish');
 
-      if (Access('God')) prof_print();
+//      if (Access('God')) prof_print();
       dotail();
     } else {
       echo "<h2>OR start with Classes:</h2>";
@@ -398,7 +390,7 @@ prof_flag("Start");
     }
   } else {
     echo "</table></form>";
-    if (Access('God')) prof_print();
+//    if (Access('God')) prof_print();
     dotail();
   }
 
@@ -430,7 +422,7 @@ prof_flag("Start");
     echo "<h2 class=Err>Warning.  If you try and make an Invalid thing. The action will fail</h2>\n";
   }
   echo "</form>";
-  if (Access('God')) prof_print();
+//  if (Access('God')) prof_print();
   dotail();
   // type, Level
 
