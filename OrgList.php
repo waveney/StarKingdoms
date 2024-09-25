@@ -18,7 +18,7 @@
     }
   }
   if ($GM = Access('GM') ) {
-    A_Check('GM');
+    Recalc_Offices();
     if (isset( $_REQUEST['F'])) {
       $Fid = $_REQUEST['F'];
     } else if (isset( $_REQUEST['f'])) {

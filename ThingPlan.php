@@ -7,8 +7,10 @@
   include_once("ThingLib.php");
   include_once("PlayerLib.php");
   include_once("ProjLib.php");
+  include_once("Profile.php");
 
   global $FACTION,$GAME,$ARMY;
+  prof_flag("Start");
   A_Check('Player');
   $Fid = 0;
   if (Access('Player')) {
@@ -78,6 +80,7 @@
 
        echo "<h1>Deleted</h1>";
        echo "<h2><a href=PThingList.php>Back to Thing list</a></h2>";
+       if (Access('God')) prof_print();
        dotail();
 
 
@@ -153,6 +156,7 @@
     Calc_Scanners($T);
   }
 // var_dump($ThingTypeNames);exit;
+  prof_flag('Heading');
   echo "<h1>Plan a Thing</h1>";
   echo "This is to design or modify a ship/$ARMY etc to later build if you want to.";
 
@@ -167,6 +171,8 @@
     foreach ($Things as $TT) {
       if (!empty($ThingTypeNames[$TT['Type']])) $FList[$TT['id']] = $TT['Name'] . " a level " . $TT['Level'] . " " . $ThingTypeNames[$TT['Type']];
     }
+
+    prof_flag('Things');
     echo fm_select($FList,null,'Design',1,' onchange=this.form.submit()');
     echo "<br>If it is in planning, it will be selected, otherwise it will copy the design.<p>\n";
 
@@ -175,6 +181,7 @@
       $LimA = Has_Tech($Fid,'Military Theory');
       $LimS = Has_Tech($Fid,'Ship Construction');
       $BPs = BluePrintList(max($LimA,$LimS)+1,'',0);
+      prof_flag('BPs');
 
  //     var_dump($BPs);
       $Direct = [];
@@ -186,6 +193,7 @@
           $Direct[] = $TT;
         }
       }
+      prof_flag('Given BP options');
 
       if ($Direct) {
         echo "<p><h2>OR Plan A:</h2>";
@@ -193,6 +201,9 @@
           echo "<button type=submit name=Create value=$di>" .  $ThingTypeNames[$di] . "</button><br>";
         }
       }
+      prof_flag('Finish');
+
+      if (Access('God')) prof_print();
       dotail();
     } else {
       echo "<h2>OR start with Classes:</h2>";
@@ -379,6 +390,7 @@
     }
   } else {
     echo "</table></form>";
+    if (Access('God')) prof_print();
     dotail();
   }
 
@@ -410,6 +422,7 @@
     echo "<h2 class=Err>Warning.  If you try and make an Invalid thing. The action will fail</h2>\n";
   }
   echo "</form>";
+  if (Access('God')) prof_print();
   dotail();
   // type, Level
 

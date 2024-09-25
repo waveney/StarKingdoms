@@ -1228,7 +1228,7 @@ function BluePrintList($Lvl=10000,$Props='',$WithISA=1) {
       };
     }
   } else {
-    $BPs = Gen_Get_Cond('Things',"GameId=$GAMEID AND Level<$Lvl AND BluePrint<0");
+    $BPs = Gen_Get_Cond('Things',"GameId=$GAMEID AND Level<=$Lvl AND BluePrint<0");
     $Fid = ($FACTION['id']??0);
     foreach($BPs as $i=>$BP) {
       if (($BP['GatedOn']??0) && !eval("return " . $BP['GatedOn'] . ";" )) continue;
