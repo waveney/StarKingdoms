@@ -120,7 +120,7 @@ function Login($errmsg='', $message='') {
 // debug_print_backtrace();exit;
   if (!empty($USER) && (($GAME['FactionLevel']??0) > $Access_Type['Participant'])) include_once ("Staff.php");
 
-  dostaffhead("Staff Login");
+  dostaffhead("Login");
 
   if ($errmsg) echo "<h2 class=Err>$errmsg</h2>";
   if ($message) echo "<h2>$message</h2>";

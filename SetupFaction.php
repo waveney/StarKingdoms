@@ -51,7 +51,9 @@ function SetupStage1() {
   $DTypes = Get_DistrictTypes();
   $SCredits = Feature('StartCredits',450);
 
-  echo "<h1>Stage 1/" . STAGES . " - Your Faction</h1><table border>";
+  echo "<h1>Stage 1/" . STAGES . " - Your Faction</h1>";
+  echo "Note this is asking for the two Faction traits, your planetary trait comes later.<p>";
+  echo "<table border>";
   echo "<form method=post>";
   Register_AutoUpdate('Faction', $Fid);
   echo "<tr>" . fm_text('Faction Name',$F,'Name',2);

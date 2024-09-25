@@ -352,6 +352,9 @@
   });
 
   $BPlanCon = Has_Tech($Fid,3);
+  $HWorld = Get_World($FACTION['HomeWorld']);
+  $HWorldHome = $HWorld['Home'];
+
   $PHx = 1;
   $Dis = [];
   $FirstHome = 0;
@@ -376,7 +379,10 @@
 
   foreach ($Homes as &$H) {
     $PlanCon = $BPlanCon;
+    // Homeworld +1, bio =, desolate -2, other -1
     $Hi = $H['id'];
+
+    if ($Hi == $HWorldHome) $PlanCon++;
     $NoC = 0;
     switch ($H['ThingType']) {
     case 1: // Planet
@@ -407,7 +413,10 @@
       break;
     }
 // if($Hi==199) echo "Here";
-    if (($H['ThingType'] != 3) && ($PH['Type'] != $Faction['Biosphere']) && ($PH['Type'] != $Faction['Biosphere2']) && ($PH['Type'] != $Faction['Biosphere3'])) $PlanCon--;
+    if ($PH['Type'] == 4) {
+      $PlanCon-=2;
+    } else if (($H['ThingType'] != 3) && ($PH['Type'] != $Faction['Biosphere']) &&
+       ($PH['Type'] != $Faction['Biosphere2']) && ($PH['Type'] != $Faction['Biosphere3'])) $PlanCon--;
     //TODO Construction and Districts...
 
     if ($NoC != 1 ) $Dists[] = ['HostType'=>-1, 'HostId' => $PH['id'], 'Type'=> -1, 'Number'=>0, 'id'=>-$PH['id']];

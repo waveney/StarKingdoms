@@ -373,10 +373,10 @@
         $N = Gen_Get($type,$mtch[2]);
         $N[$mtch[1]] = $Value;
         echo Gen_Put($type,$N);
+        exit;
       }
     }
-    exit;
-
+    // Drop through deliberate
   default:
     break;
   }
