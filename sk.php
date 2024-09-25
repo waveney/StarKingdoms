@@ -406,7 +406,7 @@ function LogEverything($Msg='') {
   global $FACTION,$USER,$GAMEID;
   $req_dump = date("D d H:i:s ") . $_SERVER['SCRIPT_FILENAME'] . " " . print_r($_REQUEST, TRUE) . print_r($_COOKIE, TRUE);
   if (isset($FACTION['Name'])) $req_dump .= "Faction: " . $FACTION['Name'] . "\n";
-  if (isset($USER['Login'])) $req_dump .= "GM: " . $USER['Login'] . "\n";
+  if (isset($USER['Login'])) $req_dump .= "Who: " . $USER['Login'] . "\n";
 
   if (empty($GAMEID)) {
     $fp = fopen('cache/requestX.log', 'a');

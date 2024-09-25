@@ -627,6 +627,7 @@ function LogisticalSupport($Fid) {  // Note this sets the Economic rating of all
 
   $ThingTypes = Get_ThingTypes();
   $DistTypes = Get_DistrictTypes();
+  $Dists = [];
 
   foreach($PHomes as $H) {
 //    $PH['Economy'] = 0;

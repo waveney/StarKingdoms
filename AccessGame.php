@@ -30,7 +30,7 @@ $_COOKIE['SKG'] = $Gid;
 if ($Person['Type'] == 0) {
   $User = $USER['Login'];
   $FACTION = Gen_Get_Cond1('Factions',"GameId=$Gid AND Player='$User'");
-  if (!$FACTION && $Game['Status']) {
+  if (!$FACTION) {
     Error_Page("You don't have a faction in that game");
   }
   $FID = $FACTION['id'];
