@@ -4,6 +4,7 @@
   include_once("SystemLib.php");
   include_once("PlayerLib.php");
   include_once("ThingLib.php");
+  include_once("OrgLib.php");
 
 
   global $FACTION,$GAMEID,$ARMY;
@@ -59,8 +60,9 @@ function SetupStage1() {
   echo "<tr>" . fm_text('Faction Name',$F,'Name',2);
   echo "<tr>" . fm_text('Player Name',$F,'Player',2);
 
-  $PTs = Get_PlanetTypeNames();
-  $PTs[0] = 'None';
+  $PTs = [];
+  foreach ($PTypes as $Pid=>$PT) if ($PT['Hospitable'] == 1) $PTs[$Pid] = $PT['Name'];
+
   echo "<tr><td >Native BioSphere<td colspan=2 >" . fm_select($PTs,$F,'Biosphere',1);
 
   echo "<tr>" . fm_text('Adjective Name',$F,'Adjective',2) . "<td>To refer to your ships etc rather than your faction name - optional";
@@ -76,7 +78,7 @@ function SetupStage1() {
 
   echo "</table><p>";
 
-  echo "<h2><a href=SetupFaction.php?STAGE=2>Forward to stage 2 - Technologies</a></h2>";
+  echo "<h2><a href=SetupFaction.php?STAGE=2 style='background:lightgreen'>Forward to stage 2 - Technologies</a></h2>";
 
   dotail();
 }
@@ -111,8 +113,8 @@ function SetupStage2() {
     Show_Tech($CT,$CTNs,$F,$CTechs,1,1,0,3);
   }
 
-  echo "<h2><a href=SetupFaction.php?STAGE=1>Back to stage 1 - Your Faction</a> - " .
-       "<a href=SetupFaction.php?STAGE=3>Forward to stage 3 - Your World</a></h2>";
+  echo "<h2><a href=SetupFaction.php?STAGE=1 style='background:ivory'>Back to stage 1 - Your Faction</a> - " .
+       "<a href=SetupFaction.php?STAGE=3 style='background:lightgreen'>Forward to stage 3 - Your World</a></h2>";
   dotail();
 }
 
@@ -325,8 +327,9 @@ function SetupStage3() {
     echo "<h2 class=Err>Your home's biosphere does not match your own.  If the error is the biosphere of your home world, contact the GMs</h2>";
 
 
-  echo "<h2><a href=SetupFaction.php?STAGE=2>Back to stage 2 - Your Technologies</a> - " .
-    "<a href=SetupFaction.php?STAGE=4>Forward to stage 4 - Social Principles</a></h2>";
+  echo "<h2><a href=SetupFaction.php?STAGE=1 style='background:ivory'>Back to stage 1 - Your Faction</a> - " .
+    "<a href=SetupFaction.php?STAGE=2 style='background:lightblue'>Back to stage 2 - Your Technologies</a> - " .
+    "<a href=SetupFaction.php?STAGE=4 style='background:lightgreen'>Forward to stage 4 - Social Principles</a></h2>";
   dotail();
 }
 
@@ -360,8 +363,9 @@ function SetupStage4() {
 
   echo "</table>";
 
-  echo "<h2><a href=SetupFaction.php?STAGE=3>Back to stage 4 - Your Home World</a> - " .
-    "<a href=SetupFaction.php?STAGE=5>Forward to stage 5 - Your System</a></h2>";
+  echo "<h2><a href=SetupFaction.php?STAGE=1 style='background:ivory'>Back to stage 1 - Your Faction</a> - " .
+    "<a href=SetupFaction.php?STAGE=3 style='background:lightblue'>Back to stage 4 - Your Home World</a> - " .
+    "<a href=SetupFaction.php?STAGE=5 style='background:lightgreen'>Forward to stage 5 - Your System</a></h2>";
   dotail();
 }
 
@@ -426,8 +430,9 @@ function SetupStage5() {
 
   echo "</table><p>";
 
-  echo "<h2><a href=SetupFaction.php?STAGE=4>Back to stage 4 - Social Principles</a> - " .
-    "<a href=SetupFaction.php?STAGE=6>Forward to stage 6 - Starting Organisation</a></h2>";
+  echo "<h2><a href=SetupFaction.php?STAGE=1 style='background:ivory'>Back to stage 1 - Your Faction</a> - " .
+    "<a href=SetupFaction.php?STAGE=4 style='background:lightblue'>Back to stage 4 - Social Principles</a> - " .
+    "<a href=SetupFaction.php?STAGE=6 style='background:lightgreen'>Forward to stage 6 - Starting Organisation</a></h2>";
   dotail();
 }
 
@@ -442,27 +447,47 @@ function SetupStage6() {
   echo "The office for this will be created on your home world.<p>";
   $Wid = $F['HomeWorld'];
 
-  $Org = Gen_Get_Cond1('Organisations', "Whose=$Fid");
+  $Orgs = Gen_Get_Cond('Organisations', "Whose=$Fid");
 
-  if (!$Org) {
-    $Org = ['Whose'=>$Fid,'GameId'=>$GAMEID,'RelOrder'=>100];
+  if (!$Orgs) {
+    $Org = ['Whose'=>$Fid,'GameId'=>$GAMEID,'RelOrder'=>100,'OrgType'=>1];
     Gen_Put('Organisations',$Org);
-    $Org = Gen_Get_Cond1('Organisations', "Whose=$Fid");
-    $Off = ['Type'=>1, 'World'=>$Wid, 'Whose'=>$Fid, 'Number'=>1,'OrgType'=>0,'Organisation'=>$Org['id']];
+    $Off = ['Type'=>1, 'World'=>$Wid, 'Whose'=>$Fid, 'Number'=>1,'OrgType'=>1,'Organisation'=>$Org['id']];
     Put_Office($Off);
+    $Orgs = Gen_Get_Cond('Organisations', "Whose=$Fid");
   }
   $OTypes = [];
   $OrgTypes = Get_OrgTypes();
   foreach ($OrgTypes as $oi=>$O) $OTypes[$oi] = $O['Name'];
+  Register_AutoUpdate('Organisations',0);
+  $coln = 0;
+  echo "<div class=tablecont><table id=indextable border width=100% style='min-width:1400px'>\n";
+  echo "<thead><tr>";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Type</a>\n";
+  echo "<th colspan=4><a href=javascript:SortTable(" . $coln++ . ",'T')>Name and description</a>\n";
+  echo "</thead><tbody>";
 
+  foreach ($Orgs as $i=>$O) {
+    echo "<tr>";
+    echo "<td>" . fm_select($OTypes,$O,'OrgType',0,'',"OrgType:$i");
+    echo fm_text1('',$O,'Name',4,'','',"Name:$i");
+    echo "<br>" . fm_basictextarea($O, 'Description',5,4,'',"Description:$i");
+    $SocPs = SocPrinciples($Fid);
+    echo "<br>Social Principle (Religious / Ideological Orgs only)" . fm_select($SocPs,$O,'SocialPrinciple',1,'',"SocialPrinciple:$i");
+  }
+  echo "</table><p>";
+
+
+  /*
   Register_AutoUpdate('Organisations',$Org['id']);
   echo "<table><tr><td>Organisation Type:<td>" . fm_select($OTypes,$Org,'OrgType');
   echo "<tr>" . fm_text('Organisation Name',$Org,'Name',4);
   echo "<tr>" . fm_textarea('Description:<br>(Optional)',$Org,'Description',4,4);
   echo "</table><p>";
-
-  echo "<h2><a href=SetupFaction.php?STAGE=5>Back to stage 5 - System Name</a> - " .
-    "<a href=SetupFaction.php?STAGE=7>Forward to stage 7 - Other Planets</a></h2>";
+*/
+  echo "<h2><a href=SetupFaction.php?STAGE=1 style='background:ivory'>Back to stage 1 - Your Faction</a> - " .
+    "<a href=SetupFaction.php?STAGE=5 style='background:lightblue'>Back to stage 5 - System Name</a> - " .
+    "<a href=SetupFaction.php?STAGE=7 style='background:lightgreen'>Forward to stage 7 - Other Planets</a></h2>";
   dotail();
 }
 
@@ -493,8 +518,9 @@ function SetupStage7() {
     echo "None to name";
   }
 
-  echo "<h2><a href=SetupFaction.php?STAGE=6>Back to stage 6 - Starting Organisation</a> - " .
-    "<a href=SetupFaction.php?STAGE=8>Forward to stage 8 - Starting Things and oddments</a></h2>";
+  echo "<h2><a href=SetupFaction.php?STAGE=1 style='background:ivory'>Back to stage 1 - Your Faction</a> - " .
+    "<a href=SetupFaction.php?STAGE=6 style='background:lightblue'>Back to stage 6 - Starting Organisation</a> - " .
+    "<a href=SetupFaction.php?STAGE=8 style='background:lightgreen'>Forward to stage 8 - Starting Things and oddments</a></h2>";
   dotail();
 }
 
@@ -509,11 +535,17 @@ function SetupStage8() {
 
   echo "<h1>Stage 8/" . STAGES . " - Starting Ships and $ARMY" ."s</h1>";
 
+  echo "Plan " . Feature('StartingShips',2) . " ships and " . Feature('StartingArmies',2) . $ARMY . "s<p>";
+
+  echo "You MAY also create some Named Characters - these have no game mechanics other than being somewhere (on a world, in a ship etc) " .
+       "but allow for RP actions.  This is <b>OPTIONAL</b>.<p>";
+
   echo "Use the <a href=ThingPlan.php>Plan a Thing Tool</a> to plan them.  They will be created when the game starts.<p>";
 
   echo "Use the <a href=PThingList.php>List of Things</a> to see what you have planned.<p>";
 
-  echo "<h2><a href=SetupFaction.php?STAGE=7>Back to stage 6 - Other Planets</a> - ";
+  echo "<h2><a href=SetupFaction.php?STAGE=1>Back to stage 1 - Your Faction</a> - " .
+    "<a href=SetupFaction.php?STAGE=7>Back to stage 7 - Other Planets</a> - ";
 
   echo "<h1>Automated Setup is complete</h1>";
   echo "There will probably be discussions with the GMs about your traits and social principles.<p>";

@@ -25,6 +25,8 @@
   echo "<form method=post action=PlanetTypes.php>";
   if ($AllG) echo fm_hidden('AllGames',1);
 
+  echo "Hospitable: 1 - starting Biospheres, 2= other hospitable<p>";
+
   echo "<div class=tablecont><table id=indextable border>\n";
   echo "<thead><tr>";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Index</a>\n";

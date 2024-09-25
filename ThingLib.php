@@ -5,7 +5,7 @@ include_once("GetPut.php");
 include_once("vendor/erusev/parsedown/Parsedown.php");
 include_once("PlayerLib.php");
 
-global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$InstrMsg,$Advance,$ValidMines,$ARMY;
+global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$InstrMsg,$Advance,$ValidMines,$ARMY,$LogistCost;
 
 $Fields = ['Engineering','Physics','Xenology'];
 $Tech_Cats = ['Core','Supp','Non Std'];

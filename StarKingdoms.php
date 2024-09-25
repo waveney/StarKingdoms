@@ -22,25 +22,25 @@ if ($God) {
 echo "<h1>Games</h1>";
 
 echo "<table border>";
+$GCount = 0;
 
 foreach ($AllGames as $Gid=>$G) {
-
   $CodePrefix = $G['CodePrefix'];
   if (!$God) {
-    $GCount = 0;
     foreach ($AllPlayGames as $P) {
       if ($P['GameId'] == $Gid) {
         echo "<tr><td><a href=$CodePrefix/AccessGame.php?G=$Gid>" . $G['Name'] . '</a> - ' . $PlayerLevel[$P['Type']] .
              " - Game is " . $GameStatus[$G['Status']];
         $GCount++;
-        continue;
       }
     }
-    if ($GCount ==0 ) echo "<tr><td>No Games found for you";
   } else {
     echo "<tr><td><a href=$CodePrefix/AccessGame.php?G=$Gid>$Gid - " . $G['Name'] . '</a> ' . " - Game is " . $GameStatus[$G['Status']];;
+    $GCount++;
   }
 }
+
+if ($GCount ==0 ) echo "<tr><td>No Games found for you";
 
 echo "</table>";
 if (Access('God')) echo "<h2><a href=/Staff.php>Top level Staff Pages</a></h2>";

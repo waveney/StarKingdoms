@@ -84,6 +84,8 @@ function Player_Page() {
 
   if (!$GM || $FACTION['NPC'] ) Put_Faction($FACTION);
 
+//  echo "You can always get back to this page by clicking on 'Faction Menu' in the page header.<p>";
+
 //var_dump($PlayerState,$FACTION);
   echo "<h1>Player Actions: " . $FACTION['Name'] . "</h1>\n";
 
@@ -299,13 +301,14 @@ function Income_Estimate($Fid) {
       break;
 
     case "Asteroid Mine":
-      $AstMines ++;
       if (Feature('AstmineDSC')) {
         $AstVal += $T['Level'];
       } else {
         $Plan = Get_Planet($T['Dist1']);
+        if (!$Plan) break;
         $AstVal += $Plan['Minerals']*$T['Level'];
       }
+      $AstMines ++;
       break;
 
     case "Embassy":
@@ -338,7 +341,7 @@ function Income_Estimate($Fid) {
 
   $Logistics = [0,0,0]; // Ship, Army, Intelligence
   foreach ($Things as $T) {
-    if (empty($T['Type'])) continue;
+    if (empty($T['Type']) || empty($TTypes[$T['Type']]) ) continue;
     $Props = $TTypes[$T['Type']]['Properties'];
     if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
       if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $LogistCost[$T['Level']];

@@ -168,18 +168,22 @@
   if ($Exist == 0) {
     echo "<form method=post action=ThingPlan.php?ACTION=COPY>";
     echo fm_hidden('id',$Tid) . fm_hidden('F',$Fid);
-    echo "<h2>Either start with Things:</h2>";
     $Things = Get_Things($Fid);
     $FList = [];
-    foreach ($Things as $TT) {
-      if (!empty($ThingTypeNames[$TT['Type']])) $FList[$TT['id']] = $TT['Name'] . " a level " . $TT['Level'] . " " . $ThingTypeNames[$TT['Type']];
+
+    if ($Things) {
+      foreach ($Things as $TT) {
+        if (!empty($ThingTypeNames[$TT['Type']])) $FList[$TT['id']] = $TT['Name'] . " a level " . $TT['Level'] . " " . $ThingTypeNames[$TT['Type']];
+      }
+      if ($FList) {
+        echo "<h2>Either start with Things:</h2>";
+
+        echo fm_select($FList,null,'Design',1,' onchange=this.form.submit()');
+        echo "<br>If it is in planning, it will be selected, otherwise it will copy the design.<p>\n";
+      }
     }
-
-    echo fm_select($FList,null,'Design',1,' onchange=this.form.submit()');
-    echo "<br>If it is in planning, it will be selected, otherwise it will copy the design.<p>\n";
-
     if ($Blue) {
-      echo "<h2>OR start with a Blue Print:</h2>";
+      echo "<h2>" .($FList?'OR ':'') . "Start with a Blue Print:</h2>";
       $LimA = Has_Tech($Fid,'Military Theory');
       $LimS = Has_Tech($Fid,'Ship Construction');
       $BPs = BluePrintList(max($LimA,$LimS)+1,'',0);
