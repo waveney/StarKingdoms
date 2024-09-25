@@ -37,6 +37,7 @@ prof_flag("Start");
     }
     if (isset($Fid)) $FACTION = $Faction = Get_Faction($Fid);
   }
+  prof_flag("Fid");
 
 
   $Blue = Feature('BluePrints');
@@ -61,6 +62,7 @@ prof_flag("Start");
 // var_dump($_REQUEST);
   if (!$FACTION)  Error_Page("Sorry you need a Faction to access this");
   //  var_dump($Fid);
+  prof_flag("b4 action");
 
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
@@ -136,6 +138,7 @@ prof_flag("Start");
       break;
     }
   }
+  prof_flag("b4head");
 
   dostaffhead("Plan a thing",["js/ProjectTools.js", "js/dropzone.js","css/dropzone.css" ]);
 
