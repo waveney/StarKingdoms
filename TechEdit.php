@@ -89,7 +89,7 @@
   echo "<td>" .  fm_select($Tech_Cats,$T,'Cat') . fm_text("Name",$T,'Name',2);
   echo fm_number('NotBy Mask',$T,'NotBy');
   echo "<tr><td>Feild:<td>" . fm_select($Fields,$T,'Field') . "<td>Pre Req Tech:" . fm_select($CTNs,$T,'PreReqTech') . fm_number1('Pre Req Level',$T,'PreReqLevel') .
-       "<td>Core Techs only - must have one of these";
+       "<td>Core Techs only - must have one of these" . fm_number1('Slots',$T,'Slots');
   echo "<tr><td>Other Pre Reqs<td>" . fm_select($TechNames,$T,'PreReqTech2',1) . "<td>" . fm_select($TechNames,$T,'PreReqTech3',1) ;
   echo "<tr>" . fm_number("Min Thing Level",$T,'MinThingLevel') . "<td>Civ /Mil:<td>" . fm_select($CivMil,$T,'CivMil');
 //  echo "<td>" . fm_select($MFN,$T,'Formula',1) .
