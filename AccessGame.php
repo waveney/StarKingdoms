@@ -27,7 +27,7 @@ $GAMEID = $Gid;
 
 setcookie('SKG',$Gid);
 $_COOKIE['SKG'] = $Gid;
-if ($Person['Type'] == 0) {
+if (($Person['Type'] == 0) || ($Person['Type'] ==3)) {
   $User = $USER['Login'];
   $FACTION = Gen_Get_Cond1('Factions',"GameId=$Gid AND Player='$User'");
   if (!$FACTION) {

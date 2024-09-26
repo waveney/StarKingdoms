@@ -470,8 +470,8 @@ function SetupStage6() {
   foreach ($Orgs as $i=>$O) {
     echo "<tr>";
     echo "<td>" . fm_select($OTypes,$O,'OrgType',0,'',"OrgType:$i");
-    echo fm_text1('',$O,'Name',4,'','',"Name:$i");
-    echo "<br>" . fm_basictextarea($O, 'Description',5,4,'',"Description:$i");
+    echo fm_text1('',$O,'Name',4,'','placeholder="New Organisation Name"',"Name:$i");
+    echo "<br>" . fm_basictextarea($O, 'Description',5,4,'placeholder="New Organisation Description"',"Description:$i");
     $SocPs = SocPrinciples($Fid);
     echo "<br>Social Principle (Religious / Ideological Orgs only)" . fm_select($SocPs,$O,'SocialPrinciple',1,'',"SocialPrinciple:$i");
   }

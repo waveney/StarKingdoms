@@ -299,7 +299,7 @@
       echo "<td>" . $BuildState[$T['BuildState']];
     }
     if ($Props & THING_MOVES_DIRECTLY) {
-      echo "<td>" . $Systems[$T['SystemId']];
+      echo "<td>" . ($Systems[$T['SystemId']]??'???');
       echo "<td>Direct<td>";
       echo "<td>" . ($T['NewSystemId'] == 0? "" : $Systems[$T['NewSystemId']]);
     } else {

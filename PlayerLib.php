@@ -67,7 +67,7 @@ function FactionFeature($Name,$default='') {  // Return value of feature if set 
 }
 
 function Player_Page() {
-  global $FACTION,$PlayerState,$PlayerStates,$PlayerStateColours,$GAME,$ARMY;
+  global $FACTION,$PlayerState,$PlayerStates,$PlayerStateColours,$GAME,$ARMY,$USER;
 
 
   dostaffhead("Things",["js/ProjectTools.js"]);

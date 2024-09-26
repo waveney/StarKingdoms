@@ -20,8 +20,7 @@ $Access_Type = array_flip($Access_Levels);
 
 $Months = ['','Jan','Feb','Mar','Apr','May','June','July','Aug','Sep','Oct','Nov','Dec'];
 $GameStatus = ['Planning','In Setup','Active','Historical'];
-$PlayerLevel = ['Player','GM','No Access'];
-
+$PlayerLevel = ['Player','GM','No Access','Read Only'];
 
 date_default_timezone_set('GMT');
 function Check_Login($check=0) {
@@ -112,11 +111,11 @@ function Access($level,$subtype=0,$thing=0) { // VERY different from fest code n
 
   switch ($level) {
   case 'Player':
-    if ($GAME['FactionLevel']??0) return 1;
+    if (($GAME['FactionLevel']??0)==1) return 1;
     return ($FACTION?1:0);
 
   case 'GM':
-    return ($GAME['FactionLevel']??0);
+    return (($GAME['FactionLevel']??0)==1);
 
   default:
     return 0;
@@ -360,7 +359,8 @@ function dostaffhead($title,$extras=[],$bodyextra='') {
 
   if (isset($FACTION['TurnState']) && $FACTION['TurnState'] >1 ) {
     if (($FACTION['TurnState'] == 4 ) || (!Access('GM'))) fm_addall('readonly');
-  }
+  } else if (($GAME['FactionLevel']??0)==3) fm_addall('readonly');
+
 }
 
 // No Banner
