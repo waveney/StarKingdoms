@@ -26,25 +26,27 @@ date_default_timezone_set('GMT');
 function Check_Login($check=0) {
   global $db,$USER,$USERID,$AccessType,$YEAR,$FACTION;
   if (!empty($USER)) return true;
-  if (isset($_COOKIE['SKC2'])) {
+  if (!empty($_COOKIE['SKC2'])) {
     $res=$db->query("SELECT * FROM People WHERE Yale='" . $_COOKIE['SKC2'] . "'");
     if ($res) {
       $USER = $res->fetch_assoc();
-      $USERID = $USER['id'];
-      $db->query("UPDATE People SET LastAccess='" . time() . "' WHERE id=$USERID" );
-// Track suspicious things
-      if (($USER['LogUse']) && (file_exists("LogFiles"))) {
-        $logf = fopen("LogFiles/U$USERID.txt",'a+');
-        if ($logf) {
-          fwrite($logf,date('d/m H:j:s '));
-          fwrite($logf,$_SERVER['PHP_SELF']);
-          fwrite($logf,json_encode($_REQUEST));
-          if ($_COOKIE) fwrite($logf,json_encode($_COOKIE));
-          if ($_FILES) fwrite($logf,json_encode($_FILES));
-          fwrite($logf,"\n\n");
+      if (!empty($USER['id'])) {
+        $USERID = $USER['id'];
+        $db->query("UPDATE People SET LastAccess='" . time() . "' WHERE id=$USERID" );
+  // Track suspicious things
+        if (($USER['LogUse']) && (file_exists("LogFiles"))) {
+          $logf = fopen("LogFiles/U$USERID.txt",'a+');
+          if ($logf) {
+            fwrite($logf,date('d/m H:j:s '));
+            fwrite($logf,$_SERVER['PHP_SELF']);
+            fwrite($logf,json_encode($_REQUEST));
+            if ($_COOKIE) fwrite($logf,json_encode($_COOKIE));
+            if ($_FILES) fwrite($logf,json_encode($_FILES));
+            fwrite($logf,"\n\n");
+          }
         }
+        return true;
       }
-      return true;
     }
   }
   include_once("Login.php");
