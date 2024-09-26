@@ -268,7 +268,8 @@ global $SkipAccessCheck;
   $Facts = Get_Factions();
   $Fs = [];
   if (isset($FACTION['Player'])) foreach($Facts as $F) {
-    if (($F['Player'] == $FACTION['Player']) || ($F['Player'] == $FACTION['Player2'])) {
+    if ((!empty($FACTION['Player']) && ($F['Player'] == $FACTION['Player'])) ||
+        (!empty($FACTION['Player2']) && ($F['Player'] == $FACTION['Player2']))) {
       $Fs[] = $F['id'];
     }
   }
