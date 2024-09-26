@@ -511,9 +511,9 @@ function SetupStage7() {
 
     $Home = Get_ProjectHome($World['Home']);
     $Planets = Get_Planets($Home['SystemId']);
-    echo "<table>";
+    echo "<table border>";
     foreach ($Planets as $pi=>$P) {
-      echo "<tr><td>" . fm_text1('',$P,'Name',2,'','',"Planets:Name:$pi");
+      echo "<tr><td>" . fm_text1('',$P,'Name',2,'','',"Planets:Name:$pi") . "<td>" . $PTypes[$P['Type']]['Name'];
     }
     echo "</table>";
 
