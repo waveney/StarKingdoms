@@ -1,6 +1,7 @@
 CREATE TABLE `Factions` (
   `Name` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `Player` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `Player2` text COLLATE utf8mb4_general_ci NOT NULL,
   `id` int NOT NULL AUTO_INCREMENT,
   `GameId` int NOT NULL,
   `Notes` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,

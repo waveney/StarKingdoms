@@ -76,6 +76,7 @@ function Show_Faction(&$F,$Mode) {
 
   echo "<tr><td $cls>Player State:<td $cls>" .
     (($GM)? fm_select($PlayerState,$F,'TurnState'): $PlayerState[$F['TurnState']]);
+  if ($GM || $F['Player2']!='') echo fm_Text('2nd Player',$F,'Player2');
 
   if ($GM) {
     echo "<td class=NotSide" . fm_checkbox("NPC",$F,'NPC') . "<td class=NotSide" . fm_checkbox('No Anomalies',$F,'NoAnomalies');

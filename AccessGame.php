@@ -29,7 +29,7 @@ setcookie('SKG',$Gid);
 $_COOKIE['SKG'] = $Gid;
 if (($Person['Type'] == 0) || ($Person['Type'] ==3)) {
   $User = $USER['Login'];
-  $FACTION = Gen_Get_Cond1('Factions',"GameId=$Gid AND Player='$User'");
+  $FACTION = Gen_Get_Cond1('Factions',"GameId=$Gid AND (Player='$User' OR Player2='$User')");
   if (!$FACTION) {
     Error_Page("You don't have a faction in that game");
   }
