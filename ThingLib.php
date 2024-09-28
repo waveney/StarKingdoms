@@ -530,15 +530,21 @@ function Calc_Scanners(&$T) { // And lots of other attributes
   $Cargo = Get_ModulesType($T['id'],'Cargo Space');
   $Cryo = Get_ModulesType($T['id'],'Cryo Pods');
   $T['Sensors'] = (($mods && ($mods['Number']>0))?$mods['Number']:0)  + (($psurv && ($psurv['Number']>0))?$psurv['Number']:0) ;
-  $T['SensorLevel'] = (($mods && ($mods['Level']>0))?$mods['Level']:0);
+  $T['SensorLevel'] = max((($mods && ($mods['Level']>0))?$mods['Level']:0),(($psurv && ($psurv['Level']>0))?$psurv['Level']:0));
   $T['NebSensors'] = ( (($nebs && ($nebs['Number']>0))?$nebs['Number']:(($T['Type'] == 9 && $T['Level'] > 1)?($T['Level']-1):0)));
   $T['CargoSpace'] = ( (($Cargo && ($Cargo['Number']>0))?$Cargo['Number']*($Cargo['Level']+1):0) +
                        (($Cryo  && ($Cryo['Number']>0))?$Cryo['Number']*($Cryo['Level']+3):0));
   if (($Deep = Get_ModulesType($T['id'],'Deep Space Construction' )) && ($Deep['Number']>0)) {
     $T['HasDeepSpace'] = $Deep['Number']*$Deep['Level'];
-  }else {
+  } else {
     $T['HasDeepSpace'] = 0;
   }
+  $Engs = Get_ModulesType($T['id'],'Sublight Engines');
+  $T['Speed'] = (($Engs && $Engs['Number']>0)?$Engs['Number']*$Engs['Level']/$T['Level']:0);
+  $Mobs = Get_ModulesType($T['id'],'Suborbital Transports');
+  $T['Mobile'] = (($Mobs && $Mobs['Number']>0)?$Mobs['Number']*$Mobs['Level']/$T['Level']:0);
+  $Flux = Get_ModulesType($T['id'],'Flux Stabilisers');
+  $T['Stability'] = max(1,(($Flux && $Flux['Number']>0)?$Flux['Number']*$Flux['Level']/$T['Level']:0));
 }
 
 function Calc_Evasion(&$T) {

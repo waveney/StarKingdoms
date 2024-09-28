@@ -456,7 +456,8 @@ function Show_Thing(&$T,$Force=0) {
 
   if ($GM) echo "<tr>" . fm_radio('Whose',$FactNames ,$T,'Whose','',1,'colspan=6','',$Fact_Colours,0);
   if  ($tprops & THING_HAS_GADGETS) echo "<tr>" . fm_textarea("Gadgets",$T,'Gadgets',8,3);
-  if  ($tprops & THING_HAS_LEVELS) echo "\n<tr>" . fm_text("Orders",$T,'Orders',2);
+  echo "\n<tr>";
+  if  ($tprops & THING_HAS_LEVELS) echo fm_text("Orders",$T,'Orders',2);
   if ($GM) {
     echo "<td>Prisoner of: " . fm_select($FactNames,$T,'PrisonerOf');
     echo "<td colspan=2>Hidden Control: " . fm_select($FactNames,$T,'HiddenControl');
@@ -574,7 +575,11 @@ function Show_Thing(&$T,$Force=0) {
     } else {
       echo "<td>Damage: $BD";
     }
-    echo fm_number1('Evasion',$T,'Evasion','','min=0 max=10000');
+    if ($GM){
+      echo fm_number1('Evasion',$T,'Evasion','','min=0 max=10000');
+    } else {
+      echo "<td>Evasion: " . $T['Evasion'];
+    }
   }
   if ($tprops & THING_HAS_DISTRICTS) {
     $DTs = Get_DistrictTypeNames();
@@ -684,7 +689,11 @@ function Show_Thing(&$T,$Force=0) {
       } else {
         echo "<td>Module space used: $totmodc";
       }
-      echo "<td>Speed: " . sprintf('%0.3g',$T['Speed']);
+      if ($tprops & THING_HAS_SHIPMODULES ) {
+        echo "<td>Speed: " . ceil(sprintf('%0.3g',$T['Speed']));
+      } else if ($tprops & THING_HAS_ARMYMODULES ) {
+        echo "<td>Mobility: " . ceil(sprintf('%0.3g',$T['Mobility']));
+      }
     } else { // Player Mode
       if ($NumMods) echo "<tr><td rowspan=" . ceil(($NumMods+4)/4) . ">Modules:";
 
@@ -733,15 +742,21 @@ function Show_Thing(&$T,$Force=0) {
           echo "<td>Module space used: $totmodc";
         }
       }
-      echo "<td>Speed: " . ceil(sprintf('%0.3g',$T['Speed']));
+      if ($tprops & THING_HAS_SHIPMODULES ) {
+        echo "<td>Speed: " . ceil(sprintf('%0.3g',$T['Speed']));
+      } else if ($tprops & THING_HAS_ARMYMODULES ) {
+        echo "<td>Mobility: " . ceil(sprintf('%0.3g',$T['Mobility']));
+      }
+      echo "<td>Stability: " . ceil($T['Stability']);
     }
 
  // TODO
  // Max modules, current count, what e
   }
 
-  if ($GM && ($tprops & THING_HAS_CIVSHIPMODS)) {
-    echo "<tr>" . fm_number('Sensors',$T,'Sensors') . fm_number('Sens Level',$T,'SensorLevel') . fm_number('Neb Sensors', $T,'NebSensors');
+  if ($GM && ($tprops & (THING_HAS_CIVSHIPMODS | THING_HAS_ARMYMODULES))) {
+    echo "<tr>" . fm_number1('Sensors',$T,'Sensors','','min=0 max=99') . fm_number1(' Level',$T,'SensorLevel','','min=0 max=20') .
+         "<td>Neb Sensors: " . fm_checkbox('', $T,'NebSensors') . fm_number1('Stability',$T,'Stability','','min=0 max=1000');
   }
   $SpecOrders = []; $SpecCount = 0;
   $HasDeep = $HasPlanet = $HasMinesweep = $HasSalvage = $HasTerraform = $EngCorpLevel = 0;
