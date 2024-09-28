@@ -89,7 +89,7 @@
       echo "<td>" . $OrgTypeNames[$O['OrgType']];
     }
     echo fm_text1('',$O,'Name',4,'','',"Name:$i");
-    echo "<br>" . fm_basictextarea($O, 'Description',5,4,'',"Description:$i");
+    echo "<br>" . fm_basictextarea($O, 'Description',5,4," style='width=70%'","Description:$i");
     if (!isset($SocPs[$Of])) $SocPs[$Of] = SocPrinciples($Of);
     if ($GM) {
       echo "<br>Social Principle (Religious / Ideological Orgs only)" . fm_select($SocPs[$Of],$O,'SocialPrinciple',1,'',"SocialPrinciple:$i");
@@ -108,7 +108,7 @@
   if ($GM) echo "<td>";
   echo fm_select($OrgTypeNames,$O,'OrgType',0,'',"OrgType:0");
   echo fm_text1('',$O,'Name:0',4,'','placeholder="New Organisation Name"');
-  echo "<br>" . fm_basictextarea($O, 'Description:0',5,4,'placeholder="New Organisation Description"');
+  echo "<br>" . fm_basictextarea($O, 'Description:0',5,4,"placeholder='New Organisation Description' style='width=70%'");
   if ($GM) {
     echo "Set up a Social Principle (if appropriate) after creating the Organisation";
   } else {

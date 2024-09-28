@@ -11,5 +11,6 @@ CREATE TABLE `People` (
   `LogUse` int NOT NULL DEFAULT '0',
   `LastGame` int NOT NULL,
   `LastAccess` int NOT NULL,
+  `AKA` text COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

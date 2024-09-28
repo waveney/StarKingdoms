@@ -69,8 +69,9 @@
         echo fm_hidden('UserId',-1);
         $User['AccessLevel'] = $Access_Type['GM'];
       }
-    echo "<tr>" . fm_text('Name', $User,'Name',3,'','autocomplete=off');
-//    echo "<tr>" . fm_text('Abrev', $User,'Abrev',1,'','autocomplete=off');
+      echo "<tr>" . fm_text('Name', $User,'Name',3,'','autocomplete=off');
+      echo "<tr>" . fm_text('AKA', $User,'AKA',3,'','autocomplete=off');
+      //    echo "<tr>" . fm_text('Abrev', $User,'Abrev',1,'','autocomplete=off');
     echo "<tr>" . fm_text('Email',$User,'Email',3,'','autocomplete=off');
     echo "<tr>" . fm_text('Phone',$User,'Phone',1,'','autocomplete=off');
     echo "<tr>" . fm_text('Login',$User,'Login');

@@ -700,7 +700,7 @@ function Show_Thing(&$T,$Force=0) {
               echo " Capacity: " . $T['CargoSpace'];
               break;
             case 'Sublight Engines':
-              echo " Speed: " . sprintf('%0.3g',$T['Speed']);
+              echo " Speed: " . ceil(sprintf('%0.3g',$T['Speed']));
               break;
             default:
           }
@@ -733,7 +733,7 @@ function Show_Thing(&$T,$Force=0) {
           echo "<td>Module space used: $totmodc";
         }
       }
-      echo "<td>Speed: " . sprintf('%0.3g',$T['Speed']);
+      echo "<td>Speed: " . ceil(sprintf('%0.3g',$T['Speed']));
     }
 
  // TODO
