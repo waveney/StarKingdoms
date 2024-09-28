@@ -26,13 +26,14 @@ function Gen_Get($Table,$id, $idx='id') {
   return [];
 }
 
-function Gen_Put($Table, &$now, $idx='id') {
+function Gen_Put($Table, &$now, $idx='id',$Mon=0) {
   if (!empty($now[$idx])) {
     $e=$now[$idx];
     $Cur = Gen_Get($Table,$e,$idx);
 
     if ($Cur) return Update_db($Table,$Cur,$now);
   }
+  if ($Mon) { debug_print_backtrace(); var_dump("ERROR New enrty that should be an update", $Table, $now); exit; }
   return $now[$idx] = Insert_db ($Table, $now );
 }
 

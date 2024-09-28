@@ -165,6 +165,8 @@
 
   if (($GM = Access('GM'))) echo "<h2><a href=ThingEdit.php?id=$Tid>GM: Thing Editing</a></h2>\n";
 
+  $MaxOver = ($Faction['TurnState']?1:0);
+
   if ($Exist == 0) {
     echo "<form method=post action=ThingPlan.php?ACTION=COPY>";
     echo fm_hidden('id',$Tid) . fm_hidden('F',$Fid);
@@ -186,7 +188,7 @@
       echo "<h2>" .($FList?'OR ':'') . "Start with a Blue Print:</h2>";
       $LimA = Has_Tech($Fid,'Military Theory');
       $LimS = Has_Tech($Fid,'Ship Construction');
-      $BPs = BluePrintList(max($LimA,$LimS)+1,'',0);
+      $BPs = BluePrintList(max($LimA,$LimS)+$MaxOver,'',0);
 
  //     var_dump($BPs);
       $Direct = [];
@@ -298,12 +300,13 @@
 
 // var_dump($MTNs, $Ms, $MMs);
       $ZZnull = [];
-      $MTs = Get_ModuleTypes();
       echo "<tr><th><b>Module type</b>" .($IsBlue?'<th><b>Orig Number</b>':'') . ($FlexM?"<th><b>Number</b>":'') .
            ($Slots?"<th><b>Slots per Module</b>":'') . "<th><b>Comments</b>";
-      $Elvl = 1;
+      $Elvl = $Mlvl = $Flvl = 1;
       $Engines = 0;
       $Weapons = 0;
+      $Mobile = 0;
+      $FluxStab = 0;
 
       // Count Used slots
       $TotUsed = 0;
@@ -358,11 +361,24 @@
           $totmodc += $MMs[$Mti]['Number'] * ($Slots?$MTs[$Mti]['SpaceUsed']:1);
         }
 
-         if ($Mti == 5) { // Engines
-           $Elvl = Calc_TechLevel($T['Whose'],$Mti);
-           if (isset($MMs[$Mti]['Number'])) $Engines = $MMs[$Mti]['Number'];
-         }
       }
+
+      $ModNames = NamesList($MTs);
+      $NamesMod = array_flip($ModNames);
+
+      if ($MMs[$Mti = $NamesMod['Sublight Engines']]??0) {
+        $Elvl = Calc_TechLevel($T['Whose'],$Mti);
+        $Engines = $MMs[$Mti]['Number'];
+      }
+      if ($MMs[$Mti = $NamesMod['Flux Stabilisers']]??0) {
+        $Flvl = Calc_TechLevel($T['Whose'],$Mti);
+        $FluxStab = $MMs[$Mti]['Number'];
+      }
+      if ($MMs[$Mti = $NamesMod['Suborbital Transports']]??0) {
+        $Mlvl = Calc_TechLevel($T['Whose'],$Mti);
+        $Mobile = $MMs[$Mti]['Number'];
+      }
+
 
       echo "<tr><td><td><td><tr><td>Modules slots used:";
       echo fm_hidden('HighestModule',$Mti);
@@ -378,10 +394,18 @@
          echo "<tr><td>Basic Damage<td>$BaseDam$SPad<td colspan=3>At current Tech Levels.  Before special weapons etc";
       }
       if ((($tprops & THING_CAN_MOVE) != 0) && (($tprops & THING_HAS_SHIPMODULES) != 0)) {
-        $T['Speed'] = $Engines*$Elvl/$T['Level'] +1;
-        echo "<tr><td>Speed:<td>" . sprintf('%0.3g',$T['Speed']) . "$SPad<td colspan=3>At current Tech Levels";
-      if ($T['CargoSpace']) echo "<tr><td>Cargo Capacity:<td>" . $T['CargoSpace'] . "$SPad<td colspan=3>At current Tech Levels";
+        $T['Speed'] = ceil($Engines*$Elvl/$T['Level']) +1;
+        echo "<tr><td>Speed:<td>" . sprintf('%0.3g',ceil($T['Speed'])) . "$SPad<td colspan=3>At current Tech Levels";
+        $T['Stability'] = ceil($FluxStab*$Flvl/$T['Level']) +1;
+        echo "<tr><td>Stability:<td>" . sprintf('%0.3g',ceil($T['Stability'])) . "$SPad<td colspan=3>At current Tech Levels";
+      } else if ((($tprops & THING_CAN_MOVE) != 0) && (($tprops & THING_HAS_ARMYMODULES) != 0)) {
+        $T['Mobility'] = ceil($Mobile*$Mlvl/$T['Level']) +1;
+        echo "<tr><td>Mobility:<td>" . sprintf('%0.3g',ceil($T['Mobility'])) . "$SPad<td colspan=3>At current Tech Levels";
+        $T['Stability'] = 1;
+        echo "<tr><td>Stability:<td>" . sprintf('%0.3g',ceil($T['Stability'])) . "$SPad<td colspan=3>At current Tech Levels";
       }
+      if ($T['CargoSpace']) echo "<tr><td>Cargo Capacity:<td>" . $T['CargoSpace'] . "$SPad<td colspan=3>At current Tech Levels";
+
     }
 
     if ($tprops & THING_CAN_BE_CREATED) {

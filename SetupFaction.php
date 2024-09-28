@@ -469,7 +469,7 @@ function SetupStage6() {
 
   foreach ($Orgs as $i=>$O) {
     echo "<tr>";
-    echo "<td>" . fm_select($OTypes,$O,'OrgType',0,'',"OrgType:$i");
+    echo "<td>" . fm_select($OTypes,$O,'OrgType',1,'',"OrgType:$i");
     echo fm_text1('',$O,'Name',4,'','placeholder="New Organisation Name"',"Name:$i");
     echo "<br>" . fm_basictextarea($O, 'Description',5,4,'placeholder="New Organisation Description"',"Description:$i");
     $SocPs = SocPrinciples($Fid);
@@ -495,6 +495,25 @@ function SetupStage7() {
   global $F, $Fid, $GAME, $FACTION, $GAMEID, $ARMY, $PTs;
   $PTypes = Get_PlanetTypes();
   $DTypes = Get_DistrictTypes();
+  $OrgTypes = Get_OrgTypes();
+
+  // Check Stage 6, return if needed
+  $Orgs = Gen_Get_Cond('Organisations', "Whose=$Fid");
+  if (!$Orgs) {
+    echo "<h1 class=err>PLEASE SETUP AN ORGANISATION</h1>";
+    SetupStage6();
+  }
+  $Org = array_pop($Orgs);
+  if (!isset($OrgTypes[$Org['OrgType']])) {
+    echo "<h1 class=err>WHAT TYPE OF ORGANISATION?</h1>";
+    SetupStage6();
+  }
+  if (empty($Org['Name'])) {
+    echo "<h1 class=err>WHAT IS YOUR ORGANISATION CALLED?</h1>";
+    SetupStage6();
+  }
+
+  // Validated
 
   echo "<form method=post>";
 
@@ -538,7 +557,7 @@ function SetupStage8() {
 
   echo "<h1>Stage 8/" . STAGES . " - Starting Ships and $ARMY" ."s</h1>";
 
-  echo "Plan " . Feature('StartingShips',2) . " ships and " . Feature('StartingArmies',2) . $ARMY . "s<p>";
+  echo "Plan " . Feature('StartingShips',2) . " Level 1 ships and " . Feature('StartingArmies',2) . " Level 1 $ARMY" . "s<p>";
 
   echo "You MAY also create some Named Characters - these have no game mechanics other than being somewhere (on a world, in a ship etc) " .
        "but allow for RP actions.  This is <b>OPTIONAL</b>.<p>";

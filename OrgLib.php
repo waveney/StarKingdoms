@@ -22,21 +22,22 @@ function Recalc_Offices() { // Recount offices for each org
   $OCount = [];
 
   foreach ($Orgs as &$O) $O['OfficeCount'] = 0;
-
-  foreach ($Offs as $oi=>$O) {
-    $Org = $O['Organisation'];
+  foreach ($Offs as $oi=>$Of) {
+    $Org = $Of['Organisation'];
     if (isset($Orgs[$Org])) {
+      if (!isset($Orgs[$Org]['OfficeCount'])) var_dump($Of);
       $Orgs[$Org]['OfficeCount']++;
-      if ($O['OrgType'] != $Orgs[$Org]['OrgType']) {
-        $O['OrgType'] = $Orgs[$Org]['OrgType'];
-        Gen_Put('Offices',$O);
+      if ($Of['OrgType'] != $Orgs[$Org]['OrgType']) {
+        $Of['OrgType'] = $Orgs[$Org]['OrgType'];
+        Gen_Put('Offices',$Of);
       }
     } else {
       echo "Office $oi does not match any current Organisation - needs fixing<p>";
     }
   }
 
-  foreach ($Orgs as &$O) Gen_Put('Organisations',$O);
+  foreach ($Orgs as $O) Gen_Put('Organisations',$O);
+
 }
 
 function SocPrinciples($Fid) {

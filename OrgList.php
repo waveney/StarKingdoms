@@ -54,14 +54,13 @@
   $FactNames = Get_Faction_Names();
 
   $Orgs = Gen_Get_Cond('Organisations',"( GameId=$GAMEID" . ($GM?" ) ":"AND Whose=$Fid ) ORDER BY RelOrder DESC"));
-// var_dump($Orgs);
   $OrgTypes = Get_OrgTypes();
-  $OrgTypeNames = [];
+  $OrgTypeNames[0] = '';
   foreach ($OrgTypes as $i=>$Ot) $OrgTypeNames[$i] = $Ot['Name'];
   $Facts = Get_Factions();
-  if (UpdateMany('Organisations','Put_ThingType',$Orgs,1,'','','Name','','Properties','',':'))
+//  var_dump($Orgs);
+  if (UpdateMany('Organisations','',$Orgs,1,'','','Name','','Properties','',':'))
     $Orgs = Gen_Get_Cond('Organisations',($GM?"GameId=$GAMEID":"Whose=$Fid"));
-
   $SocPs = [];
 
   echo "<h1>Organisations</h1>";
@@ -82,10 +81,10 @@
 
   foreach ($Orgs as $i=>$O) {
     $Of = $O['Whose'];
-    echo "<tr>";
+    echo "<tr>" . fm_hidden("GameId:$i", $GAMEID);
     if ($GM) echo "<td>$i";
     if ($GM) {
-      echo "<td>" . fm_select($OrgTypeNames,$O,'OrgType',0,'',"OrgType:$i");
+      echo "<td>" . fm_select($OrgTypeNames,$O,'OrgType',1,'',"OrgType:$i");
     } else {
       echo "<td>" . $OrgTypeNames[$O['OrgType']];
     }

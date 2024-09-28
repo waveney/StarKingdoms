@@ -613,7 +613,7 @@ function RefitRepair(&$T,$Save=1,$KeepTechLvl=0,$Other=0) {
     $T['CurHealth'] = min($T['CurHealth'],$Health);
     $T['CurShield'] = $Sld;
   }
-  $T['Speed'] =  ((($TTypes[$T['Type']]['Properties'] ?? 0)&THING_CAN_MOVE)? $Engines*$Elvl/$T['Level'] + Feature('BaseSpeed',0) :0);
+  $T['Speed'] =  ceil(((($TTypes[$T['Type']]['Properties'] ?? 0)&THING_CAN_MOVE)? $Engines*$Elvl/$T['Level'] + Feature('BaseSpeed',0) :0));
   Put_Thing($T);
   return $Etxt;
 }
@@ -883,7 +883,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
 
         $txt .= " (";
         if ($TTprops & THING_HAS_HEALTH) {
-          if ($TTprops & THING_CAN_MOVE) $txt .= "Speed: " . sprintf("%0.3g, ",$T['Speed']) ;
+          if ($TTprops & THING_CAN_MOVE) $txt .= "Speed: " . sprintf("%0.3g, ",ceil($T['Speed'])) ;
           $txt .= "Health: " . $T['CurHealth'] . "/" . $T['OrigHealth'] . ", ";
         }
         if ($BD) $txt .= "Dam: " . $BD . ($Resc? "<b>*</b>":'') . ", ";
