@@ -12,6 +12,7 @@
   }
   dostaffhead("Modules");
 
+
   $Techs = Get_Techs();
   $TNames = NamesList($Techs);
   $Mods = Get_ModuleTypes();
@@ -44,7 +45,7 @@
   $Parsedown = new Parsedown();
 
   echo "<h2>Modules</h2>\n";
-  echo "Click on Modules name to Toggle showing the definition and examples\n<p>";
+  echo "Click on Modules name to Toggle showing the definition and examples or <button type=button onclick=SeeAll('MDesc')>Expand All</button>\n<p>";
 
   foreach ($Mods as $Mid=>$M) {
     if ($M['Leveled'] & 16) {

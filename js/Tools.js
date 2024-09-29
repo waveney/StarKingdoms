@@ -479,3 +479,7 @@ function CheckModSpace() {
   }
 
 }
+
+function SeeAll(pfx){
+  $("[id^=" + pfx).show();
+}
