@@ -299,6 +299,9 @@ function SetupStage3() {
 
     $Ds = Get_DistrictsP($ThingId);
   }
+  $Place['Control'] = $Fid;
+  Put_Planet($Place);
+
 
   echo "<table border>";
   Register_AutoUpdate('Planets',$ThingId);
@@ -312,19 +315,12 @@ function SetupStage3() {
     echo "<tr><td>" . $DTypes[$D['Type']]['Name'] . fm_number1('', $D,'Number', '',' class=Num3 min=0 max=5',"DistrictNumber-$did");
   };
 
-/*
-  if ($Offices) {
-    foreach ($Offices as $O) {
-      echo "<tr><td>Organisational Office:<td>" . fm_select($OtNames,$O,'Type');
-
-  } else {
-    echo "<tr><td>Add Organisational Office:<td>" ;
-  }
-*/
   echo "</table>";
 
   if ($ThingType <3 && $Place['Type'] != $F['Biosphere'])
-    echo "<h2 class=Err>Your home's biosphere does not match your own.  If the error is the biosphere of your home world, contact the GMs</h2>";
+    echo "<h2 class=Err>Your home's biosphere does not match your own.  " .
+         "If the error is the biosphere of your home world, contact the GMs it's an easy fix, " .
+         "but not automated as other things should be checked.</h2>";
 
 
   echo "<h2><a href=SetupFaction.php?STAGE=1 style='background:ivory'>Back to stage 1 - Your Faction</a> - " .

@@ -2,6 +2,7 @@
   include_once("sk.php");
   include_once("GetPut.php");
   include_once("PlayerLib.php");
+  global $NOTBY,$SETNOT,$GAMEID;
 
   $Traits = [];
   $TraitNames = [];
@@ -9,10 +10,22 @@
 
   dostaffhead("All Traits"); // TODO ONLY FACTION traits at the moment
 
+  $AllG = 0;
+  if (isset($_REQUEST['AllGames'])) {
+    // Button for cur game
+    // Show current NotBy Mask
+    echo "<div class=floatright><h2>Showing All Games - Switch to <a href=ListTraits.php>Current Game</a></h2></div>";
+    echo "The current NotBy Mask is : $SETNOT<p>\n";
+    $AllG = 1;
+  } else {
+    echo "<div class=floatright><h2>Showing current game -  Switch to <a href=ListTraits.php?AllGames>All Games</a></h2></div>";
+  }
+
+
   echo "<h1>List of all Traits</h1>";
   echo "Game No : Faction <b>(A)</b> = Automated<P>";
 
-  $Factions = Gen_Get_Cond('Factions','id>0');
+  $Factions = Gen_Get_Cond('Factions','id>0' . ($AllG?'':" AND GameId=$GAMEID"));
   foreach($Factions as $F) {
     $Fid = $F['id'];
     $Facts[$Fid] = $F;

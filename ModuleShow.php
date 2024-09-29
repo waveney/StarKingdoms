@@ -46,7 +46,7 @@
   }
   $Parsedown = new Parsedown();
 
-  echo "<h2>Modules</h2>\n";
+  echo "<h1>Modules</h1>\n";
   echo "Click on Modules name to Toggle showing the definition and examples or <button type=button onclick=SeeAll('MDesc')>Expand All</button>\n<p>";
 
   foreach ($Mods as $Mid=>$M) {

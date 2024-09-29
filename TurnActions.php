@@ -16,11 +16,11 @@
   global $Stages,$Coded;
 
   $Stages = ['Check Turns Ready', 'Spare', 'Start Turn Process',
-    'Save All Locations', 'Spare' /*'Remove Unsupported Minefields'*/, 'Spare' /*'Cash Transfers'*/, 'Spare',
+    'Save All Locations', 'Spare' /*'Remove Unsupported Minefields'*/, 'Cash Transfers', 'Spare',
              'Follow' /*'Pay For Stargates'*/, 'Spare', 'Scientific Breakthroughs',
              'Start Projects', 'Start Operations', 'Start Operations Stage 2', 'Instructions',
              'Instructions Stage 2', 'Clear Paid For', 'Spare'/*'Agents Start Missions'*/, 'Pay For Rushes',
-             'Spare', 'Economy', 'Spare', 'Direct Moves',
+             'Spare', 'Economy', 'Trait Incomes', 'Direct Moves',
              'Load Troops', 'Spare', 'Ship Move Check', 'Ship Movements',
              'Spare', 'Spare' /*'Agents Move Check', 'Agents Movements'*/, 'See After Move', 'Meetups',
 
@@ -36,10 +36,10 @@
 
   $Coded =  ['Coded','No','Coded',
              'Coded','Coded','Coded', 'No',
-             'Coded','Coded','No','Coded',
+             'Coded','No','Coded',
              'Partial,M','No','No','Coded,M',
              'Coded,M','Coded', 'No','Coded',
-             'No','Coded','No','Coded',
+             'No','Coded','Coded','Coded',
              'Coded','No','Coded,M','Coded',
              'Coded,M','Coded','Coded', 'Coded,M',
 
@@ -1876,6 +1876,47 @@ function Economy() {
   }
   return 1;
 }
+
+function TraitIncomes() {
+  // Incomes from Planetary Traits and Faction Traits (If not handled elsewhere
+  global $GAMEID;
+
+  $SPs = [
+    ['Academic','Abundant Wildlife','Xenology'],
+    ['Engineering','Necessity is the Mother of Invention','Engineering'],
+  ];
+
+  $DTypes = Get_DistrictTypes();
+  $DTNames = NamesList($DTypes);
+  $NamesDT = array_flip($DTNames);
+  $Facts = Get_Factions();
+
+
+  $Planets = Gen_Get('Planets',"GameId=$GAMEID AND (Trait1Auto!=0 OR Trait2Auto!=0 OR Trait3Auto!=0) ");
+
+  foreach ($Planets as $Pid=>$P) {
+    for($i=1;$i<4;$i++) {
+      foreach ($SPs as $SP) {
+        if ($P["Trait$i"] == $SP[1]) {
+          $Ds = Get_DistrictsP($Pid);
+          $D = ($Ds[$NamesDT[$SP[0]]]??0);
+          if ($D) {
+            $Fact = $Facts[$P['Control']];
+            $Fact[$SP[2] . "SP"] += $D['Number'];
+            Put_Faction($Fact);
+            TurnLog($Fact['id'],"Gained " . $D['Number'] . " " . $SP[2] . " points from the planetary trait " .$SP[1] . " in " . $P['Name']);
+          }
+
+        }
+      }
+
+    }
+  }
+
+  GMLog("Done Planetary Trait Incomes<br>");
+  return 1;
+}
+
 
 function DirectMoves() {
   // EG for sharks
