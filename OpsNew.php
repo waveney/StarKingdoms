@@ -54,7 +54,6 @@
 
 
 
-  echo "<h1>New Operation</h1>";
 
 //  echo "This is a short term bodge, A better way should follow...<p>";
 
@@ -75,6 +74,7 @@
   $OrgId = $_REQUEST['O'];
   $Org = Gen_Get('Organisations',$OrgId);
   $OffType = $Org['OrgType'];
+  echo "<h1>New Operation for: " . $Org['Name'] . " - a " . $OrgTypes[$OffType]['Name'] . " org</h1>";
 
   $Turn = $_REQUEST['t'];
 
@@ -96,8 +96,8 @@
  //     var_dump($OpTypes);
       foreach ($OpTypes as $opi=>$OP) {
         if ($OP['Gate'] && !eval("return " . $OP['Gate'] . ";" )) continue;
-        echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=1&op=$opi'>" . $OP['Name'] . "</button> " .
-             $OP['Description'] . "<br>\n";
+        echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=1&op=$opi'>" . $OP['Name'] . "</button><br>" .
+             $OP['Description'] . "<p>\n";
       }
 
       echo "<p>\n";

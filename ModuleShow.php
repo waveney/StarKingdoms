@@ -21,6 +21,8 @@
     return $a['Name'] <=> $b['Name'];
   }
 
+  uasort($Mods,'Msort');
+
   if (isset($_REQUEST['f'])) {
     $Fid = $_REQUEST['f'];
   } else   if (isset($_REQUEST['F'])) {
