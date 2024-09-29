@@ -35,6 +35,7 @@
   echo "<h1>Module Types</h1>";
   echo "Fire order: 5 = normal, 1 early, 9 late, -1 not first round.  Fire rate 1= every round, 0=once, 5=once every 5 rounds, -2 double first round<p>";
   echo "Properties: 1 = Leveled, 2=Non Std Def, 4=Non Std Atk, 8=Blueprints only - invalid real things, 16=Not Visible<p>";
+  echo "Click on the Desc by each type to edit the description.<p>";
   echo "<form method=post action=ModuleList.php>";
   if ($AllG) echo fm_hidden('AllGames',1);
 
@@ -45,7 +46,6 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'n')>id</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
     if ($AllG) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>NotBy</a>\n";
-//    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Desc</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>CMA</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Wep / Def</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Based on</a>\n";
@@ -56,13 +56,13 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Formula</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Properties</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Evasion Mod</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Desc</a>\n";
 
     echo "</thead><tbody>";
 
     foreach($MTs as $MT) {
       $i = $MT['id'];
       echo "<tr><td>$i" . fm_text1("",$MT,'Name',1,'','',"Name$i");
-//      echo "<td>" . fm_basictextarea($MT,'Description',1,2,'',"Description$i");
       echo fm_notby($MT,$i,$AllG);
       echo "<td>" . fm_select($ModuleCats,$MT,'CivMil',1,'',"CivMil$i");
       echo "<td>" . fm_select($DefWep,$MT,'DefWep',0,'',"DefWep$i");
@@ -73,6 +73,7 @@
       echo "<td>" . fm_select($Forms,$MT,'Formula',1,'',"Formula$i");
       echo fm_number1("",$MT,'Leveled','','',"Leveled$i");
       echo fm_number1("",$MT,'EvasionMod','','min=0 max=100',"EvasionMod$i");
+      echo "<td><a href=ModuleEdit.php?id=$i>Desc</a>";
     }
 
 

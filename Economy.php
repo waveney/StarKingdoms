@@ -182,7 +182,7 @@
           $AstVal += $T['Level'];
         } else {
           $Plan = Get_Planet($T['Dist1']);
-          $AstVal += $Plan['Minerals']*$T['Level'];
+          $AstVal += ($Plan['Minerals']??0)*$T['Level'];
         }
         break;
 

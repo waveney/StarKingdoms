@@ -5,7 +5,7 @@
   include_once("PlayerLib.php");
   include_once("ThingLib.php");
 
-  global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$ThingInclrs,$GAMEID,$LogistCost,$ARMY;
+  global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$ThingInclrs,$GAMEID,$LogistCost,$ARMY,$ARMIES;
 
   $Fid = 0;
 //var_dump($_COOKIE,$_REQUEST);
@@ -195,6 +195,7 @@
   echo "If the Thing would benefit from refit/repair/re-equipping/reinforcing then the Refit has the number of modules (+1 if it needs repair as well)</br>";
   if ($FACTION['HasPrisoners']??0) echo "The Prisoner Tab shows Prisoners YOU have<p>\n";
   if ($GM) echo "Notes: <B>N</b> - GM Notes, Coloured start of name = hidden control<P>";
+  echo "For loading/unloading of troops and characters, go to the thing<p>\n";
 //  echo "Use only ONE of the filters to the right<br>\n";
 
   $coln = 0;
@@ -369,7 +370,7 @@
 
     $LogAvail = LogisticalSupport($Fid);
 
-    $LogCats = ['Ships','Armies','Agents'];
+    $LogCats = ['Ships',$ARMIES,'Agents'];
 
     echo "<table border>";
     echo "<tr><td>Category<td>Logistical Support<td>Logistics needed<td>Logistics Penalty\n";

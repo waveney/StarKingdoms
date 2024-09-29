@@ -13,11 +13,11 @@
 //  var_dump($_REQUEST);
   if (isset($_REQUEST['id'])) {
     $MTid = $_REQUEST['id'];
-    $MT = Get_ModuleType($MTid);
+    $M = Get_ModuleType($MTid);
   } else if (isset($_REQUEST['NEW'])) {
-    $MT = [];
+    $M = [];
   } else {
-    echo "<h2>No Systems Requested</h2>";
+    echo "<h2>No Module Requested</h2>";
     dotail();
   }
 
@@ -32,10 +32,14 @@
     }
   }
 
+  echo "<h1>Edit the description for " . $M['Name'] . "</h1>";
 
-//  Show_System($N,1);  TODO THIS IS WRONG
+  echo "<form method=post><table border>";
+  Register_AutoUpdate('ModuleTypes', $M['id']);
+  echo "<tr>" . fm_textarea('Description',$M,'Description',5,5);
+  echo "</table><p>";
 
-  if (isset($_REQUEST['NEW'])) echo "<h2><a href=ModuleEdit.php?ACTION=CREATE>Create</a></h2>";
+  echo "<h2><a href=ModuleList.php>Back to List of Modules</a></h2>";
 
   dotail();
 ?>

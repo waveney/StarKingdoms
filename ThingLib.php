@@ -461,6 +461,10 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0 ) {
       $NS = Get_FactionSystemFS($Fid,$N['id']);
 
       foreach ($Links as $Lid=>$L) {
+        if ($L['Instability'] > $T['Stability']) {
+          unset($Links[$Lid]);
+          continue;
+        }
         $LinkText = "Unknowm";
         $FL = Get_FactionLinkFL($Fid,$L['id']);
         $FarSysRef =  (($L['System1Ref'] == $N['Ref'])?$L['System2Ref']: $L['System1Ref'] );

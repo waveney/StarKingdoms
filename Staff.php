@@ -262,9 +262,11 @@
   if ($x = SKTable('Any','Game')) {
     $txt .= $x;
     $txt .= "<ul>\n";
-    $txt .= "<li><a href=TechShow.php>List Technologies</a>\n";
+    $txt .= "<li><a href=TechShow.php>List Technologies</a> (Player Info)\n";
     $txt .= "<li><a href=TechList.php>Edit Technologies</a><p>\n";
-    $txt .= "<li><a href=ModuleList.php>List Module Types</a>\n";
+
+    $txt .= "<li><a href=ModuleShow.php>List Module Types</a> (Player Info)\n";
+    $txt .= "<li><a href=ModuleList.php>List/Edit Module Types</a>\n";
     $txt .= "<li><a href=ModFormulae.php>List Module Formulas</a>\n";
     $txt .= "<p>";
 
