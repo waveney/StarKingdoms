@@ -103,11 +103,12 @@ function Player_Page() {
 
   echo "<p><li><a href=UserGuide.php>User Guide</a> - Warning this is VERY OUT OF DATE...<p>\n";
   if ($GM) echo "<li>GM: <a href=TechShow.php?SETUP&id=$Fid>Edit Technologies</a>\n";
+  echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";
+//  echo "<li><a href=ModuleShow.php?PLAYER>Module Types</a><p>\n";
 
   switch ($TState) {
   case 'Setup':
-    echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";
-    echo "<li><a href=SetupFaction.php>Faction Setup<a>\n";
+     echo "<li><a href=SetupFaction.php>Faction Setup<a>\n";
     if (!$GM && $FACTION['Horizon'] == 0) break; // This prevents access to things until setup completed
     echo "<li><a href=PThingList.php>List of Things</a> - List of Things (Ships, Armies, Named Characters, Space stations etc)";
     echo "<li><a href=ThingPlan.php>Plan a Thing</a> - Planning Things (Ships, Armies, Named Characters, Space stations etc)";
@@ -117,12 +118,11 @@ function Player_Page() {
   case 'Turn Submitted':
     if (!$GM) fm_addall('readonly');
   case 'Turn Planning':
-    echo "<li><a href=MapFull.php>Faction Map</a>\n";
-    if (Has_Tech($FACTION['id'],'Astral Mapping')) {
+    if (Feature('NodeMap')) echo "<li><a href=MapFull.php>Faction Map</a>\n";
+    if (!Feature('NodeMap') || Has_Tech($FACTION['id'],'Astral Mapping')) {
       echo "<li><a href=MapFull.php?Hex&Links=0>Faction Map</a> - with spatial location of nodes\n";
       echo "(<a href=MapFull.php?Hex>With Link Numbers)</a>\n";
     }
-    echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";
     echo "<p><li><a href=WhatCanIC.php>What Things can I See?</a>\n";
     echo "<li><a href=WorldList.php>Worlds and Colonies</a> - High Level info only\n";
     echo "<li><a href=OrgList.php>Organisations</a>\n";
@@ -151,8 +151,6 @@ function Player_Page() {
     break;
 
   case 'Turn Being Processed':
-    echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";
-
     if ($GM) echo "<p><li><a href=Player.php?SEEALL>(GM) See All Actions</a>\n";
     break;
 

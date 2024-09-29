@@ -1697,7 +1697,7 @@ function PayForRushes() {
 
 
 function Economy() {
-  global $db,$GAMEID,$LogistCost;
+  global $db,$GAMEID,$LogistCost,$ARMIES;
   // TWork out economies and generate income for each faction.
   // Blockades, theft and new things affect - this needs to be done BEFORE projects complete
 //  echo "The Economy is currently Manual<p>";
@@ -1856,7 +1856,7 @@ function Economy() {
 
     foreach($Logistics as &$Log) $Log = floor($Log);
     $LogAvail = LogisticalSupport($Fid);
-    $LogCats = ['Ships','Armies','Agents'];
+    $LogCats = ['Ships',$ARMIES,'Agents'];
 
     foreach ($LogCats as $i => $n) {
       if ($Logistics[$i]) {

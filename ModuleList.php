@@ -34,7 +34,7 @@
 
   echo "<h1>Module Types</h1>";
   echo "Fire order: 5 = normal, 1 early, 9 late, -1 not first round.  Fire rate 1= every round, 0=once, 5=once every 5 rounds, -2 double first round<p>";
-  echo "Properties: 1 = Leveled, 2=Non Std Def, 4=Non Std Atk, 8=Blueprints only - invalid real things, 16=Not Visible<p>";
+  echo "Properties: 1 = Leveled, 2=Non Std Def, 4=Non Std Atk, 8=Blueprints only - invalid real things, 16=Not Visible unless have based on tech<p>";
   echo "Click on the Desc by each type to edit the description.<p>";
   echo "<form method=post action=ModuleList.php>";
   if ($AllG) echo fm_hidden('AllGames',1);
@@ -62,7 +62,7 @@
 
     foreach($MTs as $MT) {
       $i = $MT['id'];
-      echo "<tr><td>$i" . fm_text1("",$MT,'Name',1,'','',"Name$i");
+      echo "<tr><td>$i" . fm_text1("",$MT,'Name',1,'','',"Name$i") . fm_hidden("Description$i",$MT['Description']);
       echo fm_notby($MT,$i,$AllG);
       echo "<td>" . fm_select($ModuleCats,$MT,'CivMil',1,'',"CivMil$i");
       echo "<td>" . fm_select($DefWep,$MT,'DefWep',0,'',"DefWep$i");

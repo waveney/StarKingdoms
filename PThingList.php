@@ -176,7 +176,7 @@
 
   echo "<h1>Things</h1>";
 
-  $ShowCats = ['All','Ships',$ARMY,'','Chars', 'Other'];
+  $ShowCats = ['All','Ships',$ARMIES,'','Chars', 'Other'];
   if (!empty($FACTION['HasPrisoners'])) $ShowCats[] = 'Prisoners';
   $Show['ThingShow'] = ($Faction[$GM?'GMThingType':'ThingType'] ?? 0);
   if (Feature('Shakedown')) {

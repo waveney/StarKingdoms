@@ -7,7 +7,7 @@
 
   dostaffhead("List Things",["js/ProjectTools.js"]," onload=ListThingSetup(0,1,0,0)");
 
-  global $db, $GAME,$BuildState,$ThingInstrs,$GAMEID,$ARMY;
+  global $db, $GAME,$BuildState,$ThingInstrs,$GAMEID,$ARMY,$ARMIES;
   $Blue = isset($_REQUEST['Blue']);
 
   $Systems = Get_SystemRefs();
@@ -37,7 +37,7 @@
     dotail();
   }
 
-  $ShowCats = ['All','Ships',$ARMY,'','Chars', 'Other'];
+  $ShowCats = ['All','Ships',$ARMIES,'','Chars', 'Other'];
   $Show['ThingShow'] = 0;
   $BuildCats = ['All','Plan','Building','Shakedown','Complete','Other'];
   $Build['BuildShow'] = 0;

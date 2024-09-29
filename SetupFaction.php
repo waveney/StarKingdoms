@@ -547,7 +547,7 @@ function SetupStage7() {
 }
 
 function SetupStage8() {
-  global $F, $Fid, $GAME, $FACTION, $GAMEID, $ARMY, $PTs;
+  global $F, $Fid, $GAME, $FACTION, $GAMEID, $ARMY, $ARMIES,$PTs;
   $PTypes = Get_PlanetTypes();
   $DTypes = Get_DistrictTypes();
 
@@ -555,9 +555,9 @@ function SetupStage8() {
   Put_Faction($F);
   echo "<form method=post>";
 
-  echo "<h1>Stage 8/" . STAGES . " - Starting Ships and $ARMY" ."s</h1>";
+  echo "<h1>Stage 8/" . STAGES . " - Starting Ships and $ARMIES</h1>";
 
-  echo "Plan " . Feature('StartingShips',2) . " Level 1 ships and " . Feature('StartingArmies',2) . " Level 1 $ARMY" . "s<p>";
+  echo "Plan " . Feature('StartingShips',2) . " Level 1 ships and " . Feature('StartingArmies',2) . " Level 1 $ARMIES<p>";
 
   echo "You MAY also create some Named Characters - these have no game mechanics other than being somewhere (on a world, in a ship etc) " .
        "but allow for RP actions.  This is <b>OPTIONAL</b>.<p>";
