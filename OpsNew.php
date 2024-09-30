@@ -10,7 +10,7 @@
   include_once("ProjLib.php");
   include_once("OrgLib.php");
 
-  global $FACTION,$ARMY;
+  global $FACTION,$ARMY,$GAMEID;
 
   if (Access('Player')) {
     if (!$FACTION) {

@@ -457,7 +457,7 @@ function SetupStage6() {
   $OrgTypeNames[0] = $NewOrgs[0] = '';
   foreach ($OrgTypes as $i=>$Ot) {
     $OrgTypeNames[$i] = $Ot['Name'];
-    if (!$GM && $Ot['Gate'] && !eval("return " . $Ot['Gate'] . ";" )) continue;
+    if ($Ot['Gate'] && !eval("return " . $Ot['Gate'] . ";" )) continue;
     $NewOrgs[$i] = $Ot['Name'];
   }
 

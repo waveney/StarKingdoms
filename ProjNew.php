@@ -255,6 +255,7 @@
                 }
               }
             }
+            if (Has_PTraitH($Hi,'Irradiated Wasteland')) $pc[0]++;
 
             if (Has_Trait($Fid,"Military Society") && ($DTz['Name'] == 'Military')) $pc = Proj_Costs($Lvl-1);
 

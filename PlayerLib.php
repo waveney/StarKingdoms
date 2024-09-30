@@ -211,8 +211,8 @@ function Has_PTraitH($Hid,$Name) { // Has Home got trait Name
 }
 
 function Has_PTraitT($Tid,$Name) { // Has Thing got trait Name - from system it is in
-  $T = Get_Thing($T);
-  $N = Get_System($T);
+  $T = Get_Thing($Tid);
+  $N = Get_System($T['SystemId']);
   if ($N['Trait1'] == $Name || $N['Trait2'] == $Name || $N['Trait3'] == $Name) return true;
 // NOT COMPLETE
 }

@@ -1913,7 +1913,7 @@ function TraitIncomes() {
               }
               break;
             case 2:// Tech
-              $T = Has_Tech($Fid,$SP[0]);
+              $T = Has_Tech($P['Control'],$SP[0]);
               if ($T) {
                 $Fact = $Facts[$P['Control']];
                 $Fact[$SP[2] . "SP"] += $T;
