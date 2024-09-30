@@ -47,7 +47,7 @@
 
 
 function SetupStage1() {
-  global $F, $Fid, $GAME, $FACTION, $GAMEID, $ARMY, $PTs;
+  global $F, $Fid, $GAME, $FACTION, $GAMEID, $ARMY, $PTs, $FoodTypes;
   $PTypes = Get_PlanetTypes();
   $DTypes = Get_DistrictTypes();
   $SCredits = Feature('StartCredits',450);
@@ -64,6 +64,7 @@ function SetupStage1() {
   foreach ($PTypes as $Pid=>$PT) if ($PT['Hospitable'] == 1) $PTs[$Pid] = $PT['Name'];
 
   echo "<tr><td >Native BioSphere<td colspan=2 >" . fm_select($PTs,$F,'Biosphere',1);
+  echo "<tr>" . fm_radio('What is your diet?',$FoodTypes,$F,'FoodType');
 
   echo "<tr>" . fm_text('Adjective Name',$F,'Adjective',2) . "<td>To refer to your ships etc rather than your faction name - optional";
   echo "<tr>" . fm_text("Trait 1 Name",$F,'Trait1',2). "<td>Short name that is unique";

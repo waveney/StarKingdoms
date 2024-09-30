@@ -648,6 +648,7 @@ function LogisticalSupport($Fid) {  // Note this sets the Economic rating of all
       $PH = Get_Planet($H['ThingId']);
       $Dists = Get_DistrictsP($H['ThingId']);
       $EndAct = 'Put_Planet';
+      if (Has_PTraitH($Hi,'CEOs Stomping Ground ')) $Logistics[1] +=22;
       break;
     case 2: // Moon
       $PH = Get_Moon($H['ThingId']);

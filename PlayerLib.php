@@ -7,10 +7,11 @@ include_once("GetPut.php");
 $PlayerState = ['Setup', 'Turn Planning' , 'Turn Submitted', 'Turn Being Processed','Frozen'];
 $PlayerStateColours = ['Orange','lightblue','LightGreen','pink','White'];
 $PlayerStates = array_flip($PlayerState);
+$FoodTypes = ['Omnivore','Vegitarian','Carnivore'];
 
 $Currencies = ['Credits','Physics Science Points','Engineering Science Points','Xenology Science Points','General Science Points'];
 
-global $PlayerState,$PlayerStates,$Currencies;
+global $PlayerState,$PlayerStates,$Currencies,$FoodTypes;
 
 function CheckFaction($Prog='Player',$Fid=0) {
   if (!Access('Player') && !Access('GM')) {

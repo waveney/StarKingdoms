@@ -45,5 +45,6 @@ CREATE TABLE `Factions` (
   `Trait1Conceal` int NOT NULL,
   `Trait2Conceal` int NOT NULL,
   `Trait3Conceal` int NOT NULL,
+  `FoodType` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

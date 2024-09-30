@@ -33,7 +33,7 @@
   global $db, $GAME;
 
 function Show_Faction(&$F,$Mode) {
-  global $GAME,$GAMEID,$PlayerState;;
+  global $GAME,$GAMEID,$PlayerState,$FoodTypes;
   if (!isset($F['id'])) {
     echo "<h1 class=Error>No Faction to Display</h1>";
     dotail();
@@ -72,6 +72,7 @@ function Show_Faction(&$F,$Mode) {
       echo ", " .  $PTs[$F['Biosphere3']];
     }
   }
+  echo "<tr>" . ($GM? fm_radio('Diet?',$FoodTypes,$F,'FoodType','',1,'colspan=2') : "<td>Diet is " . $FoodTypes[$F['FoodType']]);
   echo "<tr>" . fm_text('Player Name',$F,'Player',2,$cls);
 
   echo "<tr><td $cls>Player State:<td $cls>" .
