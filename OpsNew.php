@@ -78,7 +78,11 @@
 
   $Turn = $_REQUEST['t'];
 
-  $OpTypes = Gen_Get_Cond('OrgActions',"Office=$OffType");
+  if ($Org['Props'] & 2) {
+    $OpTypes = Gen_Get_Cond('OrgActions',"GameId=$GAMEID");
+  } else {
+    $OpTypes = Gen_Get_Cond('OrgActions',"Office=$OffType");
+  }
   $Stage = ($_REQUEST['Stage']??0);
   $op = ($_REQUEST['op']??0);
   $Wh = ($_REQUEST['W']??0);

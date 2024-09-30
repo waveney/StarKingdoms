@@ -1882,8 +1882,11 @@ function TraitIncomes() {
   global $GAMEID;
 
   $SPs = [
-    ['Academic','Abundant Wildlife','Xenology'],
-    ['Engineering','Necessity is the Mother of Invention','Engineering'],
+    ['Academic','Abundant Wildlife','Xenology',1],
+    ['Academic','Radioactive Crystals','Xenology',1],
+    ['Sensors','Deep Ocean Trenches','Xenology',2],
+
+    ['Engineering','Necessity is the Mother of Invention','Engineering',1],
   ];
 
   $DTypes = Get_DistrictTypes();
@@ -1898,15 +1901,27 @@ function TraitIncomes() {
     for($i=1;$i<4;$i++) {
       foreach ($SPs as $SP) {
         if ($P["Trait$i"] == $SP[1]) {
-          $Ds = Get_DistrictsP($Pid);
-          $D = ($Ds[$NamesDT[$SP[0]]]??0);
-          if ($D) {
-            $Fact = $Facts[$P['Control']];
-            $Fact[$SP[2] . "SP"] += $D['Number'];
-            Put_Faction($Fact);
-            TurnLog($Fact['id'],"Gained " . $D['Number'] . " " . $SP[2] . " points from the planetary trait " .$SP[1] . " in " . $P['Name']);
+          switch ($SP[3]) {
+            case 1: // Districts
+              $Ds = Get_DistrictsP($Pid);
+              $D = ($Ds[$NamesDT[$SP[0]]]??0);
+              if ($D) {
+                $Fact = $Facts[$P['Control']];
+                $Fact[$SP[2] . "SP"] += $D['Number'];
+                Put_Faction($Fact);
+                TurnLog($Fact['id'],"Gained " . $D['Number'] . " " . $SP[2] . " points from the planetary trait " .$SP[1] . " in " . $P['Name']);
+              }
+              break;
+            case 2:// Tech
+              $T = Has_Tech($Fid,$SP[0]);
+              if ($T) {
+                $Fact = $Facts[$P['Control']];
+                $Fact[$SP[2] . "SP"] += $T;
+                Put_Faction($Fact);
+                TurnLog($Fact['id'],"Gained " . $T . " " . $SP[2] . " points from the planetary trait " .$SP[1] . " in " . $P['Name']);
+              }
+              break;
           }
-
         }
       }
 

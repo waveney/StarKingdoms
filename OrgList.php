@@ -48,15 +48,23 @@
   }
   A_Check('Player');
 //  CheckFaction('WorldList',$Fid);
+  $GM = Access('GM');
 
-  if (!Access('GM') && $Faction['TurnState'] > 2) Player_Page();
+  if (!$GM && $Faction['TurnState'] > 2) Player_Page();
 
   $FactNames = Get_Faction_Names();
 
-  $Orgs = Gen_Get_Cond('Organisations',"( GameId=$GAMEID" . ($GM?" ) ":"AND Whose=$Fid ) ORDER BY RelOrder DESC"));
+  $Orgs = Gen_Get_Cond('Organisations',"( GameId=$GAMEID " . ($GM?" ) ":" AND Whose=$Fid ) ORDER BY RelOrder DESC"));
   $OrgTypes = Get_OrgTypes();
-  $OrgTypeNames[0] = '';
-  foreach ($OrgTypes as $i=>$Ot) $OrgTypeNames[$i] = $Ot['Name'];
+  $OrgTypeNames[0] = $NewOrgs[0] = '';
+  foreach ($OrgTypes as $i=>$Ot) {
+    $OrgTypeNames[$i] = $Ot['Name'];
+    if (!$GM && $Ot['Gate'] && !eval("return " . $Ot['Gate'] . ";" )) continue;
+    $NewOrgs[$i] = $Ot['Name'];
+  }
+
+
+
   $Facts = Get_Factions();
 //  var_dump($Orgs);
   if (UpdateMany('Organisations','',$Orgs,1,'','','Name','','Properties','',':'))
@@ -106,7 +114,7 @@
   $O = [];
   echo "<tr><td>";
   if ($GM) echo "<td>";
-  echo fm_select($OrgTypeNames,$O,'OrgType',0,'',"OrgType:0");
+  echo fm_select($NewOrgs,$O,'OrgType',0,'',"OrgType:0");
   echo fm_text1('',$O,'Name:0',4,'','placeholder="New Organisation Name"');
   echo "<br>" . fm_basictextarea($O, 'Description:0',5,4,"placeholder='New Organisation Description' style='width=70%'");
   if ($GM) {

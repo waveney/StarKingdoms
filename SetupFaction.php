@@ -454,7 +454,14 @@ function SetupStage6() {
   }
   $OTypes = [];
   $OrgTypes = Get_OrgTypes();
-  foreach ($OrgTypes as $oi=>$O) $OTypes[$oi] = $O['Name'];
+  $OrgTypeNames[0] = $NewOrgs[0] = '';
+  foreach ($OrgTypes as $i=>$Ot) {
+    $OrgTypeNames[$i] = $Ot['Name'];
+    if (!$GM && $Ot['Gate'] && !eval("return " . $Ot['Gate'] . ";" )) continue;
+    $NewOrgs[$i] = $Ot['Name'];
+  }
+
+
   Register_AutoUpdate('Organisations',0);
   $coln = 0;
   echo "<div class=tablecont><table id=indextable border width=100% style='min-width:1400px'>\n";
@@ -464,8 +471,9 @@ function SetupStage6() {
   echo "</thead><tbody>";
 
   foreach ($Orgs as $i=>$O) {
+    if (empty($NewOrgs[$O['OrgType']])) $NewOrgs[$O['OrgType']] = $OrgTypeNames[$O['OrgType']];
     echo "<tr>";
-    echo "<td>" . fm_select($OTypes,$O,'OrgType',1,'',"OrgType:$i");
+    echo "<td>" . fm_select($NewOrgs,$O,'OrgType',1,'',"OrgType:$i");
     echo fm_text1('',$O,'Name',4,'','placeholder="New Organisation Name"',"Name:$i");
     echo "<br>" . fm_basictextarea($O, 'Description',5,4,"placeholder='New Organisation Description' style='width=70%'","Description:$i");
     $SocPs = SocPrinciples($Fid);

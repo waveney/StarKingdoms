@@ -178,6 +178,45 @@ function Has_Trait($fid,$Name) {
   return false;
 }
 
+function Has_PTraitW($Wid,$Name) { // Has World got trait Name
+  $W = Get_World($Wid);
+  switch ($W['ThingType']){
+    case 1:// Planet
+      $P = Get_Planet($W['ThingId']);
+      if ($P['Trait1'] == $Name || $P['Trait2'] == $Name || $P['Trait3'] == $Name) return true;
+      return false;
+    case 1:// Moon
+      $P = Get_Moon($W['ThingId']);
+      if ($P['Trait1'] == $Name || $P['Trait2'] == $Name || $P['Trait3'] == $Name) return true;
+      return false;
+    case 1:// Thing
+     return Has_PTraitT($W['ThingId'],$Name);
+  }
+}
+
+function Has_PTraitH($Hid,$Name) { // Has Home got trait Name
+  $W = Get_ProjectHome($Hid);
+  switch ($W['ThingType']){
+    case 1:// Planet
+      $P = Get_Planet($W['ThingId']);
+      if ($P['Trait1'] == $Name || $P['Trait2'] == $Name || $P['Trait3'] == $Name) return true;
+      return false;
+    case 1:// Moon
+      $P = Get_Moon($W['ThingId']);
+      if ($P['Trait1'] == $Name || $P['Trait2'] == $Name || $P['Trait3'] == $Name) return true;
+      return false;
+    case 1:// Thing
+      return Has_PTraitT($W['ThingId'],$Name);
+  }
+}
+
+function Has_PTraitT($Tid,$Name) { // Has Thing got trait Name - from system it is in
+  $T = Get_Thing($T);
+  $N = Get_System($T);
+  if ($N['Trait1'] == $Name || $N['Trait2'] == $Name || $N['Trait3'] == $Name) return true;
+// NOT COMPLETE
+}
+
 function Ships() {
   global $FACTION;
 

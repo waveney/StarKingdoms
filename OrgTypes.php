@@ -26,10 +26,9 @@
   if (UpdateMany('OfficeTypes','Put_OrgType',$DTs,1))  $DTs=Get_OrgTypes($AllG);
 
   $coln = 0;
-echo "Do NOT change the shortnames - code depends on them<p>";
+  echo "Do NOT change the shortnames - code depends on them<p>";
 //  echo "Category 1=Academic,2=Ship Yard,4=Miltary,8=Intelligence,16=Construction, 32=Deep Space<p>";
-  echo "Props TBD<p>";
-  echo "Do NOT change the Org short names - code depends on them<p>";
+  echo "Props 1=Hidden,2=All Normal Opers<p>";
 
   echo "<form method=post>";
   if ($AllG) echo fm_hidden('AllGames',1);
@@ -47,6 +46,7 @@ echo "Do NOT change the shortnames - code depends on them<p>";
 //  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Cost</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Props</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Colour</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Gate</a>\n";
 
 
   echo "</thead><tbody>";
@@ -64,6 +64,7 @@ echo "Do NOT change the shortnames - code depends on them<p>";
 //    echo fm_number1("",$D,'Cost','','',"Cost$i");
     echo fm_number1("",$D,'Props','','',"Props$i");
     echo fm_text1("",$D,'Colour',1,'','',"Colour$i");
+    echo fm_text1("",$D,'Gate',1,'','',"Gate$i");
   }
   $D = [];
   echo "<tr><td><td><input type=text name=Name0 >";
@@ -78,6 +79,7 @@ echo "Do NOT change the shortnames - code depends on them<p>";
 //    echo fm_number1("",$D,'Cost','','',"Cost0");
     echo fm_number1("",$D,'Props','','',"Props0");
     echo "<td><input type=text name=Colour0 >";
+    echo "<td><input type=text name=Gate0 >";
     echo "</table></div>\n";
   echo "<input type=submit name=Update value=Update>\n";
   echo "</form></div>";
