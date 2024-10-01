@@ -5,6 +5,7 @@ CREATE TABLE `Organisations` (
   `Description` text COLLATE utf8mb4_general_ci NOT NULL,
   `OfficeCount` int NOT NULL,
   `OrgType` int NOT NULL,
+  `OrgType2` int NOT NULL,
   `GameId` int NOT NULL,
   `SocialPrinciple` int NOT NULL,
   `RelOrder` int NOT NULL,

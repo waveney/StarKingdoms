@@ -78,10 +78,14 @@
 
   $Turn = $_REQUEST['t'];
 
-  if ($Org['Props'] & 2) {
+  if ($OrgTypes[$Org['OrgType']]['Props'] & ORG_ALLOPS) {
     $OpTypes = Gen_Get_Cond('OrgActions',"GameId=$GAMEID");
   } else {
-    $OpTypes = Gen_Get_Cond('OrgActions',"Office=$OffType");
+    $OpTypes = Gen_Get_Cond('OrgActions',"Office=$OffType OR Office=" . $Org['OrgType2']);
+  }
+
+  if ($OrgTypes[$Org['OrgType']]['Props'] & ORG_NO_BRANCHES) {
+    foreach ($OpTypes as $i=>$Op) if ($Op['Props'] & OPER_BRANCH) unset($OpTypes[$i]);
   }
   $Stage = ($_REQUEST['Stage']??0);
   $op = ($_REQUEST['op']??0);

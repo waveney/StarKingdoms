@@ -475,7 +475,9 @@ function Recalc_Economic_Rating(&$H,&$W,$Fid,$Turn=0) {
   }
   $MinFact = (Has_Tech($Fid,'Improved Mining')?1.5:1);
   if (feature('Industrial')) {
-    return $NumPrime*4 + $NumInd*$W['Minerals']*$MinFact;
+    return $NumPrime*4 + $NumInd*($W['Minerals'] +
+      ((Has_PTraitW($W['id'],'Rare Mineral Deposits') && Has_Tech($Fid,'Advanced Mineral Extraction'))?3:0))*$MinFact +
+       (Has_PTraitW($W['id'],'Automated Farming Robots')?5:0);
   } else {
     return (Has_Trait($Fid,'No customers')?($NumPrime - $NumCom):$NumPrime)*$NumCom*2
          + min($W['Minerals'] * $MinFact,$NumPrime) + min($W['Minerals'] * $MinFact,$Mines*2* $MinFact);

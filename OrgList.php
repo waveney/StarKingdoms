@@ -92,7 +92,9 @@
     echo "<tr>" . fm_hidden("GameId:$i", $GAMEID);
     if ($GM) echo "<td>$i";
     if ($GM) {
-      echo "<td>" . fm_select($OrgTypeNames,$O,'OrgType',1,'',"OrgType:$i");
+      echo "<td>" . fm_select($OrgTypeNames,$O,'OrgType',1,'',"OrgType:$i") . "<br>";
+      echo "also:<br>" . fm_select($OrgTypeNames,$O,'OrgType2',1,'',"OrgType2:$i");
+
     } else {
       echo "<td>" . $OrgTypeNames[$O['OrgType']];
     }

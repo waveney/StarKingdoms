@@ -723,7 +723,8 @@
           echo "\n<td $BG id=ProjP$Turn:$Hi:$Di class='PHProg Group$Di Home$Hi' $Hide>" . $proj[$Turn][$Hi][$Di]['Progress'];
           echo "\n<td $BG id=ProjT$Turn:$Hi:$Di class='PHStatus Group$Di Home$Hi' $Hide>" . $proj[$Turn][$Hi][$Di]['Status'] . "";
 
-          $TotCost += $proj[$Turn][$Hi][$Di]['Cost'] + ( $proj[$Turn][$Hi][$Di]['FreeRushes']?0:($proj[$Turn][$Hi][$Di]['Rush']*Rush_Cost($Fid)));
+          $TotCost += $proj[$Turn][$Hi][$Di]['Cost'] +
+             ( $proj[$Turn][$Hi][$Di]['FreeRushes']?0:($proj[$Turn][$Hi][$Di]['Rush']*Rush_Cost($Fid,$proj[$Turn][$Hi][$Di])));
 
         } else {
           echo "<td $BG id=ProjN$Turn:$Hi:$Di class='PHName Home$Hi'>";

@@ -26,11 +26,12 @@
   $Facts[-1]['Name'] = "Other";
   $Bs = Get_BankingFT($Fid,$GAME['Turn']);
   $LinkTypes = Get_LinkLevels();
+  $Faction = $FACTION;
 
   $HasHomeLogistics = (Has_Tech($Fid,'Simplified Home Logistics') && Access('God'));
+  $HomeArmyLogistics = Has_PTraitW($Faction['HomeWorld'],'Universal Hunting Ground	');
   $FactionHome = 0;
-  if ($HasHomeLogistics) {
-    $Faction = Get_Faction($Fid);
+  if ($HasHomeLogistics || $HomeArmyLogistics) {
     $Home = $Faction['HomeWorld'];
     if ($Home) {
       $W = Get_World($Home);
@@ -89,7 +90,7 @@
     while ($PT = $res->fetch_assoc()) {
       $P = Get_Project($PT['ProjectId']);
       if (isset($P['FreeRushes']) && $P['FreeRushes']>0) continue;
-      $RCost =  (Rush_Cost($Fid) * $PT['Rush']);
+      $RCost =  (Rush_Cost($Fid,$P) * $PT['Rush']);
       if ($RCost > 0 && $P['Status']<2) {
         $Spend += $RCost;
         echo "Spending &#8373; $RCost to rush " . $P['Name'] . " by " . $PT['Rush'] . "<br>";
@@ -155,6 +156,11 @@
           $ECon /=2 ;
           echo ", It is blockaded income is halved to $ECon";
         }
+        if (Has_PTraitW($W['id'],'Thin Atmosphere')) {
+          $ECon = max(0,$ECon-1);
+          echo " Reduced by 2 due to a Thin Atmosphere leaving you with a rating of $ECon";
+        }
+
         if ($H['EconomyFactor'] < 100) {
           $ECon = ceil($ECon*$H['EconomyFactor']/100);
           echo ", It also is operating at only " . $H['EconomyFactor'] . "% so you have a rating of $ECon";
@@ -164,6 +170,7 @@
         }
       }
       echo "<br>\n";
+
       $EconVal += $ECon;
     }
     echo "<p>";
@@ -182,7 +189,7 @@
           $AstVal += $T['Level'];
         } else {
           $Plan = Get_Planet($T['Dist1']);
-          $AstVal += ($Plan['Minerals']??0)*$T['Level'];
+          $AstVal += (($Plan['Minerals']??0) + ((Has_PTraitP($W['id'],'Rare Mineral Deposits') && Has_Tech($Fid,'Advanced Mineral Extraction'))?3:0))*$T['Level'];
         }
         break;
 
@@ -236,9 +243,13 @@
       $Props = $TTypes[$T['Type']]['Properties'];
       if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
         if ($HasHomeLogistics && ($T['SystemId'] == $FactionHome)) $T['Level'] /=2;
-        if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $LogistCost[$T['Level']];
-        if ($Props & THING_HAS_GADGETS) $Logistics[2] += $LogistCost[$T['Level']];
-        if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $LogistCost[$T['Level']];
+        if ($HomeArmyLogistics && ($Props & THING_HAS_ARMYMODULES) && ($T['SystemId'] == $FactionHome)) {
+          continue; // Nocost
+        } else {
+          if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $LogistCost[$T['Level']];
+          if ($Props & THING_HAS_GADGETS) $Logistics[2] += $LogistCost[$T['Level']];
+          if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $LogistCost[$T['Level']];
+        }
       };
     }
 

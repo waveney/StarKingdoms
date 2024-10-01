@@ -1664,7 +1664,7 @@ function ProjectProgressActions($Pay4=0) {
       if ($Rush) {
         if (isset($P['FreeRushes']) && $P['FreeRushes']>0) continue;
         if ($Pay4) {
-          if (Spend_Credit($P['FactionId'],$Rc = (Rush_Cost($P['FactionId'])*$Rush), 'Rushing ' . $P['Name'] . " By $Rush")) {
+          if (Spend_Credit($P['FactionId'],$Rc = (Rush_Cost($P['FactionId'],$P)*$Rush), 'Rushing ' . $P['Name'] . " By $Rush")) {
             TurnLog($P['FactionId'],'Rushing ' . $P['Name'] . " by $Rush  Cost: " . Credit() . " $Rc");
           } else {
             TurnLog($P['FactionId'],'Not enough Credits to Rush: ' . $P['Name']);
@@ -1713,12 +1713,13 @@ function Economy() {
   foreach ($Facts as $F) {
     $Fid = $F['id'];
     $Worlds = Get_Worlds($Fid);
+    $Faction = Get_Faction($Fid);
 
     $LinkTypes = Get_LinkLevels();
     $HasHomeLogistics = Has_Tech($Fid,'Simplified Home Logistics');
+    $HomeArmyLogistics = Has_PTraitW($Faction['HomeWorld'],'Universal Hunting Ground	');
     $FactionHome = 0;
     if ($HasHomeLogistics) {
-      $Faction = Get_Faction($Fid);
       $Home = $Faction['HomeWorld'];
       if ($Home) {
         $W = Get_World($Home);
@@ -1769,6 +1770,12 @@ function Economy() {
           $ECon = ceil(($ECon - $H['Devastation'])*$H['EconomyFactor']/100);
         }
       }
+
+      if (Has_PTraitW($W['id'],'Thin Atmosphere')) {
+        $ECon = max(0,$ECon-1);
+        echo " Reduced by 2 due to a Thin Atmosphere leaving you with a rating of $ECon";
+      }
+
       if ($ECon <=0 && $Name) {
           $EccTxt .= "$Name: None\n";
       } else {
@@ -1797,7 +1804,7 @@ function Economy() {
           $AstVal += $T['Level'];
         } else {
           $Plan = Get_Planet($T['Dist1']);
-          $AstVal += $Plan['Minerals']*$T['Level'];
+          $AstVal += (($Plan['Minerals']??0) + ((Has_PTraitP($W['id'],'Rare Mineral Deposits') && Has_Tech($Fid,'Advanced Mineral Extraction'))?3:0))*$T['Level'];
         }
         break;
 
@@ -1848,9 +1855,13 @@ function Economy() {
       $Props = $TTypes[$T['Type']]['Properties'];
       if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
         if ($HasHomeLogistics && ($T['SystemId'] == $Facts[$T['Whose']]['HomeWorld'])) $T['Level'] /=2;
-        if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $LogistCost[$T['Level']];
-        if ($Props & THING_HAS_GADGETS) $Logistics[2] += $LogistCost[$T['Level']];
-        if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $LogistCost[$T['Level']];
+        if ($HomeArmyLogistics && ($Props & THING_HAS_ARMYMODULES) && ($T['SystemId'] == $FactionHome)) {
+          continue; // Nocost
+        } else {
+          if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $LogistCost[$T['Level']];
+          if ($Props & THING_HAS_GADGETS) $Logistics[2] += $LogistCost[$T['Level']];
+          if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $LogistCost[$T['Level']];
+        }
       };
     }
 
@@ -1885,7 +1896,8 @@ function TraitIncomes() {
     ['Academic','Abundant Wildlife','Xenology',1],
     ['Academic','Radioactive Crystals','Xenology',1],
     ['Sensors','Deep Ocean Trenches','Xenology',2],
-
+    ['Academic','Thin Atmosphere','Physics',1],
+    [2,'High Tectonic Activity','Engineering',3],
     ['Engineering','Necessity is the Mother of Invention','Engineering',1],
   ];
 
@@ -1920,6 +1932,12 @@ function TraitIncomes() {
                 Put_Faction($Fact);
                 TurnLog($Fact['id'],"Gained " . $T . " " . $SP[2] . " points from the planetary trait " .$SP[1] . " in " . $P['Name']);
               }
+              break;
+            case 3: //Fixed
+              $Fact = $Facts[$P['Control']];
+              $Fact[$SP[2] . "SP"] += $SP[0];
+              Put_Faction($Fact);
+              TurnLog($Fact['id'],"Gained " . $SP[0] . " " . $SP[2] . " points from the planetary trait " .$SP[1] . " in " . $P['Name']);
               break;
           }
         }

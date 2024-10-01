@@ -11,17 +11,22 @@ define('OPER_BRANCH',0x100);
 define('OPER_HIDDEN',0x200);
 define('OPER_SOCPTARGET',0x400);
 
+define('ORG_HIDDEN',1);
+define('ORG_ALLOPS',2);
+define('ORG_NO_BRANCHES',4);
+define('ORG_SPECIAL_POWER',8);
 
 define('BRANCH_HIDDEN',1);
-define('Branch_NOSPACE',2);
+define('BRANCH_NOSPACE',2);
 
 function Recalc_Offices() { // Recount offices for each org
   global $GAMEID;
   $Offs = Gen_Get_All('Offices', " WHERE GameId=$GAMEID");
   $Orgs = Gen_Get_All('Organisations', " WHERE GameId=$GAMEID");
+  $OrgTypes = Get_OrgTypes();
   $OCount = [];
 
-  foreach ($Orgs as &$O) $O['OfficeCount'] = 0;
+  foreach ($Orgs as &$O) if (($OrgTypes[$O['OrgType']]['Props'] & ORG_SPECIAL_POWER) == 0) $O['OfficeCount'] = 0;
   foreach ($Offs as $oi=>$Of) {
     $Org = $Of['Organisation'];
     if (isset($Orgs[$Org])) {
@@ -36,7 +41,7 @@ function Recalc_Offices() { // Recount offices for each org
     }
   }
 
-  foreach ($Orgs as $O) Gen_Put('Organisations',$O);
+  foreach ($Orgs as $O) if (($OrgTypes[$O['OrgType']]['Props'] & ORG_SPECIAL_POWER) == 0) Gen_Put('Organisations',$O);
 
 }
 

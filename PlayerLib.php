@@ -7,7 +7,7 @@ include_once("GetPut.php");
 $PlayerState = ['Setup', 'Turn Planning' , 'Turn Submitted', 'Turn Being Processed','Frozen'];
 $PlayerStateColours = ['Orange','lightblue','LightGreen','pink','White'];
 $PlayerStates = array_flip($PlayerState);
-$FoodTypes = ['Omnivore','Vegitarian','Carnivore'];
+$FoodTypes = ['Omnivore','Herbivore','Carnivore'];
 
 $Currencies = ['Credits','Physics Science Points','Engineering Science Points','Xenology Science Points','General Science Points'];
 
@@ -211,6 +211,18 @@ function Has_PTraitH($Hid,$Name) { // Has Home got trait Name
   }
 }
 
+function Has_PTraitP($Pid,$Name) { // Has Planet got trait Name
+  $P = Get_Planet($Pid);
+  if ($P['Trait1'] == $Name || $P['Trait2'] == $Name || $P['Trait3'] == $Name) return true;
+  return false;
+}
+
+function Has_PTraitM($Pid,$Name) { // Has Planet got trait Name
+  $P = Get_Moon($Pid);
+  if ($P['Trait1'] == $Name || $P['Trait2'] == $Name || $P['Trait3'] == $Name) return true;
+  return false;
+}
+
 function Has_PTraitT($Tid,$Name) { // Has Thing got trait Name - from system it is in
   $T = Get_Thing($Tid);
   $N = Get_System($T['SystemId']);
@@ -300,6 +312,34 @@ function Income_Estimate($Fid) {
   include_once("ThingLib.php");
   include_once("HomesLib.php");
   global $LogistCost;
+  $Faction = Get_Faction($Fid);
+
+  $HasHomeLogistics = (Has_Tech($Fid,'Simplified Home Logistics') && Access('God'));
+  $HomeArmyLogistics = Has_PTraitW($Faction['HomeWorld'],'Universal Hunting Ground	');
+  $FactionHome = 0;
+  if ($HasHomeLogistics || $HomeArmyLogistics) {
+    $Home = $Faction['HomeWorld'];
+    if ($Home) {
+      $W = Get_World($Home);
+      if ($W) {
+        switch ($W['ThingType']) {
+          case 1: // Planet
+            $P = Get_Planet($W['ThingId']);
+            $FactionHome = $P['SystemId'];
+            break;
+          case 2: // Moon
+            $M = Get_Moon($W['ThingId']);
+            $P = Get_Planet($W['PlanetId']);
+            $FactionHome = $P['SystemId'];
+            break;
+          case 3: // Things
+            $TH = Get_Thing($W['ThingId']);
+            $FactionHome = $TH['SystemId'];
+            break;
+        }
+      }
+    }
+  }
 
   $TTypes = Get_ThingTypes();
 
@@ -313,6 +353,9 @@ function Income_Estimate($Fid) {
     if (!$PH) continue;
 
     $ECon = $H['Economy'] = Recalc_Economic_Rating($H,$W,$Fid);
+    if (Has_PTraitW($W['id'],'Thin Atmosphere')) {
+      $ECon = max(0,$ECon-1);
+    }
 
     if ($W['Revolt']) {
       $ECon = 0;
@@ -344,7 +387,7 @@ function Income_Estimate($Fid) {
       } else {
         $Plan = Get_Planet($T['Dist1']);
         if (!$Plan) break;
-        $AstVal += $Plan['Minerals']*$T['Level'];
+        $AstVal += (($Plan['Minerals']??0) + ((Has_PTraitP($W['id'],'Rare Mineral Deposits') && Has_Tech($Fid,'Advanced Mineral Extraction'))?3:0))*$T['Level'];
       }
       $AstMines ++;
       break;
@@ -382,10 +425,15 @@ function Income_Estimate($Fid) {
     if (empty($T['Type']) || empty($TTypes[$T['Type']]) ) continue;
     $Props = $TTypes[$T['Type']]['Properties'];
     if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
-      if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $LogistCost[$T['Level']];
-      if ($Props & THING_HAS_GADGETS) $Logistics[2] += $LogistCost[$T['Level']];
-      if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $LogistCost[$T['Level']];
-    };
+      if ($HasHomeLogistics && ($T['SystemId'] == $FactionHome)) $T['Level'] /=2;
+      if ($HomeArmyLogistics && ($Props & THING_HAS_ARMYMODULES) && ($T['SystemId'] == $FactionHome)) {
+        continue; // Nocost
+      } else {
+        if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $LogistCost[$T['Level']];
+        if ($Props & THING_HAS_GADGETS) $Logistics[2] += $LogistCost[$T['Level']];
+        if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $LogistCost[$T['Level']];
+      }
+    }
   }
 
 
