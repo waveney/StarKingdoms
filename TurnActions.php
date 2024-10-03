@@ -242,6 +242,17 @@ function Follow() {
       $Fol = Get_Thing($Folid);
       if ($Fol) {
         if ($Fol['LinkId'] >= 0) {
+          $L = Get_Link($Fol['LinkId']);
+          if ($T['Stability'] < ($L['Instability']+$L['ThisTurnMod'])) {
+            TurnLog($T['Whose'],  $T['Name'] . " Can not follow " . $Fol['Name'] . " as the link's Instability is too high " .
+              ($L['ThisTurnMod']? ( " it is currently " . ($L['Instability']+$L['ThisTurnMod'])) : (" it is " . $L['Instability']) ));
+            GMLog($Factions[$T['Whose']]['Name'] . " - " . $T['Name'] . " Can not follow " . $Fol['Name'] . " as the link's Instability is too high " .
+              ($L['ThisTurnMod']? ( " it is currently " . ($L['Instability']+$L['ThisTurnMod'])) : (" it is " . $L['Instability']) ));
+            $T['LinkId'] = $T['LinkCost'] = $T['LinkPay'] = 0;
+            Put_Thing($T);
+
+            continue;
+          }
           $T['LinkId'] = $Fol['LinkId'];
           $T['LinkCost'] = $Fol['LinkCost'];
           $T['LinkPay'] = 1;
@@ -447,6 +458,20 @@ function StartProjects() {
         }
       }
     }
+
+    if ($T['BuildFlags'] & BUILD_FLAG1 ) {
+      if ($Facts[$Fid]['Currency3'] <= $T['Level']) {
+        $P['Status'] = 5; // Not Started
+        TurnLog($P['FactionId'],'Not starting as not enough ' . Feature('Currency3','Unknown') . ': ' . $P['Name']);
+        GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as not enough ' . Feature('Currency3','Unknown') . ': ' . $P['Name'],1);
+        Put_Project($P);
+        continue;
+      }
+      $Facts[$Fid]['Currency3'] -= $T['Level'];
+      Put_Faction($Facts[$Fid]);
+      TurnLog($P['FactionId'],'Spent ' . $T['Level'] . ' ' . Feature('Currency3','Unknown') . ' starting ' . $T['Name']);
+    }
+
     if ($Cost == 0 || Spend_Credit($P['FactionId'],$Cost,'Starting: ' . $P['Name'])) {
       $P['Status'] = 1; // Started
       TurnLog($P['FactionId'],'Starting ' . $P['Name'] . " Cost: " . Credit() . " $Cost");
@@ -1621,7 +1646,15 @@ function ProjectProgressActions($Pay4=0) {
 
 //var_dump($Dists);
       switch ($PT['Category']) {
-      case 1: $MaxActs = $Dists[5]['Number']; break;
+      case 1:
+        $MaxActs = $Dists[5]['Number'];
+        if (Has_Trait($Fid,'Masters of Energy Manipulation'))
+          if (strstr($PT['Name'],'Research')) {
+            $Tid = $P['ThingType'];
+            $Tech = Get_Tech($Tid);
+            if (($Tech['Field']??0) == 1) $MaxActs++;
+          }
+        break;
       case 2: $MaxActs = $Dists[3]['Number']; break;
       case 4: $MaxActs = $Dists[2]['Number']; break;
       case 8: $MaxActs = $Dists[4]['Number']; break;
@@ -1664,7 +1697,7 @@ function ProjectProgressActions($Pay4=0) {
       if ($Rush) {
         if (isset($P['FreeRushes']) && $P['FreeRushes']>0) continue;
         if ($Pay4) {
-          if (Spend_Credit($P['FactionId'],$Rc = (Rush_Cost($P['FactionId'],$P)*$Rush), 'Rushing ' . $P['Name'] . " By $Rush")) {
+          if (Spend_Credit($P['FactionId'],$Rc = (Rush_Cost($P['FactionId'],$P['Type'],$P['Home'])*$Rush), 'Rushing ' . $P['Name'] . " By $Rush")) {
             TurnLog($P['FactionId'],'Rushing ' . $P['Name'] . " by $Rush  Cost: " . Credit() . " $Rc");
           } else {
             TurnLog($P['FactionId'],'Not enough Credits to Rush: ' . $P['Name']);
@@ -1674,6 +1707,11 @@ function ProjectProgressActions($Pay4=0) {
           }
         }
       }
+    }
+
+    if (Has_Trait($Fid,"I Don't Want To Die")) {
+      $PNam = $ProjTypes[$P['Type']]['Name'];
+      if ($PNam == 'Train Detachment' || $PNam == 'Reinforce Detachment' || $PNam == 'Refit Detachment') $Bonus = -1;
     }
 
 //echo "Acts . $Acts<br>";
@@ -2071,9 +2109,11 @@ function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
 
       GMLog("<tr><td>" . $Facts[$Fid]['Name'] . "<td><a href=ThingEdit.php?id=$Tid>" . $T['Name']  . "<td>" . $T['Level']);
       if ($T['SystemId'] == $SR1['id']) {
-         GMLog("<td>" . $L['System1Ref'] . "<td style=color:" . $LinkLevels[abs($L['Level'])]['Colour'] . ";>#$Lid<td>" . $L['System2Ref']);
+         GMLog("<td>" . $L['System1Ref'] . "<td style=color:" . $LinkLevels[abs($L['Level'])]['Colour'] . ";>" .
+           ($L['Name']?$L['Name']:"#$Lid"). "<td>" . $L['System2Ref']);
       } else {
-         GMLog("<td>" . $L['System2Ref'] . "<td style=color:" . $LinkLevels[abs($L['Level'])]['Colour'] . ";>#$Lid<td>" . $L['System1Ref']);
+         GMLog("<td>" . $L['System2Ref'] . "<td style=color:" . $LinkLevels[abs($L['Level'])]['Colour'] . ";>" .
+           ($L['Name']?$L['Name']:"#$Lid"). "<td>" . $L['System1Ref']);
       }
 
 // var_dump($CheckNeeded,$T['LinkPay']);
@@ -2108,11 +2148,13 @@ function ShipMovements($Agents=0) {
   if (!file_exists("Turns/" . $GAMEID . "/" . $GAME['Turn'])) $LF = mkdir("Turns/" . $GAMEID . "/" . $GAME['Turn'],0777,true);
 
   $LinkLevels = Get_LinkLevels();
+
   $Things = ($Agents ? Get_AllThings() : Gen_Get_Table('Things',"ORDER BY RAND()"));
   $TTypes = Get_ThingTypes();
   $Facts = Get_Factions();
   $LOwner = GameFeature('LinkOwner',0);
   $LinkState = array_flip($LinkStates);
+  $LinkMethod = Feature('LinkMethod','Gates');
 
   foreach ($Things as $T) {
     if ($T['BuildState'] <2 || $T['BuildState'] > 3 || $T['LinkId'] <= 0 || $T['Whose']==0 || $T['CurHealth']==0) continue;
@@ -2133,7 +2175,8 @@ function ShipMovements($Agents=0) {
     if ($Lid > 0) $L = Get_Link($Lid);
 
     if (isset($_REQUEST["Prevent$Tid"]) && $_REQUEST["Prevent$Tid"] ) {
-      TurnLog($Fid,$T['Name'] . " was <b>unable to take link</b> <span style=color:" . $LinkLevels[abs($L['Level'])]['Colour'] . ">#$Lid </span> beause of " .
+      TurnLog($Fid,$T['Name'] . " was <b>unable to take link</b> <span style=color:" . $LinkLevels[abs($L['Level'])]['Colour'] . ">" .
+        ($L['Name']?$L['Name']:"#$Lid") . " </span> beause of " .
         (isset($_REQUEST["Reason$Tid"])? $_REQUEST["Reason$Tid"]:"Unknown reasons"), $T);
       $T['LastMoved'] = $GAME['Turn'];
       Put_Thing($T);
@@ -2144,14 +2187,15 @@ function ShipMovements($Agents=0) {
       // if link out & not spider - cant move
 
       if ($L && ($L['Status'] > 0) && ($Fid != $LOwner) && ($L['GameId']>0)) {
-        TurnLog($Fid,$T['Name'] . " was <b>unable to take link</b> <span style=color:" . $LinkLevels[abs($L['Level'])]['Colour'] . ">#$Lid </span> because it is " .
+        TurnLog($Fid,$T['Name'] . " was <b>unable to take link</b> <span style=color:" . $LinkLevels[abs($L['Level'])]['Colour'] . ">" .
+        ($L['Name']?$L['Name']:"#$Lid") . " </span> beause of it is " .
           $LinkStates[$L['Status']],$T);
         $T['LastMoved'] = $GAME['Turn'];
         Put_Thing($T);
         continue;
       } else if (!$L || ($L['GameId'] < 0)) {
         GMLog("Not Moving " . $T['Name']);
-        TurnLog($Fid,$T['Name'] . " was <b>unable to take link</b>#$Lid because it no longer exists",$T);
+        TurnLog($Fid,$T['Name'] . " was <b>unable to take link</b>" . ($L['Name']?$L['Name']:"#$Lid"). " because it no longer exists",$T);
         $T['LastMoved'] = $GAME['Turn'];
         Put_Thing($T);
         continue;
@@ -2164,7 +2208,23 @@ function ShipMovements($Agents=0) {
       $SR1 = Get_SystemR($L['System1Ref']);
       $SR2 = Get_SystemR($L['System2Ref']);
 
-
+      if ($T['SystemId'] == $SR1['id']) {
+        $Sid = $T['NewSystemId'] = $SR2['id'];
+        $Ref = $SR2['Ref']; // Names...
+        $N = $SR2;
+        $OldSid = $SR1['id'];
+        $OldN = $SR1;
+        $GFrom = 'A';
+        $GTo = 'B';
+      } else {
+        $Sid = $T['NewSystemId'] = $SR1['id'];
+        $Ref = $SR1['Ref'];
+        $N = $SR1;
+        $OldSid = $SR2['id'];
+        $OldN = $SR2;
+        $GFrom = 'B';
+        $GTo = 'A';
+      }
 
       if (($Agents == 0) && ($T['Whose'] != $LOwner)) {
         $L['UseCount'] += $T['Level'];
@@ -2184,8 +2244,10 @@ function ShipMovements($Agents=0) {
             SetAllLinks($L['System1Ref'], $SR1['id'],$LinkState['In Safe Mode']);
             SetAllLinks($L['System2Ref'], $SR2['id'],$LinkState['In Safe Mode']);
 
-            Report_Others(0, $SR1['id'], 31, "Link #$Lid Exploded.  All other links in " . $L['System1Ref'] . " have been put in Safe Mode");
-            Report_Others(0, $SR2['id'], 31, "Link #$Lid Exploded.  All other links in " . $L['System2Ref'] . " have been put in Safe Mode");
+            Report_Others(0, $SR1['id'], 31, "Link " . ($L['Name']?$L['Name']:"#$Lid"). " Exploded.  All other links in " . $L['System1Ref'] .
+              " have been put in Safe Mode");
+            Report_Others(0, $SR2['id'], 31, "Link " . ($L['Name']?$L['Name']:"#$Lid"). " Exploded.  All other links in " . $L['System2Ref'] .
+              " have been put in Safe Mode");
 
             // Remove the link!
 
@@ -2194,26 +2256,20 @@ function ShipMovements($Agents=0) {
             $SetBreak = 1;
           }
         }
+
+        if ($T['BuildFlags'] & BUILD_FLAG1) $L['NextTurnMod']++;
+
+        if (($LinkMethod == 'Wormholes') && $T['Stability'] < ($L['Instability']+$L['ThisTurnMod'])) {
+          TurnLog($Fid,$T['Name'] . " Did not have enough Stability to go through Link " . ($L['Name']?$L['Name']:"#$Lid") . " it currently has instability " .
+            ($L['Instability']+$L['ThisTurnMod']) . ".\nA few small fragments where spayed into $Ref the rest is deposited across the multiverse.", $T);
+          GMLog($Facts[$Fid]['Name'] . " - <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a> did not have enough Stability to go through Link " .
+            ($L['Name']?$L['Name']:"#$Lid") . " it currently has instability " . ($L['Instability']+$L['ThisTurnMod']) . " It should be destroyed (no debris)");
+          Report_Others(0, $Sid, 31, "A spray of debris that may once have been part of a ship is seen leaving the wormhole " . ($L['Name']?$L['Name']:"#$Lid"));
+        }
+
         Put_Link($L);
       }
 
-      if ($T['SystemId'] == $SR1['id']) {
-        $Sid = $T['NewSystemId'] = $SR2['id'];
-        $Ref = $SR2['Ref']; // Names...
-        $N = $SR2;
-        $OldSid = $SR1['id'];
-        $OldN = $SR1;
-        $GFrom = 'A';
-        $GTo = 'B';
-      } else {
-        $Sid = $T['NewSystemId'] = $SR1['id'];
-        $Ref = $SR1['Ref'];
-        $N = $SR1;
-        $OldSid = $SR2['id'];
-        $OldN = $SR2;
-        $GFrom = 'B';
-        $GTo = 'A';
-      }
 
       $MineChecks = ['From'=>$GFrom, 'To'=>$GTo];
       foreach ($MineChecks as $Dir=>$MC) {
@@ -2261,13 +2317,15 @@ function ShipMovements($Agents=0) {
       if ($Fid) {
         if (isset($SetBreak)) {
           TurnLog($Fid,$T['Name'] . " attempted to move from " . System_Name($OldN,$Fid) . " along <span style='color:" . $LinkLevels[abs($L['Level'])]['Colour'] .
-                  ";'>link #$Lid </span>to $pname " . ($T['NewLocation'] > 2?( " to " . $EndLocs[$T['NewLocation']]): "") . " unfortunately the link was " .
+                  ";'>link " . ($L['Name']?$L['Name']:"#$Lid"). " </span>to $pname " . ($T['NewLocation'] > 2?( " to " .
+                  $EndLocs[$T['NewLocation']]): "") . " unfortunately the link was " .
                   "overloaded and exploded - see turn report" ,$T);
           $T['CurHealth'] = 0;
           $T['SystemId'] = 0;
         } else {
           TurnLog($Fid,$T['Name'] . " has moved from " . System_Name($OldN,$Fid) . " along <span style='color:" . $LinkLevels[abs($L['Level'])]['Colour'] .
-                  ";'>link #$Lid </span>to $pname " .         ($T['NewLocation'] > 2?( " to " . $EndLocs[$T['NewLocation']]): ""),$T);
+                  ";'>link " . ($L['Name']?$L['Name']:"#$Lid"). " </span>to $pname " .
+                  ($T['NewLocation'] > 2?( " to " . $EndLocs[$T['NewLocation']]): ""),$T);
         }
       }
 //    $T['LinkId'] = 0;
@@ -3354,11 +3412,14 @@ function InstructionsComplete() {
        if (empty($Systems)) $Systems = Get_SystemRefs();
        $LinkLevels = Get_LinkLevels();
        $LL = $LinkLevels[$T['Dist1']];
-       $NewLink = ['GameId'=>$GAME['id'], 'System1Ref'=>$Systems[$T['SystemId']], 'System2Ref'=> $Systems[$T['Dist2']], 'Level'=>$T['Dist1']];
+       $L = $NewLink = ['GameId'=>$GAME['id'], 'System1Ref'=>$Systems[$T['SystemId']], 'System2Ref'=> $Systems[$T['Dist2']],
+                        'Level'=>$T['Dist1'], 'Name'=>$T['MakeName']];
        $Lid = Put_Link($NewLink);
-       TurnLog($T['Whose'], "<span style=color:" . $LL['Colour'] . ">Link#$Lid </span>has been created between " . $Systems[$T['SystemId']] . " and " .
+       TurnLog($T['Whose'], "<span style=color:" . $LL['Colour'] . ">Link" . ($L['Name']?$L['Name']:"#$Lid").
+               " </span>has been created between " . $Systems[$T['SystemId']] . " and " .
                $Systems[$T['Dist2']]);
-       GMLog("A new " . $LL['Colour'] . " level " . $T['Dist1'] . " link #$Lid </span> has been made between " . $Systems[$T['SystemId']] . " and " .
+       GMLog("A new " . $LL['Colour'] . " level " . $T['Dist1'] . " link " . ($L['Name']?$L['Name']:"#$Lid"). " </span> has been made between " .
+              $Systems[$T['SystemId']] . " and " .
               $Systems[$T['Dist2']]);
        $FL = ['LinkId'=>$Lid, 'FactionId'=>$T['Whose'],'Known'=>1];
        Put_FactionLink($FL);
@@ -3431,7 +3492,7 @@ function InstructionsComplete() {
          GMLog("Dismantling Stargate: $Lid Could not find currency name");
          break;
        }
-       Gain_Currency($T['Whose'],$AdianNumber,$Recovery,"Dismantling Link #$Lid");
+       Gain_Currency($T['Whose'],$AdianNumber,$Recovery,"Dismantling Link " . ($L['Name']?$L['Name']:"#$Lid"));
        GMLog("Link $Lid has been dismantled by " . $Facts[$T['Whose']]['Name'] . " recovered $Recovery $AdianName ");
        TurnLog($Who,"Link $Lid has been dismantled you recovered $Recovery $AdianName ");
        Report_Others($T['Whose'], $Systems[$SaveL['System1Ref']]['id'],2,"Link $Lid has been dismantled in " . $SaveL['System1Ref']);
@@ -3920,6 +3981,11 @@ function FixFudge() { // Tempcode called to fix thi9ngs
 
 function TidyUps() {
   global $db,$GAMEID,$GAME;
+  $Systems = Get_Systems();
+  $TTypes = Get_ThingTypes();
+  $TNames = NamesList($TTypes);
+  $ThingNames = array_flip($TNames);
+  $WormStab = $ThingNames['Wormhole Stabilisers'];
 
   $res = $db->query("UPDATE Things SET LinkId=0, LinkPay=0, LinkCost=0 WHERE LinkId>0 AND GameId=$GAMEID");
 
@@ -3946,6 +4012,7 @@ function TidyUps() {
     if ((($F['Props']>>28) &15) == 1) $F['Props'] = ($F['Props']&0x0fffffff);
     Put_FactionFaction($F);
   }
+  GMLog("Single Turn Player FF data Tidied Up<p>");
 
   // Tidy up Scans due ?
 
@@ -3958,8 +4025,21 @@ function TidyUps() {
   }
   GMLog("Instructions fields reset for continued use<p>");
 
+  $Links = Get_LinksGame();
+  foreach ($Links as $Lid=>$L) {
+    // Mods this/next
+    $L['ThisTurnMod'] = $L['NextTurnMod'];
+    $L['NextTurnMod'] = 0;
 
-  GMLog("Movements, 1 turn carry, district deltas Tidied Up<p>");
+    $Sid1 = $Systems[$L['System1Ref']]['id'];
+    $Sid2 = $Systems[$L['System2Ref']]['id'];
+
+    $Stabs = Get_Things_Cond(0,"Type=$WormStab AND (SystemId=$Sid1 OR SystemId=$Sid2) AND LinkId=$Lid" );
+    if ($Stabs) foreach($Stabs as $S) $L['NextTurnMod']-=$S['Level'];
+    Put_Link($L);
+  }
+  GMLog("Links: Wormhole Stabilisers and Cret-Chath tidied<p>");
+
   return 1;
 }
 

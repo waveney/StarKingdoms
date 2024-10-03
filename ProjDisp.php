@@ -204,6 +204,7 @@
             $Place = Get_Thing($PH['ThingId']);
             break;
           }
+
           $Name = "Build " . $T['Name'] . " (level $Level) on " . $Place['Name'] ;
           break;
 
@@ -534,6 +535,13 @@
           $Pro['Rush'] = $Rush = $BonusRush = $Bonus = 0;
 //          $Pro['MaxRush'] = ( ($ProjTypes[$P['Type']]['Category'] & 16) ? $PlanCon : $District_Type[$WantedDT]);
           $Pro['MaxRush'] = (( $WantedDT < 0) ? $PlanCon : $District_Type[$WantedDT]);
+          if (Has_Trait($Fid,'Masters of Energy Manipulation'))
+            if (strstr($PPtype['Name'],'Research')) {
+              $Tid = $P['ThingType'];
+              $Tech = Get_Tech($Tid);
+              if (($Tech['Field']??0) == 1) $Pro['MaxRush']++;
+            }
+
           if ($P['FreeRushes']) $Pro['Rush'] = $Rush = $Pro['MaxRush'];
 
 /*            $Pro['MaxRush'] =  (($ProjTypes[$P['Type']]['BasedOn'])? Has_Tech($Fid,$ProjTypes[$P['Type']]['BasedOn'],$t) :
@@ -552,6 +560,11 @@
               if (!empty($TurnStuff[$TSi]['Bonus'])) $Bonus = $Pro['Bonus'] = $TurnStuff[$TSi]['Bonus'];
               $TSi ++;
             }
+          }
+
+          if (Has_Trait($Fid,"I Don't Want To Die")) {
+            $PNam = $ProjTypes[$P['Type']]['Name'];
+            if ($PNam == 'Train Detachment' || $PNam == 'Reinforce Detachment' || $PNam == 'Refit Detachment') $Bonus = -1;
           }
 
           if ($t == $P['TurnEnd']) {
@@ -724,7 +737,7 @@
           echo "\n<td $BG id=ProjT$Turn:$Hi:$Di class='PHStatus Group$Di Home$Hi' $Hide>" . $proj[$Turn][$Hi][$Di]['Status'] . "";
 
           $TotCost += $proj[$Turn][$Hi][$Di]['Cost'] +
-             ( $proj[$Turn][$Hi][$Di]['FreeRushes']?0:($proj[$Turn][$Hi][$Di]['Rush']*Rush_Cost($Fid,$proj[$Turn][$Hi][$Di])));
+          ( $proj[$Turn][$Hi][$Di]['FreeRushes']?0:($proj[$Turn][$Hi][$Di]['Rush']*Rush_Cost($Fid,$proj[$Turn][$Hi][$Di]['Type'],$Hi)));
 
         } else {
           echo "<td $BG id=ProjN$Turn:$Hi:$Di class='PHName Home$Hi'>";

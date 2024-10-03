@@ -194,6 +194,11 @@ function fm_checkbox($Desc,&$data,$field,$extra='',$field2='',$split=0,$extra2='
           ($AutoADD? " oninput=AutoCheckBoxInput('$field2',$AutoType) " : "") . " Name=$field2 id=$field2 $extra>";
 }
 
+function fm_checkflagbox($Desc,&$Data,$field,$Flag,$extra='',$field2='',$split=0,$extra2='') {
+  // Fudge for now
+  return fm_checkbox($Desc,$Data,$field,$extra,$field2,$split,$extra2);
+}
+
 function fm_YesNo($Field,$Dft,$Rtxt="Why") {
   $Nul = [$Field =>$Dft];
   return fm_checkbox('',$Nul,$Field) . fm_text0(" $Rtxt",$Nul,"Reason$Field");

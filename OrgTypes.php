@@ -28,7 +28,7 @@
   $coln = 0;
   echo "Do NOT change the shortnames - code depends on them<p>";
 //  echo "Category 1=Academic,2=Ship Yard,4=Miltary,8=Intelligence,16=Construction, 32=Deep Space<p>";
-  echo "Props 1=Hidden,2=All Normal Opers<p>";
+  echo "Props 1=Hidden,2=All Normal Opers, 3=No Branches, 4=Special Power<p>";
 
   echo "<form method=post>";
   if ($AllG) echo fm_hidden('AllGames',1);

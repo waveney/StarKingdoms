@@ -296,7 +296,7 @@ function Show_System(&$N,$Mode=0) {
       $OName = NameFind($ON);
 
       echo "<tr><td><a href=LinkEdit.php?id=$Lid>" . $L['Name'] . "</a><td><a href=SysEdit.php?id=$ONid>$OSysRef - $OName</a><td>" .
-      $L['Instability'] . "<td>" . $L['Concealment'];
+      ($L['Instability']+ $L['ThisTurnMod'] ). "<td>" . $L['Concealment'];
       foreach ($Facts as $F) echo "<td>" . (isset($Know[$F['id']]) && $Know[$F['id']]['Known']?"Yes " . NameFind($Know):"No");
       echo "\n";
     }

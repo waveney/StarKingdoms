@@ -11,7 +11,6 @@
   }
 
   dostaffhead("SK Pages", ["/js/jquery.typeahead.min.js", "/css/jquery.typeahead.min.css", "/js/Staff.js"]);
-
   global $GAME, $Heads,$VERSION;
   $Heads = [];
 

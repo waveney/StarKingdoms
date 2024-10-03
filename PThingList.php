@@ -5,7 +5,7 @@
   include_once("PlayerLib.php");
   include_once("ThingLib.php");
 
-  global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$ThingInclrs,$GAMEID,$LogistCost,$ARMY,$ARMIES;
+  global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$ThingInclrs,$GAMEID,$LogistCost,$ARMY,$ARMIES,$GAME;
 
   $Fid = 0;
 //var_dump($_COOKIE,$_REQUEST);
@@ -198,6 +198,14 @@
   echo "For loading/unloading of troops and characters, go to the thing<p>\n";
 //  echo "Use only ONE of the filters to the right<br>\n";
 
+  $MovesValid = 1;
+  if (Has_Trait($Fid,'Star-Crossed')) {
+    if (IsPrime($GAME['Turn'])) {
+      $MovesValid = 0;
+      echo "You are Star Crossed - No movement this turn<p>";
+    }
+  }
+
   $coln = 0;
 
   echo "<div class=tablecont><table id=indextable border width=100% style='min-width:1400px'>\n";
@@ -309,13 +317,13 @@
       if ($T['Instruction']) echo $ThingInstrs[abs($T['Instruction'])];
       if (($T['Instruction'] == 0 || $T['Instruction'] == 5 ) && (($Props & THING_CAN_MOVE) && ( $T['BuildState'] == 3))) {
         if ( (($T['LinkId'] >=0 ) || ($T['LinkId'] == LINK_FOLLOW) )&& ($T['CurHealth'] > 0 || ($Props & THING_HAS_HEALTH) ==0)) {
-          if (($Faction['TurnState']??0) == 1) {
+          if ($MovesValid && (($Faction['TurnState']??0) == 1)) {
             echo " <a href=PMoveThing.php?id=" . $T['id'] . ">Move</a>";
           } else {
           }
           if ($T['LinkId'] > 0) {
             $L = Get_Link($T['LinkId']);
-            echo "<td style=color:" . $LinkTypes[abs($L['Level'])]['Colour'] . " >Link #" . $T['LinkId'];
+            echo "<td style=color:" . $LinkTypes[abs($L['Level'])]['Colour'] . " >Link " . ($L['Name']?$L['Name']: "#" . $T['LinkId']);
             if ($L['Level'] <0 ) echo "- Note under repair...";
             if ($T['NewSystemId'] && $T['TargetKnown'] || Has_Tech($T['Whose'],'Know All Links')) {
               echo "<td>" . $Systems[$T['NewSystemId']];

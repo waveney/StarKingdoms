@@ -83,7 +83,9 @@ define('LINK_VALUE_UNUSED',-5);
 define('LINK_DIRECTMOVE',-6);
 define('LINK_FOLLOW',-7);
 
-
+define('BUILD_FLAG1',1);
+define('BUILD_FLAG2',2);
+define('BUILD_FLAG3',4);
 
 function ModFormulaes() {
   global $ModFormulaes;
@@ -461,7 +463,7 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0 ) {
       $NS = Get_FactionSystemFS($Fid,$N['id']);
 
       foreach ($Links as $Lid=>$L) {
-        if ($L['Instability'] > $T['Stability']) {
+        if (($L['Instability'] + $L['ThisTurnMod']) > $T['Stability']) {
           unset($Links[$Lid]);
           continue;
         }
@@ -543,12 +545,14 @@ function Calc_Scanners(&$T) { // And lots of other attributes
   } else {
     $T['HasDeepSpace'] = 0;
   }
+  $LvlMod = 0;
+  if (Has_Trait($T['Whose'],'Ebonsteel Manufacturing')) $LvlMod = 1;
   $Engs = Get_ModulesType($T['id'],'Sublight Engines');
-  $T['Speed'] = (($Engs && $Engs['Number']>0)?$Engs['Number']*$Engs['Level']/$T['Level']:0);
+  $T['Speed'] = (($Engs && $Engs['Number']>0)?$Engs['Number']*($Engs['Level']+$LvlMod)/$T['Level']:0);
   $Mobs = Get_ModulesType($T['id'],'Suborbital Transports');
-  $T['Mobile'] = (($Mobs && $Mobs['Number']>0)?$Mobs['Number']*$Mobs['Level']/$T['Level']:0);
+  $T['Mobile'] = (($Mobs && $Mobs['Number']>0)?$Mobs['Number']*($Mobs['Level']+$LvlMod)/$T['Level']:0);
   $Flux = Get_ModulesType($T['id'],'Flux Stabilisers');
-  $T['Stability'] = max(1,(($Flux && $Flux['Number']>0)?$Flux['Number']*$Flux['Level']/$T['Level']:0));
+  $T['Stability'] = max(1,(($Flux && $Flux['Number']>0)?$Flux['Number']*($Flux['Level']+$LvlMod)/$T['Level']:0));
 }
 
 function Calc_Evasion(&$T) {

@@ -77,6 +77,13 @@ function Show_Thing(&$T,$Force=0) {
     $T['LinkId'] = 0;
     Put_Thing($T);
   }
+  $MovesValid = 1;
+  if (Has_Trait($Fid,'Star-Crossed')) {
+    if (IsPrime($GAME['Turn'])) {
+      $MovesValid = 0;
+      echo "You are Star Crossed - No movement this turn<p>";
+    }
+  }
 
   echo "<form method=post id=mainform enctype='multipart/form-data' action=ThingEdit.php>";
 
@@ -353,6 +360,8 @@ function Show_Thing(&$T,$Force=0) {
             $Fol = $T['NewSystemId'];
             $FThing = Get_Thing($Fol);
             echo "<a href=ThingEdit.php?id=$Fol>$Fol</a><td>" . $FThing['Name'] . " (" . $FactNames[$FThing['Whose']] . " )";
+          } else if (!$MovesValid) {
+            echo "<tr><td>Star Crossed<td>No Movement<td>";
           } else {
             echo "<tr><td>Taking Link:<td>" . fm_select($SelLinks,$T,'LinkId',0," style=color:" . $SelCols[$T['LinkId']] ,'',0,$SelCols);
             if ($ll && $LinkTypes[$ll]['Cost'] && $LOWho && $LOWho != $T['Whose'] ) {
@@ -364,12 +373,13 @@ function Show_Thing(&$T,$Force=0) {
               echo "<td>Move to:  " . fm_select($Syslocs,$T,'NewLocation');
             }
           }
+
         }
-        if ($Lid > 0) {
+        if (($Lid > 0) && $MovesValid) {
           echo fm_submit("ACTION",'Cancel Move',0);
           $NeedOr = 1;
         }
-        if (Feature('Follow') && ($tprops & THING_CAN_MOVE )) {
+        if (Feature('Follow') && $MovesValid && ($tprops & THING_CAN_MOVE )) {
           global $db;
           $ThisSys = $T['SystemId'];
           $Eyes = EyesInSystem($Fid,$ThisSys,$Tid);
@@ -694,6 +704,7 @@ function Show_Thing(&$T,$Force=0) {
       } else if ($tprops & THING_HAS_ARMYMODULES ) {
         echo "<td>Mobility: " . ceil(sprintf('%0.3g',$T['Mobility']));
       }
+
     } else { // Player Mode
       if ($NumMods) echo "<tr><td rowspan=" . ceil(($NumMods+4)/4) . ">Modules:";
 
@@ -731,8 +742,9 @@ function Show_Thing(&$T,$Force=0) {
         if (($MTs[$D['Type']]['Leveled']&8) == 0 ) $totmodc += $D['Number'] * ($Slots?$MTs[$D['Type']]['SpaceUsed']:1);
         };
 
+      echo "<tr>";
       if ($totmodc > $T['MaxModules']) {
-        echo "<tr><td>Max Modules: " . $T['MaxModules'];
+        echo "<td>Max Modules: " . $T['MaxModules'];
 //      echo fm_number1("Deep Space",$T,'HasDeepSpace');
         if ($totmodc > $T['MaxModules']) {
           echo "<td class=Err>TOO MANY MODULES\n";
@@ -748,6 +760,8 @@ function Show_Thing(&$T,$Force=0) {
         echo "<td>Mobility: " . ceil(sprintf('%0.3g',$T['Mobility']));
       }
       echo "<td>Stability: " . ceil($T['Stability']);
+
+      if ($T['BuildFlags'] & BUILD_FLAG1) echo "<td style=background:lightpink>Cret-Chath";
     }
 
  // TODO
@@ -757,6 +771,9 @@ function Show_Thing(&$T,$Force=0) {
   if ($GM && ($tprops & (THING_HAS_CIVSHIPMODS | THING_HAS_ARMYMODULES))) {
     echo "<tr>" . fm_number1('Sensors',$T,'Sensors','','min=0 max=99') . fm_number1(' Level',$T,'SensorLevel','','min=0 max=20') .
          "<td>Neb Sensors: " . fm_checkbox('', $T,'NebSensors') . fm_number1('Stability',$T,'Stability','','min=0 max=1000');
+    if (($T['BuildFlags'] & BUILD_FLAG1 ) || Has_Tech($Fid,'Cret-Chath Engineering')) {
+      echo "<td>" . fm_checkflagbox('Cret-Chath',$T,'BuildFlags',BUILD_FLAG1);
+    }
   }
   $SpecOrders = []; $SpecCount = 0;
   $HasDeep = $HasPlanet = $HasMinesweep = $HasSalvage = $HasTerraform = $EngCorpLevel = 0;

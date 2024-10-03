@@ -213,20 +213,20 @@ function Has_PTraitH($Hid,$Name) { // Has Home got trait Name
 
 function Has_PTraitP($Pid,$Name) { // Has Planet got trait Name
   $P = Get_Planet($Pid);
-  if ($P['Trait1'] == $Name || $P['Trait2'] == $Name || $P['Trait3'] == $Name) return true;
+  if ($P && ($P['Trait1'] == $Name || $P['Trait2'] == $Name || $P['Trait3'] == $Name)) return true;
   return false;
 }
 
 function Has_PTraitM($Pid,$Name) { // Has Planet got trait Name
   $P = Get_Moon($Pid);
-  if ($P['Trait1'] == $Name || $P['Trait2'] == $Name || $P['Trait3'] == $Name) return true;
+  if ($P && ($P['Trait1'] == $Name || $P['Trait2'] == $Name || $P['Trait3'] == $Name)) return true;
   return false;
 }
 
 function Has_PTraitT($Tid,$Name) { // Has Thing got trait Name - from system it is in
   $T = Get_Thing($Tid);
   $N = Get_System($T['SystemId']);
-  if ($N['Trait1'] == $Name || $N['Trait2'] == $Name || $N['Trait3'] == $Name) return true;
+  if ($N && ($N['Trait1'] == $Name || $N['Trait2'] == $Name || $N['Trait3'] == $Name)) return true;
 // NOT COMPLETE
 }
 
@@ -561,4 +561,9 @@ function PlanConst($Fid,$worldid) { // Effective Plan Construction
   if (($Target == 16) && Has_Tech($Fid,"Construction Techniques (Water)")) $PC++;
   if (($Target == 4) && Has_Tech($Fid,"Construction Techniques (Desolate)")) $PC+=2;
   return max(0,$PC);
+}
+
+function IsPrime($n) {
+  $Primes = [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97];
+  return in_array($n,$Primes);
 }

@@ -97,10 +97,11 @@
     $Res = [1,'solid','#' . $L['id'],14,'black'];
 
     if ($LinkType == 'Wormholes') {
+      $EInst = $L['Instability'] + $L['ThisTurnMod'];
       $Res[2] = $L['Name'];
-      $Res[0] = LinkPropSet(1,$Levels[$L['Concealment']]['Width'],$InstaLevels[$L['Instability']]['Width'],0);
-      $Res[1] = LinkPropSet('solid',$Levels[$L['Concealment']]['Style'],$InstaLevels[$L['Instability']]['Style'],'');
-      $Res[4] = LinkPropSet('black',$Levels[$L['Concealment']]['Colour'],$InstaLevels[$L['Instability']]['Colour'],'');
+      $Res[0] = LinkPropSet(1,$Levels[$L['Concealment']]['Width'],$InstaLevels[$EInst]['Width'],0);
+      $Res[1] = LinkPropSet('solid',$Levels[$L['Concealment']]['Style'],$InstaLevels[$EInst]['Style'],'');
+      $Res[4] = LinkPropSet('black',$Levels[$L['Concealment']]['Colour'],$InstaLevels[$EInst]['Colour'],'');
     } else if ($LinkType == 'Gate') {
       if ($L['Level'] <0 || $L['Status'] > 0) $Res[1] = 'dotted';
       $Res[4] = '"' . $Levels[abs($L['Level'])]['Colour'] . '"';

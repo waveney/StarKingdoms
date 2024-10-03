@@ -86,6 +86,33 @@ function Node_Show($Fid,$Tid, $Lid, $N, $url='') {
     fwrite($Dot,$N['Ref'] . " [$atts ];\n");
 }
 
+function LinkPropSet($def,$Conc,$Insta,$Tst) {
+  if ($Insta != $Tst) return $Insta;
+  if ($Conc != $Tst) return $Conc;
+  return $def;
+}
+
+function LinkProps($L) {
+  global $GM,$LinkType,$Levels,$lfs,$InstaLevels;
+
+  $Res = [1,'solid','#' . $L['id'],14,'black'];
+
+  if ($LinkType == 'Wormholes') {
+    $EInst = $L['Instability'] + $L['ThisTurnMod'];
+    $Res[2] = $L['Name'];
+    $Res[0] = LinkPropSet(1,$Levels[$L['Concealment']]['Width'],$InstaLevels[$EInst]['Width'],0);
+    $Res[1] = LinkPropSet('solid',$Levels[$L['Concealment']]['Style'],$InstaLevels[$EInst]['Style'],'');
+    $Res[4] = LinkPropSet('black',$Levels[$L['Concealment']]['Colour'],$InstaLevels[$EInst]['Colour'],'');
+  } else if ($LinkType == 'Gate') {
+    if ($L['Level'] <0 || $L['Status'] > 0) $Res[1] = 'dotted';
+    $Res[4] = '"' . $Levels[abs($L['Level'])]['Colour'] . '"';
+  }
+  if (strlen($Res[2]) > 4) $Res[3] = $lfs;
+  return $Res;
+}
+
+
+
   $Force = (isset($_REQUEST['FORCE'])?1:0);
 
 // START HERE
@@ -116,6 +143,7 @@ function Node_Show($Fid,$Tid, $Lid, $N, $url='') {
     $GM = Access('GM');
   }
   $Fid = $T['Whose'];
+  $LinkType = Feature('LinkMethod','Gates');
 
   $ThingProps = Thing_Type_Props();
   $tprops = $ThingProps[$T['Type']];
@@ -137,6 +165,16 @@ function Node_Show($Fid,$Tid, $Lid, $N, $url='') {
   fwrite($Dot,"graph skmovemap {\n") ; //size=" . '"8,12!"' . "\n");
   // make make
 
+  $MovesValid = 1;
+  if (Has_Trait($Fid,'Star-Crossed')) {
+    if (IsPrime($GAME['Turn'])) {
+      $MovesValid = 0;
+      echo "You are Star Crossed - No movement this turn<p>";
+      echo "<h2><a href=PThingList.php?ACTION=CANCELMOVE&T=$Tid>Cancel Move Order</a></h2>\n";
+      dotail();
+
+    }
+  }
 
   // Main node
 
@@ -145,6 +183,9 @@ function Node_Show($Fid,$Tid, $Lid, $N, $url='') {
   Node_Show($Fid,$Tid,0,$N,"/PThingList.php?ACTION=CANCELMOVE&T=$Tid");
 
   // Each link
+  $lfs = Feature('LinkFontSize',10);
+  $Levels = Get_LinkLevels();
+  $InstaLevels = Get_LinkInstaLevels();
 
   foreach ($Links as $L) {
     $Lid = $L['id'];
@@ -157,8 +198,12 @@ function Node_Show($Fid,$Tid, $Lid, $N, $url='') {
     } else {
       Node_Show($Fid,$Tid, $Lid, $ON);
     }
-    fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] . ' [color="' . $Levels[abs($L['Level'])]['Colour'] . "\" label=\"#$Lid\" " .
-                              (($L['Level'] <0)? ' style=dotted ':'') . " ];\n");
+    $Ldat = LinkProps($L);
+
+    fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] .
+            " [color=" . $Ldat[4] .
+            " penwidth=" . $Ldat[0] . " style=" . $Ldat[1] .
+            " fontsize=" . $Ldat[3] . " label=\"" . $Ldat[2] . "\" ];\n");
   }
 
   ///show mini manp click -> PthingList & loc update info

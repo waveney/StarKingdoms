@@ -336,7 +336,7 @@ foreach ($Orgs as $OrgId=>$O) {
         echo "\n<td $BG id=ProjP$Turn:$OrgId: class='PHProg Group$OrgId Home$OrgId' $Hide>" . $proj[$Turn][$OrgId]['Progress'];
         echo "\n<td $BG id=ProjT$Turn:$OrgId: class='PHStatus Group$OrgId Home$OrgId' $Hide>" . $proj[$Turn][$OrgId]['Status'] . "";
 
-        $TotCost += $proj[$Turn][$OrgId]['Cost'] + ( $proj[$Turn][$OrgId]['FreeRushes']?0:($proj[$Turn][$OrgId]['Rush']*Rush_Cost($Fid,$proj[$Turn][$OrgId])));
+        $TotCost += $proj[$Turn][$OrgId]['Cost'] + ( $proj[$Turn][$OrgId]['FreeRushes']?0:($proj[$Turn][$OrgId]['Rush']*Rush_Cost($Fid,0,$OrgId)));
 
       } else {
         echo "<td $BG id=ProjN$Turn:$OrgId: class='PHName Home$OrgId'>";

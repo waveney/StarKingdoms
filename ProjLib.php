@@ -11,11 +11,9 @@ function Proj_Costs($lvl) {
   return [$lvl*$lvl,$Cst];
 }
 
-function Rush_Cost($who,&$P) {
+function Rush_Cost($who,$PT=0,$Hi=0) {
   if (Has_Trait($who,'Bike-Shedders')) return 100;
-  if ($P['Type'] == 1) {
-    if (Has_PTriatH($P['Home'],'High Tectonic Activity')) return 100;
-  }
+  if (($PT == 1) && (Has_PTraitH($Hi,'High Tectonic Activity'))) return 100;
   return 75;
 }
 

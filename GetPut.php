@@ -893,7 +893,6 @@ function Has_Tech($fid,$name) {
     if (!$res || !($Tech = $res->fetch_assoc())) return 0;
     $name= $Tech['id'];
   }
-
   if (empty($Tech)) {
     if ($name != 0) echo "Has_Tech called with impossible tech $name";
     return 0;
@@ -903,11 +902,13 @@ function Has_Tech($fid,$name) {
 
     $res = $db->query("SELECT Level FROM  FactionTechs WHERE Faction_Id=$fid AND Tech_Id=$name ");
     if ($res && ($ans = $res->fetch_assoc())) $lvl = $ans['Level'];
+    if ($name== 145)  var_dump($lvl);
     return $lvl;
   }
 
   // Supp Tech
   $res = $db->query("SELECT Level FROM  FactionTechs WHERE Faction_Id=$fid AND Tech_Id=$name ");
+
   if (!$res || !($ans = $res->fetch_assoc())) {/*var_dump(2,$fid,$name);*/ return 0;} // Don'y have it
   if ($ans['Level'] == 0) {/*var_dump(4,$fid,$name);*/ return 0;}
 

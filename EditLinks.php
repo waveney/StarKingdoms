@@ -79,6 +79,8 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Instability</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Concealment</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Mod This Turn</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Mod Next Turn</a>\n";
   }
 
   echo "</thead><tbody>";
@@ -107,6 +109,8 @@
       echo fm_number1('',$D,'Instability','','',"Instability$i");
       echo fm_number1('',$D,'Concealment','','',"Concealment$i");
       echo fm_text1('',$D,'Name',1,'','',"Name$i");
+      echo fm_number1('',$D,'ThisTurnMod','','',"ThisTurnMod$i");
+      echo fm_number1('',$D,'NextTurnMod','','',"NextTurnMod$i");
     }
   }
   $D = ['Weight'=>1,'Concealment'=>-1];
@@ -121,6 +125,8 @@
       echo fm_number1('',$D,'Instability','','',"Instability0");
       echo fm_number1('',$D,'Concealment','','',"Concealment0");
       echo "<td>Name is auto generated";
+      echo fm_number1('',$D,'ThisTurnMod','','',"ThisTurnMod0");
+      echo fm_number1('',$D,'NextTurnMod','','',"NextTurnMod0");
     }
 //  echo "<td><input type=text name=Level0 value=0>";
   echo "</table></div>\n";

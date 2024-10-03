@@ -279,6 +279,7 @@
       }
 
       $BaseLevel = Op_Level($OrgId,$Wh);
+      if (Has_Trait($Fid,'IMPSEC') && strstr($OpTypes[$op]['Name'],'Recon')) $Mod--;
 
       echo "This operation is at a level of $BaseLevel from distance.  ";
       if ($Mod) {

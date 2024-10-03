@@ -90,7 +90,7 @@
     while ($PT = $res->fetch_assoc()) {
       $P = Get_Project($PT['ProjectId']);
       if (isset($P['FreeRushes']) && $P['FreeRushes']>0) continue;
-      $RCost =  (Rush_Cost($Fid,$P) * $PT['Rush']);
+      $RCost =  (Rush_Cost($Fid,$P['Type'],$P['Home']) * $PT['Rush']);
       if ($RCost > 0 && $P['Status']<2) {
         $Spend += $RCost;
         echo "Spending &#8373; $RCost to rush " . $P['Name'] . " by " . $PT['Rush'] . "<br>";

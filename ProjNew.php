@@ -9,7 +9,7 @@
   include_once("SystemLib.php");
   include_once("ProjLib.php");
 
-  global $FACTION,$ARMY;
+  global $FACTION,$ARMY,$ARMIES;
 
   if (Access('Player')) {
     if (!$FACTION) {
@@ -68,10 +68,14 @@
         foreach ($Things as $T) {
           if ($T['Level'] > $Limit) continue;
           $pc = Proj_Costs($T['Level']);
+          $Extra = '';
           if ($_REQUEST['ACTION'] == 'NEWARMY' && Has_Tech($Fid,'Efficient Robot Construction')) $pc[0] = max(1, $pc[0] - $T['Level']);
           if ($_REQUEST['ACTION'] == 'NEWSHIP' && Has_Tech($Fid,'Space Elevator')) $pc[0] = max(1, $pc[0] - $T['Level']);
+          if ($T['BuildFlags'] & BUILD_FLAG1) {
+            $Extra = "  Plus " . $T['Level'] . ' ' . Feature('Currency3','Unknown');
+          }
           $NameList[$T['id']] = $T['Name'] . (empty($T['Class'])?'': ", a " . $T['Class']) . " ( Level " . $T['Level'] . " ); $Place;" .
-            "Cost: " . $pc[1] .  " Needs " . $pc[0] . " progress";
+            "Cost: " . $pc[1] .  " Needs " . $pc[0] . " progress.  $Extra";
           }
 
         if ($NameList) {
@@ -255,9 +259,8 @@
                 }
               }
             }
-            if (Has_PTraitH($Hi,'Irradiated Wasteland')) $pc[0]++;
-
-            if (Has_Trait($Fid,"Military Society") && ($DTz['Name'] == 'Military')) $pc = Proj_Costs($Lvl-1);
+            if (Has_PTraitH($Hi,'Irradiated Wasteland')) { $pc[0]++; }
+            elseif (Has_Trait($Fid,"Military Society") && ($DTz['Name'] == 'Military')) $pc = Proj_Costs($Lvl-1);
 
             echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Construction'] .
                   "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $DTz['id'] .
@@ -683,7 +686,7 @@
 
 
       echo "<h2>Re-equip and Reinforce $ARMY</h2>"; // THIS MUST be AFTER the simple buttons as the form gets lost
-      echo "You can only do this to armies on the same planet.<p>";
+      echo "You can only do this to $ARMIES on the same planet.<p>";
       $HSys = $Homes[$Hi]['SystemId'];
       $HLoc = $Homes[$Hi]['WithinSysLoc'];
       $TTs = Get_ThingTypes();
@@ -718,12 +721,58 @@
         } else {
           echo "</form><form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Re-equip and Reinforce'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT'>";
           echo "You may select <b>2</b> level 1 $ARMY or 1 $ARMY of level 2 or more. (For PCs and Linux hold down Ctrl to select 2nd $ARMY)<p>";
-          echo "Select the ship to Re-equip and Reinforce: " . fm_select($RepShips, $_REQUEST, 'Sel', 0, ' multiple ','Sel2[]') ;
+          echo "Select the $ARMY to Re-equip and Reinforce: " . fm_select($RepShips, $_REQUEST, 'Sel', 0, ' multiple ','Sel2[]') ;
           echo "<button class=projtype type=submit>Re-equip and Reinforce</button><form>";
         }
 
       } else {
         echo "No armies are currently there<p>";
+      }
+
+      if (Has_Trait($Fid,"I Don't Want To Die")) {
+        echo "<h2>Re-equip $ARMY</h2>"; // THIS MUST be AFTER the simple buttons as the form gets lost
+        echo "You can only do this to $ARMIES on the same planet.<p>";
+        $HSys = $Homes[$Hi]['SystemId'];
+        $HLoc = $Homes[$Hi]['WithinSysLoc'];
+        $TTs = Get_ThingTypes();
+        $Things = Get_Things_Cond($Fid," SystemId=$HSys AND BuildState=3 "); // Get all things at xx then filter  by type == Ship & WithinSysLoc
+        $RepShips = [];
+        $Level1 = 0;
+        $Count = 0;
+        foreach ($Things as $T) {
+          if ($TTs[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES) {
+            if ($T['WithinSysLoc'] == $HLoc ) {
+              $RepShips[$T['id']] = $T['Name'] . " - level " . $T['Level'];
+              if ($T['Level'] == 1) $Level1++;
+              $Count++;
+            }
+          }
+        }
+
+
+        $pc = Proj_Costs(1);
+        if ($Count) {
+          if ($Count == 1) {
+            foreach ($RepShips as $tid=>$Name) {
+              echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Re-equip'] .
+              "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=$tid" .
+              "&Name=" . base64_encode("Re-equip and Reinforce " . $Name ) . "&L=1&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
+              "Refit and Repair $Name $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+            }
+          } else if ($Level1 < 2) {
+            echo "</form><form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Re-equip'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT'>";
+            echo "Select the $ARMY to Re-equip: " . fm_select($RepShips, $_REQUEST, 'Sel', 0) ;
+            echo "<button class=projtype type=submit>Re-equip and Reinforce</button></form>";
+          } else {
+            echo "</form><form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Re-equip'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT'>";
+            echo "You may select <b>2</b> level 1 $ARMY or 1 $ARMY of level 2 or more. (For PCs and Linux hold down Ctrl to select 2nd $ARMY)<p>";
+            echo "Select the $ARMY to Re-equip: " . fm_select($RepShips, $_REQUEST, 'Sel', 0, ' multiple ','Sel2[]') ;
+            echo "<button class=projtype type=submit>Re-equip and Reinforce</button><form>";
+          }
+
+        } else {
+          echo "No armies are currently there<p>";
+        }
       }
 
 

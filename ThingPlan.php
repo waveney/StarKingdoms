@@ -149,7 +149,7 @@
     }
   }
   $ThingProps = Thing_Type_Props();
-  $tprops = (empty($T['Type'])? 0: $ThingProps[$T['Type']]);
+  $tprops = (empty($T['Type'])? 0: $ThingProps[$T['Type']]??0);
   $Valid = $CanMake = 1;
   $ResC =0;
   if ($T['Whose'] && $T['Whose'] == $FACTION['id']) {
@@ -237,7 +237,7 @@
   $T['MaxModules'] = Max_Modules($T);
   // Sanitise thing type names
   echo "<table border>";
-  echo "<tr><td>Planning a:<td>" . (Feature('BluePrints')?$ThingTypeNames[ $T['Type']] :fm_select($ThingTypeNames, $T,'Type'));
+  echo "<tr><td>Planning a:<td>" . (Feature('BluePrints')?($ThingTypeNames[ $T['Type']]??'Unknown') :fm_select($ThingTypeNames, $T,'Type'));
   if ($T['Type']) {
 
     $Limit = 0;
@@ -362,20 +362,27 @@
         }
 
       }
+      if (Has_Tech($Fid,'Cret-Chath Engineering') && ($tprops & (THING_HAS_SHIPMODULES | THING_HAS_ARMYMODULES ))) {
+        echo "<tr><td>" . fm_checkflagbox('Use Cret-Chath',$T,'BuildFlags',BUILD_FLAG1,'','',1) . "<td>Needed: " . $T['Level'] .
+             "<td>Construction will fail if not available at start.";
+      }
 
       $ModNames = NamesList($MTs);
       $NamesMod = array_flip($ModNames);
 
+      $LvlMod = 0;
+      if (Has_Trait($T['Whose'],'Ebonsteel Manufacturing')) $LvlMod = 1;
+
       if ($MMs[$Mti = $NamesMod['Sublight Engines']]??0) {
-        $Elvl = Calc_TechLevel($T['Whose'],$Mti);
+        $Elvl = Calc_TechLevel($T['Whose'],$Mti) +$LvlMod;
         $Engines = $MMs[$Mti]['Number'];
       }
       if ($MMs[$Mti = $NamesMod['Flux Stabilisers']]??0) {
-        $Flvl = Calc_TechLevel($T['Whose'],$Mti);
+        $Flvl = Calc_TechLevel($T['Whose'],$Mti) +$LvlMod;
         $FluxStab = $MMs[$Mti]['Number'];
       }
       if ($MMs[$Mti = $NamesMod['Suborbital Transports']]??0) {
-        $Mlvl = Calc_TechLevel($T['Whose'],$Mti);
+        $Mlvl = Calc_TechLevel($T['Whose'],$Mti) +$LvlMod;
         $Mobile = $MMs[$Mti]['Number'];
       }
 

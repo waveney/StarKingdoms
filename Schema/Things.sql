@@ -64,5 +64,6 @@ CREATE TABLE `Things` (
   `PreReq` int NOT NULL,
   `HiddenClass` text COLLATE utf8mb4_general_ci NOT NULL,
   `GatedOn` text COLLATE utf8mb4_general_ci NOT NULL,
+  `BuildFlags` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
