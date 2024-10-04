@@ -190,11 +190,16 @@
       $LimS = Has_Tech($Fid,'Ship Construction');
       $BPs = BluePrintList(max($LimA,$LimS)+$MaxOver,'',0);
 
- //     var_dump($BPs);
       $Direct = [];
-//      var_dump($ThingTypeNames);
       foreach($ThingTypeNames as $TT=>$Name) {
         if (!empty($BPs[$TT])) {
+          $BPL = [];
+          foreach ($BPs[$TT] as $B) {
+   //         if ($B['Level'])
+          }
+
+
+
           echo "<tr><td>A $Name: <td>" . fm_select($BPs[$TT],null,"CDesign$TT",1,' onchange=this.form.submit()') . "<p>";
         } else if (($ThingTypes[$TT]['Properties'] & THING_HAS_BLUEPRINTS) ==0) {
           $Direct[] = $TT;

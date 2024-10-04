@@ -1937,6 +1937,7 @@ function TraitIncomes() {
     ['Academic','Thin Atmosphere','Physics',1],
     [2,'High Tectonic Activity','Engineering',3],
     ['Engineering','Necessity is the Mother of Invention','Engineering',1],
+    ['Industrial','Cret-Chath Deposits','Currency3',4],
   ];
 
   $DTypes = Get_DistrictTypes();
@@ -1976,6 +1977,17 @@ function TraitIncomes() {
               $Fact[$SP[2] . "SP"] += $SP[0];
               Put_Faction($Fact);
               TurnLog($Fact['id'],"Gained " . $SP[0] . " " . $SP[2] . " points from the planetary trait " .$SP[1] . " in " . $P['Name']);
+              break;
+            case 4: // Cret-Chath
+              $Ds = Get_DistrictsP($Pid);
+              $D = ($Ds[$NamesDT[$SP[0]]]??0);
+              if ($D) {
+                $Fact = $Facts[$P['Control']];
+                $Fact[$SP[2]] += ceil($D['Number']/2);
+                Put_Faction($Fact);
+                TurnLog($Fact['id'],"Gained " . ceil($D['Number']/2) . " " . Feature($SP[2],'Unknown') . " from the planetary trait " .
+                  $SP[1] . " in " . $P['Name']);
+              }
               break;
           }
         }

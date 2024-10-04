@@ -32,7 +32,7 @@ if (isset($_REQUEST['Action'])) {
       echo fm_hidden('HostType',$World['ThingType']) . fm_hidden('HostId',$World['ThingId']);
       echo "<tr><td>Whose:<td>" . fm_select($FactNames,$B,'Whose');
       echo "<tr><td>Branch Type:<td>" . fm_select($BTypeNames,$B,'Type');
-      echo "<tr>" . fm_text('Name (not yet used)',$B,'Name');
+      echo "<tr>" . fm_text('Name',$B,'Name');
       echo "<tr><td>Organisation:<td>" . fm_select($AOrgList,$B,'Organisation',1);
       echo "</table><br><input type=Submit name=Action value=Create><p>";
 
@@ -47,7 +47,16 @@ if (isset($_REQUEST['Action'])) {
 
     case 'Create':
       $B = [];
+      $_POST['GameId'] = $GAMEID;
       $Bid = insert_db_post('Branches',$B);
+      $Org = Gen_Get('Organisations',$B['Organisation']);
+      if ($B['Whose'] != $Org['Whose']) {
+        echo "<h2 class=err>Owner of Org not same as owner of Branch...</h2>";
+      } else {
+        $B['OrgType'] = $Org['OrgType'];
+        Gen_Put('Branches',$B);
+      }
+
       break;
 
     case 'Delete':
@@ -59,6 +68,25 @@ if (isset($_REQUEST['Action'])) {
     case 'Refresh':
       $Bid = ($_REQUEST['id'] ?? $_REQUEST['AutoRefBranches']?? 0);
       break;
+
+    case 'Add Branch': // From Edit Thing
+      $Tid = $_REQUEST['T'];
+      $AOrgs = Gen_Get_Cond('Organisations',"GameId=$GAMEID");
+      $AOrgList = NamesList($AOrgs);
+
+      echo "<table border>";
+      $B = [];
+      echo "Select who and branch type and Organisation.<p>";
+      echo fm_hidden('HostType',3) . fm_hidden('HostId',$Tid);
+      echo "<tr><td>Whose:<td>" . fm_select($FactNames,$B,'Whose');
+      echo "<tr><td>Branch Type:<td>" . fm_select($BTypeNames,$B,'Type');
+      echo "<tr>" . fm_text('Name',$B,'Name');
+      echo "<tr><td>Organisation:<td>" . fm_select($AOrgList,$B,'Organisation',1);
+      echo "</table><br><input type=Submit name=Action value=Create><p>";
+
+      dotail();
+
+
   }
 } else {
   $Bid = ($_REQUEST['id'] ?? $_REQUEST['AutoRefBranches']??0);

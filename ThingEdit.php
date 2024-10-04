@@ -599,7 +599,6 @@ function New_Thing(&$T) {
        break;
 
 
-
     case 'None' :
     default:
       break;

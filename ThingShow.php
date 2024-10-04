@@ -4,6 +4,7 @@ include_once("sk.php");
 include_once("GetPut.php");
 include_once("vendor/erusev/parsedown/Parsedown.php");
 include_once("PlayerLib.php");
+include_once("OrgLib.php");
 
 
 
@@ -553,6 +554,44 @@ function Show_Thing(&$T,$Force=0) {
       echo "<tr><td>History:<td colspan=8><textarea rows=2>$Hist$RevHist</textarea>";
     }
   }
+
+  $Branches = Gen_Get_Cond('Branches', "HostType=3 AND HostId=$Tid");
+  if ($Branches) {
+    $BTypes = Get_BranchTypes();
+    $OrgTypes = Get_OrgTypes();
+    $BBL = [];
+    foreach ($Branches as $bid=>$B) {
+      $BB = 0;
+      $Org = Gen_Get('Organisations',$B['Organisation']);
+      $style = "style='background:" . $OrgTypes[$Org['OrgType']]['Colour'] . "'";
+      if ($BTypes[$B['Type']]['Props'] & BRANCH_HIDDEN) $BB+=1;
+      if ($B['Whose'] == $Fid) $BB+=2;
+      if ($GM) $BB +=4;
+
+      switch ($BB) {
+        case 0:
+        case 2:
+        case 3:
+          $BBL[] = $B['Name'] . " A " . $BTypes[$B['Type']]['Name'] . " of <span $style>" . $Org['Name'] .
+            " ( " . $OrgTypes[$Org['OrgType']]['Name'] . ")</span>";
+          break;
+        case 1:
+          continue 2;
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+          $BBL[] = "<a href=BranchEdit.php?id=$bid>" . $B['Name'] . " A " . $BTypes[$B['Type']]['Name'] . " of </a><span $style>" . $Org['Name'] .
+            " ( " . $OrgTypes[$Org['OrgType']]['Name'] . ")</span>";
+          break;
+      }
+    }
+    if ($BBL) {
+      echo "<tr><td>Branches<td colspan=6>" . implode("<br>",$BBL );
+    }
+  }
+
+
   if ($tprops & THING_HAS_2_FACTIONS) echo "<tr>" . fm_radio('Other Faction',$FactNames ,$T,'OtherFaction','',1,'colspan=6','',$Fact_Colours,0);
   if  ($tprops & (THING_HAS_MODULES | THING_HAS_ARMYMODULES | THING_HAS_HEALTH)) {
     if ($GM) {
@@ -1687,6 +1726,7 @@ function Show_Thing(&$T,$Force=0) {
 
     echo " &nbsp; " . fm_submit("ACTION","Duplicate",0) . fm_submit("ACTION","GM Recalc",0);
     if ($HasSalvage) echo fm_submit("ACTION","Salvage",0);
+    if ($ttn[$T['Type']] == 'Outpost') echo fm_submit("Action",'Add Branch',0,"formaction=BranchEdit.php?T=$Tid");
     echo "</h2>";
   } else if (!empty($Fid)) {
     echo "<h2><a href=PThingList.php?id=$Fid>Back to Thing list</a></h2>";
