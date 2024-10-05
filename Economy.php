@@ -7,11 +7,17 @@
 
   dostaffhead("Move Things",["js/dropzone.js","css/dropzone.css" ]);
 
-  global $FACTION, $GAME, $GAMEID, $db, $Currencies,$LogistCost;
-  $Fid = $FACTION['id'];
+  global $FACTION, $GAME, $GAMEID, $db, $Currencies, $LogistCost;
   AddCurrencies();
 
-  A_Check('Player');
+  $GM = Access('GM');
+  if ($GM) {
+    $Fid = 0;
+    if (!empty($FACTION)) $Fid = $FACTION['id'];
+  } else {
+    $Fid = $FACTION['id'];
+    if ($FACTION['TurnState'] > 2) Player_Page();
+  }
 
   if (!Access('GM') && $FACTION['TurnState'] > 2) Player_Page();
 
@@ -30,6 +36,7 @@
 
   $HasHomeLogistics = (Has_Tech($Fid,'Simplified Home Logistics') && Access('God'));
   $HomeArmyLogistics = Has_PTraitW($Faction['HomeWorld'],'Universal Hunting Ground	');
+  $HasOwnGalaxy = (Has_Tech($Fid,'Own the Galaxy'));
   $FactionHome = 0;
   if ($HasHomeLogistics || $HomeArmyLogistics) {
     $Home = $Faction['HomeWorld'];
@@ -102,6 +109,10 @@
   $LLevels = Get_LinkLevels();
   $Things = Get_Things_Cond($Fid,"LinkId>0 AND LinkCost>0 AND LinkPay>0");
   $LinkCosts = 0;
+  $BTypes = Get_BranchTypes();
+  $BTypeNames = NamesList($BTypes);
+  $NameBType = array_flip($BTypeNames);
+
   foreach($Things as $T) {
     if ($LLevels[$AllLinks[$T['LinkId']]['Level']]['Cost'] == 0) continue;
     $LinkCosts += $T['LinkCost'];
@@ -128,11 +139,33 @@
 */
   echo "<h2>Projected Income</h2>\n";
 
+  [$EconVal,$Txt] = Income_Calc($Fid);
+
+  echo $Txt;
+
+  $Final =  $FACTION['Credits'] - $Spend + $EconVal*10;
+  echo "<h2>Expected End Credits is &#8373;" . ($Final < 0? "<span class=Red>$Final</span>":$Final) .  "</h2>";
+
+  if ($FACTION['PhysicsSP'] >0 || $FACTION['EngineeringSP'] > 0 || $FACTION['XenologySP'] > 0 ) {
+    echo "<h2>You also have these Science points</h2>";
+    if ($FACTION['PhysicsSP']) echo "Physics Science Points: " . $FACTION['PhysicsSP'] . "<br>";
+    if ($FACTION['EngineeringSP']) echo "Engineering Science Points: " . $FACTION['EngineeringSP'] . "<br>";
+    if ($FACTION['XenologySP']) echo "Xenology Science Points: " . $FACTION['XenologySP'] . "<br>";
+  }
+  echo "<p>";
+  if (($Nam = GameFeature('Currency1')) && $FACTION['Currency1']) echo "$Nam: " . $FACTION['Currency1'] . "<br>";
+  if (($Nam = GameFeature('Currency2')) && $FACTION['Currency2']) echo "$Nam: " . $FACTION['Currency2'] . "<br>";
+  if (($Nam = GameFeature('Currency3')) && $FACTION['Currency3']) echo "$Nam: " . $FACTION['Currency3'] . "<br>";
+
+
+  dotail();
+
+  /* Old Code
   $TTypes = Get_ThingTypes();
 
     $Worlds = Get_Worlds($Fid);
     $EconVal = $EmbVal = $OtherEmbVal = $OutPVal = 0;
-    $OutPosts = $AstMines = $AstVal = $Embassies = $OtherEmbs = $MineFields = 0;
+    $OutPosts = $AstMines = $AstVal = $Embassies = $OtherEmbs = $MineFields = $Branches = 0;
     foreach ($Worlds as $W) {
       $H = Get_ProjectHome($W['Home']);
       if (!$H) continue;
@@ -207,13 +240,15 @@
       }
     }
 
+    // Trading Branch Effects
+
     $OtherTs = Get_Things_Cond(0,"Type=17 AND OtherFaction=$Fid AND BuildState=3");
     foreach($OtherTs as $OT) {
       $OtherEmbs++;
       $OtherEmbVal += $OT['Level'];
     }
 
-    if ($OutPosts) {
+    if (Feature('OutPostTrade') && $OutPosts) {
       echo "Plus $OutPosts Outposts worth 2 each<br>\n";
       $EconVal += $OutPVal*2;
     }
@@ -248,7 +283,13 @@
         } else {
           if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $LogistCost[$T['Level']];
           if ($Props & THING_HAS_GADGETS) $Logistics[2] += $LogistCost[$T['Level']];
-          if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $LogistCost[$T['Level']];
+          if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) {
+            if ($HasOwnGalaxy && str_contains($T['Class'],'Freighter')) {
+              $Logistics[0] += $LogistCost[$T['Level']-1];
+            } else {
+              $Logistics[0] += $LogistCost[$T['Level']];
+            }
+          }
         }
       };
     }
@@ -272,20 +313,7 @@
 
 //  echo "Estimated Income is : " . Income_Estimate($Fid);
 
-  $Final =  $FACTION['Credits'] - $Spend + $EconVal*10;
-  echo "<h2>Expected End Credits is &#8373;" . ($Final < 0? "<span class=Red>$Final</span>":$Final) .  "</h2>";
 
-  if ($FACTION['PhysicsSP'] >0 || $FACTION['EngineeringSP'] > 0 || $FACTION['XenologySP'] > 0 ) {
-    echo "<h2>You also have these Science points</h2>";
-    if ($FACTION['PhysicsSP']) echo "Physics Science Points: " . $FACTION['PhysicsSP'] . "<br>";
-    if ($FACTION['EngineeringSP']) echo "Engineering Science Points: " . $FACTION['EngineeringSP'] . "<br>";
-    if ($FACTION['XenologySP']) echo "Xenology Science Points: " . $FACTION['XenologySP'] . "<br>";
-  }
-  echo "<p>";
-  if (($Nam = GameFeature('Currency1')) && $FACTION['Currency1']) echo "$Nam: " . $FACTION['Currency1'] . "<br>";
-  if (($Nam = GameFeature('Currency2')) && $FACTION['Currency2']) echo "$Nam: " . $FACTION['Currency2'] . "<br>";
-  if (($Nam = GameFeature('Currency3')) && $FACTION['Currency3']) echo "$Nam: " . $FACTION['Currency3'] . "<br>";
-
-  dotail();
+  dotail();*/
 
 ?>

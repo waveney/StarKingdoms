@@ -1750,12 +1750,17 @@ function Economy() {
 
   foreach ($Facts as $F) {
     $Fid = $F['id'];
+
+    [$EconVal,$EccTxt] = Income_Calc($Fid);
+
+    /*
     $Worlds = Get_Worlds($Fid);
     $Faction = Get_Faction($Fid);
 
     $LinkTypes = Get_LinkLevels();
     $HasHomeLogistics = Has_Tech($Fid,'Simplified Home Logistics');
     $HomeArmyLogistics = Has_PTraitW($Faction['HomeWorld'],'Universal Hunting Ground	');
+    $HasOwnGalaxy = (Has_Tech($Fid,'Own the Galaxy'));
     $FactionHome = 0;
     if ($HasHomeLogistics) {
       $Home = $Faction['HomeWorld'];
@@ -1864,7 +1869,7 @@ function Economy() {
       $OtherEmbs++;
     }
 
-    if ($OutPosts) {
+    if (Feature('OutPostTrade') && $OutPosts) {
       $EccTxt .= "Plus $OutPosts Outposts worth 2 each\n";
       $EconVal += $OutPosts*2;
     }
@@ -1898,7 +1903,13 @@ function Economy() {
         } else {
           if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $LogistCost[$T['Level']];
           if ($Props & THING_HAS_GADGETS) $Logistics[2] += $LogistCost[$T['Level']];
-          if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $LogistCost[$T['Level']];
+          if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) {
+            if ($HasOwnGalaxy && str_contains($T['Class'],'Freighter')) {
+              $Logistics[0] += $LogistCost[$T['Level']-1];
+            } else {
+              $Logistics[0] += $LogistCost[$T['Level']];
+            }
+          }
         }
       };
     }
@@ -1916,7 +1927,7 @@ function Economy() {
         }
       }
     }
-
+*/
     $EccTxt .= "Total Economy is $EconVal worth " . $EconVal*10 . "\n\n";
     Spend_Credit($Fid, -$EconVal*10, "Turn Income");
     TurnLog($Fid,$EccTxt);
@@ -1949,6 +1960,7 @@ function TraitIncomes() {
   $Planets = Gen_Get('Planets',"GameId=$GAMEID AND (Trait1Auto!=0 OR Trait2Auto!=0 OR Trait3Auto!=0) ");
 
   foreach ($Planets as $Pid=>$P) {
+    if (!$P['Control']) continue;
     for($i=1;$i<4;$i++) {
       foreach ($SPs as $SP) {
         if ($P["Trait$i"] == $SP[1]) {
@@ -1982,10 +1994,12 @@ function TraitIncomes() {
               $Ds = Get_DistrictsP($Pid);
               $D = ($Ds[$NamesDT[$SP[0]]]??0);
               if ($D) {
-                $Fact = $Facts[$P['Control']];
-                $Fact[$SP[2]] += ceil($D['Number']/2);
+                $Fid = $P['Control'];
+                $Div = (Has_Tech($Fid,'Advanced Mineral Extraction')?1:2);
+                $Fact = $Facts[$Fid];
+                $Fact[$SP[2]] += ceil($D['Number']/$Div);
                 Put_Faction($Fact);
-                TurnLog($Fact['id'],"Gained " . ceil($D['Number']/2) . " " . Feature($SP[2],'Unknown') . " from the planetary trait " .
+                TurnLog($Fid,"Gained " . ceil($D['Number']/$Div) . " " . Feature($SP[2],'Unknown') . " from the planetary trait " .
                   $SP[1] . " in " . $P['Name']);
               }
               break;
@@ -4051,6 +4065,9 @@ function TidyUps() {
     Put_Link($L);
   }
   GMLog("Links: Wormhole Stabilisers and Cret-Chath tidied<p>");
+
+  CheckBranches();
+  GMLog("Branches: Data Cross Checked<p>");
 
   return 1;
 }

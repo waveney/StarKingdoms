@@ -46,9 +46,8 @@
     }
 
   }
-  A_Check('Player');
-//  CheckFaction('WorldList',$Fid);
-  $GM = Access('GM');
+
+  $All = ($GM && isset($_REQUEST['ALL']));
 
   if (!$GM && $Faction['TurnState'] > 2) Player_Page();
 
@@ -89,6 +88,7 @@
 
   foreach ($Orgs as $i=>$O) {
     $Of = $O['Whose'];
+    if (!$All && ($Of != $Fid)) continue;
     echo "<tr>" . fm_hidden("GameId:$i", $GAMEID);
     if ($GM) echo "<td>$i";
     if ($GM) {

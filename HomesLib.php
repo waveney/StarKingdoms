@@ -473,6 +473,7 @@ function Recalc_Economic_Rating(&$H,&$W,$Fid,$Turn=0) {
     if ($DTs[$D['Type']]['Props'] & 32) $NumInd += $D['Number'];
 
   }
+//var_dump($NumPrime);
   $MinFact = (Has_Tech($Fid,'Improved Mining')?1.5:1);
   if (feature('Industrial')) {
     return $NumPrime*4 + $NumInd*($W['Minerals'] +

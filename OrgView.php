@@ -24,7 +24,9 @@ $Branches = Gen_Get_Cond('Branches',"Organisation=$OrgId");
 dostaffhead("Organisation");
 
 echo "<h1>" . $Org['Name'] . "</h1>";
-echo "Type: <b>" . ($OrgTypes[$Org['OrgType']]['Name']??'Unknown') . "</b> Organisation <p>";
+echo "Type: <b>" . ($OrgTypes[$Org['OrgType']]['Name']??'Unknown') . "</b><p>";
+if ($Org['OrgType2']) echo "Also Type: <b>" . ($OrgTypes[$Org['OrgType2']]['Name']??'Unknown') . "</b><p>";
+
 
 echo "Decription: <p>" . $Org['Description'];
 echo "<h2>Offices:</h2>";
@@ -61,7 +63,7 @@ if ($Offices) {
 } else {
   echo "None Found<p>";
 }
-echo "<h2>Branches:</h2>";
+echo "<p><h2>Branches:</h2>";
 
 if ($Branches) {
   foreach ($Branches as $B) {
@@ -83,7 +85,7 @@ if ($Branches) {
         $Where = $T['Name'] . " in " . System_Name($Sys,$Fid);
         break;
     }
-    echo "<ul>". $BTypes[$B['Type']]['Name'] . " at $Where" ;
+    echo "<li>". $BTypes[$B['Type']]['Name'] . " at $Where" ;
   }
 } else {
   echo "None Found<p>";

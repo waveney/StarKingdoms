@@ -313,10 +313,16 @@ function Income_Estimate($Fid) {
   include_once("HomesLib.php");
   global $LogistCost;
   $Faction = Get_Faction($Fid);
+  $BTypes = Get_BranchTypes();
+  $BTypeNames = NamesList($BTypes);
+  $NameBType = array_flip($BTypeNames);
+
 
   $HasHomeLogistics = (Has_Tech($Fid,'Simplified Home Logistics') && Access('God'));
   $HomeArmyLogistics = Has_PTraitW($Faction['HomeWorld'],'Universal Hunting Ground	');
+  $HasOwnGalaxy = (Has_Tech($Fid,'Own the Galaxy'));
   $FactionHome = 0;
+
   if ($HasHomeLogistics || $HomeArmyLogistics) {
     $Home = $Faction['HomeWorld'];
     if ($Home) {
@@ -405,10 +411,20 @@ function Income_Estimate($Fid) {
     }
   }
 
+  $MyPTSBranches = Gen_Get_Cond('Branches',"Whose=$Fid AND HostType!=3 AND BuildState=3 AND Type=" . $NameBType['Trading Station']);
+  $MyPBMPBranches = Gen_Get_Cond('Branches',"Whose=$Fid AND HostType!=3 AND BuildState=3 AND Type=" . $NameBType['Black Market Trade Station']);
+  $MyOPBranches = Gen_Get_Cond('Branches',"Whose=$Fid AND HostType=3 AND BuildState=3 AND Type=" . $NameBType['Trading Station']);
+  $OtherPTSBranches = Gen_Get_Cond('Branches',"Whose!=$Fid AND HostType!=3 AND BuildState=3 AND Type=" . $NameBType['Trading Station']);
+
+ // if (($MyPTSBranches || $MyOPBranches) && !(Has_Trait($Fid,'Own the Galaxy')) {
+ //   $MyTrade = (count($MyPTSBranches);
+ // }
+
+
   $OtherTs = Get_Things_Cond(0,"Type=17 AND OtherFaction=$Fid");
   foreach($OtherTs as $OT) $OtherEmbs++;
 
-  if ($OutPosts) $EconVal += $OutPosts*2;
+  if (Feature('OutPostTrade') && $OutPosts) $EconVal += $OutPosts*2;
 
   if ($AstMines) {
     if (Feature('AstmineDSC')) $AstVal *= Has_Tech($Fid,'Deep Space Construction');
@@ -431,7 +447,13 @@ function Income_Estimate($Fid) {
       } else {
         if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $LogistCost[$T['Level']];
         if ($Props & THING_HAS_GADGETS) $Logistics[2] += $LogistCost[$T['Level']];
-        if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $LogistCost[$T['Level']];
+        if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) {
+          if ($HasOwnGalaxy && str_contains($T['Class'],'Freighter')) {
+            $Logistics[0] += $LogistCost[$T['Level']-1];
+          } else {
+            $Logistics[0] += $LogistCost[$T['Level']];
+          }
+        }
       }
     }
   }
@@ -566,4 +588,238 @@ function PlanConst($Fid,$worldid) { // Effective Plan Construction
 function IsPrime($n) {
   $Primes = [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97];
   return in_array($n,$Primes);
+}
+
+function Income_Calc($Fid) {
+  global $GAMEID,$ARMY,$ARMIES,$LogistCost;
+
+  $Worlds = Get_Worlds($Fid);
+  $Facts = Get_Factions();
+  $Faction = $Facts[$Fid];
+  $BTypes = Get_BranchTypes();
+  $BTypeNames = NamesList($BTypes);
+  $NameBType = array_flip($BTypeNames);
+  $TTypes = Get_ThingTypes();
+
+  $HasHomeLogistics = Has_Tech($Fid,'Simplified Home Logistics');
+  $HomeArmyLogistics = Has_PTraitW($Faction['HomeWorld'],'Universal Hunting Ground	');
+  $HasOwnGalaxy = (Has_Tech($Fid,'Own the Galaxy'));
+
+  $FactionHome = 0;
+  if ($HasHomeLogistics) {
+    $Home = $Faction['HomeWorld'];
+    if ($Home) {
+      $W = Get_World($Home);
+      if ($W) {
+        switch ($W['ThingType']) {
+          case 1: // Planet
+            $P = Get_Planet($W['ThingId']);
+            $FactionHome = $P['SystemId'];
+            break;
+          case 2: // Moon
+            $M = Get_Moon($W['ThingId']);
+            $P = Get_Planet($W['PlanetId']);
+            $FactionHome = $P['SystemId'];
+            break;
+          case 3: // Things
+            $TH = Get_Thing($W['ThingId']);
+            $FactionHome = $TH['SystemId'];
+            break;
+        }
+      }
+    }
+  }
+
+
+  $EconVal = 0;
+  $EccTxt = "\nEconomy:<p>";
+  $OutPosts = $AstMines = $AstVal = $Embassies = $OtherEmbs = $MineFields = 0;
+
+  foreach ($Worlds as $W) {
+    $H = Get_ProjectHome($W['Home']);
+    if (empty($H)) continue;
+    $PH = Project_Home_Thing($H);
+    if (!$PH) continue;
+    $Name = $PH['Name'];
+    $EccTxt .= "<br>\n$Name: <br>";
+    $ECon = $H['Economy'] = Recalc_Economic_Rating($H,$W,$Fid);
+    if ($W['Revolt']) {
+      $ECon = 0;
+      $EccTxt .=  "It is in <b>Revolt</b> no income<br>\n";
+    } else {
+      if ($H['Devastation']) {
+        $ECon = $ECon - $H['Devastation'];
+        $EccTxt .= " It has devastation reducing it to: $ECon <br>\n";
+      }
+
+      if ($W['Blockade'] ) { //&& $Fid != 9) {
+        $ECon /= 2;
+        $EccTxt .=  "It is blockaded income is halved  to $ECon\n";
+      } else {
+        $ECon = ceil(($ECon - $H['Devastation'])*$H['EconomyFactor']/100);
+      }
+    }
+
+    if (Has_PTraitW($W['id'],'Thin Atmosphere')) {
+      $ECon = max(0,$ECon-1);
+      $EccTxt .=  " Reduced by 2 due to a Thin Atmosphere leaving you with a rating of $ECon";
+    }
+
+    if ($ECon <=0 && $Name) {
+      $EccTxt .= "Economic value is None\n";
+    } else {
+      $EccTxt .= "Economic value is: $ECon " . ($H['Devastation']? " after devastation effect of -" . $H['Devastation'] : "");
+      if ($H['EconomyFactor'] < 100) {
+        $EccTxt .= " - at " . $H['EconomyFactor'] . "%<br>\n";
+      } else if ($H['EconomyFactor'] > 100) {
+        $EccTxt .= " - at " . $H['EconomyFactor'] . "%<br>\n";
+      }
+      $EconVal += $ECon;
+    }
+    $EccTxt .=  "<br>\n";
+  }
+  $EccTxt .=  "<br>";
+  $Things = Get_Things_Cond($Fid,'BuildState=3');
+  foreach ($Things as $T) {
+    if (empty($TTypes[$T['Type']])) continue;
+    switch ($TTypes[$T['Type']]['Name']) {
+      case "Outpost":
+        $OutPosts ++;
+        break;
+
+      case "Asteroid Mine":
+        $AstMines ++;
+        if (Feature('AstmineDSC')) {
+          $AstVal += $T['Level'];
+        } else {
+          $Plan = Get_Planet($T['Dist1']);
+          $AstVal += (($Plan['Minerals']??0) + ((Has_PTraitP($W['id'],'Rare Mineral Deposits') && Has_Tech($Fid,'Advanced Mineral Extraction'))?3:0))*$T['Level'];
+        }
+        break;
+
+      case "Embassy":
+        $Embassies ++;
+        break;
+
+      case "Minefield":
+        $MineFields ++;
+        break;
+
+      default:
+        continue 2;
+    }
+  }
+
+  $MyPTSBranches = Gen_Get_Cond('Branches',"Whose=$Fid AND HostType!=3 AND Type=" . ($NameBType['Trading Station']??0));
+  $MyPBMPBranches = Gen_Get_Cond('Branches',"Whose=$Fid AND HostType!=3 AND Type=" . ($NameBType['Black Market Trade Station']??0));
+  $MyOPBranches = Gen_Get_Cond('Branches',"Whose=$Fid AND HostType=3 AND Type=" . ($NameBType['Trading Station']??0));
+  $OtherPTSBranches = Gen_Get_Cond('Branches',"Whose!=$Fid AND HostType!=3 AND Type=" . ($NameBType['Trading Station']??0));
+var_dump($MyPTSBranches,$MyPBMPBranches,$MyOPBranches,$OtherPTSBranches);
+  $MyTrade = $OtherTrade = 0;
+  $Orgs = [];
+
+  if ($MyPTSBranches || $MyOPBranches || $MyPBMPBranches) {
+    if ($MyPTSBranches && !$HasOwnGalaxy ) {
+      foreach ($MyPTSBranches as $Bid=>$B ) {
+        if (!isset($Orgs[$B['Organisation']])) $Orgs[$B['Organisation']] = Gen_Get('Organisations',$B['Organisation']);
+        $MyTrade += $Orgs[$B['Organisation']]['OfficeCount'];
+      }
+    }
+    if ($MyPBMPBranches) {
+      foreach ($MyPTSBranches as $Bid=>$B ) {
+        if (!isset($Orgs[$B['Organisation']])) $Orgs[$B['Organisation']] = Gen_Get('Organisations',$B['Organisation']);
+        $MyTrade += $Orgs[$B['Organisation']]['OfficeCount'];
+      }
+    }
+    if ($MyOPBranches && !$HasOwnGalaxy ) {
+      foreach ($MyOPBranches as $Bid=>$B ) {
+  //      if (!isset($Orgs[$B['Organisation']])) $Orgs[$B['Organisation']] = Gen_Get('Organisations',$B['Organisation']);
+        $MyTrade += 2;
+      }
+    }
+
+    if ($MyTrade){
+      $EccTxt .= "Plus Outgoing trade of my organisations worth: $MyTrade<br>\n";
+      $EconVal += $MyTrade;
+    }
+  }
+
+  if ($OtherPTSBranches) {
+    foreach( $OtherPTSBranches as $B) {
+      if (!isset($Orgs[$B['Organisation']])) $Orgs[$B['Organisation']] = Gen_Get('Organisations',$B['Organisation']);
+      $OtherTrade += $Orgs[$B['Organisation']]['OfficeCount'];
+    }
+    if ($OtherTrade){
+      $EccTxt .= "Plus incomming trade of other's organisations worth: $OtherTrade<br>\n";
+      $EconVal += $OtherTrade;
+    }
+  }
+
+  $OtherTs = Get_Things_Cond(0,"Type=17 AND OtherFaction=$Fid AND BuildState=3");
+  foreach($OtherTs as $OT) {
+    $OtherEmbs++;
+  }
+
+  if (Feature('OutPostTrade') && $OutPosts) {
+    $EccTxt .= "Plus $OutPosts Outposts worth 2 each<br>\n";
+    $EconVal += $OutPosts*2;
+  }
+  if ($AstMines) {
+    if (Feature('AstmineDSC')) $AstVal *= Has_Tech($Fid,'Deep Space Construction');
+    $EccTxt .= "Plus $AstMines Asteroid Mines worth a total of $AstVal<br>\n";
+    $EconVal += $AstVal;
+  }
+  if ($Embassies) {
+    $EccTxt .= "Plus $Embassies of your Embassies worth 1 each<br>\n";
+    $EconVal += $Embassies;
+  }
+  if ($OtherEmbs) {
+    $EccTxt .= "Plus $OtherEmbs of other Embassies worth 1 each<br>\n";
+    $EconVal += $OtherEmbs;
+  }
+
+  if ($MineFields) {
+    $EccTxt .= "Less $MineFields of Minefields worth 1 each<br>\n";
+    $EconVal -= $MineFields;
+  }
+
+  $Logistics = [0,0,0]; // Ship, Army, Intelligence
+  foreach ($Things as $T) {
+    if (empty($T['Type'])) continue;
+    $Props = $TTypes[$T['Type']]['Properties'];
+    if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
+      if ($HasHomeLogistics && ($T['SystemId'] == $Facts[$T['Whose']]['HomeWorld'])) $T['Level'] /=2;
+      if ($HomeArmyLogistics && ($Props & THING_HAS_ARMYMODULES) && ($T['SystemId'] == $FactionHome)) {
+        continue; // Nocost
+      } else {
+        if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $LogistCost[$T['Level']];
+        if ($Props & THING_HAS_GADGETS) $Logistics[2] += $LogistCost[$T['Level']];
+        if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) {
+          if ($HasOwnGalaxy && str_contains($T['Class'],'Freighter')) {
+            $Logistics[0] += $LogistCost[$T['Level']-1];
+          } else {
+            $Logistics[0] += $LogistCost[$T['Level']];
+          }
+        }
+      }
+    };
+  }
+
+  foreach($Logistics as &$Log) $Log = floor($Log);
+  $LogAvail = LogisticalSupport($Fid);
+  $LogCats = ['Ships',$ARMIES,'Agents'];
+
+  foreach ($LogCats as $i => $n) {
+    if ($Logistics[$i]) {
+      $pen = min(0,$LogAvail[$i]-$Logistics[$i]);
+      if ($pen < 0) {
+        $EconVal += $pen;
+        $EccTxt .= "<p>Logistical penalty of $pen for $n<p>\n";
+      }
+    }
+  }
+
+  $EccTxt .= "Total Economy is $EconVal worth " . $EconVal*10 . "<p>\n\n";
+  return [$EconVal,$EccTxt];
+
 }

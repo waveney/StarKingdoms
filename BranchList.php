@@ -19,6 +19,7 @@
 //  CheckFaction('WorldList',$Fid);
 
   $FactNames = Get_Faction_Names();
+  CheckBranches();
 
   $Offs = Gen_Get_Cond('Branches',"GameId=$GAMEID");
   $Orgs = Gen_Get_Cond('Organisations',"GameId=$GAMEID");

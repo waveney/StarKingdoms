@@ -1166,7 +1166,7 @@ function Get_OpType($id) {
 function Get_OpTypes($AllG=0) {
   global $db,$NOTBY;
   $Ts = [];
-  $res = $db->query("SELECT * FROM OrgActions " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0") );
+  $res = $db->query("SELECT * FROM OrgActions " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0") . " ORDER BY Office, Name");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
   return $Ts;
 }

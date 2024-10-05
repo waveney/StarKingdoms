@@ -213,3 +213,17 @@ function HabPlanetFromSystem($Sid) {
   foreach ($Ps as $P) if ($PTypes[$P['Type']]['Hospitable']) return $P['id'];
   return 0;
 }
+
+function CheckBranches() {
+  global $GAMEID;
+  $OrgTypes = Get_OrgTypes();
+  $BTypes = Get_BranchTypes();
+  $Orgs = Gen_Get_Cond('Organisations',"GameId=$GAMEID");
+  $Branches = Gen_Get_Cond('Branches',"GameId=$GAMEID");
+
+  foreach ($Branches as $B) {
+    $B['OrgType'] = $Orgs[$B['Organisation']]['OrgType'];
+    $B['Whose'] = $Orgs[$B['Organisation']]['Whose'];
+    Gen_Put('Branches',$B);
+  }
+}

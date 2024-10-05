@@ -326,7 +326,9 @@
   $Homes = Get_ProjectHomes($Fid);
   $DistTypes = Get_DistrictTypes();
 
-  $Income = Income_Estimate($Fid);
+//  $Income = Income_Estimate($Fid);
+  [$EcVal,$txt] = Income_Calc($Fid);
+  $Income = $EcVal*10;
 //var_dump($ProjTypes);exit;
 
   $Headline1 = '';
