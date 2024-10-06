@@ -146,6 +146,10 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0,$M
   global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil;
   static $AllTechs;
   if (empty($AllTechs)) $AllTechs = Get_Techs(0);
+
+  $Blue = (str_contains($T['Name'],'Blueprint'));
+  if ($Blue && !isset($_REQUEST['Blue'])) return;
+
   $Tid = $T['id'];
   $Parsedown = new Parsedown();
 
