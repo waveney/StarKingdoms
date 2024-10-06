@@ -42,17 +42,20 @@
     $TechFacts = Get_Faction_Techs($Fid);
   }
 
+  $Xtra = '';
+  if ($Fid) $Xtra = "&id=$Fid";
+  $Setup = isset($_REQUEST['SETUP']);
+  if ($Setup) $Xtra .= "&SETUP";
+
   $Blue = 0;
   if (isset($_REQUEST['Blue'])) {
-    echo "<div class=floatright><h2>Showing All Techs, including Blue Prints <a href=TechShow.php>No Blue Prints</a></h2></div>";
-    echo "The current NotBy Mask is : $SETNOT<p>\n";
+    echo "<div class=floatright><h2>Showing All Techs, including Blue Prints <a href=TechShow.php?$Xtra>No Blue Prints</a></h2></div>";
     $AllG = 1;
   } else {
-    echo "<div class=floatright><h2>Showing All Teches except Blueprints -  Switch to <a href=TechShow.php?Blue>Show Blue Prints</a></h2></div>";
+    echo "<div class=floatright><h2>Showing All Teches except Blueprints -  Switch to <a href=TechShow.php?Blue$Xtra>Show Blue Prints</a></h2></div>";
   }
 
 
-  $Setup = isset($_REQUEST['SETUP']);
   $Techs = Get_TechsByCore($Fid,($Setup?1:0));
 //var_dump ($TechFacts);
 //var_dump($FACTION);
