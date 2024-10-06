@@ -9,16 +9,16 @@
   include_once("BattleLib.php");
   include_once("TurnTools.php");
   include_once("vendor/erusev/parsedown/Parsedown.php");
-  
+
   global $LinkStates,$GAME;
-  
+
   A_Check('GM');
 
-  $LinkState = array_flip($LinkStates);            
+  $LinkState = array_flip($LinkStates);
   dostaffhead("Special Turn Processing");
   echo "<h1>Special Turn Actions - Only needed once a Blue Moon</h1>\n";
 
-  
+
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
     case 'ExplodeLink':
@@ -26,22 +26,22 @@
       echo fm_number('Link id #:',$_REQUEST,'LinkId');
       echo "</form>";
       dotail();
-      
+
     case 'ExplodeLink2':
       $Lid = $_REQUEST['LinkId'];
       $L = Get_Link($Lid);
 
-      $SR1 = Get_SystemR($L['System1Ref']);      
-      $SR2 = Get_SystemR($L['System2Ref']);           
+      $SR1 = Get_SystemR($L['System1Ref']);
+      $SR2 = Get_SystemR($L['System2Ref']);
 
       $DamageDice = (abs($L['Level'])+1)*2;
-      GMLog("<span class=Red>LINK EXPLOSION </span> on link $Lid from " . $L['System1Ref'] . " to " . $L['System2Ref'] );        
+      GMLog("<span class=Red>LINK EXPLOSION </span> on link $Lid from " . $L['System1Ref'] . " to " . $L['System2Ref'] );
       GMLog("Do ($DamageDice D10) x 10 to everything (Including Outposts, Space Stations etc) in " .
             "<a href=Meetings.php?ACTION=Check&R=" . $L['System1Ref'] . ">" . $L['System1Ref'] . "</a> And " .
             "<a href=Meetings.php?ACTION=Check&R=" . $L['System2Ref'] . ">" . $L['System2Ref'] . "</a>");
             // Emergency lockdown both ends
 
-//      db_delete('Links',$L['id']);                        
+//      db_delete('Links',$L['id']);
       SetAllLinks($L['System1Ref'], $SR1['id'],$LinkState['In Safe Mode']);
       SetAllLinks($L['System2Ref'], $SR2['id'],$LinkState['In Safe Mode']);
 
@@ -49,17 +49,33 @@
       Report_Others(0, $SR2['id'], 31, "Link #$Lid Exploded.  All other links in " . $L['System2Ref'] . " have been put in Safe Mode");
 
             // Remove the link!
-            
+
       $L['GameId'] = - $L['GameId'];
       Put_Link($L);
       echo "Link Exploded<p>";
+      dotail();
+
+    case 'RefitAll' :
+      $Facts = Get_Factions();
+      foreach ($Facts as $Fid=>$F) {
+        $Things = Get_Things_Cond($Fid);
+        foreach ($Things as $T) {
+          if ($T['BuildState'] < 3) $T['BuildState'] = 3;
+          RefitRepair($T);
+        }
+        echo "Finished " . $F['Name'] . "<p>";
+      }
+      dotail();
     }
   }
-  
+
   echo "</form>";
-  echo "<h2><a href=TurnSpecials.php?ACTION=ExplodeLink>Explode Link</a>, ";
-  
-  echo "</h2>";
+  echo "<h2>Actions: (Check with Richard before using any)</h2>";
+  echo "<li><a href=TurnSpecials.php?ACTION=ExplodeLink>Explode Link</a> ";
+  echo "<li><a href=TurnSpecials.php?ACTION=RefitAll>Refit all and Complete all in planning</a> ";
+
+
+
   echo "<h2><a href=TurnActions.php>Back to Turn Processing</a></h2>";
 
 

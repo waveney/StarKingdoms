@@ -1044,7 +1044,7 @@ function Mod_Types_From_Names(&$TTs=0) {
 }
 
 function Check_MyThing(&$T,$Fid=0) {
-  if ($T['Whose'] == $Fid) return;
+  if (($T['Whose']??-1) == $Fid) return;
   if (Access('GM')) return;
   echo "<h2 class=Err>Not Your Thing...</h2>\n";
   dotail();

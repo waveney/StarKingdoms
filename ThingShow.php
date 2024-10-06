@@ -1766,7 +1766,7 @@ function Show_Thing(&$T,$Force=0) {
 
     echo " &nbsp; " . fm_submit("ACTION","Duplicate",0) . fm_submit("ACTION","GM Recalc",0);
     if ($HasSalvage) echo fm_submit("ACTION","Salvage",0);
-    if ($ttn[$T['Type']] == 'Outpost') echo fm_submit("Action",'Add Branch',0,"formaction=BranchEdit.php?T=$Tid");
+    if (($ttn[$T['Type']]??0) == 'Outpost') echo fm_submit("Action",'Add Branch',0,"formaction=BranchEdit.php?T=$Tid");
     echo "</h2>";
   } else if (!empty($Fid)) {
     echo "<h2><a href=PThingList.php?id=$Fid>Back to Thing list</a></h2>";
