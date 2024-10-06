@@ -580,7 +580,7 @@ function fm_DragonDrop($Call, $Type,$Cat,$id,&$Data,$Mode=0,$Mess='',$Cond=1,$td
       if ($Mode) formData.append('Mode',"$Mode" ); 
       if ('$tdclass' != '') formData.append('Class',"$tdclass" );  
     },
-    dictDefaultMessage: "Drop $Name here to upload"
+    dictDefaultMessage: "Drop $Name here to upload or click to select"
   };
 XXX;
     $str .= "</script>";

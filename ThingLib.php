@@ -275,7 +275,7 @@ function Within_Sys_Locs(&$N,$PM=0,$Boarding=0,$Restrict=0,$Hab=0) {// $PM +ve =
     $ThingTypes = Get_ThingTypes();
 
     foreach ($Things as $T) {
-      if (($ThingTypes[$T['Type']]['Properties'] & THING_HAS_DISTRICTS) || $T['CargoSpace'] >0) $L[1000+$T['id']] = "On " . $T['Name'];
+      if (($ThingTypes[$T['Type']]['Properties'] & THING_HAS_DISTRICTS) || $T['CargoSpace'] ) $L[1000+$T['id']] = "On " . $T['Name'];
     }
   }
 /*
@@ -538,8 +538,9 @@ function Calc_Scanners(&$T) { // And lots of other attributes
   $T['Sensors'] = (($mods && ($mods['Number']>0))?$mods['Number']:0)  + (($psurv && ($psurv['Number']>0))?$psurv['Number']:0) ;
   $T['SensorLevel'] = max((($mods && ($mods['Level']>0))?$mods['Level']:0),(($psurv && ($psurv['Level']>0))?$psurv['Level']:0));
   $T['NebSensors'] = ( (($nebs && ($nebs['Number']>0))?$nebs['Number']:(($T['Type'] == 9 && $T['Level'] > 1)?($T['Level']-1):0)));
-  $T['CargoSpace'] = ( (($Cargo && ($Cargo['Number']>0))?$Cargo['Number']*($Cargo['Level']+1):0) +
-                       (($Cryo  && ($Cryo['Number']>0))?$Cryo['Number']*($Cryo['Level']+3):0));
+  $T['CargoSpace'] = ($Cargo?1:0) + ($Cryo?2:0);
+  /*  $T['CargoSpace'] = ( (($Cargo && ($Cargo['Number']>0))?$Cargo['Number']*($Cargo['Level']+1):0) +
+                       (($Cryo  && ($Cryo['Number']>0))?$Cryo['Number']*($Cryo['Level']+3):0)); */
   if (($Deep = Get_ModulesType($T['id'],'Deep Space Construction' )) && ($Deep['Number']>0)) {
     $T['HasDeepSpace'] = $Deep['Number']*$Deep['Level'];
   } else {

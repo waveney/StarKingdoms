@@ -38,6 +38,10 @@ function Show_Thing(&$T,$Force=0) {
   $Syslocs = Within_Sys_Locs($N);
   $LinkTypes = Get_LinkLevels();
   if ($Fid) $Faction = Get_Faction($Fid);
+  $MTs = Get_ModuleTypes();
+  $MNs = NamesList($MTs);
+  $NamesMod = array_flip($MNs);
+
 
   if ($T['SystemId'] == $T['NewSystemId'] || $T['NewSystemId'] == 0) {
     $NewSyslocs = $Syslocs;
@@ -242,7 +246,7 @@ function Show_Thing(&$T,$Force=0) {
         } else { // On Board
           $Host = Get_Thing($T['SystemId']);
           if ($Host) {
-            echo "<tr><td colspan=3>In: $Lid" . $Host['Name'];
+            echo "<tr><td colspan=3>In: " . $Host['Name'];
             $Conflict = 0;
             $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] .
                     " AND W.Home=PH.id AND W.Conflict=1");
@@ -264,7 +268,7 @@ function Show_Thing(&$T,$Force=0) {
               } else {
                 echo " - Only the transport owner can unload you";
               }
-              echo "<br>Note: To unload AFTER moving, please put the movement order in to the system for the" .
+              echo "<br>Note: To unload AFTER moving, please put the movement order in to the system for the " .
                 "transport before the Unload After Move order.<br>\n";
             }
           } else {
@@ -410,15 +414,16 @@ function Show_Thing(&$T,$Force=0) {
         }
 
       }
-
+//var_dump("Here",$Lid,$tprops);
       if (($Lid == 0) && (($tprops & THING_CAN_BETRANSPORTED)) && (($T['PrisonerOf'] == 0) || ($T['PrisonerOf'] == $FACTION['id']))) {
         $XPorts = Get_AllThingsAt($T['SystemId']);
+// var_dump($XPorts);
         $NeedCargo = ($tprops & THING_NEEDS_CARGOSPACE);
         $TList = [];
         $FF = Get_FactionFactionsCarry($Fid);
         foreach($XPorts as $X) {
           if ($X['BuildState'] < 2 || $X['BuildState'] > 3) continue;
-          if ($NeedCargo && $X['CargoSpace'] < $T['Level']) continue; // Not big enough
+          if ($NeedCargo && ($X['CargoSpace']==0)) continue; // No Cargo
           if (($ThingProps[$X['Type']]??0) & THING_CANT_HAVENAMED) continue;
           if (($X['Whose'] == $Fid) || (($T['PrisonerOf'] == $FACTION['id'] ) && (($X['Whose'] == $FACTION['id'])))) {
             // Full through
@@ -429,16 +434,35 @@ function Show_Thing(&$T,$Force=0) {
           }
 
           if ($NeedCargo) {
-//          var_dump($X);
+            $Mods = Get_Modules($X['id']);
+            $CargoSpace = ($Mods[$NamesMod['Cargo Space']]['Number']??0);
+            $CryoSpace = ($Mods[$NamesMod['Cryo Pods']]['Number']??0)*2;
+
             $OnBoard = Get_Things_Cond(0,"((LinkId=-1 OR LinkId=-3) AND SystemId=" . $X['id'] . ")");
-            $Used = 0;
-            foreach($OnBoard as $OB) if ($ThingProps[$OB['Type']] & THING_NEEDS_CARGOSPACE) $Used += $OB['Level'];
-            if ($X['CargoSpace'] < $Used + $T['Level']) continue; // Space is used
+            foreach($OnBoard as $OB) if ($ThingProps[$OB['Type']] & THING_NEEDS_CARGOSPACE) {
+              $Need = $OB['Level'];
+              if ($CryoSpace && ($ThingProps[$OB['Type']] & THING_HAS_ARMYMODULES)) {
+                $CryoSpace -= $Need;
+                if ($CryoSpace >= 0) {
+                  $Need = 0;
+                } else {
+                  $Need -= $CryoSpace;
+                }
+              }
+              if ($Need && $CargoSpace) {
+                $CargoSpace -= $Need;
+                if ($CargoSpace >= 0) {
+                  $Need = 0;
+                } else {
+                  $Need -= $CargoSpace;
+                }
+              }
+            }
+            $Space = $CargoSpace + (($tprops & THING_HAS_ARMYMODULES)?$CryoSpace:0);
+            if ($Space < $T['Level']) continue;
           }
           $TList[$X['id']] = $X['Name'];
         }
-
-
 
         if ($TList) {
           echo "<tr><td colspan=3>" . ($NeedOr?" <b>Or</b> ":'') . "Board: " . fm_select($TList,$T,'BoardPlace') . fm_submit("ACTION",'Load on Turn',0);
@@ -494,7 +518,7 @@ function Show_Thing(&$T,$Force=0) {
 
     $NewRef = (empty($T['NewSystemId']) ? $N['Ref'] : Get_System($T['NewSystemId'])['Ref']);
 
-    $CargoUsed = 0;
+    $CargoUsed = $CryoUsed = 0; // Adds troops up as Cryo - checked later if it has
 
     if ($Have) foreach ($Have as $H) {
       $Hid = $H['id'];
@@ -511,7 +535,13 @@ function Show_Thing(&$T,$Force=0) {
         echo " to: $NewRef - " . fm_select($NewSyslocs,$H,'NewLocation',0,'',"NewLocation:$Hid");
       }
       echo "<br>";
-      if ($hprops & THING_NEEDS_CARGOSPACE) $CargoUsed += $H['Level'];
+      if ($hprops & THING_NEEDS_CARGOSPACE) {
+        if ($hprops & THING_HAS_ARMYMODULES) {
+          $CryoUsed += $H['Level'];
+        } else {
+          $CargoUsed += $H['Level'];
+        }
+      }
     }
 
     if ($Having) foreach ($Having as $H) {
@@ -528,10 +558,27 @@ function Show_Thing(&$T,$Force=0) {
         echo " to: $NewRef - " . fm_select($NewSyslocs,$H,'NewLocation',0,'',"NewLocation:$Hid");
       }
       echo "<br>";
-      if ($hprops & THING_NEEDS_CARGOSPACE) $CargoUsed += $H['Level'];
+      if ($hprops & THING_NEEDS_CARGOSPACE) {
+        if ($hprops & THING_HAS_ARMYMODULES) {
+          $CryoUsed += $H['Level'];
+        } else {
+          $CargoUsed += $H['Level'];
+        }
+      }
     }
+    $Mods = Get_Modules($Tid);
 
-    if ($CargoUsed > $T['CargoSpace'] ) echo "<span class=Err>This needs $CargoUsed cargo space, but only has " . $T['CargoSpace'] . "</span>\n";
+    $CargoSpace = ($Mods[$NamesMod['Cargo Space']]['Number']??0);
+    $CryoSpace = ($Mods[$NamesMod['Cryo Pods']]['Number']??0)*2;
+
+    if ($CryoSpace && $CryoUsed){
+      $CryoSpace -= $CryoUsed;
+      if ($CryoSpace < 0) {
+        $CargoUsed -= $CryoSpace;
+      }
+    }
+    if ($CargoSpace && $CargoUsed) $CargoSpace -= $CargoUsed;
+    if ($CargoSpace < 0 ) echo "<span class=Err>This needs more cargo space, short by " . (-$CargoSpace) . "</span>\n";
 //    echo "<a href=ThingEdit.php?ACTION=UnloadAll>Unload All</a>";
   }
 
@@ -671,15 +718,8 @@ function Show_Thing(&$T,$Force=0) {
       if ($T['ProjHome']) echo "<td><a href=ProjDisp.php?H=" . $T['ProjHome'] . ">Projects here</a>";
     }
   }
-  if ($tprops & THING_HAS_MODULES) {
-//    echo "<tr><td>Modules to be done\n";
-    $MTs = Get_ModuleTypes();
-    $MNs = [];
-    foreach ($MTs as $M) $MNs[$M['id']] = $M['Name'];
 
-//var_dump($MTs);
-//    $MTNs = [];
-//    foreach($DTs as $M) $MTNs[$M['id']] = $M['Name'];
+  if ($tprops & THING_HAS_MODULES) {
     $MTNs = Get_Valid_Modules($T);
     $Mods = Get_Modules($Tid);
     if (($Blue = ($T['BluePrint']>0))) {
@@ -724,10 +764,10 @@ function Show_Thing(&$T,$Force=0) {
       }
       echo "<tr><td>Add Module Type<td>" . fm_Select($MTNs, NULL , 'Number', 1,'',"ModuleTypeAdd-$Tid");
       echo fm_number1("Max Modules",$T,'MaxModules','',' class=Num3 ');
-      if ($tprops & THING_HAS_CIVSHIPMODS) {
+/*      if ($tprops & (THING_HAS_CIVSHIPMODS | THING_HAS_MILSHIPMODS)) {
 //        echo fm_number1("Deep Space",$T,'HasDeepSpace');
         echo fm_number1("Cargo Space",$T,'CargoSpace');
-      }
+      }*/
       //var_dump($FlexUsed,$FlexAvail)
       if ($totmodc > $T['MaxModules']) {
         echo "<td class=Err>($totmodc) TOO MANY MODULES\n";
@@ -756,7 +796,7 @@ function Show_Thing(&$T,$Force=0) {
           echo $MTNs[$D['Type']] . ($T['BuildState']? (" (Level " . $D['Level'] . ") ") :"") ;
           switch ($MTs[$D['Type']]['Name']) {
             case 'Cargo Space':
-              echo " Capacity: " . $T['CargoSpace'];
+              echo " Capacity: " . $T['Level'];
               break;
             case 'Sublight Engines':
               echo " Speed: " . ceil(sprintf('%0.3g',$T['Speed']));
@@ -810,7 +850,7 @@ function Show_Thing(&$T,$Force=0) {
   if ($GM && ($tprops & (THING_HAS_CIVSHIPMODS | THING_HAS_ARMYMODULES))) {
     echo "<tr>" . fm_number1('Sensors',$T,'Sensors','','min=0 max=99') . fm_number1(' Level',$T,'SensorLevel','','min=0 max=20') .
          "<td>Neb Sensors: " . fm_checkbox('', $T,'NebSensors') . fm_number1('Stability',$T,'Stability','','min=0 max=1000');
-    if (($T['BuildFlags'] & BUILD_FLAG1 ) || Has_Tech($Fid,'Cret-Chath Engineering')) {
+    if (($T['BuildFlags'] & BUILD_FLAG1 ) || ($Fid && Has_Tech($Fid,'Cret-Chath Engineering'))) {
       echo "<td>" . fm_checkflagbox('Cret-Chath',$T,'BuildFlags',BUILD_FLAG1);
     }
   }

@@ -714,7 +714,7 @@ function Income_Calc($Fid) {
   $MyPBMPBranches = Gen_Get_Cond('Branches',"Whose=$Fid AND HostType!=3 AND Type=" . ($NameBType['Black Market Trade Station']??0));
   $MyOPBranches = Gen_Get_Cond('Branches',"Whose=$Fid AND HostType=3 AND Type=" . ($NameBType['Trading Station']??0));
   $OtherPTSBranches = Gen_Get_Cond('Branches',"Whose!=$Fid AND HostType!=3 AND Type=" . ($NameBType['Trading Station']??0));
-var_dump($MyPTSBranches,$MyPBMPBranches,$MyOPBranches,$OtherPTSBranches);
+// var_dump($MyPTSBranches,$MyPBMPBranches,$MyOPBranches,$OtherPTSBranches);
   $MyTrade = $OtherTrade = 0;
   $Orgs = [];
 
@@ -739,7 +739,7 @@ var_dump($MyPTSBranches,$MyPBMPBranches,$MyOPBranches,$OtherPTSBranches);
     }
 
     if ($MyTrade){
-      $EccTxt .= "Plus Outgoing trade of my organisations worth: $MyTrade<br>\n";
+      $EccTxt .= "Plus Outgoing trade of my trade organisations worth: $MyTrade<br>\n";
       $EconVal += $MyTrade;
     }
   }
@@ -750,7 +750,7 @@ var_dump($MyPTSBranches,$MyPBMPBranches,$MyOPBranches,$OtherPTSBranches);
       $OtherTrade += $Orgs[$B['Organisation']]['OfficeCount'];
     }
     if ($OtherTrade){
-      $EccTxt .= "Plus incomming trade of other's organisations worth: $OtherTrade<br>\n";
+      $EccTxt .= "Plus incomming trade of other's trade organisations worth: $OtherTrade<br>\n";
       $EconVal += $OtherTrade;
     }
   }

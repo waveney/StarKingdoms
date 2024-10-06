@@ -14,6 +14,7 @@ function New_Thing(&$T) {
   $Fact_Colours = Get_Faction_Colours();
   $Systems = Get_SystemRefs();
   $BPs = BluePrintList(10000);
+var_dump($BPs);
   if (!isset($T['Whose'])) $T['Whose'] = 0;
   echo "<h1>Create Thing:</h1>";
   echo "<form method=post action=ThingEdit.php>";
@@ -21,7 +22,7 @@ function New_Thing(&$T) {
   echo "<tr>" . fm_text("Name",$T,'Name');
   foreach ($ttypes as $i=>$tt) {
     if (($tt['Properties'] & THING_HAS_BLUEPRINTS) && !empty($BPs[$i])) {
-      echo "<tr id=BPSet$i hidden><td>Blue print:<td>" . fm_select($BPs[$i],$T,'BluePrint',1);
+      echo "<tr id=BPSet$i hidden><td>Blue print:<td>" . fm_select($BPs[$i],$T,'BluePrint',1,'',"BLIstZZ$i");
     }
   }
   echo "<tr class=Tlevel>" . fm_number("Level",$T,'Level');
@@ -33,6 +34,7 @@ function New_Thing(&$T) {
   dotail();
 }
   global $FACTION;
+  $ttypes = Get_ThingTypes();
 
   $Force = (isset($_REQUEST['FORCE'])?1:0);
   $GM = Access('GM');
@@ -48,6 +50,7 @@ function New_Thing(&$T) {
   dostaffhead("Edit and Create Things",["js/dropzone.js","css/dropzone.css" ]);
 
   global $db, $GAME, $GAMEID,$BuildState;
+  $ttypes = Get_ThingTypes();
 
 // START HERE
 //  var_dump($_REQUEST);
@@ -61,6 +64,13 @@ function New_Thing(&$T) {
       break;
 
     case 'Create' : // From New Thing
+      foreach ($_POST as $PO=>$POV) {
+        if (str_contains($PO,'BLIstZZ') && ($POV != 0)) {
+          $_POST['BluePrint'] = $POV;
+          break;
+        }
+      }
+
       if (!isset($_POST['SystemId'])) {
         echo "No System Given";
         New_Thing($_POST); // TODO fix 4 Blue
@@ -78,7 +88,9 @@ function New_Thing(&$T) {
       } else {
         $_POST['GameId'] = $GAMEID;
         $_POST['NewSystemId'] = $_POST['SystemId'];
+
         $tid = Insert_db_post('Things',$T);
+      var_dump($T);
       }
       $T = Get_Thing($tid); // Re-read to get defaults
 

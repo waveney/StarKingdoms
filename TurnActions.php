@@ -2035,6 +2035,9 @@ function LoadTroops() {
   $Things = Get_Things_Cond(0,"(BuildState=2 OR BuildState=3) AND (LinkId=-2 OR LinkId=-4)");
   $TTypes = Get_ThingTypes();
   $Facts = Get_Factions();
+  $MTs = Get_ModuleTypes();
+  $ModNames = NamesList($MTs);
+  $NamesMod = array_flip($ModNames);
 
   foreach($Things as $T) {
     $HostId = $T['NewSystemId'];
@@ -2055,10 +2058,33 @@ function LoadTroops() {
     }
 
     if ($NeedCargo) {
+      $Mods = Get_Modules($T['id']);
       $OnBoard = Get_Things_Cond(0,"(LinkId=-1 OR LinkId=-3) AND SystemId=" . $H['id']);
-      $Used = 0;
-      foreach($OnBoard as $OB) if ($TTypes[$OB['Type']]['Properties'] & THING_NEEDS_CARGOSPACE) $Used += $OB['Level'];
-      if ($H['CargoSpace'] < $Used + $T['Level']) {
+      $OnBoard[]= $T;
+      $CargoSpace = ($Mods[$NamesMod['Cargo Space']]['Number']??0);
+      $CryoSpace = ($Mods[$NamesMod['Cryo Pods']]['Number']??0)*2;
+
+      foreach($OnBoard as $OB) if ($TTypes[$OB['Type']]['Properties'] & THING_NEEDS_CARGOSPACE) {
+        $Need = $OB['Level'];
+        if (($CryoSpace>0) && ($TTypes[$OB['Type']]['Properties'] & THING_HAS_ARMYMODULES)) {
+          $CryoSpace -= $Need;
+          if ($CryoSpace >= 0) {
+            $Need = 0;
+          } else {
+            $Need = - $CryoSpace;
+          }
+        }
+        if ($Need && $CargoSpace) {
+          $CargoSpace -= $Need;
+          if ($CargoSpace >= 0) {
+            $Need = 0;
+          } else {
+            $Need -= $CargoSpace;
+          }
+        }
+        if ($Need) break;
+      }
+      if ($Need) {
         TurnLog($T['Whose'],"You tried to load " . $T['Name'] . " on to " . $H['Name'] . " there is not enough space",$T);
         if ($H['Whose'] != $T['Whose'])
           TurnLog($H['Whose'],  $Facts[$T['Whose']]['Name'] . " tried to load " . $T['Name'] . " on to " . $H['Name'] . " there is not enough space");
