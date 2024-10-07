@@ -74,6 +74,7 @@ define('THING_LEAVES_DEBRIS',  0x1000000);
 define('THING_IS_SMALL',       0x2000000);
 define('THING_HAS_BLUEPRINTS', 0x4000000);
 define('THING_NEEDS_PLANET',   0x8000000);
+define('THING_HAS_AGE',       0x10000000);
 
 define('LINK_ON_BOARD',-1);
 define('LINK_BOARDING',-2);

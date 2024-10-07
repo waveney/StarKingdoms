@@ -4095,6 +4095,12 @@ function TidyUps() {
   CheckBranches();
   GMLog("Branches: Data Cross Checked<p>");
 
+  $Ts = Get_Things_Cond(0,"Type=23 AND Dist1!=0");
+  foreach($Ts as $T) {
+    $T['Dist1']++;
+    Put_Thing($T);
+  }
+
   return 1;
 }
 

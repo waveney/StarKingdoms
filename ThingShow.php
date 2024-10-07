@@ -130,6 +130,7 @@ function Show_Thing(&$T,$Force=0) {
     echo fm_number('Priority',$T,'Priority');
     if ($tprops & THING_NEEDS_PLANET)
       echo fm_number1('Planet',$T,'Dist1') . ($T['Dist1']? "<td><a href=PlanEdit.php?id=" . $T['Dist1'] . ">Visit</a>":'');
+    if ($tprops & THING_HAS_AGE) echo fm_number1('Age',$T,'Dist1','','min=0 max=1000') . " optional";
 //    if (Access('God') echo fm_number1('Turn Moved',$T,
   } else {
     echo "<tr><td>Type:<td>" . ( (($tprops & THING_CAN_BE_ADVANCED) && $T['Level']>1)? $Advance[$T['Level']] : '' ) . $ttn[$T['Type']];
