@@ -151,31 +151,35 @@ function NewPasswd() {
 
   if ($ans['AccessKey'] != $_REQUEST['AccessKey']) Login("Link invalid ");
 
-  if ($ans['ChangeSent']+36000 < time()) Login("Link timed out");
+  if (isset($ans['ChangeSent']) && ($ans['ChangeSent']+36000 < time())) Login("Link timed out");
 
-  if ($_REQUEST['password'] != $_REQUEST['confirm']) Set_Password($user,"Password and Confirm did not match");
+  if ($_REQUEST['Password'] != $_REQUEST['confirm']) Set_Password($user,"Password and Confirm did not match");
 
-  if (strlen($_REQUEST['password']) < 8) Set_Password($user,"Password too short");
+  if (strlen($_REQUEST['Password']) < 8) Set_Password($user,"Password too short");
 
-  if (!preg_match('/[0-9]/',$_REQUEST['password']) ||
-    !preg_match('/[a-z]/',$_REQUEST['password']) ||
-    !preg_match('/[A-Z]/',$_REQUEST['password']) ||
-    !preg_match('/\W/',$_REQUEST['password'])) {
+  if (!preg_match('/[0-9]/',$_REQUEST['Password']) ||
+    !preg_match('/[a-z]/',$_REQUEST['Password']) ||
+    !preg_match('/[A-Z]/',$_REQUEST['Password']) ||
+    !preg_match('/\W/',$_REQUEST['Password'])) {
       Set_Password($user,"Password must have a digit, a lower case character, an uppercase and a special character");
     }
-  // using crypt rather than password_hash so it works on php 3.3
-  $hash = crypt($_REQUEST['password'],"WM");
-  $ans['password'] = $hash;
+    var_dump($USER);
+    // using crypt rather than password_hash so it works on php 3.3
+  $hash = crypt($_REQUEST['Password'],"WM");
+  $ans['Password'] = $hash;
   $ans['Yale'] = rand_string(40);
   $USER = $ans;
   $USERID = $user;
+
   setcookie('SKC2',$ans['Yale'],($_REQUEST['RememberMe'] ? mktime(0,0,0,1,1,gmdate('Y')+1) : 0 ),'/');
+var_dump($USER);
   Put_User($USER);
   include ("StarKingdoms.php"); // no return wanted
   exit;
 }
 
-/* MAIN CODE HERE */
+/* MAIN CODE HERE
+*/
   global $USERID,$CONF;
   Check_Login(1);
   if(!isset($_GET['ACTION'])) {
@@ -208,4 +212,4 @@ function NewPasswd() {
       Login(Forgot());
   }
   echo "Should not get here  $act ...";
-?>
+
