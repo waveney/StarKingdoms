@@ -46,6 +46,7 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>ThingType</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>ThingId</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Actions</a>\n";
   echo "</thead><tbody>";
 
   foreach ($Offs as $i=>$O) {
@@ -57,6 +58,7 @@
     echo fm_number1('',$O,'HostType','','',"Branches:HostType:$i");
     echo fm_number1('',$O,'HostId','','',"Branches:HostId:$i");
     echo fm_text1('',$O,'Name',4,'','',"Branches:Name:$i");
+    echo "<td><a href=BranchEdit.php?ACTION=Delete&id=$i>Delete</a>";
   }
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "</table>";

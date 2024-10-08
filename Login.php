@@ -74,7 +74,7 @@ function Set_Password($user,$msg='') {
   $ans = Get_User($user);
 // var_dump($ans);exit;
   if ($ans) {
-    if ($ans['ChangeSent']+36000 < time()) {
+    if (($ans['ChangeSent']??0)+36000 < time()) {
       $rand_hash = rand_string(40);
       $ans['ChangeSent'] = time();
       $ans['AccessKey'] = $rand_hash;

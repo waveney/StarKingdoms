@@ -31,7 +31,7 @@ function Recalc_Offices() { // Recount offices for each org
     $Org = $Of['Organisation'];
     if (isset($Orgs[$Org])) {
       if (!isset($Orgs[$Org]['OfficeCount'])) var_dump($Of);
-      $Orgs[$Org]['OfficeCount']++;
+      $Orgs[$Org]['OfficeCount']+= max($Of['Number'],1);
       if ($Of['OrgType'] != $Orgs[$Org]['OrgType']) {
         $Of['OrgType'] = $Orgs[$Org]['OrgType'];
         Gen_Put('Offices',$Of);

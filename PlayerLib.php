@@ -105,7 +105,7 @@ function Player_Page() {
   echo "<p><li><a href=UserGuide.php>User Guide</a> - Warning this is VERY OUT OF DATE...<p>\n";
   if ($GM) echo "<li>GM: <a href=TechShow.php?SETUP&id=$Fid>Edit Technologies</a>\n";
   echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";
-//  echo "<li><a href=ModuleShow.php?PLAYER>Module Types</a><p>\n";
+  echo "<li><a href=ModuleShow.php?PLAYER>Module Types</a><p>\n";
 
   switch ($TState) {
   case 'Setup':
@@ -160,7 +160,8 @@ function Player_Page() {
   echo "</ul>";
   echo "</div>";
 
-  echo "<li><a href=../StarKingdoms.php>Index of Star Kingdom's Games</a>";
+  echo "<li><a href=../StarKingdoms.php>Index of Star Kingdom's Games.</a>";
+  echo "<li><a href=Login.php?ACTION=NEWPASSWD>New Password</a>\n";
 
 
   dotail();
