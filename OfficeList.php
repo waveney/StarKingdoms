@@ -43,6 +43,8 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>World</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Number</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Actions</a>\n";
+
   echo "</thead><tbody>";
 
   foreach ($Offs as $i=>$O) {
@@ -52,7 +54,8 @@
     echo "<td>" . fm_select($FactNames,$O,'Whose',1,'',"Offices:Whose:$i");
     echo fm_number1('',$O,'World','','',"Offices:World:$i");
     echo fm_number1('',$O,'Number','','',"Offices:Number:$i");
-    echo fm_text1('',$O,'Name',4,'','',"Offices:Name:$i");
+    echo fm_text1('',$O,'Name',1,'','',"Offices:Name:$i");
+    echo "<td><a href=OfficeEdit.php?id=$i>Edit</a>, <a href=OfficeEdit.php?Action=Delete&id=$i>Del</a>";
   }
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "</table>";

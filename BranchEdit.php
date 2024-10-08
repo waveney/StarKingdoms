@@ -60,9 +60,13 @@ if (isset($_REQUEST['Action'])) {
       break;
 
     case 'Delete':
-      $Bid = $_REQUEST['AutoRefBranches'];
-      db_delete('Branches',$Bid);
-      echo "Branch Deleted";
+      $Bid = $_REQUEST['id'] ?? $_REQUEST['AutoRefBranches'] ?? 0;
+      if ($Bid) {
+        db_delete('Branches',$Bid);
+        echo "Branch Deleted";
+      } else {
+        echo 'No Branch Specified';
+      }
       dotail();
 
     case 'Refresh':

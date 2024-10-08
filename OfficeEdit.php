@@ -49,9 +49,13 @@ if (isset($_REQUEST['Action'])) {
       break;
 
     case 'Delete':
-      $Oid = $_REQUEST['AutoRefOffices'];
-      db_delete('Offices',$Oid);
-      echo "Office Deleted";
+      $Oid = $_REQUEST['id']??$_REQUEST['AutoRefOffices']??0;
+      if ($Oid) {
+        db_delete('Offices',$Oid);
+        echo "Office Deleted";
+      } else {
+        echo "Office not found";
+      }
       dotail();
 
     case 'Refresh':
