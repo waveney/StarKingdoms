@@ -7,8 +7,8 @@ include_once("PlayerLib.php");
 
 global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$InstrMsg,$Advance,$ValidMines,$ARMY,$LogistCost;
 
-$Fields = ['Engineering','Physics','Xenology'];
-$Tech_Cats = ['Core','Supp','Non Std'];
+$Fields = ['Engineering','Physics','Xenology','Special'];
+$Tech_Cats = ['Core','Supp','Non Std','Levelled Non Std'];
 $CivMil = ['','Civilian','Military'];
 $BuildState = ['Planning','Building','Shakedown','Complete','Ex','Abandonded','Missing In Action','Captured'];
 $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse Anomaly','Establish Embassy','Make Outpost',
@@ -158,7 +158,7 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0,$M
   echo "<div class=$Class><h2 onclick=Toggle('TDesc$Tid')>" . $T['Name'];
   echo "<div class=TechLevel>";
 
-  if ($Fact && $T['Cat']==0 && isset($FactTechs[$T['id']]['Level']) ) echo " ( at Level " . $FactTechs[$T['id']]['Level'] . " )";
+  if ($Fact && ($T['Cat']==0 || $T['Cat']==3) && isset($FactTechs[$T['id']]['Level']) ) echo " ( at Level " . $FactTechs[$T['id']]['Level'] . " )";
   if ($Fact && $T['Cat']>0) {
     if (isset($FactTechs[$T['id']]) && $FactTechs[$Tid]['Level'] ) {
       echo " ( Known )";
@@ -172,7 +172,7 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0,$M
   echo "</div></h2>";
 
   if ($Setup) {
-    if ($T['Cat'] == 0) {
+    if (($T['Cat'] == 0) || ($T['Cat'] == 3)) {
       echo fm_number0("Level",$FactTechs[$Tid],'Level',''," min=0 max=$MaxLvl","Tech$Tid");
     } else {
       echo fm_checkbox("Have",$FactTechs[$Tid],'Level','',"Tech$Tid");
@@ -194,6 +194,9 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0,$M
       echo "<br>";
     }
     if ($T['MinThingLevel']) echo "Size Limitation - Requires at least level " . $T['MinThingLevel'] . " ship<br>";
+    break;
+  case 3: // Specials
+    echo "<span class=orange>Special Leveled Tech outside the normal tech trees.</span><br>";
     break;
   }
 
