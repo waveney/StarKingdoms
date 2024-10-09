@@ -61,7 +61,6 @@ if (isset($_REQUEST['Action'])) {
 
 $Prin = Gen_Get('SocialPrinciples',$Sid);
 $SocPWs = Gen_Get_Cond('SocPsWorlds',"Principle=$Sid");
-
 if ($GM) {
   $Fid = 0;
   if (!empty($FACTION)) $Fid = $FACTION['id'];
@@ -78,8 +77,9 @@ Register_AutoUpdate('Generic', 0);
 if ($GM) {
   echo "<tr><td>id: $Sid";
   echo "<tr><td>Whose:<td>" . fm_select($FactNames,$Prin,'Whose');
-  echo "<tr>" . fm_text('Principle Name',$Prin,'Principle',2,'',"SocialPrinciples:Principle:$Sid");
-  echo "<tr>" . fm_textarea("Description",$Prin,3,3,'',"SocialPrinciples:Description:$Sid");
+  echo "<tr>" . fm_text('Principle Name',$Prin,'Principle',2,'','',"SocialPrinciples:Principle:$Sid");
+  echo "<tr>" . fm_textarea("Description",$Prin,'Description',3,3,'','',"SocialPrinciples:Description:$Sid");
+  if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
 } else {
   echo "<tr><td>" . $Prin['Principle'];
   echo "<td>" .  $Prin['Description'];
