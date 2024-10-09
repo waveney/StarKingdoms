@@ -13,7 +13,7 @@
 
   global $GAME,$GAMEID;
 
- var_dump($_POST);
+// var_dump($_POST);
 // Special returns @x@ changes id to x, #x# sets feild to x, !x! important error message
   switch ($type) {
 
@@ -352,9 +352,7 @@
   case 'GamePlayers':
 
   case 'Generic' : // General case of table:field:id
-    echo "aaa";
     if ((preg_match('/(\w*):(\w*):(\d*)/',$field,$mtch)?true:false)) {
-      var_dump($mtch);
       $t = $mtch[1];
       $f = $mtch[2];
       $i = $mtch[3];
