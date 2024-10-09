@@ -193,10 +193,20 @@
   if ($SocPs) {
     echo "<tr><td rowspan=" . count($SocPs) . ">Social\nPrinciples:";
     $NumSp = 0;
-    foreach ($SocPs as $SP) {
+    foreach ($SocPs as $si=>$SP) {
+      $Prin = Get_SocialP($SP['Principle']);
+//var_dump($Prin,$SP);
       if ($NumSp++) echo "<tr>";
-      echo "<td>" . $SP['Principle'] . "<td>Adherence: " . $SP['Value'];
-      if ($GM) echo "<td style='background:" . ($Facts[$SP['Whose']]['MapColour']??'White') . "'>" . ($Facts[$SP['Whose']]['Name']??'Unknown');
+      if ($GM) {
+        echo "<td>" . $Prin['Principle'] . "<td>Adherence: " . $SP['Value'];
+        echo "<td style='background:" . ($Facts[$Prin['Whose']]['MapColour']??'White') . "'>" . ($Facts[$Prin['Whose']]['Name']??'Unknown');
+        echo "<td><a href=SocialEdit.php?Action=Edit&id=" . $SP['Principle'] . ">Change</a>";
+        echo "<td colspan=6>" . $Prin['Description'];
+
+      } else { // Player
+        echo "<td>" . $Prin['Principle'] . "<td>Adherence: " . $SP['Value'];
+        echo "<td colspan=6>" . $Prin['Description'];
+      }
     }
   } else {
     echo "<tr><td colsan=2>No Social Principles Currently\n";
@@ -256,6 +266,7 @@
     }
     echo ", <a href=BranchEdit.php?Action=Add&W=$Wid>Add Branch</a>";
     echo ", <a href=OfficeEdit.php?Action=Add&W=$Wid>Add Office</a>";
+    echo ", <a href=SocialEdit.php?Action=Add&W=$Wid>Add Social Principle</a>";
     echo "</h2>\n";
   }
 

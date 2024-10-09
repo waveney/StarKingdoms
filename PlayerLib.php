@@ -127,6 +127,7 @@ function Player_Page() {
     echo "<p><li><a href=WhatCanIC.php>What Things can I See?</a>\n";
     echo "<li><a href=WorldList.php>Worlds and Colonies</a> - High Level info only\n";
     echo "<li><a href=OrgList.php>Organisations</a>\n";
+    echo "<li><a href=ListSocial.php>Social Principles</a><p>\n";
 
     echo "<li><a href=NamePlaces.php>Name Places</a> - Systems, Planets etc\n";
 //    echo "<li><a href=PScanList.php>Systems and Scans</a>\n";

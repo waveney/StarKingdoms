@@ -343,19 +343,34 @@ function SetupStage4() {
   echo "<h1>Stage 4/" . STAGES . " - Social Principles</h1>";
 
   echo "<form method=post>";
-  Register_AutoUpdate('SocialPrinciples',0);
+  Register_AutoUpdate('Generic',0);
   $SPs = Get_SocialPs($Wid);
-  if (empty($SPs)) {
+  $Prins = Gen_Get_Cond('SocialPrinciples',"Whose=$Fid");
+  if (empty($Prins)) {
     for ($i=3;$i>0;$i--) {
-      $S = ['World'=>$Wid,'Whose'=>$Fid,'Value'=>$i];
+      $S = ['Whose'=>$Fid,'Principle'=>'','Description'=>''];
       Put_SocialP($S);
+    }
+    $Prins = Gen_Get_Cond('SocialPrinciples',"Whose=$Fid");
+  }
+
+
+  if (empty($SPs)) {
+    $Value = 3;
+    foreach ($Prins as $Pid=>$Prin) {
+      $S = ['World'=>$Wid,'Principle'=>$Pid,'Value'=>max($Value--,1)];
+      Gen_Put('SocPsWorlds',$S);
     }
     $SPs = Get_SocialPs($Wid);
   }
   echo "<table border>";
-
-  foreach($SPs as $si=>$S) {
-    echo "<tr><td>Adherence: " . $S['Value'] . fm_text('Principle',$S,'Principle',4,'','',"Principle:$si");
+  foreach($Prins as $Pid=>$Prin) {
+    $Value = 0;
+    foreach($SPs as $i=>$S) if ($S['Principle'] == $Pid) $Value = $S['Value'];
+    if ($Value) {
+      echo "<tr><td>Adherence: $Value" . fm_text('Principle',$Prin,'Principle',4,'','',"SocialPrinciples:Principle:$Pid");
+      echo "<tr>" . fm_textarea('Description<br>Optional', $Prin, 'Description',4,3,'','',"SocialPrinciples:Description:$Pid");
+    }
   }
 
   echo "</table>";

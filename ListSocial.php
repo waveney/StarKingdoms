@@ -69,7 +69,7 @@
     if (isset($_REQUEST['FORCE'])) {
       $GM = 0;
     } else {
-      if ($Fid) echo "<h2>GM: <a href=WorldList.php?id=$Fid&FORCE>This page in Player Mode</a></h2>";
+      if ($Fid) echo "<h2>GM: <a href=ListSocial.php?id=$Fid&FORCE>This page in Player Mode</a></h2>";
     }
   }
   A_Check('Player');
@@ -114,38 +114,24 @@
     }
   }
 
-  $SocPs = Get_SocialPs($Fid, ' ORDER BY World');
+  $SocPs = Gen_Get_Cond('SocialPrinciples', "GameId=$GAMEID " .($GM?'':"AND Whose=$Fid") . " ORDER BY Principle");
 
-
-  Register_AutoUpdate('SocialPrinciples',0);
-  if ($GM)  echo "Set Adherence to 0 and refresh to remove";
+//  Register_AutoUpdate('SocialPrinciples',0);
 
   $coln = 0;
   echo "<div class=tablecont><table id=indextable border width=100% style='min-width:1400px'>\n";
   echo "<thead><tr>";
   if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Id</a>\n";
   if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Whose</a>\n";
-  echo "<th colspan=2><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Where</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Adherence</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Principle</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Description</a>\n";
   echo "</thead><tbody>";
 
   foreach ($SocPs as $si=>$SP) {
-    if ($SP['Value']==0) {
-      db_delete('SocialPrinciples',$si);
-      continue;
-    }
-
     echo "<tr>";
 
-    if ($GM) {
-      echo "<td>$si<td>" . $Facts[$SP['Whose']]['Name'];
-      echo fm_text1('',$SP,'Principle',2,'','',"Principle:$si");
-      echo "<td>" . WorldName($Worlds[$SP['World']]);
-      echo fm_number1('',$SP,'Value','',' min=0 max=5',"Value:$si");
-    } else {
-      echo "<td>" . $SP['Principle'] . "<td>" . WorldName($Worlds[$SP['World']]) . "<td>" . $SP['Value'];
-    }
+    if ($GM) echo "<td>$si<td>" . $Facts[$SP['Whose']]['Name'];
+    echo "<td><a href=SocialEdit.php?id=$si>" . $SP['Principle'] . "</a><td>" . $SP['Description'];
   }
   echo "</table></div>\n";
 

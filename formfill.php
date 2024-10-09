@@ -368,6 +368,7 @@
   case 'SocialPrinciples':
   case 'OrgActions':
   case 'Organisations':
+  case 'SocPsWorlds':
     if ((preg_match('/(\w*):(\d*)/',$field,$mtch)?true:false)) {
       if ($mtch[2]) {
         $N = Gen_Get($type,$mtch[2]);
