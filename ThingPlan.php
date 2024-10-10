@@ -462,6 +462,7 @@
     echo "<h2 class=Err>Warning.  If you try and make an Invalid thing. The action will fail</h2>\n";
   }
   echo "</form>";
+  echo "<h2><a href=PThingList.php>Back to List of Things</a></h2>\n";
 //  if (Access('God')) prof_print();
   dotail();
   // type, Level
@@ -474,4 +475,3 @@
 
   // Save for later
 
-?>

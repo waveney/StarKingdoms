@@ -90,6 +90,40 @@ if (isset($_REQUEST['Action'])) {
 
       dotail();
 
+    case 'New Branch': // From Planet EDit - may not be a world yet
+      $Pid = $_REQUEST['Planid'];
+      $Plan = Get_Planet($Pid);
+      if (!$Plan['ProjHome']) {
+        $HomeData = ['ThingType'=>1,'ThingId'=>$Pid, 'GameId'=>$GAMEID, 'SystemId'=>$Plan['SystemId']];
+        Put_ProjectHome($HomeData);
+        $Plan['ProjHome'] = $HomeData['id'];
+        Put_Planet($Plan);
+        $World = ['Home'=>$HomeData['id'],'ThingType'=>1, 'ThingId'=>$Pid,'GameId'=>$GAMEID ];
+        Put_World($World);
+        $Wid = $World['id'];
+      } else {
+        $World = Gen_Get_Cond1('Worlds',"ThingType=1 AND ThingId=$Pid");
+        if (!$World){
+          echo "<h2 class=err>World/home data is in a confused state give Richard Planet id: $Pid</h2>";
+          dotail();
+        }
+        $Wid = $World['id'];
+      }
+
+      $AOrgs = Gen_Get_Cond('Organisations',"GameId=$GAMEID");
+      $AOrgList = NamesList($AOrgs);
+
+      echo "<table border>";
+      $B = [];
+      echo "Select who and branch type and Organisation.<p>";
+      echo fm_hidden('HostType',$World['ThingType']) . fm_hidden('HostId',$World['ThingId']);
+      echo "<tr><td>Whose:<td>" . fm_select($FactNames,$B,'Whose');
+      echo "<tr><td>Branch Type:<td>" . fm_select($BTypeNames,$B,'Type');
+      echo "<tr>" . fm_text('Name',$B,'Name');
+      echo "<tr><td>Organisation:<td>" . fm_select($AOrgList,$B,'Organisation',1);
+      echo "</table><br><input type=Submit name=Action value=Create><p>";
+
+      dotail();
 
   }
 } else {

@@ -454,7 +454,10 @@ function Show_Planet(&$P,$Mode=0,$Buts=0) {
       }
 
       echo "<input type=submit name=ACTION value='Delete Planet' class=Button> " .
-           "<input type=submit name=ACTION value='Delete Moons' class=Button></form></center>";
+           "<input type=submit name=ACTION value='Delete Moons' class=Button>";
+
+      echo fm_submit('Action','New Branch',0,"formaction=BranchEdit.php?Planid=$Pid");
+      echo "</form></center>";
     }
   }
 }

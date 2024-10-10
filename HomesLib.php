@@ -47,7 +47,6 @@ function Recalc_Project_Homes($Logf=0, $Silent=0) {
       $Planets = Get_Planets($N['id']);
       if ($Planets) {
         foreach ($Planets as &$P) {
- if ($N['Ref'] == 'MAA') echo "Check Planet: " . $P['id'] . " - " . $P['Name'] . "<br>";
           $doneP = 0;
 
           $Cont = $P['Control'];
@@ -57,10 +56,8 @@ function Recalc_Project_Homes($Logf=0, $Silent=0) {
             if ($P['ProjHome']) {
               $PHi = $P['ProjHome'];
 
-//echo "PHI is $PHi<p>";
               foreach ($KnownHomes as &$H) {
-//var_dump($H);
-//if (!isset($H['id'])) { echo "<P>"; var_dump($H);exit;}
+
                 if ($H['id'] == $PHi) {
                   $H['Inuse'] = 1;
                   if ($H['ThingType'] != 1 || $H['ThingId'] != $P['id'] || $H['Whose'] != $Cont) {
@@ -279,7 +276,14 @@ function Recalc_Project_Homes($Logf=0, $Silent=0) {
   // Remove unused entries
   foreach ($KnownHomes as &$H) {
     if (isset($H['Inuse']) && $H['Inuse']) continue;
-      if (!$Silent) echo "Would delete Home " . $H['id'] . "<br>";
+    // Check for branches
+    // get world, check branches in world
+    $World = Gen_Get_Cond1('Worlds',"ThingType=" . $H['ThingType'] . " AND ThingId=" . $H['ThingType']);
+    if ($World) {
+      $Branches = Gen_Get_Cond('Branches',"World=" . $World['id']);
+      if ($Branches) continue;
+    }
+    if (!$Silent) echo "Would delete Home " . $H['id'] . "<br>";
     db_delete('ProjectHomes',$H['id']);
   }
 

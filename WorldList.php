@@ -141,7 +141,7 @@
     echo "<td>$type<td><a href=WorldEdit.php?id=" . $W['id'] . ">" . (empty($Name)? "Nameless": $Name) . "</a><td>" . (empty($Sys['Ref'])?"":$Sys['Ref'])  .
          "<td>" . $W['Minerals'] . "<td>" . $H['Economy'] . "<td>" . $H['Devastation'];
     if ($GM) {
-      echo "<td>" . $H['EconomyFactor'] . "<td>" . $Facts[$W['FactionId']]['Name'];
+      echo "<td>" . $H['EconomyFactor'] . "<td>" . ($Facts[$W['FactionId']]['Name']??'None');
       if (isset($W['HomeOf'])) echo " <b>(Home)</b>";
     }
     echo "<td>" . $W['RelOrder'] . "\n";
