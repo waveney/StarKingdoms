@@ -194,13 +194,14 @@
   $Orgs = Gen_Get_Cond('Organisations',"GameId=$GAMEID");
 
   // Offices
-  $Offs = Gen_Get('Offices',"World=$Wid");
+  $Offs = Gen_Get_Cond('Offices',"World=$Wid");
   if ($Offs) {
     echo "<tr><td rowspan=" . count($Offs) . ">Offices:";
     $Show = 0;
     foreach ($Offs as $Of) {
       if ($Show++) echo "<tr>";
-      echo "<td colspan=4>" . $Orgs[$Of['Organisation']]['Name'] . " ( " . $OrgTypes[$Orgs[$Of['Organisation']]['OrgType']]['Name'] . " )";
+      echo "<td colspan=4>" . ($Orgs[$Of['Organisation']]['Name']??'Unknown') .
+        " ( " . ($OrgTypes[$Orgs[$Of['Organisation']]['OrgType']]['Name']??'Unknown') . " )";
     }
   }
 

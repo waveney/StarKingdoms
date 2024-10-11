@@ -413,10 +413,10 @@ function Income_Estimate($Fid) {
     }
   }
 
-  $MyPTSBranches = Gen_Get_Cond('Branches',"Whose=$Fid AND HostType!=3 AND Type=" . ($NameBType['Trading Station']??'xx'));
-  $MyPBMPBranches = Gen_Get_Cond('Branches',"Whose=$Fid AND HostType!=3 AND Type=" . ($NameBType['Black Market Trade Station']??'xx'));
-  $MyOPBranches = Gen_Get_Cond('Branches',"Whose=$Fid AND HostType=3 AND Type=" . ($NameBType['Trading Station']??'xx'));
-  $OtherPTSBranches = Gen_Get_Cond('Branches',"Whose!=$Fid AND HostType!=3 AND Type=" . ($NameBType['Trading Station']??'xx'));
+  $MyPTSBranches = Gen_Get_Cond('Branches',"Whose=$Fid AND HostType!=3 AND Type=" . ($NameBType['Trading Station']??0));
+  $MyPBMPBranches = Gen_Get_Cond('Branches',"Whose=$Fid AND HostType!=3 AND Type=" . ($NameBType['Black Market Trade Station']??0));
+  $MyOPBranches = Gen_Get_Cond('Branches',"Whose=$Fid AND HostType=3 AND Type=" . ($NameBType['Trading Station']??0));
+  $OtherPTSBranches = Gen_Get_Cond('Branches',"Whose!=$Fid AND HostType!=3 AND Type=" . ($NameBType['Trading Station']??0));
 
  // if (($MyPTSBranches || $MyOPBranches) && !(Has_Trait($Fid,'Own the Galaxy')) {
  //   $MyTrade = (count($MyPTSBranches);
