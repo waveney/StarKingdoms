@@ -26,11 +26,11 @@ function Recalc_Offices() { // Recount offices for each org
   $OrgTypes = Get_OrgTypes();
   $OCount = [];
 
-  foreach ($Orgs as &$O) if (($OrgTypes[$O['OrgType']]['Props'] & ORG_SPECIAL_POWER) == 0) $O['OfficeCount'] = 0;
+  foreach ($Orgs as $i=>$O) if (($OrgTypes[$O['OrgType']]['Props'] & ORG_SPECIAL_POWER) == 0) $Orgs[$i]['OfficeCount'] = 0;
   foreach ($Offs as $oi=>$Of) {
     $Org = $Of['Organisation'];
     if (isset($Orgs[$Org])) {
-      if (!isset($Orgs[$Org]['OfficeCount'])) var_dump($Of);
+//      if (!isset($Orgs[$Org]['OfficeCount'])) var_dump($Of);
       $Orgs[$Org]['OfficeCount']+= max($Of['Number'],1);
       if ($Of['OrgType'] != $Orgs[$Org]['OrgType']) {
         $Of['OrgType'] = $Orgs[$Org]['OrgType'];
