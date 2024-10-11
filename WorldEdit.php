@@ -190,6 +190,22 @@
     echo "<tr><td>No Districts currently\n";
   }
 
+  $OrgTypes = Get_OrgTypes();
+  $Orgs = Gen_Get_Cond('Organisations',"GameId=$GAMEID");
+
+  // Offices
+  $Offs = Gen_Get('Offices',"World=$Wid");
+  if ($Offs) {
+    echo "<tr><td rowspan=" . count($Offs) . ">Offices:";
+    $Show = 0;
+    foreach ($Offs as $Of) {
+      if ($Show++) echo "<tr>";
+      echo "<td>" . $Orgs[$Off['Organisation']]['Name'] . " ( " . $OrgTypes[$Orgs[$B['Organisation']]['OrgType']]['Name'] . " )";
+    }
+  }
+
+
+
   if ($SocPs) {
     echo "<tr><td rowspan=" . count($SocPs) . ">Social\nPrinciples:";
     $NumSp = 0;
@@ -224,8 +240,6 @@
     }
     if ($Show) {
       echo "<tr><td>Branches:<td>";
-      $OrgTypes = Get_OrgTypes();
-      $Orgs = Gen_Get_Cond('Organisations',"GameId=$GAMEID");
       foreach ($Branches as $bi=>$B) {
  //       var_dump($B);
         if ($GM || ($B['Whose']== $Fid) || (($BTypes[$B['Type']]['Props']&1)==0)) {

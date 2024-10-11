@@ -5,7 +5,9 @@
   include_once("ProjLib.php");
   include_once("HomesLib.php");
   include_once("SystemLib.php");
+  include_once("vendor/erusev/parsedown/Parsedown.php");
   global $FACTION,$Fid,$GAMEID;
+  $Parsedown = new Parsedown();
 
   function WorldName(&$World) {
     global $Fid;
@@ -131,7 +133,7 @@
     echo "<tr>";
 
     if ($GM) echo "<td>$si<td>" . $Facts[$SP['Whose']]['Name'];
-    echo "<td><a href=SocialEdit.php?id=$si>" . $SP['Principle'] . "</a><td>" . $SP['Description'];
+    echo "<td><a href=SocialEdit.php?id=$si>" . $SP['Principle'] . "</a><td>" . $Parsedown->text($SP['Description']);
   }
   echo "</table></div>\n";
 

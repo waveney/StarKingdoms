@@ -3,7 +3,9 @@
   include_once("GetPut.php");
   include_once("ThingLib.php");
   include_once("OrgLib.php");
+  include_once("vendor/erusev/parsedown/Parsedown.php");
   global $FACTION,$GAMEID;
+  $Parsedown = new Parsedown();
 
 
   dostaffhead("List of Organisations",["js/ProjectTools.js"]);
