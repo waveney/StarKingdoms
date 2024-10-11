@@ -200,7 +200,7 @@
     $Show = 0;
     foreach ($Offs as $Of) {
       if ($Show++) echo "<tr>";
-      echo "<td>" . $Orgs[$Off['Organisation']]['Name'] . " ( " . $OrgTypes[$Orgs[$B['Organisation']]['OrgType']]['Name'] . " )";
+      echo "<td colspan=4>" . $Orgs[$Of['Organisation']]['Name'] . " ( " . $OrgTypes[$Orgs[$Of['Organisation']]['OrgType']]['Name'] . " )";
     }
   }
 
