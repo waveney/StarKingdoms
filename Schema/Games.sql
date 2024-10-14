@@ -13,4 +13,4 @@ CREATE TABLE `Games` (
   `AccessKey` mediumtext COLLATE utf8mb4_general_ci NOT NULL,
   `Image` text COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

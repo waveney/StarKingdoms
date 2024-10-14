@@ -6,7 +6,6 @@ CREATE TABLE `ScansDue` (
   `Neb` int NOT NULL,
   `Turn` int NOT NULL,
   `ThingId` int NOT NULL,
-  `SpaceSurvey` int NOT NULL,
-  `PlanetSurvey` int NOT NULL,
+  `Type` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

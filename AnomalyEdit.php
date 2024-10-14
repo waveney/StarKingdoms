@@ -81,6 +81,7 @@
   } else {
     echo "<td id=AnomalyLoc>";
   }
+  echo "<td>" . fm_checkbox('Visable from Space',$A,'VisFromSpace');
   if ($Others) {
     echo "<tr><td>Other Anomalies here:<td colspan=6>";
     foreach($Others as $O) {

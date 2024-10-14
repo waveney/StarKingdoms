@@ -6,8 +6,9 @@
  $FAnomalyStates = [-1=>'Can Find', 0=>'Unknown', 1=>'Found', 2=>'Can Analyse',
                      3=> 'Analysed, Reward unclaimed', 4=> 'Analysed, Reward Claimed'];
  $GAnomStates = ['Open','One Use','Completed','Removed'];
+ $SurveyTypes = ['Passive','Space','Planetary'];
 
- global $SurveyLevels,$FAnomalyStates,$GAnomStates;
+ global $SurveyLevels,$FAnomalyStates,$GAnomStates,$SurveyTypes;
 
  function Minerals4Planet() {
    if (Feature('Minerals')) {

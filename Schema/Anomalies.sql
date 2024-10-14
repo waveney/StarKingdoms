@@ -22,5 +22,6 @@ CREATE TABLE `Anomalies` (
   `ChainedOn2` int NOT NULL,
   `ChainedOn3` int NOT NULL,
   `ChainedOn4` int NOT NULL,
+  `VisFromSpace` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

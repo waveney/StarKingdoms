@@ -13,4 +13,4 @@ CREATE TABLE `FactionSystem` (
   `SpaceScan` int NOT NULL,
   `PlanetScan` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

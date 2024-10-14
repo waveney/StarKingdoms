@@ -12,8 +12,17 @@
       Error_Page("Sorry you need to be a GM or a Player to access this");
     }
   }
+
   A_Check('Player');
   dostaffhead("Technologies");
+  if ($GM) {
+    if (isset($_REQUEST['FORCE'])) {
+      $GM = 0;
+    } else {
+      echo "<h2><a href=TechShow.php?PLAYER&FORCE>This list in Player Mode</a></h2>";
+    }
+  }
+
   $CTs = Get_CoreTechsByName();
   $CTNs = [];
   $CTNs[0] = '';
@@ -45,7 +54,8 @@
   $Xtra = '';
   if ($Fid) $Xtra = "&id=$Fid";
   $Setup = isset($_REQUEST['SETUP']);
-  if ($Setup) $Xtra .= "&SETUP";
+  if (isset($_REQUEST['FORCE'])) $Xtra .= "&FORCE";
+  if (isset($_REQUEST['PLAYER'])) $Xtra .= "&PLAYER";
 
   $Blue = 0;
   if (isset($_REQUEST['Blue'])) {

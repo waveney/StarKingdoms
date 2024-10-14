@@ -8,4 +8,4 @@ CREATE TABLE `FactionMoon` (
   `Notes` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `ScanLevel` int DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

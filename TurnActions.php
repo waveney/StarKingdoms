@@ -2342,10 +2342,8 @@ function ShipMovements($Agents=0) {
 
       if ($Fid) {
         $FS = Get_FactionSystemFS($Fid,$Sid);
-        if (!isset($FS['id']) || ($FS['ScanLevel'] < $ShipScanLevel) || ($FS['NebScanned']<$ShipNebScanLevel)) {
-          $SP = ['FactionId'=>$Fid, 'Sys'=> $Sid, 'Scan'=>$ShipScanLevel, 'Neb'=>$ShipNebScanLevel,
-                 'Turn'=>$GAME['Turn'], 'ThingId'=>$T['id']];
-
+        if (!isset($FS['id']) || (($FS['ScanLevel'] < $ShipScanLevel) && ($N['Nebulae']<=$ShipNebScanLevel))) {
+          $SP = ['FactionId'=>$Fid, 'Sys'=> $Sid, 'Scan'=>$ShipScanLevel, 'Type'=>0, 'Turn'=>$GAME['Turn'], 'ThingId'=>$T['id']];
           Insert_db('ScansDue', $SP);
         }
 
@@ -3714,39 +3712,52 @@ function InstructionsComplete() {
 }
 
 function CheckSurveyReports() {
-  global $GAME, $SurveyLevels;
+  global $GAME, $SurveyLevels, $SurveyTypes;
 
 //  Go throuh Scans file - sort by Fid - each link, is it higher scan level than currently scanned?  If so find highest scan level attempted and show menu
 //  GMs can de-tune to allow for conflict etc  Enable scan data - save scans to log?
-  $Scans = Gen_Get_Cond('ScansDue'," Turn=" . ($GAME['Turn']) . " ORDER BY FactionId,Sys,Scan DESC");
+  $Scans = Gen_Get_Cond('ScansDue'," Turn=" . ($GAME['Turn']) . " ORDER BY FactionId,Sys,Type,Scan DESC");
 
 // var_dump($Scans);
   $Facts = Get_Factions();
   $Started = 0;
   $LastSys = 0;
-  foreach($Scans as $S) {
+  $LastType = -1;
+  foreach($Scans as $spid=>$S) {
 
     $Fid = $S['FactionId'];
     $Sid = $S['Sys'];
     $SSid = $S['id'];
-    if ($LastSys == $Sid) continue;
+    if (($LastSys == $Sid)  && ($LastType = $S['Type'])) continue;
     $FS = Get_FactionSystemFS($Fid,$Sid);
 
 //var_dump($FS);
-    if ($FS['ScanLevel'] >= $S['Scan']) continue;
+    switch ($S['Type']) {
+      case 0: // Passive
+        if ($FS['ScanLevel'] >= $S['Scan']) continue;
+        break;
+      case 1: // Space
+        if ($FS['SpaceLevel'] >= $S['Scan']) continue;
+        break;
+      case 2: // Planet
+        if ($FS['PlanetLevel'] >= $S['Scan']) continue;
+        break;
+    }
     if (!$Started) {
-      GMLog("<h2>Please review these scans, mark lower as needed</h2>\n");
-      GMLog("<table border><tr><td>Faction<td>Where<td>Scan Level<td>Type<td>Control\n");
+      GMLog("<h2>Please review these scans, Stop as needed</h2>\n");
+      GMLog("<table border><tr><td>Faction<td>Where<td>Scan Level<td>Type<td>Control<td>Stop<td>Reason\n");
       if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
       Register_AutoUpdate('ScansDue',0);
       $Started = 1;
     }
 
     $N = Get_System($S['Sys']);
-    if ($N['Nebulae'] > $S['Neb']) $S['Scan'] = 0; // Blind - in nebula wo neb scanners
-    GMLog("<tr><td>" . $Facts[$Fid]['Name'] . "<td>" . $N['Ref'] . "<td>" . fm_radio('',$SurveyLevels,$S,'Scan','',0,'',"Scan:$SSid") .
-      ($N['Control'] ? ( "<td style='background:" . $Facts[$N['Control']]['MapColour'] . ";'>" . $Facts[$N['Control']]['Name'])  : '<td>None') );
+ //   if ($N['Nebulae'] > $S['Neb']) $S['Scan'] = 0; // Blind - in nebula wo neb scanners
+    GMLog("<tr><td>" . $Facts[$Fid]['Name'] . "<td>" . $N['Ref'] . "<td>" . $S['Scan'] . "<td>" . $SurveyLevels[$S['Type']] .
+      ($N['Control'] ? ( "<td style='background:" . $Facts[$N['Control']]['MapColour'] . ";'>" . $Facts[$N['Control']]['Name'])  : '<td>None') .
+      "<td>Allow? " . fm_YesNo("Scan$spid",1, "Reason to reject") . "\n<br>");
     $LastSys = $Sid;
+    $LastType = $S['Type'];
   }
   if ($Started) {
     GMLog("</table>\n");
@@ -3758,35 +3769,59 @@ function CheckSurveyReports() {
 
 
 function GiveSurveyReports() {
-  global $GAME;
-  $Scans = Gen_Get_Cond('ScansDue'," Turn=" . ($GAME['Turn']) . " ORDER BY FactionId,Sys,Scan DESC");
+  global $GAME, $SurveyTypes;
+  $Scans = Gen_Get_Cond('ScansDue'," Turn=" . ($GAME['Turn']) . " ORDER BY FactionId,Sys,Type,Scan DESC");
 
   $Facts = Get_Factions();
-  $Started = 0;
-  foreach($Scans as $S) {
+  $LastFid = $Started = 0;
+  $LastSys = -1;
+
+  foreach($Scans as $spid=>$S) {
 
     $Fid = $S['FactionId'];
-    $FS = Get_FactionSystemFS($Fid,$S['Sys']);
-//echo "<p>";
-// if ($Fid == 2) var_dump($Fid, $S, $FS);
-    if ($FS['ScanLevel'] >= $S['Scan'] && $FS['NebScanned'] >= $S['Neb']) continue;
-    $Sys = $S['Sys'];
-    $N = Get_System($Sys);
-    $Neb = $N['Nebulae'];
-    $New = !isset($FS['id']);
-    if ($FS['ScanLevel'] < $S['Scan']) $FS['ScanLevel'] = $S['Scan'];
-    if ($FS['NebScanned'] < $S['Neb']) $FS['NebScanned'] = $S['Neb'];
-// if ($Fid == 2) var_dump($FS);
-    Put_FactionSystem($FS);
 
-    if (!$New) {
-      TurnLog($Fid, "<h3>You are due an improved survey report for <a href=SurveyReport.php?N=$Sys>" . System_Name($N,$Fid) . "</a></h3>");
+    if (isset($_REQUEST["Scan$spid"]) &&  $_REQUEST["Scan$spid"] == "on") {
+      $FS = Get_FactionSystemFS($Fid,$S['Sys']);
+      $New = !isset($FS['id']);
+      $Changed = 0;
+      switch ($S['Type']) {
+        case 0: // Passive
+          if ($FS['ScanLevel'] > $S['Scan']) {
+            $Changed = 1;
+            $FS['ScanLevel'] = $S['Scan'];
+          }
+          break;
+        case 1: // Space
+          if ($FS['SpaceScan'] > $S['Scan']) {
+            $Changed = 1;
+            $FS['SpaceScan'] = $S['Scan'];
+          }
+          break;
+        case 2: // Planet
+          if ($FS['PlanetScan'] > $S['Scan']) {
+            $Changed = 1;
+            $FS['PlanetScan'] = $S['Scan'];
+          }
+          break;
+      }
+      if ($Changed) {
+        Put_FactionSystem($FS);
+        if (($Fid != $LastFid) || ($LastSys != $S['Sys'])) {
+          $N = Get_System($S['Sys']);
+          if (!$New) {
+            TurnLog($Fid, "<h3>You are due an improved survey report for <a href=SurveyReport.php?N=" . $S['Sys'] . ">" . System_Name($N,$Fid) . "</a></h3>");
+          } else {
+            TurnLog($Fid, "<h3>You are have new survey report for <a href=SurveyReport.php?N=$" . $S['Sys'] . ">" . System_Name($N,$Fid) . "</a></h3>");
+          }
+        }
+      }
     } else {
-      TurnLog($Fid, "<h3>You are have new survey report for <a href=SurveyReport.php?N=$Sys>" . System_Name($N,$Fid) . "</a></h3>");
+      TurnLog($Fid,"Your " . $SurveyTypes[$S['Type']] . " survey could not be performed because " . $_REQUEST["ReasonScan$spid"] . "\n<br>");
     }
+    $LastFid = $Fid;
+    $LastSys = $S['Sys'];
+
   }
-
-
 //  echo "Give Survey Reports is currently Manual<p>";
   return 1;
 }
