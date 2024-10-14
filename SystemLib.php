@@ -323,7 +323,7 @@ function Show_System(&$N,$Mode=0) {
     }
     echo "</table>";
   }
-  if (Access('God')) {
+  if (Access('GM')) {
     echo "<h2>Add Faction Knowledge</h2>";
     echo "<tr><td>" . fm_select($FactNames,$_REQUEST,'F');
     echo "<td><input type=submit name=ACTION value=ADDFACT>\n";

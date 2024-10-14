@@ -58,12 +58,21 @@
     case 'RefitAll' :
       $Facts = Get_Factions();
       foreach ($Facts as $Fid=>$F) {
+        echo "Starting " . $F['Name'] . "<p>";
+        $Wid = $F['HomeWorld'];
+        $World = Get_World($Wid);
+        $Planet = Get_Planet($World['ThingId']);
+        $StartSys = $Planet['SystemId'];
         $Things = Get_Things_Cond($Fid);
-        foreach ($Things as $T) {
+        foreach ($Things as $Tid=>$T) {
+          if ($T['SystemId'] == 0) $T['SystemId'] = $StartSys;
+          Put_Thing($T);
           if ($T['BuildState'] < 3) $T['BuildState'] = 3;
           RefitRepair($T);
+          echo "Setup thing $Tid - " . $T['Name'] . "<br>";
         }
         echo "Finished " . $F['Name'] . "<p>";
+        flush();
       }
       dotail();
     }
@@ -71,12 +80,12 @@
 
   echo "</form>";
   echo "<h2>Actions: (Check with Richard before using any)</h2>";
-  echo "<li><a href=TurnSpecials.php?ACTION=ExplodeLink>Explode Link</a> ";
-  echo "<li><a href=TurnSpecials.php?ACTION=RefitAll>Refit all and Complete all in planning</a> ";
+  echo "<li><a href=TurnSpecials.php?ACTION=ExplodeLink>Explode Link</a><p>";
+  echo "<li><a href=TurnSpecials.php?ACTION=RefitAll>Refit all and Complete all in planning</a><p>";
 
 
 
   echo "<h2><a href=TurnActions.php>Back to Turn Processing</a></h2>";
 
-
+  dotail();
 ?>
