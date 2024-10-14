@@ -424,7 +424,7 @@ function Show_Thing(&$T,$Force=0) {
           if ($X['BuildState'] < 2 || $X['BuildState'] > 3) continue;
           if ($NeedCargo && ($X['CargoSpace']==0)) continue; // No Cargo
           if (($ThingProps[$X['Type']]??0) & THING_CANT_HAVENAMED) continue;
-          if (($X['Whose'] == $Fid) || (($T['PrisonerOf'] == $FACTION['id'] ) && (($X['Whose'] == $FACTION['id'])))) {
+          if (($X['Whose'] == $Fid) || (($T['PrisonerOf'] == ($FACTION['id']??0) ) && (($X['Whose'] == $FACTION['id'])))) {
             // Full through
           } else {
             $Carry = (empty($FF[$X['Whose']])? 0 : $FF[$X['Whose']]['Props']);

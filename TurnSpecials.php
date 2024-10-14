@@ -66,7 +66,7 @@
         } else {
           $World = Get_World($Wid);
           $Planet = Get_Planet($World['ThingId']);
-          $StartSys = $Planet['SystemId'];
+          $StartSys = ($Planet['SystemId']??0);
         }
         $Things = Get_Things_Cond($Fid);
         foreach ($Things as $Tid=>$T) {
