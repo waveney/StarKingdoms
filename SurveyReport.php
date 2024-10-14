@@ -5,11 +5,9 @@
   include_once("ThingLib.php");
   include_once("vendor/erusev/parsedown/Parsedown.php");
 
-//  A_Check('GM'); // For now, will be player version
-
   dostaffhead("Survey Report",["js/dropzone.js","css/dropzone.css" ]);
 
-  global $db, $GAME, $FACTION, $LinkStates;
+  global $db, $GAME, $FACTION, $LinkStates, $FAnomalyStates, $GAMEID;
 
 // START HERE
   $GM = Access('GM');
@@ -32,7 +30,9 @@
     dotail();
   }
 
-  $SurveyLevel = $PlanetLevel = 0;
+  $SurveyLevel = 100; // Switch off
+  $PlanetLevel = $SpaceLevel = $ScanLevel = 0;
+  $Syslocs = Within_Sys_Locs($N);
 
   if (!empty($FACTION)) { // Player mode
 //    $ScanSurveyXlate = [0=>0, 1=>1, 2=>3, 3=>5];
@@ -42,18 +42,14 @@
       echo "<h1>Unknown system</h1>\n";
       dotail();
     }
-    if (Feature('ScanLevels')) {
-      $SurveyLevel = $FS['ScanLevel'];  // if nebula look for nebscan level
-      $PlanetLevel = $SurveyLevel;
-    } else {
-      $SurveyLevel =0;
-    }
-
+    $ScanLevel = $FS['ScanLevel'];
+    $PlanetLevel = $FS['PlanetScan'];
+    $SpaceLevel = $FS['SpaceScan'];
   } else { // GM access
     if (isset($_REQUEST['V'])) {
       $SurveyLevel = $_REQUEST['V'];
     } else if (Access('GM')) {
-      $SurveyLevel = $PlanetLevel = 100;
+      $SurveyLevel = $PlanetLevel = $SpaceLevel = 100;
     }
 
     if (isset($_REQUEST['F'])) {
@@ -114,9 +110,12 @@
   }
 */
   echo "<div class=SReport><h1>Survey Report - $pname</h1>\n";
-  if ($GM && $SurveyLevel >= 10) echo "UniqueRef is: " . UniqueRef($Sid) . "<p>";
+  if (Feature('UniqueRefs') && $GM && $SurveyLevel >= 10) echo "UniqueRef is: " . UniqueRef($Sid) . "<p>";
 
-  if ($SurveyLevel > 2) {
+  if ($Fid) echo "This system has been passivly scaned at level $ScanLevel has been space scanned at level $SpaceLevel " .
+     "and planetary scanned at level $PlanetLevel<p>";
+
+  if (($ScanLevel>=0) && ($SurveyLevel > 2)) {
 
     if ($N['Description']) echo $Parsedown->text($N['Description']) . "<p>";
 
@@ -156,7 +155,7 @@
           ($N['Period']>1? sprintf("$Acc Hr = ",$N['Period']) : sprintf("$Acc Seconds = ",$N['Period']*3600) )  . RealWorld($N,'Period') . ".<p>";
     }
     echo "<br>";
-    if ($SurveyLevel >= 2) {
+    if ($SurveyLevel >= 0) {
       $Ps = Get_Planets($Sid);
       $Planets = $Asteroids = 0;
       foreach ($Ps as $Pi=>$P) {
@@ -252,7 +251,7 @@
           echo "Controlled by: " . "<span style='background:" . $Fs[$P['Control']]['MapColour'] . "; padding=2;'>" . $Fs[$P['Control']]['Name'] . "</span><p>";
         }
 
-        if ( $SurveyLevel >= 5 && $PTD[$P['Type']]['Hospitable'] && $P['Minerals']) echo "It has a minerals rating of <b>" . $P['Minerals'] . "</b>.  ";
+        if ( ($SpaceLevel>0) && ($SurveyLevel >= 5) && $PTD[$P['Type']]['Hospitable'] && $P['Minerals']) echo "It has a minerals rating of <b>" . $P['Minerals'] . "</b>.  ";
         if ($SurveyLevel >= 4) {
           echo "It's orbital radius is " . sprintf('%0.2g', $P['OrbitalRadius']) . " Km = " .  RealWorld($P,'OrbitalRadius');
 
@@ -267,7 +266,7 @@
         echo "<p>";
     // Districts
 
-        if ($SurveyLevel > 5) {
+        if (($PlanetLevel>0) && ($SurveyLevel > 5)) { // Now planet Survey
           $Ds = Get_DistrictsP($Pid);
           if ($Ds) { // &&
             echo "<p>Districts: ";
@@ -320,7 +319,8 @@
 
 
 
-            if ( $SurveyLevel >= 5 && $PTD[$M['Type']]['Hospitable'] && $M['Minerals']) echo "It has a minerals rating of <b>" . $M['Minerals'] . "</b>.  ";
+            if ( ($SpaceLevel>0) && ($SurveyLevel >= 5) && $PTD[$M['Type']]['Hospitable'] && $M['Minerals'])
+              echo "It has a minerals rating of <b>" . $M['Minerals'] . "</b>.  ";
             if ($SurveyLevel >= 4) {
               echo "It's orbital radius is " . sprintf('%0.2g', $M['OrbitalRadius']) . " Km = " .  RealWorld($M,'OrbitalRadius') .
                    ($M['Radius']?" ,":" and") . " a period of " . sprintf('%0.2g', $M['Period']) . " Hr = " .  RealWorld($M,'Period');
@@ -331,7 +331,7 @@
             if ($SurveyLevel > 4 && $M['Description']) echo "<p>" . $Parsedown->text($M['Description']);
 
             // Districts
-            if ($SurveyLevel > 5) {
+            if (($PlanetLevel >0) && ($SurveyLevel > 5)) { // Now Planet Survey
               $Ds = Get_DistrictsM($Mid);
 
               if ($Ds) { // &&
@@ -364,13 +364,18 @@
     foreach ($Ls as $L) {
       $OSysRef = ($L['System1Ref']==$Ref? $L['System2Ref']:$L['System1Ref']);
       $ON = Get_SystemR($OSysRef);
+      $LinkKnow = Get_FactionLinkFL($Fid,$L['id']);
+      if (!$LinkKnow && ($L['Concealment']<=$SpaceLevel)) {
+        $LinkKnow = ['Known'=>1];
+      }
+      /*
       if ($SurveyLevel >= 10) {
         $LinkKnow = ['Known'=>1];
       } else if ($FACTION) {
         $LinkKnow = Get_FactionLinkFL($Fid,$L['id']);
       } else {
         $LinkKnow = ['Known'=>0];
-      }
+      }*/
       echo "<li>Link #" . $L['id'] . " ";
 
 //var_dump($LinkKnow);
@@ -387,21 +392,77 @@
     echo "</ul><p>\n";
 
     // Known Space ANOMALIES
+    $Anoms = Gen_Get_Cond('Anomalies',"GameId=$GAMEID AND SystemId=$Sid");
+    $Shown = 0;
+    $AnStateCols = ['White','Lightgreen','Yellow','Pink','Green'];
 
-    // Known System Traits
+    if ($Anoms) {
+      foreach($Anoms as $Aid=>$A) {
+        if ($A['Concealment']<=max($SpaceLevel,$PlanetLevel)) {
+          if (!$Shown) {
+            echo "<h2>Anomalies</h2>";
+            $Shown = 1;
+          }
+          echo "Anomaly: " . $A['Name'] . " location: " . ($Syslocs[$A['WithinSysLoc']]? $Syslocs[$A['WithinSysLoc']]: "Space") . "<p>";
+          echo "Description: " . $Parsedown->text($A['Description']) . "<p>";
+          $FA = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
+          if (($FA['State']??0) == 0) {
+            $FA['State'] = 1;
+            Gen_Put('FactionAnomaly',$FA);
+          }
+          echo "<span style='Background:" . $AnStateCols[$FA['State']] . ";'>" . $FAnomalyStates[$FA['State']];
+          echo "<br>Progress: " . ($FA['Progress']??0) . " / " . $A['AnomalyLevel'];
 
-    // Planetary descriptions if present
+          if (($FA['State'] >= 3) && $A['Completion']) {
+            echo "Complete: " . $Parsedown->text($A['Completion']) . "<p>";
+          }
+        }
+      }
+    }
 
-    // Known Planetary Anomalies
+    $SysTrait = 0;
+    for($i=1;$i<4;$i++) {
+      if ($N["Trait$i"] && ($N["Trait$i" . "Conceal"] <= $SpaceLevel)) {
+        if ($SysTrait++ == 0) {
+          echo "<h2>System Traits:</h2>";
+        }
+        echo "System has the trait: " . $N["Trait$i"] . "<br>" . $Parsedown->text($N["Trait$i" . "Desc"]) . "<p>";
+      }
+    }
 
-    // Known Planetry Traits
+    $PlanTrait = 0;
+    foreach($Ps as $P) {
+      for($i=1;$i<4;$i++) {
+        if ($P["Trait$i"] && ($P["Trait$i" . "Conceal"] <= $PlanetLevel)) {
+          if ($PlanTrait++ == 0) {
+            echo "<h2>Planet Traits:</h2>";
+          }
+          echo "Planet " . $P['Name'] . " has the trait: " . $P["Trait$i"] . "<br>" . $Parsedown->text($P["Trait$i" . "Desc"]) . "<p>";
+        }
+      }
+      $Mns = [];
+      if ($P['Moons']) $Mns = Get_Moons($Pid);
+      if ($Mns) {
+        foreach($Mns as $M) {
+          for($i=1;$i<4;$i++) {
+            if ($M["Trait$i"] && ($M["Trait$i" . "Conceal"] <= $PlanetLevel)) {
+              if ($PlanTrait++ == 0) {
+                echo "<h2>Planet/Moon Traits:</h2>";
+              }
+              echo "Moon " . $M['Name'] . " of Planet " . $P['Name'] . " has the trait: " . $M["Trait$i"] . "<br>" .
+                   $Parsedown->text($M["Trait$i" . "Desc"]) . "<p>";
+            }
+          }
 
+        }
+      }
+    }
 
   } else { // BLIND
     if ($N['Nebulae']) {
       echo "You are caught in a Nebula and have no idea what is here.<p>";
     } else {
-      echo "You have arrived somewhere new without sensors.  You have no idea what is here.<p>";
+      echo "You have arrived somewhere new without sensors.  You have no idea what is here.  This should be impossible...  Tell Richard<p>";
     }
 
     $Ls = Get_Links($Ref);
@@ -428,6 +489,7 @@
   // Images
 
   echo "</div>";
+
 
 //  if ($GM) $Sid,$Eyes,$heading=0,$Images=1,$Fid=0,$Mode=0)
   echo SeeInSystem($Sid,EyesInSystem($Fid,$Sid),0,1,($FACTION['id']??0),$GM);

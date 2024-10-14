@@ -477,7 +477,7 @@ function SetupStage6() {
     $NewOrgs[$i] = $Ot['Name'];
   }
 
-
++
   Register_AutoUpdate('Organisations',0);
   $coln = 0;
   echo "<div class=tablecont><table id=indextable border width=100% style='min-width:1400px'>\n";

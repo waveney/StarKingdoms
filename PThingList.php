@@ -74,7 +74,7 @@
       if (isset($FL['Known']) && $FL['Known']) {
       } else if ($NearNeb == 0) {
           if (isset($FS['id'])) {
-            if ($FarNeb != 0 && $FS['NebScanned'] < $FarNeb) {
+            if ($FarNeb != 0 && $FS['ScanLevel'] < 0) {
               $Known = 0;
             }
           } else {

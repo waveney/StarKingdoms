@@ -181,7 +181,7 @@
         $FS = Get_FactionSystemFS($Faction, $N['id']);
         if ($N['Control'] != $Faction) {
           if (!isset($FS['id'])) continue;
-          if (($FS['PassiveScan'] > 0) || ($FS['PassiveNebScan'] > 0)) {
+          if (1) {  // ($FS['PassiveScan'] > 0) || ($FS['PassiveNebScan'] > 0)) {
             if ($FS['Name']) $ShortName = $NodeName = $FS['Name'];
             if ($FS['ShortName']) $ShortName = $FS['ShortName'];
           } else {
@@ -240,7 +240,7 @@
       foreach($Nodes as $N) {
         $from = $N['Ref'];
 
-        $FS = Get_FactionSystemFS($Faction,$N['id']);
+        if ($LinkType == 'Gates') $FS = Get_FactionSystemFS($Faction,$N['id']);
 
         $Links = Get_Links($from);
         if (!isset( $ShownNodes[$N['Ref']])) continue;
@@ -256,7 +256,7 @@
                    ($ShowLinks? " fontsize=" . $Ldat[3] . " label=\"" . $Ldat[2] . "\"": '') . " ];\n");
             $LinkShown[$L['id']]=1;
           } else {
-            if ($LinkType == 'Gates') {
+            if ($LinkType == 'Gates') { // VERY DUFF
               if ($Neb && $FS['NebScanned'] < $Neb) continue;
               if (isset($FS['ScanLevel']) && $FS['ScanLevel']<2) continue; // Wrong now wont fix unless Gates reused
             } elseif ($LinkType == 'Wormholes') {

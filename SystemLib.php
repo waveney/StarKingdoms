@@ -316,11 +316,9 @@ function Show_System(&$N,$Mode=0) {
   $FactionSys = Gen_Get_Cond('FactionSystem',"SystemId=$Sid");
   if ($FactionSys) {
     echo "<h2>Factions Knowledge</h2>";
-    echo "<table border><tr><td>Faction<td>Passive Scan Level<td>Active Scan Level";
-    if ($N['Nebula']??0) echo "<td>Passive Nebula Scan<td>Active Nebula Scan";
+    echo "<table border><tr><td>Faction<td>Passive Scan Level<td>Space Scan Level<td>Planetary Scan Level";
     foreach ($FactionSys as $FS) {
-      echo "<tr><td>" . $Facts[$FS['FactionId']]['Name'] . "<td>" . $FS['PassiveScan'] . "<td>" . $FS['ScanLevel'];
-      if ($N['Nebula']??0) echo "<td>" . $FS['PassiveNebScan'] . "<td>" . $FS['NebScanned'];
+      echo "<tr><td>" . $Facts[$FS['FactionId']]['Name'] . "<td>" . $FS['ScanLevel'] . "<td>" . $FS['SpaceLevel'] . "<td>" . $FS['PlanetLevel'];
     }
     echo "</table>";
   }

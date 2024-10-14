@@ -6,11 +6,11 @@ CREATE TABLE `FactionSystem` (
   `SystemId` int NOT NULL,
   `Name` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `ShortName` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-  `NebScanned` int NOT NULL DEFAULT '0',
+  `NebScanned` int NOT NULL DEFAULT '0' COMMENT 'Not Used',
   `Xlabel` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `MaxScan` int NOT NULL COMMENT 'Not Used',
-  `PassiveScan` int NOT NULL,
-  `PassiveNebScan` int NOT NULL,
+  `PassiveScan` int NOT NULL COMMENT 'Not Used\r\n',
+  `SpaceScan` int NOT NULL,
   `PlanetScan` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

@@ -51,7 +51,7 @@ function Node_Show($Fid,$Tid, $Lid, $N, $url='') {
         $FS = Get_FactionSystemFS($Fid, $N['id']);
         if (isset($FS['id'])) {
           $Hide = 0;
-          if ($FS['ScanLevel'] > 0) {
+          if ($FS['ScanLevel'] >= 0) {
             if (!empty($FS['Name'])) $ShortName = $NodeName = $FS['Name'];
             if (!empty($FS['ShortName'])) $ShortName = $FS['ShortName'];
           } else {

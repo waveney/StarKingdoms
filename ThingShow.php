@@ -48,8 +48,7 @@ function Show_Thing(&$T,$Force=0) {
   } elseif ($T['NewSystemId']) {
     $NN = Get_System($T['NewSystemId']);
     $FS = Get_FactionSystemFS($Fid,$T['NewSystemId']);
-    $Sl = ($NN['Nebulae']?$FS['NebScanned']:$FS['ScanLevel']);
-    if ($Sl) {
+    if ($FS['ScanLevel'] >= 0) {
       $NewSyslocs = Within_Sys_Locs($NN);
     } else {
       $NewSyslocs = [];
@@ -312,9 +311,8 @@ function Show_Thing(&$T,$Force=0) {
           $DN = Get_System($Dest);
           $FS = Get_FactionSystemFS($Fid,$Dest);
 // var_dump($FS,$Fid,$Dest);
-          $Sl = ($DN['Nebulae']?$FS['NebScanned']:$FS['ScanLevel']);
 
-          if ($Sl) {
+          if ($FS['ScanLevel'] >= 0 ) {
             $finallocs = Within_Sys_Locs($DN);
             if (!isset($finallocs[$T['NewLocation']]) ) {
               $T['NewLocation'] = 0;

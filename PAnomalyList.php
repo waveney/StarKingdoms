@@ -40,7 +40,7 @@
 
   global $db, $GAME, $FAnomalyStates, $GAMEID;
 
-  $AnStateCols = ['White','Lightgreen','Yellow','Pink'];
+  $AnStateCols = ['White','Lightgreen','Yellow','Pink','Green'];
   $FAs = Gen_Get_Cond('FactionAnomaly',"FactionId=$Fid AND State>0");
 
   $Parsedown = new Parsedown();

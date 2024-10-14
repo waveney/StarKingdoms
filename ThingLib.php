@@ -488,7 +488,7 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0 ) {
           if (isset($FS['id'])) {
             if ($FarNeb == 0) {
               $LinkText = $FarSysRef;
-            } else if ($FS['NebScanned'] >= $FarNeb) {
+            } else if ($FS['ScanLevel'] >= 0) {
               $LinkText = $FarSysRef;
             } else {
               if ($KnownOnly) {
