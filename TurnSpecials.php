@@ -60,12 +60,17 @@
       foreach ($Facts as $Fid=>$F) {
         echo "Starting " . $F['Name'] . "<p>";
         $Wid = $F['HomeWorld'];
-        $World = Get_World($Wid);
-        $Planet = Get_Planet($World['ThingId']);
-        $StartSys = $Planet['SystemId'];
+        if (!$Wid) {
+          echo "No homeworld - missing out seting starting loc<p>";
+          $StartSys = 0;
+        } else {
+          $World = Get_World($Wid);
+          $Planet = Get_Planet($World['ThingId']);
+          $StartSys = $Planet['SystemId'];
+        }
         $Things = Get_Things_Cond($Fid);
         foreach ($Things as $Tid=>$T) {
-          if ($T['SystemId'] == 0) $T['SystemId'] = $StartSys;
+          if ($StartSys && ($T['SystemId'] == 0)) $T['SystemId'] = $StartSys;
           Put_Thing($T);
           if ($T['BuildState'] < 3) $T['BuildState'] = 3;
           RefitRepair($T);
