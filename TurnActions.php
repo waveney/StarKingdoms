@@ -4072,8 +4072,7 @@ function TidyUps() {
   $TTypes = Get_ThingTypes();
   $TNames = NamesList($TTypes);
   $ThingNames = array_flip($TNames);
-  $WormStab = $ThingNames['Wormhole Stabilisers'];
-
+  $WormStab = $ThingNames['Wormhole Stabiliser'];
   $res = $db->query("UPDATE Things SET LinkId=0, LinkPay=0, LinkCost=0 WHERE LinkId>0 AND GameId=$GAMEID");
 
   // Check for lid <-1...
