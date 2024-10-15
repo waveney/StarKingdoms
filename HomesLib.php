@@ -480,6 +480,7 @@ function Recalc_Economic_Rating(&$H,&$W,$Fid,$Turn=0) {
 //var_dump($NumPrime);
   $MinFact = (Has_Tech($Fid,'Improved Mining')?1.5:1);
   if (feature('Industrial')) {
+ //   var_dump($NumPrime,$NumInd,$MinFact, $W);
     return $NumPrime*4 + $NumInd*($W['Minerals'] +
       ((Has_PTraitW($W['id'],'Rare Mineral Deposits') && Has_Tech($Fid,'Advanced Mineral Extraction'))?3:0))*$MinFact +
        (Has_PTraitW($W['id'],'Automated Farming Robots')?5:0);

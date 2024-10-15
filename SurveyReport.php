@@ -119,7 +119,7 @@
   echo "<div class=SReport><h1>Survey Report - $pname</h1>\n";
   if (Feature('UniqueRefs') && $GM && $SurveyLevel >= 10) echo "UniqueRef is: " . UniqueRef($Sid) . "<p>";
 
-  if ($Fid) echo "This system has been passivly scanned at level $ScanLevel. " .
+  if ($Fid) echo "This system has been passivly scanned. " .
      (($SpaceLevel>0)?"Has been space scanned at level $SpaceLevel. ":"No Space Survey has been Made. ") .
      (($PlanetLevel>0)?"Has been planetary scanned at level $PlanetLevel<p>":"No Planetary Survey has been made.<p>");
 
@@ -381,8 +381,13 @@
       $OSysRef = ($L['System1Ref']==$Ref? $L['System2Ref']:$L['System1Ref']);
       $ON = Get_SystemR($OSysRef);
       $LinkKnow = Get_FactionLinkFL($Fid,$L['id']);
-      if (!$LinkKnow && ($L['Concealment']<=$SpaceLevel)) {
-        $LinkKnow = ['Known'=>1];
+ //     var_dump($LinkKnow,$L);
+      if (!(isset($LinkKnow['id']))) {
+        if ($L['Concealment']<=min(0,$SpaceLevel)) {
+          $LinkKnow = ['Known'=>1];
+        } else {
+          continue;
+        }
       }
       /*
       if ($SurveyLevel >= 10) {
@@ -394,7 +399,6 @@
       }*/
       echo "<li>Link #" . $L['id'] . " ";
 
-//var_dump($LinkKnow);
       if ($LinkKnow['Known']) {
         $name = NameFind($L);
         if ($name) echo " ( $name ) ";
@@ -494,7 +498,7 @@
     foreach ($Ls as $L) {
       $OSysRef = ($L['System1Ref']==$Ref? $L['System2Ref']:$L['System1Ref']);
       $ON = Get_SystemR($OSysRef);
-      if ($SurveyLevel >= 10) {
+      if ($SurveyLevel >= 10) {  // WRONG
       } else if ($FACTION) {
         $LinkKnow = Get_FactionLinkFL($Fid,$L['id']);
         if (!$LinkKnow['Known']) continue;

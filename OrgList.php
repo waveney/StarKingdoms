@@ -13,22 +13,25 @@
   $xtra = '';
   if (Access('Player')) {
     if (!isset($FACTION['id'])) {
+ //     var_dump($FACTION); exit;
       if (!Access('GM') ) Error_Page("Sorry you need to be a GM or a Player to access this");
     } else {
       $Fid = $FACTION['id'];
-      $Faction = &$FACTION;
+      $Faction = $FACTION;
     }
   }
   if ($GM = Access('GM') ) {
     Recalc_Offices();
-    if (isset( $_REQUEST['F'])) {
-      $Fid = $_REQUEST['F'];
-    } else if (isset( $_REQUEST['f'])) {
-      $Fid = $_REQUEST['f'];
-    } else if (isset( $_REQUEST['id'])) {
-      $Fid = $_REQUEST['id'];
+    if ($Fid == 0) {
+      if (isset( $_REQUEST['F'])) {
+        $Fid = $_REQUEST['F'];
+      } else if (isset( $_REQUEST['f'])) {
+        $Fid = $_REQUEST['f'];
+      } else if (isset( $_REQUEST['id'])) {
+        $Fid = $_REQUEST['id'];
+      }
+      if (isset($Fid)) $Faction = Get_Faction($Fid);
     }
-    if (isset($Fid)) $Faction = Get_Faction($Fid);
     if (isset($_REQUEST['FORCE'])) {
       $GM = 0;
     } else {
