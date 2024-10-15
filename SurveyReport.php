@@ -29,6 +29,13 @@
     echo "<h2>No Systems Requested</h2>";
     dotail();
   }
+  if ($GM) {
+    if (isset($_REQUEST['FORCE'])) {
+      $GM = 0;
+    } else {
+      echo "<h2><a href=SurveyReport.php?N=$Sid>This page in Player Mode</a></h2>\n";
+    }
+  }
 
   $SurveyLevel = 100; // Switch off
   $PlanetLevel = $SpaceLevel = $ScanLevel = 0;
@@ -112,8 +119,9 @@
   echo "<div class=SReport><h1>Survey Report - $pname</h1>\n";
   if (Feature('UniqueRefs') && $GM && $SurveyLevel >= 10) echo "UniqueRef is: " . UniqueRef($Sid) . "<p>";
 
-  if ($Fid) echo "This system has been passivly scaned at level $ScanLevel has been space scanned at level $SpaceLevel " .
-     "and planetary scanned at level $PlanetLevel<p>";
+  if ($Fid) echo "This system has been passivly scanned at level $ScanLevel. " .
+     (($SpaceLevel>0)?"Has been space scanned at level $SpaceLevel. ":"No Space Survey has been Made. ") .
+     (($PlanetLevel>0)?"Has been planetary scanned at level $PlanetLevel<p>":"No Planetary Survey has been made.<p>");
 
   if (($ScanLevel>=0) && ($SurveyLevel > 2)) {
 
@@ -366,8 +374,8 @@
 
   if ($SurveyLevel > 1) {
     $Ls = Get_Links($Ref);
-    echo "<BR CLEAR=ALL><h2>There are " . Feature('LinkRefText','Stargates') . " to:</h2><ul>\n";
-    $GM = Access('GM');
+    echo "<BR CLEAR=ALL><h2>There are " . Feature('LinkRefText','Stargate') . "s to:</h2><ul>\n";
+//    $GM = Access('GM');
 
     foreach ($Ls as $L) {
       $OSysRef = ($L['System1Ref']==$Ref? $L['System2Ref']:$L['System1Ref']);
@@ -411,9 +419,9 @@
         if ($LocCat ==2 || $LocCat == 4) $Loc=1; // Ground;
         if (($Loc == 1) && $A['VisFromSpace']) $Loc=3; // Vis From Space
 
-        if ((($Loc == 0) && ($A['Concealment']<=$SpaceLevel)) ||
-            (($Loc == 1) && ($A['Concealment']<=$PlanetLevel)) ||
-            (($Loc == 2) && ($A['Concealment']<=max($SpaceLevel,$PlanetLevel)))) {
+        if ((($Loc == 0) && ($A['ScanLevel']<=$SpaceLevel)) ||
+            (($Loc == 1) && ($A['ScanLevel']<=$PlanetLevel)) ||
+            (($Loc == 2) && ($A['ScanLevel']<=max($SpaceLevel,$PlanetLevel)))) {
           if (!$Shown) {
             echo "<h2>Anomalies</h2>";
             $Shown = 1;

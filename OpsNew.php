@@ -10,7 +10,7 @@
   include_once("ProjLib.php");
   include_once("OrgLib.php");
 
-  global $FACTION,$ARMY,$GAMEID;
+  global $FACTION,$ARMY,$GAMEID, $NOTBY;
 
   if (Access('Player')) {
     if (!$FACTION) {
@@ -79,9 +79,9 @@
   $Turn = $_REQUEST['t'];
 
   if ($OrgTypes[$Org['OrgType']]['Props'] & ORG_ALLOPS) {
-    $OpTypes = Gen_Get_Cond('OrgActions',"GameId=$GAMEID");
+    $OpTypes = Gen_Get_Cond('OrgActions',"(NotBy&$NOTBY)=0 ");
   } else {
-    $OpTypes = Gen_Get_Cond('OrgActions',"Office=$OffType OR Office=" . $Org['OrgType2']);
+    $OpTypes = Gen_Get_Cond('OrgActions',"(NotBy&$NOTBY)=0 AND ( Office=$OffType OR Office=" . $Org['OrgType2'] . " )");
   }
 
   if ($OrgTypes[$Org['OrgType']]['Props'] & ORG_NO_BRANCHES) {

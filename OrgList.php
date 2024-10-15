@@ -32,7 +32,7 @@
     if (isset($_REQUEST['FORCE'])) {
       $GM = 0;
     } else {
-      if ($Fid) echo "<h2>GM: <a href=OrgList.php?id=$Fid&FORCE>This page in Player Mode</a></h2>";
+      if ($Fid) echo "<h2>GM: <a href=OrgList.php?FORCE>This page in Player Mode</a></h2>";
     }
 
     if (isset($_REQUEST['ACTION']))

@@ -595,6 +595,7 @@ function IsPrime($n) {
 
 function Income_Calc($Fid) {
   global $GAMEID,$ARMY,$ARMIES,$LogistCost;
+  include_once("HomesLib.php");
 
   $Worlds = Get_Worlds($Fid);
   $Facts = Get_Factions();
