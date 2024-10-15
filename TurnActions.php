@@ -2141,7 +2141,7 @@ function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
   }
 // var_dump($UsedLinks);
 
-  GMLog("<table border><tr><td>Who<td>What<td>Level<td>From<td>Link<td>To<td>Paid<td>Stop<td>Why Stopping\n");
+  GMLog("<table border><tr><td>Who<td>What<td>Level<td>From<td>Link<td>To<td>" . ($LOWho?"Paid<td>":'') . "Stop<td>Why Stopping\n");
   foreach ($Things as $T) {
     if ($T['BuildState'] <2 || $T['BuildState'] > 3 || $T['LinkId'] <= 0 || $T['Whose']==0 || $T['CurHealth']==0) continue;
     if (( $Agents == 0 &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER)) ||
@@ -2170,18 +2170,19 @@ function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
 
 // var_dump($CheckNeeded,$T['LinkPay']);
 
-      if ($L['Status'] != 0) {
-        GMLog("<td class=Err>" . $LinkStates[$L['Status']]);
-      } else if ($L['Level'] ==1 || $T['LinkPay']<0 || ($LOWho>0 && $Fid == $LOWho)) {
-        GMLog("<td>Free");
-      } elseif ($T['LinkPay'] > 0) {
-        GMLog("<td>Yes");
-      } elseif ($CheckNeeded && isset($UsedLinks[$Lid][$T['Whose']]) && $UsedLinks[$Lid][$T['Whose']]) {
-        GMLog("<td>Following");
-      } else {
-        GMLog("<td><b>No</b");
+      if ($LOWho) {
+        if ($L['Status'] != 0) {
+          GMLog("<td class=Err>" . $LinkStates[$L['Status']]);
+        } else if ($L['Level'] ==1 || $T['LinkPay']<0 || ($LOWho>0 && $Fid == $LOWho)) {
+          GMLog("<td>Free");
+        } elseif ($T['LinkPay'] > 0) {
+          GMLog("<td>Yes");
+        } elseif ($CheckNeeded && isset($UsedLinks[$Lid][$T['Whose']]) && $UsedLinks[$Lid][$T['Whose']]) {
+          GMLog("<td>Following");
+        } else {
+          GMLog("<td><b>No</b");
+        }
       }
-
 
 //      GMLog("<td>" . (($L['Level'] ==1 || $T['LinkPay']<0)?'Free':($T['LinkPay'] > 0?'Yes':
 //            ($CheckNeeded && isset($UsedLinks[$Lid][$T['Whose']]) && $UsedLinks[$Lid][$T['Whose']])?'Following':'<b>No</b>')));
@@ -2254,7 +2255,7 @@ function ShipMovements($Agents=0) {
       }
       GMLog("Moving " . $T['Name']);
 
-      $ShipScanLevel = Scanners($T);
+      $ShipScanLevel = $T['SensorLevel'];
       $ShipNebScanLevel = NebScanners($T);
 
       $SR1 = Get_SystemR($L['System1Ref']);
@@ -2343,7 +2344,7 @@ function ShipMovements($Agents=0) {
       if ($Fid) {
         $FS = Get_FactionSystemFS($Fid,$Sid);
         if (!isset($FS['id']) || (($FS['ScanLevel'] < $ShipScanLevel) && ($N['Nebulae']<=$ShipNebScanLevel))) {
-          $SP = ['FactionId'=>$Fid, 'Sys'=> $Sid, 'Scan'=>$ShipScanLevel, 'Type'=>0, 'Turn'=>$GAME['Turn'], 'ThingId'=>$T['id']];
+          $SP = ['FactionId'=>$Fid, 'Sys'=> $Sid, 'Scan'=>$ShipScanLevel, 'Type'=>0, 'Turn'=>$GAME['Turn'], 'ThingId'=>$T['id'], 'GameId'=>$GAMEID];
           Insert_db('ScansDue', $SP);
         }
 
@@ -3753,7 +3754,7 @@ function CheckSurveyReports() {
 
     $N = Get_System($S['Sys']);
  //   if ($N['Nebulae'] > $S['Neb']) $S['Scan'] = 0; // Blind - in nebula wo neb scanners
-    GMLog("<tr><td>" . $Facts[$Fid]['Name'] . "<td>" . $N['Ref'] . "<td>" . $S['Scan'] . "<td>" . $SurveyLevels[$S['Type']] .
+    GMLog("<tr><td>" . $Facts[$Fid]['Name'] . "<td>" . $N['Ref'] . "<td>" . $S['Scan'] . "<td>" . $SurveyTypes[$S['Type']] .
       ($N['Control'] ? ( "<td style='background:" . $Facts[$N['Control']]['MapColour'] . ";'>" . $Facts[$N['Control']]['Name'])  : '<td>None') .
       "<td>Allow? " . fm_YesNo("Scan$spid",1, "Reason to reject") . "\n<br>");
     $LastSys = $Sid;
@@ -3761,7 +3762,7 @@ function CheckSurveyReports() {
   }
   if ($Started) {
     GMLog("</table>\n");
-    GMLog("<h2><a href=TurnActions.php?ACTION=StageDone&Stage=CheckSurveyReports>When Happy click here</a></h2>");
+    GMLog( "<input type=submit name=Ignore value=Chosen>\n");
     dotail();
   }
   return 1;
