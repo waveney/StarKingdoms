@@ -4088,9 +4088,9 @@ function TidyUps() {
   // Tidy 1 turn carry options
   $FFs = Gen_Get_Cond('FactionFaction',"GameId=$GAMEID AND Props>0");
   foreach ($FFs as $F) {
-    if (($F['Props'] &15) == 1) $F['Props'] = ($F['Props']&0xfffffff0);
-    if ((($F['Props']>>4) &15) == 1) $F['Props'] = ($F['Props']&0xffffff0f);
-    if ((($F['Props']>>8) &15) == 1) $F['Props'] = ($F['Props']&0xfffff0ff);
+    if (($F['Props']       &15) == 1) $F['Props'] = ($F['Props']&0xfffffff0);
+    if ((($F['Props']>>4)  &15) == 1) $F['Props'] = ($F['Props']&0xffffff0f);
+    if ((($F['Props']>>8)  &15) == 1) $F['Props'] = ($F['Props']&0xfffff0ff);
     if ((($F['Props']>>12) &15) == 1) $F['Props'] = ($F['Props']&0xffff0fff);
     if ((($F['Props']>>16) &15) == 1) $F['Props'] = ($F['Props']&0xfff0ffff);
     if ((($F['Props']>>20) &15) == 1) $F['Props'] = ($F['Props']&0xff0fffff);
@@ -4120,7 +4120,7 @@ function TidyUps() {
     $Sid1 = $Systems[$L['System1Ref']]['id'];
     $Sid2 = $Systems[$L['System2Ref']]['id'];
 
-    $Stabs = Get_Things_Cond(0,"Type=$WormStab AND (SystemId=$Sid1 OR SystemId=$Sid2) AND LinkId=$Lid" );
+    $Stabs = Get_Things_Cond(0,"Type=$WormStab AND (SystemId=$Sid1 OR SystemId=$Sid2) AND id=$Lid" );
     if ($Stabs) foreach($Stabs as $S) $L['NextTurnMod']-=$S['Level'];
     Put_Link($L);
   }
