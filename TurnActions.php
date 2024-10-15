@@ -29,7 +29,7 @@
              'Project Progress', 'Operations Progress', 'Instructions Progress','Collaborative Progress',
     'Spare', 'Spare', /*'Espionage Missions Complete', 'Counter Espionage',*/ 'Handle Co Op Projects', 'Spare' /*'Finish Shakedowns'*/,
              'Refit Projects Complete', 'Projects Complete','Operations Complete',  'Instructions Complete',
-             'Check Survey Reports', 'Give Survey Reports', 'Check Spot Anomalies', 'Spot Anomalies',
+             'Check Survey Reports', 'Give Survey Reports', 'Spare', 'Spare', //'Check Spot Anomalies', 'Spot Anomalies',
              'Militia Army Recovery', 'Generate Turns', 'Tidy Ups', 'Clear Conflict Flags',
              'Save What Can Be Seen', 'Recalc Project Homes', 'Finish Turn Process',
              'Check Follow Ups', 'Enable Factions Access'];
