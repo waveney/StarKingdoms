@@ -73,7 +73,7 @@ function Show_Thing(&$T,$Force=0) {
 //var_dump($SelLinks);exit;
 /*
   if ($Links && $T['LinkId'] >= 0 && !isset($Links[$T['LinkId']]['Level'])) {
-    var_dump($T); echo "<p>"; var_dump($Links); echo "<p>";
+    var_dump($T); echo "<p>"; var_dump($Links); echo "<p>"; // OK
   }
 */
 

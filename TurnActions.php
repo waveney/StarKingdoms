@@ -3783,10 +3783,10 @@ function GiveSurveyReports() {
 
     $Fid = $S['FactionId'];
 
-    if (isset($_REQUEST["Scan$spid"]) &&  $_REQUEST["Scan$spid"] == "on") {
+    if (isset($_REQUEST["Scan$spid"]) &&  ($_REQUEST["Scan$spid"] == "on")) {
       $FS = Get_FactionSystemFS($Fid,$S['Sys']);
       $New = !isset($FS['id']);
-      $Changed = 0;
+      $Changed = $New;
       switch ($S['Type']) {
         case 0: // Passive
           if ($FS['ScanLevel'] > $S['Scan']) {
@@ -4278,7 +4278,7 @@ function Do_Turn() {
           $act = preg_replace('/ /','',$act);
           if ($SName == $act) break;
         }
-        var_dump($S);
+ //       var_dump($S);
         if ($S > 63) {
           GMLog("Stage $SName not found");
           break;

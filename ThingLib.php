@@ -756,6 +756,7 @@ function Thing_Duplicate($otid) {
   $T['CurHealth'] = $T['OrigHealth'];
   $T['PrisonerOf'] = 0;
   $T['ProjHome'] = 0;
+  $T['LastMoved'] = -1;
   if ($T['GM_Notes']) {
     $T['GM_Notes'] = "This thing has been copied from " . $T['Name'] . "- id: $otid with this note:\n" . $T['GM_Notes'];
   }

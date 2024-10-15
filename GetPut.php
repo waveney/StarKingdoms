@@ -562,6 +562,7 @@ function Put_Thing(&$now) {
     return Update_db('Things',$Cur,$now);
   } else {
     $now['GameId'] = $GAMEID;
+    $now['LastMoved'] = -1;
     return $now['id'] = Insert_db ('Things', $now );
   }
 }
@@ -902,7 +903,7 @@ function Has_Tech($fid,$name) {
 
     $res = $db->query("SELECT Level FROM  FactionTechs WHERE Faction_Id=$fid AND Tech_Id=$name ");
     if ($res && ($ans = $res->fetch_assoc())) $lvl = $ans['Level'];
-    if ($name== 145)  var_dump($lvl);
+ //   if ($name== 145)  var_dump($lvl);
     return $lvl;
   }
 

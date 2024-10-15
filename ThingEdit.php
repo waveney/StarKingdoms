@@ -14,7 +14,7 @@ function New_Thing(&$T) {
   $Fact_Colours = Get_Faction_Colours();
   $Systems = Get_SystemRefs();
   $BPs = BluePrintList(10000);
-var_dump($BPs);
+// var_dump($BPs);
   if (!isset($T['Whose'])) $T['Whose'] = 0;
   echo "<h1>Create Thing:</h1>";
   echo "<form method=post action=ThingEdit.php>";
@@ -90,7 +90,7 @@ var_dump($BPs);
         $_POST['NewSystemId'] = $_POST['SystemId'];
 
         $tid = Insert_db_post('Things',$T);
-      var_dump($T);
+ //     var_dump($T);
       }
       $T = Get_Thing($tid); // Re-read to get defaults
 
