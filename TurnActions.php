@@ -3814,7 +3814,7 @@ function GiveSurveyReports() {
           if (!$New) {
             TurnLog($Fid, "<h3>You are due an improved survey report for <a href=SurveyReport.php?N=" . $S['Sys'] . ">" . System_Name($N,$Fid) . "</a></h3>");
           } else {
-            TurnLog($Fid, "<h3>You are have new survey report for <a href=SurveyReport.php?N=$" . $S['Sys'] . ">" . System_Name($N,$Fid) . "</a></h3>");
+            TurnLog($Fid, "<h3>You are have new survey report for <a href=SurveyReport.php?N=" . $S['Sys'] . ">" . System_Name($N,$Fid) . "</a></h3>");
           }
         }
       }
@@ -4164,6 +4164,7 @@ function SaveWhatCanBeSeen() {
 }
 
 function RecalcProjectHomes() {
+  global $GAMEID;
   // Proj Homes, Worlds
   include_once("HomesLib.php");
   include_once("MinedLib.php");
@@ -4172,7 +4173,7 @@ function RecalcProjectHomes() {
 
   // Dynamic Systems
 
-  $DSys = Gen_Get_Cond('Systems',"Flags>0");
+  $DSys = Gen_Get_Cond('Systems',"GameId=$GAMEID AND Flags>0");
   foreach($DSys as $N) {
     Dynamic_Update($N,1);
   }
