@@ -3724,6 +3724,7 @@ function CheckSurveyReports() {
   $Started = 0;
   $LastSys = 0;
   $LastType = -1;
+
   foreach($Scans as $spid=>$S) {
 
     $Fid = $S['FactionId'];
@@ -3746,6 +3747,7 @@ function CheckSurveyReports() {
     }
     if (!$Started) {
       GMLog("<h2>Please review these scans, Stop as needed</h2>\n");
+      GMLog("<form method=post action=TurnActions.php?ACTION=Process&S=CheckSurveyReports>");
       GMLog("<table border><tr><td>Faction<td>Where<td>Scan Level<td>Type<td>Control<td>Stop<td>Reason\n");
       if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
       Register_AutoUpdate('ScansDue',0);
