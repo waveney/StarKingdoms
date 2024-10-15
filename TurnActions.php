@@ -3713,11 +3713,11 @@ function InstructionsComplete() {
 }
 
 function CheckSurveyReports() {
-  global $GAME, $SurveyLevels, $SurveyTypes;
+  global $GAME, $GAMEID, $SurveyLevels, $SurveyTypes;
 
 //  Go throuh Scans file - sort by Fid - each link, is it higher scan level than currently scanned?  If so find highest scan level attempted and show menu
 //  GMs can de-tune to allow for conflict etc  Enable scan data - save scans to log?
-  $Scans = Gen_Get_Cond('ScansDue'," Turn=" . ($GAME['Turn']) . " ORDER BY FactionId,Sys,Type,Scan DESC");
+  $Scans = Gen_Get_Cond('ScansDue'," GameId=$GAMEID AND Turn=" . ($GAME['Turn']) . " ORDER BY FactionId,Sys,Type,Scan DESC");
 
 // var_dump($Scans);
   $Facts = Get_Factions();
@@ -3772,8 +3772,8 @@ function CheckSurveyReports() {
 
 
 function GiveSurveyReports() {
-  global $GAME, $SurveyTypes;
-  $Scans = Gen_Get_Cond('ScansDue'," Turn=" . ($GAME['Turn']) . " ORDER BY FactionId,Sys,Type,Scan DESC");
+  global $GAME, $GAMEID, $SurveyTypes;
+  $Scans = Gen_Get_Cond('ScansDue'," GameId=$GAMEID AND Turn=" . ($GAME['Turn']) . " ORDER BY FactionId,Sys,Type,Scan DESC");
 
   $Facts = Get_Factions();
   $LastFid = $Started = 0;
@@ -3789,19 +3789,19 @@ function GiveSurveyReports() {
       $Changed = $New;
       switch ($S['Type']) {
         case 0: // Passive
-          if ($FS['ScanLevel'] > $S['Scan']) {
+          if ($FS['ScanLevel'] < $S['Scan']) {
             $Changed = 1;
             $FS['ScanLevel'] = $S['Scan'];
           }
           break;
         case 1: // Space
-          if ($FS['SpaceScan'] > $S['Scan']) {
+          if ($FS['SpaceScan'] < $S['Scan']) {
             $Changed = 1;
             $FS['SpaceScan'] = $S['Scan'];
           }
           break;
         case 2: // Planet
-          if ($FS['PlanetScan'] > $S['Scan']) {
+          if ($FS['PlanetScan'] < $S['Scan']) {
             $Changed = 1;
             $FS['PlanetScan'] = $S['Scan'];
           }
