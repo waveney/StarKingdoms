@@ -381,9 +381,9 @@
       $OSysRef = ($L['System1Ref']==$Ref? $L['System2Ref']:$L['System1Ref']);
       $ON = Get_SystemR($OSysRef);
       $LinkKnow = Get_FactionLinkFL($Fid,$L['id']);
- //     var_dump($LinkKnow,$L);
+ //     var_dump($LinkKnow,$L,$SpaceLevel);
       if (!(isset($LinkKnow['id']))) {
-        if ($L['Concealment']<=min(0,$SpaceLevel)) {
+        if ($L['Concealment']<=max(0,$SpaceLevel)) {
           $LinkKnow = ['Known'=>1];
         } else {
           continue;
@@ -397,14 +397,16 @@
       } else {
         $LinkKnow = ['Known'=>0];
       }*/
-      echo "<li>Link #" . $L['id'] . " ";
+      echo "<li>Link " . ($L['Name']?$L['Name']:"#" . $L['id']) . " ";
 
       if ($LinkKnow['Known']) {
-        $name = NameFind($L);
-        if ($name) echo " ( $name ) ";
-        echo " to " . ReportEnd($ON) .  " level " . $LinkLevels[abs($L['Level'])]['Colour'];
+//        $name = NameFind($L);
+//        if ($name) echo " ( $name ) ";
+        echo " to " . ReportEnd($ON) . " Instability: " . $L['Instability'] . " Concealment: " . $L['Concealment'];
+        // " level " . $LinkLevels[abs($L['Level'])]['Colour'];
       } else {
-        echo " to an unknown location.  Level " .  $LinkLevels[abs($L['Level'])]['Colour'];
+        echo " to an unknown location." . " Instability: " . $L['Instability'] . " Concealment: " . $L['Concealment'];
+        //Level " .  $LinkLevels[abs($L['Level'])]['Colour'];
       }
       if ($L['Status'] != 0) echo " <span class=Red>" . $LinkStates[$L['Status']] . "</span>";
 
@@ -447,40 +449,46 @@
       }
     }
 
-    $SysTrait = 0;
-    for($i=1;$i<4;$i++) {
-      if ($N["Trait$i"] && ($N["Trait$i" . "Conceal"] <= $SpaceLevel)) {
-        if ($SysTrait++ == 0) {
-          echo "<h2>System Traits:</h2>";
+    if ($SpaceLevel>0) {
+      $SysTrait = 0;
+      for($i=1;$i<4;$i++) {
+        if ($N["Trait$i"] && ($N["Trait$i" . "Conceal"] <= $SpaceLevel)) {
+          if ($SysTrait++ == 0) {
+            echo "<h2>System Traits:</h2>";
+          }
+          echo "System has the trait: " . $N["Trait$i"] . "<br>" . $Parsedown->text($N["Trait$i" . "Desc"]) . "<p>";
         }
-        echo "System has the trait: " . $N["Trait$i"] . "<br>" . $Parsedown->text($N["Trait$i" . "Desc"]) . "<p>";
       }
     }
 
-    $PlanTrait = 0;
-    foreach($Ps as $P) {
-      for($i=1;$i<4;$i++) {
-        if ($P["Trait$i"] && ($P["Trait$i" . "Conceal"] <= $PlanetLevel)) {
-          if ($PlanTrait++ == 0) {
-            echo "<h2>Planet Traits:</h2>";
-          }
-          echo "Planet " . $P['Name'] . " has the trait: " . $P["Trait$i"] . "<br>" . $Parsedown->text($P["Trait$i" . "Desc"]) . "<p>";
-        }
-      }
-      $Mns = [];
-      if ($P['Moons']) $Mns = Get_Moons($Pid);
-      if ($Mns) {
-        foreach($Mns as $M) {
-          for($i=1;$i<4;$i++) {
-            if ($M["Trait$i"] && ($M["Trait$i" . "Conceal"] <= $PlanetLevel)) {
-              if ($PlanTrait++ == 0) {
-                echo "<h2>Planet/Moon Traits:</h2>";
-              }
-              echo "Moon " . $M['Name'] . " of Planet " . $P['Name'] . " has the trait: " . $M["Trait$i"] . "<br>" .
-                   $Parsedown->text($M["Trait$i" . "Desc"]) . "<p>";
-            }
-          }
+    if ($PlanetLevel > 0) {
+      $PlanTrait = 0;
+      foreach($Ps as $P) {
 
+        for($i=1;$i<4;$i++) {
+          if ($P["Trait$i"] && ($P["Trait$i" . "Conceal"] <= $PlanetLevel)) {
+            if ($PlanTrait++ == 0) {
+              echo "<h2>Planet Traits:</h2>";
+            }
+            var_dump($P,$PlanetLevel);
+            echo "Planet " . $P['Name'] . " has the trait: " . $P["Trait$i"] . "<br>" . $Parsedown->text($P["Trait$i" . "Desc"]) . "<p>";
+          }
+        }
+        $Mns = [];
+        if ($P['Moons']) $Mns = Get_Moons($Pid);
+        if ($Mns) {
+          foreach($Mns as $M) {
+            for($i=1;$i<4;$i++) {
+              if ($M["Trait$i"] && ($M["Trait$i" . "Conceal"] <= $PlanetLevel)) {
+                if ($PlanTrait++ == 0) {
+                  echo "<h2>Planet/Moon Traits:</h2>";
+                }
+                echo "Moon " . $M['Name'] . " of Planet " . $P['Name'] . " has the trait: " . $M["Trait$i"] . "<br>" .
+                     $Parsedown->text($M["Trait$i" . "Desc"]) . "<p>";
+              }
+            }
+
+          }
         }
       }
     }
@@ -505,9 +513,10 @@
       } else {
         continue;
       }
-      echo "You know of Link #" . $L['id'] . " ";
-      $name = NameFind($L);
-      if ($name) echo " ( $name ) ";
+      echo "You know of Link " . ($L['Name']?$L['Name']:"#" . $L['id']) . " ";
+
+//      $name = NameFind($L);
+//      if ($name) echo " ( $name ) ";
       echo " to " . ReportEnd($ON) .  " level " . $LinkLevels[$L['Level']]['Colour'];
     }
   }

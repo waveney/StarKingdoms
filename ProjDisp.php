@@ -321,7 +321,7 @@
   echo "Note 2: The amount of progress before the end of the previous turn is at best a guess.  " .
        "If the number of districts/planetary construction has changed they will be wrong.<p>\n";
 
-  echo "Currently this display is for construction and district based projects only.<br>\n";
+  echo "Currently this display is for district based projects only.<br>\n";
 
   $Homes = Get_ProjectHomes($Fid);
   $DistTypes = Get_DistrictTypes();
@@ -433,7 +433,7 @@
 
 
       if ($D['Type'] > 0 && (($DistTypes[$D['Type']]['Props'] &2) == 0)) continue;
-      if ($D['Type'] < 0 && $PlanCon<1 ) continue;
+      if ($D['Type'] < 0 ) continue;
       $Di = $D['id'];
       $Hide = ($Hi == $OpenHi && $Di == $OpenDi? "" : "hidden");
 //      if (!$Hide && $SaveDType) {
