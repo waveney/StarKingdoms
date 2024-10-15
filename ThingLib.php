@@ -235,6 +235,8 @@ function Thing_Type_Props() {
   return $tns;
 }
 
+// 200+ = on planet, 400+ = on moon rest in space
+
 function Within_Sys_Locs(&$N,$PM=0,$Boarding=0,$Restrict=0,$Hab=0) {// $PM +ve = Planet Number, -ve = Moon Number, restrict 1=ON, 2space only
   include_once("SystemLib.php");
   $L[0] = "";
@@ -463,7 +465,8 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0 ) {
   $SelCols = [''];
     if ($GM || Has_Tech($T['Whose'],'Know All Links')) {
       foreach ($Links as $L) {
-        $SelLinks[$L['id']] = "#" . $L['id'] . " to " . (($L['System1Ref'] == $N['Ref'])?$L['System2Ref']: $L['System1Ref'] );
+        $Lnam = ($L['Name']?$L['Name']:"#" .$L['id']);
+        $SelLinks[$L['id']] = "$Lnam to " . (($L['System1Ref'] == $N['Ref'])?$L['System2Ref']: $L['System1Ref'] );
         $SelCols[$L['id']] = $LinkTypes[abs($L['Level'])]['Colour'];
       }
     } else {
@@ -475,7 +478,7 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0 ) {
           unset($Links[$Lid]);
           continue;
         }
-        $LinkText = "Unknowm";
+        $LinkText = "Unknown";
         $FL = Get_FactionLinkFL($Fid,$L['id']);
         $FarSysRef =  (($L['System1Ref'] == $N['Ref'])?$L['System2Ref']: $L['System1Ref'] );
         $FSN = Get_SystemR($FarSysRef);
@@ -519,7 +522,9 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0 ) {
           continue;
 //          $LinkText = '?';
         }
-        $SelLinks[$L['id']] = "#" . $L['id'] . " to " . $LinkText . ($L['Status'] != 0) . " - " . $LinkStates[$L['Status']];
+        $Lnam = ($L['Name']?$L['Name']:"#" .$L['id']);
+
+        $SelLinks[$L['id']] = "$Lnam to " . $LinkText . ($L['Status'] != 0) . " - " . $LinkStates[$L['Status']];
         $SelCols[$L['id']] = $LinkTypes[$L['Level']]['Colour'];
       }
     }

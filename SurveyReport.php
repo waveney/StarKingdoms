@@ -251,7 +251,12 @@
           echo "Controlled by: " . "<span style='background:" . $Fs[$P['Control']]['MapColour'] . "; padding=2;'>" . $Fs[$P['Control']]['Name'] . "</span><p>";
         }
 
-        if ( ($SpaceLevel>0) && ($SurveyLevel >= 5) && $PTD[$P['Type']]['Hospitable'] && $P['Minerals']) echo "It has a minerals rating of <b>" . $P['Minerals'] . "</b>.  ";
+        if ($P['Minerals']) {
+          if (( $PTD[$P['Type']]['Hospitable'] && ($PlanetLevel>0)) ||
+            (!$PTD[$P['Type']]['Hospitable'] && ($SpaceLevel>0))) {
+              echo "It has a minerals rating of <b>" . $P['Minerals'] . "</b>.  ";
+            }
+        }
         if ($SurveyLevel >= 4) {
           echo "It's orbital radius is " . sprintf('%0.2g', $P['OrbitalRadius']) . " Km = " .  RealWorld($P,'OrbitalRadius');
 
@@ -317,10 +322,13 @@
               echo "Controlled by: " . "<span style='background:" . $Fs[$M['Control']]['MapColour'] . "; padding=2;'>" . $Fs[$M['Control']]['Name'] . "</span><p>";
             }
 
+            if ($M['Minerals']) {
+              if (( $PTD[$M['Type']]['Hospitable'] && ($PlanetLevel>0)) ||
+                (!$PTD[$M['Type']]['Hospitable'] && ($SpaceLevel>0))) {
+                  echo "It has a minerals rating of <b>" . $M['Minerals'] . "</b>.  ";
+                }
+            }
 
-
-            if ( ($SpaceLevel>0) && ($SurveyLevel >= 5) && $PTD[$M['Type']]['Hospitable'] && $M['Minerals'])
-              echo "It has a minerals rating of <b>" . $M['Minerals'] . "</b>.  ";
             if ($SurveyLevel >= 4) {
               echo "It's orbital radius is " . sprintf('%0.2g', $M['OrbitalRadius']) . " Km = " .  RealWorld($M,'OrbitalRadius') .
                    ($M['Radius']?" ,":" and") . " a period of " . sprintf('%0.2g', $M['Period']) . " Hr = " .  RealWorld($M,'Period');
@@ -398,7 +406,14 @@
 
     if ($Anoms) {
       foreach($Anoms as $Aid=>$A) {
-        if ($A['Concealment']<=max($SpaceLevel,$PlanetLevel)) {
+        $Loc = 0; // Space
+        $LocCat = $A['WithinSysLoc']%100;
+        if ($LocCat ==2 || $LocCat == 4) $Loc=1; // Ground;
+        if (($Loc == 1) && $A['VisFromSpace']) $Loc=3; // Vis From Space
+
+        if ((($Loc == 0) && ($A['Concealment']<=$SpaceLevel)) ||
+            (($Loc == 1) && ($A['Concealment']<=$PlanetLevel)) ||
+            (($Loc == 2) && ($A['Concealment']<=max($SpaceLevel,$PlanetLevel)))) {
           if (!$Shown) {
             echo "<h2>Anomalies</h2>";
             $Shown = 1;

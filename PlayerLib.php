@@ -110,7 +110,7 @@ function Player_Page() {
   switch ($TState) {
   case 'Setup':
     echo "<li><a href=SetupFaction.php>Faction Setup</a>\n";
-    if ($GM) echo "<li>GM: <a href=StartGame.php>Start up Faction</a>";
+//    if ($GM) echo "<li>GM: <a href=StartGame.php>Start up Faction</a>";
     if (!$GM && $FACTION['Horizon'] == 0) break; // This prevents access to things until setup completed
     echo "<li><a href=PThingList.php>List of Things</a> - List of Things (Ships, Armies, Named Characters, Space stations etc)";
     echo "<li><a href=ThingPlan.php>Plan a Thing</a> - Planning Things (Ships, Armies, Named Characters, Space stations etc)";
