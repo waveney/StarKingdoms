@@ -436,7 +436,7 @@
           echo "Description: " . $Parsedown->text($A['Description']) . "<p>";
           $FA = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
           if (($FA['State']??0) == 0) {
-            $FA['State'] = 1;
+            $FA = ['State' => 1, 'FactionId'=>$Fid, 'AnomalyId'=>$Aid, 'Progress'=>0];
             Gen_Put('FactionAnomaly',$FA);
           }
           echo "<span style='Background:" . $AnStateCols[$FA['State']] . ";'>" . $FAnomalyStates[$FA['State']];
