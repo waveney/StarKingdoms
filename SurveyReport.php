@@ -49,9 +49,9 @@
       echo "<h1>Unknown system</h1>\n";
       dotail();
     }
-    $ScanLevel = $FS['ScanLevel'];
-    $PlanetLevel = $FS['PlanetScan'];
-    $SpaceLevel = $FS['SpaceScan'];
+    $ScanLevel = max(0,$FS['ScanLevel']);
+    $PlanetLevel = max(0,$FS['PlanetScan']);
+    $SpaceLevel = max(0,$FS['SpaceScan']);
   } else { // GM access
     if (isset($_REQUEST['V'])) {
       $SurveyLevel = $_REQUEST['V'];
