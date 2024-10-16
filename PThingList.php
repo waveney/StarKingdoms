@@ -216,6 +216,7 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Class</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Type</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Level</a>\n";
+  if (!$Fid) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Whose</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Orders</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Health</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>State</a>\n";
@@ -301,7 +302,8 @@
     echo "<td>" . $T['Class'];
     echo "<td>" . $Name;
     echo "<td>" . $T['Level'];
-    echo "<td>" . ((($Fid==0) || ($RowClass == 'Prisoner')) ? "<span style='background:" . ($Factions[$T['Whose']]['MapColour']??'white') . "'>[" .
+    if ($Fid == 0) echo "<td style='background:" . ($Factions[$T['Whose']]['MapColour']??'white') . "'>" . ($Factions[$T['Whose']]['Name']??'Unknown');
+    echo "<td>" . (($RowClass == 'Prisoner') ? "<span style='background:" . ($Factions[$T['Whose']]['MapColour']??'white') . "'>[" .
                  ($Factions[$T['Whose']]['Name']??'Unknown') . "]</span>" : $T['Orders']);
     echo "<td><center>" . (($Props & THING_HAS_HEALTH)? $T['CurHealth'] . ' / ' . $T['OrigHealth'] : "-");
     if (!empty($T['PrisonerOf'])) {
