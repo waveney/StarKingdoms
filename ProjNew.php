@@ -242,7 +242,7 @@
 
 //var_dump("THREE",$DTz,$HDists[$Hi]);
             // TODO bug if you already have that level in the pipeline - Add check to Turns Ready
-            if (($Lvl >= $DTz['MaxNum'])) {
+            if ($Lvl >= $PlanCon ) { // $DTz['MaxNum'])) {
               if (!$GM) continue;
               echo "Not allowed (GM only):";
             }
