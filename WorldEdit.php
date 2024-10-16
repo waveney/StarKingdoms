@@ -262,7 +262,7 @@
 
   for($i=1;$i<4;$i++) {
     if ($WH["Trait$i"] && ($WH["Trait$i" . "Conceal"] <= $PlanetLevel)) {
-         echo "<tl><td>Trait:<td>" . $P["Trait$i"] . "<td colspan=4>" . $Parsedown->text($P["Trait$i" . "Desc"]);
+         echo "<tr><td>Trait:<td>" . $P["Trait$i"] . "<td colspan=4>" . $Parsedown->text($P["Trait$i" . "Desc"]);
     }
   }
 

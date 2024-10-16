@@ -480,6 +480,10 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0 ) {
         }
         $LinkText = "Unknown";
         $FL = Get_FactionLinkFL($Fid,$L['id']);
+        if (!$FL || ($L['Known']==0 && $L['Concealment']>0)) {
+          unset($Links[$Lid]);
+          continue;
+        }
         $FarSysRef =  (($L['System1Ref'] == $N['Ref'])?$L['System2Ref']: $L['System1Ref'] );
         $FSN = Get_SystemR($FarSysRef);
         $FarNeb = $FSN['Nebulae'];

@@ -299,6 +299,6 @@
 
 
   }
-  echo "<h2><a href=OpsNew.php?t=$Turn&O=$OrgId>Back to start</a> , <a href=OrgDisp.php?id=$Fid>Cancel</a></h2>\n";
+  echo "<h2><a href=OpsNew.php?t=$Turn&O=$OrgId>Back to start</a> , <a href=OpsDisp.php?id=$Fid>Cancel</a></h2>\n";
   dotail();
 

@@ -434,7 +434,7 @@
           }
           echo "Anomaly: " . $A['Name'] . " location: " . ($Syslocs[$A['WithinSysLoc']]? $Syslocs[$A['WithinSysLoc']]: "Space") . "<p>";
           echo "Description: " . $Parsedown->text($A['Description']) . "<p>";
-          $FA = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
+          $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
           if (!isset($FA['id'])) {
             $FA = ['State' => 1, 'FactionId'=>$Fid, 'AnomalyId'=>$Aid, 'Progress'=>0];
             Gen_Put('FactionAnomaly',$FA);
