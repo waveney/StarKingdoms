@@ -159,8 +159,8 @@
 
     //TODO Construction and Districts...
 
-    if ($NoC != 1) $Dists[] = ['HostType'=>-1, 'HostId' => $PH['id'], 'Type'=> -1, 'Number'=>0, 'id'=>-$PH['id']];
-    foreach ($Dists as &$D) {
+//    if ($NoC != 1) $Dists[] = ['HostType'=>-1, 'HostId' => $PH['id'], 'Type'=> -1, 'Number'=>0, 'id'=>-$PH['id']];
+    foreach ($Dists as $D) {
       if ($D['Type'] > 0 && (($DistTypes[$D['Type']]['Props'] &2) == 0)) continue;
       if (($D['Type'] < 0) && ($PH['Type'] != $Faction['Biosphere']) &&
          ($PH['Type'] != $Faction['Biosphere2']) && ($PH['Type'] != $Faction['Biosphere3']) && (Has_Tech($Fid,3)<2)) continue;
@@ -193,7 +193,7 @@
 
 // echo "ZZ: $Where<p>";
 
-//var_dump($HDists);
+ // var_dump($HDists);
 
   echo "<form method=post action=ProjNew.php>";
   echo fm_hidden('t',$Turn) . fm_hidden('Hi',$Hi) . fm_hidden('Di',$Di) . fm_hidden('DT',$D['Type']);
@@ -210,28 +210,28 @@
 
     $PlanCon = PlanConst($Fid,$World['id']);
     $CurOff = $CurDists = 0;
-      if ($MaxDists > 0) {
+    if ($MaxDists > 0) {
 
-        foreach ($HDists[$Hi] as $DD) if ($DD['Type'] > 0) $CurDists += $DD['Number'];
-        $CurOff = Count($Offices);
+      foreach ($HDists[$Hi] as $DD) if ($DD['Type'] > 0) $CurDists += $DD['Number'];
+      $CurOff = Count($Offices);
 
-        echo "Maximum Districts: $MaxDists<br>Current Districts: $CurDists<br>";
-        if (Feature('Orgs')) echo "Offices: $CurOff<br>";
-      }
+      echo "Maximum Districts: $MaxDists<br>Current Districts: $CurDists<br>";
+      if (Feature('Orgs')) echo "Offices: $CurOff<br>";
+    }
 
 //         echo "Maximum Districts: $MaxDists<br>Current Districts: $CurDists<br>";
 
       if ($MaxDists==0 || (($CurOff + $CurDists) < $MaxDists)) {
         $DTs = Get_DistrictTypes();
         $DNames = [];
-//var_dump($HDists[$Hi]);
+//var_dump("ONE", $HDists[$Hi],$Hi);
         foreach ($DTs as $DTz) {
           if (($D['Number']??0) > $PlanCon) continue;
-          if (eval("return " . $DTz['Gate'] . ";" )) {
+          if ($DTz['Gate'] && eval("return " . $DTz['Gate'] . ";" )) {
             $DNames[$DTz['id']] = $DTz['Name'];
 
             $Lvl = 0;
-
+//var_dump("TWO",$DTz,$HDists[$Hi]);
             foreach ($HDists[$Hi] as $D) {
 //echo "<br>Checking "; var_dump($D);
               if ($D['Type'] == $DTz['id']) {
@@ -240,8 +240,8 @@
               }
             }
 
-//var_dump($DTz);
-// TODO bug if you already have that level in the pipeline - Add check to Turns Ready
+//var_dump("THREE",$DTz,$HDists[$Hi]);
+            // TODO bug if you already have that level in the pipeline - Add check to Turns Ready
             if (($Lvl >= $DTz['MaxNum'])) {
               if (!$GM) continue;
               echo "Not allowed (GM only):";
