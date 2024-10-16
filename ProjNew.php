@@ -275,6 +275,8 @@
           $Lvl = count($Offices)+1;
           $pc = Proj_Costs($Lvl);
           foreach($OrgTypes as $ot=>$O) {
+            if ($O['Gate'] && !eval("return " . $O['Gate'] . ";" )) continue;
+
             if ($Offices[$ot]??0) continue;
  //           $Ord = ($Offices[$ot]??0)+1;
             echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Construction'] .
