@@ -158,7 +158,7 @@ function New_Thing(&$T) {
       $TTypes = Get_ThingTypes();
       echo "<table border>";
       foreach($Things as $T) {
-        if ( empty($T['Name']) || $T['BuildState'] <1 || $T['BuildState'] > 3 || ( $TTypes[$T['Type']]['Properties'] & THING_CANT_HAVENAMED) ) continue;
+        if ( empty($T['Name']) || $T['BuildState'] <1 || $T['BuildState'] > 3 || (( $TTypes[$T['Type']]['Properties']??0) & THING_CANT_HAVENAMED) ) continue;
         echo "<button class=projtype type=submit formaction=ThingEdit.php?ACTION=Select_Thing&Thing=" . $T['id'] . ">" . $T['Name'] . "</button><p>\n";
       }
       echo "</form>\n";

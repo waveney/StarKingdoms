@@ -173,7 +173,7 @@
       } else if ($OpTypes[$op]['Props'] & OPER_BRANCH) {
         $Plan = HabPlanetFromSystem($Wh);
         if ($Plan) {
-          $AllReady = Gen_Get_Cond('Branches'," HostType=1 AND HostId=$Plan AND OrgId=$OrgId" );
+          $AllReady = Gen_Get_Cond('Branches'," HostType=1 AND HostId=$Plan AND Organisation=$OrgId" );
           if ($AllReady) {
             $P = Get_Planet($Plan);
             echo "There is already a branch of " . $Org['Name'] . " on " . $P['Name'] . " in " . System_Name($TSys,$Fid) . "</h2>\n";

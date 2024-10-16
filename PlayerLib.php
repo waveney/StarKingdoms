@@ -569,11 +569,11 @@ function PlanConst($Fid,$worldid) { // Effective Plan Construction
       break;
 
     case 3: // Thing
-      $Target = $FACTION['BioSphere'];
+      $Target = $FACTION['Biosphere'];
       break;
   }
 
-  if (($Target != $FACTION['BioSphere']) && ($Target != $FACTION['BioSphere2']) && ($Target != $FACTION['BioSphere3'])) {
+  if (($Target != $FACTION['Biosphere']) && ($Target != $FACTION['Biosphere2']) && ($Target != $FACTION['Biosphere3'])) {
     if ($Target == 4) {
       $PC-=2;
     } else {
