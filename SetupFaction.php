@@ -411,7 +411,12 @@ function SetupStage5() {
   $Refs = [];
   foreach ($CSys as $Si=>$S) {
     $FS = Get_FactionSystemFS($Fid,$Si);
-    if (!isset($FS['id'])) Put_FactionSystem($FS);
+    $Sens = max(1,Has_Tech($Fid,'Sensors'));
+    $FS['ScanLevel'] = min($FS['ScanLevel'],$Sens);
+    $FS['SpaceScan'] = min($FS['SpaceScan'],$Sens);
+    $FS['PlanetScan'] = min($FS['PlanetScan'],$Sens);
+
+    Put_FactionSystem($FS);
     $Ref[$S['Ref']] = $Si;
   }
   if (count($CSys) > 1) {
@@ -477,7 +482,7 @@ function SetupStage6() {
     $NewOrgs[$i] = $Ot['Name'];
   }
 
-+
+
   Register_AutoUpdate('Organisations',0);
   $coln = 0;
   echo "<div class=tablecont><table id=indextable border width=100% style='min-width:1400px'>\n";

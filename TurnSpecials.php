@@ -18,6 +18,7 @@
   dostaffhead("Special Turn Processing");
   echo "<h1>Special Turn Actions - Only needed once a Blue Moon</h1>\n";
 
+// var_dump($_REQUEST);
 
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
@@ -80,6 +81,30 @@
         flush();
       }
       dotail();
+
+    case 'FixFSdata':
+      $Facts = Get_Factions();
+      foreach ($Facts as $Fid=>$F) {
+        $HW = $F['HomeWorld'];
+        if (!$HW) {
+          echo "Skipping " . $F['Name'] . " no homeworld found.<p>";
+          continue;
+        }
+        $World = Get_World($HW);
+        $Planet = Get_Planet($World['ThingId']);
+        $Sys = $Planet['SystemId'];
+        $FS = Get_FactionSystemFS($Fid,$Sys);
+        $Sens = max(1,Has_Tech($Fid,'Sensors'));
+        $FS['ScanLevel'] = min($FS['ScanLevel'],$Sens);
+        $FS['SpaceScan'] = min($FS['SpaceScan'],$Sens);
+        $FS['PlanetScan'] = min($FS['PlanetScan'],$Sens);
+
+        Put_FactionSystem($FS);
+        echo "Sorted " . $F['Name'] . "<p>";
+      }
+
+      dotail();
+
     }
   }
 
@@ -87,6 +112,7 @@
   echo "<h2>Actions: (Check with Richard before using any)</h2>";
   echo "<li><a href=TurnSpecials.php?ACTION=ExplodeLink>Explode Link</a><p>";
   echo "<li><a href=TurnSpecials.php?ACTION=RefitAll>Refit all and Complete all in planning</a><p>";
+  echo "<li><a href=TurnSpecials.php?ACTION=FixFSdata>Fix FS Data</a><p>";
 
 
 
