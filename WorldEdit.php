@@ -4,8 +4,11 @@
   include_once("ThingLib.php");
   include_once("ProjLib.php");
   include_once("HomesLib.php");
+  include_once("vendor/erusev/parsedown/Parsedown.php");
+
   global $FACTION,$GAMEID;
 
+  $Parsedown = new Parsedown();
   $Fid = 0;
   $xtra = '';
   $NeedDelta = 0;
@@ -102,7 +105,8 @@
         break;
     }
 
-
+    $FS = Get_FactionSystemFS($Fid,$SysId);
+    $PlanetLevel = max(1,($FS['PlanetScan']??1));
 
     if (isset($_REQUEST['ACTION'])) { // Post home actions
       switch ($_REQUEST['ACTION']) {
@@ -251,6 +255,14 @@
           echo "<br>";
         }
       }
+    }
+  }
+
+  // Traits - need planet survey level
+
+  for($i=1;$i<4;$i++) {
+    if ($WH["Trait$i"] && ($WH["Trait$i" . "Conceal"] <= $PlanetLevel)) {
+         echo "<tl><td>Trait:<td>" . $P["Trait$i"] . "<td colspan=4>" . $Parsedown->text($P["Trait$i" . "Desc"]);
     }
   }
 
