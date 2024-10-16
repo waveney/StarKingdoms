@@ -59,7 +59,7 @@
       if (empty($A['Name'])) continue;
       $N = Get_System($A['SystemId']);
       echo "<tr><td>" . $A['Name'] . "<td>" . $N['Ref'] . "<td style='Background:" . $AnStateCols[$FA['State']] . ";'>" . $FAnomalyStates[$FA['State']] . "<td>";
-      echo $FA['Progress'] . " / " . $A['AnomalyLevel'] . "<td colspan=4>" .  $Parsedown->text($A['Description']);
+      echo $FA['Progress'] . " / " . $A['AnomalyLevel'] . "<td colspan=4>" .  $Parsedown->text(stripslashes($A['Description']));
 //      echo "</tr>";
     }
     echo "</tbody></table></div>";

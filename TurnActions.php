@@ -3235,7 +3235,7 @@ function InstructionsComplete() {
              TurnLog($Fid , $T['Name'] . " Anomaly study on " . $A['Name'] .
                " has been completed - See sperate response from the GMs for what you get");
              if (!empty($A['Completion'])) {
-               TurnLog($Fid ,"Completion Text: " . $Parsedown -> text($A['Completion']) );
+               TurnLog($Fid ,"Completion Text: " . $Parsedown -> text(stripslashes($A['Completion'])) );
                $ctxt = '';
              } else {
                $ctxt = "  AND the completion text.";
@@ -3267,7 +3267,7 @@ function InstructionsComplete() {
                  $XA = Get_Anomaly($Xid);
 
                  TurnLog($Fid , "Completing " . $A['Name'] . " has opened up another anomaly that could be studied: " . $XA['Name'] .
-                   " in " . $Systems[$XA['SystemId']] . "\n" .  $Parsedown->text($XA['Description']) .
+                   " in " . $Systems[$XA['SystemId']] . "\n" .  $Parsedown->text(stripslashes($XA['Description'])) .
                    "\nIt will take " . $XA['AnomalyLevel'] . " scan level actions to complete.\n\n");
                  GMLog($Facts[$Fid]['Name'], "Have been told about anomaly " . $XA['Name']);
                }
@@ -3945,7 +3945,7 @@ function SpotAnomalies() {
 
           if ( !isset($_REQUEST["Prevent$Tid"]) || $_REQUEST["Prevent$Tid"]!='on')  {
 
-            TurnLog($LastWho,"You have spotted an anomaly: " . $A['Name'] . " in " . $Systems[$Sid] . "\n" .  $Parsedown->text($A['Description']) .
+            TurnLog($LastWho,"You have spotted an anomaly: " . $A['Name'] . " in " . $Systems[$Sid] . "\n" .  $Parsedown->text(stripslashes($A['Description'])) .
                   "\nIt will take " . $A['AnomalyLevel'] . " scan level actions to complete.\n\n");
 
             GMLog($Facts[$T['Whose']]['Name'] . " have just spotted anomaly: <a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . "</a> in " .

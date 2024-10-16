@@ -125,7 +125,7 @@
 
   if (($ScanLevel>=0) && ($SurveyLevel > 2)) {
 
-    if ($N['Description']) echo $Parsedown->text($N['Description']) . "<p>";
+    if ($N['Description']) echo $Parsedown->text(stripslashes($N['Description'])) . "<p>";
 
     if ($N['Control']) echo "Controlled by: " . "<span style='background:" . $Fs[$N['Control']]['MapColour'] . "; padding=2;'>" . $Fs[$N['Control']]['Name'] . "</span><p>";
     if ($GM && $SurveyLevel >= 10 && $N['HistoricalControl']) echo "Historically controlled by: " . "<span style='background:" . $Fs[$N['HistoricalControl']]['MapColour'] .
@@ -274,7 +274,7 @@
 
           if ($P['Moons']) echo ".  It has " . Plural($P['Moons'],'',"a moon.", $P['Moons'] . " moons.");
         }
-        if ($SurveyLevel > 4 && $P['Description']) echo "<p>" . $Parsedown->text($P['Description']) ;
+        if ($SurveyLevel > 4 && $P['Description']) echo "<p>" . $Parsedown->text(stripslashes($P['Description'])) ;
 
         echo "<p>";
     // Districts
@@ -344,7 +344,7 @@
                                    " and gravity at " . sprintf('%0.2g', $M['Gravity']) . " m/s<sup>2</sup> = " .  RealWorld($M,'Gravity');
             }
 
-            if ($SurveyLevel > 4 && $M['Description']) echo "<p>" . $Parsedown->text($M['Description']);
+            if ($SurveyLevel > 4 && $M['Description']) echo "<p>" . $Parsedown->text(stripslashes($M['Description']));
 
             // Districts
             if (($PlanetLevel >0) && ($SurveyLevel > 5)) { // Now Planet Survey
@@ -433,7 +433,7 @@
             $Shown = 1;
           }
           echo "Anomaly: " . $A['Name'] . " location: " . ($Syslocs[$A['WithinSysLoc']]? $Syslocs[$A['WithinSysLoc']]: "Space") . "<p>";
-          echo "Description: " . $Parsedown->text($A['Description']) . "<p>";
+          echo "Description: " . $Parsedown->text(stripslashes($A['Description'])) . "<p>";
           $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
           if (!isset($FA['id'])) {
             $FA = ['State' => 1, 'FactionId'=>$Fid, 'AnomalyId'=>$Aid, 'Progress'=>0];
@@ -446,7 +446,7 @@
           echo "<br>Progress: " . ($FA['Progress']??0) . " / " . $A['AnomalyLevel'];
 
           if (($FA['State'] >= 3) && $A['Completion']) {
-            echo "Complete: " . $Parsedown->text($A['Completion']) . "<p>";
+            echo "Complete: " . $Parsedown->text(stripslashes($A['Completion'])) . "<p>";
           }
         }
       }
@@ -459,7 +459,7 @@
           if ($SysTrait++ == 0) {
             echo "<h2>System Traits:</h2>";
           }
-          echo "System has the trait: " . $N["Trait$i"] . "<br>" . $Parsedown->text($N["Trait$i" . "Desc"]) . "<p>";
+          echo "System has the trait: " . $N["Trait$i"] . "<br>" . $Parsedown->text(stripslashes($N["Trait$i" . "Desc"])) . "<p>";
         }
       }
     }
@@ -474,7 +474,7 @@
               echo "<h2>Planet Traits:</h2>";
             }
 //            var_dump($P,$PlanetLevel);
-            echo "Planet " . $P['Name'] . " has the trait: " . $P["Trait$i"] . "<br>" . $Parsedown->text($P["Trait$i" . "Desc"]) . "<p>";
+            echo "Planet " . $P['Name'] . " has the trait: " . $P["Trait$i"] . "<br>" . $Parsedown->text(stripslashes($P["Trait$i" . "Desc"])) . "<p>";
           }
         }
         $Mns = [];
@@ -487,7 +487,7 @@
                   echo "<h2>Planet/Moon Traits:</h2>";
                 }
                 echo "Moon " . $M['Name'] . " of Planet " . $P['Name'] . " has the trait: " . $M["Trait$i"] . "<br>" .
-                     $Parsedown->text($M["Trait$i" . "Desc"]) . "<p>";
+                  $Parsedown->text(stripslashes($M["Trait$i" . "Desc"])) . "<p>";
               }
             }
 

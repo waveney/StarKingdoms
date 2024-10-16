@@ -37,9 +37,9 @@
         $A = Get_Anomaly($Aid);
 
         echo "<h2>Description:</h2>";
-        echo $Parsedown -> text($A['Description']);
+        echo $Parsedown -> text(stripslashes($A['Description']));
         echo "<h2>Completion:</h2>";
-        echo $Parsedown -> text($A['Completion']);
+        echo $Parsedown -> text(stripslashes($A['Completion']));
         break;
 
       default:

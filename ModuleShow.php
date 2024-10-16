@@ -61,7 +61,7 @@
 
     echo "<p><div id=MDesc$Mid hidden>";
     if ($M['Description']) {
-      echo  $Parsedown->text($M['Description']);
+      echo  $Parsedown->text(stripslashes($M['Description']));
     } else {
       echo "Description not yet written - inform the GMs...";
     }

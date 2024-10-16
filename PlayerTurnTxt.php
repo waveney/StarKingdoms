@@ -61,7 +61,6 @@
   /// List of turns
 
   echo "<h1>Automated Actions Turn: $Turn</h1>\n";
- // $Parsedown = new Parsedown();
 
   $FileName = "Turns/$GAMEID/$Turn/$Fid.txt";
 
@@ -72,12 +71,6 @@
 
   $FILE = fopen($FileName,'r');
   while ($txt = fgets($FILE)) echo "$txt<br>";
-/*
-  $Text = file_get_contents($FileName);
-  // display selected turn
-
-  echo $Parsedown->text($Text) . "<p>";
-*/
 
   Player_Page();
   dotail();

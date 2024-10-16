@@ -205,7 +205,7 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0,$M
   echo "<br>";
 
   if (!$Descs) echo "<div id=TDesc$Tid hidden>";
-  if ($T['Description']) echo  $Parsedown->text($T['Description']);
+  if ($T['Description']) echo  $Parsedown->text(stripslashes($T['Description']));
 
 //  if ($lvl == 0) {
     if (!$Descs) echo "</div>";
