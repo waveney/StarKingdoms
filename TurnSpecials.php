@@ -91,8 +91,21 @@
           continue;
         }
         $World = Get_World($HW);
-        $Planet = Get_Planet($World['ThingId']);
-        $Sys = $Planet['SystemId'];
+        switch ($World['ThingType']) {
+          case 1: // Planet
+            $Planet = Get_Planet($World['ThingId']);
+            $Sys = $Planet['SystemId'];
+            break;
+          case 2:// Moon
+            $Moon = Get_Moon($World['ThingId']);
+            $Planet = Get_Planet($Moon['PlanetId']);
+            $Sys = $Planet['SystemId'];
+            break;
+          case 3: // Thing
+            $Thing = Get_Thing($World['ThingId']);
+            $Sys = $Thing['SystemId'];
+            break;
+        }
         $FS = Get_FactionSystemFS($Fid,$Sys);
         $Sens = max(1,Has_Tech($Fid,'Sensors'));
         $FS['ScanLevel'] = min($FS['ScanLevel'],$Sens);
