@@ -169,9 +169,11 @@
   $Factions = Get_Factions();
 //  $Techs = Get_Techs($Fid);
   $ModTypes = Get_ModuleTypes();
-  foreach ($ModTypes as &$Mt) {
-    $Lvl = Calc_TechLevel($Fid,$Mt['id']);
-    $Mt['Target'] = $Lvl;
+  if ($Fid) {
+    foreach ($ModTypes as &$Mt) {
+      $Lvl = Calc_TechLevel($Fid,$Mt['id']);
+      $Mt['Target'] = $Lvl;
+    }
   }
 
   echo "<h1>Things</h1>";
@@ -192,7 +194,7 @@
   echo "To see more information about each thing and to do movement and changes click on the name<p>\n";
   echo "Click on column heading to sort by column - toggles up/down<br>\n";
   echo "Ex things only show up under state <b>Other</b><br>\n";
-  echo "If the Thing would benefit from refit/repair/re-equipping/reinforcing then the Refit has the number of modules (+1 if it needs repair as well)</br>";
+  if ($Fid) echo "If the Thing would benefit from refit/repair/re-equipping/reinforcing then the Refit has the number of modules (+1 if it needs repair as well)</br>";
   if ($FACTION['HasPrisoners']??0) echo "The Prisoner Tab shows Prisoners YOU have<p>\n";
   if ($GM) echo "Notes: <B>N</b> - GM Notes, Coloured start of name = hidden control<P>";
   echo "For loading/unloading of troops and characters, go to the thing<p>\n";
@@ -221,35 +223,37 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Actions</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Using Link</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Moving to</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Refit?</a>\n";
+  if ($Fid) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Refit?</a>\n";
   if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Sensors</a>\n";
   if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Notes</a>\n";
   echo "</thead><tbody>";
 
-  $Logistics = [0,0,0]; // Ship, Army, Intelligence
-  $LinkTypes = Get_LinkLevels();
-  $HasHomeLogistics = (Has_Tech($Fid,'Simplified Home Logistics') && Access('God'));
-  $FactionHome = 0;
-  if ($HasHomeLogistics) {
-    $Faction = Get_Faction($Fid);
-    $Home = $Faction['HomeWorld'];
-    if ($Home) {
-      $W = Get_World($Home);
-      if ($W) {
-        switch ($W['ThingType']) {
-          case 1: // Planet
-            $P = Get_Planet($W['ThingId']);
-            $FactionHome = $P['SystemId'];
-            break;
-          case 2: // Moon
-            $M = Get_Moon($W['ThingId']);
-            $P = Get_Planet($W['PlanetId']);
-            $FactionHome = $P['SystemId'];
-            break;
-          case 3: // Things
-            $TH = Get_Thing($W['ThingId']);
-            $FactionHome = $TH['SystemId'];
-            break;
+  if ($Fid) {
+    $Logistics = [0,0,0]; // Ship, Army, Intelligence
+    $LinkTypes = Get_LinkLevels();
+    $HasHomeLogistics = (Has_Tech($Fid,'Simplified Home Logistics') && Access('God'));
+    $FactionHome = 0;
+    if ($HasHomeLogistics) {
+      $Faction = Get_Faction($Fid);
+      $Home = $Faction['HomeWorld'];
+      if ($Home) {
+        $W = Get_World($Home);
+        if ($W) {
+          switch ($W['ThingType']) {
+            case 1: // Planet
+              $P = Get_Planet($W['ThingId']);
+              $FactionHome = $P['SystemId'];
+              break;
+            case 2: // Moon
+              $M = Get_Moon($W['ThingId']);
+              $P = Get_Planet($W['PlanetId']);
+              $FactionHome = $P['SystemId'];
+              break;
+            case 3: // Things
+              $TH = Get_Thing($W['ThingId']);
+              $FactionHome = $TH['SystemId'];
+              break;
+          }
         }
       }
     }
@@ -264,7 +268,7 @@
     $Name = ($ThingTypes[$T['Type']]['Name']??'Unknown');
     if (!$Name) $Name = "Unknown Thing $Tid";
 
-    if ($T['Whose'] != $Fid) {
+    if ($Fid && ($T['Whose'] != $Fid)) {
       $RowClass = 'Prisoner';
     } else if ($Props & THING_HAS_SHIPMODULES) {
       $RowClass = 'Ship';
@@ -280,28 +284,31 @@
 
     $BuildClass = ($T['BuildState']<4 ? $T['BuildState'] : 4);
 
-    if (($T['BuildState'] == 2 || $T['BuildState'] == 3) && ($RowClass != 'Prisoner')) {
-      $ELevel = $T['Level'];
-      if ($HasHomeLogistics && ($T['SystemId'] == $FactionHome)) $ELevel /=2;
-      if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $LogistCost[$ELevel];
-      if ($Props & THING_HAS_GADGETS) $Logistics[2] += $LogistCost[$ELevel];
-      if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $LogistCost[$ELevel];
-    };
+    if ($Fid) {
+      if (($T['BuildState'] == 2 || $T['BuildState'] == 3) && ($RowClass != 'Prisoner')) {
+        $ELevel = $T['Level'];
+        if ($HasHomeLogistics && ($T['SystemId'] == $FactionHome)) $ELevel /=2;
+        if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $LogistCost[$ELevel];
+        if ($Props & THING_HAS_GADGETS) $Logistics[2] += $LogistCost[$ELevel];
+        if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $LogistCost[$ELevel];
+      };
 
-    foreach($Logistics as &$Log) $Log = floor($Log);
+      foreach($Logistics as &$Log) $Log = floor($Log);
+    }
 
     echo "\n<tr class='ThingList Thing_$RowClass Thing_Build$BuildClass'>";
     echo "<td><a href=" . ($T['BuildState']? "ThingEdit.php" : "ThingPlan.php") . "?id=$Tid>" . ($T['Name'] ? $T['Name'] : "Nameless" ) . "</a>";
     echo "<td>" . $T['Class'];
     echo "<td>" . $Name;
     echo "<td>" . $T['Level'];
-    echo "<td>" . (($RowClass == 'Prisoner') ? "<span style='background:" . ($Factions[$T['Whose']]['MapColour']??'white') . "'>[" .
+    echo "<td>" . ((($Fid==0) || ($RowClass == 'Prisoner')) ? "<span style='background:" . ($Factions[$T['Whose']]['MapColour']??'white') . "'>[" .
                  ($Factions[$T['Whose']]['Name']??'Unknown') . "]</span>" : $T['Orders']);
     echo "<td><center>" . (($Props & THING_HAS_HEALTH)? $T['CurHealth'] . ' / ' . $T['OrigHealth'] : "-");
     if (!empty($T['PrisonerOf'])) {
       echo "<td>Prisoner";
       if (($T['Whose'] == $Fid) && (!$GM)) {
-        echo "<td><td><td><td>";
+        echo "<td><td><td>";
+        if ($Fid) echo "<td>";
         continue;
       }
     } else {
@@ -345,17 +352,20 @@
         echo "<td><td>";
       }
     }
-    $Modules = Get_Modules($Tid);
     $Up = 0;
-    foreach ($Modules as $M) {
-      $Mt = ($ModTypes[$M['Type']]??0);
-      if ((($Mt['Leveled']??0) & 1) == 0) continue;
-      if ($M['Level'] < $Mt['Target']) {
-        $Up += $M['Number'];
+    if ($Fid) {
+      $Modules = Get_Modules($Tid);
+      foreach ($Modules as $M) {
+        $Mt = ($ModTypes[$M['Type']]??0);
+        if ((($Mt['Leveled']??0) & 1) == 0) continue;
+        if ($M['Level'] < $Mt['Target']) {
+          $Up += $M['Number'];
+        }
       }
+
+      if (($T['CurHealth'] < $T['OrigHealth']) && ($Props & THING_HAS_HEALTH) && (($Props & THING_CAN_BE_SPLATED) == 0)) $Up++;
+      echo "<td>" . ($Up?$Up:'');
     }
-    if (($T['CurHealth'] < $T['OrigHealth']) && ($Props & THING_HAS_HEALTH) && (($Props & THING_CAN_BE_SPLATED) == 0)) $Up++;
-    echo "<td>" . ($Up?$Up:'');
 
     if ($GM) {
       echo "<td>" . (($T['Sensors'] ? ($T['Sensors'] . '*L' . $T['SensorLevel']) : ''));
