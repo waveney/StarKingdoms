@@ -33,7 +33,7 @@
     if (isset($_REQUEST['FORCE'])) {
       $GM = 0;
     } else {
-      echo "<h2><a href=SurveyReport.php?N=$Sid>This page in Player Mode</a></h2>\n";
+      echo "<h2><a href=SurveyReport.php?N=$Sid&FORCE>This page in Player Mode</a></h2>\n";
     }
   }
 
@@ -470,7 +470,7 @@
             if ($PlanTrait++ == 0) {
               echo "<h2>Planet Traits:</h2>";
             }
-            var_dump($P,$PlanetLevel);
+//            var_dump($P,$PlanetLevel);
             echo "Planet " . $P['Name'] . " has the trait: " . $P["Trait$i"] . "<br>" . $Parsedown->text($P["Trait$i" . "Desc"]) . "<p>";
           }
         }

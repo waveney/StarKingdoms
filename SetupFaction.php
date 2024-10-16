@@ -412,9 +412,9 @@ function SetupStage5() {
   foreach ($CSys as $Si=>$S) {
     $FS = Get_FactionSystemFS($Fid,$Si);
     $Sens = max(1,Has_Tech($Fid,'Sensors'));
-    $FS['ScanLevel'] = min($FS['ScanLevel'],$Sens);
-    $FS['SpaceScan'] = min($FS['SpaceScan'],$Sens);
-    $FS['PlanetScan'] = min($FS['PlanetScan'],$Sens);
+    $FS['ScanLevel'] = max($FS['ScanLevel'],$Sens);
+    $FS['SpaceScan'] = max($FS['SpaceScan'],$Sens);
+    $FS['PlanetScan'] = max($FS['PlanetScan'],$Sens);
 
     Put_FactionSystem($FS);
     $Ref[$S['Ref']] = $Si;

@@ -45,32 +45,27 @@ function Node_Show($Fid,$Tid, $Lid, $N, $url='') {
   global $Factions,$Dot;
     $NodeName = $N['Name']?$N['Name']:"";
     $ShortName = $N['ShortName']?$N['ShortName']:$NodeName;
-    $Hide = 0;
     if ($Fid) {
       if ($N['Control'] != $Fid) {
         $FS = Get_FactionSystemFS($Fid, $N['id']);
-        if (isset($FS['id'])) {
-          $Hide = 0;
-          if ($FS['ScanLevel'] >= 0) {
+        if (isset($FS['id']) && ($FS['ScanLevel'] >= 0)) {
             if (!empty($FS['Name'])) $ShortName = $NodeName = $FS['Name'];
             if (!empty($FS['ShortName'])) $ShortName = $FS['ShortName'];
-          } else {
-            $Hide = 1;
-          }
+        } else {
+          return;
         }
       }
     }
     $atts = "";
 
     $Colour = "white";
-    if ($N['Control'] && !$Hide) {
+    if ($N['Control'] ) {
       $Colour = $Factions[$N['Control']]['MapColour'];
       $Factions[$N['Control']]['Seen']=1;
     } else {
       $Colour = "White";
     }
 
-    if ($Hide) $NodeName = '';
     $BdrColour = "Black";
 
     $atts .= "  shape=box style=filled fillcolor=\"$Colour\" color=$BdrColour";
