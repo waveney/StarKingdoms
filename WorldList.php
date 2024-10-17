@@ -130,7 +130,7 @@
     }
 
     if ($Conflict == 0) {
-      $Recalc = Recalc_Economic_Rating($H,$W,$Fid);
+      [$Recalc,$Rtxt] = Recalc_Economic_Rating($H,$W,$Fid);
 
       if ($Recalc != $H['Economy']) {
         echo "ECONOMY ERROR - SHOULD BE $Recalc <br>";

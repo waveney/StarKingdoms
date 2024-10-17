@@ -1264,7 +1264,7 @@ function Show_Thing(&$T,$Force=0) {
       if ($NumPs == 1) {
         foreach ($HabPs as $Plid=>$data) {
           $P = $Ps[$Plid];
-          $ConLevel = Feature('BaseColonise',16) + $P['ColonyTweak'];
+          $ConLevel = Feature('BaseColonise',10) + $P['ColonyTweak'];
           $Prog = $HasPlanet * ($EngCorpLevel + $data[2]);
 
           echo "<tr><td><td colspan=6>Colonising: " . $P['Name'] . " a " . $PlTs[$P['Type']]['Name'] . ($PlTs[$P['Type']]['Append']?' Planet':'') .

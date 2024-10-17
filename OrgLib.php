@@ -26,7 +26,13 @@ function Recalc_Offices() { // Recount offices for each org
   $OrgTypes = Get_OrgTypes();
   $OCount = [];
 
-  foreach ($Orgs as $i=>$O) if (($OrgTypes[$O['OrgType']]['Props'] & ORG_SPECIAL_POWER) == 0) $Orgs[$i]['OfficeCount'] = 0;
+  foreach ($Orgs as $i=>$O) {
+    if (($OrgTypes[$O['OrgType']]['Props'] & ORG_SPECIAL_POWER) == 0) {
+      $Orgs[$i]['OfficeCount'] = 0;
+    } else {
+      if (($Pow = Has_Tech($O['Whose'],'Ascension'))) $Orgs[$i]['OfficeCount'] = $Pow;
+    }
+  }
   foreach ($Offs as $oi=>$Of) {
     $Org = $Of['Organisation'];
     if (isset($Orgs[$Org])) {

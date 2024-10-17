@@ -370,7 +370,7 @@ function Recalc_Worlds($Silent=0) {
         Put_World($W);
 
         $Worlds[$Wi]['Done'] = 1;
-        $Recalc = Recalc_Economic_Rating($H,$W,$Fid);
+        [$Recalc,$Rtxt] = Recalc_Economic_Rating($H,$W,$Fid);
         if ($H['Economy'] != $Recalc) {
           $H['Economy'] = $Recalc;
           Put_ProjectHome($H);
@@ -416,7 +416,7 @@ function Recalc_Worlds($Silent=0) {
     Put_World($W);
     $Worlds[$W['id']] = $W;
 
-    $Recalc = Recalc_Economic_Rating($H,$W,$Fid);
+    [$Recalc,$Rtxt] = Recalc_Economic_Rating($H,$W,$Fid);
     if ($H['Economy'] != $Recalc) {
       $H['Economy'] = $Recalc;
       Put_ProjectHome($H);
@@ -462,6 +462,8 @@ function Recalc_Economic_Rating(&$H,&$W,$Fid,$Turn=0) {
   $Dists = Get_DistrictsH($H['id'],$Turn);
   $DTs = Get_DistrictTypes();
 
+  $ERate = 0;
+  $EText = '';
   $NumPrime = $Mines = 0;
   $NumCom = 0; $NumInd = 0;
   if (!$Dists) return 0;
@@ -480,10 +482,23 @@ function Recalc_Economic_Rating(&$H,&$W,$Fid,$Turn=0) {
 //var_dump($NumPrime);
   $MinFact = (Has_Tech($Fid,'Improved Mining')?1.5:1);
   if (feature('Industrial')) {
+    $ERate = $NumPrime*4;
+    $EText = $NumPrime*4 . " from districts<br>\n";
+    $Min = $W['Minerals']*$NumInd;
+    if ($Min) {
+      $ERate += $Min;
+      $EText .= "Plus $Min from minerals<br>\n";
+    }
+    if (Has_PTraitW($W['id'],'Rare Mineral Deposits') && Has_Tech($Fid,'Advanced Mineral Extraction')) {
+      $ERate += $MinFact*3;
+      $EText .= "Plus " . $MinFact*3 . " from Rare Mineral Deposits<br>\n";
+    }
+    if (Has_PTraitW($W['id'],'Automated Farming Robots')) {
+      $ERate += 5;
+      $EText .= "Plus 5 from Automated Farming Robots<br>\n";
+    }
  //   var_dump($NumPrime,$NumInd,$MinFact, $W);
-    return $NumPrime*4 + $NumInd*($W['Minerals'] +
-      ((Has_PTraitW($W['id'],'Rare Mineral Deposits') && Has_Tech($Fid,'Advanced Mineral Extraction'))?3:0))*$MinFact +
-       (Has_PTraitW($W['id'],'Automated Farming Robots')?5:0);
+    return [$ERate,$EText];
   } else {
     return (Has_Trait($Fid,'No customers')?($NumPrime - $NumCom):$NumPrime)*$NumCom*2
          + min($W['Minerals'] * $MinFact,$NumPrime) + min($W['Minerals'] * $MinFact,$Mines*2* $MinFact);

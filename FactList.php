@@ -2,6 +2,7 @@
   include_once("sk.php");
   include_once("GetPut.php");
   include_once("PlayerLib.php");
+  include_once("ThingLib.php");
 
   A_Check('GM');
 
@@ -49,6 +50,7 @@
 
   foreach($Factions as $F) {
     $Fid = $F['id'];
+    [$Econ,$Ectxt] = Income_Calc($Fid);
     echo "<tr><td><a href=FactionEdit.php?F=$Fid>$Fid</a>";
     echo "<td><a href=Access.php?id=$Fid&Key=" . $F['AccessKey'] . " ><b>Use</b></a>";
     echo "<td><a href=FactionEdit.php?F=$Fid>" . $F['Name'] . "</a>";
@@ -58,7 +60,7 @@
     echo "<td>" . (isset($F['LastActive']) && $F['LastActive']? date('d/m/y H:i:s',$F['LastActive']) :"Never");
     echo "<td <span style='background:" . $PlayerStateColours[$F['TurnState']] . "'>"  . $PlayerState[$F['TurnState']];
     if ($PlayerState[$F['TurnState']] == 'Setup' && $F['Horizon']) echo " - used";
-    echo "<td>" . Income_Estimate($Fid);
+    echo "<td>" . $Econ*10;
     echo "<td><a href=Access.php?id=$Fid&Key=" . $F['AccessKey'] . " ><b>Use</b></a>";
   }
 

@@ -266,7 +266,7 @@
     }
   }
 
-  $H['Economy'] = Recalc_Economic_Rating($H,$W,$Fid);
+  [$H['Economy'],$Rtxt] = Recalc_Economic_Rating($H,$W,$Fid);
   if (isset($H['id'])) Put_ProjectHome($H);
 
   if (!empty($W['MaxDistricts'])) echo "<td>Max Districts: " . $WH['MaxDistricts'];
