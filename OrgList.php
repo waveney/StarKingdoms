@@ -93,22 +93,22 @@
 
   foreach ($Orgs as $i=>$O) {
     $Of = $O['Whose'];
+    if (!isset($SocPs[$Of])) $SocPs[$Of] = SocPrinciples($Of);
+
     if (!$All && ($Of != $Fid)) continue;
     echo "<tr>" . fm_hidden("GameId:$i", $GAMEID);
     if ($GM) echo "<td>$i";
-    if ($GM) {
+    if ($GM || ($O['OfficeCount']==0)) {
       echo "<td>" . fm_select($OrgTypeNames,$O,'OrgType',1,'',"OrgType:$i") . "<br>";
-      echo "also:<br>" . fm_select($OrgTypeNames,$O,'OrgType2',1,'',"OrgType2:$i");
+      if ($GM) echo "also:<br>" . fm_select($OrgTypeNames,$O,'OrgType2',1,'',"OrgType2:$i");
+      echo fm_text1('',$O,'Name',4,'','',"Name:$i");
 
-    } else {
-      echo "<td>" . $OrgTypeNames[$O['OrgType']];
-    }
-    echo fm_text1('',$O,'Name',4,'','',"Name:$i");
-    echo "<br>" . fm_basictextarea($O, 'Description',5,4," style='width=70%'","Description:$i");
-    if (!isset($SocPs[$Of])) $SocPs[$Of] = SocPrinciples($Of);
-    if ($GM) {
+      echo "<br>" . fm_basictextarea($O, 'Description',5,4," style='width=70%'","Description:$i");
       echo "<br>Social Principle (Religious / Ideological Orgs only)" . fm_select($SocPs[$Of],$O,'SocialPrinciple',1,'',"SocialPrinciple:$i");
     } else {
+      echo "<td>" . $OrgTypeNames[$O['OrgType']];
+      echo "<td colspan=4>" . $O['Name'] . "<br>";
+      echo $Parsedown->text(stripslashes($O['Description']));
       if ($O['OrgType'] == 5) echo "<br>Social Principle (Religious / Ideological Orgs only): " . $SocPs[$Of];
     }
     echo fm_number1('',$O,'RelOrder','','',"RelOrder:$i");
@@ -144,6 +144,7 @@
 
     if ($GM) echo "GM Note: The count of offices is reset next time <b>Rebuild list of Worlds and colonies</b> is run.<p>";
   } else {
+    echo "</table>";
     echo "New organisations are made by building them an office.<p>";
   }
   echo "</form></div>";
