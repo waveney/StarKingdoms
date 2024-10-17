@@ -9,7 +9,7 @@
   include_once("SystemLib.php");
   include_once("ProjLib.php");
 
-  global $FACTION,$ADDALL,$GAME,$ARMY;
+  global $FACTION,$ADDALL,$GAME,$ARMY, $GAMEID;
 
 // var_dump($_REQUEST);
 
@@ -63,6 +63,12 @@
 
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {  // TODO This code is DREADFUL needs redoing
+      case 'NEWORG':
+        $NOrg = ['Whose'=>$Fid, 'OrgType' => $_REQUEST['NewOrgType'], 'Name'=> $_REQUEST['NewOrgName'], 'Description'=>$_REQUEST['NewOrgDescription'],
+                 'SocialPrinciple' => $_REQUEST['NewOrgSocialPrinciple'], 'OfficeCount'=>0, 'GameId'=>$GAMEID];
+        $_REQUEST['Sel'] = $Orgid = Gen_Put('Organisations',$NOrg);
+        // Drop through
+
       case 'NEW':
         $Ptype = $_REQUEST['p'];
         $Turn = $_REQUEST['t'];
@@ -73,6 +79,7 @@
         $FreeRush = 0;
 
         switch ($ProjTypes[$Ptype]['Name']) {
+
         case 'Construction':
         case 'Grow District':
         case 'Research Planetary Construction':

@@ -8,6 +8,7 @@
   include_once("PlayerLib.php");
   include_once("SystemLib.php");
   include_once("ProjLib.php");
+  include_once("OrgLib.php");
 
   global $FACTION,$ARMY,$ARMIES;
 
@@ -274,18 +275,42 @@
           echo "<h2>Build Offices</h2>";
           $Lvl = count($Offices)+1;
           $pc = Proj_Costs($Lvl);
-          foreach($OrgTypes as $ot=>$O) {
-            if ($O['Gate'] && !eval("return " . $O['Gate'] . ";" )) continue;
-
-            if ($Offices[$ot]??0) continue;
- //           $Ord = ($Offices[$ot]??0)+1;
+          $Orgs = Gen_Get_Cond('Organisations',"Whose=$Fid");
+          if (count($Offices)< count($Orgs)) {
+            foreach ($Orgs as $OrgId=>$Org) {
+              foreach ($Offices as $O) if ($O['Organisation'] == $OrgId) continue 2;
+            }
             echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Construction'] .
-            "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=-$ot" .
-            "&Name=" . base64_encode("Build " . $O['Name'] . " Office $Place") .
+            "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=-$OrgId" .
+            "&Name=" . base64_encode("Build " . $Org['Name'] . " Office $Place") .
             "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-            "Build " . $O['Name'] . " Office; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>\n";
+            "Build " . $Org['Name'] . " Office; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>\n";
 
           }
+          // Get local offices, Get orgs.
+          // Make offices to any orgs w/o an office
+          // Office for new org
+          $ValidOrgs = [];
+          foreach($OrgTypes as $ot=>$O) {
+            if ($O['Gate'] && !eval("return " . $O['Gate'] . ";" )) continue;
+            $ValidOrgs[$ot] = $O['Name'];
+          }
+
+          echo "<h3>Office for a new Organisation</h3>";
+          echo "<table>";
+          echo "<tr><td>Org Type:" . fm_select($ValidOrgs,$O,'OrgType',0,'',"NewOrgType");
+          echo fm_text1('',$O,'NewOrgName',2,'','placeholder="New Organisation Name"');
+          echo "<tr><td colspan=4>" . fm_basictextarea($O, 'NewOrgDescription',5,3,"placeholder='New Organisation Description' style='width=70%'");
+          $SocPs = SocPrinciples($Fid);
+          echo "<tr><td colspan=4>Social Priniple (Religious / Ideological only)" . fm_select($SocPs,$O,'NewOrgSocialPrinciple');
+          echo "</table><br>";
+          echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEWORG&id=$Fid&p=" . $PTi['Construction'] .
+            "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=-$ot" .
+            "&Name=" . base64_encode("Build New Orgs Office $Place") .
+            "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
+            "Build New Orgs Office; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>\n";
+
+
         }
       }
 

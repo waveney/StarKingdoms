@@ -1241,8 +1241,7 @@ function Show_Thing(&$T,$Force=0) {
     case 'Colonise': // Colonise
       $PlTs = Get_PlanetTypes();
       $Ps = Get_Planets($N['id']);
-      $Hab_dome = Has_Tech($Fid,'Habitation Domes');
-      $Hab_Climate = Has_Tech($Fid,'Climate Control');
+
       $HabPs = [];
       foreach($Ps as $P) {
         if (!$PlTs[$P['Type']]['Hospitable']) continue;
@@ -1250,9 +1249,9 @@ function Show_Thing(&$T,$Force=0) {
         if (($P['Type'] == $FACTION['Biosphere']) || ($P['Type'] == $FACTION['Biosphere2']) || ($P['Type'] == $FACTION['Biosphere3'])) {
           $HabPs[$P['id']] = [$P['Name'],$P['Type'],0];
         } else if ($P['Type'] == 4 ) {
-          if ($Hab_dome) $HabPs[$P['id']] = [$P['Name'],$P['Type'],-2];
+          $HabPs[$P['id']] = [$P['Name'],$P['Type'],(Has_Tech($Fid,'Habitation Domes')?1.5:3)];
         } else {
-          if ($Hab_Climate) $HabPs[$P['id']] = [$P['Name'],$P['Type'],-1];
+          $HabPs[$P['id']] = [$P['Name'],$P['Type'],(Has_Tech($Fid,'Climate Control')?0.5:1)];
         }
       }
 
@@ -1265,7 +1264,8 @@ function Show_Thing(&$T,$Force=0) {
         foreach ($HabPs as $Plid=>$data) {
           $P = $Ps[$Plid];
           $ConLevel = Feature('BaseColonise',10) + $P['ColonyTweak'];
-          $Prog = $HasPlanet * ($EngCorpLevel + $data[2]);
+          $ConLevel = ceil($ConLevel*(1+$data[2]));
+          $Prog = $HasPlanet * $EngCorpLevel;
 
           echo "<tr><td><td colspan=6>Colonising: " . $P['Name'] . " a " . $PlTs[$P['Type']]['Name'] . ($PlTs[$P['Type']]['Append']?' Planet':'') .
              " will take $ConLevel actions, this will do $Prog actions per turn."; // TODO Moons
@@ -1279,8 +1279,9 @@ function Show_Thing(&$T,$Force=0) {
         $i = 1;
         foreach ($HabPs as $Plid=>$data) {
           $P = $Ps[$Plid];
-          $ConLevel = Feature('BaseColonise',16) + $P['ColonyTweak'];
-          $Prog = $HasPlanet * ($EngCorpLevel + $data[2]);
+          $ConLevel = Feature('BaseColonise',10) + $P['ColonyTweak'];
+          $ConLevel = ceil($ConLevel*(1+$data[2]));
+          $Prog = $HasPlanet * $EngCorpLevel;
           $Plans[$Plid] = $P['Name'] . " a " . $PlTs[$P['Type']]['Name'] . ($PlTs[$P['Type']]['Append']?'Planet':'') .
              " will take $ConLevel actions, this will do $Prog actions per turn."; // TODO Moons
           $Cols[$Plid] = $ThingInclrs[$i++];

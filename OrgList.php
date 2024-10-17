@@ -118,31 +118,34 @@
     }
     echo "<td>" . $O['OfficeCount'] . "<br><a href=OrgView.php?id=$i>View</a>";
   }
-  $O = [];
-  echo "<tr><td>";
-  if ($GM) echo "<td>";
-  echo fm_select($NewOrgs,$O,'OrgType',0,'',"OrgType:0");
-  echo fm_text1('',$O,'Name:0',4,'','placeholder="New Organisation Name"');
-  echo "<br>" . fm_basictextarea($O, 'Description:0',5,4,"placeholder='New Organisation Description' style='width=70%'");
   if ($GM) {
-    echo "Set up a Social Principle (if appropriate) after creating the Organisation";
-  } else {
-    if (!isset($SocPs[$Fid])) $SocPs[$Fid] = SocPrinciples($Fid);
-    echo "<br>Social Priniple (Religious / Ideological only)" . fm_select($SocPs[$Fid],$O,'SocialPrinciple:0');
-  }
-  echo fm_number1('',$O,'RelOrder','','',"RelOrder:0");
-  if ($GM) {
-    echo "<td>" . fm_select($FactNames,$O,'Whose:0',1);
-  } else {
-    echo fm_hidden('Whose:0',$Fid);
-  }
-  echo fm_hidden('GameId:0',$GAMEID);
-  if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
-  echo "</table>";
-  echo "<h2><input type=submit name=Update value='Add New Organisation'></h2>";
+    $O = [];
+    echo "<tr><td>";
+    if ($GM) echo "<td>";
+    echo fm_select($NewOrgs,$O,'OrgType',0,'',"OrgType:0");
+    echo fm_text1('',$O,'Name:0',4,'','placeholder="New Organisation Name"');
+    echo "<br>" . fm_basictextarea($O, 'Description:0',5,4,"placeholder='New Organisation Description' style='width=70%'");
+    if ($GM) {
+      echo "Set up a Social Principle (if appropriate) after creating the Organisation";
+    } else {
+      if (!isset($SocPs[$Fid])) $SocPs[$Fid] = SocPrinciples($Fid);
+      echo "<br>Social Priniple (Religious / Ideological only)" . fm_select($SocPs[$Fid],$O,'SocialPrinciple:0');
+    }
+    echo fm_number1('',$O,'RelOrder','','',"RelOrder:0");
+    if ($GM) {
+      echo "<td>" . fm_select($FactNames,$O,'Whose:0',1);
+    } else {
+      echo fm_hidden('Whose:0',$Fid);
+    }
+    echo fm_hidden('GameId:0',$GAMEID);
+    if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
+    echo "</table>";
+    echo "<h2><input type=submit name=Update value='Add New Organisation'></h2>";
 
-  if ($GM) echo "GM Note: The count of offices is reset next time <b>Rebuild list of Worlds and colonies</b> is run.<p>";
-
+    if ($GM) echo "GM Note: The count of offices is reset next time <b>Rebuild list of Worlds and colonies</b> is run.<p>";
+  } else {
+    echo "New organisations are made by building them an office.<p>";
+  }
   echo "</form></div>";
   dotail();
 
