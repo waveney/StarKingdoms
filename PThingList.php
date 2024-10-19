@@ -345,7 +345,12 @@
             echo "<td><td>";
           }
         } else {
-          echo "<td><td>";
+          echo "<td>";
+          if ($T['LinkId'] < 0) {
+            $Host = Get_Thing($T['SystemId']);
+            if ($Host) echo $Host['Name'];
+          }
+          echo "<td>";
         }
       } else {
         if ($GM && ($Props & THING_HAS_HEALTH) && ($Props & THING_CAN_BE_SPLATED) && ($T['CurHealth']>0)) {

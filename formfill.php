@@ -182,6 +182,7 @@
 
     $N[$field] = $Value;
     if ($field == 'LinkId') {
+      Set_Faction();
       $L = Get_Link($Value);
       $SYS1 = Get_SystemR($L['System1Ref']);
       $SYS2 = Get_SystemR($L['System2Ref']);

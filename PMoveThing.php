@@ -150,6 +150,7 @@ function LinkProps($L) {
   $N = Get_System($ThisSys);
 
   echo "<h1>Click on the destination to move:</h1><h2> " . $T['Name'] . " - from " . $N['Ref'] . " next turn</h2>";
+  echo "Note: This should only show you the links that can be used by " . $T['Name'] . ".<p>";
 
   $Dot = fopen("cache/$GAMEID/Movemap$Fid.dot","w+");
   if (!$Dot) { echo "Could not create dot file<p>"; dotail(); };
@@ -226,7 +227,7 @@ function LinkProps($L) {
           $Ttxt = SeeThing($Thing,$LastWhose,$Eyes,$Fid,0,0,0); //$Thing['Name'] type Class, whose SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0)
           if ($Ttxt) {
             $List[$Thing['id']] = $Ttxt;
-            $Colrs[$Thing['id']] = $Facts[$Thing['Whose']]['MapColour'];
+            $Colrs[$Thing['id']] = ($Facts[$Thing['Whose']]['MapColour']??'lime');
           }
         }
         if ($List) {

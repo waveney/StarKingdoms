@@ -78,6 +78,7 @@ function Put_System(&$now) {
 
 function Get_SystemR($sysref) {
   global $db,$GAMEID;
+  var_dump($sysref);
   $res = $db->query("SELECT * FROM Systems WHERE GameId=$GAMEID AND Ref='$sysref'");
   if ($res) return $res->fetch_assoc();
   return [];

@@ -480,7 +480,7 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0 ) {
         }
         $LinkText = "Unknown";
         $FL = Get_FactionLinkFL($Fid,$L['id']);
-        if (!$FL || ($L['Known']==0 && $L['Concealment']>0)) {
+        if (!$FL || ($FL['Known']==0 && $L['Concealment']>0)) {
           unset($Links[$Lid]);
           continue;
         }

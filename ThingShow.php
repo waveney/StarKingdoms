@@ -516,7 +516,7 @@ function Show_Thing(&$T,$Force=0) {
     $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
     if ($Conf) $Conflict = $Conf[0]['Conflict'];
 
-    $NewRef = (empty($T['NewSystemId']) ? $N['Ref'] : Get_System($T['NewSystemId'])['Ref']);
+    $NewRef = (empty($T['NewSystemId']) ? ($N['Ref']??'???') : Get_System($T['NewSystemId'])['Ref']);
 
     $CargoUsed = $CryoUsed = 0; // Adds troops up as Cryo - checked later if it has
 
@@ -526,7 +526,7 @@ function Show_Thing(&$T,$Force=0) {
       echo "<a href=ThingEdit.php?id=$Hid>" . $H['Name'] . "</a> a " . (($hprops & THING_HAS_LEVELS)? "Level " . $H['Level'] : "") . " " . $ttn[$H['Type']];
       if ($GM && $Conflict) echo " <b>Conflict</b> ";
       if ($GM || !$Conflict ) echo fm_submit("ACT$Hid",'Unload Now',0);
-      echo " to: " . $N['Ref'] . " - " . fm_select($Syslocs,$H,'WithinSysLoc',0,'',"WithinSysLoc:$Hid");
+      echo " to: " . ($N['Ref']??'???') . " - " . fm_select($Syslocs,$H,'WithinSysLoc',0,'',"WithinSysLoc:$Hid");
       if ($H['LinkId'] == -3) {
         echo " - Unloading on Turn to <b>$NewRef</b>, " . $NewSyslocs[$H['NewLocation']];
         echo fm_submit("ACT$Hid",'Cancel Unload',0);
