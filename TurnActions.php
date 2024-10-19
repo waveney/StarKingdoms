@@ -3637,9 +3637,11 @@ function GiveSurveyReports() {
         if (($Fid != $LastFid) || ($LastSys != $S['Sys'])) {
           $N = Get_System($S['Sys']);
           if (!$New) {
-            TurnLog($Fid, "<h3>You are due an improved survey report for <a href=SurveyReport.php?N=" . $S['Sys'] . ">" . System_Name($N,$Fid) . "</a></h3>");
+            TurnLog($Fid, "<h3>You are due an improved survey report for <a href=SurveyReport.php?N=" . $S['Sys'] . ">" . System_Name($N,$Fid) . "</a>" .
+              " (Just click on the system on your map)</h3>");
           } else {
-            TurnLog($Fid, "<h3>You are have new survey report for <a href=SurveyReport.php?N=" . $S['Sys'] . ">" . System_Name($N,$Fid) . "</a></h3>");
+            TurnLog($Fid, "<h3>You are have new survey report for <a href=SurveyReport.php?N=" . $S['Sys'] . ">" . System_Name($N,$Fid) . "</a>" .
+              " (Just click on the system on your map)</h3>");
           }
         }
       }
@@ -4005,6 +4007,40 @@ function RecalcProjectHomes() {
 
   Recalc_Mined_locs();
   Recalc_Prisoner_Counts();
+
+  // check for worlds and colonies that can be autoscanned at a higher level
+  $Facts = Get_Factions();
+  foreach ($Facts as $Fid=>$Fact) {
+    $Worlds = Get_Worlds($Fid);
+    $Scanlvl = Has_Tech($Fid,'Sensors');
+    foreach ($Worlds as $Wid=>$W) {
+      switch ($W['ThingType']) {
+        case 1: // Planet
+          $P = Get_Planet($W['ThingId']);
+          $Sys = $P['SystemId'];
+          break;
+        case 2: // MOon
+          $M = Get_Moon($W['ThingId']);
+          $P = Get_Planet($M['PlanetId']);
+          $Sys = $P['SystemId'];
+          break;
+        case 3: // hing
+          $P = Get_Thing($W['ThingId']);
+          $Sys = $P['SystemId'];
+          break;
+      }
+      $FS = Get_FactionSystemFS($Fid,$Sys);
+      if (!isset($FS['id']) || ($FS['ScanLevel'] < $Scanlvl) || ($FS['SpaceScan'] < $Scanlvl) || ($FS['PlanetScan'] < $Scanlvl)) {
+        $FS['ScanLevel'] = $FS['SpaceScan'] = $FS['PlanetScan'] = $Scanlvl;
+        $N = Get_System($Sys);
+        Put_FactionSystem($FS);
+        TurnLog($Fid, "<h3>You are due an improved survey report for <a href=SurveyReport.php?N=$Sys>" . System_Name($N,$Fid) .
+          "</a> (just click on the system on your map)</h3>");
+      }
+    }
+  }
+  GMLog("<br>Worlds Recalculated and indications of improved World and colony surveys given<p>\n");
+
   return 1;
 }
 
