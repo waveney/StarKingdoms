@@ -916,10 +916,14 @@ function Has_Tech($fid,$name) {
   $lvl = 0;
   $Based = $Tech['PreReqTech'];
 
-  $res = $db->query("SELECT Level FROM  FactionTechs WHERE Faction_Id=$fid AND Tech_Id=$Based ");
-  if ($res && ($ans = $res->fetch_assoc())) $lvl = $ans['Level'];
+  if ($Based) {
+    $res = $db->query("SELECT Level FROM  FactionTechs WHERE Faction_Id=$fid AND Tech_Id=$Based ");
+    if ($res && ($ans = $res->fetch_assoc())) $lvl = $ans['Level'];
 
-  return $lvl;
+    return $lvl;
+  }
+  return $ans['Level'];
+
 }
 
 function Has_GTrait(&$Data,$Name) {

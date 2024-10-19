@@ -330,7 +330,7 @@ foreach ($Orgs as $OrgId=>$O) {
         if ($OpCosts) echo "\n<td $BG id=ProjC$Turn:$OrgId: class='PHCost Group$OrgId Home$OrgId' $Hide>" . $proj[$Turn][$OrgId]['Cost'];
         if ($OpRushs) echo "\n<td $BG id=ProjR$Turn:$OrgId: class='PHRush Group$OrgId Home$OrgId' $Hide>" . (($Turn < $GAME['Turn'])?$proj[$Turn][$OrgId]['Rush'] :
              "<input type=number id=Rush$Turn:$PN name=Rush$Turn:$PN oninput=RushChange($Turn,$PN,$OrgId,0," .
-             $proj[$Turn][$OrgId]['MaxRush'] . ") value=" . min($proj[$Turn][$OrgId]['Rush'],$proj[$Turn][$OrgId]['MaxRush'])  .
+             $proj[$Turn][$OrgId]['MaxRush'] . ",'Operations') value=" . min($proj[$Turn][$OrgId]['Rush'],$proj[$Turn][$OrgId]['MaxRush'])  .
              " min=0 max=" . ($proj[$Turn][$OrgId]['GMOverride']?20:$proj[$Turn][$OrgId]['MaxRush']) .">" );
  //     if (!empty($Proj[$Turn][$OrgId]['Bonus'])) echo "<div id=ProjB$Turn:$OrgId: class='PHBonus hidden>" . $Proj[$Turn][$OrgId]['Bonus'] . "</div>";
         echo "\n<td $BG id=ProjP$Turn:$OrgId: class='PHProg Group$OrgId Home$OrgId' $Hide>" . $proj[$Turn][$OrgId]['Progress'];

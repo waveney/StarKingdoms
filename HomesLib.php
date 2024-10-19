@@ -12,6 +12,7 @@ function Recalc_Project_Homes($Logf=0, $Silent=0) {
 
   $KnownHomes = [];
 
+ // var_dump($Facts);
   foreach($Facts as $F) {
     $Homes = Get_ProjectHomes($F['id']);
     if ($Homes) $KnownHomes = array_merge($KnownHomes,$Homes);
@@ -226,7 +227,7 @@ function Recalc_Project_Homes($Logf=0, $Silent=0) {
 
     if ($T['BuildState'] < 2 || $T['BuildState'] > 3 ) continue;
 
-    if (($ThingTypes[$T['Type']]['Properties'] & (THING_HAS_DISTRICTS + THING_CAN_DO_PROJECTS)) != 0 ) {
+    if ((($ThingTypes[$T['Type']]['Properties']??0) & (THING_HAS_DISTRICTS + THING_CAN_DO_PROJECTS)) != 0 ) {
       $THi = $T['ProjHome'];
       if ($THi) {
         foreach ($KnownHomes as &$H) {
@@ -360,7 +361,7 @@ function Recalc_Worlds($Silent=0) {
           $ThisBio = -1;
           break;
         }
-        $Bio = $Facts[$Fid]['Biosphere'];
+        $Bio = ($Facts[$Fid]['Biosphere']??0);
     // Find Project Home
 
         $W['Home'] = $H['id'];

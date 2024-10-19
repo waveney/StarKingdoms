@@ -68,21 +68,21 @@ function Link_Search($Sys,$lnks) { // Part of Op_Level (Recusive)
 //  echo "A";
   $BeenHere[$Sys] = $lnks+1;
   // if ($Sys)
-//  echo "A";
+//  echo "A$lnks<br>";
   $Any = 0;
   foreach ($SysLnks[$Sys] as $Si) {
- //   echo "B$Si";
+//    echo "B$lnks:$Si<br>";
     if ($BeenHere[$Si]??99) continue;
- //   echo "C";
+ //   echo "Call LS - $lnks:<br>";
     $D = Link_Search($Si,$lnks+1);
-//echo "<br>D$D=$Min=";
+//echo "<br>D$lnks:$D=$Min=<br>";
     if (($D >= 0) && ($D < $Min)) {
       $Min = $D;
       $Any = 1;
     }
   }
   $BeenHere[$Sys] = 0;
-//echo "E$Any=";
+//echo "E$lnks:$Min=<br>";
   return $Min;
 }
 
@@ -101,7 +101,7 @@ function Op_Level($Orgid,$Sys,$Mod=0) {
   $LKnown = Gen_Get_Cond('FactionLink', "FactionId=$Fid");
   $SKnown1 = Gen_Get_Cond('FactionSystem', "FactionId=$Fid");
   $SKnown = [];
-  foreach($SKnown1 as &$K) $SKnown[$K['SystemId']] = $K;
+  foreach($SKnown1 as $K) $SKnown[$K['SystemId']] = $K;
   $Links = Get_LinksGame();
 //  $Depth = $Org['OfficeCount']-$Mod;
 
@@ -134,16 +134,16 @@ function Op_Level($Orgid,$Sys,$Mod=0) {
     switch ($W['ThingType']) {
       case 1: //Planets
         $P = Get_Planet($W['ThingId']);
-        $Targets[$P['SystemId']] = 1;
+        $Targets[$P['SystemId']] = 2;
         break;
       case 2: // Moon
         $M = Get_Moon($W['ThingId']);
         $P = Get_Planet($M['PlanetId']);
-        $Targets[$P['SystemId']] = 1;
+        $Targets[$P['SystemId']] = 2;
         break;
       case 3: // Thing
         $P = Get_Thing($W['ThingId']);
-        $Targets[$B['SystemId']] = 1;
+        $Targets[$B['SystemId']] = 2;
         break;
     }
   }
@@ -151,7 +151,7 @@ function Op_Level($Orgid,$Sys,$Mod=0) {
   // Targets should now identify the systems it needs to reach
   if (isset($_REQUEST['SHOWTARGS'])) var_dump($Targets,$SKnown);
   if (isset($Targets[$Sys])) return 0; // Range 0
-
+// var_dump($LKnown);
   // Make double linked list of links to systems
   $SysLnks = [];
   $BeenHere = [];
@@ -171,12 +171,13 @@ function Op_Level($Orgid,$Sys,$Mod=0) {
     }
     $BeenHere[$S1] = $BeenHere[$S2] = 0;
   }
-  foreach ($SKnown as $Si=>$K) $BeenHere[$Si] = 0;
+  foreach (array_keys($SKnown) as $Si) $BeenHere[$Si] = 0;
   if (!isset($SysLnks[$Sys])) return -1; // No known links there
 //  $BeenHere[$Sys] = 1;
 //var_dump($BeenHere,$Depth);
   $Min = 100;
   $Min = Link_Search($Sys,0);
+//  var_dump($Min2);
   return $Min;// ($Min>99?-1:$Min);
 }
 

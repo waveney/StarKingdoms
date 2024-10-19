@@ -43,9 +43,9 @@ debugger;
 }
 
 
-function RushChange(Turn,Projn,Homeindx,Distindx,MaxRush) {
+function RushChange(Turn,Projn,Homeindx,Distindx,MaxRush,sfx='') {
 debugger;
-  AutoInput('Rush' + Turn + ':' + Projn);
+  AutoInput('Rush' + Turn + ':' + Projn,sfx);
   var costthis = document.getElementById("ProjC" + Turn + ':' + Homeindx + ':' + Distindx).innerHTML;
   if (costthis && costthis > 0) { 
     var Acts = document.getElementById("ProjP" + Turn + ':' + Homeindx +':' + Distindx).innerHTML;  

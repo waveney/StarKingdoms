@@ -133,7 +133,7 @@
     echo "<tr>";
 
     if ($GM) echo "<td>$si<td>" . $Facts[$SP['Whose']]['Name'];
-    echo "<td><a href=SocialEdit.php?id=$si>" . $SP['Principle'] . "</a><td>" . $Parsedown->text(striptslashes($SP['Description']));
+    echo "<td><a href=SocialEdit.php?id=$si>" . $SP['Principle'] . "</a><td>" . $Parsedown->text(stripslashes($SP['Description']));
   }
   echo "</table></div>\n";
 

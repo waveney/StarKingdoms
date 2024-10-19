@@ -260,9 +260,11 @@
 
   // Traits - need planet survey level
 
-  for($i=1;$i<4;$i++) {
-    if ($WH["Trait$i"] && ($WH["Trait$i" . "Conceal"] <= $PlanetLevel)) {
-      echo "<tr><td>Trait:<td>" . $P["Trait$i"] . "<td colspan=4>" . $Parsedown->text(stripslashes($P["Trait$i" . "Desc"]));
+  if ($WH) {
+    for($i=1;$i<4;$i++) {
+      if ($WH["Trait$i"] && ($WH["Trait$i" . "Conceal"] <= $PlanetLevel)) {
+        echo "<tr><td>Trait:<td>" . $P["Trait$i"] . "<td colspan=4>" . $Parsedown->text(stripslashes($P["Trait$i" . "Desc"]));
+      }
     }
   }
 

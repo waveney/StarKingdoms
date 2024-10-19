@@ -319,7 +319,7 @@ function Show_System(&$N,$Mode=0) {
     echo "<h2>Factions Knowledge</h2>";
     echo "<table border><tr><td>Faction<td>Passive Scan Level<td>Space Scan Level<td>Planetary Scan Level";
     foreach ($FactionSys as $FS) {
-      echo "<tr><td>" . $Facts[$FS['FactionId']]['Name'] . "<td>" . $FS['ScanLevel'] . "<td>" . $FS['SpaceLevel'] . "<td>" . $FS['PlanetLevel'];
+      echo "<tr><td>" . $Facts[$FS['FactionId']]['Name'] . "<td>" . $FS['ScanLevel'] . "<td>" . $FS['SpaceScan'] . "<td>" . $FS['PlanetScan'];
     }
     echo "</table>";
   }

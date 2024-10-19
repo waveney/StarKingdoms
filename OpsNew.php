@@ -138,7 +138,7 @@
 
       if ($OpTypes[$op]['Props'] & OPER_OUTPOST) {
         $TTYpes = Get_ThingTypes();
-        $TTNames = NamesList($TTYpes);
+        $TTNames = array_flip(NamesList($TTYpes));
         $OutPs = Get_Things_Cond($Fid,"Type=" . $TTNames['Outpost'] . " AND SystemId=$Wh AND BuildState=3");
         if ($OutPs) {
           if (count($OutPs >1)) {
@@ -226,7 +226,7 @@
         if ($OpTypes[$op]['Props'] & OPER_SOCPTARGET) { // Target SocP
           $With = $TSys['Control'];
           $World = WorldFromSystem($Wh);
-          $SocPs = Get_SocialPs($World);
+          $SocPs = Get_SocialPs($World); // NEEDS Changing
           if ($SocPs) {
             echo "<h2>Please Select the Social Principle you are hitting:</h2>";
             foreach ($SocPs as $Si=>$SPr) {
@@ -237,8 +237,15 @@
           }
           // Need to remove those not visable as too low
 
-        } else { // Your SocP - no actions at this stage (I think)
-
+        } else { // Your SocP, load it for world
+          $SocPs = Get_SocialPs($World);
+          $SP = 0;
+          foreach ($SocPs as $Si=>$S) {
+            if ($SP == $Org['SocialPrinciple']) {
+              $SP = $Si;
+              break;
+            }
+          }
         }
 
       }
@@ -262,13 +269,12 @@
           }
           $Level = $TechLevel;
         }
-        if ($SP) {
-          $SocP = Get_SocialP($SP);
-          echo "Principle:" . $SocP['Principle'];
-          $Level = $SocP['Value'];
-          $Name .= " Principle: " . $SocP['Principle'];
-
-        }
+      }
+      if ($SP) {
+        $SocP = Get_SocialP($SP);
+        echo "Principle:" . $SocP['Principle'];
+        $Level = $SocP['Value'];
+        $Name .= " Principle: " . $SocP['Principle'];
       }
 
       $Mod = ($OpTypes[$op]['Props'] & OPER_LEVEL);

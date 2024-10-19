@@ -23,43 +23,17 @@ TODO
 50) Links in Ledgend controlled by tech/feature
 
 
-Future Hooks:
-1) Players can be GMs etc in different games (untested)
-2) Nebulae can be thicker requiring more/better sensors
-3) Projects can be abandoned and resumed later (penalty to be decided upon)
-4) Many things from Asteroid mines, Minefields etc can be "advanced", they appear the same to other factions, but get more money, delever more damage etc.
-5) Link Ids can be annoymised so you don't know what connects to what until you explore them
-6) Most things can be leveled eg minefileds, outposts etc
-7) The Logistics cost of units at Home can be halved (Always or by a tech)
 
 
-SKC y => Game n
-SKD y => game m
 
-If no cookie -> login page
-login -> (list of games)
-select game of list, player/GM access
 
-if game selected 
-  game live?  N -> read only
-  Y -> GM? N -> Player mode (SKD only)
-  Y -> GM mode (SKC only)
 
-Get game data
-  from game get code prefix
-  
-  src1 -> GAME1 source
-  
-  srcn -> Gamen source
-  
-  Can be multiple games per src
+
+
   
   modify .htaccess to redirect as appropriate
   
-Core code
-  sk, skfm, skdb, Updatesystem, Login, ListUsers, AddUser, GetPut?
-  CoreTools.js NEW
-  GameData? 
+
 
 
 Per game code
@@ -70,17 +44,15 @@ SKD - Current Game/Faction
 
 NEW GAME 
 1  Maps and links consistentcy
-    2  Colonise mechanics
-3  Build office
-    4  Econ Office
 5  Offices and homeworld
-    6  Building limits and rates
 7  Spread the word level calc
-8  Rushing
-9  Make trade branch
-    10 better enconomy calcs 
-11 
-
+11 Hostile/wary/neutral/friendly/ally
+13 Burn the heretic - ac gm
+14 Scans of worlds & colonies
+15 Burn Heretics/Investigate Competition (Low priority)
+16 All Operations to automate (list when started)
+17 Where has X come from (from last line in things history) - add to see after movement (filter for unknown wormhole)
+19
 
 
 

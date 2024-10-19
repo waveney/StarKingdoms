@@ -739,7 +739,7 @@
           echo "\n<td $BG id=ProjC$Turn:$Hi:$Di class='PHCost Group$Di Home$Hi' $Hide>" . $proj[$Turn][$Hi][$Di]['Cost'];
           echo "\n<td $BG id=ProjR$Turn:$Hi:$Di class='PHRush Group$Di Home$Hi' $Hide>" . (($Turn < $GAME['Turn'])?$proj[$Turn][$Hi][$Di]['Rush'] :
                "<input type=number id=Rush$Turn:$PN name=Rush$Turn:$PN oninput=RushChange($Turn,$PN,$Hi,$Di," .
-               $proj[$Turn][$Hi][$Di]['MaxRush'] . ") value=" . min($proj[$Turn][$Hi][$Di]['Rush'],$proj[$Turn][$Hi][$Di]['MaxRush'])  .
+               $proj[$Turn][$Hi][$Di]['MaxRush'] . ",'Projects') value=" . min($proj[$Turn][$Hi][$Di]['Rush'],$proj[$Turn][$Hi][$Di]['MaxRush'])  .
                " min=0 max=" . ($proj[$Turn][$Hi][$Di]['GMOverride']?20:$proj[$Turn][$Hi][$Di]['MaxRush']) .">" );
 //          if (!empty($Proj[$Turn][$Hi][$Di]['Bonus'])) echo "<div id=ProjB$Turn:$Hi:$Di class='PHBonus hidden>" . $Proj[$Turn][$Hi][$Di]['Bonus'] . "</div>";
           echo "\n<td $BG id=ProjP$Turn:$Hi:$Di class='PHProg Group$Di Home$Hi' $Hide>" . $proj[$Turn][$Hi][$Di]['Progress'];
