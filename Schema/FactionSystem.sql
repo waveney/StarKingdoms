@@ -12,5 +12,7 @@ CREATE TABLE `FactionSystem` (
   `PassiveScan` int NOT NULL COMMENT 'Not Used\r\n',
   `SpaceScan` int NOT NULL,
   `PlanetScan` int NOT NULL,
+  `Star1Name` text COLLATE utf8mb4_general_ci NOT NULL,
+  `Star2Name` text COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
