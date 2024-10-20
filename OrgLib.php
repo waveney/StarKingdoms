@@ -147,7 +147,7 @@ function Op_Level($Orgid,$Sys,$Mod=0) {
         break;
       case 3: // Thing
         $P = Get_Thing($W['ThingId']);
-        $Targets[$B['SystemId']] = 2;
+        $Targets[$P['SystemId']] = 2;
         break;
     }
   }
