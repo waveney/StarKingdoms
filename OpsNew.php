@@ -21,6 +21,9 @@
       if (!Access('GM') && $Faction['TurnState'] > 2) Player_Page();
     }
   }
+
+  dostaffhead("New Operations for faction");
+
   if (Access('GM') ) {
     A_Check('GM');
     if (isset( $_REQUEST['F'])) {
@@ -30,7 +33,12 @@
     } else if (isset( $_REQUEST['id'])) {
       $Fid = $_REQUEST['id'];
     }
-    if (isset($Fid)) $Faction = Get_Faction($Fid);
+    if (isset($Fid)) {
+      $Faction = Get_Faction($Fid);
+    } else {
+      echo "<h2 class=Err>No Faction Selected</h2>";
+      dotail();
+    }
   }
 
   $OpCosts = Feature('OperationCosts');
@@ -39,7 +47,6 @@
   $OpTypes = Get_OpTypes();
   $OrgTypes = Get_OrgTypes();
 
-  dostaffhead("New Operations for faction");
 
 //  var_dump($_REQUEST);
 

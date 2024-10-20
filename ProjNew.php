@@ -279,13 +279,12 @@
           if (count($Offices)< count($Orgs)) {
             foreach ($Orgs as $OrgId=>$Org) {
               foreach ($Offices as $O) if ($O['Organisation'] == $OrgId) continue 2;
+              echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Construction'] .
+                    "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=-$OrgId" .
+                    "&Name=" . base64_encode("Build " . $Org['Name'] . " Office $Place") .
+                    "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
+                    "Build " . $Org['Name'] . " Office; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>\n";
             }
-            echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Construction'] .
-            "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=-$OrgId" .
-            "&Name=" . base64_encode("Build " . $Org['Name'] . " Office $Place") .
-            "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-            "Build " . $Org['Name'] . " Office; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>\n";
-
           }
           // Get local offices, Get orgs.
           // Make offices to any orgs w/o an office

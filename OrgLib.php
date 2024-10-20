@@ -64,7 +64,7 @@ function Link_Search($Sys,$lnks) { // Part of Op_Level (Recusive)
 //var_dump($BeenHere);
   if ($lnks > 20) return -2;
   if (isset($Targets[$Sys])) return $lnks;
-  if ($BeenHere[$Sys] || ($lnks>=$Min)) return -3;
+  if (($BeenHere[$Sys]>($lnks+1)) || ($lnks>=$Min)) return -3;
 //  echo "A";
   $BeenHere[$Sys] = $lnks+1;
   // if ($Sys)
@@ -126,7 +126,7 @@ function Op_Level($Orgid,$Sys,$Mod=0) {
         break;
       case 3: // Thing
         $P = Get_Thing($B['HostId']);
-        $Targets[$B['SystemId']] = 1;
+        if ($B['SystemId']) $Targets[$B['SystemId']] = 1;
         break;
     }
   }

@@ -88,7 +88,7 @@
   echo "<th colspan=4><a href=javascript:SortTable(" . $coln++ . ",'T')>Name and description</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Relative Order</a>\n";
   if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Whose</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Offices</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Offices &amp; Branches</a>\n";
   echo "</thead><tbody>";
 
   foreach ($Orgs as $i=>$O) {
@@ -109,7 +109,7 @@
       echo "<td>" . $OrgTypeNames[$O['OrgType']];
       echo "<td colspan=4>" . $O['Name'] . "<br>";
       echo $Parsedown->text(stripslashes($O['Description']));
-      if ($O['OrgType'] == 5) echo "<br>Social Principle (Religious / Ideological Orgs only): " . $SocPs[$Of];
+      if ($O['OrgType'] == 5) echo "<br>Social Principle (Religious / Ideological Orgs only): " . $SocPs[$Of][$O['SocialPrinciple']];
     }
     echo fm_number1('',$O,'RelOrder','','',"RelOrder:$i");
     if ($GM) {

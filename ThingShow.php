@@ -960,8 +960,8 @@ function Show_Thing(&$T,$Force=0) {
 
     case 'Analyse Anomaly': // Analyse
       if (($T['Sensors'] == 0) || empty($N) ) continue 2;
-      $Anoms = Gen_Get_Cond1('Anomalies',"SystemId=" . $T['SystemId']);
-      foreach($Anoms as $A) {
+      $A = Gen_Get_Cond1('Anomalies',"SystemId=" . $T['SystemId']);
+      if ($A) {
         $Aid = $A['id'];
         $FA = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
         if (empty($FA['id']) ) continue;
