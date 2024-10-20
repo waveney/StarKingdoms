@@ -960,12 +960,11 @@ function Show_Thing(&$T,$Force=0) {
 
     case 'Analyse Anomaly': // Analyse
       if (($T['Sensors'] == 0) || empty($N) ) continue 2;
-      $Anoms = Gen_Get_Cond('Anomalies',"SystemId=" . $T['SystemId']);
+      $Anoms = Gen_Get_Cond1('Anomalies',"SystemId=" . $T['SystemId']);
       foreach($Anoms as $A) {
         $Aid = $A['id'];
         $FA = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
-        if (empty($FA[0]['id']) ) continue;
-        $FA = $FA[0];
+        if (empty($FA['id']) ) continue;
         if ($FA['State'] == 0 || $FA['State'] == 3) continue;
         if ($FA['Progress'] < $A['AnomalyLevel']) break 2; // This anomaly can be studied (There may be more than one, but one is enough
       }
