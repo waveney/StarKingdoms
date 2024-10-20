@@ -37,7 +37,7 @@
       if (!Access('GM') ) Error_Page("Sorry you need to be a GM or a Player to access this");
     } else {
       $Fid = $FACTION['id'];
-      $Faction = &$FACTION;
+      $Faction = $FACTION;
     }
   } else if (!$GM) {
     Error_Page("Sorry you need to be a GM or a Player to access this");
@@ -249,7 +249,7 @@ foreach ($Orgs as $OrgId=>$O) {
   $HL = "<th class='PHStart Group$OrgId Home$OrgId' id=PHDist:$OrgId $back $Hide><b>+</b>" .
   "<th $back class='PHName  Home$OrgId'><button type=button onclick=Toggle('Group$OrgId')>";
 
-  $HL .= $O['Name'] . " - " . $O['OfficeCount'];
+  $HL .= $O['Name'] . " " . $O['OfficeCount'];
   $HL .= "</button><th $back class='PHLevel Group$OrgId Home$OrgId'id=PHLevel$OrgId $Hide>Lvl";
   if ($OpCosts) $HL .= "<th $back class='PHCost Group$OrgId Home$OrgId' id=PHCost$OrgId $Hide>Cost";
   if ($OpRushs) $HL .= "<th $back class='PHRush Group$OrgId Home$OrgId' id=PHRush$OrgId $Hide>Rush";

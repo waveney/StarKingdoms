@@ -8,12 +8,26 @@
   include_once("ProjLib.php");
 
   global $FACTION,$GAME,$Project_Status;
+  dostaffhead("Edit a Project");
+
+  if (isset($_REQUEST['id'])) {
+    $Prid = $_REQUEST['id'];
+    $P = Get_Project($Prid);
+  } else {
+    echo "No Project given";
+    dotail();
+  }
 
   $GM = Access('GM');
   if ($GM ) {
     A_Check('GM');
     $Fid = $_REQUEST['id'];
     $Faction = Get_Faction($Fid);
+    if (isset($_REQUEST['FORCE'])) {
+      $GM = 0;
+    } else {
+      echo "<h2><a href=ProjEdit.php?id=$Prid&FORCE>This page in player mode</a></h2>";
+    }
   } else if (Access('Player')) {
     if (!$FACTION) {
       Error_Page("Sorry you need to be a GM or a Player to access this");
@@ -21,17 +35,7 @@
     $Fid = $FACTION['id'];
     $Faction = &$FACTION;
   }
-
-  dostaffhead("Edit a Project");
-
-  if (isset($_REQUEST['id'])) {
-    $Prid = $_REQUEST['id'];
-    $P = Get_Project($Prid);
-    if (!$GM && $P['GMLock']) fm_addall('READONLY');
-  } else {
-    echo "No Project given";
-    dotail();
-  }
+  if (!$GM && $P['GMLock']) fm_addall('READONLY');
 
 //var_dump($_REQUEST);
   if (isset($_REQUEST['ACTION'])) {
@@ -151,11 +155,11 @@
 
 
   echo "<form method=post action=ProjEdit.php><table border>";
-  Register_Autoupdate("Project",$Prid);
+  Register_Autoupdate("Projects",$Prid);
   echo fm_hidden('id',$Prid);
   $PProps = $ProjTypes[$P['Type']]['Props'];
 
-  if (Access('GM')) {
+  if ($GM) {
     echo "<tr><td>Project Id:<td>$Prid<td>For<td>" . fm_select($FactionNames,$P,'FactionId');
     echo "<tr><td>Project Type<td>" . fm_select($ProjTypeNames,$P,'Type');
     echo fm_text("Project Name",$P,'Name',2);
@@ -205,8 +209,8 @@
     echo "<tr><td>Project Type<td>" . $ProjTypes[$P['Type']]['Name'];
     echo fm_text("Project Name",$P,'Name',2);
 
-    echo "<tr>" . fm_number('Level',$P,'Level') . "<td>Status<td>" . ($Project_Status[$P['Status']]);
-    echo "<tr>" . (($when > 0)?fm_number("Turn Start",$P,'TurnStart'): "<td>Started Turn" . $P['TurnStart']);
+    echo "<tr><td>Level:<td>" . $P['Level'] . "<td>Status<td>" . ($Project_Status[$P['Status']]);
+    echo "<tr>" . (($when > 0)?fm_number("Turn Start",$P,'TurnStart','',"min=".$GAME['Turn']): "<td>Started Turn" . $P['TurnStart']);
     if ($when <0) echo "<td>Finished Turn" . $P['TurnEnd'];
     echo "<tr><td>Where:<td>" . $PH['Name'] . " in " . NameFind($System);
     echo "<tr><td>Cost:<td>" . $P['Costs'] . "<td>Progress needed:<td>" . $P['ProgNeeded'];
@@ -215,7 +219,7 @@
       $Thing = Get_Thing($P['ThingId']);
       echo "<td><a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . $Thing['Name'] . "</a>"; // May need Tweek for player edit
     } else if ($P['ThingType']) {
-      echo "<td>" . ($P['Type'] == 1 ? ($DistTypeN[$P['ThingType']]) : $TechNames[$P['ThingType']] );
+      echo "<td>" . (($P['Type']??0) == 1 ? ($DistTypeN[$P['ThingType']]??'??') : ($TechNames[$P['ThingType']]??'??') );
       if ($PProps & 8) {
         echo " Recipient: " . $FactionNames[$P['ThingId']];
       }

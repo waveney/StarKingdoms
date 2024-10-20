@@ -66,7 +66,9 @@
       case 'NEWORG':
         $NOrg = ['Whose'=>$Fid, 'OrgType' => $_REQUEST['NewOrgType'], 'Name'=> $_REQUEST['NewOrgName'], 'Description'=>$_REQUEST['NewOrgDescription'],
                  'SocialPrinciple' => $_REQUEST['NewOrgSocialPrinciple'], 'OfficeCount'=>0, 'GameId'=>$GAMEID];
-        $_REQUEST['Sel'] = $Orgid = Gen_Put('Organisations',$NOrg);
+        $Orgid = Gen_Put('Organisations',$NOrg);
+        $_REQUEST['Sel'] = -$Orgid;
+
         // Drop through
 
       case 'NEW':

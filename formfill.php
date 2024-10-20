@@ -270,7 +270,7 @@
 //       echo 'FORCELOADCHANGE54321:NOW' .
       Put_ProjectTurn($N);
     }
-    exit;
+    break;  // other fields handled by main code
 
   case 'FFaction' :
     if (preg_match('/Know(\d*):(\d*)/',$field,$mtch)?true:false) {
