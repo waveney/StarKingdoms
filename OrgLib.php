@@ -58,7 +58,7 @@ function SocPrinciples($Fid) {
   return $A;
 }
 
-function Link_Search($Sys,$lnks) { // Part of Op_Level (Recusive)
+function Link_Search($Sys,$lnks) { // Part of Op_Level (Recusive) - no longer used
   global $Min,$Targets,$SysLnks,$Depth,$BeenHere;
 //echo "LS: $Sys, $lnks<p>";
 //var_dump($BeenHere);
@@ -87,7 +87,7 @@ function Link_Search($Sys,$lnks) { // Part of Op_Level (Recusive)
 }
 
 function Op_Level($Orgid,$Sys,$Mod=0) {
-  global $Min,$Targets,$SysLnks,$Depth,$BeenHere;
+  global $Min,$Targets,$SysLnks,$Depth,$BeenHere,$GAMEID;
   // Get list off all systems with worlds of Factions and all locations of branches (ignore duplicates eg Outpost/planet)
 
   // get all faction link knowledge
@@ -103,6 +103,10 @@ function Op_Level($Orgid,$Sys,$Mod=0) {
   $SKnown = [];
   foreach($SKnown1 as $K) $SKnown[$K['SystemId']] = $K;
   $Links = Get_LinksGame();
+
+  $ValidLinks=[];
+  foreach($LKnown as $LK) $ValidLinks[$LK['LinkId']] = 1;
+
 //  $Depth = $Org['OfficeCount']-$Mod;
 
 // var_dump($Links, $LKnown,$SKnown1,$SKnown);
@@ -149,37 +153,43 @@ function Op_Level($Orgid,$Sys,$Mod=0) {
   }
 
   // Targets should now identify the systems it needs to reach
-  if (isset($_REQUEST['SHOWTARGS'])) var_dump($Targets,$SKnown);
+  if (isset($_REQUEST['SHOWTARGS'])) var_dump($Targets,$SKnown,$ValidLinks);
   if (isset($Targets[$Sys])) return 0; // Range 0
-// var_dump($LKnown);
-  // Make double linked list of links to systems
-  $SysLnks = [];
   $BeenHere = [];
-  foreach($LKnown as $si=>$K) {
-    $L = $Links[$K['LinkId']];
-    $S1 = $RSyss[$L['System1Ref']];
-    $S2 = $RSyss[$L['System2Ref']];
-    if (isset($SysLnks[$S1])) {
-      $SysLnks[$S1][] = $S2;
-    } else {
-      $SysLnks[$S1] = [$S2];
+
+  $Depth = 0;
+  $ThisList[] = $Sys;
+  while (($Depth < 5) && !empty($ThisList)) {
+//    echo "Doing Depth $Depth<p>";
+    $NextList = [];
+    foreach($ThisList as $Sid) {
+      if (isset($BeenHere[$Sid])) continue;
+      if (isset($Targets[$Sid])) return $Depth;
+      $BeenHere[$Sid] = 1;
+      $SidRef = $SRefs[$Sid];
+      $LinksHere = Gen_Get_Cond('Links', "GameId=$GAMEID AND (System1Ref='$SidRef' OR System2Ref='$SidRef')");
+      if ($LinksHere) foreach ($LinksHere as $L) {
+        if (isset($ValidLinks[$L['id']])) {
+          $LinkToRef = (($L['System1Ref']==$SidRef) ?$L['System2Ref']:$L['System1Ref']);
+          $LinkToId = $RSyss[$LinkToRef];
+          if (!isset($BeenHere[$LinkToId])) {
+            $NextList[] = $LinkToId;
+          }
+        }
+      }
     }
-    if (isset($SysLnks[$S2])) {
-      $SysLnks[$S2][] = $S1;
-    } else {
-      $SysLnks[$S2] = [$S1];
-    }
-    $BeenHere[$S1] = $BeenHere[$S2] = 0;
+    $Depth++;
+    $ThisList = $NextList;
   }
-  foreach (array_keys($SKnown) as $Si) $BeenHere[$Si] = 0;
-  if (!isset($SysLnks[$Sys])) return -1; // No known links there
-//  $BeenHere[$Sys] = 1;
-//var_dump($BeenHere,$Depth);
-  $Min = 100;
-  $Min = Link_Search($Sys,0);
-//  var_dump($Min2);
-  return $Min;// ($Min>99?-1:$Min);
+  return -1;
 }
+  /*
+   * STart at sys, go though each link,
+   * if system seen, skip,
+   * if found result,
+   * add links to next level list
+   *
+   */
 
 function OrgColours() {
   static $Cols = [];

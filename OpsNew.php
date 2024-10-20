@@ -313,6 +313,10 @@
       }
 
       $BaseLevel = Op_Level($OrgId,$Wh);
+      if ($BaseLevel<0) {
+        echo "<h2 class=ErrNo path found to one of your worlds or branches</h2>";
+        break;
+      }
       if (Has_Trait($Fid,'IMPSEC') && strstr($OpTypes[$op]['Name'],'Recon')) $Mod--;
 
       echo "This operation is at a level of $BaseLevel from distance.  ";

@@ -187,18 +187,6 @@ function Get_Links1end($sysref) {
   return $links;
 }
 
-// Messy not right avoid if poss
-function Get_LinksAll($sysid) {
-  global $db,$GAMEID;
-  $res = $db->query("SELECT * FROM Links WHERE GameId=$GAMEID AND (System1=$sysid OR System2=$sysid)");
-  $links = [];
-  if ($res) {
-    while ($ans = $res->fetch_assoc()) { $links[] = $ans; };
-    }
-  return $links;
-}
-
-
 // Link knnowledge
 
 function Get_FactionLink($id) {
