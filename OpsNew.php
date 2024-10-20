@@ -193,6 +193,7 @@
       $TFid = $TSys['Control'];
       if (!$Head) echo "<h2>Selected: " . $OpTypes[$op]['Name'] . " in " . System_Name($TSys,$Fid) . "</h2>\n";
       $Head = 1;
+      if ($Wh) $World = WorldFromSystem($Wh);
 
       if ($OpTypes[$op]['Props'] & OPER_TECH) {
         $With = $TSys['Control'];
@@ -225,13 +226,33 @@
       } else if ($OpTypes[$op]['Props'] & OPER_SOCP) {
         if ($OpTypes[$op]['Props'] & OPER_SOCPTARGET) { // Target SocP
           $With = $TSys['Control'];
-          $World = WorldFromSystem($Wh);
-          $SocPs = Get_SocialPs($World); // NEEDS Changing
+          $KnownTarget = Gen_Get_Cond('FactionSocialP',"FactionId=$Fid AND World=$World");
+          if (!$KnownTarget) {
+            echo "<h2 class=Err>You don't know what the social principles are for that world</h2>";
+            break;
+          }
+          $SocPs = Get_SocialPs($World);
+
           if ($SocPs) {
+            $Known = 0;
+            foreach ($KnownTarget as $Ta) {
+              foreach($SocPs as $pi=>$SP) if ($Ta['SocP']==$pi) {
+                $SocP['Known'] = 1;
+                $Known++;
+                continue 2;
+              }
+            }
+
+            if (!$Known) {
+              echo "<h2 class=Err>You don't know what the current social principles are for that world</h2>";
+              break;
+            }
+
             echo "<h2>Please Select the Social Principle you are hitting:</h2>";
             foreach ($SocPs as $Si=>$SPr) {
-              echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=2&op=$op&W=$Wh&SP=$Si'>" .
-                   $SPr['Principle'] . "</button> \n";
+              $Prin = Gen_Get('SocialPrinciples', $SPr['Principle']);
+               echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=2&op=$op&W=$Wh&SP=$Si'>" .
+                   $Prin['Principle'] . " Currently has adherance of " . $SPr['Value'] . "</button> \n";
 
             }
           }
