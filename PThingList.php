@@ -229,9 +229,10 @@
   if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Notes</a>\n";
   echo "</thead><tbody>";
 
+  $LinkTypes = Get_LinkLevels();
+
   if ($Fid) {
     $Logistics = [0,0,0]; // Ship, Army, Intelligence
-    $LinkTypes = Get_LinkLevels();
     $HasHomeLogistics = (Has_Tech($Fid,'Simplified Home Logistics') && Access('God'));
     $FactionHome = 0;
     if ($HasHomeLogistics) {

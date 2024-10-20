@@ -240,7 +240,7 @@
       foreach($Nodes as $N) {
         $from = $N['Ref'];
 
-        if ($LinkType == 'Gates') $FS = Get_FactionSystemFS($Faction,$N['id']);
+        $FS = Get_FactionSystemFS($Faction,$N['id']);
 
         $Links = Get_Links($from);
         if (!isset( $ShownNodes[$N['Ref']])) continue;
@@ -260,7 +260,7 @@
               if ($Neb && $FS['NebScanned'] < $Neb) continue;
               if (isset($FS['ScanLevel']) && $FS['ScanLevel']<2) continue; // Wrong now wont fix unless Gates reused
             } elseif ($LinkType == 'Wormholes') {
-              if (($L['Concealment'] > 0) && !isset($Fl['id'])) continue;
+              if (($L['Concealment'] > $FS['SpaceScan']) && !isset($Fl['id'])) continue;
             } else continue;
 
             $rand = "B$ul";  // This kludge at least allows both ends to be displayed
