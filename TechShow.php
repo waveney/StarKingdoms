@@ -78,9 +78,14 @@
   if ($Setup) {
     Register_AutoUpdate('FactTech',$Fid);
   }
-  foreach ($CTs as $CT) {
+  foreach ($CTs as $ctind=>$CT) {
+    echo "<div class=floatright><h2>" .
+      "<button type=button id=ShowSupTechs$ctind onclick=TechSet($ctind)>Show Supplemental " . $CT['Name'] . " Techs</button>" .
+      "<button type=button id=HideSupTechs$ctind onclick=HideTechSet($ctind) hidden>Hide Supplemental " . $CT['Name'] . " Techs</button>" .
+      "</h2></div>";
     Show_Tech($CT,$CTNs,$FACTION,$TechFacts,0,$Setup);
 
+    echo "<div id=SupTechs$ctind hidden>";
     foreach ($Techs as $T) {
 //      echo "Checking "  . $T['Name'] . " Against " . $CT['Name']
       if (($T['Cat']>0) && ($T['PreReqTech'] == $CT['id'])) {
@@ -89,6 +94,7 @@
         Show_Tech($T,$CTNs,$FACTION,$TechFacts,0,$Setup,1); //,' hidden');
       }
     }
+    echo "</div>";
 //    echo "</div></div>";
   }
 

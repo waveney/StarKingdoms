@@ -483,3 +483,16 @@ function CheckModSpace() {
 function SeeAll(pfx){
   $("[id^=" + pfx).show();
 }
+
+function TechSet(idx) {
+  $('#SupTechs' + idx).show();
+  $('#ShowSupTechs' + idx).hide();  
+  $('#HideSupTechs' + idx).show();
+}
+
+function HideTechSet(idx) {
+  $('#SupTechs' + idx).hide();
+  $('#ShowSupTechs' + idx).show();  
+  $('#HideSupTechs' + idx).hide();
+}
+
