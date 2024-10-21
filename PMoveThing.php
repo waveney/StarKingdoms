@@ -52,7 +52,7 @@ function Node_Show($Fid,$Tid, $Lid, $N, $url='') {
             if (!empty($FS['Name'])) $ShortName = $NodeName = $FS['Name'];
             if (!empty($FS['ShortName'])) $ShortName = $FS['ShortName'];
         } else {
-          return;
+          return 0;
         }
       }
     }
@@ -79,6 +79,7 @@ function Node_Show($Fid,$Tid, $Lid, $N, $url='') {
 
     if ($Lid) $atts .= " href=\"/PThingList.php?ACTION=MOVE&T=$Tid&L=$Lid\" ";
     fwrite($Dot,$N['Ref'] . " [$atts ];\n");
+    return 1;
 }
 
 function LinkPropSet($def,$Conc,$Insta,$Tst) {
@@ -188,11 +189,11 @@ function LinkProps($L) {
     $OtherRef = ($L['System1Ref'] == $ThisRef? $L['System2Ref'] :$L['System1Ref'] );
     $ON = Get_SystemR($OtherRef);
     if (strchr($SelLinks[$Lid],'?')) {
-
-//      if ($T['Type'] == 5) continue;
       fwrite($Dot,"$OtherRef [label=\"?\" shape=circle href=\"/PThingList.php?ACTION=MOVE&T=$Tid&L=$Lid\" ] ");
     } else {
-      Node_Show($Fid,$Tid, $Lid, $ON);
+      if (!Node_Show($Fid,$Tid, $Lid, $ON)) {
+        fwrite($Dot,"$OtherRef [label=\"?\" shape=circle href=\"/PThingList.php?ACTION=MOVE&T=$Tid&L=$Lid\" ] ");
+      }
     }
     $Ldat = LinkProps($L);
 
