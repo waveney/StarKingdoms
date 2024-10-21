@@ -10,6 +10,7 @@ define('OPER_CREATE_OUTPOST',0x80);
 define('OPER_BRANCH',0x100);
 define('OPER_HIDDEN',0x200);
 define('OPER_SOCPTARGET',0x400);
+define('OPER_WORMHOLE',0x800);
 
 define('ORG_HIDDEN',1);
 define('ORG_ALLOPS',2);

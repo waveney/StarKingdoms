@@ -42,21 +42,18 @@ SKC2 - Who You are
 SKD - Current Game/Faction
 
 
-NEW GAME FEATURES
+NEW GAME FEATURES & BUGS
 11 Hostile/wary/neutral/friendly/ally
 16 All Operations to automate (list when started)
 17 Where has X come from (from last line in things history) - add to see after movement (filter for unknown wormhole)
-19 Improve Technology display
 21 Name stars
 28 Name Wormholes
 30 Link colours info
-35 GM access to faction scan levels
-
-BUGS
 31 something worth clarifying, is that science orgs can survey system through unexplored wormholes - pgd 13:46
-35 ship cannot move on valid link Chris 20:03 acg
-
-
+36 GM access to faction scan levels
+37 Techs - toggle all
+38 Spread the word 
+39 Explore wormhole
 
 
 

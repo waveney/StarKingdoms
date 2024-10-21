@@ -100,6 +100,7 @@
   $TechId = $_REQUEST['Te']??0;
   $TechLevel = $_REQUEST['TL']??0;
   $SP = $_REQUEST['SP']??0;
+  $Lid = $_REQUEST['Lid']??0;
 
 
   echo "<form method=post action=ProjNew.php>";
@@ -204,6 +205,7 @@
 
       if ($OpTypes[$op]['Props'] & OPER_TECH) {
         $With = $TSys['Control'];
+        $Techs = Get_Techs($Fid);
         $FactTechs = Get_Faction_Techs($With);
         $MyTechs = Get_Faction_Techs($Fid);
 
@@ -212,18 +214,19 @@
 
         foreach ($CTs as $TT) {
           $Tid = $TT['id'];
-          if ($MyTechs[$Tid] > $FactTechs[$Tid]) {
-            $Lvl = $FactTechs[$Tid]+1;
-            echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&T=$Tid&TL=$Lvl'>" .
+          if ($MyTechs[$Tid]['Level'] > $FactTechs[$Tid]['Level']) {
+            $Lvl = $FactTechs[$Tid]['Level']+1;
+            echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&Te=$Tid&TL=$Lvl'>" .
                  $TT['Name'] . " at level $Lvl</button> \n";
           }
         }
 
         foreach ($MyTechs as $T) {
-          if ($T['Cat'] == 0 || !isset($FactTechs[$T['id']]) ) continue;
+          if (($Techs[$T['Tech_Id']]['Cat']??0) == 0 || !isset($FactTechs[$T['id']]) ) continue;
           if (!isset($FactTechs[$T['PreReqTech']]) ) continue;
-          $Tid = $T['id'];
-          $Lvl = $T['PreReqLevel'];
+          $Tid = $T['Tech_Id'];
+          $Tec = $Techs[$Tid];
+          $Lvl = $Tec['PreReqLevel'];
           if ($Lvl < 1) continue;
           echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&Te=$Tid&TL=$Lvl'>" .
                $TT['Name'] . " at level $Lvl</button> \n";
@@ -258,7 +261,7 @@
             echo "<h2>Please Select the Social Principle you are hitting:</h2>";
             foreach ($SocPs as $Si=>$SPr) {
               $Prin = Gen_Get('SocialPrinciples', $SPr['Principle']);
-               echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=2&op=$op&W=$Wh&SP=$Si'>" .
+               echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&SP=$Si'>" .
                    $Prin['Principle'] . " Currently has adherance of " . $SPr['Value'] . "</button> \n";
 
             }
@@ -276,6 +279,27 @@
           }
         }
 
+      } else if (($OpTypes[$op]['Props'] & OPER_WORMHOLE)) {
+        $Ref = $TSys['Ref'];
+        $FS = Get_FactionSystemFS($Fid,$Wh);
+
+        $Ls = Get_Links($Ref);
+        echo "<h2>Select the wormhole to explore:</h2>";
+        foreach ($Ls as $Lid=>$L) {
+
+        }
+        echo "<BR CLEAR=ALL><h2>There are " . Feature('LinkRefText','Stargate') . "s to:</h2><ul>\n";
+        //    $GM = Access('GM');
+
+        foreach ($Ls as $Lid=>$L) {
+          $OSysRef = ($L['System1Ref']==$Ref? $L['System2Ref']:$L['System1Ref']);
+          $ON = Get_SystemR($OSysRef);
+          $LinkKnow = Get_FactionLinkFL($Fid,$L['id']);
+          if (($L['Concealment'] <= $FS['SpaceScan']) || ($LinkKnow && $LinkKnow['Known'])) {
+            echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&SP=$Si&Lid=$Lid'>" .
+            $L['Name'] . "</button> \n";
+          }
+        }
       }
       // Drop through
 
@@ -287,17 +311,18 @@
 
       if (!isset($Head)) {
         echo "<h2>Selected: " . $OpTypes[$op]['Name'] . " in " . System_Name($TSys,$Fid) . "</h2>\n";
-        if ($TechId) {
-          $Tech = Get_Tech($TechId);
-          echo "Tech:" . $Tech['Name'];
-          $Name .= "Tech: " . $Tech['Name'] ;
-          if ($Tech['Cat'] == 0) {
-            echo " at Level $TechLevel<p>";
-            $Name .= " L$TechLevel";
-          }
-          $Level = $TechLevel;
-        }
       }
+      if ($TechId) {
+        $Tech = Get_Tech($TechId);
+        echo "Tech: " . $Tech['Name'];
+        $Name .= "Tech: " . $Tech['Name'] ;
+        if ($Tech['Cat'] == 0) {
+          echo " at Level $TechLevel<p>";
+          $Name .= " L$TechLevel";
+        }
+        $Level = $TechLevel-1;
+      }
+
       if ($SP) {
         $SocP = Get_SocialP($SP);
         echo "Principle:" . $SocP['Principle'];
@@ -305,16 +330,22 @@
         $Name .= " Principle: " . $SocP['Principle'];
       }
 
+      if ($Lid) {
+        $L = Get_Link($Lid);
+        echo "Wormhole: " . $L['Name'];
+        $Name .= " Wormhole: " . $L['Name'];
+      }
+
       $Mod = ($OpTypes[$op]['Props'] & OPER_LEVEL);
-//      var_dump($Mod,$Level);
-      if ($Mod >4) {
+ //     var_dump($Mod,$Level);
+      if ($Mod >= 4) {
         if ($Mod &4) $Mod = $Level;
         if ($Mod &8) $Mod = $Level*2;
       }
 
       $BaseLevel = Op_Level($OrgId,$Wh);
       if ($BaseLevel<0) {
-        echo "<h2 class=ErrNo path found to one of your worlds or branches</h2>";
+        echo "<h2 class=Err>No path found to one of your worlds or branches</h2>";
         break;
       }
       if (Has_Trait($Fid,'IMPSEC') && strstr($OpTypes[$op]['Name'],'Recon')) $Mod--;
