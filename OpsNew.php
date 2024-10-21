@@ -203,6 +203,7 @@
       $Head = 1;
       if ($Wh) $World = WorldFromSystem($Wh);
 
+//      var_dump($OpTypes[$op]['Props']);
       if ($OpTypes[$op]['Props'] & OPER_TECH) {
         $With = $TSys['Control'];
         $Techs = Get_Techs($Fid);
@@ -261,7 +262,7 @@
             echo "<h2>Please Select the Social Principle you are hitting:</h2>";
             foreach ($SocPs as $Si=>$SPr) {
               $Prin = Gen_Get('SocialPrinciples', $SPr['Principle']);
-               echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&SP=$Si'>" .
+               echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&SP=$SP'>" .
                    $Prin['Principle'] . " Currently has adherance of " . $SPr['Value'] . "</button> \n";
 
             }
@@ -288,7 +289,7 @@
         foreach ($Ls as $Lid=>$L) {
 
         }
-        echo "<BR CLEAR=ALL><h2>There are " . Feature('LinkRefText','Stargate') . "s to:</h2><ul>\n";
+        echo "<BR CLEAR=ALL><h2>There are " . Feature('LinkRefText','Stargate') . "s to:</h2>\n";
         //    $GM = Access('GM');
 
         foreach ($Ls as $Lid=>$L) {
@@ -296,10 +297,11 @@
           $ON = Get_SystemR($OSysRef);
           $LinkKnow = Get_FactionLinkFL($Fid,$L['id']);
           if (($L['Concealment'] <= $FS['SpaceScan']) || ($LinkKnow && $LinkKnow['Known'])) {
-            echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&SP=$Si&Lid=$Lid'>" .
+            echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&SP=$SP&Lid=$Lid'>" .
             $L['Name'] . "</button> \n";
           }
         }
+        break;
       }
       // Drop through
 
@@ -314,7 +316,7 @@
       }
       if ($TechId) {
         $Tech = Get_Tech($TechId);
-        echo "Tech: " . $Tech['Name'];
+        echo "Tech: " . $Tech['Name'] . "<p>";
         $Name .= "Tech: " . $Tech['Name'] ;
         if ($Tech['Cat'] == 0) {
           echo " at Level $TechLevel<p>";
@@ -325,14 +327,14 @@
 
       if ($SP) {
         $SocP = Get_SocialP($SP);
-        echo "Principle:" . $SocP['Principle'];
+        echo "Principle:" . $SocP['Principle'] . "<p>";
         $Level = $SocP['Value'];
         $Name .= " Principle: " . $SocP['Principle'];
       }
 
       if ($Lid) {
         $L = Get_Link($Lid);
-        echo "Wormhole: " . $L['Name'];
+        echo "Wormhole: " . $L['Name'] . "<p>";
         $Name .= " Wormhole: " . $L['Name'];
       }
 
@@ -368,6 +370,6 @@
 
 
   }
-  echo "<h2><a href=OpsNew.php?t=$Turn&O=$OrgId>Back to start</a> , <a href=OpsDisp.php?id=$Fid>Cancel</a></h2>\n";
+  echo "<p><h2><a href=OpsNew.php?t=$Turn&O=$OrgId>Back to start</a> , <a href=OpsDisp.php?id=$Fid>Cancel</a></h2>\n";
   dotail();
 
