@@ -200,11 +200,12 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0,$M
     break;
   }
 
-  if ($T['Slots']) echo "Uses " . $T['Slots'] . " module " . Plural($T['Slots'],"","slot","slots") . "  ";
-  if ($T['CivMil']) echo "<b>" . $CivMil[$T['CivMil']] . " ships</b>";
+  if (!$Descs) echo "<div id=TDesc$Tid hidden>";
+
+  if (feature('ShowModuleSlots') && $T['Slots']) echo "Uses " . $T['Slots'] . " module " . Plural($T['Slots'],"","slot","slots") . "  ";
+  if (feature('ShowCivMilInfo') && $T['CivMil']) echo "<b>" . $CivMil[$T['CivMil']] . " ships</b>";
   echo "<br>";
 
-  if (!$Descs) echo "<div id=TDesc$Tid hidden>";
   if ($T['Description']) echo  $Parsedown->text(stripslashes($T['Description']));
 
 //  if ($lvl == 0) {

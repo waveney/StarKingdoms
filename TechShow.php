@@ -43,7 +43,7 @@
     $FACTION = Get_Faction($Fid);
   }
 
-  if (!Access('GM') && $FACTION['TurnState'] > 2) Player_Page();
+//  if (!Access('GM') && $FACTION['TurnState'] > 2) Player_Page();
 //var_dump($Techs); exit;
 
   $TechFacts = [];

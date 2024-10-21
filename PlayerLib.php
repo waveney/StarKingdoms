@@ -68,7 +68,7 @@ function FactionFeature($Name,$default='') {  // Return value of feature if set 
 }
 
 function Player_Page() {
-  global $FACTION,$PlayerState,$PlayerStates,$PlayerStateColours,$GAME,$ARMY,$USER;
+  global $FACTION,$PlayerState,$PlayerStates,$PlayerStateColours,$GAME,$ARMY,$USER,$ARMIES;
 
 
   dostaffhead("Things",["js/ProjectTools.js"]);
@@ -112,8 +112,8 @@ function Player_Page() {
     echo "<li><a href=SetupFaction.php>Faction Setup</a>\n";
 //    if ($GM) echo "<li>GM: <a href=StartGame.php>Start up Faction</a>";
     if (!$GM && $FACTION['Horizon'] == 0) break; // This prevents access to things until setup completed
-    echo "<li><a href=PThingList.php>List of Things</a> - List of Things (Ships, Armies, Named Characters, Space stations etc)";
-    echo "<li><a href=ThingPlan.php>Plan a Thing</a> - Planning Things (Ships, Armies, Named Characters, Space stations etc)";
+    echo "<li><a href=PThingList.php>List of Things</a> - List of Things (Ships, $ARMIES, Named Characters, Space stations etc)";
+    echo "<li><a href=ThingPlan.php>Plan a Thing</a> - Planning Things (Ships, $ARMIES, Named Characters, Space stations etc)";
     if (!Access('God')) break;
 
   case 'Frozen':
@@ -134,9 +134,9 @@ function Player_Page() {
     echo "<li><a href=PAnomalyList.php>Anomalies that have been seen</a><p>\n";
     echo "<li><a href=ProjDisp.php>Projects</a>\n";
     if (Feature('Orgs')) echo "<li><a href=OpsDisp.php>Operations</a>\n";
-    echo "<li><a href=PThingList.php>List of Things</a> - List of Things (Ships, Armies, Named Characters, Space stations etc)";
+    echo "<li><a href=PThingList.php>List of Things</a> - List of Things (Ships, $ARMIES, Named Characters, Space stations etc)";
     if ($PlayerState[$FACTION['TurnState']] != 'Frozen')
-       echo "<li><a href=ThingPlan.php>Plan a Thing</a> - Planning Things (Ships, Armies, Named Characters, Space stations etc)";
+       echo "<li><a href=ThingPlan.php>Plan a Thing</a> - Planning Things (Ships, $ARMIES, Named Characters, Space stations etc)";
     if ($FACTION['PhysicsSP'] >=5 || $FACTION['EngineeringSP'] >=5 || $FACTION['XenologySP'] >=5 ) echo "<li><a href=SciencePoints.php>Spend Science Points</a>";
     echo "<P><li><a href=Economy.php>Economy</a>";
     echo "<li><a href=Banking.php>Banking</a><p>";
@@ -148,7 +148,7 @@ function Player_Page() {
       echo "<li><a href=Player.php?ACTION=Unsub>Cancel Submission</a><p>\n";
     }
     echo "<li><a href=FactionEdit.php>Faction Information</a> - Mostly read only once set up.\n";
-    echo "<li><a href=FactionCarry.php>Allow Others Access</a> - To allow individuals and armies aboard and repairing.\n";
+    echo "<li><a href=FactionCarry.php>Allow Others Access</a> - To allow Individuals and $ARMIES aboard and repairing.\n";
     if ($GM) echo "<p><li>GM: <a href=SplitFaction.php?ACTION=Start>Split Faction</a>\n";
     break;
 
@@ -183,6 +183,7 @@ function Has_Trait($fid,$Name) {
 
 function Has_PTraitW($Wid,$Name) { // Has World got trait Name
   $W = Get_World($Wid);
+  if (!$W) return false;
   switch ($W['ThingType']){
     case 1:// Planet
       $P = Get_Planet($W['ThingId']);
