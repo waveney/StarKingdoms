@@ -534,7 +534,7 @@
   echo SeeInSystem($Sid,EyesInSystem($Fid,$Sid),0,1,($FACTION['id']??0),$GM);
 
 
-  if (Access('GM')) echo "<p><h2><a href=SysEdit.php?id=$Sid>Edit System</s></h2>";
+  if ($GM) echo "<p><h2><a href=SysEdit.php?id=$Sid>Edit System</s></h2>";
 
   dotail();
 
