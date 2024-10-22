@@ -10,7 +10,7 @@ function GMLog($text,$Bold=0) {
   }
   if ($Bold) $text = "<b>" . $text . "</b>";
   fwrite($LF,"$text\n");
-  echo "$text<br>";  
+  echo "$text<br>";
 }
 
 function SKLog($text,$e=0) {
@@ -21,7 +21,7 @@ function SKLog($text,$e=0) {
 
 function FollowUp($Fid,$Msg) {
   global $GAME,$GAMEID;
-  
+
   $rec = ['GameId'=>$GAMEID, 'Turn'=>$GAME['Turn'], 'FactionId'=>$Fid, 'ActionNeeded'=>$Msg ];
   Gen_Put('FollowUp',$rec);
 }
@@ -41,7 +41,7 @@ function TurnLog($Fid,$text,&$T=0) {
   }
   fwrite($LF[$Fid],"$text\n");
   if ($T) {
-    $rec = ['ThingId'=>$T['id'],'TurnNum'=>$GAME['Turn'],'Text'=>$text];
+    $rec = ['ThingId'=>$T['id'],'TurnNum'=>$GAME['Turn'],'Text'=>strip_tags($text)];
     Gen_Put('ThingHistory',$rec);
 /*    if (isset($T['History'])) {
       $T['History'] .= "Turn#" . ($GAME['Turn']) . ": " . $text . "\n";
@@ -58,7 +58,7 @@ function Report_Others($Who, $Where, $SeenBy, $Message) {
 //var_dump($Who,$Where,$SeenBy,$Message);exit;
   static $Factions;
   if (!isset($Factions)) $Factions = Get_Factions();
-  
+
   foreach ($Factions as $F) {
     if ($F['id'] == $Who) continue;
     $Eyes = EyesInSystem($F['id'],$Where);
@@ -84,11 +84,11 @@ function Done_Stage($Name) {
   }
 
 //echo "Done $S<br>";
-  if ($S > 63) { 
+  if ($S > 63) {
     GMLog("Stage $SName not found");
   } else {
     $Sand['Progress'] |= 1<<$S;
-  } 
+  }
 }
 
 function SetAllLinks($Ref, $Sid, $LinkState) {

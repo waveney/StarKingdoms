@@ -48,7 +48,7 @@ function Recalc_Offices() { // Recount offices for each org
     }
   }
 
-  foreach ($Orgs as $O) if (($OrgTypes[$O['OrgType']]['Props'] & ORG_SPECIAL_POWER) == 0) Gen_Put('Organisations',$O);
+  foreach ($Orgs as $O) Gen_Put('Organisations',$O);
 
 }
 
@@ -119,6 +119,7 @@ function Op_Level($Orgid,$Sys,$Mod=0) {
   $Worlds = Get_Worlds($Fid);
   $Branches = Gen_Get_Cond('Branches', "Whose=$Fid AND Organisation=$Orgid");
   if ($Branches) foreach ($Branches as $B) {
+    if ($B['Surpressed']) continue;
     switch ($B['HostType']) {
       case 1: //Planets
         $P = Get_Planet($B['HostId']);

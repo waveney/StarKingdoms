@@ -4,7 +4,7 @@
   include_once("ThingLib.php");
   include_once("ProjLib.php");
   include_once("HomesLib.php");
-  global $FACTION;
+  global $FACTION,$ForceNoFaction;
 
 
   dostaffhead("List of Worlds and Colonies",["js/ProjectTools.js"]);
@@ -34,6 +34,7 @@
       if ($Fid) echo "<h2>GM: <a href=WorldList.php?id=$Fid&FORCE>This page in Player Mode</a></h2>";
     }
   }
+  if (isset($ForceNoFaction)) $Fid = 0;
   A_Check('Player');
 //  CheckFaction('WorldList',$Fid);
 

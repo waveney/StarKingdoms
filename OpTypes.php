@@ -33,6 +33,7 @@
 //  echo "Category 1=Academic,2=Ship Yard,4=Miltary,8=Intelligence,16=Construction, 32=Deep Space<p>";
   echo "Props: 4 lower bits: 0 = Operation is at Level, 1 = +1, 2 = +2, 4=+X 8 = +2X.  16 = Tech Select, 32 = SocPrin, 64=Outpost, " .
        "128=Outpost Create, 256=New Branch, 512=Hidden, 1024=SocialP of Target, 2048=Target Wormhole<p>";
+  echo "Team Props: 1=hidden, 2=in space, 3=ground<p>";
   echo "Do NOT change the Op names - code depends on them<p>";
 
   echo "<form method=post>";
@@ -46,6 +47,7 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Organisation</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Props</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Gate</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Team Props</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Description</a>\n";
 
   echo "</thead><tbody>";
@@ -57,6 +59,7 @@
     echo "<td>" . fm_select($OTNs,$D,'Office',1,'',"Office:$i");
     echo fm_number1("",$D,'Props','','',"Props:$i");
     echo fm_text1("",$D,'Gate',1,'','',"Gate:$i");
+    echo fm_number1("",$D,'TeamProps','','',"TeamProps:$i");
     echo "<td>" . fm_basictextarea($D,'Description',3,3,'',"Description:$i");
   }
   $D = [];
@@ -67,6 +70,7 @@
   echo "<td>" . fm_select($OTNs,$D,'Office',1,'',"Office:0");
   echo fm_number1("",$D,'Props','','',"Props:0");
   echo fm_text1("",$D,'Gate',1,'','',"Gate:0");
+  echo fm_number1("",$D,'TeamProps','','',"TeamProps:0");
   echo "<td>" . fm_basictextarea($D,'Description',3,3,'',"Description:0");
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "</table></div>\n";

@@ -46,6 +46,7 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>ThingType</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>ThingId</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Suppressed</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Actions</a>\n";
   echo "</thead><tbody>";
 
@@ -58,6 +59,7 @@
     echo fm_number1('',$O,'HostType','','min=1 max=9',"Branches:HostType:$i");
     echo fm_number1('',$O,'HostId','','min=0 max=10000',"Branches:HostId:$i");
     echo fm_text1('',$O,'Name',1,'','',"Branches:Name:$i");
+    echo fm_number1('',$O,'HostId','','min=0 max=10000',"Branches:Suppressed:$i");
     echo "<td><a href=BranchEdit.php?id=$i>Edit</a>, <a href=BranchEdit.php?Action=Delete&id=$i>Del</a>";
   }
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
