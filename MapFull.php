@@ -260,7 +260,7 @@
               if ($Neb && $FS['NebScanned'] < $Neb) continue;
               if (isset($FS['ScanLevel']) && $FS['ScanLevel']<2) continue; // Wrong now wont fix unless Gates reused
             } elseif ($LinkType == 'Wormholes') {
-              if (($L['Concealment'] > $FS['SpaceScan']) && !isset($Fl['id'])) continue;
+              if (($L['Concealment'] > max(0,$FS['SpaceScan'])) && !isset($Fl['id'])) continue;
             } else continue;
 
             $rand = "B$ul";  // This kludge at least allows both ends to be displayed

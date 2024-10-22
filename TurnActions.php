@@ -2404,10 +2404,12 @@ function OperationsProgress() {
   $OpTypes = Get_OpTypes();
   $Operations = Gen_Get_Cond('Operations', "GameId=$GAMEID AND Status=1" );
   $Orgs = Gen_Get_Cond('Organisations',"GameId=$GAMEID");
+  $Facts = Get_Factions();
 
   foreach ($Operations as $Oid=>$O) {
     $O['Progress'] += $Orgs[$O['OrgId']]['OfficeCount'];
     Put_Operation($O);
+    TurnLog($O['FactionId'],$Orgs[$O['OrgId']]['Name'] . " has " . $Orgs[$O['OrgId']]['OfficeCount'] . " Progress.");
   }
   GMLog("All Operations Progressed<p>");
   return 1;
@@ -3001,6 +3003,8 @@ function OperationsComplete() {
       GMLog("Operation " . $O['Name'] . " has completed, for " . $Facts[$Fid]['Name'] .
          " this is not automated yet.  See <a href=OperEdit.php?id=$Oid>Operation</a>",1);
       FollowUp($Fid,"Operation " . $O['Name'] . " has completed, this is not automated yet.  See <a href=OperEdit.php?id=$Oid>Operation</a>");
+      $O['State'] = 4;
+      Put_Operation($O);
     }
   }
 }
