@@ -2475,9 +2475,8 @@ function InstructionsProgress() {
         $Fid = $T['Whose'];
         if ($Aid) {
           $A = Get_Anomaly($Aid);
-          $FAs = Gen_Get_Cond('FactionAnomaly',"FactionId=$Fid AND AnomalyId=$Aid");
-          if ($FAs) {
-            $FA = $FAs[0];
+          $FA = Gen_Get_Cond1('FactionAnomaly',"FactionId=$Fid AND AnomalyId=$Aid");
+          if ($FA) {
             $Pro = $T['Sensors']*$T['SensorLevel'];
             $T['Progress'] = $FA['Progress'] = min($FA['Progress']+$Pro, $A['AnomalyLevel']);
             Gen_Put('FactionAnomaly',$FA);
@@ -2491,9 +2490,8 @@ function InstructionsProgress() {
           if ($Anoms) {
             foreach($Anoms as $A) {
               $Aid = $A['id'];
-              $FAs = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
-              if (empty($FAs[0]['id'])) continue;
-              $FA = $FAs[0];
+              $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
+              if (empty($FA['id'])) continue;
               if ($FA['Progress'] < $A['AnomalyLevel']) {
                 $Pro = $T['Sensors']*$T['SensorLevel'];
                 $T['Progress'] = $FA['Progress'] = min($FA['Progress']+$Pro, $A['AnomalyLevel']);

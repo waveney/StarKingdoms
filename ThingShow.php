@@ -1381,7 +1381,7 @@ function Show_Thing(&$T,$Force=0) {
 
       } else {
         $Aid = $Anom['id'];
-        $FA = (Gen_Get_Cond('FactionAnomaly',"FactionId=$Fid AND AnomalyId=$Aid"))[0];
+        $FA = Gen_Get_Cond1('FactionAnomaly',"FactionId=$Fid AND AnomalyId=$Aid");
         echo "<br>Analysing: " . $Anom['Name'];
         $ProgShow = 2;
         $Acts = $Anom['AnomalyLevel'];
