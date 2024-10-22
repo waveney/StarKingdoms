@@ -262,8 +262,12 @@
         if ($P['Minerals']) {
           if (( $PTD[$P['Type']]['Hospitable'] && ($PlanetLevel>0)) ||
             (!$PTD[$P['Type']]['Hospitable'] && ($SpaceLevel>0))) {
-              echo "It has a minerals rating of <b>" . $P['Minerals'] . "</b>.  ";
+              echo "It has a minerals rating of <b>" . $P['Minerals'] . "</b><p> ";
             }
+        }
+
+        if ($PTD[$P['Type']]['Hospitable'] && ($PlanetLevel>0)) {
+          echo "It has a colonization rating of <b>" . (Feature('BaseColonise',10) + $P['ColonyTweak']) . "</b><p>";
         }
         if ($SurveyLevel >= 4) {
           echo "It's orbital radius is " . sprintf('%0.2g', $P['OrbitalRadius']) . " Km = " .  RealWorld($P,'OrbitalRadius');
@@ -333,8 +337,11 @@
             if ($M['Minerals']) {
               if (( $PTD[$M['Type']]['Hospitable'] && ($PlanetLevel>0)) ||
                 (!$PTD[$M['Type']]['Hospitable'] && ($SpaceLevel>0))) {
-                  echo "It has a minerals rating of <b>" . $M['Minerals'] . "</b>.  ";
+                  echo "It has a minerals rating of <b>" . $M['Minerals'] . "</b><p>.  ";
                 }
+            }
+            if ($PTD[$P['Type']]['Hospitable'] && ($PlanetLevel>0)) {
+              echo "It has a colonization rating of <b>" . (Feature('BaseColonise',10) + $M['ColonyTweak']) . "</b><p>";
             }
 
             if ($SurveyLevel >= 4) {
