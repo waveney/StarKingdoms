@@ -382,8 +382,11 @@ function StartProjects() {
     $PT = $ProjTypes[$P['Type']];
     $Cost = $P['Costs'];
     $Fid = $P['FactionId'];
+    $T = 0;
+
     if ($ProjTypes[$P['Type']]['Props'] & 2) { // Has a thing
       $Where = Where_Is_Home($P['Home']);
+      $T = 0;
 
       $Tid = $P['ThingId'];
       if ($Tid) {
@@ -463,7 +466,7 @@ function StartProjects() {
       }
     }
 
-    if ($T['BuildFlags'] & BUILD_FLAG1 ) {
+    if ($T && ($T['BuildFlags'] & BUILD_FLAG1 )) {
       if ($Facts[$Fid]['Currency3'] <= $T['Level']) {
         $P['Status'] = 5; // Not Started
         TurnLog($P['FactionId'],'Not starting as not enough ' . Feature('Currency3','Unknown') . ': ' . $P['Name']);
@@ -1498,12 +1501,13 @@ function ProjectProgressActions($Pay4=0) {
   $Homes = Get_ProjectHomes();
 
   foreach ($Projects as $P) {
+// var_dump($P);
     if ($P['LastUpdate'] >= $GAME['Turn']) continue;
     GMLog("Updating project " . $P['id'] . " " . $P['Name']);
 
     $H = $Homes[$P['Home']];
     $Wid = 0;
-    $Fid = $P['Whose'];
+    $Fid = $P['FactionId'];
     foreach($Worlds as $W) {
       if ($W['Home'] == $P['Home']) {
         $Wid = $W['id'];
@@ -1587,6 +1591,8 @@ function ProjectProgressActions($Pay4=0) {
       // else default actions
     }
 
+//    var_dump($P,$PT);
+
     if ($PT['Category'] & 16) { // Construction
 
       $Fact = Get_Faction($P['FactionId']);
@@ -1668,7 +1674,7 @@ function ProjectProgressActions($Pay4=0) {
       }
     }
 
-//echo "Maxacts . $MaxActs<br>";
+// echo "Maxacts . $MaxActs<br>";
 
   // Find Project Home
   // Find Dists or Skill to base on
