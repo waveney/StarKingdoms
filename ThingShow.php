@@ -1018,7 +1018,8 @@ function Show_Thing(&$T,$Force=0) {
 
     case 'Make Minefield':
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Mine Layers') || empty($N) ) continue 2;
-      if (Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 AND WithinSysLoc=" . $T['WithinSysLoc'])) continue 2;
+      if (Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] .
+        " AND BuildState=3 AND WithinSysLoc=" . $T['WithinSysLoc'])) continue 2;
       break;
 
     case 'Make Orbital Repair Yard':
@@ -1072,7 +1073,7 @@ function Show_Thing(&$T,$Force=0) {
         $idx++;
         if ($P['Minerals'] == 0) continue;
         foreach($PMines as $PM) {
-          if ($PM['WithinSysLoc'] == $idx+200) continue 2; // Already have mine on this planet
+          if ($PM['WithinSysLoc'] == $idx+200) continue 3; // Already have mine on this planet
           $found = 1;
           break;
         }
@@ -1130,17 +1131,18 @@ function Show_Thing(&$T,$Force=0) {
 
     case 'Build Advanced Minefield' :
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Advanced Minefields') || empty($N) ) continue 2;
-      if (Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 AND WithinSysLoc=" . $T['WithinSysLoc'])) continue 2;
+      if (Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] .
+        " AND BuildState=3 AND WithinSysLoc=" . $T['WithinSysLoc'])) continue 2;
       break;
 
     case 'Clear Minefield':
       if ($Moving || !$HasDeep || !$HasMinesweep || empty($N) ) continue 2;
-      if (! Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] . " AND BuildState=3 AND WithinSysLoc=" . $T['WithinSysLoc'])) continue 2;
+      if (! Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] .
+        " AND BuildState=3 AND WithinSysLoc=" . $T['WithinSysLoc'])) continue 2;
       break;
 
     case 'Make Advanced Deep Space Sensor':
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Advanced Deep Space Sensors') || empty($N) ) continue 2;
-//      if (Get_Things_Cond(0,"Type=" . $TTNames['Deep Space Sensor'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one //???
       break;
 
     case 'Salvage':
