@@ -963,10 +963,10 @@ function Show_Thing(&$T,$Force=0) {
       $A = Gen_Get_Cond1('Anomalies',"SystemId=" . $T['SystemId']);
       if ($A) {
         $Aid = $A['id'];
-        $FA = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
+        $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
         if (empty($FA['id']) ) continue 2;
         if ($FA['State'] == 0 || $FA['State'] == 3) continue 2;
-        if ($FA['Progress'] < $A['AnomalyLevel']) break 2; // This anomaly can be studied (There may be more than one, but one is enough
+        if ($FA['Progress'] < $A['AnomalyLevel']) break; // This anomaly can be studied (There may be more than one, but one is enough
       }
       continue 2; // NOt yet
 
@@ -976,7 +976,7 @@ function Show_Thing(&$T,$Force=0) {
       if (Get_Things_Cond($Fid,"Type=" . $TTNames['Embassy'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
       $Facts = Get_Factions();
       foreach ($Facts as $F) {
-        if ($F['id'] == $T['Whose'] || $F['HomeWorld'] == 0) continue 2;
+        if ($F['id'] == $T['Whose'] || $F['HomeWorld'] == 0) continue 3;
         $W = Get_World($F['HomeWorld']);
         if ($W) {
           $H = Get_ProjectHome($W['Home']);
@@ -1073,7 +1073,7 @@ function Show_Thing(&$T,$Force=0) {
         $idx++;
         if ($P['Minerals'] == 0) continue;
         foreach($PMines as $PM) {
-          if ($PM['WithinSysLoc'] == $idx+200) continue 3; // Already have mine on this planet
+          if ($PM['WithinSysLoc'] == $idx+200) continue 4; // Already have mine on this planet
           $found = 1;
           break;
         }
@@ -1360,9 +1360,8 @@ function Show_Thing(&$T,$Force=0) {
         foreach($Anoms as $A) {
           $Aid = $A['id'];
 
-          $FA = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
-          if (empty($FA[0]['id'])) continue;
-          $FA = $FA[0];
+          $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
+          if (empty($FA['id'])) continue;
           if ($FA['Progress'] < $A['AnomalyLevel']) {
             $Alist[$Aid] = $A['Name'] . " - takes " . $A['AnomalyLevel'] . " Sensor Points to Analyse.\n";
             $LastA = $A['Name'];
