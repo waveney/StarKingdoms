@@ -1809,6 +1809,7 @@ function TraitIncomes() {
                 $Fact[$SP[2] . "SP"] += $D['Number'];
                 Put_Faction($Fact);
                 TurnLog($Fact['id'],"Gained " . $D['Number'] . " " . $SP[2] . " points from the planetary trait " .$SP[1] . " in " . $P['Name']);
+                GMLog($Fact['id']['Name'] . " Gained " . $D['Number'] . " " . $SP[2] . " points from the planetary trait " .$SP[1] . " in " . $P['Name']);
               }
               break;
             case 2:// Tech
@@ -1818,13 +1819,16 @@ function TraitIncomes() {
                 $Fact[$SP[2] . "SP"] += $T;
                 Put_Faction($Fact);
                 TurnLog($Fact['id'],"Gained " . $T . " " . $SP[2] . " points from the planetary trait " .$SP[1] . " in " . $P['Name']);
+                GMLog($Fact['id']['Name'] . " Gained " . $T . " " . $SP[2] . " points from the planetary trait " .$SP[1] . " in " . $P['Name']);
               }
               break;
             case 3: //Fixed
               $Fact = $Facts[$P['Control']];
               $Fact[$SP[2] . "SP"] += $SP[0];
               Put_Faction($Fact);
+
               TurnLog($Fact['id'],"Gained " . $SP[0] . " " . $SP[2] . " points from the planetary trait " .$SP[1] . " in " . $P['Name']);
+              GMLog($Fact['id']['Name'] . " Gained " . $SP[0] . " " . $SP[2] . " points from the planetary trait " .$SP[1] . " in " . $P['Name']);
               break;
             case 4: // Cret-Chath
               $Ds = Get_DistrictsP($Pid);
@@ -1836,6 +1840,8 @@ function TraitIncomes() {
                 $Fact[$SP[2]] += ceil($D['Number']/$Div);
                 Put_Faction($Fact);
                 TurnLog($Fid,"Gained " . ceil($D['Number']/$Div) . " " . Feature($SP[2],'Unknown') . " from the planetary trait " .
+                  $SP[1] . " in " . $P['Name']);
+                GMLog($Fact['Name'] . " Gained " . ceil($D['Number']/$Div) . " " . Feature($SP[2],'Unknown') . " from the planetary trait " .
                   $SP[1] . " in " . $P['Name']);
               }
               break;
