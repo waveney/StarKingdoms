@@ -34,7 +34,7 @@
 
   if (!$GM && $Fact['TurnState'] > 2) Player_Page();
 
-  $typ='';
+  $typ=Feature('DefaultMapType','Hex');
   if (isset($_REQUEST['Hex'])) {
     if ($GM) {
       $typ = 'Hex';
