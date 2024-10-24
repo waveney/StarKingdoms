@@ -36,11 +36,29 @@ foreach ($FSs as $FS) {
 asort($WRefs);
 
 function TransferSys($SysR) {
-  global $Fid,$Tid;
+  global $Fid,$Tid,$GAMEID;
   $N = Get_SystemR($SysR);
-  $FS = Get_FactionSystemFS($Fid,$N['id']);
-  $TFS = Get_FactionSystemFS($Tid,$N['id']);
+  $Sid = $N['id'];
+  $FS = Get_FactionSystemFS($Fid,$Sid);
+  $TFS = Get_FactionSystemFS($Tid,$Sid);
   $TFS['ScanLevel'] = max($FS['ScanLevel'],$TFS['ScanLevel']);
+  if (isset($_REQUEST['SURV'])) {
+    $TFS['SpaceScan'] = max($FS['SpaceScan'],$TFS['SpaceScan']);
+    $TFS['PlanetScan'] = max($FS['PlanetScan'],$TFS['PlanetScan']);
+
+    $Anoms = Gen_Get_Cond('Anomalies',"GameId=$GAMEID AND SystemId=$Sid");
+
+    if ($Anoms) {
+      foreach($Anoms as $Aid=>$A) {
+        $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
+        $FTA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Tid");
+        if (isset($FA['id'])&& !isset($FTA['id'])) {
+          $FTA = ['State' => 1, 'FactionId'=>$Tid, 'AnomalyId'=>$Aid, 'Progress'=>0];
+          Gen_Put('FactionAnomaly',$FTA);
+        }
+      }
+    }
+  }
   Put_FactionSystem($TFS);
 
   $Links = Get_Links($SysR);
@@ -63,8 +81,12 @@ if (isset($_REQUEST['ACTION'])) {
   switch ($_REQUEST['ACTION']) {
     case 'Transfer':
       $SysR = $_REQUEST['R'];
-      $Tid = $_REQUEST['T'];
+      $Tid = $_REQUEST['T']??0;
 
+      if (!$Tid) {
+        echo "No destination Faction selected.<p>";
+        break;
+      }
       if ($SysR == 'ALLLL') {
         echo "Doing All<p>";
         foreach($WRefs as $Ref) {
@@ -101,6 +123,7 @@ if ($GM) {
 }
 echo "To: " . fm_select($FactList,$_REQUEST,'T') . "<p>";
 
+echo "Include results of Space/Planetary Surveys " . fm_checkbox('',$_REQUEST,'SURV') . " (Includes known anomalies traits, and mineral ratings)";
 echo "<h2>Select the System</h2>";
 foreach ($WRefs as $Wi=>$Ref) {
   echo "<button class=projtype type=submit formaction='MapTransfer.php?ACTION=Transfer&R=$Ref'>$Ref</button> \n";
