@@ -20,6 +20,10 @@ define('ORG_SPECIAL_POWER',8);
 define('BRANCH_HIDDEN',1);
 define('BRANCH_NOSPACE',2);
 
+define('TEAM_HIDDEN',1);
+define('TEAM_INSPACE',2);
+define('TEAM_ONGROUND',4);
+
 function Recalc_Offices() { // Recount offices for each org
   global $GAMEID;
   $Offs = Gen_Get_All('Offices', " WHERE GameId=$GAMEID");

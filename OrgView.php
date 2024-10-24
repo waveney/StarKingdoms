@@ -63,6 +63,18 @@ if ($Offices) {
 } else {
   echo "None Found<p>";
 }
+
+$Teamid = $Org['Team'];
+if ($GM) {
+  echo "Team: <a href=ThingEdit.php?id=$Teamid>$Teamid : ";
+  if ($Teamid) {
+    $Team = Get_Thing($Teamid);
+    $N = Get_System($Team['SystemId']);
+    echo $Team['Name'] . "</a> currently in " . $N['Ref'];
+  }
+  echo "</a><p>";
+}
+
 echo "<p><h2>Branches:</h2>";
 
 if ($Branches) {

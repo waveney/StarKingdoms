@@ -30,6 +30,7 @@ function Show_Thing(&$T,$Force=0) {
 
   $Fid = $T['Whose'];
   $ttn = Thing_Type_Names();
+  $ntt = array_flip($ttn);
   $FactNames = Get_Faction_Names();
   $Fact_Colours = Get_Faction_Colours();
   $ThingProps = Thing_Type_Props();
@@ -41,7 +42,10 @@ function Show_Thing(&$T,$Force=0) {
   $MTs = Get_ModuleTypes();
   $MNs = NamesList($MTs);
   $NamesMod = array_flip($MNs);
-
+  $IsaTeam = ($tprops & THING_ISA_TEAM);
+  if ($IsaTeam) {
+    $Org = Gen_Get('Organisations',$T['Dist1']);
+  }
 
   if ($T['SystemId'] == $T['NewSystemId'] || $T['NewSystemId'] == 0) {
     $NewSyslocs = $Syslocs;
@@ -143,10 +147,12 @@ function Show_Thing(&$T,$Force=0) {
     echo fm_DragonDrop(1,'Image','Thing',$Tid,$T,1,'',1,'','Thing');
   echo "</table>";
 
-
-  if (Feature('BluePrints') && ($T['BluePrint']??0) && !$GM ){
+  $ChangeBox = 0;
+  if (Feature('BluePrints') && ($tprops & THING_HAS_BLUEPRINTS) && ($T['BluePrint']??0) && !$GM ){
     echo "<tr><td>Class:<td>" . $T['Class'];
     if ($T['HiddenClass']) echo "<td>Actually: " . $T['HiddenClass'];
+  } else if ($IsaTeam) {
+    echo "<tr><td>Organisation:<td>" . $Org['Name'];
   } else if (!$GM) {
     echo "<tr>" . fm_text('Class',$T,'Class',2);
   } else {
@@ -171,7 +177,7 @@ function Show_Thing(&$T,$Force=0) {
         if ($Proj['TurnEnd']) echo " End Turn: " . $Proj['TurnEnd'];
       }
     }
-    if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
+    if (($T['BuildState'] == 2) || ($T['BuildState'] == 3) && ($tprops & THING_HAS_BLUEPRINTS)) {
       if ($GM && Feature('BluePrints')) {
         echo fm_number1('Blue Print',$T,'BluePrint','','min=-100 max=10000') ;
         BlueShow($T,$GM);
@@ -232,7 +238,17 @@ function Show_Thing(&$T,$Force=0) {
           } else {
             echo "<tr><td>Current System:<td>" . (empty($N)? 'Unknown' : $N['Ref']) . "<td>";
             if ($T['BuildState']> 2 ) {
-              echo ($Syslocs[$T['WithinSysLoc'] ?? 0] ?? 'Deep Space');
+              $Conflict = 0;
+              $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] .
+                " AND W.Home=PH.id AND W.Conflict=1");
+              if ($Conf) $Conflict = $Conf[0]['Conflict'];
+
+              if ($Conflict) {
+                echo ($Syslocs[$T['WithinSysLoc'] ?? 0] ?? 'Deep Space');
+              } else {
+                echo fm_select($Syslocs,$T,'WithinSysLoc');
+                $ChangeBox = 1;
+              }
             } else {
               BlueShow($T,$GM);
             }
@@ -332,7 +348,7 @@ function Show_Thing(&$T,$Force=0) {
       $NeedOr = 0;
       if ((($tprops & THING_CAN_MOVE)) && ($Lid >= 0) && ($T['BuildState']>1) && $T['SystemId']) {
 
-        if (($T['BuildState'] == 2) || ($T['CurHealth'] == 0) || empty($SelLinks) ) { // Shakedown or just warped out
+        if (($T['BuildState'] == 2) || ($T['CurHealth'] == 0) || (empty($SelLinks) && !$ChangeBox) ) { // Shakedown or just warped out
           echo "<tr><td colspan=3>This is unable to use links, it can move within the system.<br>Where in the system should it go? " .
                 fm_select($Syslocs,$T,'WithinSysLoc');
         } else {
@@ -1735,11 +1751,17 @@ function Show_Thing(&$T,$Force=0) {
       }
     }
   }
-  if (Access('God')) {
-    echo "<tr><td>Instruction:<td>" . fm_select($ThingInstrs,$T,'Instruction') . "<td>Stored: "  . fm_select($ThingInstrs,$T,'CurInst');
+  if (Access('God') && !$IsaTeam) {
+    echo "<tr><td>GOD - Instruction:<td>" . fm_select($ThingInstrs,$T,'Instruction') . "<td>Stored: "  . fm_select($ThingInstrs,$T,'CurInst');
     echo fm_number1('Dist1',$T,'Dist1') . fm_number1('Dist2',$T,'Dist2') . fm_number1('Spare1',$T,'Spare1');
     if (($T['ProjectId'] ?? 0) && $T['BuildState'] > 1) echo "<tr>" . fm_number('Prog/Anom Id',$T,'ProjectId') . "<td colspan=2>Reminder progress from Anomaly itself";
     echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
+  }
+
+  if ($IsaTeam) {
+    $Ops = Get_OpTypes();
+    $Oper = Get_Operation($T['ProjectId']);
+    echo "<tr><td>Current Operation:<td colspan=3>" . ($Ops[$Oper['Type']]['Name']??'Unknown');
   }
   echo "</table></div>\n";
   echo fm_submit("ACTION","Refresh",0);

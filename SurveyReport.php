@@ -119,7 +119,7 @@
   echo "<div class=SReport><h1>Survey Report - $pname</h1>\n";
   if (Feature('UniqueRefs') && $GM && $SurveyLevel >= 10) echo "UniqueRef is: " . UniqueRef($Sid) . "<p>";
 
-  if ($Fid) echo "This system has been passivly scanned. " .
+  if ($Fid) echo "This system has been passively scanned. " .
      (($SpaceLevel>0)?"Has been space scanned at level $SpaceLevel. ":"No Space Survey has been Made. ") .
      (($PlanetLevel>0)?"Has been planetary scanned at level $PlanetLevel<p>":"No Planetary Survey has been made.<p>");
 
@@ -267,7 +267,7 @@
         }
 
         if ($PTD[$P['Type']]['Hospitable'] && ($PlanetLevel>0)) {
-          echo "It has a colonization rating of <b>" . (Feature('BaseColonise',10) + $P['ColonyTweak']) . "</b><p>";
+          echo "It has a colonisation rating of <b>" . (Feature('BaseColonise',10) + $P['ColonyTweak']) . "</b><p>";
         }
         if ($SurveyLevel >= 4) {
           echo "It's orbital radius is " . sprintf('%0.2g', $P['OrbitalRadius']) . " Km = " .  RealWorld($P,'OrbitalRadius');
@@ -341,7 +341,7 @@
                 }
             }
             if ($PTD[$P['Type']]['Hospitable'] && ($PlanetLevel>0)) {
-              echo "It has a colonization rating of <b>" . (Feature('BaseColonise',10) + $M['ColonyTweak']) . "</b><p>";
+              echo "It has a colonisation rating of <b>" . (Feature('BaseColonise',10) + $M['ColonyTweak']) . "</b><p>";
             }
 
             if ($SurveyLevel >= 4) {

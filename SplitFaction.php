@@ -174,6 +174,19 @@ function Copy_Knowledge_A() {
   }
   echo "Copied Faction System Data<p>";
 
+  // Links
+
+  $FSs = Gen_Get_Cond('FactionLinks',"FactionId=$Fid");
+  if ($FSs) {
+    foreach($FSs as $FS) {
+      unset($FS['id']);
+      $FS['FactionId'] = $Nid;
+      $NFS = Get_FactionLinkFL($Nid,$FS['LinkId']);
+      if (empty($NFS['id'])) Put_FactionLink($FS);
+    }
+  }
+  echo "Copied Faction Link Data<p>";
+
   // Planets
 
   $FSs = Gen_Get_Cond('FactionPlanet',"FactionId=$Fid");

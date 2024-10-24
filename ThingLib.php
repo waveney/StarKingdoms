@@ -75,6 +75,7 @@ define('THING_IS_SMALL',       0x2000000);
 define('THING_HAS_BLUEPRINTS', 0x4000000);
 define('THING_NEEDS_PLANET',   0x8000000);
 define('THING_HAS_AGE',       0x10000000);
+define('THING_ISA_TEAM',      0x20000000);
 
 define('LINK_ON_BOARD',-1);
 define('LINK_BOARDING',-2);
@@ -243,6 +244,7 @@ function Within_Sys_Locs(&$N,$PM=0,$Boarding=0,$Restrict=0,$Hab=0) {// $PM +ve =
   $L[0] = "";
   if ($Restrict !=1) $L[1] = 'Deep space';
 //  $L[2] = 'On board ship';
+  $L[3] = 'On the Ground somewhere';
   if (!isset($N['id'])) return $L;
   $Ps = Get_Planets($N['id']);
   $PTD = Get_PlanetTypes();

@@ -33,7 +33,7 @@
 //  echo "Category 1=Academic,2=Ship Yard,4=Miltary,8=Intelligence,16=Construction, 32=Deep Space<p>";
   echo "Props: 4 lower bits: 0 = Operation is at Level, 1 = +1, 2 = +2, 4=+X 8 = +2X.  16 = Tech Select, 32 = SocPrin, 64=Outpost, " .
        "128=Outpost Create, 256=New Branch, 512=Hidden, 1024=SocialP of Target, 2048=Target Wormhole<p>";
-  echo "Team Props: 1=hidden, 2=in space, 3=ground<p>";
+  echo "Team Props: 1=hidden, 2=in space, 4=ground<p>";
   echo "Do NOT change the Op names - code depends on them<p>";
 
   echo "<form method=post>";

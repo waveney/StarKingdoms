@@ -672,6 +672,24 @@ function StartOperations() {
     }
     $O['Status'] = 1;// Started
     TurnLog($Fid,"Operation " . $O['Name'] . " has started for organisation " . $Orgs[$O['OrgId']]['Name']);
+    // Move Team
+
+    $Team = Gen_Get_Cond1('Things', "Whose=$Fid AND Type=" . $NamesTTypes['Team'] . " AND Dist1=$OrgId");
+
+    var_dump($Team);
+    if (!$Team) {
+      $Team = ['Whose'=>$Fid,'Type'=>$NamesTTypes['Team'], 'Dist1'=>$OrgId,'BuildState'=>3,
+        'Name'=>("Operations team for " . $Orgs[$OrgId]['Name'])];
+      Put_Thing($Team);
+      var_dump($Team);
+      $Orgs[$OrgId]['Team'] = $Team['id'];
+      Gen_Put('Organisations',$Orgs[$OrgId]);
+    }
+    $Team['SystemId'] = $Wh;
+    $Team['ProjectId'] = $Oid;
+    $Team['WithinSysLoc'] = (($OpTypes[$O['Type']]['TeamProps'] & TEAM_INSPACE)?0:3);
+    Put_Thing($Team);
+
     Put_Operation($O);
   }
   if ($NeedColStage2) {
@@ -2990,6 +3008,8 @@ function OperationsComplete() {
   $TTYpes = Get_ThingTypes();
   $TTNames = NamesList($TTYpes);
   $Orgs = Gen_Get_Cond('Organisations',"GameId=$GAMEID");
+  $NameOps = NamesList($OpTypes);
+  $OpNames = array_flip($NameOps);
 
   foreach ($Operations as $Oid=>$O) {
     $Fid = $O['Whose'];
@@ -2998,13 +3018,51 @@ function OperationsComplete() {
     $Sys = Get_System($Wh);
     $TWho = $Sys['Control'];
 
-    switch ($O['Type']) {
-    default:
-      GMLog("Operation " . $O['Name'] . " has completed, for " . $Facts[$Fid]['Name'] .
-         " this is not automated yet.  See <a href=OperEdit.php?id=$Oid>Operation</a>",1);
-      FollowUp($Fid,"Operation " . $O['Name'] . " has completed, this is not automated yet.  See <a href=OperEdit.php?id=$Oid>Operation</a>");
-      $O['State'] = 4;
-      Put_Operation($O);
+    switch ($NameOps[$O['Type']]) {
+      case 'Establish Deep Space Science Facility':
+      case 'Establish Research Base':
+      case 'Explore Wormhole':
+      case 'Share Technology':
+      case 'Study Anomaly':
+      case 'Study Planet':
+      case 'Survey System':
+      case 'Establish Black Market':
+      case 'Establish Trade Hub':
+      case 'Establish Trading Station':
+      case 'Outcompete':
+      case 'Send Asteroid Mining Expedition':
+      case 'Transfer Resources':
+      case 'Transfer Resources Ongoing':
+      case 'Counter Insurgency':
+      case 'Establish Forward Operating Area':
+      case 'Establish Outpost Defences':
+      case 'Insurgency':
+      case 'Advanced Scientific Recon':
+      case 'Cultural Recon':
+      case 'Establish Forward Operating Base':
+      case 'Establish Outpost Safe House':
+      case 'Establish Safe House':
+      case 'Fundamental Scientific Recon':
+      case 'Military Recon':
+      case 'Organisational Recon':
+      case 'Planetary Recon':
+      case 'Police Crackdown':
+      case 'Burn the Heretics':
+      case 'Establish Hidden Lodge':
+      case 'Establish Hidden Outpost Lodge':
+      case 'Establish Lodge':
+      case 'Establish Outpost Lodge':
+      case 'Investigate Competition':
+      case 'Sponsor Colonists':
+      case 'Spread the Word':
+
+
+      default:
+        GMLog("Operation " . $O['Name'] . " has completed, for " . $Facts[$Fid]['Name'] .
+           " this is not automated yet.  See <a href=OperEdit.php?id=$Oid>Operation</a>",1);
+        FollowUp($Fid,"Operation " . $O['Name'] . " has completed, this is not automated yet.  See <a href=OperEdit.php?id=$Oid>Operation</a>");
+        $O['State'] = 4;
+        Put_Operation($O);
     }
   }
 }
