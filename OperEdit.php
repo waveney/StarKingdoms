@@ -10,10 +10,15 @@
 
   global $FACTION,$GAME,$Project_Status;
 
+
   $GM = Access('GM');
   if ($GM ) {
-    $Fid = $FACTION['id'];
-    $Faction = Get_Faction($Fid);
+    if ($FACTION) {
+      $Fid = $FACTION['id'];
+      $Faction = Get_Faction($Fid);
+    } else {
+      $Fid = 0;
+    }
   } else if (Access('Player')) {
     if (!$FACTION) {
       Error_Page("Sorry you need to be a GM or a Player to access this");
