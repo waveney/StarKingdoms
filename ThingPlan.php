@@ -91,32 +91,35 @@
         $T = ['Whose' => $Fid, 'Type'=>$_REQUEST['Create']];
         $Tid = Put_Thing($T);
       } else {
-        $Des = '';
+        $Design = '';
         $mtch = [];
+        $Copy = 1;
         if (!empty($_REQUEST['Design'])) {
-          $Des = $_REQUEST['Design'];
+          $Design = $_REQUEST['Design'];
         } else {
           foreach ($_REQUEST as $L=>$R) {
- //           echo "$R<p>";
-            if (preg_match('/CDesign\d*/',$L,$mtch) && $R) {
-              $Des = $R;
+            if (!$R) continue;
+            if (preg_match('/^(.*)Design\d*/',$L,$mtch) && $R) {
+              $Design = $R;
+              $DesCat = $mtch[1];
+              if ($DesCat == 'Plan') $Copy = 0;
               break;
             }
           }
-          if (empty($Des)) {
+          if (empty($Design)) {
             echo "<h1 class=Err>Design not found - Tell Richard what you did</h1>";
             dotail();
           }
-          $_REQUEST['Design'] = $Des;
         }
-        $OldT = Get_Thing($Des);
+        $OldT = Get_Thing($Design);
   //var_dump($OldT);
+
         $T = $OldT;
-        if ((empty($OldT['BuildState'])) && ($OldT['BluePrint'] >= 0)) {
+        if ((empty($OldT['BuildState'])) && ($OldT['BluePrint'] >= 0) && ($Copy==0)) {
           db_delete('Things',$Tid);
           $Tid = $T['id'];
         } else {
-          $T = Thing_Duplicate($_REQUEST['Design']);
+          $T = Thing_Duplicate($Design);
           $T['Whose'] = $Fid;
           $Tid = $T['id'];
           $T['BuildState'] = $T['NewSystemId'] = $T['SystemId'] = 0;
@@ -172,52 +175,63 @@
     echo fm_hidden('id',$Tid) . fm_hidden('F',$Fid);
     $Things = Get_Things($Fid);
     $FList = [];
+    $PlanList = [];
+    $CopyList = [];
+    $NeedOr = 0;
 
     if ($Things) {
-      foreach ($Things as $TT) {
-        if (!empty($ThingTypeNames[$TT['Type']])) $FList[$TT['id']] = $TT['Name'] . " a level " . $TT['Level'] . " " . $ThingTypeNames[$TT['Type']];
+      foreach ($Things as $Tid=>$TT) {
+//        var_dump($TT);
+        $Type = $TT['Type'];
+        if (empty($ThingTypeNames[$Type])) continue;
+        $Name = $TT['Name'] . " a level " . $TT['Level'] . " " . $ThingTypeNames[$Type];
+        if ($TT['BuildState']==0) {
+          $PlanList[$Type][$Tid] = $Name;
+        }
+        if ($ThingProps[$Type] & (THING_HAS_ARMYMODULES | THING_HAS_SHIPMODULES)) $CopyList[$Type][$Tid] = $Name;
       }
-      if ($FList) {
-        echo "<h2>Either start with Things:</h2>";
 
-        echo fm_select($FList,null,'Design',1,' onchange=this.form.submit()');
-        echo "<br>If it is in planning, it will be selected, otherwise it will copy the design.<p>\n";
+      if ($PlanList) {
+        echo "<h2>Continue Planning these:</h2>";
+        echo "<table>";
+        foreach ($PlanList as $Typ=>$List) {
+          echo "<tr><td width=150>" . $ThingTypeNames[$Typ] . "<td>" , fm_select($List,null,"PlanDesign$Typ",1,' onchange=this.form.submit()') . "<p>";
+        }
+        echo "</table><p>";
+        $NeedOr = 1;
+      }
+
+      if ($CopyList) {
+        echo "<h2>" . ($NeedOr?'OR ':'') . "A copy of one of these:</h2>";
+        echo "<table>";
+        foreach ($CopyList as $Typ=>$List) {
+          echo "<tr><td width=150>" . $ThingTypeNames[$Typ] . "<td>" , fm_select($List,null,"CopyDesign$Typ",1,' onchange=this.form.submit()') . "<p>";
+        }
+        echo "</table><p>";
+        $NeedOr = 1;
       }
     }
+
     if ($Blue) {
-      echo "<h2>" .($FList?'OR ':'') . "Start with a Blue Print:</h2>";
+      echo "<h2>" . ($NeedOr?'OR ':'') . "Start with a Blue Print:</h2>";
+      $NeedOr = 1;
       $LimA = Has_Tech($Fid,'Military Theory');
       $LimS = Has_Tech($Fid,'Ship Construction');
       $BPs = BluePrintList(max($LimA,$LimS)+$MaxOver,'',0);
 
       $Direct = [];
+      echo "<table>";
       foreach($ThingTypeNames as $TT=>$Name) {
         if (!empty($BPs[$TT])) {
-          $BPL = [];
-          foreach ($BPs[$TT] as $B) {
-   //         if ($B['Level'])
-          }
-
-
-
-          echo "<tr><td>A $Name: <td>" . fm_select($BPs[$TT],null,"CDesign$TT",1,' onchange=this.form.submit()') . "<p>";
+          echo "<tr><td width=150>A $Name: <td>" . fm_select($BPs[$TT],null,"BlueDesign$TT",1,' onchange=this.form.submit()') . "<p>";
         } else if (($ThingTypes[$TT]['Properties'] & THING_HAS_BLUEPRINTS) ==0) {
           $Direct[] = $TT;
         }
       }
-
-      if ($Direct) {
-        echo "<p><h2>OR Plan A:</h2>";
-        foreach ($Direct as $di) {
-          echo "<button type=submit name=Create value=$di>" .  $ThingTypeNames[$di] . "</button><br>";
-        }
-      }
-//      prof_flag('Finish');
-
-//      if (Access('God')) prof_print();
-      dotail();
+      echo "</table><p>";
     } else {
-      echo "<h2>OR start with Classes:</h2>";
+      echo "<h2>" . ($NeedOr?'OR ':'') . "Start with Classes:</h2>";
+      $NeedOr = 1;
 
       $CList = [];
       $Classes = [];
@@ -229,11 +243,19 @@
           }
         }
       }
-      echo fm_select($CList,null,'CDesign',1,' onchange=this.form.submit()');
-      echo "<br>If it is in planning, it will be selected, otherwise it will copy the design.<p>\n";
+      echo fm_select($CList,null,'ClassDesign',1,' onchange=this.form.submit()');
 
       echo "<h2>OR design from scratch</h2>";
     }
+    if ($Direct) {
+      echo "<h2>" . ($NeedOr?'OR ':'') . " Plan A:</h2>";
+      $NeedOr = 1;
+      foreach ($Direct as $di) {
+          echo "<button type=submit name=Create value=$di>" .  $ThingTypeNames[$di] . "</button><br>";
+        }
+      }
+    dotail();
+
   }
 
   echo "<form method=post action=ThingPlan.php>";

@@ -82,6 +82,10 @@ if (isset($_REQUEST['ACTION'])) {
     case 'Transfer':
       $SysR = $_REQUEST['R'];
       $Tid = $_REQUEST['T']??0;
+      if ($_REQUEST['F'] != $Fid) {
+        echo "<h2 class=Err>Something has gone wrong tell Richard - Code MT1 </h2>";
+        break;
+      }
 
       if (!$Tid) {
         echo "No destination Faction selected.<p>";
