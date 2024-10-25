@@ -585,7 +585,7 @@ function StartOperations() {
             TurnLog($Fid,'Not Starting ' . $O['Name'] . " as the Outpost is full");
             GMLog('Not Starting ' . $O['Name'] . " as the <a href=ThingEdit.php?id=$Tid>Outpost</a> is full");
             Put_Operation($O);
-            break;
+            continue;
           }
         }
 
@@ -594,15 +594,17 @@ function StartOperations() {
           if ($AllReady) {
             $O['Status'] = 5; // Not Started
             TurnLog($Fid,'Not Starting ' . $O['Name'] . " as there is already a branch there");
+            GMLog('Not Starting ' . $O['Name'] . " as there is already a branch there");
             Put_Operation($O);
-            break;
+            continue;
           }
         }
       } else if (!($Otp & OPER_CREATE_OUTPOST)) { // No out post and can't create
         $O['Status'] = 5; // Not Started
         TurnLog($Fid,'Not Starting ' . $O['Name'] . " There is not currently an Outpost there, this operation can't create one");
+        GMLog('Not Starting ' . $O['Name']  . " There is not currently an Outpost there, this operation can't create one");
         Put_Operation($O);
-        break;
+        continue;
       }
     } else if ($Otp & OPER_BRANCH) {
       $Plan = HabPlanetFromSystem($Wh);
@@ -613,14 +615,17 @@ function StartOperations() {
           $O['Status'] = 5; // Not Started
           TurnLog($Fid,'Not Starting ' . $O['Name'] . " There is already a branch of " . $Orgs[$OrgId]['Name'] . " on " . $P['Name'] . " in " .
                   System_Name($Sys,$Fid) );
+          GMLog('Not Starting ' . $O['Name']  . " There is already a branch of " . $Orgs[$OrgId]['Name'] . " on " . $P['Name'] . " in " .
+                  System_Name($Sys,$Fid) );
           Put_Operation($O);
-          break;
+          continue;
         }
       } else {
         $O['Status'] = 5; // Not Started
         TurnLog($Fid,"There is no planet in " . System_Name($Sys,$Fid) . " that can support a Branch" );
+        GMLog('Not Starting ' . $O['Name']  . " There is no planet in " . System_Name($Sys,$Fid) . " that can support a Branch" );
         Put_Operation($O);
-        break;
+        continue;
       }
     }
 
@@ -645,6 +650,7 @@ function StartOperations() {
         TurnLog($Fid,'Not Starting sharing ' . $Tech['Name'] . " as it is already known by " . $Facts[$TWho]['Name']);
         GMLog($Facts[$Fid]['Name'] . ' Not Starting sharing ' . $$Tech['Name'] . " as it is already known by " . $Facts[$TWho]['Name']);
         Put_Operation($O);
+        continue;
       }
       $Level = $O['Para2'];
     }
@@ -672,6 +678,7 @@ function StartOperations() {
     }
     $O['Status'] = 1;// Started
     TurnLog($Fid,"Operation " . $O['Name'] . " has started for organisation " . $Orgs[$O['OrgId']]['Name']);
+    GMLog("Operation " . $O['Name'] . " has started for organisation " . $Orgs[$O['OrgId']]['Name']);
     // Move Team
 
     $Team = Gen_Get_Cond1('Things', "Whose=$Fid AND Type=" . $NamesTTypes['Team'] . " AND Dist1=$OrgId");

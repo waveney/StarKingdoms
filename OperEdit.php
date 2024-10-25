@@ -12,8 +12,7 @@
 
   $GM = Access('GM');
   if ($GM ) {
-    A_Check('GM');
-    $Fid = $_REQUEST['id'];
+    $Fid = $FACTION['id'];
     $Faction = Get_Faction($Fid);
   } else if (Access('Player')) {
     if (!$FACTION) {
@@ -89,7 +88,9 @@
   $OrgTypes = Get_OrgTypes();
   $OpTypeNames = NamesList($OpTypes);
   $Systems = Get_SystemRefs();
-
+  $Orgs = Gen_Get_Cond('Organisations',"Whose=$Fid");
+//var_dump($Orgs,$Fid);
+  $OrgNames = NamesList($Orgs);
 
   // Past is frozen unless GM
   // Future changeble by all
@@ -104,8 +105,8 @@
 
   if (Access('GM')) {
     echo "<tr><td>Operation Id:<td>$Oid<td>For<td>" . fm_select($FactionNames,$O,'Whose');
-    echo "<tr><td>Operation Type<td>" . fm_select($OpTypeNames,$O,'Type');
-    echo fm_text("Operation Name",$O,'Name',2);
+    echo "<tr><td>Organisation:<td>" . fm_select($OrgNames,$O,'OrgId') . "<td>Operation Type<td>" . fm_select($OpTypeNames,$O,'Type');
+    echo "<tr>" . fm_text("Operation Name",$O,'Name',2);
     echo "<tr>" . fm_number('Level',$O,'Level') . "<td>Status<td>" . fm_select($Project_Status,$O,'Status');
     echo "<td class=NotSide>" . fm_checkbox('GM Lock',$O,'GMLock');
     echo "<tr>" . fm_number("Turn Start",$O,'TurnStart') . fm_number('Turn Ended', $O, 'TurnEnd');
@@ -127,7 +128,8 @@
 
   } else { // Player TODO Testing
     echo "<tr><td>Operation Type<td>" . $OpTypes[$O['Type']]['Name'];
-    echo fm_text("Operation Name",$O,'Name',2);
+    echo "<tr><td>Organisation:<td>" . $OrgNames[$O['Organisation']];
+    echo "<tr>" . fm_text("Operation Name",$O,'Name',2);
 
     echo "<tr>" . fm_number('Level',$O,'Level') . "<td>Status<td>" . ($Project_Status[$O['Status']]);
     echo "<tr>" . (($when > 0)?fm_number("Turn Start",$O,'TurnStart'): "<td>Started Turn" . $O['TurnStart']);
