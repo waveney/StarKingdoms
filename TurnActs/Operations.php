@@ -237,44 +237,171 @@ function OperationsComplete() {
     $Wh = $O['SystemId'];
     $Sys = Get_System($Wh);
     $TWho = $Sys['Control'];
+    $Org = Gen_Get('Organisations',$O['OrgId']);
 
     switch ($NameOps[$O['Type']]) {
       case 'Establish Deep Space Science Facility':
         $Outpost = Outpost_in($O['SystemId'],$Fid);
-        New_Branch($Outpost,$NamesBTs['']);
+        New_Branch($Outpost,$NamesBTs['Science Space Base']);
+        TurnLog($Fid,"A new Science Space Base branch for " . $Org['Name'] . " has been set up on the Outpost in " . System_Name($Sys,$Fid) );
+        if ($Outpost['Whose'] != $Fid) {
+          TurnLog($Outpost['Whose'],"A new Science Space Base branch for " . $Org['Name'] . " has been set up on the Outpost in  " .
+            System_Name($Sys,$Outpost['Whose']) . " by " . $Facts[$Fid]['Name']);
+        }
+        GMLog("A new Science Space Base branch for " . $Org['Name'] . " has been set up on the Outpost in  " .
+            System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);
         break;
-      case 'Establish Research Base':
+
+      case 'Establish Outpost Defences':
+        $Outpost = Outpost_in($O['SystemId'],$Fid);
+        New_Branch($Outpost,$NamesBTs['Forward Operating Area']);
+        TurnLog($Fid,"A new Forward Operating Area branch for " . $Org['Name'] . " has been set up on the Outpost in " . System_Name($Sys,$Fid) );
+        if ($Outpost['Whose'] != $Fid) {
+          TurnLog($Outpost['Whose'],"A new Forward Operating Area branch for " . $Org['Name'] . " has been set up on the Outpost in  " .
+            System_Name($Sys,$Outpost['Whose']) . " by " . $Facts[$Fid]['Name']);
+        }
+        GMLog("A new Forward Operating Area branch for " . $Org['Name'] . " has been set up on the Outpost in  " .
+          System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);
+        break;
+
+      case 'Establish Outpost Safe House':
+        $Outpost = Outpost_in($O['SystemId'],$Fid,0);
+        New_Branch($Outpost,$NamesBTs['Safe House']);
+        TurnLog($Fid,"A new Safe House branch for " . $Org['Name'] . " has been set up on the Outpost in " . System_Name($Sys,$Fid) );
+
+        GMLog("A new Safe House branch for " . $Org['Name'] . " has been set up on the Outpost in  " .
+          System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);
+        break;
+
+      case 'Establish Hidden Outpost Lodge':
+        $Outpost = Outpost_in($O['SystemId'],$Fid,0);
+        New_Branch($Outpost,$NamesBTs['Hidden Lodge']);
+        TurnLog($Fid,"A new Hidden Lodge branch for " . $Org['Name'] . " has been set up on the Outpost in " . System_Name($Sys,$Fid) );
+        GMLog("A new Hidden Lodge branch for " . $Org['Name'] . " has been set up on the Outpost in  " .
+          System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);
+        break;
+
+      case 'Establish Outpost Lodge':
+        $Outpost = Outpost_in($O['SystemId'],$Fid);
+        New_Branch($Outpost,$NamesBTs['Lodge']);
+        TurnLog($Fid,"A new Lodge branch for " . $Org['Name'] . " has been set up on the Outpost in " . System_Name($Sys,$Fid) );
+        if ($Outpost['Whose'] != $Fid) {
+          TurnLog($Outpost['Whose'],"A new Lodge branch for " . $Org['Name'] . " has been set up on the Outpost in  " .
+            System_Name($Sys,$Outpost['Whose']) . " by " . $Facts[$Fid]['Name']);
+        }
+        GMLog("A new Lodge branch for " . $Org['Name'] . " has been set up on the Outpost in  " .
+          System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);
+        break;
+
+      case 'Establish Trading Station':
+        $Outpost = Outpost_in($O['SystemId'],$Fid);
+        New_Branch($Outpost,$NamesBTs['Trading Station']);
+        TurnLog($Fid,"A new Trading Station branch for " . $Org['Name'] . " has been set up on the Outpost in " . System_Name($Sys,$Fid) );
+        if ($Outpost['Whose'] != $Fid) {
+          TurnLog($Outpost['Whose'],"A new Trading Station branch for " . $Org['Name'] . " has been set up on the Outpost in  " .
+            System_Name($Sys,$Outpost['Whose']) . " by " . $Facts[$Fid]['Name']);
+        }
+        GMLog("A new Trading Station branch for " . $Org['Name'] . " has been set up on the Outpost in  " .
+          System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);
+        break;
+
+      case 'Establish Forward Operating Base':
+        $Outpost = Outpost_in($O['SystemId'],$Fid);
+        New_Branch($Outpost,$NamesBTs['Forward Operating Base']);
+        TurnLog($Fid,"A new Forward Operating Base branch for " . $Org['Name'] . " has been set up on the Outpost in " . System_Name($Sys,$Fid) );
+        if ($Outpost['Whose'] != $Fid) {
+          TurnLog($Outpost['Whose'],"A new Forward Operating Base branch for " . $Org['Name'] . " has been set up on the Outpost in  " .
+            System_Name($Sys,$Outpost['Whose']) . " by " . $Facts[$Fid]['Name']);
+        }
+        GMLog("A new Forward Operating Base branch for " . $Org['Name'] . " has been set up on the Outpost in  " .
+          System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);
+        break;
+
+      case 'Establish Black Market':
+        $World = World_in($O['SystemId'],$Fid);
+        New_Branch($Outpost,$NamesBTs['Black Market Trading Station']);
+        TurnLog($Fid,"A new Black Market Trading Station branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
+          " in " . System_Name($Sys,$Fid) );
+        GMLog("A new Black Market Trading Station branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
+          System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);
+        break;
+
+      case 'Establish Trade Hub':
+        $World = World_in($O['SystemId'],$Fid);
+        New_Branch($World,$NamesBTs['Trading Station']);
+        TurnLog($Fid,"A new Trading Station branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .  System_Name($Sys,$Fid) );
+        if ($Outpost['Whose'] != $Fid) {
+          TurnLog($Outpost['Whose'],"A new Trading Station branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
+            System_Name($Sys,$Outpost['Whose']) . " by " . $Facts[$Fid]['Name']);
+        }
+        GMLog("A new Trading Station branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
+          System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);
+        break;
+
+      case 'Establish Safe House':
+        $World = World_in($O['SystemId'],$Fid);
+        New_Branch($Outpost,$NamesBTs['Safe House']);
+        TurnLog($Fid,"A new Safe House branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
+          " in " . System_Name($Sys,$Fid) );
+        GMLog("A new Safe House branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
+          System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);
+        break;
+
+      case 'Establish Hidden Lodge':
+        $World = World_in($O['SystemId'],$Fid);
+        New_Branch($Outpost,$NamesBTs['Hidden Lodge']);
+        TurnLog($Fid,"A new Hidden Lodge branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
+          " in " . System_Name($Sys,$Fid) );
+        GMLog("A new Hidden Lodge branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
+          System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);
+        break;
+
+      case 'Establish Lodge':
+        $World = World_in($O['SystemId'],$Fid);
+        New_Branch($World,$NamesBTs['Trading Station']);
+        TurnLog($Fid,"A new Lodge branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .  System_Name($Sys,$Fid) );
+        if ($Outpost['Whose'] != $Fid) {
+          TurnLog($Outpost['Whose'],"A new Lodge branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
+            System_Name($Sys,$Outpost['Whose']) . " by " . $Facts[$Fid]['Name']);
+        }
+        GMLog("A new Lodge branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
+          System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);
+        break;
+
+      case 'Establish Forward Operating Area':
+        $World = World_in($O['SystemId'],$Fid);
+        New_Branch($World,$NamesBTs['Forward Operating Area']);
+        TurnLog($Fid,"A new Forward Operating Area branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .  System_Name($Sys,$Fid) );
+        if ($Outpost['Whose'] != $Fid) {
+          TurnLog($Outpost['Whose'],"A new Forward Operating Area branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
+            System_Name($Sys,$Outpost['Whose']) . " by " . $Facts[$Fid]['Name']);
+        }
+        GMLog("A new Forward Operating Area branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
+          System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);
+        break;
+
+
+      case 'Establish Research Base': // Type complication
+
       case 'Explore Wormhole':
       case 'Share Technology':
       case 'Study Anomaly':
       case 'Study Planet':
       case 'Survey System':
-      case 'Establish Black Market':
-      case 'Establish Trade Hub':
-      case 'Establish Trading Station':
       case 'Outcompete':
       case 'Send Asteroid Mining Expedition':
       case 'Transfer Resources':
       case 'Transfer Resources Ongoing':
       case 'Counter Insurgency':
-      case 'Establish Forward Operating Area':
-      case 'Establish Outpost Defences':
       case 'Insurgency':
       case 'Advanced Scientific Recon':
       case 'Cultural Recon':
-      case 'Establish Forward Operating Base':
-      case 'Establish Outpost Safe House':
-      case 'Establish Safe House':
       case 'Fundamental Scientific Recon':
       case 'Military Recon':
       case 'Organisational Recon':
       case 'Planetary Recon':
       case 'Police Crackdown':
       case 'Burn the Heretics':
-      case 'Establish Hidden Lodge':
-      case 'Establish Hidden Outpost Lodge':
-      case 'Establish Lodge':
-      case 'Establish Outpost Lodge':
       case 'Investigate Competition':
       case 'Sponsor Colonists':
       case 'Spread the Word':

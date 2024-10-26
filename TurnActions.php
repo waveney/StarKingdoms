@@ -46,14 +46,14 @@
     [26,'',         'Spare',''], //Agents Move Check
     [27,'',         'Spare',''], // Agents Movements
     [28,'Movement',  'See After Move','Coded'],
-    [29,'',         'Meetups','Coded,M'],
-    [30,'',         'Space Combat','Help'],
-    [31,'',         'Unload Troops','Coded'],
-    [32,'',         'Planetary Defence','No'],
-    [33,'',         'Orbital Bombardment','No'],
-    [34,'',         'Ground Combat','Help'],
-    [35,'',         'Devastation Selection','Coded,M'],
-    [36,'',         'Devastation','Coded'],
+    [29,'Combat',    'Meetups','Coded,M'],
+    [30,'Combat',    'Space Combat','Help'],
+    [31,'Movement',  'Unload Troops','Coded'],
+    [32,'Combat',    'Planetary Defence','No'],
+    [33,'Combat',    'Orbital Bombardment','No'],
+    [34,'Combat',    'Ground Combat','Help'],
+    [35,'Combat',    'Devastation Selection','Coded,M'],
+    [36,'Combat',    'Devastation','Coded'],
     [37,'',         'Ownership Change','Coded'],
     [38,'Projects',  'Project Progress','Coded'],
     [39,'Operations','Operations Progress','Coded'],
@@ -1189,7 +1189,7 @@ function Do_Turn() {
   }
 
   echo "<table border>";
-  echo "<tr><th>#" . (Access('God')?"<td>Mask<td>Dir":"") . "<td>Automation<td>Stage<th>State<th>Commands\n";
+  echo "<tr><th>#" . (Access('God')?"<td>Mask<td>File":"") . "<td>Automation<td>Stage<th>State<th>Commands\n";
   $Stage = 0;
   $Prog = 1;
   $NextStage = -1;
