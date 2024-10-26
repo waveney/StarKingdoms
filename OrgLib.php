@@ -11,6 +11,8 @@ define('OPER_BRANCH',0x100);
 define('OPER_HIDDEN',0x200);
 define('OPER_SOCPTARGET',0x400);
 define('OPER_WORMHOLE',0x800);
+define('OPER_CIVILISED',0x1000);
+
 
 define('ORG_HIDDEN',1);
 define('ORG_ALLOPS',2);
@@ -254,6 +256,59 @@ function CheckBranches() {
 function OrgType($Short) {
   $OT = Gen_Get_Cond1('OfficeTypes',"ShortName=$Short");
   return $OT['id'];
+}
+
+function Outpost_In($Sid,$Who,$Create=1) {
+  global $GAMEID;
+  $TTYpes = Get_ThingTypes();
+  $TTNames = array_flip(NamesList($TTYpes));
+  $OutPs = Get_Things_Cond(0,"Type=" . $TTNames['Outpost'] . " AND SystemId=$Sid AND BuildState=3");
+  if ($OutPs) {
+    $OutP = $OutPs[0];
+  } else if ($Create) {
+    $OutP = ['Type'=>$TTNames['Outpost'],'SystemId'=>$Sid,'Whose'=>$Who,'BuildState'=>3, 'GameId'=>$GAMEID];
+    Put_Thing($OutP);
+    $Sys = Get_System($Sid);
+    if ($Sys['Control'] == 0) {
+      $Sys['Control'] = $Who;
+      $FS = Get_FactionSystem($Who,$Sys);
+      if (!empty($FS['Name'])) $Sys['Name'] = $FS['Name'];
+      Put_System($Sys);
+    }
+  } else {
+    return 0;
+  }
+  return $OutP;
+}
+
+function World_In($Sid,$Who) {
+  global $GAMEID;
+  $Plan = HabPlanetFromSystem($Sid);
+  if ($Plan == 0) return 0;
+  $World = Gen_Get_Cond1('Worlds','ThingType=1 AND ThingId=$Plan');
+  $P = Get_Planet($Plan);
+
+  if (empty($World)) {
+    $World = ['ThingType'=>1, 'ThingId'=>$Plan, 'Minerals'=>$P['Minerals'],'FactionId'=>$Who, 'Home'=>0, 'GameId'=>$GAMEID];
+    Put_World($World);
+    if (empty($P['Control'])) {
+      $FP = Get_FactionPlanetFS($Who,$Plan);
+      $P['Control'] = $Who;
+      if (!empty($FP['Name'])) $P['Name'] = $FP['Name'];
+      Put_Planet($P);
+    }
+  }
+  $World['Name'] = $P['Name'];
+
+  return $World;
+}
+
+function New_Branch(&$Data,$Type,&$O,&$Org) {
+  global $GAMEID;
+
+  $B = ['HostType'=>(isset($Data['Minerals'])?1:3), 'HostId'=>$Data['id'], 'Whose'=>$O['Whose'], 'Type'=>$Type,
+    'Organisation'=>$O['OrgId'],'OrgType'=>$Org['OrgType'], 'GameId'=>$GAMEID];
+  Gen_Put('Branches',$B);
 }
 
 

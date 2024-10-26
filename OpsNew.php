@@ -10,7 +10,7 @@
   include_once("ProjLib.php");
   include_once("OrgLib.php");
 
-  global $FACTION,$ARMY,$GAMEID, $NOTBY;
+  global $FACTION,$ARMY,$GAMEID, $NOTBY,$Fields;
 
   if (Access('Player')) {
     if (!$FACTION) {
@@ -102,7 +102,6 @@
   $SP = $_REQUEST['SP']??0;
   $Lid = $_REQUEST['Lid']??0;
 
-
   echo "<form method=post action=ProjNew.php>";
  // echo fm_hidden('t',$Turn) . fm_hidden('O',$OrgId) . fm_hidden('Stage',$Stage+1) . fm_hidden('p',$op) . fm_hidden('W',$Wh);
 
@@ -187,6 +186,22 @@
             echo "There is already a branch of " . $Org['Name'] . " on " . $P['Name'] . " in " . System_Name($TSys,$Fid) . "</h2>\n";
             break;
           }
+
+          if ($OpTypes[$op]['Props'] & OPER_CIVILISED) {
+            if (Get_DistrictsP($Plan)) { // It has a space age civ
+              echo "<h2>Select Type of Science Points to Collect</h2>";
+              for ($i=1;$i<4;$i++) {
+                echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&SP=$i'>" .
+                   $Fields[$i-1] . "</button>\n";
+              }
+              break;
+
+            } else {
+              $SP = 3;
+              // Xenology only
+            }
+          }
+
         } else {
           echo "There is no planet in " . System_Name($TSys,$Fid) . " that can support a Branch.<p>\n";
           break;
@@ -326,10 +341,14 @@
       }
 
       if ($SP) {
-        $SocP = Get_SocialP($SP);
-        echo "Principle:" . $SocP['Principle'] . "<p>";
-        $Level = $SocP['Value'];
-        $Name .= " Principle: " . $SocP['Principle'];
+        if ($OpTypes[$op]['Props'] & OPER_SOCP) {
+          $SocP = Get_SocialP($SP);
+          echo "Principle:" . $SocP['Principle'] . "<p>";
+          $Level = $SocP['Value'];
+          $Name .= " Principle: " . $SocP['Principle'];
+        } else { // Science Points
+          $Name .= " " . $Fields[$SP-1];
+        }
       }
 
       if ($Lid) {

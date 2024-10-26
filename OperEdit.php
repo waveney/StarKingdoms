@@ -8,7 +8,7 @@
   include_once("ProjLib.php");
   include_once("OrgLib.php");
 
-  global $FACTION,$GAME,$Project_Status;
+  global $FACTION,$GAME,$Project_Status,$Fields;
 
 
   $GM = Access('GM');
@@ -128,6 +128,9 @@
       $SocPs = Get_SocialP($O['Para1']);
       echo "<tr><td>Social Principe:<td>" . $SocPs['Principle'] . " - Edit via Richard if needed";
       if (Access('God')) echo "<tr>" . fm_number('Para1',$O,'Para1');
+    } else if ($PProps & OPER_CIVILISED) {
+      array_unshift($Fields,'');
+      echo "<tr><td>Science Points:<td>" . fm_select($Fields,$O,'Para1');
     }
     echo "<tr>" . fm_textarea('Notes',$O,'Notes',8,2);
 
@@ -149,6 +152,8 @@
     } else if ($PProps & OPER_SOCP) {
       $SP = Get_SocialP($O['Para1']);
       echo "<tr><td>Social Principe:<td>" . $SP['Principle'];
+    } else if ($PProps & OPER_CIVILISED) {
+      echo "<tr><td>Science Points:<td>" . $Fields[$O['Para1']-1];
     }
     echo "<tr>" . fm_textarea('Notes',$O,'Notes',8,2);
   }
