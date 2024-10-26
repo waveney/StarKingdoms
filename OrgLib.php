@@ -250,3 +250,10 @@ function CheckBranches() {
     Gen_Put('Branches',$B);
   }
 }
+
+function OrgType($Short) {
+  $OT = Gen_Get_Cond1('OfficeTypes',"ShortName=$Short");
+  return $OT['id'];
+}
+
+

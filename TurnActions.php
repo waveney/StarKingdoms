@@ -13,49 +13,76 @@
 
   A_Check('GM');
 
-  global $Stages,$Coded;
+  global $TurnActions;
 
-  $Stages = ['Check Turns Ready', 'Spare', 'Start Turn Process',
-             'Save All Locations', 'Spare' /*'Remove Unsupported Minefields'*/, 'Cash Transfers', 'Spare',
-             'Follow' /*'Pay For Stargates'*/, 'Spare', 'Scientific Breakthroughs',
-             'Start Projects', 'Start Operations', 'Start Operations Stage 2', 'Instructions',
 
-             'Instructions Stage 2', 'Clear Paid For', 'Spare'/*'Agents Start Missions'*/, 'Pay For Rushes',
-             'Spare', 'Economy', 'Trait Incomes', 'Direct Moves',
-             'Load Troops', 'Spare', 'Ship Move Check', 'Ship Movements',
-             'Spare', 'Spare' /*'Agents Move Check', 'Agents Movements'*/, 'See After Move', 'Meetups',
+  $TurnActions = [ // Order, Prefix, Function, Code comment
+    [ 0,'',         'Check Turns Ready','Coded'],
+    [ 1,'',         'Spare',''],
+    [ 2,'',         'Start Turn Process','Coded'],
+    [ 3,'',         'Save All Locations','Coded'],
+    [ 4,'',         'Spare',''], //Remove Unsupported Minefields
+    [ 5,'',         'Cash Transfers','Coded'],
+    [ 6,'',         'Spare',''],
+    [ 7,'',         'Follow','Coded'],
+    [ 8,'',         'Spare',''],
+    [ 9,'',         'Scientific Breakthroughs','Coded'],
+    [10,'',         'Start Projects','Coded,M'],
+    [11,'Operations','Start Operations','Coded,M'],
+    [12,'Operations','Start Operations Stage 2','Coded'],
+    [13,'',         'Instructions','Coded,M'],
+    [14,'',         'Instructions Stage 2','Coded'],
+    [15,'',         'Clear Paid For','Coded'],
+    [16,'',         'Spare',''],// Agents Start Missions
+    [17,'',         'Pay For Rushes','Coded'],
+    [18,'',         'Spare',''],
+    [19,'',         'Economy','Coded'],
+    [20,'',         'Trait Incomes','Coded'],
+    [21,'',         'Direct Moves','Coded'],
+    [22,'',         'Load Troops','Coded'],
+    [23,'',         'Spare',''],
+    [24,'',         'Ship Move Check','Coded,M'],
+    [25,'',         'Ship Movements','Coded'],
+    [26,'',         'Spare',''], //Agents Move Check
+    [27,'',         'Spare',''], // Agents Movements
+    [28,'',         'See After Move','Coded'],
+    [29,'',         'Meetups','Coded,M'],
+    [30,'',         'Space Combat','Help'],
+    [31,'',         'Unload Troops','Coded'],
+    [32,'',         'Planetary Defence','No'],
+    [33,'',         'Orbital Bombardment','No'],
+    [34,'',         'Ground Combat','Help'],
+    [35,'',         'Devastation Selection','Coded,M'],
+    [36,'',         'Devastation','Coded'],
+    [37,'',         'Ownership Change','Coded'],
+    [38,'',         'Project Progress','Coded'],
+    [39,'Operations','Operations Progress','Coded'],
+    [40,'',         'Instructions Progress','Coded'],
+    [41,'',         'Collaborative Progress','Coded'],
+    [42,'',         'Spare',''], //Espionage Missions Complete
+    [43,'',         'Spare',''], // Counter Espionage
+    [44,'',         'Handle Co Op Projects','Coded,M'],
+    [45,'',         'Spare',''], //Finish Shakedowns
+    [46,'',         'Refit Projects Complete','Coded'],
+    [47,'',         'Projects Complete','Coded'],
+    [48,'Operations','Operations Complete','Coded'],
+    [49,'',         'Instructions Complete','Coded'],
+    [50,'',         'Check Survey Reports','Coded,M'],
+    [51,'',         'Give Survey Reports','Coded'],
+    [52,'',         'Spare',''],//Check Spot Anomalies
+    [53,'',         'Spare',''],//Spot Anomalies
+    [54,'',         'Militia Army Recovery','Coded'],
+    [55,'',         'Generate Turns','No'],
+    [56,'',         'Tidy Ups','Coded'],
+    [57,'',         'Clear Conflict Flags','Coded'],
+    [58,'',         'Save What Can Be Seen','Coded'],
+    [59,'',         'Recalc Project Homes','Coded'],
+    [60,'',         'Finish Turn Process','Coded'],
+    [61,'',         'Check Follow Ups','Coded'],
+    [62,'',         'Enable Factions Access','Coded'],
+    [63,'',         'Spare',''],
 
-             'Space Combat', 'Unload Troops', 'Planetary Defence', 'Orbital Bombardment',
-             'Ground Combat', 'Devastation Selection', 'Devastation', 'Ownership Change',
-             'Project Progress', 'Operations Progress', 'Instructions Progress','Collaborative Progress',
-             'Spare', 'Spare', /*'Espionage Missions Complete', 'Counter Espionage',*/ 'Handle Co Op Projects', 'Spare' /*'Finish Shakedowns'*/,
-
-             'Refit Projects Complete', 'Projects Complete','Operations Complete',  'Instructions Complete',
-             'Check Survey Reports', 'Give Survey Reports', 'Spare', 'Spare', //'Check Spot Anomalies', 'Spot Anomalies',
-             'Militia Army Recovery', 'Generate Turns', 'Tidy Ups', 'Clear Conflict Flags',
-             'Save What Can Be Seen', 'Recalc Project Homes', 'Finish Turn Process',
-             'Check Follow Ups', 'Enable Factions Access'];
-
-  $Coded =  ['Coded','No','Coded',
-             'Coded','Coded','Coded', 'No',
-             'Coded','No','Coded',
-             'Coded,M','Coded,M','Coded','Coded,M',
-
-             'Coded','Coded', 'No','Coded',
-             'No','Coded','Coded','Coded',
-             'Coded','No','Coded,M','Coded',
-             'Coded,M','Coded','Coded', 'Coded,M',
-
-             'Help','Coded','No','Coded,M',
-             'Help','Coded,M','Coded', 'Coded',
-             'Coded','Coded','Coded','Coded',
-             'Coded,M','Partial,M','Coded,M','Partial,M',
-
-             'Coded,M', 'Coded','No', 'Coded',
-             'Coded,M', 'Coded','No','No',
-             'Coded','No','Coded','Coded',
-             'Coded','Coded','Coded',
-             'Coded','Coded'];
+  ];
 
 function CheckTurnsReady() {
   global $PlayerStates,$PlayerState, $PlayerStateColours;
@@ -542,204 +569,6 @@ function StartProjects() {
     }
     Put_Project($P);
   }
-  return 1;
-}
-
-function StartOperations() {
-  global $GAME,$GAMEID;
-
-  $Facts = Get_Factions();
-  $OpTypes = Get_OpTypes();
-  $Operations = Gen_Get_Cond('Operations', "GameId=$GAMEID AND Status=0 AND TurnStart=" . $GAME['Turn']);
-  $OrgTypes = Get_OrgTypes();
-  $NeedColStage2 = 0;
-  $TTYpes = Get_ThingTypes();
-  $TTNames = NamesList($TTYpes);
-  $NamesTTypes = array_flip($TTNames);
-  $Orgs = Gen_Get_Cond('Organisations',"GameId=$GAMEID");
-
-  foreach ($Operations as $Oid=>$O) {
-    $Fid = $O['Whose'];
-    $Otp = $OpTypes[$O['Type']]['Props'];
-    $Wh = $O['SystemId'];
-    $Sys = Get_System($Wh);
-    $TWho = $Sys['Control'];
-    $OrgId = $O['OrgId'];
-
-    if ($Otp & OPER_OUTPOST) {
-      $OutPs = Get_Things_Cond($Fid,"Type=" . $NamesTTypes['Outpost'] . " AND SystemId=$Wh AND BuildState=3");
-      if ($OutPs) {
-        if (count($OutPs >1)) {
-          GMLog("There are multiple Outposts in " . $Sys['Ref'] . " - Tell Richard");
-          exit;
-        }
-        if (($Otp & OPER_CREATE_OUTPOST)) {
-          $Tid = $OutPs[0]['id'];
-          $EBs = Gen_Get_Cond('Branches', " HostType=3 AND HostId=$Tid");
-
-          $MaxB = HasTech($OutPs[0]['Whose'],'Offworld Construction');
-          foreach ($EBs as $B) if ($B['Props'] & BRANCH_NOSPACE) $MaxB--;
-
-          if ($MaxB >= $EBs) {
-            $O['Status'] = 5; // Not Started
-            TurnLog($Fid,'Not Starting ' . $O['Name'] . " as the Outpost is full");
-            GMLog('Not Starting ' . $O['Name'] . " as the <a href=ThingEdit.php?id=$Tid>Outpost</a> is full");
-            Put_Operation($O);
-            continue;
-          }
-        }
-
-        if ($Otp & OPER_BRANCH) {
-          $AllReady = Gen_Get_Cond('Branches'," HostType=3 AND HostId=$Tid AND OrgId=$OrgId" );
-          if ($AllReady) {
-            $O['Status'] = 5; // Not Started
-            TurnLog($Fid,'Not Starting ' . $O['Name'] . " as there is already a branch there");
-            GMLog('Not Starting ' . $O['Name'] . " as there is already a branch there");
-            Put_Operation($O);
-            continue;
-          }
-        }
-      } else if (!($Otp & OPER_CREATE_OUTPOST)) { // No out post and can't create
-        $O['Status'] = 5; // Not Started
-        TurnLog($Fid,'Not Starting ' . $O['Name'] . " There is not currently an Outpost there, this operation can't create one");
-        GMLog('Not Starting ' . $O['Name']  . " There is not currently an Outpost there, this operation can't create one");
-        Put_Operation($O);
-        continue;
-      }
-    } else if ($Otp & OPER_BRANCH) {
-      $Plan = HabPlanetFromSystem($Wh);
-      if ($Plan) {
-        $AllReady = Gen_Get_Cond('Branches'," HostType=1 AND HostId=$Plan AND OrgId=$OrgId" );
-        if ($AllReady) {
-          $P = Get_Planet($Plan);
-          $O['Status'] = 5; // Not Started
-          TurnLog($Fid,'Not Starting ' . $O['Name'] . " There is already a branch of " . $Orgs[$OrgId]['Name'] . " on " . $P['Name'] . " in " .
-                  System_Name($Sys,$Fid) );
-          GMLog('Not Starting ' . $O['Name']  . " There is already a branch of " . $Orgs[$OrgId]['Name'] . " on " . $P['Name'] . " in " .
-                  System_Name($Sys,$Fid) );
-          Put_Operation($O);
-          continue;
-        }
-      } else {
-        $O['Status'] = 5; // Not Started
-        TurnLog($Fid,"There is no planet in " . System_Name($Sys,$Fid) . " that can support a Branch" );
-        GMLog('Not Starting ' . $O['Name']  . " There is no planet in " . System_Name($Sys,$Fid) . " that can support a Branch" );
-        Put_Operation($O);
-        continue;
-      }
-    }
-
-    if (($Otp & OPER_BRANCH) && !($Otp & OPER_HIDDEN ) ){
-      if ($NeedColStage2 == 0) {
-        GMLog("<form method=post action=TurnActions.php?ACTION=Process&S=Instructions>");
-        $NeedColStage2 = 1;
-      }
-      GMLog($Facts[$Fid]['Name'] . " is seting up a branch of  " . $Orgs[$O['OrgId']]['Name'] .
-           " (" . $OrgTypes[$O[$OrgId]]['Name'] . " ) it is controlled by " . ($Facts[$Sys['Control']]['Name']??'Nobody') .
-           " - Allow? " . fm_YesNo("Org$Oid",1, "Reason to reject") . "\n<br>");
-    }
-
-    $Level = 0;
-    if ($Otp & OPER_TECH ) {
-
-      $Tech = Get_Tech($O['Para1']);
-      $Got = Has_Tech($TWho,$O['Para1']);
-      if ($Got && $Got>= $O['Para2']) {
-        // Target already has tech
-        $O['Status'] = 5; // Finished
-        TurnLog($Fid,'Not Starting sharing ' . $Tech['Name'] . " as it is already known by " . $Facts[$TWho]['Name']);
-        GMLog($Facts[$Fid]['Name'] . ' Not Starting sharing ' . $$Tech['Name'] . " as it is already known by " . $Facts[$TWho]['Name']);
-        Put_Operation($O);
-        continue;
-      }
-      $Level = $O['Para2'];
-    }
-
-    if ($Otp & OPER_SOCPTARGET) {
-      $SocP = Get_SocialP($O['Para1']);
-      $Level = $SocP['Value'];
-    }
-
-
-    $Mod = ($Otp & OPER_LEVEL);
-    if ($Mod >=4) {
-      if ($Mod &4) $Mod = $Level;
-      if ($Mod &8) $Mod = $Level*2;
-    }
-
-    $BaseLevel = Op_Level($OrgId,$Wh) + $Mod;
-
-    if ($BaseLevel != $O['Level']) {
-      $ProgNeed = Proj_Costs($BaseLevel)[0];
-
-      TurnLog($Fid,'WARNING operation ' . $O['Name'] . " with the " . $Orgs[$O['OrgId']]['Name'] . " is actually level $BaseLevel not " .
-        $O['Level'] . " and now needs " . $O['ProgNeeded'] . " progress.");
-
-    }
-    $O['Status'] = 1;// Started
-    TurnLog($Fid,"Operation " . $O['Name'] . " has started for organisation " . $Orgs[$O['OrgId']]['Name']);
-    GMLog("Operation " . $O['Name'] . " has started for organisation " . $Orgs[$O['OrgId']]['Name']);
-    // Move Team
-
-    $Team = Gen_Get_Cond1('Things', "Whose=$Fid AND Type=" . $NamesTTypes['Team'] . " AND Dist1=$OrgId");
-
-    var_dump($Team);
-    if (!$Team) {
-      $Team = ['Whose'=>$Fid,'Type'=>$NamesTTypes['Team'], 'Dist1'=>$OrgId,'BuildState'=>3,
-        'Name'=>("Operations team for " . $Orgs[$OrgId]['Name'])];
-      Put_Thing($Team);
-      var_dump($Team);
-      $Orgs[$OrgId]['Team'] = $Team['id'];
-      Gen_Put('Organisations',$Orgs[$OrgId]);
-    }
-    $Team['SystemId'] = $Wh;
-    $Team['ProjectId'] = $Oid;
-    $Team['WithinSysLoc'] = (($OpTypes[$O['Type']]['TeamProps'] & TEAM_INSPACE)?0:3);
-    Put_Thing($Team);
-
-    Put_Operation($O);
-  }
-  if ($NeedColStage2) {
-    echo "<input type=submit name=Ignore value=Checked>\n";
-
-    dotail();
-  }
-  return 2;
-}
-
-function StartOperationsStage2() {  // Making branches is checked
-  global $GAME,$GAMEID;
-
-  $Facts = Get_Factions();
-  $OpTypes = Get_OpTypes();
-  $Operations = Gen_Get_Cond('Operations', "GameId=$GAMEID AND Status=0 AND TurnStart=" . $GAME['Turn']);
-  $OrgTypes = Get_OrgTypes();
-  $NeedColStage2 = 0;
-  $TTYpes = Get_ThingTypes();
-  $TTNames = NamesList($TTYpes);
-  $Orgs = Gen_Get_Cond('Organisations',"GameId=$GAMEID");
-
-  foreach ($Operations as $Oid=>$O) {
-
-    if (!isset($_REQUEST["Org$Oid"])) continue;
-    $Ans = $_REQUEST["Org$Oid"];
-
-    $Fid = $O['Whose'];
-    $Otp = $OpTypes[$O['Type']]['Props'];
-    $Wh = $O['SystemId'];
-    $Sys = Get_System($Wh);
-    $TWho = $Sys['Control'];
-
-    if ($Ans == "on") {
-      $O['State'] = 1;
-      TurnLog($Fid,"Operation " . $O['Name'] . " has started for organisation " . $Orgs[$O['OrgId']]['Name']);
-    } else {
-      TurnLog($Fid, "Operation " . $O['Name'] . "was not started because " . $_REQUEST["ReasonOrg$Oid"]??"Unknown");
-      $O['State'] = 5;
-    }
-    Put_Operation($O);
-  }
-  GMLog("<br>All Operations started<p>");
   return 1;
 }
 
@@ -1878,9 +1707,53 @@ function TraitIncomes() {
   }
 
   GMLog("Done Planetary Trait Incomes<br>");
+
+  // Science Points for Offices and Branches
+  $Sci = OrgType('Science');
+  $Orgs = Gen_Get_Cond("Organisations", "Game=$GAMEID AND Type=$Sci");
+  $BTypes = Get_BranchTypes();
+  $BTindex = array_flip(NamesList($BTypes));
+
+  foreach ($Orgs as $Oid=>$O) {
+    $Who = $O['Whose'];
+    $Pow = $O['OfficeCount'];
+    Gain_Science($Who,4,$Pow*$Pow,'Offices of ' . $O['Name']);
+    TurnLog($Who,"Gained " . ($Pow*$Pow) . " Science points for offices of " . $O['Name']);
+
+    $Branches = Gen_Get_Cond('Branches', "Game=$GAMEID AND Organisation=$Oid");
+    $SPs = [0,0,0,0];
+    foreach ($Branches as $B) {
+      switch ($BTypes[$B['Type']]['Name']) {
+        case 'Science Branch (Xenology)':
+          Gain_Science($Who,3,$Pow,"From a branch");
+          $SPs[3] += $Pow;
+          break;
+        case 'Science Branch (Physics)':
+          Gain_Science($Who,1,$Pow,"From a branch");
+          $SPs[1] += $Pow;
+          break;
+        case 'Science Branch (Engineering)':
+          Gain_Science($Who,2,$Pow,"From a branch");
+          $SPs[2] += $Pow;
+          break;
+        case 'Science Space Base':
+          $T = Get_Thing($B['HostId']);
+          $N = Get_System($T['SystemId']);
+          $Ref = $N['Ref'];
+
+          FollowUp($Who, "A Science base of " . $O['Name'] . " (" . $Facts[$Who]['Name'] . ") power $Pow on an outpost in $Ref may get something");
+          // No idea what goes here...
+      }
+    }
+    if ($SPs[1] || $SPs[2] || $SPs[3]) {
+      TurnLog($Who,"Gained " . ($SPs[1]?$SPs[1] . "Physics points, ":'') .
+         ($SPs[2]?$SPs[2] . "Engineering points, ":'') . ($SPs[3]?$SPs[3] . "Xenology points, ":'') . " for branches of " . $O['Name']);
+    }
+
+  }
+
   return 1;
 }
-
 
 function DirectMoves() {
   // EG for sharks
@@ -2420,23 +2293,6 @@ function OwnershipChange() {
 function ProjectProgress() {
   ProjectProgressActions(0); // Progress, payment already made
   GMLog("All Projects Progressed<p>");
-  return 1;
-}
-
-function OperationsProgress() {
-  global $GAME,$GAMEID;
-
-  $OpTypes = Get_OpTypes();
-  $Operations = Gen_Get_Cond('Operations', "GameId=$GAMEID AND Status=1" );
-  $Orgs = Gen_Get_Cond('Organisations',"GameId=$GAMEID");
-  $Facts = Get_Factions();
-
-  foreach ($Operations as $Oid=>$O) {
-    $O['Progress'] += $Orgs[$O['OrgId']]['OfficeCount'];
-    Put_Operation($O);
-    TurnLog($O['FactionId'],$Orgs[$O['OrgId']]['Name'] . " has " . $Orgs[$O['OrgId']]['OfficeCount'] . " Progress.");
-  }
-  GMLog("All Operations Progressed<p>");
   return 1;
 }
 
@@ -3003,75 +2859,6 @@ function RefitProjectsComplete() {
 function ProjectsComplete() {
 //  echo "Projects Complete is currently Manual<p>";
   return ProjectsCompleted(1);
-}
-
-function OperationsComplete() {
-  global $GAME,$GAMEID;
-
-  $Facts = Get_Factions();
-  $OpTypes = Get_OpTypes();
-  $Operations = Gen_Get_Cond('Operations', "GameId=$GAMEID AND Status=1 AND Progress>=ProgNeeded");
-  $OrgTypes = Get_OrgTypes();
-  $TTYpes = Get_ThingTypes();
-  $TTNames = NamesList($TTYpes);
-  $Orgs = Gen_Get_Cond('Organisations',"GameId=$GAMEID");
-  $NameOps = NamesList($OpTypes);
-  $OpNames = array_flip($NameOps);
-
-  foreach ($Operations as $Oid=>$O) {
-    $Fid = $O['Whose'];
-    $Otp = $OpTypes[$O['Type']]['Props'];
-    $Wh = $O['SystemId'];
-    $Sys = Get_System($Wh);
-    $TWho = $Sys['Control'];
-
-    switch ($NameOps[$O['Type']]) {
-      case 'Establish Deep Space Science Facility':
-      case 'Establish Research Base':
-      case 'Explore Wormhole':
-      case 'Share Technology':
-      case 'Study Anomaly':
-      case 'Study Planet':
-      case 'Survey System':
-      case 'Establish Black Market':
-      case 'Establish Trade Hub':
-      case 'Establish Trading Station':
-      case 'Outcompete':
-      case 'Send Asteroid Mining Expedition':
-      case 'Transfer Resources':
-      case 'Transfer Resources Ongoing':
-      case 'Counter Insurgency':
-      case 'Establish Forward Operating Area':
-      case 'Establish Outpost Defences':
-      case 'Insurgency':
-      case 'Advanced Scientific Recon':
-      case 'Cultural Recon':
-      case 'Establish Forward Operating Base':
-      case 'Establish Outpost Safe House':
-      case 'Establish Safe House':
-      case 'Fundamental Scientific Recon':
-      case 'Military Recon':
-      case 'Organisational Recon':
-      case 'Planetary Recon':
-      case 'Police Crackdown':
-      case 'Burn the Heretics':
-      case 'Establish Hidden Lodge':
-      case 'Establish Hidden Outpost Lodge':
-      case 'Establish Lodge':
-      case 'Establish Outpost Lodge':
-      case 'Investigate Competition':
-      case 'Sponsor Colonists':
-      case 'Spread the Word':
-
-
-      default:
-        GMLog("Operation " . $O['Name'] . " has completed, for " . $Facts[$Fid]['Name'] .
-           " this is not automated yet.  See <a href=OperEdit.php?id=$Oid>Operation</a>",1);
-        FollowUp($Fid,"Operation " . $O['Name'] . " has completed, this is not automated yet.  See <a href=OperEdit.php?id=$Oid>Operation</a>");
-        $O['State'] = 4;
-        Put_Operation($O);
-    }
-  }
 }
 
 function InstructionsComplete() {
@@ -4073,9 +3860,9 @@ function TidyUps() {
     Put_Thing($T);
   }
 
-  $Branches = Gen_Get('Branches', "GameId=$GAMEID AND Surpressed>0");
+  $Branches = Gen_Get('Branches', "GameId=$GAMEID AND Suppressed>0");
   if ($Branches) foreach ($Branches as $B) {
-    $B['Surpressed']--;
+    $B['Suppressed']--;
     Gen_Put('Branches',$B);
   }
 
@@ -4208,9 +3995,57 @@ function EnableFactionsAccess() {
   return 1;
 }
 
+function Do_Phase($S) {
+  global $TurnActions,$Sand;
+  if (is_numeric($S)) {
+    $act = $TurnActions[$S][2];
+    $act = preg_replace('/ /','',$act);
+  } else {
+    $SName = $_REQUEST['S'];
+    $SName = preg_replace('/ /','',$SName);
+    for($S =0; $S <64 ; $S++) {
+      $act = $TurnActions[$S][2];
+      $act = preg_replace('/ /','',$act);
+      if ($SName == $act) return;
+    }
+    //       var_dump($S);
+    if ($S > 63) {
+      GMLog("Stage $SName not found");
+      return;
+    } else {
+      $Sand['Progress'] |= 1<<$S;
+    }
+    SKLog("Completed " . $TurnActions[$S][2]);
+    $S++;
+    $act = $TurnActions[$S][2];
+    $act = preg_replace('/ /','',$act);
+  }
+
+  $Pfx = $TurnActions[$S][1];
+  if ($Pfx) {
+    include_once("TurnActs/$Pfx");
+  }
+  GMLog("Would call $act<p>");
+  if (!is_callable($act)) {
+    GMLog("<class Err>$act not yet written</span><p>");
+    return;
+  }
+  SKLog("Doing " . $TurnActions[$S][2]);
+  $Result = $act();
+  if ($Result) {
+    $Sand['Progress'] |= 1<<$S;
+    if ($Result > 1) {
+      $Sand['Progress'] |= 2<<$S;
+    }
+  } else {
+    GMLog("Processing cancelled<p>\n");
+  }
+
+}
+
 function Do_Turn() {
   global $Sand;  // If you need to add something, replace a spare if poss, then nothing breaks
-  global $Stages,$Coded;
+  global $TurnActions;
 
   $Sand = Get_TurnNumber();
 // var_dump($Sand);
@@ -4228,7 +4063,7 @@ function Do_Turn() {
       $SName = $_REQUEST['Stage'];
       $SName = preg_replace('/ /','',$SName);
       for($S =0; $S <64 ; $S++) {
-        $act = $Stages[$S];
+        $act = $TurnActions[$S][2];
         $act = preg_replace('/ /','',$act);
         if ($SName == $act) break;
       }
@@ -4240,55 +4075,18 @@ function Do_Turn() {
       }// Deliberate drop through
 
     case 'Complete': // Should be now no longer used - See StageDone lower down.  (Uses name of stge not number - thus allows for renumbering)
-      SKLog("Completed " . $Stages[$S]);
+      SKLog("Completed " . $TurnActions[$S][2]);
       $Sand['Progress'] |= 1<<$S;
       $S++; // Deliberate drop through
 
     case 'Process':
-      if (is_numeric($S)) {
-        $act = $Stages[$S];
-        $act = preg_replace('/ /','',$act);
-      } else {
-        $SName = $_REQUEST['S'];
-        $SName = preg_replace('/ /','',$SName);
-        for($S =0; $S <64 ; $S++) {
-          $act = $Stages[$S];
-          $act = preg_replace('/ /','',$act);
-          if ($SName == $act) break;
-        }
- //       var_dump($S);
-        if ($S > 63) {
-          GMLog("Stage $SName not found");
-          break;
-        } else {
-          $Sand['Progress'] |= 1<<$S;
-        }
-        SKLog("Completed " . $Stages[$S]);
-        $S++;
-        $act = $Stages[$S];
-        $act = preg_replace('/ /','',$act);
-      }
-      GMLog("Would call $act<p>");
-      if (!is_callable($act)) {
-        GMLog("<class Err>$act not yet written</span><p>");
-        break;
-      }
-      SKLog("Doing " . $Stages[$S]);
-      $Result = $act();
-      if ($Result) {
-        $Sand['Progress'] |= 1<<$S;
-        if ($Result > 1) {
-          $Sand['Progress'] |= 2<<$S;
-        }
-      } else {
-        GMLog("Processing cancelled<p>\n");
-      }
+      Do_Phase($S);
       break;
 
     case 'Skip':
-      if (isset($Stages[$S] )) {
-        GMLog("<b>" . $Stages[$S] . " Skipped<b>");
-        SKLog("Skipped " . $Stages[$S]);
+      if (isset($TurnActions[$S][2] )) {
+        GMLog("<b>" . $TurnActions[$S][2] . " Skipped<b>");
+        SKLog("Skipped " . $TurnActions[$S][2]);
         $Sand['Progress'] |= 1<<$S;
       } else {
         echo "Off the end of the turn";
@@ -4296,17 +4094,30 @@ function Do_Turn() {
       break;
 
     case 'Revert':
-      if (isset($Stages[$S] )) {
-        GMLog("<b>" . $Stages[$S] . " Reverted<b>");
-        SKLog("Reverted " . $Stages[$S]);
+      if (isset($TurnActions[$S][2] )) {
+        GMLog("<b>" . $TurnActions[$S][2] . " Reverted<b>");
+        SKLog("Reverted " . $TurnActions[$S][2]);
         $Sand['Progress'] &= ~(1<<$S);
       } else {
         GMLog("Off the end of the turn");
       }
       break;
 
+    case 'Redo' : //Revert and Do Now
+      if (isset($TurnActions[$S][2] )) {
+        GMLog("<b>" . $TurnActions[$S][2] . " Reverted<b>");
+        SKLog("Reverted " . $TurnActions[$S][2]);
+        $Sand['Progress'] &= ~(1<<$S);
+
+        Do_Phase($S);
+
+      } else {
+        GMLog("Off the end of the turn");
+      }
+      break;
+
     case 'RevertAll':
-      if (isset($Stages[$S] )) {
+      if (isset($TurnActions[$S][2] )) {
         SKLog("Reverted All");
         $Sand['Progress'] = 0;
       } else {
@@ -4318,18 +4129,18 @@ function Do_Turn() {
   }
 
   echo "<table border>";
-  echo "<tr><th>#" . (Access('God')?"<td>Mask":"") . "<td>Automation<td>Stage<th>State<th>Commands\n";
+  echo "<tr><th>#" . (Access('God')?"<td>Mask<td>Dir":"") . "<td>Automation<td>Stage<th>State<th>Commands\n";
   $Stage = 0;
   $Prog = 1;
   $NextStage = -1;
 
-  foreach ($Stages as $sta) {
-    if ($sta != 'Spare') {
-      echo "<tr><td>$Stage<td>" .  (Access('God')?(dechex($Prog) . "<td>"):"") . $Coded[$Stage] . "<td>" . $sta . "<td>";
+  foreach ($TurnActions as $sta) {
+    if ($sta[2] != 'Spare') {
+      echo "<tr><td>$Stage<td>" .  (Access('God')?(dechex($Prog) . "<td>" . $sta[1] . "<td>"):"") . $sta[3] . "<td>" . $sta[2] . "<td>";
 
 // var_dump($Sand['Progress'],$Prog);
       if ($Sand['Progress'] & $Prog) {
-        echo "Completed<td><a href=TurnActions.php?ACTION=Revert&S=$Stage>Revert</a>";
+        echo "Completed<td><a href=TurnActions.php?ACTION=Revert&S=$Stage>Revert</a> &nbsp &nbsp; <a href=TurnActions.php?ACTION=Redo&S=$Stage>Redo</a>";
       } else if ($NextStage < 0) {
         $NextStage = $Stage;
         echo "Ready to do<td><a href=TurnActions.php?ACTION=Process&S=$Stage>Process</a> &nbsp &nbsp; <a href=TurnActions.php?ACTION=Skip&S=$Stage>Skip</a>";
