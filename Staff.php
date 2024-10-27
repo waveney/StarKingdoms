@@ -308,6 +308,8 @@
     $txt .= "<li><a href=OrgList.php?ALL>List of all Organisations</a>\n";
     $txt .= "<li><a href=OfficeList.php>List of all Offices</a>\n";
     $txt .= "<li><a href=BranchList.php>List of all Branches</a>\n";
+    if (Access('God')) $txt .= "<li><a href=SetupTeams.php>Setup Teams for all Current Operations</a>\n";
+
     $txt .= "<p>";
     $txt .= "</ul>\n";
   }

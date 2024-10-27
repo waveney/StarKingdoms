@@ -138,12 +138,10 @@ function StartOperations() {
 
     $Team = Gen_Get_Cond1('Things', "Whose=$Fid AND Type=" . $NamesTTypes['Team'] . " AND Dist1=$OrgId");
 
-    var_dump($Team);
     if (!$Team) {
       $Team = ['Whose'=>$Fid,'Type'=>$NamesTTypes['Team'], 'Dist1'=>$OrgId,'BuildState'=>3,
         'Name'=>("Operations team for " . $Orgs[$OrgId]['Name'])];
       Put_Thing($Team);
-      var_dump($Team);
       $Orgs[$OrgId]['Team'] = $Team['id'];
       Gen_Put('Organisations',$Orgs[$OrgId]);
     }
@@ -172,7 +170,9 @@ function StartOperationsStage2() {  // Making branches is checked
   $NeedColStage2 = 0;
   $TTYpes = Get_ThingTypes();
   $TTNames = NamesList($TTYpes);
+  $NamesTTypes = array_flip($TTNames);
   $Orgs = Gen_Get_Cond('Organisations',"GameId=$GAMEID");
+
 
   foreach ($Operations as $Oid=>$O) {
 
@@ -184,10 +184,26 @@ function StartOperationsStage2() {  // Making branches is checked
     $Wh = $O['SystemId'];
     $Sys = Get_System($Wh);
     $TWho = $Sys['Control'];
+    $OrgId = $O['OrgId'];
 
     if ($Ans == "on") {
       $O['State'] = 1;
       TurnLog($Fid,"Operation " . $O['Name'] . " has started for organisation " . $Orgs[$O['OrgId']]['Name']);
+
+      $Team = Gen_Get_Cond1('Things', "Whose=$Fid AND Type=" . $NamesTTypes['Team'] . " AND Dist1=$OrgId");
+
+      if (!$Team) {
+        $Team = ['Whose'=>$Fid,'Type'=>$NamesTTypes['Team'], 'Dist1'=>$OrgId,'BuildState'=>3,
+          'Name'=>("Operations team for " . $Orgs[$OrgId]['Name'])];
+        Put_Thing($Team);
+        $Orgs[$OrgId]['Team'] = $Team['id'];
+        Gen_Put('Organisations',$Orgs[$OrgId]);
+      }
+      $Team['SystemId'] = $Wh;
+      $Team['ProjectId'] = $Oid;
+      $Team['WithinSysLoc'] = (($OpTypes[$O['Type']]['TeamProps'] & TEAM_INSPACE)?0:3);
+      Put_Thing($Team);
+
     } else {
       TurnLog($Fid, "Operation " . $O['Name'] . "was not started because " . $_REQUEST["ReasonOrg$Oid"]??"Unknown");
       $O['State'] = 5;

@@ -1215,7 +1215,31 @@ function Empty_Thing(&$T) {
 }
 
 function Thing_Delete($tid) {
+  global $Project_Status,$Project_Statuses,$GAME;
+  $TTs = Get_ThingTypes();
+  $TTNames = NamesList($TTs);
+  $NameTT = array_flip($TTNames);
+
   $T = Get_Thing($tid);
+
+  $TT = $TTs[$T['Type']];
+  switch ($TTNames[$T['Type']]) {
+    case 'Team':
+      $Oper = Get_Operation($T['ProjectId']);
+      if ($Oper['Status'] ==1) {//is lost
+        include_once("TurnTools.php");
+        $Fact = Get_Faction($T['Whose']);
+        $Oper['Status'] = 6;
+        $Org = Gen_Get("Organisation" , $Oper['OrgId']);
+        TurnLog($T['Whose'], "The Team doing Operation " . $Oper['Name'] . " for " . $Org['Name'] . " has been destroyed, the operation has been lost.");
+        GMLog("The Team doing Operation " . $Oper['Name'] . " for " . $Org['Name'] . " has been destroyed, the operation has been lost.");
+      }
+      break;
+
+    default:
+      break;
+  }
+
   $Discs = Get_DistrictsT($tid);
   if ($Discs) {
     foreach ($Discs as $D) {

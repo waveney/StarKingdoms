@@ -18,7 +18,7 @@ function Rush_Cost($who,$PT=0,$Hi=0) {
 }
 
 global $Project_Status,$Project_Statuses;
-$Project_Status = [0=>'Planned',1=>'Started', 2=>'Finished',3=>'Cancelled', 4=>'On Hold', 5=>'Not Started'];
+$Project_Status = [0=>'Planned',1=>'Started', 2=>'Finished',3=>'Cancelled', 4=>'On Hold', 5=>'Not Started', 6=>'Interupted'];
 $Project_Statuses = array_flip($Project_Status);
 
 function  Where_Is_Home($PH,$Set=0) {
