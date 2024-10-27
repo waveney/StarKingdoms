@@ -23,33 +23,15 @@ TODO
 50) Links in Ledgend controlled by tech/feature
 
 
-
-
-
-
-
-
-
   
   modify .htaccess to redirect as appropriate
   
 
-
-
-Per game code
-
-SKC2 - Who You are
-SKD - Current Game/Faction
-
-
 NEW GAME FEATURES & BUGS
 11 Hostile/wary/neutral/friendly/ally
 16 All Operations to automate (list when started)
-      case 'Explore Wormhole':
       case 'Share Technology':
       case 'Study Anomaly':
-      case 'Study Planet':
-      case 'Survey System':
       case 'Outcompete':
       case 'Send Asteroid Mining Expedition':
       case 'Transfer Resources':
@@ -73,7 +55,6 @@ NEW GAME FEATURES & BUGS
 28 Name Wormholes
 30 Link colours info
 37 Techs - toggle all
-44 Operations & meetups - after turn Need An Operation Team as a Thing for each Org
 63 Post It for operations
 75 Speed to load a thing
 76 Where are my ships (on map)

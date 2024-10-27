@@ -427,10 +427,43 @@ function OperationsComplete() {
         break;
 
       case 'Explore Wormhole':
+        $L = Get_Link($O['Para1']);
+        $N = Get_System($O['SystemId']);
+        $OtherRef = (($L['System1Ref']==$N['Ref'])?$L['System2Ref']:$L['System1Ref']);
+        $ON = Get_SystemR($OtherRef);
+        $ONid = $ON['id'];
+        $FS = Get_FactionSystemFS($Fid,$ONid);
+        $FS['ScanLevel'] = $FS['SpaceScan'] = Has_Tech($Fid,'Sensors');
+        Put_FactionSystem($FS);
+        $Scan = ['FactionId'=>$Fid,'Sys'=>$ONid, 'Type'=>1, 'ThingId'=>-1,'GameId'=>$GAMEID, 'Turn'=>$GAME['Turn']];
+        Gen_Put('ScansDue',$Scan);
+        TurnLog($Fid,"System " . System_Name($ON,$Fid) . " has been explored through wormhole " . $L['Name'] );
+        break;
+
+      case 'Survey System':
+        $N = Get_System($O['SystemId']);
+        $FS = Get_FactionSystemFS($Fid,$O['SystemId']);
+        $FS['ScanLevel'] = $FS['SpaceScan'] = Has_Tech($Fid,'Sensors');
+        Put_FactionSystem($FS);
+        $Scan = ['FactionId'=>$Fid,'Sys'=>$O['SystemId'], 'Type'=>1, 'ThingId'=>-1,'GameId'=>$GAMEID, 'Turn'=>$GAME['Turn']];
+        Gen_Put('ScansDue',$Scan);
+        TurnLog($Fid,"System " . System_Name($N,$Fid) . " has been Space survied. ");
+        break;
+
+      case 'Study Planet':
+        $N = Get_System($O['SystemId']);
+        $FS = Get_FactionSystemFS($Fid,$O['SystemId']);
+        $FS['PlanetScan'] = Has_Tech($Fid,'Sensors');
+        Put_FactionSystem($FS);
+        $Scan = ['FactionId'=>$Fid,'Sys'=>$O['SystemId'], 'Type'=>2, 'ThingId'=>-1,'GameId'=>$GAMEID, 'Turn'=>$GAME['Turn']];
+        Gen_Put('ScansDue',$Scan);
+        TurnLog($Fid,"System " . System_Name($N,$Fid) . " has been Planetary survied. ");
+        break;
+
+
+
       case 'Share Technology':
       case 'Study Anomaly':
-      case 'Study Planet':
-      case 'Survey System':
       case 'Outcompete':
       case 'Send Asteroid Mining Expedition':
       case 'Transfer Resources':
