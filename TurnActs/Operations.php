@@ -460,13 +460,32 @@ function OperationsComplete() {
         TurnLog($Fid,"System " . System_Name($N,$Fid) . " has been Planetary survied. ");
         break;
 
+      case 'Transfer Resources':
+        $Wid = WorldFromSystem($O['SystemId'],$Fid);
+        $World = Get_World($Wid);
+        $To = $World['FactionId'];
+        $Amount = $O['Para1'];
+
+        if (Spend_Credit($Fid,$Amount,'Transfer to ' . $Facts[$To]['Name'],$To)) {
+          TurnLog($Fid,"Transfered " . Credit() . $Amount . " to " . $Facts[$To]['Name']);
+
+          Spend_Credit($To, - $Amount,'Transfer From ' . $Facts[$Fid]['Name'],$Fid);
+          TurnLog($To,$Facts[$Fid]['Name'] . " transfered " . Credit() . $Amount . " to you" );
+          GMLog('Cash transfer from ' . $Facts[$Fid]['Name']. ' to ' . $Facts[$To]['Name'] . ' of ' . Credit() . $Amount);
+        } else {
+          TurnLog($Fid,"Failed to transfer " . Credit() . $Amount . " to " . $Facts[$To]['Name'] . " you only have " . $Facts[$Fid]['Credits']);
+          TurnLog($To,  $Facts[$Fid]['Name'] . " Failed to transfer " . Credit() . $Amount );
+          GMLog('Cash transfer from ' . $Facts[$Fid]['Name']. ' to ' . $Facts[$To]['Name'] . ' of ' . Credit() . $Amount .  ' Bounced');
+        }
+        break;
+
+
 
 
       case 'Share Technology':
       case 'Study Anomaly':
       case 'Outcompete':
       case 'Send Asteroid Mining Expedition':
-      case 'Transfer Resources':
       case 'Transfer Resources Ongoing':
       case 'Counter Insurgency':
       case 'Insurgency':

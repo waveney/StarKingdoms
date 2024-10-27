@@ -317,6 +317,12 @@
           }
         }
         break;
+      } else if (($OpTypes[$op]['Props'] & OPER_MONEY)) {
+        echo "<h2>How many Credits?</h2>";
+        echo fm_hidden('Stage',5) . fm_hidden('op',$op) . fm_hidden('W',$Wh);
+        echo fm_number('',$_REQUEST,'SP','','min=0 max=' , $Facts[$Fid]['Credits'] );
+        echo "<button class=projtype type=submit>Send Money</button>";
+        break;
       }
       // Drop through
 
@@ -346,6 +352,9 @@
           echo "Principle:" . $SocP['Principle'] . "<p>";
           $Level = $SocP['Value'];
           $Name .= " Principle: " . $SocP['Principle'];
+        } else if ($OpTypes[$op]['Props'] & OPER_Money) {
+          echo "Ammount: " . Credit() . $SP . "<p>";
+          $Name .= " " . Credit() . $SP . "<p>";
         } else { // Science Points
           $Name .= " " . $Fields[$SP-1];
         }

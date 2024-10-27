@@ -131,6 +131,8 @@
     } else if ($PProps & OPER_CIVILISED) {
       array_unshift($Fields,'');
       echo "<tr><td>Science Points:<td>" . fm_select($Fields,$O,'Para1');
+    } else if ($PProps & OPER_MONEY) {
+      echo "<tr>" . fm_number('Credits',$O,'Para1');
     }
     echo "<tr>" . fm_textarea('Notes',$O,'Notes',8,2);
 
@@ -154,6 +156,8 @@
       echo "<tr><td>Social Principe:<td>" . $SP['Principle'];
     } else if ($PProps & OPER_CIVILISED) {
       echo "<tr><td>Science Points:<td>" . $Fields[$O['Para1']-1];
+    } else if ($PProps & OPER_MONEY) {
+      echo "<tr><td>Credits:<td>" . Credit() . $O['Para1'];
     }
     echo "<tr>" . fm_textarea('Notes',$O,'Notes',8,2);
   }
