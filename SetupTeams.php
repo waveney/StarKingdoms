@@ -39,12 +39,12 @@ foreach ($Operations as $Oid=>$O) {
   }
   $Team['SystemId'] = $Wh;
   $Team['ProjectId'] = $Oid;
-  $Team['WithinSysLoc'] = (($OpTypes[$O['Type']]['TeamProps'] & TEAM_INSPACE)?0:3);
+  $Team['WithinSysLoc'] = (($OpTypes[$O['Type']]['TeamProps'] & TEAM_INSPACE)?1:3);
   Put_Thing($Team);
 
   Put_Operation($O);
   $N = Get_System($Wh);
-  echo "Created Team for " . $Orgs[$OrgId]['Name'] . " in $Wh<p>";
+  echo "Created Team for " . $Orgs[$OrgId]['Name'] . " in " . $N['Ref'] . "<p>";
 }
 
 echo "All Done..";

@@ -812,7 +812,11 @@ function EyesInSystem($Fid,$Sid,$Of=0) { // Eyes 1 = in space, 2= sens, 4= neb s
 //var_dump($MyThings);
   foreach ($MyThings as $T) {
     if ($T['SeenTypeMask']) continue;
-    $eye = $ThingTypes[$T['Type']]['Eyes'];
+    if ($ThingTypes[$T['Type']] == 'Team') {
+      $eye = ($T['WithinSysLoc']==1)?1:8;
+    } else {
+      $eye = $ThingTypes[$T['Type']]['Eyes'];
+    }
     if (($Neb > 0) && ($T['NebSensors'] < $Neb) && (($eye&4 ==0))) continue;
     if ($T['PrisonerOf']) continue;
     $Eyes |= $eye;
@@ -831,6 +835,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
   global $Advance,$FACTION;
   static $ThingTypes;
   static $Factions;
+  static $OpProps;
   if (!$ThingTypes) $ThingTypes = Get_ThingTypes();
   if (!$Factions) $Factions = Get_Factions();
   $Locations = Within_Sys_Locs_Id($T['SystemId']);
@@ -842,6 +847,17 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
   $TTprops = $ThingTypes[$T['Type']]['Properties'];
 
   if ($T['CurHealth'] == 0 && ($TTprops & THING_CAN_BE_SPLATED)) return '';
+  if ($TTprops & THING_ISA_TEAM) {
+    if ($T['Whose'] != $Fid) {
+      include_once('OrgLib.php');
+      $Op = Get_Operation($T['ProjectId']);
+      if (!$OpProps) $OpProps = Get_OpTypes();
+      if (($OpProps[$Op['Type']]['TeamProps'] & TEAM_HIDDEN) && !$GM) return '';
+
+      if (($OpProps[$Op['Type']]['TeamProps'] & TEAM_INSPACE) && (($Eyes & 1) == 0)) return '';
+      if (($OpProps[$Op['Type']]['TeamProps'] & TEAM_ONGROUND) && (($Eyes & 8) == 0)) return '';
+    }
+  }
 
   $stm = (int) (~ (int)$T['SeenTypeMask']);
 //echo "Failed to see:" . $ThingTypes[$T['Type']]['SeenBy'] . ":$stm:" . $T['SeenTypeMask'] . ":$Eyes<p>";
@@ -973,7 +989,7 @@ function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0,$Mode=0) {
     $LastWhose = 0;
     foreach ($Things as $T) {
       $txt .= SeeThing($T,$LastWhose,$Eyes,$Fid,$Images,$GM); //,$ThingTypes,$Factions);
-    };
+    }
   return $txt;
 }
 

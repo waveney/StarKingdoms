@@ -243,7 +243,7 @@ function Show_Thing(&$T,$Force=0) {
                 " AND W.Home=PH.id AND W.Conflict=1");
               if ($Conf) $Conflict = $Conf[0]['Conflict'];
 
-              if ($Conflict) {
+              if ($Conflict || ($tprops & THING_ISA_TEAM)) {
                 echo ($Syslocs[$T['WithinSysLoc'] ?? 0] ?? 'Deep Space');
               } else {
                 echo fm_select($Syslocs,$T,'WithinSysLoc');
