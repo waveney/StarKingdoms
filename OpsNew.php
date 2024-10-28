@@ -350,9 +350,9 @@
         if ($OpTypes[$op]['Props'] & OPER_SOCP) {
           $SocP = Get_SocialP($SP);
           echo "Principle:" . $SocP['Principle'] . "<p>";
-          $Level = $SocP['Value'];
+          $TechLevel = $Level = $SocP['Value'];
           $Name .= " Principle: " . $SocP['Principle'];
-        } else if ($OpTypes[$op]['Props'] & OPER_Money) {
+        } else if ($OpTypes[$op]['Props'] & OPER_MONEY) {
           echo "Ammount: " . Credit() . $SP . "<p>";
           $Name .= " " . Credit() . $SP . "<p>";
         } else { // Science Points

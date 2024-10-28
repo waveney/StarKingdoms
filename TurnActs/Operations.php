@@ -479,7 +479,31 @@ function OperationsComplete() {
         }
         break;
 
+      case 'Spread the Word':
+        $Wid = WorldFromSystem($O['SystemId'],$Fid);
+        $World = Get_World($Wid);
+        $SocP = Gen_Get('SocialPrinciples',$O['Para1']);
+        $SPW = Gen_Get_Cond1('SocPsWorlds',"Principle=" . $O['Para1'] . " AND World=$Wid");
 
+        if ($SocP['Value'] > $O['Para2']) {
+          TurnLog($Fid,"Spread the Word of '" . $SocP['Principle']  . "' to " . World_Name($Wid,$Fid) . " failed it is already at " . $SocP['Value']);
+          GMLog("Spread the Word of '" . $SocP['Principle']  . "' to " . World_Name($Wid,$Fid) . " by " . $Org['Name'] . " of " .
+            $Facts[$Fid]['Name'] . " failed it is already at " . $SocP['Value']);
+
+        } else {
+          if ($SPW) {
+            $SPW['Value']++;
+          } else {
+            $SPW = ['Principle'=>$O['Para1'],'World'=>$Wid,'Value'=>1];
+          }
+          Gen_Put('SocPsWorlds',$SPW);
+          TurnLog($Fid,"Spread the Word of '" . $SocP['Principle']  . "' to " . World_Name($Wid,$Fid) . " succeeded it is now " . $SPW['Value']);
+
+          if ($World['FactionId'] != $Fid) {
+            Report_SP_Change($Fid,$World);
+          }
+        }
+        break;
 
 
       case 'Share Technology':
@@ -499,7 +523,6 @@ function OperationsComplete() {
       case 'Burn the Heretics':
       case 'Investigate Competition':
       case 'Sponsor Colonists':
-      case 'Spread the Word':
 
 
       default:

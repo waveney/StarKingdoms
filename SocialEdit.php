@@ -54,10 +54,20 @@ if (isset($_REQUEST['Action'])) {
       }
       dotail();
 
+    case 'Report':
+      $SocPW = Gen_Get('SocPWorlds',$Pwi);
+
+      $Wid = $SocPW['World'];
+      $World = Get_World($Wid);
+      if ($World['FactionId']) Report_SP_Change($World['FactionId'],$World);
+      break;
+
     case 'Edit':
       // drop though
   }
 }
+
+if ($GM) echo "If you make a change here, you can inform the world's owner by clicking Report<p>";
 
 $Prin = Gen_Get('SocialPrinciples',$Sid);
 $SocPWs = Gen_Get_Cond('SocPsWorlds',"Principle=$Sid");
@@ -112,7 +122,7 @@ if ($SocPWs ) {
     echo "<tr><td>" . System_Name($Sys,$Fid) . "<td>$Where";
     if ($GM) {
        echo fm_number1('',$Spw,'Value','','min=0 max=100', "SocPsWorlds:Value:$pwi");
-       echo "<td><a href=SocialEdit.php?Action=Remove&Pwi=$pwi>Remove</a>";
+       echo "<td><a href=SocialEdit.php?Action=Remove&Pwi=$pwi>Remove</a>, <a href=SocialEdit.php?Action=Report&Pwi=$pwi>Report</a>";
     } else {
       echo "<td>" . $Spw['Value'];
     }
