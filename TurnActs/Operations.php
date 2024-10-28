@@ -523,6 +523,7 @@ function OperationsComplete() {
       case 'Burn the Heretics':
       case 'Investigate Competition':
       case 'Sponsor Colonists':
+      case 'Gather Life':
 
 
       default:

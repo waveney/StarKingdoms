@@ -45,6 +45,7 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Last Active</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>State</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Economy</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Sens</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Use</a>\n";
   echo "</thead><tbody>";
 
@@ -61,6 +62,7 @@
     echo "<td <span style='background:" . $PlayerStateColours[$F['TurnState']] . "'>"  . $PlayerState[$F['TurnState']];
     if ($PlayerState[$F['TurnState']] == 'Setup' && $F['Horizon']) echo " - used";
     echo "<td>" . $Econ*10;
+    echo "<td>" . Has_Tech($Fid,'Sensors');
     echo "<td><a href=Access.php?id=$Fid&Key=" . $F['AccessKey'] . " ><b>Use</b></a>";
   }
 

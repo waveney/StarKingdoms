@@ -82,31 +82,6 @@
 
         switch ($ProjTypes[$Ptype]['Name']) {
 
-        case 'Construction':
-        case 'Grow District':
-        case 'Research Planetary Construction':
-        case 'Research Core Technology':
-        case 'Research Supplemental Technology':
-        case 'Research Ship Construction':
-        case 'Research Supplemental ship Tech':
-        case ('Research ' . Feature('MilTech')):
-        case "Research Supplemental $ARMY Tech":
-        case 'Research Intelligence Operations':
-        case 'Research Supplemental Intelligence Tech':
-        case 'Research Supplemental Planetary Construction Tech':
-        case 'Construct Warp Gate':
-        case 'Decipher Alien Language':
-        case 'Rebuild and Repair':
-        case 'Grow Modules' :
-        case 'Produce Adianite' :
-
-          if (isset($_REQUEST['Sel'])) $Sel = $_REQUEST['Sel'];
-          $Level = $_REQUEST['L'];
-          $Costs = $_REQUEST['C'];
-          $ProgN = $_REQUEST['PN'];
-          $Name = base64_decode($_REQUEST['Name']);
-          break;
-
         case 'Re-equip and Reinforce':
           $Level = 1;
           $TthingId2 = 0;
@@ -280,7 +255,34 @@
         case 'Build Advanced Asteroid Mining Facility':
         case 'Unknown' :
           break;
+
+
+        case 'Construction':
+        case 'Grow District':
+        case 'Research Planetary Construction':
+        case 'Research Core Technology':
+        case 'Research Supplemental Technology':
+        case 'Research Ship Construction':
+        case 'Research Supplemental ship Tech':
+        case ('Research ' . Feature('MilTech')):
+        case "Research Supplemental $ARMY Tech":
+        case 'Research Intelligence Operations':
+        case 'Research Supplemental Intelligence Tech':
+        case 'Research Supplemental Planetary Construction Tech':
+        case 'Construct Warp Gate':
+        case 'Decipher Alien Language':
+        case 'Rebuild and Repair':
+        case 'Grow Modules' :
+        case 'Produce Adianite' :
         default:
+
+          if (isset($_REQUEST['Sel'])) $Sel = $_REQUEST['Sel'];
+          $Level = $_REQUEST['L'];
+          $Costs = $_REQUEST['C'];
+          $ProgN = $_REQUEST['PN'];
+          $Name = base64_decode($_REQUEST['Name']);
+          break;
+
         }
 
         if ($Valid) {

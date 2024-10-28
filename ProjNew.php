@@ -469,6 +469,16 @@
 //    echo "Not in this game<p>";
       break;
 
+      if (HasTrait($Fid,"It's worth taking a long time to say it")) {
+        echo "<h2>Academic Contemplation</h2>";
+        $Lvl = 2;
+        $pc = Proj_Costs($Lvl);
+        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" .
+        $PTi['Academic Contemplation'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $TT['id'] .
+        "&Name=" . base64_encode('Academic Contemplation' . " $Lvl$Place"). "&L=$Lvl&C=" . $pc[1] . "&PN=" . $pc[0] ."'>" .
+        'Academic Contemplation' . " $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+      }
+
 
   case 'Shipyard':
       echo "<h2>Build a Ship</h2>";

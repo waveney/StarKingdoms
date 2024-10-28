@@ -739,6 +739,12 @@ function ProjectsCompleted($Pass) {
           }
           break;
 
+        case 'Academic Contemplation':
+          Gain_Science($Fid, rand(1,3), 30, 'Academic Contemplation');
+
+          TurnLog($Fid,"Gained 30 Science points from Academic Contemplation");
+          break;
+
 
           // These all now handled as instructions - not projects at the moment
         case 'Decommision':
