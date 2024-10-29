@@ -681,3 +681,12 @@ function Income_Calc($Fid) {
   return [$EconVal,$EccTxt];
 
 }
+
+function Faction_Feature($Fid,$Name,$Default=0){
+  static $Features;
+  if (empty($Features[$Fid])) {
+    $Fact= Get_Faction($Fid);
+    $Features[$Fid] = parse_ini_string($Fact['Features']?? '');
+  }
+  return ($Features[$Name] ?? $Default);
+}
