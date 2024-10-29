@@ -151,6 +151,11 @@ function Player_Page() {
       echo "<li><a href=Player.php?ACTION=Unsub>Cancel Submission</a><p>\n";
     }
     echo "<li><a href=FactionEdit.php>Faction Information</a> - Mostly read only once set up.\n";
+    if (Faction_Feature($Fid,'TrackedResources')) {
+      echo "<li><a href=Traced.php>Other Tracked Properties</a>\n";
+
+    }
+
     if ($Facts) {
       echo "<li><a href=FactionCarry.php>Allow Others Access</a> - To allow Individuals and $ARMIES aboard and repairing.\n";
       echo "<li><a href=MapTransfer.php>Transfer Mapping knowledge to another Faction</a>\n";

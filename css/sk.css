@@ -82,7 +82,7 @@ table-layout: fixed;
 }
 
 .creditlog .CLWhat {
-
+  
 }
 
 .creditlog .CLFrom {
@@ -179,3 +179,8 @@ input[type='radio'] {
 .NotHostile {
   color:green;
 }
+
+.SeeImage:hover {
+	transform: scale(5);
+}
+

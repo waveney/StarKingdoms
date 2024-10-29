@@ -844,7 +844,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
   $RawA = 0;
 
 //  if ($T['id'] == 238) { echo "Here with outpost<br>"; var_dump($T); }
-  $TTprops = $ThingTypes[$T['Type']]['Properties'];
+  $TTprops = ($ThingTypes[$T['Type']]['Properties']??0);
 
   if ($T['CurHealth'] == 0 && ($TTprops & THING_CAN_BE_SPLATED)) return '';
   if ($TTprops & THING_ISA_TEAM) {
@@ -863,7 +863,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
 //echo "Failed to see:" . $ThingTypes[$T['Type']]['SeenBy'] . ":$stm:" . $T['SeenTypeMask'] . ":$Eyes<p>";
 //var_dump($stm);
       if ($Fid >=0 && ($T['Whose'] != $Fid) && ($T['PrisonerOf'] != $Fid) &&
-          ((($ThingTypes[$T['Type']]['SeenBy'] & $stm & $Eyes) == 0 ))) {
+          (((($ThingTypes[$T['Type']]['SeenBy']??0) & $stm & $Eyes) == 0 ))) {
 // echo "Failed to see:" . $ThingTypes[$T['Type']]['SeenBy'] . ":$stm:$Eyes<p>";
         return '';
       }
@@ -929,7 +929,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
           $txt .= ", Prisoner Of: <span style='background:" . $Fact['MapColour'] . "'>" . $Fact['Name'] . "</span>";
         }
       } else if ($GM && !empty($T['Orders'])) $txt .= ", <span style='background:#ffd966;'>Orders: " . $T['Orders'] . "</span>";
-      if ($Images && !empty($T['Image'])) $txt .= " <img valign=top src=" . $T['Image'] . " height=100> ";
+      if ($Images && !empty($T['Image'])) $txt .= " <img valign=top src=" . $T['Image'] . " height=100 class=SeeImage> ";
 
       if ($GM) {
         $Resc =0;
@@ -982,7 +982,7 @@ function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0,$Mode=0) {
          $Fac = Get_Faction($N['Control']);
          $Col = $Fac['MapColour'];
        }
-       $txt .= "<h2 style='background:$Col;'>System " . System_Name($N,$Fid) . "</h2>";
+       $txt .= "<p><h2 style='background:$Col;'><a href=SurveyReport.php?id=$Sid>System " . System_Name($N,$Fid) . "</a></h2>";
     } else {
        $txt .= "<h2>In the System is:</h2>";
     }
