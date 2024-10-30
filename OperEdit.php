@@ -72,6 +72,30 @@
         exit;
       case 'Raise 1 Level': // Not for operations YET
         break;
+
+      case 'Start 1 Turn Later':
+        $O['TurnStart']++;
+        Put_Operation($O);
+/*        $PTs = Get_ProjectTurns($Oid);
+        if ($PTs) foreach($PTs as $PT){
+          $PT['TurnNumber']++;
+          Put_ProjectTurn($PT);
+        }*/
+
+        break;
+
+      case 'Start 1 Turn Earlier':
+        $O['TurnStart']--;
+        Put_Operation($O);
+/*        $PTs = Get_ProjectTurns($Oid);
+        if ($PTs) foreach($PTs as $PT){
+          $PT['TurnNumber']--;
+          Put_ProjectTurn($PT);
+        }*/
+
+        break;
+
+
     }
   }
 

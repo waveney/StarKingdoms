@@ -98,6 +98,29 @@
         $P['Name'] = preg_replace("/ $OldLvl /", " $Newlvl ",$P['Name'],1);
         Put_Project($P);
         break;
+
+      case 'Start 1 Turn Later':
+        $P['TurnStart']++;
+        Put_Project($P);
+        $PTs = Get_ProjectTurns($Prid);
+        if ($PTs) foreach($PTs as $PT){
+          $PT['TurnNumber']++;
+          Put_ProjectTurn($PT);
+        }
+
+        break;
+
+      case 'Start 1 Turn Earlier':
+        $P['TurnStart']--;
+        Put_Project($P);
+        $PTs = Get_ProjectTurns($Prid);
+        if ($PTs) foreach($PTs as $PT){
+          $PT['TurnNumber']--;
+          Put_ProjectTurn($PT);
+        }
+
+        break;
+
     }
   }
 
@@ -241,6 +264,8 @@
         echo fm_submit("ACTION",'Raise 1 Level',0);
       }
     }
+    echo fm_submit('ACTION','Start 1 Turn Later');
+    echo fm_submit('ACTION','Start 1 Turn Earlier');
   }
   echo "</h2>";
   echo "</form>";
