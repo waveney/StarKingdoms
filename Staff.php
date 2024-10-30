@@ -218,6 +218,8 @@
     $txt .= "<li><a href=ListTraits.php>List All Faction Traits</a><p>\n";
 
     $txt .= "<li><a href=ListSocial.php>List Social Principles</a><p>\n";
+    $txt .= "<li><a href=TrackedTypes.php>Tracked Properties</a><p>\n";
+
 
     $txt .= "</ul>\n";
   }
