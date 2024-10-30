@@ -46,3 +46,5 @@ echo "<tr><td>" . fm_text1('',$es,'Name',2) . fm_number1('',$es,'Props') . fm_su
 
 if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
 
+dotail();
+

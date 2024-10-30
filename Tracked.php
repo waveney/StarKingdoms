@@ -80,9 +80,9 @@ if ($GM) {
   echo "<tr><td>Physics Points<td>" . $FACTION['PhysicsSP'];
   echo "<tr><td>Engineering Points<td>" . $FACTION['EngineeringSP'];
   echo "<tr><td>Xenology Points<td>" . $FACTION['XenologySP'];
-  if ($Nam = GameFeature('Currency1')) echo "<tr><td>$Nam:<td>" . $FACTION['Currency1'];
-  if ($Nam = GameFeature('Currency2')) echo "<tr><td>$Nam:<td>" . $FACTION['Currency2'];
-  if ($Nam = GameFeature('Currency3')) echo "<tr><td>$Nam:<td>" . $FACTION['Currency3'];
+  if (($Nam = GameFeature('Currency1')) && ($FACTION['Currency1'])) echo "<tr><td>$Nam:<td>" . $FACTION['Currency1'];
+  if (($Nam = GameFeature('Currency2')) && ($FACTION['Currency2'])) echo "<tr><td>$Nam:<td>" . $FACTION['Currency2'];
+  if (($Nam = GameFeature('Currency3')) && ($FACTION['Currency3'])) echo "<tr><td>$Nam:<td>" . $FACTION['Currency3'];
   foreach ($Tracks as $ti=>$Tr) {
     echo "<tr><td>" . ($ResTypes[$Tr['Type']]['Name']??'Unknown') . "<td>" . $Tr['Value'];
 
@@ -104,4 +104,5 @@ if ($GM) {
   }
 }
 echo "</table>";
-Dotail();
+
+dotail();
