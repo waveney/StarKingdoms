@@ -11,7 +11,7 @@ global $NOTBY,$SETNOT,$GAMEID;
 dostaffhead("Manage Tracked Resources Types");
 echo "This is to managed other than the standard credit, currencies and science points<p>";
 
-echo "Props: TBD<p>";
+echo "Props: 4 lower bits: 0 =Normal, 1= TrackTable 1<p>";
 if (isset($_REQUEST['ACTION'])) {
   switch ($_REQUEST['ACTION']) {
     case 'Add':

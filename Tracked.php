@@ -84,7 +84,7 @@ if ($GM) {
   if (($Nam = GameFeature('Currency2')) && ($FACTION['Currency2'])) echo "<tr><td>$Nam:<td>" . $FACTION['Currency2'];
   if (($Nam = GameFeature('Currency3')) && ($FACTION['Currency3'])) echo "<tr><td>$Nam:<td>" . $FACTION['Currency3'];
   foreach ($Tracks as $ti=>$Tr) {
-    echo "<tr><td>" . ($ResTypes[$Tr['Type']]['Name']??'Unknown') . "<td>" . $Tr['Value'];
+    echo "<tr><td>" . ($ResTypes[$Tr['Type']]['Name']??'Unknown');
 
     switch (($ResTypes[$Tr['Type']]['Props']&15)) { // lower 4 bits = track type
       case 1:
@@ -100,6 +100,7 @@ if ($GM) {
         break;
 
       default:
+        echo  "<td>" . $Tr['Value'];
     }
   }
 }
