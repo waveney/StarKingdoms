@@ -181,7 +181,7 @@
 
   $World = Gen_Get_Cond1('Worlds',"Home=$Hi");
   if ($World) {
-    $Offices = Get_OfficesByType($World['id']);
+    $Offices = Get_Offices($World['id']);
   }
 
 

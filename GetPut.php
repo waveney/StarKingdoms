@@ -1218,14 +1218,6 @@ function Get_Offices($World=0,$xtra='') {
   return $Ts;
 }
 
-function Get_OfficesByType($World,$xtra='') {
-  global $db,$NOTBY,$GAMEID;
-  $Ts = [];
-  $res = $db->query("SELECT * FROM Offices WHERE World=$World $xtra");
-  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['Type']] = $ans;
-  return $Ts;
-}
-
 function Put_Office(&$now) {
   global $db,$GAMEID;
   if (isset($now['id'])) {

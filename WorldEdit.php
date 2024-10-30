@@ -200,16 +200,25 @@
   // Offices
   $Offs = Gen_Get_Cond('Offices',"World=$Wid");
   if ($Offs) {
-    echo "<tr><td rowspan=" . count($Offs) . ">Offices:";
-    $Show = 0;
-    foreach ($Offs as $Of) {
-      if ($Show++) echo "<tr>";
-      echo "<td colspan=4>" . ($Orgs[$Of['Organisation']]['Name']??'Unknown') .
-        " ( " . ($OrgTypes[$Orgs[$Of['Organisation']]['OrgType']]['Name']??'Unknown') . " )";
+    $Clean = [];
+    foreach ($Offs as $i=>$Of) {
+      if ($Orgs[$Of['Organisation']]??0) {
+        $Clean[$i] = $Of;
+      } else {
+        db_delete('Offices',$Of['id']);
+      }
+    }
+
+    if ($Clean) {
+      echo "<tr><td rowspan=" . count($Clean) . ">Offices:";
+      $Show = 0;
+      foreach ($Clean as $i=>$Of) {
+        if ($Show++) echo "<tr>";
+        echo "<td colspan=4>" . ($Orgs[$Of['Organisation']]['Name']??'Unknown') .
+          " ( " . ($OrgTypes[$Orgs[$Of['Organisation']]['OrgType']]['Name']??'Unknown') . " )";
+      }
     }
   }
-
-
 
   if ($SocPs) {
     echo "<tr><td rowspan=" . count($SocPs) . ">Social\nPrinciples:";
