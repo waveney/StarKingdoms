@@ -34,7 +34,7 @@ NEW GAME FEATURES & BUGS
       case 'Study Anomaly':
       case 'Outcompete':
       case 'Send Asteroid Mining Expedition':
-      case 'Transfer Resources Ongoing':
+      case 'Transfer Resources Ongoing': 
       case 'Counter Insurgency':
       case 'Insurgency':
       case 'Advanced Scientific Recon':
@@ -59,7 +59,9 @@ NEW GAME FEATURES & BUGS
 75 Speed to load a thing
 76 Where are my ships (on map)
 78 Automation chat gm 18:50 27 oct
-79 GM changes of SPs and vague notification of owner
+86 Team Visability message?
+87 Track Strakara Threat
+88 
 
 
 

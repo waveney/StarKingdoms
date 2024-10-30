@@ -508,7 +508,7 @@ function Show_Thing(&$T,$Force=0) {
   if ($GM) echo "<tr>" . fm_radio('Whose',$FactNames ,$T,'Whose','',1,'colspan=6','',$Fact_Colours,0);
   if  ($tprops & THING_HAS_GADGETS) echo "<tr>" . fm_textarea("Gadgets",$T,'Gadgets',8,3);
   echo "\n<tr>";
-  if  ($tprops & THING_HAS_LEVELS) echo fm_text("Orders",$T,'Orders',2);
+  if  (feature('Orders') && ($tprops & THING_HAS_LEVELS)) echo fm_text("Orders",$T,'Orders',2);
   if ($GM) {
     echo "<td>Prisoner of: " . fm_select($FactNames,$T,'PrisonerOf');
     echo "<td colspan=2>Hidden Control: " . fm_select($FactNames,$T,'HiddenControl');

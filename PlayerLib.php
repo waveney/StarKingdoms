@@ -152,7 +152,7 @@ function Player_Page() {
     }
     echo "<li><a href=FactionEdit.php>Faction Information</a> - Mostly read only once set up.\n";
     if (Faction_Feature($Fid,'TrackedResources')) {
-      echo "<li><a href=Traced.php>Other Tracked Properties</a>\n";
+      echo "<li><a href=Tracked.php>Other Tracked Properties</a>\n";
 
     }
 

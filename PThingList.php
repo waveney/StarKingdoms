@@ -33,9 +33,15 @@
     if (isset($Fid)) $Faction = Get_Faction($Fid);
   }
 
+  if ($GM && isset($_REQUEST['FORCE'])) $GM = 0;
+
   dostaffhead("Things",["js/ProjectTools.js"],
              " onload=ListThingSetup(" . ($FACTION['id']??0) . ",$GM," . ($GM?($FACTION['GMThingType']??0):$Faction['ThingType']) . "," .
              ($GM?($Faction['GMThingBuild']??0):$Faction['ThingBuild']) . ")" );
+
+  if ($GM && $Fid) {
+    echo "<h2><a href=PThingList.php?FORCE>This page in Player Mode</a></h2>";
+  }
 
   if ($GM && isset($Fid) && $Fid==0) {
   } else {
@@ -217,7 +223,7 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Type</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Level</a>\n";
   if (!$Fid) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Whose</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Orders</a>\n";
+  if (Feature('Orders')) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Orders</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Health</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>State</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Where</a>\n";
@@ -227,6 +233,8 @@
   if ($Fid) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Refit?</a>\n";
   if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Sensors</a>\n";
   if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Notes</a>\n";
+  if (!$GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Prio</a>\n";
+
   echo "</thead><tbody>";
 
   $LinkTypes = Get_LinkLevels();
@@ -304,13 +312,13 @@
     echo "<td>" . $Name;
     echo "<td>" . $T['Level'];
     if ($Fid == 0) echo "<td style='background:" . ($Factions[$T['Whose']]['MapColour']??'white') . "'>" . ($Factions[$T['Whose']]['Name']??'Unknown');
-    echo "<td>" . (($RowClass == 'Prisoner') ? "<span style='background:" . ($Factions[$T['Whose']]['MapColour']??'white') . "'>[" .
+    if (0) echo "<td>" . (($RowClass == 'Prisoner') ? "<span style='background:" . ($Factions[$T['Whose']]['MapColour']??'white') . "'>[" .
                  ($Factions[$T['Whose']]['Name']??'Unknown') . "]</span>" : $T['Orders']);
     echo "<td><center>" . (($Props & THING_HAS_HEALTH)? $T['CurHealth'] . ' / ' . $T['OrigHealth'] : "-");
     if (!empty($T['PrisonerOf'])) {
       echo "<td>Prisoner";
       if (($T['Whose'] == $Fid) && (!$GM)) {
-        echo "<td><td><td>";
+        echo "<td><td><td><td>";
         if ($Fid) echo "<td>";
         continue;
       }
@@ -372,8 +380,14 @@
       }
 
       if (($T['CurHealth'] < $T['OrigHealth']) && ($Props & THING_HAS_HEALTH) && (($Props & THING_CAN_BE_SPLATED) == 0)) $Up++;
-      echo "<td>" . ($Up?$Up:'');
+      if ($RowClass == 'Prisoner'){
+        echo "<td><span style='background:" . ($Factions[$T['Whose']]['MapColour']??'white') . "'>[" .
+           ($Factions[$T['Whose']]['Name']??'Unknown') . "]</span>";
+      } else {
+        echo "<td>" . ($Up?$Up:'');
+      }
     }
+    if (!$GM) echo "<td>" . $T['Priority'];
 
     if ($GM) {
       echo "<td>" . (($T['Sensors'] ? ($T['Sensors'] . '*L' . $T['SensorLevel']) : ''));
