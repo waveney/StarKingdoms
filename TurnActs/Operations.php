@@ -505,6 +505,33 @@ function OperationsComplete() {
         }
         break;
 
+      case 'Burn the Heretics':
+        $Wid = WorldFromSystem($O['SystemId'],$Fid);
+        $World = Get_World($Wid);
+        $SocP = Gen_Get('SocialPrinciples',$O['Para1']);
+        $SPW = Gen_Get_Cond1('SocPsWorlds',"Principle=" . $O['Para1'] . " AND World=$Wid");
+
+        if ($SocP['Value'] > $O['Para2']) {
+          TurnLog($Fid,"Burn the Heretics of '" . $SocP['Principle']  . "' to " . World_Name($Wid,$Fid) . " failed it is already at " . $SocP['Value']);
+          GMLog("Burn the Heretics of '" . $SocP['Principle']  . "' to " . World_Name($Wid,$Fid) . " by " . $Org['Name'] . " of " .
+            $Facts[$Fid]['Name'] . " failed it is already at " . $SocP['Value']);
+
+        } else {
+          if ($SPW) {
+            $SPW['Value'] = max(0,$SPW['Value']-1);
+          } else {
+            $SPW = ['Principle'=>$O['Para1'],'World'=>$Wid,'Value'=>0];
+          }
+          Gen_Put('SocPsWorlds',$SPW);
+          TurnLog($Fid,"Burn the Heretics of '" . $SocP['Principle']  . "' to " . World_Name($Wid,$Fid) . " succeeded it is now " . $SPW['Value']);
+
+          if ($World['FactionId'] != $Fid) {
+            Report_SP_Change($Fid,$World);
+          }
+        }
+        break;
+
+
 
       case 'Share Technology':
       case 'Study Anomaly':
@@ -520,7 +547,6 @@ function OperationsComplete() {
       case 'Organisational Recon':
       case 'Planetary Recon':
       case 'Police Crackdown':
-      case 'Burn the Heretics':
       case 'Investigate Competition':
       case 'Sponsor Colonists':
       case 'Gather Life':

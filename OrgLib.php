@@ -168,7 +168,7 @@ function Op_Level($Orgid,$Sys,$Mod=0) {
 
   $Depth = 0;
   $ThisList[] = $Sys;
-  while (($Depth < 5) && !empty($ThisList)) {
+  while (($Depth < 8) && !empty($ThisList)) {
 //    echo "Doing Depth $Depth<p>";
     $NextList = [];
     foreach($ThisList as $Sid) {
