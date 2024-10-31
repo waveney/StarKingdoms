@@ -180,6 +180,7 @@
     $txt .= "<li><a href=Payments.php>See Payments (Credit/SP)</a>\n";
     $txt .= "<p>";
     $txt .= "<li><a href=UserGuide.php>User Guide</a>\n";
+    $txt .= "<li><a href=RepeatFollowUp.php>Set up Repeat Follow Ups</a>\n";
 
     $txt .= "</ul>\n";
   }

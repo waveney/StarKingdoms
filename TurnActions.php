@@ -168,6 +168,13 @@ function StartTurnProcess() {
   }
 */
 
+  $Rups = Gen_Get_Cond('RepeatFollow',"GameId=$GAMEID");
+  if ($Rups) {
+    foreach($Rups as $R) {
+      FollowUp(0,$R['Name']);
+    }
+  }
+
   GMLog("Started Turn Processing");
   return 1;
 }
@@ -471,6 +478,22 @@ function TraitIncomes() {
     if ($SPs[1] || $SPs[2] || $SPs[3]) {
       TurnLog($Who,"Gained " . ($SPs[1]?$SPs[1] . "Physics points, ":'') .
          ($SPs[2]?$SPs[2] . "Engineering points, ":'') . ($SPs[3]?$SPs[3] . "Xenology points, ":'') . " for branches of " . $O['Name']);
+    }
+
+    if ($O['Name'] == 'Ecoline') {
+      $Wildlife = Has_Track($Fid,'Alien Wildlife');
+      $Xeno = [125=>5, 80=>4, 45=>3, 20=>2, 5=> 1];
+      $Mult = 0;
+      foreach ($Xeno as $XV=>$XP ) {
+        if ($Wildlife >= $XV) {
+          $Mult = $XP;
+          break;
+        }
+      }
+      if ($Mult) {
+        Gain_Science($Who,3,$Pow*$Mult,"From Ecoline");
+        TurnLog($Who,"Gained " . $Pow*$Mult . " Xenology points from Ecoline");
+      }
     }
 
   }

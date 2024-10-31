@@ -692,3 +692,18 @@ function Faction_Feature($Fid,$Name,$Default=0){
   }
   return ($Features[$Name] ?? $Default);
 }
+
+function Tracks() {
+  static $Tracks;
+  if ($Tracks) return $Tracks;
+  $Tracks = Gen_Get_All('ResourceTypes');
+  return $Tracks;
+}
+
+function Has_Track($Fid,$Name) {
+  $TNames = array_flip(NameList(Tracks()));
+  $Trackid = $TNames[$Name];
+  $Have = Gen_Get_Cond('Resources',"Whose=$Fid AND Type=$Trackid");
+  return $Have['Value']??0;
+}
+
