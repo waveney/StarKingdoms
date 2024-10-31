@@ -102,7 +102,7 @@
   $SP = $_REQUEST['SP']??0;
   $Lid = $_REQUEST['Lid']??0;
 
-  echo "<form method=post action=ProjNew.php>";
+  echo "<form method=post action=OpsNew.php>";
  // echo fm_hidden('t',$Turn) . fm_hidden('O',$OrgId) . fm_hidden('Stage',$Stage+1) . fm_hidden('p',$op) . fm_hidden('W',$Wh);
 
   switch ($Stage) {
