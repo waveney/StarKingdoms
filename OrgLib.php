@@ -13,6 +13,8 @@ define('OPER_SOCPTARGET',0x400);
 define('OPER_WORMHOLE',0x800);
 define('OPER_CIVILISED',0x1000);
 define('OPER_MONEY',0x2000);
+define('OPER_DESC',0x4000);
+define('OPER_ANOMALY',0x8000);
 
 
 define('ORG_HIDDEN',1);

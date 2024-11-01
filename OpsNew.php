@@ -323,9 +323,36 @@
         echo fm_number('',$_REQUEST,'SP','','min=0 max=' , $Facts[$Fid]['Credits'] );
         echo "<button class=projtype type=submit>Send Money</button>";
         break;
-      }
-      // Drop through
+      } else if (($OpTypes[$op]['Props'] & OPER_DESC)) {
+        // Need description too complex otherwise
+      } else if (($OpTypes[$op]['Props'] & OPER_ANOMALY)) {
+        // Look for anomalies at target, if any, are they not analysed, if so record list, if list empty - err msg, if one select, if many give choice
+        $Anoms = Gen_Get_Cond('Anomalies',"GameId=$GAMEID AND SystemId=$Wh");
+        if ($Anoms) {
+          echo "<h2>Anomalies</h2>";
+          $AnomList = [];
+          foreach($Anoms as $A) {
+            $Aid = $A['id'];
+            $FA = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
+            if (($FA['State'] ==1) || ($FA['State'] ==2)) $AnomList[$Aid] = $A['Name'];
+          }
+          if (empty($AnomList)) {
+            echo "<h2>There are no known anomalies there</h2>";
+            break;
+          } else if (count($AnomList) == 1) {
+            $SP = $Aid; // Then drop through
+          } else {
+            echo "<h2>Please select which Anomaly?</h2>";
+            foreach($AnomList as $Aid=>$AL) {
+              echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&SP=$Aid'>$AL</button> \n";
+            }
+          }
+        } else {
+          echo "<h2>There are no known anomalies there</h2>";
+          break;
+        }
 
+      }
     case 5: // Complete /Restart/ etc
       $TSys = Get_System($Wh);
       $TFid = $TSys['Control'];
@@ -355,6 +382,11 @@
         } else if ($OpTypes[$op]['Props'] & OPER_MONEY) {
           echo "Ammount: " . Credit() . $SP . "<p>";
           $Name .= " " . Credit() . $SP . "<p>";
+        } else if (($OpTypes[$op]['Props'] & OPER_ANOMALY)) {
+          $Anom = Gen_Get('Anomalies',$SP);
+          $Name .= " - " . $Anom['Name'];
+        } else if (($OpTypes[$op]['Props'] & OPER_DESC)) {
+          $Name .= " $Desc";
         } else { // Science Points
           $Name .= " " . $Fields[$SP-1];
         }
