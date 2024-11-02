@@ -11,6 +11,7 @@
   dostaffhead("A Knows B");
 
   echo "<h1>What Factions know of others</h1>";
+  echo "If their are details there is a * after the relationship<p>";
 
   echo "<form method=post action=FactionFaction.php>";
   Register_Autoupdate('FFaction',0);
@@ -27,7 +28,7 @@
 
     $DR = $Relations[$F1['DefaultRelations']];
 //    var_dump($DR);
-    echo "<td style='background:" . $DR[1]  . "'>" . $DR[0];
+    echo "<td style='background:" . $DR[1]  . "'>" . $DR[0] . ($F1['AlienDescription']?' *':'');
     foreach ($Facts as $F2) {
       if ($F1['id'] == $F2['id'] ) {
         echo "<td>";
@@ -39,10 +40,11 @@
       $bg = " style='background:" . $DR[1]  . "'";
       if (isset($FF[$F2['id']])) {
         echo "<td $bg>" . fm_checkbox('',$K,'Y','',"Know" . $F1['id'] . ":" . $F2['id']);
+        echo " " . $DR[0] . ($FF[$F2['id']]['Description']?' *':'');
       } else {
         echo "<td $bg>" . fm_checkbox('',$K,'N','',"Know" . $F1['id'] . ":" . $F2['id']);
+        echo " " . $DR[0];
       }
-      echo " " . $DR[0];
     }
   }
   echo "</table></form>";
