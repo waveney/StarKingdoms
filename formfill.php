@@ -295,9 +295,9 @@
       echo Put_FactionFaction($N);
     } else if ((preg_match('/(\w*):(\d*)/',$field,$mtch)?true:false)) {
       if ($mtch[2]) {
-        if ($mtch[1] == 'DefaultRelations') {
+        if (($mtch[1] == 'DefaultRelations') || ($mtch[1] == 'AlienDescription')) {
           $N=Get_Faction($mtch[2]);
-          $N['DefaultRelations'] = $Value;
+          $N[$mtch[1]] = $Value;
           Put_Faction($N);
         } else {
           $N = Gen_Get($type,$mtch[2]);

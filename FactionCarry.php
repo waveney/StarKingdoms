@@ -63,6 +63,7 @@
   echo "<thead><tr>";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Faction Name</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Relationship</a>\n";
+  echo "<th colspan=4><a href=javascript:SortTable(" . $coln++ . ",'T')>Details<br>Neutral, Wary only</a>\n";
 
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Carry Armies</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Carry Individuals</a>\n";
@@ -73,6 +74,7 @@
   echo "<tr height=50><Td>Unknown Aliens";
   if ($FACTION['DefaultRelations'] == 0) $FACTION['DefaultRelations']= 5;
   echo "<td>" . fm_radio('',$RelVals,$FACTION,'DefaultRelations','',-2,'',"DefaultRelations:$Fid",$RelCols);
+  echo "<td colspan=4>Details:<br>" . fm_basictextarea($FACTION,'AlienDescription',3,6,'',"AlienDescription:$Fid");
 
   foreach($FactFacts as $FF) {
     $F = Get_Faction($FF['FactionId2']);
@@ -83,13 +85,14 @@
 //    function fm_radio($Desc,&$defn,&$data,$field,$extra='',$tabs=1,$extra2='',$field2='',$colours=0,$multi=0,$extra3='',$extra4='') {
     if ($FF['Relationship'] == 0) $FF['Relationship']= 5;
     echo "<td>" . fm_radio('',$RelVals,$FF,'Relationship','',-2,'',"Relationship:$id",$RelCols);
+    echo "<td colspan=4>Details:<br>" . fm_basictextarea($FF,'Description',3,6,'',"Description:$id");
 //echo  "\nProps:" . dechex($FF['Props']) . "\n";
     $perms = [ $FF['Props'] & 15, (($FF['Props'] >>4)&15), (($FF['Props'] >>8)&15),(($FF['Props'] >>12)&15),];
 //var_dump($perms);
-    echo "<td>" . fm_radio('',$Boarding,$perms,0,'',0,'',"Set:0:" . $FF['id']);
-    echo "<td>" . fm_radio('',$Boarding,$perms,1,'',0,'',"Set:1:" . $FF['id']);
- //   echo "<td>" . fm_radio('',$Boarding,$perms,2,'',0,'',"Set:2:" . $FF['id']); // Warp gates
-    echo "<td>" . fm_radio('',$Boarding,$perms,3,'',0,'',"Set:3:" . $FF['id']);
+    echo "<td>" . fm_radio('',$Boarding,$perms,0,'',-2,'',"Set:0:" . $FF['id']);
+    echo "<td>" . fm_radio('',$Boarding,$perms,1,'',-2,'',"Set:1:" . $FF['id']);
+ //   echo "<td>" . fm_radio('',$Boarding,$perms,2,'',-2,'',"Set:2:" . $FF['id']); // Warp gates
+    echo "<td>" . fm_radio('',$Boarding,$perms,3,'',-2,'',"Set:3:" . $FF['id']);
   }
   if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "</table></div></form>\n";
