@@ -293,6 +293,18 @@
       $N['Props'] = ($N['Props'] & $Mask) + ($Value << ($nib*4));
 //echo "Mask: " . dechex($Mask) . " New Props:" . dechex($N['Props']) . "\n";
       echo Put_FactionFaction($N);
+    } else if ((preg_match('/(\w*):(\d*)/',$field,$mtch)?true:false)) {
+      if ($mtch[2]) {
+        if ($mtch[1] == 'DefaultRelations') {
+          $N=Get_Faction($mtch[2]);
+          $N['DefaultRelations'] = $Value;
+          Put_Faction($N);
+        } else {
+          $N = Gen_Get($type,$mtch[2]);
+          $N[$mtch[1]] = $Value;
+          echo Gen_Put($type,$N);
+        }
+      }
     }
     exit;
 

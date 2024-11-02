@@ -10,8 +10,9 @@ $PlayerStates = array_flip($PlayerState);
 $FoodTypes = ['Omnivore','Herbivore','Carnivore'];
 
 $Currencies = ['Credits','Physics Science Points','Engineering Science Points','Xenology Science Points','General Science Points'];
+$Relations = [9=>['Allied','lightgreen'],7=>['Friendly','lightyellow'],5=>['Neutral','lightblue'],3=>['Wary','Orange'],1=>['Hostile','Red']];
 
-global $PlayerState,$PlayerStates,$Currencies,$FoodTypes;
+global $PlayerState,$PlayerStates,$Currencies,$FoodTypes,$Relations;
 
 function CheckFaction($Prog='Player',$Fid=0) {
   if (!Access('Player') && !Access('GM')) {
@@ -155,8 +156,8 @@ function Player_Page() {
     echo "<li><a href=FactionEdit.php>Faction Information</a> - Mostly read only once set up.\n";
     echo "<li><a href=Tracked.php>Tracked Resources and Properties</a>\n";
 
-    if ($Facts) {
-      echo "<li><a href=FactionCarry.php>Allow Others Access</a> - To allow Individuals and $ARMIES aboard and repairing.\n";
+    if ($Facts || $FACTION['NPC']) {
+      echo "<li><a href=FactionCarry.php>Relationship with Other Factions</a> - Also to allow Individuals and $ARMIES aboard and repairing.\n";
       echo "<li><a href=MapTransfer.php>Transfer Mapping knowledge to another Faction</a>\n";
     }
     if ($GM) echo "<p><li>GM: <a href=SplitFaction.php?ACTION=Start>Split Faction</a>\n";

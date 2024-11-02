@@ -239,31 +239,37 @@ function fm_select(&$Options,$data,$field,$blank=0,$selopt='',$field2='',$Max=0,
   return fm_select2($Options,'@@@@@@',$field,$blank,$selopt,$field2,$Max,$optclass, $Raw,$BGColour);
 }
 
+// tabs 0=none, 1 normal, 2 lines between, 3 box before txt
 function fm_radio($Desc,&$defn,&$data,$field,$extra='',$tabs=1,$extra2='',$field2='',$colours=0,$multi=0,$extra3='',$extra4='') {
   global $ADDALL,$AutoADD,$AutoAfter,$AutoType;
   if (!$colours) $colours = ['white','lightgreen','lightpink','lightblue','lightyellow','bisque','#99ffcc','#b3b3ff'];
+  //var_dump($Desc,$field,$tabs,$extra2,$field2);
   if ($field2 == '') $field2=$field;
   $str = "";
-  if ($tabs) $str .= "<td $extra>";
-  if ($Desc) $str .= "$Desc:";
+  if ($tabs > 0) $str .= "<td $extra>";
+  if ($Desc) { $str .= "$Desc:";
   $str .= help($field) . "&nbsp;";
-  if ($tabs) $str .= "<td $extra2>";
+  if ($tabs > 0) $str .= "<td $extra2>";
+  }
+  if (($tabs < 0 ) && $Desc) $str .= "<br>";
   $done = 0;
   foreach($defn as $i=>$d) {
     if (!$d) continue;
-    $str.= (($done && $tabs == 2) ? "<br>" : " ");
+    $str.= (($done && abs($tabs) >= 2) ? "<br>" : " ");
     $done = 1;
     if ($colours) {
-      $col = (isset($colours[$i])?$colours[$i]:$colours[rand(0,7)]);
+      $col = (isset($colours[$i])?$colours[$i]:($colours[rand(0,7)]??'white'));
       $str .= "<span style='background:$col;padding:4; white-space: nowrap;'>";
     }
-    $str .= "<label for=$field2$i $extra3>$d:</label>";
+    if (abs($tabs) < 3) {
+      $str .= "<label for=$field2$i $extra3>$d:</label>";
+    }
     $ex = $extra;
     $ex = preg_replace('/###F/',("'" . $field2 . "'"),$ex);
     $ex = preg_replace('/###V/',("'" . $i . "'"),$ex);
     if ($multi) {
       $str .= "<input type=checkbox name=$field2$i $ex id=$field2$i $ADDALL ";
-      if ($AutoADD) $str .= " oninput=AutoInput('$field2$i',$AutoType,$i) ";
+      if ($AutoADD) $str .= " oninput=AutoInput('$field2$i',$i,$AutoType) ";
       $str .= " value='$i'";
       if (isset($data["$field$i"]) && ($data["$field$i"] == $i)) $str .= " checked";
     } else {
@@ -272,7 +278,11 @@ function fm_radio($Desc,&$defn,&$data,$field,$extra='',$tabs=1,$extra2='',$field
       $str .= " value='$i' $extra4";
       if (isset($data[$field]) && ($data[$field] == $i)) $str .= " checked";
     }
-    $str .= ">";
+    $str .= ">\n";
+    if (abs($tabs) == 3) {
+      $str .= " <label for=$field2$i $extra3>$d</label>";
+    }
+
     if ($colours) $str .= "</span>";
   }
   return $str;
