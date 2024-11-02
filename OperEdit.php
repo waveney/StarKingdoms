@@ -157,6 +157,14 @@
       echo "<tr><td>Science Points:<td>" . fm_select($Fields,$O,'Para1');
     } else if ($PProps & OPER_MONEY) {
       echo "<tr>" . fm_number('Credits',$O,'Para1');
+    } else if ($PProps & OPER_ANOMALY) {
+      $Anom = Gen_Get('Anomalies', $O['Para1']);
+      echo "<tr>" . fm_number('Anomaly',$O,'Para1')  . "<td>" . $Anom['Name'];
+
+    }
+
+    if ($PProps & OPER_DESC) {
+      echo "<tr>" . fm_text('Description',$O,'Description',6);
     }
     echo "<tr>" . fm_textarea('Notes',$O,'Notes',8,2);
 

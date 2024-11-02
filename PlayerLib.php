@@ -81,9 +81,11 @@ function Player_Page() {
   }
 
   $Fid = $FACTION['id'];
-  $FACTION['LastActive'] = time();
 
-  if (!$GM || $FACTION['NPC'] ) Put_Faction($FACTION);
+  if (!$GM || $FACTION['NPC'] ) {
+    $FACTION['LastActive'] = time();
+    Put_Faction($FACTION);
+  }
 
   $Factions = Get_Factions();
   $Facts = Get_FactionFactions($Fid);

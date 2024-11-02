@@ -25,7 +25,7 @@
   setcookie('SKF',$FID);
   $_COOKIE['SKF'] = $FID;
 
-  $USER['AccessLevel'] = $Access_Type['Player'];
+  set_Faction(0);
 
   $Gid = $F['GameId'];
   if ($Gid != $GAMEID) {

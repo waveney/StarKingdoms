@@ -83,6 +83,7 @@
         $Level = $_REQUEST['L']??0;
         $ProgN = $_REQUEST['PN']??0;
         $Costs = $_REQUEST['C']??0;
+        $Desc = base64_decode($_REQUEST['Desc']??'');
 
         $Valid = 1;
         $FreeRush = 0;
@@ -91,7 +92,7 @@
           $OldPro = Get_OperationAt($OrgId, $Turn);
           $Pro = ['Whose'=>$Fid, 'Type'=>$Optype, 'Level'=> $Level, 'OrgId'=>$OrgId, 'Progress'=>0, 'Status'=>0, 'TurnStart'=>$Turn,
                   'Name'=>$Name, 'Costs' => $Costs, 'ProgNeeded' => $ProgN, 'Status'=>0, 'FreeRushes'=>$FreeRush,
-                  'SystemId'=>$Wh, 'Para1' => ($SP?$SP:$Te), 'Para2' => $TL, 'GameId'=>$GAMEID,
+                  'SystemId'=>$Wh, 'Para1' => ($SP?$SP:$Te), 'Para2' => $TL, 'GameId'=>$GAMEID, 'Description'=>$Desc,
 
           ];
 

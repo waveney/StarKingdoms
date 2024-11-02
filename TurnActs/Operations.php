@@ -540,6 +540,7 @@ function OperationsComplete() {
       case 'Study Anomaly':
         $Anom = Gen_Get('Anomalies',$O['Para1']);
         if (($Anom['Complete']??3) ==0) {
+          $Aid = $Anom['id']??0;
           $FA = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
           $Prog = Has_Tech('Sensors')*$Org['OfficeCount'];
 

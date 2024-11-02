@@ -101,6 +101,7 @@
   $TechLevel = $_REQUEST['TL']??0;
   $SP = $_REQUEST['SP']??0;
   $Lid = $_REQUEST['Lid']??0;
+  $Desc = $_REQUEST['Description']??'';
 
   echo "<form method=post action=OpsNew.php>";
  // echo fm_hidden('t',$Turn) . fm_hidden('O',$OrgId) . fm_hidden('Stage',$Stage+1) . fm_hidden('p',$op) . fm_hidden('W',$Wh);
@@ -324,6 +325,11 @@
         echo "<button class=projtype type=submit>Send Money</button>";
         break;
       } else if (($OpTypes[$op]['Props'] & OPER_DESC)) {
+        echo "<h2>Describe what is being done - this Operation is not automated</h2>";
+        echo fm_hidden('Stage',5) . fm_hidden('op',$op) . fm_hidden('W',$Wh) . fm_hidden('O',$OrgId) .fm_hidden('t',$Turn);
+        echo fm_text('',$_REQUEST,'Description',6);
+        echo "<button class=projtype type=submit>Proceed</button>";
+        break;
         // Need description too complex otherwise
       } else if (($OpTypes[$op]['Props'] & OPER_ANOMALY)) {
         // Look for anomalies at target, if any, are they not analysed, if so record list, if list empty - err msg, if one select, if many give choice
@@ -425,7 +431,7 @@
 
       echo "<button class=projtype type=submit " .
            "formaction='OpsDisp.php?ACTION=NEW&t=$Turn&O=$OrgId&op=$op&W=$Wh&SP=$SP&Te=$TechId&TL=$TechLevel&N=" .
-           base64_encode("$Name") . "&L=$BaseLevel&PN=$ProgNeed'>$Name</button> \n";
+           base64_encode("$Name") . "&L=$BaseLevel&PN=$ProgNeed&Desc=" . base64_encode("$Desc") . "'>$Name</button> \n";
 
 
 
