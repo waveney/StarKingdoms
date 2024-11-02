@@ -1,36 +1,48 @@
 <?php
   include_once("sk.php");
   include_once("GetPut.php");
-  /* Remove any Participant overlay */
-
+  include_once("PlayerLib.php");
+/* Remove any Participant overlay */
+  global $Relations;
   A_Check('GM');
 
   $Facts = Get_Factions();
-  
+
   dostaffhead("A Knows B");
-  
+
   echo "<h1>What Factions know of others</h1>";
-  
+
   echo "<form method=post action=FactionFaction.php>";
   Register_Autoupdate('FFaction',0);
-  
+
   echo "<table border>";
-  echo "<tr><th>Do These V know about &gt;";
+  echo "<tr><th>Do These V know about &gt;<th>Aliens";
   $K = ['Y'=>1, 'N'=> 0];
   foreach ($Facts as $F) echo "<th>" . $F['Name'];
   foreach ($Facts as $F1) {
+//    var_dump($F1);
     $FF = Get_FactionFactions($F1['id']);
     echo "<tr><td>" . $F1['Name'];
+    if ($F1['DefaultRelations'] == 0) $F1['DefaultRelations']= 5;
+
+    $DR = $Relations[$F1['DefaultRelations']];
+//    var_dump($DR);
+    echo "<td style='background:" . $DR[1]  . "'>" . $DR[0];
     foreach ($Facts as $F2) {
       if ($F1['id'] == $F2['id'] ) {
         echo "<td>";
-        continue; 
+        continue;
       }
+      $R = $FF[$F2['id']]['Relationship']??5;
+      if ($R ==0) $R = 5;
+      $DR = $Relations[$R];
+      $bg = " style='background:" . $DR[1]  . "'";
       if (isset($FF[$F2['id']])) {
-        echo "<td>" . fm_checkbox('',$K,'Y','',"Know" . $F1['id'] . ":" . $F2['id']);
+        echo "<td $bg>" . fm_checkbox('',$K,'Y','',"Know" . $F1['id'] . ":" . $F2['id']);
       } else {
-        echo "<td>" . fm_checkbox('',$K,'N','',"Know" . $F1['id'] . ":" . $F2['id']);      
+        echo "<td $bg>" . fm_checkbox('',$K,'N','',"Know" . $F1['id'] . ":" . $F2['id']);
       }
+      echo " " . $DR[0];
     }
   }
   echo "</table></form>";
@@ -41,7 +53,7 @@
     echo "</table>";
   }
 
-  
+
   dotail();
 
 ?>
