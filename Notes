@@ -27,10 +27,8 @@ TODO
   
 
 NEW GAME FEATURES & BUGS
-11 Hostile/wary/neutral/friendly/ally
 16 All Operations to automate (list when started)
       case 'Share Technology':
-      case 'Study Anomaly':
       case 'Outcompete':
       case 'Send Asteroid Mining Expedition':
       case 'Transfer Resources Ongoing': 
@@ -43,10 +41,8 @@ NEW GAME FEATURES & BUGS
       case 'Organisational Recon':
       case 'Planetary Recon':
       case 'Police Crackdown':
-      case 'Burn the Heretics':
       case 'Investigate Competition':
       case 'Sponsor Colonists':
-      case 'Spread the Word':
       Gather Life
   
 17 Where has X come from (from last line in things history) - add to see after movement (filter for unknown wormhole)

@@ -23,7 +23,7 @@
   foreach ($Facts as $F1) {
 //    var_dump($F1);
     $FF = Get_FactionFactions($F1['id']);
-    echo "<tr><td>" . $F1['Name'];
+    echo "<tr><td><a href=FactionCarry.php?F=" . $F1['id'] . ">". $F1['Name'] . "</a>";
     if ($F1['DefaultRelations'] == 0) $F1['DefaultRelations']= 5;
 
     $DR = $Relations[$F1['DefaultRelations']];

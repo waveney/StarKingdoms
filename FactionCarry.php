@@ -30,7 +30,7 @@
   }
 
   dostaffhead("Carry Control",["js/ProjectTools.js"]);
-
+//var_dump($Faction);
   CheckFaction('PThingList',$Fid);
 
   if (isset($_REQUEST['ACTION'])) {
@@ -72,9 +72,9 @@
   echo "</thead><tbody>";
 
   echo "<tr height=50><Td>Unknown Aliens";
-  if ($FACTION['DefaultRelations'] == 0) $FACTION['DefaultRelations']= 5;
-  echo "<td>" . fm_radio('',$RelVals,$FACTION,'DefaultRelations','',-2,'',"DefaultRelations:$Fid",$RelCols);
-  echo "<td colspan=4>Details:<br>" . fm_basictextarea($FACTION,'AlienDescription',3,6,'',"AlienDescription:$Fid");
+  if ($Faction['DefaultRelations'] == 0) $Faction['DefaultRelations'] = 5;
+  echo "<td>" . fm_radio('',$RelVals,$Faction,'DefaultRelations','',-2,'',"DefaultRelations:$Fid",$RelCols);
+  echo "<td colspan=4>Details:<br>" . fm_basictextarea($Faction,'AlienDescription',3,6,'',"AlienDescription:$Fid");
 
   foreach($FactFacts as $FF) {
     $F = Get_Faction($FF['FactionId2']);

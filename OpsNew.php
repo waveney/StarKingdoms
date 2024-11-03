@@ -149,7 +149,7 @@
         $TTNames = array_flip(NamesList($TTYpes));
         $OutPs = Get_Things_Cond($Fid,"Type=" . $TTNames['Outpost'] . " AND SystemId=$Wh AND BuildState=3");
         if ($OutPs) {
-          if (count($OutPs >1)) {
+          if (count($OutPs) >1) {
             echo "<h2 class=Err>There are multiple Outposts there - let the GM's know...</h2>";
             GMLog4Later("There are multiple Outposts in " . $TSys['Ref']);
             break;

@@ -239,7 +239,7 @@ function fm_select(&$Options,$data,$field,$blank=0,$selopt='',$field2='',$Max=0,
   return fm_select2($Options,'@@@@@@',$field,$blank,$selopt,$field2,$Max,$optclass, $Raw,$BGColour);
 }
 
-// tabs 0=none, 1 normal, 2 lines between, 3 box before txt
+// tabs 0=none, 1 normal, 2 lines between, 3 box before txt,
 function fm_radio($Desc,&$defn,&$data,$field,$extra='',$tabs=1,$extra2='',$field2='',$colours=0,$multi=0,$extra3='',$extra4='') {
   global $ADDALL,$AutoADD,$AutoAfter,$AutoType;
   if (!$colours) $colours = ['white','lightgreen','lightpink','lightblue','lightyellow','bisque','#99ffcc','#b3b3ff'];
