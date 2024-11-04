@@ -72,6 +72,7 @@
   echo "<h2>SK Pages - " . (isset($GAME['Name'])?$GAME['Name']:"Star Kingdoms" ) . "</h2>\n";
 
   $Factions = Get_Factions();
+  echo "<span style='line-height:1.8'>";
   foreach($Factions as $F) {
     $Fid = $F['id'];
 
@@ -79,7 +80,7 @@
          ";text-shadow: 2px 2px 3px white;padding:2px'><b>"  . NoBreak($F['Name']) . "</b></a> ";
   }
 
-  echo "<p>\n";
+  echo "</span><p>\n";
 
   $GMActs = Gen_Get_Cond('GMLog4Later','id>0');
   if ($GMActs) {

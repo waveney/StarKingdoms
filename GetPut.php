@@ -591,7 +591,6 @@ function Get_ThingsSys($Sid,$type=0,$Fid=0) {
 function Get_Things_Cond($Fact=0,$Cond='') {
   global $db,$GAMEID;
   $Ts = [];
-  // echo "SELECT * FROM Things WHERE " . ($Fact? " Whose=$Fact AND $Cond " : $Cond);
   $res = $db->query("SELECT * FROM Things WHERE GameId=$GAMEID " . ($Fact? " AND Whose=$Fact ":'') . ($Cond? " AND $Cond ":''));
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
   return $Ts;
@@ -600,7 +599,6 @@ function Get_Things_Cond($Fact=0,$Cond='') {
 function Get_Things_Cond_Ordered($Fact=0,$Cond='') {
   global $db,$GAMEID;
   $Ts = [];
-  // echo "SELECT * FROM Things WHERE " . ($Fact? " Whose=$Fact AND $Cond " : $Cond);
   $res = $db->query("SELECT * FROM Things WHERE GameId=$GAMEID " . ($Fact? " AND Whose=$Fact ":'') . ($Cond? " AND $Cond ":''));
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
   return $Ts;

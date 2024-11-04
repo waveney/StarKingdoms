@@ -1106,7 +1106,7 @@ function Do_Phase($S) {
 
   $Pfx = $TurnActions[$S][1];
   if ($Pfx) {
-    include_once("TurnActs/$Pfx");
+    include_once("TurnActs/$Pfx" . ".php");
   }
   GMLog("Would call $act<p>");
   if (!is_callable($act)) {
