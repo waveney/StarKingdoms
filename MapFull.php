@@ -1,6 +1,7 @@
 <?php
   include_once("sk.php");
   include_once("GetPut.php");
+  include_once("ThingLib.php");
 
   global $FACTION,$GAMEID,$LinkType,$USERID;
 
@@ -29,8 +30,31 @@
     $Faction = 0;
   }
 
+  $Extras = [];
+
   if ($FACTION) $Faction = $FACTION['id'];
   $Fact = Get_Faction($Faction);
+
+  if ($Faction) {
+    // Setup Extras
+    $TTypes = Get_ThingTypes();
+    $Things = Get_Things_Cond($Faction,"BuildState=3");
+    foreach ($Things as $T) {
+      $TCat = 0;
+      $sid = $T['SystemId'];
+      if (!($TTypes[$T['Type']]['Properties'] & THING_HAS_BLUEPRINTS)) continue;
+      if (!isset($Extras[$sid])) $Extras[$sid] = ['',0,0];
+      if ($TTypes[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) {
+        $Extras[$sid][1]++;
+      } else if ($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES) {
+        $Extras[$sid][2]++;
+      } else continue;
+
+      $Extras[$sid][0] .= $T['Name'] . " L" . $T['Level'] . " " . $TTypes[$T['Type']]['Name'] . "\n";
+    }
+
+
+  }
 
   if (!$GM && $Fact['TurnState'] > 2) Player_Page();
 
@@ -224,7 +248,18 @@
       if ($Faction) {
         $atts .= " href=\"/SurveyReport.php?R=" . $N['Ref'] . '" ';
 
-        if (!empty($FS['Xlabel'])) $atts .= " xlabel=\"" . $FS['Xlabel'] . '" ';
+        if (empty($FS['Xlabel'])) {
+          if ($Extras[$N['id']]) {
+            $atts .= " xlabel=<";
+            if ($Extras[$N['id']][1]) $atts .= '<font color="red">' . $Extras[$N['id']][1] . ' </font>';
+            if ($Extras[$N['id']][2]) $atts .= '<font color="blue">' . $Extras[$N['id']][2] . ' </font>';
+            $atts .= '> ';
+
+            $atts .= ' tooltip="' . $Extras[$N['id']][0] . '" ';
+          }
+        } else {
+          $atts .= " xlabel=\"" . $FS['Xlabel'] . '" ';
+        }
       } else {
         $atts .= " href=\"/SysEdit.php?N=" . $N['id'] . '" ';
       }

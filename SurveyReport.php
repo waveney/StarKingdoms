@@ -138,7 +138,9 @@
     if (isset($N['Flags']) && ($N['Flags'] &1)) $Acc="%0.8g";
 
     echo "The " . ($N['Type2']?"principle star":"star");
-    if ($N['StarName']) echo " ( " . $N['StarName'] . " ) " ;
+    if ($N['StarName'] || $FS['Star1Name']) {
+      echo " ( " . ($FS['Star1Name']?$FS['Star1Name']:$N['StarName']) . " ) " ;
+    }
     echo " is a " . $N['Type'] . ".<br>";
 
     if ($SurveyLevel >= 3) echo "It has a radius of " .
@@ -151,7 +153,11 @@
 
       if ($N['Image2']) echo "<br clear=all><img src=" . $N['Image2'] . ">";
       echo "The companion star ";
-      if ($N['StarName2']) echo " ( " . $N['StarName2'] . " ) " ;
+
+      if ($N['StarName2'] || $FS['Star2Name']) {
+        echo " ( " . ($FS['Star2Name2']?$FS['Star2Name']:$N['StarName2']) . " ) " ;
+      }
+
       echo " is a " . $N['Type2']  . ".<br>";
 
       if ($SurveyLevel >= 3) echo "It has a radius of " . sprintf("$Acc Km = ",$N['Radius2'])  . RealWorld($N,'Radius2') .
@@ -405,6 +411,7 @@
         $LinkKnow = ['Known'=>0];
       }*/
       echo "<li>Link " . ($L['Name']?$L['Name']:"#" . $L['id']) . " ";
+      if ($LinkKnow['Name']??0) echo " (AKA " .$LinkKnow['Name'] . " ) ";
 
       if ($LinkKnow['Known']) {
 //        $name = NameFind($L);

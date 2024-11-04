@@ -194,10 +194,45 @@
 
     case 'Name Star(s)':
       // Under your control, if so update system data
+      if (! isset($_REQUEST['sysstarref']) || strlen($_REQUEST['sysstarref']) < 3 ) {
+          echo "<h2 class=Err>System not known to you</h2>";
+          break;
+        }
+      $sysref = $_REQUEST['sysstarref'];
+      $N = Get_SystemR($sysref);
+      if (!$N) {
+        echo "<h2 class=Err>System $sysref not known to you</h2>";
+        break;
+      }
+      $Sid = $N['id'];
+      $FS = Get_FactionSystemFS($Fid,$Sid);
+      $FS['Star1Name'] = $_REQUEST['Star1Name'];
+      $FS['Star2Name'] = $_REQUEST['Star2Name'];
+      Put_FactionSystem($FS);
+
+      if ($N['Control'] == $Fid) {
+        $N['StarName'] = $FS['Star1Name'];
+        $N['StarName2'] = $FS['Star2Name'];
+        Put_System($N);
+      }
+      echo "<H2>Star(s) have been named</h2>";
       break;
 
     case 'Name Wormhole':
-      // if You know it add to FL data
+      $nam = Sanitise($_REQUEST['LinkId'],'txt');
+      $L = Gen_Get_Cond1('Links',"Name='$nam'");
+      if (!$L) {
+        echo "<h2 class=Err>Link $nam not known</h2>";
+        break;
+      }
+      $FL = Get_FactionLinkFL($Fid,$L['id']);
+      if (!$FL['id']) {
+        echo "<h2 class=Err>Link $nam not known to you</h2>";
+        break;
+      }
+      $FL['Name'] = Sanitise($_REQUEST['WormName']);
+      Put_FactionLink($FL);
+      echo "<H2>The Wormhole has been named</h2>";
       break;
 
     default:
@@ -230,9 +265,9 @@
   echo "</form></table><p>";
 
   if ($Force) echo fm_submit("ACTION","SET");
-/*
+
   echo "<h1>Naming Stars</h1>";
-  echo fm_text('System Ref',$dat,'sysstarref');
+  echo fm_text('System Ref',$dat,'sysstarref') . "<p>";
 
   echo fm_text('Primary Star Name',$dat,'Star1Name',4) . "<p>";
   echo fm_text('Companion Star Name (if applicable',$dat,'Star2Name',4) . "<p>";
@@ -242,7 +277,7 @@
   echo fm_text('Link Identifier',$dat,'LinkId') . "<p>";
   echo fm_text('Your Wormhole Name',$dat,'WormName',4) . "<p>";
   echo fm_submit('ACTION','Name Wormhole');
-*/
+
 
   dotail();
 
