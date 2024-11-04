@@ -112,7 +112,7 @@
     }
 
 // *********************** Maps ****************************************************
-  if ($x = SKTable('Any','Maping')) {
+  if ($x = SKTable('Any','Mapping')) {
     $txt .= $x;
     $txt .= "<ul>\n";
     $txt .= "<li><a href=MapShow.php>Full Map Show</a>\n";

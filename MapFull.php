@@ -255,16 +255,16 @@
       if ($Faction) {
         $atts .= " href=\"/SurveyReport.php?R=" . $N['Ref'] . '" ';
 
-        if (empty($FS['Xlabel'])) {
-          if ($Extras[$N['id']]) {
-            $atts .= " xlabel=<";
-            if ($Extras[$N['id']][1]) $atts .= '<font color="red">' . $Extras[$N['id']][1] . ' </font>';
-            if ($Extras[$N['id']][2]) $atts .= '<font color="blue">' . $Extras[$N['id']][2] . ' </font>';
-            $atts .= '> ';
 
-            $atts .= ' tooltip="' . $Extras[$N['id']][0] . '" ';
-          }
-        } else {
+      if ($Extras[$N['id']]) {
+        $atts .= " xlabel=<";
+        if ($Extras[$N['id']][1]) $atts .= '<font color="red">' . $Extras[$N['id']][1] . ' </font>';
+        if ($Extras[$N['id']][2]) $atts .= '<font color="blue">' . $Extras[$N['id']][2] . ' </font>';
+        $atts .= '> ';
+
+        $atts .= ' tooltip="' . $Extras[$N['id']][0] . '" ';
+
+      } else if (empty($FS['Xlabel'])) {
           $atts .= " xlabel=\"" . $FS['Xlabel'] . '" ';
         }
       } else {
