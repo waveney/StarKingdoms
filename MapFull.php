@@ -38,7 +38,7 @@
   if ($Faction) {
     // Setup Extras
     $TTypes = Get_ThingTypes();
-    $Things = Get_Things_Cond($Faction,"BuildState=3");
+    $Things = Get_Things_Cond_Ordered($Faction,"BuildState=3");
     foreach ($Things as $Tid => $T) {
       $TCat = 0;
       $tex = '';
@@ -256,7 +256,7 @@
         $atts .= " href=\"/SurveyReport.php?R=" . $N['Ref'] . '" ';
 
 
-      if ($Extras[$N['id']]) {
+      if (($Extras[$N['id']]??0) {
         $atts .= " xlabel=<";
         if ($Extras[$N['id']][1]) $atts .= '<font color="red">' . $Extras[$N['id']][1] . ' </font>';
         if ($Extras[$N['id']][2]) $atts .= '<font color="blue">' . $Extras[$N['id']][2] . ' </font>';

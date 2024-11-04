@@ -155,7 +155,8 @@
             break;
           }
           if (($OpTypes[$op]['Props'] & OPER_CREATE_OUTPOST)) {
-            $Tid = $OutPs[0]['id'];
+            $OutP = array_pop($OutPs);
+            $Tid = $OutPs['id'];
             $EBs = Gen_Get_Cond('Branches', " HostType=3 AND HostId=$Tid");
 
             $MaxB = HasTech($OutPs[0]['Whose'],'Offworld Construction');

@@ -85,7 +85,7 @@
   if ($GMActs) {
     echo "<h2>GMs need to be aware that:</h2>\n";
     foreach($GMActs as $G) {
-      echo $G['What'] . " - <a href=Staff.php?ACTION=Resolve&id=" . $G['id'] . ">Resolved</a>";
+      echo $G['What'] . " - <a href=Staff.php?ACTION=Resolve&id=" . $G['id'] . ">Resolved</a><br>";
     }
   }
 
