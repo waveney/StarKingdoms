@@ -593,7 +593,7 @@ function Get_Things_Cond($Fact=0,$Cond='') {
   $Ts = [];
 // echo "SELECT * FROM Things WHERE " . ($Fact? " Whose=$Fact AND $Cond " : $Cond);
   $res = $db->query("SELECT * FROM Things WHERE GameId=$GAMEID " . ($Fact? " AND Whose=$Fact ":'') . ($Cond? " AND $Cond ":''));
-  if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
   return $Ts;
 }
 

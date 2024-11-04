@@ -39,9 +39,14 @@
     // Setup Extras
     $TTypes = Get_ThingTypes();
     $Things = Get_Things_Cond($Faction,"BuildState=3");
-    foreach ($Things as $T) {
+    foreach ($Things as $Tid => $T) {
       $TCat = 0;
-      $sid = $T['SystemId'];
+      if ($T['LinkId'] >=0) {
+        $sid = $T['SystemId'];
+      } else {
+        $Carrier = $T['SystemId'];
+        $sid = $Things[$Carrier]['SystemId'];
+      }
       if (!($TTypes[$T['Type']]['Properties'] & THING_HAS_BLUEPRINTS)) continue;
       if (!isset($Extras[$sid])) $Extras[$sid] = ['',0,0];
       if ($TTypes[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) {
