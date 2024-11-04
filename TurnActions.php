@@ -30,8 +30,8 @@
     [10,'Projects',  'Start Projects','Coded,M'],
     [11,'Operations','Start Operations','Coded,M'],
     [12,'Operations','Start Operations Stage 2','Coded'],
-    [13,'Insruct',   'Instructions','Coded,M'],
-    [14,'Insruct',   'Instructions Stage 2','Coded'],
+    [13,'Instruct',  'Instructions','Coded,M'],
+    [14,'Instruct',  'Instructions Stage 2','Coded'],
     [15,'',         'Clear Paid For','Coded'],
     [16,'',         'Spare',''],// Agents Start Missions
     [17,'Projects',  'Pay For Rushes','Coded'],
@@ -57,8 +57,8 @@
     [37,'',         'Ownership Change','Coded'],
     [38,'Projects',  'Project Progress','Coded'],
     [39,'Operations','Operations Progress','Coded'],
-    [40,'Insruct',   'Instructions Progress','Coded'],
-    [41,'Insruct',   'Collaborative Progress','Coded'],
+    [40,'Instruct',  'Instructions Progress','Coded'],
+    [41,'Instruct',  'Collaborative Progress','Coded'],
     [42,'',         'Spare',''], //Espionage Missions Complete
     [43,'',         'Spare',''], // Counter Espionage
     [44,'',         'Handle Co Op Projects','Coded,M'],
@@ -66,7 +66,7 @@
     [46,'Projects',  'Refit Projects Complete','Coded'],
     [47,'Projects',  'Projects Complete','Coded'],
     [48,'Operations','Operations Complete','Coded'],
-    [49,'Insruct',   'Instructions Complete','Coded'],
+    [49,'Instruct',  'Instructions Complete','Coded'],
     [50,'',         'Check Survey Reports','Coded,M'],
     [51,'',         'Give Survey Reports','Coded'],
     [52,'',         'Spare',''],//Check Spot Anomalies
