@@ -40,6 +40,7 @@
     $TTypes = Get_ThingTypes();
     $Things = Get_Things_Cond_Ordered($Faction,"BuildState=3");
     foreach ($Things as $Tid => $T) {
+      if (!($TTypes[$T['Type']]['Properties'] & THING_HAS_BLUEPRINTS)) continue;
       $TCat = 0;
       $tex = '';
       if ($T['LinkId'] >=0) {
@@ -49,7 +50,6 @@
         $sid = $Things[$Carrier]['SystemId'];
         $tex = " (on " .$Things[$Carrier]['Name'] . ")";
       }
-      if (!($TTypes[$T['Type']]['Properties'] & THING_HAS_BLUEPRINTS)) continue;
       if (!isset($Extras[$sid])) $Extras[$sid] = ['',0,0];
       if ($TTypes[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) {
         $Extras[$sid][1]++;
@@ -256,7 +256,7 @@
         $atts .= " href=\"/SurveyReport.php?R=" . $N['Ref'] . '" ';
 
 
-      if (($Extras[$N['id']]??0) {
+      if ($Extras[$N['id']]??0) {
         $atts .= " xlabel=<";
         if ($Extras[$N['id']][1]) $atts .= '<font color="red">' . $Extras[$N['id']][1] . ' </font>';
         if ($Extras[$N['id']][2]) $atts .= '<font color="blue">' . $Extras[$N['id']][2] . ' </font>';

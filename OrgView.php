@@ -98,7 +98,7 @@ if ($Branches) {
         break;
     }
     echo "<li>". $BTypes[$B['Type']]['Name'] . " at $Where" ;
-    if ($B['Surpressed']) echo "<span class=Red> This branch is surpressed and can not do any thing for " . $B['Surpressed'] . " turns.";
+    if ($B['Suppressed']) echo "<span class=Red> This branch is suppressed and can not do any thing for " . $B['Suppressed'] . " turns.";
   }
 } else {
   echo "None Found<p>";

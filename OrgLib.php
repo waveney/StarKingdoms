@@ -128,7 +128,7 @@ function Op_Level($Orgid,$Sys,$Mod=0) {
   $Worlds = Get_Worlds($Fid);
   $Branches = Gen_Get_Cond('Branches', "Whose=$Fid AND Organisation=$Orgid");
   if ($Branches) foreach ($Branches as $B) {
-    if ($B['Surpressed']) continue;
+    if ($B['Suppressed']) continue;
     switch ($B['HostType']) {
       case 1: //Planets
         $P = Get_Planet($B['HostId']);
