@@ -41,11 +41,13 @@
     $Things = Get_Things_Cond($Faction,"BuildState=3");
     foreach ($Things as $Tid => $T) {
       $TCat = 0;
+      $tex = '';
       if ($T['LinkId'] >=0) {
         $sid = $T['SystemId'];
       } else {
         $Carrier = $T['SystemId'];
         $sid = $Things[$Carrier]['SystemId'];
+        $tex = " (on " .$Things[$Carrier]['Name'] . ")"
       }
       if (!($TTypes[$T['Type']]['Properties'] & THING_HAS_BLUEPRINTS)) continue;
       if (!isset($Extras[$sid])) $Extras[$sid] = ['',0,0];
@@ -55,7 +57,7 @@
         $Extras[$sid][2]++;
       } else continue;
 
-      $Extras[$sid][0] .= $T['Name'] . " L" . $T['Level'] . " " . $TTypes[$T['Type']]['Name'] . "\n";
+      $Extras[$sid][0] .= $T['Name'] . " L" . $T['Level'] . " " . $TTypes[$T['Type']]['Name'] . "$tex\n";
     }
 
 
