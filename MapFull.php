@@ -47,7 +47,7 @@
       } else {
         $Carrier = $T['SystemId'];
         $sid = $Things[$Carrier]['SystemId'];
-        $tex = " (on " .$Things[$Carrier]['Name'] . ")"
+        $tex = " (on " .$Things[$Carrier]['Name'] . ")";
       }
       if (!($TTypes[$T['Type']]['Properties'] & THING_HAS_BLUEPRINTS)) continue;
       if (!isset($Extras[$sid])) $Extras[$sid] = ['',0,0];
