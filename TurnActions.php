@@ -367,7 +367,7 @@ function TraitIncomes() {
     ['Sensors','Deep Ocean Trenches','Xenology',2],
     ['Academic','Thin Atmosphere','Physics',1],
     [2,'High Tectonic Activity','Engineering',3],
-    ['Engineering','Necessity is the Mother of Invention','Engineering',1],
+    ['Industrial','Necessity is the Mother of Invention','Engineering',1],
     ['Industrial','Cret-Chath Deposits','Currency3',4],
   ];
 
