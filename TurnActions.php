@@ -557,10 +557,10 @@ function CheckSurveyReports() {
         if ($FS['ScanLevel'] >= $S['Scan']) continue 2;
         break;
       case 1: // Space
-        if ($FS['SpaceLevel'] >= $S['Scan']) continue 2;
+        if ($FS['SpaceScan'] >= $S['Scan']) continue 2;
         break;
       case 2: // Planet
-        if ($FS['PlanetLevel'] >= $S['Scan']) continue 2;
+        if ($FS['PlanetScan'] >= $S['Scan']) continue 2;
         break;
     }
     if (!$Started) {
