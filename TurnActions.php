@@ -59,8 +59,8 @@
     [39,'Operations','Operations Progress','Coded'],
     [40,'Instruct',  'Instructions Progress','Coded'],
     [41,'Instruct',  'Collaborative Progress','Coded'],
-    [42,'',         'Spare',''], //Espionage Missions Complete
-    [43,'',         'Spare',''], // Counter Espionage
+    [42,'Movement',  'Retreats Selection','No'],
+    [43,'Movement',  'Retreats','No'],
     [44,'',         'Handle Co Op Projects','Coded,M'],
     [45,'',         'Spare',''], //Finish Shakedowns
     [46,'Projects',  'Refit Projects Complete','Coded'],
@@ -440,7 +440,7 @@ function TraitIncomes() {
 
   // Science Points for Offices and Branches
   $Sci = OrgType('Science');
-  $Orgs = Gen_Get_Cond("Organisations", "Game=$GAMEID AND Type=$Sci");
+  $Orgs = Gen_Get_Cond("Organisations", "GameId=$GAMEID AND OrgType=$Sci");
   $BTypes = Get_BranchTypes();
   $BTindex = array_flip(NamesList($BTypes));
 
@@ -450,7 +450,7 @@ function TraitIncomes() {
     Gain_Science($Who,4,$Pow*$Pow,'Offices of ' . $O['Name']);
     TurnLog($Who,"Gained " . ($Pow*$Pow) . " Science points for offices of " . $O['Name']);
 
-    $Branches = Gen_Get_Cond('Branches', "Game=$GAMEID AND Organisation=$Oid");
+    $Branches = Gen_Get_Cond('Branches', "GameId=$GAMEID AND Organisation=$Oid");
     $SPs = [0,0,0,0];
     foreach ($Branches as $B) {
       switch ($BTypes[$B['Type']]['Name']) {
@@ -481,7 +481,7 @@ function TraitIncomes() {
     }
 
     if ($O['Name'] == 'Ecoline') {
-      $Wildlife = Has_Track($Fid,'Alien Wildlife');
+      $Wildlife = Has_Track($Who,'Alien Wildlife');
       $Xeno = [125=>5, 80=>4, 45=>3, 20=>2, 5=> 1];
       $Mult = 0;
       foreach ($Xeno as $XV=>$XP ) {

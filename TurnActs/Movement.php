@@ -550,5 +550,15 @@ function UnloadTroops() {
   return 1;
 }
 
+function RetreatsSelection() {
+  GMLog("Retreats are manual at the moment<p>");
+  return 1;
 
+}
+
+function Retreats() {
+  GMLog("Retreats are manual at the moment<p>");
+  return 1;
+
+}
 

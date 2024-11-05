@@ -288,7 +288,7 @@ function World_In($Sid,$Who) {
   global $GAMEID;
   $Plan = HabPlanetFromSystem($Sid);
   if ($Plan == 0) return 0;
-  $World = Gen_Get_Cond1('Worlds','ThingType=1 AND ThingId=$Plan');
+  $World = Gen_Get_Cond1('Worlds',"ThingType=1 AND ThingId=$Plan");
   $P = Get_Planet($Plan);
 
   if (empty($World)) {

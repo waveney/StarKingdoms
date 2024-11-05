@@ -112,7 +112,7 @@
     if ($F['NoAnomalies']) continue;
     $Fid = $F['id'];
     $FA = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
-    if ($FA) $FA = $FA[0];
+    if ($FA) $FA = array_pop($FA);
     echo "<form method=post action=AnomalyEdit.php>";
     echo "<tr><td style='background:" . $F['MapColour'] . ";'>" . $F['Name'];
     echo "<td colspan=3>". fm_radio('',$FAnomalyStates,$FA,'State','',0,'',"State:$Fid");

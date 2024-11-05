@@ -398,6 +398,7 @@ function WhatCanBeSeenBy($Fid,$Mode=0) {
 
 function PlanConst($Fid,$worldid) { // Effective Plan Construction
   global $FACTION;
+  if (!$FACTION) $FACTION = Get_Faction($Fid);
   $PTypes = Get_PlanetTypes();
 
   $PC = Has_Tech($Fid,"Planetary Construction");
@@ -704,7 +705,7 @@ function Tracks() {
 }
 
 function Has_Track($Fid,$Name) {
-  $TNames = array_flip(NameList(Tracks()));
+  $TNames = array_flip(NamesList(Tracks()));
   $Trackid = $TNames[$Name];
   $Have = Gen_Get_Cond('Resources',"Whose=$Fid AND Type=$Trackid");
   return $Have['Value']??0;

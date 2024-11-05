@@ -103,7 +103,7 @@ function StartProjects() {
     }
 
     if ($T && ($T['BuildFlags'] & BUILD_FLAG1 )) {
-      if ($Facts[$Fid]['Currency3'] <= $T['Level']) {
+      if ($Facts[$Fid]['Currency3'] < $T['Level']) {
         $P['Status'] = 5; // Not Started
         TurnLog($P['FactionId'],'Not starting as not enough ' . Feature('Currency3','Unknown') . ': ' . $P['Name']);
         GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as not enough ' . Feature('Currency3','Unknown') . ': ' . $P['Name'],1);

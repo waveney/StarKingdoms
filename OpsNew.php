@@ -100,7 +100,6 @@
   $TechId = $_REQUEST['Te']??0;
   $TechLevel = $_REQUEST['TL']??0;
   $SP = $_REQUEST['SP']??0;
-  $Lid = $_REQUEST['Lid']??0;
   $Desc = $_REQUEST['Description']??'';
 
   echo "<form method=post action=OpsNew.php>";
@@ -303,10 +302,7 @@
 
         $Ls = Get_Links($Ref);
         echo "<h2>Select the wormhole to explore:</h2>";
-        foreach ($Ls as $Lid=>$L) {
-
-        }
-        echo "<BR CLEAR=ALL><h2>There are " . Feature('LinkRefText','Stargate') . "s to:</h2>\n";
+        echo "<h2>There are " . Feature('LinkRefText','Stargate') . "s to:</h2>\n";
         //    $GM = Access('GM');
 
         foreach ($Ls as $Lid=>$L) {
@@ -314,7 +310,7 @@
           $ON = Get_SystemR($OSysRef);
           $LinkKnow = Get_FactionLinkFL($Fid,$L['id']);
           if (($L['Concealment'] <= $FS['SpaceScan']) || ($LinkKnow && $LinkKnow['Known'])) {
-            echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&SP=$SP&Lid=$Lid'>" .
+            echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&SP=$Lid'>" .
             $L['Name'] . "</button> \n";
           }
         }
@@ -394,15 +390,13 @@
           $Name .= " - " . $Anom['Name'];
         } else if (($OpTypes[$op]['Props'] & OPER_DESC)) {
           $Name .= " $Desc";
+        } else if (($OpTypes[$op]['Props'] & OPER_WORMHOLE)) {
+          $L = Get_Link($SP);
+          echo "Wormhole: " . $L['Name'] . "<p>";
+          $Name .= " Wormhole: " . $L['Name'];
         } else { // Science Points
           $Name .= " " . $Fields[$SP-1];
         }
-      }
-
-      if ($Lid) {
-        $L = Get_Link($Lid);
-        echo "Wormhole: " . $L['Name'] . "<p>";
-        $Name .= " Wormhole: " . $L['Name'];
       }
 
       $Mod = ($OpTypes[$op]['Props'] & OPER_LEVEL);

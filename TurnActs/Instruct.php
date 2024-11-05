@@ -1297,7 +1297,7 @@ function InstructionsComplete() {
       default:
         GMLog("Instruction: $Instr has completed, for " . $Facts[$Who]['Name'] . " by <a href=ThingEdit.php?id=$Tid>" . $T['Name'] .
         ".  No automation - probable bug",1);
-        FollowUp($Fid,"Instruction: $Instr has completed, for " . $Facts[$Who]['Name'] . " by <a href=ThingEdit.php?id=$Tid>" . $T['Name'] .
+        FollowUp($Who,"Instruction: $Instr has completed, for " . $Facts[$Who]['Name'] . " by <a href=ThingEdit.php?id=$Tid>" . $T['Name'] .
           ".  No automation - probable bug");
 
         break;

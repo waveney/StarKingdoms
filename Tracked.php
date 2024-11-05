@@ -14,7 +14,7 @@ $GM = Access('GM');
 dostaffhead("Tracked Resources");
 if (isset($FACTION)) {
   $Fid = $FACTION['id'];
-  if ( $FACTION['TurnState'] == 3) Player_Page();
+  if ( ($FACTION['TurnState'] == 3) && !$GM) Player_Page();
 } else if ($GM) {
   if (isset($_REQUEST['id'])) {
     $Fid = $_REQUEST['id'];
@@ -91,7 +91,7 @@ if ($GM) {
         $Colour = 'White';
         $Txt = 'None';
         foreach ($TrackScale1 as $Lim=>$Data) {
-          if ($Tr['Value'] < $Lim) {
+          if ($Tr['Value'] <= $Lim) {
             [$Txt,$Colour] = $Data;
             break;
           }

@@ -84,13 +84,13 @@ function StartOperations() {
       }
     }
 
-    if (($Otp & OPER_BRANCH) && !($Otp & OPER_HIDDEN ) ){
+    if (($Otp & OPER_BRANCH) && !($Otp & OPER_HIDDEN ) && ($Sys['Control'] != $Fid)){
       if ($NeedColStage2 == 0) {
         GMLog("<form method=post action=TurnActions.php?ACTION=Process&S=Instructions>");
         $NeedColStage2 = 1;
       }
       GMLog($Facts[$Fid]['Name'] . " is seting up a branch of  " . $Orgs[$O['OrgId']]['Name'] .
-        " (" . $OrgTypes[$O[$OrgId]]['Name'] . " ) it is controlled by " . ($Facts[$Sys['Control']]['Name']??'Nobody') .
+        " (" . $OrgTypes[$Orgs[$O['OrgId']]['OrgType']]['Name'] . " ) it is controlled by " . ($Facts[$Sys['Control']]['Name']??'Nobody') .
         " - Allow? " . fm_YesNo("Org$Oid",1, "Reason to reject") . "\n<br>");
     }
 
@@ -103,7 +103,7 @@ function StartOperations() {
         // Target already has tech
         $O['Status'] = 5; // Finished
         TurnLog($Fid,'Not Starting sharing ' . $Tech['Name'] . " as it is already known by " . $Facts[$TWho]['Name']);
-        GMLog($Facts[$Fid]['Name'] . ' Not Starting sharing ' . $$Tech['Name'] . " as it is already known by " . $Facts[$TWho]['Name']);
+        GMLog($Facts[$Fid]['Name'] . ' Not Starting sharing ' . $Tech['Name'] . " as it is already known by " . $Facts[$TWho]['Name']);
         Put_Operation($O);
         continue;
       }
@@ -225,7 +225,7 @@ function OperationsProgress() {
   foreach ($Operations as $Oid=>$O) {
     $O['Progress'] += $Orgs[$O['OrgId']]['OfficeCount'];
     Put_Operation($O);
-    TurnLog($O['FactionId'],$Orgs[$O['OrgId']]['Name'] . " has " . $Orgs[$O['OrgId']]['OfficeCount'] . " Progress.");
+    TurnLog($O['Whose'],$Orgs[$O['OrgId']]['Name'] . " has " . $Orgs[$O['OrgId']]['OfficeCount'] . " Progress.");
   }
   GMLog("All Operations Progressed<p>");
   return 1;
@@ -582,4 +582,5 @@ function OperationsComplete() {
     $O['State'] = 4;
     Put_Operation($O);
   }
+  return 1;
 }
