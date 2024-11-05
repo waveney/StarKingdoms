@@ -584,8 +584,9 @@ function CheckSurveyReports() {
     GMLog("</table>\n");
     GMLog( "<input type=submit name=Ignore value=Chosen>\n");
     dotail();
+  } else {
+    return 2;
   }
-  return 1;
 }
 
 
@@ -639,7 +640,9 @@ function GiveSurveyReports() {
         }
       }
     } else {
-      TurnLog($Fid,"Your " . $SurveyTypes[$S['Type']] . " survey could not be performed because " . $_REQUEST["ReasonScan$spid"] . "\n<br>");
+      $N = Get_System($S['Sys']);
+      TurnLog($Fid,"Your " . $SurveyTypes[$S['Type']] . " survey in " . System_Name($N)." could not be performed because " .
+        $_REQUEST["ReasonScan$spid"] . "\n<br>");
     }
     $LastFid = $Fid;
     $LastSys = $S['Sys'];

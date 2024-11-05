@@ -61,6 +61,7 @@ function Show_Thing(&$T,$Force=0) {
     $NewSyslocs = [];
   }
 
+//  echo "B1 " . $T['CurHealth'] . "<p>";
   $Systems = Get_SystemRefs();
   $T['MaxModules'] = Max_Modules($T);
   if  (($tprops & THING_HAS_MODULES) && ($T['PrisonerOf'] == 0)) [$T['OrigHealth'],$T['ShieldPoints']] = Calc_Health($T,1);

@@ -99,8 +99,8 @@ function Player_Page() {
   $TState = $PlayerState[$FACTION['TurnState']] ;
 
 
-  echo "<h2>Player state: <span style='background:" . $PlayerStateColours[$FACTION['TurnState']] . "'>$TState</span> Turn:" .
-       $GAME['Turn'] . "</h2>";
+  echo "<h2>Player state: <span style='background:" . $PlayerStateColours[$FACTION['TurnState']] . "'>$TState</span>" .
+      (($FACTION['TurnState']<3)?" Turn:" . $GAME['Turn']:'') . "</h2>";
   if (($GM && $TState != 'Setup') || isset($_REQUEST['SEEALL'])) $TState = 'Turn Planning';
 
   echo "<div class=Player>";

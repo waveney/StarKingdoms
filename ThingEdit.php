@@ -759,10 +759,6 @@ function New_Thing(&$T) {
 
   dotail();
 
-?>
-
-
-
 
 
 
