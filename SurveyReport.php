@@ -128,12 +128,12 @@
     } else if ($N['Nebulae']) {
       echo "This system is in a Nebula, you have not scanned it with nebula sensors<p>";
     } else {
-      echo "You have very liited information about this system<p>";
+ //     echo "You have very limited information about this system<p>";
 
     }
    }
 
-  if (($ScanLevel>1) && ($SurveyLevel > 2)) {
+  if (($ScanLevel>0) && ($SurveyLevel > 2)) {
 
     if ($N['Description']) echo $Parsedown->text(stripslashes($N['Description'])) . "<p>";
 
