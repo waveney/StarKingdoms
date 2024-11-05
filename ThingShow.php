@@ -933,9 +933,9 @@ function Show_Thing(&$T,$Force=0) {
         if (($P['Type'] == $FACTION['Biosphere']) || ($P['Type'] == $FACTION['Biosphere2']) || ($P['Type'] == $FACTION['Biosphere3'])) {
           $HabPs[$P['id']] = [$P['Name'],$P['Type'],0];
         } else if ($P['Type'] == 4 ) {
-          if ($Hab_dome) $HabPs[$P['id']] = [$P['Name'],$P['Type'],-2];
+          $HabPs[$P['id']] = [$P['Name'],$P['Type'],-2];
         } else {
-          if ($Hab_Climate) $HabPs[$P['id']] = [$P['Name'],$P['Type'],-1];
+          $HabPs[$P['id']] = [$P['Name'],$P['Type'],-1];
         }
       }
       if (empty($HabPs)) continue 2;
