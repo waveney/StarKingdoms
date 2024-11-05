@@ -181,7 +181,7 @@
     }
 
     $N[$field] = $Value;
-    if ($field == 'LinkId') {
+    if (($field == 'LinkId') && ($Value>0)) {
       Set_Faction();
       $L = Get_Link($Value);
       $SYS1 = Get_SystemR($L['System1Ref']);

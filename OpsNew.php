@@ -98,9 +98,11 @@
   $op = ($_REQUEST['op']??0);
   $Wh = ($_REQUEST['W']??0);
   $TechId = $_REQUEST['Te']??0;
-  $TechLevel = $_REQUEST['TL']??0;
+  $P2 = $TechLevel = $_REQUEST['P2']??0;
   $SP = $_REQUEST['SP']??0;
   $Desc = $_REQUEST['Description']??'';
+  $TTYpes = Get_ThingTypes();
+  $TTNames = array_flip(NamesList($TTYpes));
 
   echo "<form method=post action=OpsNew.php>";
  // echo fm_hidden('t',$Turn) . fm_hidden('O',$OrgId) . fm_hidden('Stage',$Stage+1) . fm_hidden('p',$op) . fm_hidden('W',$Wh);
@@ -144,8 +146,6 @@
       echo "<h2>Selected: " . $OpTypes[$op]['Name'] . " in " . System_Name($TSys,$Fid) . "</h2>\n";
 
       if ($OpTypes[$op]['Props'] & OPER_OUTPOST) {
-        $TTYpes = Get_ThingTypes();
-        $TTNames = array_flip(NamesList($TTYpes));
         $OutPs = Get_Things_Cond($Fid,"Type=" . $TTNames['Outpost'] . " AND SystemId=$Wh AND BuildState=3");
         if ($OutPs) {
           if (count($OutPs) >1) {
@@ -233,7 +233,7 @@
           $Tid = $TT['id'];
           if ($MyTechs[$Tid]['Level'] > $FactTechs[$Tid]['Level']) {
             $Lvl = $FactTechs[$Tid]['Level']+1;
-            echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&Te=$Tid&TL=$Lvl'>" .
+            echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&Te=$Tid&P2=$Lvl'>" .
                  $TT['Name'] . " at level $Lvl</button> \n";
           }
         }
@@ -245,7 +245,7 @@
           $Tec = $Techs[$Tid];
           $Lvl = $Tec['PreReqLevel'];
           if ($Lvl < 1) continue;
-          echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&Te=$Tid&TL=$Lvl'>" .
+          echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&Te=$Tid&P2=$Lvl'>" .
                $TT['Name'] . " at level $Lvl</button> \n";
         }
         break;
@@ -316,6 +316,42 @@
         }
         break;
       } else if (($OpTypes[$op]['Props'] & OPER_MONEY)) {
+        $Wid = WorldFromSystem($Wh,$Fid);
+        $To1 = $To2 = 0;
+        if ($Wid) {
+          $World = Get_World($Wid);
+          $To1 = $World['FactionId'];
+        }
+
+        $OutPs = Get_Things_Cond($Fid,"Type=" . $TTNames['Outpost'] . " AND SystemId=$Wh AND BuildState=3");
+        if ($OutPs) {
+          if (count($OutPs) >1) {
+            echo "<h2 class=Err>There are multiple Outposts there - let the GM's know...</h2>";
+            GMLog4Later("There are multiple Outposts in " . $TSys['Ref']);
+            break;
+          }
+          $OutP = array_pop($OutPs);
+          $To2 = $OutP['Whose'];
+        }
+
+        if (($To1==0) && ($To2==0)) {
+          echo "<h2>There is no one there to transfer resources to</h2>";
+          break;
+        }
+
+        if ($To1 == $To2) $To2 = 0; // No choice
+        if ($To1 && $To2) {
+          echo "<h2>Who to?</h2>";
+          $RList = [$To1 =>$Facts[$To1]['Name'], $To2 =>$Facts[$To2]['Name']];
+          echo fm_radio('Select', $RList,$_REQUEST,$P2) . "<p>";
+        } else if ($To1) {
+          echo "Transfer to " . $Facts[$To1]['Name'];
+          $P2 = $To1;
+        } else {
+          echo "Transfer to " . $Facts[$To2]['Name'];
+          $P2 = $To2;
+        }
+
         echo "<h2>How many Credits?</h2>";
         echo fm_hidden('Stage',5) . fm_hidden('op',$op) . fm_hidden('W',$Wh) . fm_hidden('O',$OrgId) .fm_hidden('t',$Turn);
         echo fm_number('',$_REQUEST,'SP','','min=0 max=' , $Facts[$Fid]['Credits'] );
@@ -383,8 +419,8 @@
           $TechLevel = $Level = $SocP['Value'];
           $Name .= " Principle: " . $SocP['Principle'];
         } else if ($OpTypes[$op]['Props'] & OPER_MONEY) {
-          echo "Ammount: " . Credit() . $SP . "<p>";
-          $Name .= " " . Credit() . $SP . "<p>";
+          echo "Ammount: " . Credit() . $SP . " to " . $Facts[$P2]['Name'] . "<p>";
+          $Name .= " " . Credit() . $SP . " to " . $Facts[$P2]['Name'] . "<p>";
         } else if (($OpTypes[$op]['Props'] & OPER_ANOMALY)) {
           $Anom = Gen_Get('Anomalies',$SP);
           $Name .= " - " . $Anom['Name'];
@@ -425,7 +461,7 @@
       echo "This operation will be at level $BaseLevel (Needing $ProgNeed progress).  You currently do " . $Org['OfficeCount'] . " progress per turn.<p>";
 
       echo "<button class=projtype type=submit " .
-           "formaction='OpsDisp.php?ACTION=NEW&t=$Turn&O=$OrgId&op=$op&W=$Wh&SP=$SP&Te=$TechId&TL=$TechLevel&N=" .
+           "formaction='OpsDisp.php?ACTION=NEW&t=$Turn&O=$OrgId&op=$op&W=$Wh&SP=$SP&Te=$TechId&P2=$P2&N=" .
            base64_encode("$Name") . "&L=$BaseLevel&PN=$ProgNeed&Desc=" . base64_encode("$Desc") . "'>$Name</button> \n";
 
 

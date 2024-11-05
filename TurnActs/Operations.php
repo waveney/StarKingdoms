@@ -461,9 +461,7 @@ function OperationsComplete() {
         break;
 
       case 'Transfer Resources':
-        $Wid = WorldFromSystem($O['SystemId'],$Fid);
-        $World = Get_World($Wid);
-        $To = $World['FactionId'];
+        $To = $O['Para2'];
         $Amount = $O['Para1'];
 
         if (Spend_Credit($Fid,$Amount,'Transfer to ' . $Facts[$To]['Name'],$To)) {

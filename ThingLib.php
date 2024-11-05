@@ -128,6 +128,7 @@ function Mod_Value($fid,$modtypeid) {
 function Mod_ValueSimple($tl,$modtypeid,&$Rescat) {
 //echo "Mod Value of $tl, $modtypeid<p>";
   $mt = Get_ModuleType($modtypeid);
+  if ($mt['Formula']) return 0;
   $mf = Get_ModFormula($mt['Formula']);
 
   if ($mf['Name'] == 'None') return 0;
