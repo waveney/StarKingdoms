@@ -546,8 +546,10 @@ function Scanners(&$T) {
 }
 
 function NebScanners(&$T) {
-  if (empty($T['NebSensors']) || empty($T['SensorLevel'])) return 0;
-  return floor($T['NebSensors'] * $T['SensorLevel'] / 2);
+  if (empty($T['NebSensors']) || empty($T['SensorLevel']) || empty($T['Sensors'])) return 0;
+
+  if ( Feature('OldNebScans')) return floor($T['NebSensors'] * $T['SensorLevel'] / 2);
+  return $T['SensorLevel'];
 }
 
 function Calc_Scanners(&$T) { // And lots of other attributes

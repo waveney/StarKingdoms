@@ -424,7 +424,8 @@ function ShipMovements($Agents=0) {
         if ($Fid) {
           $FS = Get_FactionSystemFS($Fid,$Sid);
           if (!isset($FS['id']) || (($FS['ScanLevel'] < $ShipScanLevel) && ($N['Nebulae']<=$ShipNebScanLevel))) {
-            $SP = ['FactionId'=>$Fid, 'Sys'=> $Sid, 'Scan'=>$ShipScanLevel, 'Type'=>0, 'Turn'=>$GAME['Turn'], 'ThingId'=>$T['id'], 'GameId'=>$GAMEID];
+            $SP = ['FactionId'=>$Fid, 'Sys'=> $Sid, 'Scan'=>($N['Nebulae']?$ShipNebScanLevel:$ShipScanLevel), 'Type'=>0,
+              'Turn'=>$GAME['Turn'], 'ThingId'=>$T['id'], 'GameId'=>$GAMEID];
             Insert_db('ScansDue', $SP);
           }
 

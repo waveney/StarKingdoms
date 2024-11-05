@@ -49,7 +49,7 @@
       echo "<h1>Unknown system</h1>\n";
       dotail();
     }
-    $ScanLevel = max(0,$FS['ScanLevel']);
+    $ScanLevel = $FS['ScanLevel'];
     $PlanetLevel = max(0,$FS['PlanetScan']);
     $SpaceLevel = max(0,$FS['SpaceScan']);
   } else { // GM access
@@ -120,11 +120,20 @@
   echo "<div class=SReport><h1>Survey Report - $pname</h1>\n";
   if (Feature('UniqueRefs') && $GM && $SurveyLevel >= 10) echo "UniqueRef is: " . UniqueRef($Sid) . "<p>";
 
-  if ($Fid) echo "This system has been passively scanned. " .
-     (($SpaceLevel>0)?"Has been space scanned at level $SpaceLevel. ":"No Space Survey has been Made. ") .
-     (($PlanetLevel>0)?"Has been planetary scanned at level $PlanetLevel<p>":"No Planetary Survey has been made.<p>");
+  if ($Fid) {
+    if ($ScanLevel>1) {
+      echo "This system has been passively scanned. " .
+        (($SpaceLevel>0)?"Has been space scanned at level $SpaceLevel. ":"No Space Survey has been Made. ") .
+        (($PlanetLevel>0)?"Has been planetary scanned at level $PlanetLevel<p>":"No Planetary Survey has been made.<p>");
+    } else if ($N['Nebulae']) {
+      echo "This system is in a Nebula, you have not scanned it with nebula sensors<p>";
+    } else {
+      echo "You have very liited information about this system<p>";
 
-  if (($ScanLevel>=0) && ($SurveyLevel > 2)) {
+    }
+   }
+
+  if (($ScanLevel>1) && ($SurveyLevel > 2)) {
 
     if ($N['Description']) echo $Parsedown->text(stripslashes($N['Description'])) . "<p>";
 
@@ -386,7 +395,7 @@
     echo "</ul>";
   }
 
-  if (($ScanLevel>=0) && ($SurveyLevel > 1)) {
+  if (($ScanLevel>0) && ($SurveyLevel > 1)) {
     $Ls = Get_Links($Ref);
     echo "<BR CLEAR=ALL><h2>There are " . Feature('LinkRefText','Stargate') . "s to:</h2><ul>\n";
 //    $GM = Access('GM');
@@ -519,7 +528,7 @@
     }
 
     $Ls = Get_Links($Ref);
-    $GM = Access('GM');
+ //   $GM = Access('GM');
 
     foreach ($Ls as $L) {
       $OSysRef = ($L['System1Ref']==$Ref? $L['System2Ref']:$L['System1Ref']);
@@ -535,7 +544,7 @@
 
 //      $name = NameFind($L);
 //      if ($name) echo " ( $name ) ";
-      echo " to " . ReportEnd($ON) . " Instability: " . $L['Instability'] . " Concealment: " . $L['Concealment'];
+      echo " to " . ReportEnd($ON) . " Instability: " . $L['Instability'] . " Concealment: " . $L['Concealment'] . "<br>";
     }
   }
 
