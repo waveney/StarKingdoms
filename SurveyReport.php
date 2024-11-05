@@ -386,7 +386,7 @@
     echo "</ul>";
   }
 
-  if ($SurveyLevel > 1) {
+  if (($ScanLevel>=0) && ($SurveyLevel > 1)) {
     $Ls = Get_Links($Ref);
     echo "<BR CLEAR=ALL><h2>There are " . Feature('LinkRefText','Stargate') . "s to:</h2><ul>\n";
 //    $GM = Access('GM');
@@ -524,7 +524,7 @@
     foreach ($Ls as $L) {
       $OSysRef = ($L['System1Ref']==$Ref? $L['System2Ref']:$L['System1Ref']);
       $ON = Get_SystemR($OSysRef);
-      if ($SurveyLevel >= 10) {  // WRONG
+      if ($GM && $SurveyLevel >= 10) {  // WRONG
       } else if ($FACTION) {
         $LinkKnow = Get_FactionLinkFL($Fid,$L['id']);
         if (!$LinkKnow['Known']) continue;
@@ -535,7 +535,7 @@
 
 //      $name = NameFind($L);
 //      if ($name) echo " ( $name ) ";
-      echo " to " . ReportEnd($ON) .  " level " . $LinkLevels[$L['Level']]['Colour'];
+      echo " to " . ReportEnd($ON) . " Instability: " . $L['Instability'] . " Concealment: " . $L['Concealment'];
     }
   }
 
