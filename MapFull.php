@@ -242,7 +242,7 @@
         $Historical = 1;
       }
 
-      $atts .= " shape=" . ($N['Hospitable']?(($N['Hospitable']>1)?$MultiHabitableShape:$HabitableShape):$InHabitableShape);
+      if (($FS['ScanLevel']??0)>0) $atts .= " shape=" . ($N['Hospitable']?(($N['Hospitable']>1)?$MultiHabitableShape:$HabitableShape):$InHabitableShape);
       if ($typ) $atts .=
       " pos=\"" . ($N['GridX']*$XScale+(5-$N['GridY'])/2) . "," . (9-$N['GridY'])*$Scale . "!\"";
       $atts .= " style=filled fillcolor=\"$Colour\" color=\"$BdrColour\"";

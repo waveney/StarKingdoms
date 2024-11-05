@@ -121,7 +121,7 @@
   if (Feature('UniqueRefs') && $GM && $SurveyLevel >= 10) echo "UniqueRef is: " . UniqueRef($Sid) . "<p>";
 
   if ($Fid) {
-    if ($ScanLevel>1) {
+    if ($ScanLevel>0) {
       echo "This system has been passively scanned. " .
         (($SpaceLevel>0)?"Has been space scanned at level $SpaceLevel. ":"No Space Survey has been Made. ") .
         (($PlanetLevel>0)?"Has been planetary scanned at level $PlanetLevel<p>":"No Planetary Survey has been made.<p>");
@@ -131,7 +131,7 @@
  //     echo "You have very limited information about this system<p>";
 
     }
-   }
+  }
 
   if (($ScanLevel>0) && ($SurveyLevel > 2)) {
 

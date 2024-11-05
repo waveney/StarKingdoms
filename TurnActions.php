@@ -606,6 +606,7 @@ function GiveSurveyReports() {
       $FS = Get_FactionSystemFS($Fid,$S['Sys']);
       $New = !isset($FS['id']);
       $Changed = $New;
+      $Scan = max(1,$S['Scan']);
       switch ($S['Type']) {
         case 0: // Passive
           if ($FS['ScanLevel'] < $S['Scan']) {
