@@ -59,4 +59,7 @@ NEW GAME FEATURES & BUGS
 107 look at autotext during processing
 108 edit autotext
 109 TurnActions S=Name
-110
+110 Prevent Operations completing multiple times
+112
+
+

@@ -225,7 +225,7 @@ function OperationsProgress() {
   foreach ($Operations as $Oid=>$O) {
     $O['Progress'] += $Orgs[$O['OrgId']]['OfficeCount'];
     Put_Operation($O);
-    TurnLog($O['Whose'],$Orgs[$O['OrgId']]['Name'] . " has " . $Orgs[$O['OrgId']]['OfficeCount'] . " Progress.");
+    TurnLog($O['Whose'],$Orgs[$O['OrgId']]['Name'] . " has " . $Orgs[$O['OrgId']]['OfficeCount'] . " Progress on " . $O['Name']);
   }
   GMLog("All Operations Progressed<p>");
   return 1;

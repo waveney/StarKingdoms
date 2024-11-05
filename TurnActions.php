@@ -476,8 +476,8 @@ function TraitIncomes() {
       }
     }
     if ($SPs[1] || $SPs[2] || $SPs[3]) {
-      TurnLog($Who,"Gained " . ($SPs[1]?$SPs[1] . "Physics points, ":'') .
-         ($SPs[2]?$SPs[2] . "Engineering points, ":'') . ($SPs[3]?$SPs[3] . "Xenology points, ":'') . " for branches of " . $O['Name']);
+      TurnLog($Who,"Gained " . ($SPs[1]?$SPs[1] . " Physics points, ":'') .
+         ($SPs[2]?$SPs[2] . " Engineering points, ":'') . ($SPs[3]?$SPs[3] . " Xenology points, ":'') . " for branches of " . $O['Name']);
     }
 
     if ($O['Name'] == 'Ecoline') {
