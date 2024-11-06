@@ -155,14 +155,14 @@
           }
           if (($OpTypes[$op]['Props'] & OPER_CREATE_OUTPOST)) {
             $OutP = array_pop($OutPs);
-            $Tid = $OutPs['id'];
+            $Tid = $OutP['id'];
             $EBs = Gen_Get_Cond('Branches', " HostType=3 AND HostId=$Tid");
 
             $MaxB = HasTech($OutPs[0]['Whose'],'Offworld Construction');
             foreach ($EBs as $B) if ($B['Props'] & BRANCH_NOSPACE) $MaxB--;
 
-            if ($MaxB >= $EBs) {
-              echo "The Outpost is full";
+            if ($MaxB >= count($EBs)) {
+              echo "The Outpost is full<p>";
               break;
             }
           }

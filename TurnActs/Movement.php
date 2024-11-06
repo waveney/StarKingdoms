@@ -300,11 +300,12 @@ function ShipMovements($Agents=0) {
     if (( $Agents == 0 &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER)) ||
       ( $Agents &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER) ==0 ) ) continue;
 
-      if ($T['LastMoved'] == $GAME['Turn']) continue; // Already done
+      if (abs($T['LastMoved']) == $GAME['Turn']) continue; // Already done
 
       $Tid = $T['id'];
       $Fid = $T['Whose'];
       $Lid = $T['LinkId'];
+      $Retreat = 0;
       if ($Lid > 0) $L = Get_Link($Lid);
 
       if (isset($_REQUEST["Prevent$Tid"]) && $_REQUEST["Prevent$Tid"] ) {
@@ -433,6 +434,8 @@ function ShipMovements($Agents=0) {
           $FL['Known'] = 1;
           Put_FactionLink($FL);
 
+          if ($N['Nebulae'] > $T['NebSensors']) $Retreat=1;
+
           $pname = System_Name($N,$Fid);
         } else {
           $pname = $N['Ref'];
@@ -462,7 +465,7 @@ function ShipMovements($Agents=0) {
         }
         //    $T['LinkId'] = 0;
         if ($T['Instruction'] != 0 && !Has_Tech($Fid,'Stargate Construction') ) $T['Instruction'] = 0;
-        $T['LastMoved'] = $GAME['Turn'];
+        $T['LastMoved'] = ($Retreat?-$GAME['Turn']:$GAME['Turn']);
         Put_Thing($T);
         if (isset($SetBreak)) return 0; // Will need to come back in to finish movements after damage
       } else if ( $T['WithinSysLoc'] != $T['NewLocation'] && $T['NewLocation']>1) {
@@ -552,9 +555,21 @@ function UnloadTroops() {
 }
 
 function RetreatsSelection() {
-  GMLog("Retreats are manual at the moment<p>");
-  return 1;
+  global $GAME,$GAMEID;
+  $Ret = -$GAME['Turn'];
+  $Things = Get_Things_Cond(0,"(BuildState=3) AND ( LastMoved=$Ret) AND GameId=$GAMEID");
+  $TTypes = Get_ThingTypes();
+  $Facts = Get_Factions();
+  if ($Things) {
+    GMLog("<h2>These could retreat - Do check, it does not yet check if there is a Ship with Nebula s to stop one, tick the stop box and say why</h2>");
+    GMLog("<form method=Post action=TurnActions.php?ACTION=StageDone>" . fm_hidden('Stage','Retreats Selection'));
 
+
+
+  }
+  return 2;
+
+//  GMLog("Retreats are manual at the moment<p>");
 }
 
 function Retreats() {

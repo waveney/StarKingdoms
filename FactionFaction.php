@@ -11,7 +11,7 @@
   dostaffhead("A Knows B");
 
   echo "<h1>What Factions know of others</h1>";
-  echo "If their are details there is a * after the relationship<p>";
+  echo "If their are details there is a * after the relationship.  Click on the Faction in the left column to see any details.<p>";
 
   echo "<form method=post action=FactionFaction.php>";
   Register_Autoupdate('FFaction',0);
