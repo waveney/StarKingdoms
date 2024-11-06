@@ -170,7 +170,7 @@
 
   } else { // Player TODO Testing
     echo "<tr><td>Operation Type<td>" . $OpTypes[$O['Type']]['Name'];
-    echo "<tr><td>Organisation:<td>" . $OrgNames[$O['Organisation']];
+    echo "<tr><td>Organisation:<td>" . $OrgNames[$O['OrgId']];
     echo "<tr>" . fm_text("Operation Name",$O,'Name',2);
 
     echo "<tr>" . fm_number('Level',$O,'Level') . "<td>Status<td>" . ($Project_Status[$O['Status']]);

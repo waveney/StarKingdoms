@@ -59,11 +59,11 @@ NEW GAME FEATURES & BUGS
 107 look at autotext during processing
 108 edit autotext
 109 TurnActions S=Name
-110 Prevent Operations completing multiple times
 112 Finding a nebula in XZS, Yuri Gargarin retreated to QWC
 113 Cret Chath and retreats
 115 Feature request - from "Things I can see" can it put the Stance that the alien ships are taking towards us?
-121
+121 Ensure Planet Survey before Colonise
+123
 
 #2 Something went wrong on Operations, Specifically, The Archons explored a wormhole (ASC into TBA) the operation shows as 1/1 Started last turn and STILL as 1/1 Complete this turn ⁠ascendancy⁠
 #3 Also Operations, The Elysian Order, Progress looks wrong, I started it turn 1, so should be 3/4 this turn but is showing 4/4 to complete this turn. ⁠ascendancy⁠

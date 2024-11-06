@@ -178,7 +178,7 @@
   $Currens = [];
   $CCount = 0;
   foreach ($Currencies as $idx=>$CName) {
-    if ($GM || ( $Trade[$idx] && $Factions[$Fid]["Currency" . ($idx-4)])) {
+    if ($GM || ( ($Trade[$idx]??0) && ($idx>4) && ($idx<8) && (($Factions[$Fid]["Currency" . ($idx-4)])??0))) {
       $Currens[$idx] = $CName;
       $CCount++;
     }

@@ -373,7 +373,7 @@
           foreach($Anoms as $A) {
             $Aid = $A['id'];
             $FA = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
-            if (($FA['State'] ==1) || ($FA['State'] ==2)) $AnomList[$Aid] = $A['Name'];
+            if ($FA && (($FA['State'] ==1) || ($FA['State'] ==2))) $AnomList[$Aid] = $A['Name'];
           }
           if (empty($AnomList)) {
             echo "<h2>There are no known anomalies there</h2>";

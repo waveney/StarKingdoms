@@ -213,14 +213,14 @@ function New_Thing(&$T) {
     case 'GM Refit' :
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
-      Calc_Scanners($T);
+//      Calc_Scanners($T);
       RefitRepair($T);
       break;
 
     case 'GM Recalc' :
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
-      Calc_Scanners($T);
+//      Calc_Scanners($T);
       RefitRepair($T,1,1);
       break;
 
