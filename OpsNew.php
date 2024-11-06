@@ -158,7 +158,7 @@
             $Tid = $OutP['id'];
             $EBs = Gen_Get_Cond('Branches', " HostType=3 AND HostId=$Tid");
 
-            $MaxB = HasTech($OutPs[0]['Whose'],'Offworld Construction');
+            $MaxB = Has_Tech($OutPs[0]['Whose'],'Offworld Construction');
             foreach ($EBs as $B) if ($B['Props'] & BRANCH_NOSPACE) $MaxB--;
 
             if ($MaxB >= count($EBs)) {
