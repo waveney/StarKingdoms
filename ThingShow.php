@@ -66,7 +66,7 @@ function Show_Thing(&$T,$Force=0) {
   $T['MaxModules'] = Max_Modules($T);
   if  (($tprops & THING_HAS_MODULES) && ($T['PrisonerOf'] == 0)) [$T['OrigHealth'],$T['ShieldPoints']] = Calc_Health($T,1);
 
-  if (($T['BuildState'] == 3) && ($tprops & THING_CAN_MOVE) && ($T['CurHealth'] > 0) && ($t['LinkId']>=0) ) { // Complete Only
+  if (($T['BuildState'] == 3) && ($tprops & THING_CAN_MOVE) && ($T['CurHealth'] > 0) && ($T['LinkId']>=0) ) { // Complete Only
     $res = Moves_4_Thing($T,$Force, ($tprops & (THING_HAS_GADGETS | THING_CAN_BETRANSPORTED)), $N);
 //var_dump($res);exit;
     [$Links, $SelLinks, $SelCols ] = $res;
@@ -1752,7 +1752,10 @@ function Show_Thing(&$T,$Force=0) {
         $T['Progress'] = 0;
       }
     }
+  } else { // No Valid instructions
+    $T['CurInst'] = $T['Instruction'] = $T['Progress'] = 0;
   }
+
   if (Access('God') && !$IsaTeam) {
     echo "<tr><td>GOD - Instruction:<td>" . fm_select($ThingInstrs,$T,'Instruction') . "<td>Stored: "  . fm_select($ThingInstrs,$T,'CurInst');
     echo fm_number1('Dist1',$T,'Dist1') . fm_number1('Dist2',$T,'Dist2') . fm_number1('Spare1',$T,'Spare1');
