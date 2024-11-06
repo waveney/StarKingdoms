@@ -159,7 +159,7 @@
             $Tid = $OutP['id'];
             $EBs = Gen_Get_Cond('Branches', " HostType=3 AND HostId=$Tid");
 
-            $MaxB = Has_Tech($OutPs[0]['Whose'],'Offworld Construction');
+            $MaxB = Has_Tech($OutP['Whose'],'Offworld Construction');
             foreach ($EBs as $B) if ($BTypes[$B['Type']]['Props'] & BRANCH_NOSPACE) $MaxB--;
 
             if ($MaxB >= count($EBs)) {
@@ -169,7 +169,7 @@
           }
 
           if ($OpTypes[$op]['Props'] & OPER_BRANCH) {
-            $AllReady = Gen_Get_Cond('Branches'," HostType=3 AND HostId=$Tid AND OrgId=$OrgId" );
+            $AllReady = Gen_Get_Cond('Branches'," HostType=3 AND HostId=$Tid AND Organisation=$OrgId" );
             if ($AllReady) {
               echo "There is already a branch of " . $Org['Name'] . " at that oupost.<p>";
               break;
