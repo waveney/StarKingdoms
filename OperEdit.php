@@ -133,7 +133,7 @@
   $PProps = $OpTypes[$O['Type']]['Props'];
 
   if (Access('GM')) {
-    echo "<tr><td>Operation Id:<td>$Oid<td>For<td>" . fm_select($FactionNames,$O,'Whose');
+    echo "<tr><td>Operation Id:<td>$Oid<td>For<td>" . fm_select($FactionNames,$O,'Whose') . fm_number('Turn State', $O,'TurnState');
     echo "<tr><td>Organisation:<td>" . fm_select($OrgNames,$O,'OrgId') . "<td>Operation Type<td>" . fm_select($OpTypeNames,$O,'Type');
     echo "<tr>" . fm_text("Operation Name",$O,'Name',2);
     echo "<tr>" . fm_number('Level',$O,'Level') . "<td>Status<td>" . fm_select($Project_Status,$O,'Status');

@@ -223,7 +223,12 @@ function OperationsProgress() {
   $Facts = Get_Factions();
 
   foreach ($Operations as $Oid=>$O) {
+    if ($O['TurnState'] > 0) {
+      GMLog("Skipping progress on <a href=OperEdit.php?id=$Oid>" . $O['Name'] . " </a> as already Done.");
+      continue;
+    }
     $O['Progress'] += $Orgs[$O['OrgId']]['OfficeCount'];
+    $O['TurnState'] = 1;
     Put_Operation($O);
     TurnLog($O['Whose'],$Orgs[$O['OrgId']]['Name'] . " has " . $Orgs[$O['OrgId']]['OfficeCount'] . " Progress on " . $O['Name']);
   }
@@ -254,6 +259,9 @@ function OperationsComplete() {
     $Sys = Get_System($Wh);
     $TWho = $Sys['Control'];
     $Org = Gen_Get('Organisations',$O['OrgId']);
+    if ($O['TurnState'] >2) {
+      GMLog("Skipping Operation <a href=OperEdit.php?id=$Oid>" . $O['Name'] . " </a> as already completed.");
+    }
 
     switch ($NameOps[$O['Type']]) {
       case 'Establish Deep Space Science Facility':
@@ -577,6 +585,7 @@ function OperationsComplete() {
         " this is not automated yet.  See <a href=OperEdit.php?id=$Oid>Operation</a>",1);
         FollowUp($Fid,"Operation " . $O['Name'] . " has completed, this is not automated yet.  See <a href=OperEdit.php?id=$Oid>Operation</a>");
     }
+    $O['TurnState'] = 2;
     $O['State'] = 4;
     Put_Operation($O);
   }

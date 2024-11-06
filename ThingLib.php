@@ -467,56 +467,39 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0 ) {
   $Links = (empty($N['Ref']) ? [] : Get_Links($N['Ref']));
   $SelLinks = [''];
   $SelCols = [''];
-    if ($GM || Has_Tech($T['Whose'],'Know All Links')) {
-      foreach ($Links as $L) {
-        $Lnam = ($L['Name']?$L['Name']:"#" .$L['id']);
-        $SelLinks[$L['id']] = "$Lnam to " . (($L['System1Ref'] == $N['Ref'])?$L['System2Ref']: $L['System1Ref'] );
-        $SelCols[$L['id']] = $LinkTypes[abs($L['Level'])]['Colour'];
-      }
-    } else {
-      $NearNeb = $N['Nebulae'];
-      $NS = Get_FactionSystemFS($Fid,$N['id']);
+  if ($GM || Has_Tech($T['Whose'],'Know All Links')) {
+    foreach ($Links as $L) {
+      $Lnam = ($L['Name']?$L['Name']:"#" .$L['id']);
+      $SelLinks[$L['id']] = "$Lnam to " . (($L['System1Ref'] == $N['Ref'])?$L['System2Ref']: $L['System1Ref'] );
+      $SelCols[$L['id']] = $LinkTypes[abs($L['Level'])]['Colour'];
+    }
+  } else {
+    $NearNeb = ($N['Nebulae']??0);
+    $NS = Get_FactionSystemFS($Fid,$N['id']);
 
-      foreach ($Links as $Lid=>$L) {
-        if (($L['Instability'] + $L['ThisTurnMod']) > $T['Stability']) {
-          unset($Links[$Lid]);
-          continue;
-        }
-        $LinkText = "Unknown";
-        $FL = Get_FactionLinkFL($Fid,$L['id']);
-        if (($L['Concealment'] > $NS['SpaceScan']) && (($FL['Known']??0) ==0)) {
-          unset($Links[$Lid]);
-          continue;
-        }
-        $FarSysRef =  (($L['System1Ref'] == $N['Ref'])?$L['System2Ref']: $L['System1Ref'] );
-        $FSN = Get_SystemR($FarSysRef);
-        $FarNeb = $FSN['Nebulae'];
-        $FS = Get_FactionSystemFS($Fid,$FSN['id']);
-//echo "<p>doing link " . $L['id'] . " to $FarSysRef ". $FSN['id'] ; var_dump($FS);
-        if ($FL['Known']??0) {
-          $LinkText = $FarSysRef;
-        } else if ($NearNeb == 0) {
-          if (isset($FS['id'])) {
-            if ($FarNeb == 0) {
-              $LinkText = $FarSysRef;
-            } else if ($FS['ScanLevel'] >= 0) {
-              $LinkText = $FarSysRef;
-            } else {
-              if ($KnownOnly) {
-                unset($Links[$Lid]);
-                continue;
-              }
-              $LinkText = '?';
-            }
-          } else {
-            if ($KnownOnly) {
-              unset($Links[$Lid]);
-              continue;
-            }
-            $LinkText = '?';
-          }
-        } else if ($NS['NebScanned'] >= $NearNeb) { // In a Neb...
-          if (isset($FS['id'])) {
+    foreach ($Links as $Lid=>$L) {
+      if (($L['Instability'] + $L['ThisTurnMod']) > $T['Stability']) {
+        unset($Links[$Lid]);
+        continue;
+      }
+      $LinkText = "Unknown";
+      $FL = Get_FactionLinkFL($Fid,$L['id']);
+      if (($L['Concealment'] > $NS['SpaceScan']) && (($FL['Known']??0) ==0)) {
+        unset($Links[$Lid]);
+        continue;
+      }
+      $FarSysRef =  (($L['System1Ref'] == $N['Ref'])?$L['System2Ref']: $L['System1Ref'] );
+      $FSN = Get_SystemR($FarSysRef);
+      $FarNeb = $FSN['Nebulae'];
+      $FS = Get_FactionSystemFS($Fid,$FSN['id']);
+ //echo "<p>doing link " . $L['id'] . " to $FarSysRef ". $FSN['id'] ; var_dump($FS);
+      if ($FL['Known']??0) {
+        $LinkText = $FarSysRef;
+      } else if ($NearNeb == 0) {
+        if (isset($FS['id'])) {
+          if ($FarNeb == 0) {
+            $LinkText = $FarSysRef;
+          } else if ($FS['ScanLevel'] >= 0) {
             $LinkText = $FarSysRef;
           } else {
             if ($KnownOnly) {
@@ -526,16 +509,33 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0 ) {
             $LinkText = '?';
           }
         } else {
-          unset($Links[$Lid]);
-          continue;
-//          $LinkText = '?';
+          if ($KnownOnly) {
+            unset($Links[$Lid]);
+            continue;
+          }
+          $LinkText = '?';
         }
-        $Lnam = ($L['Name']?$L['Name']:"#" .$L['id']);
-
-        $SelLinks[$L['id']] = "$Lnam to " . $LinkText . ($L['Status'] != 0) . " - " . $LinkStates[$L['Status']];
-        $SelCols[$L['id']] = $LinkTypes[$L['Level']]['Colour'];
+      } else if ($NS['NebScanned'] >= $NearNeb) { // In a Neb...
+        if (isset($FS['id'])) {
+          $LinkText = $FarSysRef;
+        } else {
+          if ($KnownOnly) {
+            unset($Links[$Lid]);
+            continue;
+          }
+          $LinkText = '?';
+        }
+      } else {
+        unset($Links[$Lid]);
+        continue;
+ //          $LinkText = '?';
       }
+      $Lnam = ($L['Name']?$L['Name']:"#" .$L['id']);
+
+      $SelLinks[$L['id']] = "$Lnam to " . $LinkText . ($L['Status'] != 0) . " - " . $LinkStates[$L['Status']];
+      $SelCols[$L['id']] = $LinkTypes[$L['Level']]['Colour'];
     }
+  }
 // var_dump($Links,"<br>",$SelLinks,"<p>");
   return [$Links, $SelLinks, $SelCols ];
 }
@@ -572,9 +572,9 @@ function Calc_Scanners(&$T) { // And lots of other attributes
   $LvlMod = 0;
   if (Has_Trait($T['Whose'],'Ebonsteel Manufacturing')) $LvlMod = 1;
   $Engs = Get_ModulesType($T['id'],'Sublight Engines');
-  $T['Speed'] = (($Engs && $Engs['Number']>0)?$Engs['Number']*($Engs['Level']+$LvlMod)/$T['Level']:0);
+  $T['Speed'] = ceil(($Engs && $Engs['Number']>0)?$Engs['Number']*($Engs['Level']+$LvlMod)/$T['Level']:0);
   $Mobs = Get_ModulesType($T['id'],'Suborbital Transports');
-  $T['Mobile'] = (($Mobs && $Mobs['Number']>0)?$Mobs['Number']*($Mobs['Level']+$LvlMod)/$T['Level']:0);
+  $T['Mobile'] = ceil(($Mobs && $Mobs['Number']>0)?$Mobs['Number']*($Mobs['Level']+$LvlMod)/$T['Level']:0);
   $Flux = Get_ModulesType($T['id'],'Flux Stabilisers');
   $T['Stability'] = max(1,(($Flux && $Flux['Number']>0)?$Flux['Number']*($Flux['Level']+$LvlMod)/$T['Level']:0));
 }
@@ -652,7 +652,6 @@ function RefitRepair(&$T,$Save=1,$KeepTechLvl=0,$Other=0) {
     $T['CurHealth'] = min($T['CurHealth'],$Health);
     $T['CurShield'] = $Sld;
   }
-  $T['Speed'] =  ceil(((($TTypes[$T['Type']]['Properties'] ?? 0)&THING_CAN_MOVE)? $Engines*$Elvl/$T['Level'] + Feature('BaseSpeed',0) :0));
   Put_Thing($T);
   return $Etxt;
 }

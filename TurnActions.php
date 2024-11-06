@@ -901,6 +901,7 @@ function TidyUps() {
   $ThingNames = array_flip($TNames);
   $WormStab = $ThingNames['Wormhole Stabiliser'];
   $res = $db->query("UPDATE Things SET LinkId=0, LinkPay=0, LinkCost=0 WHERE LinkId>0 AND GameId=$GAMEID");
+  $res = $db->query("UPDATE Operations SET TurnState=0 WHERE GameId=$GAMEID");
 
   // Check for lid <-1...
   $NotFin = Get_Things(0,"LinkId<-1");
@@ -967,6 +968,8 @@ function TidyUps() {
     $B['Suppressed']--;
     Gen_Put('Branches',$B);
   }
+
+
 
   return 1;
 }
