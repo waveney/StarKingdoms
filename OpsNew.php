@@ -103,6 +103,7 @@
   $Desc = $_REQUEST['Description']??'';
   $TTYpes = Get_ThingTypes();
   $TTNames = array_flip(NamesList($TTYpes));
+  $BTypes = Get_BranchTypes();
 
   echo "<form method=post action=OpsNew.php>";
  // echo fm_hidden('t',$Turn) . fm_hidden('O',$OrgId) . fm_hidden('Stage',$Stage+1) . fm_hidden('p',$op) . fm_hidden('W',$Wh);
@@ -159,7 +160,7 @@
             $EBs = Gen_Get_Cond('Branches', " HostType=3 AND HostId=$Tid");
 
             $MaxB = Has_Tech($OutPs[0]['Whose'],'Offworld Construction');
-            foreach ($EBs as $B) if ($B['Props'] & BRANCH_NOSPACE) $MaxB--;
+            foreach ($EBs as $B) if ($BTypes[$B['Type']]['Props'] & BRANCH_NOSPACE) $MaxB--;
 
             if ($MaxB >= count($EBs)) {
               echo "The Outpost is full<p>";
