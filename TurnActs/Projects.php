@@ -104,15 +104,18 @@ function StartProjects() {
 
     if ($T && ($T['BuildFlags'] & BUILD_FLAG1 )) {
       if ($Facts[$Fid]['Currency3'] < $T['Level']) {
-        $P['Status'] = 5; // Not Started
-        TurnLog($P['FactionId'],'Not starting as not enough ' . Feature('Currency3','Unknown') . ': ' . $P['Name']);
-        GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as not enough ' . Feature('Currency3','Unknown') . ': ' . $P['Name'],1);
-        Put_Project($P);
-        continue;
+
+//        $P['Status'] = 5; // Not Started
+        TurnLog($P['FactionId'],'Not enough ' . Feature('Currency3','Unknown') . ': ' . $P['Name']) . " building of " . $T['Name'] . " proceding without it.";
+        GMLog($Facts[$P['FactionId']]['Name'] . ' Not enough ' . Feature('Currency3','Unknown') . ': ' . $P['Name']  . " building of " . $T['Name'] .
+           " proceding without it.",1);
+        $T['BuildFlags'] = ($T['BuildFlags'] & (~BUILD_FLAG1));
+        Put_Thing($T);
+      } else {
+        $Facts[$Fid]['Currency3'] -= $T['Level'];
+        Put_Faction($Facts[$Fid]);
+        TurnLog($P['FactionId'],'Spent ' . $T['Level'] . ' ' . Feature('Currency3','Unknown') . ' starting ' . $T['Name']);
       }
-      $Facts[$Fid]['Currency3'] -= $T['Level'];
-      Put_Faction($Facts[$Fid]);
-      TurnLog($P['FactionId'],'Spent ' . $T['Level'] . ' ' . Feature('Currency3','Unknown') . ' starting ' . $T['Name']);
     }
 
     if ($Cost == 0 || Spend_Credit($P['FactionId'],$Cost,'Starting: ' . $P['Name'])) {

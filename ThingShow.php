@@ -66,7 +66,7 @@ function Show_Thing(&$T,$Force=0) {
   $T['MaxModules'] = Max_Modules($T);
   if  (($tprops & THING_HAS_MODULES) && ($T['PrisonerOf'] == 0)) [$T['OrigHealth'],$T['ShieldPoints']] = Calc_Health($T,1);
 
-  if (($T['BuildState'] == 3) && ($tprops & THING_CAN_MOVE) && ($T['CurHealth'] > 0)) { // Complete Only
+  if (($T['BuildState'] == 3) && ($tprops & THING_CAN_MOVE) && ($T['CurHealth'] > 0) && ($t['LinkId']>=0) ) { // Complete Only
     $res = Moves_4_Thing($T,$Force, ($tprops & (THING_HAS_GADGETS | THING_CAN_BETRANSPORTED)), $N);
 //var_dump($res);exit;
     [$Links, $SelLinks, $SelCols ] = $res;
