@@ -921,7 +921,7 @@ function Show_Thing(&$T,$Force=0) {
 
     case 'Colonise': // Colonise
 //      if ((($Moving || $tprops & THING_HAS_CIVSHIPMODS) == 0 ) ) continue 2;
-      if (!$HasPlanet || ($LinkId <0)) continue 2;
+      if (!$HasPlanet || ($T['LinkId'] <0)) continue 2;
       $PlTs = Get_PlanetTypes();
       $Ps = Get_Planets($N['id']);
       $Hab_dome = Has_Tech($Fid,'Habitation Domes');
