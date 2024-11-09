@@ -55,12 +55,12 @@
     [35,'Combat',    'Devastation Selection','Coded,M'],
     [36,'Combat',    'Devastation','Coded'],
     [37,'',         'Ownership Change','Coded'],
-    [38,'Projects',  'Project Progress','Coded'],
-    [39,'Operations','Operations Progress','Coded'],
-    [40,'Instruct',  'Instructions Progress','Coded'],
-    [41,'Instruct',  'Collaborative Progress','Coded'],
-    [42,'Movement',  'Retreats Selection','No'],
-    [43,'Movement',  'Retreats','No'],
+    [38,'Movement',  'Retreats Selection','No'],
+    [39,'Movement',  'Retreats','No'],
+    [40,'Projects',  'Project Progress','Coded'],
+    [41,'Operations','Operations Progress','Coded'],
+    [42,'Instruct',  'Instructions Progress','Coded'],
+    [43,'Instruct',  'Collaborative Progress','Coded'],
     [44,'',         'Handle Co Op Projects','Coded,M'],
     [45,'',         'Spare',''], //Finish Shakedowns
     [46,'Projects',  'Refit Projects Complete','Coded'],
@@ -565,7 +565,7 @@ function CheckSurveyReports() {
     }
     if (!$Started) {
       GMLog("<h2>Please review these scans, Stop as needed</h2>\n");
-      GMLog("<form method=post action=TurnActions.php?ACTION=Process&S=CheckSurveyReports>");
+      GMLog("<form method=post action=TurnActions.php?ACTION=StageDone>" . fm_hidden('S','Check Survey Reports'));
       GMLog("<table border><tr><td>Faction<td>Where<td>Scan Level<td>Type<td>Control<td>Stop<td>Reason\n");
       if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
       Register_AutoUpdate('ScansDue',0);
@@ -1092,6 +1092,7 @@ function Do_Phase($S) {
   } else {
     $SName = $_REQUEST['S'];
     $SName = preg_replace('/ /','',$SName);
+    $SName = preg_replace('/_/','',$SName);
     for($S =0; $S <64 ; $S++) {
       $act = $TurnActions[$S][2];
       $act = preg_replace('/ /','',$act);
@@ -1149,7 +1150,7 @@ function Do_Turn() {
     switch ($_REQUEST['ACTION']) {
     case 'StageDone':
 //      $S = $_REQUEST['S'];
-      $SName = $_REQUEST['Stage'];
+      $SName = $S;
       $SName = preg_replace('/ /','',$SName);
       for($S =0; $S <64 ; $S++) {
         $act = $TurnActions[$S][2];

@@ -962,7 +962,10 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
         }
       }
       if ($itxt) {
-        if ($T['Description']) $txt .= "<br>" . $T['Description'];
+        if ($T['Description']) {
+          $Parsedown = new Parsedown();
+          $txt .= "<br>" . $Parsedown->text(stripslashes($T['Description']));
+        }
       }
       if ($Images) $txt .= "<br clear=all>\n";
       if ($Div) $txt .= "</div>";

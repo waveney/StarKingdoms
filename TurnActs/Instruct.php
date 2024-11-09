@@ -14,6 +14,7 @@ function Instructions() { // And other Instructions
   $PTs = Get_ProjectTypes();
   $TTypes = Get_ThingTypes();
   $AAs = [];
+  $Stage2Link = "<form method=post action=TurnActions.php?ACTION=StageDone&S=Instructions>";
 
   foreach ($Things as $T) {
     if ( $T['BuildState'] < 2 || $T['BuildState'] > 3) {
@@ -38,7 +39,7 @@ function Instructions() { // And other Instructions
         $P = Get_Planet($T['Spare1']);
         if ($N['Control'] > 0 && $N['Control'] != $T['Whose']) {  // Colonising system under control of others
           if ($NeedColStage2 == 0) {
-            GMLog("<form method=post action=TurnActions.php?ACTION=Process&S=Instructions>");
+            GMLog($Stage2Link);
             $NeedColStage2 = 1;
           }
           GMLog($Facts[$T['Whose']]['Name'] . " colonising " . $N['Ref'] . " it is controlled by " . $Facts[$N['Control']]['Name'] .
@@ -78,7 +79,7 @@ function Instructions() { // And other Instructions
               if ($FirstG == 0) $FirstG = $G['id'];
             }
             if ($NeedColStage2 == 0) {
-              GMLog("<form method=post action=TurnActions.php?ACTION=Process&S=Instructions>");
+              GMLog($Stage2Link);
               $NeedColStage2 = 1;
             }
             $_REQUEST['G'] = $FirstG;
@@ -211,7 +212,7 @@ function Instructions() { // And other Instructions
             break;
           } else if ( ($FA['State'] == 1) && $A['OtherReq']) {
             if ($NeedColStage2 == 0) {
-              echo "<form method=post action=TurnActions.php?ACTION=Process&S=Instructions>";
+              GMLog($Stage2Link);
               $NeedColStage2 = 1;
             }
             GMLog("<p><a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a> is starting to analyse anomaly <a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] .
@@ -241,7 +242,7 @@ function Instructions() { // And other Instructions
                 break 2;
               } else if ($FA['State'] == 1 && !empty($A['OtherReq'])) {
                 if ($NeedColStage2 == 0) {
-                  echo "<form method=post action=TurnActions.php?ACTION=Process&S=Instructions>";
+                  GMLog($Stage2Link);
                   $NeedColStage2 = 1;
                 }
                 $T['ProjectId'] = $Aid;
@@ -260,7 +261,7 @@ function Instructions() { // And other Instructions
 
       case 'Establish Embassy':
         if ($NeedColStage2 == 0) {
-          echo "<form method=post action=TurnActions.php?ACTION=Process&S=Instructions>";
+          GMLog($Stage2Link);
           $NeedColStage2 = 1;
         }
         GMLog($Facts[$T['Whose']]['Name'] . " setting up an Embassy in " . $N['Ref'] . " - Allow? " . fm_YesNo("Emb$Tid",1, "Reason to reject") . "\n<br>");
@@ -304,7 +305,7 @@ function Instructions() { // And other Instructions
           break;
         }
         if ($NeedColStage2 == 0) {
-          GMLog("<form method=post action=TurnActions.php?ACTION=Process&S=Instructions>");
+          GMLog($Stage2Link);
           $NeedColStage2 = 1;
         }
 
@@ -382,7 +383,7 @@ function Instructions() { // And other Instructions
           break;
         }
         if ($NeedColStage2 == 0) {
-          GMLog("<form method=post action=TurnActions.php?ACTION=Process&S=Instructions>");
+          GMLog($Stage2Link);
           $NeedColStage2 = 1;
         }
 

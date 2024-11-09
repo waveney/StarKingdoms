@@ -15,7 +15,7 @@ body
     font-size:15px;
     margin:0;
     cursor:default;
-    font-weight:500;
+    font-weight:510;
     }
 @font-face
     {
@@ -684,7 +684,7 @@ textarea:Focus
 }
 #map {
   height: 100%;
-  text-color:black;
+  color:black;
 }
 #MapWrap {
   overflow:hidden;

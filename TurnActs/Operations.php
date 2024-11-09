@@ -86,10 +86,10 @@ function StartOperations() {
 
     if (($Otp & OPER_BRANCH) && !($Otp & OPER_HIDDEN ) && ($Sys['Control'] != $Fid)){
       if ($NeedColStage2 == 0) {
-        GMLog("<form method=post action=TurnActions.php?ACTION=Process&S=Instructions>");
+        GMLog("<form method=post action=TurnActions.php?ACTION=StageDone&S=Operations>");
         $NeedColStage2 = 1;
       }
-      GMLog($Facts[$Fid]['Name'] . " is seting up a branch of  " . $Orgs[$O['OrgId']]['Name'] .
+      GMLog($Facts[$Fid]['Name'] . " is setting up a branch of  " . $Orgs[$O['OrgId']]['Name'] .
         " (" . $OrgTypes[$Orgs[$O['OrgId']]['OrgType']]['Name'] . " ) it is controlled by " . ($Facts[$Sys['Control']]['Name']??'Nobody') .
         " - Allow? " . fm_YesNo("Org$Oid",1, "Reason to reject") . "\n<br>");
     }
