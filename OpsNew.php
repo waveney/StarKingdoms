@@ -373,7 +373,7 @@
           $AnomList = [];
           foreach($Anoms as $A) {
             $Aid = $A['id'];
-            $FA = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
+            $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
             if ($FA && (($FA['State'] ==1) || ($FA['State'] ==2))) $AnomList[$Aid] = $A['Name'];
           }
           if (empty($AnomList)) {

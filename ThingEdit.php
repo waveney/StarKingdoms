@@ -534,6 +534,13 @@ function New_Thing(&$T) {
       Put_Thing($T);
       break;
 
+    case 'Retreat' :
+      $tid = $_REQUEST['id'];
+      $T = Get_Thing($tid);
+      $T['Retreat'] = 2;
+      Put_Thing($T);
+      break;
+
     case 'Salvage' : // As in turn action called by GM for wierd cases (eg you forgot)
       include_once("TurnTools.php");
       include_once("ProjLib.php");

@@ -194,8 +194,7 @@
         $FSN = $SYS1;
       }
       $N['NewLocation'] = 1;
-
-      $NearNeb = $N['Nebulae'];
+      $NearNeb = $FSN['Nebulae'];
       $Fid = $N['Whose'];
       $Known = 1;
       // Handle link knowledge - KLUDGE

@@ -230,7 +230,12 @@ function Show_Thing(&$T,$Force=0) {
             echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId',1);
             echo "<td>";
             if ($T['BuildState']> 2 ) {
-              echo fm_select($Syslocs,$T,'WithinSysLoc');
+              if ($T['Retreat']) {
+                $Retreats = ['','From Nebula','From Combat'];
+                echo "Retreat:" . fm_select($Retreats,$T,'Retreat');
+              } else {
+                echo fm_select($Syslocs,$T,'WithinSysLoc');
+              }
             } else {
               BlueShow($T,$GM);
             }
@@ -513,8 +518,8 @@ function Show_Thing(&$T,$Force=0) {
   if ($GM) {
     echo "<td>Prisoner of: " . fm_select($FactNames,$T,'PrisonerOf');
     echo "<td colspan=2>Hidden Control: " . fm_select($FactNames,$T,'HiddenControl');
-    if (Access('God')) echo "<tr><td>GOD!:<td>SystemId: " . $T['SystemId'] . "<td>LinkId: " . $T['LinkId'] . "<td>Locn: " . $T['WithinSysLoc'] .
-    "<td>NewSystemId: " . $T['NewSystemId'] . "<td>New Locn: " . $T['NewLocation'];
+    if (Access('God')) echo "<tr><td>GOD!:<td>SystemId: " . $T['SystemId'] . "<td>LinkId: " . $T['LinkId'] . "<td>In Sys Locn: " . $T['WithinSysLoc'] .
+    "<td>NewSystemId: " . $T['NewSystemId'] . " New Locn: " . $T['NewLocation'] . fm_Number1('LastMoved',$T,'LastMoved');
   }
   echo "<tr>" . fm_textarea("Description\n(For others)",$T,'Description',8,2);
   echo "<tr>" . fm_textarea('Notes',$T,'Notes',8,2);
@@ -1782,6 +1787,7 @@ function Show_Thing(&$T,$Force=0) {
       echo fm_number0(" Do",$T,'Damage', '',' class=Num3 ') . fm_submit("ACTION","Damage",0);
     }
     if (($T['PrisonerOf'] ?? 0)) echo fm_submit("ACTION","Disarm",0);
+    if (($tprops & THING_CAN_MOVE) && ($Faction['TurnState'] == 3)) echo fm_submit("ACTION",'Retreat');
   }
   if (!$GM && ($tprops & THING_CAN_BE_CREATED)) echo fm_submit("ACTION","Delete",0);
   if ($GM) {

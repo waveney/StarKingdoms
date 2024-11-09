@@ -196,7 +196,8 @@ function LoadTroops() {
   return 1;
 }
 
-function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
+
+function ShipMoveCheck($Mode=0) {  // Show all movements to allow for blocking
   global $GAME,$GAMEID,$LinkStates;
   $LinkLevels = Get_LinkLevels();
   $Things = Get_AllThings();
@@ -205,12 +206,12 @@ function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
   $LOWho = GameFeature('LinkOwner',0);
 
   GMLog("<h2>These movements are planned - to stop one, tick the stop box and say why</h2>");
-  //  GMLog("<form method=Post action=TurnActions.php?ACTION=Complete>" . fm_hidden('S',($Agents?34:32)));
-  GMLog("<form method=Post action=TurnActions.php?ACTION=StageDone>" . fm_hidden('Stage',($Agents?'Agents Move Check':'Ship Move Check')));
+  //  GMLog("<form method=Post action=TurnActions.php?ACTION=Complete>" . fm_hidden('S',($Mode?34:32)));
+  GMLog("<form method=Post action=TurnActions.php?ACTION=StageDone>" . fm_hidden('Stage',($Mode?'Agents Move Check':'Ship Move Check')));
 
 
   $UsedLinks = [];
-  if ($Agents) {
+  if ($Mode) {
     foreach ($Things as $T) {
       if ($T['BuildState'] <2 || $T['BuildState'] > 3 || $T['LinkId'] <= 0 || $T['Whose']==0) continue;
       if ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER) {
@@ -224,10 +225,10 @@ function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
   GMLog("<table border><tr><td>Who<td>What<td>Level<td>From<td>Link<td>To<td>" . ($LOWho?"Paid<td>":'') . "Stop<td>Why Stopping\n");
   foreach ($Things as $T) {
     if ($T['BuildState'] <2 || $T['BuildState'] > 3 || $T['LinkId'] <= 0 || $T['Whose']==0 || $T['CurHealth']==0) continue;
-    if (( $Agents == 0 &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER)) ||
-      ( $Agents &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER) ==0 ) ) continue;
+    if (( $Mode == 0 &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER)) ||
+      ( ($Mode ==1) &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER) ==0 ) ) continue;
 
-      $CheckNeeded = ( $Agents && ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER) );
+      $CheckNeeded = ( ($Mode ==1) && ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER) );
 
       if ($T['LinkId']>0 && $T['NewSystemId'] != $T['SystemId'] ) {
         $Tid = $T['id'];
@@ -274,15 +275,29 @@ function ShipMoveCheck($Agents=0) {  // Show all movements to allow for blocking
 
 }
 
-function ShipMovements($Agents=0) {
+// Mode 0 = Normal, 1 = Agents, 2 = Retreats
+function ShipMovements($Mode=0) {
   global $GAME,$GAMEID,$LinkStates;
   // Foreach thing, do moves, generate list of new survey reports & levels, update "knowns"
 
   if (!file_exists("Turns/" . $GAMEID . "/" . $GAME['Turn'])) $LF = mkdir("Turns/" . $GAMEID . "/" . $GAME['Turn'],0777,true);
-
   $LinkLevels = Get_LinkLevels();
 
-  $Things = ($Agents ? Get_AllThings() : Gen_Get_Table('Things',"ORDER BY RAND()"));
+  switch ($Mode) {
+    case 0:
+      $Things = Gen_Get_Table('Things',"GameId=$GAMEID AND ORDER BY RAND()");
+      $Done = $GAME['Turn'];
+      break;
+    case 1:
+      $Things = Get_AllThings();
+      $Done = $GAME['Turn'];
+      break;
+    case 2:
+      $Things = Gen_Get_Cond('Things', "GameId=$GAMEID AND Retreat!=0");
+      $Done = -$GAME['Turn'];
+      break;
+  }
+
   $TTypes = Get_ThingTypes();
   $Facts = Get_Factions();
   $LOwner = GameFeature('LinkOwner',0);
@@ -291,16 +306,9 @@ function ShipMovements($Agents=0) {
 
   foreach ($Things as $T) {
     if ($T['BuildState'] <2 || $T['BuildState'] > 3 || $T['LinkId'] <= 0 || $T['Whose']==0 || $T['CurHealth']==0) continue;
-    /*    if ($Agents == 0 && ($T['LinkId'] <= 0) {
-     if (($TTypes[$T['Type']]['Properties'] & THING_CAN_BETRANSPORTED)) {
-
-     }
-     continue;
-     }*/
-    if (( $Agents == 0 &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER)) ||
-      ( $Agents &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER) ==0 ) ) continue;
-
-      if (abs($T['LastMoved']) == $GAME['Turn']) continue; // Already done
+    if (( ($Mode == 0) &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER)) ||
+      ( ($Mode == 1) &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER) ==0 ) ) continue;
+      if ($T['LastMoved'] == $Done) continue; // Already done
 
       $Tid = $T['id'];
       $Fid = $T['Whose'];
@@ -312,7 +320,7 @@ function ShipMovements($Agents=0) {
         TurnLog($Fid,$T['Name'] . " was <b>unable to take link</b> <span style=color:" . $LinkLevels[abs($L['Level'])]['Colour'] . ">" .
           ($L['Name']?$L['Name']:"#$Lid") . " </span> beause of " .
           (isset($_REQUEST["Reason$Tid"])? $_REQUEST["Reason$Tid"]:"Unknown reasons"), $T);
-        $T['LastMoved'] = $GAME['Turn'];
+        $T['LastMoved'] = $Done;
         Put_Thing($T);
         continue;
       }
@@ -324,13 +332,13 @@ function ShipMovements($Agents=0) {
           TurnLog($Fid,$T['Name'] . " was <b>unable to take link</b> <span style=color:" . $LinkLevels[abs($L['Level'])]['Colour'] . ">" .
             ($L['Name']?$L['Name']:"#$Lid") . " </span> beause of it is " .
             $LinkStates[$L['Status']],$T);
-          $T['LastMoved'] = $GAME['Turn'];
+          $T['LastMoved'] = $Done;
           Put_Thing($T);
           continue;
         } else if (!$L || ($L['GameId'] < 0)) {
           GMLog("Not Moving " . $T['Name']);
           TurnLog($Fid,$T['Name'] . " was <b>unable to take link</b>" . ($L['Name']?$L['Name']:"#$Lid"). " because it no longer exists",$T);
-          $T['LastMoved'] = $GAME['Turn'];
+          $T['LastMoved'] = $Done;
           Put_Thing($T);
           continue;
         }
@@ -360,7 +368,7 @@ function ShipMovements($Agents=0) {
           $GTo = 'A';
         }
 
-        if (($Agents == 0) && ($T['Whose'] != $LOwner)) {
+        if (($Mode != 1) && ($T['Whose'] != $LOwner)) {
           $L['UseCount'] += $T['Level'];
           if (Feature('LinksExplode') && ($L['UseCount'] > 100*$L['Weight'])) {// something breaks
             $BadProb = $T['Level']*($L['UseCount'] - 100*$L['Weight']);
@@ -404,7 +412,6 @@ function ShipMovements($Agents=0) {
           Put_Link($L);
         }
 
-
         $MineChecks = ['From'=>$GFrom, 'To'=>$GTo];
         foreach ($MineChecks as $Dir=>$MC) {
           //      var_dump($L);
@@ -434,7 +441,7 @@ function ShipMovements($Agents=0) {
           $FL['Known'] = 1;
           Put_FactionLink($FL);
 
-          if ($N['Nebulae'] > $T['NebSensors']) $Retreat=1;
+          if ($N['Nebulae'] > $T['NebSensors']) $T['Retreat'] = 1;
 
           $pname = System_Name($N,$Fid);
         } else {
@@ -442,12 +449,12 @@ function ShipMovements($Agents=0) {
         }
 
         // Leaving Minefields
-        if (!$Agents) Move_Thing_Within_Sys($T,1,1);
+        if ($Mode == 0) Move_Thing_Within_Sys($T,1,1);
         //      $N = Get_System($T['NewSystemId']);
         $EndLocs = Within_Sys_Locs($N);
         $T['SystemId'] = $T['NewSystemId'];
         $T['WithinSysLoc'] = $T['NewLocation'];
-        if (!$Agents) Move_Thing_Within_Sys($T,$T['NewLocation'],1);
+        if ($Mode == 0) Move_Thing_Within_Sys($T,$T['NewLocation'],1);
         //      SKLog("Moved to $pname along " . $LinkLevels[$L['Level']]['Colour']. " link #$Lid to " . $EndLocs[$T['NewLocation']]);
         if ($Fid) {
           if (isset($SetBreak)) {
@@ -458,18 +465,21 @@ function ShipMovements($Agents=0) {
                 $T['CurHealth'] = 0;
                 $T['SystemId'] = 0;
           } else {
-            TurnLog($Fid,$T['Name'] . " has moved from " . System_Name($OldN,$Fid) . " along <span style='color:" . $LinkLevels[abs($L['Level'])]['Colour'] .
-              ";'>link " . ($L['Name']?$L['Name']:"#$Lid"). " </span>to $pname " .
+            TurnLog($Fid,$T['Name'] . " has " . (($Mode<2)?"moved":"retreated") . " from " . System_Name($OldN,$Fid) . " along <span style='color:" .
+              $LinkLevels[abs($L['Level'])]['Colour'] . ";'>link " . ($L['Name']?$L['Name']:"#$Lid"). " </span>to $pname " .
               ($T['NewLocation'] > 2?( " to " . $EndLocs[$T['NewLocation']]): ""),$T);
+            GMLog($T['Name'] . " has " . (($Mode<2)?"moved":"retreated") . " from " . System_Name($OldN,$Fid) . " along <span style='color:" .
+              $LinkLevels[abs($L['Level'])]['Colour'] . ";'>link " . ($L['Name']?$L['Name']:"#$Lid"). " </span>to $pname " .
+              ($T['NewLocation'] > 2?( " to " . $EndLocs[$T['NewLocation']]): ""));
           }
         }
         //    $T['LinkId'] = 0;
         if ($T['Instruction'] != 0 && !Has_Tech($Fid,'Stargate Construction') ) $T['Instruction'] = 0;
-        $T['LastMoved'] = ($Retreat?-$GAME['Turn']:$GAME['Turn']);
+        $T['LastMoved'] = $Done;
         Put_Thing($T);
         if (isset($SetBreak)) return 0; // Will need to come back in to finish movements after damage
       } else if ( $T['WithinSysLoc'] != $T['NewLocation'] && $T['NewLocation']>1) {
-        if (!$Agents) {
+        if ($Mode == 0) {
           Move_Thing_Within_Sys($T,1,1);
           Move_Thing_Within_Sys($T,$T['NewLocation'],1);
         } else {
@@ -484,7 +494,7 @@ function ShipMovements($Agents=0) {
         $EndLocs = Within_Sys_Locs($N);
         //      SKLog("Moved to " . $EndLocs[$T['NewLocation']] . " within $pname");
         if ($Fid) TurnLog($Fid,$T['Name'] . " moved to " . $EndLocs[$T['NewLocation']] .  " within $pname",$T);
-        $T['LastMoved'] = $GAME['Turn'];
+        $T['LastMoved'] = $Done;
         Put_Thing($T);
       }
 
@@ -545,7 +555,8 @@ function UnloadTroops() {
     $T['LinkId'] = 0;
 
     TurnLog($T['Whose'], $T['Name'] . " has been unloaded from " . $H['Name'] . " in " . $N['Ref'] . " to " . $Syslocs[$T['WithinSysLoc']], $T);
-    if ($T['Whose'] != $H['Whose']) TurnLog($H['Whose'], $T['Name'] . " has been unloded from " . $H['Name'] . " in " . $N['Ref'] . " to " . $Syslocs[$T['WithinSysLoc']]);
+    if ($T['Whose'] != $H['Whose']) TurnLog($H['Whose'], $T['Name'] . " has been unloded from " . $H['Name'] . " in " . $N['Ref'] . " to " .
+      $Syslocs[$T['WithinSysLoc']]);
     GMLog($T['Name'] . " has been unloaded from " . $H['Name'] . " in " . $N['Ref'] . " to " . $Syslocs[$T['WithinSysLoc']]);
     Put_Thing($T);
   }
@@ -556,24 +567,93 @@ function UnloadTroops() {
 
 function RetreatsSelection() {
   global $GAME,$GAMEID;
-  $Ret = -$GAME['Turn'];
-  $Things = Get_Things_Cond(0,"(BuildState=3) AND ( LastMoved=$Ret) AND GameId=$GAMEID");
+  $Things = Get_Things_Cond_Ordered(0,"(BuildState=3) AND ( Retreat!=0 ) AND (GameId=$GAMEID)");
   $TTypes = Get_ThingTypes();
   $Facts = Get_Factions();
+  $SysHasNeb = [];
+  $SRefs = Get_SystemRefs();
+  $RefSs = array_flip($SRefs);
+
   if ($Things) {
     GMLog("<h2>These could retreat - Do check, it does not yet check if there is a Ship with Nebula s to stop one, tick the stop box and say why</h2>");
     GMLog("<form method=Post action=TurnActions.php?ACTION=StageDone>" . fm_hidden('Stage','Retreats Selection'));
+    GMLog("<table border><tr><th>Whose<th>What<th>Reason<th>From<th>To<th>Stop<th>Why");
+    foreach ($Things as $Tid=>$T) {
+      $Loc = $T['SystemId'];
+      $Fid = $T['Whose'];
 
+      switch ($T['Retreat']) {
+        case 1: // Nebula
+          // Is there a ship with a sensor there?
+          if (isset($SysHasNeb[$Loc][$Fid])) {
+            if ($SysHasNeb[$Loc][$Fid]) continue 2;
+          } else {
+            $Ship = Gen_Get_Cond1('Things',"SystemId=$Loc AND NebSensor>0 AND Whose=Fid");
+            $SysHasNeb[$Loc][$Fid] = $Ship;
+            if ($Ship) continue 2;
+          }
+          // Drop Through
+        case 2: // Combat
 
+          if ($T['LinkId']> 0) {
+            $L = Get_Link($T['LinkId']);
+            $To = (($L['System1Ref'] == $SRefs[$Loc])? $RefSs[$L['System2Ref']] :  $RefSs[$L['System1Ref']]);
+            $Totxt = "(" . $L['Name'] . ") to " . $SRefs[$To] . fm_hidden("RetreatLink$Tid",$T['LinkId']);
+          } else {
+            $res = Moves_4_Thing($T,0, 1);
+            [$Links, $SelLinks, $SelCols ] = $res;
+            $Totxt = fm_select($SelLinks,$T,'LinkId',0," style=color:" . $SelCols[$T['LinkId']] ,"RetreatLink$Tid",0,$SelCols) .
+               ' <span class=red>SET THIS!</span>';
+          }
+
+          GMLog("<tr><td>" . $Facts[$Fid]['Name'] . "<td><a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a><td>" .
+            ['','','From Combat'][$T['Retreat']] . "<td>" . $SRefs[$Loc] . "<td>$Totxt<td>" .
+            fm_checkbox('',$_REQUEST,"RetreatBox$Tid") . fm_text1('', $_REQUEST,"RetreatTxt$Tid"));
+          break;
+       }
+    }
+    GMLog("</table><input type=submit value='Click to Proceed'></form>\n");
+    dotail();
 
   }
   return 2;
-
-//  GMLog("Retreats are manual at the moment<p>");
 }
 
 function Retreats() {
-  GMLog("Retreats are manual at the moment<p>");
+  global $GAME,$GAMEID;
+  $Things = Get_Things_Cond_Ordered(0,"(BuildState=3) AND ( Retreat!=0 ) AND (GameId=$GAMEID)");
+  $TTypes = Get_ThingTypes();
+  $Facts = Get_Factions();
+  $SysHasNeb = [];
+  $SRefs = Get_SystemRefs();
+  $RefSs = array_flip($SRefs);
+  $Call = 0;
+
+//  var_dump($_REQUEST);
+
+  if ($Things) {
+    foreach ($Things as $Tid=>$T) {
+      $Loc = $T['SystemId'];
+      $Fid = $T['Whose'];
+      if (isset($_REQUEST["RetreatLink$Tid"])) {
+        $T['NewSystemId'] = -1;
+        if (($_REQUEST["RetreatBox$Tid"]??0) == 'on') {
+          TurnLog($Fid,$T['Name'] . " could have retreated, but didn't because " . $_REQUEST["RetreatTxt$Tid"]);
+          $T['Retreat'] = 0;
+        } else {
+          $Call = 1;
+          if ($_REQUEST["RetreatLink$Tid"] != $T['LinkId']) {
+            $T['LinkId'] = $_REQUEST["RetreatLink$Tid"];
+          }
+        }
+        Put_Thing($T);
+      }
+    }
+
+    if ($Call) ShipMovements(2);
+  }
+
+  GMLog("Retreats have been completed<p>");
   return 1;
 
 }

@@ -339,7 +339,9 @@
             echo " <a href=PMoveThing.php?id=" . $T['id'] . ">Move</a>";
           } else {
           }
-          if ($T['LinkId'] > 0) {
+          if ($T['Retreat']) {
+            echo "<td>" . (($T['LastMoved'] <0)?'Retreated':'Retreating');
+          } elseif ($T['LinkId'] > 0) {
             $L = Get_Link($T['LinkId']);
             echo "<td style=color:" . $LinkTypes[abs($L['Level'])]['Colour'] . " >Link " . ($L['Name']?$L['Name']: "#" . $T['LinkId']);
             if ($L['Level'] <0 ) echo "- Note under repair...";

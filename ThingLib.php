@@ -468,7 +468,11 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0 ) {
   $SelLinks = [''];
   $SelCols = [''];
   if ($GM || Has_Tech($T['Whose'],'Know All Links')) {
-    foreach ($Links as $L) {
+    foreach ($Links as $Lid=>$L) {
+      if (($L['Instability'] + $L['ThisTurnMod']) > $T['Stability']) {
+        unset($Links[$Lid]);
+        continue;
+      }
       $Lnam = ($L['Name']?$L['Name']:"#" .$L['id']);
       $SelLinks[$L['id']] = "$Lnam to " . (($L['System1Ref'] == $N['Ref'])?$L['System2Ref']: $L['System1Ref'] );
       $SelCols[$L['id']] = $LinkTypes[abs($L['Level'])]['Colour'];
