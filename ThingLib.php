@@ -847,7 +847,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
   if (!$Factions) $Factions = Get_Factions();
   $Locations = Within_Sys_Locs_Id($T['SystemId']);
 
-  $txt = '';
+  $txt = $itxt = '';
   $RawA = 0;
 
 //  if ($T['id'] == 238) { echo "Here with outpost<br>"; var_dump($T); }
@@ -879,14 +879,14 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
       if ($Div) {
         if (($T['BuildState'] == 4) || (($T['Type'] == 23) && $GM)) { // Named Chars
           if ($GM) {
-            $txt .= "<div class=FullD hidden>";
+            $txt .= "<div class=FullD,SeeThingTxt' hidden>";
           } elseif ($T['BuildState'] >= 4) {
-            $txt .= "<div class=FullD hidden>The remains of: ";
+            $txt .= "<div class='FullD,SeeThingTxt' hidden>The remains of: ";
           } else {
-            $txt .= "<div>";
+            $txt .= "<div class=SeeThingTxt>";
           }
         } else {
-          $txt .= "<div>";
+          $txt .= "<div class=SeeThingTxt>";
         }
       }
 
@@ -936,7 +936,9 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
           $txt .= ", Prisoner Of: <span style='background:" . $Fact['MapColour'] . "'>" . $Fact['Name'] . "</span>";
         }
       } else if ($GM && !empty($T['Orders'])) $txt .= ", <span style='background:#ffd966;'>Orders: " . $T['Orders'] . "</span>";
-      if ($Images && !empty($T['Image'])) $txt .= " <img valign=top src=" . $T['Image'] . " height=100 class=SeeImage> ";
+      if ($Images && !empty($T['Image'])) {
+        $itxt .= " <img valign=top src=" . $T['Image'] . " height=100 class=SeeImage> ";
+      }
 
       if ($GM) {
         $Resc =0;
@@ -959,8 +961,12 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
           }
         }
       }
+      if ($itxt) {
+        if ($T['Description']) $txt .= "<br>" . $T['Description'];
+      }
       if ($Images) $txt .= "<br clear=all>\n";
       if ($Div) $txt .= "</div>";
+      if ($itxt) $txt = "<div class=SeeThingwrap>$txt<div class=SeeThingImg>$itxt</div></div>";
       $LastWhose = $T['Whose'];
 // if ($T['id'] == 238) echo "Txt is:$txt<p>";
    return $txt;
