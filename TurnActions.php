@@ -69,8 +69,8 @@
     [49,'Instruct',  'Instructions Complete','Coded'],
     [50,'',         'Check Survey Reports','Coded,M'],
     [51,'',         'Give Survey Reports','Coded'],
-    [52,'',         'Spare',''],//Check Spot Anomalies
-    [53,'',         'Spare',''],//Spot Anomalies
+    [52,'',         'Check Spot Anomalies','Coded'],//
+    [53,'',         'Spot Anomalies','Coded'],
     [54,'',         'Militia Army Recovery','Coded'],
     [55,'',         'Generate Turns','No'],
     [56,'',         'Tidy Ups','Coded'],
@@ -667,60 +667,75 @@ function CheckSpotAnomalies() {
   $Facts = Get_Factions();
   $Systems = Get_SystemRefs();
   $Scans = Gen_Get_Cond('ScansDue'," Turn=" . $GAME['Turn'] . " ORDER BY FactionId,Sys");
-
-  GMLog("<form method=Post action=TurnActions.php?ACTION=StageDone>" . fm_hidden('Stage','CheckSpotAnomalies'));
-  GMLog("<h1>Please check these anomalies should be spotted</h1>");
-  GMLog("<table border><tr><td>Who<td>Where<td>what<td>Stop\n");
   $Anoms = Gen_Get_Cond('Anomalies',"GameId=" . $GAME['id'] . " ORDER BY SystemId, ScanLevel");
-  foreach($Anoms as $A) {
-    $Aid = $A['id'];
-//if ($Aid == 37) var_dump($A);
+  $SysAs = [];
+  $Parsedown = new Parsedown();
+  $Started = 0;
+
+  foreach ($Anoms as $Aid=>$A) {
     $Sid = $A['SystemId'];
-    $ScanNeed = $A['ScanLevel'];
+    if (isset($SysAs[$Sid])) {
+      $SysAs[$Sid][] = $Aid;
+    } else {
+      $SysAs[$Sid] = [$Aid];
+    }
+  }
 
-    $Things = Get_Things_Cond(0,"SystemId=$Sid AND SensorLevel>=$ScanNeed ORDER BY Whose, SensorLevel DESC");
-// if ($Aid == 37) var_dump($Things);
-    $LastWho = 0;
-    $LastAn = 0;
-    foreach($Things as $T) {
-//if ($Aid == 45) echo "Checking " . $T['id'] . "<br>";
-//if ($Aid == 37) echo "Checking " . $T['Name'] . "<br>";
-      foreach($Scans as $S) {
-        if (($S['Sys'] == $Sid) && $S['FactionId'] == $T['Whose'] && $S['Scan']<5) continue 2; // Next thing
-      }
+  if ($Scans) {
+    foreach($Scans as $Scid=>$Sc) {
+      $Fid = $Sc['FactionId'];
 
-//if ($Aid == 45) echo "Checked " . $T['Name'] . "<br>";
-      if ($T['Whose'] != $LastWho) {
-        $LastWho = $T['Whose'];
-        $LastAn = 0;
-        $FA = Gen_Get_Cond('FactionAnomaly',"FactionId=$LastWho AND AnomalyId=$Aid");
-        if ($FA) {
-          $FA = $FA[0];
-        } else {
-          $FA = ['FactionId'=>$LastWho, 'AnomalyId'=>$Aid, 'State'=>0, 'Notes'=>''];
+      $Sys = $Sc['Sys'];
+      if (!empty($SysAs[$Sys])) {
+        foreach ($SysAs[$Sys] as $Aid) {
+          $FA = Gen_Get_Cond1('FactionAnomaly',"FactionId=$Fid AND AnomalyId=$Aid");
+          if (isset($FA['id'])) continue; // Already found
+          $FS = Get_FactionSystemFS($Fid, $Sys);
+
+          $Loc = 0; // Space
+          $LocCat = $A['WithinSysLoc']%100;
+          if ($LocCat ==2 || $LocCat == 4) $Loc=1; // Ground;
+          if (($Loc == 1) && $A['VisFromSpace']) $Loc=3; // Vis From Space
+
+          if ((($Loc == 0) && ($A['ScanLevel']<=$FS['SpaceScan'])) ||
+            (($Loc == 1) && ($A['ScanLevel']<=$FS['PlanetScan'])) ||
+            (($Loc == 2) && ($A['ScanLevel']<=max($FS['SpaceScan'],$FS['PlanetScan'])))) {  // Found...
+
+            if (empty($A['OtherReq'])) {
+              $N = Get_System($Sys);
+              $Syslocs = Within_Sys_Locs($N);
+
+              TurnLog($Fid,"You have spotted an anomaly: " . $A['Name'] . " in " . $Systems[$Sid] . "\n" .
+                " location: " . ($Syslocs[$A['WithinSysLoc']]? $Syslocs[$A['WithinSysLoc']]: "Space") . "<p>" .
+                $Parsedown->text(stripslashes($A['Description'])) .
+                "\nIt will take " . $A['AnomalyLevel'] . " scan level actions to complete.\n\n");
+                Gen_Put('FactionAnomaly',$FA);
+
+              continue;
+            } else {
+              if (!$Started){
+                GMLog("<form method=Post action=TurnActions.php?ACTION=StageDone>" . fm_hidden('Stage','CheckSpotAnomalies'));
+                GMLog("<h1>Please check these anomalies should be spotted</h1>");
+                GMLog("<table border><tr><td>Who<td>Where<td>what<td>Reqs<td>Enable\n");
+                $Started=1;
+              }
+              GMLog("<tr><Td>" . $Facts[$Fid]['Name'] . "<td>" . $Systems[$Sys] . "<td><a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . "</a><td>" .
+                $A['OtherReq'] . "<td>" . fm_checkbox('',$_REQUEST,"Enable$Fid:$Aid"));
+
+            }
+          }
         }
-      }
-      if ((($A['Properties'] == 0) && (($FA['State'] == 0) && ($LastAn != $Aid))) ||
-          (($A['Properties'] == 1) && (($FA['State'] == -1) && ($LastAn != $Aid)))) {
-/*
-        if ($T['SensorLevel'] < $A['ScanLevel'] ) {
-          if ( GameFeature('MissedAnomalies',0)) GMLog($Facts[$T['Whose']]['Name'] . " Just missed spotting an anomaly in " . $Systems[$Sid] .
-              " by one sensor level on the " . $T['Name']);
-          $LastAn = $Aid;
-          continue;
-        }
-*/
-
-        $Tid = $T['id'];
-        GMLog("<tr><Td>" . $Facts[$T['Whose']]['Name'] . "<td>" . $Systems[$Sid] . "<td><a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . "</a><td>" .
-              fm_checkbox('',$_REQUEST,"Prevent$Tid"));
-        $LastAn = $Aid;
       }
     }
   }
 
-  GMLog("</table><input type=submit value='Click to Proceed'></form>\n");
-  dotail();
+  if ($Started) {
+    GMLog("</table><input type=submit value='Click to Proceed'></form>\n");
+    dotail();
+  } else {
+    return 2;
+  }
+
 }
 
 
@@ -736,54 +751,24 @@ function SpotAnomalies() {
   $Facts = Get_Factions();
   $Systems = Get_SystemRefs();
   $Parsedown = new Parsedown();
-  $TTypes = Get_ThingTypes();
+  $mtch = [];
 
-  $Anoms = Gen_Get_Cond('Anomalies',"GameId=$GAMEID AND ScanLevel>=0 ORDER BY SystemId, ScanLevel");
-  foreach($Anoms as $A) {
-    $Aid = $A['id'];
-    $Sid = $A['SystemId'];
-    $ScanNeed = $A['ScanLevel'];
-    $OnPlanet = (($A['WithinSysLoc']%100 ==2) || ($A['WithinSysLoc']%100 ==4));
+  foreach($_REQUEST as $R=>$V) {
+    if (preg_match('/Enable(\d*):(\d*)/',$R,$mtch) && ($V != 'on')){
+      $Fid = $mtch[1];
+      $Aid = $mtch[2];
+      $A = Get_Anomaly($Aid);
+      $Sys = $A['SystemId'];
 
-    $Things = Get_Things_Cond(0,"SystemId=$Sid AND SensorLevel>=$ScanNeed ORDER BY Whose, SensorLevel DESC");
-    $LastWho = 0;
-    $LastAn = 0;
-    foreach($Things as $T) {
-      if (( $OnPlanet && (($TTypes[$T['Type']]['Props'] & THING_HAS_ARMYMODULES) > 0)) ||
-          (!$OnPlanet && (($TTypes[$T['Type']]['Props'] & THING_HAS_SHIPMODULES) > 0 ))) {
-// if ($Aid == 45) echo "Checking " . $T['id'] . "<br>";
-        if ($Facts[$T['Whose']]['NoAnomalies']) continue;
-        if ($T['Whose'] != $LastWho) {
-          $LastWho = $T['Whose'];
-          $LastAn = 0;
-          $FA = Gen_Get_Cond('FactionAnomaly',"FactionId=$LastWho AND AnomalyId=$Aid");
-          if ($FA) {
-            $FA = $FA[0];
-          } else {
-            $FA = ['FactionId'=>$LastWho, 'AnomalyId'=>$Aid, 'State'=>0, 'Notes'=>''];
-          }
-        }
-        $Tid = $T['id'];
-        if ((($A['Properties'] == 0) && (($FA['State'] == 0) && ($LastAn != $Aid))) ||
-            (($A['Properties'] == 1) && (($FA['State'] == -1) && ($LastAn != $Aid)))) {
+      $FA = Gen_Get_Cond1('FactionAnomaly',"FactionId=$Fid AND AnomalyId=$Aid");
+      $N = Get_System($Sys);
+      $Syslocs = Within_Sys_Locs($N);
 
-          if ( !isset($_REQUEST["Prevent$Tid"]) || $_REQUEST["Prevent$Tid"]!='on')  {
-
-            TurnLog($LastWho,"You have spotted an anomaly: " . $A['Name'] . " in " . $Systems[$Sid] . "\n" .  $Parsedown->text(stripslashes($A['Description'])) .
-                  "\nIt will take " . $A['AnomalyLevel'] . " scan level actions to complete.\n\n");
-
-            GMLog($Facts[$T['Whose']]['Name'] . " have just spotted anomaly: <a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] . "</a> in " .
-                  $Systems[$Sid] . " from the " . $T['Name'] );
-            $FA['State'] = 1;
-  // var_dump($FA);
-            Gen_Put('FactionAnomaly',$FA);
-          }
-          $LastAn = $Aid;
-          continue;
-        } else { // Already known
-
-        }
-      }
+      TurnLog($Fid,"You have spotted an anomaly: " . $A['Name'] . " in " . $N['Ref'] . "\n" .
+        " location: " . ($Syslocs[$A['WithinSysLoc']]? $Syslocs[$A['WithinSysLoc']]: "Space") . "<p>" .
+        $Parsedown->text(stripslashes($A['Description'])) .
+        "\nIt will take " . $A['AnomalyLevel'] . " scan level actions to complete.\n\n");
+        Gen_Put('FactionAnomaly',$FA);
     }
   }
 

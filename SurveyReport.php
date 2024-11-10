@@ -452,10 +452,26 @@
         if ((($Loc == 0) && ($A['ScanLevel']<=$SpaceLevel)) ||
             (($Loc == 1) && ($A['ScanLevel']<=$PlanetLevel)) ||
             (($Loc == 2) && ($A['ScanLevel']<=max($SpaceLevel,$PlanetLevel)))) {
+
+          $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
+          if (empty($FA['id'])) {
+            if ($A['ScanLevel'] <0) continue;
+/*            for ($i=1; $i<=4; $i++) {
+              if (!empty($A["ChainedOn$i"])) {
+                $ACh = $A["ChainedOn$i"];
+                $FCH = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$ACh AND FactionId=$Fid");
+                if (empty($FCH['id'])) continue 2;  // Dont know chained on
+                if ($FCH['State'] <3 ) continue 2;  // Haven't analysed chained on
+              }
+            }*/
+          }
+
           if (!$Shown) {
             echo "<h2>Anomalies</h2>";
             $Shown = 1;
           }
+
+
           echo "Anomaly: " . $A['Name'] . " location: " . ($Syslocs[$A['WithinSysLoc']]? $Syslocs[$A['WithinSysLoc']]: "Space") . "<p>";
           echo "Description: " . $Parsedown->text(stripslashes($A['Description'])) . "<p>";
           $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");

@@ -843,6 +843,10 @@ function InstructionsComplete() {
                   if (empty($Systems)) $Systems = Get_SystemRefs();
 
                   $Xid = $A["ChainedOn$i"];
+                  $XA = Get_Anomaly($Xid);
+                  $FS = Get_System($XA['SystemId']);
+                  if (empty($FS['id'])) continue;
+
                   $FA = Gen_Get_Cond1('FactionAnomaly',"FactionId=$Fid AND AnomalyId=$Xid");
                   if (!$FA) {
                     $FA = ['FactionId'=>$Fid, 'AnomalyId'=>$Xid, 'State' =>2,  'Notes'=>''];
@@ -851,7 +855,6 @@ function InstructionsComplete() {
                     $FA['State'] = 2;
                   }
                   Gen_Put('FactionAnomaly',$FA);
-                  $XA = Get_Anomaly($Xid);
 
                   TurnLog($Fid , "Completing " . $A['Name'] . " has opened up another anomaly that could be studied: " . $XA['Name'] .
                     " in " . $Systems[$XA['SystemId']] . "\n" .  $Parsedown->text(stripslashes($XA['Description'])) .
@@ -1294,6 +1297,9 @@ function InstructionsComplete() {
         Gen_Put('ScansDue',$Scan);
         break;
 
+      case 'Collaborative Planetary Construction' :
+      case 'Collaborative DSC':
+        break; // All handled by the progress
 
       default:
         GMLog("Instruction: $Instr has completed, for " . $Facts[$Who]['Name'] . " by <a href=ThingEdit.php?id=$Tid>" . $T['Name'] .
@@ -1363,30 +1369,9 @@ function InstructionsProgress() {
         Put_Thing($T);
         break;
 
-      case 'Collaborative DSC': // Dist1 has Thing number being helped
+      case 'Collaborative Planetary Construction' :
+      case 'Collaborative DSC':
         break; // Now in second pass
-        //        $Prog = Has_Tech($T['Whose'],'Deep Space Construction');
-        $Mods = Get_ModulesType($Tid, 'Deep Space Construction');
-        $ProgGain = $Mods['Level']*$Mods['Number'];
-        $HT = Get_Thing($T['Dist1']);
-        if ($HT) {
-          if ($HT['Instruction'] && ($IntructProps[abs($HT['Instruction'])] & 1)) {
-            $HT['Progress'] = min($HT['ActionsNeeded'],$HT['Progress']+$ProgGain);
-            GMLog("$ProgGain progress on " . $ThingInstrs[abs($HT['Instruction'])] . " for " . $Facts[$HT['Whose']]['Name'] . ":" . $HT['Name'] . " Now at " .
-              $HT['Progress'] . " / " . $HT['ActionsNeeded']);
-
-            TurnLog($HT['Whose'],$T['Name'] . " did $ProgGain towards completing " . $ThingInstrs[abs($HT['Instruction'])] . " by " . $HT['Name'] . " Now at " .
-              $HT['Progress'] . " / " . $HT['ActionsNeeded']);
-            if ($HT['Whose'] != $T['Whose']) {
-              TurnLog($T['Whose'],$T['Name'] . " did $ProgGain towards completing " . $ThingInstrs[abs($HT['Instruction'])] . " by " . $HT['Name']);
-            }
-            Put_Thing($HT);
-          }
-          else {
-            TurnLog($T['Whose'], $T['Name'] . " Was collacorating with " . $HT['Name'] . ", but " . $HT['Name'] . " is not doing any DSC.");
-          }
-        }
-        break;
 
       case 'Analyse Anomaly':
         $Aid = $T['ProjectId'];
