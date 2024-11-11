@@ -55,8 +55,8 @@
     [35,'Combat',    'Devastation Selection','Coded,M'],
     [36,'Combat',    'Devastation','Coded'],
     [37,'',         'Ownership Change','Coded'],
-    [38,'Movement',  'Retreats Selection','No'],
-    [39,'Movement',  'Retreats','No'],
+    [38,'Movement',  'Retreats Selection','Coded'],
+    [39,'Movement',  'Retreats','Coded'],
     [40,'Projects',  'Project Progress','Coded'],
     [41,'Operations','Operations Progress','Coded'],
     [42,'Instruct',  'Instructions Progress','Coded'],
@@ -73,14 +73,14 @@
     [53,'',         'Spot Anomalies','Coded'],
     [54,'',         'Militia Army Recovery','Coded'],
     [55,'',         'Generate Turns','No'],
-    [56,'',         'Tidy Ups','Coded'],
+    [56,'',         'Spare',''],
     [57,'',         'Clear Conflict Flags','Coded'],
-    [58,'Movement',  'Save What Can Be Seen','Coded'],
-    [59,'',         'Recalc Project Homes','Coded'],
-    [60,'',         'Finish Turn Process','Coded'],
-    [61,'',         'Check Follow Ups','Coded'],
-    [62,'',         'Enable Factions Access','Coded'],
-    [63,'',         'Spare',''],
+    [58,'',         'Check Follow Ups','Coded'],
+    [59,'Movement',  'Save What Can Be Seen','Coded'],
+    [60,'',         'Recalc Project Homes','Coded'],
+    [61,'',         'Tidy Ups','Coded'],
+    [62,'',         'Spare',''],
+    [63,'',         'Enable Factions Access','Coded'],
 
   ];
 
@@ -954,6 +954,15 @@ function TidyUps() {
   }
 
 
+  $Facts = Get_Factions();
+  foreach ($Facts as $F) {
+    if ($F['NPC'] == 0 ) continue;
+    $F['TurnState'] = 1;
+    Put_Faction($F);
+  }
+
+  GMLog("<br>NPC Factions marked as Turn Planning<p>\n");
+
 
   return 1;
 }
@@ -1024,15 +1033,6 @@ function RecalcProjectHomes() {
 function FinishTurnProcess() {
   global $GAME,$Sand;
   // Change faction state update turn number
-
-  $Facts = Get_Factions();
-  foreach ($Facts as $F) {
-    if ($F['NPC'] == 0 ) continue;
-    $F['TurnState'] = 1;
-    Put_Faction($F);
-  }
-
-  GMLog("<br>NPC Factions marked as Turn Planning<p>\n");
   // TODO Send messages to discord ??
   return 1;
 }
