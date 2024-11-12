@@ -247,7 +247,7 @@
       " pos=\"" . ($N['GridX']*$XScale+(5-$N['GridY'])/2) . "," . (9-$N['GridY'])*$Scale . "!\"";
       $atts .= " style=filled fillcolor=\"$Colour\" color=\"$BdrColour\"";
       if ($NodeName) {
-        $atts .= NodeLab($ShortName, $N['Ref']) . " margin=0 "; //($Faction==0?$N['Ref']:""));
+        $atts .= NodeLab($ShortName, $N['Ref']) . " margin=0.03 "; //($Faction==0?$N['Ref']:""));
       }
       if ($N['Nebulae']) { $atts .= " penwidth=" . (2+$N['Nebulae']*2); $NebF = 1; }
       else { $atts .= " penwidth=2"; }

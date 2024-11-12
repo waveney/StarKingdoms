@@ -91,16 +91,18 @@ if (isset($_REQUEST['ACTION'])) {
         echo "No destination Faction selected.<p>";
         break;
       }
+
+      $ActPass = (isset($_REQUEST['SURV'])?'Active':'Passive');
       if ($SysR == 'ALLLL') {
         echo "Doing All<p>";
         foreach($WRefs as $Ref) {
           TransferSys($Ref);
-          echo "Transfered $Ref to " . $Factions[$Tid]['Name'] . "<br>";
+          echo "Transferred $ActPass knowledge of system $Ref to " . $Factions[$Tid]['Name'] . "<br>";
         }
         echo "All done<p>";
       } else {
         TransferSys($SysR);
-        echo "Transfered knowledge of system $SysR to " . $Factions[$Tid]['Name'] . "<br>";
+        echo "Transferred $ActPass knowledge of system $SysR to " . $Factions[$Tid]['Name'] . "<br>";
       }
     default:
 
