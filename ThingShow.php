@@ -1073,7 +1073,7 @@ function Show_Thing(&$T,$Force=0) {
       break;
 
     case 'Make Deep Space Sensor':
-      if ($Moving || !$HasDeep || !Has_Tech($Fid,'Deep Space Sensors') || empty($N) ) continue 2;
+      if ($Moving || !$HasDeep || !Has_Tech($Fid,'Remote Sensors') || empty($N) ) continue 2;
 //      if (Get_Things_Cond(0,"Type=" . $TTNames['Deep Space Sensor'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) continue 2; // Already have one
       break;
 
@@ -1164,7 +1164,7 @@ function Show_Thing(&$T,$Force=0) {
       break;
 
     case 'Make Advanced Deep Space Sensor':
-      if ($Moving || !$HasDeep || !Has_Tech($Fid,'Advanced Deep Space Sensors') || empty($N) ) continue 2;
+      if ($Moving || !$HasDeep || !Has_Tech($Fid,'Advanced Remote Sensors') || empty($N) ) continue 2;
       break;
 
     case 'Salvage':
@@ -1492,7 +1492,7 @@ function Show_Thing(&$T,$Force=0) {
       break;
 
     case 'Make Deep Space Sensor':
-      echo "<br>" . fm_text0("Name of Deep Space Sensor",$T,'MakeName');
+      echo "<br>" . fm_text0("Name of Remote Sensor",$T,'MakeName');
       $Acts = $PTNs['Deep Space Sensors']['CompTarget'];
       break;
 
@@ -1660,8 +1660,8 @@ function Show_Thing(&$T,$Force=0) {
       $ProgShow = 2;
       break;
 
-    case 'Make Advanced Deep Space Sensor':
-      echo "<br>" . fm_text0("Name of Advanced Deep Space Sensor",$T,'MakeName');
+    case 'Make Advanced Remote Sensors':
+      echo "<br>" . fm_text0("Name of Advanced Remote Sensor",$T,'MakeName');
       $Acts = $PTNs['Advanced Deep Space Sensors']['CompTarget'];
       break;
 
