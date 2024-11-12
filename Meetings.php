@@ -9,6 +9,10 @@
   include_once("TurnTools.php");
   A_Check('GM');
 
+  global $Relations;
+
+  $FactFact = [];
+
 /* Get all systems and Factions
 
   Go through each Home - record systems
@@ -197,8 +201,8 @@ function ForceReport($Sid,$Cat) {
   foreach ($Things as $T){
     if ($T['BuildState'] <2 || $T['BuildState'] >3 || ($T['LinkId'] < 0 && $T['LinkId'] > -5)) continue; // Don't exist
     $Sid = $T['SystemId'];
-    $Eyes = $TTypes[$T['Type']]['Eyes'];
-    $Hostile = ($TTypes[$T['Type']]['Properties'] & THING_IS_HOSTILE) && ($T['PrisonerOf'] == 0);
+    $Eyes = ($TTypes[$T['Type']]['Eyes']??0);
+    $Hostile = (($TTypes[$T['Type']]['Properties']??0) & THING_IS_HOSTILE) && ($T['PrisonerOf'] == 0);
     if (isset($Sys[$Sid][$T['Whose']])) {
       $Sys[$Sid][$T['Whose']] |= $Eyes;
     } else {
@@ -311,8 +315,10 @@ function ForceReport($Sid,$Cat) {
   }
   echo "<h1>Checking</h1>";
 
-  echo "<span class=NotHostile>Factions</span> thus marked have only Never Hostile Things<p>";
+  echo "<span class=NotHostile>Factions</span> thus marked have only Never Hostile Things.<br>" .
+       "The most hostile rating between factions present is displayed.<p>";
 //  echo "Checked Things<p>";
+
 
   foreach ($Systems as $N) {
     $Sid = $N['id'];
@@ -321,7 +327,7 @@ function ForceReport($Sid,$Cat) {
     foreach($Facts as $Fid=>$F) {
       if (isset($Sys[$Sid][$Fid])) {
         $NumF++;
-        $Fs[] = $F;
+        $Fs[$Fid] = $F;
       }
     }
     if (isset($Sys[$Sid][0])) {
@@ -330,6 +336,27 @@ function ForceReport($Sid,$Cat) {
     }
     if ($NumF > 1) {
       echo "System: <a href=Meetings.php?ACTION=Check&S=$Sid$TurnP>" . $N['Ref'] . "</a> has ";
+
+      $React = 9;
+ //     var_dump($Fs);
+      foreach ($Fs as $F1=>$FS1) {
+        if ($F1 == 0) continue;
+        foreach($Fs as $F2=>$FS2) {
+          if ($F1 == $F2) continue;
+          if ($F2 == 0) {
+            $R = $Facts[$F1]['DefaultRelations'];
+            $FactFact[$F1][0] = ($R?$R:5);
+          } else if (!isset($FactFact[$F1][$F2])) {
+            $FF = Gen_Get_Cond1('FactionFaction',"FactionId1=$F1 AND FactionId2=$F2");
+            $FactFact[$F1][$F2] = (($FF['Relationship']??0)?$FF['Relationship']:5);
+          }
+          $React = min($React,$FactFact[$F1][$F2]);
+        }
+      }
+
+      $DR = $Relations[$React];
+      echo " <span style='background:" . $DR[1]  . "'>" . $DR[0] . "</span> ";
+
       foreach($Fs as $F) {
         if (empty($F['Name'])) {
           echo 'Other , ';
