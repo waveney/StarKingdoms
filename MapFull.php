@@ -377,11 +377,11 @@
     $MapDirStuff = Feature('MapDirections');
     if ($MapDirStuff) {
       [$Dx,$Dy,$Dl,$DN,$DE,$DS,$DW] = explode(',',$MapDirStuff); // X,Y,Len,North,East,South,West
-      $Ds = [[$Dx,$Dy,$Dx,$Dy+$Dl,$DN],[$Dx,$Dy,$Dx+$Dl,$Dy,$DE],[$Dx,$Dy,$Dx,$Dy-$Dl,$DS],[$Dx,$Dy,$Dx-$Dl,$Dy,$DW]];
+      $Ds = [[$Dx,$Dy,$Dx,$Dy+$Dl*.7,$DN],[$Dx,$Dy,$Dx+$Dl,$Dy,$DE],[$Dx,$Dy,$Dx,$Dy-$Dl*.7,$DS],[$Dx,$Dy,$Dx-$Dl,$Dy,$DW]];
 
       fwrite($Dot,"Direct [shape=point pos=\"$Dx,$Dy!\"];\n");
       foreach($Ds as $i=>$D) {
-        fwrite($Dot, "Direct$i [ pos=\"" . $D[2]. "," . $D[3] . "!\" label=" . $D[4] . "];\n");
+        fwrite($Dot, "Direct$i [ pos=\"" . $D[2]. "," . $D[3] . "!\" label=" . $D[4] . " margin=0 fontsize=10];\n");
         fwrite($Dot, "Direct -- Direct$i [penwidth=2 dir=forward arrowsize=1 ];\n");
       }
     }
