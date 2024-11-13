@@ -14,6 +14,10 @@
   $ShowLinks = ($_REQUEST['Links']??1);
 
   $GM = Access('GM');
+  if ($GM) {
+    if (isset($_REQUEST['FORCE'])) $GM=0;
+    if ($GM) echo "<h2><a href=MapFull.php?Hex&Links=0&FORCE>This page in Player Mode</a></h2>";
+  }
 
   $CatCols = ["white","grey", "Yellow"];
   $HexLegPos = [];
