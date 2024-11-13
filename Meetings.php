@@ -74,8 +74,8 @@ function ForceReport($Sid,$Cat) {
   echo "<table border>";
   echo "<tr><td>What<td>Type<td>Level<td>Health<td>Attack<td>Speed<td>Actions\n";
   foreach($Things as $T) {
-    if ((($Cat == 'S') && (($TTypes[$T['Type']]['Properties'] & 8) != 0)) ||
-        (($Cat == 'G') && (($TTypes[$T['Type']]['Properties'] & 0x800020) != 0))) {
+    if ((($Cat == 'S') && ((($TTypes[$T['Type']]['Properties']??0) & 8) != 0)) ||
+        (($Cat == 'G') && ((($TTypes[$T['Type']]['Properties']??0) & 0x800020) != 0))) {
       if (($T['CurHealth'] == 0) && ($T['Type'] == 20)) continue; // Skip Militia at zero
       if ($T['PrisonerOf'] != 0) continue; // Prisoners
       $Tid = $T['id'];

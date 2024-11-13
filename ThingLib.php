@@ -916,7 +916,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
       }
       if (($T['Whose'] == $Fid) && ($TTprops & THING_CAN_BE_ADVANCED) && ($T['Level'] > 1)) $txt .= ' ' . $Advance[$T['Level']];
       if ($T['Whose']==0 && Access('GM')) {
-        $txt .= "<a href=ThingEdit.php?id=" . $T['id'] . ">" . $ThingTypes[$T['Type']]['Name'] . "</a>";
+        $txt .= "<a href=ThingEdit.php?id=" . $T['id'] . ">" . ($ThingTypes[$T['Type']]['Name']??'Unknown') . "</a>";
       } else {
         $txt .= " " . $ThingTypes[$T['Type']]['Name'];
       }

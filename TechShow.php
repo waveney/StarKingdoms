@@ -56,6 +56,7 @@
   $Setup = isset($_REQUEST['SETUP']);
   if (isset($_REQUEST['FORCE'])) $Xtra .= "&FORCE";
   if (isset($_REQUEST['PLAYER'])) $Xtra .= "&PLAYER";
+  if ($Setup) $Xtra .= "&SETUP";
 
   $Blue = 0;
   if (isset($_REQUEST['Blue'])) {

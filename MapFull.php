@@ -242,7 +242,8 @@
         $Historical = 1;
       }
 
-      if ($GM || (($FS['ScanLevel']??0)>0)) $atts .= " shape=" . ($N['Hospitable']?(($N['Hospitable']>1)?$MultiHabitableShape:$HabitableShape):$InHabitableShape);
+      if ($GM || (($FS['ScanLevel']??0)>0)) $atts .= " shape=" .
+        ($N['Hospitable']?(($N['Hospitable']>1)?$MultiHabitableShape:$HabitableShape):$InHabitableShape);
       if ($typ) $atts .=
       " pos=\"" . ($N['GridX']*$XScale+(5-$N['GridY'])/2) . "," . (9-$N['GridY'])*$Scale . "!\"";
       $atts .= " style=filled fillcolor=\"$Colour\" color=\"$BdrColour\"";
@@ -306,7 +307,10 @@
             } else continue;
 
             $rand = "B$ul";  // This kludge at least allows both ends to be displayed
-            fwrite($Dot,"Unk$ul$rand [label=\"?\" shape=circle];\n");
+
+            $OL = ($from==$L['System1Ref']?$L['System2Ref']:$L['System1Ref']);
+            $NodLab = (Feature('HideUnknownNodes')?'?':$OL);
+            fwrite($Dot,"Unk$ul$rand [label=\"$NodLab\" shape=circle margin=0];\n");
             fwrite($Dot,"$from -- Unk$ul$rand [color=" . $Ldat[4] .
               " penwidth=" . $Ldat[0] . " style=" . $Ldat[1] .
               ($ShowLinks? " fontsize=" . $Ldat[3] . " label=\"" . $Ldat[2] . "\"": '') . " ];\n");
