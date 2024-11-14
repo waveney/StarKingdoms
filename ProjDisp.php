@@ -258,6 +258,12 @@
 
 
         case 'Construction':
+          // Mostly default apart from Lewis...
+          if (Has_PTraitH($Hi,'New Home')) {
+            $FreeRush = 99;  // Will be reduced to actual limit
+          }
+          // Drop through
+
         case 'Grow District':
         case 'Research Planetary Construction':
         case 'Research Core Technology':
@@ -287,7 +293,6 @@
 
         if ($Valid) {
           $OldPro = Get_ProjectAt($Hi, $DT, $Turn);
-// var_dump($OldPro);
           $Pro = ['FactionId'=>$Fid, 'Type'=>$Ptype, 'Level'=> $Level, 'Home'=>$Hi, 'Progress'=>0, 'Status'=>0, 'TurnStart'=>$Turn, 'Name'=>$Name,
                   'Costs' => $Costs, 'ProgNeeded' => $ProgN, 'BuildState'=>0, 'DType' => $DT, 'FreeRushes'=>$FreeRush];
           if (isset($With)) $Pro['ThingId'] = $With;
