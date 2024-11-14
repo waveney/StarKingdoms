@@ -632,7 +632,8 @@ function New_Thing(&$T) {
 
         $Sys = $T['SystemId'];
 
-        if (($T['LinkId'] > 0) && ($RV == 'Unload on Turn')) $Sys = $T['NewSystemId'];
+        if ($T['LinkId'] > 0) {
+          if ($RV == 'Unload on Turn') $Sys = $T['NewSystemId'];
           $tt = $T;
         } else if ($T['LinkId'] == 0) {
         } else if ($T['LinkId'] == -1) {
