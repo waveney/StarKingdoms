@@ -630,34 +630,29 @@ function New_Thing(&$T) {
         $Tid = $_REQUEST['id'];
         $T = Get_Thing($Tid); // What it is unloading from - gives sys
 
-        if ($T['LinkId'] > 0) {
-          $Sys = $T['NewSystemId'];
-          $N = Get_System($Sys);
+        $Sys = $T['SystemId'];
+
+        if (($T['LinkId'] > 0) && ($RV == 'Unload on Turn')) $Sys = $T['NewSystemId'];
           $tt = $T;
         } else if ($T['LinkId'] == 0) {
-          $Sys = $T['SystemId'];
-          $N = Get_System($Sys);
         } else if ($T['LinkId'] == -1) {
           $tt = Get_Thing($T['SystemId']);
           $Sys = $tt['NewSystemId'];
-          $N = Get_System($Sys);
         } else if ($T['LinkId'] == -2) { // Load on Turn
           $tt = Get_Thing($T['NewSystemId']);
           $Sys = ($tt['LinkId'] > 0 ? $tt['NewSystemId'] : $tt['SystemId']);
-          $N = Get_System($Sys);
         } else if ($T['LinkId'] == -3) { // already unloading on Turn
           $tt = Get_Thing($T['NewSystemId']);
           $Sys = $tt['NewSystemId'];
-          $N = Get_System($Sys);
         } else if ($T['LinkId'] == -4) { // Load and unloading on Turn
           $tt = Get_Thing($T['NewSystemId']);
           $Sys = $tt['NewSystemId'];
-          $N = Get_System($Sys);
         } else { // -5 = Direct
           $Sys = $T['NewSystemId'];
-          $N = Get_System($Sys);
           $tt = $T;
         }
+
+        $N = Get_System($Sys);
 
         switch ($RV) {
           case 'Unload Now':
