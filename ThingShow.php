@@ -927,6 +927,8 @@ function Show_Thing(&$T,$Force=0) {
     case 'Colonise': // Colonise
 //      if ((($Moving || $tprops & THING_HAS_CIVSHIPMODS) == 0 ) ) continue 2;
       if (!$HasPlanet || ($T['LinkId'] <0)) continue 2;
+      $FS = Get_FactionSystemFS($Fid,$T['SystemId']);
+      if (($FS['PlanetScan']??0)<1 ) continue 2;
       $PlTs = Get_PlanetTypes();
       $Ps = Get_Planets($N['id']);
       $Hab_dome = Has_Tech($Fid,'Habitation Domes');
@@ -1292,7 +1294,7 @@ function Show_Thing(&$T,$Force=0) {
           $Prog = $HasPlanet * $EngCorpLevel;
 
           echo "<tr><td><td colspan=6>Colonising: " . $P['Name'] . " a " . $PlTs[$P['Type']]['Name'] . ($PlTs[$P['Type']]['Append']?' Planet':'') .
-             " will take $ConLevel actions, this will do $Prog actions per turn."; // TODO Moons
+             " will take $ConLevel actions. This " . $ttn[$T['Type']] . " will do $Prog actions per turn."; // TODO Moons
           $T['Spare1'] = $Plid;
 
           break;
@@ -1307,7 +1309,7 @@ function Show_Thing(&$T,$Force=0) {
           $ConLevel = ceil($ConLevel*(1+$data[2]));
           $Prog = $HasPlanet * $EngCorpLevel;
           $Plans[$Plid] = $P['Name'] . " a " . $PlTs[$P['Type']]['Name'] . ($PlTs[$P['Type']]['Append']?'Planet':'') .
-             " will take $ConLevel actions, this will do $Prog actions per turn."; // TODO Moons
+             " will take $ConLevel actions. This " . $ttn[$T['Type']] . " will do $Prog actions per turn."; // TODO Moons
           $Cols[$Plid] = $ThingInclrs[$i++];
 
         }
@@ -1326,7 +1328,7 @@ function Show_Thing(&$T,$Force=0) {
       $Acts = $ConLevel;
       $T['Dist2'] = $Prog;  // Spare1 = Planet, Dist2 = Prog/turn
       $ProgShow = 1;
-      $Cost = -1;
+//      $Cost = -1;
       break;
 
     case 'Voluntary Warp Home': // Warp Home
@@ -1731,7 +1733,7 @@ function Show_Thing(&$T,$Force=0) {
     if ($Cost < 0) {
       $T['InstCost'] = $Cost = 0;
     } else {
-      $T['InstCost'] = $Cost = $Acts*10;
+      $T['InstCost'] = $Cost = $Acts*Feature('ConstructionCost',10);
     }
     if (Has_Trait($Fid,'Built for Construction and Logistics') && ($Cost>200)) {
       $T['InstCost'] = $Cost = (200+($Cost-200)/2);
