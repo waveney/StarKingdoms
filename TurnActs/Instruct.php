@@ -805,7 +805,7 @@ function InstructionsComplete() {
             Put_Thing($H);
           }
         }
-        $T['BuildState'] = -1;
+        if ('RemoveAfterColonise') $T['BuildState'] = -1;
         break; // The making homes and worlds in a later stage completes the colonisation I hope
 
       case 'Analyse Anomaly':

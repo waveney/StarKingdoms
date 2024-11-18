@@ -36,8 +36,9 @@
   if ($GM && isset($_REQUEST['FORCE'])) $GM = 0;
 
   dostaffhead("Things",["js/ProjectTools.js"],
-             " onload=ListThingSetup(" . ($FACTION['id']??0) . ",$GM," . ($GM?($FACTION['GMThingType']??0):$Faction['ThingType']) . "," .
-             ($GM?($Faction['GMThingBuild']??0):$Faction['ThingBuild']) . ")" );
+             " onload=ListThingSetup(" . ($FACTION['id']??0) . ",$GM," .
+             ($GM?($FACTION['GMThingType']??0):($Faction['ThingType']??0)) . "," .
+             ($GM?($Faction['GMThingBuild']??0):($Faction['ThingBuild']??0)) . ")" );
 
   if ($GM && $Fid) {
     echo "<h2><a href=PThingList.php?FORCE>This page in Player Mode</a></h2>";

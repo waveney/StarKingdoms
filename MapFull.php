@@ -269,7 +269,7 @@
 
         $atts .= ' tooltip="' . $Extras[$N['id']][0] . '" ';
 
-      } else if (empty($FS['Xlabel'])) {
+      } else if (!empty($FS['Xlabel'])) {
           $atts .= " xlabel=\"" . $FS['Xlabel'] . '" ';
         }
       } else {

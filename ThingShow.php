@@ -1328,7 +1328,6 @@ function Show_Thing(&$T,$Force=0) {
       $Acts = $ConLevel;
       $T['Dist2'] = $Prog;  // Spare1 = Planet, Dist2 = Prog/turn
       $ProgShow = 1;
-//      $Cost = -1;
       break;
 
     case 'Voluntary Warp Home': // Warp Home
@@ -1789,7 +1788,7 @@ function Show_Thing(&$T,$Force=0) {
       echo fm_number0(" Do",$T,'Damage', '',' class=Num3 ') . fm_submit("ACTION","Damage",0);
     }
     if (($T['PrisonerOf'] ?? 0)) echo fm_submit("ACTION","Disarm",0);
-    if (($tprops & THING_CAN_MOVE) && ($Faction['TurnState'] == 3)) echo fm_submit("ACTION",'Retreat');
+    if (($tprops & THING_CAN_MOVE) && (($Faction['TurnState']??0) == 3)) echo fm_submit("ACTION",'Retreat');
   }
   if (!$GM && ($tprops & THING_CAN_BE_CREATED)) echo fm_submit("ACTION","Delete",0);
   if ($GM) {
