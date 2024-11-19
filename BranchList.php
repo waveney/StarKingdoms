@@ -29,6 +29,7 @@
   $OrgNames = NamesList($Orgs);
   $BTypes = Get_BranchTypes();
   $BTypeNames = NamesList($BTypes);
+  $SysRs = Get_SystemRefs();
 
   $Facts = Get_Factions();
 
@@ -43,6 +44,8 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Organisation</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Branch Type</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Whose</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Where</a>\n";
+
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>ThingType</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>ThingId</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
@@ -56,6 +59,22 @@
     echo "<td>" . fm_select($OrgNames,$O,'Organisation',1,'',"Branches:Organisation:$i");
     echo "<td>" . fm_select($BTypeNames,$O,'Type',1,'',"Branches:Type:$i");
     echo "<td>" . fm_select($FactNames,$O,'Whose',1,'',"Branches:Whose:$i");
+    switch ($O['HostType']) {
+      case 1:// Planet
+        $P = Get_Planet($O['HostId']);
+        $Where = $P['SystemId'];
+        break;
+      case 2:// Moon
+        $M = Get_Moon($O['HostId']);
+        $P = $M['PlanetId'];
+        $Where = $P['SystemId'];
+        break;
+      case 3: // Thing;
+        $T = get_Thing($O['HostId']);
+        $Where = $T['SystemId'];
+        break;
+    }
+    echo "<td>" . $SysRs[$Where];
     echo fm_number1('',$O,'HostType','','min=1 max=9',"Branches:HostType:$i");
     echo fm_number1('',$O,'HostId','','min=0 max=10000',"Branches:HostId:$i");
     echo fm_text1('',$O,'Name',1,'','',"Branches:Name:$i");

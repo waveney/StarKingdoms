@@ -253,7 +253,7 @@ function OperationsComplete() {
   $NamesBTs = array_flip($BTypeNames);
 
   foreach ($Operations as $Oid=>$O) {
-    var_dump("Completing",$O);
+//    var_dump("Completing",$O);
     $Fid = $O['Whose'];
     $Otp = $OpTypes[$O['Type']]['Props'];
     $Wh = $O['SystemId'];
@@ -598,7 +598,7 @@ function OperationsComplete() {
     }
     $O['TurnState'] = 2;
     $O['Status'] = 4;
-    var_dump($O);
+//    var_dump($O);
     Put_Operation($O);
   }
   return 1;

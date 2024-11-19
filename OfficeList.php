@@ -27,6 +27,7 @@
   $OrgTypes = Get_OrgTypes();
   $OrgTypeNames = NamesList($OrgTypes);
   $OrgNames = NamesList($Orgs);
+  $SysRs = Get_SystemRefs();
 
   $Facts = Get_Factions();
 
@@ -40,6 +41,7 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Org Type</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Organisation</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Whose</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Where</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>World</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Number</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
@@ -52,6 +54,23 @@
     echo "<td>" . fm_select($OrgTypeNames,$O,'OrgType',0,'',"Offices:OrgType:$i");
     echo "<td>" . fm_select($OrgNames,$O,'Organisation',1,'',"Offices:Organisation:$i");
     echo "<td>" . fm_select($FactNames,$O,'Whose',1,'',"Offices:Whose:$i");
+    $World = Get_World($O['World']);
+    switch ($World['ThingType']) {
+      case 1:// Planet
+        $P = Get_Planet($World['ThingId']);
+        $Where = $P['SystemId'];
+        break;
+      case 2:// Moon
+        $M = Get_Moon($World['ThingId']);
+        $P = Get_Planet($M['PlanetId']);
+        $Where = $P['SystemId'];
+        break;
+      case 3: // Thing;
+        $T = get_Thing($World['ThingId']);
+        $Where = $T['SystemId'];
+        break;
+    }
+    echo "<td>" . $SysRs[$Where];
     echo fm_number1('',$O,'World','','',"Offices:World:$i");
     echo fm_number1('',$O,'Number','','',"Offices:Number:$i");
     echo fm_text1('',$O,'Name',1,'','',"Offices:Name:$i");
