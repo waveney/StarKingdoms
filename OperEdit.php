@@ -143,6 +143,7 @@
     echo "<td>" . fm_checkbox('GM Override',$O,'GMOverride') . " Set to override maxrush";
     echo "<tr>" . ($OpCosts?fm_number('Cost',$O,'Costs'):'') . fm_number('Prog Needed', $O,'ProgNeeded');
     echo "<tr>" . fm_number("Progress",$O,'Progress') . fm_number('Last Updated',$O,'LastUpdate');
+    if (Access('God')) echo "<tr>" . fm_number('Para1',$O,'Para1') .  fm_number('Para2',$O,'Para2');
     if ($PProps & OPER_TECH) {
       $Techs = Get_Techs();
       $TechNames = NamesList($Techs);

@@ -7,6 +7,7 @@ function GMLog($text,$Bold=0) {
   if (!isset($LF)) {
      if (!file_exists("Turns/$GAMEID/" . $GAME['Turn'])) mkdir("Turns/" . $GAMEID . "/" . $GAME['Turn'],0777,true);
      $LF = fopen("Turns/$GAMEID/" . $GAME['Turn'] . "/0.txt", "a+");
+     fwrite($LF,'</table></table></table></table></table></table></table></table></table>');
   }
   if ($Bold) $text = "<b>" . $text . "</b>";
   fwrite($LF,"$text\n");

@@ -285,7 +285,7 @@ function ShipMovements($Mode=0) {
 
   switch ($Mode) {
     case 0:
-      $Things = Gen_Get_Table('Things',"GameId=$GAMEID AND ORDER BY RAND()");
+      $Things = Gen_Get_Cond('Things',"GameId=$GAMEID ORDER BY RAND()");
       $Done = $GAME['Turn'];
       break;
     case 1:
@@ -588,7 +588,7 @@ function RetreatsSelection() {
           if (isset($SysHasNeb[$Loc][$Fid])) {
             if ($SysHasNeb[$Loc][$Fid]) continue 2;
           } else {
-            $Ship = Gen_Get_Cond1('Things',"SystemId=$Loc AND NebSensor>0 AND Whose=Fid");
+            $Ship = Gen_Get_Cond1('Things',"SystemId=$Loc AND NebSensor>0 AND Whose=$Fid");
             $SysHasNeb[$Loc][$Fid] = $Ship;
             if ($Ship) continue 2;
           }

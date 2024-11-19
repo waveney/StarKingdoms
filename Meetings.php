@@ -43,6 +43,7 @@ function ForceReport($Sid,$Cat) {
   $TMsk = ($Cat=='G'?1:2);
   $PlanMoon = [];
   $FirePower = $Wid = $Bat = 0;
+  $HomeType = "Unknown";
 
   if ($Cat == 'G') {
     $PTD = Get_PlanetTypes();  // ONLY works for single taget at present
@@ -72,7 +73,7 @@ function ForceReport($Sid,$Cat) {
   if ($Cat =='G' && $Wid) echo "<h2><a href=WorldEdit.php?ACTION=Militia&id=$Wid>Create /Update Militia</a></h2>";
 
   echo "<table border>";
-  echo "<tr><td>What<td>Type<td>Level<td>Health<td>Attack<td>Speed<td>Actions\n";
+  echo "<tr><td>What<td>Type<td>Level<td>Health<td>Evasion<td>Attack<td>Speed<td>Actions\n";
   foreach($Things as $T) {
     if ((($Cat == 'S') && ((($TTypes[$T['Type']]['Properties']??0) & 8) != 0)) ||
         (($Cat == 'G') && ((($TTypes[$T['Type']]['Properties']??0) & 0x800020) != 0))) {
@@ -151,12 +152,13 @@ function ForceReport($Sid,$Cat) {
       $tprops = $ThingProps[$T['Type']];
 
       $txt .= fm_hidden("OrigData$Tid",implode(":",[$T['CurHealth'], $T['OrigHealth'],0,$T['CurShield'],$T['ShieldPoints']]));
-      $txt .= "<td>" . $TTypes[$T['Type']]['Name'] . "<td>" . $T['Level'];
+      $txt .= "<td>" . $TTypes[$T['Type']]['Name'] . "<td>" . $T['Level'] . "<td>" . $T['Evasion'];
       $txt .= "<td><span id=StateOf$Tid>" . $T['CurHealth'] . " / " . $T['OrigHealth'];
       if ($T['ShieldPoints']) $txt .= " (" . $T['CurShield'] . "/" . $T['ShieldPoints'] . ") ";
       $txt .= "</span><td><span id=Attack$Tid>$BD</span><td>" .
            (($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE)? "Speed: " . sprintf("%0.3g ",$T['Speed']) :'') ;
       $txt .=  fm_number1(" Do",$T,'Damage', ''," class=Num3 onchange=Do_Damage($Tid,$LastF,'$Cat')","Damage:$Tid") . " damage";
+      $txt .= fm_checkbox('Retreat?',$T,'RetreatMe','',"RetreatMe:$Tid");
 
       $FirePower += $BD;
     }
@@ -249,6 +251,14 @@ function ForceReport($Sid,$Cat) {
 
           // Reports??
         }
+        if ($RV && preg_match('/RetreatMe:(\d*)/',$RN,$Mtch)) {
+          $Tid = $Mtch[1];
+          $T['Retreat'] = 2;
+          TurnLog($T['Whose'],$T['Name'] . " Will retreat from combat\n",$T);
+          GMLog($T['Name'] . " will retreat from combat\n",$T);
+          Put_Thing($T);
+        }
+
       }
 
 

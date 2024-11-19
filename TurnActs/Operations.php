@@ -187,7 +187,7 @@ function StartOperationsStage2() {  // Making branches is checked
     $OrgId = $O['OrgId'];
 
     if ($Ans == "on") {
-      $O['State'] = 1;
+      $O['Status'] = 1;
       TurnLog($Fid,"Operation " . $O['Name'] . " has started for organisation " . $Orgs[$O['OrgId']]['Name']);
 
       $Team = Gen_Get_Cond1('Things', "Whose=$Fid AND Type=" . $NamesTTypes['Team'] . " AND Dist1=$OrgId");
@@ -206,7 +206,7 @@ function StartOperationsStage2() {  // Making branches is checked
 
     } else {
       TurnLog($Fid, "Operation " . $O['Name'] . "was not started because " . $_REQUEST["ReasonOrg$Oid"]??"Unknown");
-      $O['State'] = 5;
+      $O['Status'] = 5;
     }
     Put_Operation($O);
   }
@@ -253,14 +253,16 @@ function OperationsComplete() {
   $NamesBTs = array_flip($BTypeNames);
 
   foreach ($Operations as $Oid=>$O) {
+    var_dump("Completing",$O);
     $Fid = $O['Whose'];
     $Otp = $OpTypes[$O['Type']]['Props'];
     $Wh = $O['SystemId'];
     $Sys = Get_System($Wh);
     $TWho = $Sys['Control'];
     $Org = Gen_Get('Organisations',$O['OrgId']);
-    if ($O['TurnState'] >2) {
+    if ($O['TurnState'] >1) {
       GMLog("Skipping Operation <a href=OperEdit.php?id=$Oid>" . $O['Name'] . " </a> as already completed.");
+      continue;
     }
 
     switch ($NameOps[$O['Type']]) {
@@ -370,7 +372,8 @@ function OperationsComplete() {
       case 'Establish Trade Hub':
         $World = World_in($O['SystemId'],$Fid);
         New_Branch($World,$NamesBTs['Trading Station'],$O,$Org);
-        TurnLog($Fid,"A new Trading Station branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .  System_Name($Sys,$Fid) );
+        TurnLog($Fid,"A new Trading Station branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
+           System_Name($Sys,$Fid) );
         if ($Outpost['Whose'] != $Fid) {
           TurnLog($Outpost['Whose'],"A new Trading Station branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
             System_Name($Sys,$Outpost['Whose']) . " by " . $Facts[$Fid]['Name']);
@@ -412,7 +415,8 @@ function OperationsComplete() {
       case 'Establish Forward Operating Area':
         $World = World_in($O['SystemId'],$Fid);
         New_Branch($World,$NamesBTs['Forward Operating Area'],$O,$Org);
-        TurnLog($Fid,"A new Forward Operating Area branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .  System_Name($Sys,$Fid) );
+        TurnLog($Fid,"A new Forward Operating Area branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
+          System_Name($Sys,$Fid) );
         if ($Outpost['Whose'] != $Fid) {
           TurnLog($Outpost['Whose'],"A new Forward Operating Area branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
             System_Name($Sys,$Outpost['Whose']) . " by " . $Facts[$Fid]['Name']);
@@ -425,7 +429,8 @@ function OperationsComplete() {
       case 'Establish Research Base': // Type complication
         $World = World_in($O['SystemId'],$Fid);
         New_Branch($World,$O['Para1'],$O,$Org); // Para aligns with Branch type
-        TurnLog($Fid,"A new Research Base branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .  System_Name($Sys,$Fid) );
+        TurnLog($Fid,"A new Research Base branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
+          System_Name($Sys,$Fid) );
         if ($Outpost['Whose'] != $Fid) {
           TurnLog($Outpost['Whose'],"A new Research Base branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
             System_Name($Sys,$Outpost['Whose']) . " by " . $Facts[$Fid]['Name']);
@@ -436,6 +441,10 @@ function OperationsComplete() {
 
       case 'Explore Wormhole':
         $L = Get_Link($O['Para1']);
+        if (!$L) {
+          GMLog("<h2 class=Err>Exploring a Wormhole with no data for Operation $Oid - Call Richard</h2>");
+          break;
+        }
         $N = Get_System($O['SystemId']);
         $OtherRef = (($L['System1Ref']==$N['Ref'])?$L['System2Ref']:$L['System1Ref']);
         $ON = Get_SystemR($OtherRef);
@@ -518,7 +527,8 @@ function OperationsComplete() {
         $SPW = Gen_Get_Cond1('SocPsWorlds',"Principle=" . $O['Para1'] . " AND World=$Wid");
 
         if ($SPW['Value'] > $O['Para2']) {
-          TurnLog($Fid,"Burn the Heretics of '" . $SocP['Principle']  . "' to " . World_Name($Wid,$Fid) . " failed it is already at " . $SPW['Value']);
+          TurnLog($Fid,"Burn the Heretics of '" . $SocP['Principle']  . "' to " . World_Name($Wid,$Fid) . " failed it is already at " .
+            $SPW['Value']);
           GMLog("Burn the Heretics of '" . $SocP['Principle']  . "' to " . World_Name($Wid,$Fid) . " by " . $Org['Name'] . " of " .
             $Facts[$Fid]['Name'] . " failed it is already at " . $SPW['Value']);
 
@@ -527,7 +537,8 @@ function OperationsComplete() {
             $SPW['Value'] = max(0,$SPW['Value']-1);
             if ($SPW['Value']) {
               Gen_Put('SocPsWorlds',$SPW);
-              TurnLog($Fid,"Burn the Heretics of '" . $SocP['Principle']  . "' on " . World_Name($Wid,$Fid) . " succeeded it is now " . $SPW['Value']);
+              TurnLog($Fid,"Burn the Heretics of '" . $SocP['Principle']  . "' on " . World_Name($Wid,$Fid) . " succeeded it is now " .
+                $SPW['Value']);
             } else {
               db_delete('SocPsWorlds',$SPW['id']);
               TurnLog($Fid,"Burn the Heretics '" . $SocP['Principle']  . "' on " . World_Name($Wid,$Fid) . " has been elminated");
@@ -586,7 +597,8 @@ function OperationsComplete() {
         FollowUp($Fid,"Operation " . $O['Name'] . " has completed, this is not automated yet.  See <a href=OperEdit.php?id=$Oid>Operation</a>");
     }
     $O['TurnState'] = 2;
-    $O['State'] = 4;
+    $O['Status'] = 4;
+    var_dump($O);
     Put_Operation($O);
   }
   return 1;

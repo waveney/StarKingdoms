@@ -709,7 +709,9 @@ function CheckSpotAnomalies() {
                 " location: " . ($Syslocs[$A['WithinSysLoc']]? $Syslocs[$A['WithinSysLoc']]: "Space") . "<p>" .
                 $Parsedown->text(stripslashes($A['Description'])) .
                 "\nIt will take " . $A['AnomalyLevel'] . " scan level actions to complete.\n\n");
-                Gen_Put('FactionAnomaly',$FA);
+
+              $FA = ['FactionId' => $Fid, 'State'=>1, 'AnomalyId'=>$Aid];
+              Gen_Put('FactionAnomaly',$FA);
 
               continue;
             } else {
@@ -813,7 +815,7 @@ function MilitiaArmyRecovery() {
 
     }
 
-    if ($TTypes[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) {
+    if (isset($MTNs['Self-Repairing Armour']) && (($TTypes[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES))) {
       $Self = Get_ModulesType($T['id'],$MTNs['Self-Repairing Armour']);
       if (isset($Self['Number'])) {
         $Rep = $Self['Number']*$Self['Level']*2;
@@ -824,7 +826,7 @@ function MilitiaArmyRecovery() {
       }
     }
 
-    if ($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES) {
+    if (isset($MTNs['Self Repairing Robot Armour']) && (($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES))) {
       $RepMods = ['Medical Corps', 'Self Repairing Robot Armour'];
       foreach ($RepMods as $Mt) {
         $Med = Get_ModulesType($T['id'],$MTNs[$Mt]);
