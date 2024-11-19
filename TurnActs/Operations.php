@@ -598,6 +598,7 @@ function OperationsComplete() {
     }
     $O['TurnState'] = 2;
     $O['Status'] = 4;
+    $O['TurnEnd'] = $GAME['Turn'];
 //    var_dump($O);
     Put_Operation($O);
   }

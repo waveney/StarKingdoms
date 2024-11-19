@@ -1140,7 +1140,7 @@ function Do_Turn() {
     switch ($_REQUEST['ACTION']) {
     case 'StageDone':
 //      $S = $_REQUEST['S'];
-      $SName = $S;
+      $SName = $_REQUEST['Stage'];
       $SName = preg_replace('/ /','',$SName);
       for($S =0; $S <64 ; $S++) {
         $act = $TurnActions[$S][2];

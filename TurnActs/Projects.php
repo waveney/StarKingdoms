@@ -401,6 +401,12 @@ function ProjectProgressActions($Pay4=0) {
         }
       }
     }
+
+    if (Has_Trait($Fid,"I Don't Want To Die")) {
+      $PNam = $ProjTypes[$P['Type']]['Name'];
+      if ($PNam == 'Train Detachment' || $PNam == 'Reinforce Detachment' || $PNam == 'Refit Detachment') $Bonus = -1;
+    }
+
     if (isset($TurnStuff['Rush'])) {
       $Rush = min($TurnStuff['Rush'],$PActs,$P['ProgNeeded']-$P['Progress']-$Acts-$Bonus-$FreeRush);
       if ($Rush) {
@@ -418,15 +424,11 @@ function ProjectProgressActions($Pay4=0) {
       }
     }
 
-    if (Has_Trait($Fid,"I Don't Want To Die")) {
-      $PNam = $ProjTypes[$P['Type']]['Name'];
-      if ($PNam == 'Train Detachment' || $PNam == 'Reinforce Detachment' || $PNam == 'Refit Detachment') $Bonus = -1;
-    }
-
     //echo "Acts . $Acts<br>";
     if ($Pay4 == 0) {
       $P['Progress'] = min($P['ProgNeeded'], $P['Progress']+$Acts+$Rush+$Bonus+$FreeRush);
       TurnLog($P['FactionId'],"Progressing " . $P['Name'] . " by " . ($Acts+$Rush+$Bonus+$FreeRush));
+      GMLog("Updating project " . $P['id'] . " " . $P['Name'] . " with ". ($Acts+$Rush+$Bonus+$FreeRush) . " progress");
       $P['LastUpdate'] = $GAME['Turn'];
       Put_Project($P); // Note completeion is handled later in the turn sequence
     }

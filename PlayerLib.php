@@ -397,13 +397,12 @@ function WhatCanBeSeenBy($Fid,$Mode=0) {
 }
 
 function PlanConst($Fid,$worldid) { // Effective Plan Construction
-  global $FACTION;
-  if (!$FACTION) $FACTION = Get_Faction($Fid);
-  $PTypes = Get_PlanetTypes();
+  $Fact = Get_Faction($Fid);
+//  $PTypes = Get_PlanetTypes();
 
   $PC = Has_Tech($Fid,"Planetary Construction");
 
-  if ($worldid == $FACTION['HomeWorld']) $PC++;
+  if ($worldid == $Fact['HomeWorld']) $PC++;
   $World = Get_World($worldid);
 
   switch ($World['ThingType']) {
@@ -418,11 +417,11 @@ function PlanConst($Fid,$worldid) { // Effective Plan Construction
       break;
 
     case 3: // Thing
-      $Target = $FACTION['Biosphere'];
+      $Target = $Fact['Biosphere'];
       break;
   }
 
-  if (($Target != $FACTION['Biosphere']) && ($Target != $FACTION['Biosphere2']) && ($Target != $FACTION['Biosphere3'])) {
+  if (($Target != $Fact['Biosphere']) && ($Target != $Fact['Biosphere2']) && ($Target != $Fact['Biosphere3'])) {
     if ($Target == 4) {
       $PC-=2;
     } else {
