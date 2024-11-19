@@ -197,6 +197,8 @@ function ProjectProgressActions($Pay4=0) {
   $Factions = Get_Factions();
   $Worlds = Get_Worlds();
   $Homes = Get_ProjectHomes();
+  $DTNames = NamesList($DistTypes);
+  $NameDTs = array_flip($DTNames);
 
   foreach ($Projects as $P) {
     // var_dump($P);
@@ -291,6 +293,7 @@ function ProjectProgressActions($Pay4=0) {
 
     //    var_dump($P,$PT);
 
+    /*
     if ($PT['Category'] & 16) { // Construction
 
       $Fact = Get_Faction($P['FactionId']);
@@ -318,6 +321,7 @@ function ProjectProgressActions($Pay4=0) {
     } else if ($PT['Category'] > 32) { // Intelligence -TODO
 
     } else { // District based
+    */
       if (!isset($H['ThingType'])) {
         GMLog("<b>Confused state for project " . $P['id'] . "</b><p>");
         $H['Skip'] = 1;
@@ -356,7 +360,7 @@ function ProjectProgressActions($Pay4=0) {
       //var_dump($Dists);
       switch ($PT['Category']) {
         case 1:
-          $MaxActs = $Dists[5]['Number'];
+          $MaxActs = $Dists[$NamesDTs['Academic']]['Number'];
           if (Has_Trait($Fid,'Masters of Energy Manipulation'))
             if (strstr($PT['Name'],'Research')) {
               $Tid = $P['ThingType'];
@@ -364,13 +368,14 @@ function ProjectProgressActions($Pay4=0) {
               if (($Tech['Field']??0) == 1) $MaxActs++;
             }
           break;
-        case 2: $MaxActs = $Dists[3]['Number']; break;
-        case 4: $MaxActs = $Dists[2]['Number']; break;
-        case 8: $MaxActs = $Dists[4]['Number']; break;
+        case 2: $MaxActs = $Dists[$NamesDTs['ShipYard']]['Number']; break;
+        case 4: $MaxActs = $Dists[$NamesDTs['Military']]['Number']; break;
+        case 8: $MaxActs = $Dists[$NamesDTs['Intelligence']]['Number']; break;
+        case 16: $MaxActs = $Dists[$NamesDTs['Industrial']]['Number']; break;
         default:
           GMLog("<b>Confused state for project " . $P['id'] . "</b><p>");
       }
-    }
+ //   }
 
     // echo "Maxacts . $MaxActs<br>";
 
