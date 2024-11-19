@@ -876,12 +876,15 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
       }
       if ($T['BuildState'] < 2 || $T['BuildState'] > 4) return ''; // Building or abandoned
       if ($Div && $LastWhose && $LastWhose!= $T['Whose']) $txt .= "<P>";
+      $Imgxtra = 0;
       if ($Div) {
         if (($T['BuildState'] == 4) || (($T['Type'] == 23) && $GM)) { // Named Chars
           if ($GM) {
             $txt .= "<div class=FullD,SeeThingTxt' hidden>";
+            $Imgxtra = 1;
           } elseif ($T['BuildState'] >= 4) {
             $txt .= "<div class='FullD,SeeThingTxt' hidden>The remains of: ";
+            $Imgxtra = 1;
           } else {
             $txt .= "<div class=SeeThingTxt>";
           }
@@ -969,7 +972,14 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
       }
       if ($Images) $txt .= "<br clear=all>\n";
       if ($Div) $txt .= "</div>";
-      if ($itxt) $txt = "<div class=SeeThingwrap>$txt<div class=SeeThingImg>$itxt</div></div>";
+
+      if ($itxt) {
+        if ($Imgxtra) {
+          $txt = "<div class='FullD,SeeThingwrap' hidden>$txt<div class='FullD,SeeThingImg' hidden>$itxt</div></div>";
+        } else {
+          $txt = "<div class=SeeThingwrap>$txt<div class=SeeThingImg>$itxt</div></div>";
+        }
+      }
       $LastWhose = $T['Whose'];
 // if ($T['id'] == 238) echo "Txt is:$txt<p>";
    return $txt;

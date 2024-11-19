@@ -313,7 +313,7 @@
       if (!$N) {
         $N = ['FactionId'=>$mtch[2],'AnomalyId'=>$id];
       } else {
-        $N = $N[0];
+        $N = array_pop($N);
       }
       $N[$mtch[1]] = $Value;
  // var_dump($N);

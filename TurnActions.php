@@ -598,9 +598,12 @@ function GiveSurveyReports() {
   $LastFid = $Started = 0;
   $LastSys = -1;
 
+//  var_dump($_REQUEST,$Scans);
+
   foreach($Scans as $spid=>$S) {
 
     $Fid = $S['FactionId'];
+//    var_dump($spid);
 
     if (isset($_REQUEST["Scan$spid"]) &&  ($_REQUEST["Scan$spid"] == "on")) {
       $FS = Get_FactionSystemFS($Fid,$S['Sys']);
@@ -640,7 +643,7 @@ function GiveSurveyReports() {
           }
         }
       }
-    } else {
+    } else if (isset($_REQUEST["ReasonScan$spid"])) {
       $N = Get_System($S['Sys']);
       TurnLog($Fid,"Your " . $SurveyTypes[$S['Type']] . " survey in " . System_Name($N)." could not be performed because " .
         $_REQUEST["ReasonScan$spid"] . "\n<br>");
