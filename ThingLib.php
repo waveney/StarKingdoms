@@ -880,10 +880,10 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
       if ($Div) {
         if (($T['BuildState'] == 4) || (($T['Type'] == 23) && $GM)) { // Named Chars
           if ($GM) {
-            $txt .= "<div class=FullD,SeeThingTxt' hidden>";
+            $txt .= "<div class='FullD SeeThingTxt' hidden>";
             $Imgxtra = 1;
           } elseif ($T['BuildState'] >= 4) {
-            $txt .= "<div class='FullD,SeeThingTxt' hidden>The remains of: ";
+            $txt .= "<div class='FullD SeeThingTxt' hidden>The remains of: ";
             $Imgxtra = 1;
           } else {
             $txt .= "<div class=SeeThingTxt>";
@@ -956,7 +956,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
         if ($T['NebSensors']) $txt .= "N, ";
         $txt .= ")";
       } else {
-        if ($TTprops & THING_HAS_HEALTH) {
+        if (($TTprops & THING_HAS_HEALTH) && ($T['BuildState'] < 4)) {
           if ($T['CurHealth']*10 <= $T['OrigHealth']) {
             $txt .= " - Badly Damaged ";
           } else if ($T['CurHealth']*2 <= $T['OrigHealth']) {
@@ -975,7 +975,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
 
       if ($itxt) {
         if ($Imgxtra) {
-          $txt = "<div class='FullD,SeeThingwrap' hidden>$txt<div class='FullD,SeeThingImg' hidden>$itxt</div></div>";
+          $txt = "<div class=SeeThingwrap>$txt<div class='FullD SeeThingImg' hidden>$itxt</div></div>";
         } else {
           $txt = "<div class=SeeThingwrap>$txt<div class=SeeThingImg>$itxt</div></div>";
         }
