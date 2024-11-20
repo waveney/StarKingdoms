@@ -26,7 +26,7 @@
 //  $Techs = Get_Techs(0,$AllG);
 //  $TechNames = Tech_Names($Techs);
 
-  if (UpdateMany('OrgActions','Put_OpType',$DTs,0,'','','Name','','','',':'))  $DTs=Get_OpTypes($AllG);
+  if (UpdateMany('OrgActions','Put_OpType',$DTs,0,'','','Name','','Props','',':'))  $DTs=Get_OpTypes($AllG);
 
   $coln = 0;
 
@@ -38,7 +38,7 @@
   echo "Do NOT change the Op names - code depends on them<p>";
 
   echo "<form method=post>";
-  Register_AutoUpdate('OrgActions', 0);
+  Register_AutoUpdate('OrgActions', 0); // Not compatible with Hex
   if ($AllG) echo fm_hidden('AllGames',1);
   echo "<div class=tablecont><table id=indextable border>\n";
   echo "<thead><tr>";
@@ -56,9 +56,9 @@
     $i = $Did = $D['id'];
     echo "<tr><td>$i";
     echo fm_text1("",$D,'Name',1,'','',"Name:$i");
-    echo fm_notby($D,$i,$AllG);
+    echo fm_notby($D,$i,$AllG,':');
     echo "<td>" . fm_select($OTNs,$D,'Office',1,'',"Office:$i");
-    echo fm_number1("",$D,'Props','','',"Props:$i");
+    echo fm_hex1("",$D,'Props','','',"Props:$i");
     echo fm_text1("",$D,'Gate',1,'','',"Gate:$i");
     echo fm_number1("",$D,'TeamProps','','',"TeamProps:$i");
     echo "<td>" . fm_basictextarea($D,'Description',3,3,'',"Description:$i");

@@ -28,6 +28,8 @@
 
   echo "<h1>Thing Types</h1>";
 
+//  echo "<h2 class=red>YOU NEED TO CLICK UPDATE ON THIS PAGE - Autoupdate does not work with Hex</h2>";
+
   echo "Props (Hex) 1=Districts, 2=Modules, 4=Leveled, 8=Ship, 10=Gadgets, 20=Army, 40=Mil, 80=Civil, " .
        "100=Normal Move, 200=Army Move, 400= Two Factions, 800=Inherit Minerals,<br>" .
        "1000=Can be Advanced, 2000=Instant Create, 4000=Need Cargo Space, 8000=No Named Chars, " .
@@ -38,6 +40,8 @@
   echo "SeenBy: What Eyes can see this<br>\n";
 //  echo "Game 0 = All, N = Game N<br>";
   echo "<form method=post action=ThingTypes.php>";
+  Register_AutoUpdate('ThingTypes', 0); // Not compatible with Hex
+
   if ($AllG) echo fm_hidden('AllGames',1);
 
 
@@ -59,29 +63,30 @@
     foreach($Ts as $T) {
       $i = $T['id'];
       echo "<tr><td><a href=TechEdit.php?id=$i>$i</a>";
-      echo fm_text1("",$T,'Name',1,'','',"Name$i");
-      echo fm_notby($T,$i,$AllG);
-      echo fm_hex1('',$T,'Properties','','',"Properties$i");
+      echo fm_text1("",$T,'Name',1,'','',"Name:$i");
+      echo fm_notby($T,$i,$AllG,':');
+      echo fm_hex1('',$T,'Properties','','',"Properties:$i");
       echo fm_text1("",$T,'Gate',1,'','',"Gate$i");
-      echo fm_number1('',$T,'Eyes','','min=0 max=100',"Eyes$i");
-      echo fm_number1('',$T,'SeenBy','','min=0 max=100',"SeenBy$i");
-      echo fm_number1('',$T,'MaxLvl','','min=0 max=100',"MaxLvl$i");
-      echo fm_number1('',$T,'EvasionMod','','min=0 max=100',"EvasionMod$i");
-      echo fm_hidden("GameId$i",$T['GameId']);
+      echo fm_number1('',$T,'Eyes','','min=0 max=100',"Eyes:$i");
+      echo fm_number1('',$T,'SeenBy','','min=0 max=100',"SeenBy:$i");
+      echo fm_number1('',$T,'MaxLvl','','min=0 max=100',"MaxLvl:$i");
+      echo fm_number1('',$T,'EvasionMod','','min=0 max=100',"EvasionMod:$i");
+      echo fm_hidden("GameId:$i",$T['GameId']);
       }
 
   $T = ['MaxLvl'=>10];
-  echo "<tr><td>" . fm_text1("",$T,'Name',1,'','',"Name0");
-  echo fm_hidden('NotBy0',$SETNOT);
+  echo "<tr><td>" . fm_text1("",$T,'Name',1,'','',"Name:0");
+  echo fm_hidden('NotBy:0',$SETNOT);
   if ($AllG) echo "<td>$SETNOT";
-  echo fm_hex1('',$T,'Properties','','',"Properties0");
-      echo fm_text1("",$T,'Gate',1,'','',"Gate0");
-      echo fm_number1('',$T,'Eyes','','min=0 max=100',"Eyes0");
-      echo fm_number1('',$T,'SeenBy','','min=0 max=100',"SeenBy0");
-      echo fm_number1('',$T,'MaxLvl','','min=0 max=100',"MaxLvl0");
-      echo fm_number1('',$T,'EvasionMod','','min=0 max=100',"EvasionMod0");
-      echo fm_hidden("GameId0",$GAMEID);
-  echo "</tbody></table></div>\n";
+  echo fm_hex1('',$T,'Properties','','',"Properties:0");
+      echo fm_text1("",$T,'Gate',1,'','',"Gate:0");
+      echo fm_number1('',$T,'Eyes','','min=0 max=100',"Eyes:0");
+      echo fm_number1('',$T,'SeenBy','','min=0 max=100',"SeenBy:0");
+      echo fm_number1('',$T,'MaxLvl','','min=0 max=100',"MaxLvl:0");
+      echo fm_number1('',$T,'EvasionMod','','min=0 max=100',"EvasionMod:0");
+      echo fm_hidden("GameId:0",$GAMEID);
+      if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
+      echo "</tbody></table></div>\n";
 
   echo "<h2><input type=submit name=Update value=Update></h2>";
   echo "</form></div>";

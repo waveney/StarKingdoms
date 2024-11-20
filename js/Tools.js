@@ -293,6 +293,47 @@ function AutoInput(f, sfx='', after='') {
   });
 }
 
+function AutoHexInput(f, sfx='', after='') {
+//  debugger;
+  var newval = parseInt(document.getElementById(f).value,16);
+  var id = f;
+  if (document.getElementById(f).newid ) id = document.getElementById(f).newid;
+  var yearval = (document.getElementById('Year') ? (document.getElementById('Year').value || 0) : 0);
+  var typeval = document.getElementById('AutoType' +sfx).value;
+  var refval = document.getElementById('AutoRef' +sfx).value;
+  $.post("formfill.php", {'D':typeval, 'F':id, 'V':newval, 'Y':yearval, 'I':refval}, function( data ) {
+    var elem = document.getElementById(f);
+    var m = data.match(/^\s*?@(.*)@/);
+    if (m) {
+      elem.newid = elem.name = m[1];
+    } else if (m = data.match(/^\s*?#(.*)#/)) { // Photo update 
+      m = data.split('#')
+      elem.value = m[1];
+      document.getElementById(m[2]).src = m[3];
+    } else if (m = data.match(/^\s*!(.*)!/)) $('#ErrorMessage').html( m[1] );
+
+    var dbg = document.getElementById('Debug');
+    if (dbg) $('#Debug').html( data) ;  
+    if (data.match(/FORCERELOAD54321/m)) {
+      setTimeout(function(){
+//        var Location = window.location.pathname + "?id=" + refval;  //  window.location.hostname
+//        window.location.href = Location;
+
+        window.location.reload();
+        }, 100);
+    } else if (data.match(/FORCELOADCHANGE54321/m)) {
+      setTimeout(function(){
+        var Location = window.location.pathname + "?id=" + refval;  //  window.location.hostname
+        window.location.href = Location;
+        }, 100);
+    } else if (data.match(/CALLxxAFTER/m)) {
+      after(f);
+    } else if (m=data.match(/REPLACE_ID_WITH:(.*) /m)) {
+     if (document.getElementById(f)) document.getElementById(f).id = m[1];    
+    }
+  });
+}
+
 function AutoCheckBoxInput(f,sfx='') {
 //  debugger;
   var cbval = document.getElementById(f).checked;

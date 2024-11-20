@@ -213,7 +213,7 @@ function ShipMoveCheck($Mode=0) {  // Show all movements to allow for blocking
   $UsedLinks = [];
   if ($Mode) {
     foreach ($Things as $T) {
-      if ($T['BuildState'] <2 || $T['BuildState'] > 3 || $T['LinkId'] <= 0 || $T['Whose']==0) continue;
+      if ($T['BuildState'] <2 || $T['BuildState'] > 3 || $T['LinkId'] <= 0 ) continue;
       if ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER) {
       } else {
         $UsedLinks[$T['LinkId']][$T['Whose']] = ($T['SystemId'] == $T['NewSystemId']);
@@ -305,7 +305,7 @@ function ShipMovements($Mode=0) {
   $LinkMethod = Feature('LinkMethod','Gates');
 
   foreach ($Things as $T) {
-    if ($T['BuildState'] <2 || $T['BuildState'] > 3 || $T['LinkId'] <= 0 || $T['Whose']==0 || $T['CurHealth']==0) continue;
+    if ($T['BuildState'] <2 || $T['BuildState'] > 3 || $T['LinkId'] <= 0 || $T['CurHealth']==0) continue;
     if (( ($Mode == 0) &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER)) ||
       ( ($Mode == 1) &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER) ==0 ) ) continue;
       if ($T['LastMoved'] == $Done) continue; // Already done

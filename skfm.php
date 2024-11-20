@@ -132,7 +132,7 @@ function fm_hex($Name,&$data=0,$field,$extra1='',$extra2='',$field2='') {
   if ($Name) $str .= "$Name: ";
   $str .= help($field) . "<td $extra1><input type=text name=$field2 id=$field2 $extra2";
   if ($data) if (isset($data[$field])) $str .= " value=\"" . dechex($data[$field]) . "\"";
-  if ($AutoADD) $str .=  " oninput=AutoInput('$field2',$AutoType) ";
+  if ($AutoADD) $str .=  " oninput=AutoHexInput('$field2',$AutoType) ";
   return $str . " $ADDALL>\n";
 }
 
@@ -143,7 +143,7 @@ function fm_hex1($Name,&$data=0,$field,$extra1='',$extra2='',$field2='') {
   if ($Name) $str .= "$Name: ";
   $str .= help($field) . "<input type=text name=$field2 id=$field2 $extra2";
   if ($data) if (isset($data[$field])) $str .= " value=\"" . dechex($data[$field]) . "\"";
-  if ($AutoADD) $str .=  " oninput=AutoInput('$field2',$AutoType) ";
+  if ($AutoADD) $str .=  " oninput=AutoHexInput('$field2',$AutoType) ";
   return $str . " $ADDALL>\n";
 }
 
@@ -713,8 +713,8 @@ function Ordinal($n) {
   return $ends[$n % 10];
 }
 
-function fm_notby(&$D,$i,$AllG=0) {
-  return fm_number1('',$D,'NotBy',($AllG?'':'hidden'),'',"NotBy$i");
+function fm_notby(&$D,$i,$AllG=0,$Div='') {
+  return fm_number1('',$D,'NotBy',($AllG?'':'hidden'),'',"NotBy$Div$i");
 }
 
 function NamesList(&$D,$fld='Name') {

@@ -374,7 +374,7 @@
     }
     exit;
 
-
+  case 'ThingTypes':
   case 'ScansDue': // Generic case of field:id
   case 'SocialPrinciples':
   case 'OrgActions':

@@ -283,11 +283,11 @@ function ProjectProgressActions($Pay4=0) {
 
     if (($PT['Category'] & 255) == 255) { // Post-it
       if ($P['DType'] == -1) { $PT['Category'] = 16; }
-      else if ($P['DType'] == 2) { $PT['Category'] = 4; }
-      else if ($P['DType'] == 3) { $PT['Category'] = 2; }
-      else if ($P['DType'] == 4) { $PT['Category'] = 8; }
-      else if ($P['DType'] == 5) { $PT['Category'] = 1; }
-      else if ($P['DType'] == 10) { $PT['Category'] = 2; }
+      else if ($P['DType'] == $NameDTs['Military']) { $PT['Category'] = 4; }
+      else if ($P['DType'] == $NameDTs['ShipYard']) { $PT['Category'] = 2; }
+      else if ($P['DType'] == $NameDTs['Intelligence']) { $PT['Category'] = 8; }
+      else if ($P['DType'] == $NameDTs['Academic']) { $PT['Category'] = 1; }
+      else if ($P['DType'] == $NameDTs['Orbital Repair']) { $PT['Category'] = 2; }
       // else default actions
     }
 
@@ -360,7 +360,7 @@ function ProjectProgressActions($Pay4=0) {
       //var_dump($Dists);
       switch ($PT['Category']) {
         case 1:
-          $MaxActs = $Dists[$NamesDTs['Academic']]['Number'];
+          $MaxActs = $Dists[$NameDTs['Academic']]['Number'];
           if (Has_Trait($Fid,'Masters of Energy Manipulation'))
             if (strstr($PT['Name'],'Research')) {
               $Tid = $P['ThingType'];
@@ -368,10 +368,10 @@ function ProjectProgressActions($Pay4=0) {
               if (($Tech['Field']??0) == 1) $MaxActs++;
             }
           break;
-        case 2: $MaxActs = $Dists[$NamesDTs['ShipYard']]['Number']; break;
-        case 4: $MaxActs = $Dists[$NamesDTs['Military']]['Number']; break;
-        case 8: $MaxActs = $Dists[$NamesDTs['Intelligence']]['Number']; break;
-        case 16: $MaxActs = $Dists[$NamesDTs['Industrial']]['Number']; break;
+        case 2: $MaxActs = $Dists[$NameDTs['ShipYard']]['Number']; break;
+        case 4: $MaxActs = $Dists[$NameDTs['Military']]['Number']; break;
+        case 8: $MaxActs = $Dists[$NameDTs['Intelligence']]['Number']; break;
+        case 16: $MaxActs = $Dists[$NameDTs['Industrial']]['Number']; break;
         default:
           GMLog("<b>Confused state for project " . $P['id'] . "</b><p>");
       }
