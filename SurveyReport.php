@@ -271,7 +271,7 @@
         }
         echo PM_Type($PTD[$P['Type']],"Planet") . "</b>.  ";
 
-        if (1) { //$SurveyLevel >= 4 && $P['Control']>0 && $P['Control'] != $N['Control']) {
+        if ($SurveyLevel >= 4 && $P['Control']>0) { // && $P['Control'] != $N['Control']) {
           echo "Colonised by: " . "<span style='background:" . $Fs[$P['Control']]['MapColour'] . "; padding=2;'>" . $Fs[$P['Control']]['Name'] . "</span><p>";
         }
 
@@ -346,7 +346,7 @@
 
             echo PM_Type($PTD[$M['Type']],"Moon") . "</b>.  ";
 
-            if (1) { // $SurveyLevel >= 4 && $M['Control']>0 && $M['Control'] != $P['Control']) {
+            if ( ($SurveyLevel >= 4) && ($M['Control']>0)) { // && $M['Control'] != $P['Control']) {
               echo "Colonised by: " . "<span style='background:" . $Fs[$M['Control']]['MapColour'] . "; padding=2;'>" . $Fs[$M['Control']]['Name'] . "</span><p>";
             }
 
