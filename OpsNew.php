@@ -189,8 +189,9 @@
             break;
           }
 
-          if ($OpTypes[$op]['Props'] & OPER_CIVILISED) {
+          if ($OpTypes[$op]['Props'] & OPER_SCIPOINTS) {
             if (Get_DistrictsP($Plan)) { // It has a space age civ
+
               echo "<h2>Select Type of Science Points to Collect</h2>";
               for ($i=1;$i<4;$i++) {
                 echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&SP=$i'>" .
@@ -431,7 +432,7 @@
           $L = Get_Link($SP);
           echo "Wormhole: " . $L['Name'] . "<p>";
           $Name .= " Wormhole: " . $L['Name'];
-        } else { // Science Points
+        } else if (($OpTypes[$op]['Props'] & OPER_SCIPOINTS)) { // Science Points
           $Name .= " " . $Fields[$SP-1];
         }
       }

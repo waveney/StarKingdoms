@@ -63,14 +63,13 @@ NEW GAME FEATURES & BUGS
 147 Is it possible to list Consumer Corp as an option for the Ascendancy, when building an Office. 
    (As per Lizard rules, the Lizards will own the office, but it's being built by the Ascendancy)
 155 hidding octopi ships
-157 Operation Props check
-158 Branches/offices - where are they
 161 Clear Conflit flags - looping...
-164 Optype props -> hex
 165 Stop Anomaly study - gm option
 169 Recalc operation levels on start
 170 Turn actions to complete 1/2 stages 
-171 Autoupdate and Hex
+172 Ross's screen format problem
+173 Edit World font size mobile - see a chat gm 21/11
+
 
 
 [Mon Nov 18 20:12:34.072916 2024] [proxy_fcgi:error] [pid 304022:tid 140261904586496] [client 86.152.219.13:0] AH01071: Got error 'PHP message: 
