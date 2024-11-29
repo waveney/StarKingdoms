@@ -351,3 +351,18 @@ function Report_SP_Change(&$World) {
   if (empty($Fid)) return;
   TurnLog($Fid,"There has been a change of Social Principles on " . World_Name($World['id'],$Fid));
 }
+
+function Oper_Costs($lvl) {
+  if ($lvl<0) return [1E6,1E6]; // Should be never but...
+  if ($lvl <=16) return [[1,50],[1,50],[3,200],[6,450],[10,800],[15,1250],[21,1800],[28,2450],[36,4300],[45,4050],[55,5000],[66,5550],
+    [78,6200],[91,6950],[105,7800],[120,8750],[136,9800]][$lvl];
+    $Cst = 9800;
+    $lvl =136;
+    for($l=16;$l<=$lvl;$l++) {
+      $Cst+= $l*100+50;
+      $lvl += $l;
+    }
+    return [$lvl,$Cst];
+}
+
+

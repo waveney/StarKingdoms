@@ -264,8 +264,8 @@
         echo fm_submit("ACTION",'Raise 1 Level',0);
       }
     }
-    echo fm_submit('ACTION','Start 1 Turn Later');
     echo fm_submit('ACTION','Start 1 Turn Earlier');
+    echo fm_submit('ACTION','Start 1 Turn Later');
   }
   echo "</h2>";
   echo "</form>";

@@ -458,7 +458,7 @@
         echo "With modifiers of +$Mod making the operation level $BaseLevel.<p>";
       }
 
-      $ProgNeed = Proj_Costs($BaseLevel)[0];
+      $ProgNeed = Oper_Costs($BaseLevel)[0];
 
       echo "This operation will be at level $BaseLevel (Needing $ProgNeed progress).  You currently do " . $Org['OfficeCount'] . " progress per turn.<p>";
 
