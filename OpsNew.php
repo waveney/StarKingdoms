@@ -436,7 +436,7 @@
           $Name .= " " . $Fields[$SP-1];
         }
       }
-
+//      var_dump($OpTypes[$op]['Props'],$Name);
       $Mod = ($OpTypes[$op]['Props'] & OPER_LEVEL);
  //     var_dump($Mod,$Level);
       if ($Mod >= 4) {

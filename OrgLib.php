@@ -15,7 +15,7 @@ define('OPER_CIVILISED',0x1000);
 define('OPER_MONEY',0x2000);
 define('OPER_DESC',0x4000);
 define('OPER_ANOMALY',0x8000);
-define('OPER_SCIPOINTS',010000);
+define('OPER_SCIPOINTS',0x10000);
 
 
 define('ORG_HIDDEN',1);
@@ -233,7 +233,7 @@ function WorldFromSystem($Sid,$Fid=0) {
   }
 
   $World = Gen_Get_Cond1('Worlds', "ThingType=1 AND ThingId=" . $Planet['id']);
-  return $World['id'];
+  return $World['id']??0;
 }
 
 function HabPlanetFromSystem($Sid) {
@@ -307,10 +307,10 @@ function World_In($Sid,$Who) {
   return $World;
 }
 
-function New_Branch(&$Data,$Type,&$O,&$Org) {
+function New_Branch(&$World,$Type,&$O,&$Org) {
   global $GAMEID;
 
-  $B = ['HostType'=>(isset($Data['Minerals'])?1:3), 'HostId'=>$Data['id'], 'Whose'=>$O['Whose'], 'Type'=>$Type,
+  $B = ['HostType'=>$World['ThingType'], 'HostId'=>$World['ThingId'], 'Whose'=>$O['Whose'], 'Type'=>$Type,
     'Organisation'=>$O['OrgId'],'OrgType'=>$Org['OrgType'], 'GameId'=>$GAMEID];
   Gen_Put('Branches',$B);
 }
