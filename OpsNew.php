@@ -161,8 +161,8 @@
 
             $MaxB = Has_Tech($OutP['Whose'],'Offworld Construction');
             foreach ($EBs as $B) if ($BTypes[$B['Type']]['Props'] & BRANCH_NOSPACE) $MaxB--;
-
-            if ($MaxB >= count($EBs)) {
+//            var_dump($MaxB, $OutP['Whose'],$EBs,count($EBs));
+            if ($MaxB <= count($EBs)) {
               echo "The Outpost is full<p>";
               break;
             }
