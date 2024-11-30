@@ -168,6 +168,8 @@
             }
           }
 
+          $OutP = array_pop($OutPs);
+          $Tid = $OutP['id'];
           if ($OpTypes[$op]['Props'] & OPER_BRANCH) {
             $AllReady = Gen_Get_Cond('Branches'," HostType=3 AND HostId=$Tid AND Organisation=$OrgId" );
             if ($AllReady) {

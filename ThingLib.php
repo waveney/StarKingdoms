@@ -1329,7 +1329,7 @@ function BluePrintList($Lvl=10000,$Props='',$WithISA=1) {
         if (($BP['GatedOn']??0) && !eval("return " . $BP['GatedOn'] . ";" )) continue;
         $tt = $BP['Type'];
         if ($WithISA && empty($BPlst[$tt])) $BPlst[$tt][-1] = 'Is a Blueprint';
-        $BPlst[$tt][$BP['id']] = $BP['Name'];
+        $BPlst[$tt][$BP['id']] = $BP['Name'] . " (L" . $BP['Level'] . ")";
       };
     }
   } else {
@@ -1339,7 +1339,7 @@ function BluePrintList($Lvl=10000,$Props='',$WithISA=1) {
       if (($BP['GatedOn']??0) && !eval("return " . $BP['GatedOn'] . ";" )) continue;
       $tt = $BP['Type'];
       if ($WithISA && empty($BPlst[$tt])) $BPlst[$tt][-1] = 'Is a Blueprint';
-      $BPlst[$tt][$BP['id']] = $BP['Name'];
+      $BPlst[$tt][$BP['id']] = $BP['Name']  . " (L" . $BP['Level'] . ")";
     };
   }
   return $BPlst;

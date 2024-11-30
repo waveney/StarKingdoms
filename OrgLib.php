@@ -142,7 +142,7 @@ function Op_Level($Orgid,$Sys,$Mod=0) {
         break;
       case 3: // Thing
         $P = Get_Thing($B['HostId']);
-        if ($P['SystemId']) $Targets[$P['SystemId']] = 1;
+        if ($P['SystemId']??0) $Targets[$P['SystemId']] = 1;
         break;
     }
   }
