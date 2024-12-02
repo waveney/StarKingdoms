@@ -355,6 +355,7 @@
 
           if ($MT == 'Flexible') {
             echo "<td id=FlexSpace>$FlexM<td>Space left: <span id=UnusedFlex " . ($SpareFlex<0?'class=Err':'') . ">$SpareFlex</span>";
+            $Valid = 0;
             continue;
           }
 

@@ -106,7 +106,7 @@ function CheckTurnsReady() {
     GMLog( "<td style='background:" . $F['MapColour'] . ";'>"
          . (isset($F['LastActive']) && $F['LastActive']? date('d/m/y H:i:s',$F['LastActive']) :"Never") );
     GMLog( "<td <span style='background:" . $PlayerStateColours[$F['TurnState']] . "'>"  . $PlayerState[$F['TurnState']]);
-    if ($F['TurnState'] != 2) {
+    if ($F['TurnState'] < 2) {
       $AllOK = 0;
     }
   }
@@ -565,7 +565,7 @@ function CheckSurveyReports() {
     }
     if (!$Started) {
       GMLog("<h2>Please review these scans, Stop as needed</h2>\n");
-      GMLog("<form method=post action=TurnActions.php?ACTION=StageDone>" . fm_hidden('S','Check Survey Reports'));
+      GMLog("<form method=post action=TurnActions.php?ACTION=DoStage2>" . fm_hidden('Stage','Check Survey Reports'));
       GMLog("<table border><tr><td>Faction<td>Where<td>Scan Level<td>Type<td>Control<td>Stop<td>Reason\n");
       if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
       Register_AutoUpdate('ScansDue',0);
@@ -719,7 +719,7 @@ function CheckSpotAnomalies() {
               continue;
             } else {
               if (!$Started){
-                GMLog("<form method=Post action=TurnActions.php?ACTION=StageDone>" . fm_hidden('Stage','CheckSpotAnomalies'));
+                GMLog("<form method=Post action=TurnActions.php?ACTION=DoStage2>" . fm_hidden('Stage','CheckSpotAnomalies'));
                 GMLog("<h1>Please check these anomalies should be spotted</h1>");
                 GMLog("<table border><tr><td>Who<td>Where<td>what<td>Reqs<td>Enable\n");
                 $Started=1;
@@ -1074,6 +1074,16 @@ function EnableFactionsAccess() {
   return 1;
 }
 
+function Finish_Phase($S,$Ret = 1) {
+  global $TurnActions,$Sand;
+  $Sand['Progress'] |= 1<<$S;
+  if ($Ret > 1) {
+    $Sand['Progress'] |= 2<<$S;
+  }
+//  var_dump($Sand,$S,$Ret);
+  Put_Turn($Sand);
+}
+
 function Do_Phase($S) {
   global $TurnActions,$Sand;
   if (is_numeric($S)) {
@@ -1099,6 +1109,7 @@ function Do_Phase($S) {
     $S++;
     $act = $TurnActions[$S][2];
     $act = preg_replace('/ /','',$act);
+    Put_Turn($Sand);
   }
 
   $Pfx = $TurnActions[$S][1];
@@ -1113,14 +1124,24 @@ function Do_Phase($S) {
   SKLog("Doing " . $TurnActions[$S][2]);
   $Result = $act();
   if ($Result) {
-    $Sand['Progress'] |= 1<<$S;
-    if ($Result > 1) {
-      $Sand['Progress'] |= 2<<$S;
-    }
+    Finish_Phase($S,$Result);
   } else {
     GMLog("Processing cancelled<p>\n");
   }
+  Put_Turn($Sand);
 
+}
+
+function StageNumber() {
+  global $TurnActions;
+  $SName = $_REQUEST['Stage'];
+  $SName = preg_replace('/ /','',$SName);
+  for($S =0; $S <64 ; $S++) {
+    $act = $TurnActions[$S][2];
+    $act = preg_replace('/ /','',$act);
+    if ($SName == $act) return $S;
+  }
+  return -1;
 }
 
 function Do_Turn() {
@@ -1138,72 +1159,79 @@ function Do_Turn() {
   if (isset($_REQUEST['ACTION']) && ( isset($_REQUEST['S']) || isset($_REQUEST['Stage']))) {
     $S = (isset($_REQUEST['S'])? $_REQUEST['S'] : 0);
     switch ($_REQUEST['ACTION']) {
-    case 'StageDone':
-//      $S = $_REQUEST['S'];
-      $SName = $_REQUEST['Stage'];
-      $SName = preg_replace('/ /','',$SName);
-      for($S =0; $S <64 ; $S++) {
-        $act = $TurnActions[$S][2];
-        $act = preg_replace('/ /','',$act);
-        if ($SName == $act) break;
-      }
-      if ($S > 63) {
-        GMLog("Stage $SName not found");
+      case 'StagesDone': // Not used now
+        $S = StageNumber();
+        if ($S < 0 ) {
+          GMLog("Stage " . $_REQUEST['Stage'] . " not found");
+          break;
+        }
+        Finish_Phase($S,2);
         break;
-      } else {
-        $Sand['Progress'] |= 1<<$S;
-      }// Deliberate drop through
 
-    case 'Complete': // Should be now no longer used - See StageDone lower down.  (Uses name of stge not number - thus allows for renumbering)
-      SKLog("Completed " . $TurnActions[$S][2]);
-      $Sand['Progress'] |= 1<<$S;
-      $S++; // Deliberate drop through
+      case 'Complete':
+        $S = StageNumber();
+        if ($S < 0 ) {
+          GMLog("Stage " . $_REQUEST['Stage'] . " not found");
+          break;
+        }
+        Finish_Phase($S,1);
+        break;
 
-    case 'Process':
-      Do_Phase($S);
-      break;
+      case 'DoStage2':
+        $S = StageNumber();
+        if ($S < 0 ) {
+          GMLog("Stage " . $_REQUEST['Stage'] . " not found");
+          break;
+        }
+        Finish_Phase($S,1);
+        Do_Phase($S+1);
+        break;
 
-    case 'Skip':
-      if (isset($TurnActions[$S][2] )) {
-        GMLog("<b>" . $TurnActions[$S][2] . " Skipped<b>");
-        SKLog("Skipped " . $TurnActions[$S][2]);
-        $Sand['Progress'] |= 1<<$S;
-      } else {
-        echo "Off the end of the turn";
-      }
-      break;
-
-    case 'Revert':
-      if (isset($TurnActions[$S][2] )) {
-        GMLog("<b>" . $TurnActions[$S][2] . " Reverted<b>");
-        SKLog("Reverted " . $TurnActions[$S][2]);
-        $Sand['Progress'] &= ~(1<<$S);
-      } else {
-        GMLog("Off the end of the turn");
-      }
-      break;
-
-    case 'Redo' : //Revert and Do Now
-      if (isset($TurnActions[$S][2] )) {
-        GMLog("<b>" . $TurnActions[$S][2] . " Reverted<b>");
-        SKLog("Reverted " . $TurnActions[$S][2]);
-        $Sand['Progress'] &= ~(1<<$S);
-
+      case 'Process':
         Do_Phase($S);
+        break;
 
-      } else {
-        GMLog("Off the end of the turn");
-      }
-      break;
+      case 'Skip':
+        if (isset($TurnActions[$S][2] )) {
+          GMLog("<b>" . $TurnActions[$S][2] . " Skipped<b>");
+          SKLog("Skipped " . $TurnActions[$S][2]);
+          $Sand['Progress'] |= 1<<$S;
+        } else {
+          echo "Off the end of the turn";
+        }
+        break;
 
-    case 'RevertAll':
-      if (isset($TurnActions[$S][2] )) {
-        SKLog("Reverted All");
-        $Sand['Progress'] = 0;
-      } else {
-        GMLog("Off the end of the turn");
-      }
-      break;
+      case 'Revert':
+        if (isset($TurnActions[$S][2] )) {
+          GMLog("<b>" . $TurnActions[$S][2] . " Reverted<b>");
+          SKLog("Reverted " . $TurnActions[$S][2]);
+          $Sand['Progress'] &= ~(1<<$S);
+        } else {
+          GMLog("Off the end of the turn");
+        }
+        break;
+
+      case 'Redo' : //Revert and Do Now
+        if (isset($TurnActions[$S][2] )) {
+          GMLog("<b>" . $TurnActions[$S][2] . " Reverted<b>");
+          SKLog("Reverted " . $TurnActions[$S][2]);
+          $Sand['Progress'] &= ~(1<<$S);
+
+          Do_Phase($S);
+
+        } else {
+          GMLog("Off the end of the turn");
+        }
+        break;
+
+      case 'RevertAll':
+        if (isset($TurnActions[$S][2] )) {
+          SKLog("Reverted All");
+          $Sand['Progress'] = 0;
+        } else {
+          GMLog("Off the end of the turn");
+        }
+        break;
 
     }
   }
@@ -1259,4 +1287,3 @@ function Do_Turn() {
 
   dotail();
 
-?>

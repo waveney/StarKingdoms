@@ -86,7 +86,7 @@ function StartOperations() {
 
     if (($Otp & OPER_BRANCH) && !($Otp & OPER_HIDDEN ) && ($Sys['Control'] != $Fid)){
       if ($NeedColStage2 == 0) {
-        GMLog("<form method=post action=TurnActions.php?ACTION=StageDone&S=Operations>");
+        GMLog("<form method=post action=TurnActions.php?ACTION=DoStage2&Stage=Operations>");
         $NeedColStage2 = 1;
       }
       GMLog($Facts[$Fid]['Name'] . " is setting up a branch of  " . $Orgs[$O['OrgId']]['Name'] .

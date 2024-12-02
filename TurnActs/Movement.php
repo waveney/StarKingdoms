@@ -207,7 +207,7 @@ function ShipMoveCheck($Mode=0) {  // Show all movements to allow for blocking
 
   GMLog("<h2>These movements are planned - to stop one, tick the stop box and say why</h2>");
   //  GMLog("<form method=Post action=TurnActions.php?ACTION=Complete>" . fm_hidden('S',($Mode?34:32)));
-  GMLog("<form method=Post action=TurnActions.php?ACTION=StageDone>" . fm_hidden('Stage',($Mode?'Agents Move Check':'Ship Move Check')));
+  GMLog("<form method=Post action=TurnActions.php?ACTION=DoStage2>" . fm_hidden('Stage',($Mode?'Agents Move Check':'Ship Move Check')));
 
 
   $UsedLinks = [];
@@ -576,7 +576,7 @@ function RetreatsSelection() {
 
   if ($Things) {
     GMLog("<h2>These could retreat - Do check, it does not yet check if there is a Ship with Nebula s to stop one, tick the stop box and say why</h2>");
-    GMLog("<form method=Post action=TurnActions.php?ACTION=StageDone>" . fm_hidden('S','Retreats Selection'));
+    GMLog("<form method=Post action=TurnActions.php?ACTION=DoStage2>" . fm_hidden('Stage','Retreats Selection'));
     GMLog("<table border><tr><th>Whose<th>What<th>Reason<th>From<th>To<th>Stop<th>Why");
     foreach ($Things as $Tid=>$T) {
       $Loc = $T['SystemId'];

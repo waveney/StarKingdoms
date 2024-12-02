@@ -69,16 +69,8 @@ NEW GAME FEATURES & BUGS
 170 Turn actions to complete 1/2 stages 
 172 Ross's screen format problem
 173 Edit World font size mobile - see a chat gm 21/11
-177 clearly state flex used or not 
-178 Plan a blueprint LEVEL
+179 Explore wormhole in nebula
+180 
 
-
-[Mon Nov 18 20:12:34.072916 2024] [proxy_fcgi:error] [pid 304022:tid 140261904586496] [client 86.152.219.13:0] AH01071: Got error 'PHP message: 
-PHP Warning:  Undefined array key "ReasonScan969" in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php on line 646; PHP message: PHP Warning:  
-Undefined array key "ReasonScan968" in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php on line 646; PHP message: PHP Warning:  
-Undefined array key "ReasonScan967" in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php on line 646; PHP message: PHP Warning:  
-Undefined array key "ReasonScan970" in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php on line 646; PHP message: PHP Warning:  
-Undefined array key "ReasonScan971" in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php on line 646; PHP message: PHP Warning:  
-Undefined array key "ReasonScan972" in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php on line 646', referer: https://starkingdoms.uk/TurnActions.php?ACTION=Process&S=50
 
 

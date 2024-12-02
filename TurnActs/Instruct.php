@@ -14,7 +14,7 @@ function Instructions() { // And other Instructions
   $PTs = Get_ProjectTypes();
   $TTypes = Get_ThingTypes();
   $AAs = [];
-  $Stage2Link = "<form method=post action=TurnActions.php?ACTION=StageDone&S=Instructions>";
+  $Stage2Link = "<form method=post action=TurnActions.php?ACTION=DoStage2&Stage=Instructions>";
 
   foreach ($Things as $T) {
     if ( $T['BuildState'] < 2 || $T['BuildState'] > 3) {

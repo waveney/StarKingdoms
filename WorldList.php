@@ -167,10 +167,10 @@
 
   switch ($Conflict) {
     case 1:
-      echo "<h2><a href=TurnActions.php?ACTION=StageDone&Stage=DevastationSelection&S=44>Back To Turn Processing</a></h2>";
+      echo "<h2><a href=TurnActions.php?ACTION=Complete&Stage=DevastationSelection>Back To Turn Processing</a></h2>";
       break;
     case 2:
-      echo "<h2><a href=TurnActions.php?ACTION=StageDone&Stage=ClearConflictFlags&S=58>Back To Turn Processing</a></h2>";
+      echo "<h2><a href=TurnActions.php?ACTION=Complete&Stage=ClearConflictFlags>Back To Turn Processing</a></h2>";
       break;
     default:
       break;
