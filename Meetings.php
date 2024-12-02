@@ -73,7 +73,7 @@ function ForceReport($Sid,$Cat) {
   if ($Cat =='G' && $Wid) echo "<h2><a href=WorldEdit.php?ACTION=Militia&id=$Wid>Create /Update Militia</a></h2>";
 
   echo "<table border>";
-  echo "<tr><td>What<td>Type<td>Level<td>Health<td>Evasion<td>Attack<td>Speed<td>Actions\n";
+  echo "<tr><td>What<td>Type<td>Level<td>Evasion<td>Health<td>Attack<td>Speed<td>Actions\n";
   foreach($Things as $T) {
     if ((($Cat == 'S') && ((($TTypes[$T['Type']]['Properties']??0) & 8) != 0)) ||
         (($Cat == 'G') && ((($TTypes[$T['Type']]['Properties']??0) & 0x800020) != 0))) {
@@ -158,7 +158,7 @@ function ForceReport($Sid,$Cat) {
       $txt .= "</span><td><span id=Attack$Tid>$BD</span><td>" .
            (($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE)? "Speed: " . sprintf("%0.3g ",$T['Speed']) :'') ;
       $txt .=  fm_number1(" Do",$T,'Damage', ''," class=Num3 onchange=Do_Damage($Tid,$LastF,'$Cat')","Damage:$Tid") . " damage";
-      $txt .= fm_checkbox('Retreat?',$T,'RetreatMe','',"RetreatMe:$Tid");
+      $txt .= fm_checkbox(', Retreat?',$T,'RetreatMe','',"RetreatMe:$Tid");
 
       $FirePower += $BD;
     }

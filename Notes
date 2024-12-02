@@ -63,14 +63,32 @@ NEW GAME FEATURES & BUGS
 147 Is it possible to list Consumer Corp as an option for the Ascendancy, when building an Office. 
    (As per Lizard rules, the Lizards will own the office, but it's being built by the Ascendancy)
 155 hidding octopi ships
-161 Clear Conflit flags - looping...
 165 Stop Anomaly study - gm option
-169 Recalc operation levels on start
-170 Turn actions to complete 1/2 stages 
 172 Ross's screen format problem
 173 Edit World font size mobile - see a chat gm 21/11
 179 Explore wormhole in nebula
-180 
+180 Federations trait
+181 The Ascendancy is setting up a branch of The Elysian Order (Religious / Ideological ) it is controlled by Lizards (where?)
+183 Not Starting Establish Outpost Safe House in Lorthyss ( HFU ) There is not currently an Outpost there, this operation can't create one (Who?0
+184 Undefined array key 32 in /var/www/vhosts/starkingdoms.uk/httpdocs/Banking.php on line 143; PHP message: PHP Warning:  
+Undefined array key 32 in /var/www/vhosts/starkingdoms.uk/httpdocs/Banking.php on line 143', referer: https://starkingdoms.uk/Player.php
+185 Undefined array key "id" in /var/www/vhosts/starkingdoms.uk/httpdocs/ThingShow.php on line 450; PHP message: PHP Warning:  Undefined array key "id" in 
+/var/www/vhosts/starkingdoms.uk/httpdocs/ThingShow.php on line 450', referer: https://starkingdoms.uk/ThingEdit.php?id=2685
+186 Retreat reason - nebulae mising
+187 Operations On hold not finished...!
+188 Follow through invis - CLA & Octopi
+189 Operation - list of orgs is wrong
+190 Add Tracked res simpler
+191 Space annomalies - need space probe
+192 Space/ground should be clear
+193 Mettups - other missing on ground
+
+
+
+Office 32 does not match any current Organisation - needs fixing
+Office 33 does not match any current Organisation - needs fixing
+
+
 
 
 

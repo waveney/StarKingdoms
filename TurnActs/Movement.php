@@ -588,7 +588,7 @@ function RetreatsSelection() {
           if (isset($SysHasNeb[$Loc][$Fid])) {
             if ($SysHasNeb[$Loc][$Fid]) continue 2;
           } else {
-            $Ship = Gen_Get_Cond1('Things',"SystemId=$Loc AND NebSensor>0 AND Whose=$Fid");
+            $Ship = Gen_Get_Cond1('Things',"SystemId=$Loc AND NebSensors>0 AND Whose=$Fid");
             $SysHasNeb[$Loc][$Fid] = $Ship;
             if ($Ship) continue 2;
           }

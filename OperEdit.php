@@ -33,6 +33,13 @@
     $Oid = $_REQUEST['id'];
     $O = Get_Operation($Oid);
     if (!$GM && $O['GMLock']) fm_addall('READONLY');
+    if ($GM) {
+      $Fid = $O['Whose'];
+    } else {
+      if ($Fid != $O['Whose']) {
+        Error_Page("Sorry That is not your operation...");
+      }
+    }
   } else {
     echo "No Project given";
     dotail();
@@ -153,7 +160,7 @@
       $SocPs = Get_SocialP($O['Para1']);
       echo "<tr><td>Social Principe:<td>" . $SocPs['Principle'] . " - Edit via Richard if needed";
       if (Access('God')) echo "<tr>" . fm_number('Para1',$O,'Para1');
-    } else if ($PProps & OPER_CIVILISED) {
+    } else if ($PProps & OPER_SCIPOINTS) {
       array_unshift($Fields,'');
       echo "<tr><td>Science Points:<td>" . fm_select($Fields,$O,'Para1');
     } else if ($PProps & OPER_MONEY) {
@@ -161,6 +168,7 @@
     } else if ($PProps & OPER_ANOMALY) {
       $Anom = Gen_Get('Anomalies', $O['Para1']);
       echo "<tr>" . fm_number('Anomaly',$O,'Para1')  . "<td>" . $Anom['Name'];
+    } else if ($PProps & OPER_CIVILISED) {
 
     }
 

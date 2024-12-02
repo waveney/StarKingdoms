@@ -12,6 +12,7 @@ function StartOperations() {
   $TTNames = NamesList($TTYpes);
   $NamesTTypes = array_flip($TTNames);
   $Orgs = Gen_Get_Cond('Organisations',"GameId=$GAMEID");
+  $BTs = Get_BranchTypes();
 
   foreach ($Operations as $Oid=>$O) {
     $Fid = $O['Whose'];
@@ -22,9 +23,9 @@ function StartOperations() {
     $OrgId = $O['OrgId'];
 
     if ($Otp & OPER_OUTPOST) {
-      $OutPs = Get_Things_Cond($Fid,"Type=" . $NamesTTypes['Outpost'] . " AND SystemId=$Wh AND BuildState=3");
+      $OutPs = Get_Things_Cond(0,"Type=" . $NamesTTypes['Outpost'] . " AND SystemId=$Wh AND BuildState=3");
       if ($OutPs) {
-        if (count($OutPs >1)) {
+        if (count($OutPs) >1) {
           GMLog("There are multiple Outposts in " . $Sys['Ref'] . " - Tell Richard");
           exit;
         }
@@ -32,8 +33,8 @@ function StartOperations() {
           $Tid = $OutPs[0]['id'];
           $EBs = Gen_Get_Cond('Branches', " HostType=3 AND HostId=$Tid");
 
-          $MaxB = HasTech($OutPs[0]['Whose'],'Offworld Construction');
-          foreach ($EBs as $B) if ($B['Props'] & BRANCH_NOSPACE) $MaxB--;
+          $MaxB = Has_Tech($OutPs[0]['Whose'],'Offworld Construction');
+          foreach ($EBs as $B) if ($BTs[$B['Type']]['Props'] & BRANCH_NOSPACE) $MaxB--;
 
           if ($MaxB >= $EBs) {
             $O['Status'] = 5; // Not Started
@@ -45,7 +46,7 @@ function StartOperations() {
         }
 
         if ($Otp & OPER_BRANCH) {
-          $AllReady = Gen_Get_Cond('Branches'," HostType=3 AND HostId=$Tid AND OrgId=$OrgId" );
+          $AllReady = Gen_Get_Cond('Branches'," HostType=3 AND HostId=$Tid AND Organisation=$OrgId" );
           if ($AllReady) {
             $O['Status'] = 5; // Not Started
             TurnLog($Fid,'Not Starting ' . $O['Name'] . " as there is already a branch there");
@@ -374,8 +375,8 @@ function OperationsComplete() {
         New_Branch($World,$NamesBTs['Trading Station'],$O,$Org);
         TurnLog($Fid,"A new Trading Station branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
            System_Name($Sys,$Fid) );
-        if ($Outpost['Whose'] != $Fid) {
-          TurnLog($Outpost['Whose'],"A new Trading Station branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
+        if ($World['FactionId'] != $Fid) {
+          TurnLog($World['FactionId'],"A new Trading Station branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
             System_Name($Sys,$Outpost['Whose']) . " by " . $Facts[$Fid]['Name']);
         }
         GMLog("A new Trading Station branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
@@ -404,8 +405,8 @@ function OperationsComplete() {
         $World = World_in($O['SystemId'],$Fid);
         New_Branch($World,$NamesBTs['Trading Station'],$O,$Org);
         TurnLog($Fid,"A new Lodge branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .  System_Name($Sys,$Fid) );
-        if ($Outpost['Whose'] != $Fid) {
-          TurnLog($Outpost['Whose'],"A new Lodge branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
+        if ($World['FactionId'] != $Fid) {
+          TurnLog($World['FactionId'],"A new Lodge branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
             System_Name($Sys,$Outpost['Whose']) . " by " . $Facts[$Fid]['Name']);
         }
         GMLog("A new Lodge branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
@@ -417,8 +418,8 @@ function OperationsComplete() {
         New_Branch($World,$NamesBTs['Forward Operating Area'],$O,$Org);
         TurnLog($Fid,"A new Forward Operating Area branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
           System_Name($Sys,$Fid) );
-        if ($Outpost['Whose'] != $Fid) {
-          TurnLog($Outpost['Whose'],"A new Forward Operating Area branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
+        if ($World['FactionId'] != $Fid) {
+          TurnLog($World['FactionId'],"A new Forward Operating Area branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
             System_Name($Sys,$Outpost['Whose']) . " by " . $Facts[$Fid]['Name']);
         }
         GMLog("A new Forward Operating Area branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
@@ -431,8 +432,8 @@ function OperationsComplete() {
         New_Branch($World,$O['Para1'],$O,$Org); // Para aligns with Branch type
         TurnLog($Fid,"A new Research Base branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
           System_Name($Sys,$Fid) );
-        if ($Outpost['Whose'] != $Fid) {
-          TurnLog($Outpost['Whose'],"A new Research Base branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
+        if ($World['FactionId'] != $Fid) {
+          TurnLog($World['FactionId'],"A new Research Base branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
             System_Name($Sys,$Outpost['Whose']) . " by " . $Facts[$Fid]['Name']);
         }
         GMLog("A new Research Base branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
@@ -597,7 +598,7 @@ function OperationsComplete() {
         FollowUp($Fid,"Operation " . $O['Name'] . " has completed, this is not automated yet.  See <a href=OperEdit.php?id=$Oid>Operation</a>");
     }
     $O['TurnState'] = 2;
-    $O['Status'] = 4;
+    $O['Status'] = 2;
     $O['TurnEnd'] = $GAME['Turn'];
 //    var_dump($O);
     Put_Operation($O);
