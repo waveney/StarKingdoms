@@ -38,9 +38,19 @@ function Follow() {
               ($L['ThisTurnMod']? ( " it is currently " . ($L['Instability']+$L['ThisTurnMod'])) : (" it is " . $L['Instability']) ));
             $T['LinkId'] = $T['LinkCost'] = $T['LinkPay'] = 0;
             Put_Thing($T);
-
             continue;
           }
+
+          $FL = Get_FactionLinkFL($T['Whose'],$Fol['LinkId']);
+          if (empty($FL['id'])) {
+            TurnLog($T['Whose'],  $T['Name'] . " Can not follow " . $Fol['Name'] . " as the link they used is unknown to you ");
+            GMLog($Factions[$T['Whose']]['Name'] . " - " . $T['Name'] . " Can not follow " . $Fol['Name'] .
+              " as the link they used is unknown to you ");
+            $T['LinkId'] = $T['LinkCost'] = $T['LinkPay'] = 0;
+            Put_Thing($T);
+            continue;
+          }
+
           $T['LinkId'] = $Fol['LinkId'];
           $T['LinkCost'] = $Fol['LinkCost'];
           $T['LinkPay'] = 1;
@@ -607,7 +617,7 @@ function RetreatsSelection() {
           }
 
           GMLog("<tr><td>" . $Facts[$Fid]['Name'] . "<td><a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a><td>" .
-            ['','','From Combat'][$T['Retreat']] . "<td>" . $SRefs[$Loc] . "<td>$Totxt<td>" .
+            ['','From Nebula','From Combat'][$T['Retreat']] . "<td>" . $SRefs[$Loc] . "<td>$Totxt<td>" .
             fm_checkbox('',$_REQUEST,"RetreatBox$Tid") . fm_text1('', $_REQUEST,"RetreatTxt$Tid"));
           break;
        }

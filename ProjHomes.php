@@ -4,8 +4,8 @@
   include_once("ThingLib.php");
   include_once("ProjLib.php");
   include_once("HomesLib.php");
- 
-  
+
+
   A_Check('GM');
 
   dostaffhead("List Project Homes");
@@ -15,7 +15,7 @@
 
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
-      case 'EDIT': 
+      case 'EDIT':
         echo "<h1>Project Home</h1>";
         $Hid = $_REQUEST['id'];
         Show_Home($Hid);
@@ -34,15 +34,15 @@
   $Systems = Get_SystemRefs();
   $Factions = Get_Factions();
   $Homes = Get_ProjectHomes();
-  
+
   if (!$Homes) {
     echo "<h2>No Homes found</h2>";
     dotail();
   }
-  
+
   echo "<h1>List Project Homes</h1>";
   echo "All worlds with districts, space stations and things which can do deep space<br>\n";
-  
+
   $coln = 0;
   echo "<div class=tablecont><table id=indextable border width=100% style='min-width:1400px'>\n";
   echo "<thead><tr>";
@@ -84,9 +84,10 @@
     echo "<td>" . $H['EconomyFactor'];
     echo "<td><a href=ProjDisp.php?id=" . $H['Whose'] . ">Projects</a>\n";
   }
-      
+  if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
+
   echo "</tbody></table></div>\n";
-  
+
 
   dotail();
 ?>

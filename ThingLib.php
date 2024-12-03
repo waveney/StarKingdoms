@@ -1044,7 +1044,7 @@ function Update_Militia(&$W,&$Dists,$NewOwn=0) {
 
   $FactN = ($NewOwn?$NewOwn:$W['FactionId']);
   $Mils = Get_Things_Cond(0,"Type=20 AND SystemId=$Sys AND WithinSysLoc=$loc ");
-  $Hlth = 40+Has_Tech($FactN,'Militia Training Techniques')*2;
+  $Hlth = feature('MilitiaHealth',25)+Has_Tech($FactN,'Militia Training Techniques')*2;
 
   $Dcount = 0;
   $DTs = Get_DistrictTypes();
@@ -1072,7 +1072,7 @@ function Update_Militia(&$W,&$Dists,$NewOwn=0) {
     $MNames = [];
 
     foreach ($Mils as $Ml) $MNames[$Ml['Name']] = 1; // Didts & Dist2 give short cut to world and districts
-    $M = ['Type'=>20, 'CurHealth'=>$Hlth, 'OrigHealth'=>$Hlth,
+    $M = ['Type'=>20, 'CurHealth'=>$Hlth, 'OrigHealth'=>$Hlth, 'Evasion'=>40,
            'Whose'=>$FactN, 'SystemId'=>$Sys, 'WithinSysLoc'=>$loc, 'BuildState'=>3,
            'Dist1'=> $W['ThingType'], 'Dist2'=>$W['ThingId'] ];
     $Mn = 1;

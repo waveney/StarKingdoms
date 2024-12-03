@@ -39,7 +39,7 @@ function StartOperations() {
           if ($MaxB >= $EBs) {
             $O['Status'] = 5; // Not Started
             TurnLog($Fid,'Not Starting ' . $O['Name'] . " as the Outpost is full");
-            GMLog('Not Starting ' . $O['Name'] . " as the <a href=ThingEdit.php?id=$Tid>Outpost</a> is full");
+            GMLog('Not Starting ' . $O['Name'] . " for " . $Facts[$O['Whose']]['Name'] . " as the <a href=ThingEdit.php?id=$Tid>Outpost</a> is full");
             Put_Operation($O);
             continue;
           }
@@ -50,14 +50,15 @@ function StartOperations() {
           if ($AllReady) {
             $O['Status'] = 5; // Not Started
             TurnLog($Fid,'Not Starting ' . $O['Name'] . " as there is already a branch there");
-            GMLog('Not Starting ' . $O['Name'] . " as there is already a branch there");
+            GMLog('Not Starting ' . $O['Name'] . " for " . $Facts[$O['Whose']]['Name'] . " as there is already a branch there");
             Put_Operation($O);
             continue;
           }
         }
       } else if (!($Otp & OPER_CREATE_OUTPOST)) { // No out post and can't create
         $O['Status'] = 5; // Not Started
-        TurnLog($Fid,'Not Starting ' . $O['Name'] . " There is not currently an Outpost there, this operation can't create one");
+        TurnLog($Fid,'Not Starting ' . $O['Name'] . " for " . $Facts[$O['Whose']]['Name'] .
+          " There is not currently an Outpost there, this operation can't create one");
         GMLog('Not Starting ' . $O['Name']  . " There is not currently an Outpost there, this operation can't create one");
         Put_Operation($O);
         continue;
@@ -79,7 +80,8 @@ function StartOperations() {
       } else {
         $O['Status'] = 5; // Not Started
         TurnLog($Fid,"There is no planet in " . System_Name($Sys,$Fid) . " that can support a Branch" );
-        GMLog('Not Starting ' . $O['Name']  . " There is no planet in " . System_Name($Sys,$Fid) . " that can support a Branch" );
+        GMLog('Not Starting ' . $O['Name']  . " for " . $Facts[$O['Whose']]['Name'] . " There is no planet in " . System_Name($Sys,$Fid) .
+          " that can support a Branch" );
         Put_Operation($O);
         continue;
       }
@@ -91,7 +93,8 @@ function StartOperations() {
         $NeedColStage2 = 1;
       }
       GMLog($Facts[$Fid]['Name'] . " is setting up a branch of  " . $Orgs[$O['OrgId']]['Name'] .
-        " (" . $OrgTypes[$Orgs[$O['OrgId']]['OrgType']]['Name'] . " ) it is controlled by " . ($Facts[$Sys['Control']]['Name']??'Nobody') .
+        " (" . $OrgTypes[$Orgs[$O['OrgId']]['OrgType']]['Name'] . " ) in " . System_Name($Sys,$Fid) . " it is controlled by " .
+        ($Facts[$Sys['Control']]['Name']??'Nobody') .
         " - Allow? " . fm_YesNo("Org$Oid",1, "Reason to reject") . "\n<br>");
     }
 

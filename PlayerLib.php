@@ -525,7 +525,7 @@ function Income_Calc($Fid) {
 
     if (Has_PTraitW($W['id'],'Thin Atmosphere')) {
       $ECon = max(0,$ECon-1);
-      $EccTxt .=  " Reduced by 2 due to a Thin Atmosphere leaving you with a rating of $ECon";
+      $EccTxt .=  " Reduced by 2 due to a Thin Atmosphere leaving you with a rating of $ECon<br>\n";
     }
 
     if ($ECon <=0 && $Name) {

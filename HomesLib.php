@@ -296,7 +296,7 @@ function Show_Home($Hid) {
   $H = Get_ProjectHome($Hid);
   echo "Properties: 1=No Projects<p>";
   echo "<form method=post action=ProjHomes.php>";
-  Register_Autoupdate("ProjectHome",$Hid);
+  Register_Autoupdate("ProjectHomes",$Hid);
   fm_hidden('id',$Hid);
   echo "<table border>\n";
   echo "<tr><td>Id: $Hid";

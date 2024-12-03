@@ -31,6 +31,10 @@
     foreach ($Facts as $Fi=>$F) {
       $FactList[$Fi] = $Factions[$Fi]['Name'];
     }
+  } else if ($GM) {
+    foreach ($Facts as $Fi=>$F) {
+      $FactList[$Fi] = $Factions[$Fi]['Name'];
+    }
   }
 
 //  var_dump($_REQUEST);
