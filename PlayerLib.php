@@ -524,7 +524,7 @@ function Income_Calc($Fid) {
     }
 
     if (Has_PTraitW($W['id'],'Thin Atmosphere')) {
-      $ECon = max(0,$ECon-1);
+      $ECon = max(0,$ECon-2);
       $EccTxt .=  " Reduced by 2 due to a Thin Atmosphere leaving you with a rating of $ECon<br>\n";
     }
 
@@ -576,7 +576,7 @@ function Income_Calc($Fid) {
   $MyPTSBranches = Gen_Get_Cond('Branches',"Whose=$Fid AND HostType!=3 AND Type=" . ($NameBType['Trading Station']??0));
   $MyPBMPBranches = Gen_Get_Cond('Branches',"Whose=$Fid AND HostType!=3 AND Type=" . ($NameBType['Black Market Trade Station']??0));
   $MyOPBranches = Gen_Get_Cond('Branches',"Whose=$Fid AND HostType=3 AND Type=" . ($NameBType['Trading Station']??0));
-  $OtherPTSBranches = Gen_Get_Cond('Branches',"Whose!=$Fid AND HostType!=3 AND Type=" . ($NameBType['Trading Station']??0));
+  $OtherPTSBranches = Gen_Get_Cond('Branches',"Whose!=$Fid AND HostType!=3 AND HostId=$Wid AND Type=" . ($NameBType['Trading Station']??0));
 // var_dump($MyPTSBranches,$MyPBMPBranches,$MyOPBranches,$OtherPTSBranches);
   $MyTrade = $OtherTrade = 0;
   $Orgs = [];
@@ -609,8 +609,10 @@ function Income_Calc($Fid) {
 
   if ($OtherPTSBranches) {
     foreach( $OtherPTSBranches as $B) {
-      if (!isset($Orgs[$B['Organisation']])) $Orgs[$B['Organisation']] = Gen_Get('Organisations',$B['Organisation']);
-      $OtherTrade += $Orgs[$B['Organisation']]['OfficeCount'];
+      if (!isset($Orgs[$B['Organisation']])) {
+        $Orgs[$B['Organisation']] = Gen_Get('Organisations',$B['Organisation']);
+        $OtherTrade += $Orgs[$B['Organisation']]['OfficeCount'];
+      }
     }
     if ($OtherTrade){
       $EccTxt .= "Plus incomming trade of other's trade organisations worth: $OtherTrade<br>\n";
