@@ -12,13 +12,13 @@ $Tech_Cats = ['Core','Supp','Non Std','Levelled Non Std'];
 $CivMil = ['','Civilian','Military'];
 $BuildState = ['Planning','Building','Shakedown','Complete','Ex','Abandonded','Missing In Action','Captured'];
 $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse Anomaly','Establish Embassy','Make Outpost',
-                'Make Asteroid Mine','Make Minefield',
+                'Make Asteroid Mine','Make Minefield',//8
                 'Make Orbital Repair Yard','Build Space Station','Expand Space Station','Make Deep Space Sensor',
-                'Make Advanced Asteroid Mine','Build Stargate',
+                'Make Advanced Asteroid Mine','Build Stargate',//14
                 'Make Planet Mine', 'Construct Command Relay Station', 'Repair Command Node','Build Planetary Mine',
-                'Dismantle Stargate','Disband','Transfer',
+                'Dismantle Stargate','Disband','Transfer',//21
                 'Make Something','Make Warpgate','Retire','Stop Support','Make Advanced Minefield','Clear Minefield',
-                'Make Advanced Deep Space Sensor','Salvage',
+                'Make Advanced Deep Space Sensor','Salvage',//29
                 'Terraform','Link Repair','Collaborative DSC','Space Survey','Planetary Survey','Collaborative Planetary Construction',
                 'Collaborative Space Construction',
 ];

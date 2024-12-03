@@ -499,7 +499,7 @@ function Income_Calc($Fid) {
     $EccTxt .= $Rtxt;
 
     $Offs = Gen_Get_Cond('Offices',"World=$Wid AND OrgType=2");
-    if ($Offs) {
+    if ($Offs && !$HasOwnGalaxy ) {
       foreach ($Offs as $Off ) {
         $Org = Gen_Get('Organisations',$Off['Organisation']);
         $ECon += $Org['OfficeCount'];
@@ -601,7 +601,7 @@ function Income_Calc($Fid) {
         $MyTrade += $Orgs[$B['Organisation']]['OfficeCount'];
       }
     }
-    if ($MyPBMPBranches) {
+    if ($MyPBMPBranches&& !$HasOwnGalaxy ) {
       foreach ($MyPTSBranches as $Bid=>$B ) {
         if (!isset($Orgs[$B['Organisation']])) $Orgs[$B['Organisation']] = Gen_Get('Organisations',$B['Organisation']);
         $MyTrade += $Orgs[$B['Organisation']]['OfficeCount'];
