@@ -160,8 +160,13 @@ switch ($B['HostType']) {
     break;
   case 3:// Thing
     $T = Get_Thing($B['HostId']);
-    $Sys = Get_System($T['SystemId']);
-    $Where = $T['Name'] . " in " . System_Name($Sys,$Fid);
+    if ($T) {
+      $Sys = Get_System($T['SystemId']);
+      $Where = $T['Name'] . " in " . System_Name($Sys,$Fid);
+    } else {
+      $Sys = [];
+      $Where = "?";
+    }
     break;
 }
 
