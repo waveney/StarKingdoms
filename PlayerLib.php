@@ -542,11 +542,10 @@ function Income_Calc($Fid) {
 
     $OtherPTSBranches = Gen_Get_Cond('Branches',"Whose!=$Fid AND HostType!=3 AND HostId=$Wid AND Type=" . ($NameBType['Trading Station']??0));
     if ($OtherPTSBranches) {
+      $OtherTrade = 0;
       foreach( $OtherPTSBranches as $B) {
-        if (!isset($Orgs[$B['Organisation']])) {
-          $Orgs[$B['Organisation']] = Gen_Get('Organisations',$B['Organisation']);
-          $OtherTrade += $Orgs[$B['Organisation']]['OfficeCount'];
-        }
+        $Org = Gen_Get('Organisations',$B['Organisation']);
+        $OtherTrade += $Org['OfficeCount'];
       }
       if ($OtherTrade){
         $EccTxt .= "Plus incomming trade of other's trade organisations worth: $OtherTrade<br>\n";
@@ -592,7 +591,7 @@ function Income_Calc($Fid) {
   $MyPBMPBranches = Gen_Get_Cond('Branches',"Whose=$Fid AND HostType!=3 AND Type=" . ($NameBType['Black Market Trade Station']??0));
   $MyOPBranches = Gen_Get_Cond('Branches',"Whose=$Fid AND HostType=3 AND Type=" . ($NameBType['Trading Station']??0));
 // var_dump($MyPTSBranches,$MyPBMPBranches,$MyOPBranches,$OtherPTSBranches);
-  $MyTrade = $OtherTrade = 0;
+  $MyTrade = 0;
   $Orgs = [];
 
   if ($MyPTSBranches || $MyOPBranches || $MyPBMPBranches) {
