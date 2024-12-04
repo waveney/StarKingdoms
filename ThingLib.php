@@ -580,7 +580,7 @@ function Calc_Scanners(&$T) { // And lots of other attributes
   $Mobs = Get_ModulesType($T['id'],'Suborbital Transports');
   $T['Mobile'] = ceil(($Mobs && $Mobs['Number']>0)?$Mobs['Number']*($Mobs['Level']+$LvlMod)/$T['Level']:0);
   $Flux = Get_ModulesType($T['id'],'Flux Stabilisers');
-  $T['Stability'] = max(1,(($Flux && $Flux['Number']>0)?$Flux['Number']*($Flux['Level']+$LvlMod)/$T['Level']:0));
+  $T['Stability'] = ceil(max(1,(($Flux && $Flux['Number']>0)?$Flux['Number']*($Flux['Level']+$LvlMod)/$T['Level']:0)));
 }
 
 function Calc_Evasion(&$T) {
