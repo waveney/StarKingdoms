@@ -51,5 +51,6 @@ CREATE TABLE `Factions` (
   `FoodType` int NOT NULL,
   `DefaultRelations` int NOT NULL,
   `AlienDescription` text COLLATE utf8mb4_general_ci NOT NULL,
+  `ScaleFactor` float NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
