@@ -515,9 +515,9 @@ function Income_Calc($Fid) {
         $EccTxt .= " It has devastation reducing it to: $ECon <br>\n";
       }
 
-      if ($W['Blockade'] ) { //&& $Fid != 9) {
-        $ECon /= 2;
-        $EccTxt .=  "It is blockaded income is halved  to $ECon\n";
+      if ($W['Blockade'] ) {
+        $ECon *= (10-$W['Blockade'])/10;
+        $EccTxt .=  "It is blockaded income is reduced to $ECon\n";
       } else {
         $ECon = ceil(($ECon - $H['Devastation'])*$H['EconomyFactor']/100);
       }
