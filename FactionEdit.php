@@ -74,7 +74,7 @@ function Show_Faction(&$F,$Mode) {
   }
   echo "<tr>" . ($GM? fm_radio('Diet?',$FoodTypes,$F,'FoodType','',1,'colspan=2') : "<td>Diet is " . $FoodTypes[$F['FoodType']]);
   echo "<tr>" . fm_text('Player Name',$F,'Player',2,$cls) . fm_text1('Scale Factor',$F,'ScaleFactor') .
-    "<td colspan=4>If your maps are confused, reduce this a LITTLE from 1";
+    "<td colspan=4>If your maps are confused, change this a LITTLE from 1.0";
 
   echo "<tr><td $cls>Player State:<td $cls>" .
     (($GM)? fm_select($PlayerState,$F,'TurnState'): $PlayerState[$F['TurnState']]);

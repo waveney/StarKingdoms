@@ -616,7 +616,29 @@ function New_Thing(&$T) {
          echo "Salvage was attempted in " .  $N['Ref'] . " but there are no wrecks currently present.<p>";
        }
        break;
+    case 'Takeover': // Construction Lead
+      $tid = $_REQUEST['id'];
+      $T = Get_Thing($tid);
+      $Otid = $T['Dist1'];
+      $OT = Get_Thing($Otid);
 
+      $oldIns = $T['Instruction'];
+      $T['Instruction'] = $OT['Instruction'];
+      $T['Dist1'] = $OT['Dist1'];
+      $T['Dist2'] = $OT['Dist2'];
+      $T['Spare1'] = $OT['Spare1'];
+      $T['MakeName'] = $OT['MakeName'];
+      $T['ActionsNeeded'] = $OT['ActionsNeeded'];
+      $T['Progress'] = $OT['Progress'];
+      $T['InstCost'] = $OT['InstCost'];
+      $T['CurInst'] = $OT['CurInst'];
+
+      $OT['Instruction'] = $oldIns;
+      $OT['Dist1'] = $tid;
+
+      Put_Thing($T);
+      Put_Thing($OT);
+      break;
 
     case 'None' :
     default:

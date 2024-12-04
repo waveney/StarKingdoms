@@ -19,7 +19,7 @@
     if ($GM) echo "<h2><a href=MapFull.php?Hex&Links=0&FORCE>This page in Player Mode</a></h2>";
   }
 
-  if (isset($FACTION)) $XScale *= $FACTION['ScaleFactor'];
+  if (!empty($FACTION)) $XScale *= $FACTION['ScaleFactor'];
 
   $CatCols = ["white","grey", "Yellow"];
   $HexLegPos = [];
