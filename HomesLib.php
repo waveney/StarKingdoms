@@ -570,5 +570,16 @@ function ConstructLoc($Hid,$Posn=0) {
 
 }
 
+function WorldFlags(&$W) {
+  $Stat = [];
+  if ($W['Conflict']) $Stat[]= 'Conflict';
+  if ($W['Blockade']) $Stat[]= 'Blockade:' . $W['Blockade'];
+  if ($W['Revolt'])   $Stat[]= 'Revolt';
+  if ($Stat) {
+    echo "<td class=Red>" . implode(', ',$Stat);
+  } else {
+    echo "<td>";
+  }
+}
 
 ?>

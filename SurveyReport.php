@@ -133,7 +133,7 @@
     }
   }
 
-  if (($ScanLevel>0) && ($SurveyLevel > 2)) {
+  if (($ScanLevel>=0) && ($SurveyLevel > 2)) {
 
     if ($N['Description']) echo $Parsedown->text(stripslashes($N['Description'])) . "<p>";
 

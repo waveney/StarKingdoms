@@ -153,15 +153,7 @@
  //     echo "<td>" . fm_checkbox("Blockade?", $W, 'Blockade','',"Blockade:99:" . $W['id']);
       echo "<td>" . fm_checkbox("Revolt?", $W, 'Revolt','',"Revolt:99:" . $W['id']);
     } else {
-      $Stat = [];
-      if ($W['Conflict']) $Stat[]= 'Conflict';
-      if ($W['Blockade']) $Stat[]= 'Blockade:' . $W['Blockade'];
-      if ($W['Revolt'])   $Stat[]= 'Revolt';
-      if ($Stat) {
-        echo "<td class=Red>" . implode(', ',$Stat);
-      } else {
-        echo "<td>";
-      }
+      WorldFlags($W);
     }
   }
   echo "</table></div>\n";

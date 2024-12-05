@@ -154,6 +154,7 @@
     echo "<tr>" . fm_number('ThingType',$W,'ThingType') . fm_number('ThingId',$W,'ThingId');
   }
   echo "<tr>" . fm_text('Name',$WH,'Name',3,'','',"Name:" . $W['ThingType'] . ":" . $W['ThingId']);
+  WorldFlags($W);
   echo "<tr>" . fm_textarea('Description',$WH,'Description',8,3,'','', "Description:" . $W['ThingType'] . ":" . $W['ThingId']);
   if ($GM) {
     echo "<tr>" . fm_number("Minerals", $W, 'Minerals');
