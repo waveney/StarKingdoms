@@ -398,6 +398,7 @@
       } else if (($OpTypes[$op]['Props'] & OPER_LEVELMOD)) {
         echo fm_hidden('Stage',5) . fm_hidden('op',$op) . fm_hidden('W',$Wh) . fm_hidden('O',$OrgId) .fm_hidden('t',$Turn);
         echo fm_number('Level Modifier',$_REQUEST,'SP','','min=0'); " As specified by the GMs.";
+        echo "<br>" . fm_text('Description',$_REQUEST,'Description',6);
         echo "<button class=projtype type=submit>Proceed</button>";
         break;
       }
@@ -434,8 +435,6 @@
         } else if (($OpTypes[$op]['Props'] & OPER_ANOMALY)) {
           $Anom = Gen_Get('Anomalies',$SP);
           $Name .= " - " . $Anom['Name'];
-        } else if (($OpTypes[$op]['Props'] & OPER_DESC)) {
-          $Name .= " $Desc";
         } else if (($OpTypes[$op]['Props'] & OPER_WORMHOLE)) {
           $L = Get_Link($SP);
           echo "Wormhole: " . $L['Name'] . "<p>";
@@ -446,6 +445,10 @@
           $Mod = $SP;
         }
       }
+      if (($OpTypes[$op]['Props'] & OPER_DESC)) {
+        $Name .= " $Desc";
+      }
+
 //      var_dump($OpTypes[$op]['Props'],$Name);
       if (($OpTypes[$op]['Props'] & OPER_LEVELMOD) == 0) $Mod = ($OpTypes[$op]['Props'] & OPER_LEVEL);
  //     var_dump($Mod,$Level);
