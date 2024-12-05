@@ -16,6 +16,8 @@ define('OPER_MONEY',0x2000);
 define('OPER_DESC',0x4000);
 define('OPER_ANOMALY',0x8000);
 define('OPER_SCIPOINTS',0x10000);
+define('OPER_ALLORGS',0x20000);
+define('OPER_LEVELMOD',0x40000);
 
 
 define('ORG_HIDDEN',1);
@@ -310,8 +312,14 @@ function World_In($Sid,$Who) {
 function New_Branch(&$World,$Type,&$O,&$Org) {
   global $GAMEID;
 
-  $B = ['HostType'=>$World['ThingType'], 'HostId'=>$World['ThingId'], 'Whose'=>$O['Whose'], 'Type'=>$Type,
+  if (isset($World['BuildState'])) { // Outpost
+    $B = ['HostType'=>3, 'HostId'=>$World['id'], 'Whose'=>$O['Whose'], 'Type'=>$Type,
+      'Organisation'=>$O['OrgId'],'OrgType'=>$Org['OrgType'], 'GameId'=>$GAMEID];
+
+  } else {
+    $B = ['HostType'=>$World['ThingType'], 'HostId'=>$World['ThingId'], 'Whose'=>$O['Whose'], 'Type'=>$Type,
     'Organisation'=>$O['OrgId'],'OrgType'=>$Org['OrgType'], 'GameId'=>$GAMEID];
+  }
   Gen_Put('Branches',$B);
 }
 
@@ -323,7 +331,7 @@ function World_Name($Wid,$Fid=0) {
       $Sys = $P['SystemId'];
       $FP = Get_FactionPlanetFS($Fid,$P['id']);
       $N = Get_System($Sys);
-      $Name = ($FP['Name']?$FP['Name']:$P['Name']) . " in " . System_Name($N,$Fid);
+      $Name = (!empty($FP['Name'])?$FP['Name']:$P['Name']) . " in " . System_Name($N,$Fid);
       return $Name;
 
     case 2 : // Moon
@@ -345,7 +353,7 @@ function World_Name($Wid,$Fid=0) {
   }
 }
 
-function Report_SP_Change(&$World) {
+function Report_SP_Change($Fid,&$World) {
   include_once("TurnTools.php");
   $Fid = $World['FactionId'];
   if (empty($Fid)) return;

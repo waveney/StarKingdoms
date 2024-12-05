@@ -88,7 +88,8 @@
   if ($OrgTypes[$Org['OrgType']]['Props'] & ORG_ALLOPS) {
     $OpTypes = Gen_Get_Cond('OrgActions',"(NotBy&$NOTBY)=0 ");
   } else {
-    $OpTypes = Gen_Get_Cond('OrgActions',"(NotBy&$NOTBY)=0 AND ( Office=$OffType OR Office=" . $Org['OrgType2'] . " )");
+    $OpTypes = Gen_Get_Cond('OrgActions',"(NotBy&$NOTBY)=0 AND ( Office=$OffType OR Office=" . $Org['OrgType2'] .
+      " OR ((Props&" . OPER_ALLORGS . ")!=0))");
   }
 
   if ($OrgTypes[$Org['OrgType']]['Props'] & ORG_NO_BRANCHES) {
@@ -394,7 +395,11 @@
           echo "<h2>There are no known anomalies there</h2>";
           break;
         }
-
+      } else if (($OpTypes[$op]['Props'] & OPER_LEVELMOD)) {
+        echo fm_hidden('Stage',5) . fm_hidden('op',$op) . fm_hidden('W',$Wh) . fm_hidden('O',$OrgId) .fm_hidden('t',$Turn);
+        echo fm_number('Level Modifier',$_REQUEST,'SP','','min=0'); " As specified by the GMs.";
+        echo "<button class=projtype type=submit>Proceed</button>";
+        break;
       }
     case 5: // Complete /Restart/ etc
       $TSys = Get_System($Wh);
@@ -416,6 +421,7 @@
         $Level = $TechLevel-1;
       }
 
+      $Mod = 0;
       if ($SP) {
         if ($OpTypes[$op]['Props'] & OPER_SOCP) {
           $SocP = Get_SocialP($SP);
@@ -436,10 +442,12 @@
           $Name .= " Wormhole: " . $L['Name'];
         } else if (($OpTypes[$op]['Props'] & OPER_SCIPOINTS)) { // Science Points
           $Name .= " " . $Fields[$SP-1];
+        } else if (($OpTypes[$op]['Props'] & OPER_LEVELMOD)) {
+          $Mod = $SP;
         }
       }
 //      var_dump($OpTypes[$op]['Props'],$Name);
-      $Mod = ($OpTypes[$op]['Props'] & OPER_LEVEL);
+      if (($OpTypes[$op]['Props'] & OPER_LEVELMOD) == 0) $Mod = ($OpTypes[$op]['Props'] & OPER_LEVEL);
  //     var_dump($Mod,$Level);
       if ($Mod >= 4) {
         if ($Mod &4) $Mod = $Level;

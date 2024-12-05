@@ -499,12 +499,17 @@ function OperationsComplete() {
         break;
 
       case 'Spread the Word':
+        $To = $O['Para2'];
         $Wid = WorldFromSystem($O['SystemId'],$Fid);
         $World = Get_World($Wid);
         $SocP = Gen_Get('SocialPrinciples',$O['Para1']);
+        if (!$SocP) {
+          GMLog('<b>ERROR</b> Spread the Word ' . $Facts[$Fid]['Name']. ' to ' . $Facts[$To]['Name'] . ' of unknown principle ' . $O['Para1']);
+          break;
+        }
         $SPW = Gen_Get_Cond1('SocPsWorlds',"Principle=" . $O['Para1'] . " AND World=$Wid");
 
-        if ($SPW['Value'] > $O['Para2']) {
+        if (isset($SPW['Value']) && ($SPW['Value'] > $O['Para2'])) {
           TurnLog($Fid,"Spread the Word of '" . $SocP['Principle']  . "' to " . World_Name($Wid,$Fid) . " failed it is already at " . $SPW['Value']);
           GMLog("Spread the Word of '" . $SocP['Principle']  . "' to " . World_Name($Wid,$Fid) . " by " . $Org['Name'] . " of " .
             $Facts[$Fid]['Name'] . " failed it is already at " . $SPW['Value']);
