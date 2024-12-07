@@ -472,8 +472,8 @@
           }
 
 
-          echo "Anomaly: " . $A['Name'] . " location: " . ($Syslocs[$A['WithinSysLoc']]? $Syslocs[$A['WithinSysLoc']]: "Space") . "<p>";
-          echo "Description: " . $Parsedown->text(stripslashes($A['Description'])) . "<p>";
+          echo "<br><h3>Anomaly: " . $A['Name'] . "</h3>location: " . ($Syslocs[$A['WithinSysLoc']]? $Syslocs[$A['WithinSysLoc']]: "Space") . "<p>";
+          if ($A['Description']) echo "Description: " . $Parsedown->text(stripslashes($A['Description'])) . "<p>";
           $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
           if (!isset($FA['id'])) {
             $FA = ['State' => 1, 'FactionId'=>$Fid, 'AnomalyId'=>$Aid, 'Progress'=>0];
@@ -482,7 +482,7 @@
             $FA['State'] = 1;
             Gen_Put('FactionAnomaly',$FA);
           }
-          echo "<span style='Background:" . $AnStateCols[$FA['State']] . ";'>" . $FAnomalyStates[$FA['State']];
+          echo "<span style='Background:" . $AnStateCols[$FA['State']] . ";'>" . $FAnomalyStates[$FA['State']] . "</span>";
           echo "<br>Progress: " . ($FA['Progress']??0) . " / " . $A['AnomalyLevel'];
 
           if (($FA['State'] >= 3) && $A['Completion']) {

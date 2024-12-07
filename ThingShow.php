@@ -967,7 +967,8 @@ function Show_Thing(&$T,$Force=0) {
         $LDists = Get_DistrictsH($H['id']);
         if (isset($LDists[3])) break 2; // FOund a Shipyard
       }
-      if (isset($N['id']) && Get_Things_Cond($Fid,"Type=" . $TTNames['Orbital Repair Yards'] . " AND SystemId=" . $N['id'] . " AND BuildState=3")) break;
+      if (isset($N['id']) && Get_Things_Cond($Fid,"Type=" . $TTNames['Orbital Repair Yards'] . " AND SystemId=" . $N['id'] .
+        " AND BuildState=3")) break;
         // Orbital Shipyard
       continue 2;
 
@@ -984,13 +985,20 @@ function Show_Thing(&$T,$Force=0) {
 
     case 'Analyse Anomaly': // Analyse
       if (($T['Sensors'] == 0) || empty($N) ) continue 2;
-      $A = Gen_Get_Cond1('Anomalies',"SystemId=" . $T['SystemId']);
-      if ($A) {
-        $Aid = $A['id'];
-        $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
-        if (empty($FA['id']) ) continue 2;
-        if ($FA['State'] == 0 || $FA['State'] == 3) continue 2;
-        if ($FA['Progress'] < $A['AnomalyLevel']) break; // This anomaly can be studied (There may be more than one, but one is enough
+      $Anoms = Gen_Get_Cond('Anomalies',"SystemId=" . $T['SystemId']);
+      if ($Anoms) {
+        foreach ($Anoms as $Aid=>$A) {
+          $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
+          if (empty($FA['id']) ) continue;
+          if ($FA['State'] == 0 || $FA['State'] == 3) continue;
+          if ($FA['Progress'] >= $A['AnomalyLevel']) continue; // Done
+          $LocGr = intdiv($A['WithinSysLoc'],100);
+          if (($A['WithinSysLoc'] == 3) || ($LocGr == 2) || ($LocGr ==4)) { // Ground
+            if ($tprops & THING_HAS_ARMYMODULES) break 2; // Valid
+          } else { // Space
+            if ($tprops & THING_HAS_SHIPMODULES) break 2; // Valid
+          }
+        }
       }
       continue 2; // NOt yet
 
@@ -1260,7 +1268,7 @@ function Show_Thing(&$T,$Force=0) {
     if ($Moving && $HasDeep) echo " Note <span class=Red>Moving</span>, so no DSC instructions are shown";
     switch ($ThingInstrs[abs($T['Instruction'])]) {
     case 'None': // None
-      $T['Dist1'] = $T['Dist2'] = 0;
+      $T['ProjectId'] = $T['Dist1'] = $T['Dist2'] = 0;
       break;
 
     case 'Colonise': // Colonise
@@ -1387,6 +1395,16 @@ function Show_Thing(&$T,$Force=0) {
           $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
           if (empty($FA['id'])) continue;
           if ($FA['Progress'] < $A['AnomalyLevel']) {
+            $LocGr = intdiv($A['WithinSysLoc'],100);
+ //           echo "<tr><td>"; var_dump($tprops,$LocGr);
+            if (($A['WithinSysLoc'] == 3) || ($LocGr == 2) || ($LocGr ==4)) { // Ground
+              if (($tprops & THING_HAS_ARMYMODULES) == 0) continue;
+ //             echo "Ground";
+            } else { // Space
+              if (($tprops & THING_HAS_SHIPMODULES) == 0) continue;
+  //            echo "Space";
+
+            }
             $Alist[$Aid] = $A['Name'] . " - takes " . $A['AnomalyLevel'] . " Sensor Points to Analyse.\n";
             $LastA = $A['Name'];
             $Al = $Aid;
