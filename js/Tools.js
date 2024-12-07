@@ -1,4 +1,4 @@
-// Tools for any page - will move many things here in time
+n// Tools for any page - will move many things here in time
 
 
 // SelectAll/None for any page - 
@@ -537,3 +537,12 @@ function HideTechSet(idx) {
   $('#HideSupTechs' + idx).hide();
 }
 
+function AddTrack(id) {
+  debugger;
+  var mod = document.getElementById('Ignore:' + id);
+  var mval = mod.value;
+  var Cval = document.getElementById(id);
+  Cval.value = Number(Cval.value) + Number(mval);
+  mod.value = '';
+  AutoInput(id,'Generic');
+}

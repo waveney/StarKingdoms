@@ -48,19 +48,28 @@ $NewResNames = NamesList($ResTypes);
 echo "<table border>";
 if ($GM) {
   echo "<h2><a href= Tracked.php?FORCE>This Page in Player Mode</a></h2>";
-  echo "<form method=post>";
-  Register_AutoUpdate('Generic',0);
 
-  echo "<tr>" . fm_number('Credits',$FACTION,'Credits','','',"Factions:Credits:$Fid");
-  echo "<tr>" . fm_number('Physics Points', $FACTION,'PhysicsSP','','',"Factions:PhysicsSP:$Fid");
-  echo "<tr>" . fm_number('Engineering Points', $FACTION,'EngineeringSP','','',"Factions:EngineeringSP:$Fid");
-  echo "<tr>" . fm_number('Xenology Points', $FACTION,'XenologySP','','',"Factions:XenologySP:$Fid");
-  if ($Nam = GameFeature('Currency1')) echo "<tr>" . fm_number($Nam, $FACTION,'Currency1','','',"Factions:Currency1:$Fid");
-  if ($Nam = GameFeature('Currency2')) echo "<tr>" . fm_number($Nam, $FACTION,'Currency2','','',"Factions:Currency2:$Fid");
-  if ($Nam = GameFeature('Currency3')) echo "<tr>" . fm_number($Nam, $FACTION,'Currency3','','',"Factions:Currency3:$Fid");
+  echo "<form method=post>";
+  Register_AutoUpdate('Generic',0);  echo "<tr><th>Track<th>Value<th colspan=2>Actions";
+  $Ign = [];
+  echo "<tr>" . fm_number('Credits',$FACTION,'Credits','','',"Factions:Credits:$Fid") .
+    fm_number1('',$Ign,"Ignore:Factions:Credits:$Fid") . "<button type=button onclick=AddTrack('Factions:Credits:$Fid')>Add</button>";
+  echo "<tr>" . fm_number('Physics Points', $FACTION,'PhysicsSP','','',"Factions:PhysicsSP:$Fid").
+    fm_number1('',$Ign,"Ignore:Factions:PhysicsSP:$Fid") . "<button type=button onclick=AddTrack('Factions:PhysicsSP:$Fid')>Add</button>";
+  echo "<tr>" . fm_number('Engineering Points', $FACTION,'EngineeringSP','','',"Factions:EngineeringSP:$Fid") .
+    fm_number1('',$Ign,"Ignore:Factions:EngineeringSP:$Fid") . "<button type=button onclick=AddTrack('Factions:EngineeringSP:$Fid')>Add</button>";
+  echo "<tr>" . fm_number('Xenology Points', $FACTION,'XenologySP','','',"Factions:XenologySP:$Fid") .
+    fm_number1('',$Ign,"Ignore:Factions:XenologySP:$Fid") . "<button type=button onclick=AddTrack('Factions:XenologySP:$Fid')>Add</button>";
+  if ($Nam = GameFeature('Currency1')) echo "<tr>" . fm_number($Nam, $FACTION,'Currency1','','',"Factions:Currency1:$Fid") .
+    fm_number1('',$Ign,"Ignore:Factions:Currency1:$Fid") . "<button type=button onclick=AddTrack('Factions:Currency1:$Fid')>Add</button>";
+  if ($Nam = GameFeature('Currency2')) echo "<tr>" . fm_number($Nam, $FACTION,'Currency2','','',"Factions:Currency2:$Fid").
+    fm_number1('',$Ign,"Ignore:Factions:Currency2:$Fid") . "<button type=button onclick=AddTrack('Factions:Currency2:$Fid')>Add</button>";
+  if ($Nam = GameFeature('Currency3')) echo "<tr>" . fm_number($Nam, $FACTION,'Currency3','','',"Factions:Currency3:$Fid").
+    fm_number1('',$Ign,"Ignore:Factions:Currency3:$Fid") . "<button type=button onclick=AddTrack('Factions:Currency3:$Fid')>Add</button>";
 
   foreach ($Tracks as $ti=>$Tr) {
     echo "<tr>" . fm_number(($ResTypes[$Tr['Type']]['Name']??'Unknown'),$Tr,'Value','','',"Resources:Value:$ti") .
+      fm_number1('',$Ign,"Ignore:Resources:Value:$ti") . "<button type=button onclick=AddTrack('Resources:Value:$ti')>Add</button>" .
       fm_submit('ACTION','Remove',1,"formaction=Tracked.php?Ti=$ti");
       unset($NewResNames[$Tr['Type']]);
   }

@@ -366,11 +366,15 @@
   case 'Generic' : // General case of table:field:id
     if ((preg_match('/(\w*):(\w*):(\d*)/',$field,$mtch)?true:false)) {
       $t = $mtch[1];
+      if ($t == 'Ignore') exit;
       $f = $mtch[2];
       $i = $mtch[3];
       $N = Gen_Get($t,$i);
       $N[$f] = $Value;
       echo Gen_Put($t,$N);
+    }
+    if ((preg_match('/Ignore:(\w*):(\w*):(\d*)/',$field,$mtch)?true:false)) {
+      exit;
     }
     exit;
 
