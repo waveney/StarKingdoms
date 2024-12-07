@@ -697,7 +697,7 @@ function Faction_Feature($Name,$Default=0){
   if (empty($Features)) {
     $Features = parse_ini_string($FACTION['Features']?? '');
   }
-  return ($Features[$Name] ?? $Default);
+  return ($Features[$Name] ?? Feature($Name,$Default));
 }
 
 function Tracks() {

@@ -38,7 +38,7 @@
 function ForceReport($Sid,$Cat) {
   global $Facts, $Homes, $TTypes, $ModTypes, $N, $Techs, $ThingProps,$ARMY ;
   $Things = Get_Things_Cond(0,"SystemId=$Sid AND ( BuildState=2 OR BuildState=3) ORDER BY Whose");
-  $LastF = $Home = $Control = 0;
+  $LastF = $Home = $Control = -1;
   $txt = $ftxt = $htxt = $Battct = '';
   $TMsk = ($Cat=='G'?1:2);
   $PlanMoon = [];
@@ -81,7 +81,7 @@ function ForceReport($Sid,$Cat) {
       if ($T['PrisonerOf'] != 0) continue; // Prisoners
       $Tid = $T['id'];
       if ($LastF != $T['Whose']) {
-        if ($LastF) {
+        if ($LastF >=0) {
           echo $htxt;
           if ($Bat) echo "Battle Tactics: Effectively $Bat ( $Battct ) <br>";
           echo  $ftxt. "<br>Total Firepower: $FirePower" . $txt;
@@ -89,14 +89,15 @@ function ForceReport($Sid,$Cat) {
         $BD = $Bat = 0;
         $LastF = $T['Whose'];
         $FirePower = 0;
-        $htxt = "<tr><td colspan=7 style='background:" . $Facts[$LastF]['MapColour'] . "'><h2>" . $Facts[$LastF]['Name'] . "</h2><tr><td colspan=7>";
+        $htxt = "<tr><td colspan=7 style='background:" . ($Facts[$LastF]['MapColour']??'Bisque') . "'><h2>" .
+          ($Facts[$LastF]['Name']??'Independant') . "</h2><tr><td colspan=7>";
         $txt = $Battct = $ftxt = '';
         $txt .= "<br>Damage recieved: <span id=DamTot$Cat$LastF>0</span>";
 
         $FTs = Get_Faction_Techs($LastF);
 
         foreach ($FTs as $FT) {
-          if (empty($FT['Tech_Id'])) continue;
+          if (empty($FT['Tech_Id']) || empty($Techs[$FT['Tech_Id']])) continue;
 
           $Tech = $Techs[$FT['Tech_Id']];
           if ($Tech['Properties'] & $TMsk) {
@@ -161,6 +162,7 @@ function ForceReport($Sid,$Cat) {
       $txt .= fm_checkbox(', Retreat?',$T,'RetreatMe','',"RetreatMe:$Tid");
 
       $FirePower += $BD;
+    } else {
     }
 
   }
@@ -169,6 +171,7 @@ function ForceReport($Sid,$Cat) {
     if ($Bat) echo "Battle Tactics: Effectively $Bat ( $Battct ) <br>";
     echo  $ftxt. "<br>Total Firepower: <span id=FirePower:$LastF>$FirePower</span>" . $txt;
   }
+//  var_dump($txt,$htxt);
   echo "</table>";
 }
 
@@ -348,7 +351,6 @@ function ForceReport($Sid,$Cat) {
       echo "System: <a href=Meetings.php?ACTION=Check&S=$Sid$TurnP>" . $N['Ref'] . "</a> has ";
 
       $React = 9;
- //     var_dump($Fs);
       foreach ($Fs as $F1=>$FS1) {
         if ($F1 == 0) continue;
         foreach($Fs as $F2=>$FS2) {
