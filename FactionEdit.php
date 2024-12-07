@@ -115,9 +115,9 @@ function Show_Faction(&$F,$Mode) {
   }
 
   echo "<tr>" . fm_textarea('Notes',$F,'Notes',8,2);
+  echo "<tr>" . fm_textarea('Features',$F,'Features',8,2,'');
 
   if ($GM) {
-    echo "<tr>" . fm_textarea('Features',$F,'Features',8,2,' class=NotSide');
     echo "<tr>" . fm_textarea('GM_Notes',$F,'GM_Notes',8,2,' class=NotSide');
     echo "<tr>" . fm_text('Map Colour',$F,'MapColour',1,' class=NotSide') . fm_text('Map Text Colour',$F,'MapText',1,' class=NotSide')
     . fm_number('HomeWorld',$F,'HomeWorld',' class=NotSide');

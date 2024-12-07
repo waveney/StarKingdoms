@@ -314,13 +314,15 @@
   }
 
   echo "<h1>Display Projects</h1>";
+  $LookForward = Faction_Feature('Projects_Forward',10);
+  $LookBack = Faction_Feature('Projects_Back',-1);
 
   echo "<div class=floatright style=text-align:right><div class=Bespoke>" .
-       "Showing:<button class=BigSwitchSelected id=BespokeM onclick=Add_Bespoke()>10 Turns</button><br>" .
+       "Showing:<button class=BigSwitchSelected id=BespokeM onclick=Add_Bespoke()>$LookForward Turns</button><br>" .
        "Switch to: <button class=BigSwitch id=GenericM onclick=Add_Bespoke()>All Turns</button></div>" .
        "<div class=Bespoke hidden id=BespokeMess>" .
        "Showing:<button class=BigSwitchSelected id=GenericM1 onclick=Remove_Bespoke()>All Turns</button><br>" .
-       "Switch to: <button class=BigSwitch id=BespokeM1 onclick=Remove_Bespoke()>10 Turns</button></div>" .
+       "Switch to: <button class=BigSwitch id=BespokeM1 onclick=Remove_Bespoke()>$LookForward Turns</button></div>" .
        "<h2><a href=ProjDisp.php>Refresh</a></h2>" .
        "</div>";
 
@@ -699,8 +701,8 @@
   for($Turn=0; $Turn<($GAME['Turn']+50); $Turn++) {
     $RowClass = "ProjHide";
     $hide = ' hidden';
-    if ($Turn >= ($GAME['Turn']-1) && $Turn < ($GAME['Turn']+9)) {
-        $RowClass = 'projhow';
+    if ($Turn >= ($GAME['Turn']+$LookBack) && $Turn < ($GAME['Turn']+$LookForward-1)) {
+      $RowClass = 'projhow';
         $hide = '';
     }
 

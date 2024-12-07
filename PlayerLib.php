@@ -690,11 +690,12 @@ function Income_Calc($Fid) {
 
 }
 
-function Faction_Feature($Fid,$Name,$Default=0){
+function Faction_Feature($Name,$Default=0){
+  global $FACTION;
   static $Features;
-  if (empty($Features[$Fid])) {
-    $Fact= Get_Faction($Fid);
-    $Features[$Fid] = parse_ini_string($Fact['Features']?? '');
+  if (empty($FACTION) || empty($FACTION['Features'])) return $Default;
+  if (empty($Features)) {
+    $Features = parse_ini_string($FACTION['Features']?? '');
   }
   return ($Features[$Name] ?? $Default);
 }

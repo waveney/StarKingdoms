@@ -541,14 +541,14 @@ function CheckSurveyReports() {
   $Facts = Get_Factions();
   $Started = 0;
   $LastSys = 0;
-  $LastType = -1;
+  $LastFid = $LastType = -1;
 
   foreach($Scans as $spid=>$S) {
 
     $Fid = $S['FactionId'];
     $Sid = $S['Sys'];
     $SSid = $S['id'];
-    if (($LastSys == $Sid)  && ($LastType = $S['Type'])) continue;
+    if (($LastFid == $Fid) && ($LastSys == $Sid) && ($LastType == $S['Type'])) continue;
     $FS = Get_FactionSystemFS($Fid,$Sid);
 
 //var_dump($FS);
@@ -579,6 +579,7 @@ function CheckSurveyReports() {
       "<td>Allow? " . fm_YesNo("Scan$spid",1, "Reason to reject") . "\n<br>");
     $LastSys = $Sid;
     $LastType = $S['Type'];
+    $LastFid = $Fid;
   }
   if ($Started) {
     GMLog("</table>\n");
@@ -632,7 +633,7 @@ function GiveSurveyReports() {
       }
       if ($Changed) {
         Put_FactionSystem($FS);
-        if (($Fid != $LastFid) || ($LastSys != $S['Sys'])) {
+   //     if (($Fid != $LastFid) || ($LastSys != $S['Sys'])) {
           $N = Get_System($S['Sys']);
           if (!$New) {
             TurnLog($Fid, "<h3>You are due an improved survey report for <a href=SurveyReport.php?N=" . $S['Sys'] . ">" . System_Name($N,$Fid) . "</a>" .
@@ -641,7 +642,7 @@ function GiveSurveyReports() {
             TurnLog($Fid, "<h3>You are have new survey report for <a href=SurveyReport.php?N=" . $S['Sys'] . ">" . System_Name($N,$Fid) . "</a>" .
               " (Just click on the system on your map)</h3>");
           }
-        }
+     //   }
       }
     } else if (isset($_REQUEST["ReasonScan$spid"])) {
       $N = Get_System($S['Sys']);
