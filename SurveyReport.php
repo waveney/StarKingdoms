@@ -310,6 +310,27 @@
               echo $DistTypes[$DD['Type']]['Name'] . ": " . $DD['Number'];
             }
             echo "<p>";
+
+            $World = Gen_Get_Cond1('Worlds',"ThingType=1 AND ThingId=$Pid");
+            if ($World) {
+              $Offs = Gen_Get_Cond('Offices',"World=" . $World['id']);
+              if ($Offs) {
+                $Clean = [];
+                foreach ($Offs as $i=>$Of) {
+                  $Org = Gen_Get('Organisations',$Of['Organisation']);
+                  $OrgType = Gen_Get('OfficeTypes',$Of['OrgType']);
+
+                  if ($OrgType['Props']&1) continue; // Hidden
+                  $Clean[]= $Org['Name'] . " (" . $OrgType['Name'] . ") ";
+
+                }
+
+                if ($Clean) {
+                  echo "<p>Offices: " . implode(', ',$Clean) . "<p>";
+                }
+              }
+            }
+
           }
         }
 
@@ -381,6 +402,26 @@
                   echo $DistTypes[$D['Type']]['Name'] . ": " . $D['Number'];
                 }
                 echo "<p>";
+
+                $World = Gen_Get_Cond1('Worlds',"ThingType=2 AND ThingId=$Mid");
+                if ($World) {
+                  $Offs = Gen_Get_Cond('Offices',"World=" . $World['id']);
+                  if ($Offs) {
+                    $Clean = [];
+                    foreach ($Offs as $i=>$Of) {
+                      $Org = Gen_Get('Organisations',$Of['Organisation']);
+                      $OrgType = Gen_Get('OfficeTypes',$Of['OrgType']);
+
+                      if ($OrgType['Props']&1) continue; // Hidden
+                      $Clean[]= $Org['Name'] . " (" . $OrgType['Name'] . ") ";
+
+                    }
+
+                    if ($Clean) {
+                      echo "<p>Offices: " . implode(', ',$Clean) . "<p>";
+                    }
+                  }
+                }
               }
             }
 
