@@ -588,5 +588,18 @@ function System_Name(&$N,$Fid=0) {
   return $pname;
 }
 
+function Survey_Save($Fid,$Sid,&$Survey) {
+  global $GAME,$GAMEID;
+  $dir = "Games/$GAMEID/Factions/$Fid";
+  if (!is_dir($dir)) mkdir($dir);
+  file_put_contents("$dir/$Sid", $Survey);
+}
+
+function Survey_Read($Fid,$Sid) {
+  global $GAME,$GAMEID;
+  $file = "Games/$GAMEID/Factions/$Fid/$Sid";
+//  if (!file_exists($file)) return 0;
+  return file_get_contents($file);
+}
 
 ?>

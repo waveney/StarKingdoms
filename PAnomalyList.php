@@ -52,6 +52,7 @@
     echo "<thead><tr>";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Where</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Ground /<br>Space</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>State</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Progress</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Description</a>\n";
@@ -61,8 +62,13 @@
       $Aid = $FA['AnomalyId'];
       $A = Get_Anomaly($Aid);
       if (empty($A['Name'])) continue;
+      $Loc = 'Space';
+      $LocGr = intdiv($A['WithinSysLoc'],100);
+      if (($A['WithinSysLoc'] == 3) || ($LocGr == 2) || ($LocGr ==4)) $Loc = 'Ground';
+
+
       $N = Get_System($A['SystemId']);
-      echo "<tr><td>" . $A['Name'] . "<td><a href=SurveyReport.php?R=" . $N['Ref'] . ">" . $N['Ref'] .
+      echo "<tr><td>" . $A['Name'] . "<td><a href=SurveyReport.php?R=" . $N['Ref'] . ">" . $N['Ref'] . "<td>$Loc" .
            "<td style='Background:" . $AnStateCols[$FA['State']] . ";'>" . $FAnomalyStates[$FA['State']] . "<td>";
       echo $FA['Progress'] . " / " . $A['AnomalyLevel'] . "<td colspan=4>" .  $Parsedown->text(stripslashes($A['Description']));
 //      echo "</tr>";

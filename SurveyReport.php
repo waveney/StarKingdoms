@@ -55,7 +55,7 @@
   } else { // GM access
     $FS = [];
     if (isset($_REQUEST['V'])) {
-      $SurveyLevel = $_REQUEST['V'];
+      $SurveyLevel = $PlanetLevel = $SpaceLevel = $_REQUEST['V'];
     } else if (Access('GM')) {
       $SurveyLevel = $PlanetLevel = $SpaceLevel = 100;
     }
