@@ -27,6 +27,7 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Limited</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Other Reqs</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Location</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Ground /<br>Space</a>\n";
   echo "</thead><tbody>";
 
   foreach($As as $A) {
@@ -37,7 +38,11 @@
     echo "<td>" . ($A['Properties']?'Yes':'');
     echo "<td>" . ($A['OtherReq']?'Yes':'');
     echo "<td>" . ($Systems[$A['SystemId']]??'???');
-    }
+    $Loc = 'Space';
+    $LocGr = intdiv($A['WithinSysLoc'],100);
+    if (($A['WithinSysLoc'] == 3) || ($LocGr == 2) || ($LocGr ==4)) $Loc = 'Ground';
+    echo "<td>$Loc";
+  }
   echo "</tbody></table></div>\n";
 
   echo "<h2><a href=AnomalyEdit.php?ACTION=NEW>New Anomaly</a></h2>";

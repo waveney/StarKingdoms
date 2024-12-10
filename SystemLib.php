@@ -602,4 +602,376 @@ function Survey_Read($Fid,$Sid) {
   return file_get_contents($file);
 }
 
-?>
+function Planet_Save($Fid,$Pid,&$Survey) {
+  global $GAME,$GAMEID;
+  $dir = "Games/$GAMEID/Factions/$Fid/Planet";
+  if (!is_dir($dir)) mkdir($dir);
+  file_put_contents("$dir/$Pid", $Survey);
+}
+
+function Moon_Save($Fid,$Mid,&$Survey) {
+  global $GAME,$GAMEID;
+  $dir = "Games/$GAMEID/Factions/$Fid/Moon";
+  if (!is_dir($dir)) mkdir($dir);
+  file_put_contents("$dir/$Mid", $Survey);
+}
+
+function Space_Scan($Sid,$Level) {
+  // Wormholes, Sys Traits, Space Anoms
+  $Parsedown = new Parsedown();
+}
+
+function Planet_Scan($Pid,$Level) {
+  // Districts, Offices, Traits, Anoms
+  $Parsedown = new Parsedown();
+}
+
+function Moon_Scan($Mid,$Level) {
+  // Districts, Offices, Traits, Anoms
+  $Parsedown = new Parsedown();
+}
+
+function PlanetScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
+  global $LinkStates,$GAMEID,$FAnomalyStates;
+  $Parsedown = new Parsedown();
+  $PTD = Get_PlanetTypes();
+  $DistTypes = Get_DistrictTypes();
+
+  $blobs = [];
+
+  $N = Get_System($Sid);
+  $Ref = $N['Ref'];
+
+  $Ps = Get_Planets($Sid);
+  if (!$Ps) return '';
+  foreach ($Ps as $P) {
+    $ptxt = '';
+
+    $Pid = $P['id'];
+    $Mns = [];
+    if ($P['Moons']) $Mns = Get_Moons($Pid);
+    if ($P['Minerals']) {
+      if (( $PTD[$P['Type']]['Hospitable'] && ($PlanetLevel>0)) ||
+        (!$PTD[$P['Type']]['Hospitable'] && ($SpaceLevel>0))) {
+          $ptxt .= "It has a minerals rating of <b>" . $P['Minerals'] . "</b><p> ";
+        }
+    }
+
+    if ($PTD[$P['Type']]['Hospitable'] && ($PlanetLevel>0)) {
+      $ptxt .= "It has a colonisation rating of <b>" . (Feature('BaseColonise',10) + $P['ColonyTweak']) . "</b><p>";
+    }
+
+    if ($ptxt) {
+      $blobs[]= "A$Pid";
+      $blobs[]= $ptxt;
+      $ptxt = '';
+    }
+
+    $Ds = Get_DistrictsP($Pid);
+    if ($Ds) {
+      $ptxt .= "<p>Districts: ";
+      $dc = 0;
+      foreach ($Ds as $DD) {
+        if (!isset($DistTypes[$DD['Type']])) continue;
+        if ($dc++) $ptxt .=  ", ";
+        $ptxt .= $DistTypes[$DD['Type']]['Name'] . ": " . $DD['Number'];
+      }
+      echo "<p>";
+
+      $World = Gen_Get_Cond1('Worlds',"ThingType=1 AND ThingId=$Pid");
+      if ($World) {
+        $Offs = Gen_Get_Cond('Offices',"World=" . $World['id']);
+        if ($Offs) {
+          $Clean = [];
+          foreach ($Offs as $i=>$Of) {
+            $Org = Gen_Get('Organisations',$Of['Organisation']);
+            $OrgType = Gen_Get('OfficeTypes',$Org['OrgType']);
+            if ($OrgType['Props']&1) continue; // Hidden
+            $Clean[]= $Org['Name'] . " (" . $OrgType['Name'] . ") ";
+
+          }
+
+          if ($Clean) {
+            $ptxt .=  "<p>Offices: " . implode(', ',$Clean) . "<p>";
+          }
+        }
+      }
+    }
+
+    // Traits
+    $PlanTrait = 0;
+    for($i=1;$i<4;$i++) {
+      if ($P["Trait$i"] && ($P["Trait$i" . "Conceal"] <= $PlanetLevel)) {
+        if ($PlanTrait++ == 0) {
+          $ptxt .=  "<h2>Planet Traits:</h2>";
+        }
+        //            var_dump($P,$PlanetLevel);
+        $ptxt .=  "Planet " . $P['Name'] . " has the trait: " . $P["Trait$i"] . "<br>" . $Parsedown->text(stripslashes($P["Trait$i" . "Desc"])) . "<p>";
+      }
+    }
+
+    if ($ptxt) {
+      $blobs[]= "B$Pid";
+      $blobs[]= $ptxt;
+      $ptxt = '';
+    }
+
+    if ($Mns) {
+      //Moons of
+      foreach ($Mns as $M) {
+        $Mid = $M['id'];
+
+        if ($M['Minerals']) {
+          if (( $PTD[$M['Type']]['Hospitable'] && ($PlanetLevel>0)) ||
+            (!$PTD[$M['Type']]['Hospitable'] && ($SpaceLevel>0))) {
+              $ptxt .= "It has a minerals rating of <b>" . $M['Minerals'] . "</b><p>.  ";
+            }
+        }
+        if ($PTD[$P['Type']]['Hospitable'] && ($PlanetLevel>0)) {
+          $ptxt .= "It has a colonisation rating of <b>" . (Feature('BaseColonise',10) + $M['ColonyTweak']) . "</b><p>";
+        }
+
+        if ($ptxt) {
+          $blobs[]= "C$Mid";
+          $blobs[]= $ptxt;
+          $ptxt = '';
+        }
+
+        // Districts
+        $Ds = Get_DistrictsM($Mid);
+
+        if ($Ds) { // &&
+          $ptxt .= "<p>Districts: ";
+          $dc = 0;
+          foreach ($Ds as $D) {
+            if ($dc++) $ptxt .= ", ";
+            $ptxt .= $DistTypes[$D['Type']]['Name'] . ": " . $D['Number'];
+          }
+          $ptxt .= "<p>";
+
+          $World = Gen_Get_Cond1('Worlds',"ThingType=2 AND ThingId=$Mid");
+          if ($World) {
+            $Offs = Gen_Get_Cond('Offices',"World=" . $World['id']);
+            if ($Offs) {
+              $Clean = [];
+              foreach ($Offs as $i=>$Of) {
+                $Org = Gen_Get('Organisations',$Of['Organisation']);
+                $OrgType = Gen_Get('OfficeTypes',$Of['OrgType']);
+
+                if ($OrgType['Props']&1) continue; // Hidden
+                $Clean[]= $Org['Name'] . " (" . $OrgType['Name'] . ") ";
+
+              }
+
+              if ($Clean) {
+                $ptxt .= "<p>Offices: " . implode(', ',$Clean) . "<p>";
+              }
+            }
+          }
+        }
+      }
+
+      // Traits
+      $PlanTrait = 0;
+      for($i=1;$i<4;$i++) {
+        if ($M["Trait$i"] && ($M["Trait$i" . "Conceal"] <= $PlanetLevel)) {
+          if ($PlanTrait++ == 0) {
+            $ptxt .=  "<h2>Planet Traits:</h2>";
+          }
+          $ptxt .=  "Moon " . $M['Name'] . " has the trait: " . $M["Trait$i"] . "<br>" .
+            $Parsedown->text(stripslashes($M["Trait$i" . "Desc"])) . "<p>";
+        }
+      }
+
+      if ($ptxt) {
+        $blobs[]= "D$Pid";
+        $blobs[]= $ptxt;
+        $ptxt = '';
+      }
+    }
+  }
+
+  $Anoms = Gen_Get_Cond('Anomalies',"GameId=$GAMEID AND SystemId=$Sid");
+  $Shown = 0;
+  $AnStateCols = ['White','Lightgreen','Yellow','Pink','Green'];
+
+  if ($Anoms) {
+    foreach($Anoms as $Aid=>$A) {
+      $Loc = 0; // Space
+      $LocCat = $A['WithinSysLoc']%100;
+      if (($A['ScanLevel']<=$PlanetLevel) && ($LocCat ==2 || $LocCat == 4)) {
+
+        if (!$GM){
+          $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
+          if (empty($FA['id'])) {
+            if ($A['ScanLevel'] <0) continue;
+          }
+        }
+
+        if (!$Shown) {
+          $ptxt .=  "<h2>Ground Anomalies</h2>";
+          $Shown = 1;
+        }
+
+
+        $ptxt .=  "<br><h3>Anomaly: " . $A['Name'] . "</h3>location: " . ($Syslocs[$A['WithinSysLoc']]? $Syslocs[$A['WithinSysLoc']]: "Space") . "<p>";
+        if ($A['Description']) $txt .=  "Description: " . $Parsedown->text(stripslashes($A['Description'])) . "<p>";
+        if (!$GM) {
+          $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
+          if (!isset($FA['id'])) {
+            $FA = ['State' => 1, 'FactionId'=>$Fid, 'AnomalyId'=>$Aid, 'Progress'=>0];
+            Gen_Put('FactionAnomaly',$FA);
+          } else if (($FA['State']??0) < 1) {
+            $FA['State'] = 1;
+            Gen_Put('FactionAnomaly',$FA);
+          }
+          $ptxt .=  "<span style='Background:" . $AnStateCols[$FA['State']] . ";'>" . $FAnomalyStates[$FA['State']] . "</span>";
+          $ptxt .=  "<br>Progress: " . ($FA['Progress']??0) . " / " . $A['AnomalyLevel'];
+
+          if (($FA['State'] >= 3) && $A['Completion']) {
+            $ptxt .=  "Complete: " . $Parsedown->text(stripslashes($A['Completion'])) . "<p>";
+          }
+        }
+      }
+    }
+
+    if ($ptxt) {
+      $blobs[]= "Z0";
+      $blobs[]= $ptxt;
+      $ptxt = '';
+    }
+  }
+
+  return implode('::::',$blobs);
+}
+
+function Record_PlanetScan(&$FS) {
+  global $GAME;
+  $N = Get_System($FS['SystemId']);
+  $SLocs = Within_Sys_Locs($N);
+
+  $FS['PlanetSurvey'] = PlanetScanBlob($FS['SystemId'],$FS['FactionId'],max(0,$FS['SpaceScan']),max(0,$FS['PlanetScan']),$SLocs);
+  $FS['PlanetTurn'] = $GAME['Turn'];
+  Put_FactionSystem($FS);
+}
+
+function SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
+  global $LinkStates,$GAMEID,$FAnomalyStates;
+  $Parsedown = new Parsedown();
+
+  $txt = '';
+
+  $N = Get_System($Sid);
+  $Ref = $N['Ref'];
+
+  $Ls = Get_Links($Ref);
+  $txt .= "<BR CLEAR=ALL><h2>There are " . Feature('LinkRefText','Stargate') . "s to:</h2><ul>\n";
+
+  foreach ($Ls as $L) {
+    $OSysRef = ($L['System1Ref']==$Ref? $L['System2Ref']:$L['System1Ref']);
+    $ON = Get_SystemR($OSysRef);
+    if ($GM ) {
+      $LinkKnow = ['Known'=>1];
+    } else {
+      $LinkKnow = Get_FactionLinkFL($Fid,$L['id']);
+      //     var_dump($LinkKnow,$L,$SpaceLevel);
+      if (!(isset($LinkKnow['id']))) {
+        if ($L['Concealment']<=max(0,$SpaceLevel)) {
+          $LinkKnow = ['Known'=>1];
+        } else {
+          continue;
+        }
+      }
+    }
+
+    $txt .=  "<li>Link " . ($L['Name']?$L['Name']:"#" . $L['id']) . " ";
+    if ($LinkKnow['Name']??0) $txt .=  " (AKA " .$LinkKnow['Name'] . " ) ";
+
+    if ($LinkKnow['Known']) {
+      //        $name = NameFind($L);
+      //        if ($name) echo " ( $name ) ";
+      $txt .=  " to " . ReportEnd($ON) . " Instability: " . $L['Instability'] . " Concealment: " . $L['Concealment'];
+      // " level " . $LinkLevels[abs($L['Level'])]['Colour'];
+    } else {
+      $txt .=  " to an unknown location." . " Instability: " . $L['Instability'] . " Concealment: " . $L['Concealment'];
+      //Level " .  $LinkLevels[abs($L['Level'])]['Colour'];
+    }
+    if ($L['Status'] != 0) $txt .= " <span class=Red>" . $LinkStates[$L['Status']] . "</span>";
+
+  }
+  $txt .=  "</ul><p>\n";
+
+// Known Space ANOMALIES
+  $Anoms = Gen_Get_Cond('Anomalies',"GameId=$GAMEID AND SystemId=$Sid");
+  $Shown = 0;
+  $AnStateCols = ['White','Lightgreen','Yellow','Pink','Green'];
+
+  if ($Anoms) {
+    foreach($Anoms as $Aid=>$A) {
+      $Loc = 0; // Space
+      $LocCat = $A['WithinSysLoc']%100;
+      if ($LocCat ==2 || $LocCat == 4) $Loc=1; // Ground;
+      if (($Loc == 1) && $A['VisFromSpace']) $Loc=3; // Vis From Space
+
+      if (($A['ScanLevel']<=$SpaceLevel) && ($Loc ==0 || $Loc==3)) {
+
+          if (!$GM){
+            $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
+            if (empty($FA['id'])) {
+              if ($A['ScanLevel'] <0) continue;
+            }
+          }
+
+          if (!$Shown) {
+            $txt .=  "<h2>Space Anomalies</h2>";
+            $Shown = 1;
+          }
+
+
+          $txt .=  "<br><h3>Anomaly: " . $A['Name'] . "</h3>location: " . ($Syslocs[$A['WithinSysLoc']]? $Syslocs[$A['WithinSysLoc']]: "Space") . "<p>";
+          if ($A['Description']) $txt .=  "Description: " . $Parsedown->text(stripslashes($A['Description'])) . "<p>";
+          if (!$GM) {
+            $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
+            if (!isset($FA['id'])) {
+              $FA = ['State' => 1, 'FactionId'=>$Fid, 'AnomalyId'=>$Aid, 'Progress'=>0];
+              Gen_Put('FactionAnomaly',$FA);
+            } else if (($FA['State']??0) < 1) {
+              $FA['State'] = 1;
+              Gen_Put('FactionAnomaly',$FA);
+            }
+            $txt .=  "<span style='Background:" . $AnStateCols[$FA['State']] . ";'>" . $FAnomalyStates[$FA['State']] . "</span>";
+            $txt .=  "<br>Progress: " . ($FA['Progress']??0) . " / " . $A['AnomalyLevel'];
+
+            if (($FA['State'] >= 3) && $A['Completion']) {
+              $txt .=  "Complete: " . $Parsedown->text(stripslashes($A['Completion'])) . "<p>";
+            }
+          }
+        }
+    }
+  }
+
+  if ($SpaceLevel>0) {
+    $SysTrait = 0;
+    for($i=1;$i<4;$i++) {
+      if ($N["Trait$i"] && ($N["Trait$i" . "Conceal"] <= $SpaceLevel)) {
+        if ($SysTrait++ == 0) {
+          $txt .=  "<h2>System Traits:</h2>";
+        }
+        $txt .=  "System has the trait: " . $N["Trait$i"] . "<br>" . $Parsedown->text(stripslashes($N["Trait$i" . "Desc"])) . "<p>";
+      }
+    }
+  }
+
+  return $txt;
+}
+
+function Record_SpaceScan(&$FS) {
+  global $GAME;
+  $N = Get_System($FS['SystemId']);
+  $SLocs = Within_Sys_Locs($N);
+
+  $FS['SpaceSurvey'] = SpaceScanBlob($FS['SystemId'],$FS['FactionId'],max(0,$FS['SpaceScan']),max(0,$FS['PlanetScan']),$SLocs);
+  $FS['SpaceTurn'] = $GAME['Turn'];
+  Put_FactionSystem($FS);
+}
+

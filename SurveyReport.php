@@ -41,7 +41,7 @@
   $PlanetLevel = $SpaceLevel = $ScanLevel = 0;
   $Syslocs = Within_Sys_Locs($N);
 
-  if (!empty($FACTION)) { // Player mode
+  if (!$GM && !empty($FACTION)) { // Player mode
 //    $ScanSurveyXlate = [0=>0, 1=>1, 2=>3, 3=>5];
     $Fid = $FACTION['id'];
     $FS = Get_FactionSystemFS($Fid,$Sid);
@@ -52,12 +52,15 @@
     $ScanLevel = $FS['ScanLevel'];
     $PlanetLevel = max(0,$FS['PlanetScan']);
     $SpaceLevel = max(0,$FS['SpaceScan']);
+
+    $SpaceBlob = $FS['SpaceSurvey'];
+    $PlanBlob = $FS['PlanetSurvey'];
   } else { // GM access
     $FS = [];
     if (isset($_REQUEST['V'])) {
-      $SurveyLevel = $PlanetLevel = $SpaceLevel = $_REQUEST['V'];
+      $ScanLevel = $SurveyLevel = $PlanetLevel = $SpaceLevel = $_REQUEST['V'];
     } else if (Access('GM')) {
-      $SurveyLevel = $PlanetLevel = $SpaceLevel = 100;
+      $ScanLevel = $SurveyLevel = $PlanetLevel = $SpaceLevel = 100;
     }
 
     if (isset($_REQUEST['F'])) {
@@ -66,16 +69,19 @@
     } else {
       $Fid = 0;
     }
-
-    /*
-    if (isset($_REQUEST['M']) && $Fid ) {  // DUFF OLD  Needs changes if ever reused
-      $FS = Get_FactionSystemFS($Fid,$Sid);
-      $FS['ScanLevel'] = ($_REQUEST['L']?? $SurveyLevel);
-      if (isset($_REQUEST['N'])) $FS['NebScanned'] = ($_REQUEST['N']?? $SurveyLevel);
-      Put_FactionSystem($FS);
-    }*/
+    $SpaceBlob =  SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,$Syslocs,$GM);
+    $PlanBlob = PlanetScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,$Syslocs,$GM);
   }
-
+  $RawBlobs = explode('::::',$PlanBlob);
+  $Blobs = [];
+  $K = 'None';
+  foreach($RawBlobs as $i=>$V) {
+    if ($i&1) {
+      $Blobs[$K] = $V;
+    } else {
+      $K = $V;
+    }
+  }
 
   $Parsedown = new Parsedown();
   $PTNs = Get_PlanetTypeNames();
@@ -86,6 +92,7 @@
   $N=Get_System($Sid);
   $Ref = $N['Ref'];
   $Fs= Get_Factions();
+
 
   if ($N['Flags'] & 1) Dynamic_Update($N);
 
@@ -121,10 +128,12 @@
   if (Feature('UniqueRefs') && $GM && $SurveyLevel >= 10) echo "UniqueRef is: " . UniqueRef($Sid) . "<p>";
 
   if ($Fid) {
-    if ($ScanLevel>0) {
+    if ($ScanLevel>=0) {
       echo "This system has been passively scanned. " .
-        (($SpaceLevel>0)?"Has been space scanned at level $SpaceLevel. ":"No Space Survey has been Made. ") .
-        (($PlanetLevel>0)?"Has been planetary scanned at level $PlanetLevel<p>":"No Planetary Survey has been made.<p>");
+        (($SpaceLevel>0)?("Has been space scanned at level $SpaceLevel" . ($FS['SpaceTurn']?(" on Turn " . $FS['SpaceTurn']):'') .".  ")
+          :"No Space Survey has been Made. ") .
+        (($PlanetLevel>0)?("Has been planetary scanned at level $PlanetLevel" . ($FS['PlanetTurn']?(" on Turn " . $FS['PlanetTurn']):''))
+          :"No Planetary Survey has been made.")  . "<p>";
     } else if ($N['Nebulae']) {
       echo "This system is in a Nebula, you have not scanned it with nebula sensors<p>";
     } else {
@@ -275,16 +284,8 @@
           echo "Colonised by: " . "<span style='background:" . $Fs[$P['Control']]['MapColour'] . "; padding=2;'>" . $Fs[$P['Control']]['Name'] . "</span><p>";
         }
 
-        if ($P['Minerals']) {
-          if (( $PTD[$P['Type']]['Hospitable'] && ($PlanetLevel>0)) ||
-            (!$PTD[$P['Type']]['Hospitable'] && ($SpaceLevel>0))) {
-              echo "It has a minerals rating of <b>" . $P['Minerals'] . "</b><p> ";
-            }
-        }
+        echo $Blobs["A$Pid"]??'';
 
-        if ($PTD[$P['Type']]['Hospitable'] && ($PlanetLevel>0)) {
-          echo "It has a colonisation rating of <b>" . (Feature('BaseColonise',10) + $P['ColonyTweak']) . "</b><p>";
-        }
         if ($SurveyLevel >= 4) {
           echo "It's orbital radius is " . sprintf('%0.2g', $P['OrbitalRadius']) . " Km = " .  RealWorld($P,'OrbitalRadius');
 
@@ -297,6 +298,9 @@
         if ($SurveyLevel > 4 && $P['Description']) echo "<p>" . $Parsedown->text(stripslashes($P['Description'])) ;
 
         echo "<p>";
+
+        echo $Blobs["B$Pid"]??'';
+        /*
     // Districts
 
         if (($PlanetLevel>0) && ($SurveyLevel > 5)) { // Now planet Survey
@@ -318,8 +322,7 @@
                 $Clean = [];
                 foreach ($Offs as $i=>$Of) {
                   $Org = Gen_Get('Organisations',$Of['Organisation']);
-                  $OrgType = Gen_Get('OfficeTypes',$Of['OrgType']);
-
+                  $OrgType = Gen_Get('OfficeTypes',$Org['OrgType']);
                   if ($OrgType['Props']&1) continue; // Hidden
                   $Clean[]= $Org['Name'] . " (" . $OrgType['Name'] . ") ";
 
@@ -332,7 +335,7 @@
             }
 
           }
-        }
+        }*/
 
         if ($SurveyLevel >= 4 && $Mns) {
           echo Plural($Mns,'',"  The moon of note is:", "  The moons of note are: ") . "<p><ul>";
@@ -371,15 +374,7 @@
               echo "Colonised by: " . "<span style='background:" . $Fs[$M['Control']]['MapColour'] . "; padding=2;'>" . $Fs[$M['Control']]['Name'] . "</span><p>";
             }
 
-            if ($M['Minerals']) {
-              if (( $PTD[$M['Type']]['Hospitable'] && ($PlanetLevel>0)) ||
-                (!$PTD[$M['Type']]['Hospitable'] && ($SpaceLevel>0))) {
-                  echo "It has a minerals rating of <b>" . $M['Minerals'] . "</b><p>.  ";
-                }
-            }
-            if ($PTD[$P['Type']]['Hospitable'] && ($PlanetLevel>0)) {
-              echo "It has a colonisation rating of <b>" . (Feature('BaseColonise',10) + $M['ColonyTweak']) . "</b><p>";
-            }
+            echo $Blobs["C$Mid"]??'';
 
             if ($SurveyLevel >= 4) {
               echo "It's orbital radius is " . sprintf('%0.2g', $M['OrbitalRadius']) . " Km = " .  RealWorld($M,'OrbitalRadius') .
@@ -390,40 +385,7 @@
 
             if ($SurveyLevel > 4 && $M['Description']) echo "<p>" . $Parsedown->text(stripslashes($M['Description']));
 
-            // Districts
-            if (($PlanetLevel >0) && ($SurveyLevel > 5)) { // Now Planet Survey
-              $Ds = Get_DistrictsM($Mid);
-
-              if ($Ds) { // &&
-                echo "<p>Districts: ";
-                $dc = 0;
-                foreach ($Ds as $D) {
-                  if ($dc++) echo ", ";
-                  echo $DistTypes[$D['Type']]['Name'] . ": " . $D['Number'];
-                }
-                echo "<p>";
-
-                $World = Gen_Get_Cond1('Worlds',"ThingType=2 AND ThingId=$Mid");
-                if ($World) {
-                  $Offs = Gen_Get_Cond('Offices',"World=" . $World['id']);
-                  if ($Offs) {
-                    $Clean = [];
-                    foreach ($Offs as $i=>$Of) {
-                      $Org = Gen_Get('Organisations',$Of['Organisation']);
-                      $OrgType = Gen_Get('OfficeTypes',$Of['OrgType']);
-
-                      if ($OrgType['Props']&1) continue; // Hidden
-                      $Clean[]= $Org['Name'] . " (" . $OrgType['Name'] . ") ";
-
-                    }
-
-                    if ($Clean) {
-                      echo "<p>Offices: " . implode(', ',$Clean) . "<p>";
-                    }
-                  }
-                }
-              }
-            }
+            echo $Blobs["D$Mid"]??'';
 
           }
           echo "</ul><p>";
@@ -436,12 +398,17 @@
     echo "</ul>";
   }
 
-  if (($ScanLevel>0) && ($SurveyLevel > 1)) {
+  if ($SpaceBlob) echo $SpaceBlob;
+
+  echo $Blobs['Z0']??'';
+
+/*
+  if (($ScanLevel>=0) && ($SurveyLevel > 1)) {
     $Ls = Get_Links($Ref);
     echo "<BR CLEAR=ALL><h2>There are " . Feature('LinkRefText','Stargate') . "s to:</h2><ul>\n";
 //    $GM = Access('GM');
 
-    foreach ($Ls as $L) {
+    /*    foreach ($Ls as $L) {
       $OSysRef = ($L['System1Ref']==$Ref? $L['System2Ref']:$L['System1Ref']);
       $ON = Get_SystemR($OSysRef);
       $LinkKnow = Get_FactionLinkFL($Fid,$L['id']);
@@ -453,14 +420,6 @@
           continue;
         }
       }
-      /*
-      if ($SurveyLevel >= 10) {
-        $LinkKnow = ['Known'=>1];
-      } else if ($FACTION) {
-        $LinkKnow = Get_FactionLinkFL($Fid,$L['id']);
-      } else {
-        $LinkKnow = ['Known'=>0];
-      }*/
       echo "<li>Link " . ($L['Name']?$L['Name']:"#" . $L['id']) . " ";
       if ($LinkKnow['Name']??0) echo " (AKA " .$LinkKnow['Name'] . " ) ";
 
@@ -477,6 +436,7 @@
 
     }
     echo "</ul><p>\n";
+
 
     // Known Space ANOMALIES
     $Anoms = Gen_Get_Cond('Anomalies',"GameId=$GAMEID AND SystemId=$Sid");
@@ -497,14 +457,6 @@
           $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
           if (empty($FA['id'])) {
             if ($A['ScanLevel'] <0) continue;
-/*            for ($i=1; $i<=4; $i++) {
-              if (!empty($A["ChainedOn$i"])) {
-                $ACh = $A["ChainedOn$i"];
-                $FCH = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$ACh AND FactionId=$Fid");
-                if (empty($FCH['id'])) continue 2;  // Dont know chained on
-                if ($FCH['State'] <3 ) continue 2;  // Haven't analysed chained on
-              }
-            }*/
           }
 
           if (!$Shown) {
@@ -543,9 +495,10 @@
           echo "System has the trait: " . $N["Trait$i"] . "<br>" . $Parsedown->text(stripslashes($N["Trait$i" . "Desc"])) . "<p>";
         }
       }
-    }
+    } */
 
-    if ($PlanetLevel > 0) {
+
+/*    if ($PlanetLevel > 0) {
       $PlanTrait = 0;
       foreach($Ps as $P) {
 
@@ -603,7 +556,7 @@
 //      if ($name) echo " ( $name ) ";
       echo " to " . ReportEnd($ON) . " Instability: " . $L['Instability'] . " Concealment: " . $L['Concealment'] . "<br>";
     }
-  }
+  }*/
 
   // Links
   // Images
@@ -612,8 +565,8 @@
 
 
 //  if ($GM) $Sid,$Eyes,$heading=0,$Images=1,$Fid=0,$Mode=0)
-  echo SeeInSystem($Sid,EyesInSystem($Fid,$Sid),0,1,($FACTION['id']??0),$GM);
-
+ // echo SeeInSystem($Sid,EyesInSystem($Fid,$Sid),0,1,($FACTION['id']??0),$GM);
+// TODO Reinstate that when saving result
 
   if ($GM) echo "<p><h2><a href=SysEdit.php?id=$Sid>Edit System</s></h2>";
 

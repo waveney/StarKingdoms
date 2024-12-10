@@ -619,15 +619,19 @@ function GiveSurveyReports() {
           }
           break;
         case 1: // Space
-          if ($FS['SpaceScan'] < $S['Scan']) {
+          if (($FS['SpaceScan'] < $S['Scan']) || ($FS['SpaceTurn'] < $GAME['Turn'])) {
             $Changed = 1;
             $FS['SpaceScan'] = $S['Scan'];
+            $FS['SpaceTurn'] = $GAME['Turn'];
+            Record_SpaceScan($FS);
           }
           break;
         case 2: // Planet
-          if ($FS['PlanetScan'] < $S['Scan']) {
+          if (($FS['PlanetScan'] < $S['Scan']) || ($FS['PlanetTurn'] < $GAME['Turn'])) {
             $Changed = 1;
             $FS['PlanetScan'] = $S['Scan'];
+            $FS['PlanetTurn'] = $GAME['Turn'];
+            Record_PlanetScan($FS);
           }
           break;
       }
@@ -983,7 +987,7 @@ function ClearConflictFlags() {
 
 
 function RecalcProjectHomes() {
-  global $GAMEID;
+  global $GAME,$GAMEID;
   // Proj Homes, Worlds
   include_once("HomesLib.php");
   include_once("MinedLib.php");
@@ -1024,8 +1028,12 @@ function RecalcProjectHomes() {
       $FS = Get_FactionSystemFS($Fid,$Sys);
       if (!isset($FS['id']) || ($FS['ScanLevel'] < $Scanlvl) || ($FS['SpaceScan'] < $Scanlvl) || ($FS['PlanetScan'] < $Scanlvl)) {
         $FS['ScanLevel'] = $FS['SpaceScan'] = $FS['PlanetScan'] = $Scanlvl;
+        $FS['SpaceTurn'] = $FS['PlanetTurn'] = $GAME['Turn'];
         $N = Get_System($Sys);
         Put_FactionSystem($FS);
+        Record_SpaceScan($FS);
+        Record_PlanetScan($FS);
+
         TurnLog($Fid, "<h3>You are due an improved survey report for <a href=SurveyReport.php?N=$Sys>" . System_Name($N,$Fid) .
           "</a> (just click on the system on your map)</h3>");
       }

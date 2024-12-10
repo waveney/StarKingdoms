@@ -44,7 +44,9 @@ function TransferSys($SysR) {
   $TFS['ScanLevel'] = max($FS['ScanLevel'],$TFS['ScanLevel']);
   if (isset($_REQUEST['SURV'])) {
     $TFS['SpaceScan'] = max($FS['SpaceScan'],$TFS['SpaceScan']);
+    $TFS['SpaceScan'] = max($FS['SpaceTurn'],$TFS['SpaceTurn']);
     $TFS['PlanetScan'] = max($FS['PlanetScan'],$TFS['PlanetScan']);
+    $TFS['PlanetScan'] = max($FS['PlanetTurn'],$TFS['PlanetTurn']);
 
     $Anoms = Gen_Get_Cond('Anomalies',"GameId=$GAMEID AND SystemId=$Sid");
 

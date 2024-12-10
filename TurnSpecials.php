@@ -114,10 +114,21 @@
 
         Put_FactionSystem($FS);
         echo "Sorted " . $F['Name'] . "<p>";
+
       }
 
       dotail();
 
+    case 'FixFSdata2':
+      $FSs = Gen_Get_Cond('FactionSystem',"FactionId>=29"); // 29 for live
+      foreach ($FSs as $FS) {
+        $FS['PlanetTurn'] = $GAME['Turn'];
+        if ($FS['SpaceScan']>0) Record_SpaceScan($FS);
+        if ($FS['PlanetScan']>0) Record_PlanetScan($FS);
+        if ($FS['SpaceScan']>0 || $FS['PlanetScan']>0) echo "Updated " . $FS['FactionId'] . ":" . $FS['SystemId'] . "<br>";
+      }
+      echo "All Done";
+      dotail();
     }
   }
 
@@ -125,7 +136,7 @@
   echo "<h2>Actions: (Check with Richard before using any)</h2>";
   echo "<li><a href=TurnSpecials.php?ACTION=ExplodeLink>Explode Link</a><p>";
   echo "<li><a href=TurnSpecials.php?ACTION=RefitAll>Refit all and Complete all in planning</a><p>";
-  echo "<li><a href=TurnSpecials.php?ACTION=FixFSdata>Fix FS Data</a><p>";
+  echo "<li><a href=TurnSpecials.php?ACTION=FixFSdata2>Fix FS Data (again)</a><p>";
 
 
 
