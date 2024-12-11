@@ -86,10 +86,10 @@
   $Turn = $_REQUEST['t'];
 
   if ($OrgTypes[$Org['OrgType']]['Props'] & ORG_ALLOPS) {
-    $OpTypes = Gen_Get_Cond('OrgActions',"(NotBy&$NOTBY)=0 ");
+    $OpTypes = Gen_Get_Cond('OrgActions',"(NotBy&$NOTBY)=0 ORDER BY Name");
   } else {
     $OpTypes = Gen_Get_Cond('OrgActions',"(NotBy&$NOTBY)=0 AND ( Office=$OffType OR Office=" . $Org['OrgType2'] .
-      " OR ((Props&" . OPER_ALLORGS . ")!=0))");
+      " OR ((Props&" . OPER_ALLORGS . ")!=0))  ORDER BY Name");
   }
 
   if ($OrgTypes[$Org['OrgType']]['Props'] & ORG_NO_BRANCHES) {
@@ -133,6 +133,7 @@
       asort($WRefs);
 
       echo "<h2>Select the Target System</h2>";
+      echo "For an operation through a wormhole, that is the system with the known end of the wormhole.<p>";
       foreach ($WRefs as $Wi=>$Ref) {
         echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=2&op=$op&W=$Wi'>$Ref</button> \n";
       }
@@ -479,7 +480,7 @@
            "formaction='OpsDisp.php?ACTION=NEW&t=$Turn&O=$OrgId&op=$op&W=$Wh&SP=$SP&Te=$TechId&P2=$P2&N=" .
            base64_encode("$Name") . "&L=$BaseLevel&PN=$ProgNeed&Desc=" . base64_encode("$Desc") . "'>$Name</button> \n";
 
-
+      echo "Click to confirm<p>";
 
   }
   echo "<p><h2><a href=OpsNew.php?t=$Turn&O=$OrgId>Back to start</a> , <a href=OpsDisp.php?id=$Fid>Cancel</a></h2>\n";
