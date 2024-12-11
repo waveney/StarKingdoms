@@ -109,9 +109,10 @@ function Player_Page() {
   echo "<ul>";
 
   echo "<p><li><a href=UserGuide.php>User Guide</a> - Warning this is VERY OUT OF DATE...<p>\n";
-  if ($GM) echo "<li>GM: <a href=TechShow.php?SETUP&id=$Fid>Edit Technologies</a>\n";
-  echo "<li><a href=TechShow.php?PLAYER>Technologies</a>\n";
-  echo "<li><a href=ModuleShow.php?PLAYER>Module Types</a><p>\n";
+  if ($GM) echo "<li>GM: <a href=TechShow.php?SETUP&id=$Fid>Edit Technologies</a>";
+  echo "<li>Information: <a href=TechShow.php?PLAYER>Technologies</a>, " .
+       "<a href=ModuleShow.php?PLAYER>Module Types</a>, " .
+       "<a href=OperTypesShow.php>Operation Types</a><p> ";
 
   switch ($TState) {
   case 'Setup':
