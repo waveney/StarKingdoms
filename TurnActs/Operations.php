@@ -598,6 +598,7 @@ function OperationsComplete() {
       case 'Investigate Competition':
       case 'Sponsor Colonists':
       case 'Gather Life':
+      case 'Military Recon Through Wormhole':
 
 
       default:

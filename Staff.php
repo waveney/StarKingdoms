@@ -160,7 +160,7 @@
     $txt .= "<p>";
     $txt .= "<li><a href=WorldList.php>List Worlds and colonies</a>\n";
     $txt .= "<li><a href=WorldMake.php>Rebuild list of Worlds and colonies</a> - re do Project homes first\n";
-    if (Access('God')) $txt .= "<li><a href=FixMinerals.php>Fix Minerals</a>\n";
+//    if (Access('God')) $txt .= "<li><a href=FixMinerals.php>Fix Minerals</a>\n";
 
     $txt .= "</ul>\n";
   }
@@ -312,7 +312,7 @@
     $txt .= "<li><a href=OrgList.php?ALL>List of all Organisations</a>\n";
     $txt .= "<li><a href=OfficeList.php>List of all Offices</a>\n";
     $txt .= "<li><a href=BranchList.php>List of all Branches</a>\n";
-    if (Access('God')) $txt .= "<li><a href=SetupTeams.php>Setup Teams for all Current Operations</a>\n";
+//    if (Access('God')) $txt .= "<li><a href=SetupTeams.php>Setup Teams for all Current Operations</a>\n";
 
     $txt .= "<p>";
     $txt .= "</ul>\n";
