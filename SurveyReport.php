@@ -55,6 +55,17 @@
 
     $SpaceBlob = $FS['SpaceSurvey'];
     $PlanBlob = $FS['PlanetSurvey'];
+
+    if (empty($SpaceBlob) && $SpaceLevel>0) {
+      Record_SpaceScan($FS);
+      $SpaceBlob = $FS['SpaceSurvey'];
+    }
+
+    if (empty($PlanBlob) && $PlanetLevel>0) {
+      Record_PlanetScan($FS);
+      $PlanBlob = $FS['PlanetSurvey'];
+    }
+
   } else { // GM access
     $FS = [];
     if (isset($_REQUEST['V'])) {

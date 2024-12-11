@@ -423,8 +423,8 @@ textarea:Focus
 #flex
     {
     column-width:350px;
-    column-left: 400px;
-    column-right: 400px;
+/*    column-left: 400px;
+    column-right: 400px;*/
     column-gap: 25px;
     column-count:3;
     }
