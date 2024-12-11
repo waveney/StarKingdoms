@@ -43,6 +43,13 @@ function TransferSys($SysR) {
   $TFS = Get_FactionSystemFS($Tid,$Sid);
   $TFS['ScanLevel'] = max($FS['ScanLevel'],$TFS['ScanLevel']);
   if (isset($_REQUEST['SURV'])) {
+    if (($TFS['SpaceScan'] < $FS['SpaceScan']) || (($TFS['SpaceScan'] == $FS['SpaceScan']) && ($TFS['SpaceTurn'] < $TFS['SpaceTurn']))) {
+      $TFS['SpaceSurvey'] = $FS['SpaceSurvey'];
+    }
+    if (($TFS['PlanetScan'] < $FS['PlanetScan']) || (($TFS['PlanetScan'] == $FS['PlanetScan']) && ($TFS['PlanetTurn'] < $TFS['PlanetTurn']))) {
+      $TFS['PlanetSurvey'] = $FS['PlanetSurvey'];
+    }
+
     $TFS['SpaceScan'] = max($FS['SpaceScan'],$TFS['SpaceScan']);
     $TFS['SpaceScan'] = max($FS['SpaceTurn'],$TFS['SpaceTurn']);
     $TFS['PlanetScan'] = max($FS['PlanetScan'],$TFS['PlanetScan']);
