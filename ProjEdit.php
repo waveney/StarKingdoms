@@ -240,7 +240,11 @@
     echo "<tr><td>Progress:<td>" . $P['Progress'];
     if ($P['ThingId'] ) {
       $Thing = Get_Thing($P['ThingId']);
-      echo "<td><a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . $Thing['Name'] . "</a>"; // May need Tweek for player edit
+      if ($GM) {
+        echo "<td><a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . $Thing['Name'] . "</a>"; // May need Tweek for player edit
+      } else {
+        echo "<td><a href=ThingPlan.php?id=" . $P['ThingId'] . ">" . $Thing['Name'] . "</a>";
+      }
     } else if ($P['ThingType']) {
       echo "<td>" . (($P['Type']??0) == 1 ? ($DistTypeN[$P['ThingType']]??'??') : ($TechNames[$P['ThingType']]??'??') );
       if ($PProps & 8) {
