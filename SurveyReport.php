@@ -56,7 +56,7 @@
     $SpaceBlob = $FS['SpaceSurvey'];
     $PlanBlob = $FS['PlanetSurvey'];
 
-    if (empty($SpaceBlob) && $SpaceLevel>0) {
+    if (empty($SpaceBlob) && $SpaceLevel>=0) {
       Record_SpaceScan($FS);
       $SpaceBlob = $FS['SpaceSurvey'];
     }
