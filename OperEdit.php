@@ -57,7 +57,7 @@
         echo "</h2>\n";
         dotail();
         exit;
-      case 'Abandon Project':
+      case 'Abandon Operation':
         if ($O['Status'] == 0) { // Never started
           db_delete('Operations',$Oid);
           echo "<h1>Deleted</h1>";

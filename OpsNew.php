@@ -112,14 +112,21 @@
   switch ($Stage) {
     case 0: //Select Op Type
       echo "<h2>Select Operation:</h2>";
+      echo "<table border><tr><th>Operation<th>Level<th>Description";
  //     var_dump($OpTypes);
       foreach ($OpTypes as $opi=>$OP) {
         if ($OP['Gate'] && !eval("return " . $OP['Gate'] . ";" )) continue;
-        echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=1&op=$opi'>" . $OP['Name'] . "</button><br>" .
-             $OP['Description'] . "<p>\n";
+        $Ltxt = "Level";
+        if ($OP['Props']&3) $Ltxt .= "+" . ($OP['Props']&3);
+        if (($OP['Props']& 0Xc)) {
+          $Ltxt .= "+" . ((($OP['Props']&7)>>2)?(($OP['Props']&7)>>2)>1:'') . "X";
+        }
+        echo "<tr><td><button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=1&op=$opi'>" . $OP['Name'] . "</button><br>" .
+          $OP['Description'] . "<p>\n";
+        echo "<td>$Ltxt<td>" . $OP['Description'];
       }
 
-      echo "<p>\n";
+      echo "</table><p>\n";
       break;
 
     case 1: // Where
@@ -151,6 +158,7 @@
       if ($OpTypes[$op]['Props'] & OPER_OUTPOST) {
         $OutPs = Get_Things_Cond(0,"Type=" . $TTNames['Outpost'] . " AND SystemId=$Wh AND BuildState=3");
         if ($OutPs) {
+          $popped = 0;
           if (count($OutPs) >1) {
             echo "<h2 class=Err>There are multiple Outposts there - let the GM's know...</h2>";
             GMLog4Later("There are multiple Outposts in " . $TSys['Ref']);
@@ -158,6 +166,7 @@
           }
           if (($OpTypes[$op]['Props'] & OPER_CREATE_OUTPOST)) {
             $OutP = array_pop($OutPs);
+            $popped = 1;
             $Tid = $OutP['id'];
             $EBs = Gen_Get_Cond('Branches', " HostType=3 AND HostId=$Tid");
 
@@ -170,7 +179,10 @@
             }
           }
 
-          $OutP = array_pop($OutPs);
+          if (!$popped) {
+            $OutP = array_pop($OutPs);
+            $popped = 0;
+          }
           $Tid = $OutP['id'];
           if ($OpTypes[$op]['Props'] & OPER_BRANCH) {
             $AllReady = Gen_Get_Cond('Branches'," HostType=3 AND HostId=$Tid AND Organisation=$OrgId" );
