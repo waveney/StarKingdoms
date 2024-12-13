@@ -121,8 +121,9 @@
         if (($OP['Props']& 0Xc)) {
           $Ltxt .= "+" . ((($OP['Props']&7)>>2)?(($OP['Props']&7)>>2)>1:'') . "X";
         }
-        echo "<tr><td><button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=1&op=$opi'>" . $OP['Name'] . "</button><br>" .
-          $OP['Description'] . "<p>\n";
+        echo "<tr><td><button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=1&op=$opi'>" . $OP['Name'] .
+          "</button><br>";
+
         echo "<td>$Ltxt<td>" . $OP['Description'];
       }
 
