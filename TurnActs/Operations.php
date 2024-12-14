@@ -455,30 +455,51 @@ function OperationsComplete() {
         $ONid = $ON['id'];
         $FS = Get_FactionSystemFS($Fid,$ONid);
         $FS['ScanLevel'] = $FS['SpaceScan'] = Has_Tech($Fid,'Sensors');
+        $xtra = '';
+        if ($N['Nebulae']) {
+          if (!Has_Tech($Fid,'Nebula Sensors')) {
+            $FS['ScanLevel'] = $FS['SpaceScan'] = -1;
+            $xtra = "  Unfortunately it is in a Nebula, you can't see anything.";
+          }
+        }
         Put_FactionSystem($FS);
         $Scan = ['FactionId'=>$Fid,'Sys'=>$ONid, 'Type'=>1, 'ThingId'=>-1,'GameId'=>$GAMEID, 'Turn'=>$GAME['Turn']];
         Gen_Put('ScansDue',$Scan);
-        TurnLog($Fid,"System " . System_Name($ON,$Fid) . " has been explored through wormhole " . $L['Name'] );
+        TurnLog($Fid,"System " . System_Name($ON,$Fid) . " has been explored through wormhole " . $L['Name'] . $xtra);
         break;
 
       case 'Survey System':
         $N = Get_System($O['SystemId']);
         $FS = Get_FactionSystemFS($Fid,$O['SystemId']);
         $FS['ScanLevel'] = $FS['SpaceScan'] = Has_Tech($Fid,'Sensors');
+        $xtra = '';
+        if ($N['Nebulae']) {
+          if (!Has_Tech($Fid,'Nebula Sensors')) {
+            $FS['ScanLevel'] = $FS['SpaceScan'] = -1;
+            $xtra = "  Unfortunately it is in a Nebula, you can't see anything.";
+          }
+        }
         Put_FactionSystem($FS);
         $Scan = ['FactionId'=>$Fid,'Sys'=>$O['SystemId'], 'Type'=>1, 'ThingId'=>-1,'GameId'=>$GAMEID, 'Turn'=>$GAME['Turn']];
         Gen_Put('ScansDue',$Scan);
-        TurnLog($Fid,"System " . System_Name($N,$Fid) . " has been Space survied. ");
+        TurnLog($Fid,"System " . System_Name($N,$Fid) . " has been Space survied. $xtra");
         break;
 
       case 'Study Planet':
         $N = Get_System($O['SystemId']);
         $FS = Get_FactionSystemFS($Fid,$O['SystemId']);
         $FS['PlanetScan'] = Has_Tech($Fid,'Sensors');
+        $xtra = '';
+        if ($N['Nebulae']) {
+          if (!Has_Tech($Fid,'Nebula Sensors')) {
+            $FS['PlanetScan'] = -1;
+            $xtra = "  Unfortunately it is in a Nebula, you can't see anything.";
+          }
+        }
         Put_FactionSystem($FS);
         $Scan = ['FactionId'=>$Fid,'Sys'=>$O['SystemId'], 'Type'=>2, 'ThingId'=>-1,'GameId'=>$GAMEID, 'Turn'=>$GAME['Turn']];
         Gen_Put('ScansDue',$Scan);
-        TurnLog($Fid,"System " . System_Name($N,$Fid) . " has been Planetary survied. ");
+        TurnLog($Fid,"System " . System_Name($N,$Fid) . " has been Planetary survied. $xtra");
         break;
 
       case 'Transfer Resources':

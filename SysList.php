@@ -73,7 +73,7 @@
     $Who = Gen_Get_Cond('FactionSystem',"SystemId=$sid");
     if ($Who) {
       $Usage = [0,0,0,0]; //PC, B PC, NPC, B NPC
-      $UTxt = ['P', 'BP', 'NPC', 'BNPC'];
+      $UTxt = ['Yes', 'Blind', 'NPC', 'Blind NPC'];
       foreach($Who as $W) {
         $Off=0;
         if (!isset($Factions[$W['FactionId']]) || ($Factions[$W['FactionId']]['NPC'])) $Off=2;
@@ -81,7 +81,12 @@
         $Usage[$Off]++;
       }
       echo "<td>";
-      for($i=0; $i<4; $i++) if ($Usage[$i]) echo $Usage[$i]  . $UTxt[$i] . " ";
+      for($i=0; $i<4; $i++) {
+        if ($Usage[$i]) {
+          echo $UTxt[$i];
+          break;
+        }
+      }
     } else {
       echo "<td>No";
     }
