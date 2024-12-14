@@ -71,9 +71,20 @@
       }
     }
     $Who = Gen_Get_Cond('FactionSystem',"SystemId=$sid");
-    $npc = 1;
-    foreach($Who as $W) if (!isset($Factions[$W['FactionId']]) || (!$Factions[$W['FactionId']]['NPC'])) $npc = 0;
-    echo "<td>" .($Who?($npc?"NPC only":"Yes"):"No");
+    if ($Who) {
+      $Usage = [0,0,0,0]; //PC, B PC, NPC, B NPC
+      $UTxt = ['P', 'BP', 'NPC', 'BNPC'];
+      foreach($Who as $W) {
+        $Off=0;
+        if (!isset($Factions[$W['FactionId']]) || ($Factions[$W['FactionId']]['NPC'])) $Off=2;
+        if ($W['ScanLevel']<0) $Off++;
+        $Usage[$Off]++;
+      }
+      echo "<td>";
+      for($i=0; $i<4; $i++) if ($Usage[$i]) echo $Usage[$i]  . $UTxt[$i] . " ";
+    } else {
+      echo "<td>No";
+    }
     echo "<td>" . $N['LinkCount'];
   }
 
