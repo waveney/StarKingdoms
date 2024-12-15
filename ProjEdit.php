@@ -7,7 +7,7 @@
   include_once("SystemLib.php");
   include_once("ProjLib.php");
 
-  global $FACTION,$GAME,$Project_Status;
+  global $FACTION,$GAME,$Project_Status,$Fields;
   dostaffhead("Edit a Project");
 
   if (isset($_REQUEST['id'])) {
@@ -220,7 +220,8 @@
           echo fm_select($DistTypeN,$P,'ThingType');
         }
       } else {
-        echo fm_select($TechNames, $P, 'ThingType');
+        echo fm_select($TechNames, $P, 'ThingType'). "<td>" . $Fields[$Techs[$P['ThingType']]['Cat']];
+
       }
       if ($PProps & 8) {
         echo fm_select($FactionNames,$P,'ThingId');
@@ -246,7 +247,13 @@
         echo "<td><a href=ThingPlan.php?id=" . $P['ThingId'] . ">" . $Thing['Name'] . "</a>";
       }
     } else if ($P['ThingType']) {
-      echo "<td>" . (($P['Type']??0) == 1 ? ($DistTypeN[$P['ThingType']]??'??') : ($TechNames[$P['ThingType']]??'??') );
+      echo "<td>";
+      if (($P['Type']??0) == 1) {
+        echo ($DistTypeN[$P['ThingType']]??'??');
+      } else {
+        echo ($TechNames[$P['ThingType']]??'??') . "<td>" . $Fields[$Techs[$P['ThingType']]['Cat']];
+
+      }
       if ($PProps & 8) {
         echo " Recipient: " . $FactionNames[$P['ThingId']];
       }
