@@ -876,7 +876,7 @@ function SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
       $LinkKnow = Get_FactionLinkFL($Fid,$L['id']);
       //     var_dump($LinkKnow,$L,$SpaceLevel);
       if (!(isset($LinkKnow['id']))) {
-        if ($L['Concealment']<=max(0,$SpaceLevel)) {
+        if ($L['Concealment']<=max((($N['Nebulae']==0)?0:-5),$SpaceLevel)) {
           $LinkKnow = ['Known'=>1];
         } else {
           continue;
