@@ -850,7 +850,7 @@ function Record_PlanetScan(&$FS) {
   $N = Get_System($FS['SystemId']);
   $SLocs = Within_Sys_Locs($N);
 
-  $FS['PlanetSurvey'] = PlanetScanBlob($FS['SystemId'],$FS['FactionId'],max(0,$FS['SpaceScan']),max(0,$FS['PlanetScan']),$SLocs);
+  $FS['PlanetSurvey'] = PlanetScanBlob($FS['SystemId'],$FS['FactionId'],$FS['SpaceScan'],$FS['PlanetScan'],$SLocs);
   $FS['PlanetTurn'] = $GAME['Turn'];
   Put_FactionSystem($FS);
 }
@@ -876,7 +876,7 @@ function SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
       $LinkKnow = Get_FactionLinkFL($Fid,$L['id']);
       //     var_dump($LinkKnow,$L,$SpaceLevel);
       if (!(isset($LinkKnow['id']))) {
-        if ($L['Concealment']<=max((($N['Nebulae']==0)?0:-5),$SpaceLevel)) {
+        if ($L['Concealment']<=max(-$N['Nebulae'],$SpaceLevel)) {
           $LinkKnow = ['Known'=>1];
         } else {
           continue;
@@ -970,7 +970,7 @@ function Record_SpaceScan(&$FS) {
   $N = Get_System($FS['SystemId']);
   $SLocs = Within_Sys_Locs($N);
 
-  $FS['SpaceSurvey'] = SpaceScanBlob($FS['SystemId'],$FS['FactionId'],max(0,$FS['SpaceScan']),max(0,$FS['PlanetScan']),$SLocs);
+  $FS['SpaceSurvey'] = SpaceScanBlob($FS['SystemId'],$FS['FactionId'],$FS['SpaceScan'],$FS['PlanetScan'],$SLocs);
   $FS['SpaceTurn'] = $GAME['Turn'];
   Put_FactionSystem($FS);
 }
