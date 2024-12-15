@@ -96,8 +96,10 @@
     }
   }
 
-
-
+  function Show_Research($Name,$Link,$Cost,$Prog,$Desc) {
+    echo "<tr><td><button class=projtype type=submit formaction=$Link>$Name</button><td>$Cost<td>$Prog" .
+    "<td><div class=NewProjDesc>" . ParseText($Desc) . "</div>";
+  }
 
   echo "<h1>New Project</h1>";
 
@@ -389,7 +391,7 @@
 
   case 'Academic':
 
-    echo "<h2>Research Core Technology</h2>";
+    echo "<h2>Research Core Technology</h2><table border><th>Project<th>Cost<th>Progress<br>Needed<th>Description";
       $FactTechs = Get_Faction_Techs($Fid, $Turn);
       $CTs = Get_CoreTechsByName();
       foreach ($CTs as $TT) {
@@ -399,13 +401,20 @@
           $Lvl = 1;
         }
         $pc = Proj_Costs($Lvl);
-        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" .
+
+        Show_Research($TT['Name'],"ProjDisp.php?ACTION=NEW&id=$Fid&p=" .
+                $PTi['Research Core Technology'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $TT['id'] .
+                "&Name=" . base64_encode("Research " . $TT['Name'] . " $Lvl$Place"). "&L=$Lvl&C=" . $pc[1] . "&PN=" . $pc[0],
+          $pc[1],$pc[0],$TT['Description']);
+
+/*        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" .
                 $PTi['Research Core Technology'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $TT['id'] .
                 "&Name=" . base64_encode("Research " . $TT['Name'] . " $Lvl$Place"). "&L=$Lvl&C=" . $pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Research " . $TT['Name'] . " $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+                "Research " . $TT['Name'] . " $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";*/
         }
+        echo "</table>";
 
-    echo "<h2>Research Supplimental Technology</h2>";
+    echo "<h2>Research Supplimental Technology</h2><table border><th>Project<th>Cost<th>Progress<br>Needed<th>Description";
       $Techs = Get_TechsByCore($Fid);
       foreach ($Techs as $T) {
         if ($T['Cat'] == 0 || (isset($FactTechs[$T['id']]) && $FactTechs[$T['id']]['Level'])) continue;
@@ -415,11 +424,17 @@
         if ($T['PreReqTech3'] && ((! isset($FactTechs[$T['PreReqTech3']])) || $FactTechs[$T['PreReqTech3']]== 0)) continue;
         $Lvl = $T['PreReqLevel'];
         $pc = Proj_Costs($Lvl);
+        Show_Research($T['Name'],"ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Supplemental Technology'] .
+                "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $T['id'] .
+                "&Name=" . base64_encode("Research " . $T['Name'] . $Place) . "&L=$Lvl&C=" . $pc[1] . "&PN=" . $pc[0],
+          $pc[1],$pc[0],$T['Description']);
+ /*
         echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Supplemental Technology'] .
                 "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $T['id'] .
                 "&Name=" . base64_encode("Research " . $T['Name'] . $Place) . "&L=$Lvl&C=" . $pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Research " . $T['Name'] . "; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+                "Research " . $T['Name'] . "; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";*/
       }
+      echo "</table>";
 
       if (Feature('TechSharing')) {
         echo "<h2>Share Technology</h2>";

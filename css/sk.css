@@ -81,9 +81,10 @@ table-layout: fixed;
   width:100px;
 }
 
+/*
 .creditlog .CLWhat {
-  
-}
+ 
+}*/
 
 .creditlog .CLFrom {
   width:250px;
@@ -199,4 +200,10 @@ input[type='radio'] {
 
 .SeeThingImg {
 	width:200;
+}
+
+.NewProjDesc {
+	height:42px;
+	max-height:60px;
+	overflow:auto;
 }

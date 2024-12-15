@@ -727,3 +727,10 @@ function Cancel_AutoUpdate() {
   global $ADDALL,$AutoADD,$AutoAfter,$AutoType;
   $AutoADD = 0;
 }
+
+function ParseText($txt) {
+  include_once("vendor/erusev/parsedown/Parsedown.php");
+  static $Parsedown = new Parsedown();
+  $ftxt = $Parsedown->text($txt);
+  return substr($ftxt,3);
+}
