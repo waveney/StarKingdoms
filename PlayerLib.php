@@ -442,16 +442,10 @@ function IsPrime($n) {
   return in_array($n,$Primes);
 }
 
-function Income_Calc($Fid) {
-  global $GAMEID,$ARMY,$ARMIES,$LogistCost;
-  include_once("HomesLib.php");
-
-  $Worlds = Get_Worlds($Fid);
+function Logistics($Fid,&$Things) {
+  global $LogistCost;
   $Facts = Get_Factions();
   $Faction = $Facts[$Fid];
-  $BTypes = Get_BranchTypes();
-  $BTypeNames = NamesList($BTypes);
-  $NameBType = array_flip($BTypeNames);
   $TTypes = Get_ThingTypes();
 
   $HasHomeLogistics = Has_Tech($Fid,'Simplified Home Logistics');
@@ -483,6 +477,47 @@ function Income_Calc($Fid) {
     }
   }
 
+  $Logistics = [0,0,0]; // Ship, Army, Intelligence
+  foreach ($Things as $T) {
+    if (empty($T['Type'])) continue;
+    $Props = $TTypes[$T['Type']]['Properties'];
+    if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
+      if ($HasHomeLogistics && ($T['SystemId'] == $Facts[$T['Whose']]['HomeWorld'])) $T['Level'] /=2;
+      if ($HomeArmyLogistics && ($Props & THING_HAS_ARMYMODULES) && ($T['SystemId'] == $FactionHome)) {
+        continue; // Nocost
+      } else {
+        if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $LogistCost[$T['Level']];
+        if ($Props & THING_HAS_GADGETS) $Logistics[2] += $LogistCost[$T['Level']];
+        if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) {
+          if ($HasOwnGalaxy && str_contains($T['Class'],'Freighter')) {
+            $Logistics[0] += $LogistCost[$T['Level']-1];
+          } else {
+            $Logistics[0] += $LogistCost[$T['Level']];
+          }
+        }
+      }
+    };
+  }
+
+  foreach($Logistics as &$Log) $Log = floor($Log);
+
+  return $Logistics;
+}
+
+
+function Income_Calc($Fid) {
+  global $GAMEID,$ARMY,$ARMIES,$LogistCost;
+  include_once("HomesLib.php");
+
+  $Worlds = Get_Worlds($Fid);
+  $Facts = Get_Factions();
+  $Faction = $Facts[$Fid];
+  $BTypes = Get_BranchTypes();
+  $BTypeNames = NamesList($BTypes);
+  $NameBType = array_flip($BTypeNames);
+  $TTypes = Get_ThingTypes();
+
+  $HasOwnGalaxy = (Has_Trait($Fid,'Own the Galaxy'));
 
   $EconVal = 0;
   $EccTxt = "\nEconomy:<p>";
@@ -650,29 +685,7 @@ function Income_Calc($Fid) {
     $EconVal -= $MineFields;
   }
 
-  $Logistics = [0,0,0]; // Ship, Army, Intelligence
-  foreach ($Things as $T) {
-    if (empty($T['Type'])) continue;
-    $Props = $TTypes[$T['Type']]['Properties'];
-    if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
-      if ($HasHomeLogistics && ($T['SystemId'] == $Facts[$T['Whose']]['HomeWorld'])) $T['Level'] /=2;
-      if ($HomeArmyLogistics && ($Props & THING_HAS_ARMYMODULES) && ($T['SystemId'] == $FactionHome)) {
-        continue; // Nocost
-      } else {
-        if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $LogistCost[$T['Level']];
-        if ($Props & THING_HAS_GADGETS) $Logistics[2] += $LogistCost[$T['Level']];
-        if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) {
-          if ($HasOwnGalaxy && str_contains($T['Class'],'Freighter')) {
-            $Logistics[0] += $LogistCost[$T['Level']-1];
-          } else {
-            $Logistics[0] += $LogistCost[$T['Level']];
-          }
-        }
-      }
-    };
-  }
-
-  foreach($Logistics as &$Log) $Log = floor($Log);
+  $Logistics = Logistics($Fid,$Things);
   $LogAvail = LogisticalSupport($Fid);
   $LogCats = ['Ships',$ARMIES,'Agents'];
 

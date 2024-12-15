@@ -296,15 +296,7 @@
     $BuildClass = ($T['BuildState']<4 ? $T['BuildState'] : 4);
 
     if ($Fid) {
-      if (($T['BuildState'] == 2 || $T['BuildState'] == 3) && ($RowClass != 'Prisoner')) {
-        $ELevel = $T['Level'];
-        if ($HasHomeLogistics && ($T['SystemId'] == $FactionHome)) $ELevel /=2;
-        if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $LogistCost[$ELevel];
-        if ($Props & THING_HAS_GADGETS) $Logistics[2] += $LogistCost[$ELevel];
-        if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) $Logistics[0] += $LogistCost[$ELevel];
-      };
-
-      foreach($Logistics as &$Log) $Log = floor($Log);
+      $Logistics = Logistics($Fid,$Things);
     }
 
     echo "\n<tr class='ThingList Thing_$RowClass Thing_Build$BuildClass'>";
