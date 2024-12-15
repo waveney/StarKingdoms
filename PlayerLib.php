@@ -449,7 +449,7 @@ function Logistics($Fid,&$Things) {
   $TTypes = Get_ThingTypes();
 
   $HasHomeLogistics = Has_Tech($Fid,'Simplified Home Logistics');
-  $HomeArmyLogistics = Has_PTraitW($Faction['HomeWorld'],'Universal Hunting Ground	');
+  $HomeArmyLogistics = Has_PTraitW($Faction['HomeWorld'],'Universal Hunting Ground');
   $HasOwnGalaxy = (Has_Trait($Fid,'Own the Galaxy'));
 
   $FactionHome = 0;

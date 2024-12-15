@@ -46,12 +46,12 @@ function TransferSys($SysR) {
     if (($TFS['SpaceScan'] < $FS['SpaceScan']) || (($TFS['SpaceScan'] == $FS['SpaceScan']) && ($TFS['SpaceTurn'] < $TFS['SpaceTurn']))) {
       $TFS['SpaceSurvey'] = $FS['SpaceSurvey'];
       $TFS['SpaceScan'] = $FS['SpaceScan'];
-      $TFS['SpaceScan'] = $FS['SpaceTurn'];
+      $TFS['SpaceTurn'] = $FS['SpaceTurn'];
     }
     if (($TFS['PlanetScan'] < $FS['PlanetScan']) || (($TFS['PlanetScan'] == $FS['PlanetScan']) && ($TFS['PlanetTurn'] < $TFS['PlanetTurn']))) {
       $TFS['PlanetSurvey'] = $FS['PlanetSurvey'];
       $TFS['PlanetScan'] = $FS['PlanetScan'];
-      $TFS['PlanetScan'] = $FS['PlanetTurn'];
+      $TFS['PlanetTurn'] = $FS['PlanetTurn'];
     }
 
     $Anoms = Gen_Get_Cond('Anomalies',"GameId=$GAMEID AND SystemId=$Sid");
