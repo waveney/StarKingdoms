@@ -217,7 +217,7 @@
 
   $coln = 0;
 
-  echo "<div class=tablecont><table id=indextable border width=100% style='min-width:1400px'>\n";
+  echo "<div class=tablecont><table class=striped id=indextable border width=100% style='min-width:1400px'>\n";
   echo "<thead><tr>";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Class</a>\n";

@@ -731,6 +731,6 @@ function Cancel_AutoUpdate() {
 function ParseText($txt) {
   include_once("vendor/erusev/parsedown/Parsedown.php");
   static $Parsedown = new Parsedown();
-  $ftxt = $Parsedown->text($txt);
+  $ftxt = $Parsedown->text(stripslashes($txt));
   return substr($ftxt,3);
 }

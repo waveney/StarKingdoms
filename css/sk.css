@@ -207,3 +207,21 @@ input[type='radio'] {
 	max-height:60px;
 	overflow:auto;
 }
+
+.striped tbody tr:nth-child(4n) {
+  background-color: #f8f8f8;
+}
+
+.striped tbody tr:nth-child(4n+1) {
+  background-color: #e8e0e8;
+}
+
+.striped tbody tr:nth-child(4n+2) {
+  background-color: #f8f8f8;
+/*	background-color: #e8e8e0;*/
+}
+
+.striped tbody tr:nth-child(4n+3) {
+  background-color: #e0e8e8;
+}
+

@@ -154,7 +154,6 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0,$M
   if ($Blue && !isset($_REQUEST['Blue'])) return;
 
   $Tid = $T['id'];
-  $Parsedown = new Parsedown();
 
   $Class = ($T['Cat'] == 0?"TechDesc":"SuppTech");
   echo "<div class=$Class><h2 onclick=Toggle('TDesc$Tid')>" . $T['Name'];
@@ -208,7 +207,7 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0,$M
   if (feature('ShowCivMilInfo') && $T['CivMil']) echo "<b>" . $CivMil[$T['CivMil']] . " ships</b>";
   echo "<br>";
 
-  if ($T['Description']) echo  $Parsedown->text(stripslashes($T['Description']));
+  if ($T['Description']) echo ParseText($T['Description']);
 
 //  if ($lvl == 0) {
     if (!$Descs) echo "</div>";
@@ -966,8 +965,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
       }
       if ($itxt) {
         if ($T['Description']) {
-          $Parsedown = new Parsedown();
-          $txt .= "<br>" . $Parsedown->text(stripslashes($T['Description']));
+          $txt .= "<br>" . ParseText($T['Description']);
         }
       }
       if ($Images) $txt .= "<br clear=all>\n";

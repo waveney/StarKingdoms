@@ -21,7 +21,7 @@ $FSs = Gen_Get_Cond('FactionSystem',"FactionId=$Fid");
 //var_dump($Systems);
 $OFSs = [];
 foreach ($FSs as $i=>$FS) {
-  if (!isset($Systems[$FS['SystemId']])) continue;
+  if (!isset($Systems[$FS['SystemId']]) || $FS['ScanLevel']<0) continue;
   $N = $Systems[$FS['SystemId']];
   $FS['FName'] = System_Name($N,$Fid);
   $OFSs[$N['Ref']] = $FS;
@@ -29,7 +29,7 @@ foreach ($FSs as $i=>$FS) {
 
 $coln = 0;
 
-echo "<div class=tablecont><table id=indextable border>\n";
+echo "<div class=tablecont><table class=striped id=indextable border>\n";
 echo "<thead><tr>";
 echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Ref</a>\n";
 echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
@@ -49,14 +49,14 @@ foreach($OFSs as $R=>$FS) {
     echo "<td>";
   }
   if ($FS['SpaceScan']>0) {
-    echo "<td>" . $FS['SpaceScan'] . " T" . $FS['SpaceTurn'];
+    echo "<td>L" . $FS['SpaceScan'] . " T" . $FS['SpaceTurn'];
   } else {
-    echo "<td>Not Yet";
+    echo "<td>-";
   }
   if ($FS['PlanetScan']>0) {
-    echo "<td>" . $FS['PlanetScan'] . " T" . $FS['PlanetTurn'];
+    echo "<td>L" . $FS['PlanetScan'] . " T" . $FS['PlanetTurn'];
   } else {
-    echo "<td>Not Yet";
+    echo "<td>-";
   }
   echo "<td>" . floor($N['GridX']) . "," . floor($N['GridY']);
 }

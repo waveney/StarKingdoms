@@ -368,7 +368,7 @@ table {
 }
 th
     {
-    color:#FFFFFF;
+/*    color:#FFFFFF;*/
     border-radius:5px;
     font-weight:normal;
 /*    font-family:SHONAR, verdana, arial, helvetica, sans-serif; */
@@ -376,7 +376,7 @@ th
     }
 td
     {
-    background-color:#FFFFFF;
+/*    background-color:#FFFFFF;*/
     border-radius:5px;
     }
 input
