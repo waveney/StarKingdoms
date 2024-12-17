@@ -32,7 +32,7 @@ echo "<tr><th>Concealment-><br>Instability V";
 for($i = 0; $i <=$MaxC; $i++) echo "<th>$i";
 echo "<th>Total";
 
-for ($I = 0; $I <=$MaxI; $I++) {
+for ($I = 1; $I <=$MaxI; $I++) {
   echo "<tr><td>$I";
   $TotI = 0;
   for ($C = 0; $C <=$MaxC; $C++) {

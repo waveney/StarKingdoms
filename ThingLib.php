@@ -22,7 +22,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
                 'Terraform','Link Repair','Collaborative DSC','Space Survey','Planetary Survey','Collaborative Planetary Construction',
                 'Collaborative Space Construction',
 ];
-$IntructProps = [0,0,0,0,0,0,1,1,1,
+$IntructProps = [0,2,0,0,0,0,1,1,1,
                  1,1,1,1,1,1,
                  1,1,1,1,1,0,0,
                  1,1,0,0,1,0,1,1,

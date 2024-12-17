@@ -119,13 +119,14 @@
     $txt .= "<li><a href=MapShow.php>Full Map Show</a>\n";
     $txt .= "<li><a href=MapShow.php?Hex>Hex Map Show</a>\n<p>";
 
+    /*
     $txt .= "<li><form method=Post action=MapFull.php class=staffform>";
       $txt .= "<input type=submit name=f value='Map Show for' id=staffformid>" .
                 fm_select($Facts,0,'f',1," onchange=this.form.submit()") . "</form>\n";
 
     $txt .= "<li><form method=Post action=MapFull.php?Hex&Links=0 class=staffform>";
       $txt .= "<input type=submit name=f1 value='Hex Map for' id=staffformid>" .
-                fm_select($Facts,0,'f1',1," onchange=this.form.submit()") . "</form>\n";
+                fm_select($Facts,0,'f1',1," onchange=this.form.submit()") . "</form>\n";*/
 
 
     $txt .= "<li><a href=MapFull.php?Links=0>Full Map Generate</a>\n";

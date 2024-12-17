@@ -1736,7 +1736,7 @@ function Show_Thing(&$T,$Force=0) {
     case 'Collaborative Planetary Construction':
       $DList = [0=>''] + $OtherList;
       //var_dump($DList);
-      echo "<br>Select ship to collaborate with.  If they are not doing anything, nothing happens. " . fm_select($DList,$T,'Dist1');
+      echo "<br>Select detachment to collaborate with.  If they are not doing anything, nothing happens. " . fm_select($DList,$T,'Dist1');
       if ($T['Dist1']) {
         echo "<button type=submit formaction=ThingEdit.php?ACTION=Takeover&id=$Tid>Takeover Lead Construction</button>";
       }

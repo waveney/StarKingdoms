@@ -100,12 +100,13 @@
   $Wh = ($_REQUEST['W']??0);
   $TechId = $_REQUEST['Te']??0;
   $P2 = $TechLevel = $_REQUEST['P2']??0;
-  $SP = $_REQUEST['SP']??0;
+  $P1 = $SP = $_REQUEST['SP']??0;
   $Desc = $_REQUEST['Description']??'';
   $TTYpes = Get_ThingTypes();
   $TTNames = array_flip(NamesList($TTYpes));
   $BTypes = Get_BranchTypes();
 
+//  var_dump($Stage,$P1,$P2,$SP,$Wh);
   echo "<form method=post action=OpsNew.php>";
  // echo fm_hidden('t',$Turn) . fm_hidden('O',$OrgId) . fm_hidden('Stage',$Stage+1) . fm_hidden('p',$op) . fm_hidden('W',$Wh);
 
@@ -372,8 +373,8 @@
         }
 
         echo "<h2>How many Credits?</h2>";
-        echo fm_hidden('Stage',5) . fm_hidden('op',$op) . fm_hidden('W',$Wh) . fm_hidden('O',$OrgId) .fm_hidden('t',$Turn);
-        echo fm_number('',$_REQUEST,'SP','','min=0 max=' , $Facts[$Fid]['Credits'] );
+        echo fm_hidden('Stage',5) . fm_hidden('op',$op) . fm_hidden('W',$Wh) . fm_hidden('O',$OrgId) .fm_hidden('t',$Turn).fm_hidden('P2',$P2);
+        echo fm_number('',$_REQUEST,'SP','','min=0 max=' . $Facts[$Fid]['Credits'] );
         echo "<button class=projtype type=submit>Send Money</button>";
         break;
       } else if (($OpTypes[$op]['Props'] & OPER_DESC)) {

@@ -447,6 +447,7 @@ function TraitIncomes() {
   foreach ($Orgs as $Oid=>$O) {
     $Who = $O['Whose'];
     $Pow = $O['OfficeCount'];
+    if ($Pow == 0) continue;
     Gain_Science($Who,4,$Pow*$Pow,'Offices of ' . $O['Name']);
     TurnLog($Who,"Gained " . ($Pow*$Pow) . " Science points for offices of " . $O['Name']);
 
@@ -896,6 +897,7 @@ function TidyUps() {
   $ThingNames = array_flip($TNames);
   $WormStab = $ThingNames['Wormhole Stabiliser'];
   $res = $db->query("UPDATE Things SET LinkId=0, LinkPay=0, LinkCost=0, Retreat=0 WHERE LinkId>0 AND GameId=$GAMEID");
+  $res = $db->query("UPDATE Operations SET TurnState=0 WHERE GameId=$GAMEID");
 
   // Check for lid <-1...
   $NotFin = Get_Things(0,"LinkId<-1");

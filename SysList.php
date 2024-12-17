@@ -33,7 +33,7 @@
   echo "<h1>Systems</h1>";
 
   $coln = 0;
-  echo "<div class=tablecont><table id=indextable border width=100% style='min-width:1400px'>\n";
+  echo "<div class=tablecont><table class=striped id=indextable border width=100% style='min-width:1400px'>\n";
   echo "<thead><tr>";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Ref</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Control</a>\n";

@@ -328,7 +328,7 @@ function ShipMovements($Mode=0) {
 
       if (isset($_REQUEST["Prevent$Tid"]) && $_REQUEST["Prevent$Tid"] ) {
         TurnLog($Fid,$T['Name'] . " was <b>unable to take link</b> <span style=color:" . $LinkLevels[abs($L['Level'])]['Colour'] . ">" .
-          ($L['Name']?$L['Name']:"#$Lid") . " </span> beause of " .
+          ($L['Name']?$L['Name']:"#$Lid") . " </span> because of " .
           (isset($_REQUEST["Reason$Tid"])? $_REQUEST["Reason$Tid"]:"Unknown reasons"), $T);
         $T['LastMoved'] = $Done;
         Put_Thing($T);
@@ -441,17 +441,24 @@ function ShipMovements($Mode=0) {
 
         if ($Fid) {
           $FS = Get_FactionSystemFS($Fid,$Sid);
-          if (!isset($FS['id']) || (($FS['ScanLevel'] < $ShipScanLevel) && ($N['Nebulae']<=$ShipNebScanLevel))) {
-            $SP = ['FactionId'=>$Fid, 'Sys'=> $Sid, 'Scan'=>($N['Nebulae']?$ShipNebScanLevel:$ShipScanLevel), 'Type'=>0,
-              'Turn'=>$GAME['Turn'], 'ThingId'=>$T['id'], 'GameId'=>$GAMEID];
-            Insert_db('ScansDue', $SP);
+          if ($N['Nebulae'] > $T['NebSensors']) {
+            $T['Retreat'] = 1;
+            if (!isset($FS['id']) || (($FS['ScanLevel'] < $ShipScanLevel) && ($N['Nebulae']<=$ShipNebScanLevel))) {
+              $SP = ['FactionId'=>$Fid, 'Sys'=> $Sid, 'Scan'=>-1, 'Type'=>0,
+                'Turn'=>$GAME['Turn'], 'ThingId'=>$T['id'], 'GameId'=>$GAMEID];
+              Insert_db('ScansDue', $SP);
+            }
+          } else {
+            if (!isset($FS['id']) || (($FS['ScanLevel'] < $ShipScanLevel) && ($N['Nebulae']<=$ShipNebScanLevel))) {
+              $SP = ['FactionId'=>$Fid, 'Sys'=> $Sid, 'Scan'=>($N['Nebulae']?$ShipNebScanLevel:$ShipScanLevel), 'Type'=>0,
+                'Turn'=>$GAME['Turn'], 'ThingId'=>$T['id'], 'GameId'=>$GAMEID];
+              Insert_db('ScansDue', $SP);
+            }
           }
 
           $FL = Get_FactionLinkFL($Fid,$Lid);
           $FL['Known'] = 1;
           Put_FactionLink($FL);
-
-          if ($N['Nebulae'] > $T['NebSensors']) $T['Retreat'] = 1;
 
           $pname = System_Name($N,$Fid);
         } else {
@@ -475,7 +482,8 @@ function ShipMovements($Mode=0) {
                 $T['CurHealth'] = 0;
                 $T['SystemId'] = 0;
           } else {
-            TurnLog($Fid,$T['Name'] . " has " . (($Mode<2)?"moved":"retreated") . " from " . System_Name($OldN,$Fid) . " along <span style='color:" .
+            TurnLog($Fid,$T['Name'] . " has " . (($Mode<2)?"moved":("<b>retreated</b> " . ['','From a Nebula','From Combat'][$T['Retreat']])) .
+              " from " . System_Name($OldN,$Fid) . " along <span style='color:" .
               $LinkLevels[abs($L['Level'])]['Colour'] . ";'>link " . ($L['Name']?$L['Name']:"#$Lid"). " </span>to $pname " .
               ($T['NewLocation'] > 2?( " to " . $EndLocs[$T['NewLocation']]): ""),$T);
             GMLog($T['Name'] . " has " . (($Mode<2)?"moved":"retreated") . " from " . System_Name($OldN,$Fid) . " along <span style='color:" .

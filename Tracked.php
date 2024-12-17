@@ -50,7 +50,9 @@ if ($GM) {
   echo "<h2><a href= Tracked.php?FORCE>This Page in Player Mode</a></h2>";
 
   echo "<form method=post>";
-  Register_AutoUpdate('Generic',0);  echo "<tr><th>Track<th>Value<th colspan=2>Actions";
+  Register_AutoUpdate('Generic',0);
+  echo "<input type=submit hidden name=Ignore>";
+  echo "<tr><th>Track<th>Value<th colspan=2>Actions";
   $Ign = [];
   echo "<tr>" . fm_number('Credits',$FACTION,'Credits','','',"Factions:Credits:$Fid") .
     fm_number1('',$Ign,"Ignore:Factions:Credits:$Fid") . "<button type=button onclick=AddTrack('Factions:Credits:$Fid')>Add</button>";

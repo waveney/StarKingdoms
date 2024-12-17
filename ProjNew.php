@@ -53,11 +53,14 @@
         $TTypes = Get_ThingTypes();
         $Things = Get_Things_Cond($Fid, 'DesignValid=1 ');
         if ($_REQUEST['ACTION'] == 'NEWSHIP') {
-          foreach ($Things as $Tid=>$T) if (($T['Type'] == 0) || (($TTypes[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) == 0)) unset($Things[$Tid]);
+          foreach ($Things as $Tid=>$T) if (($T['Type'] == 0) || (($TTypes[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) == 0))
+            unset($Things[$Tid]);
         } else if ($_REQUEST['ACTION'] == 'NEWARMY') {
-          foreach ($Things as $Tid=>$T) if (($T['Type'] == 0) || (($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES) == 0)) unset($Things[$Tid]);
+          foreach ($Things as $Tid=>$T) if (($T['Type'] == 0) || (($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES) == 0))
+            unset($Things[$Tid]);
         } else if ($_REQUEST['ACTION'] == 'NEWAGENT') {
-          foreach ($Things as $Tid=>$T) if (($T['Type'] == 0) || (($TTypes[$T['Type']]['Properties'] & THING_HAS_GADGETS) == 0)) unset($Things[$Tid]);
+          foreach ($Things as $Tid=>$T) if (($T['Type'] == 0) || (($TTypes[$T['Type']]['Properties'] & THING_HAS_GADGETS) == 0))
+            unset($Things[$Tid]);
         }
 
         if (!$Things) {
@@ -78,7 +81,6 @@
           $NameList[$T['id']] = $T['Name'] . (empty($T['Class'])?'': ", a " . $T['Class']) . " ( Level " . $T['Level'] . " ); $Place;" .
             "Cost: " . $pc[1] .  " Needs " . $pc[0] . " progress.  $Extra";
           }
-
         if ($NameList) {
           echo "<h2>Select a deign to make</h2>";
           echo "If it is in planning, you are build that, if already built then it will be a copy.<br>";

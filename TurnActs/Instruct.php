@@ -1,6 +1,6 @@
 <?php
 
-function Instructions() { // And other Instructions
+function Instructions() {
   global $ThingInstrs,$GAME;
   global $Currencies,$ValidMines;
   global $FACTION;
@@ -36,6 +36,12 @@ function Instructions() { // And other Instructions
 
       case 'Colonise': // Colonise
       case 'Build Planetary Mine':
+        if ($T['InstCost'] && !Spend_Credit($T['Whose'],$T['InstCost'],"Colonise in " . $N['Ref']) ) {
+          $T['Progress'] = -1; // Stalled
+          TurnLog($T['Whose'],"Could not afford to start Colony in " .$N['Ref'],$T);
+          GMLog($Facts[$T['Whose']]['Name'] . " Could not afford to start Colony in " .$N['Ref']);
+          break;
+        }
         $P = Get_Planet($T['Spare1']);
         if ($N['Control'] > 0 && $N['Control'] != $T['Whose']) {  // Colonising system under control of others
           if ($NeedColStage2 == 0) {
@@ -1286,14 +1292,14 @@ function InstructionsComplete() {
       case 'Space Survey':
         $Sys = $T['SystemId'];
         $Sens = $T['Sensors'];
-        $Scan = ['FactionId'=>$Who,'Sys'=>$Sys, 'Type'=>1, 'ThingId'=>$Tid,'GameId'=>$GAMEID, 'Turn'=>$GAME['Turn']];
+        $Scan = ['FactionId'=>$Who,'Sys'=>$Sys, 'Type'=>1, 'ThingId'=>$Tid,'GameId'=>$GAMEID, 'Turn'=>$GAME['Turn'], 'Scan'=>$Sens];
         Gen_Put('ScansDue',$Scan);
         break;
 
       case 'Planetary Survey':
         $Sys = $T['SystemId'];
         $Sens = $T['Sensors'];
-        $Scan = ['FactionId'=>$Who,'Sys'=>$Sys, 'Type'=>2, 'ThingId'=>$Tid,'GameId'=>$GAMEID, 'Turn'=>$GAME['Turn']];
+        $Scan = ['FactionId'=>$Who,'Sys'=>$Sys, 'Type'=>2, 'ThingId'=>$Tid,'GameId'=>$GAMEID, 'Turn'=>$GAME['Turn'], 'Scan'=>$Sens];
         Gen_Put('ScansDue',$Scan);
         break;
 
@@ -1451,9 +1457,9 @@ function CollaborativeProgress() {
               TurnLog($T['Whose'],$T['Name'] . " did $ProgGain towards completing " . $ThingInstrs[abs($HT['Instruction'])] . " by " . $HT['Name']);
             }
             Put_Thing($HT);
-          }
-          else {
-            TurnLog($T['Whose'], $T['Name'] . " Was collacorating with " . $HT['Name'] . ", but " . $HT['Name'] . " is not doing any DSC.");
+          } else {
+            TurnLog($T['Whose'], $T['Name'] . " Was collaborating with " . $HT['Name'] . ", but " . $HT['Name'] . " is not doing any " .
+              "Space Construction.");
           }
         }
         break;
@@ -1463,9 +1469,9 @@ function CollaborativeProgress() {
         $ProgGain = $Mods['Level']*$Mods['Number']; // For all except colonise
         $HT = Get_Thing($T['Dist1']);
         if ($HT) {
-          if ($HT['Instruction'] && ($IntructProps[abs($HT['Instruction'])] & 1)) {
+          if ($HT['Instruction'] && ($IntructProps[abs($HT['Instruction'])] & 2)) {
             if ($HT['Instruction'] == 1) { // Colonise
-              $Fact = $Facts[$HT['Whose']];
+ /*             $Fact = $Facts[$HT['Whose']];
               $Plan = $HT['Spare1'];
               $P = Get_Planet($Plan);
               if (($P['Type'] == $Fact['Biosphere']) || ($P['Type'] == $Fact['Biosphere2']) || ($P['Type'] == $Fact['Biosphere3'])) {
@@ -1474,8 +1480,8 @@ function CollaborativeProgress() {
                 $LMod = -2;
               } else {
                 $LMod = -1;
-              }
-              $ProgGain = max(0,$Mods['Level']+$LMod)*$Mods['Number'];
+              }*/
+              $ProgGain = max(0,$Mods['Level']*$Mods['Number']);
             }
             $HT['Progress'] = min($HT['ActionsNeeded'],$HT['Progress']+$ProgGain);
             GMLog("$ProgGain progress on " . $ThingInstrs[abs($HT['Instruction'])] . " for " . $Facts[$HT['Whose']]['Name'] . ":" . $HT['Name'] . " Now at " .
@@ -1487,9 +1493,9 @@ function CollaborativeProgress() {
               TurnLog($T['Whose'],$T['Name'] . " did $ProgGain towards completing " . $ThingInstrs[abs($HT['Instruction'])] . " by " . $HT['Name']);
             }
             Put_Thing($HT);
-          }
-          else {
-            TurnLog($T['Whose'], $T['Name'] . " Was collacorating with " . $HT['Name'] . ", but " . $HT['Name'] . " is not doing any DSC.");
+          } else {
+            TurnLog($T['Whose'], $T['Name'] . " Was collaborating with " . $HT['Name'] . ", but " . $HT['Name'] .
+              " is not doing any Planetary Construction.");
           }
         }
         break;

@@ -129,7 +129,7 @@ function StartOperations() {
     $BaseLevel = Op_Level($OrgId,$Wh) + $Mod;
 
     if ($BaseLevel != $O['Level']) {
-      $ProgNeed = Oper_Costs($BaseLevel)[0];
+      $O['ProgNeeded'] = $ProgNeed = Oper_Costs($BaseLevel)[0];
 
       TurnLog($Fid,'WARNING operation ' . $O['Name'] . " with the " . $Orgs[$O['OrgId']]['Name'] . " is actually level $BaseLevel not " .
         $O['Level'] . " and now needs " . $O['ProgNeeded'] . " progress.");
