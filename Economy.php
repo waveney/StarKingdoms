@@ -87,7 +87,7 @@
   }
 
   if ($DeepSpace) {
-    echo "Starting " . count($Things) . " Deep Space Constructions, costing " . Credit() . $DeepSpace . "<p>";
+    echo "Starting " . count($Things) . " Constructions, costing " . Credit() . $DeepSpace . "<p>";
     $Spend += $DeepSpace;
   }
 

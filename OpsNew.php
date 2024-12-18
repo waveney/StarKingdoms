@@ -106,7 +106,7 @@
   $TTNames = array_flip(NamesList($TTYpes));
   $BTypes = Get_BranchTypes();
 
-//  var_dump($Stage,$P1,$P2,$SP,$Wh);
+ // var_dump($Stage,$P1,$P2,$SP,$Wh,$Desc);
   echo "<form method=post action=OpsNew.php>";
  // echo fm_hidden('t',$Turn) . fm_hidden('O',$OrgId) . fm_hidden('Stage',$Stage+1) . fm_hidden('p',$op) . fm_hidden('W',$Wh);
 
@@ -233,13 +233,13 @@
 
 
     case 4: // Secondary Questions
+
       $TSys = Get_System($Wh);
       $TFid = $TSys['Control'];
       if (!$Head) echo "<h2>Selected: " . $OpTypes[$op]['Name'] . " in " . System_Name($TSys,$Fid) . "</h2>\n";
       $Head = 1;
       if ($Wh) $World = WorldFromSystem($Wh);
 
-//      var_dump($OpTypes[$op]['Props']);
       if ($OpTypes[$op]['Props'] & OPER_TECH) {
         $With = $TSys['Control'];
         $Techs = Get_Techs($Fid);
@@ -269,8 +269,9 @@
                $TT['Name'] . " at level $Lvl</button> \n";
         }
         break;
+      }
 
-      } else if ($OpTypes[$op]['Props'] & OPER_SOCP) {
+      if ($OpTypes[$op]['Props'] & OPER_SOCP) {
         if ($OpTypes[$op]['Props'] & OPER_SOCPTARGET) { // Target SocP
           $With = $TSys['Control'];
           $KnownTarget = Gen_Get_Cond('FactionSocialP',"FactionId=$Fid AND World=$World");
@@ -315,8 +316,10 @@
             }
           }
         }
+        break;
+      }
 
-      } else if (($OpTypes[$op]['Props'] & OPER_WORMHOLE)) {
+      if (($OpTypes[$op]['Props'] & OPER_WORMHOLE)) {
         $Ref = $TSys['Ref'];
         $FS = Get_FactionSystemFS($Fid,$Wh);
 
@@ -335,7 +338,9 @@
           }
         }
         break;
-      } else if (($OpTypes[$op]['Props'] & OPER_MONEY)) {
+      }
+
+      if (($OpTypes[$op]['Props'] & OPER_MONEY)) {
         $Wid = WorldFromSystem($Wh,$Fid);
         $To1 = $To2 = 0;
         if ($Wid) {
@@ -377,14 +382,9 @@
         echo fm_number('',$_REQUEST,'SP','','min=0 max=' . $Facts[$Fid]['Credits'] );
         echo "<button class=projtype type=submit>Send Money</button>";
         break;
-      } else if (($OpTypes[$op]['Props'] & OPER_DESC)) {
-        echo "<h2>Describe what is being done - this Operation is not automated</h2>";
-        echo fm_hidden('Stage',5) . fm_hidden('op',$op) . fm_hidden('W',$Wh) . fm_hidden('O',$OrgId) .fm_hidden('t',$Turn);
-        echo fm_text('',$_REQUEST,'Description',6);
-        echo "<button class=projtype type=submit>Proceed</button>";
-        break;
-        // Need description too complex otherwise
-      } else if (($OpTypes[$op]['Props'] & OPER_ANOMALY)) {
+      }
+
+      if (($OpTypes[$op]['Props'] & OPER_ANOMALY)) {
         // Look for anomalies at target, if any, are they not analysed, if so record list, if list empty - err msg, if one select, if many give choice
         $Anoms = Gen_Get_Cond('Anomalies',"GameId=$GAMEID AND SystemId=$Wh");
         if ($Anoms) {
@@ -410,13 +410,25 @@
           echo "<h2>There are no known anomalies there</h2>";
           break;
         }
-      } else if (($OpTypes[$op]['Props'] & OPER_LEVELMOD)) {
-        echo fm_hidden('Stage',5) . fm_hidden('op',$op) . fm_hidden('W',$Wh) . fm_hidden('O',$OrgId) .fm_hidden('t',$Turn);
-        echo fm_number('Level Modifier',$_REQUEST,'SP','','min=0'); " As specified by the GMs.";
-        echo "<br>" . fm_text('Description',$_REQUEST,'Description',6);
-        echo "<button class=projtype type=submit>Proceed</button>";
-        break;
       }
+
+      // COmpound questions
+      if (($OpTypes[$op]['Props'] & (OPER_LEVELMOD | OPER_DESC))) {
+        echo fm_hidden('Stage',5) . fm_hidden('op',$op) . fm_hidden('W',$Wh) . fm_hidden('O',$OrgId) .fm_hidden('t',$Turn);
+
+        if ($OpTypes[$op]['Props'] & OPER_LEVELMOD) {
+          echo fm_number('Level Modifier',$_REQUEST,'SP','','min=0');
+          echo " As specified by the GMs.<p>";
+        }
+
+       if (($OpTypes[$op]['Props'] & OPER_DESC)) {
+          echo "<h2>Describe what is being done - this Operation is not automated</h2>";
+          echo fm_text('',$_REQUEST,'Description',6);
+       }
+      echo "<button class=projtype type=submit>Proceed</button>";
+      break;
+      }
+
     case 5: // Complete /Restart/ etc
       $TSys = Get_System($Wh);
       $TFid = $TSys['Control'];
@@ -437,29 +449,33 @@
         $Level = $TechLevel-1;
       }
 
-      $Mod = 0;
-      if ($SP) {
-        if ($OpTypes[$op]['Props'] & OPER_SOCP) {
-          $SocP = Get_SocialP($SP);
-          echo "Principle:" . $SocP['Principle'] . "<p>";
-          $TechLevel = $Level = $SocP['Value'];
-          $Name .= " Principle: " . $SocP['Principle'];
-        } else if ($OpTypes[$op]['Props'] & OPER_MONEY) {
-          echo "Ammount: " . Credit() . $SP . " to " . $Facts[$P2]['Name'] . "<p>";
-          $Name .= " " . Credit() . $SP . " to " . $Facts[$P2]['Name'] . "<p>";
-        } else if (($OpTypes[$op]['Props'] & OPER_ANOMALY)) {
-          $Anom = Gen_Get('Anomalies',$SP);
-          $Name .= " - " . $Anom['Name'];
-        } else if (($OpTypes[$op]['Props'] & OPER_WORMHOLE)) {
-          $L = Get_Link($SP);
-          echo "Wormhole: " . $L['Name'] . "<p>";
-          $Name .= " Wormhole: " . $L['Name'];
-        } else if (($OpTypes[$op]['Props'] & OPER_SCIPOINTS)) { // Science Points
-          $Name .= " " . $Fields[$SP-1];
-        } else if (($OpTypes[$op]['Props'] & OPER_LEVELMOD)) {
-          $Mod = $SP;
-        }
+      $AMod = $Mod = 0;
+      if ($OpTypes[$op]['Props'] & OPER_SOCP) {
+        $SocP = Get_SocialP($SP);
+        echo "Principle:" . $SocP['Principle'] . "<p>";
+        $TechLevel = $Level = $SocP['Value'];
+        $Name .= " Principle: " . $SocP['Principle'];
       }
+      if ($OpTypes[$op]['Props'] & OPER_MONEY) {
+        echo "Ammount: " . Credit() . $SP . " to " . $Facts[$P2]['Name'] . "<p>";
+        $Name .= " " . Credit() . $SP . " to " . $Facts[$P2]['Name'] . "<p>";
+      }
+      if (($OpTypes[$op]['Props'] & OPER_ANOMALY)) {
+        $Anom = Gen_Get('Anomalies',$SP);
+        $Name .= " - " . $Anom['Name'];
+      }
+      if (($OpTypes[$op]['Props'] & OPER_WORMHOLE)) {
+        $L = Get_Link($SP);
+        echo "Wormhole: " . $L['Name'] . "<p>";
+        $Name .= " Wormhole: " . $L['Name'];
+      }
+      if (($OpTypes[$op]['Props'] & OPER_SCIPOINTS)) { // Science Points
+        $Name .= " " . $Fields[$SP-1];
+      }
+      if (($OpTypes[$op]['Props'] & OPER_LEVELMOD)) {
+        $AMod = $SP;
+      }
+
       if (($OpTypes[$op]['Props'] & OPER_DESC)) {
         $Name .= " $Desc";
       }
@@ -471,6 +487,7 @@
         if ($Mod &4) $Mod = $Level;
         if ($Mod &8) $Mod = $Level*2;
       }
+      $Mod += $AMod;
 
       $BaseLevel = Op_Level($OrgId,$Wh);
       if ($BaseLevel<0) {

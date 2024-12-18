@@ -220,7 +220,7 @@
           echo fm_select($DistTypeN,$P,'ThingType');
         }
       } else {
-        echo fm_select($TechNames, $P, 'ThingType'). "<td>" . $Fields[$Techs[$P['ThingType']]['Cat']];
+        echo fm_select($TechNames, $P, 'ThingType'). "<td>" . $Fields[($Techs[$P['ThingType']]['Cat']??4)];
 
       }
       if ($PProps & 8) {

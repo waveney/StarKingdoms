@@ -390,7 +390,13 @@ function ProjectProgressActions($Pay4=0) {
     $Bonus = 0;
     if (!empty($TurnStuff['Bonus'])) $Bonus = $TurnStuff['Bonus'];
 
-    $PActs = $Acts = min($MaxActs,$P['ProgNeeded']-$P['Progress']);
+    if (Has_Trait($Fid,"I Don't Want To Die")) {
+      $PNam = $ProjTypes[$P['Type']]['Name'];
+      if ($PNam == 'Train Detachment' || $PNam == 'Reinforce Detachment' || $PNam == 'Refit Detachment') $Bonus -= 1;
+    }
+
+    $PActs = $Acts = min($MaxActs,$P['ProgNeeded']-$P['Progress']-$Bonus);
+
     if ($Revolt) {
       $Acts = 0;
       TurnLog($P['FactionId'],'No normal progress on ' . $P['Name'] . " by because of <b>Revolt</b> ");
@@ -405,11 +411,6 @@ function ProjectProgressActions($Pay4=0) {
           TurnLog($P['FactionId'],'Free Rush of ' . $P['Name'] . " by $FreeRush ");
         }
       }
-    }
-
-    if (Has_Trait($Fid,"I Don't Want To Die")) {
-      $PNam = $ProjTypes[$P['Type']]['Name'];
-      if ($PNam == 'Train Detachment' || $PNam == 'Reinforce Detachment' || $PNam == 'Refit Detachment') $Bonus = -1;
     }
 
     if (isset($TurnStuff['Rush'])) {

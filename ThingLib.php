@@ -7,7 +7,7 @@ include_once("PlayerLib.php");
 
 global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$InstrMsg,$Advance,$ValidMines,$ARMY,$LogistCost;
 
-$Fields = ['Engineering','Physics','Xenology','Special'];
+$Fields = ['Engineering','Physics','Xenology','Special','Unknown'];
 $Tech_Cats = ['Core','Supp','Non Std','Levelled Non Std'];
 $CivMil = ['','Civilian','Military'];
 $BuildState = ['Planning','Building','Shakedown','Complete','Ex','Abandonded','Missing In Action','Captured'];

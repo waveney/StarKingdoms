@@ -815,7 +815,7 @@ function PlanetScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
 
 
         $ptxt .=  "<br><h3>Anomaly: " . $A['Name'] . "</h3>location: " . ($Syslocs[$A['WithinSysLoc']]? $Syslocs[$A['WithinSysLoc']]: "Space") . "<p>";
-        if ($A['Description']) $txt .=  "Description: " . $Parsedown->text(stripslashes($A['Description'])) . "<p>";
+        if ($A['Description']) $ptxt .=  "Description: " . $Parsedown->text(stripslashes($A['Description'])) . "<p>";
         if (!$GM) {
           $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
           if (!isset($FA['id'])) {
