@@ -93,9 +93,9 @@ function Show_Faction(&$F,$Mode) {
     echo "<tr><td>Physics Points<td>" . $F['PhysicsSP'];
     echo "<tr><td>Engineering Points<td>" . $F['EngineeringSP'];
     echo "<tr><td>Xenology Points<td>" . $F['XenologySP'];
-    if ($Nam = GameFeature('Currency1')) echo "<tr><td>$Nam:<td>" . $F['Currency1'];
-    if ($Nam = GameFeature('Currency2')) echo "<tr><td>$Nam:<td>" . $F['Currency2'];
-    if ($Nam = GameFeature('Currency3')) echo "<tr><td>$Nam:<td>" . $F['Currency3'];
+    if ($Nam = GameFeature('Currency1') && $F['Currency1']) echo "<tr><td>$Nam:<td>" . $F['Currency1'];
+    if ($Nam = GameFeature('Currency2') && $F['Currency2']) echo "<tr><td>$Nam:<td>" . $F['Currency2'];
+    if ($Nam = GameFeature('Currency3') && $F['Currency3']) echo "<tr><td>$Nam:<td>" . $F['Currency3'];
   }
 
 
