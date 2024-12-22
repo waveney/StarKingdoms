@@ -616,24 +616,8 @@ function Moon_Save($Fid,$Mid,&$Survey) {
   file_put_contents("$dir/$Mid", $Survey);
 }
 
-function Space_Scan($Sid,$Level) {
-  // Wormholes, Sys Traits, Space Anoms
-  $Parsedown = new Parsedown();
-}
-
-function Planet_Scan($Pid,$Level) {
-  // Districts, Offices, Traits, Anoms
-  $Parsedown = new Parsedown();
-}
-
-function Moon_Scan($Mid,$Level) {
-  // Districts, Offices, Traits, Anoms
-  $Parsedown = new Parsedown();
-}
-
 function PlanetScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
   global $LinkStates,$GAMEID,$FAnomalyStates;
-  $Parsedown = new Parsedown();
   $PTD = Get_PlanetTypes();
   $DistTypes = Get_DistrictTypes();
 
@@ -706,7 +690,7 @@ function PlanetScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
           $ptxt .=  "<h2>Planet Traits:</h2>";
         }
         //            var_dump($P,$PlanetLevel);
-        $ptxt .=  "Planet " . $P['Name'] . " has the trait: " . $P["Trait$i"] . "<br>" . $Parsedown->text(stripslashes($P["Trait$i" . "Desc"])) . "<p>";
+        $ptxt .=  "Planet " . $P['Name'] . " has the trait: " . $P["Trait$i"] . "<br>" . ParseText($P["Trait$i" . "Desc"]) . "<p>";
       }
     }
 
@@ -779,7 +763,7 @@ function PlanetScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
             $ptxt .=  "<h2>Planet Traits:</h2>";
           }
           $ptxt .=  "Moon " . $M['Name'] . " has the trait: " . $M["Trait$i"] . "<br>" .
-            $Parsedown->text(stripslashes($M["Trait$i" . "Desc"])) . "<p>";
+            ParseText($M["Trait$i" . "Desc"]) . "<p>";
         }
       }
 
@@ -815,7 +799,7 @@ function PlanetScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
 
 
         $ptxt .=  "<br><h3>Anomaly: " . $A['Name'] . "</h3>location: " . ($Syslocs[$A['WithinSysLoc']]? $Syslocs[$A['WithinSysLoc']]: "Space") . "<p>";
-        if ($A['Description']) $ptxt .=  "Description: " . $Parsedown->text(stripslashes($A['Description'])) . "<p>";
+        if ($A['Description']) $ptxt .=  "Description: " . ParseText($A['Description']) . "<p>";
         if (!$GM) {
           $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
           if (!isset($FA['id'])) {
@@ -826,10 +810,10 @@ function PlanetScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
             Gen_Put('FactionAnomaly',$FA);
           }
           $ptxt .=  "<span style='Background:" . $AnStateCols[$FA['State']] . ";'>" . $FAnomalyStates[$FA['State']] . "</span>";
-          $ptxt .=  "<br>Progress: " . ($FA['Progress']??0) . " / " . $A['AnomalyLevel'];
+ //         $ptxt .=  "<br>Progress: " . ($FA['Progress']??0) . " / " . $A['AnomalyLevel'];
 
           if (($FA['State'] >= 3) && $A['Completion']) {
-            $ptxt .=  "Complete: " . $Parsedown->text(stripslashes($A['Completion'])) . "<p>";
+            $ptxt .=  "Complete: " . ParseText($A['Completion']) . "<p>";
           }
         }
       }
@@ -857,7 +841,6 @@ function Record_PlanetScan(&$FS) {
 
 function SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
   global $LinkStates,$GAMEID,$FAnomalyStates;
-  $Parsedown = new Parsedown();
 
   $txt = '';
 
@@ -929,7 +912,7 @@ function SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
 
 
           $txt .=  "<br><h3>Anomaly: " . $A['Name'] . "</h3>location: " . ($Syslocs[$A['WithinSysLoc']]? $Syslocs[$A['WithinSysLoc']]: "Space") . "<p>";
-          if ($A['Description']) $txt .=  "Description: " . $Parsedown->text(stripslashes($A['Description'])) . "<p>";
+          if ($A['Description']) $txt .=  "Description: " . ParseText($A['Description']) . "<p>";
           if (!$GM) {
             $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
             if (!isset($FA['id'])) {
@@ -940,10 +923,10 @@ function SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
               Gen_Put('FactionAnomaly',$FA);
             }
             $txt .=  "<span style='Background:" . $AnStateCols[$FA['State']] . ";'>" . $FAnomalyStates[$FA['State']] . "</span>";
-            $txt .=  "<br>Progress: " . ($FA['Progress']??0) . " / " . $A['AnomalyLevel'];
+  //          $txt .=  "<br>Progress: " . ($FA['Progress']??0) . " / " . $A['AnomalyLevel'];
 
             if (($FA['State'] >= 3) && $A['Completion']) {
-              $txt .=  "Complete: " . $Parsedown->text(stripslashes($A['Completion'])) . "<p>";
+              $txt .=  "Complete: " . ParseText($A['Completion']) . "<p>";
             }
           }
         }
@@ -957,7 +940,7 @@ function SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
         if ($SysTrait++ == 0) {
           $txt .=  "<h2>System Traits:</h2>";
         }
-        $txt .=  "System has the trait: " . $N["Trait$i"] . "<br>" . $Parsedown->text(stripslashes($N["Trait$i" . "Desc"])) . "<p>";
+        $txt .=  "System has the trait: " . $N["Trait$i"] . "<br>" . ParseText($N["Trait$i" . "Desc"]) . "<p>";
       }
     }
   }

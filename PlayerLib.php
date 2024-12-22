@@ -91,9 +91,6 @@ function Player_Page() {
   $Factions = Get_Factions();
   $Facts = Get_FactionFactions($Fid);
 
-//  echo "You can always get back to this page by clicking on 'Faction Menu' in the page header.<p>";
-
-//var_dump($PlayerState,$FACTION);
   echo "<h1>Player Actions: " . $FACTION['Name'] . "</h1>\n";
 
   $TState = $PlayerState[$FACTION['TurnState']] ;
@@ -105,19 +102,13 @@ function Player_Page() {
 
   echo "<div class=Player>";
   if ((!$GM) && $TState == 'Turn Submitted') echo "<b>To change anything, cancel the turn submission first.</b><br>";
-  echo "The only current actions are:";
+  if (FactionFeature('BackHereHelp',1) ) echo "The only current actions are:";
   echo "<ul>";
 
-  echo "<p><li><a href=UserGuide.php>User Guide</a> - Warning this is VERY OUT OF DATE...<p>\n";
-  if ($GM) echo "<li>GM: <a href=TechShow.php?SETUP&id=$Fid>Edit Technologies</a>";
-  echo "<li>Information: <a href=TechShow.php?PLAYER>Technologies</a>, " .
-       "<a href=ModuleShow.php?PLAYER>Module Types</a>, " .
-       "<a href=OperTypesShow.php>Operation Types</a><p> ";
 
   switch ($TState) {
   case 'Setup':
     echo "<li><a href=SetupFaction.php>Faction Setup</a>\n";
-//    if ($GM) echo "<li>GM: <a href=StartGame.php>Start up Faction</a>";
     if (!$GM && $FACTION['Horizon'] == 0) break; // This prevents access to things until setup completed
     echo "<li><a href=PThingList.php>List of Things</a> - List of Things (Ships, $ARMIES, Named Characters, Space stations etc)";
     echo "<li><a href=ThingPlan.php>Plan a Thing</a> - Planning Things (Ships, $ARMIES, Named Characters, Space stations etc)";
@@ -127,54 +118,81 @@ function Player_Page() {
   case 'Turn Submitted':
     if (!$GM) fm_addall('readonly');
   case 'Turn Planning':
-    if (Feature('NodeMap')) echo "<li><a href=MapFull.php>Faction Map</a>\n";
+    if (Feature('NodeMap')) {
+      echo "<li><a href=MapFull.php?Links=0>Faction Map</a>";
+      echo " (<a href=MapFull.php?Hex&Links=1>With Link identities)</a>\n";
+    }
     if (!Feature('NodeMap') || Has_Tech($FACTION['id'],'Astral Mapping')) {
       echo "<li><a href=MapFull.php?Hex&Links=0>Faction Map</a> - with spatial location of nodes\n";
-      echo "(<a href=MapFull.php?Hex>With Link identities)</a>\n";
+      echo " (<a href=MapFull.php?Hex>With Link identities)</a>\n";
     }
-    echo "<li><a href=PSystemList.php>List of Known Systems</a>\n";
+    echo "<ul>";
+      echo "<li><a href=PSystemList.php>List of Known Systems</a>\n";
+      echo "<li><a href=WorldList.php>Worlds and Colonies</a> - High Level info only\n";
+      echo "<li><a href=NamePlaces.php>Name Places</a> - Systems, Planets etc\n";
+      echo "<li><a href=PAnomalyList.php>Anomalies that have been seen</a><p>\n";
+    echo "</ul>";
 
-    echo "<p><li><a href=WhatCanIC.php>What Things can I See?</a>\n";
-    echo "<li><a href=WorldList.php>Worlds and Colonies</a> - High Level info only\n";
-    echo "<li><a href=OrgList.php>Organisations</a>\n";
-    echo "<li><a href=ListSocial.php>Social Principles</a><p>\n";
 
-    echo "<li><a href=NamePlaces.php>Name Places</a> - Systems, Planets etc\n";
-    echo "<li><a href=PAnomalyList.php>Anomalies that have been seen</a><p>\n";
-    echo "<li><a href=ProjDisp.php>Projects</a>\n";
-    if (Feature('Orgs')) echo "<li><a href=OpsDisp.php>Operations</a>\n";
-    echo "<li><a href=PThingList.php>List of Things</a> - List of Things (Ships, $ARMIES, Named Characters, Space stations etc)";
-    if ($PlayerState[$FACTION['TurnState']] != 'Frozen')
-       echo "<li><a href=ThingPlan.php>Plan a Thing</a> - Planning Things (Ships, $ARMIES, Named Characters, Space stations etc)";
-    if ($FACTION['PhysicsSP'] >=5 || $FACTION['EngineeringSP'] >=5 || $FACTION['XenologySP'] >=5 ) echo "<li><a href=SciencePoints.php>Spend Science Points</a>";
-    echo "<P><li><a href=Economy.php>Economy</a>";
-    echo "<li><a href=Banking.php>Banking</a><p>";
-    echo "<li><a href=PlayerTurnTxt.php>Turn Actions Automated Response Text</a>";
-//    echo "<li><a href=PlayerTurn.php>Submit Player Turn text</a> - For now a link to a Google Docs file.<p>\n";
+    echo "<li>Doing Stuff<ul>";
+      echo "<li><a href=ProjDisp.php>Projects</a>\n";
+      if (Feature('Orgs')) echo "<li><a href=OpsDisp.php>Operations</a>\n";
+      echo "<li><a href=PThingList.php>List of Things</a> - List of Things (Ships, $ARMIES, Named Characters, Space stations etc)";
+      if ($PlayerState[$FACTION['TurnState']] != 'Frozen') {
+        echo "<li><a href=ThingPlan.php>Plan a Thing</a> - Planning Things (Ships, $ARMIES, Named Characters, Space stations etc)";
+      }
+      if ($FACTION['PhysicsSP'] >=5 || $FACTION['EngineeringSP'] >=5 || $FACTION['XenologySP'] >=5 ) {
+        echo "<li><a href=SciencePoints.php>Spend Science Points</a>";
+      }
+      if ($Facts || $FACTION['NPC']) {
+        echo "<li><a href=MapTransfer.php>Transfer Mapping knowledge to another Faction</a>\n";
+      }
+    echo "</ul>";
+
+    echo "<p><li><a href=PlayerTurnTxt.php>Turn Actions Automated Response Text</a>";
+    echo "<ul><li><a href=WhatCanIC.php>What Things can I See?</a></ul>\n";
+
     if ($PlayerState[$FACTION['TurnState']] == 'Turn Planning') {
       echo "<li><a href=Player.php?ACTION=Submit>Submit Turn</a><p>\n";
     } else {
       echo "<li><a href=Player.php?ACTION=Unsub>Cancel Submission</a><p>\n";
     }
-    echo "<li><a href=FactionEdit.php>Faction Information</a> - Mostly read only once set up.\n";
-    echo "<li><a href=Tracked.php>Tracked Resources and Properties</a>\n";
 
-    if ($Facts || $FACTION['NPC']) {
-      echo "<li><a href=FactionCarry.php>Relationship with Other Factions</a> - Also to allow Individuals and $ARMIES aboard and repairing.\n";
-      echo "<li><a href=MapTransfer.php>Transfer Mapping knowledge to another Faction</a>\n";
-    }
-    if ($GM) echo "<p><li>GM: <a href=SplitFaction.php?ACTION=Start>Split Faction</a>\n";
+    echo "<p><li><a href=FactionEdit.php>Faction Information</a> - Mostly read only once set up.\n";
+    echo "<ul>";
+      if ($Facts || $FACTION['NPC']) {
+        echo "<li><a href=FactionCarry.php>Relationship with Other Factions</a> - Also to allow Individuals and $ARMIES aboard and repairing.\n";
+      }
+      echo "<li><a href=Tracked.php>Tracked Resources and Properties</a>\n";
+      if (Feature('Orgs')) echo "<li><a href=OrgList.php>Organisations</a>\n";
+      if (Feature('Orgs')) echo "<li><a href=ListSocial.php>Social Principles</a>\n";
+      echo "<li><a href=Economy.php>Economy</a>";
+      echo "<li><a href=Banking.php>Banking</a><p>";
+    echo "</ul>";
+
+    echo "<li>Information: ";
+    echo "<ul>";
+      echo "<li><a href=TechShow.php?PLAYER>Technologies</a> (inc current levels)";
+      echo "<li><a href=ModuleShow.php?PLAYER>Module Types</a> ";
+      echo "<li><a href=OperTypesShow.php>Operation Types</a>";
+    echo "</ul>";
+
     break;
 
   case 'Turn Being Processed':
     if ($GM) echo "<p><li><a href=Player.php?SEEALL>(GM) See All Actions</a>\n";
     break;
+  }
 
+  if ($GM) {
+    echo "<p><li>GM: <a href=TechShow.php?SETUP&id=$Fid>Edit Technologies</a>";
+    echo "<li>GM: <a href=SplitFaction.php?ACTION=Start>Split Faction</a>\n";
   }
 
   echo "</ul>";
   echo "</div>";
 
+  echo "<li><a href=UserGuide.php>User Guide</a> - Warning this is VERY OUT OF DATE...<p>\n";
   echo "<li><a href=../StarKingdoms.php>Index of Star Kingdom's Games.</a>";
   echo "<li><a href=Login.php?ACTION=NEWPASSWD>New Password</a>\n";
 

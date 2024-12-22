@@ -3,13 +3,14 @@ include_once("sk.php");
 include_once("GetPut.php");
 include_once("ThingLib.php");
 include_once("OrgLib.php");
-global $NOTBY,$GAME;
+global $NOTBY,$GAME,$FACTION;
 
 A_Check('Player');
 $DTs = Get_OpTypes(0);
 $OTs = Get_OrgTypes(0);
 
 $coln = 0;
+$Fid = $FACTION['id']??0;
 
 dostaffhead("Types of Operation");
 

@@ -229,7 +229,7 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>State</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Where</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Actions</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Using Link</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Using Link / Details</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Moving to</a>\n";
   if ($Fid) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Refit?</a>\n";
   if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Sensors</a>\n";

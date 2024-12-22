@@ -36,7 +36,7 @@ foreach ($FSs as $FS) {
 asort($WRefs);
 
 function TransferSys($SysR) {
-  global $Fid,$Tid,$GAMEID;
+  global $Fid,$Tid,$GAMEID,$GAME;
   $N = Get_SystemR($SysR);
   $Sid = $N['id'];
   $FS = Get_FactionSystemFS($Fid,$Sid);
@@ -46,12 +46,12 @@ function TransferSys($SysR) {
     if (($TFS['SpaceScan'] < $FS['SpaceScan']) || (($TFS['SpaceScan'] == $FS['SpaceScan']) && ($TFS['SpaceTurn'] < $TFS['SpaceTurn']))) {
       $TFS['SpaceSurvey'] = $FS['SpaceSurvey'];
       $TFS['SpaceScan'] = $FS['SpaceScan'];
-      $TFS['SpaceTurn'] = $FS['SpaceTurn'];
+      $TFS['SpaceTurn'] = $FS['SpaceTurn']??$GAME['Turn'];
     }
     if (($TFS['PlanetScan'] < $FS['PlanetScan']) || (($TFS['PlanetScan'] == $FS['PlanetScan']) && ($TFS['PlanetTurn'] < $TFS['PlanetTurn']))) {
       $TFS['PlanetSurvey'] = $FS['PlanetSurvey'];
       $TFS['PlanetScan'] = $FS['PlanetScan'];
-      $TFS['PlanetTurn'] = $FS['PlanetTurn'];
+      $TFS['PlanetTurn'] = $FS['PlanetTurn']??$GAME['Turn'];
     }
 
     $Anoms = Gen_Get_Cond('Anomalies',"GameId=$GAMEID AND SystemId=$Sid");
