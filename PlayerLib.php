@@ -50,31 +50,13 @@ function TradeableCurrencies() {
   return $Trade;
 }
 
-function FactionFeature($Name,$default='') {  // Return value of feature if set from GAMESYS
-  static $Features;
-  global $FACTION;
-  if (!$Features) {
-    $Features = [];
-    foreach (explode("\n",$FACTION['Features']) as $i=>$feat) {
-      $Dat = explode(":",$feat,4);
-      if ($Dat[0] && isset($Dat[1])) {
-        $Features[$Dat[0]] = trim($Dat[1]);
-      } elseif ($Dat[0] && isset($Dat[4])) {
-        $Features[$Dat[0]] = trim($Dat[4]);
-      }
-    }
-  }
-  if (isset($Features[$Name])) return $Features[$Name];
-  return $default;
-}
-
 function Player_Page() {
   global $FACTION,$PlayerState,$PlayerStates,$PlayerStateColours,$GAME,$ARMY,$USER,$ARMIES;
 
 
   dostaffhead("Things",["js/ProjectTools.js"]);
   $GM = Access('GM');
-  $FF = 1; //FactionFeature('AllowActions',$GM);  // Eventually change GM to 1
+  $FF = 1; //Faction_Feature('AllowActions',$GM);  // Eventually change GM to 1
 
   if (empty($FACTION['id'])) {
     echo "<h1>No Faction Selected</h1>";
@@ -102,7 +84,7 @@ function Player_Page() {
 
   echo "<div class=Player>";
   if ((!$GM) && $TState == 'Turn Submitted') echo "<b>To change anything, cancel the turn submission first.</b><br>";
-  if (FactionFeature('BackHereHelp',1) ) echo "The only current actions are:";
+  if (Faction_Feature('BackHereHelp',1) ) echo "The only current actions are:";
   echo "<ul>";
 
 

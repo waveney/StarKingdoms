@@ -291,7 +291,7 @@ global $SkipAccessCheck;
   }
 
 
-  if (FactionFeature('BackHereHelp',1) ) echo "You can always get back here by clicking on 'Faction Menu' on the bar above.<br>\n";
+  if (Faction_Feature('BackHereHelp',1) ) echo "You can always get back here by clicking on 'Faction Menu' on the bar above.<br>\n";
 
   Player_Page();
   dotail();
