@@ -45,6 +45,14 @@ function Gen_Get_All($Table, $extra='', $idx='id') {
     return $Ts;
 }
 
+function Gen_Get_All_Game($Table, $idx='id') {
+  global $db,$NOTBY;
+  $Ts = [];
+  $res = $db->query("SELECT * FROM $Table WHERE (NotBy&$NOTBY)=0");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans[$idx]] = $ans;
+  return $Ts;
+}
+
 function Gen_Get_Cond($Table,$Cond, $idx='id') {
   global $db;
   $Ts = [];
@@ -344,13 +352,25 @@ function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$M
 
 // var_dump($Sep,$Mstr,$MstrNot);
 //return;
-  if (isset($_POST{'Update'})) {
+  if (isset($_POST['Update'])) {
+    $Pfx = '';
+    $mtch = [];
+    foreach ($_REQUEST as $R=>$V) {
+      if (preg_match("/$table:(\w*):(\d*)/",$R,$mtch)){
+        $Pfx = "$table:";
+        $Sep = ':';
+        break;
+      } else if (preg_match("/$Mstr$Sep(\d*)/",$R,$mtch)) {
+        break;
+      }
+    }
+
     if ($data) foreach($data as $t) {
       $i = $t[$indxname];
       if ($i) {
-        if (isset($_POST["$Mstr$Sep$i"]) && $_POST["$Mstr$Sep$i"] == $MstrNot) {
+        if (isset($_POST["$Pfx$Mstr$Sep$i"]) && $_POST["$Pfx$Mstr$Sep$i"] == $MstrNot) {
           if ($Deletes) {
-            if (!empty($MstrChk) && !isset($_POST["$MstrChk$Sep$i"])) continue;
+            if (!empty($MstrChk) && !isset($_POST["$Pfx$MstrChk$Sep$i"])) continue;
 //          echo "Would delete " . $t[$indxname] . "<br>";
               db_delete($table,$t[$indxname]);
             if ($Deletes == 1) return 1;
@@ -361,16 +381,16 @@ function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$M
           foreach ($Flds as $fld=>$ftyp) {
             if ($fld == $indxname) continue;
             if (in_array($fld,$DateFlds)) {
-              $t[$fld] = Date_BestGuess($_POST["$fld$Sep$i"]);
+              $t[$fld] = Date_BestGuess($_POST["$Pfx$fld$Sep$i"]);
               $recpres = 1;
             } else if (in_array($fld,$TimeFlds)) {
-              $t[$fld] = Time_BestGuess($_POST["$fld$Sep$i"]);
+              $t[$fld] = Time_BestGuess($_POST["$Pfx$fld$Sep$i"]);
               $recpres = 1;
             } else if (in_array($fld,$HexFlds)) {
-              $t[$fld] = hexdec($_POST["$fld$Sep$i"]);
+              $t[$fld] = hexdec($_POST["$Pfx$fld$Sep$i"]);
               $recpres = 1;
-            } else if (isset($_POST["$fld$Sep$i"])) {
-              $t[$fld] = $_POST["$fld$Sep$i"];
+            } else if (isset($_POST["$Pfx$fld$Sep$i"])) {
+              $t[$fld] = $_POST["$Pfx$fld$Sep$i"];
               $recpres = 1;
             } else {
               $t[$fld] = 0;
@@ -407,7 +427,27 @@ function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$M
       $t['GameId'] = $GAMEID;
 //      var_dump($t);
       Insert_db($table,$t);
+    } else if (isset($_POST["$table:$Mstr$Sep" . "0"] ) && $_POST["$table:$Mstr$Sep" . "0"] != $MstrNot) {
+      $t = array();
+      foreach ($Flds as $fld=>$ftyp) {
+        if ($fld == $indxname) continue;
+        if (isset($_POST["$table:$fld$Sep" . "0"])) {
+          if (in_array($fld,$DateFlds)) {
+            $t[$fld] = Date_BestGuess($_POST["$table:$fld$Sep" . "0"]);
+          } else if (in_array("$fld$Sep",$TimeFlds)) {
+            $t[$fld] = Time_BestGuess($_POST["$table:$fld$Sep" . "0"]);
+          } else if (in_array("$fld$Sep",$HexFlds)) {
+            $t[$fld] = hexdec($_POST["$table:$fld$Sep" . "0"]);
+          } else {
+            $t[$fld] = $_POST["$table:$fld$Sep" . "0"];
+          }
+        }
+      }
+      $t['GameId'] = $GAMEID;
+      //      var_dump($t);
+      Insert_db($table,$t);
     }
+
     return 1;
   }
 }

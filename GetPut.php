@@ -868,7 +868,9 @@ function Get_ThingTypes($AllG=0) {
   global $db,$NOTBY;
   $Ts = [];
   $res = $db->query("SELECT * FROM ThingTypes " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0") );
-  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
+  if ($res) while ($ans = $res->fetch_assoc()) {
+    $Ts[$ans['id']] = $ans;
+  }
   return $Ts;
 }
 

@@ -46,6 +46,7 @@ function Show_Thing(&$T,$Force=0) {
   if ($IsaTeam) {
     $Org = Gen_Get('Organisations',$T['Dist1']);
   }
+  $Varies = Gen_Get_All_Game('Variants');
 
   if ($T['SystemId'] == $T['NewSystemId'] || $T['NewSystemId'] == 0) {
     $NewSyslocs = $Syslocs;
@@ -130,8 +131,12 @@ function Show_Thing(&$T,$Force=0) {
     if ($T['BluePrint']<0) echo fm_text1('Gated On',$T,'GatedOn',2,'class=NotSide');
     if (feature('HiddenControl')) echo "<td colspan=2>Hidden Control: " . fm_select($FactNames,$T,'HiddenControl');
     echo "<tr><td>Type:<td>" . fm_select($ttn,$T,'Type',1);
-    if (($tprops & THING_HAS_LEVELS) || ($tprops & THING_CAN_BE_ADVANCED)) echo fm_number("Level",$T,'Level');
-    echo fm_number('Priority',$T,'Priority');
+    if (($tprops & THING_HAS_LEVELS) || ($tprops & THING_CAN_BE_ADVANCED)) echo fm_number1("Level",$T,'Level');
+    if ($tprops & THING_HAS_VARIANTS) {
+      $varlist = NamesList($Varies);
+      echo "<td>Varient: " . fm_select($varlist, $T, 'Variant',1);
+    }
+    echo fm_number1('Priority',$T,'Priority');
     if ($tprops & THING_NEEDS_PLANET)
       echo fm_number1('Planet',$T,'Dist1') . ($T['Dist1']? "<td><a href=PlanEdit.php?id=" . $T['Dist1'] . ">Visit</a>":'');
     if ($tprops & THING_HAS_AGE) echo fm_number1('Age',$T,'Dist1','','min=0 max=1000') . " optional";
@@ -139,6 +144,7 @@ function Show_Thing(&$T,$Force=0) {
   } else {
     echo "<tr><td>Type:<td>" . ( (($tprops & THING_CAN_BE_ADVANCED) && $T['Level']>1)? $Advance[$T['Level']] : '' ) . $ttn[$T['Type']];
     if ($tprops & THING_HAS_LEVELS) echo "<td>Level: " . $T['Level'];
+    if (($tprops & THING_HAS_VARIANTS) && $T['Variant']) echo "<td>Variant: " . $Varies[$T['Variant']]['Name'];
     echo fm_number('Priority',$T,'Priority');
   }
   if ($tprops & THING_HAS_AGE) echo fm_number1('Age',$T,'Dist1','','min=0 max=1000') . " optional";
@@ -696,7 +702,7 @@ function Show_Thing(&$T,$Force=0) {
     if ($GM){
       echo fm_number1('Evasion',$T,'Evasion','','min=0 max=10000');
     } else {
-      echo "<td>Evasion: " . $T['Evasion'];
+      echo "<td>Evasion: " . max(0,min($T['Evasion'],80));
     }
   }
   if ($tprops & THING_HAS_DISTRICTS) {

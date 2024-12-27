@@ -66,5 +66,7 @@ CREATE TABLE `Things` (
   `GatedOn` text COLLATE utf8mb4_general_ci NOT NULL,
   `BuildFlags` int NOT NULL,
   `Retreat` int NOT NULL,
+  `Variant` int NOT NULL,
+  `TargetEvasion` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

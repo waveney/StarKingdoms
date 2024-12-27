@@ -366,9 +366,9 @@
   case 'Generic' : // General case of table:field:id
     if ((preg_match('/(\w*):(\w*):(\d*)/',$field,$mtch)?true:false)) {
       $t = $mtch[1];
-      if ($t == 'Ignore') exit;
       $f = $mtch[2];
       $i = $mtch[3];
+      if (($t == 'Ignore') || ($i==0)) exit;
       $N = Gen_Get($t,$i);
       $N[$f] = $Value;
       echo Gen_Put($t,$N);
@@ -382,7 +382,7 @@
   case 'ScansDue': // Generic case of field:id
   case 'SocialPrinciples':
   case 'OrgActions':
-  case 'Organisations':
+  case 'Variants':
   case 'SocPsWorlds':
     if ((preg_match('/(\w*):(\d*)/',$field,$mtch)?true:false)) {
       if ($mtch[2]) {

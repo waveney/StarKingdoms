@@ -76,6 +76,8 @@ define('THING_HAS_BLUEPRINTS', 0x4000000);
 define('THING_NEEDS_PLANET',   0x8000000);
 define('THING_HAS_AGE',       0x10000000);
 define('THING_ISA_TEAM',      0x20000000);
+define('THING_HAS_VARIANTS',  0x40000000);
+
 
 define('LINK_ON_BOARD',-1);
 define('LINK_BOARDING',-2);
@@ -425,6 +427,18 @@ function Calc_Damage(&$T,&$Rescat) {
     }
   }
 
+  if ($T['Variant']) {
+    $V = Gen_Get('Variants',$T['Variant']);
+    $vev = $V['Firepower'];
+    if ($vev) {
+      if (abs($vev)<5) {
+        $Dam*=$vev;
+      } else {
+        $Dam += $vev;
+      }
+    }
+  }
+
   return $Dam;
 }
 
@@ -595,7 +609,20 @@ function Calc_Evasion(&$T) {
     $ev += $MTypes[$M['Type']]['EvasionMod']*$M['Number'];
   }
 
-  $T['Evasion'] = max(0,min($ev,80));
+  if ($T['Variant']) {
+    $V = Gen_Get('Variants',$T['Variant']);
+    $vev = $V['Evasion'];
+    if ($vev) {
+      if (abs($vev)<5) {
+        $ev*=$vev;
+      } else {
+        $ev += $vev;
+      }
+    }
+    $T['TargetEvasion'] = $V['TargetEvasion']??0; // Actual Number calculated when in battle
+  }
+
+  $T['Evasion'] = $ev;
 }
 
 function RefitRepair(&$T,$Save=1,$KeepTechLvl=0,$Other=0) {
