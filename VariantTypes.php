@@ -30,7 +30,7 @@
 //  echo "<h2 class=red>YOU NEED TO CLICK UPDATE ON THIS PAGE - Autoupdate does not work with Hex</h2>";
 
   echo "Props (Hex) bits 0-3 Devastation Effect (0=normal,1=none,2=double),<br>" .
-       "16=Can operate on ground, 32=Not 1st round, 64=Grant evasion, 128=Only 1st Round<p>\n";
+       "16=Can operate on ground, 32=Not 1st round, 64=Grant evasion, 128=Only 1st Round, 256=No Devastation<p>\n";
   echo "Note for Firepower,Evasion and Target Evasion - A |value| <5 is +/-V*25%, 5+ is a simple number<br>\n";
   echo "<form method=post action=VariantTypes.php>";
   Register_AutoUpdate('Generic', 0); // Not compatible with Hex

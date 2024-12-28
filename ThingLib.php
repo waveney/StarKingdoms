@@ -432,7 +432,7 @@ function Calc_Damage(&$T,&$Rescat) {
     $vev = $V['Firepower'];
     if ($vev) {
       if (abs($vev)<5) {
-        $Dam = ceil($Dam * $vev/4);
+        $Dam = $Dam + ceil($Dam * $vev/4);
       } else {
         $Dam += $vev;
       }
@@ -614,7 +614,7 @@ function Calc_Evasion(&$T) {
     $vev = $V['Evasion'];
     if ($vev) {
       if (abs($vev)<5) {
-        $ev = ceil($ev * $vev/4);
+        $ev = $ev + ceil($ev * $vev/4);
       } else {
         $ev += $vev;
       }

@@ -13,6 +13,8 @@
   $Systems = Get_SystemRefs();
   $Factions = Get_Factions();
   $xtra = '';
+  $Varies = Gen_Get_All_Game('Variants');
+
 
   if (isset($_REQUEST['AT'])) {
     $Sids = array_flip($Systems);
@@ -109,7 +111,9 @@
 
     echo "<tr class='ThingList Thing_$RowClass Thing_Build$BuildClass'><td><a href=ThingEdit.php?id=$tid>$tid</a>";
 
-    echo "<td>" . ($ThingTypes[$T['Type']]['Name']??'Unknown') . "<td>" . $T['Level'];
+    echo "<td>" . ($ThingTypes[$T['Type']]['Name']??'Unknown');
+    if ($T['Variant']) echo " ( " . $Varies[$T['Variant']]['Name'] . " )";
+    echo "<td>" . $T['Level'];
     echo "<td><center>" . (($Props & THING_HAS_HEALTH)? $T['CurHealth'] . ' / ' . $T['OrigHealth'] : "-");
     if ($T['LinkId'] >= 0 || $T['LinkId'] == -2 || $T['LinkId'] == -4 || ($T['LinkId'] == -6)) {
       echo "<td><a href=ThingList.php?AT=$Ref>$Ref</a><td>$Loc";

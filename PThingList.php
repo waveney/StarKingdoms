@@ -173,6 +173,7 @@
   }
   $ThingTypes = Get_ThingTypes();
   $Systems = Get_SystemRefs();
+  $Varies = Gen_Get_All_Game('Variants');
   $Factions = Get_Factions();
 //  $Techs = Get_Techs($Fid);
   $ModTypes = Get_ModuleTypes();
@@ -303,6 +304,7 @@
     echo "<td><a href=" . ($T['BuildState']? "ThingEdit.php" : "ThingPlan.php") . "?id=$Tid>" . ($T['Name'] ? $T['Name'] : "Nameless" ) . "</a>";
     echo "<td>" . $T['Class'];
     echo "<td>" . $Name;
+    if ($T['Variant']) echo " ( " . $Varies[$T['Variant']]['Name'] . " )";
     echo "<td>" . $T['Level'];
     if ($Fid == 0) echo "<td style='background:" . ($Factions[$T['Whose']]['MapColour']??'white') . "'>" . ($Factions[$T['Whose']]['Name']??'Unknown');
     if (0) echo "<td>" . (($RowClass == 'Prisoner') ? "<span style='background:" . ($Factions[$T['Whose']]['MapColour']??'white') . "'>[" .
