@@ -14,26 +14,45 @@ function New_Thing(&$T) {
   $Fact_Colours = Get_Faction_Colours();
   $Systems = Get_SystemRefs();
   $BPs = BluePrintList(10000);
+  $Varies = Gen_Get_All_Game('Variants');
+  $VarList = NamesList($Varies);
+
 // var_dump($BPs);
+
+//  var_dump($T);
   if (!isset($T['Whose'])) $T['Whose'] = 0;
-  echo "<h1>Create Thing:</h1>";
+  if (($T['BluePrint']??0) >= 0 ) {
+    echo "<h1>Create Thing:</h1>";
+  } else {
+    foreach ($ttypes as $ti=>$tt) {
+      if (($tt['Properties'] & THING_HAS_BLUEPRINTS) == 0) unset($ttn[$ti]);
+    }
+    echo "<h1>Create Blue Print:</h1>";
+  }
   echo "<form method=post action=ThingEdit.php>";
   echo "<table><tr><td>Type:<td>" . fm_select($ttn,$T,'Type',0," onchange=ListSelection(event,'Type','BPSet','Tlevel')");
   echo "<tr>" . fm_text("Name",$T,'Name');
-  foreach ($ttypes as $i=>$tt) {
-    if (($tt['Properties'] & THING_HAS_BLUEPRINTS) && !empty($BPs[$i])) {
-      echo "<tr id=BPSet$i hidden><td>Blue print:<td>" . fm_select($BPs[$i],$T,'BluePrint',1,'',"BLIstZZ$i");
-    }
-  }
   echo "<tr class=Tlevel>" . fm_number("Level",$T,'Level');
-  echo "<tr>" . fm_radio('Whose',$FactNames ,$T,'Whose','',1,'colspan=6','',$Fact_Colours,0);
-  echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId',1);
-  echo "<tr><td>BuildState:<td>" . fm_select($BuildState,$T,'BuildState');
-  echo "<tr><td>" . fm_submit("ACTION","Create");
+  if (($T['BluePrint']??0) >= 0 ) {
+    foreach ($ttypes as $i=>$tt) {
+      if (($tt['Properties'] & THING_HAS_BLUEPRINTS) && !empty($BPs[$i])) {
+        echo "<tr id=BPSet$i hidden><td>Blue print:<td>" . fm_select($BPs[$i],$T,'BluePrint',1,'',"BLIstZZ$i");
+      }
+    }
+    echo "<tr>" . fm_radio('Whose',$FactNames ,$T,'Whose','',1,'colspan=6','',$Fact_Colours,0);
+    echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId',1);
+    echo "<tr><td>BuildState:<td>" . fm_select($BuildState,$T,'BuildState');
+    echo "<tr><td>" . fm_submit("ACTION","Create");
+  } else {
+    echo "<tr><td>Variant:<td>" . fm_select($VarList,$T,'Variant',1) . fm_hidden('BluePrint',$T['BluePrint']) .fm_hidden('BuildState',3);
+    echo "<tr><td>" . fm_submit("ACTION","Create Blueprint");
+  }
   echo "</table></form>";
   dotail();
 }
-  global $FACTION;
+
+
+global $FACTION;
   $ttypes = Get_ThingTypes();
 
   $Force = (isset($_REQUEST['FORCE'])?1:0);
@@ -63,6 +82,11 @@ function New_Thing(&$T) {
       New_Thing($T);
       break;
 
+    case 'NEWBLUE' :
+      $T = ['Level'=>1, 'BuildState'=>3, 'LinkId'=>0, 'BluePrint'=>-1];
+      New_Thing($T);
+      break;
+
     case 'Create' : // From New Thing
       foreach ($_POST as $PO=>$POV) {
         if (str_contains($PO,'BLIstZZ') && ($POV != 0)) {
@@ -75,6 +99,9 @@ function New_Thing(&$T) {
         echo "No System Given";
         New_Thing($_POST); // TODO fix 4 Blue
       }
+      // Drop Through
+
+    case 'Create Blueprint':
       if (($_POST['BluePrint']??0) > 0) {
         $T = Thing_Duplicate($_POST['BluePrint']);
         $T['Class'] = $T['Name'];
@@ -87,10 +114,20 @@ function New_Thing(&$T) {
         $tid = $T['id'];
       } else {
         $_POST['GameId'] = $GAMEID;
-        $_POST['NewSystemId'] = $_POST['SystemId'];
+        $_POST['NewSystemId'] = ($_POST['SystemId']??0);
 
-        $tid = Insert_db_post('Things',$T);
- //     var_dump($T);
+        if ($T['id']??0 ) {
+          $tid = $T['id'];
+          Update_db_post('Things',$T);
+        } else {
+          $tid = Insert_db_post('Things',$T);
+        }
+        Calc_Evasion($T);
+        $ResC = 0;
+        Calc_Damage($T,$ResC);
+        Calc_Health($T);
+        Calc_Scanners($T);
+        Put_Thing($T);
       }
       $T = Get_Thing($tid); // Re-read to get defaults
 
@@ -108,6 +145,7 @@ function New_Thing(&$T) {
         echo "<h2 class=Err>WARNING this has flexible modules...</h2>";
       }
       break;
+
 
     case 'CREATE' : // Named Chars
       echo "<h2>Choose a world to start on:</h2>\n";

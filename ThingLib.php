@@ -373,7 +373,7 @@ function Calc_Health(&$T,$KeepTechLvl=0,$Other=0) {
     return 40 + Has_Tech($T['Whose'],'Militia Training Techniques')*2;
   }
 
-  if ($Other == 0) $Other = $T['Whose'];
+  if ($Other == 0) $Other = $T['Whose']??0;
   if (Has_Trait($Other,'Thick Skinned')) $Plus =1;
   $Health = (Feature('BaseHealth')?5*($T['Level']+$Plus):0);
   $Shield = 0;
@@ -587,7 +587,7 @@ function Calc_Scanners(&$T) { // And lots of other attributes
     $T['HasDeepSpace'] = 0;
   }
   $LvlMod = 0;
-  if (Has_Trait($T['Whose'],'Ebonsteel Manufacturing')) $LvlMod = 1;
+  if (Has_Trait($T['Whose']??0,'Ebonsteel Manufacturing')) $LvlMod = 1;
   $Engs = Get_ModulesType($T['id'],'Sublight Engines');
   $T['Speed'] = ceil(($Engs && $Engs['Number']>0)?$Engs['Number']*($Engs['Level']+$LvlMod)/$T['Level']:0);
   $Mobs = Get_ModulesType($T['id'],'Suborbital Transports');
