@@ -501,7 +501,7 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0 ) {
       }
       $LinkText = "Unknown";
       $FL = Get_FactionLinkFL($Fid,$L['id']);
-      if (($L['Concealment'] > $NS['SpaceScan']) && (($FL['Known']??0) ==0)) {
+      if (($L['Concealment'] > 0) && ($L['Concealment'] > $NS['SpaceScan']) && (($FL['Known']??0) ==0)) {
         unset($Links[$Lid]);
         continue;
       }
