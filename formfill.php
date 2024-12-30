@@ -202,7 +202,7 @@
       $FarNeb = $FSN['Nebulae'];
       $FS = Get_FactionSystemFS($Fid,$FSN['id']);
 
-      if (isset($FL['Known']) && $FL['Known']) {
+      if (Has_Tech($Fid,'Know All Links') || (isset($FL['Known']) && $FL['Known'])) {
       } else if ($NearNeb == 0) {
           if (isset($FS['id'])) {
             if ($FarNeb != 0 && $FS['ScanLevel'] < 0) {
@@ -216,7 +216,7 @@
               $Known = 0;
           }
         } else {
-          echo "Error!"; exit;// Can't see that link
+          if (!Has_Tech($Fid,'Know All Links')) echo "Error!"; exit;// Can't see that link
         }
       $N['TargetKnown'] = $Known;
     }

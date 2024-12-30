@@ -934,14 +934,19 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
         $RawA = 0;
       }
       if ($T['Whose']) {
-        $Who = ($Factions[$T['Whose']]['Adjective']?$Factions[$T['Whose']]['Adjective']:$Factions[$T['Whose']]['Name']);
-        if ($RawA && is_vowel($Who)) $txt .= "n";
-        if ($Div) {
-          $txt .= " <span style='background:" . $Factions[$T['Whose']]['MapColour'] . "'>$Who</span>";
+        if ($T['HideOwner'] && !$GM) {
+          $txt .= "Unidentified";
         } else {
-          $txt .= " $Who";
+          $Who = ($Factions[$T['Whose']]['Adjective']?$Factions[$T['Whose']]['Adjective']:$Factions[$T['Whose']]['Name']);
+          if ($RawA && is_vowel($Who)) $txt .= "n";
+          if ($Div) {
+            $txt .= " <span style='background:" . $Factions[$T['Whose']]['MapColour'] . "'>$Who</span>";
+          } else {
+            $txt .= " $Who";
+          }
+          if ($T['HideOwner']) $txt .= " (Hidden)";
+          $RawA = 0;
         }
-        $RawA = 0;
       }
       if (($T['Whose'] == $Fid) && ($TTprops & THING_CAN_BE_ADVANCED) && ($T['Level'] > 1)) $txt .= ' ' . $Advance[$T['Level']];
       if ($T['Whose']==0 && Access('GM')) {

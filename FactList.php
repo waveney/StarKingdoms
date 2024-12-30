@@ -18,6 +18,7 @@
     dotail();
   }
 
+//  var_dump($_REQUEST);
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
     case 'Set State':
@@ -25,7 +26,7 @@
 
       foreach ($Factions as &$F) {
         $F['TurnState'] = $NewState;
-        Put_Faction($F);
+        if (!$F['NPC'] || (($_REQUEST['PlayerOnly']??'off') == 'on')) Put_Faction($F);
       }
       $Factions = Get_Factions(1);
       break;
@@ -71,7 +72,8 @@
   echo "</tbody></table></div>\n";
 
   echo "<form method=post action=FactList.php>";
-  echo fm_select($PlayerState,NULL,'TurnState') . "<input type=submit name=ACTION value='Set State'>";
+  echo fm_select($PlayerState,NULL,'TurnState') . "<input type=submit name=ACTION value='Set State'>" .
+       fm_checkbox('And NPCs?',$_REQUEST,'PlayerOnly');
   echo "</form></h2>\n";
   echo "<h2><a href=FactionEdit.php?ACTION=NEW>New Faction</a> ";
 

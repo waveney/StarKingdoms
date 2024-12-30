@@ -129,7 +129,7 @@ function Show_Thing(&$T,$Force=0) {
     echo "<tr class=NotSide><td class=NotSide>Id: $Tid<td class=NotSide>Game: $GAMEID - " . $GAME['Name'];
     echo fm_number('Seen Mask',$T,'SeenTypeMask','class=NotSide','class=NotSide');
     if ($T['BluePrint']<0) echo fm_text1('Gated On',$T,'GatedOn',2,'class=NotSide');
-    if (feature('HiddenControl')) echo "<td colspan=2>Hidden Control: " . fm_select($FactNames,$T,'HiddenControl');
+//    if (feature('HiddenControl')) echo "<td colspan=2>Hidden Control: " . fm_select($FactNames,$T,'HiddenControl');
     echo "<tr><td>Type:<td>" . fm_select($ttn,$T,'Type',1);
     if (($tprops & THING_HAS_LEVELS) || ($tprops & THING_CAN_BE_ADVANCED)) echo fm_number1("Level",$T,'Level');
     if ($tprops & THING_HAS_VARIANTS) {
@@ -524,6 +524,8 @@ function Show_Thing(&$T,$Force=0) {
   if ($GM) {
     echo "<td>Prisoner of: " . fm_select($FactNames,$T,'PrisonerOf');
     echo "<td colspan=2>Hidden Control: " . fm_select($FactNames,$T,'HiddenControl');
+    echo "<td>" . fm_checkbox('Hide Owner',$T,'HideOwner');
+
     if (Access('God')) echo "<tr><td>GOD!:<td>SystemId: " . $T['SystemId'] . "<td>LinkId: " . $T['LinkId'] . "<td>In Sys Locn: " . $T['WithinSysLoc'] .
     "<td>NewSystemId: " . $T['NewSystemId'] . " New Locn: " . $T['NewLocation'] . fm_Number1('LastMoved',$T,'LastMoved');
   }

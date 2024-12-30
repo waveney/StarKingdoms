@@ -68,5 +68,6 @@ CREATE TABLE `Things` (
   `Retreat` int NOT NULL,
   `Variant` int NOT NULL,
   `TargetEvasion` int NOT NULL,
+  `HideOwner` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
