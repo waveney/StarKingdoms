@@ -120,7 +120,7 @@
         $Ltxt = "Level";
         if ($OP['Props']&3) $Ltxt .= "+" . ($OP['Props']&3);
         if (($OP['Props']& 0Xc)) {
-          $Ltxt .= "+" . ((($OP['Props']&7)>>2)?(($OP['Props']&7)>>2)>1:'') . "X";
+          $Ltxt .= "+" . ((($OP['Props']&15)>>2)>1?(($OP['Props']&15)>>2):'') . "X";
         }
         echo "<tr><td><button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=1&op=$opi'>" . $OP['Name'] .
           "</button><br>";
@@ -486,8 +486,7 @@
       if (($OpTypes[$op]['Props'] & OPER_LEVELMOD) == 0) $Mod = ($OpTypes[$op]['Props'] & OPER_LEVEL);
  //     var_dump($Mod,$Level);
       if ($Mod >= 4) {
-        if ($Mod &4) $Mod = $Level;
-        if ($Mod &8) $Mod = $Level*2;
+        $Mod = ($Mod&3) + $Level*($Mod>>2);
       }
       $Mod += $AMod;
 

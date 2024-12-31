@@ -31,7 +31,7 @@ if ($DTs) foreach($DTs as $D) {
   $Ltxt = "Level";
   if ($D['Props']&3) $Ltxt .= "+" . ($D['Props']&3);
   if (($D['Props']& 0Xc)) {
-    $Ltxt .= "+" . ((($D['Props']&7)>>2)?(($D['Props']&7)>>2)>1:'') . "X";
+    $Ltxt .= "+" . ((($D['Props']&15)>>2)>1?(($D['Props']&15)>>2):'') . "X";
   }
   echo "<td>$Ltxt<td>" . $D['Description'];
 }

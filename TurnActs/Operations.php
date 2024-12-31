@@ -122,8 +122,7 @@ function StartOperations() {
 
     $Mod = ($Otp & OPER_LEVEL);
     if ($Mod >=4) {
-      if ($Mod &4) $Mod = $Level;
-      if ($Mod &8) $Mod = $Level*2;
+      $Mod = ($Mod&3) + $Level*($Mod>>2);
     }
 
     $BaseLevel = Op_Level($OrgId,$Wh) + $Mod;
