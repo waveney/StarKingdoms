@@ -143,8 +143,10 @@
 
       echo "<h2>Select the Target System</h2>";
       echo "For an operation through a wormhole, that is the system with the known end of the wormhole.<p>";
+      $WRC = 0;
       foreach ($WRefs as $Wi=>$Ref) {
         echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=2&op=$op&W=$Wi'>$Ref</button> \n";
+        if (($WRC++%15) == 0) echo "<br>";
       }
       break;
 
@@ -458,7 +460,7 @@
       }
       if ($OpTypes[$op]['Props'] & OPER_MONEY) {
         echo "Ammount: " . Credit() . $SP . " to " . $Facts[$P2]['Name'] . "<p>";
-        $Name .= " " . Credit() . $SP . " to " . $Facts[$P2]['Name'] . "<p>";
+        $Name .= " " . $SP . " Credits to " . $Facts[$P2]['Name'];
       }
       if (($OpTypes[$op]['Props'] & OPER_ANOMALY)) {
         $Anom = Gen_Get('Anomalies',$SP);

@@ -410,7 +410,7 @@ function OperationsComplete() {
         TurnLog($Fid,"A new Lodge branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .  System_Name($Sys,$Fid) );
         if ($World['FactionId'] != $Fid) {
           TurnLog($World['FactionId'],"A new Lodge branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
-            System_Name($Sys,$Outpost['Whose']) . " by " . $Facts[$Fid]['Name']);
+            System_Name($Sys,$World['Whose']) . " by " . $Facts[$Fid]['Name']);
         }
         GMLog("A new Lodge branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
           System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);
@@ -423,7 +423,7 @@ function OperationsComplete() {
           System_Name($Sys,$Fid) );
         if ($World['FactionId'] != $Fid) {
           TurnLog($World['FactionId'],"A new Forward Operating Area branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
-            System_Name($Sys,$Outpost['Whose']) . " by " . $Facts[$Fid]['Name']);
+            System_Name($Sys,$World['Whose']) . " by " . $Facts[$Fid]['Name']);
         }
         GMLog("A new Forward Operating Area branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
           System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);
@@ -437,7 +437,7 @@ function OperationsComplete() {
           System_Name($Sys,$Fid) );
         if ($World['FactionId'] != $Fid) {
           TurnLog($World['FactionId'],"A new Research Base branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
-            System_Name($Sys,$Outpost['Whose']) . " by " . $Facts[$Fid]['Name']);
+            System_Name($Sys,$World['Whose']) . " by " . $Facts[$Fid]['Name']);
         }
         GMLog("A new Research Base branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
           System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);

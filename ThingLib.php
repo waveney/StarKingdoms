@@ -427,7 +427,7 @@ function Calc_Damage(&$T,&$Rescat) {
     }
   }
 
-  if ($T['Variant']) {
+  if ($T['Variant']??0) {
     $V = Gen_Get('Variants',$T['Variant']);
     $vev = $V['Firepower'];
     if ($vev) {

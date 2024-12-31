@@ -58,7 +58,7 @@
       case 'Setup' :
         $BankRec = ['FactionId'=>$Fid, 'Recipient'=>$_REQUEST['Recipient'], 'Amount'=>$_REQUEST['Amount'],
                     'StartTurn'=> $_REQUEST['StartTurn'], 'EndTurn' => (empty( $_REQUEST['EndTurn'])? $_REQUEST['StartTurn'] : $_REQUEST['EndTurn']),
-                    'YourRef' => $_REQUEST['YourRef'],'What'=>(isset($_REQUEST['What'])?$_REQUEST['What']:0) ];
+                    'YourRef' => $_REQUEST['YourRef'],'What'=>(isset($_REQUEST['What'])?$_REQUEST['What']:0),'GameId'=>$GAMEID ];
 
         if (empty($BankRec['YourRef'])) $BankRec['YourRef'] = "Unspecified";
         Put_Banking($BankRec);
@@ -73,7 +73,7 @@
         dostaffhead("Banking");
         $B = ['FactionId'=>$Fid, 'Recipient'=>$_REQUEST['Recipient'], 'Amount'=>$_REQUEST['Amount'],
                     'StartTurn'=> $_REQUEST['StartTurn'], 'EndTurn' => (empty( $_REQUEST['EndTurn'])? $_REQUEST['StartTurn'] : $_REQUEST['EndTurn']),
-                    'YourRef' => $_REQUEST['YourRef'], 'What'=>(isset($_REQUEST['What'])?$_REQUEST['What']:0)];
+          'YourRef' => $_REQUEST['YourRef'], 'What'=>(isset($_REQUEST['What'])?$_REQUEST['What']:0),'GameId'=>$GAMEID];
         if (empty($BankRec['YourRef'])) $BankRec['YourRef'] = "Unspecified";
 
 

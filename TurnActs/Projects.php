@@ -519,7 +519,7 @@ function ProjectsCompleted($Pass) {
             Put_District($D);
           } else { // Office
             $World = Gen_Get_Cond1('Worlds',"Home=" . $P['Home']);
-            $Off = ['Type' => -$P['ThingType'], 'World'=>$World['id'], 'Whose'=>$P['Whose'], 'Number'=>1];
+            $Off = ['Organisation' => -$P['ThingType'], 'OrgType'=>$P['ThingId'], 'World'=>$World['id'], 'Whose'=>$P['Whose'], 'Number'=>1];
             Put_Office($Off);
           }
           TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");

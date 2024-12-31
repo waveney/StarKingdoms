@@ -30,7 +30,7 @@
       case 'Setup' :
         $BankRec = ['FactionId'=>$Fid, 'Recipient'=>$_REQUEST['Recipient'], 'Amount'=>$_REQUEST['Amount'],
                     'StartTurn'=> $_REQUEST['StartTurn'], 'EndTurn' => (empty( $_REQUEST['EndTurn'])? $_REQUEST['StartTurn'] : $_REQUEST['EndTurn']),
-                    'YourRef' => $_REQUEST['YourRef']];
+                    'YourRef' => $_REQUEST['YourRef'], 'GameId'=>$GAMEID];
 
         Put_Banking($BankRec);
         $_REQUEST['Recipient'] = '';

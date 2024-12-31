@@ -209,7 +209,7 @@
         }
       }
     } else if (1 || $P['ThingType']) {
-      echo "<td>";
+      echo "<tr>" . fm_number('ThingType',$P,'ThingType') . "<td>";
       if ($P['Type'] == 1) {
         if ($P['ThingType'] < 0) {// Office
           $OTypes = Get_OrgTypes();

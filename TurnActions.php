@@ -202,6 +202,14 @@ function CashTransfers() {
   AddCurrencies();
 
   foreach($Bs as $B) {
+    if ($B['FactionId'] > 0 && !isset($Facts[$B['FactionId']])) {
+      GMLog('Impossible Cash transfer from ' . $B['FactionId'] . "Bank ref " . $B['id']);
+      continue;
+    }
+    if ($B['Recipient'] > 0 && !isset($Facts[$B['Recipient']])) {
+      GMLog('Impossible Cash transfer to ' . $B['Recipient'] . "Bank ref " . $B['id']);
+      continue;
+    }
     if ($B['DoneTurn'] >= $GAME['Turn']) continue; // Already done
     if ($B['What'] == 0) {
       if ($B['FactionId'] == 0) {

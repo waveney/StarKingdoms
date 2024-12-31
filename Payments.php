@@ -4,22 +4,23 @@
   include_once("ThingLib.php");
   include_once("ProjLib.php");
   include_once("PlayerLib.php");
-  
+
   A_Check('GM');
 
   dostaffhead("List Payments");
 
 
-  global $GAME,$Currencies;
+  global $GAME,$GAMEID,$Currencies;
 
   AddCurrencies();
   $Facts = Get_Faction_Names();
 //  var_dump($_REQUEST);
   echo "<h2>Payments in Credits or SP</h2>\n";
-  $Banks = Gen_Get_Cond('Banking', "FactionId=0 AND EndTurn>=" . $GAME['Turn']);
+  $Banks = Gen_Get_Cond('Banking', "GameId=$GAMEID AND FactionId=0 AND EndTurn>=" . $GAME['Turn']);
 
-  if (UpdateMany('Banking','Put_Banking',$Banks,2,'','','Amount',0)) $Banks = Gen_Get_Cond('Banking', "FactionId=0 AND EndTurn>=" . $GAME['Turn']);
-  
+  if (UpdateMany('Banking','Put_Banking',$Banks,2,'','','Amount',0))
+    $Banks = Gen_Get_Cond('Banking', "GameId=$GAMEID AND FactionId=0 AND EndTurn>=" . $GAME['Turn']);
+
   $coln = 0;
   echo "<form method=post action=Payments.php>";
   echo "<div class=tablecont><table id=indextable border width=100% style='min-width:1400px'>\n";
