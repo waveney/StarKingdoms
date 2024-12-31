@@ -310,7 +310,7 @@
           echo "</table><br>";
           echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEWORG&id=$Fid&p=" . $PTi['Construction'] .
             "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=-$ot" .
-            "&Name=" . base64_encode("Build New Orgs Office $Place") .
+            "&Name=" . base64_encode("Build NNEEWW Office $Place") .
             "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
             "Build New Orgs Office; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>\n";
 

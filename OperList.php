@@ -32,8 +32,9 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Who</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Organisation</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Status</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Start Turn</a>\n";
-//  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Cost</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Start Turn</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Finish Turn</a>\n";
+  //  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Cost</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Progress</a>\n";
   echo "</thead><tbody>";
 
@@ -45,7 +46,8 @@
     echo "<td>" . $Orgs[$O['OrgId']]['Name'] . " (" . $OrgTypes[$Orgs[$O['OrgId']]['OrgType']]['Name'] . " )";
     echo "<td>" . $Project_Status[$O['Status']];
     echo "<td>" . $O['TurnStart'];
-//    echo "<td>" . $O['Costs'];
+    echo "<td>" . $O['TurnEnd'];
+    //    echo "<td>" . $O['Costs'];
     echo "<td>" . $O['Progress'] . "/" . $O['ProgNeeded'];
   }
 

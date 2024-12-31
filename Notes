@@ -68,16 +68,11 @@ NEW GAME FEATURES & BUGS
 180 Federations trait
 197 Engineering points - Fed
 201 no space survey data - get conceal 2 wormholes - LIZ / Barrayar
-208 LInk counts by properties
 211 Anomallies progress > scan report
 212 New Office Builds ...
-213 Operlist Finish turn - Current turn
-214 Transfer Resources yet again
 215 Name propogate on control
-216 Format of systems in ops list
 217 Space/Ground anomally again
-219 Offices with missing type, and whose
-
+223
 
  
 Stack trace:\n#0 /var/www/vhosts/starkingdoms.uk/httpdocs/skdb.php(242): mysqli->query()\n
@@ -85,12 +80,12 @@ Stack trace:\n#0 /var/www/vhosts/starkingdoms.uk/httpdocs/skdb.php(242): mysqli-
 #2 /var/www/vhosts/starkingdoms.uk/httpdocs/formfill.php(403): Gen_Put()\n
 #3 {main}\n  thrown in /var/www/vhosts/starkingdoms.uk/httpdocs/skdb.php on line 242', referer: https://starkingdoms.uk/ProjDisp.php
 
-[Mon Dec 30 17:03:37.680063 2024] [proxy_fcgi:error] [pid 1149765:tid 140470906701568] [client 88.97.216.88:0] AH01071: Got error 'PHP message: PHP Fatal error:  Uncaught mysqli_sql_exception: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 1 in /var/www/vhosts/starkingdoms.uk/httpdocs/skdb.php:242\nStack trace:\n#0 /var/www/vhosts/starkingdoms.uk/httpdocs/skdb.php(242): mysqli->query()\n#1 /var/www/vhosts/starkingdoms.uk/httpdocs/skdb.php(37): Insert_db()\n#2 /var/www/vhosts/starkingdoms.uk/httpdocs/formfill.php(403): Gen_Put()\n#3 {main}\n  thrown in /var/www/vhosts/starkingdoms.uk/httpdocs/skdb.php on line 242', referer: https://starkingdoms.uk/ProjDisp.php
-[Mon Dec 30 17:08:05.212683 2024] [proxy_fcgi:error] [pid 1149793:tid 140470713833216] [client 88.97.216.88:0] AH01071: Got error 'PHP message: PHP Warning:  Undefined array key "Variant" in /var/www/vhosts/starkingdoms.uk/httpdocs/ThingLib.php on line 430', referer: https://starkingdoms.uk/Player.php
-[Mon Dec 30 17:08:31.645180 2024] [proxy_fcgi:error] [pid 1149793:tid 140470168569600] [client 88.97.216.88:0] AH01071: Got error 'PHP message: PHP Warning:  Undefined array key "Variant" in /var/www/vhosts/starkingdoms.uk/httpdocs/ThingLib.php on line 430', referer: https://starkingdoms.uk/Player.php
-
-
-[Mon Dec 30 19:15:54.510693 2024] [proxy_fcgi:error] [pid 1149793:tid 140470697047808] [client 86.152.219.13:0] AH01071: Got error 'PHP message: PHP Warning:  Undefined array key 8 in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php on line 214; PHP message: PHP Warning:  Trying to access array offset on value of type null in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php on line 214; PHP message: PHP Warning:  Undefined array key 1 in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php on line 218; PHP message: PHP Warning:  Trying to access array offset on value of type null in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php on line 218; PHP message: PHP Warning:  Undefined array key 1 in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php on line 220; PHP message: PHP Warning:  Trying to access array offset on value of type null in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php on line 220; PHP message: PHP Warning:  Undefined array key 8 in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php on line 220; PHP message: PHP Warning:  Trying to access array offset on value of type null in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php on line 220; PHP message: PHP Warning:  Undefined array key 7 in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php on line 214; PHP message: PHP Warning:  Trying to access array offset on value of type null in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php on line 214; PHP message: PHP Warning:  Undefined array key 1 in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php on line 218; PHP message: PHP Warning:  Trying to access array offset on value of type null in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php on line 218; PHP message: PHP Warning:  Undefined array key 1 in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php on line 220; PHP message: PHP Warning:  Trying to access array offset on value of type null in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php on line 220; PHP message: PHP Warning:  Undefined array key 7 in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php on line 220; PHP message: PHP Warning:  Trying to access array offset on value of type null in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php on line 220; PHP message: PHP Warning:  Undefined array key 6 in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php on line 214; PHP message: PHP Warning:  Trying to access array offset on value of type null in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php on line 214; PHP message: PHP Warning:  Undefined array key 1 in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php on line 218; PHP message: PHP Warning:  Trying to access array offset on value of type null in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php on line 218; PHP message: PHP Warning:  Undefined array key 1 in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php on line 220; PHP message: PHP Warning:  Trying to access array offset on value of type null in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php on line 220; PHP message: PHP Warning:  Undefined array key 6 in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php on line 220; PHP message: PHP Warning:  Trying to access array offset on value of type null in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php on line 220', referer: https://starkingdoms.uk/TurnActions.php?ACTION=Process&S=3
+You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 1 in 
+/var/www/vhosts/starkingdoms.uk/httpdocs/skdb.php:242\nStack trace:\n
+#0 /var/www/vhosts/starkingdoms.uk/httpdocs/skdb.php(242): mysqli->query()\n
+#1 /var/www/vhosts/starkingdoms.uk/httpdocs/skdb.php(37): Insert_db()\n
+#2 /var/www/vhosts/starkingdoms.uk/httpdocs/formfill.php(403): Gen_Put()\n
+#3 {main}\n  thrown in /var/www/vhosts/starkingdoms.uk/httpdocs/skdb.php on line 242', referer: https://starkingdoms.uk/ProjDisp.php
 
 
 

@@ -146,7 +146,7 @@
       $WRC = 0;
       foreach ($WRefs as $Wi=>$Ref) {
         echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=2&op=$op&W=$Wi'>$Ref</button> \n";
-        if (($WRC++%15) == 0) echo "<br>";
+        if ((++$WRC%15) == 0) echo "<br>";
       }
       break;
 

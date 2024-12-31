@@ -275,7 +275,7 @@
         echo fm_submit("ACTION",'Raise 1 Level',0);
       }
     }
-    echo fm_submit('ACTION','Start 1 Turn Earlier');
+    if ($P['TurnStart'] > $GAME['Turn']) echo fm_submit('ACTION','Start 1 Turn Earlier');
     echo fm_submit('ACTION','Start 1 Turn Later');
   }
   echo "</h2>";

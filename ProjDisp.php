@@ -62,12 +62,17 @@
   $ThingTypes = Get_ThingTypes();
 
   if (isset($_REQUEST['ACTION'])) {
+    $Name = base64_decode($_REQUEST['Name']??'');
+
     switch ($_REQUEST['ACTION']) {  // TODO This code is DREADFUL needs redoing
       case 'NEWORG':
         $NOrg = ['Whose'=>$Fid, 'OrgType' => $_REQUEST['NewOrgType'], 'Name'=> $_REQUEST['NewOrgName'], 'Description'=>$_REQUEST['NewOrgDescription'],
                  'SocialPrinciple' => $_REQUEST['NewOrgSocialPrinciple'], 'OfficeCount'=>0, 'GameId'=>$GAMEID];
         $Orgid = Gen_Put('Organisations',$NOrg);
         $_REQUEST['Sel'] = -$Orgid;
+        if (str_contains($Name,'NNEEWW')) {
+          $Name = preg_replace('/NNEEWW/',$_REQUEST['NewOrgName'],$Name);
+        }
 
         // Drop through
 
@@ -109,9 +114,7 @@
           }
           $T1 = Get_Thing($TthingId);
 
-          if (isset($_REQUEST['Name'])) {
-            $Name = base64_decode($_REQUEST['Name']);
-          } else {
+          if (!isset($_REQUEST['Name'])) {
             $T1 = Get_Thing($TthingId);
             $Name = "Re-equip and Reinforce " . $T1['Name'];
             if ($TthingId2) $Name .= " and " . $T2['Name'];
@@ -149,9 +152,7 @@
           }
           $T1 = Get_Thing($TthingId);
 
-          if (isset($_REQUEST['Name'])) {
-            $Name = base64_decode($_REQUEST['Name']);
-          } else {
+          if (!isset($_REQUEST['Name'])) {
             $T1 = Get_Thing($TthingId);
             $Name = "Refit and Repair " . $T1['Name'];
             if ($TthingId2) $Name .= " and " . $T2['Name'];
@@ -286,7 +287,6 @@
           $Level = $_REQUEST['L'];
           $Costs = $_REQUEST['C'];
           $ProgN = $_REQUEST['PN'];
-          $Name = base64_decode($_REQUEST['Name']);
           break;
 
         }
