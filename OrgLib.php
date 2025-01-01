@@ -277,7 +277,7 @@ function Outpost_In($Sid,$Who,$Create=1) {
     $Sys = Get_System($Sid);
     if ($Sys['Control'] == 0) {
       $Sys['Control'] = $Who;
-      $FS = Get_FactionSystem($Who,$Sys);
+      $FS = Get_FactionSystemFS($Who,$Sid);
       if (!empty($FS['Name'])) $Sys['Name'] = $FS['Name'];
       Put_System($Sys);
     }

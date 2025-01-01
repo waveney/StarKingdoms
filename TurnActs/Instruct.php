@@ -779,6 +779,8 @@ function InstructionsComplete() {
         if ($N['Control'] != $Who) {
           if ($N['Control'] == 0) {
             $N['Control'] = $Who;
+            $FS = Get_FactionSystemFS($Who,$T['SystemId']);
+            if (!empty($FS['Name'])) $N['Name'] = $FS['Name'];
             Put_System($N);
           }
         }
@@ -800,18 +802,20 @@ function InstructionsComplete() {
         GMLog($P['Name'] . " on " . $N['Ref'] . " has been colonised by " . $Facts[$Who]['Name'],1);  // TODO Check for any named chars and offload
         Report_Others($T['Whose'], $T['SystemId'],31,$P['Name'] . " on " . $N['Ref'] . " has been colonised by " . $N['Ref']);
 
-        $Have = Get_Things_Cond(0," (LinkId<0 AND SystemId=$Tid) ");
-        if ($Have) {
-          $Loc = Within_Sys_Locs($N,$T['Spare1']);
-          foreach ($Have as $H) {
-            $H['SystemId'] = $T['SystemId'];
-            $H['WithinSysLoc'] = $Loc;
-            TurnLog($Who,$H['Name'] . " has been offloaded on to " . $P['Name'] . " in " . $N['Ref'],$H);
-            if ($H['Whose'] != $Who) TurnLog($H['Whose'],$H['Name'] . " has been offloaded on to " . $P['Name'] . " in " . $N['Ref'],$H);
-            Put_Thing($H);
+        if ('RemoveAfterColonise'){
+          $Have = Get_Things_Cond(0," (LinkId<0 AND SystemId=$Tid) ");
+          if ($Have) {
+            $Loc = Within_Sys_Locs($N,$T['Spare1']);
+            foreach ($Have as $H) {
+              $H['SystemId'] = $T['SystemId'];
+              $H['WithinSysLoc'] = $Loc;
+              TurnLog($Who,$H['Name'] . " has been offloaded on to " . $P['Name'] . " in " . $N['Ref'],$H);
+              if ($H['Whose'] != $Who) TurnLog($H['Whose'],$H['Name'] . " has been offloaded on to " . $P['Name'] . " in " . $N['Ref'],$H);
+              Put_Thing($H);
+            }
           }
+          $T['BuildState'] = -1;
         }
-        if ('RemoveAfterColonise') $T['BuildState'] = -1;
         break; // The making homes and worlds in a later stage completes the colonisation I hope
 
       case 'Analyse Anomaly':

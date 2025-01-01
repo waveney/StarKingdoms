@@ -46,8 +46,8 @@
       } else {
         $FL = ['LinkId'=>$Lid, 'FactionId'=>$Fid, 'Known'=>1 ];
         Put_FactionLink($FL);
+        $Know = Get_Factions4Link($Lid);
       }
-      $Know = Get_Factions4Link($Lid);
       break;
     }
   }
@@ -56,7 +56,7 @@
   echo "<div class=tablecont><table width=90% border class=SideTable>\n";
   Register_AutoUpdate('Link',$Lid);
 
-  echo "<tr><td>Id: $Lid<td>Game: $GAMEID<td>" . fm_number('Level',$L,'Level');
+  echo "<tr><td>Id: $Lid<td>Game: $GAMEID<td>Name: " . ($L['Name']??'None') . fm_number('Level',$L,'Level');
   echo "<tr>" . fm_text('From',$L,'System1Ref') . "<td>" . NameFind($N1) . fm_text('To',$L,'System2Ref') . "<td>" . NameFind($N2);
   echo "<tr><td><b>Known by</b>";
 

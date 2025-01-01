@@ -305,6 +305,7 @@
                    ($ShowLinks? " fontsize=" . $Ldat[3] . " label=\"" . $Ldat[2] . "\"": '') . " ];\n");
             $LinkShown[$L['id']]=1;
           } else {
+            if ($Fl['Known']==0) continue;
             if ($LinkType == 'Gates') { // VERY DUFF
               if ($Neb && $FS['NebScanned'] < $Neb) continue;
               if (isset($FS['ScanLevel']) && $FS['ScanLevel']<2) continue; // Wrong now wont fix unless Gates reused
