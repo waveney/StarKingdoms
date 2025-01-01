@@ -78,7 +78,7 @@
   echo "<h1>Organisations</h1>";
   echo "To add a new one, fill in name, description and org type at the bottom and click the <b>Add New Organisation</b> button<p>";
   echo "Click on the View link under the office count, to see location of all Offices and Branches<p>";
-  Register_AutoUpdate('Organisations',0);
+  Register_AutoUpdate('Generic',0);
   echo "<form method=post>";
   $coln = 0;
   echo "<div class=tablecont><table id=indextable border width=100% style='min-width:1400px'>\n";
@@ -99,21 +99,22 @@
     echo "<tr>" . fm_hidden("GameId:$i", $GAMEID);
     if ($GM) echo "<td>$i";
     if ($GM || ($O['OfficeCount']==0)) {
-      echo "<td>" . fm_select($OrgTypeNames,$O,'OrgType',1,'',"OrgType:$i") . "<br>";
-      if ($GM) echo "also:<br>" . fm_select($OrgTypeNames,$O,'OrgType2',1,'',"OrgType2:$i");
-      echo fm_text1('',$O,'Name',4,'','',"Name:$i");
+      echo "<td>" . fm_select($OrgTypeNames,$O,'OrgType',1,'',"Organisations:OrgType:$i") . "<br>";
+      if ($GM) echo "also:<br>" . fm_select($OrgTypeNames,$O,'OrgType2',1,'',"Organisations:OrgType2:$i");
+      echo fm_text1('',$O,'Name',4,'','',"Organisations:Name:$i");
 
-      echo "<br>" . fm_basictextarea($O, 'Description',5,4," style='width=70%'","Description:$i");
-      echo "<br>Social Principle (Religious / Ideological Orgs only)" . fm_select($SocPs[$Of],$O,'SocialPrinciple',1,'',"SocialPrinciple:$i");
+      echo "<br>" . fm_basictextarea($O, 'Description',5,4," style='width=70%'","Organisations:Description:$i");
+      echo "<br>Social Principle (Religious / Ideological Orgs only)" .
+        fm_select($SocPs[$Of],$O,'SocialPrinciple',1,'',"Organisations:SocialPrinciple:$i");
     } else {
       echo "<td>" . $OrgTypeNames[$O['OrgType']];
       echo "<td colspan=4>" . $O['Name'] . "<br>";
       echo $Parsedown->text(stripslashes($O['Description']));
       if ($O['OrgType'] == 5) echo "<br>Social Principle (Religious / Ideological Orgs only): " . $SocPs[$Of][$O['SocialPrinciple']];
     }
-    echo fm_number1('',$O,'RelOrder','','',"RelOrder:$i");
+    echo fm_number1('',$O,'RelOrder','','',"Organisations:RelOrder:$i");
     if ($GM) {
-      echo "<td>" . fm_select($FactNames,$O,'Whose',1,'',"Whose:$i");
+      echo "<td>" . fm_select($FactNames,$O,'Whose',1,'',"Organisations:Whose:$i");
       echo "<br><a href=OrgList.php?ACTION=Delete&i=$i>Delete</a>";
     }
     echo "<td>" . $O['OfficeCount'] . "<br><a href=OrgView.php?id=$i>View</a>";
@@ -122,8 +123,8 @@
     $O = [];
     echo "<tr><td>";
     if ($GM) echo "<td>";
-    echo fm_select($NewOrgs,$O,'OrgType',0,'',"OrgType:0");
-    echo fm_text1('',$O,'Name:0',4,'','placeholder="New Organisation Name"');
+    echo fm_select($NewOrgs,$O,'OrgType',0,'',"Organisations:OrgType:0");
+    echo fm_text1('',$O,'Organisations:Name:0',4,'','placeholder="New Organisation Name"');
     echo "<br>" . fm_basictextarea($O, 'Description:0',5,4,"placeholder='New Organisation Description' style='width=70%'");
     if ($GM) {
       echo "Set up a Social Principle (if appropriate) after creating the Organisation";
@@ -131,11 +132,11 @@
       if (!isset($SocPs[$Fid])) $SocPs[$Fid] = SocPrinciples($Fid);
       echo "<br>Social Priniple (Religious / Ideological only)" . fm_select($SocPs[$Fid],$O,'SocialPrinciple:0');
     }
-    echo fm_number1('',$O,'RelOrder','','',"RelOrder:0");
+    echo fm_number1('',$O,'RelOrder','','',"Organisations:RelOrder:0");
     if ($GM) {
-      echo "<td>" . fm_select($FactNames,$O,'Whose:0',1);
+      echo "<td>" . fm_select($FactNames,$O,'Organisations:Whose:0',1);
     } else {
-      echo fm_hidden('Whose:0',$Fid);
+      echo fm_hidden('Organisations:Whose:0',$Fid);
     }
     echo fm_hidden('GameId:0',$GAMEID);
     if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
