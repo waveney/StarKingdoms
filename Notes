@@ -60,7 +60,6 @@ NEW GAME FEATURES & BUGS
 142 check refit/repair projects
 147 Is it possible to list Consumer Corp as an option for the Ascendancy, when building an Office. 
    (As per Lizard rules, the Lizards will own the office, but it's being built by the Ascendancy)
-155 hidding octopi ships
 165 Stop Anomaly study - gm option
 172 Ross's screen format problem
 173 Edit World font size mobile - see a chat gm 21/11
@@ -69,9 +68,8 @@ NEW GAME FEATURES & BUGS
 197 Engineering points - Fed
 201 no space survey data - get conceal 2 wormholes - LIZ / Barrayar
 211 Anomallies progress > scan report
-215 Name propogate on control
 217 Space/Ground anomally again
-223
+223 
 
  
 Stack trace:\n#0 /var/www/vhosts/starkingdoms.uk/httpdocs/skdb.php(242): mysqli->query()\n

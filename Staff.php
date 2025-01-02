@@ -223,6 +223,7 @@
     $txt .= "<li><a href=ListSocial.php>List Social Principles</a><p>\n";
     $txt .= "<li><a href=TrackedTypes.php>Tracked Properties</a><p>\n";
 
+    if (Access('God')) $txt .= "<li><a href=BuildFactLink.php>Build Factions link Knowledge</a>\n";
 
     $txt .= "</ul>\n";
   }

@@ -299,7 +299,7 @@
           $Fl = Get_FactionLinkFL($Faction, $L['id']);
           $Ldat = LinkProps($L);
           if (isset($Fl['id']) && $Fl['Known'] || $AllLinks) {
-            fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] .
+            fwrite($Dot,$L['System1Ref'] . " -> " . $L['System2Ref'] .
                    " [color=" . $Ldat[4] .
                    " penwidth=" . $Ldat[0] . " style=" . $Ldat[1] .
                    ($ShowLinks? " fontsize=" . $Ldat[3] . " label=\"" . $Ldat[2] . "\"": '') . " ];\n");
@@ -318,7 +318,7 @@
             $OL = ($from==$L['System1Ref']?$L['System2Ref']:$L['System1Ref']);
             $NodLab = (Feature('HideUnknownNodes')?'?':$OL);
             fwrite($Dot,"Unk$ul$rand [label=\"$NodLab\" shape=circle margin=0];\n");
-            fwrite($Dot,"$from -- Unk$ul$rand [color=" . $Ldat[4] .
+            fwrite($Dot,"$from -> Unk$ul$rand [color=" . $Ldat[4] .
               " penwidth=" . $Ldat[0] . " style=" . $Ldat[1] .
               ($ShowLinks? " fontsize=" . $Ldat[3] . " label=\"" . $Ldat[2] . "\"": '') . " ];\n");
             $ul++;
@@ -340,7 +340,7 @@
 
         foreach ($Links as $L) {
           $Ldat = LinkProps($L);
-          fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] .
+          fwrite($Dot,$L['System1Ref'] . " -> " . $L['System2Ref'] .
             " [color=" . $Ldat[4] .
             " penwidth=" . $Ldat[0] . " style=" . $Ldat[1] .
             ($ShowLinks? " fontsize=" . $Ldat[3] . " label=\"" . $Ldat[2] . "\"": '') . " ];\n");
@@ -393,7 +393,7 @@
       fwrite($Dot,"Direct [shape=point pos=\"$Dx,$Dy!\"];\n");
       foreach($Ds as $i=>$D) {
         fwrite($Dot, "Direct$i [ pos=\"" . $D[2]. "," . $D[3] . "!\" label=" . $D[4] . " margin=0 fontsize=10];\n");
-        fwrite($Dot, "Direct -- Direct$i [penwidth=2 dir=forward arrowsize=1 ];\n");
+        fwrite($Dot, "Direct -> Direct$i [penwidth=2 dir=forward arrowsize=1 ];\n");
       }
     }
 

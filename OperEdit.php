@@ -142,12 +142,12 @@
   if (Access('GM')) {
     echo "<tr><td>Operation Id:<td>$Oid<td>For<td>" . fm_select($FactionNames,$O,'Whose') . fm_number('Turn State', $O,'TurnState');
     echo "<tr><td>Organisation:<td>" . fm_select($OrgNames,$O,'OrgId') . "<td>Operation Type<td>" . fm_select($OpTypeNames,$O,'Type');
-    echo "<tr>" . fm_text("Operation Name",$O,'Name',2);
+    echo "<tr>" . fm_text("Operation Name",$O,'Name',6);
     echo "<tr>" . fm_number('Level',$O,'Level') . "<td>Status<td>" . fm_select($Project_Status,$O,'Status');
-    echo "<td class=NotSide>" . fm_checkbox('GM Lock',$O,'GMLock');
+//    echo "<td class=NotSide>" . fm_checkbox('GM Lock',$O,'GMLock');
     echo "<tr>" . fm_number("Turn Start",$O,'TurnStart') . fm_number('Turn Ended', $O, 'TurnEnd');
     echo "<tr><td>Where:<td>" . fm_select($Systems,$O,'SystemId',1);
-    echo "<td>" . fm_checkbox('GM Override',$O,'GMOverride') . " Set to override maxrush";
+    if (Feature('OperationRushes')) echo "<td>" . fm_checkbox('GM Override',$O,'GMOverride') . " Set to override maxrush";
     echo "<tr>" . ($OpCosts?fm_number('Cost',$O,'Costs'):'') . fm_number('Prog Needed', $O,'ProgNeeded');
     echo "<tr>" . fm_number("Progress",$O,'Progress') . fm_number('Last Updated',$O,'LastUpdate');
     if (Access('God')) echo "<tr>" . fm_number('Para1',$O,'Para1') .  fm_number('Para2',$O,'Para2');
