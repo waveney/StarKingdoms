@@ -1072,8 +1072,8 @@ function InstructionsComplete() {
         GMLog("A new " . $LL['Colour'] . " level " . $T['Dist1'] . " link " . ($L['Name']?$L['Name']:"#$Lid"). " </span> has been made between " .
           $Systems[$T['SystemId']] . " and " .
           $Systems[$T['Dist2']]);
-        $FL = ['LinkId'=>$Lid, 'FactionId'=>$T['Whose'],'Known'=>1];
-        Put_FactionLink($FL);
+        $FLK = ['FactionId' => $Fid,'LinkId'=>$Lid,'Used'=>1];
+        Gen_Put('FactionLinkKnown',$FLK);
         Report_Others($T['Whose'], $T['SystemId'],2,"A new " . $LL['Colour'] . " level " . $T['Dist1'] . " link #$Lid </span> has been made in " . $N['Ref']);
         Report_Others($T['Whose'], $T['Dist2'],2,"A new " . $LL['Colour'] . " level " . $T['Dist1'] . " link #$Lid </span> has been made in " . $Systems[$T['Dist2']]);
         break;

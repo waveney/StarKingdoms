@@ -500,17 +500,27 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0 ) {
         continue;
       }
       $LinkText = "Unknown";
+      $FLK = Gen_Get_Cond1('FactionLinkKnown',"FactionId=$Fid AND LinkId=$Lid");
+
+      if (($L['Concealment'] == 0) || ($FLK['Used']??0) || ($NS['SpaceScan'] >= $L['Concealment'])) {
+
+      } else {
+        unset($Links[$Lid]);
+        continue;
+      }
+
+/*
       $FL = Get_FactionLinkFL($Fid,$L['id']);
       if (($L['Concealment'] > 0) && ($L['Concealment'] > $NS['SpaceScan']) && (($FL['Known']??0) ==0)) {
         unset($Links[$Lid]);
         continue;
-      }
+      }*/
       $FarSysRef =  (($L['System1Ref'] == $N['Ref'])?$L['System2Ref']: $L['System1Ref'] );
       $FSN = Get_SystemR($FarSysRef);
       $FarNeb = $FSN['Nebulae'];
       $FS = Get_FactionSystemFS($Fid,$FSN['id']);
  //echo "<p>doing link " . $L['id'] . " to $FarSysRef ". $FSN['id'] ; var_dump($FS);
-      if ($FL['Known']??0) {
+      if ($FLK['Used']??0) {
         $LinkText = $FarSysRef;
       } else if ($NearNeb == 0) {
         if (isset($FS['id'])) {

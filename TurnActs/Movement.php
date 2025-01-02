@@ -28,9 +28,11 @@ function Follow() {
     foreach ($Things as $T) {
       $Folid = $T['NewSystemId'];
       $Fol = Get_Thing($Folid);
+      $Fid = $T['Whose'];
       if ($Fol) {
-        if ($Fol['LinkId'] >= 0) {
-          $L = Get_Link($Fol['LinkId']);
+        $Lid = $Fol['LinkId'];
+        if ($Lid >= 0) {
+          $L = Get_Link($Lid);
           if ($T['Stability'] < ($L['Instability']+$L['ThisTurnMod'])) {
             TurnLog($T['Whose'],  $T['Name'] . " Can not follow " . $Fol['Name'] . " as the link's Instability is too high " .
               ($L['ThisTurnMod']? ( " it is currently " . ($L['Instability']+$L['ThisTurnMod'])) : (" it is " . $L['Instability']) ));
@@ -41,22 +43,24 @@ function Follow() {
             continue;
           }
 
-          $FL = Get_FactionLinkFL($T['Whose'],$Fol['LinkId']);
-          if (empty($FL['id'])) {
-            TurnLog($T['Whose'],  $T['Name'] . " Can not follow " . $Fol['Name'] . " as the link they used is unknown to you ");
-            GMLog($Factions[$T['Whose']]['Name'] . " - " . $T['Name'] . " Can not follow " . $Fol['Name'] .
+          $FS = Get_FactionSystemFS($Fid,$T['SystemId']);
+          $FLK = Gen_Get_Cond1('FactionLinkKnown',"FactionId=$Fid AND LinkId=$Lid");
+
+          if (($L['Concealment'] == 0) || ($FLK['Used']??0) || ($FS['SpaceScan'] >= $L['Concealment'])) { // Valid
+            $T['LinkId'] = $Fol['LinkId'];
+            $T['LinkCost'] = $Fol['LinkCost'];
+            $T['LinkPay'] = 1;
+            $T['NewSystemId'] = $Fol['NewSystemId'];
+            Put_Thing($T);
+            GMLog($T['Name'] . " ( " . $Factions[$T['Whose']]['Name'] . " ) is following " . $Fol['Name'] . " ( " . $Factions[$Fol['Whose']]['Name'] . " )" );
+          } else {
+            GMLog($Factions[$Fid]['Name'] . " - " . $T['Name'] . " Can not follow " . $Fol['Name'] .
               " as the link they used is unknown to you ");
             $T['LinkId'] = $T['LinkCost'] = $T['LinkPay'] = 0;
             Put_Thing($T);
             continue;
           }
 
-          $T['LinkId'] = $Fol['LinkId'];
-          $T['LinkCost'] = $Fol['LinkCost'];
-          $T['LinkPay'] = 1;
-          $T['NewSystemId'] = $Fol['NewSystemId'];
-          Put_Thing($T);
-          GMLog($T['Name'] . " ( " . $Factions[$T['Whose']]['Name'] . " ) is following " . $Fol['Name'] . " ( " . $Factions[$Fol['Whose']]['Name'] . " )" );
         } else {
           $Again = 1;
         }
@@ -456,9 +460,19 @@ function ShipMovements($Mode=0) {
             }
           }
 
+/*
           $FL = Get_FactionLinkFL($Fid,$Lid);
           $FL['Known'] = 1;
           Put_FactionLink($FL);
+          */
+          $FLK = Gen_Get_Cond1('FactionLinkKnown',"FactionId=$Fid AND LinkId=$Lid");
+          if ($FLK && !$FLK['Used']) {
+            $FLK['Used'] = 1;
+            Gen_Put('FactionLinkKnown',$FLK);
+          } else {
+            $FLK = ['FactionId' => $Fid,'LinkId'=>$Lid,'Used'=>1];
+            Gen_Put('FactionLinkKnown',$FLK);
+          }
 
           $pname = System_Name($N,$Fid);
         } else {

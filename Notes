@@ -88,5 +88,40 @@ You have an error in your SQL syntax; check the manual that corresponds to your 
 
 
 
+BuildFactLink.php:    $FLK = Gen_Get_Cond1('FactionLinkKnown',"FactionId=$Fid AND LinkId=$Lid");
+BuildFactLink.php:    Gen_Put('FactionLinkKnown',$FLK);
+formfill.php:      $FL = Get_FactionLinkFL($Fid,$L['id']);
+GetPut.php:function Get_FactionLink($id) {
+GetPut.php:  $res = $db->query("SELECT * FROM FactionLink WHERE id=$id");
+GetPut.php:function Get_FactionLinkFL($Fact, $Lid) {
+GetPut.php:  $res = $db->query("SELECT * FROM FactionLink WHERE FactionId=$Fact AND LinkId=$Lid");
+GetPut.php:function Put_FactionLink(&$now) {
+GetPut.php:    $Cur = Get_FactionLink($e);
+GetPut.php:    return Update_db('FactionLink',$Cur,$now);
+GetPut.php:    return $now['id'] = Insert_db ('FactionLink', $now );
+GetPut.php:  $res = $db->query("SELECT * FROM FactionLink WHERE LinkId=$Lid");
+LinkEdit.php:        Put_FactionLink($FL);
+LinkEdit.php:        Put_FactionLink($FL);
+MapFull.php:          $Fl = Get_FactionLinkFL($Faction, $L['id']);
+MapFull.php:              Put_FactionLink($Fl);
+MapTransfer.php:    $FL = Get_FactionLinkFL($Fid,$Lid);
+MapTransfer.php:      $FL = Get_FactionLinkFL($Tid,$Lid);
+MapTransfer.php:        Put_FactionLink($FL);
+NamePlaces.php:      $FL = Get_FactionLinkFL($Fid,$L['id']);
+NamePlaces.php:      Put_FactionLink($FL);
+OpsNew.php:          $LinkKnow = Get_FactionLinkFL($Fid,$L['id']);
+OrgLib.php:  $LKnown = Gen_Get_Cond('FactionLink', "FactionId=$Fid");
+PlayerMove.php:    $FL = Get_FactionLinkFL($Fid,$Lid);
+PlayerMove.php:      $FL = Get_FactionLinkFL($Fid,$Lid);
+PlayerMove.php:      Put_FactionLink($FL);
+PThingList.php:      $FL = Get_FactionLinkFL($Fid,$Lid);
+SetupFaction.php:          $FL = Get_FactionLinkFL($Fid,$L['id']);
+SetupFaction.php:            Put_FactionLink($FL);
+SplitFaction.php:  $FSs = Gen_Get_Cond('FactionLinks',"FactionId=$Fid");
+SplitFaction.php:      $NFS = Get_FactionLinkFL($Nid,$FS['LinkId']);
+SplitFaction.php:      if (empty($NFS['id'])) Put_FactionLink($FS);
+SurveyReport.php:      $LinkKnow = Get_FactionLinkFL($Fid,$L['id']);
+SurveyReport.php:        $LinkKnow = Get_FactionLinkFL($Fid,$L['id']);
+SystemLib.php:      $LinkKnow = Get_FactionLinkFL($Fid,$L['id']);
 
 
