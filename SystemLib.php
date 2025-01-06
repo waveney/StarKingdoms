@@ -275,14 +275,15 @@ function Show_System(&$N,$Mode=0) {
       $Know = Get_Factions4Link($L['id']);
       $OName = NameFind($ON);
 
-      echo "<tr><td><a href=LinkEdit.php?id=$Lid>#$Lid</a><td><a href=SysEdit.php?id=$ONid>$OSysRef - $OName</a><td>" . $LinkLevels[$L['Level']]['Name'];
+ // OLD CODE
+ // echo "<tr><td><a href=LinkEdit.php?id=$Lid>#$Lid</a><td><a href=SysEdit.php?id=$ONid>$OSysRef - $OName</a><td>" . $LinkLevels[$L['Level']]['Name'];
       foreach ($Facts as $F) echo "<td>" . (isset($Know[$F['id']]) && $Know[$F['id']]['Known']?"Yes " . NameFind($Know):"No");
       echo "\n";
       }
     echo "</table>\n";
   } else if ($LinkType=='Wormholes') {
     echo "<h2>Wormholes</h2>";
-    echo "Go to link to update knowledge for now.<p>";
+    echo "Go to link to mark as Used, otherwise change scan levels.<p>";
     echo "<table border><tr><td>Link<td>To<td>Instability<td>Concealment";
     foreach ($Facts as $F) echo "<td>" . $F['Name'];
     echo "\n";
@@ -298,7 +299,7 @@ function Show_System(&$N,$Mode=0) {
 
       echo "<tr><td><a href=LinkEdit.php?id=$Lid>" . $L['Name'] . "</a><td><a href=SysEdit.php?id=$ONid>$OSysRef - $OName</a><td>" .
       ($L['Instability']+ $L['ThisTurnMod'] ). "<td>" . $L['Concealment'];
-      foreach ($Facts as $F) echo "<td>" . (isset($Know[$F['id']]) && $Know[$F['id']]['Known']?"Yes " . NameFind($Know):"No");
+      foreach ($Facts as $F) echo "<td>" . (isset($Know[$F['id']])?$Know[$F['id']]:"No");
       echo "\n";
     }
     echo "</table>\n";
@@ -320,7 +321,7 @@ function Show_System(&$N,$Mode=0) {
     echo "<table border><tr><td>Faction<td>Passive Scan Level<td>Space Scan Level<td>Planetary Scan Level";
     foreach ($FactionSys as $FS) {
       $fsid = $FS['id'];
-      echo "<tr><td><a href=EditFactionSys.php?id=$fsid>" . $Facts[$FS['FactionId']]['Name'] .
+      echo "<tr><td><a href=EditFactionSys.php?id=$fsid>" . ($Facts[$FS['FactionId']]['Name']??'Unknown') .
          "</a><td>" . $FS['ScanLevel'] . "<td>" . $FS['SpaceScan'] . "<td>" . $FS['PlanetScan'];
     }
     echo "</table>";
@@ -856,7 +857,9 @@ function SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
     if ($GM ) {
       $LinkKnow = ['Known'=>1];
     } else {
-      $LinkKnow = Get_FactionLinkFL($Fid,$L['id']);
+      $FLK = Gen_Get_Cond1('FactionLinkKnown',"FactionId=$Fid AND LinkId=". $L['id']);
+
+      $LinkKnow = LinkVis($Fid,$L['id'],$Sid);// Get_FactionLinkFL($Fid,$L['id']);
       //     var_dump($LinkKnow,$L,$SpaceLevel);
       if (!(isset($LinkKnow['id']))) {
         if ($L['Concealment']<=max(-$N['Nebulae'],$SpaceLevel)) {

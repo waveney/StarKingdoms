@@ -188,7 +188,7 @@ function Get_Links1end($sysref) {
 }
 
 // Link knnowledge
-
+/*
 function Get_FactionLink($id) {
   global $db;
   $res = $db->query("SELECT * FROM FactionLink WHERE id=$id");
@@ -211,16 +211,51 @@ function Put_FactionLink(&$now) {
   } else {
     return $now['id'] = Insert_db ('FactionLink', $now );
   }
-}
+}*/
 
+/*
 function Get_Factions4Link($Lid) {
   global $db;
   $FL = [];
   $res = $db->query("SELECT * FROM FactionLink WHERE LinkId=$Lid");
   if ($res) while ($ans = $res->fetch_assoc()) $FL[$ans['FactionId']] = $ans;
   return $FL;
-}
+} */
 
+function Get_Factions4Link($Lid) {
+  $L = Get_Link($Lid);
+  $Sys1 = Get_SystemR($L['System1Ref']);
+  $S1id = $Sys1['id'];
+  $Sys2 = Get_SystemR($L['System2Ref']);
+  $S2id = $Sys2['id'];
+
+  $Facts = Get_Factions();
+  $FL = [];
+  foreach ($Facts as $Fid=>$F) {
+    if (Has_Tech($Fid,'Know All Links')) {
+      $FL[$Fid] = 'Used';
+      continue;
+    }
+    $FLK = Gen_Get_Cond1('FactionLinkKnown',"FactionId=$Fid AND LinkId=$Lid");
+    if ($FLK['Used']??0) {
+      $FL[$Fid] = 'Used';
+      continue;
+    }
+    $FS1 = Get_FactionSystemFS($Fid,$S1id);
+    $FS2 = Get_FactionSystemFS($Fid,$S2id);
+
+    if ($L['Concealment'] == 0) {
+      $FL[$Fid] = 'Both';
+      continue;
+    }
+
+    $K = 0;
+    if (($FS1['SpaceScan']??0) >= $L['Concealment']) $K+=1;
+    if (($FS2['SpaceScan']??0) >= $L['Concealment']) $K+=2;
+    if ($K) $FL[$Fid] = ['From ' . $L['System1Ref'], 'From ' . $L['System2Ref'],'Both'][$K];
+  }
+  return $FL;
+}
 // FactionsSystems
 
 function Get_FactionSystem($id) {
@@ -244,6 +279,22 @@ function Get_FactionSystemFRef($Fact, $ref) { // DUFF CODE TODO no ref value
   $N = Get_SystemR($ref);
   if ($N) return ['FactionId'=>$Fact, 'SystemId'=>$N['id']];
   echo "Unknown System Reference $ref<p>";
+}
+
+function Get_FactionSystemsF($Fact) {
+  global $db;
+  $Fs = [];
+  $res = $db->query("SELECT * FROM FactionSystem WHERE FactionId=$Fact");
+  if ($res) while ($ans = $res->fetch_assoc()) $Fs[$ans['SystemId']] = $ans;
+  return $Fs;
+}
+
+function Get_LinksUsed($Fact) {
+  global $db;
+  $Ls = [];
+  $res = $db->query("SELECT * FROM FactionLinkKnown WHERE FactionId=$Fact AND Used!=0");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ls[$ans['LinkId']] = 1;
+  return $Ls;
 }
 
 function Put_FactionSystem(&$now) {

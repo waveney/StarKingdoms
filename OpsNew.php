@@ -331,10 +331,9 @@
         //    $GM = Access('GM');
 
         foreach ($Ls as $Lid=>$L) {
-          $OSysRef = ($L['System1Ref']==$Ref? $L['System2Ref']:$L['System1Ref']);
-          $ON = Get_SystemR($OSysRef);
-          $LinkKnow = Get_FactionLinkFL($Fid,$L['id']);
-          if (($L['Concealment'] <= $FS['SpaceScan']) || ($LinkKnow && $LinkKnow['Known'])) {
+//          $OSysRef = ($L['System1Ref']==$Ref? $L['System2Ref']:$L['System1Ref']);
+//          $ON = Get_SystemR($OSysRef);
+          if (LinkVis($Fid,$Wh,$Lid)) {
             echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&SP=$Lid'>" .
             $L['Name'] . "</button> \n";
           }

@@ -1398,4 +1398,27 @@ function BlueShow(&$T,$GM=0) {
     echo "No Blue Print";
   }
 }
+
+function LinkVis($Fid,$Lid,$Sid) {
+  static $KnowAll,$KnowFid,$LastSid,$Sys,$FS;
+  if ($KnowFid != $Fid) {
+    $KnowFid = $Fid;
+    $KnowAll = Has_Tech($Fid,'Know All Links');
+    $LastFS = [];
+  }
+  if ($Sid != $LastSid) {
+    $LastSid = $Sid;
+    $Sys = Get_System($Sid);
+    $FS = [];
+  }
+  if (empty($FS)) {
+    $FS = Get_FactionSystemFS($Fid,$Sid);
+  }
+  $FLK = Gen_Get_Cond1('FactionLinkKnown',"FactionId=$Fid AND LinkId=$Lid");
+  $L = Get_Link($Lid);
+
+  return ($KnowAll || ($L['Concealment'] == 0) || ($FLK['Used']??0) || $L['Concealment']<=$FS['ScanLevel']);
+}
+
+
 ?>

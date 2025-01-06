@@ -428,10 +428,10 @@ function SetupStage5() {
 //        echo "Checking " . $L['id'] . " From " . $L['System1Ref'] . " to " .  $L['System2Ref']. "<br>";
         if (isset($Ref[$L['System1Ref']]) && isset($Ref[$L['System2Ref']]) && $ScanLevel >= $L['Concealment']) {
 //          echo "Got Here... ScanLevel ". $L['Concealment'] . "<p>";
-          $FL = Get_FactionLinkFL($Fid,$L['id']);
+          $FL = Gen_Get_Cond1('FactionLinkKnown',"FactionId=$Fid AND LinkId=" . $L['id']);
           if (!isset($FL['id'])) {
-            $FL['Known'] = 1;
-            Put_FactionLink($FL);
+            $FL['Used'] = 1;
+            Gen_Put('FactionLinkKnown',$FL);
           }
         }
       }

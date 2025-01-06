@@ -69,59 +69,26 @@ NEW GAME FEATURES & BUGS
 201 no space survey data - get conceal 2 wormholes - LIZ / Barrayar
 211 Anomallies progress > scan report
 217 Space/Ground anomally again
-223 
+223 When you colonise a new planet, it starts with social principals based on your nearest other world
+
 
  
-Stack trace:\n#0 /var/www/vhosts/starkingdoms.uk/httpdocs/skdb.php(242): mysqli->query()\n
-#1 /var/www/vhosts/starkingdoms.uk/httpdocs/skdb.php(37): Insert_db()\n
-#2 /var/www/vhosts/starkingdoms.uk/httpdocs/formfill.php(403): Gen_Put()\n
-#3 {main}\n  thrown in /var/www/vhosts/starkingdoms.uk/httpdocs/skdb.php on line 242', referer: https://starkingdoms.uk/ProjDisp.php
-
-You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 1 in 
-/var/www/vhosts/starkingdoms.uk/httpdocs/skdb.php:242\nStack trace:\n
-#0 /var/www/vhosts/starkingdoms.uk/httpdocs/skdb.php(242): mysqli->query()\n
-#1 /var/www/vhosts/starkingdoms.uk/httpdocs/skdb.php(37): Insert_db()\n
-#2 /var/www/vhosts/starkingdoms.uk/httpdocs/formfill.php(403): Gen_Put()\n
-#3 {main}\n  thrown in /var/www/vhosts/starkingdoms.uk/httpdocs/skdb.php on line 242', referer: https://starkingdoms.uk/ProjDisp.php
+OrgLib.php:  $LKnown = Gen_Get_Cond('FactionLink', "FactionId=$Fid"); --- COMPLEX
 
 
+===================Cut=========================
 
+There have been big changes to how link and map knowledge works:
 
+A link can only be used from a system if it is known where it is in that system.
 
-BuildFactLink.php:    $FLK = Gen_Get_Cond1('FactionLinkKnown',"FactionId=$Fid AND LinkId=$Lid");
-BuildFactLink.php:    Gen_Put('FactionLinkKnown',$FLK);
-formfill.php:      $FL = Get_FactionLinkFL($Fid,$L['id']);
-GetPut.php:function Get_FactionLink($id) {
-GetPut.php:  $res = $db->query("SELECT * FROM FactionLink WHERE id=$id");
-GetPut.php:function Get_FactionLinkFL($Fact, $Lid) {
-GetPut.php:  $res = $db->query("SELECT * FROM FactionLink WHERE FactionId=$Fact AND LinkId=$Lid");
-GetPut.php:function Put_FactionLink(&$now) {
-GetPut.php:    $Cur = Get_FactionLink($e);
-GetPut.php:    return Update_db('FactionLink',$Cur,$now);
-GetPut.php:    return $now['id'] = Insert_db ('FactionLink', $now );
-GetPut.php:  $res = $db->query("SELECT * FROM FactionLink WHERE LinkId=$Lid");
-LinkEdit.php:        Put_FactionLink($FL);
-LinkEdit.php:        Put_FactionLink($FL);
-MapFull.php:          $Fl = Get_FactionLinkFL($Faction, $L['id']);
-MapFull.php:              Put_FactionLink($Fl);
-MapTransfer.php:    $FL = Get_FactionLinkFL($Fid,$Lid);
-MapTransfer.php:      $FL = Get_FactionLinkFL($Tid,$Lid);
-MapTransfer.php:        Put_FactionLink($FL);
-NamePlaces.php:      $FL = Get_FactionLinkFL($Fid,$L['id']);
-NamePlaces.php:      Put_FactionLink($FL);
-OpsNew.php:          $LinkKnow = Get_FactionLinkFL($Fid,$L['id']);
-OrgLib.php:  $LKnown = Gen_Get_Cond('FactionLink', "FactionId=$Fid");
-PlayerMove.php:    $FL = Get_FactionLinkFL($Fid,$Lid);
-PlayerMove.php:      $FL = Get_FactionLinkFL($Fid,$Lid);
-PlayerMove.php:      Put_FactionLink($FL);
-PThingList.php:      $FL = Get_FactionLinkFL($Fid,$Lid);
-SetupFaction.php:          $FL = Get_FactionLinkFL($Fid,$L['id']);
-SetupFaction.php:            Put_FactionLink($FL);
-SplitFaction.php:  $FSs = Gen_Get_Cond('FactionLinks',"FactionId=$Fid");
-SplitFaction.php:      $NFS = Get_FactionLinkFL($Nid,$FS['LinkId']);
-SplitFaction.php:      if (empty($NFS['id'])) Put_FactionLink($FS);
-SurveyReport.php:      $LinkKnow = Get_FactionLinkFL($Fid,$L['id']);
-SurveyReport.php:        $LinkKnow = Get_FactionLinkFL($Fid,$L['id']);
-SystemLib.php:      $LinkKnow = Get_FactionLinkFL($Fid,$L['id']);
+If you have travelled along it you obviously know it.
+If you have space scanned the system you wish to leave from (or have had the data transfered to you) at sufficient level to see it you know it.
 
+If you don't know how to use the link, it will have arrows showing the direction known.
+
+Unknown links don't help in finding the level of an operation.  Your operation teams can't use them.  
+
+The two operations that explicitly look through a wormhole to do a scan/recon at the far end still work,
+as the operations team are based in the known system.
 

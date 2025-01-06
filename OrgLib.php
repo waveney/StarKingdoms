@@ -111,22 +111,29 @@ function Op_Level($Orgid,$Sys,$Mod=0) {
 
   $Org = Gen_Get('Organisations',$Orgid) ;
   $Fid = $Org['Whose'];
-  $LKnown = Gen_Get_Cond('FactionLink', "FactionId=$Fid");
-  $SKnown1 = Gen_Get_Cond('FactionSystem', "FactionId=$Fid");
-  $SKnown = [];
-  foreach($SKnown1 as $K) $SKnown[$K['SystemId']] = $K;
+  $LKnown = Gen_Get_Cond('FactionLinkKnown', "FactionId=$Fid");
+  $FSs = Get_FactionSystemsF($Fid);
   $Links = Get_LinksGame();
-
-  $ValidLinks=[];
-  foreach($LKnown as $LK) $ValidLinks[$LK['LinkId']] = 1;
-
-//  $Depth = $Org['OfficeCount']-$Mod;
-
-// var_dump($Links, $LKnown,$SKnown1,$SKnown);
-  if (!isset($SKnown[$Sys])) return -1; // Unknown target system
-
   $SRefs = Get_SystemRefs();
   $RSyss = array_flip($SRefs);
+
+  if (!isset($FSs[$Sys])) return -1; // Unknown target system
+
+  $ValidLinks=[];
+  foreach($LKnown as $LK) if ($LK['Used']??0) $ValidLinks[$LK['LinkId']] = 1;
+
+  foreach ($Links as $Lid=>$L) {
+    $S1id = $RSyss[$L['System1Ref']];
+    $S2id = $RSyss[$L['System2Ref']];
+    if (!isset($FSs[$S1id]) || !isset($FSs[$S2id])) continue;
+    if ($L['Concealment'] > 0) {
+      if ($FSs[$S1id]['SpaceScan'] < $L['Concealment']) continue;
+      if ($FSs[$S2id]['SpaceScan'] < $L['Concealment']) continue;
+    }
+    $ValidLinks[$Lid] = 1;
+  }
+//  $Depth = $Org['OfficeCount']-$Mod;
+
   $Targets = [];
   $Worlds = Get_Worlds($Fid);
   $Branches = Gen_Get_Cond('Branches', "Whose=$Fid AND Organisation=$Orgid");
@@ -167,7 +174,7 @@ function Op_Level($Orgid,$Sys,$Mod=0) {
   }
 
   // Targets should now identify the systems it needs to reach
-  if (isset($_REQUEST['SHOWTARGS'])) var_dump($Targets,$SKnown,$ValidLinks);
+  if (isset($_REQUEST['SHOWTARGS'])) var_dump($Targets,$ValidLinks);
   if (isset($Targets[$Sys])) return 0; // Range 0
   $BeenHere = [];
 

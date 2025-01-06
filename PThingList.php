@@ -70,6 +70,7 @@
       }
       $T['NewLocation'] = 1;
 
+      /*
       $NearNeb = $N['Nebulae'];
 
       $Known = 1;
@@ -94,8 +95,8 @@
       } else {
         $Known = 0;
       }
-
-      $T['TargetKnown'] = $Known;
+*/
+      $T['TargetKnown'] = LinkVis($Fid,$T['NewSystemId'],$Lid);
       $T['LinkId'] = $Lid;
       $LinkTypes = Get_LinkLevels();
       $ThingProps = Thing_Type_Props();

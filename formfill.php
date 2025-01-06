@@ -198,11 +198,11 @@
       $Fid = $N['Whose'];
       $Known = 1;
       // Handle link knowledge - KLUDGE
-      $FL = Get_FactionLinkFL($Fid,$L['id']);
+      $LV = LinkVis($Fid,$L['id'],$FSN['id']);
       $FarNeb = $FSN['Nebulae'];
       $FS = Get_FactionSystemFS($Fid,$FSN['id']);
 
-      if (Has_Tech($Fid,'Know All Links') || (isset($FL['Known']) && $FL['Known'])) {
+      if (Has_Tech($Fid,'Know All Links') || ($LV && ($FS['ScanLevel']>=0))) {
       } else if ($NearNeb == 0) {
           if (isset($FS['id'])) {
             if ($FarNeb != 0 && $FS['ScanLevel'] < 0) {

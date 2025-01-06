@@ -175,13 +175,24 @@ function Copy_Knowledge_A() {
   echo "Copied Faction System Data<p>";
 
   // Links
-
-  $FSs = Gen_Get_Cond('FactionLinks',"FactionId=$Fid");
+/*
+  $FSs = Gen_Get_Cond('FactionLink',"FactionId=$Fid");
   if ($FSs) {
     foreach($FSs as $FS) {
       unset($FS['id']);
       $FS['FactionId'] = $Nid;
       $NFS = Get_FactionLinkFL($Nid,$FS['LinkId']);
+      if (empty($NFS['id'])) Put_FactionLink($FS);
+    }
+  }
+  echo "Copied Faction Link Data<p>";*/
+
+  $FSs = Gen_Get_Cond('FactionLinkKnown',"FactionId=$Fid");
+  if ($FSs) {
+    foreach($FSs as $FS) {
+      unset($FS['id']);
+      $FS['FactionId'] = $Nid;
+      $NFS = Gen_Get_Cond1('FactionLinkKnown',"FactionId=$Fid AND LinkId=" . $FS['LinkId']); // Get_FactionLinkFL($Nid,$FS['LinkId']);
       if (empty($NFS['id'])) Put_FactionLink($FS);
     }
   }

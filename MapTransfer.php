@@ -71,12 +71,15 @@ function TransferSys($SysR) {
 
   $Links = Get_Links($SysR);
   foreach ($Links as $Lid=>$L) {
-    $FL = Get_FactionLinkFL($Fid,$Lid);
-    if ($FL['Known']) {
-      $FL = Get_FactionLinkFL($Tid,$Lid);
-      if (!$FL['Known']) {
-        $FL['Known'] = 1;
-        Put_FactionLink($FL);
+    $FLK = Gen_Get_Cond1('FactionLinkKnown',"FactionId=$Fid AND LinkId=$Lid");
+    if ($FLK['USED']??0) {
+      $FLK = Gen_Get_Cond1('FactionLinkKnown',"FactionId=$Tid AND LinkId=$Lid");
+      if ($FLK) {
+        $FLK['Used'] = 1;
+        Gen_Put('FactionLinkKnown',$FLK);
+      } else {
+        $FLK = ['LinkId'=>$Lid, 'FactionId'=>$Tid, 'Used'=>1 ];
+        Gen_Put('FactionLinkKnown',$FLK);
       }
     }
   }

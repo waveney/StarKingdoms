@@ -218,7 +218,7 @@
       echo "<H2>Star(s) have been named</h2>";
       break;
 
-    case 'Name Wormhole':
+    case 'Name Wormhole': // NOT USED
       $nam = Sanitise($_REQUEST['LinkId'],'txt');
       $L = Gen_Get_Cond1('Links',"Name='$nam'");
       if (!$L) {
@@ -272,12 +272,12 @@
   echo fm_text('Primary Star Name',$dat,'Star1Name',4) . "<p>";
   echo fm_text('Companion Star Name (if applicable',$dat,'Star2Name',4) . "<p>";
   echo fm_submit('ACTION','Name Star(s)');
-
+/*
   echo "<h1>Naming a wormhole</h1>";
   echo fm_text('Link Identifier',$dat,'LinkId') . "<p>";
   echo fm_text('Your Wormhole Name',$dat,'WormName',4) . "<p>";
   echo fm_submit('ACTION','Name Wormhole');
-
+*/
 
   dotail();
 

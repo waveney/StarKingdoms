@@ -27,24 +27,26 @@
 // var_dump($HexLegPos);exit;
 
   if (isset($_REQUEST['f'])) {
-    $Faction = $_REQUEST['f'];
+    $Fid = $_REQUEST['f'];
   } else   if (isset($_REQUEST['F'])) {
-    $Faction = $_REQUEST['F'];
+    $Fid = $_REQUEST['F'];
   } else if (isset($_REQUEST['f1'])) {
-    $Faction = $_REQUEST['f1'];
+    $Fid = $_REQUEST['f1'];
   } else {
-    $Faction = 0;
+    $Fid = 0;
   }
 
   $Extras = [];
 
-  if ($FACTION) $Faction = $FACTION['id'];
-  $Fact = Get_Faction($Faction);
+  if (($Fid ==0) && $FACTION) {
+    $Fid = $FACTION['id'];
+  }
+  $Fact = Get_Faction($Fid);
 
-  if ($Faction) {
+  if ($Fid) {
     // Setup Extras
     $TTypes = Get_ThingTypes();
-    $Things = Get_Things_Cond_Ordered($Faction,"BuildState=3");
+    $Things = Get_Things_Cond_Ordered($Fid,"BuildState=3");
     foreach ($Things as $Tid => $T) {
       if (!($TTypes[$T['Type']]['Properties'] & THING_HAS_BLUEPRINTS)) continue;
       $TCat = 0;
@@ -65,8 +67,8 @@
 
       $Extras[$sid][0] .= $T['Name'] . " L" . $T['Level'] . " " . $TTypes[$T['Type']]['Name'] . "$tex\n";
     }
-
-
+    $LUsed = Get_LinksUsed($Fid);
+    $FSs = Get_FactionSystemsF($Fid);
   }
 
   if (!$GM && $Fact['TurnState'] > 2) Player_Page();
@@ -76,7 +78,7 @@
     if ($GM) {
       $typ = 'Hex';
     } elseif (Access('Player')) {
-      if (Has_Tech($Faction,'Astral Mapping') || Feature('MapsinHex')) {
+      if (Has_Tech($Fid,'Astral Mapping') || Feature('MapsinHex')) {
  //       echo "Found Hex...";
         $typ = 'Hex';
       }
@@ -147,21 +149,18 @@
     return $Res;
   }
 
-// echo "<h1>Faction $Faction</h1>";
   global $db, $GAME,$GAMEID;
 
   $HexLegPos = [];
   eval("\$HexLegPos=" . Feature('LegPos','[[0,0]]') . ";" );
 //var_dump($HexLegPos);
   $RedoMap = 1;
-//  $Dot = fopen("cache/Fullmap$Faction$typ.dot","w+");
-//  if (!$Dot) { echo "Could not create dot file<p>"; dotail(); };
-
 
   $Nodes = Get_Systems();
+  $BackR = [];
   $PlanetTypes = Get_PlanetTypes();
   foreach($Nodes as $ref=>$N){
-    $Sid = $N['id'];
+    $BackR[$ref] = $Sid = $N['id'];
     $Planets = Get_Planets($Sid);
     $Nodes[$ref]['Hospitable'] = 0;
     foreach ($Planets as $Pid=>$P) {
@@ -188,7 +187,7 @@
   $MultiHabitableShape = Feature('MultiHabitableShape',$HabitableShape);
 
   while ($RedoMap) {
-    $Dot = fopen("cache/$GAMEID/Fullmap$Faction$typ.dot","w+");
+    $Dot = fopen("cache/$GAMEID/Fullmap$Fid$typ.dot","w+");
     if (!$Dot) { echo "Could not create dot file<p>"; dotail(); };
 //  ftruncate($Dot,0);  // Needed for redoing logic
 
@@ -214,16 +213,12 @@
       $ShortName = $N['ShortName']?$N['ShortName']:$NodeName;
       $Hide = 0;
       $FS = 0;
-      if ($Faction) {
-        $FS = Get_FactionSystemFS($Faction, $N['id']);
-        if ($N['Control'] != $Faction) {
-          if (!isset($FS['id'])) continue;
-          if (1) {  // ($FS['PassiveScan'] > 0) || ($FS['PassiveNebScan'] > 0)) {
-            if ($FS['Name']) $ShortName = $NodeName = $FS['Name'];
-            if ($FS['ShortName']) $ShortName = $FS['ShortName'];
-          } else {
-            $Hide = 1;
-          }
+      if ($Fid) {
+        $FS = ($FSs[$N['id']]??0);
+        if (!$FS) continue;
+        if ($N['Control'] != $Fid) {
+          if ($FS['Name']) $ShortName = $NodeName = $FS['Name'];
+          if ($FS['ShortName']) $ShortName = $FS['ShortName'];
         }
       }
       $atts = "";
@@ -233,33 +228,33 @@
         $Colour = $Factions[$N['Control']]['MapColour'];
         $Factions[$N['Control']]['Seen']=1;
       } else if ($N['Category']) {
-        $Colour = ($Faction?"White":$CatCols[$N['Category']]);
+        $Colour = ($Fid?"White":$CatCols[$N['Category']]);
         if ($Colour == 'Yellow') $OtherInt = 1;
       } else {
         $Colour = "White";
       }
 
-      if ($GM && $Faction == 0 && $N['HistoricalControl']) $Factions[$N['HistoricalControl']]['Seen']=1;
+      if ($GM && $Fid == 0 && $N['HistoricalControl']) $Factions[$N['HistoricalControl']]['Seen']=1;
 
       if ($Hide) $NodeName = '';
       $BdrColour = "Black";
-      if ($Faction == 0 && $N['HistoricalControl']) {
+      if ($Fid == 0 && $N['HistoricalControl']) {
         $BdrColour = $Factions[$N['HistoricalControl']]['MapColour'];
         $Historical = 1;
       }
 
-      if ($GM || (($FS['ScanLevel']??0)>0)) $atts .= " shape=" .
+      if ($GM || (($FS['ScanLevel']??0)>=0)) $atts .= " shape=" .
         ($N['Hospitable']?(($N['Hospitable']>1)?$MultiHabitableShape:$HabitableShape):$InHabitableShape);
       if ($typ) $atts .=
       " pos=\"" . ($N['GridX']*$XScale+(5-$N['GridY'])/2) . "," . (9-$N['GridY'])*$Scale . "!\"";
       $atts .= " style=filled fillcolor=\"$Colour\" color=\"$BdrColour\"";
       if ($NodeName) {
-        $atts .= NodeLab($ShortName, $N['Ref']) . " margin=0.03 "; //($Faction==0?$N['Ref']:""));
+        $atts .= NodeLab($ShortName, $N['Ref']) . " margin=0.03 ";
       }
       if ($N['Nebulae']) { $atts .= " penwidth=" . (2+$N['Nebulae']*2); $NebF = 1; }
       else { $atts .= " penwidth=2"; }
 
-      if ($Faction) {
+      if ($Fid) {
         $atts .= " href=\"/SurveyReport.php?R=" . $N['Ref'] . '" ';
 
 
@@ -283,57 +278,65 @@
     }
 
 
-    if ($Faction) {
+    if ($Fid) {
       $ul = 1;
-      $AllLinks = Has_Tech($Faction,'Know All Links');
+      $AllLinks = Has_Tech($Fid,'Know All Links');
       foreach($Nodes as $N) {
         $from = $N['Ref'];
 
-        $FS = Get_FactionSystemFS($Faction,$N['id']);
+        $FS = $FSs[$N['id']]??[];
 
         $Links = Get_Links($from);
         if (!isset( $ShownNodes[$N['Ref']])) continue;
         $Neb = $N['Nebulae'];
         foreach ($Links as $L) {
-          if (isset($LinkShown[$L['id']])) continue;
-          $Fl = Get_FactionLinkFL($Faction, $L['id']);
-          $Ldat = LinkProps($L);
-          if (isset($Fl['id']) && $Fl['Known'] || $AllLinks) {
-            fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] .
-                   " [color=" . $Ldat[4] .
-                   " penwidth=" . $Ldat[0] . " style=" . $Ldat[1] .
-                   ($ShowLinks? " fontsize=" . $Ldat[3] . " label=\"" . $Ldat[2] . "\"": '') . " ];\n");
-            $LinkShown[$L['id']]=1;
+          $Lid = $L['id'];
+          if (isset($LinkShown[$Lid])) continue;
+          if ($N['Ref'] == $L['System1Ref']) {
+            $OSid = $BackR[$L['System2Ref']];
+            $dir = 'forward';
+            $ORef = $L['System2Ref'];
           } else {
-            if ($Fl['Known']==0) continue;
-            if ($LinkType == 'Gates') { // VERY DUFF
-              if ($Neb && $FS['NebScanned'] < $Neb) continue;
-              if (isset($FS['ScanLevel']) && $FS['ScanLevel']<2) continue; // Wrong now wont fix unless Gates reused
-            } elseif ($LinkType == 'Wormholes') {
-              if (($L['Concealment'] > max(0,$FS['SpaceScan'])) && !isset($Fl['id'])) continue;
-            } else continue;
-
-            $rand = "B$ul";  // This kludge at least allows both ends to be displayed
-
-            $OL = ($from==$L['System1Ref']?$L['System2Ref']:$L['System1Ref']);
-            $NodLab = (Feature('HideUnknownNodes')?'?':$OL);
-            fwrite($Dot,"Unk$ul$rand [label=\"$NodLab\" shape=circle margin=0];\n");
-            fwrite($Dot,"$from -- Unk$ul$rand [color=" . $Ldat[4] .
-              " penwidth=" . $Ldat[0] . " style=" . $Ldat[1] .
-              ($ShowLinks? " fontsize=" . $Ldat[3] . " label=\"" . $Ldat[2] . "\"": '') . " ];\n");
-            $ul++;
-            if (isset($UnknownLink[$L['id']])) {
-              $RedoMap = 1;
-              $Fl['Known'] = 1;
-              Put_FactionLink($Fl);
-            } else {
-              $UnknownLink[$L['id']] = 1;
-            }
+            $OSid = $BackR[$L['System1Ref']];
+            $dir = 'back';
+            $ORef = $L['System1Ref'];
           }
- //       $LinkShown[$L['id']]=1;
+
+          $Ldat = LinkProps($L);
+          $Ways = 0;
+
+          if (isset($LUsed[$Lid]) || $AllLinks || ($FS && ($L['Concealment'] == 0))) $Ways = 3;
+          if (($Ways == 0) && isset($FS) && ($FS['SpaceScan'] >= $L['Concealment'])) $Ways = 1;
+          if (($Ways < 3) && isset($FSs[$OSid]) && ($FSs[$OSid]['SpaceScan'] >= $L['Concealment']))  $Ways +=2;
+
+          $from = $L['System1Ref'];
+          $to = $L['System2Ref'];
+          $Arrow = '';
+//  if ($Lid == 156)        var_dump($Lid,$from,$to,$Ways,$AllLinks,($LUsed[$Lid]??0),$FS,$L);
+          switch ($Ways) {
+            case 0: continue 2; // Not Known at all
+            case 1: // From here may be unknown other end
+              if (isset($FSs[$OSid])) {
+                $rand = "B$ul";  // This kludge at least allows both ends to be displayed
+                $NodLab = (Feature('HideUnknownNodes')?'?':$ORef);
+                $to = "Unk$ul$rand";
+                fwrite($Dot, "$to [label=\"$NodLab\" shape=circle margin=0];\n");
+              }
+              $Arrow = " dir=$dir arrowsize=2 ";
+              break;
+            case 2: // To Here
+              $Arrow = " dir=$dir arrowsize=2 ";
+              break;
+            case 3: // Both Ways (nothing special needed)
+          }
+          fwrite($Dot,"$from -- $to [color=" . $Ldat[4] .
+                 " penwidth=" . $Ldat[0] . " style=" . $Ldat[1] .
+                 $Arrow .
+                 ($ShowLinks? " fontsize=" . $Ldat[3] . " label=\"" . $Ldat[2] . "\"": '') . " ];\n");
+          $LinkShown[$L['id']]=1;
         }
       }
-    } else {
+    } else { // GM mode
       foreach($Nodes as $N) {
         $from = $N['Ref'];
         $Links = Get_Links1end($from);
@@ -372,7 +375,7 @@
       $ls++;
     };
 
-    if (!$Faction) {
+    if (!$Fid) {
       if ($Historical) {
         fwrite($Dot,"Other [shape=$LegendShape style=filled fillcolor=white penwidth=2 color=\"CadetBlue\"" . NodeLab("Control","Other") .
           ($typ?" pos=\"" . $HexLegPos[$ls][0]*$XScale . "," . $HexLegPos[$ls][1]*$Scale . "!\"" : "") . "];\n");
@@ -405,24 +408,18 @@
 //  echo "<H1>Dot File written</h1>";
 
   if ($typ) {
-    exec("fdp -Tpng -n cache/$GAMEID/Fullmap$Faction$typ.dot > cache/$GAMEID/Fullmap$Faction$typ.png");
-    exec("fdp -Tcmapx -n cache/$GAMEID/Fullmap$Faction$typ.dot > cache/$GAMEID/Fullmap$Faction$typ.map");
-    //    exec("fdp -Timap -n cache/$GAMEID/Fullmap$Faction$typ.dot > cache/$GAMEID/Fullmap$Faction$typ.imap");
-    //    exec("fdp -Tsvg -n cache/$GAMEID/Fullmap$Faction$typ.dot > cache/$GAMEID/Fullmap$Faction$typ.svg");
+    exec("fdp -Tpng -n cache/$GAMEID/Fullmap$Fid$typ.dot > cache/$GAMEID/Fullmap$Fid$typ.png");
+    exec("fdp -Tcmapx -n cache/$GAMEID/Fullmap$Fid$typ.dot > cache/$GAMEID/Fullmap$Fid$typ.map");
   } else {
-    exec("unflatten cache/$GAMEID/Fullmap$Faction$typ.dot > cache/$GAMEID/f$USERID.dot");
-//    exec("dot -Tsvg cache/f.dot > cache/Fullmap$Faction.svg");
-    exec("dot -Tpng cache/$GAMEID/f$USERID.dot > cache/$GAMEID/Fullmap$Faction$typ.png");
-    exec("dot -Tcmapx cache/$GAMEID/f$USERID.dot > cache/$GAMEID/Fullmap$Faction$typ.map");
+    exec("unflatten cache/$GAMEID/Fullmap$Fid$typ.dot > cache/$GAMEID/f$USERID.dot");
+    exec("dot -Tpng cache/$GAMEID/f$USERID.dot > cache/$GAMEID/Fullmap$Fid$typ.png");
+    exec("dot -Tcmapx cache/$GAMEID/f$USERID.dot > cache/$GAMEID/Fullmap$Fid$typ.map");
   }
 
 //  echo "<h2>dot run</h2>";
   $Rand = rand(1,100000);
-  echo "<img src=cache/$GAMEID/Fullmap$Faction$typ.png?$Rand maxwidth=100% usemap='#skmap'>";
-  readfile("cache/$GAMEID/Fullmap$Faction$typ.map");
-
-  //  echo "<object type='image/svg+xml' data=cache/$GAMEID/Fullmap$Faction$typ.svg?$Rand maxwidth=100%></object>";
-//  echo "<svg type='image/svg+xml' data=cache/$GAMEID/Fullmap$Faction$typ.svg?$Rand maxwidth=100%></svg>";
+  echo "<img src=cache/$GAMEID/Fullmap$Fid$typ.png?$Rand maxwidth=100% usemap='#skmap'>";
+  readfile("cache/$GAMEID/Fullmap$Fid$typ.map");
 
 
   dotail();

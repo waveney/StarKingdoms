@@ -4,6 +4,8 @@
   include_once("GetPut.php");
   include_once("PlayerLib.php");
 
+  // OLD CODE NO LONGER USED
+  /*
   A_Check('GM');
 // START HERE
 // var_dump($_REQUEST);
@@ -92,4 +94,4 @@ return;
 
   dotail();
 
-?>
+?>*/

@@ -30,7 +30,6 @@
   $N2 = Get_SystemR($Ref2);
 
   $Factions = Get_Factions();
-  $Know = Get_Factions4Link($Lid);
 
 //var_dump($Know);
 
@@ -38,15 +37,13 @@
     switch ($_REQUEST['ACTION']) {
     case 'Toggle' :
       $Fid = $_REQUEST['F'];
-      if (isset($Know[$Fid])) {
-        $FL = $Know[$Fid];
-        $FL['Known'] = ($FL['Known']?0:1);
-        $Know[$Fid] = $FL;
-        Put_FactionLink($FL);
+      $FLK = Gen_Get_Cond1('FactionLinkKnown',"FactionId=$Fid AND LinkId=$Lid");
+      if (isset($FLK['id'])) {
+        $FLK['Used'] = 1-$FLK['Used'];
+        Gen_Put('FactionLinkKnown',$FLK);
       } else {
-        $FL = ['LinkId'=>$Lid, 'FactionId'=>$Fid, 'Known'=>1 ];
-        Put_FactionLink($FL);
-        $Know = Get_Factions4Link($Lid);
+        $FLK = ['LinkId'=>$Lid, 'FactionId'=>$Fid, 'Used'=>1 ];
+        Gen_Put('FactionLinkKnown',$FLK);
       }
       break;
     }
@@ -54,14 +51,17 @@
 
   echo "<form method=post id=mainform enctype='multipart/form-data' action=LinkEdit.php>";
   echo "<div class=tablecont><table width=90% border class=SideTable>\n";
-  Register_AutoUpdate('Link',$Lid);
+  Register_AutoUpdate('Links',$Lid);
 
-  echo "<tr><td>Id: $Lid<td>Game: $GAMEID<td>Name: " . ($L['Name']??'None') . fm_number('Level',$L,'Level');
+  echo "<tr><td>Id: $Lid<td>Game: $GAMEID " . fm_text('Name',$L,'Name');
+  echo "<tr>" . fm_number('Concealment',$L,'Concealment') . fm_number('Instablity',$L,'Instablity');
   echo "<tr>" . fm_text('From',$L,'System1Ref') . "<td>" . NameFind($N1) . fm_text('To',$L,'System2Ref') . "<td>" . NameFind($N2);
   echo "<tr><td><b>Known by</b>";
 
-  foreach ($Factions as $F) {
-    echo "<tr><td>" . $F['Name'] . "<td><a href=LinkEdit.php?ACTION=Toggle&L=$Lid&F=" . $F['id'] . ">" . (isset($Know[$F['id']]) && $Know[$F['id']]['Known']?"Yes " . NameFind($Know):"No") . "</a>";
+  foreach ($Factions as $Fid=>$F) {
+    $FLK = Gen_Get_Cond1('FactionLinkKnown',"FactionId=$Fid AND LinkId=$Lid");
+
+    echo "<tr><td>" . $F['Name'] . "<td><a href=LinkEdit.php?ACTION=Toggle&L=$Lid&F=$Fid>" . (($FLK['Used']??0)?'Used':'No'); "</a>";
     echo "\n";
   }
 
