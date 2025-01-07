@@ -294,38 +294,35 @@
           if (isset($LinkShown[$Lid])) continue;
           if ($N['Ref'] == $L['System1Ref']) {
             $OSid = $BackR[$L['System2Ref']];
-            $dir = 'forward';
-            $ORef = $L['System2Ref'];
+            $to = $L['System2Ref'];
           } else {
             $OSid = $BackR[$L['System1Ref']];
-            $dir = 'back';
-            $ORef = $L['System1Ref'];
+            $to = $L['System1Ref'];
           }
 
           $Ldat = LinkProps($L);
           $Ways = 0;
 
-          if (isset($LUsed[$Lid]) || $AllLinks || ($FS && ($L['Concealment'] == 0))) $Ways = 3;
-          if (($Ways == 0) && isset($FS) && ($FS['SpaceScan'] >= $L['Concealment'])) $Ways = 1;
+          if (isset($LUsed[$Lid]) || $AllLinks || ((($FS['ScanLevel']??-1)>=0) && ($L['Concealment'] == 0) && isset($FSs[$OSid]))) $Ways = 3;
+          if (($Ways == 0) && (($FS['ScanLevel']??-1)>=0) && (($L['Concealment'] == 0) || ($FS['SpaceScan'] >= $L['Concealment']))) $Ways = 1;
           if (($Ways < 3) && isset($FSs[$OSid]) && ($FSs[$OSid]['SpaceScan'] >= $L['Concealment']))  $Ways +=2;
 
-          $from = $L['System1Ref'];
-          $to = $L['System2Ref'];
           $Arrow = '';
 //  if ($Lid == 156)        var_dump($Lid,$from,$to,$Ways,$AllLinks,($LUsed[$Lid]??0),$FS,$L);
           switch ($Ways) {
             case 0: continue 2; // Not Known at all
             case 1: // From here may be unknown other end
-              if (isset($FSs[$OSid])) {
+              if (!isset($FSs[$OSid])) {
                 $rand = "B$ul";  // This kludge at least allows both ends to be displayed
-                $NodLab = (Feature('HideUnknownNodes')?'?':$ORef);
+                $NodLab = (Feature('HideUnknownNodes')?'?':$to);
                 $to = "Unk$ul$rand";
                 fwrite($Dot, "$to [label=\"$NodLab\" shape=circle margin=0];\n");
+                $ul++;
               }
-              $Arrow = " dir=$dir arrowsize=2 ";
+              $Arrow = " dir=forward arrowsize=1 ";
               break;
             case 2: // To Here
-              $Arrow = " dir=$dir arrowsize=2 ";
+              $Arrow = " dir=back arrowsize=1 ";
               break;
             case 3: // Both Ways (nothing special needed)
           }
