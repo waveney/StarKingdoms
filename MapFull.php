@@ -13,19 +13,6 @@
   $XScale = Feature('XScale',1)*$Scale;
   $ShowLinks = ($_REQUEST['Links']??1);
 
-  $GM = Access('GM');
-  if ($GM) {
-    if (isset($_REQUEST['FORCE'])) $GM=0;
-    if ($GM) echo "<h2><a href=MapFull.php?Hex&Links=0&FORCE>This page in Player Mode</a></h2>";
-  }
-
-  if (!empty($FACTION)) $XScale *= $FACTION['ScaleFactor'];
-
-  $CatCols = ["white","grey", "Yellow"];
-  $HexLegPos = [];
-  eval("\$HexLegPos=" . Feature('LegPos','[[0,0]]') . ";" );
-// var_dump($HexLegPos);exit;
-
   if (isset($_REQUEST['f'])) {
     $Fid = $_REQUEST['f'];
   } else   if (isset($_REQUEST['F'])) {
@@ -35,15 +22,32 @@
   } else {
     $Fid = 0;
   }
-
-  $Extras = [];
-
   if (($Fid ==0) && $FACTION) {
     $Fid = $FACTION['id'];
   }
-  $Fact = Get_Faction($Fid);
+
+  if ($Fid) $Fact = Get_Faction($Fid);
+
+  $GM = Access('GM');
+  if ($GM) {
+    if (isset($_REQUEST['FORCE'])) $GM=0;
+    if ($GM && $Fid) echo "<h2><a href=MapFull.php?Hex&Links=0&FORCE>This page in Player Mode</a></h2>";
+  } else {
+    if ($Fact['TurnState'] > 2) Player_Page();
+  }
+
+  if (!empty($FACTION)) $XScale *= $FACTION['ScaleFactor'];
+
+  $CatCols = ["white","grey", "Yellow"];
+  $HexLegPos = [];
+  eval("\$HexLegPos=" . Feature('LegPos','[[0,0]]') . ";" );
+// var_dump($HexLegPos);exit;
+
+  $Extras = [];
+  $AllLinks = 0;
 
   if ($Fid) {
+    $AllLinks = Has_Tech($Fid,'Know All Links');
     // Setup Extras
     $TTypes = Get_ThingTypes();
     $Things = Get_Things_Cond_Ordered($Fid,"BuildState=3");
@@ -71,7 +75,6 @@
     $FSs = Get_FactionSystemsF($Fid);
   }
 
-  if (!$GM && $Fact['TurnState'] > 2) Player_Page();
 
   $typ=Feature('DefaultMapType','Hex');
   if (isset($_REQUEST['Hex'])) {
@@ -278,9 +281,8 @@
     }
 
 
-    if ($Fid) {
+    if ($Fid && !$AllLinks) {
       $ul = 1;
-      $AllLinks = Has_Tech($Fid,'Know All Links');
       foreach($Nodes as $N) {
         $from = $N['Ref'];
 

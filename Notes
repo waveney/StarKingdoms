@@ -72,9 +72,6 @@ NEW GAME FEATURES & BUGS
 223 When you colonise a new planet, it starts with social principals based on your nearest other world
 
 
- 
-OrgLib.php:  $LKnown = Gen_Get_Cond('FactionLink', "FactionId=$Fid"); --- COMPLEX
-
 
 ===================Cut=========================
 
@@ -83,7 +80,10 @@ There have been big changes to how link and map knowledge works:
 A link can only be used from a system if it is known where it is in that system.
 
 If you have travelled along it you obviously know it.
-If you have space scanned the system you wish to leave from (or have had the data transfered to you) at sufficient level to see it you know it.
+
+If you have space scanned the system you wish to leave from (or have had the data transferred to you) at sufficient level to see it you know it.
+
+If it is concealment 0, and you have passively scanned it you know how to use it
 
 If you don't know how to use the link, it will have arrows showing the direction known.
 
@@ -91,4 +91,6 @@ Unknown links don't help in finding the level of an operation.  Your operation t
 
 The two operations that explicitly look through a wormhole to do a scan/recon at the far end still work,
 as the operations team are based in the known system.
+
+Most factions maps have changed.  Most have lost links and systems they never should have had.  Some have gained links.
 
