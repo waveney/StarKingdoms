@@ -218,7 +218,7 @@
       $FS = 0;
       if ($Fid) {
         $FS = ($FSs[$N['id']]??0);
-        if (!$FS) continue;
+        if (!$FS && !$AllLinks) continue;
         if ($N['Control'] != $Fid) {
           if ($FS['Name']) $ShortName = $NodeName = $FS['Name'];
           if ($FS['ShortName']) $ShortName = $FS['ShortName'];
@@ -244,6 +244,12 @@
       if ($Fid == 0 && $N['HistoricalControl']) {
         $BdrColour = $Factions[$N['HistoricalControl']]['MapColour'];
         $Historical = 1;
+      } else if ($AllLinks) {
+        if ($N['Control'] == $Fid || $N['HistoricalControl']==$Fid) {
+          $Colour = $Factions[$Fid]['MapColour'];
+        } else {
+          $Colour = 'White';
+        }
       }
 
       if ($GM || (($FS['ScanLevel']??0)>=0)) $atts .= " shape=" .
