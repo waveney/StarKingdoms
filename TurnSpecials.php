@@ -123,7 +123,7 @@
       $FSs = Gen_Get_Cond('FactionSystem',"FactionId>=29"); // 29 for live
       foreach ($FSs as $FS) {
         $FS['PlanetTurn'] = $GAME['Turn'];
-        if ($FS['SpaceScan']>0) Record_SpaceScan($FS);
+        Record_SpaceScan($FS);
         if ($FS['PlanetScan']>0) Record_PlanetScan($FS);
         if ($FS['SpaceScan']>0 || $FS['PlanetScan']>0) echo "Updated " . $FS['FactionId'] . ":" . $FS['SystemId'] . "<br>";
       }

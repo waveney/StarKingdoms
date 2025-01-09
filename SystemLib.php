@@ -855,25 +855,17 @@ function SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
     $OSysRef = ($L['System1Ref']==$Ref? $L['System2Ref']:$L['System1Ref']);
     $ON = Get_SystemR($OSysRef);
     if ($GM ) {
-      $LinkKnow = ['Known'=>1];
+      $LinkKnow = 1;
     } else {
       $FLK = Gen_Get_Cond1('FactionLinkKnown',"FactionId=$Fid AND LinkId=". $L['id']);
 
-      $LinkKnow = LinkVis($Fid,$L['id'],$Sid);// Get_FactionLinkFL($Fid,$L['id']);
-      //     var_dump($LinkKnow,$L,$SpaceLevel);
-      if (!(isset($LinkKnow['id']))) {
-        if ($L['Concealment']<=max(-$N['Nebulae'],$SpaceLevel)) {
-          $LinkKnow = ['Known'=>1];
-        } else {
-          continue;
-        }
-      }
+      $LinkKnow = LinkVis($Fid,$L['id'],$Sid);
+      if (!$LinkKnow) continue;
     }
 
     $txt .=  "<li>Link " . ($L['Name']?$L['Name']:"#" . $L['id']) . " ";
-    if ($LinkKnow['Name']??0) $txt .=  " (AKA " .$LinkKnow['Name'] . " ) ";
 
-    if ($LinkKnow['Known']) {
+    if ($LinkKnow) { // WRONG WRONG  - needs to be a test of Far end system known on feature X
       //        $name = NameFind($L);
       //        if ($name) echo " ( $name ) ";
       $txt .=  " to " . ReportEnd($ON) . " Instability: " . $L['Instability'] . " Concealment: " . $L['Concealment'];
