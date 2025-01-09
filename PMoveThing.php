@@ -221,7 +221,8 @@ function LinkProps($L) {
     $Eyes = EyesInSystem($Fid,$ThisSys,$Tid);
     $Facts = Get_Factions();
     if ($Eyes) {
-      $OtherShips = $db->query("SELECT t.* FROM Things t, ThingTypes tt WHERE t.type=tt.id AND (tt.Properties&0x100)!=0 AND t.SystemId=$ThisSys AND Whose!=$Fid");
+      $OtherShips = $db->query("SELECT t.* FROM Things t, ThingTypes tt WHERE t.type=tt.id AND (t.BuildState=2 OR t.BuildState=3) AND " .
+          "(tt.Properties&0x100)!=0 AND t.SystemId=$ThisSys AND Whose!=$Fid");
       if ($OtherShips) {
         $List = [];
         $Colrs = [];
