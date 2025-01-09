@@ -42,7 +42,7 @@ echo "</thead><tbody>";
 ksort($OFSs);
 foreach($OFSs as $R=>$FS) {
   $N = $Systems[$FS['SystemId']];
-  echo "<tr><td>$R<td>" . ($FS['Name']??$FS['FName']);
+  echo "<tr><td><a href=SurveyReport.php?R=$R>$R</a><td><a href=SurveyReport.php?R=$R>" . ($FS['Name']??$FS['FName']) . "</a>";
   if ($N['Control']) {
     echo "<td style='background:" . $Facts[$N['Control']]['MapColour']. "'>" . $Facts[$N['Control']]['Name'];
   } else {
