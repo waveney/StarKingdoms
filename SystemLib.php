@@ -918,11 +918,7 @@ function SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
               Gen_Put('FactionAnomaly',$FA);
             }
             $txt .=  "<span style='Background:" . $AnStateCols[$FA['State']] . ";'>" . $FAnomalyStates[$FA['State']] . "</span>";
-  //          $txt .=  "<br>Progress: " . ($FA['Progress']??0) . " / " . $A['AnomalyLevel'];
 
-            if (($FA['State'] >= 3) && $A['Completion']) {
-              $txt .=  "Complete: " . ParseText($A['Completion']) . "<p>";
-            }
           }
         }
     }
