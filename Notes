@@ -68,12 +68,12 @@ NEW GAME FEATURES & BUGS
 217 Space/Ground anomally again
 223 When you colonise a new planet, it starts with social principals based on your nearest other world
 224 Meetups - armies on Different Planets
-225 Lewis MLY - Anomaly
-226 Judith Nebula XHP extra link on report
 229 Outpost details on What Can I see
 230 Kage survey report
 235 Pmove and Know All Links
 236 GM Tweak to operation levels
+237 ross - lizard org + economy
+
 
 Undefined array key "Name" in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActs/Instruct.php on line 57; 
 PHP message: PHP Warning:  Undefined array key "Name" in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActs/Instruct.php on line 58', 

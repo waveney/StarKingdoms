@@ -30,18 +30,25 @@
     dotail();
   }
 
-  $DEBUG = 0;
+  $DEBUG = $REDO = 0;
 
   if ($GM) {
     if (isset($_REQUEST['FORCE'])) {
       $GM = 0;
     } else {
       echo "<h2><a href=SurveyReport.php?N=$Sid&FORCE>This page in Player Mode</a></h2>\n";
-      if (Access('God')) echo "<h2><a href=SurveyReport.php?N=$Sid&FORCE&DEBUG>This page in Diagnostic Mode</a></h2>\n";
+      if (Access('God')) {
+        echo "<h2><a href=SurveyReport.php?N=$Sid&FORCE&DEBUG>This page in Diagnostic Mode</a></h2>\n";
+        echo "<h2><a href=SurveyReport.php?N=$Sid&FORCE&REDO>Redo The Cached data for this</a></h2>\n";
+      }
     }
     if (isset($_REQUEST['DEBUG'])) {
       $DEBUG = 1;
     }
+    if (isset($_REQUEST['REDO'])) {
+      $REDO = 1;
+    }
+
   }
 
 
@@ -49,7 +56,7 @@
   $PlanetLevel = $SpaceLevel = $ScanLevel = 0;
   $Syslocs = Within_Sys_Locs($N);
 
-  if (!$GM && !empty($FACTION) && !$DEBUG) { // Player mode
+  if (!$GM && !empty($FACTION) && !$DEBUG ) { // Player mode
 //    $ScanSurveyXlate = [0=>0, 1=>1, 2=>3, 3=>5];
     $Fid = $FACTION['id'];
     $FS = Get_FactionSystemFS($Fid,$Sid);
@@ -64,12 +71,12 @@
     $SpaceBlob = $FS['SpaceSurvey'];
     $PlanBlob = $FS['PlanetSurvey'];
 
-    if (empty($SpaceBlob) && $SpaceLevel>=0) {
+    if ($REDO || (empty($SpaceBlob) && $SpaceLevel>=0)) {
       Record_SpaceScan($FS);
       $SpaceBlob = $FS['SpaceSurvey'];
     }
 
-    if (empty($PlanBlob) && $PlanetLevel>0) {
+    if ($REDO || (empty($PlanBlob) && $PlanetLevel>0)) {
       Record_PlanetScan($FS);
       $PlanBlob = $FS['PlanetSurvey'];
     }

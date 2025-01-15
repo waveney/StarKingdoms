@@ -889,6 +889,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
 
 //  if ($T['id'] == 238) { echo "Here with outpost<br>"; var_dump($T); }
   $TTprops = ($ThingTypes[$T['Type']]['Properties']??0);
+  $TTprops2 = ($ThingTypes[$T['Type']]['Prop2']??0);
 
   if ($T['CurHealth'] == 0 && ($TTprops & THING_CAN_BE_SPLATED)) return '';
   if ($TTprops & THING_ISA_TEAM) {
@@ -1011,7 +1012,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
           $txt .= "<br>" . ParseText($T['Description']);
         }
 
-        if ($TTprops & THING_SHOW_CONTENTS) {
+        if ($TTprops2 & THING_SHOW_CONTENTS) {
           switch ($ThingTypes[$T['Type']]['Name']) {
             case 'Outpost':
               include_once('OrgLib.php');
