@@ -378,6 +378,11 @@ global $FACTION;
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
       $H = Get_Thing($T['SystemId']);
+      if (!$H) {
+        echo "<h2 class=Err>Could not find thing to unload from - Tell Richard</h2>";
+        GMLog4Later("Tell Richard - Unloading from $tid could not find thing:" . $T['SystemId'] . " LinkId:" . $T['LinkId']);
+        break;
+      }
       Check_MyThing($T,$Fid,$H);
       if ($H['LinkId'] < 0) {
         $T['LinkId'] = -1;

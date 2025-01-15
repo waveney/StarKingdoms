@@ -29,19 +29,27 @@
     echo "<h2>No Systems Requested</h2>";
     dotail();
   }
+
+  $DEBUG = 0;
+
   if ($GM) {
     if (isset($_REQUEST['FORCE'])) {
       $GM = 0;
     } else {
       echo "<h2><a href=SurveyReport.php?N=$Sid&FORCE>This page in Player Mode</a></h2>\n";
+      if (Access('God')) echo "<h2><a href=SurveyReport.php?N=$Sid&FORCE&DEBUG>This page in Diagnostic Mode</a></h2>\n";
+    }
+    if (isset($_REQUEST['DEBUG'])) {
+      $DEBUG = 1;
     }
   }
+
 
   $SurveyLevel = 100; // Switch off
   $PlanetLevel = $SpaceLevel = $ScanLevel = 0;
   $Syslocs = Within_Sys_Locs($N);
 
-  if (!$GM && !empty($FACTION)) { // Player mode
+  if (!$GM && !empty($FACTION) && !$DEBUG) { // Player mode
 //    $ScanSurveyXlate = [0=>0, 1=>1, 2=>3, 3=>5];
     $Fid = $FACTION['id'];
     $FS = Get_FactionSystemFS($Fid,$Sid);
@@ -80,6 +88,7 @@
     } else {
       $Fid = 0;
     }
+
     $SpaceBlob =  SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,$Syslocs,$GM);
     $PlanBlob = PlanetScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,$Syslocs,$GM);
   }
@@ -108,33 +117,7 @@
   if ($N['Flags'] & 1) Dynamic_Update($N);
 
   $pname = System_Name($N,$Fid);
-/*
-  $pname = NameFind($N);
-  if ($Fid) {
-    $FS = Get_FactionSystemFS($Fid, $Sid);
-    if (!empty($FS['Name']) > 1) {
-      $Fname = NameFind($FS);
 
-      if ($pname != $Fname) {
-        if (strlen($pname) > 1) {
-          $pname = $Fname . " ( $pname | $Ref ) ";
-        } else {
-          $pname = $Fname . " ( $Ref ) ";
-        }
-      } else {
-        $pname .= " ( $Ref ) ";
-      }
-    } else if ($pname) {
-      $pname .= " ( $Ref ) ";
-    } else {
-      $pname = $Ref;
-    }
-  } else if ($pname) {
-    $pname .= " ( $Ref ) ";
-  } else {
-    $pname = $Ref;
-  }
-*/
   echo "<div class=SReport><h1>Survey Report - $pname</h1>\n";
   if (Feature('UniqueRefs') && $GM && $SurveyLevel >= 10) echo "UniqueRef is: " . UniqueRef($Sid) . "<p>";
 

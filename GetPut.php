@@ -252,7 +252,7 @@ function Get_Factions4Link($Lid) {
     $K = 0;
     if (($FS1['SpaceScan']??0) >= $L['Concealment']) $K+=1;
     if (($FS2['SpaceScan']??0) >= $L['Concealment']) $K+=2;
-    if ($K) $FL[$Fid] = ['From ' . $L['System1Ref'], 'From ' . $L['System2Ref'],'Both'][$K];
+    if ($K) $FL[$Fid] = ['','From ' . $L['System1Ref'], 'From ' . $L['System2Ref'],'Both'][$K];
   }
   return $FL;
 }

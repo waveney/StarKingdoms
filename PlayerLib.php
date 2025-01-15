@@ -169,6 +169,10 @@ function Player_Page() {
   if ($GM) {
     echo "<p><li>GM: <a href=TechShow.php?SETUP&id=$Fid>Edit Technologies</a>";
     echo "<li>GM: <a href=SplitFaction.php?ACTION=Start>Split Faction</a>\n";
+    if (Access('God')) {
+      echo "<li>God: <a href=DoSurvey.php>Do Survey - local only</a>\n";
+
+    }
   }
 
   echo "</ul>";

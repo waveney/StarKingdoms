@@ -65,32 +65,19 @@ NEW GAME FEATURES & BUGS
 173 Edit World font size mobile - see a chat gm 21/11
 179 Explore wormhole in nebula
 180 Federations trait
-197 Engineering points - Fed
-201 no space survey data - get conceal 2 wormholes - LIZ / Barrayar
-211 Anomallies progress > scan report
 217 Space/Ground anomally again
 223 When you colonise a new planet, it starts with social principals based on your nearest other world
+224 Meetups - armies on Different Planets
+225 Lewis MLY - Anomaly
+226 Judith Nebula XHP extra link on report
+229 Outpost details on What Can I see
+230 Kage survey report
+235 Pmove and Know All Links
+236 GM Tweak to operation levels
+
+Undefined array key "Name" in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActs/Instruct.php on line 57; 
+PHP message: PHP Warning:  Undefined array key "Name" in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActs/Instruct.php on line 58', 
+referer: https://starkingdoms.uk/TurnActions.php?ACTION=Process&S=11
 
 
-
-===================Cut=========================
-
-There have been big changes to how link and map knowledge works:
-
-A link can only be used from a system if it is known where it is in that system.
-
-If you have travelled along it you obviously know it.
-
-If you have space scanned the system you wish to leave from (or have had the data transferred to you) at sufficient level to see it you know it.
-
-If it is concealment 0, and you have passively scanned it you know how to use it
-
-If you don't know how to use the link, it will have arrows showing the direction known.
-
-Unknown links don't help in finding the level of an operation.  Your operation teams can't use them.  
-
-The two operations that explicitly look through a wormhole to do a scan/recon at the far end still work,
-as the operations team are based in the known system.
-
-Most factions maps have changed.  Most have lost links and systems they never should have had.  Some have gained links.
-
+ 

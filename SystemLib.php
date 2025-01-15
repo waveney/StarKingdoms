@@ -342,6 +342,8 @@ function Show_System(&$N,$Mode=0) {
     }
     echo "<input type=submit name=ACTION value='Redo Moons' class=Button>";
     echo "<input type=submit name=ACTION value='Delete System' class=Button>";
+    echo "<input type=submit name=ACTION value='Change Control To' class=Button>";
+      echo fm_select($FactNames,$N,'NewControl');
     echo "</form></center>";
   }
   echo "<center><h2><a href=SurveyReport.php?id=$Sid>Survey Report</a>";
@@ -908,6 +910,11 @@ function SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
 
           $txt .=  "<br><h3>Anomaly: " . $A['Name'] . "</h3>location: " . ($Syslocs[$A['WithinSysLoc']]? $Syslocs[$A['WithinSysLoc']]: "Space") . "<p>";
           if ($A['Description']) $txt .=  "Description: " . ParseText($A['Description']) . "<p>";
+var_dump($FA);
+          if (($FA['State'] >= 3) && $A['Completion']) {
+            $ptxt .=  "Complete: " . ParseText($A['Completion']) . "<p>";
+          }
+
           if (!$GM) {
             $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
             if (!isset($FA['id'])) {
@@ -917,8 +924,6 @@ function SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
               $FA['State'] = 1;
               Gen_Put('FactionAnomaly',$FA);
             }
-            $txt .=  "<span style='Background:" . $AnStateCols[$FA['State']] . ";'>" . $FAnomalyStates[$FA['State']] . "</span>";
-
           }
         }
     }

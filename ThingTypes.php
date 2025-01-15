@@ -35,7 +35,8 @@
        "1000=Can be Advanced, 2000=Instant Create, 4000=Need Cargo Space, 8000=No Named Chars, " .
        "10000=Do Projects (Wo Dists), 20000=Direct Move, 40000=Move 2nd, 80000=Has Health<br>" .
        "100000=Has Control, 200000=Needs Support, 400000=Hostile, 800000=Can Splat, 1000000=Can Leave Debris," .
-       "2000000=Is Small, 4000000=Blueprints, 8000000=Needs Planet, 10000000=Age, 20000000=Team, 40000000=Variants<p>\n";
+       "2000000=Is Small, 4000000=Blueprints, 8000000=Needs Planet, 10000000=Age, 20000000=Team, 40000000=Variants<p>";
+  echo "Props2 (Hex) 1=Show Contents<p>\n";
   echo "Eyes:  1 = in space, 2= sens, 4= neb sens, 8=ground 1, 16 ground 2 etc<br>\n"; // TODO no ground differntion yet
   echo "SeenBy: What Eyes can see this<br>\n";
 //  echo "Game 0 = All, N = Game N<br>";
@@ -52,6 +53,7 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
     if ($AllG) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>NotBy</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Properties</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Prop2</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Gate</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Eyes</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>SeenBy</a>\n";
@@ -66,6 +68,7 @@
       echo fm_text1("",$T,'Name',1,'','',"Name:$i");
       echo fm_notby($T,$i,$AllG,':');
       echo fm_hex1('',$T,'Properties','','',"Properties:$i");
+      echo fm_hex1('',$T,'Prop2','','',"Prop2:$i");
       echo fm_text1("",$T,'Gate',1,'','',"Gate$i");
       echo fm_number1('',$T,'Eyes','','min=0 max=100',"Eyes:$i");
       echo fm_number1('',$T,'SeenBy','','min=0 max=100',"SeenBy:$i");

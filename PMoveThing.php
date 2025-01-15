@@ -140,6 +140,7 @@ function LinkProps($L) {
   }
   $Fid = $T['Whose'];
   $LinkType = Feature('LinkMethod','Gates');
+  $AllLinks = Has_Tech($Fid,'Know All Links');
 
   $ThingProps = Thing_Type_Props();
   $tprops = $ThingProps[$T['Type']];

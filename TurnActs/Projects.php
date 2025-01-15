@@ -285,7 +285,7 @@ function ProjectProgressActions($Pay4=0) {
       if ($P['DType'] == -1) { $PT['Category'] = 16; }
       else if ($P['DType'] == $NameDTs['Military']) { $PT['Category'] = 4; }
       else if ($P['DType'] == $NameDTs['Shipyard']) { $PT['Category'] = 2; }
-      else if ($P['DType'] == $NameDTs['Intelligence']) { $PT['Category'] = 8; }
+//      else if ($P['DType'] == $NameDTs['Intelligence']) { $PT['Category'] = 8; }
       else if ($P['DType'] == $NameDTs['Academic']) { $PT['Category'] = 1; }
       else if ($P['DType'] == $NameDTs['Orbital Repair']) { $PT['Category'] = 2; }
       // else default actions
@@ -519,7 +519,7 @@ function ProjectsCompleted($Pass) {
             Put_District($D);
           } else { // Office
             $World = Gen_Get_Cond1('Worlds',"Home=" . $P['Home']);
-            $Off = ['Organisation' => -$P['ThingType'], 'OrgType'=>$P['ThingId'], 'World'=>$World['id'], 'Whose'=>$P['Whose'], 'Number'=>1];
+            $Off = ['Organisation' => -$P['ThingType'], 'OrgType'=>$P['ThingId'], 'World'=>$World['id'], 'Whose'=>$P['FactionId'], 'Number'=>1];
             Put_Office($Off);
           }
           TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");

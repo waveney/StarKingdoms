@@ -225,7 +225,7 @@ function Instructions() {
               "</a> which has other requirements. <b>" . $A['OtherReq'] . "</b>.  Are they met? " . fm_YesNo("AA$Tid" ,1,$Rtxt="Why" ));
             GMLog("<p>");
             break;
-          } else if ($FA['State'] == 3) {
+          } else if ($FA['State'] >= 3) {
             TurnLog($T['Whose'], $T['Name'] . " is trying to analyse a completed Anomaly: " , $T['Name']);
             $T['Instruction'] = $T['ProjectId'] = 0;
             Put_Thing($T);
@@ -761,7 +761,6 @@ function InstructionsComplete() {
   $Facts = Get_Factions();
   $TTNames = Thing_Types_From_Names();
   $TTypes = Get_ThingTypes();
-  $Parsedown = new Parsedown();
   $Systems = [];
   $DTypes = Get_DistrictTypes();
   $DTypeNames = NamesList($DTypes);
@@ -798,8 +797,9 @@ function InstructionsComplete() {
          }*/
 
 
-        TurnLog($Who,$P['Name'] . " on " . $N['Ref'] . " has been colonised");
+        TurnLog($Who,'<p>' . $P['Name'] . " on " . $N['Ref'] . " has been colonised");
         GMLog($P['Name'] . " on " . $N['Ref'] . " has been colonised by " . $Facts[$Who]['Name'],1);  // TODO Check for any named chars and offload
+        FollowUp($Who,"Set Social Principles of new colony in " .$N['Ref'] . " - not yet automated");
         Report_Others($T['Whose'], $T['SystemId'],31,$P['Name'] . " on " . $N['Ref'] . " has been colonised by " . $N['Ref']);
 
         if ('RemoveAfterColonise'){
@@ -823,16 +823,15 @@ function InstructionsComplete() {
         if ($Aid) {
           $A = Get_Anomaly($Aid);
           $Fid = $T['Whose'];
-          $FAs = Gen_Get_Cond('FactionAnomaly',"FactionId=$Fid AND AnomalyId=$Aid");
-          if ($FAs) {
-            $FA = $FAs[0];
-            if ($FA['Progress'] >= $A['AnomalyLevel'] && $FA['State'] != 3) {
+          $FA = Gen_Get_Cond1('FactionAnomaly',"FactionId=$Fid AND AnomalyId=$Aid");
+          if ($FA) {
+            if (($FA['Progress'] >= $A['AnomalyLevel']) && ($FA['State'] < 3)) {
               $FA['State'] = 3;
               Gen_Put('FactionAnomaly',$FA);
-              TurnLog($Fid , $T['Name'] . " Anomaly study on " . $A['Name'] .
+              TurnLog($Fid ,'<p>' .  $T['Name'] . " Anomaly study on " . $A['Name'] .
                 " has been completed - See sperate response from the GMs for what you get");
               if (!empty($A['Completion'])) {
-                TurnLog($Fid ,"Completion Text: " . $Parsedown -> text(stripslashes($A['Completion'])) );
+                TurnLog($Fid ,"Completion Text: " . ParseText($A['Completion']) );
                 $ctxt = '';
               } else {
                 $ctxt = "  AND the completion text.";
@@ -867,7 +866,7 @@ function InstructionsComplete() {
                   Gen_Put('FactionAnomaly',$FA);
 
                   TurnLog($Fid , "Completing " . $A['Name'] . " has opened up another anomaly that could be studied: " . $XA['Name'] .
-                    " in " . $Systems[$XA['SystemId']] . "\n" .  $Parsedown->text(stripslashes($XA['Description'])) .
+                    " in " . $Systems[$XA['SystemId']] . "\n" .  ParseText($XA['Description']) .
                     "\nIt will take " . $XA['AnomalyLevel'] . " scan level actions to complete.\n\n");
                   GMLog($Facts[$Fid]['Name'], "Have been told about anomaly " . $XA['Name']);
                 }
@@ -1347,8 +1346,8 @@ function InstructionsProgress() {
       case 'Colonise':
         $Prog = $T['Dist2'];
         if ($Prog == 0) {
-          GMLog("Colonisation by <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "Has zero progress - Tell Richard");
-          FollowUp($T['Whose'],"Colonisation by <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "Has zero progress - Tell Richard");
+          GMLog("Colonisation by <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a> Has zero progress - Tell Richard");
+          FollowUp($T['Whose'],"Colonisation by <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a> Has zero progress - Tell Richard");
         }
         $T['Progress'] = min($T['ActionsNeeded'],($T['Progress']+$Prog)); // Progress stored in Dist2
         Put_Thing($T);

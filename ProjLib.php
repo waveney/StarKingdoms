@@ -100,7 +100,7 @@ function Project_Finished(&$P,$Turn) {  // CODE ON HOLD
       $Tech = Get_Tech($Tid);
       if ($Tech['Cat'] == 0) { // Core
         if ($CTech['Level'] < $P['Level']) {
-          $N = Get_FutureTech($P['Whose'], $Tid, $P['Level']);
+          $N = Get_FutureTech($P['FactionId'], $Tid, $P['Level']);
           $N['StartTurn'] = $Turn;
           Put_FutureTech($N);
           break;

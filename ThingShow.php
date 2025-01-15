@@ -286,13 +286,13 @@ function Show_Thing(&$T,$Force=0) {
               if ($GM) {
                 if ($Lid == -1 || $Lid == -2) echo fm_submit("ACTION",'Unload After Move',0);
                 echo fm_submit("ACTION",'Unload Now',0);
-              } else if ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ) {
+              } else if ($Fid == $Host['Whose'] || $Host['Whose'] == $Faction['id'] ) {
                 echo fm_submit("ACTION",'Unload Now',0);
               }
             } else {
-              if ($Lid == -1 || $Lid == -2) if ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] )
+              if ($Lid == -1 || $Lid == -2) if ($Fid == $Host['Whose'] || $Host['Whose'] == $Faction['id'] )
                 echo fm_submit("ACTION",'Unload After Move',0);
-              if ($GM || (!$Conflict && ($Fid == $Host['Whose'] || $Host['Whose'] == $FACTION['id'] ))) {
+                if ($GM || (!$Conflict && ($Fid == $Host['Whose'] || $Host['Whose'] == $Faction['id'] ))) {
                 echo fm_submit("ACTION",'Unload Now',0);
               } else {
                 echo " - Only the transport owner can unload you";
@@ -443,7 +443,7 @@ function Show_Thing(&$T,$Force=0) {
 
       }
 //var_dump("Here",$Lid,$tprops);
-      if (($Lid == 0) && (($tprops & THING_CAN_BETRANSPORTED)) && (($T['PrisonerOf'] == 0) || ($T['PrisonerOf'] == $FACTION['id']))) {
+      if (($Lid == 0) && (($tprops & THING_CAN_BETRANSPORTED)) && (($T['PrisonerOf'] == 0) || ($T['PrisonerOf'] == ($FACTION['id']??0)))) {
         $XPorts = Get_AllThingsAt($T['SystemId']);
 // var_dump($XPorts);
         $NeedCargo = ($tprops & THING_NEEDS_CARGOSPACE);
@@ -945,7 +945,7 @@ function Show_Thing(&$T,$Force=0) {
       foreach($Ps as $P) {
         if (!$PlTs[$P['Type']]['Hospitable']) continue;
         if (Get_DistrictsP($P['id'])) continue; // Someone already there
-        if (($P['Type'] == $FACTION['Biosphere']) || ($P['Type'] == $FACTION['Biosphere2']) || ($P['Type'] == $FACTION['Biosphere3'])) {
+        if (($P['Type'] == $Faction['Biosphere']) || ($P['Type'] == $Faction['Biosphere2']) || ($P['Type'] == $Faction['Biosphere3'])) {
           $HabPs[$P['id']] = [$P['Name'],$P['Type'],0];
         } else if ($P['Type'] == 4 ) {
           $HabPs[$P['id']] = [$P['Name'],$P['Type'],-2];
@@ -1288,7 +1288,7 @@ function Show_Thing(&$T,$Force=0) {
       foreach($Ps as $P) {
         if (!$PlTs[$P['Type']]['Hospitable']) continue;
         if (Get_DistrictsP($P['id'])) continue; // Someone already there
-        if (($P['Type'] == $FACTION['Biosphere']) || ($P['Type'] == $FACTION['Biosphere2']) || ($P['Type'] == $FACTION['Biosphere3'])) {
+        if (($P['Type'] == $Faction['Biosphere']) || ($P['Type'] == $Faction['Biosphere2']) || ($P['Type'] == $Faction['Biosphere3'])) {
           $HabPs[$P['id']] = [$P['Name'],$P['Type'],0];
         } else if ($P['Type'] == 4 ) {
           $HabPs[$P['id']] = [$P['Name'],$P['Type'],(Has_Tech($Fid,'Habitation Domes')?1.5:3)];

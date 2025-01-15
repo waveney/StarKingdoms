@@ -246,11 +246,22 @@ echo "No tds<p>";
         }
         Put_Planet($P);
       }
+
     case 'ADDFACT' :
       if (!empty($_REQUEST['F'])) {
         $FS = ['FactionId'=>$_REQUEST['F'], 'SystemId'=>$Sysid];
         Put_FactionSystem($FS);
       }
+      break;
+
+    case 'Change Control To':
+      $NewC = $_REQUEST['NewControl']??0;
+      $N['Control'] = $NewC;
+      $FS = Get_FactionSystemFS($NewC,$Sysid);
+      if ($FS['Name']??0) {
+        $N['Name'] = $FS['Name'];
+      }
+      Put_System($N);
       break;
 
     default:

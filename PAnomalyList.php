@@ -5,6 +5,7 @@
   include_once("vendor/erusev/parsedown/Parsedown.php");
 
   global $FACTION;
+  $Fid = 0;
 
   A_Check('Player');
   if (Access('Player')) {
@@ -69,8 +70,12 @@
 
       $N = Get_System($A['SystemId']);
       echo "<tr><td>" . $A['Name'] . "<td><a href=SurveyReport.php?R=" . $N['Ref'] . ">" . $N['Ref'] . "<td>$Loc" .
-           "<td style='Background:" . $AnStateCols[$FA['State']] . ";'>" . $FAnomalyStates[$FA['State']] . "<td>";
-      echo $FA['Progress'] . " / " . $A['AnomalyLevel'] . "<td colspan=4>" .  $Parsedown->text(stripslashes($A['Description']));
+      "<td style='Background:" . $AnStateCols[$FA['State']] . ";'>" . $FAnomalyStates[$FA['State']] . "<td>";
+      echo $FA['Progress'] . " / " . $A['AnomalyLevel'] . "<td colspan=4>" .  ParseText($A['Description']);
+
+      if (($FA['State']>=3) && ($A['Completion'])){
+        echo "<p>Complete:<p>" . ParseText($A['Completion']);
+      }
 //      echo "</tr>";
     }
     echo "</tbody></table></div>";

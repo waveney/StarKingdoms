@@ -78,6 +78,8 @@ define('THING_HAS_AGE',       0x10000000);
 define('THING_ISA_TEAM',      0x20000000);
 define('THING_HAS_VARIANTS',  0x40000000);
 
+define('THING_SHOW_CONTENTS', 1);
+
 
 define('LINK_ON_BOARD',-1);
 define('LINK_BOARDING',-2);
@@ -470,7 +472,6 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0 ) {
   } else {
     $GM = Access('GM');
   }
-  $KnownOnly=0;
   if ($T['LinkId'] <0) return [[],[],[]];
 //var_dump($T);exit;
   $Fid = $T['Whose'];
@@ -1009,8 +1010,31 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
         if ($T['Description']) {
           $txt .= "<br>" . ParseText($T['Description']);
         }
+
+        if ($TTprops & THING_SHOW_CONTENTS) {
+          switch ($ThingTypes[$T['Type']]['Name']) {
+            case 'Outpost':
+              include_once('OrgLib.php');
+              $Brans = Gen_Get_Cond('Branches',"HostType=3 AND Hostid=" . $T['id']);
+              if ($Brans) {
+                $BList = [];
+                foreach ($Brans as $B) {
+                  $BT = Gen_Get('BranchTypes',$B['Type']);
+                  if ($B['Whose'] != ($FACTION['id']??0) && ($BT['Props'] & BRANCH_HIDDEN)) continue;
+                  $Org = Gen_Get('Organisations',$B['Organisation']);
+                  $OrgType = Gen_Get('OfficeTypes', $B['OrgType']);
+                  $BList[] = $Org['Name'] . " (" . $OrgType['Name'] .")";
+                }
+                if ($BList) $txt .= "Branches: " . implode(',',$BList);
+              } else {
+                $txt .= "<br>No Branches found";
+              }
+            default:
+          }
+        }
       }
       if ($Images) $txt .= "<br clear=all>\n";
+
       if ($Div) $txt .= "</div>";
 
       if ($itxt) {
