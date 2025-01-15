@@ -75,19 +75,25 @@
     }
 
   } else { // GM access
-    $FS = [];
-    if (isset($_REQUEST['V'])) {
-      $ScanLevel = $SurveyLevel = $PlanetLevel = $SpaceLevel = $_REQUEST['V'];
-    } else if (Access('GM')) {
-      $ScanLevel = $SurveyLevel = $PlanetLevel = $SpaceLevel = 100;
-    }
-
     if (isset($_REQUEST['F'])) {
       $Fid = $_REQUEST['F'];
       $FACTION = Get_faction($Fid);
     } else {
       $Fid = 0;
     }
+
+    $FS = Get_FactionSystemFS($Fid,$Sid);
+
+    if (isset($_REQUEST['V'])) {
+      $ScanLevel = $SurveyLevel = $PlanetLevel = $SpaceLevel = $_REQUEST['V'];
+    } else if ($DEBUG) {
+      $ScanLevel = $FS['ScanLevel'];
+      $PlanetLevel = max(0,$FS['PlanetScan']);
+      $SpaceLevel = max(0,$FS['SpaceScan']);
+    } else if (Access('GM')) {
+      $ScanLevel = $SurveyLevel = $PlanetLevel = $SpaceLevel = 100;
+    }
+
 
     $SpaceBlob =  SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,$Syslocs,$GM);
     $PlanBlob = PlanetScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,$Syslocs,$GM);
@@ -134,6 +140,7 @@
  //     echo "You have very limited information about this system<p>";
 
     }
+
   }
 
   if (($ScanLevel>=0) && ($SurveyLevel > 2)) {
