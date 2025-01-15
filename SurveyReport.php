@@ -78,6 +78,8 @@
     if (isset($_REQUEST['F'])) {
       $Fid = $_REQUEST['F'];
       $FACTION = Get_faction($Fid);
+    } else if ($FACTION){
+      $Fid = $FACTION['id'];
     } else {
       $Fid = 0;
     }

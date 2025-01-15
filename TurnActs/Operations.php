@@ -375,7 +375,7 @@ function OperationsComplete() {
       case 'Establish Trade Hub':
         $World = World_in($O['SystemId'],$Fid);
         New_Branch($World,$NamesBTs['Trading Station'],$O,$Org);
-        TurnLog($Fid,"A new Trading Station branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
+        TurnLog($Fid,"A new Trading Station branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] . " " .
            System_Name($Sys,$Fid) );
         if ($World['FactionId'] != $Fid) {
           TurnLog($World['FactionId'],"A new Trading Station branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .

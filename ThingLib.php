@@ -1441,7 +1441,7 @@ function LinkVis($Fid,$Lid,$Sid) {
   $FLK = Gen_Get_Cond1('FactionLinkKnown',"FactionId=$Fid AND LinkId=$Lid");
   $L = Get_Link($Lid);
 
-  return ($KnowAll || ($L['Concealment'] == 0) || ($FLK['Used']??0) || $L['Concealment']<=$FS['SpaceScan']);
+  return ($KnowAll || (($L['Concealment'] == 0) && ($Sys['Nebulae']==0)) || ($FLK['Used']??0) || $L['Concealment']<=$FS['SpaceScan']);
 }
 
 
