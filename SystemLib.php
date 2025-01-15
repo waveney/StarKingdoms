@@ -785,7 +785,7 @@ function PlanetScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
   if ($Anoms) {
     foreach($Anoms as $Aid=>$A) {
       $Loc = 0; // Space
-      $LocCat = $A['WithinSysLoc']%100;
+      $LocCat = intdiv($A['WithinSysLoc'],100);
       if (($A['ScanLevel']<=$PlanetLevel) && ($LocCat ==2 || $LocCat == 4)) {
 
         if (!$GM){
@@ -889,7 +889,7 @@ function SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
   if ($Anoms) {
     foreach($Anoms as $Aid=>$A) {
       $Loc = 0; // Space
-      $LocCat = $A['WithinSysLoc']%100;
+      $LocCat = intdiv($A['WithinSysLoc'],100);
       if ($LocCat ==2 || $LocCat == 4) $Loc=1; // Ground;
       if (($Loc == 1) && $A['VisFromSpace']) $Loc=3; // Vis From Space
 
@@ -910,7 +910,7 @@ function SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
 
           $txt .=  "<br><h3>Anomaly: " . $A['Name'] . "</h3>location: " . ($Syslocs[$A['WithinSysLoc']]? $Syslocs[$A['WithinSysLoc']]: "Space") . "<p>";
           if ($A['Description']) $txt .=  "Description: " . ParseText($A['Description']) . "<p>";
-var_dump($FA);
+
           if (($FA['State'] >= 3) && $A['Completion']) {
             $ptxt .=  "Complete: " . ParseText($A['Completion']) . "<p>";
           }

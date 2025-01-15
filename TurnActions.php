@@ -710,7 +710,7 @@ function CheckSpotAnomalies() {
           $FS = Get_FactionSystemFS($Fid, $Sys);
 
           $Loc = 0; // Space
-          $LocCat = $A['WithinSysLoc']%100;
+          $LocCat = intdiv($A['WithinSysLoc'],100);
           if ($LocCat ==2 || $LocCat == 4) $Loc=1; // Ground;
           if (($Loc == 1) && $A['VisFromSpace']) $Loc=3; // Vis From Space
 
