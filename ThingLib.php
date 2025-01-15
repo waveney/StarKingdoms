@@ -1011,27 +1011,26 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
         if ($T['Description']) {
           $txt .= "<br>" . ParseText($T['Description']);
         }
-
-        if ($TTprops2 & THING_SHOW_CONTENTS) {
-          switch ($ThingTypes[$T['Type']]['Name']) {
-            case 'Outpost':
-              include_once('OrgLib.php');
-              $Brans = Gen_Get_Cond('Branches',"HostType=3 AND Hostid=" . $T['id']);
-              if ($Brans) {
-                $BList = [];
-                foreach ($Brans as $B) {
-                  $BT = Gen_Get('BranchTypes',$B['Type']);
-                  if ($B['Whose'] != ($FACTION['id']??0) && ($BT['Props'] & BRANCH_HIDDEN)) continue;
-                  $Org = Gen_Get('Organisations',$B['Organisation']);
-                  $OrgType = Gen_Get('OfficeTypes', $B['OrgType']);
-                  $BList[] = $Org['Name'] . " (" . $OrgType['Name'] .")";
-                }
-                if ($BList) $txt .= "Branches: " . implode(',',$BList);
-              } else {
-                $txt .= "<br>No Branches found";
+      }
+      if ($TTprops2 & THING_SHOW_CONTENTS) {
+        switch ($ThingTypes[$T['Type']]['Name']) {
+          case 'Outpost':
+            include_once('OrgLib.php');
+            $Brans = Gen_Get_Cond('Branches',"HostType=3 AND Hostid=" . $T['id']);
+            if ($Brans) {
+              $BList = [];
+              foreach ($Brans as $B) {
+                $BT = Gen_Get('BranchTypes',$B['Type']);
+                if ($B['Whose'] != ($FACTION['id']??0) && ($BT['Props'] & BRANCH_HIDDEN)) continue;
+                $Org = Gen_Get('Organisations',$B['Organisation']);
+                $OrgType = Gen_Get('OfficeTypes', $B['OrgType']);
+                $BList[] = $Org['Name'] . " (" . $OrgType['Name'] .")";
               }
-            default:
-          }
+              if ($BList) $txt .= "<br>Branches: " . implode(',',$BList);
+            } else {
+              $txt .= "<br>No Branches found";
+            }
+          default:
         }
       }
       if ($Images) $txt .= "<br clear=all>\n";
