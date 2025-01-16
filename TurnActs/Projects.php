@@ -467,6 +467,7 @@ function ProjectsCompleted($Pass) {
   $ProjTypes = Get_ProjectTypes();
   $Projects = Get_Projects_Cond("GameId=$GAMEID AND Status=1 AND Progress>=ProgNeeded");
   $OTypes = Get_OrgTypes();
+  $TTypes = Get_ThingTypes();
   foreach ($Projects as $P) {
     $PT = $ProjTypes[$P['Type']];
 
@@ -604,13 +605,28 @@ function ProjectsCompleted($Pass) {
             //        }
           }
 
+
           $WSL = ConstructLoc($P['Home'],0);
           $T['WithinSysLoc'] = 1;
           Move_Thing_Within_Sys($T,$WSL,1);
-          TurnLog($Fid, $T['Name'] . " has been launched" . (Feature('Shakedowns')?" and will now start its shakedown cruise":''),$T);
           Calc_Scanners($T);
           $T['ProjectId'] = 0;
+          TurnLog($Fid, $T['Name'] . " has been launched" . (Feature('Shakedowns')?" and will now start its shakedown cruise":''),$T);
           Put_Thing($T);
+
+          if ($P['Level'] > 1 && $TTypes[$T['Type']]['Name'] == 'Fighter' && Has_Tech($Fid,'Advanced Fighter Construction') ) {
+            $Number = ([1,1,3,6,10,15,21,28,36][$P['Level']]??1);
+            $OrigName = $T['Name'];
+//            var_dump($Number);
+            for ($Dup = 2;$Dup<=$Number;$Dup++) {
+              unset($T['id']);
+              $T['Name'] = "$OrigName $Dup";
+//              var_dump($Dup, $T);
+              Put_Thing($T);
+              TurnLog($Fid, $T['Name'] . " has been launched" . (Feature('Shakedowns')?" and will now start its shakedown cruise":''),$T);
+            }
+          }
+
           break;
 
         case "Train $ARMY":

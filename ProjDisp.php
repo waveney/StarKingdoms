@@ -177,6 +177,7 @@
           $Costs = $pc[1];
           $ProgN = $pc[0];
           $TthingId = $T['id'];
+          $TType = $T['Type'];
           $PH = Get_ProjectHome($Hi);
           switch ($PH['ThingType']) {
           case 1:
@@ -294,7 +295,7 @@
         if ($Valid) {
           $OldPro = Get_ProjectAt($Hi, $DT, $Turn);
           $Pro = ['FactionId'=>$Fid, 'Type'=>$Ptype, 'Level'=> $Level, 'Home'=>$Hi, 'Progress'=>0, 'Status'=>0, 'TurnStart'=>$Turn, 'Name'=>$Name,
-                  'Costs' => $Costs, 'ProgNeeded' => $ProgN, 'BuildState'=>0, 'DType' => $DT, 'FreeRushes'=>$FreeRush];
+                  'Costs' => $Costs, 'ProgNeeded' => $ProgN, 'BuildState'=>0, 'DType' => $DT, 'FreeRushes'=>$FreeRush, 'ThingType'=>($TType??0)];
           if (isset($With)) $Pro['ThingId'] = $With;
           if (isset($Sel)) $Pro['ThingType'] = $Sel;
           if (isset($TthingId)) $Pro['ThingId'] = $TthingId;
