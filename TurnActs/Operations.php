@@ -125,7 +125,7 @@ function StartOperations() {
       $Mod = ($Mod&3) + $Level*($Mod>>2);
     }
 
-    $BaseLevel = Op_Level($OrgId,$Wh) + $Mod;
+    $BaseLevel = Op_Level($OrgId,$Wh) + $Mod + $O['GMLock'];
 
     if ($BaseLevel != $O['Level']) {
       $O['ProgNeeded'] = $ProgNeed = Oper_Costs($BaseLevel)[0];

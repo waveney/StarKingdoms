@@ -65,14 +65,11 @@ NEW GAME FEATURES & BUGS
 173 Edit World font size mobile - see a chat gm 21/11
 179 Explore wormhole in nebula
 180 Federations trait
-217 Space/Ground anomally again
 223 When you colonise a new planet, it starts with social principals based on your nearest other world
 224 Meetups - armies on Different Planets
-229 Outpost details on What Can I see
-230 Kage survey report
-235 Pmove and Know All Links
-236 GM Tweak to operation levels
-237 ross - lizard org + economy
+238 Advanced Fighter Construction
+
+
 
 
 Undefined array key "Name" in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActs/Instruct.php on line 57; 

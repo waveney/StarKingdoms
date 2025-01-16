@@ -232,11 +232,11 @@
         echo "<td>" . $Prin['Principle'] . "<td>Adherence: " . $SP['Value'];
         echo "<td style='background:" . ($Facts[$Prin['Whose']]['MapColour']??'White') . "'>" . ($Facts[$Prin['Whose']]['Name']??'Unknown');
         echo "<td><a href=SocialEdit.php?Action=Edit&id=" . $SP['Principle'] . ">Change</a>";
-        echo "<td colspan=6>" . $Prin['Description'];
+        echo "<td colspan=6>" . ParseText($Prin['Description']);
 
       } else { // Player
         echo "<td>" . $Prin['Principle'] . "<td>Adherence: " . $SP['Value'];
-        echo "<td colspan=6>" . $Prin['Description'];
+        echo "<td colspan=6>" . ParseText($Prin['Description']);
       }
     }
   } else {

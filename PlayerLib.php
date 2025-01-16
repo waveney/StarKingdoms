@@ -590,10 +590,24 @@ function Income_Calc($Fid) {
         $OtherTrade += $Org['OfficeCount'];
       }
       if ($OtherTrade){
-        $EccTxt .= "Plus incomming trade of other's trade organisations worth: $OtherTrade<br>\n";
+        $EccTxt .= "Plus incomming trade of other's trade organisations Branches worth: $OtherTrade<br>\n";
         $EconVal += $OtherTrade;
       }
     }
+
+    $OtherOffices = Gen_Get_Cond('Offices',"Whose!=$Fid AND World=$Wid AND OrgType=2");
+    if ($OtherOffices) {
+      $OtherTrade = 0;
+      foreach( $OtherOffices as $O) {
+        $Org = Gen_Get('Organisations',$O['Organisation']);
+        $OtherTrade += $Org['OfficeCount'];
+      }
+      if ($OtherTrade){
+        $EccTxt .= "Plus incomming trade of other's trade organisations Offices worth: $OtherTrade<br>\n";
+        $EconVal += $OtherTrade;
+      }
+    }
+
 
     $EccTxt .=  "<br>\n";
   }
