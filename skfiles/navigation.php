@@ -1,5 +1,6 @@
 <?php
   include_once("sk.php");
+  include_once("PlayerLib.php");
   global $Access_Type,$USER,$YEAR,$FACTION,$GAME;
   global $PlayerState,$PlayerStates,$PlayerStateColours,$Currencies;
   Set_Faction();
@@ -17,7 +18,8 @@
 
   if ($FACTION) echo "<a href=Player.php onmouseover=NoHoverSticky()>Faction Menu</a>";
   if ($GM) echo "<a href=Staff.php onmouseover=NoHoverSticky()>GM Menu</a>";
-  echo "<a href='Login.php?ACTION=LOGOUT' onmouseover=NoHoverSticky()>Logout " . (!empty($USER['AKA'])?$USER['AKA']: (isset($USER['Login'])?$USER['Login']:" ")) . "</a>";
+  echo "<a href='Login.php?ACTION=LOGOUT' onmouseover=NoHoverSticky()>Logout " . //"User</a>";
+    Faction_Feature('LoginAKA', (!empty($USER['AKA'])?$USER['AKA']: (isset($USER['Login'])?$USER['Login']:" "))) . "</a>";
   if ($GM && $FACTION ) {
     echo "<a href=Access.php?id=" . $FACTION['id'] . "&Key=" . $FACTION['AccessKey'] . " style='background:" . $FACTION['MapColour'] . "; color: " .
          ($FACTION['MapText']?$FACTION['MapText']:'black') .

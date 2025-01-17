@@ -676,7 +676,6 @@ function number2roman($num,$isUpper=true) {
     else return strtolower($res);
 }
 
-
 function Sanitise(&$txt,$len=40,$cat='') {
   $txt = trim($txt);
   if ($len && strlen($txt) > $len) $txt = substr($txt,$len);
@@ -684,11 +683,21 @@ function Sanitise(&$txt,$len=40,$cat='') {
     case 'num':
       $txt = preg_replace('/[^0-9]/','',$txt);
       return $txt;
+    case 'phone':
+      $txt = preg_replace('/[^0-9 +]/','',$txt);
+      return $txt;
     case 'email':
       $txt = preg_replace('/[^a-zA-Z0-9@_.]/','',$txt);
       return $txt;
     case 'txt':
       $txt = preg_replace('/[^a-zA-Z0-9]/','',$txt);
+      return $txt;
+    case 'html':
+      return Html_Sanity($txt);
+    case 'skip':
+      return $txt;
+    case 'link':
+      $txt = preg_replace('/[^a-zA-Z0-9_&:\?\=\-\+ ,.\'\/\\\\]/','',$txt);
       return $txt;
     default:
       $txt = preg_replace('/[^a-zA-Z0-9_ ,.\'\/\\\\]/','',$txt);
@@ -704,7 +713,6 @@ function SanitiseAll($Rules) {
     }
   }
 }
-
 
 function Ordinal($n) {
   $ends = array('th','st','nd','rd','th','th','th','th','th','th');
