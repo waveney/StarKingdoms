@@ -676,6 +676,21 @@ function number2roman($num,$isUpper=true) {
     else return strtolower($res);
 }
 
+function HtmlSanity($txt) {
+  static $Valid = ['b','i','ul','ol','li','br','p'];
+  $Break = preg_split('/<.*>/',txt,PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+  $ntxt = '';
+  $mtch = [];
+  foreach ($Break as $chunk) {
+    if ($chunk[0] == '<') {
+      $lc = strtolower(trim($chunk,'</>'));
+      if (!in_array($lc,$Valid)) continue;
+    }
+    $ntxt .= $chunk;
+  }
+  return $ntxt;
+}
+
 function Sanitise(&$txt,$len=40,$cat='') {
   $txt = trim($txt);
   if ($len && strlen($txt) > $len) $txt = substr($txt,$len);

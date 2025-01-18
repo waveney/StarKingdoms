@@ -19,6 +19,7 @@ echo "<div class=tablecont><table id=indextable border>\n";
 echo "<thead><tr>";
 echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
 echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Organisation type</a>\n";
+echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Hidden?</a>\n";
 echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Level</a>\n";
 echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Description</a>\n";
 
@@ -26,7 +27,7 @@ echo "</thead><tbody>";
 if ($DTs) foreach($DTs as $D) {
   if ($D['Gate'] && !eval("return " . $D['Gate'] . ";" )) continue;
 
-  echo "<tr><td>" . $D['Name'] . "<td>" . $OTs[$D['Office']]['Name'];
+  echo "<tr><td>" . $D['Name'] . "<td>" . $OTs[$D['Office']]['Name'] ."<td>" . (($D['TeamProps']&1)?'Yes':'No');
 
   $Ltxt = "Level";
   if ($D['Props']&3) $Ltxt .= "+" . ($D['Props']&3);
