@@ -903,15 +903,15 @@ function SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
           }
 
           if (!$Shown) {
-            $txt .=  "<h2>Space Anomalies</h2>";
+            $txt .=  "<h2>Anomalies Visible from Space</h2>";
             $Shown = 1;
           }
 
 
-          $txt .=  "<br><h3>Anomaly: " . $A['Name'] . "</h3>location: " . ($Syslocs[$A['WithinSysLoc']]? $Syslocs[$A['WithinSysLoc']]: "Space") . "<p>";
+          $txt .=  "<br><h3>Anomaly: " . $A['Name'] . "</h3>Location: " . ($Syslocs[$A['WithinSysLoc']]? $Syslocs[$A['WithinSysLoc']]: "Space") . "<p>";
           if ($A['Description']) $txt .=  "Description: " . ParseText($A['Description']) . "<p>";
 
-          if (($FA['State'] >= 3) && $A['Completion']) {
+          if ((($FA['State']??0) >= 3) && $A['Completion']) {
             $ptxt .=  "Complete: " . ParseText($A['Completion']) . "<p>";
           }
 

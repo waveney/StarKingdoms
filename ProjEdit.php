@@ -278,8 +278,8 @@
     }
 //    var_dump($TTypes[$P['ThingType']]['Name'],$ProjTypes[$P['Type']]['Name'],Has_Tech($P['FactionId'],'Advanced Fighter Construction'));
 
-    else if (($TTypes[$P['ThingType']]['Name'] == 'Fighter')  &&
-      ($ProjTypes[$P['Type']]['Name'] == 'Construct Ship') &&
+    else if ((($TTypes[$P['ThingType']]['Name']??'') == 'Fighter')  &&
+      (($ProjTypes[$P['Type']]['Name']??'') == 'Construct Ship') &&
        Has_Tech($P['FactionId'],'Advanced Fighter Construction') ) echo fm_submit("ACTION",'Raise 1 Level',0);
     if ($P['TurnStart'] > $GAME['Turn']) echo fm_submit('ACTION','Start 1 Turn Earlier');
     echo fm_submit('ACTION','Start 1 Turn Later');

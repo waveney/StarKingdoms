@@ -240,7 +240,7 @@
       $TFid = $TSys['Control'];
       if (!$Head) echo "<h2>Selected: " . $OpTypes[$op]['Name'] . " in " . System_Name($TSys,$Fid) . "</h2>\n";
       $Head = 1;
-      if ($Wh) $World = WorldFromSystem($Wh);
+      if ($Wh) $Wid = WorldFromSystem($Wh);
 
       if ($OpTypes[$op]['Props'] & OPER_TECH) {
         $With = $TSys['Control'];
@@ -275,13 +275,19 @@
 
       if ($OpTypes[$op]['Props'] & OPER_SOCP) {
         if ($OpTypes[$op]['Props'] & OPER_SOCPTARGET) { // Target SocP
+          $World = Get_World($Wid);
+          if ($World['FactionId'] == $Fid) {
+            echo "<h2>This is your own world - just <a href=WorldEdit.php?id=$Wid>look at it...</a></h2>";
+            break;
+
+          }
           $With = $TSys['Control'];
-          $KnownTarget = Gen_Get_Cond('FactionSocialP',"FactionId=$Fid AND World=$World");
+          $KnownTarget = Gen_Get_Cond('FactionSocialP',"FactionId=$Fid AND World=$Wid");
           if (!$KnownTarget) {
             echo "<h2 class=Err>You don't know what the social principles are for that world</h2>";
             break;
           }
-          $SocPs = Get_SocialPs($World);
+          $SocPs = Get_SocialPs($Wid);
 
           if ($SocPs) {
             $Known = 0;

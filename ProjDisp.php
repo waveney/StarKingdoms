@@ -698,7 +698,9 @@
 
   echo "<tr><td>Turn";
   foreach ($Headline2 as $Hl) echo $Hl;
-  echo "<th>Total Cost<th>Credits Left";
+  echo "<th>Total Cost";
+  if (Feature('ProjMiscCosts',0)) echo "<th>Misc Costs";
+  echo "<th>Credits Left";
   for($Turn=0; $Turn<($GAME['Turn']+50); $Turn++) {
     $RowClass = "ProjHide";
     $hide = ' hidden';
