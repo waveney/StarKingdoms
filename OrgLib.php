@@ -221,7 +221,7 @@ function OrgColours() {
   return $Cols;
 }
 
-function WorldFromSystem($Sid,$Fid=0) {
+function WorldFromSystem($Sid,$Fid=-1) {
   $Ps = Get_Planets($Sid);
   $PTypes = Get_PlanetTypes();
   $Hab = [];
@@ -234,13 +234,12 @@ function WorldFromSystem($Sid,$Fid=0) {
     if ($PTypes[$P['Type']]['Hospitable']) $Hab[] = $P;
   }
   if (!$Planet) {
-    if ( count($Hab) == 1) {
+    if ($Hab) {
       $Planet = $Hab[0];
     } else {
       return 0;
     }
   }
-
   $World = Gen_Get_Cond1('Worlds', "ThingType=1 AND ThingId=" . $Planet['id']);
   return $World['id']??0;
 }

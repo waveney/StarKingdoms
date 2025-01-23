@@ -67,7 +67,9 @@ NEW GAME FEATURES & BUGS
 180 Federations trait
 223 When you colonise a new planet, it starts with social principals based on your nearest other world
 224 Meetups - armies on Different Planets
-239
+240 All Social Principle Ops
+241
+
 
 
 
@@ -77,4 +79,16 @@ PHP message: PHP Warning:  Undefined array key "Name" in /var/www/vhosts/starkin
 referer: https://starkingdoms.uk/TurnActions.php?ACTION=Process&S=11
 
 
+ Many changes to how Social Principles are seen on other factions worlds and how "Spread the Word" and "Burn the Herectics" work:
+ 
+ 1) If you have a branch on an Alien world you can see the social principles on that world.  
+ 
+ Select **Organisations -> Your orgs name -> View** to see the offices, branches and social principles.
+ 
+ 2) You always know them for your own worlds.  Worlds and colonies -> select world
+ 
+ 3) The Operation "Cultural Recon" is no more
+ 
+ 4) You can only target social principles you know about directly.  Thus you can only affect those on your worlds and where you have branches.
+ 
  

@@ -386,7 +386,8 @@ function ProjectProgressActions($Pay4=0) {
 
     $TurnStuff = Get_ProjectTurnPT($P['id'],$GAME['Turn']);
 
-    $Rush = $FreeRush = 0;
+    $Rush = 0;
+    $FreeRush = $P['FreeRushes'];
     $Bonus = 0;
     if (!empty($TurnStuff['Bonus'])) $Bonus = $TurnStuff['Bonus'];
 

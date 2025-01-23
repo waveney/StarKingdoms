@@ -17,6 +17,7 @@ if (!$GM && $Org['Whose']!= $FACTION['id']) {
 $Fid = $Org['Whose'];
 $OrgTypes = Get_OrgTypes();
 $BTypes = Get_BranchTypes();
+$Facts = Get_Factions();
 
 $Offices = Gen_Get_Cond('Offices',"Organisation=$OrgId");
 $Branches = Gen_Get_Cond('Branches',"Organisation=$OrgId");
@@ -28,7 +29,7 @@ echo "Type: <b>" . ($OrgTypes[$Org['OrgType']]['Name']??'Unknown') . "</b><p>";
 if ($Org['OrgType2']) echo "Also Type: <b>" . ($OrgTypes[$Org['OrgType2']]['Name']??'Unknown') . "</b><p>";
 
 
-echo "Decription: <p>" . $Org['Description'];
+echo "Decription: <p>" . ParseText($Org['Description']);
 echo "<h2>Offices:</h2>";
 
 if ($Offices) {
@@ -65,14 +66,12 @@ if ($Offices) {
 }
 
 $Teamid = $Org['Team'];
-if ($GM) {
-  echo "Team: <a href=ThingEdit.php?id=$Teamid>$Teamid : ";
-  if ($Teamid) {
-    $Team = Get_Thing($Teamid);
-    $N = Get_System($Team['SystemId']);
-    echo $Team['Name'] . "</a> currently in " . $N['Ref'];
-  }
-  echo "</a><p>";
+if ($Teamid == 0) {
+  echo "Team not currently deployed.<p>";
+} else {
+  $Team = Get_Thing($Teamid);
+  $N = Get_System($Team['SystemId']);
+  echo "Team: <a href=ThingEdit.php?id=$Teamid>" . $Team['Name'] . "</a> currently in " . System_Name($N,$Org['Whose']) . "<P>";
 }
 
 echo "<p><h2>Branches:</h2>";
@@ -98,6 +97,23 @@ if ($Branches) {
         break;
     }
     echo "<li>". $BTypes[$B['Type']]['Name'] . " at $Where" ;
+    if ($B['HostType'] != 3) {
+      $World = Gen_Get_Cond1('Worlds',"ThingType=" . $B['HostType'] . " AND ThingId=" . $B['HostId']);
+      $SocPs = Get_SocialPs($World['id']);
+      if ($SocPs) {
+        echo "<br>It's social principles are:<ul>";
+        foreach ($SocPs as $si=>$SP) {
+          $Prin = Get_SocialP($SP['Principle']);
+          echo "<li><b>" . $Prin['Principle'] . "</b> - Adherence: " . $SP['Value'];
+          echo " <span style='background:" . ($Facts[$Prin['Whose']]['MapColour']??'White') . "'>" . ($Facts[$Prin['Whose']]['Name']??'Unknown');
+          echo "<br>" . ParseText($Prin['Description']);
+        }
+        echo "</ul>";
+      } else {
+        echo "<br>No Social Principles Currently";
+      }
+
+    }
     if ($B['Suppressed']) echo "<span class=Red> This branch is suppressed and can not do any thing for " . $B['Suppressed'] . " turns.";
   }
 } else {

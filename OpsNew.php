@@ -240,7 +240,11 @@
       $TFid = $TSys['Control'];
       if (!$Head) echo "<h2>Selected: " . $OpTypes[$op]['Name'] . " in " . System_Name($TSys,$Fid) . "</h2>\n";
       $Head = 1;
-      if ($Wh) $Wid = WorldFromSystem($Wh);
+      if ($Wh) {
+        $Wid = WorldFromSystem($Wh);
+//        var_dump("Wid",$Wid);
+      }
+      $Drop = 0;
 
       if ($OpTypes[$op]['Props'] & OPER_TECH) {
         $With = $TSys['Control'];
@@ -273,59 +277,34 @@
         break;
       }
 
-      if ($OpTypes[$op]['Props'] & OPER_SOCP) {
-        if ($OpTypes[$op]['Props'] & OPER_SOCPTARGET) { // Target SocP
-          $World = Get_World($Wid);
-          if ($World['FactionId'] == $Fid) {
-            echo "<h2>This is your own world - just <a href=WorldEdit.php?id=$Wid>look at it...</a></h2>";
-            break;
+      if ($OpTypes[$op]['Props'] & OPER_SOCP) { // Burn Heretics
+        $Wid = WorldFromSystem($Wh,$Fid);
+        $World = Get_World($Wid);
+        $SP = $Org['SocialPrinciple'];
+        $SocPs = Get_SocialPs($Wid);
 
-          }
-          $With = $TSys['Control'];
-          $KnownTarget = Gen_Get_Cond('FactionSocialP',"FactionId=$Fid AND World=$Wid");
-          if (!$KnownTarget) {
+        //  var_dump($World,$Wid,$Fid);
+        if ($World['FactionId'] != $Fid) { // Not own World, find if branch
+          $Brs = Gen_Get_Cond('Branches',"Whose=$Fid AND HostType=" . $World['ThingType'] . " AND HostId=" . $World['ThingId']);
+          if (!$Brs) {
             echo "<h2 class=Err>You don't know what the social principles are for that world</h2>";
             break;
           }
-          $SocPs = Get_SocialPs($Wid);
-
-          if ($SocPs) {
-            $Known = 0;
-            foreach ($KnownTarget as $Ta) {
-              foreach($SocPs as $pi=>$SP) if ($Ta['SocP']==$pi) {
-                $SocP['Known'] = 1;
-                $Known++;
-                continue 2;
-              }
-            }
-
-            if (!$Known) {
-              echo "<h2 class=Err>You don't know what the current social principles are for that world</h2>";
-              break;
-            }
-
-            echo "<h2>Please Select the Social Principle you are hitting:</h2>";
-            foreach ($SocPs as $Si=>$SPr) {
-              $Prin = Gen_Get('SocialPrinciples', $SPr['Principle']);
-               echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&SP=$SP'>" .
-                   $Prin['Principle'] . " Currently has adherance of " . $SPr['Value'] . "</button> \n";
-
-            }
-          }
-          // Need to remove those not visable as too low
-
-        } else { // Your SocP, load it for world
-          $SocPs = Get_SocialPs($World);
-          $SP = 0;
-          foreach ($SocPs as $Si=>$S) {
-            if ($SP == $Org['SocialPrinciple']) {
-              $SP = $Si;
-              break;
-            }
-          }
         }
-        break;
+
+        if ($OpTypes[$op]['Props'] & OPER_SOCPTARGET) { // Target SocP for Burn Heretics
+          echo "<h2>Please Select the Social Principle you are hitting:</h2>";
+          foreach ($SocPs as $Si=>$SPr) {
+            $SP = $SPr['Principle'];
+            $Prin = Gen_Get('SocialPrinciples', $SP);
+            echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&SP=$SP'>" .
+            $Prin['Principle'] . " Currently has adherance of " . $SPr['Value'] . "</button><br>\n";
+
+          }
+          break;
+        }
       }
+
 
       if (($OpTypes[$op]['Props'] & OPER_WORMHOLE)) {
         $Ref = $TSys['Ref'];
@@ -435,6 +414,7 @@
       echo "<button class=projtype type=submit>Proceed</button>";
       break;
       }
+      // else drop through
 
     case 5: // Complete /Restart/ etc
       $TSys = Get_System($Wh);
@@ -460,7 +440,10 @@
       if ($OpTypes[$op]['Props'] & OPER_SOCP) {
         $SocP = Get_SocialP($SP);
         echo "Principle:" . $SocP['Principle'] . "<p>";
-        $TechLevel = $Level = $SocP['Value'];
+        $Wid = WorldFromSystem($Wh,$Fid);
+        $CurVal = Gen_Get_Cond1('SocPsWorlds',"Principle=$SP AND World=$Wid");
+
+        $TechLevel = $Level = ($CurVal['Value']??0);
         $Name .= " Principle: " . $SocP['Principle'];
       }
       if ($OpTypes[$op]['Props'] & OPER_MONEY) {
