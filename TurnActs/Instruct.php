@@ -816,7 +816,61 @@ function InstructionsComplete() {
           }
           $T['BuildState'] = -1;
         }
-        break; // The making homes and worlds in a later stage completes the colonisation I hope
+
+        $NewHome = ['ThingType'=>1, 'ThingId'=>$P['id'], 'Whose'=>$Who, 'SystemId'=>$P['SystemId'], 'WithinSysLoc'=>$T['WithinSysLoc'],
+          'EconomyFactor'=>100, 'GameId'=>$GAMEID ];
+        Put_ProjectHome($NewHome);
+        $NewWorld = ['FactionId'=>$Who, 'Home'=>$NewHome['id'], 'Minerals'=>$P['Minerals'],'ThingType'=>1, 'ThingId'=>$P['id'],
+          'GameId'=>$GAMEID ];
+        Put_World($NewWorld);
+
+        // Social Principles
+        // Get list current worlds
+        // If 1 - use that, if many find nearest, copy SPs to new colony
+
+        $Worlds = Get_Worlds($Who);
+        if (count($Worlds) == 1) {
+          $World = array_pop($Worlds);
+
+          $SocPs = Get_SocialPs($World['id']);
+          foreach ($SocPs as $SP) {
+            if ($SP['Value']>1) {
+              $newSP = ['World'=>$NewWorld['id'],'Principle'=>$SP['Principle'],'Value'=>($SP['Value']-1)];
+              Gen_Put('SocPsWorlds',$newSP);
+            }
+          }
+
+        } else {
+          $MinDist = 9;
+          foreach ($Worlds as $Wid=>$W) {
+            $Home = Get_ProjectHome($W['Home']);
+            $Dist = DistanceBetween($Who,$P['SystemId'],$Home['SystemId'],$MinDist);
+            if ($Dist < 0) continue;
+            if ($Dist < $MinDist) $MinDist = $Dist;
+            $Worlds[$Wid]['Distance'] = $Dist;
+          }
+
+          $Prins = [];
+          foreach ($Worlds as $Wid=>$W) {
+            if (($Worlds[$Wid]['Distance']??99) == $MinDist) {
+              $SocPs = Get_SocialPs($Wid);
+              foreach ($SocPs as $SP) {
+                if (($Prins[$SP['Principle']]??0) < $SP['Value']) {
+                  $SocPs[$SP['Principle']] = $SP['Value'];
+                }
+              }
+            }
+          }
+
+          foreach ($Prins as $P=>$V) {
+            if ($V < 2) continue;
+            $newSP = ['World'=>$NewWorld['id'],'Principle'=>$P,'Value'=>$V-1];
+            Gen_Put('SocPsWorlds',$newSP);
+          }
+        }
+
+        break;
+
 
       case 'Analyse Anomaly':
         $Aid = $T['ProjectId'];

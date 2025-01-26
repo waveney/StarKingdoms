@@ -91,7 +91,7 @@
         if ($Valid) {
           $OldPro = Get_OperationAt($OrgId, $Turn);
           $Pro = ['Whose'=>$Fid, 'Type'=>$Optype, 'Level'=> $Level, 'OrgId'=>$OrgId, 'Progress'=>0, 'Status'=>0, 'TurnStart'=>$Turn,
-                  'Name'=>$Name, 'Costs' => $Costs, 'ProgNeeded' => $ProgN, 'Status'=>0, 'FreeRushes'=>$FreeRush,
+                  'Name'=>$Name, 'Costs' => $Costs, 'ProgNeeded' => $ProgN, 'Status'=>0, 'FreeRushes'=>$FreeRush, 'TurnEnd'=>0,
                   'SystemId'=>$Wh, 'Para1' => ($SP?$SP:$Te), 'Para2' => $P2, 'GameId'=>$GAMEID, 'Description'=>$Desc,
 
           ];

@@ -379,4 +379,58 @@ function Oper_Costs($lvl) {
     return [$lvl,$Cst];
 }
 
+function DistanceBetween($Fid,$Sys1,$Sys2,$MaxDepth=9) {
+  global $Min,$Targets,$SysLnks,$Depth,$BeenHere,$GAMEID;
+
+  $LKnown = Gen_Get_Cond('FactionLinkKnown', "FactionId=$Fid");
+  $FSs = Get_FactionSystemsF($Fid);
+  $Links = Get_LinksGame();
+  $SRefs = Get_SystemRefs();
+  $RSyss = array_flip($SRefs);
+
+  if (!isset($FSs[$Sys1])) return -1; // Unknown system
+  if (!isset($FSs[$Sys2])) return -1; // Unknown system
+
+  $ValidLinks=[];
+  foreach($LKnown as $LK) if ($LK['Used']??0) $ValidLinks[$LK['LinkId']] = 1;
+
+  foreach ($Links as $Lid=>$L) {
+    $S1id = $RSyss[$L['System1Ref']];
+    $S2id = $RSyss[$L['System2Ref']];
+    if (!isset($FSs[$S1id]) || !isset($FSs[$S2id])) continue;
+    if ($L['Concealment'] > 0) {
+      if ($FSs[$S1id]['SpaceScan'] < $L['Concealment']) continue;
+      if ($FSs[$S2id]['SpaceScan'] < $L['Concealment']) continue;
+    }
+    $ValidLinks[$Lid] = 1;
+  }
+
+  $BeenHere = [];
+
+  $Depth = 0;
+  $ThisList[] = $Sys1;
+  while (($Depth < $MaxDepth) && !empty($ThisList)) {
+    //    echo "Doing Depth $Depth<p>";
+    $NextList = [];
+    foreach($ThisList as $Sid) {
+      if ($Sid == $Sys2) return $Depth;
+      if (isset($BeenHere[$Sid])) continue;
+      $BeenHere[$Sid] = 1;
+      $SidRef = $SRefs[$Sid];
+      $LinksHere = Gen_Get_Cond('Links', "GameId=$GAMEID AND (System1Ref='$SidRef' OR System2Ref='$SidRef')");
+      if ($LinksHere) foreach ($LinksHere as $L) {
+        if (isset($ValidLinks[$L['id']])) {
+          $LinkToRef = (($L['System1Ref']==$SidRef) ?$L['System2Ref']:$L['System1Ref']);
+          $LinkToId = $RSyss[$LinkToRef];
+          if (!isset($BeenHere[$LinkToId])) {
+            $NextList[] = $LinkToId;
+          }
+        }
+      }
+    }
+    $Depth++;
+    $ThisList = $NextList;
+  }
+  return -1;
+}
 

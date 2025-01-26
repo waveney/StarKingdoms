@@ -20,7 +20,6 @@
 
   $GM = Access('GM');
   if ($GM ) {
-    A_Check('GM');
     $Fid = $_REQUEST['id'];
     $Faction = Get_Faction($Fid);
     if (isset($_REQUEST['FORCE'])) {

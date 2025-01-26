@@ -1423,14 +1423,14 @@ function BlueShow(&$T,$GM=0) {
   }
 }
 
-function LinkVis($Fid,$Lid,$Sid) {
+function LinkVis($Fid,$Sid,$Lid) {
   static $KnowAll,$KnowFid,$LastSid,$Sys,$FS;
   if ($KnowFid != $Fid) {
     $KnowFid = $Fid;
     $KnowAll = Has_Tech($Fid,'Know All Links');
     $LastFS = [];
   }
-  if ($Sid != $LastSid) {
+  if (($Sid != $LastSid) || empty($Sys)) {
     $LastSid = $Sid;
     $Sys = Get_System($Sid);
     $FS = [];

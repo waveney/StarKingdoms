@@ -10,6 +10,7 @@
 
   global $FACTION,$GAME,$Project_Status,$Fields;
 
+  dostaffhead("Edit an Operation");
 
   $GM = Access('GM');
   if ($GM ) {
@@ -19,6 +20,12 @@
     } else {
       $Fid = 0;
     }
+    if (isset($_REQUEST['FORCE'])) {
+      $GM = 0;
+    } else {
+      $Oid = $_REQUEST['id'];
+      echo "<h2><a href=OperEdit.php?id=$Oid&FORCE>This page in player mode</a></h2>";
+    }
   } else if (Access('Player')) {
     if (!$FACTION) {
       Error_Page("Sorry you need to be a GM or a Player to access this");
@@ -27,7 +34,6 @@
     $Faction = &$FACTION;
   }
 
-  dostaffhead("Edit an Operation");
 
   if (isset($_REQUEST['id'])) {
     $Oid = $_REQUEST['id'];
@@ -139,7 +145,7 @@
   echo fm_hidden('id',$Oid);
   $PProps = $OpTypes[$O['Type']]['Props'];
 
-  if (Access('GM')) {
+  if ($GM) {
     echo "<tr><td>Operation Id:<td>$Oid<td>For<td>" . fm_select($FactionNames,$O,'Whose') . fm_number('Turn State', $O,'TurnState');
     echo "<tr><td>Organisation:<td>" . fm_select($OrgNames,$O,'OrgId') . "<td>Operation Type<td>" . fm_select($OpTypeNames,$O,'Type');
     echo "<tr>" . fm_text("Operation Name",$O,'Name',6);

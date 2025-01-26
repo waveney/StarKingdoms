@@ -105,7 +105,7 @@ if ($Branches) {
         foreach ($SocPs as $si=>$SP) {
           $Prin = Get_SocialP($SP['Principle']);
           echo "<li><b>" . $Prin['Principle'] . "</b> - Adherence: " . $SP['Value'];
-          echo " <span style='background:" . ($Facts[$Prin['Whose']]['MapColour']??'White') . "'>" . ($Facts[$Prin['Whose']]['Name']??'Unknown');
+ //       echo " <span style='background:" . ($Facts[$Prin['Whose']]['MapColour']??'White') . "'>" . ($Facts[$Prin['Whose']]['Name']??'Unknown');
           echo "<br>" . ParseText($Prin['Description']);
         }
         echo "</ul>";

@@ -609,7 +609,7 @@ function OperationsComplete() {
       case 'Counter Insurgency':
       case 'Insurgency':
       case 'Advanced Scientific Recon':
-      case 'Cultural Recon':
+      case 'Cultural Recon': // no longer exists
       case 'Fundamental Scientific Recon':
       case 'Military Recon':
       case 'Organisational Recon':
