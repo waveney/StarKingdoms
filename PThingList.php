@@ -96,7 +96,7 @@
         $Known = 0;
       }
 */
-      $T['TargetKnown'] = LinkVis($Fid,$T['NewSystemId'],$Lid);
+      $T['TargetKnown'] = LinkVis($Fid,$Lid,$T['NewSystemId']);
       $T['LinkId'] = $Lid;
       $LinkTypes = Get_LinkLevels();
       $ThingProps = Thing_Type_Props();

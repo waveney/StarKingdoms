@@ -1423,7 +1423,7 @@ function BlueShow(&$T,$GM=0) {
   }
 }
 
-function LinkVis($Fid,$Sid,$Lid) {
+function LinkVis($Fid,$Lid,$Sid) {
   static $KnowAll,$KnowFid,$LastSid,$Sys,$FS;
   if ($KnowFid != $Fid) {
     $KnowFid = $Fid;
