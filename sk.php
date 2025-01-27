@@ -32,7 +32,8 @@ function Check_Login($check=0) {
       $USER = $res->fetch_assoc();
       if (!empty($USER['id'])) {
         $USERID = $USER['id'];
-        $db->query("UPDATE People SET LastAccess='" . time() . "' WHERE id=$USERID" );
+        if (isset($USER['LastIP']))
+          $db->query("UPDATE People SET LastAccess='" . time() . "', LastIP='" . $_SERVER['REMOTE_ADDR'] . "' WHERE id=$USERID" );
   // Track suspicious things
         if (($USER['LogUse']) && (file_exists("LogFiles"))) {
           $logf = fopen("LogFiles/U$USERID.txt",'a+');
