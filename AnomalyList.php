@@ -2,13 +2,14 @@
   include_once("sk.php");
   include_once("GetPut.php");
   include_once("ThingLib.php");
+  include_once("SystemLib.php");
 
   A_Check('GM');
 
   dostaffhead("List Anomalies");
 
   global $db, $GAME, $GAMEID;
-  global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil;
+  global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$GAnomStates;
 
   $As = Gen_Get_Cond('Anomalies',"GameId=$GAMEID ORDER BY SystemId");
 
@@ -28,6 +29,7 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Other Reqs</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Location</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Ground /<br>Space</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Status</a>\n";
   echo "</thead><tbody>";
 
   foreach($As as $A) {
@@ -42,6 +44,7 @@
     $LocGr = intdiv($A['WithinSysLoc'],100);
     if (($A['WithinSysLoc'] == 3) || ($LocGr == 2) || ($LocGr ==4)) $Loc = 'Ground';
     echo "<td>$Loc";
+    echo "<td>" . $GAnomStates[$A['Complete']];
   }
   echo "</tbody></table></div>\n";
 

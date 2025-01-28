@@ -156,8 +156,14 @@ function ForceReport($Sid,$Cat) {
       $txt .= "<td>" . $TTypes[$T['Type']]['Name'] . "<td>" . $T['Level'] . "<td>" . $T['Evasion'];
       $txt .= "<td><span id=StateOf$Tid>" . $T['CurHealth'] . " / " . $T['OrigHealth'];
       if ($T['ShieldPoints']) $txt .= " (" . $T['CurShield'] . "/" . $T['ShieldPoints'] . ") ";
-      $txt .= "</span><td><span id=Attack$Tid>$BD</span><td>" .
-           (($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE)? "Speed: " . sprintf("%0.3g ",$T['Speed']) :'') ;
+      $txt .= "</span><td><span id=Attack$Tid>$BD</span><td>";
+      if ($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE) {
+        if ($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES) {
+          $txt .= "Speed: " . sprintf("%0.3g ",$T['Speed']);
+        } else {
+          $txt .= "Mobility: " . sprintf("%0.3g ",$T['Mobility']);
+        }
+      }
       $txt .=  fm_number1(" Do",$T,'Damage', ''," class=Num3 onchange=Do_Damage($Tid,$LastF,'$Cat')","Damage:$Tid") . " damage";
       $txt .= fm_checkbox(', Retreat?',$T,'RetreatMe','',"RetreatMe:$Tid");
 

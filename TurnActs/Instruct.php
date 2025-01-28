@@ -896,7 +896,7 @@ function InstructionsComplete() {
                 "</a> has been completed - give them the reward. $ctxt");
               $T['ProjectId'] = 0;
 
-              if ($A['Complete'] == 1) {
+              if ($A['Complete'] == 1) { // ONe Use
                 $A['Complete'] = 2;
                 Put_Anomaly($A);
               }

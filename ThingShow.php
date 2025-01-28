@@ -2,7 +2,6 @@
 // Lib of Thing related stuff
 include_once("sk.php");
 include_once("GetPut.php");
-include_once("vendor/erusev/parsedown/Parsedown.php");
 include_once("PlayerLib.php");
 include_once("OrgLib.php");
 
@@ -546,7 +545,7 @@ function Show_Thing(&$T,$Force=0) {
     $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
     if ($Conf) $Conflict = $Conf[0]['Conflict'];
 
-    $NewRef = (empty($T['NewSystemId']) ? ($N['Ref']??'???') : Get_System($T['NewSystemId'])['Ref']);
+    $NewRef = (empty($T['NewSystemId']) ? ($N['Ref']??'???') : (Get_System($T['NewSystemId'])['Ref'])??'???');
 
     $CargoUsed = $CryoUsed = 0; // Adds troops up as Cryo - checked later if it has
 
@@ -967,6 +966,7 @@ function Show_Thing(&$T,$Force=0) {
       break;
 
     case 'Decommision': // Dissasemble
+
       if ($Moving || ($tprops & THING_HAS_SHIPMODULES) == 0 ) continue 2;
       // Is there a Home here with a shipyard
       $Loc = $T['SystemId'];

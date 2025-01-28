@@ -9,7 +9,6 @@
   include_once("BattleLib.php");
   include_once("TurnTools.php");
   include_once("OrgLib.php");
-  include_once("vendor/erusev/parsedown/Parsedown.php");
 
   A_Check('GM');
 
@@ -564,6 +563,7 @@ function CheckSurveyReports() {
     switch ($S['Type']) {
       case 0: // Passive
         if ($FS['ScanLevel'] >= $S['Scan']) continue 2;
+        if (!Feature('CheckPassive')) continue 2;
         break;
       case 1: // Space
         if ($FS['SpaceScan'] >= $S['Scan']) continue 2;
@@ -572,6 +572,10 @@ function CheckSurveyReports() {
         if ($FS['PlanetScan'] >= $S['Scan']) continue 2;
         break;
     }
+
+    $N = Get_System($S['Sys']);
+    if ($Fid == $N['Control']) continue;
+
     if (!$Started) {
       GMLog("<h2>Please review these scans, Stop as needed</h2>\n");
       GMLog("<form method=post action=TurnActions.php?ACTION=DoStage2>" . fm_hidden('Stage','Check Survey Reports'));
@@ -581,7 +585,6 @@ function CheckSurveyReports() {
       $Started = 1;
     }
 
-    $N = Get_System($S['Sys']);
  //   if ($N['Nebulae'] > $S['Neb']) $S['Scan'] = 0; // Blind - in nebula wo neb scanners
     GMLog("<tr><td>" . $Facts[$Fid]['Name'] . "<td>" . $N['Ref'] . "<td>" . $S['Scan'] . "<td>" . $SurveyTypes[$S['Type']] .
       ($N['Control'] ? ( "<td style='background:" . $Facts[$N['Control']]['MapColour'] . ";'>" . $Facts[$N['Control']]['Name'])  : '<td>None') .
@@ -686,7 +689,6 @@ function CheckSpotAnomalies() {
   $Scans = Gen_Get_Cond('ScansDue'," Turn=" . $GAME['Turn'] . " ORDER BY FactionId,Sys");
   $Anoms = Gen_Get_Cond('Anomalies',"GameId=" . $GAME['id'] . " ORDER BY SystemId, ScanLevel");
   $SysAs = [];
-  $Parsedown = new Parsedown();
   $Started = 0;
 
   foreach ($Anoms as $Aid=>$A) {
@@ -724,7 +726,7 @@ function CheckSpotAnomalies() {
 
               TurnLog($Fid,"You have spotted an anomaly: " . $A['Name'] . " in " . $Systems[$Sid] . "\n" .
                 " location: " . ($Syslocs[$A['WithinSysLoc']]? $Syslocs[$A['WithinSysLoc']]: "Space") . "<p>" .
-                $Parsedown->text(stripslashes($A['Description'])) .
+                Parsetext($A['Description']) .
                 "\nIt will take " . $A['AnomalyLevel'] . " scan level actions to complete.\n\n");
 
               $FA = ['FactionId' => $Fid, 'State'=>1, 'AnomalyId'=>$Aid];
@@ -769,7 +771,6 @@ function SpotAnomalies() {
 
   $Facts = Get_Factions();
   $Systems = Get_SystemRefs();
-  $Parsedown = new Parsedown();
   $mtch = [];
 
   foreach($_REQUEST as $R=>$V) {
@@ -785,7 +786,7 @@ function SpotAnomalies() {
 
       TurnLog($Fid,"You have spotted an anomaly: " . $A['Name'] . " in " . $N['Ref'] . "\n" .
         " location: " . ($Syslocs[$A['WithinSysLoc']]? $Syslocs[$A['WithinSysLoc']]: "Space") . "<p>" .
-        $Parsedown->text(stripslashes($A['Description'])) .
+        ParseText($A['Description']) .
         "\nIt will take " . $A['AnomalyLevel'] . " scan level actions to complete.\n\n");
         Gen_Put('FactionAnomaly',$FA);
     }
@@ -1282,7 +1283,6 @@ function Do_Turn() {
 
   echo "<center><h2><a href=TurnActions.php?ACTION=Process&S=$NextStage>Do Next Stage</a></h2></center>\n";
   if (Access('God')) echo "<center><h2><a href=TurnActions.php?ACTION=RevertAll&S=$NextStage>Revert All</a></h2></center>\n";
-  $Parsedown = new Parsedown(); // To hande logs in time
 
   if (!empty($Sand['id'])) {
     echo "<br><p><br><p><h2>Turn Detail (for bug fixing)</h2>";

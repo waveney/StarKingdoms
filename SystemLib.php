@@ -787,7 +787,7 @@ function PlanetScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
       $Loc = 0; // Space
       $LocCat = intdiv($A['WithinSysLoc'],100);
       if (($A['ScanLevel']<=$PlanetLevel) && ($LocCat ==2 || $LocCat == 4)) {
-
+        if ($A['Completed'] > 1) continue; // Completed or Removed
         if (!$GM){
           $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
           if (empty($FA['id'])) {
@@ -796,12 +796,15 @@ function PlanetScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
         }
 
         if (!$Shown) {
-          $ptxt .=  "<h2>Ground Anomalies</h2>";
+          $ptxt .=  "<h2>Ground Anomalies</h2>" .
+            "For up to date information on their state look at your <a href=PAnomalyList.php>Anomaly List</a>.";
+
           $Shown = 1;
         }
 
 
-        $ptxt .=  "<br><h3>Anomaly: " . $A['Name'] . "</h3>location: " . ($Syslocs[$A['WithinSysLoc']]? $Syslocs[$A['WithinSysLoc']]: "Space") . "<p>";
+        $ptxt .=  "<br><h3>Anomaly: " . $A['Name'] . "</h3>location: " .
+           ($Syslocs[$A['WithinSysLoc']]? $Syslocs[$A['WithinSysLoc']]: "Space") . "<p>";
         if ($A['Description']) $ptxt .=  "Description: " . ParseText($A['Description']) . "<p>";
         if (!$GM) {
           $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
@@ -894,38 +897,40 @@ function SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
       if (($Loc == 1) && $A['VisFromSpace']) $Loc=3; // Vis From Space
 
       if (($A['ScanLevel']<=$SpaceLevel) && ($Loc ==0 || $Loc==3)) {
+        if ($A['Completed'] > 1) continue; // Completed or Removed
 
-          if (!$GM){
-            $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
-            if (empty($FA['id'])) {
-              if ($A['ScanLevel'] <0) continue;
-            }
-          }
-
-          if (!$Shown) {
-            $txt .=  "<h2>Anomalies Visible from Space</h2>";
-            $Shown = 1;
-          }
-
-
-          $txt .=  "<br><h3>Anomaly: " . $A['Name'] . "</h3>Location: " . ($Syslocs[$A['WithinSysLoc']]? $Syslocs[$A['WithinSysLoc']]: "Space") . "<p>";
-          if ($A['Description']) $txt .=  "Description: " . ParseText($A['Description']) . "<p>";
-
-          if ((($FA['State']??0) >= 3) && $A['Completion']) {
-            $ptxt .=  "Complete: " . ParseText($A['Completion']) . "<p>";
-          }
-
-          if (!$GM) {
-            $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
-            if (!isset($FA['id'])) {
-              $FA = ['State' => 1, 'FactionId'=>$Fid, 'AnomalyId'=>$Aid, 'Progress'=>0];
-              Gen_Put('FactionAnomaly',$FA);
-            } else if (($FA['State']??0) < 1) {
-              $FA['State'] = 1;
-              Gen_Put('FactionAnomaly',$FA);
-            }
+        if (!$GM){
+          $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
+          if (empty($FA['id'])) {
+            if ($A['ScanLevel'] <0) continue;
           }
         }
+
+        if (!$Shown) {
+          $txt .=  "<h2>Anomalies Visible from Space</h2>" .
+             "For up to date information on their state look at your <a href=PAnomalyList.php>Anomaly List</a>.";
+          $Shown = 1;
+        }
+
+
+        $txt .=  "<br><h3>Anomaly: " . $A['Name'] . "</h3>Location: " . ($Syslocs[$A['WithinSysLoc']]? $Syslocs[$A['WithinSysLoc']]: "Space") . "<p>";
+        if ($A['Description']) $txt .=  "Description: " . ParseText($A['Description']) . "<p>";
+
+        if ((($FA['State']??0) >= 3) && $A['Completion']) {
+          $ptxt .=  "Complete: " . ParseText($A['Completion']) . "<p>";
+        }
+
+        if (!$GM) {
+          $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
+          if (!isset($FA['id'])) {
+            $FA = ['State' => 1, 'FactionId'=>$Fid, 'AnomalyId'=>$Aid, 'Progress'=>0];
+            Gen_Put('FactionAnomaly',$FA);
+          } else if (($FA['State']??0) < 1) {
+            $FA['State'] = 1;
+            Gen_Put('FactionAnomaly',$FA);
+          }
+        }
+      }
     }
   }
 

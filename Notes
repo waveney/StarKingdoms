@@ -65,20 +65,17 @@ NEW GAME FEATURES & BUGS
 179 Explore wormhole in nebula
 180 Federations trait
 224 Meetups - armies on Different Planets
+
 242 System: ZTW has Neutral Thorians , Other ,  <= no Other, only world
-243 Speed/mobility in meetups mob=0??
 244 See Turn Processing - Paskritt Stormfur - TBA???
 245 Retreats and detachments
-246 Scans for reject scans on areas controlled by faction
 247 The Association VPG 6 Space - 6 is # of sensors not the level
 
-248 [Mon Jan 27 20:11:53.617767 2025] [proxy_fcgi:error] [pid 3981122:tid 140470873163520] [client 86.152.219.13:0] AH01071: 
-Got error 'PHP message: PHP Warning:  Undefined array key "Ref" in /var/www/vhosts/starkingdoms.uk/httpdocs/ThingShow.php on line 549', 
-referer: https://starkingdoms.uk/WhereIs.php?ACTION=Find
+251 Completed /  removed anomalies
 
-249 [Mon Jan 27 20:16:01.181222 2025] [proxy_fcgi:error] [pid 3981123:tid 140470973875968] [client 86.152.219.13:0] AH01071: 
-Got error 'PHP message: PHP Warning:  Undefined variable $Outpost in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActs/Operations.php on 
-line 382; PHP message: PHP Warning:  Trying to access array offset on value of type null in 
-/var/www/vhosts/starkingdoms.uk/httpdocs/TurnActs/Operations.php on line 382', referer: 
-https://starkingdoms.uk/TurnActions.php?ACTION=Process&S=47
+255 Visability of things attacking detachments in space
+256 Ross rules 28/1 13:34
+257 Decommision away from home - see rule book 28/1 @ 16:40
+258 
+
 

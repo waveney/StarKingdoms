@@ -365,7 +365,7 @@ function OperationsComplete() {
 
       case 'Establish Black Market':
         $World = World_in($O['SystemId'],$Fid);
-        New_Branch($Outpost,$NamesBTs['Black Market Trading Station'],$O,$Org);
+        New_Branch($World,$NamesBTs['Black Market Trading Station'],$O,$Org);
         TurnLog($Fid,"A new Black Market Trading Station branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
           " in " . System_Name($Sys,$Fid) );
         GMLog("A new Black Market Trading Station branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
@@ -379,7 +379,7 @@ function OperationsComplete() {
            System_Name($Sys,$Fid) );
         if ($World['FactionId'] != $Fid) {
           TurnLog($World['FactionId'],"A new Trading Station branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
-            System_Name($Sys,$Outpost['Whose']) . " by " . $Facts[$Fid]['Name']);
+            System_Name($Sys,$World['Whose']) . " by " . $Facts[$Fid]['Name']);
         }
         GMLog("A new Trading Station branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
           System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);
@@ -387,7 +387,7 @@ function OperationsComplete() {
 
       case 'Establish Safe House':
         $World = World_in($O['SystemId'],$Fid);
-        New_Branch($Outpost,$NamesBTs['Safe House'],$O,$Org);
+        New_Branch($World,$NamesBTs['Safe House'],$O,$Org);
         TurnLog($Fid,"A new Safe House branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
           " in " . System_Name($Sys,$Fid) );
         GMLog("A new Safe House branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
@@ -396,7 +396,7 @@ function OperationsComplete() {
 
       case 'Establish Hidden Lodge':
         $World = World_in($O['SystemId'],$Fid);
-        New_Branch($Outpost,$NamesBTs['Hidden Lodge'],$O,$Org);
+        New_Branch($World,$NamesBTs['Hidden Lodge'],$O,$Org);
         TurnLog($Fid,"A new Hidden Lodge branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
           " in " . System_Name($Sys,$Fid) );
         GMLog("A new Hidden Lodge branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .

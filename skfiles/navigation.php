@@ -11,7 +11,6 @@
   echo "<div class=Staff>";
   echo "<div class=navigation>";
   if ($FACTION) {
-    include_once("PlayerLib.php");
     echo "<span style='background:" . ($PlayerStateColours[$FACTION['TurnState']]??'White') . "'>" .
       ($PlayerState[$FACTION['TurnState']]??'Undefined') . "</span>";
     }

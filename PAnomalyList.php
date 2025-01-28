@@ -2,9 +2,8 @@
   include_once("sk.php");
   include_once("GetPut.php");
   include_once("SystemLib.php");
-  include_once("vendor/erusev/parsedown/Parsedown.php");
 
-  global $FACTION;
+  global $FACTION,$GAnomStates;
   $Fid = 0;
 
   A_Check('Player');
@@ -44,9 +43,6 @@
   $AnStateCols = ['White','Lightgreen','Yellow','Pink','Green'];
   $FAs = Gen_Get_Cond('FactionAnomaly',"FactionId=$Fid AND State>0");
 
-  $Parsedown = new Parsedown();
-
-
   if ($FAs) {
     $coln = 0;
     echo "<div class=tablecont><table id=indextable border width=100% style='min-width:1400px'>\n";
@@ -69,9 +65,14 @@
 
 
       $N = Get_System($A['SystemId']);
-      echo "<tr><td>" . $A['Name'] . "<td><a href=SurveyReport.php?R=" . $N['Ref'] . ">" . $N['Ref'] . "<td>$Loc" .
-      "<td style='Background:" . $AnStateCols[$FA['State']] . ";'>" . $FAnomalyStates[$FA['State']] . "<td>";
-      echo $FA['Progress'] . " / " . $A['AnomalyLevel'] . "<td colspan=4>" .  ParseText($A['Description']);
+      echo "<tr><td>" . $A['Name'] . "<td><a href=SurveyReport.php?R=" . $N['Ref'] . ">" . $N['Ref'] . "<td>$Loc";
+
+      if (($A['Complete']<2) || ($FA['State']>1)) {
+        echo "<td style='Background:" . $AnStateCols[$FA['State']] . ";'>" . $FAnomalyStates[$FA['State']];
+      } else {
+        echo "<td style='Background:coral'>" . $GAnomStates[$A['Complete']] . ($A['Complete'] ==2?' by someone else': ' for some reason');
+      }
+      echo  "<td>" . $FA['Progress'] . " / " . $A['AnomalyLevel'] . "<td colspan=4>" .  ParseText($A['Description']);
 
       if (($FA['State']>=3) && ($A['Completion'])){
         echo "<p>Complete:<p>" . ParseText($A['Completion']);

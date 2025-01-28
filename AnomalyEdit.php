@@ -5,14 +5,12 @@
   include_once("ThingLib.php");
   include_once("PlayerLib.php");
   include_once("SystemLib.php");
-  include_once("vendor/erusev/parsedown/Parsedown.php");
 
   global $FACTION,$GAME,$GAMEID,$FAnomalyStates,$GAnomStates;
 
   A_Check('GM');
 
   dostaffhead("Edit an Anomaly");
-  $Parsedown = new Parsedown();
 
 //var_dump($_REQUEST);
   if (isset($_REQUEST['ACTION'])) {
@@ -37,9 +35,9 @@
         $A = Get_Anomaly($Aid);
 
         echo "<h2>Description:</h2>";
-        echo $Parsedown -> text(stripslashes($A['Description']));
+        echo ParseText($A['Description']);
         echo "<h2>Completion:</h2>";
-        echo $Parsedown -> text(stripslashes($A['Completion']));
+        echo ParseText($A['Completion']);
         break;
 
       default:
