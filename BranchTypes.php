@@ -23,7 +23,7 @@ if (isset($_REQUEST['AllGames'])) {
 }
 
 $Ts = Get_BranchTypes($AllG);
-if (UpdateMany('BranchTypes','Put_BranchType',$Ts,1,'','','Name','','Props')) $Ts = Get_BranchTypes($AllG);
+if (UpdateMany('BranchTypes','Put_BranchType',$Ts,1,'','','Name','RemoveMe','Props')) $Ts = Get_BranchTypes($AllG);
 
 echo "<h1>Branch Types</h1>";
 

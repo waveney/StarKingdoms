@@ -38,12 +38,12 @@
 //  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Fest Email</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Access Level</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Last IP</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Last Access</a>\n";
   //  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Roll</a>\n";
 //  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Rel Order</a>\n";
 //  if (feature('ShowContactPhotos')) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Image</a>\n";
 //  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Public</a>\n";
   if ($Full) {
-//    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Last Access</a>\n";
 //    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Test User</a>\n";
 //    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Show</a>\n";
 //    foreach ($Sections as $sec)
@@ -60,7 +60,8 @@
     echo  (($Full || Access('SysAdmin') || $USER['AccessLevel'] >= $usr['AccessLevel'])? ("<a href=AddUser.php?usernum=" . $usr['id'] . ">" . $usr['Name'] . "</a>") : $usr['SN']);
 //    echo "<td>" . $usr['Abrev'];
     echo "<td>" . $usr['Login'] . "<td>" . $usr['Email'] . "<td>" . $Access_Levels[$usr['AccessLevel']] . "<td>" . $usr['LastIP'];
-//    echo "<td>" . $usr['Roll'] . "<td>" . $usr['RelOrder'] ;
+    if ($usr['LastAccess']) echo "<td>" . date('d/m/y H:i:s',$usr['LastAccess']);
+    //    echo "<td>" . $usr['Roll'] . "<td>" . $usr['RelOrder'] ;
     if (feature('ShowContactPhotos')) {
       echo "<td>";
       if ($usr['Image']) echo "<img src='" . $usr['Image'] . "' width=50>";
@@ -69,7 +70,6 @@
 
 //    if ($Full) {
 //      echo "<td>";
-//      if ($usr['LastAccess']) echo date('d/m/y H:i:s',$usr['LastAccess']);
 //      echo "<td>";
 //      if ($usr['NoTasks']) echo "Y";
 //      echo "<td>";

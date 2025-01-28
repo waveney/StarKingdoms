@@ -24,7 +24,7 @@
   }
 
   $Ts = Get_ThingTypes($AllG);
-  if (UpdateMany('ThingTypes','Put_ThingType',$Ts,1,'','','Name','','Properties')) $Ts = Get_ThingTypes($AllG);
+  if (UpdateMany('ThingTypes','Put_ThingType',$Ts,1,'','','Name','RemoveMe','Properties')) $Ts = Get_ThingTypes($AllG);
 
   echo "<h1>Thing Types</h1>";
 

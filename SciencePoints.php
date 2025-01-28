@@ -81,7 +81,7 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$Thi
   */
 
 
-  $SPCosts = [0,5,20,45,80,125,180,245,320,405,500,605,720,845,980];
+  $SPCosts = [5,5,20,45,80,125,180,245,320,405,500,605,720,845,980];
 
   $Ts = Get_Techs();
 
@@ -94,7 +94,7 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$Thi
   echo "<h1>Spend Science Points</h1>";
 
   echo "<table border style='width:300'><tr><th>Tech Level<th>Points Required";
-  for ($i = 1;$i<6; $i++) echo "<tr><td>$i<td>" . $SPCosts[$i-1];
+  for ($i = 1;$i<6; $i++) echo "<tr><td>$i<td>" . $SPCosts[$i];
   echo "</table>";
 /*
   echo "<h2>Current Points</h2>";
