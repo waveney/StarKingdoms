@@ -173,11 +173,11 @@
             $popped = 1;
             $Tid = $OutP['id'];
             $EBs = Gen_Get_Cond('Branches', " HostType=3 AND HostId=$Tid");
-
+            $Used = 0;
             $MaxB = Has_Tech($OutP['Whose'],'Offworld Construction');
-            foreach ($EBs as $B) if ($BTypes[$B['Type']]['Props'] & BRANCH_NOSPACE) $MaxB--;
-//            var_dump($MaxB, $OutP['Whose'],$EBs,count($EBs));
-            if ($MaxB <= count($EBs)) {
+            foreach ($EBs as $B) if (($BTypes[$B['Type']]['Props'] & BRANCH_NOSPACE)==0) $Used++;
+//            var_dump($MaxB, $Used, $OutP['Whose'],$EBs,count($EBs));
+            if ($MaxB <= $Used) {
               echo "The Outpost is full<p>";
               break;
             }
