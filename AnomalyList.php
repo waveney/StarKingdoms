@@ -18,6 +18,9 @@
 
   $Systems = Get_SystemRefs();
 
+  echo "<form method=post>";
+  Register_AutoUpdate('Generic',0);
+
   $coln = 0;
   echo "<div class=tablecont><table id=indextable border style='min-width:1400px'>\n";
   echo "<thead><tr>";
@@ -44,7 +47,7 @@
     $LocGr = intdiv($A['WithinSysLoc'],100);
     if (($A['WithinSysLoc'] == 3) || ($LocGr == 2) || ($LocGr ==4)) $Loc = 'Ground';
     echo "<td>$Loc";
-    echo "<td>" . $GAnomStates[$A['Complete']];
+    echo "<td>" . fm_select($GAnomStates,$A,'Complete',0,'',"Anomalies:Complete:$i");
   }
   echo "</tbody></table></div>\n";
 
