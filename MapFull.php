@@ -217,7 +217,7 @@
       $Hide = 0;
       $FS = 0;
       if ($Fid) {
-        $FS = ($FSs[$N['id']]??0);
+        $FS = ($FSs[$N['id']]??[]);
         if (!$FS && !$AllLinks) continue;
         if ($N['Control'] != $Fid) {
           if ($FS['Name']) $ShortName = $NodeName = $FS['Name'];

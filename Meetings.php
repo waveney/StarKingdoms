@@ -33,7 +33,7 @@
   $Techs = Get_Techs();
   $ThingProps = Thing_Type_Props();
 
-
+//  var_dump($_REQUEST);
 
 function ForceReport($Sid,$Cat) {
   global $Facts, $Homes, $TTypes, $ModTypes, $N, $Techs, $ThingProps,$ARMY ;
@@ -226,8 +226,6 @@ function ForceReport($Sid,$Cat) {
     }
   }
 
-//  var_dump($_REQUEST);
-
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
     case 'Do ALL Damage':
@@ -262,6 +260,8 @@ function ForceReport($Sid,$Cat) {
         }
         if ($RV && preg_match('/RetreatMe:(\d*)/',$RN,$Mtch)) {
           $Tid = $Mtch[1];
+          $T = Get_Thing($Tid);
+
           $T['Retreat'] = 2;
           TurnLog($T['Whose'],$T['Name'] . " Will retreat from combat\n",$T);
           GMLog($T['Name'] . " will retreat from combat\n",$T);

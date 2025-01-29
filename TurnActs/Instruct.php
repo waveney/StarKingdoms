@@ -1348,14 +1348,14 @@ function InstructionsComplete() {
 
       case 'Space Survey':
         $Sys = $T['SystemId'];
-        $Sens = $T['Sensors'];
+        $Sens = $T['SensorLevel'];
         $Scan = ['FactionId'=>$Who,'Sys'=>$Sys, 'Type'=>1, 'ThingId'=>$Tid,'GameId'=>$GAMEID, 'Turn'=>$GAME['Turn'], 'Scan'=>$Sens];
         Gen_Put('ScansDue',$Scan);
         break;
 
       case 'Planetary Survey':
         $Sys = $T['SystemId'];
-        $Sens = $T['Sensors'];
+        $Sens = $T['SensorLevel'];
         $Scan = ['FactionId'=>$Who,'Sys'=>$Sys, 'Type'=>2, 'ThingId'=>$Tid,'GameId'=>$GAMEID, 'Turn'=>$GAME['Turn'], 'Scan'=>$Sens];
         Gen_Put('ScansDue',$Scan);
         break;
