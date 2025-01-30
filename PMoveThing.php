@@ -144,7 +144,7 @@ function LinkProps($L) {
 
   $ThingProps = Thing_Type_Props();
   $tprops = $ThingProps[$T['Type']];
-  [$Links, $SelLinks, $SelCols ] = Moves_4_Thing($T,1,($tprops & (THING_HAS_GADGETS | THING_CAN_BETRANSPORTED)));
+  [$Links, $SelLinks, $SelCols ] = Moves_4_Thing($T,1,($tprops & (THING_HAS_GADGETS )));
 
 // var_dump($Links,$SelLinks);
 

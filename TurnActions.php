@@ -382,65 +382,66 @@ function TraitIncomes() {
   $DTNames = NamesList($DTypes);
   $NamesDT = array_flip($DTNames);
   $Facts = Get_Factions();
-
+  $Systems = Get_Systems();
 
   $Planets = Gen_Get_Cond('Planets',"GameId=$GAMEID AND (Trait1Auto!=0 OR Trait2Auto!=0 OR Trait3Auto!=0) ");
 
   foreach ($Planets as $Pid=>$P) {
-    if (!$P['Control']) continue;
-    for($i=1;$i<4;$i++) {
-      foreach ($SPs as $SP) {
-        if ($P["Trait$i"] == $SP[1]) {
-          switch ($SP[3]) {
-            case 1: // Districts
-              $Ds = Get_DistrictsP($Pid);
-              $D = ($Ds[$NamesDT[$SP[0]]]??0);
-              if ($D) {
-                $Fact = $Facts[$P['Control']];
-                $Fact[$SP[2] . "SP"] += $D['Number'];
-                Put_Faction($Fact);
-                TurnLog($Fact['id'],"Gained " . $D['Number'] . " " . $SP[2] . " points from the planetary trait " .$SP[1] . " in " . $P['Name']);
-                GMLog($Fact['Name'] . " Gained " . $D['Number'] . " " . $SP[2] . " points from the planetary trait " .$SP[1] . " in " . $P['Name']);
-              }
-              break;
-            case 2:// Tech
-              $T = Has_Tech($P['Control'],$SP[0]);
-              if ($T) {
-                $Fact = $Facts[$P['Control']];
-                $Fact[$SP[2] . "SP"] += $T;
-                Put_Faction($Fact);
-                TurnLog($Fact['id'],"Gained " . $T . " " . $SP[2] . " points from the planetary trait " .$SP[1] . " in " . $P['Name']);
-                GMLog($Fact['Name'] . " Gained " . $T . " " . $SP[2] . " points from the planetary trait " .$SP[1] . " in " . $P['Name']);
-              }
-              break;
-            case 3: //Fixed
-              $Fact = $Facts[$P['Control']];
-              $Fact[$SP[2] . "SP"] += $SP[0];
-              Put_Faction($Fact);
+    $Sid = [$P['SystemId']];
+    if (!$P['Control'] || !$Systems[$Sid]['HistoricalControl']) continue;
+    $Contrls = [];
+    if ($P['Control']) $Contrls[]= $P['Control'];
+//    if ($Systems[$Sid]['HistoricalControl']) $Contrls[]= $Systems[$Sid]['HistoricalControl'];
 
-              TurnLog($Fact['id'],"Gained " . $SP[0] . " " . $SP[2] . " points from the planetary trait " .$SP[1] . " in " . $P['Name']);
-              GMLog($Fact['Name'] . " Gained " . $SP[0] . " " . $SP[2] . " points from the planetary trait " .$SP[1] . " in " . $P['Name']);
-              break;
-            case 4: // Cret-Chath
-              $Ds = Get_DistrictsP($Pid);
-              $D = ($Ds[$NamesDT[$SP[0]]]??0);
-              if ($D) {
-                $Fid = $P['Control'];
-                $Div = (Has_Tech($Fid,'Advanced Mineral Extraction')?1:2);
-                $Fact = $Facts[$Fid];
-                $Fact[$SP[2]] += ceil($D['Number']/$Div);
-                Put_Faction($Fact);
-                TurnLog($Fid,"Gained " . ceil($D['Number']/$Div) . " " . Feature($SP[2],'Unknown') . " from the planetary trait " .
-                  $SP[1] . " in " . $P['Name']);
-                GMLog($Fact['Name'] . " Gained " . ceil($D['Number']/$Div) . " " . Feature($SP[2],'Unknown') . " from the planetary trait " .
-                  $SP[1] . " in " . $P['Name']);
-              }
-              break;
+    foreach ($Contrls as $Fid) {
+      for($i=1;$i<4;$i++) {
+        foreach ($SPs as $SP) {
+          if ($P["Trait$i"] == $SP[1]) {
+            switch ($SP[3]) {
+              case 1: // Districts
+                $Ds = Get_DistrictsP($Pid);
+                $D = ($Ds[$NamesDT[$SP[0]]]??0);
+                if ($D) {
+                  $Facts[$Fid][$SP[2] . "SP"] += $D['Number'];
+                  TurnLog($Fid,"Gained " . $D['Number'] . " " . $SP[2] . " points from the planetary trait " .$SP[1] . " in " . $P['Name']);
+                  GMLog($Facts[$Fid]['Name'] . " Gained " . $D['Number'] . " " . $SP[2] . " points from the planetary trait " .$SP[1] . " in " . $P['Name']);
+                }
+                break;
+              case 2:// Tech
+                $T = Has_Tech($P['Control'],$SP[0]);
+                if ($T) {
+                  $Facts[$Fid][$SP[2] . "SP"] += $T;
+                  TurnLog($Fid,"Gained " . $T . " " . $SP[2] . " points from the planetary trait " .$SP[1] . " in " . $P['Name']);
+                  GMLog($Facts[$Fid]['Name'] . " Gained " . $T . " " . $SP[2] . " points from the planetary trait " .$SP[1] . " in " . $P['Name']);
+                }
+                break;
+              case 3: //Fixed
+                $Facts[$Fid][$SP[2] . "SP"] += $SP[0];
+                TurnLog($Fid,"Gained " . $SP[0] . " " . $SP[2] . " points from the planetary trait " .$SP[1] . " in " . $P['Name']);
+                GMLog($Facts[$Fid]['Name'] . " Gained " . $SP[0] . " " . $SP[2] . " points from the planetary trait " .$SP[1] . " in " . $P['Name']);
+                break;
+              case 4: // Cret-Chath
+                $Ds = Get_DistrictsP($Pid);
+                $D = ($Ds[$NamesDT[$SP[0]]]??0);
+                if ($D) {
+                  $Div = (Has_Tech($Fid,'Advanced Mineral Extraction')?1:2);
+                  $Facts[$Fid][$SP[2]] += ceil($D['Number']/$Div);
+                  TurnLog($Fid,"Gained " . ceil($D['Number']/$Div) . " " . Feature($SP[2],'Unknown') . " from the planetary trait " .
+                    $SP[1] . " in " . $P['Name']);
+                  GMLog($Facts[$Fid]['Name'] . " Gained " . ceil($D['Number']/$Div) . " " . Feature($SP[2],'Unknown') . " from the planetary trait " .
+                    $SP[1] . " in " . $P['Name']);
+                }
+                break;
+            }
           }
         }
-      }
 
+      }
     }
+  }
+
+  foreach ($Facts as $F){
+    Put_Faction($F);
   }
 
   GMLog("Done Planetary Trait Incomes<br>");

@@ -190,6 +190,7 @@ function ForceReport($Sid,$Cat) {
   $Hostiles = [];
   $Mtch = [];
 
+  /* NO idea what this was for
   foreach($Homes as $H) {
     switch ($H['ThingType']) {
     case 1: // Planet
@@ -206,6 +207,7 @@ function ForceReport($Sid,$Cat) {
     }
     $Sys[$Sid][$H['Whose']] = 1024;
   }
+*/
 
 //  echo "Checked Homes<p>";
 
@@ -214,15 +216,17 @@ function ForceReport($Sid,$Cat) {
     $Sid = $T['SystemId'];
     $Eyes = ($TTypes[$T['Type']]['Eyes']??0);
     $Hostile = (($TTypes[$T['Type']]['Properties']??0) & THING_IS_HOSTILE) && ($T['PrisonerOf'] == 0);
-    if (isset($Sys[$Sid][$T['Whose']])) {
-      $Sys[$Sid][$T['Whose']] |= $Eyes;
-    } else {
-      $Sys[$Sid][$T['Whose']] = $Eyes;
-    }
-    if (isset($Hostiles[$Sid][$T['Whose']])) {
-      $Hostiles[$Sid][$T['Whose']] |= $Hostile;
-    } else {
-      $Hostiles[$Sid][$T['Whose']] = $Hostile;
+    if ($Eyes) {
+      if (isset($Sys[$Sid][$T['Whose']])) {
+        $Sys[$Sid][$T['Whose']] |= $Eyes;
+      } else {
+        $Sys[$Sid][$T['Whose']] = $Eyes;
+      }
+      if (isset($Hostiles[$Sid][$T['Whose']])) {
+        $Hostiles[$Sid][$T['Whose']] |= $Hostile;
+      } else {
+        $Hostiles[$Sid][$T['Whose']] = $Hostile;
+      }
     }
   }
 

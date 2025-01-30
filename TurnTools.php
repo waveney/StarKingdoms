@@ -9,7 +9,7 @@ function GMLog($text,$Bold=0) {
      $LF = fopen("Turns/$GAMEID/" . $GAME['Turn'] . "/0.txt", "a+");
      fwrite($LF,'</table></table></table></table></table></table></table></table></table>');
   }
-  if ($Bold) $text = "<b>" . $text . "</b>";
+//  if ($Bold) $text = "<b>" . $text . "</b>";
   fwrite($LF,"$text\n");
   echo "$text<br>";
 }

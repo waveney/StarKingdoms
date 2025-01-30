@@ -359,6 +359,7 @@ function Show_Planet(&$P,$Mode=0,$Buts=0) {
     echo "<span class=NotSide>Fields marked are not visible to factions.</span>";
     echo "  <span class=NotCSide>Marked are visible if set, but not changeable by factions.</span>";
   }
+  echo "Attributes:1=Hide,2,4,8=Inherit System Traits1,2,3";
 
   $FactNames = Get_Faction_Names();
   $Facts = Get_Factions();
@@ -378,7 +379,7 @@ function Show_Planet(&$P,$Mode=0,$Buts=0) {
        "<td class=NotSide>" . $GAME['Name'] . fm_text('System Ref',$N,'Ref',1,"class=NotSide");
   echo "<tr>" . fm_radio('Control',$FactNames ,$P,'Control','',1,'colspan=5','',$Fact_Colours,0);
   echo "<tr>" . fm_text('Name',$P,'Name',4) . fm_number('Colonise Mod',$P,'ColonyTweak');  // TODO Image
-  echo "<tr>" . fm_text('Short Name',$P,'ShortName') . fm_number('Attributes',$P,'Attributes') . "<td>1=Hide" . fm_number('Mined',$P,'Mined');
+  echo "<tr>" . fm_text('Short Name',$P,'ShortName') . fm_number('Attributes',$P,'Attributes') . fm_number('Mined',$P,'Mined');
   echo "<tr>" . fm_textarea('Description',$P,'Description',4,3);
   echo "<tr><td>Type:<td>" . fm_Select($PTNs,$P,'Type',1) . fm_number('Minerals',$P,'Minerals',1,"class=NotCSide");
   echo fm_number('Moons',$P,'Moons',1,"class=NotCSide");
@@ -473,7 +474,7 @@ function Show_Moon(&$M,$Mode=0) {
     echo "<span class=NotSide>Fields marked are not visible to factions.</span>";
     echo "  <span class=NotCSide>Marked are visible if set, but not changeable by factions.</span>";
   }
-
+  echo "Attributes:1=Hide,2,4,8=Inherit Planet Traits1,2,3";
   $Pid = $M['PlanetId'];
   $P = Get_Planet($Pid);
   $FactNames = Get_Faction_Names();
@@ -494,7 +495,7 @@ function Show_Moon(&$M,$Mode=0) {
   echo "<tr><td class=NotSide>Moon Id:<td class=NotSide>$Mid";
   echo "<tr>" . fm_radio('Control',$FactNames ,$M,'Control','',1,'colspan=6','',$Fact_Colours,0);
   echo "<tr>" . fm_text('Name',$M,'Name',8) . fm_number('Colonise Mod',$P,'ColonyTweak');  // TODO Image
-  echo "<tr>" . fm_text('Short Name',$M,'ShortName') . fm_number('Attributes',$M,'Attributes') . "<td>1=Hide" . fm_number('Mined',$M,'Mined');
+  echo "<tr>" . fm_text('Short Name',$M,'ShortName') . fm_number('Attributes',$M,'Attributes') . fm_number('Mined',$M,'Mined');
   echo "<tr>" . fm_textarea('Description',$M,'Description',8,3);
   echo "<tr><td>Type:<td>" . fm_Select($PTNs,$M,'Type',1) . fm_number('Minerals',$M,'Minerals',1,"class=NotCSide");
 
@@ -897,7 +898,7 @@ function SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
       if (($Loc == 1) && $A['VisFromSpace']) $Loc=3; // Vis From Space
 
       if (($A['ScanLevel']<=$SpaceLevel) && ($Loc ==0 || $Loc==3)) {
-        if ($A['Completed'] > 1) continue; // Completed or Removed
+        if ($A['Complete'] > 1) continue; // Completed or Removed
 
         if (!$GM){
           $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");

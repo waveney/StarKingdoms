@@ -543,7 +543,7 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0 ) {
           }
           $LinkText = '?';
         }
-      } else if ($NS['NebScanned'] >= $NearNeb) { // In a Neb...
+      } else if (($NS['ScanLevel'] >= $NearNeb ) && $T['NebSensors']) { // In a Neb...
         if (isset($FS['id'])) {
           $LinkText = $FarSysRef;
         } else {
