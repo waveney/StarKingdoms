@@ -788,7 +788,7 @@ function PlanetScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
       $Loc = 0; // Space
       $LocCat = intdiv($A['WithinSysLoc'],100);
       if (($A['ScanLevel']<=$PlanetLevel) && ($LocCat ==2 || $LocCat == 4)) {
-        if ($A['Completed'] > 1) continue; // Completed or Removed
+        if ($A['Complete'] > 1) continue; // Completed or Removed
         if (!$GM){
           $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
           if (empty($FA['id'])) {

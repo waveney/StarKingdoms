@@ -84,6 +84,8 @@ function TransferSys($SysR) {
       }
     }
   }
+  $LogE = ['FromFact'=>$Fid,'DestFact'=>$Tid,'SystemId'=>$Sid,'Survey'=>(isset($_REQUEST['SURV'])?1:0),'XferWhen'=>time(),'Turn'=>$GAME['Turn']];
+  Gen_Put("TransferLog",$LogE);
 }
 
 global $Fid,$Tid;

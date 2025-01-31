@@ -37,6 +37,17 @@ function Gen_Put($Table, &$now, $idx='id',$Mon=0) {
   return $now[$idx] = Insert_db ($Table, $now );
 }
 
+function Gen_Put_Debug($Table, &$now, $idx='id',$Mon=1) {
+  if (!empty($now[$idx])) {
+    $e=$now[$idx];
+    $Cur = Gen_Get($Table,$e,$idx);
+
+    if ($Cur) return Update_db($Table,$Cur,$now);
+  }
+  if ($Mon) { debug_print_backtrace(); var_dump(" New enrty that should be an update", $Table, $now); exit; }
+  return $now[$idx] = Insert_db ($Table, $now );
+}
+
 function Gen_Get_All($Table, $extra='', $idx='id') {
     global $db;
     $Ts = [];

@@ -9,6 +9,7 @@ CREATE TABLE `Moons` (
   `OrbitalRadius` double NOT NULL,
   `Type` int NOT NULL DEFAULT '0',
   `Control` int NOT NULL DEFAULT '0',
+  `HistoricalControl` int NOT NULL,
   `Minerals` int NOT NULL DEFAULT '0',
   `Description` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `Image` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,

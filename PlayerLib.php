@@ -128,6 +128,7 @@ function Player_Page() {
       }
       if ($Facts || $FACTION['NPC']) {
         echo "<li><a href=MapTransfer.php>Transfer Mapping knowledge to another Faction</a>\n";
+        if (Access('God')) echo "<li><a href=MapTransferLogs.php>Logs of Mapping Transfers</a>\n";
       }
     echo "</ul>";
 
