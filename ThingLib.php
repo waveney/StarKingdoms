@@ -602,7 +602,7 @@ function Calc_Scanners(&$T) { // And lots of other attributes
   $Engs = Get_ModulesType($T['id'],'Sublight Engines');
   $T['Speed'] = ceil(($Engs && $Engs['Number']>0)?$Engs['Number']*($Engs['Level']+$LvlMod)/$T['Level']:0);
   $Mobs = Get_ModulesType($T['id'],'Suborbital Transports');
-  $T['Mobile'] = ceil(($Mobs && $Mobs['Number']>0)?$Mobs['Number']*($Mobs['Level']+$LvlMod)/$T['Level']:0);
+  $T['Mobility'] = ceil(($Mobs && $Mobs['Number']>0)?$Mobs['Number']*($Mobs['Level']+$LvlMod)/$T['Level']:0);
   $Flux = Get_ModulesType($T['id'],'Flux Stabilisers');
   $T['Stability'] = ceil(max(1,(($Flux && $Flux['Number']>0)?$Flux['Number']*($Flux['Level']+$LvlMod)/$T['Level']:0)));
 }

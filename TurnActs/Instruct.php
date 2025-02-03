@@ -10,6 +10,9 @@ function Instructions() {
   $Facts = Get_Factions();
   $Systems = Get_SystemRefs();
   $TTNames = Thing_Types_From_Names();
+  $DTypes = Get_DistrictTypes();
+  $DistNames = NamesList($DTypes);
+  $NamesDists = array_flip($DistNames);
 
   $PTs = Get_ProjectTypes();
   $TTypes = Get_ThingTypes();
@@ -108,25 +111,95 @@ function Instructions() {
         }
         break;
 
+      case 'Disband': // Dissasemble
       case 'Decommision': // Dissasemble
+      case 'Retire': // Retire Agent
+        switch ($ThingInstrs[$T['Instruction']]) {
+
+          case 'Disband': // Dissasemble
+            $Tec = Feature('MilTech');
+            $Dist = 'Military';
+            $txt = 'disbanded';
+            break;
+          case 'Decommision': // Dissasemble
+            $Tec = Feature('Ship Construction');
+            $Dist = 'Shipyard';
+            $txt = 'decommisioned';
+            break;
+          case 'Retire': // Retire Agent
+            $Tec = 'Intelligence Operations';
+            $Dist = 'Intelligence';
+            $txt = 'retired';
+            break;
+
+        }
+
         $Lvl = $T['Level'];
+        $Loc = $T['SystemId'];
+        $Fid = $T['Whose'];
+
+        $Homes = Gen_Get_Cond('ProjectHomes', "SystemId=$Loc");
+
+        if (!$Homes) {
+          TurnLog($T['Whose'], "The " . $T['Name'] . " could not be $txt as no home found", $T);
+          GMLog($Facts[$T['Whose']]['Name'] . " - " . $T['Name'] . " could not be $txt as no home found");
+          break;
+        }
+
+        $Rating = -1;
+        $SelectedH = [];
+
+        foreach ($Homes as $H) {
+          $Rate = 0;
+          if ($H['Whose'] == $Fid) $Rate = 2;
+          $LDists = Get_DistrictsH($H['id']);
+          if ($LDists[$DistNames[$Dist]]??0) {
+            $Rate += 1;
+          }
+          if ($Rate > $Rating) {
+            $Rating = $Rate;
+            $SelectedH = $H;
+          }
+        }
+
         $T['BuildState'] = -1;
         $T['SystemId'] = 0;
-        //      $T['History'] .= "Decommissioned";
         $T['Instruction'] = 0;
-        $cash = 10*$Lvl*Has_Tech($T['Whose'],'Ship Construction');
-        TurnLog($T['Whose'], "The " . $T['Name'] . " has been decommisioned gaining you " . Credit() . $cash, $T);
-        Spend_Credit($T['Whose'],-$cash,"Decommisioning " . $T['Name']);
-        GMLog($Facts[$T['Whose']]['Name'] . " - " . $T['Name'] . " has been decommisioned");
+        $cash = 10*$Lvl*Has_Tech($SelectedH['Whose'],'Ship Construction');
+        TurnLog($T['Whose'], "The " . $T['Name'] . " has been $txt gaining you " . Credit() . $cash, $T);
+        Spend_Credit($SelectedH['Whose'],-$cash,"$txt " . $T['Name']);
+        GMLog($Facts[$T['Whose']]['Name'] . " - " . $T['Name'] . " has been $txt");
 
         $Have = Get_Things_Cond(0," (LinkId<0 AND SystemId=$Tid) ");
+        $DWin = $DLid = 0;
+        $DSys = $Loc;
+        $N = Get_System($Loc);
         if ($Have) {
-          foreach ($Have as $H) {
-            $H['SystemId'] = $T['SystemId'];
-            $H['WithinSysLoc'] = 0;
-            TurnLog($T['Whose'],$H['Name'] . " has been offloaded on to " . $P['Name'] . " in " . $N['Ref'],$H);
+          switch ($SelectedH['ThingType']) {
+          case 3: // Thing
+            $DLid = -1;
+            $DWin = 0;
+            $Host = Get_Thing($Loc);
+            break;
 
-            if ($H['Whose'] != $T['Whose']) TurnLog($H['Whose'],$H['Name'] . " has been offloaded on to " . $P['Name'] . " in " . $N['Ref'],$H);
+          case 1: // Planet
+            $DWin = Within_Sys_Locs($N,$SelectedH['ThingType']);
+            $Host = Get_Planet($SelectedH['ThingType']);
+            break;
+
+          case 2 : // Moon
+            $DWin = Within_Sys_Locs($N,-$SelectedH['ThingType']);
+            $Host = Get_Moon($SelectedH['ThingType']);
+            break;
+          }
+
+          foreach ($Have as $H) {
+            $H['SystemId'] = $DSys;
+            $H['WithinSysLoc'] = $DLid;
+            $H['LinkId'] = $DLid;
+            TurnLog($T['Whose'],$H['Name'] . " has been offloaded on to " . $Host['Name'] . " in " . $N['Ref'],$H);
+
+            if ($H['Whose'] != $Host['Whose']) TurnLog($H['Whose'],$H['Name'] . " has been offloaded on to " . $Host['Name'] . " in " . $N['Ref'],$H);
             Put_Thing($H);
           }
         }
@@ -134,7 +207,7 @@ function Instructions() {
         db_delete('Things',$Tid);
         continue 2;
 
-      case 'Disband': // Dissasemble
+/*      case 'Disband': // Dissasemble
         $Lvl = $T['Level'];
         $T['BuildState'] = -1;
         $T['SystemId'] = 0;
@@ -200,7 +273,7 @@ function Instructions() {
         }
 
         db_delete('Things',$Tid);
-        continue 2;
+        continue 2;*/
 
 
       case 'Analyse Anomaly': // Anomaly

@@ -968,27 +968,49 @@ function Show_Thing(&$T,$Force=0) {
     case 'Decommision': // Dissasemble
 
       if ($Moving || ($tprops & THING_HAS_SHIPMODULES) == 0 ) continue 2;
+      // If home - yours or friendly - does not need a shipyard - just affects payout
       // Is there a Home here with a shipyard
       $Loc = $T['SystemId'];
-      $Homes = Gen_Get_Cond('ProjectHomes', "SystemId=$Loc AND Whose=$Fid");
+      $Homes = Gen_Get_Cond('ProjectHomes', "SystemId=$Loc");
+
+      if (!$Homes) continue 2;
+      foreach ($Homes as $H) {
+        if ($H['Whose'] == $Fid) break 2; // Mine
+        $OFid = $H['Whose'];
+        $FF = Gen_Get_Cond1('FactionFaction', "FactionId1=$Fid AND Factionid2=$OFid");
+        if ($FF && ($FF['Relationship'] > 5)) break 2;
+      }
+
+      /* Old Code
       foreach ($Homes as $H) {
         $LDists = Get_DistrictsH($H['id']);
         if (isset($LDists[3])) break 2; // FOund a Shipyard
       }
       if (isset($N['id']) && Get_Things_Cond($Fid,"Type=" . $TTNames['Orbital Repair Yards'] . " AND SystemId=" . $N['id'] .
         " AND BuildState=3")) break;
-        // Orbital Shipyard
+        // Orbital Shipyard*/
+
       continue 2;
 
     case 'Disband': // Dissasemble
       if ($Moving || ($tprops & THING_HAS_ARMYMODULES) == 0 ) continue 2;
       // Is there a Home here with a Military
       $Loc = $T['SystemId'];
+      $Homes = Gen_Get_Cond('ProjectHomes', "SystemId=$Loc");
+
+      if (!$Homes) continue 2;
+      foreach ($Homes as $H) {
+        if ($H['Whose'] == $Fid) break 2; // Mine
+        $OFid = $H['Whose'];
+        $FF = Gen_Get_Cond1('FactionFaction', "FactionId1=$Fid AND Factionid2=$OFid");
+        if ($FF && ($FF['Relationship'] > 5)) break 2;
+      }
+      /* OLD CODE
       $Homes = Gen_Get_Cond('ProjectHomes', "SystemId=$Loc AND Whose=$Fid");
       foreach ($Homes as $H) {
         $LDists = Get_DistrictsH($H['id']);
         if (isset($LDists[2])) break 2; // FOund a Military District
-      }
+      }*/
       continue 2;
 
     case 'Analyse Anomaly': // Analyse
