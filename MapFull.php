@@ -429,17 +429,21 @@
       }
     } */
 
+    $Fudge = Feature('MapFudges','0.25,.3,3,1,10,1,2');
+
+    [$Fht,$FDn,$FLns,$Fll,$Ffnt,$Fcmw,$Fimw] = explode(',',$Fudge );
+
     $PCount = 0;
     foreach ($Levels as $i=>$L) {
       if ($L['Used']>0) {
         $DX1 = $HexLegPos[$ls][0]*$XScale;
-        $DX2 = $DX1+1;
-        $DY = $HexLegPos[$ls][1]*$Scale - 0.25*$PCount +.5;
+        $DX2 = $DX1+$Fll;
+        $DY = $HexLegPos[$ls][1]*$Scale - $Fht*$PCount +$FDn;
         fwrite($Dot, "ConcealA$i [ pos=\"$DX1,$DY!\" label=\"\" shape=point margin=0 penwidth=0 ];\n");
         fwrite($Dot, "ConcealB$i [ pos=\"$DX2,$DY!\" label=\"\" shape=point margin=0 penwidth=0 ];\n");
-        fwrite($Dot, "ConcealA$i -- ConcealB$i [ color=" . ($L['Colour']?$L['Colour']:'black') . " penwidth=" . max($L['Width'],1) .
-          " style=" . ($L['Style']?$L['Style']:'Solid') . " label=\"Concealment " . $L['Level'] . "\" fontsize=10];\n");
-        if (++$PCount == 3) {
+        fwrite($Dot, "ConcealA$i -- ConcealB$i [ color=" . ($L['Colour']?$L['Colour']:'black') . " penwidth=" . max($L['Width'],$Fcmw) .
+          " style=" . ($L['Style']?$L['Style']:'Solid') . " label=\"Conceal " . $L['Level'] . "\" fontsize=$Ffnt];\n");
+        if (++$PCount == $FLns) {
           $PCount = 0;
           $ls++;
         }
@@ -453,13 +457,13 @@
     foreach ($InstaLevels as $i=>$L) {
       if ($L['Used']>0) {
         $DX1 = $HexLegPos[$ls][0]*$XScale;
-        $DX2 = $DX1+1;
-        $DY = $HexLegPos[$ls][1]*$Scale - 0.25*$PCount +.5;
+        $DX2 = $DX1+$Fll;
+        $DY = $HexLegPos[$ls][1]*$Scale - $Fht*$PCount +$FDn;
         fwrite($Dot, "InstaA$i [ pos=\"$DX1,$DY!\" label=\"\" shape=point margin=0 penwidth=0 ];\n");
         fwrite($Dot, "InstaB$i [ pos=\"$DX2,$DY!\" label=\"\" shape=point margin=0 penwidth=0 ];\n");
-        fwrite($Dot, "InstaA$i -- InstaB$i [ color=" . ($L['Colour']?$L['Colour']:'black') . " penwidth=" . max($L['Width'],2) .
-          " style=" . ($L['Style']?$L['Style']:'Solid') . " label=\"Instability " . $L['Instability'] . "\" fontsize=10];\n");
-        if (++$PCount == 3) {
+        fwrite($Dot, "InstaA$i -- InstaB$i [ color=" . ($L['Colour']?$L['Colour']:'black') . " penwidth=" . max($L['Width'],$Fimw) .
+          " style=" . ($L['Style']?$L['Style']:'Solid') . " label=\"Instability " . $L['Instability'] . "\" fontsize=$Ffnt];\n");
+        if (++$PCount == $FLns) {
           $PCount = 0;
           $ls++;
         }
