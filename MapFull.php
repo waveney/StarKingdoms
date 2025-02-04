@@ -312,12 +312,15 @@
             $to = $L['System1Ref'];
           }
 
-          $Ldat = LinkProps($L);
           $Ways = 0;
 
           if (isset($LUsed[$Lid]) || $AllLinks || ((($FS['ScanLevel']??-1)>=0) && ($L['Concealment'] == 0) && isset($FSs[$OSid]))) $Ways = 3;
           if (($Ways == 0) && (($FS['ScanLevel']??-1)>=0) && (($L['Concealment'] == 0) || ($FS['SpaceScan'] >= $L['Concealment']))) $Ways = 1;
           if (($Ways < 3) && isset($FSs[$OSid]) && ($FSs[$OSid]['SpaceScan'] >= $L['Concealment']))  $Ways +=2;
+
+          if ($Ways == 0) continue; // Not Known
+
+          $Ldat = LinkProps($L);
 
           $Arrow = '';
 //  if ($Lid == 156)        var_dump($Lid,$from,$to,$Ways,$AllLinks,($LUsed[$Lid]??0),$FS,$L);
@@ -454,7 +457,7 @@
         $DY = $HexLegPos[$ls][1]*$Scale - 0.25*$PCount +.5;
         fwrite($Dot, "InstaA$i [ pos=\"$DX1,$DY!\" label=\"\" shape=point margin=0 penwidth=0 ];\n");
         fwrite($Dot, "InstaB$i [ pos=\"$DX2,$DY!\" label=\"\" shape=point margin=0 penwidth=0 ];\n");
-        fwrite($Dot, "InstaA$i -- InstaB$i [ color=" . ($L['Colour']?$L['Colour']:'black') . " penwidth=" . max($L['Width'],1) .
+        fwrite($Dot, "InstaA$i -- InstaB$i [ color=" . ($L['Colour']?$L['Colour']:'black') . " penwidth=" . max($L['Width'],2) .
           " style=" . ($L['Style']?$L['Style']:'Solid') . " label=\"Instability " . $L['Instability'] . "\" fontsize=10];\n");
         if (++$PCount == 3) {
           $PCount = 0;
