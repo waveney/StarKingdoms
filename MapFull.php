@@ -140,6 +140,8 @@
 
     if ($LinkType == 'Wormholes') {
       $EInst = $L['Instability'] + $L['ThisTurnMod'];
+      $Levels[$L['Concealment']]['Used']++;
+      $InstaLevels[$EInst]['Used']++;
       $Res[2] = $L['Name'];
       $Res[0] = LinkPropSet(1,$Levels[$L['Concealment']]['Width'],$InstaLevels[$EInst]['Width'],0);
       $Res[1] = LinkPropSet('solid',$Levels[$L['Concealment']]['Style'],$InstaLevels[$EInst]['Style'],'');
@@ -181,6 +183,8 @@
 
   $Levels = Get_LinkLevels();
   $InstaLevels = Get_LinkInstaLevels();
+  foreach ($Levels as $i=>$L) {$Levels[$i]['Used'] = 0;}
+  foreach ($InstaLevels as $i=>$L) {$InstaLevels[$i]['Used'] = 0;}
   // var_dump($Levels);
   $Factions = Get_Factions();
   $Historical = 0;
@@ -193,8 +197,6 @@
     $Dot = fopen("cache/$GAMEID/Fullmap$Fid$typ.dot","w+");
     if (!$Dot) { echo "Could not create dot file<p>"; dotail(); };
 //  ftruncate($Dot,0);  // Needed for redoing logic
-
- // echo "AA";
 
     $RedoMap = 0;
 
@@ -406,6 +408,62 @@
         fwrite($Dot, "Direct -- Direct$i [penwidth=2 dir=forward arrowsize=1 ];\n");
       }
     }
+
+/* This works as a method but is very crude
+    $ConcealStuff = Feature('MapConceal3');
+    if ($ConcealStuff) {
+      $Conc = explode(',',$ConcealStuff);
+      $Dx = array_shift($Conc);
+      $Dy = array_shift($Conc);
+      $Dz = array_shift($Conc);
+      $Dadd = array_shift($Conc);
+      foreach($Conc as $i=>$C) {
+        [$W,$txt] = explode('=',$C,2);
+        $DD = $Dy - $i*$Dadd;
+        fwrite($Dot, "ConcealA$i [ pos=\"$Dx,$DD!\" label=\"\" shape=point margin=0 penwidth=0];\n");
+        fwrite($Dot, "ConcealB$i [ pos=\"$Dz,$DD!\" label=\"\" shape=point margin=0 penwidth=0 ];\n");
+        fwrite($Dot, "ConcealA$i -- ConcealB$i [ penwidth=$W  xlabel=\"    $txt\" fontsize=10];\n");
+      }
+    } */
+
+    $PCount = 0;
+    foreach ($Levels as $i=>$L) {
+      if ($L['Used']>0) {
+        $DX1 = $HexLegPos[$ls][0]*$XScale;
+        $DX2 = $DX1+1;
+        $DY = $HexLegPos[$ls][1]*$Scale - 0.25*$PCount +.5;
+        fwrite($Dot, "ConcealA$i [ pos=\"$DX1,$DY!\" label=\"\" shape=point margin=0 penwidth=0 ];\n");
+        fwrite($Dot, "ConcealB$i [ pos=\"$DX2,$DY!\" label=\"\" shape=point margin=0 penwidth=0 ];\n");
+        fwrite($Dot, "ConcealA$i -- ConcealB$i [ color=" . ($L['Colour']?$L['Colour']:'black') . " penwidth=" . max($L['Width'],1) .
+          " style=" . ($L['Style']?$L['Style']:'Solid') . " label=\"Concealment " . $L['Level'] . "\" fontsize=10];\n");
+        if (++$PCount == 3) {
+          $PCount = 0;
+          $ls++;
+        }
+
+      }
+    }
+
+    if ($PCount) $ls++;
+    $PCount = 0;
+
+    foreach ($InstaLevels as $i=>$L) {
+      if ($L['Used']>0) {
+        $DX1 = $HexLegPos[$ls][0]*$XScale;
+        $DX2 = $DX1+1;
+        $DY = $HexLegPos[$ls][1]*$Scale - 0.25*$PCount +.5;
+        fwrite($Dot, "InstaA$i [ pos=\"$DX1,$DY!\" label=\"\" shape=point margin=0 penwidth=0 ];\n");
+        fwrite($Dot, "InstaB$i [ pos=\"$DX2,$DY!\" label=\"\" shape=point margin=0 penwidth=0 ];\n");
+        fwrite($Dot, "InstaA$i -- InstaB$i [ color=" . ($L['Colour']?$L['Colour']:'black') . " penwidth=" . max($L['Width'],1) .
+          " style=" . ($L['Style']?$L['Style']:'Solid') . " label=\"Instability " . $L['Instability'] . "\" fontsize=10];\n");
+        if (++$PCount == 3) {
+          $PCount = 0;
+          $ls++;
+        }
+
+      }
+    }
+
 
     fwrite($Dot,"}\n");
     fclose($Dot);
