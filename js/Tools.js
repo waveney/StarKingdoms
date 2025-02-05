@@ -526,9 +526,16 @@ function SeeAll(pfx){
 }
 
 function TechSet(idx) {
-  $('#SupTechs' + idx).show();
-  $('#ShowSupTechs' + idx).hide();  
-  $('#HideSupTechs' + idx).show();
+  if (idx == 'ALL') {
+    $('[id^=SupTechs]').show();
+    $('[id^=ShowSupTechs]').hide();  
+    $('[id^=HideSupTechs]').hide();  
+    $('#ExpandAll').hide();
+  } else {
+    $('#SupTechs' + idx).show();
+    $('#ShowSupTechs' + idx).hide();  
+    $('#HideSupTechs' + idx).show();
+  }
 }
 
 function HideTechSet(idx) {

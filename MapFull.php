@@ -436,7 +436,7 @@
     $PCount = 0;
     foreach ($Levels as $i=>$L) {
       if ($L['Used']>0) {
-        $DX1 = $HexLegPos[$ls][0]*$XScale;
+        $DX1 = $HexLegPos[$ls][0]*$XScale -($Fll/2);
         $DX2 = $DX1+$Fll;
         $DY = $HexLegPos[$ls][1]*$Scale - $Fht*$PCount +$FDn;
         fwrite($Dot, "ConcealA$i [ pos=\"$DX1,$DY!\" label=\"\" shape=point margin=0 penwidth=0 ];\n");
@@ -456,7 +456,7 @@
 
     foreach ($InstaLevels as $i=>$L) {
       if ($L['Used']>0) {
-        $DX1 = $HexLegPos[$ls][0]*$XScale;
+        $DX1 = $HexLegPos[$ls][0]*$XScale -($Fll/2);
         $DX2 = $DX1+$Fll;
         $DY = $HexLegPos[$ls][1]*$Scale - $Fht*$PCount +$FDn;
         fwrite($Dot, "InstaA$i [ pos=\"$DX1,$DY!\" label=\"\" shape=point margin=0 penwidth=0 ];\n");
