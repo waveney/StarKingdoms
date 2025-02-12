@@ -822,7 +822,7 @@ function Show_Thing(&$T,$Force=0) {
         if (($dc++)%4 == 0)  echo "<tr>";
         echo "<td><b>" . abs($D['Number']). "</b> of ";
         if (isset($MTNs[$D['Type']])) {
-          echo $MTNs[$D['Type']] . ($T['BuildState']? (" (Level " . $D['Level'] . ") ") :"") ;
+          echo $MTNs[$D['Type']] . (($T['Leveled']&1)? (" (Level " . $D['Level'] . ") ") :"") ;
           switch ($MTs[$D['Type']]['Name']) {
             case 'Cargo Space':
               echo " Capacity: " . $T['Level'];
@@ -835,10 +835,12 @@ function Show_Thing(&$T,$Force=0) {
           if ($D['Number'] <0) echo " <b>Inactive</b>";
         } else {
           $M = $MTs[$D['Type']];
-          if ($l = Has_Tech($T['Whose'],$M['BasedOn'])) {
-            echo "<span class=err>Invalid</span> " . $M['Name'] . ' Modules ' . ($T['BuildState']? (" (Level " . $D['Level'] . ") ") :"") ;
-          } else {
-            echo '<span class=err>Unknown</span> ' . $M['Name'] . ' Modules' . ($T['BuildState']? (" (Level " . $D['Level'] . ") ") :"") ;
+          if ($M['BasedOn']) {
+            if ($l = Has_Tech($T['Whose'],$M['BasedOn'])) {
+              echo "<span class=err>Invalid</span> " . $M['Name'] . ' Modules ' . ($T['BuildState']? (" (Level " . $D['Level'] . ") ") :"") ;
+            } else {
+              echo '<span class=err>Unknown</span> ' . $M['Name'] . ' Modules' . ($T['BuildState']? (" (Level " . $D['Level'] . ") ") :"") ;
+            }
           }
         }
 

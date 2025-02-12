@@ -481,7 +481,7 @@ function OperationsComplete() {
           }
         }
         Put_FactionSystem($FS);
-        $Scan = ['FactionId'=>$Fid,'Sys'=>$O['SystemId'], 'Type'=>1, 'ThingId'=>-1,'GameId'=>$GAMEID, 'Turn'=>$GAME['Turn']];
+        $Scan = ['FactionId'=>$Fid,'Sys'=>$O['SystemId'], 'Type'=>1, 'ThingId'=>-1,'GameId'=>$GAMEID, 'Turn'=>$GAME['Turn'], 'Scan'=>$FS['ScanLevel']];
         Gen_Put('ScansDue',$Scan);
         TurnLog($Fid,"System " . System_Name($N,$Fid) . " has been Space survied. $xtra");
         break;
@@ -498,7 +498,7 @@ function OperationsComplete() {
           }
         }
         Put_FactionSystem($FS);
-        $Scan = ['FactionId'=>$Fid,'Sys'=>$O['SystemId'], 'Type'=>2, 'ThingId'=>-1,'GameId'=>$GAMEID, 'Turn'=>$GAME['Turn']];
+        $Scan = ['FactionId'=>$Fid,'Sys'=>$O['SystemId'], 'Type'=>2, 'ThingId'=>-1,'GameId'=>$GAMEID, 'Turn'=>$GAME['Turn'],  'Scan'=>$FS['PlanetScan']];
         Gen_Put('ScansDue',$Scan);
         TurnLog($Fid,"System " . System_Name($N,$Fid) . " has been Planetary survied. $xtra");
         break;
