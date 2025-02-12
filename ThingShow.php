@@ -845,7 +845,7 @@ function Show_Thing(&$T,$Force=0) {
         }
 
         $CLvl = Calc_TechLevel($Fid,$D['Type']);
-        if ($CLvl < $D['Level'] && $T['BuildState'] != 0 ) {
+        if (($T['Leveled']&1) && ($CLvl < $D['Level']) && ($T['BuildState'] != 0 )) {
           echo ". <span class=Blue> Note you have Level: $CLvl </span>";
         }
         if (!isset($MTNs[$D['Type']])) $BadMods += $D['Number'];
