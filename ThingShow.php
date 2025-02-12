@@ -825,10 +825,10 @@ function Show_Thing(&$T,$Force=0) {
           echo $MTNs[$D['Type']] . (($T['Leveled']&1)? (" (Level " . $D['Level'] . ") ") :"") ;
           switch ($MTs[$D['Type']]['Name']) {
             case 'Cargo Space':
-              echo " Capacity: " . $T['Level'];
+              echo " - Capacity: " . $T['Level'];
               break;
             case 'Sublight Engines':
-              echo " Speed: " . ceil(sprintf('%0.3g',$T['Speed']));
+              echo " - Speed: " . ceil(sprintf('%0.3g',$T['Speed']));
               break;
             default:
           }
@@ -837,9 +837,9 @@ function Show_Thing(&$T,$Force=0) {
           $M = $MTs[$D['Type']];
           if ($M['BasedOn']) {
             if ($l = Has_Tech($T['Whose'],$M['BasedOn'])) {
-              echo "<span class=err>Invalid</span> " . $M['Name'] . ' Modules ' . ($T['BuildState']? (" (Level " . $D['Level'] . ") ") :"") ;
+              echo "<span class=err>Invalid</span> " . $M['Name'] . ' Modules ' . (($T['Leveled']&1)? (" (Level " . $D['Level'] . ") ") :"") ;
             } else {
-              echo '<span class=err>Unknown</span> ' . $M['Name'] . ' Modules' . ($T['BuildState']? (" (Level " . $D['Level'] . ") ") :"") ;
+              echo '<span class=err>Unknown</span> ' . $M['Name'] . ' Modules' . (($T['Leveled']&1)? (" (Level " . $D['Level'] . ") ") :"") ;
             }
           }
         }

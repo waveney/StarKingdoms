@@ -493,7 +493,7 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0 ) {
     }
   } else {
     $NearNeb = ($N['Nebulae']??0);
-    $NS = Get_FactionSystemFS($Fid,$N['id']);
+    $NS = (($Fid && $N['id'])?Get_FactionSystemFS($Fid,$N['id']):[]);
 
     foreach ($Links as $Lid=>$L) {
       if (($L['Instability'] + $L['ThisTurnMod']) > $T['Stability']) {
