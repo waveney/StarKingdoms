@@ -179,7 +179,8 @@ function Player_Page() {
   echo "</ul>";
   echo "</div>";
 
-  echo "<li><a href=UserGuide.php>User Guide</a> - Warning this is VERY OUT OF DATE...<p>\n";
+  echo "<li><a href=https://starkingdoms.eaglesroost.org target=_blank>Rules Wiki</a> - opens in a separate tab<p>\n";
+  echo "<li><a href=UserGuide.php>User Guide</a> - Warning this is VERY OUT OF DATE...\n";
   echo "<li><a href=../StarKingdoms.php>Index of Star Kingdom's Games.</a>";
   echo "<li><a href=Login.php?ACTION=NEWPASSWD>New Password</a>\n";
 
@@ -299,7 +300,7 @@ function Gain_Science($Who,$What,$Amount,$Why) { // Ammount is negative to gain 
         $Fact['EngineeringSP'] = ($Fact['EngineeringSP'] ?? 0) + 1;
         break;
       case 3:
-        $Fact['XenologySP'] = ($Fact['XenologySP'] ?? 0) + $Amount + 1;
+        $Fact['XenologySP'] = ($Fact['XenologySP'] ?? 0) + 1;
         break;
       }
     }

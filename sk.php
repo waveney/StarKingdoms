@@ -21,6 +21,7 @@ $Access_Type = array_flip($Access_Levels);
 $Months = ['','Jan','Feb','Mar','Apr','May','June','July','Aug','Sep','Oct','Nov','Dec'];
 $GameStatus = ['Planning','In Setup','Active','Historical'];
 $PlayerLevel = ['Player','GM','No Access','Read Only'];
+$AutoLevel = ['Manual','Automated','Partial'];
 
 date_default_timezone_set('GMT');
 function Check_Login($check=0) {

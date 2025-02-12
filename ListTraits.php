@@ -43,7 +43,7 @@
     foreach($TraitUse as $Use) {
       [$Fid,$TN,$Auto,$Conceal] = $Use;
       echo ($use++?', ':'') . "<a href=FactionEdit.php?F=$Fid>" . $Facts[$Fid]['GameId']  . ':' . $Facts[$Fid]['Name']
-         . ($Conceal?"<span class=red>C:$Conceal</span>":" 0") . ($Auto?" <b>(A)</b>":'') . "</a>";
+      . ($Conceal?"<span class=red>C:$Conceal</span>":" 0") . ($Auto?['','<b>(A)</b>','<b>(P)</b>'][$Auto]:'') . "</a>";
     }
   }
 

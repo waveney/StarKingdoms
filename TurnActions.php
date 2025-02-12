@@ -424,7 +424,7 @@ function TraitIncomes() {
         }
 
         foreach ($SPs as $SP) {
-          if ($P["Trait$i"] == $SP[1]) {
+          if ($Bod["Trait$i"] == $SP[1]) {
 //            echo "Checking $ii - $i " . $SP[1] . "<p>";
             switch ($SP[3]) {
               case 1: // Districts
@@ -650,7 +650,7 @@ function GiveSurveyReports() {
     $Fid = $S['FactionId'];
 //    var_dump($spid);
 
-    if (isset($_REQUEST["Scan$spid"]) &&  ($_REQUEST["Scan$spid"] == "on")) {
+    if (!isset($_REQUEST["Scan$spid"]) || (isset($_REQUEST["Scan$spid"]) &&  ($_REQUEST["Scan$spid"] == "on"))) {
       $FS = Get_FactionSystemFS($Fid,$S['Sys']);
       $New = !isset($FS['id']);
       $Changed = $New;

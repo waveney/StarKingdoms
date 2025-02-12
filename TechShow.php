@@ -74,6 +74,7 @@
 
   echo "<h2>Technologies</h2>\n";
   echo "<div class=floatright id=ExpandAll><button type=button onclick=TechSet('ALL')>Expand All</button></div><p>";
+  echo "<div class=floatright id=ContractAll hidden><button type=button onclick=TechSet('NONE')>Contract All</button></div><p>";
   echo "Click on technologies name to Toggle showing the definition and examples\n<p>";
 
 //  if (Access('God')) echo "<table></tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea></table>";

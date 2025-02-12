@@ -129,6 +129,19 @@
       }
       echo "All Done";
       dotail();
+
+    case 'SetTeamDescs':
+      $Orgs = Gen_Get_All_GameId('Organisations');
+      foreach ($Orgs as $Oid=>$Org) {
+        $Tid = $Org['Team'];
+        if ($Tid == 0) continue;
+        $Ops = Gen_Get_Cond1('Operations',"OrgId=$Oid AND Status=1");
+        if (!$Ops) continue;
+        $Team = Get_Thing($Tid);
+        $Team['Description'] = $Ops['Name'] . ' ' . $Ops['Description'];
+        Put_Thing($Team);
+        echo "Set Team for " . $Org['Name'] . "<p>";
+      }
     }
   }
 
@@ -137,6 +150,7 @@
   echo "<li><a href=TurnSpecials.php?ACTION=ExplodeLink>Explode Link</a><p>";
   echo "<li><a href=TurnSpecials.php?ACTION=RefitAll>Refit all and Complete all in planning</a><p>";
   echo "<li><a href=TurnSpecials.php?ACTION=FixFSdata2>Fix FS Data (again)</a><p>";
+  echo "<li><a href=TurnSpecials.php?ACTION=SetTeamDescs>Set Team Descriptions</a><p>";
 
 
 

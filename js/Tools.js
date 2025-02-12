@@ -531,6 +531,13 @@ function TechSet(idx) {
     $('[id^=ShowSupTechs]').hide();  
     $('[id^=HideSupTechs]').hide();  
     $('#ExpandAll').hide();
+    $('#ContractAll').show();
+ } else if (idx == 'NONE') {
+    $('[id^=SupTechs]').hide();
+    $('[id^=ShowSupTechs]').show();  
+    $('[id^=HideSupTechs]').hide();  
+    $('#ExpandAll').show();
+    $('#ContractAll').hide();
   } else {
     $('#SupTechs' + idx).show();
     $('#ShowSupTechs' + idx).hide();  

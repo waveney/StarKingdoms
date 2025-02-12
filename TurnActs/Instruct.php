@@ -838,7 +838,7 @@ function InstructionsComplete() {
   $DTypes = Get_DistrictTypes();
   $DTypeNames = NamesList($DTypes);
 
-
+// var_dump(array_flip($DTypeNames)); exit;
   foreach ($Things as $T) {
     $N = Get_System($T['SystemId']);
     $Tid = $T['id'];
@@ -861,7 +861,7 @@ function InstructionsComplete() {
 
         $D = ['HostType' =>1, 'HostId'=> $P['id'], 'Type'=> $T['Dist1'], 'Number'=>1, 'GameId'=>$GAME['id'], 'TurnStart'=>$GAME['Turn']];
         //      if ($D['Type'] == 0) $D['Type'] = 1;
-        $D['Type'] = array_flip($DTypeNames)['industrial'];
+        $D['Type'] = array_flip($DTypeNames)['Industrial'];
         Put_District($D);
         /*
          if (Get_ModulesType($Tid,'Self Repairing Robot Armour') && $T['Dist2']) {
@@ -875,7 +875,7 @@ function InstructionsComplete() {
         FollowUp($Who,"Set Social Principles of new colony in " .$N['Ref'] . " - not yet automated");
         Report_Others($T['Whose'], $T['SystemId'],31,$P['Name'] . " on " . $N['Ref'] . " has been colonised by " . $N['Ref']);
 
-        if ('RemoveAfterColonise'){
+        if (Feature('RemoveAfterColonise')){
           $Have = Get_Things_Cond(0," (LinkId<0 AND SystemId=$Tid) ");
           if ($Have) {
             $Loc = Within_Sys_Locs($N,$T['Spare1']);
@@ -1454,7 +1454,9 @@ function InstructionsComplete() {
       $T['Spare1'] = 0;
       Put_Thing($T);
     } else {
-      db_delete('Things',$Tid);
+      $T['GameId'] = -$GAMEID;
+      $T['Whose'] = -$Who;
+      Put_Thing($T);
     }
   }
 

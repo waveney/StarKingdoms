@@ -119,20 +119,21 @@ function StartOperations() {
       $Level = $SocP['Value'];
     }
 
-
+    if (($Otp & OPER_LEVELMOD) == 0) { // reclac level
     $Mod = ($Otp & OPER_LEVEL);
-    if ($Mod >=4) {
-      $Mod = ($Mod&3) + $Level*($Mod>>2);
-    }
+      if ($Mod >=4) {
+        $Mod = ($Mod&3) + $Level*($Mod>>2);
+      }
 
-    $BaseLevel = Op_Level($OrgId,$Wh) + $Mod + $O['GMLock'];
+      $BaseLevel = Op_Level($OrgId,$Wh) + $Mod + $O['GMLock'];
 
-    if ($BaseLevel != $O['Level']) {
-      $O['ProgNeeded'] = $ProgNeed = Oper_Costs($BaseLevel)[0];
+      if ($BaseLevel != $O['Level']) {
+        $O['ProgNeeded'] = $ProgNeed = Oper_Costs($BaseLevel)[0];
 
-      TurnLog($Fid,'WARNING operation ' . $O['Name'] . " with the " . $Orgs[$O['OrgId']]['Name'] . " is actually level $BaseLevel not " .
-        $O['Level'] . " and now needs " . $O['ProgNeeded'] . " progress.");
+        TurnLog($Fid,'WARNING operation ' . $O['Name'] . " with the " . $Orgs[$O['OrgId']]['Name'] . " is actually level $BaseLevel not " .
+          $O['Level'] . " and now needs " . $O['ProgNeeded'] . " progress.");
 
+      }
     }
     $O['Status'] = 1;// Started
     TurnLog($Fid,"Operation " . $O['Name'] . " has started for organisation " . $Orgs[$O['OrgId']]['Name']);
@@ -151,6 +152,7 @@ function StartOperations() {
     $Team['SystemId'] = $Wh;
     $Team['ProjectId'] = $Oid;
     $Team['WithinSysLoc'] = (($OpTypes[$O['Type']]['TeamProps'] & TEAM_INSPACE)?0:3);
+    $Team['Description'] = $O['Name'] . ' ' . $O['Description'];
     Put_Thing($Team);
 
     Put_Operation($O);
@@ -379,7 +381,7 @@ function OperationsComplete() {
            System_Name($Sys,$Fid) );
         if ($World['FactionId'] != $Fid) {
           TurnLog($World['FactionId'],"A new Trading Station branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
-            System_Name($Sys,$World['Whose']) . " by " . $Facts[$Fid]['Name']);
+            System_Name($Sys,$World['FactionId']) . " by " . $Facts[$Fid]['Name']);
         }
         GMLog("A new Trading Station branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
           System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);

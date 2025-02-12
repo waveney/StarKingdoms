@@ -68,7 +68,7 @@
         $Label = "System";
       }
       echo ($use++?', ':'') . "$Label : <a href=$Link>$Sid</a> "
-         . ($Conceal?"<span class=red>C:[$Conceal]</span>":" [0]") . ($Auto?" <b>(A)</b>":'') . "</a>";
+         . ($Conceal?"<span class=red>C:[$Conceal]</span>":" [0]") . ($Auto?['','<b>(A)</b>','<b>(P)</b>'][$Auto]:'') . "</a>";
     }
   }
 

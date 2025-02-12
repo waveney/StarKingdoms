@@ -775,11 +775,10 @@ function LogisticalSupport($Fid) {  // Note this sets the Economic rating of all
 //    $EndAct($PH);
   }
 
-//var_dump($Logistics); echo "<br>";
-  if ($ln = Has_Tech($Fid,'Naval Logistics')) $Logistics[0] += 2*$ln;
-  if ($ln = Has_Tech($Fid,'Army Logistics')) $Logistics[1]  += 2*$ln;
-  if ($ln = Has_Tech($Fid,'Intelligence Logistics')) $Logistics[2] += 2*$ln;
-//var_dump($Logistics);
+  $MilTheory = Has_Tech($Fid,'	Military Theory');
+  if (Has_Tech($Fid,'Naval Logistics')) $Logistics[0] += $LogisticMult*$MilTheory;
+  if (Has_Tech($Fid,'Army Logistics')) $Logistics[1]  += $LogisticMult*$MilTheory;
+  if (Has_Tech($Fid,'Intelligence Logistics')) $Logistics[2] += $LogisticMult*$MilTheory;
   return $Logistics;
 }
 
@@ -1007,9 +1006,10 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
           }
         }
       }
-      if ($itxt) {
+      if ( $GM && ($TTprops & THING_ISA_TEAM)) {
         if ($T['Description']) {
           $txt .= "<br>" . ParseText($T['Description']);
+          $Images = 1; // To add the br at end
         }
       }
       if ($TTprops2 & THING_SHOW_CONTENTS) {
