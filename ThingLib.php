@@ -775,7 +775,7 @@ function LogisticalSupport($Fid) {  // Note this sets the Economic rating of all
 //    $EndAct($PH);
   }
 
-  $MilTheory = Has_Tech($Fid,'	Military Theory');
+  $MilTheory = Has_Tech($Fid,'Military Theory');
   if (Has_Tech($Fid,'Naval Logistics')) $Logistics[0] += $LogisticMult*$MilTheory;
   if (Has_Tech($Fid,'Army Logistics')) $Logistics[1]  += $LogisticMult*$MilTheory;
   if (Has_Tech($Fid,'Intelligence Logistics')) $Logistics[2] += $LogisticMult*$MilTheory;
