@@ -16,7 +16,7 @@
   $f2 = file_exists("cache/$GAMEID/Fullmap0$typ.map");
   if ($f1 && $f2) {
     // if (file_exists("cache/$GAMEID/Fullmap0$typ.png") && file_exists("cache/Fullmap0$typ.map")) {
-    echo "<img src=cache/$GAMEID/Fullmap0$typ.png?$Rand maxwidth=100% usemap='#skmap'>";
+    echo "<img src=cache/$GAMEID/Fullmap0$typ.png?$Rand width=100% usemap='#skmap'>";
     readfile("cache/$GAMEID/Fullmap0$typ.map");
     dotail();
   }
