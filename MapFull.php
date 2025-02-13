@@ -490,7 +490,7 @@
 
 //  echo "<h2>dot run</h2>";
   $Rand = rand(1,100000);
-  echo "<img src=cache/$GAMEID/Fullmap$Fid$typ.png?$Rand usemap='#skmap'>";
+  echo "<img src=cache/$GAMEID/Fullmap$Fid$typ.png?$Rand maxwidth=100% usemap='#skmap'>";
   readfile("cache/$GAMEID/Fullmap$Fid$typ.map");
 
 
