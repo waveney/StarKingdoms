@@ -1,6 +1,5 @@
 <?php
 
-
 function Meetups() {
   // For each system get all things.  If more than 1 faction, note location flag for that system
   // if (more than 1 has "control" then there is a bundle
@@ -80,3 +79,34 @@ function Devastation() {
   return 1;
 
 }
+
+function ReturnMilOrgForces() {
+  $TTypes = Get_ThingTypes();
+  $NTypes = array_flip(NamesList($TTypes));
+  $Things = Get_Things_Cond(0,"( Type=" . $NTypes['Heavy Security'] . " OR Type=" . $NTypes['Fighter Defences'] . ") AND LinkId!=" . LINK_INBRANCH);
+  $Count = 0;
+  foreach($Things as $Tid=>$T) {
+    $Count++;
+    $Bid = $T['ProjectId'];
+    if (Gen_Get('Branches',$Bid)) {
+      $T['LinkId'] = LINK_INBRANCH;
+      $T['SystemId'] = 0;
+      Put_Thing($T);
+    } else { // Branch missing
+      GMLog( "BRANCH $Bid MISSING...");
+      Thing_Delete($Tid);
+    }
+  }
+
+  $Things = Get_Things_Cond(0,"Type=" . $NTypes['Militia'] . " AND LinkId!=" . LINK_INBRANCH);
+  foreach($Things as $Tid=>$T) {
+    $Count++;
+    $T['LinkId'] = LINK_INBRANCH;
+    Put_Thing($T);
+  }
+
+  GMLog("$Count Forces have returned<p>");
+  return 1;
+
+}
+

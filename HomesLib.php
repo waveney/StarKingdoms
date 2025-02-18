@@ -19,7 +19,7 @@ function Recalc_Project_Homes($Logf=0, $Silent=0) {
   }
 
   $AllDists = Get_DistrictsAll();
-//var_dump($AllDists); exit;
+////var_dump($AllDists); exit;
   $PWithDists = $MWithDists = $TWithDists = [];
   foreach($AllDists as $D) {
     switch ($D['HostType']) {
@@ -38,7 +38,7 @@ function Recalc_Project_Homes($Logf=0, $Silent=0) {
   }
 
 //var_dump($KnownHomes); exit;
-//var_dump($PWithDists);
+//var_dump($PWithDists);exit;
 //var_dump($MWithDists);exit;
   $Systems = Get_Systems();
   foreach ($Systems as &$N) {
@@ -47,7 +47,7 @@ function Recalc_Project_Homes($Logf=0, $Silent=0) {
 
       $Planets = Get_Planets($N['id']);
       if ($Planets) {
-        foreach ($Planets as &$P) {
+        foreach ($Planets as $Pid=>&$P) {
           $doneP = 0;
 
           $Cont = $P['Control'];
@@ -456,6 +456,27 @@ function Recalc_Worlds($Silent=0) {
 
 
   if (!$Silent) echo "Worlds recalculted<p>\n";
+
+  // Checking All Branches
+  $Orgs = Gen_Get_All_GameId('Organisations');
+
+  $Branches = Gen_Get_All_GameId('Branches');
+
+  foreach ($Branches as $B) {
+    $Up = 0;
+    $OrgId = $B['Organisation'];
+    if ($Orgs[$OrgId]['OrgType'] != $B['OrgType']) {
+      $B['OrgType'] = $Orgs[$OrgId]['OrgType'];
+      $Up = 1;
+    }
+
+    if ($Orgs[$OrgId]['Whose'] != $B['Whose']) {
+      $B['Whose'] = $Orgs[$OrgId]['Whose'];
+      $Up = 1;
+    }
+
+    if ($Up) Gen_Put('Branches',$B);
+  }
 }
 
 function Recalc_Economic_Rating(&$H,&$W,$Fid,$Turn=0) {

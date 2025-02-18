@@ -7,7 +7,7 @@
   global $FACTION,$GAMEID;
   $Parsedown = new Parsedown();
 
-
+// var_dump($_REQUEST);
   dostaffhead("List of Organisations",["js/ProjectTools.js"]);
   $Fid = 0;
   $xtra = '';
@@ -96,7 +96,7 @@
     if (!isset($SocPs[$Of])) $SocPs[$Of] = SocPrinciples($Of);
 
     if (!$All && ($Of != $Fid)) continue;
-    echo "<tr>" . fm_hidden("GameId:$i", $GAMEID);
+    echo "<tr>";
     if ($GM) echo "<td>$i";
     if ($GM || ($O['OfficeCount']==0)) {
       echo "<td>" . fm_select($OrgTypeNames,$O,'OrgType',1,'',"Organisations:OrgType:$i") . "<br>";
@@ -118,6 +118,7 @@
       echo "<br><a href=OrgList.php?ACTION=Delete&i=$i>Delete</a>";
     }
     echo "<td>" . $O['OfficeCount'] . "<br><a href=OrgView.php?id=$i>View</a>";
+    echo fm_hidden("Organisations:GameId:$i", $O['GameId']);
   }
   if ($GM) {
     $O = [];
@@ -125,7 +126,7 @@
     if ($GM) echo "<td>";
     echo fm_select($NewOrgs,$O,'OrgType',0,'',"Organisations:OrgType:0");
     echo fm_text1('',$O,'Organisations:Name:0',4,'','placeholder="New Organisation Name"');
-    echo "<br>" . fm_basictextarea($O, 'Description:0',5,4,"placeholder='New Organisation Description' style='width=70%'");
+    echo "<br>" . fm_basictextarea($O, 'Organisations:Description:0',5,4,"placeholder='New Organisation Description' style='width=70%'");
     if ($GM) {
       echo "Set up a Social Principle (if appropriate) after creating the Organisation";
     } else {

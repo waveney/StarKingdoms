@@ -276,6 +276,7 @@
   foreach ($Things as $T) {
     if (empty($T['Type'])) continue;
     $Props = ($ThingTypes[$T['Type']]['Properties']??0);
+    $Prop2 = ($ThingTypes[$T['Type']]['Prop2']??0);
 
     $Tid = $T['id'];
     $Name = ($ThingTypes[$T['Type']]['Name']??'Unknown');
@@ -283,6 +284,8 @@
 
     if ($Fid && ($T['Whose'] != $Fid)) {
       $RowClass = 'Prisoner';
+    } else if ($Prop2 & THING_ALWAYS_OTHER) {
+      $RowClass = 'Other';
     } else if ($Props & THING_HAS_SHIPMODULES) {
       $RowClass = 'Ship';
     } else  if ($Props & THING_HAS_ARMYMODULES) {
@@ -306,7 +309,7 @@
     echo "<td>" . $T['Class'];
     echo "<td>" . $Name;
     if ($T['Variant']) echo " ( " . $Varies[$T['Variant']]['Name'] . " )";
-    echo "<td>" . $T['Level'];
+    echo "<td>" . (($Props & THING_HAS_LEVELS)?$T['Level']:'');
     if ($Fid == 0) echo "<td style='background:" . ($Factions[$T['Whose']]['MapColour']??'white') . "'>" . ($Factions[$T['Whose']]['Name']??'Unknown');
     if (0) echo "<td>" . (($RowClass == 'Prisoner') ? "<span style='background:" . ($Factions[$T['Whose']]['MapColour']??'white') . "'>[" .
                  ($Factions[$T['Whose']]['Name']??'Unknown') . "]</span>" : $T['Orders']);
@@ -326,7 +329,8 @@
       echo "<td>Direct<td>";
       echo "<td>" . ($T['NewSystemId'] == 0? "" : $Systems[$T['NewSystemId']]);
     } else {
-      echo "<td>" . ((($T['LinkId'] >= 0) || ($T['LinkId'] == LINK_FOLLOW )) ? (empty($Systems[$T['SystemId']]) ?'': $Systems[$T['SystemId']]) : 'On Board');
+      echo "<td>" . ((($T['LinkId'] >= 0) || ($T['LinkId'] == LINK_FOLLOW )) ?
+        (empty($Systems[$T['SystemId']]) ?'': $Systems[$T['SystemId']]) : (($T['LinkId'] == LINK_INBRANCH ) ? 'Not Deployed' : 'On Board'));
       echo "<td>";
       if ($T['Instruction']) echo $ThingInstrs[abs($T['Instruction'])];
       if (($T['Instruction'] == 0 || $T['Instruction'] == 5 ) && (($Props & THING_CAN_MOVE) && ( $T['BuildState'] == 3))) {

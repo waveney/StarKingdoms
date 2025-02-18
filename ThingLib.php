@@ -78,7 +78,9 @@ define('THING_HAS_AGE',       0x10000000);
 define('THING_ISA_TEAM',      0x20000000);
 define('THING_HAS_VARIANTS',  0x40000000);
 
-define('THING_SHOW_CONTENTS', 1);
+define('THING_SHOW_CONTENTS',     1); // Prop2
+define('THING_HAS_RECOVERY',      2);
+define('THING_ALWAYS_OTHER',      4);
 
 
 define('LINK_ON_BOARD',-1);
@@ -88,6 +90,7 @@ define('LINK_LOAD_AND_UNLOAD',-4);
 define('LINK_VALUE_UNUSED',-5);
 define('LINK_DIRECTMOVE',-6);
 define('LINK_FOLLOW',-7);
+define('LINK_INBRANCH',-8);
 
 define('BUILD_FLAG1',1);
 define('BUILD_FLAG2',2);
@@ -416,6 +419,7 @@ function Calc_Health(&$T,$KeepTechLvl=0,$Other=0) {
 
 function Calc_Damage(&$T,&$Rescat) {
 
+  if ($T['ActDamage']) return $T['ActDamage'];
   if ($T['Type'] ==20) return 8; // Militia
   $Dam = 0;
   $Ms = Get_Modules($T['id']);
@@ -1083,7 +1087,7 @@ function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0,$Mode=0) {
   return $txt;
 }
 
-function Update_Militia(&$W,&$Dists,$NewOwn=0) {
+function Update_Militia(&$W,&$Dists,$NewOwn=0,$Deploy=0) {
 //var_dump($W,$Dists,$NewOwn);
   switch ($W['ThingType']) {
     case 1: // Planet
@@ -1128,8 +1132,9 @@ function Update_Militia(&$W,&$Dists,$NewOwn=0) {
         $Ml['OrigHealth'] = $Hlth;
         $Ml['CurHealth'] = min($Ml['CurHealth']+$Diff,$Hlth );
         $Ml['Whose'] = $FactN;
-        Put_Thing($Ml);
       }
+      $Ml['LinkId'] = ($Deploy?0:LINK_INBRANCH);
+      Put_Thing($Ml);
     }
 
   } else {
@@ -1138,7 +1143,7 @@ function Update_Militia(&$W,&$Dists,$NewOwn=0) {
     foreach ($Mils as $Ml) $MNames[$Ml['Name']] = 1; // Didts & Dist2 give short cut to world and districts
     $M = ['Type'=>20, 'CurHealth'=>$Hlth, 'OrigHealth'=>$Hlth, 'Evasion'=>40,
            'Whose'=>$FactN, 'SystemId'=>$Sys, 'WithinSysLoc'=>$loc, 'BuildState'=>3,
-           'Dist1'=> $W['ThingType'], 'Dist2'=>$W['ThingId'] ];
+           'Dist1'=> $W['ThingType'], 'Dist2'=>$W['ThingId'], 'LinkId' => ($Deploy?0:LINK_INBRANCH)  ];
     $Mn = 1;
     for ($Mnum = count($Mils); $Mnum < $Dcount; $Mnum++) {
       while (isset($MNames["Militia $Mname $Mn"])) $Mn++;
@@ -1152,6 +1157,7 @@ function Update_Militia(&$W,&$Dists,$NewOwn=0) {
   foreach ($Mils as $Ml) {
     if ($Ml['OrigHealth'] != $Hlth) {
       $Ml['OrigHealth'] = $Hlth;
+      $Ml['LinkId'] = ($Deploy?0:LINK_INBRANCH);
       Put_Thing($Ml);
     }
   }
@@ -1339,6 +1345,13 @@ function Thing_Delete($tid) {
         $Org = Gen_Get("Organisation" , $Oper['OrgId']);
         TurnLog($T['Whose'], "The Team doing Operation " . $Oper['Name'] . " for " . $Org['Name'] . " has been destroyed, the operation has been lost.");
         GMLog("The Team doing Operation " . $Oper['Name'] . " for " . $Org['Name'] . " has been destroyed, the operation has been lost.");
+      }
+      break;
+
+    case 'Outpost':
+      $Brans = Gen_Get_Cond('Branches',"HostType=3 AND HostId=$tid");
+      if ($Brans) foreach ($Brans as $Bid=>$B) {
+        db_delete('Branches',$Bid);
       }
       break;
 

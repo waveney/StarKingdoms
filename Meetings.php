@@ -7,6 +7,7 @@
   include_once("ProjLib.php");
   include_once("HomesLib.php");
   include_once("TurnTools.php");
+  include_once("OrgLib.php");
   A_Check('GM');
 
   global $Relations;
@@ -37,7 +38,7 @@
 
 function ForceReport($Sid,$Cat) {
   global $Facts, $Homes, $TTypes, $ModTypes, $N, $Techs, $ThingProps,$ARMY ;
-  $Things = Get_Things_Cond(0,"SystemId=$Sid AND ( BuildState=2 OR BuildState=3) ORDER BY Whose");
+  $Things = Get_Things_Cond(0,"SystemId=$Sid AND ( BuildState=2 OR BuildState=3) AND LinkId>=0 ORDER BY Whose");
   $LastF = $Home = $Control = -1;
   $txt = $ftxt = $htxt = $Battct = '';
   $TMsk = ($Cat=='G'?1:2);
@@ -70,13 +71,28 @@ function ForceReport($Sid,$Cat) {
 
   echo "<h2>" . ($Cat =='G' ?'Ground':'Space') . " Force Report for " . $N['Ref'] . ($Cat =='G' ? " - " . ($PlanMoon['Name'] ?? 'Nameless') .
        " ($HomeType)" :'') . "</h2>\n";
-  if ($Cat =='G' && $Wid) echo "<h2><a href=WorldEdit.php?ACTION=Militia&id=$Wid>Create /Update Militia</a></h2>";
+  if ($Cat =='G' && $Wid) {
+    echo "<h2><a href=WorldEdit.php?ACTION=MilitiaDeploy&id=$Wid>Deploy Militia</a></h2>";
+    $MilOrg = Gen_Get_Cond('Branches',"HostType=" . $H['ThingType'] . " AND HostId=" . $H['ThingId'] . " AND OrgType=3");
+    if ($MilOrg) {
+      echo "<h2><a href=BranchEdit.php?Action=SPAWN_HS&Hid=" . $H['ThingId'] . "&Sid=$Sid>Deploy Heavy Security</a></h2>";
+    }
+  } else if ($Cat == 'S') {
+    $Outpost = Outpost_In($Sid,0,0);
+    if ($Outpost) {
+      $MilOrg = Gen_Get_Cond('Branches',"HostType=3 AND HostId=" . $Outpost['id'] . " AND OrgType=3");
+      if ($MilOrg) {
+        echo "<h2><a href=BranchEdit.php?Action=SPAWN_FS&Oid=" . $Outpost['id'] . "&Sid=$Sid>Deploy Defensive Fighters</a></h2>";
+      }
+
+    }
+  }
 
   echo "<table border>";
   echo "<tr><td>What<td>Type<td>Level<td>Evasion<td>Health<td>Attack<td>Speed<td>Actions\n";
   foreach($Things as $T) {
     if ((($Cat == 'S') && ((($TTypes[$T['Type']]['Properties']??0) & 8) != 0)) ||
-        (($Cat == 'G') && ((($TTypes[$T['Type']]['Properties']??0) & 0x800020) != 0))) {
+        (($Cat == 'G') && ((($TTypes[$T['Type']]['Properties']??0) & 0x20) != 0))) {
       if (($T['CurHealth'] == 0) && ($T['Type'] == 20)) continue; // Skip Militia at zero
       if ($T['PrisonerOf'] != 0) continue; // Prisoners
       $Tid = $T['id'];

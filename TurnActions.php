@@ -72,7 +72,7 @@
     [53,'',         'Spot Anomalies','Coded'],
     [54,'',         'Militia Army Recovery','Coded'],
     [55,'',         'Generate Turns','No'],
-    [56,'',         'Spare',''],
+    [56,'Combat',   'Return Mil Org Forces','Coded'],
     [57,'',         'Clear Conflict Flags','Coded'],
     [58,'',         'Check Follow Ups','Coded'],
     [59,'Movement',  'Save What Can Be Seen','Coded'],
@@ -833,14 +833,18 @@ function MilitiaArmyRecovery() {
 //  GMLog("Militia Recovery is currently Manual<p>");
 //  GMLog("Also Self Repair Armour<p>");
 
-  $Things = Get_Things_Cond(0,"(CurHealth>0 OR (CurHealth=0 AND Type=20)) AND (CurHealth<OrigHealth OR CurShield<ShieldPoints)");
+  $Things = Get_Things_Cond(0,"(CurHealth>0 OR (CurHealth=0 AND BuildState=3)) AND (CurHealth<OrigHealth OR CurShield<ShieldPoints)");
   $TTypes = Get_ThingTypes();
   $MTypes = Get_ModuleTypes();
   $MTNs = Mod_Types_From_Names($MTypes);
   $LastHost = $LastId = $Rec = 0;
+  $Facts = Get_Factions();
+  foreach ($Facts as $Fid=>$Fact) {
+    $Facts[$Fid]['Organic'] = Has_Trait($Fid,'Organic Units');
+  }
 
   foreach ($Things as $T) {
-    if ($TTypes[$T['Type']]['Name'] == 'Militia') {
+    if ($TTypes[$T['Type']]['Prop2'] & THING_HAS_RECOVERY) {
 
       // if not in conflit, recovery some
       $Conflict = 0;
@@ -848,13 +852,19 @@ function MilitiaArmyRecovery() {
       if ($Conf) $Conflict = $Conf[0]['Conflict'];
       if ($Conflict) continue;  // No recovery allowed
 
-      if ($LastHost != $T['Dist1'] || $LastId != $T['Dist2']) {
-        $Dists = Gen_Get_Cond('Districts',"HostType=" . $T['Dist1'] . " AND HostId=" . $T['Dist2']);
-        $Dcount = 0;
-        foreach($Dists as $D) $Dcount += $D['Number'];
-        $Rec = floor($Dcount/2)+1;
-        $LastHost = $T['Dist1'];
-        $LastId = $T['Dist2'];
+      // Work out recovery
+      if ($TTypes[$T['Type']]['Name'] == 'Militia') {
+        if ($LastHost != $T['Dist1'] || $LastId != $T['Dist2']) {
+          $Dists = Gen_Get_Cond('Districts',"HostType=" . $T['Dist1'] . " AND HostId=" . $T['Dist2']);
+          $Dcount = 0;
+          foreach($Dists as $D) $Dcount += $D['Number'];
+          $SaveRec = floor($Dcount/2)+1;
+          $LastHost = $T['Dist1'];
+          $LastId = $T['Dist2'];
+        }
+        $Rec = $SaveRec;
+      } else {
+        $Rec = intdiv($T['OrigHealth'],4);
       }
 
 // echo "Recovery of $Rec<br>";
@@ -892,6 +902,19 @@ function MilitiaArmyRecovery() {
           if ($T['Whose']) TurnLog($T['Whose'],$T['Name'] . " recovered $Rep health",$T);
           GMLog("<a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a> recovered $Rep health");
         }
+      }
+    }
+
+    if ($Facts[$T['Whose']]['Organic']) {
+      $Conflict = 0;
+      $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
+      if ($Conf) $Conflict = $Conf[0]['Conflict'];
+      if (!$Conflict) {
+        $Rec = intdiv($T['OrigHealth'],10);
+        $T['CurHealth'] = max($T['OrigHealth'], $T['CurHealth']+$Rec);
+        Put_Thing($T);
+        if ($T['Whose']) TurnLog($T['Whose'],$T['Name'] . " recovered $Rec health",$T);
+        GMLog("<a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . ' a ' . $TTypes[$T['Type']]['Name'] . "</a> recovered $Rec health");
       }
     }
 

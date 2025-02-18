@@ -196,6 +196,8 @@ function Show_Thing(&$T,$Force=0) {
 // -4 Board and unboard see -2,-3 for extra fields
 // -5 Not Used
 // -6 Direct Move to NewSystemId, NewWithinSys without links
+// -7 Follow
+// -8 In Branch
 
       $Lid = ($T['LinkId'] ?? 0);
       if ($tprops & THING_MOVES_DIRECTLY) {
@@ -228,7 +230,7 @@ function Show_Thing(&$T,$Force=0) {
       } else {
   // if ($GM) echo "Lid:$Lid SystemId:" . $T['SystemId']; // TEST CODE DELIBARATELY STILL BEING USED - GM ONLY
         if ($Lid<0 && Access('God') ) {
-          echo fm_number0("Lid",$T,'LinkId') . fm_number1("SysId",$T,'SystemId');
+  //        echo fm_number0("<br>Lid",$T,'LinkId') . fm_number1("SysId",$T,'SystemId');
         }
         if ($Lid >= 0 || $Lid == LINK_BOARDING || $Lid == LINK_LOAD_AND_UNLOAD) { // Insystem
           if ($GM) {
@@ -271,6 +273,9 @@ function Show_Thing(&$T,$Force=0) {
           echo "<tr><td colspan=3>Following: " . "<span style='background:" . $Fact_Colours[$Fol['Whose']] . "'>" .
                SeeThing($Fol,$LastWhose,7,$Fid,0,0,0) . "</span>";
           echo fm_submit("ACTION",'Cancel Follow',0);
+        } else if ($Lid == LINK_INBRANCH ) {
+          echo "<tr><td>Within the Branch";
+          if ($GM) echo "<td><a href=BranchEdit.php?id=" . $T['ProjectId'] . ">Branch</a>";
         } else { // On Board
           $Host = Get_Thing($T['SystemId']);
           if ($Host) {
@@ -525,8 +530,10 @@ function Show_Thing(&$T,$Force=0) {
     echo "<td colspan=2>Hidden Control: " . fm_select($FactNames,$T,'HiddenControl');
     echo "<td>" . fm_checkbox('Hide Owner',$T,'HideOwner');
 
-    if (Access('God')) echo "<tr><td>GOD!:<td>SystemId: " . $T['SystemId'] . "<td>LinkId: " . $T['LinkId'] . "<td>In Sys Locn: " . $T['WithinSysLoc'] .
-    "<td>NewSystemId: " . $T['NewSystemId'] . " New Locn: " . $T['NewLocation'] . fm_Number1('LastMoved',$T,'LastMoved');
+    if (Access('God')) echo "<tr><td>GOD!: " . fm_number0('SystemId',$T,'SystemId') . fm_number1('WithinSysLoc',$T,'WithinSysLoc') .
+      fm_number1('LinkId',$T,'LinkId') .
+      fm_number1('NewSystemId',$T,'NewSystemId') . fm_number1('NewLocation',$T,'NewLocation') . fm_Number1('LastMoved',$T,'LastMoved');
+
   }
   echo "<tr>" . fm_textarea("Description\n(For others)",$T,'Description',8,2);
   echo "<tr>" . fm_textarea('Notes',$T,'Notes',8,2);

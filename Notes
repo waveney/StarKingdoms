@@ -6,18 +6,12 @@ TODO
 9) Terraforming - Action input no actions in code
 12) Blockade busting
 14) Bombardment
-17) Logistics with no worlds
-20) Transfer Militia
-21) Unload after move bug
-22) Militia Transfer
 24) Meetings
    * REports to factions
-   * Carried things on destruction
 39) Nebulae and Anomalies
 40) Thing TYpe for ignore on Meetups
 45) Thing - edit history
 46) Turn Text edit
-50) Links in Ledgend controlled by tech/feature
 
 
   
@@ -70,6 +64,13 @@ it currently lists all ships with their speed, stats etc.  Can it please also li
 280 Ross 11/2 @16:57
 285 Easy ways to stop/pause Projects/operations/instructions
 287 Ross 13/2 @10:15 (repeat)
+288 What about an "Organisation specific map" that shows the locations of branches/offices in one colour, then the effective range from them 
+in different colours so you can see that, say, range 1 is yellow, range 2 is orange, range 3 is dark orange and range 4 is red or something like that?
+289 Office New Org - check how many
+292 Trait Organic Units - Game Chat 15/2 @17:10
+294 Destroy Outpost -> Branches
+295 Scan All branches ensure Org Type is correct
+296
 
 Both should let the GM decide how many to spawn, for which player, and where - and should then spawn at that player's current tech levels.
 Similar to the Militia spawning method but with Fighter Squadrons and Heavy Security Teams.

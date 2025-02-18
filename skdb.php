@@ -256,7 +256,7 @@ if ($indxname!=$fname) echo "T3 "; */
       }
     }
   }
-//var_dump($from,$newrec);exit;
+// var_dump($from,$newrec);exit;
   if ($proced) {
     $insert = $db->query($newrec);
     if ($insert) {
@@ -431,34 +431,35 @@ function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$M
       $t = array();
       foreach ($Flds as $fld=>$ftyp) {
         if ($fld == $indxname) continue;
-        if (isset($_POST["$fld$Sep" . "0"])) {
+        $Look = "$Pfx$fld$Sep" . "0";
+        if (isset($_POST[$Look])) {
           if (in_array($fld,$DateFlds)) {
-            $t[$fld] = Date_BestGuess($_POST["$fld$Sep" . "0"]);
-          } else if (in_array("$fld$Sep",$TimeFlds)) {
-            $t[$fld] = Time_BestGuess($_POST["$fld$Sep" . "0"]);
-          } else if (in_array("$fld$Sep",$HexFlds)) {
-            $t[$fld] = hexdec($_POST["$fld$Sep" . "0"]);
+            $t[$fld] = Date_BestGuess($_POST[$Look]);
+          } else if (in_array($fld,$TimeFlds)) {
+            $t[$fld] = Time_BestGuess($_POST[$Look]);
+          } else if (in_array($fld,$HexFlds)) {
+            $t[$fld] = hexdec($_POST[$Look]);
           } else {
-            $t[$fld] = $_POST["$fld$Sep" . "0"];
+            $t[$fld] = $_POST[$Look];
           }
         }
       }
       $t['GameId'] = $GAMEID;
-//      var_dump($t);
+//      var_dump("$Pfx$fld$Sep" . "0", $HexFlds,$t);
       Insert_db($table,$t);
-    } else if (isset($_POST["$table:$Mstr$Sep" . "0"] ) && $_POST["$table:$Mstr$Sep" . "0"] != $MstrNot) {
+    } else if (isset($_POST["$Pfx$Mstr$Sep" . "0"] ) && $_POST["$Pfx$Mstr$Sep" . "0"] != $MstrNot) {
       $t = array();
       foreach ($Flds as $fld=>$ftyp) {
         if ($fld == $indxname) continue;
-        if (isset($_POST["$table:$fld$Sep" . "0"])) {
+        if (isset($_POST["$Pfx$fld$Sep" . "0"])) {
           if (in_array($fld,$DateFlds)) {
-            $t[$fld] = Date_BestGuess($_POST["$table:$fld$Sep" . "0"]);
-          } else if (in_array("$fld$Sep",$TimeFlds)) {
-            $t[$fld] = Time_BestGuess($_POST["$table:$fld$Sep" . "0"]);
-          } else if (in_array("$fld$Sep",$HexFlds)) {
-            $t[$fld] = hexdec($_POST["$table:$fld$Sep" . "0"]);
+            $t[$fld] = Date_BestGuess($_POST["$Pfx$fld$Sep" . "0"]);
+          } else if (in_array($fld,$TimeFlds)) {
+            $t[$fld] = Time_BestGuess($_POST["$Pfx$fld$Sep" . "0"]);
+          } else if (in_array($fld,$HexFlds)) {
+            $t[$fld] = hexdec($_POST["$Pfx$fld$Sep" . "0"]);
           } else {
-            $t[$fld] = $_POST["$table:$fld$Sep" . "0"];
+            $t[$fld] = $_POST["$Pfx$fld$Sep" . "0"];
           }
         }
       }

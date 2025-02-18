@@ -11,7 +11,7 @@
   global $db, $GAME, $GAMEID;
   global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil;
 
-// var_dump($_REQUEST);
+// var_dump($_REQUEST); exit;
   $AllG = 0;
   if (isset($_REQUEST['AllGames'])) {
     // Button for cur game
@@ -24,7 +24,7 @@
   }
 
   $Ts = Get_ThingTypes($AllG);
-  if (UpdateMany('ThingTypes','Put_ThingType',$Ts,1,'','','Name','RemoveMe','Properties')) $Ts = Get_ThingTypes($AllG);
+  if (UpdateMany('ThingTypes','Put_ThingType',$Ts,1,'','','Name','RemoveMe','Properties,Prop2','',':')) $Ts = Get_ThingTypes($AllG);
 
   echo "<h1>Thing Types</h1>";
 
@@ -82,7 +82,9 @@
   echo fm_hidden('NotBy:0',$SETNOT);
   if ($AllG) echo "<td>$SETNOT";
   echo fm_hex1('',$T,'Properties','','',"Properties:0");
-      echo fm_text1("",$T,'Gate',1,'','',"Gate:0");
+  echo fm_hex1('',$T,'Prop2','','',"Prop2:0");
+
+  echo fm_text1("",$T,'Gate',1,'','',"Gate:0");
       echo fm_number1('',$T,'Eyes','','min=0 max=100',"Eyes:0");
       echo fm_number1('',$T,'SeenBy','','min=0 max=100',"SeenBy:0");
       echo fm_number1('',$T,'MaxLvl','','min=0 max=100',"MaxLvl:0");

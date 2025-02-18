@@ -125,6 +125,108 @@ if (isset($_REQUEST['Action'])) {
 
       dotail();
 
+    case 'SPAWN_HS':
+      // Get each branch on world, Get Dets for branch, Create/ update as nes
+      $Sid = $_REQUEST['Sid'];
+      $Hid = $_REQUEST['Hid'];
+      $TTypes = Get_ThingTypes();
+      $NTypes = array_flip(NamesList($TTypes));
+
+      $Branches = Gen_Get_Cond('Branches',"HostType<3 AND HostId=$Hid AND OrgType=3");
+// var_dump($Branches);
+      $TotC = 0;
+      if ($Branches) {
+        foreach ($Branches as $Bid=>$B) {
+          $Fid = $B['Whose'];
+          $DefLevel = Has_Tech($Fid,'Infantry Defences');
+          $OffLevel = Has_Tech($Fid,'Infantry Weapons');
+          $Def = 3*($DefLevel*3+12);
+          $Off = 3*($OffLevel+4);
+
+          $Org = Gen_Get_Cond1('Organisations',$B['Organisation']);
+          $Num = $Org['OfficeCount'];
+
+          $Teams = Get_Things_Cond($B['Whose'],"Type=" . $NTypes['Heavy Security'] . " AND ProjectId=$Bid");
+          $Count = 0;
+          if ($Teams) foreach($Teams as $Tid=>$T) {
+            if ($T['OrigHealth'] < $Def) {
+              $T['CurHealth'] = $Def + $T['CurHealth'] - $T['OrigHealth'];
+              $T['OrigHealth'] = $Def;
+            }
+            $T['Damage'] = $Off;
+            $T['SystemId'] = $Sid;
+            $T['WithinSysLoc'] = 3;
+            $T['LinkId'] = 0;
+            Put_Thing($T);
+            $Count++;
+          }
+          if ($Count < $Num) { // New ones
+            while ($Count < $Num) {
+              $Count++;
+              $T = ['Whose'=>$Fid, 'Type'=>$NTypes['Heavy Security'], 'BuildState'=>3, 'CurHealth'=>$Def, 'OrigHealth'=>$Def, 'ActDamage'=>$Off,
+                'SystemId'=>$Sid, 'WithinSysLoc'=>3, 'Class'=>'Heavy Security', 'Name'=>($B['Name']?$B['Name']:"Heavy Security $Bid") . ":$Count" ,
+                'Evasion'=>40, 'ProjectId'=>$Bid, 'LinkId'=>0];
+              Put_Thing($T);
+            }
+          }
+          $TotC += $Count;
+        }
+      }
+      echo "$TotC Heavy Security Forces have been deployed.<p><h2><a href=Meetings.php?ACTION=Check&S=$Sid>Return to Meetups</a></h2>";
+      dotail();
+
+    case 'SPAWN_FS':
+      $Sid = $_REQUEST['Sid'];
+      $Oid = $_REQUEST['Oid'];
+      $TTypes = Get_ThingTypes();
+      $NTypes = array_flip(NamesList($TTypes));
+
+      $Branches = Gen_Get_Cond('Branches',"HostType=3 AND HostId=$Oid AND OrgType=3");
+      // var_dump($Branches);
+      $TotC = 0;
+      if ($Branches) {
+        foreach ($Branches as $Bid=>$B) {
+          $Fid = $B['Whose'];
+          $DefLevel = Has_Tech($Fid,'Starship Defences');
+          $OffLevel = Has_Tech($Fid,'Starship  Weapons');
+          $EngLevel = Has_Tech($Fid,'Engines');
+          $Def = 2*($DefLevel*3+12);
+          $Off = 2*($OffLevel+4);
+          $Speed = 2*$EngLevel;
+
+          $Org = Gen_Get_Cond1('Organisations',$B['Organisation']);
+          $Num = $Org['OfficeCount'];
+
+          $Squads = Get_Things_Cond($B['Whose'],"Type=" . $NTypes['Fighter Defences'] . " AND ProjectId=$Bid");
+          $Count = 0;
+          if ($Squads) foreach($Squads as $Tid=>$T) {
+            if ($T['OrigHealth'] < $Def) {
+              $T['CurHealth'] = $Def + $T['CurHealth'] - $T['OrigHealth'];
+              $T['OrigHealth'] = $Def;
+            }
+            $T['Damage'] = $Off;
+            $T['SystemId'] = $Sid;
+            $T['Speed'] = $Speed;
+            $T['WithinSysLoc'] = 1;
+            $T['LinkId'] = 0;
+            Put_Thing($T);
+            $Count++;
+          }
+          if ($Count < $Num) { // New ones
+            while ($Count < $Num) {
+              $Count++;
+              $T = ['Whose'=>$Fid, 'Type'=>$NTypes['Fighter Defences'], 'BuildState'=>3, 'CurHealth'=>$Def, 'OrigHealth'=>$Def, 'ActDamage'=>$Off,
+                'SystemId'=>$Sid, 'WithinSysLoc'=>1, 'Class'=>'Defence Fighter Squadron', 'Name'=>($B['Name']?$B['Name']:"Squadron $Bid") . ":$Count" ,
+                'Evasion'=>40, 'ProjectId'=>$Bid, 'Speed'=>$Speed, 'LinkId'=>0];
+              Put_Thing($T);
+            }
+          }
+          $TotC += $Count;
+        }
+      }
+      echo "$TotC Fighter Defences Squadron have been deployed.<p><h2><a href=Meetings.php?ACTION=Check&S=$Sid>Return to Meetups</a></h2>";
+      dotail();
+
   }
 } else {
   $Bid = ($_REQUEST['id'] ?? $_REQUEST['AutoRefBranches']??0);

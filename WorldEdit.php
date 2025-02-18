@@ -4,11 +4,9 @@
   include_once("ThingLib.php");
   include_once("ProjLib.php");
   include_once("HomesLib.php");
-  include_once("vendor/erusev/parsedown/Parsedown.php");
 
   global $FACTION,$GAMEID;
 
-  $Parsedown = new Parsedown();
   $Fid = 0;
   $xtra = '';
   $NeedDelta = 0;
@@ -127,6 +125,14 @@
        case 'XMilitia2' : // Transfer
          Update_Militia($W,$Dists,$_REQUEST['Whose']);
          echo "<h2>Militia Transfered and Updated</h2>";
+         dotail();
+         break;
+
+       case 'MilitiaDeploy':
+         $TotC = Update_Militia($W,$Dists,0,1);
+         $Home = Get_ProjectHome($W['Home']);
+         $Sid = $Home['SystemId'];
+         echo "$TotC Militia have been deployed.<p><h2><a href=Meetings.php?ACTION=Check&S=$Sid>Return to Meetups</a></h2>";
          dotail();
          break;
 
@@ -273,7 +279,7 @@
   if ($WH) {
     for($i=1;$i<4;$i++) {
       if ($WH["Trait$i"] && ($WH["Trait$i" . "Conceal"] <= $PlanetLevel)) {
-        echo "<tr><td>Trait:<td>" . $P["Trait$i"] . "<td colspan=4>" . $Parsedown->text(stripslashes($P["Trait$i" . "Desc"]));
+        echo "<tr><td>Trait:<td>" . $P["Trait$i"] . "<td colspan=4>" . ParseText($P["Trait$i" . "Desc"]);
       }
     }
   }
