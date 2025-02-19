@@ -764,6 +764,11 @@ function Show_Thing(&$T,$Force=0) {
     $FlexUsed = 0;
     $FlexAvailD = ($Blue?Get_ModulesType($Tid,'Flexible'):0);
     $FlexAvail = ($FlexAvailD?$FlexAvailD['Number']:0);
+    $Mt = [];
+    foreach ($MTNs as &$Mt) {
+      $Lvl = Calc_TechLevel($Fid,$Mt['id']);
+      $Mt['Target'] = $Lvl;
+    }
 
  //   var_dump($BMods);
     $NumMods = count($Mods);

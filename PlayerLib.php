@@ -490,6 +490,7 @@ function Logistics($Fid,&$Things) {
     if (empty($T['Type'])) continue;
     $Props = $TTypes[$T['Type']]['Properties'];
     if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
+      if ($TTypes[$T['Type']]['Prop2'] & THING_ALWAYS_OTHER) continue;
       if ($HasHomeLogistics && ($T['SystemId'] == $Facts[$T['Whose']]['HomeWorld'])) $T['Level'] /=2;
       if ($HomeArmyLogistics && ($Props & THING_HAS_ARMYMODULES) && ($T['SystemId'] == $FactionHome)) {
         continue; // Nocost
