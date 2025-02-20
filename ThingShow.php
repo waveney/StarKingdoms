@@ -764,13 +764,14 @@ function Show_Thing(&$T,$Force=0) {
     $FlexUsed = 0;
     $FlexAvailD = ($Blue?Get_ModulesType($Tid,'Flexible'):0);
     $FlexAvail = ($FlexAvailD?$FlexAvailD['Number']:0);
+
     $Mt = [];
-    foreach ($MTNs as &$Mt) {
-      $Lvl = Calc_TechLevel($Fid,$Mt['id']);
-      $Mt['Target'] = $Lvl;
+    foreach ($MTNs as $Mi=>$Mn) {
+      $Lvl = Calc_TechLevel($Fid,$Mi);
+      $Mt[$Mi] = $Lvl;
     }
 
- //   var_dump($BMods);
+//    var_dump($Mt);
     $NumMods = count($Mods);
     $dc=0;
     $totmodc = 0;
@@ -785,7 +786,8 @@ function Show_Thing(&$T,$Force=0) {
         if (($dc++)%2 == 0)  echo "<tr>";
         echo "<td>" . (isset($MTNs[$D['Type']])? fm_Select($MTNs, $D , 'Type', 1,'',"ModuleType-$did") : "<span class=red>INV:" .
                       fm_Select($MNs, $D , 'Type', 1,'',"ModuleType-$did") . "</span>" )
-                    . (($MTs[$D['Type']]['Leveled']&1) ? fm_number1('Level', $D,'Level', '', ' class=Num3 ',"ModuleLevel-$did") :'<td>') . ' # '
+                      . (($MTs[$D['Type']]['Leveled']&1) ? fm_number1('Level', $D,'Level', '', ' class=Num3 ',"ModuleLevel-$did") .
+                        (($D['Level']<$Mt[$D['Type']])? "<span class=green>(" . $Mt[$D['Type']] . ")</span>":'') :'<td>'). ' # '
                     . fm_number0('', $D,'Number', '',' class=Num3 ',"ModuleNumber-$did")
                     . (($Blue && !empty($BMods[$D['Type']]))? "<span class=Blue>(" . $BMods[$D['Type']]['Number'] . ')</span> ' :'')
                     . "<button id=ModuleRemove-$did onclick=AutoInput('ModuleRemove-$did')>R</button>";
@@ -834,7 +836,8 @@ function Show_Thing(&$T,$Force=0) {
         if (($dc++)%4 == 0)  echo "<tr>";
         echo "<td><b>" . abs($D['Number']). "</b> of ";
         if (isset($MTNs[$D['Type']])) {
-          echo $MTNs[$D['Type']] . (($T['Leveled']&1)? (" (Level " . $D['Level'] . ") ") :"") ;
+          echo $MTNs[$D['Type']] . (($MTs[$D['Type']]['Leveled']&1)? (" (Level " . $D['Level'] . ") ") :"") ;
+          if ($D['Level']<$Mt[$D['Type']]) echo "<span class=green>(" . $Mt[$D['Type']] . ")</span>";
           switch ($MTs[$D['Type']]['Name']) {
             case 'Cargo Space':
               echo " - Capacity: " . $T['Level'];
