@@ -837,7 +837,7 @@ function Show_Thing(&$T,$Force=0) {
         echo "<td><b>" . abs($D['Number']). "</b> of ";
         if (isset($MTNs[$D['Type']])) {
           echo $MTNs[$D['Type']] . (($MTs[$D['Type']]['Leveled']&1)? (" (Level " . $D['Level'] . ") ") :"") ;
-          if ($D['Level']<$Mt[$D['Type']]) echo "<span class=green>(" . $Mt[$D['Type']] . ")</span>";
+          if (($MTs[$D['Type']]['Leveled']&1) && ($D['Level']<$Mt[$D['Type']])) echo "<span class=green>(" . $Mt[$D['Type']] . ")</span>";
           switch ($MTs[$D['Type']]['Name']) {
             case 'Cargo Space':
               echo " - Capacity: " . $T['Level'];
