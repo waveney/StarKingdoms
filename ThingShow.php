@@ -826,6 +826,8 @@ function Show_Thing(&$T,$Force=0) {
       } else if ($tprops & THING_HAS_ARMYMODULES ) {
         echo "<td>Mobility: " . ceil(sprintf('%0.3g',$T['Mobility']));
       }
+      echo fm_number1('To Hit Bonus',$T,'ToHitBonus');
+
 
     } else { // Player Mode
       if ($NumMods) echo "<tr><td rowspan=" . ceil(($NumMods+4)/4) . ">Modules:";
@@ -837,7 +839,7 @@ function Show_Thing(&$T,$Force=0) {
         echo "<td><b>" . abs($D['Number']). "</b> of ";
         if (isset($MTNs[$D['Type']])) {
           echo $MTNs[$D['Type']] . (($MTs[$D['Type']]['Leveled']&1)? (" (Level " . $D['Level'] . ") ") :"") ;
-          if (($MTs[$D['Type']]['Leveled']&1) && ($D['Level']<$Mt[$D['Type']])) echo "<span class=green>(" . $Mt[$D['Type']] . ")</span>";
+          if (($MTs[$D['Type']]['Leveled']&1) && ($D['Level']<$Mt[$D['Type']])) echo " <span class=green>(" . $Mt[$D['Type']] . ")</span>";
           switch ($MTs[$D['Type']]['Name']) {
             case 'Cargo Space':
               echo " - Capacity: " . $T['Level'];
@@ -885,6 +887,7 @@ function Show_Thing(&$T,$Force=0) {
         echo "<td>Mobility: " . ceil(sprintf('%0.3g',$T['Mobility']));
       }
       echo "<td>Stability: " . ceil($T['Stability']);
+      if ($T['ToHitBonus']) echo "<td>To Hit Bonus: " . $T['ToHitBonus'];
 
       if ($T['BuildFlags'] & BUILD_FLAG1) echo "<td style=background:lightpink>Cret-Chath";
     }

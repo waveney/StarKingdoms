@@ -89,7 +89,7 @@ function ForceReport($Sid,$Cat) {
   }
 
   echo "<table border>";
-  echo "<tr><td>What<td>Type<td>Level<td>Evasion<td>Health<td>Attack<td>Speed<td>Actions\n";
+  echo "<tr><td>What<td>Type<td>Level<td>Evasion<td>Health<td>Attack<td>To Hit<td>Speed<td>Actions\n";
   foreach($Things as $T) {
     if ((($Cat == 'S') && ((($TTypes[$T['Type']]['Properties']??0) & 8) != 0)) ||
         (($Cat == 'G') && ((($TTypes[$T['Type']]['Properties']??0) & 0x20) != 0))) {
@@ -105,8 +105,8 @@ function ForceReport($Sid,$Cat) {
         $BD = $Bat = 0;
         $LastF = $T['Whose'];
         $FirePower = 0;
-        $htxt = "<tr><td colspan=7 style='background:" . ($Facts[$LastF]['MapColour']??'Bisque') . "'><h2>" .
-          ($Facts[$LastF]['Name']??'Independant') . "</h2><tr><td colspan=7>";
+        $htxt = "<tr><td colspan=9 style='background:" . ($Facts[$LastF]['MapColour']??'Bisque') . "'><h2>" .
+          ($Facts[$LastF]['Name']??'Independant') . "</h2><tr><td colspan=9>";
         $txt = $Battct = $ftxt = '';
         $txt .= "<br>Damage recieved: <span id=DamTot$Cat$LastF>0</span>";
 
@@ -172,7 +172,7 @@ function ForceReport($Sid,$Cat) {
       $txt .= "<td>" . $TTypes[$T['Type']]['Name'] . "<td>" . $T['Level'] . "<td>" . $T['Evasion'];
       $txt .= "<td><span id=StateOf$Tid>" . $T['CurHealth'] . " / " . $T['OrigHealth'];
       if ($T['ShieldPoints']) $txt .= " (" . $T['CurShield'] . "/" . $T['ShieldPoints'] . ") ";
-      $txt .= "</span><td><span id=Attack$Tid>$BD</span><td>";
+      $txt .= "</span><td><span id=Attack$Tid>$BD</span><td>" . $T['ToHitBonus'] . "<td>";
       if ($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE) {
         if ($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES) {
           $txt .= "Mobility: " . sprintf("%0.3g ",$T['Mobility']);

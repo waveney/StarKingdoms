@@ -69,5 +69,8 @@ it currently lists all ships with their speed, stats etc.  Can it please also li
 297 The new Map trade history is useful, can I request some "turn gating options" 
     to limit what we can see, its not a problem just yet, but I can forsee mine getting very long very quick (Ross)
 298 If you have a branch on someone else's outpost, do you have space eyes in that system?  Ditto for ground branches?
-
+299 Meetups - how hard would it be to have on the meetups screen a flag for each unit to say if they're carrying something or not?  
+    Then we can go into the unit and unload fighters etc.
+300 Not high priority Richard, but ships and detachments will need a new field please - "To Hit Bonus".  This should default to 0 but 
+    be modifiable by specific modules and variants.
 
