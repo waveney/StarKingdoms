@@ -3,6 +3,7 @@ chdir('Schema');
 $skema = `skeema pull`;
 echo $skema . "\n\n";
 chdir('..');
+$Ignore = `git add -A`;
 
 $commits = `git shortlog -s -n`;
 $lines = explode("\n",$commits);

@@ -13,6 +13,7 @@
   global $FACTION,$GAME,$ARMY;
   A_Check('Player');
   $Fid = 0;
+
   if (Access('Player')) {
     if (!$FACTION) {
       if (!Access('GM')) {

@@ -56,6 +56,7 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Formula</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Properties</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Evasion Mod</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>To Hit Mod</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Desc</a>\n";
 
     echo "</thead><tbody>";
@@ -72,7 +73,8 @@
       echo fm_number1("",$MT,'FireOrder','','min=-5 max=10',"FireOrder$i") . fm_number1("",$MT,'FireRate',"",'min=0 max=10',"FireRate$i");
       echo "<td>" . fm_select($Forms,$MT,'Formula',1,'',"Formula$i");
       echo fm_number1("",$MT,'Leveled','','',"Leveled$i");
-      echo fm_number1("",$MT,'EvasionMod','','min=0 max=100',"EvasionMod$i");
+      echo fm_number1("",$MT,'EvasionMod','','min=-100 max=100',"EvasionMod$i");
+      echo fm_number1("",$MT,'ToHitMod','','min=-100 max=100',"ToHitMod$i");
       echo "<td><a href=ModuleEdit.php?id=$i>Desc</a>";
     }
 
@@ -90,7 +92,8 @@
   echo fm_number1("",$MT,'FireOrder',"",'min=-5 max=10',"FireOrder0") . fm_number1("",$MT,'FireRate',"",'min=0 max=10',"FireRate0");
   echo "<td>" . fm_select($Forms,$MT,'Formula',1,'',"Formula0");
   echo fm_number1("",$MT,'Leveled','','min=0 max=100',"Leveled0");
-  echo fm_number1("",$MT,'EvasionMod','','min=0 max=100',"EvasionMod0");
+  echo fm_number1("",$MT,'EvasionMod','','min=-100 max=100',"EvasionMod0");
+  echo fm_number1("",$MT,'ToHitMod','','min=-100 max=100',"ToHitMod0");
   echo "</tbody></table></div>\n";
 
   echo "<h2><input type=submit name=Update value=Update></h2>";

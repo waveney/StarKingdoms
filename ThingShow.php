@@ -700,7 +700,7 @@ function Show_Thing(&$T,$Force=0) {
     }
 
     $Resc =0;
-    $BD = Calc_Damage($T,$Resc);
+    [$BD,$ToHit] = Calc_Damage($T,$Resc);
     Calc_Evasion($T);
     if ($Resc) {
       echo "<td>Basic Damage: $BD - There are other weapons";
@@ -826,7 +826,9 @@ function Show_Thing(&$T,$Force=0) {
       } else if ($tprops & THING_HAS_ARMYMODULES ) {
         echo "<td>Mobility: " . ceil(sprintf('%0.3g',$T['Mobility']));
       }
-      echo fm_number1('To Hit Bonus',$T,'ToHitBonus');
+      // echo fm_number1('To Hit Bonus',$T,'ToHitBonus');
+      $T['ToHitBonus'] = $ToHit;
+      if ($ToHit) echo "<td>To Hit: $ToHit";
 
 
     } else { // Player Mode

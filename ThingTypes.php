@@ -69,7 +69,7 @@
       echo fm_notby($T,$i,$AllG,':');
       echo fm_hex1('',$T,'Properties','','',"Properties:$i");
       echo fm_hex1('',$T,'Prop2','','',"Prop2:$i");
-      echo fm_text1("",$T,'Gate',1,'','',"Gate$i");
+      echo fm_text1("",$T,'Gate',1,'','',"Gate:$i");
       echo fm_number1('',$T,'Eyes','','min=0 max=100',"Eyes:$i");
       echo fm_number1('',$T,'SeenBy','','min=0 max=100',"SeenBy:$i");
       echo fm_number1('',$T,'MaxLvl','','min=0 max=100',"MaxLvl:$i");

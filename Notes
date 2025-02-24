@@ -71,6 +71,4 @@ it currently lists all ships with their speed, stats etc.  Can it please also li
 298 If you have a branch on someone else's outpost, do you have space eyes in that system?  Ditto for ground branches?
 299 Meetups - how hard would it be to have on the meetups screen a flag for each unit to say if they're carrying something or not?  
     Then we can go into the unit and unload fighters etc.
-300 Not high priority Richard, but ships and detachments will need a new field please - "To Hit Bonus".  This should default to 0 but 
-    be modifiable by specific modules and variants.
-
+301  targeting computers module yesterday, will I be able to edit that module to provide a +5 boost to "To hit" in the same way Point Defences adds to Evasion?

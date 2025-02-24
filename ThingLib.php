@@ -419,17 +419,19 @@ function Calc_Health(&$T,$KeepTechLvl=0,$Other=0) {
 
 function Calc_Damage(&$T,&$Rescat) {
 
-  if ($T['ActDamage']) return $T['ActDamage'];
+  if ($T['ActDamage']??0) return $T['ActDamage'];
   if ($T['Type'] ==20) return 8; // Militia
   $Dam = 0;
   $Ms = Get_Modules($T['id']);
   $Mts = Get_ModuleTypes();
+  $ToHit = 0;
 
   $Rescat = 0;
   foreach ($Mts as $mt) if ($mt['DefWep'] == 2 ) {
     foreach ($Ms as $M) if (($Mts[$M['Type']]['Name'] == $mt['Name']) && ($M['Number'] > 0)) {
       $dam = ($M['Level'] > 0?$M['Number'] * Mod_ValueSimple($M['Level'],$M['Type'],$Rescat):0);
       $Dam += $dam;
+      $ToHit += $M['Number']*$Mts[$M['Type']]['ToHitMod'];
     }
   }
 
@@ -445,7 +447,7 @@ function Calc_Damage(&$T,&$Rescat) {
     }
   }
 
-  return $Dam;
+  return [$Dam,$ToHit];
 }
 
 function Calc_TechLevel($Fid,$MType) {
@@ -991,7 +993,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
 
       if ($GM) {
         $Resc =0;
-        $BD = Calc_Damage($T,$Resc);
+        [$BD,$ToHit] = Calc_Damage($T,$Resc);
 
         $txt .= " (";
         if ($TTprops & THING_HAS_HEALTH) {
@@ -999,6 +1001,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
           $txt .= "Health: " . $T['CurHealth'] . "/" . $T['OrigHealth'] . ", ";
         }
         if ($BD) $txt .= "Dam: " . $BD . ($Resc? "<b>*</b>":'') . ", ";
+        if ($ToHit) $txt .= "ToHit: $ToHit, ";
         if ($T['NebSensors']) $txt .= "N, ";
         $txt .= ")";
       } else {
