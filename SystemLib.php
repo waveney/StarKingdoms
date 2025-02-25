@@ -844,6 +844,7 @@ function Record_PlanetScan(&$FS) {
   $FS['PlanetSurvey'] = PlanetScanBlob($FS['SystemId'],$FS['FactionId'],$FS['SpaceScan'],$FS['PlanetScan'],$SLocs);
   $FS['PlanetTurn'] = $GAME['Turn'];
   Put_FactionSystem($FS);
+  return $FS['PlanetSurvey'];
 }
 
 function SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
@@ -958,5 +959,6 @@ function Record_SpaceScan(&$FS) {
   $FS['SpaceSurvey'] = SpaceScanBlob($FS['SystemId'],$FS['FactionId'],$FS['SpaceScan'],$FS['PlanetScan'],$SLocs);
   $FS['SpaceTurn'] = $GAME['Turn'];
   Put_FactionSystem($FS);
+  return $FS['SpaceSurvey'];
 }
 

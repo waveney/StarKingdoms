@@ -12,7 +12,8 @@ $PlayerStates = array_flip($PlayerState);
 $FoodTypes = ['Omnivore','Herbivore','Carnivore'];
 
 $Currencies = ['Credits','Physics Science Points','Engineering Science Points','Xenology Science Points','General Science Points'];
-$Relations = [9=>['Allied','lightgreen'],7=>['Friendly','lightyellow'],5=>['Neutral','lightblue'],3=>['Wary','Orange'],1=>['Hostile','Red']];
+$Relations = [9=>['Allied','lightgreen'],7=>['Friendly','lightyellow'],5=>['Neutral','lightblue'],3=>['Wary','Orange'],1=>['Hostile','Red'],
+  0=>['Bug','Purple']];
 
 function CheckFaction($Prog='Player',$Fid=0) {
   if (!Access('Player') && !Access('GM')) {
@@ -585,7 +586,7 @@ function Income_Calc($Fid) {
       $EconVal += $ECon;
     }
 
-    $OtherPTSBranches = Gen_Get_Cond('Branches',"Whose!=$Fid AND HostType!=3 AND HostId=$Wid AND Type=" . ($NameBType['Trading Station']??0));
+    $OtherPTSBranches = Gen_Get_Cond('Branches',"Whose!=$Fid AND HostType!=3 AND HostId=" . $W['Thingid'] . " AND Type=" . ($NameBType['Trading Station']??0));
     if ($OtherPTSBranches) {
       $OtherTrade = 0;
       foreach( $OtherPTSBranches as $B) {
@@ -678,7 +679,6 @@ function Income_Calc($Fid) {
       $EconVal += $MyTrade;
     }
   }
-
 
   $OtherTs = Get_Things_Cond(0,"Type=17 AND OtherFaction=$Fid AND BuildState=3");
   foreach($OtherTs as $OT) {

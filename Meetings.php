@@ -381,9 +381,11 @@ function ForceReport($Sid,$Cat) {
       foreach ($Fs as $F1=>$FS1) {
         if ($F1 == 0) continue;
         $R1 = $Facts[$F1]['DefaultRelations'];
+        if ($R1 == 0) $R1 = 5;
         foreach($Fs as $F2=>$FS2) {
           if ($F1 == $F2) continue;
           $R2 = $Facts[$F2]['DefaultRelations'];
+          if ($R2 == 0) $R2 = 5;
           if (!isset($FactFact[$F1][$F2])) {
             $FF = Gen_Get_Cond1('FactionFaction',"FactionId1=$F1 AND FactionId2=$F2");
             if ($FF) {

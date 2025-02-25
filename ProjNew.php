@@ -662,7 +662,7 @@
           if ($FC['Props'] & 0xf000) {
             $OThings = Get_Things_Cond($FC['FactionId1']," SystemId=$HSys AND ( BuildState=3 OR BuildState=2) AND Level<=$MaxLvl "); // Warp Gates
             foreach ($OThings as $T) {
-              if ($TTs[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) {
+              if (($TTs[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES)  && !($TTs[$T['Type']]['Prop2'] & THING_ALWAYS_OTHER) ) {
                 $RepShips[$T['id']] = $T['Name'] . " - level " . $T['Level'] . " (" . $Factions[$T['Whose']]['Name'] . ")";
                 if ($T['Level'] == 1) $Level1++;
                 $Count++;
@@ -748,7 +748,7 @@
       $Level1 = 0;
       $Count = 0;
       foreach ($Things as $T) {
-        if ($TTs[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES) {
+        if (($TTs[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES) && !($TTs[$T['Type']]['Prop2'] & THING_ALWAYS_OTHER) ) {
           if ($T['WithinSysLoc'] == $HLoc ) {
             $RepShips[$T['id']] = $T['Name'] . " - level " . $T['Level'];
             if ($T['Level'] == 1) $Level1++;

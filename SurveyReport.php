@@ -72,13 +72,11 @@
     $PlanBlob = $FS['PlanetSurvey'];
 
     if ($REDO || (empty($SpaceBlob) && $SpaceLevel>=0)) {
-      Record_SpaceScan($FS);
-      $SpaceBlob = $FS['SpaceSurvey'];
+      $SpaceBlob = Record_SpaceScan($FS);
     }
 
     if ($REDO || (empty($PlanBlob) && $PlanetLevel>0)) {
-      Record_PlanetScan($FS);
-      $PlanBlob = $FS['PlanetSurvey'];
+      $PlanBlob = Record_PlanetScan($FS);
     }
 
   } else { // GM access

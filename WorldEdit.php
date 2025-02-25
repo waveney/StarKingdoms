@@ -260,7 +260,7 @@
       foreach ($Branches as $bi=>$B) if (($B['Whose']== $Fid) || (($BTypes[$B['Type']]['Props']&1)==0)) { $Show = 1; break;}
     }
     if ($Show) {
-      echo "<tr><td>Branches:<td>";
+      echo "<tr><td>Branches:<td colspan=5>";
       foreach ($Branches as $bi=>$B) {
  //       var_dump($B);
         if ($GM || ($B['Whose']== $Fid) || (($BTypes[$B['Type']]['Props']&1)==0)) {

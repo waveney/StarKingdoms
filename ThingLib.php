@@ -427,12 +427,14 @@ function Calc_Damage(&$T,&$Rescat) {
   $ToHit = 0;
 
   $Rescat = 0;
-  foreach ($Mts as $mt) if ($mt['DefWep'] == 2 ) {
-    foreach ($Ms as $M) if (($Mts[$M['Type']]['Name'] == $mt['Name']) && ($M['Number'] > 0)) {
-      $dam = ($M['Level'] > 0?$M['Number'] * Mod_ValueSimple($M['Level'],$M['Type'],$Rescat):0);
+  foreach ($Mts as $mti=>$mt) {
+    if (!isset($Ms[$mti])) continue;
+    $M = $Ms[$mti];
+    if ($mt['DefWep'] == 2 ) {
+      $dam = ($M['Level'] > 0?$M['Number'] * Mod_ValueSimple($M['Level'],$mti,$Rescat):0);
       $Dam += $dam;
-      $ToHit += $M['Number']*$Mts[$M['Type']]['ToHitMod'];
     }
+    $ToHit += $M['Number']*$mt['ToHitMod'];
   }
 
   if ($T['Variant']??0) {
@@ -618,10 +620,8 @@ function Calc_Evasion(&$T) {
   $TTypes = Get_ThingTypes();
   if (!isset($TTypes[$T['Type']])) return 0;
   $MMs = Get_Modules($T['id']);
-
   $ev = max(0,(5-$T['Level'])*10);
   $ev += $TTypes[$T['Type']]['EvasionMod'];
-
   foreach ($MMs as $M) {
     $ev += $MTypes[$M['Type']]['EvasionMod']*$M['Number'];
   }
@@ -638,7 +638,6 @@ function Calc_Evasion(&$T) {
     }
     $T['TargetEvasion'] = $V['TargetEvasion']??0; // Actual Number calculated when in battle
   }
-
   $T['Evasion'] = $ev;
 }
 
@@ -689,6 +688,9 @@ function RefitRepair(&$T,$Save=1,$KeepTechLvl=0,$Other=0) {
 //var_dump($Health);
   Calc_Scanners($T);
   Calc_Evasion($T);
+  $R = 0;
+  [$DM,$ToHit] = Calc_Damage($T,$R);
+  $T['ToHitBonus'] = $ToHit;
 //  var_dump($Health,$Sld);
   $T['OrigHealth'] = $Health;
   $T['ShieldPoints'] = $Sld;
@@ -1356,6 +1358,30 @@ function Thing_Delete($tid) {
       $Brans = Gen_Get_Cond('Branches',"HostType=3 AND HostId=$tid");
       if ($Brans) foreach ($Brans as $Bid=>$B) {
         db_delete('Branches',$Bid);
+      }
+
+      // if no planets/moons controlled by Faction, remove control
+      $N = Get_System($T['SystemId']);
+      if ($N['Control'] == $T['Whose']) {
+        $Ps = Get_Planets($T['SystemId']);
+        $Cont = 0;
+        foreach ($Ps as $P) {
+          if ($P['Control'] == $T['Whose']) {
+            $Cont = 1;
+            break;
+          }
+          $Ms = Get_Moons($P['id']);
+          foreach ($Ms as $M) {
+            if ($M['Control'] == $T['Whose']) {
+              $Cont = 1;
+              break 2;
+            }
+          }
+        }
+        if (!$Cont) {
+          $N['Control'] = 0;
+          Put_System($N);
+        }
       }
       break;
 

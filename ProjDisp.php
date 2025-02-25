@@ -231,7 +231,7 @@
           $ProgN = $pc[0];
           $Name = $_REQUEST['PostItTxt'];
           if (empty($Name)) {
-            echo "<h2 class=Err>No message given</h2>";
+            echo "<h2 class=Err>No Postit Message given</h2>";
             $Valid = 0;
             break;
           }

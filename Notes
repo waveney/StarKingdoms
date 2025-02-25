@@ -55,13 +55,8 @@ NEW GAME FEATURES & BUGS
 224 Meetups - armies on Different Planets
 263 Can't remember if we put it on the todo list last time - but on the system page you get to from "faction meetups", 
 it currently lists all ships with their speed, stats etc.  Can it please also list their current "action"?  (E.g. survey, construction, etc)
-264   Move  Link VGW22PCN ?
 274 Rules Queries Feb 10 - 22:01
-278 Judith transfer HTX from Ross
-279 Bar - VGW
-280 Ross 11/2 @16:57
 285 Easy ways to stop/pause Projects/operations/instructions
-287 Ross 13/2 @10:15 (repeat)
 288 What about an "Organisation specific map" that shows the locations of branches/offices in one colour, then the effective range from them 
     in different colours so you can see that, say, range 1 is yellow, range 2 is orange, range 3 is dark orange and range 4 is red or something like that?
 289 Office New Org - check how many
@@ -71,16 +66,10 @@ it currently lists all ships with their speed, stats etc.  Can it please also li
 298 If you have a branch on someone else's outpost, do you have space eyes in that system?  Ditto for ground branches?
 299 Meetups - how hard would it be to have on the meetups screen a flag for each unit to say if they're carrying something or not?  
     Then we can go into the unit and unload fighters etc.
-301 targeting computers module yesterday, will I be able to edit that module to provide a +5 boost to "To hit" in the same way Point Defences adds to Evasion?
-302 Space Faurna - hostile
-303 Why no Lizard fighters in HTX
-306 Ross 24/2 @21:01
-307 Kage 24/2 @21:08, & 21:19 - Asteroid belt
-308 destroy outpost  = ownership change
-309 bar-asc 24/2 @21:54 / Ross @21:56
-312
-
-
+306 Ross 24/2 @21:01 - trade from someelse's trade branch on home world
+312 Can the Tables on the various "ProjNew" pages get some CSS added so that they default to a move visually digestible form. (The Academy in particularl)
+    Consistency with the Ops pages would be nice there, agreed. The improvement to Ops was great.
+314
 
 [Mon Feb 24 20:01:16.023839 2025] [proxy_fcgi:error] [pid 2867273:tid 140695662679808] [client 86.26.173.150:0] AH01071: Got error 'PHP message: PHP Warning:  
 Undefined array key 0 in /var/www/vhosts/starkingdoms.uk/httpdocs/OrgLib.php on line 43; PHP message: PHP Warning:  
