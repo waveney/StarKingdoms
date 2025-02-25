@@ -901,6 +901,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
     if ($T['Whose'] != $Fid) {
       include_once('OrgLib.php');
       $Op = Get_Operation($T['ProjectId']);
+      if (!$Op) return '';
       if (!$OpProps) $OpProps = Get_OpTypes();
       if (($OpProps[$Op['Type']]['TeamProps'] & TEAM_HIDDEN) && !$GM) return '';
 

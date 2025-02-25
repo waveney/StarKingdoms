@@ -538,6 +538,7 @@ global $FACTION;
       $T = Get_Thing($tid);
       Check_MyThing($T,$Fid);
       $RDam = $Dam = $_REQUEST['Damage'];
+      $T['Conflict'] = 1;
       echo "<h2>" . $T['Name'];
       if ($T['CurShield']) {
         $shldD = min($T['CurShield'],$Dam);

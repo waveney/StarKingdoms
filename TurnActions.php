@@ -844,8 +844,8 @@ function MilitiaArmyRecovery() {
   }
 
   foreach ($Things as $T) {
+    if ($T['Conflict']) continue;
     if ($TTypes[$T['Type']]['Prop2'] & THING_HAS_RECOVERY) {
-
       // if not in conflit, recovery some
       $Conflict = 0;
       $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
@@ -905,13 +905,14 @@ function MilitiaArmyRecovery() {
       }
     }
 
-    if ($Facts[$T['Whose']]['Organic']) {
+    if ($T['Whose'] && ($Facts[$T['Whose']]['Organic']??0)) {
+      if ($T['Conflict']) continue;
       $Conflict = 0;
       $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
       if ($Conf) $Conflict = $Conf[0]['Conflict'];
       if (!$Conflict) {
         $Rec = intdiv($T['OrigHealth'],10);
-        $T['CurHealth'] = max($T['OrigHealth'], $T['CurHealth']+$Rec);
+        $T['CurHealth'] = min($T['OrigHealth'], $T['CurHealth']+$Rec);
         Put_Thing($T);
         if ($T['Whose']) TurnLog($T['Whose'],$T['Name'] . " recovered $Rec health",$T);
         GMLog("<a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . ' a ' . $TTypes[$T['Type']]['Name'] . "</a> recovered $Rec health");
@@ -961,6 +962,7 @@ function TidyUps() {
   $ThingNames = array_flip($TNames);
   $WormStab = $ThingNames['Wormhole Stabiliser'];
   $res = $db->query("UPDATE Things SET LinkId=0, LinkPay=0, LinkCost=0, Retreat=0 WHERE LinkId>0 AND GameId=$GAMEID");
+  $res = $db->query("UPDATE Things SET Conflict=0 WHERE Conflict>0 AND GameId=$GAMEID");
   $res = $db->query("UPDATE Operations SET TurnState=0 WHERE GameId=$GAMEID");
 
   // Check for lid <-1...

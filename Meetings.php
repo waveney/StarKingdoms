@@ -165,7 +165,7 @@ function ForceReport($Sid,$Cat) {
         }
       }
       $Resc = 0;
-      $BD = Calc_Damage($T,$Resc);
+      [$BD,$ToHit] = Calc_Damage($T,$Resc);
       $tprops = $ThingProps[$T['Type']];
 
       $txt .= fm_hidden("OrigData$Tid",implode(":",[$T['CurHealth'], $T['OrigHealth'],0,$T['CurShield'],$T['ShieldPoints']]));
@@ -257,6 +257,7 @@ function ForceReport($Sid,$Cat) {
 //var_dump($Tid,$RN,$RV);
           $T = Get_Thing($Tid);
           $RDam = $Dam = $RV;
+          $T['Conflict'] = 1;
           if (($IgnoreShield == 0) && $T['CurShield']) {
             $shldD = min($T['CurShield'],$Dam);
             $T['CurShield'] = $T['CurShield'] - $shldD;
@@ -382,13 +383,20 @@ function ForceReport($Sid,$Cat) {
         foreach($Fs as $F2=>$FS2) {
           if ($F1 == $F2) continue;
           if ($F2 == 0) {
-            $R = $Facts[$F1]['DefaultRelations'];
-            $FactFact[$F1][0] = ($R?$R:5);
-          } else if (!isset($FactFact[$F1][$F2])) {
-            $FF = Gen_Get_Cond1('FactionFaction',"FactionId1=$F1 AND FactionId2=$F2");
-            $FactFact[$F1][$F2] = (($FF['Relationship']??0)?$FF['Relationship']:5);
+            $R1 = $Facts[$F1]['DefaultRelations'];
+            $R2 = $Facts[$F2]['DefaultRelations'];
+            $FactFact[$F1][0] = $FactFact[$F2][0] = min(($R1?$R1:5),($R2?$R2:5));
+          } else {
+            if (!isset($FactFact[$F1][$F2])) {
+              $FF = Gen_Get_Cond1('FactionFaction',"FactionId1=$F1 AND FactionId2=$F2");
+              $FactFact[$F1][$F2] = (($FF['Relationship']??0)?$FF['Relationship']:5);
+            }
+            if (!isset($FactFact[$F2][$F1])) {
+              $FF = Gen_Get_Cond1('FactionFaction',"FactionId1=$F2 AND FactionId2=$F1");
+              $FactFact[$F2][$F1] = (($FF['Relationship']??0)?$FF['Relationship']:5);
+            }
           }
-          $React = min($React,$FactFact[$F1][$F2]);
+          $React = min($React,$FactFact[$F1][$F2],$FactFact[$F2][$F1]);
         }
       }
 

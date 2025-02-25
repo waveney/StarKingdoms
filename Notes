@@ -71,4 +71,25 @@ it currently lists all ships with their speed, stats etc.  Can it please also li
 298 If you have a branch on someone else's outpost, do you have space eyes in that system?  Ditto for ground branches?
 299 Meetups - how hard would it be to have on the meetups screen a flag for each unit to say if they're carrying something or not?  
     Then we can go into the unit and unload fighters etc.
-301  targeting computers module yesterday, will I be able to edit that module to provide a +5 boost to "To hit" in the same way Point Defences adds to Evasion?
+301 targeting computers module yesterday, will I be able to edit that module to provide a +5 boost to "To hit" in the same way Point Defences adds to Evasion?
+302 Space Faurna - hostile
+303 Why no Lizard fighters in HTX
+306 Ross 24/2 @21:01
+307 Kage 24/2 @21:08, & 21:19 - Asteroid belt
+308 destroy outpost  = ownership change
+309 bar-asc 24/2 @21:54 / Ross @21:56
+312
+
+
+
+[Mon Feb 24 20:01:16.023839 2025] [proxy_fcgi:error] [pid 2867273:tid 140695662679808] [client 86.26.173.150:0] AH01071: Got error 'PHP message: PHP Warning:  
+Undefined array key 0 in /var/www/vhosts/starkingdoms.uk/httpdocs/OrgLib.php on line 43; PHP message: PHP Warning:  
+Trying to access array offset on value of type null in /var/www/vhosts/starkingdoms.uk/httpdocs/OrgLib.php on line 43',
+ referer: https://starkingdoms.uk/Staff.php
+ 
+
+ 
+
+   
+
+
