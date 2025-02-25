@@ -51,8 +51,10 @@ function Recalc_Offices() { // Recount offices for each org
     if (isset($Orgs[$Org])) {
 //      if (!isset($Orgs[$Org]['OfficeCount'])) var_dump($Of);
       $Orgs[$Org]['OfficeCount']+= max($Of['Number'],1);
-      if ($Of['OrgType'] != $Orgs[$Org]['OrgType']) {
+      if (($Of['OrgType'] != $Orgs[$Org]['OrgType']) || ($Of['OrgType2'] != $Orgs[$Org]['OrgType2'])) {
         $Of['OrgType'] = $Orgs[$Org]['OrgType'];
+        $Of['OrgType2'] = $Orgs[$Org]['OrgType2'];
+
         Gen_Put('Offices',$Of);
       }
     } else {

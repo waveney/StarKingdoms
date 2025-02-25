@@ -280,7 +280,10 @@ echo "<tr><td>Whose:<td>" . fm_select($FactNames,$B,'Whose');
 echo "<tr><td>Branch Type:<td>" . fm_select($BTypeNames,$B,'Type');
 echo "<tr>" . fm_text('Name (not yet used)',$B,'Name');
 echo "<tr><td>Organisation:<td>" . fm_select($OrgList,$B,'Organisation',1);
-if ($Org) echo "<tr><td>Org is type:<td>" . ($OrgTypes[$Org['OrgType']]['Name']??'Unknown') . "<td>Refresh page if Org changed";
+if ($Org) {
+  echo "<tr><td>Org is type:<td>" . ($OrgTypes[$Org['OrgType']]['Name']??'Unknown') . "<td>Refresh page if Org changed";
+  if ($Org['OrgType2']) echo "<tr><td>Org also type:<td>" . ($OrgTypes[$Org['OrgType2']]['Name']??'') . "<td>Refresh page if Org changed";
+}
 echo "<tr><td>Location:<td>$Where<td>Only changeable by Richard";
 echo "</table>";
 

@@ -73,14 +73,14 @@ function ForceReport($Sid,$Cat) {
        " ($HomeType)" :'') . "</h2>\n";
   if ($Cat =='G' && $Wid) {
     echo "<h2><a href=WorldEdit.php?ACTION=MilitiaDeploy&id=$Wid>Deploy Militia</a></h2>";
-    $MilOrg = Gen_Get_Cond('Branches',"HostType=" . $H['ThingType'] . " AND HostId=" . $H['ThingId'] . " AND OrgType=3");
+    $MilOrg = Gen_Get_Cond('Branches',"HostType=" . $H['ThingType'] . " AND HostId=" . $H['ThingId'] . " AND (OrgType=3 OR OrgType2=3)");
     if ($MilOrg) {
       echo "<h2><a href=BranchEdit.php?Action=SPAWN_HS&Hid=" . $H['ThingId'] . "&Sid=$Sid>Deploy Heavy Security</a></h2>";
     }
   } else if ($Cat == 'S') {
     $Outpost = Outpost_In($Sid,0,0);
     if ($Outpost) {
-      $MilOrg = Gen_Get_Cond('Branches',"HostType=3 AND HostId=" . $Outpost['id'] . " AND OrgType=3");
+      $MilOrg = Gen_Get_Cond('Branches',"HostType=3 AND HostId=" . $Outpost['id'] . " AND (OrgType=3 OR OrgType2=3)");
       if ($MilOrg) {
         echo "<h2><a href=BranchEdit.php?Action=SPAWN_FS&Oid=" . $Outpost['id'] . "&Sid=$Sid>Deploy Defensive Fighters</a></h2>";
       }
@@ -380,20 +380,24 @@ function ForceReport($Sid,$Cat) {
       $React = 9;
       foreach ($Fs as $F1=>$FS1) {
         if ($F1 == 0) continue;
+        $R1 = $Facts[$F1]['DefaultRelations'];
         foreach($Fs as $F2=>$FS2) {
           if ($F1 == $F2) continue;
-          if ($F2 == 0) {
-            $R1 = $Facts[$F1]['DefaultRelations'];
-            $R2 = $Facts[$F2]['DefaultRelations'];
-            $FactFact[$F1][0] = $FactFact[$F2][0] = min(($R1?$R1:5),($R2?$R2:5));
-          } else {
-            if (!isset($FactFact[$F1][$F2])) {
-              $FF = Gen_Get_Cond1('FactionFaction',"FactionId1=$F1 AND FactionId2=$F2");
+          $R2 = $Facts[$F2]['DefaultRelations'];
+          if (!isset($FactFact[$F1][$F2])) {
+            $FF = Gen_Get_Cond1('FactionFaction',"FactionId1=$F1 AND FactionId2=$F2");
+            if ($FF) {
               $FactFact[$F1][$F2] = (($FF['Relationship']??0)?$FF['Relationship']:5);
+            } else {
+              $FactFact[$F1][$F2] = $R1;
             }
-            if (!isset($FactFact[$F2][$F1])) {
-              $FF = Gen_Get_Cond1('FactionFaction',"FactionId1=$F2 AND FactionId2=$F1");
+          }
+          if (!isset($FactFact[$F2][$F1])) {
+            $FF = Gen_Get_Cond1('FactionFaction',"FactionId1=$F2 AND FactionId2=$F1");
+            if ($FF) {
               $FactFact[$F2][$F1] = (($FF['Relationship']??0)?$FF['Relationship']:5);
+            } else {
+              $FactFact[$F2][$F1] = $R2;
             }
           }
           $React = min($React,$FactFact[$F1][$F2],$FactFact[$F2][$F1]);
