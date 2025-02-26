@@ -380,7 +380,7 @@ function WhatCanBeSeenBy($Fid,$Mode=0) {
       continue 2;
     }
     if (!$Sid) continue;
-    $Places[$Sid] = (empty($Places[$Sid])? 8 : ($Places[$Sid] | 8));
+    $Places[$Sid] = 15; // See all -> old code for on planet -> (empty($Places[$Sid])? 15 : ($Places[$Sid] | 8));
   }
 
   foreach ($SRefs as $Sid=>$Ref) {

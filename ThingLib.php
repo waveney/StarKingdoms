@@ -1077,7 +1077,7 @@ function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0,$Mode=0) {
 //if ($Sid == 4) var_dump ($Things); echo "XX<p>";
     $N = Get_System($Sid);
     if ($heading) {
-       $Col = 'White';
+       $Col = Feature('DefaultSeeCol','White');
        if ($N['Control']) {
          $Fac = Get_Faction($N['Control']);
          $Col = $Fac['MapColour'];
