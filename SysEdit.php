@@ -264,6 +264,11 @@ echo "No tds<p>";
       Put_System($N);
       break;
 
+    case 'Update Control':
+      System_Owner($Sysid);
+      $N = Get_System($Sysid);
+      break;
+
     default:
       break;
     }

@@ -848,16 +848,14 @@ function InstructionsComplete() {
     switch ($Instr) {
       case 'Colonise':
         $P = Get_Planet($T['Spare1']);
-        if ($N['Control'] != $Who) {
-          if ($N['Control'] == 0) {
-            $N['Control'] = $Who;
-            $FS = Get_FactionSystemFS($Who,$T['SystemId']);
-            if (!empty($FS['Name'])) $N['Name'] = $FS['Name'];
-            Put_System($N);
-          }
-        }
         $P['Control'] = $Who;
         Put_Planet($P);
+
+        $Control = System_Owner($P['SystemId']);
+        if ($Control) {
+          TurnLog($T['Whose'], $Control);
+          GMLog($Control);
+        }
 
         $D = ['HostType' =>1, 'HostId'=> $P['id'], 'Type'=> $T['Dist1'], 'Number'=>1, 'GameId'=>$GAME['id'], 'TurnStart'=>$GAME['Turn']];
         //      if ($D['Type'] == 0) $D['Type'] = 1;
@@ -893,8 +891,7 @@ function InstructionsComplete() {
         $NewHome = ['ThingType'=>1, 'ThingId'=>$P['id'], 'Whose'=>$Who, 'SystemId'=>$P['SystemId'], 'WithinSysLoc'=>$T['WithinSysLoc'],
           'EconomyFactor'=>100, 'GameId'=>$GAMEID ];
         Put_ProjectHome($NewHome);
-        $NewWorld = ['FactionId'=>$Who, 'Home'=>$NewHome['id'], 'Minerals'=>$P['Minerals'],'ThingType'=>1, 'ThingId'=>$P['id'],
-          'GameId'=>$GAMEID ];
+        $NewWorld = ['FactionId'=>$Who, 'Home'=>$NewHome['id'], 'Minerals'=>$P['Minerals'],'ThingType'=>1, 'ThingId'=>$P['id'], 'GameId'=>$GAMEID ];
         Put_World($NewWorld);
 
         // Social Principles

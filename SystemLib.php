@@ -342,6 +342,7 @@ function Show_System(&$N,$Mode=0) {
     }
     echo "<input type=submit name=ACTION value='Redo Moons' class=Button>";
     echo "<input type=submit name=ACTION value='Delete System' class=Button>";
+    echo fm_submit("ACTION",'Update Control');
     echo "<input type=submit name=ACTION value='Change Control To' class=Button>";
       echo fm_select($FactNames,$N,'NewControl');
     echo "</form></center>";
@@ -961,4 +962,61 @@ function Record_SpaceScan(&$FS) {
   Put_FactionSystem($FS);
   return $FS['SpaceSurvey'];
 }
+
+function System_Owner($Sid) {
+  // Verifies/Sets System Owner - Called when Colony, Outpost created/destroyed, as needed from System by GM
+
+  //var_dump('Called $Sid');
+  $N = Get_System($Sid);
+  $Ps = Get_Planets($Sid);
+  $Facts = Get_Factions();
+
+  $Cont = 0;
+  foreach ($Ps as $P) {
+    if ($P['Control']) {
+      if ($P['Control'] != $N['Control']) {
+        $N['Control'] = $P['Control'];
+        Put_System($N);
+  //      var_dump("Change 1 to " .$N['Control'] );
+        return "Control of " . $N['Ref'] . " now " . $Facts[$N['Control']]['Name'];
+      }
+  //    var_dump("No change 2");
+      return;
+    }
+    $Ms = Get_Moons($P['id']);
+    foreach ($Ms as $M) {
+      if ($M['Control'] != $N['Control']) {
+        $N['Control'] = $M['Control'];
+        Put_System($N);
+   //     var_dump("Change 3 to " .$N['Control'] );
+        return "Control of " . $N['Ref'] . " now " . $Facts[$N['Control']]['Name'];
+      }
+  //    var_dump("No change 4");
+      return;
+    }
+  }
+//var_dump("Checking for outpost");
+  $TTypes = Get_ThingTypes();
+  $Outpost = Gen_Get_Cond1('Things',"Type=" . array_flip(NamesList( $TTypes))['Outpost'] . " AND SystemId=$Sid AND BuildState=3");
+  if ($Outpost) {
+    if ($Outpost['Whose'] != $N['Control']) {
+      $N['Control'] = $Outpost['Whose'];
+      Put_System($N);
+ //     var_dump("Change 5 to " .$N['Control'] );
+      return "Control of " . $N['Ref'] . " now " . $Facts[$N['Control']]['Name'];
+    }
+//    var_dump("No change 6");
+    return;
+  }
+  if ($N['Control']) {
+    $N['Control'] = 0;
+    Put_System($N);
+//    var_dump("Change 7 to None " );
+
+    return "Control of " . $N['Ref'] . " now none";
+  }
+ // var_dump("No change 8");
+
+}
+
 

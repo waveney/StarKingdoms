@@ -1360,28 +1360,10 @@ function Thing_Delete($tid) {
         db_delete('Branches',$Bid);
       }
 
-      // if no planets/moons controlled by Faction, remove control
-      $N = Get_System($T['SystemId']);
-      if ($N['Control'] == $T['Whose']) {
-        $Ps = Get_Planets($T['SystemId']);
-        $Cont = 0;
-        foreach ($Ps as $P) {
-          if ($P['Control'] == $T['Whose']) {
-            $Cont = 1;
-            break;
-          }
-          $Ms = Get_Moons($P['id']);
-          foreach ($Ms as $M) {
-            if ($M['Control'] == $T['Whose']) {
-              $Cont = 1;
-              break 2;
-            }
-          }
-        }
-        if (!$Cont) {
-          $N['Control'] = 0;
-          Put_System($N);
-        }
+      $Control = System_Owner($T['SystemId']);
+      if ($Control) {
+        TurnLog($T['Whose'], $Control);
+        GMLog($Control);
       }
       break;
 

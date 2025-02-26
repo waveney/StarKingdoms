@@ -282,13 +282,12 @@ function Outpost_In($Sid,$Who,$Create=1) {
   } else if ($Create) {
     $OutP = ['Type'=>$TTNames['Outpost'],'SystemId'=>$Sid,'Whose'=>$Who,'BuildState'=>3, 'GameId'=>$GAMEID];
     Put_Thing($OutP);
-    $Sys = Get_System($Sid);
-    if ($Sys['Control'] == 0) {
-      $Sys['Control'] = $Who;
-      $FS = Get_FactionSystemFS($Who,$Sid);
-      if (!empty($FS['Name'])) $Sys['Name'] = $FS['Name'];
-      Put_System($Sys);
+    $Control = System_Owner($Sid);
+    if ($Control) {
+      TurnLog($Who, $Control);
+      GMLog($Control);
     }
+
   } else {
     return 0;
   }
