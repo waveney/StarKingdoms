@@ -586,7 +586,7 @@ function Income_Calc($Fid) {
       $EconVal += $ECon;
     }
 
-    $OtherPTSBranches = Gen_Get_Cond('Branches',"Whose!=$Fid AND HostType!=3 AND HostId=" . $W['Thingid'] . " AND Type=" . ($NameBType['Trading Station']??0));
+    $OtherPTSBranches = Gen_Get_Cond('Branches',"Whose!=$Fid AND HostType!=3 AND HostId=" . $W['ThingId'] . " AND Type=" . ($NameBType['Trading Station']??0));
     if ($OtherPTSBranches) {
       $OtherTrade = 0;
       foreach( $OtherPTSBranches as $B) {

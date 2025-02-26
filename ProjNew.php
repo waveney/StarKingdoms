@@ -82,7 +82,7 @@
             "Cost: " . $pc[1] .  " Needs " . $pc[0] . " progress.  $Extra";
           }
         if ($NameList) {
-          echo "<h2>Select a deign to make</h2>";
+          echo "<h2>Select a design to make</h2>";
           echo "If it is in planning, you are build that, if already built then it will be a copy.<br>";
 
           echo "<form method=post action=ProjDisp.php?ACTION=NEW&id=$Fid&p=$Ptype&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT>";
@@ -100,10 +100,9 @@
 
   function Show_Research($Name,$Link,$Cost,$Prog,$Desc) {
     echo "<tr><td><button class=projtype type=submit formaction=$Link>$Name</button><td>$Cost<td>$Prog" .
-    "<td><div class=NewProjDesc>" . ParseText($Desc) . "</div>";
+    "<td><div class=ProjDesc>" . ParseText($Desc) . "</div>";
   }
 
-  echo "<h1>New Project</h1>";
 
   $Homes = Get_ProjectHomes($Fid);
   $DistTypes = Get_DistrictTypes();
@@ -188,6 +187,7 @@
     $Offices = Get_Offices($World['id']);
   }
 
+  echo "<h1>New " . ($DistTypes[$D['Type']]['Name']??'Construction') . " Project on " . $PH['Name'] . "</h1>";
 
   $Stage = (isset($_REQUEST['STAGE'])? $_REQUEST['STAGE'] : 0);
 
@@ -227,6 +227,7 @@
 //         echo "Maximum Districts: $MaxDists<br>Current Districts: $CurDists<br>";
 
       if ($MaxDists==0 || (($CurOff + $CurDists) < $MaxDists)) {
+        echo "<table class=ProjTab border><tr><td>Project<td>Cost<td>Progress<br>Needed<td>Description";
         $DTs = Get_DistrictTypes();
         $DNames = [];
 //var_dump("ONE", $HDists[$Hi],$Hi);
@@ -267,29 +268,37 @@
             if (Has_PTraitH($Hi,'Irradiated Wasteland')) { $pc[0]++; }
             elseif (Has_Trait($Fid,"Military Society") && ($DTz['Name'] == 'Military')) $pc = Proj_Costs($Lvl-1);
 
-            echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Construction'] .
+            echo "<tr><td><button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Construction'] .
                   "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $DTz['id'] .
                   "&Name=" . base64_encode("Build " . $DTz['Name'] . " District $Lvl$Place") . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                  "Build " . $DTz['Name'] . " District $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>\n";
+                  "Build " . $DTz['Name'] . " District $Lvl </button><td>" . $pc[1] . " <td> " . $pc[0] . "<td>";
 
           }
         }
+
+        echo "</table><p>";
 
         if (Feature('Orgs') && count($Offices) < $PlanCon) {
           echo "<h2>Build Offices</h2>";
           $Lvl = count($Offices)+1;
           $pc = Proj_Costs($Lvl);
           $Orgs = Gen_Get_Cond('Organisations',"Whose=$Fid");
+          $Tstart = 0;
           if (count($Offices)< count($Orgs)) {
             foreach ($Orgs as $OrgId=>$Org) {
               foreach ($Offices as $O) if ($O['Organisation'] == $OrgId) continue 2;
-              echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Construction'] .
+              if (!$Tstart++) echo "<table class=ProjTab border><tr><td>Project<td>Cost<td>Progress<br>Needed<td>Description";
+
+              echo "<tr><td><button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Construction'] .
                     "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=-$OrgId" .
                     "&Name=" . base64_encode("Build " . $Org['Name'] . " Office $Place") .
                     "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                    "Build " . $Org['Name'] . " Office; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>\n";
+                    "Build " . $Org['Name'] . " Office</button><td>" . $pc[1] . " <td> " . $pc[0] .
+                    "<td><div class=ProjDesc>" . ParseText($Org['Description']) . "</div>";
             }
           }
+          if ($Tstart) echo "</table><p>";
+
           // Get local offices, Get orgs.
           // Make offices to any orgs w/o an office
           // Office for new org
@@ -339,21 +348,22 @@
                   "Build Warp Gate $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
       }
 
+      $FactTechs = Get_Faction_Techs($Fid, $Turn);
+      $Techs = Get_TechsByCore($Fid);
 
     echo "<h2>Research Planetary Construction</h2><p>";
+      echo "<table class=ProjTab border><tr><td>Project<td>Cost<td>Progress<br>Needed<td>Description";
       $OldPc = Has_Tech($Fid,3);
       $Lvl = $OldPc+1;
       $pc = Proj_Costs($Lvl);
-      echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Planetary Construction'] .
+      echo "<tr><td><button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Planetary Construction'] .
                 "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=3" .
                 "&Name=" . base64_encode("Research Planetary Construction $Lvl$Place"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Research Planetary Construction $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+                "Research Planetary Construction $Lvl" .
+                "</button><td>" . $pc[1] . " <td> " . $pc[0] . "<td><div class=ProjDesc>" . ParseText($Techs[3]['Description']) . "</div>";
+      echo "</table><p>";
 
-
-
-      $Rbuts = [];
-      $FactTechs = Get_Faction_Techs($Fid, $Turn);
-      $Techs = Get_TechsByCore($Fid);
+      $Tstart = 0;
       foreach ($Techs as $T) {
         if ($T['Cat'] == 0 || (isset($FactTechs[$T['id']]) && $FactTechs[$T['id']]['Level'])) continue;
         if (!isset($FactTechs[$T['PreReqTech']])) continue;
@@ -362,16 +372,20 @@
 
         $Lvl = $T['PreReqLevel'];
         $pc = Proj_Costs($Lvl);
-        $Rbuts[] = "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Supplemental Planetary Construction Tech'] .
+        if (!$Tstart++) {
+          echo "<h2>Research Supplimental Planetary Construction Technology</h2>";
+          echo "<table class=ProjTab border><tr><td>Project<td>Cost<td>Progress<br>Needed<td>Description";
+        }
+
+        echo "<tr><td><button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" .
+                $PTi['Research Supplemental Planetary Construction Tech'] .
                 "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $T['id'] .
                 "&Name=" . base64_encode("Research " . $T['Name'] . $Place) . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Research " . $T['Name'] . "; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+                "Research " . $T['Name'] .
+                "</button><td>" . $pc[1] . " <td> " . $pc[0] . "<td><div class=ProjDesc>" . ParseText($T['Description']) . "</div>";
       }
+      if ($Tstart) echo "</table><p>";
 
-      if ($Rbuts) {
-        echo "<h2>Research Supplimental Planetary Construction Technology</h2>";
-        foreach ($Rbuts as $rb) echo $rb;
-      }
 
       if (Has_Tech($Fid,'Adianite Production Methods')) {
         $Lvl = 1;
@@ -393,7 +407,7 @@
 
   case 'Academic':
 
-    echo "<h2>Research Core Technology</h2><table border><th>Project<th>Cost<th>Progress<br>Needed<th>Description";
+    echo "<h2>Research Core Technology</h2><table class=ProjTab border><th>Project<th>Cost<th>Progress<br>Needed<th>Description";
       $FactTechs = Get_Faction_Techs($Fid, $Turn);
       $CTs = Get_CoreTechsByName();
       foreach ($CTs as $TT) {
@@ -409,14 +423,10 @@
                 "&Name=" . base64_encode("Research " . $TT['Name'] . " $Lvl$Place"). "&L=$Lvl&C=" . $pc[1] . "&PN=" . $pc[0],
           $pc[1],$pc[0],$TT['Description']);
 
-/*        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" .
-                $PTi['Research Core Technology'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $TT['id'] .
-                "&Name=" . base64_encode("Research " . $TT['Name'] . " $Lvl$Place"). "&L=$Lvl&C=" . $pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Research " . $TT['Name'] . " $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";*/
         }
         echo "</table>";
 
-    echo "<h2>Research Supplimental Technology</h2><table border><th>Project<th>Cost<th>Progress<br>Needed<th>Description";
+    echo "<h2>Research Supplimental Technology</h2><table class=ProjTab border><th>Project<th>Cost<th>Progress<br>Needed<th>Description";
       $Techs = Get_TechsByCore($Fid);
       foreach ($Techs as $T) {
         if ($T['Cat'] == 0 || (isset($FactTechs[$T['id']]) && $FactTechs[$T['id']]['Level'])) continue;
@@ -430,12 +440,7 @@
                 "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $T['id'] .
                 "&Name=" . base64_encode("Research " . $T['Name'] . $Place) . "&L=$Lvl&C=" . $pc[1] . "&PN=" . $pc[0],
           $pc[1],$pc[0],$T['Description']);
- /*
-        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Supplemental Technology'] .
-                "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $T['id'] .
-                "&Name=" . base64_encode("Research " . $T['Name'] . $Place) . "&L=$Lvl&C=" . $pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Research " . $T['Name'] . "; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";*/
-      }
+       }
       echo "</table>";
 
       if (Feature('TechSharing')) {
@@ -505,16 +510,22 @@
 
 
 
+      $FactTechs = Get_Faction_Techs($Fid, $Turn);
+      $Techs = Get_TechsByCore($Fid);
       echo "<h2>Research Ship Construction</h2><p>";
+        echo "<table class=ProjTab border><tr><td>Project<td>Cost<td>Progress<br>Needed<td>Description";
         $OldPc = Has_Tech($Fid,7);
         $Lvl = $OldPc+1;
         $pc = Proj_Costs($Lvl);
-        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Ship Construction'] .
+        echo "<tr><td><button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Ship Construction'] .
                 "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=7" .
                 "&Name=" . base64_encode("Research Ship Construction $Lvl$Place"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Research Ship Construction $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+                "Research Ship Construction Level $Lvl" .
+                "</button><td>" . $pc[1] . " <td> " . $pc[0] . "<td><div class=ProjDesc>" . ParseText($Techs[7]['Description']) . "</div>";
 
-      $Rbuts = [];
+        echo "</table><p>";
+
+      $Tstart = 0;
       $FactTechs = Get_Faction_Techs($Fid, $Turn);
       $Techs = Get_TechsByCore($Fid);
       foreach ($Techs as $T) {
@@ -523,18 +534,21 @@
         if ($T['PreReqTech']!=7) continue;
         if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
 
+        if (!$Tstart++) {
+          echo "<h2>Research Supplimental Ship Technology</h2>";
+          echo "<table class=ProjTab border><tr><td>Project<td>Cost<td>Progress<br>Needed<td>Description";
+        }
+
         $Lvl = $T['PreReqLevel'];
         $pc = Proj_Costs($Lvl);
-        $Rbuts[] = "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Supplemental ship Tech'] .
+
+        echo "<tr><td><button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Supplemental ship Tech'] .
                 "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $T['id'] .
                 "&Name=" . base64_encode("Research " . $T['Name'] . $Place) . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Research " . $T['Name'] . "; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+                "Research " . $T['Name'] .
+                "</button><td>" . $pc[1] . " <td> " . $pc[0] . "<td><div class=ProjDesc>" . ParseText($T['Description']) . "</div>";
       }
-
-      if ($Rbuts) {
-        echo "<h2>Research Supplimental Ship Technology</h2>";
-        foreach ($Rbuts as $rb) echo $rb;
-      }
+      if ($Tstart) echo "</table><p>";
 
       if (Has_Trait($Fid,'Grow Modules')) {
         echo "<h2>Grow Modules</h2>";
@@ -704,20 +718,24 @@
       echo "<button class=projtype type=submit formaction='ProjNew.php?ACTION=NEWARMY&id=$Fid&p=" . $PTi["Train $ARMY"] .
            "&t=$Turn&Hi=$Hi&Di=$Di$pl&DT=$DT'>Train a new $ARMY$Place</button><p>";
 
+      $FactTechs = Get_Faction_Techs($Fid);
+      $Techs = Get_TechsByCore($Fid);
 
       echo "<h2>Research " . Feature('MilTech') . "</h2><p>";
-        $OldPc = Has_Tech($Fid,8);
+      echo "<table class=ProjTab border><tr><td>Project<td>Cost<td>Progress<br>Needed<td>Description";
+      $OldPc = Has_Tech($Fid,8);
         $Lvl = $OldPc+1;
         $pc = Proj_Costs($Lvl);
-        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" .
+        echo "<tr><td><button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" .
                 $PTi['Research ' . Feature('MilTech')] .
                 "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=8" .
                 "&Name=" . base64_encode("Research " . Feature('MilTech') . " on $Lvl$Place") . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Research " . Feature('MilTech') . " $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+                "Research " . Feature('MilTech') . " $Lvl" .
+                "</button><td>" . $pc[1] . " <td> " . $pc[0] . "<td><div class=ProjDesc>" . ParseText($Techs[8]['Description']) . "</div>";
+        echo "</table><p>";
 
-      $Rbuts = [];
-      $FactTechs = Get_Faction_Techs($Fid);
-      $Techs = Get_TechsByCore($Fid);
+      $Tstart = 0;
+
       foreach ($Techs as $T) {
         if ($T['Cat'] == 0 ||  (isset($FactTechs[$T['id']]) && $FactTechs[$T['id']]['Level'])) continue;
         if (!isset($FactTechs[$T['PreReqTech']])) continue;
@@ -726,17 +744,20 @@
 
         $Lvl = $T['PreReqLevel'];
         $pc = Proj_Costs($Lvl);
-        $Rbuts[] = "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi["Research Supplemental $ARMY Tech"] .
+
+        if (!$Tstart++) {
+          echo "<h2>Research Supplimental Ship Technology</h2>";
+          echo "<table class=ProjTab border><tr><td>Project<td>Cost<td>Progress<br>Needed<td>Description";
+        }
+
+        echo "<tr><td><button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi["Research Supplemental $ARMY Tech"] .
                 "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $T['id'] .
                 "&Name=" . base64_encode("Research " . $T['Name'] .  $Place) . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Research " . $T['Name'] . "; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+                "Research " . $T['Name'] .
+                "</button><td>" . $pc[1] . " <td> " . $pc[0] . "<td><div class=ProjDesc>" . ParseText($T['Description']) . "</div>";
       }
 
-     if ($Rbuts) {
-       echo "<h2>Research Supplimental $ARMY Technology</h2>";
-       foreach ($Rbuts as $rb) echo $rb;
-     }
-
+      if ($Tstart) echo "</table><p>";
 
       echo "<h2>Re-equip and Reinforce $ARMY</h2>"; // THIS MUST be AFTER the simple buttons as the form gets lost
       echo "You can only do this to $ARMIES on the same planet.<p>";

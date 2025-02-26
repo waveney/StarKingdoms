@@ -824,7 +824,7 @@ function Get_TechsByCore($Fact=0, $All=0, $AllG=0) {
     $res = $db->query("SELECT DISTINCT t.* FROM Technologies t, FactionTechs ft WHERE ((NotBy&$NOTBY)=0) AND (" .
            "(t.Cat<2 OR (t.Cat=2 AND ft.Faction_Id=$Fact AND ft.Tech_Id=t.id))) ORDER BY t.PreReqTech, t.PreReqLevel, t.Name");
   }
-  if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
+  if ($res) while ($ans = $res->fetch_assoc()) $Ms[$ans['id']] = $ans;
   return $Ms;
 }
 

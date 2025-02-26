@@ -69,15 +69,9 @@ it currently lists all ships with their speed, stats etc.  Can it please also li
 312 Can the Tables on the various "ProjNew" pages get some CSS added so that they default to a move visually digestible form. (The Academy in particularl)
     Consistency with the Ops pages would be nice there, agreed. The improvement to Ops was great.
 315 Not yet studied Anomalies on map
-316 on the What Can I See Page, Can the non-owned systems get something that is full width? perhaps a black border around the rectangle so it is more obvious 
-    as it moves from one system into the other? The full width blocks of colour are really helpful, but the full width block of white on white is invisible.
-317 Eyes from colonies
+318
 
 
-[Mon Feb 24 20:01:16.023839 2025] [proxy_fcgi:error] [pid 2867273:tid 140695662679808] [client 86.26.173.150:0] AH01071: Got error 'PHP message: PHP Warning:  
-Undefined array key 0 in /var/www/vhosts/starkingdoms.uk/httpdocs/OrgLib.php on line 43; PHP message: PHP Warning:  
-Trying to access array offset on value of type null in /var/www/vhosts/starkingdoms.uk/httpdocs/OrgLib.php on line 43',
- referer: https://starkingdoms.uk/Staff.php
  
 
  

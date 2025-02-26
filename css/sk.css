@@ -225,3 +225,46 @@ input[type='radio'] {
   background-color: #e0e8e8;
 }
 
+.ProjTab {
+  background-color:#f8f8f8;
+}
+
+.ProjTab tr:first-child {
+	font-weight:bold;
+}
+
+.ProjTab tr td:first-child {
+	width:300px;
+}
+.ProjTab tr td:nth-child(2) {
+	width:50px;
+	text-align:right;
+}
+.ProjTab tr td:nth-child(3) {
+	width:50px;
+	text-align:right;
+}
+.ProjTab tr td:nth-child(4) {
+}
+
+.ProjTab .ProjDesc {
+     text-align:left;	
+  max-height:100px;
+  overflow-y: auto;
+	
+}
+
+.ProjTab tbody tr:nth-child(3n) {
+  background-color: #e0e8e8;;
+}
+
+.ProjTab tbody tr:nth-child(3n+1) {
+  background-color: #e8e0e8;
+}
+
+.ProjTab td {
+/*	display:block; */
+	max-height:100px;
+}
+
+
