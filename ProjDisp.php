@@ -374,7 +374,7 @@
   });
 
   $BPlanCon = Has_Tech($Fid,3);
-  $HWorld = Get_World($FACTION['HomeWorld']);
+  $HWorld = Get_World($Faction['HomeWorld']);
   $HWorldHome = $HWorld['Home'];
 
   $PHx = 1;

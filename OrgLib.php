@@ -49,7 +49,6 @@ function Recalc_Offices() { // Recount offices for each org
   foreach ($Offs as $oi=>$Of) {
     $Org = $Of['Organisation'];
     if (isset($Orgs[$Org])) {
-//      if (!isset($Orgs[$Org]['OfficeCount'])) var_dump($Of);
       $Orgs[$Org]['OfficeCount']+= max($Of['Number'],1);
       if (($Of['OrgType'] != $Orgs[$Org]['OrgType']) || ($Of['OrgType2'] != $Orgs[$Org]['OrgType2'])) {
         $Of['OrgType'] = $Orgs[$Org]['OrgType'];
@@ -59,6 +58,21 @@ function Recalc_Offices() { // Recount offices for each org
       }
     } else {
       echo "Office $oi does not match any current Organisation - needs fixing<p>";
+    }
+  }
+
+  $Branches = Gen_Get_All('Branches', " WHERE GameId=$GAMEID");
+  foreach ($Branches as $Bi=>$B) {
+    $Org = $B['Organisation'];
+    if (isset($Orgs[$Org])) {
+      if (($B['OrgType'] != $Orgs[$Org]['OrgType']) || ($B['OrgType2'] != $Orgs[$Org]['OrgType2'])) {
+        $B['OrgType'] = $Orgs[$Org]['OrgType'];
+        $B['OrgType2'] = $Orgs[$Org]['OrgType2'];
+
+        Gen_Put('Branches',$B);
+      }
+    } else {
+      echo "Branch $Bi does not match any current Organisation - needs fixing<p>";
     }
   }
 

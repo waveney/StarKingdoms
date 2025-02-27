@@ -81,7 +81,8 @@
 
           echo "<form method=post action=ProjDisp.php?ACTION=NEW&id=$Fid&p=$Ptype&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT>";
 
-          foreach($Things as $Tid=>$T) {
+          foreach($Things as $T) {
+            $Tid = $T['id'];
             $pc = Proj_Costs($T['Level']);
             $Extra = '';
             if ($_REQUEST['ACTION'] == 'NEWARMY' && Has_Tech($Fid,'Efficient Robot Construction')) $pc[0] = max(1, $pc[0] - $T['Level']);

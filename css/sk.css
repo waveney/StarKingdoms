@@ -238,11 +238,11 @@ input[type='radio'] {
 }
 .ProjTab tr td:nth-child(2) {
 	width:50px;
-	text-align:right;
+	text-align:center;
 }
 .ProjTab tr td:nth-child(3) {
 	width:50px;
-	text-align:right;
+	text-align:center;
 }
 .ProjTab tr td:nth-child(4) {
 }
@@ -284,15 +284,15 @@ input[type='radio'] {
 }
 .ProjThingTab tr td:nth-child(3) {
 	width:50px;
-	text-align:right;
+	text-align:center;
 }
 .ProjThingTab tr td:nth-child(4) {
 	width:50px;
-	text-align:right;
+	text-align:center;
 }
 .ProjThingTab tr td:nth-child(5) {
 	width:50px;
-	text-align:right;
+	text-align:center;
 }
 .ProjThingTab tr td:nth-child(6) {
 }
