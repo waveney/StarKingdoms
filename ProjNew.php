@@ -48,6 +48,7 @@
         $Hi = $_REQUEST['Hi'];
         $Di = $_REQUEST['Di'];
         $DT = $_REQUEST['DT'];
+        $MTypes = Get_ModuleTypes();
         $Place = base64_decode($_REQUEST['pl']);
 
         $TTypes = Get_ThingTypes();
@@ -68,25 +69,37 @@
           break;
         }
 
-        $NameList = [];
-        foreach ($Things as $T) {
-          if ($T['Level'] > $Limit) continue;
-          $pc = Proj_Costs($T['Level']);
-          $Extra = '';
-          if ($_REQUEST['ACTION'] == 'NEWARMY' && Has_Tech($Fid,'Efficient Robot Construction')) $pc[0] = max(1, $pc[0] - $T['Level']);
-          if ($_REQUEST['ACTION'] == 'NEWSHIP' && Has_Tech($Fid,'Space Elevator')) $pc[0] = max(1, $pc[0] - $T['Level']);
-          if ($T['BuildFlags'] & BUILD_FLAG1) {
-            $Extra = "  Plus " . $T['Level'] . ' ' . Feature('Currency3','Unknown');
-          }
-          $NameList[$T['id']] = $T['Name'] . (empty($T['Class'])?'': ", a " . $T['Class']) . " ( Level " . $T['Level'] . " ); $Place;" .
-            "Cost: " . $pc[1] .  " Needs " . $pc[0] . " progress.  $Extra";
-          }
-        if ($NameList) {
+        foreach ($Things as $Tid=>$T) {
+          if ($T['Level'] > $Limit) unset($Things[$Tid]);
+        }
+
+        if ($Things) {
           echo "<h2>Select a design to make</h2>";
-          echo "If it is in planning, you are build that, if already built then it will be a copy.<br>";
+          echo "If it is in planning, you will build that, if already built then it will be a copy.<br>";
+
+          echo "<table class=ProjThingTab border><tr><td>Project<td>Level<td>Cost<td>Other<br>Cost<td>Progress<br>Needed<td>Description";
 
           echo "<form method=post action=ProjDisp.php?ACTION=NEW&id=$Fid&p=$Ptype&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT>";
-          echo fm_select($NameList,$_REQUEST,'ThingId',1," onchange=this.form.submit()") . "\n<br>";
+
+          foreach($Things as $Tid=>$T) {
+            $pc = Proj_Costs($T['Level']);
+            $Extra = '';
+            if ($_REQUEST['ACTION'] == 'NEWARMY' && Has_Tech($Fid,'Efficient Robot Construction')) $pc[0] = max(1, $pc[0] - $T['Level']);
+            if ($_REQUEST['ACTION'] == 'NEWSHIP' && Has_Tech($Fid,'Space Elevator')) $pc[0] = max(1, $pc[0] - $T['Level']);
+            if ($T['BuildFlags'] & BUILD_FLAG1) {
+              $Extra = $T['Level'] . ' ' . Feature('Currency3','Unknown');
+            }
+            $Mods = [];
+            $Ms = Get_Modules($Tid);
+            foreach ($Ms as $Mi=>$M) $Mods[]= $M['Number'] . " " . ($MTypes[$Mi]['Name']??"Unknown $Mi");
+            $Moddesc = implode(', ',$Mods);
+
+            echo "<tr><td><button class=projtype formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=$Ptype&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&ThingId=$Tid'>" .
+              $T['Name'] . (empty($T['Class'])?'': ", a " . $T['Class']) . "</buton><td>" . $T['Level'] . "<td>" . $pc[1] .  "<td>$Extra<td>" . $pc[0] .
+              "<td>$Moddesc";
+            }
+          echo "</table><p>";
+
         } else {
           echo "<h2>Sorry you do not have any plans for these - go to <a href=ThingPlan.php?F=$Fid>Thing Planning</a> first</h2>";
         }
@@ -282,7 +295,7 @@
           echo "<h2>Build Offices</h2>";
           $Lvl = count($Offices)+1;
           $pc = Proj_Costs($Lvl);
-          $Orgs = Gen_Get_Cond('Organisations',"Whose=$Fid");
+          $Orgs = Gen_Get_Cond('Organisations',"Whose=$Fid AND OfficeCount!=0");
           $Tstart = 0;
           if (count($Offices)< count($Orgs)) {
             foreach ($Orgs as $OrgId=>$Org) {
