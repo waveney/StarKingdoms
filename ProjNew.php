@@ -92,7 +92,7 @@
             }
             $Mods = [];
             $Ms = Get_Modules($Tid);
-            foreach ($Ms as $Mi=>$M) $Mods[]= $M['Number'] . " " . ($MTypes[$Mi]['Name']??"Unknown $Mi");
+            foreach ($Ms as $Mi=>$M) if (($MTypes[$Mi]['Leveled'] &8)== 0) $Mods[]= $M['Number'] . " " . ($MTypes[$Mi]['Name']??"Unknown $Mi");
             $Moddesc = implode(', ',$Mods);
 
             echo "<tr><td><button class=projtype formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=$Ptype&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&ThingId=$Tid'>" .

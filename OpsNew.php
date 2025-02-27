@@ -81,7 +81,9 @@
   $OrgId = $_REQUEST['O'];
   $Org = Gen_Get('Organisations',$OrgId);
   $OffType = $Org['OrgType'];
-  echo "<h1>New Operation for: " . $Org['Name'] . " - a " . $OrgTypes[$OffType]['Name'] . " org</h1>";
+  echo "<h1>New Operation for: " . $Org['Name'] . " - a " . $OrgTypes[$OffType]['Name'] . " org";
+  if ($Org['OrgType2'])
+  echo "</h1>";
 
   $Turn = $_REQUEST['t'];
 

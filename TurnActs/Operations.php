@@ -464,9 +464,9 @@ function OperationsComplete() {
           }
         }
         Put_FactionSystem($FS);
-        $Scan = ['FactionId'=>$Fid,'Sys'=>$ONid, 'Type'=>1, 'ThingId'=>-1,'GameId'=>$GAMEID, 'Turn'=>$GAME['Turn']];
+        $Scan = ['FactionId'=>$Fid,'Sys'=>$ONid, 'Type'=>0, 'ThingId'=>-1,'GameId'=>$GAMEID, 'Turn'=>$GAME['Turn']];
         Gen_Put('ScansDue',$Scan);
-        TurnLog($Fid,"System " . System_Name($ON,$Fid) . " has been explored through wormhole " . $L['Name'] . $xtra);
+        TurnLog($Fid,"System " . System_Name($ON,$Fid) . " has been passively explored through wormhole " . $L['Name'] . $xtra);
         break;
 
       case 'Survey System':
@@ -613,6 +613,7 @@ function OperationsComplete() {
       case 'Advanced Scientific Recon':
       case 'Cultural Recon': // no longer exists
       case 'Fundamental Scientific Recon':
+      case 'Wormhole Recon':
       case 'Military Recon':
       case 'Organisational Recon':
       case 'Planetary Recon':
