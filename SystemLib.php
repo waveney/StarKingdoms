@@ -966,7 +966,6 @@ function Record_SpaceScan(&$FS) {
 function System_Owner($Sid) {
   // Verifies/Sets System Owner - Called when Colony, Outpost created/destroyed, as needed from System by GM
 
-  //var_dump('Called $Sid');
   $N = Get_System($Sid);
   $Ps = Get_Planets($Sid);
   $Facts = Get_Factions();
@@ -976,22 +975,35 @@ function System_Owner($Sid) {
     if ($P['Control']) {
       if ($P['Control'] != $N['Control']) {
         $N['Control'] = $P['Control'];
+        $FS = Get_FactionSystemFS($N['Control'],$Sid);
+        if ($FS['Name']??'') $N['Name'] = $FS;
         Put_System($N);
   //      var_dump("Change 1 to " .$N['Control'] );
         return "Control of " . $N['Ref'] . " now " . $Facts[$N['Control']]['Name'];
       }
-  //    var_dump("No change 2");
+      $FS = Get_FactionSystemFS($N['Control'],$Sid);
+      if (($FS['Name']??'') && ($FS['Name'] != $N['Name'])){
+        $N['Name']= $FS;
+        Put_System($N);
+      }
+
       return;
     }
     $Ms = Get_Moons($P['id']);
     foreach ($Ms as $M) {
       if ($M['Control'] != $N['Control']) {
         $N['Control'] = $M['Control'];
+        $FS = Get_FactionSystemFS($N['Control'],$Sid);
+        if ($FS['Name']??'') $N['Name'] = $FS;
         Put_System($N);
    //     var_dump("Change 3 to " .$N['Control'] );
         return "Control of " . $N['Ref'] . " now " . $Facts[$N['Control']]['Name'];
       }
   //    var_dump("No change 4");
+      if (($FS['Name']??'') && ($FS['Name'] != $N['Name'])){
+        $N['Name']= $FS;
+        Put_System($N);
+      }
       return;
     }
   }
@@ -1001,11 +1013,17 @@ function System_Owner($Sid) {
   if ($Outpost) {
     if ($Outpost['Whose'] != $N['Control']) {
       $N['Control'] = $Outpost['Whose'];
+      $FS = Get_FactionSystemFS($N['Control'],$Sid);
+      if ($FS['Name']??'') $N['Name'] = $FS;
       Put_System($N);
  //     var_dump("Change 5 to " .$N['Control'] );
       return "Control of " . $N['Ref'] . " now " . $Facts[$N['Control']]['Name'];
     }
 //    var_dump("No change 6");
+    if (($FS['Name']??'') && ($FS['Name'] != $N['Name'])){
+      $N['Name']= $FS;
+      Put_System($N);
+    }
     return;
   }
   if ($N['Control']) {

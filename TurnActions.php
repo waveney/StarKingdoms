@@ -42,20 +42,20 @@
     [23,'',         'Spare',''],
     [24,'Movement',  'Ship Move Check','Coded,M'],
     [25,'Movement',  'Ship Movements','Coded'],
-    [26,'',         'Spare',''], //Agents Move Check
-    [27,'',         'Spare',''], // Agents Movements
-    [28,'Movement',  'See After Move','Coded'],
-    [29,'Combat',    'Meetups','Coded,M'],
-    [30,'Combat',    'Space Combat','Help'],
-    [31,'Movement',  'Unload Troops','Coded'],
-    [32,'Combat',    'Planetary Defence','No'],
-    [33,'Combat',    'Orbital Bombardment','No'],
-    [34,'Combat',    'Ground Combat','Help'],
-    [35,'Combat',    'Devastation Selection','Coded,M'],
-    [36,'Combat',    'Devastation','Coded'],
-    [37,'',         'Ownership Change','Coded'],
-    [38,'Movement',  'Retreats Selection','Coded'],
-    [39,'Movement',  'Retreats','Coded'],
+    [26,'Movement',  'See After Move','Coded'],
+    [27,'Combat',    'Meetups','Coded,M'],
+    [28,'Combat',    'Space Combat','Help'],
+    [29,'Movement',  'Unload Troops','Coded'],
+    [30,'Combat',    'Planetary Defence','No'],
+    [31,'Combat',    'Orbital Bombardment','No'],
+    [32,'Combat',    'Ground Combat','Help'],
+    [33,'Combat',    'Devastation Selection','Coded,M'],
+    [34,'Combat',    'Devastation','Coded'],
+    [35,'',         'Ownership Change','Coded'],
+    [36,'Movement',  'Retreats Selection','Coded'],
+    [37,'Movement',  'Retreats','Coded'],
+    [38,'',         'Affect Activities',''],
+    [39,'',         'Affect Activities Actions',''],
     [40,'Projects',  'Project Progress','Coded'],
     [41,'Operations','Operations Progress','Coded'],
     [42,'Instruct',  'Instructions Progress','Coded'],
@@ -552,6 +552,116 @@ function HandleCoOpProjects() {
 
   return 1;
 }
+
+function AffectActivities() {
+  global $GAMEID;
+  $Facts = Get_Factions();
+  $Systems = Get_SystemsById();
+  $Homes = Get_ProjectHomes();
+
+  echo "<H1>Affect ongoing Projects, Instructions and Operations</h1>";
+  echo "Pause - will stop any progress this turn.<p>" .
+    "Cancel - Will cancel the activity, Projects and Operations could be recovered by Richard, Instructions are lost permenantly.<p>";
+
+  echo "<form method=Post action=TurnActions.php?ACTION=DoStage2>" . fm_hidden('Stage','Affect Activities');
+  echo "<h2>Projects</h2>";
+  echo "<table border><tr><td>Activity<td>Who<td>Where<td>Progress<td>Pause<td>Cancel<td>Reason";
+
+  $Projects = Get_Projects_Cond("Status=1 AND GameId=$GAMEID");
+  foreach ($Projects as $P) {
+    $Pid = $P['id'];
+    echo "<tr><td><a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a><td>" . $Facts[$P['FactionId']]['Name'] . "<td>" . ($Systems[($Homes[$P['Home']]['SystemId']??0)]['Ref']??'??') . "<td>" .
+      $P['Progress'] . "/" . $P['ProgNeeded'] . "<td>" . fm_checkbox('',$_REQUEST,"Pause:Proj:$Pid") .
+      "<td>" . fm_checkbox('',$_REQUEST,"Cancel:Proj:$Pid") . fm_text1('',$_REQUEST,"Reason:Proj:$Pid");
+  }
+  echo "</table><p>\n";
+
+  echo "<h2>Operations</h2>";
+
+  $Ops = Gen_Get_Cond('Operations',"Status=1 AND GameId=$GAMEID");
+  echo "<table border><tr><td>Activity<td>Who<td>Where<td>Progress<td>Pause<td>Cancel<td>Reason";
+  foreach ($Ops as $OP) {
+    $Oid = $OP['id'];
+    echo "<tr><td><a href=OperEdit.php?id=$Oid>" . $OP['Name'] . "</a><td>" . $Facts[$OP['Whose']]['Name'] . "<td>" . ($Systems[$OP['SystemId']]['Ref']??'??') . "<td>" .
+      $P['Progress'] . "/" . $OP['ProgNeeded'] . "<td>" . fm_checkbox('',$_REQUEST,"Pause:Oper:$Oid") .
+      "<td>" . fm_checkbox('',$_REQUEST,"Cancel:Oper:$Oid") . fm_text1('',$_REQUEST,"Reason:Oper:$Oid");
+  }
+  echo "</table><p>\n";
+
+  echo "<h2>Instructions</h2> To be written...<p>";
+
+  GMLog( "<input type=submit name=Ignore value=Checked>\n");
+  dotail();
+
+}
+
+function AffectActivitiesActions() {
+  global $GAME,$Project_Statuses;
+  $mtch = [];
+  foreach ($_REQUEST as $R=>$V) {
+    if (preg_match('/(\w*):(\w*):(\d*)/', $R, $mtch)) {
+      [$junk,$action,$area,$id] = $mtch;
+      switch ($action) {
+        case 'Pause':
+          switch ($area) {
+            case 'Proj':
+              // Mark as done this turn
+              $P = Get_Project($id);
+              $P['LastUpdate'] = $GAME['Turn'];
+
+              $Reason = ($_REQUEST["Reason:Proj:$id"]??'Unknown reason');
+              TurnLog($P['FactionId'], "Project " . $P['Name'] . " had no progress because of: $Reason");
+              Put_Project($P);
+              break;
+
+            case 'Oper':
+              $P = Get_Operation($id);
+              $P['LastUpdate'] = $GAME['Turn'];
+
+              $Reason = ($_REQUEST["Reason:Oper:$id"]??'Unknown reason');
+              TurnLog($P['Whose'], "Operation " . $P['Name'] . " had no progress because of: $Reason");
+              Put_Operation($P);
+              break;
+
+            case 'Inst':
+
+              break;
+          }
+          break;
+
+        case 'Cancel':
+          switch ($area) {
+            case 'Proj':
+              $P = Get_Project($id);
+              $P['Status'] = $Project_Statuses['Cancelled'];
+
+              $Reason = ($_REQUEST["Reason:Proj:$id"]??'Unknown reason');
+              TurnLog($P['FactionId'], "Project " . $P['Name'] . " has been cancelled because of: $Reason");
+              Put_Project($P);
+              break;
+
+            case 'Oper':
+              $P = Get_Operation($id);
+              $P['Status'] = $Project_Statuses['Cancelled'];
+
+              $Reason = ($_REQUEST["Reason:Proj:$id"]??'Unknown reason');
+              TurnLog($P['Whose'], "Operation " . $P['Name'] . " has been cancelled because of: $Reason");
+              Put_Operation($P);
+              break;
+
+            case 'Inst':
+
+              break;
+          }
+          break;
+
+        default: // pick up Reason as used
+          break;
+      }
+    }
+  }
+}
+
 
 function FinishShakedowns() {
   // Move anything in shakedown to completed

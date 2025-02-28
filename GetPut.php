@@ -89,7 +89,17 @@ function Get_Systems() {
   $Systms = [];
   if ($res) {
     while ($ans = $res->fetch_assoc()) { $Systms[$ans['Ref']] = $ans; }
-    }
+  }
+  return $Systms;
+}
+
+function Get_SystemsById() {
+  global $db,$GAMEID;
+  $res = $db->query("SELECT * FROM Systems WHERE GameId=$GAMEID ORDER BY Ref");
+  $Systms = [];
+  if ($res) {
+    while ($ans = $res->fetch_assoc()) { $Systms[$ans['id']] = $ans; }
+  }
   return $Systms;
 }
 
