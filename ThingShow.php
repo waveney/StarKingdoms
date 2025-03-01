@@ -1783,6 +1783,7 @@ function Show_Thing(&$T,$Force=0) {
       if ($T['Dist1']) {
         echo "<button type=submit formaction=ThingEdit.php?ACTION=Takeover&id=$Tid>Takeover Lead Construction</button>";
       }
+      $Acts = -1;
       break;
 
     case 'Collaborative Planetary Construction':
@@ -1792,6 +1793,7 @@ function Show_Thing(&$T,$Force=0) {
       if ($T['Dist1']) {
         echo "<button type=submit formaction=ThingEdit.php?ACTION=Takeover&id=$Tid>Takeover Lead Construction</button>";
       }
+      $Acts = -1;
       break;
 
     case 'Space Survey':

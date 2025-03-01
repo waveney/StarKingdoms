@@ -554,7 +554,7 @@ function HandleCoOpProjects() {
 }
 
 function AffectActivities() {
-  global $GAMEID;
+  global $GAMEID,$ThingInstrs;
   $Facts = Get_Factions();
   $Systems = Get_SystemsById();
   $Homes = Get_ProjectHomes();
@@ -588,7 +588,42 @@ function AffectActivities() {
   }
   echo "</table><p>\n";
 
-  echo "<h2>Instructions</h2> To be written...<p>";
+  echo "<h2>Instructions</h2>";
+  echo "Only those that can be affected are listed, scans are handled seperately later.<p>\n";
+
+
+  $Things = Get_Things_Cond(0,"Instruction!=0 AND ActionsNeeded!=0 AND GameId=$GAMEID AND (BuildState=3 OR BuildState=2)");
+  if ($Things) {
+    echo "<table border><tr><td>Activity<td>Who<td>Where<td>Progress<td>Pause<td>Cancel<td>Reason";
+    foreach ($Things as $T) {
+      $Tid = $T['id'];
+      echo "<tr><td><a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a> a " . $T['Class'] . "<td>" . $Facts[$T['Whose']]['Name'] .
+        "<td>" . ($Systems[$T['SystemId']]['Ref']??'??') . "<td>";
+      switch ($ThingInstrs[abs($T['Instruction'])]) {
+        case 'Analyse Anomaly': // Analyse
+          $Aid = $T['ProjectId'];
+          $Anom = Get_Anomaly($Aid);
+          $FA = Gen_Get_Cond1('FactionAnomaly',"FactionId=$Fid AND AnomalyId=$Aid");
+          echo $FA['Progress']. "/" . $Anom['AnomalyLevel'] . "<td>" . fm_checkbox('',$_REQUEST,"Pause:Oper:$Oid") .
+          "<td>" . fm_text1('',$_REQUEST,"Reason:Oper:$Oid"); // No Cancel
+          break;
+
+        case 'Collaborative Space Construction': // Progress is elsewhere, only cancel is meaningful
+        case 'Collaborative DSC':
+        case 'Collaborative Planetary Construction':
+          echo "<td><td>" . fm_checkbox('',$_REQUEST,"Cancel:Oper:$Oid") . fm_text1('',$_REQUEST,"Reason:Oper:$Oid");
+          break;
+
+        default:
+          echo $P['Progress'] . "/" . $T['ActionsNeeded'] . "<td>" . fm_checkbox('',$_REQUEST,"Pause:Oper:$Oid") .
+            "<td>" . fm_checkbox('',$_REQUEST,"Cancel:Oper:$Oid") . fm_text1('',$_REQUEST,"Reason:Oper:$Oid");
+          break;
+      }
+    }
+    echo "</table><p>\n";
+
+  }
+
 
   GMLog( "<input type=submit name=Ignore value=Checked>\n");
   dotail();
@@ -596,7 +631,7 @@ function AffectActivities() {
 }
 
 function AffectActivitiesActions() {
-  global $GAME,$Project_Statuses;
+  global $GAME,$Project_Statuses,$ThingInstrs;
   $mtch = [];
   foreach ($_REQUEST as $R=>$V) {
     if (preg_match('/(\w*):(\w*):(\d*)/', $R, $mtch)) {
@@ -624,6 +659,13 @@ function AffectActivitiesActions() {
               break;
 
             case 'Inst':
+              $T = Get_Thing($id);
+              $T['CurInst'] = -$T['CurInst'];
+
+              $Reason = ($_REQUEST["Reason:Inst:$id"]??'Unknown reason');
+              TurnLog($T['Whose'], "Instruction: " . $ThingInstrs[abs($T['Instruction'])] . " had no progress because of: $Reason");
+
+              Put_Thing($T);
 
               break;
           }
@@ -650,7 +692,12 @@ function AffectActivitiesActions() {
               break;
 
             case 'Inst':
+              $T = Get_Thing($id);
+              $T['CurInst'] = $T['Instruction'] = 0;
 
+              $Reason = ($_REQUEST["Reason:Inst:$id"]??'Unknown reason');
+              TurnLog($T['Whose'], "Instruction: " . $ThingInstrs[abs($T['Instruction'])] . " has been cancelled because of: $Reason");
+              Put_Thing($T);
               break;
           }
           break;
@@ -1071,7 +1118,7 @@ function TidyUps() {
   $TNames = NamesList($TTypes);
   $ThingNames = array_flip($TNames);
   $WormStab = $ThingNames['Wormhole Stabiliser'];
-  $res = $db->query("UPDATE Things SET LinkId=0, LinkPay=0, LinkCost=0, Retreat=0 WHERE LinkId>0 AND GameId=$GAMEID");
+  $res = $db->query("UPDATE Things SET LinkId=0, LinkPay=0, LinkCost=0, Retreat=0, CurInst=ABS(Instruction) WHERE LinkId>0 AND GameId=$GAMEID");
   $res = $db->query("UPDATE Things SET Conflict=0 WHERE Conflict>0 AND GameId=$GAMEID");
   $res = $db->query("UPDATE Operations SET TurnState=0 WHERE GameId=$GAMEID");
 

@@ -1462,7 +1462,7 @@ function InstructionsComplete() {
 
 function InstructionsProgress() {
   global $ThingInstrs,$IntructProps;
-  $Things = Get_Things_Cond(0,"Instruction!=0");
+  $Things = Get_Things_Cond(0,"Instruction!=0 AND CurInst>0");
   $Facts = Get_Factions();
 
   foreach ($Things as $T) {
