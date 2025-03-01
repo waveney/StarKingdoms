@@ -620,11 +620,12 @@ function ProjectsCompleted($Pass) {
             $OrigName = $T['Name'];
 //            var_dump($Number);
             for ($Dup = 2;$Dup<=$Number;$Dup++) {
-              unset($T['id']);
-              $T['Name'] = "$OrigName $Dup";
-//              var_dump($Dup, $T);
-              Put_Thing($T);
-              TurnLog($Fid, $T['Name'] . " has been launched" . (Feature('Shakedowns')?" and will now start its shakedown cruise":''),$T);
+              $DT = Thing_Duplicate($T['id']);
+              $DT['Name'] = "$OrigName $Dup";
+              $DT['SystemId'] = $T['SystemId'];
+              $DT['WithinSysLoc'] = $T['WithinSysLoc'];
+              Put_Thing($DT);
+              TurnLog($Fid, $DT['Name'] . " has been launched" . (Feature('Shakedowns')?" and will now start its shakedown cruise":''),$DT);
             }
           }
 

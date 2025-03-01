@@ -603,7 +603,7 @@ function AffectActivities() {
         case 'Analyse Anomaly': // Analyse
           $Aid = $T['ProjectId'];
           $Anom = Get_Anomaly($Aid);
-          $FA = Gen_Get_Cond1('FactionAnomaly',"FactionId=$Fid AND AnomalyId=$Aid");
+          $FA = Gen_Get_Cond1('FactionAnomaly',"FactionId=" . $T['Whose'] . " AND AnomalyId=$Aid");
           echo $FA['Progress']. "/" . $Anom['AnomalyLevel'] . "<td>" . fm_checkbox('',$_REQUEST,"Pause:Oper:$Oid") .
           "<td>" . fm_text1('',$_REQUEST,"Reason:Oper:$Oid"); // No Cancel
           break;
