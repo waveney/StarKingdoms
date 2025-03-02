@@ -197,6 +197,36 @@ function ForceReport($Sid,$Cat) {
   echo "</table>";
 }
 
+function SystemSee($Sid) {
+ // echo "<form>";
+  $txt = SeeInSystem($Sid,31,1,0,-1,1);
+
+  echo $txt;
+
+  echo "</form><p><hr>Make sure you have unloaded troops BEFORE looking at the Ground Combat Report.<p>";
+
+
+  echo "<form method=post action=Meetings.php?ACTION=Check&S=$Sid onkeydown=\"return event.key != 'Enter';\">";
+
+  $_REQUEST['IgnoreShield'] = 0;
+  echo "<h2>" . fm_checkbox('Bipass shields - (eg missiles)',$_REQUEST,'IgnoreShield') . "</h2><p>";
+  $mtch = [];
+  if (preg_match('/<div class=FullD hidden>/',$txt,$mtch)) {
+    echo "<button class='floatright FullD' onclick=\"($('.FullD').toggle())\">Show Remains of Things and Named Characters</button>";
+  }
+
+
+  //      Register_AutoUpdate('Meetings',$Sid);
+
+  ForceReport($Sid,'G');
+  ForceReport($Sid,'S');
+
+  echo fm_submit("ACTION",'Do ALL Damage',0);
+  echo "</form>";
+
+
+}
+
 // Planetary Defences + Militia for Ground Combat
 
   $TurnP = '';
@@ -307,36 +337,33 @@ function ForceReport($Sid,$Cat) {
         exit;
       }
 
-      $txt = SeeInSystem($Sid,31,1,0,-1,1);
-
-      echo $txt;
-
-      echo "Make sure you have unloaded troops BEFORE looking at the Ground Combat Report.<p>";
-
-
-      echo "<form method=post action=Meetings.php?ACTION=Check&S=$Sid onkeydown=\"return event.key != 'Enter';\">";
-
-      $_REQUEST['IgnoreShield'] = 0;
-      echo "<h2>" . fm_checkbox('Bipass shields - (eg missiles)',$_REQUEST,'IgnoreShield') . "</h2><p>";
-      $mtch = [];
-      if (preg_match('/<div class=FullD hidden>/',$txt,$mtch)) {
-        echo "<button class='floatright FullD' onclick=\"($('.FullD').toggle())\">Show Remains of Things and Named Characters</button>";
-      }
-
-
-//      Register_AutoUpdate('Meetings',$Sid);
-
-      ForceReport($Sid,'G');
-      ForceReport($Sid,'S');
-
-      echo fm_submit("ACTION",'Do ALL Damage',0);
-      echo "</form>";
-
+      SystemSee($Sid);
 
 //      echo "<p><h2><a href=Meetings.php?S=$Sid&ACTION=FRGROUND>Force Report for Ground Combat</a>, " .
 //                  "<a href=Meetings.php?S=$Sid&ACTION=FRSPACE>Force Report for Space Combat</a></h2>";
       break;
 
+    case 'UNLOAD' :
+      $Tid = $_REQUEST['id'];
+      $T = Get_Thing($Tid);
+      if ($T['LinkId'] >= 0 ) {
+        echo "Data for $Tid inconsistent call Richard";
+        dotail();
+      }
+      $Hid = $T['SystemId'];
+      $H = Get_Thing($Hid);
+      if ($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES ) {
+        $T['WithinSysLoc'] =3;
+      } else {
+        $T['WithinSysLoc'] =1;
+      }
+      $T['LinkId'] = 0;
+      $Sid = $T['SystemId'] = $H['SystemId'];
+      Put_Thing($T);
+      echo $T['Name'] . " unloaded<p>";
+      $N = Get_System($Sid);
+      SystemSee($Sid);
+      break;
 
 
     case 'FRGROUND':

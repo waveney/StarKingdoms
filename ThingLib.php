@@ -882,8 +882,8 @@ function is_vowel(&$Text) {
   return strpos(" aeiou",strtolower(substr($Text,0,1)));
 }
 
-function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
-  global $Advance,$FACTION;
+function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0) {
+  global $Advance,$FACTION,$ThingInstrs;
   static $ThingTypes;
   static $Factions;
   static $OpProps;
@@ -892,6 +892,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
   $Locations = Within_Sys_Locs_Id($T['SystemId']);
 
   $txt = $itxt = '';
+  $Tid = $T['id'];
   $RawA = 0;
 
 //  if ($T['id'] == 238) { echo "Here with outpost<br>"; var_dump($T); }
@@ -1043,6 +1044,32 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1) {
           default:
         }
       }
+
+      if ($Contents) {
+        if ($T['Instruction']) {
+          $txt .= "<br>Doing: " . $ThingInstrs[$T['Instruction']];
+        }
+        $OnBoard = Get_Things_Cond(0,"(LinkId=-1 OR LinkId=-3 OR LinkId=-4) AND SystemId=$Tid AND BuildState=3");
+ //       var_dump($Tid,$Contents,$OnBoard);
+        if ($OnBoard) {
+          $txt .= "<br>On Board: ";
+          foreach ($OnBoard as $H) {
+            $Hid = $H['id'];
+            $txt .= "<form method=post action=Meetings.php?ACTION=UNLOAD&id=$Hid>";
+            $hprops = $ThingTypes[$H['Type']]['Properties'];
+              $txt .=  "<a href=ThingEdit.php?id=" . $H['id'] . ">" . $H['Name'] . "</a> a " . (($hprops & THING_HAS_LEVELS)? "Level " . $H['Level'] : "") .
+                   " " . $H['Class'] . " " . $ThingTypes[$H['Type']]['Name'];
+
+            if ($GM) {
+              if ($hprops & ( THING_HAS_ARMYMODULES | THING_HAS_SHIPMODULES )) {
+                $txt .= "<button type=submit >Unload Before Fight</button><br>";
+              }
+            }
+            echo "</form>";
+          }
+        }
+      }
+
       if ($Images) $txt .= "<br clear=all>\n";
 
       if ($Div) $txt .= "</div>";
@@ -1088,7 +1115,7 @@ function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0,$Mode=0) {
     }
     $LastWhose = 0;
     foreach ($Things as $T) {
-      $txt .= SeeThing($T,$LastWhose,$Eyes,$Fid,$Images,$GM); //,$ThingTypes,$Factions);
+      $txt .= "<P>" . SeeThing($T,$LastWhose,$Eyes,$Fid,$Images,$GM,1,$GM); //,$ThingTypes,$Factions);
     }
   return $txt;
 }

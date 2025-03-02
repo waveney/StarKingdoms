@@ -676,10 +676,13 @@ function AffectActivitiesActions() {
             case 'Proj':
               $P = Get_Project($id);
               $P['Status'] = $Project_Statuses['Cancelled'];
+              $Cost = intdiv($P['Costs'],2);
+              Spend_Credit($P['FactionId'],-$Cost,"Refund from Cancelled Project");
 
               $Reason = ($_REQUEST["Reason:Proj:$id"]??'Unknown reason');
-              TurnLog($P['FactionId'], "Project " . $P['Name'] . " has been cancelled because of: $Reason");
+              TurnLog($P['FactionId'], "Project " . $P['Name'] . " has been cancelled because of: $Reason.  $Cost " . credit() . " have recovered.");
               Put_Project($P);
+
               break;
 
             case 'Oper':

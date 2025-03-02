@@ -425,7 +425,7 @@
       echo "<tr><td>Health/Hull<td>" . $T['OrigHealth'] . "$SPad<td colspan=3>At current Tech Levels";
       if ($T['ShieldPoints']) echo "<tr><td>Shields<td>" . $T['ShieldPoints'] . "$SPad<td colspan=3>At current Tech Levels";
       $ResC = 0;
-      $BaseDam = Calc_Damage($T, $ResC);
+      [$BaseDam,$ToHit] = Calc_Damage($T, $ResC);
       if ($tprops & (THING_HAS_ARMYMODULES | THING_HAS_MILSHIPMODS )) {
          echo "<tr><td>Basic Damage<td>$BaseDam$SPad<td colspan=3>At current Tech Levels.  Before special weapons etc";
       }

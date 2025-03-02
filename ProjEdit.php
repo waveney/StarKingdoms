@@ -59,6 +59,11 @@
           dotail();
           exit;
         }
+        if ($P['Status'] == 1) { // Started some mmoney back
+          $Cost = intdiv($P['Costs'],2);
+          Spend_Credit($Fid,-$Cost,'Recovered from cancelled Project');
+          echo "Recovered " . credit() . " $Cost";
+        }
         $P['Status'] = 3;
         Put_Project($P);
         echo "<h1>Abandoned</h1>";
@@ -267,7 +272,7 @@
   echo fm_submit("Ignore","Ignore",0," hidden");
   if ($when >=0) echo fm_submit("ACTION",'Abandon Project',0) . " ";
   if ($when > 0 || $GM )  {
-    echo fm_submit("ACTION",'Delete',0) . " ";
+    if ($P['Status'] == 0) echo fm_submit("ACTION",'Delete',0) . " ";
     if (($PProps & 128) && ($P['ThingType']>0)) {
       if (($P['Type'] == 1) && ($P['Level'] >= $DistTypes[$P['ThingType']]['MaxNum'] )) {
         if ($GM) echo "Not allowed (GM only): <input type=submit name=ACTION value='Raise 1 Level'>";

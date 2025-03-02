@@ -78,7 +78,7 @@
         echo "<td>" . $Systems[$P['SystemId']] . "<td>" .$P['Name'];
         break;
     }
-    echo "<td>" . $Factions[$H['Whose']]['Name'];
+    echo "<td>" . ($Factions[$H['Whose']]['Name']??'Unknown');
     echo "<td>" . $H['Economy'];
     echo "<td>" . $H['Devastation'];
     echo "<td>" . $H['EconomyFactor'];
