@@ -81,7 +81,7 @@ define('THING_HAS_VARIANTS',  0x40000000);
 define('THING_SHOW_CONTENTS',     1); // Prop2
 define('THING_HAS_RECOVERY',      2);
 define('THING_ALWAYS_OTHER',      4);
-
+define('THING_NO_LOGISTICS',      8);
 
 define('LINK_ON_BOARD',-1);
 define('LINK_BOARDING',-2);
@@ -626,7 +626,7 @@ function Calc_Evasion(&$T) {
     $ev += $MTypes[$M['Type']]['EvasionMod']*$M['Number'];
   }
 
-  if ($T['Variant']) {
+  if (($T['Variant']??0)) {
     $V = Gen_Get('Variants',$T['Variant']);
     $vev = $V['Evasion'];
     if ($vev) {

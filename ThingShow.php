@@ -708,7 +708,7 @@ function Show_Thing(&$T,$Force=0) {
       echo "<td>Damage: $BD";
     }
     if ($GM){
-      echo fm_number1('Evasion',$T,'Evasion','','min=0 max=10000');
+      echo fm_number1('Evasion',$T,'Evasion','','min=-1000 max=10000');
     } else {
       echo "<td>Evasion: " . max(0,min($T['Evasion'],80));
     }

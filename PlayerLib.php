@@ -134,7 +134,10 @@ function Player_Page() {
     echo "</ul>";
 
     echo "<p><li><a href=PlayerTurnTxt.php>Turn Actions Automated Response Text</a>";
-    echo "<ul><li><a href=WhatCanIC.php>What Things can I See?</a></ul>\n";
+    echo "<ul>";
+    if (Access('God')) echo "<li><a href=EditText.php>Edit Auto Text</a>";
+    echo "<li><a href=WhatCanIC.php>What Things can I See?</a></ul>\n";
+
 
     if ($PlayerState[$FACTION['TurnState']] == 'Turn Planning') {
       echo "<li><a href=Player.php?ACTION=Submit>Submit Turn</a><p>\n";
@@ -499,6 +502,7 @@ function Logistics($Fid,&$Things) {
         if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $LogistCost[$T['Level']];
         if ($Props & THING_HAS_GADGETS) $Logistics[2] += $LogistCost[$T['Level']];
         if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) {
+          if (( $TTypes[$T['Type']]['Prop2'] & THING_NO_LOGISTICS) && ($T['LinkId']<0) ) continue;
           if ($HasOwnGalaxy && str_contains($T['Class'],'Freighter')) {
             $Logistics[0] += $LogistCost[$T['Level']-1];
           } else {
