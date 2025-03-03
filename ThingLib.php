@@ -887,8 +887,10 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
   static $ThingTypes;
   static $Factions;
   static $OpProps;
+  static $ModuleTypes;
   if (!$ThingTypes) $ThingTypes = Get_ThingTypes();
   if (!$Factions) $Factions = Get_Factions();
+  if (!$ModuleTypes) $ModuleTypes = Get_ModuleTypes();
   $Locations = Within_Sys_Locs_Id($T['SystemId']);
 
   $txt = $itxt = '';
@@ -1061,6 +1063,9 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
                    " " . $H['Class'] . " " . $ThingTypes[$H['Type']]['Name'];
 
             if ($GM) {
+              $FB = array_flip(NamesList($ModuleTypes))['Fighter Bays'];
+              if (($ThingTypes[$H['Type']]['Name'] == 'Fighter') && (!Get_ModulesType($Tid, $FB) )) $txt .= " (Flatpacked) ";
+
               if ($hprops & ( THING_HAS_ARMYMODULES | THING_HAS_SHIPMODULES )) {
                 $txt .= "<button type=submit >Unload Before Fight</button><br>";
               }
