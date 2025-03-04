@@ -76,7 +76,7 @@
       $FAs = Gen_Get_Cond('FactionAnomaly',"FactionId=$Fid AND (State=1 OR State=2)");
       foreach($FAs as $FA) {
         $A = Get_Anomaly($FA['AnomalyId']);
-        $Extras[$A['SystemId']][3] = 1;
+        if ($A['Complete']<2) $Extras[$A['SystemId']][3] = 1;
       }
     }
 
