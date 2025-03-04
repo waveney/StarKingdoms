@@ -71,6 +71,15 @@
 
       $Extras[$sid][0] .= $T['Name'] . " L" . $T['Level'] . " " . $TTypes[$T['Type']]['Name'] . "$tex\n";
     }
+
+    if (Feature('ShowAnomsOnMap')) {
+      $FAs = Gen_Get_Cond('FactionAnomaly',"FactionId=$Fid AND (State=1 OR State=2)");
+      foreach($FAs as $FA) {
+        $A = Get_Anomaly($FA['AnomalyId']);
+        $Extras[$A['SystemId']][3] = 1;
+      }
+    }
+
     $LUsed = Get_LinksUsed($Fid);
     $FSs = Get_FactionSystemsF($Fid);
   }
@@ -273,8 +282,9 @@
 
       if ($Extras[$N['id']]??0) {
         $atts .= " xlabel=<";
-        if ($Extras[$N['id']][1]) $atts .= '<font color="red">' . $Extras[$N['id']][1] . ' </font>';
-        if ($Extras[$N['id']][2]) $atts .= '<font color="blue">' . $Extras[$N['id']][2] . ' </font>';
+        if ($Extras[$N['id']][1]??0) $atts .= '<font color="red">' . $Extras[$N['id']][1] . ' </font>';
+        if ($Extras[$N['id']][2]??0) $atts .= '<font color="blue">' . $Extras[$N['id']][2] . ' </font>';
+        if ($Extras[$N['id']][3]??0) $atts .= '<font color="darkgreen">A</font>';
         $atts .= '> ';
 
         $atts .= ' tooltip="' . $Extras[$N['id']][0] . '" ';

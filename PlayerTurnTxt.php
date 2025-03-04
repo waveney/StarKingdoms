@@ -65,8 +65,11 @@
   $FileName = "Turns/$GAMEID/$Turn/$Fid.txt";
 
   if (!file_exists($FileName)) {
-    echo "<h2>Sorry that turn does not have any text on file</h2>";
-    dotail();
+    $FileName = "Turns/$GAMEID/" . ($Turn-1) . "/$Fid.txt";
+    if (!file_exists($FileName)) {
+      echo "<h2>Sorry that turn does not have any text on file</h2>";
+      dotail();
+    }
   }
 
   $FILE = fopen($FileName,'r');

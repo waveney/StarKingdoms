@@ -622,6 +622,7 @@ function Calc_Evasion(&$T) {
   $MMs = Get_Modules($T['id']);
   $ev = max(0,(5-$T['Level'])*10);
   $ev += $TTypes[$T['Type']]['EvasionMod'];
+  $SpeedMult = 1;
   foreach ($MMs as $M) {
     $ev += $MTypes[$M['Type']]['EvasionMod']*$M['Number'];
   }
@@ -638,6 +639,7 @@ function Calc_Evasion(&$T) {
     }
     $T['TargetEvasion'] = $V['TargetEvasion']??0; // Actual Number calculated when in battle
   }
+
   $T['Evasion'] = $ev;
 }
 
