@@ -72,7 +72,7 @@
       $Extras[$sid][0] .= $T['Name'] . " L" . $T['Level'] . " " . $TTypes[$T['Type']]['Name'] . "$tex\n";
     }
 
-    if (Feature('ShowAnomsOnMap')) {
+    if (!Faction_Feature('HideAnomsOnMap')) {
       $FAs = Gen_Get_Cond('FactionAnomaly',"FactionId=$Fid AND (State=1 OR State=2)");
       foreach($FAs as $FA) {
         $A = Get_Anomaly($FA['AnomalyId']);
