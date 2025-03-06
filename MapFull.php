@@ -103,8 +103,8 @@
 //var_dump($typ);exit;
 
   function NodeLab($txt,$Prefix='') {
-    $FSize = [14,14,14,14,14, 13,13,12,12, 11,10,9,9, 8,8,7,7, 6,6,6,6];
-    if (strlen($txt) > 20 ) $txt = substr($txt,0,20);
+    $FSize = [14,14,14,14,14, 13,13,12,12, 11,10,9,9, 8,8,7,7, 6,6,6,6, 5,5,5,5,5 ];
+    if (strlen($txt) > 25 ) $txt = substr($txt,0,20);
     $len = strlen($txt);
     $ret = ' label="';
     if ($Prefix) $ret .= "$Prefix\n";
