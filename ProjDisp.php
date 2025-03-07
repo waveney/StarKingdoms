@@ -736,8 +736,8 @@
         echo "<td $BG id=proj$Turn:$Hi:$Di class='PHStart Group$Di Home$Hi' $Hide>\n";
         if ($Turn >= $GAME['Turn'] && $ADDALL!='readonly') {
           $Warn = '';
-          if (isset($proj[$Turn - 1 ][$Hi][$Di]['Status']) && ($proj[$Turn - 1 ][$Hi][$Di]['Status'] == 'Started' || $proj[$Turn - 1][$Hi][$Di]['Status'] == 'Ongoing')) {
- //           $Warn = "onclick=\"return confirm('Do you want to abandon " . $Proj[$Turn-1][$Hi][$Di]['Name'] . '?\'"';
+          if (isset($proj[$Turn - 1 ][$Hi][$Di]['Status']) &&
+              ($proj[$Turn - 1 ][$Hi][$Di]['Status'] == 'Started' || $proj[$Turn - 1][$Hi][$Di]['Status'] == 'Ongoing')) {
               $Action = "onclick='return NewProjectCheck($Turn,$Hi,$Di)' formaction=ProjNew.php?t=$Turn&Hi=$Hi&Di=$Di";
           } else {
             $Action = "formaction=ProjNew.php?t=$Turn&Hi=$Hi&Di=$Di";
@@ -747,8 +747,9 @@
         if (isset($proj[$Turn][$Hi][$Di]['Type'])) {
           $PN = $proj[$Turn][$Hi][$Di]['id'];
           echo "\n<td $BG id=ProjN$Turn:$Hi:$Di class='PHName Home$Hi" . ($proj[$Turn][$Hi][$Di]['Type'] == 38?" PHpostit ":"") . "'>" .
-                "<a href=ProjEdit.php?id=" . $proj[$Turn][$Hi][$Di]['id'] . ">" .
-                $proj[$Turn][$Hi][$Di]['Name'] . "</a>";
+                "<a href=ProjEdit.php?id=" . $proj[$Turn][$Hi][$Di]['id'] . ">";
+          if ($proj[$Turn][$Hi][$Di]['id'] != ($proj[$Turn-1][$Hi][$Di]['id']??0)) echo "<b>";
+          echo $proj[$Turn][$Hi][$Di]['Name'] . "</b></a>";
           echo "\n<td $BG id=ProjL$Turn:$Hi:$Di class='PHLevel Group$Di Home$Hi' $Hide>" . $proj[$Turn][$Hi][$Di]['Level'];
           echo "\n<td $BG id=ProjC$Turn:$Hi:$Di class='PHCost Group$Di Home$Hi' $Hide>" . $proj[$Turn][$Hi][$Di]['Cost'];
           echo "\n<td $BG id=ProjR$Turn:$Hi:$Di class='PHRush Group$Di Home$Hi' $Hide>" . (($Turn < $GAME['Turn'])?$proj[$Turn][$Hi][$Di]['Rush'] :

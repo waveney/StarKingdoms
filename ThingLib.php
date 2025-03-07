@@ -96,6 +96,29 @@ define('BUILD_FLAG1',1);
 define('BUILD_FLAG2',2);
 define('BUILD_FLAG3',4);
 
+/* New Values
+define('BS_Planning',0);
+define('BS_Building',1);
+define('BS_Shakedown',16);
+define('BS_Repair',17);
+define('BS_Complete',32);
+define('BS_Ex',48);
+define('BS_Abandon',49);
+define('BS_Missing',50);
+define('BS_Captured',51);
+
+Old Values */
+define('BS_Planning',0);
+define('BS_Building',1);
+define('BS_Shakedown',2);
+define('BS_Repair',17);
+define('BS_Complete',3);
+define('BS_Ex',4);
+define('BS_Abandon',5);
+define('BS_Missing',6);
+define('BS_Captured',7);
+
+
 function ModFormulaes() {
   global $ModFormulaes;
   if ($ModFormulaes) return $ModFormulaes;

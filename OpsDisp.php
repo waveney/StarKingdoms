@@ -327,8 +327,9 @@ foreach ($Orgs as $OrgId=>$O) {
       if (isset($proj[$Turn][$OrgId]['Type'])) {
         $PN = $proj[$Turn][$OrgId]['id'];
         echo "\n<td $BG id=ProjN$Turn:$OrgId: class='PHName Home$OrgId" . ($proj[$Turn][$OrgId]['Type'] == 666?" PHpostit ":"") . "'>" .
-              "<a href=OperEdit.php?id=" . $proj[$Turn][$OrgId]['id'] . ">" .
-              $proj[$Turn][$OrgId]['Name'] . "</a>";
+              "<a href=OperEdit.php?id=" . $proj[$Turn][$OrgId]['id'] . ">";
+        if ($proj[$Turn][$OrgId]['id'] != ($proj[$Turn-1][$OrgId]['id']??0)) echo "<b>";
+        echo $proj[$Turn][$OrgId]['Name'] . "</b></a>";
         echo "\n<td $BG id=ProjL$Turn:$OrgId: class='PHLevel Group$OrgId Home$OrgId' $Hide>" . $proj[$Turn][$OrgId]['Level'];
         if ($OpCosts) echo "\n<td $BG id=ProjC$Turn:$OrgId: class='PHCost Group$OrgId Home$OrgId' $Hide>" . $proj[$Turn][$OrgId]['Cost'];
         if ($OpRushs) echo "\n<td $BG id=ProjR$Turn:$OrgId: class='PHRush Group$OrgId Home$OrgId' $Hide>" . (($Turn < $GAME['Turn'])?$proj[$Turn][$OrgId]['Rush'] :
