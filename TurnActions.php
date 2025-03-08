@@ -592,7 +592,7 @@ function AffectActivities() {
   echo "Only those that can be affected are listed, scans are handled seperately later.<p>\n";
 
 
-  $Things = Get_Things_Cond(0,"Instruction!=0 AND ActionsNeeded!=0 AND GameId=$GAMEID AND (BuildState=3 OR BuildState=2)");
+  $Things = Get_Things_Cond(0,"Instruction!=0 AND ActionsNeeded!=0 AND GameId=$GAMEID AND (BuildState=" . BS_COMPLETE . " OR BuildState=" . BS_SERVICE . ")");
   if ($Things) {
     echo "<table border><tr><td>Activity<td>Who<td>Where<td>Progress<td>Pause<td>Cancel<td>Reason";
     foreach ($Things as $T) {
@@ -716,10 +716,11 @@ function AffectActivitiesActions() {
 function FinishShakedowns() {
   // Move anything in shakedown to completed
 
-  $Things = Get_Things_Cond(0," BuildState=2 ");
+  if (!Feature('Shakedowns')) return;
+  $Things = Get_Things_Cond(0," BuildState=" . BS_SERVICE);
 
   foreach($Things as $T) {
-    $T['BuildState'] = 3;
+    $T['BuildState'] = BS_COMPLETE;
     TurnLog($T['Whose'],$T['Name'] . " has finished it's Shakedown and is now ready for operations.",$T);
     Put_Thing($T);
   }
@@ -993,7 +994,7 @@ function MilitiaArmyRecovery() {
 //  GMLog("Militia Recovery is currently Manual<p>");
 //  GMLog("Also Self Repair Armour<p>");
 
-  $Things = Get_Things_Cond(0,"(CurHealth>0 OR (CurHealth=0 AND BuildState=3)) AND (CurHealth<OrigHealth OR CurShield<ShieldPoints)");
+  $Things = Get_Things_Cond(0,"(CurHealth>0 OR (CurHealth=0 AND BuildState=" . BS_COMPLETE . ")) AND (CurHealth<OrigHealth OR CurShield<ShieldPoints)");
   $TTypes = Get_ThingTypes();
   $MTypes = Get_ModuleTypes();
   $MTNs = Mod_Types_From_Names($MTypes);

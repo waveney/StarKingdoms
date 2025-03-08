@@ -5,7 +5,7 @@
 
   dostaffhead("Move Things",["js/dropzone.js","css/dropzone.css" ]);
 
-  global $db, $GAME, $GAMEID,$BuildState,$Factions,$Dot;
+  global $db, $GAME, $GAMEID,$Factions,$Dot;
 
   function NodeLab($txt,$Prefix='') {
     $FSize = [14,14,14,14,14, 13,13,12,12, 11,10,9,9, 8,8,7,7, 6,6,6,6];
@@ -222,7 +222,7 @@ function LinkProps($L) {
     $Eyes = EyesInSystem($Fid,$ThisSys,$Tid);
     $Facts = Get_Factions();
     if ($Eyes) {
-      $OtherShips = $db->query("SELECT t.* FROM Things t, ThingTypes tt WHERE t.type=tt.id AND (t.BuildState=2 OR t.BuildState=3) AND " .
+      $OtherShips = $db->query("SELECT t.* FROM Things t, ThingTypes tt WHERE t.type=tt.id AND t.BuildState=" . BS_COMPLETE . " AND " .
           "(tt.Properties&0x100)!=0 AND t.SystemId=$ThisSys AND Whose!=$Fid");
       if ($OtherShips) {
         $List = [];

@@ -38,7 +38,7 @@
 
 function ForceReport($Sid,$Cat) {
   global $Facts, $Homes, $TTypes, $ModTypes, $N, $Techs, $ThingProps,$ARMY ;
-  $Things = Get_Things_Cond(0,"SystemId=$Sid AND ( BuildState=2 OR BuildState=3) AND LinkId>=0 ORDER BY Whose");
+  $Things = Get_Things_Cond(0,"SystemId=$Sid AND ( BuildState=" . BS_SERVICE . " OR BuildState=" . BS_COMPLETE . ") AND LinkId>=0 ORDER BY Whose");
   $LastF = $Home = $Control = -1;
   $txt = $ftxt = $htxt = $Battct = '';
   $TMsk = ($Cat=='G'?1:2);
@@ -258,7 +258,7 @@ function SystemSee($Sid) {
 //  echo "Checked Homes<p>";
 
   foreach ($Things as $T){
-    if ($T['BuildState'] <2 || $T['BuildState'] >3 || ($T['LinkId'] < 0 && $T['LinkId'] > -5)) continue; // Don't exist
+    if ($T['BuildState'] != BS_COMPLETE || ($T['LinkId'] < 0 && $T['LinkId'] > -5)) continue;
     $Sid = $T['SystemId'];
     $Eyes = ($TTypes[$T['Type']]['Eyes']??0);
     $Hostile = (($TTypes[$T['Type']]['Properties']??0) & THING_IS_HOSTILE) && ($T['PrisonerOf'] == 0);
@@ -298,7 +298,7 @@ function SystemSee($Sid) {
           }
 
           if (($T['CurHealth'] == 0) && ($ThingProps[$T['Type']] & (THING_HAS_SHIPMODULES | THING_HAS_ARMYMODULES)) != 0) {
-            $T['BuildState'] = 4;
+            $T['BuildState'] = BS_EX;
             TurnLog($T['Whose'],$T['Name'] . " took $RV damage and has been destroyed\n",$T);
             GMLog($T['Name'] . " took $RV damage and has been destroyed\n",$T);
             Empty_Thing($T);

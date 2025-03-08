@@ -4,16 +4,16 @@
   include_once("ThingLib.php");
   include_once("ProjLib.php");
   include_once("HomesLib.php");
- 
-  
+
+
   A_Check('GM');
 
   dostaffhead("Set all Speeds");
 
-  global $db, $GAME,$BuildState;
+  global $db, $GAME;
 
   echo "<h1>Set All Scanners</h1>";
-  
+
   $TTypes = Get_ThingTypes();
   $Things = Get_AllThings(0);
   foreach($Things as $T) {
@@ -22,7 +22,7 @@
       Put_Thing($T);
     }
   }
-  
+
   echo "All done\n";
   dotail();
 ?>

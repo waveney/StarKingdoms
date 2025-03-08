@@ -31,7 +31,7 @@ foreach ($Operations as $Oid=>$O) {
   $Team = Gen_Get_Cond1('Things', "Whose=$Fid AND Type=" . $NamesTTypes['Team'] . " AND Dist1=$OrgId");
 
   if (!$Team) {
-    $Team = ['Whose'=>$Fid,'Type'=>$NamesTTypes['Team'], 'Dist1'=>$OrgId,'BuildState'=>3,
+    $Team = ['Whose'=>$Fid,'Type'=>$NamesTTypes['Team'], 'Dist1'=>$OrgId,'BuildState'=>BS_COMPLETE,
       'Name'=>("Operations team for " . $Orgs[$OrgId]['Name'])];
     Put_Thing($Team);
     $Orgs[$OrgId]['Team'] = $Team['id'];

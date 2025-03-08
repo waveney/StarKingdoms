@@ -162,7 +162,7 @@
       echo "<h2>Selected: " . $OpTypes[$op]['Name'] . " in " . System_Name($TSys,$Fid) . "</h2>\n";
 
       if ($OpTypes[$op]['Props'] & OPER_OUTPOST) {
-        $OutPs = Get_Things_Cond(0,"Type=" . $TTNames['Outpost'] . " AND SystemId=$Wh AND BuildState=3");
+        $OutPs = Get_Things_Cond(0,"Type=" . $TTNames['Outpost'] . " AND SystemId=$Wh AND BuildState=" . BS_COMPLETE);
         if ($OutPs) {
           $popped = 0;
           if (count($OutPs) >1) {
@@ -336,7 +336,7 @@
           $To1 = $World['FactionId'];
         }
 
-        $OutPs = Get_Things_Cond(0,"Type=" . $TTNames['Outpost'] . " AND SystemId=$Wh AND BuildState=3");
+        $OutPs = Get_Things_Cond(0,"Type=" . $TTNames['Outpost'] . " AND SystemId=$Wh AND BuildState=" . BS_COMPLETE);
         if ($OutPs) {
           if (count($OutPs) >1) {
             echo "<h2 class=Err>There are multiple Outposts there - let the GM's know...</h2>";

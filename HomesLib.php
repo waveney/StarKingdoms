@@ -225,7 +225,7 @@ function Recalc_Project_Homes($Logf=0, $Silent=0) {
       continue;
     }
 
-    if ($T['BuildState'] < 2 || $T['BuildState'] > 3 ) continue;
+    if ($T['BuildState'] < BS_SERVICE || $T['BuildState'] > BS_COMPLETE ) continue;
 
     if ((($ThingTypes[$T['Type']]['Properties']??0) & (THING_HAS_DISTRICTS + THING_CAN_DO_PROJECTS)) != 0 ) {
       $THi = $T['ProjHome'];

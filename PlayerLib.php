@@ -349,7 +349,7 @@ function WhatCanBeSeenBy($Fid,$Mode=0) {
   $txt = '';
 
   foreach ($MyThings as $T) {
-    if ($T['BuildState'] < 2 || $T['BuildState']> 3) continue; // Ignore things not in use
+    if ($T['BuildState'] < BS_SERVICE || $T['BuildState']> BS_COMPLETE) continue; // Ignore things not in use
     $Sid = $T['SystemId'];
     if ($T['LinkId'] == -1 || $T['LinkId'] == -3) {
       $Hosts[$T['SystemId']][] = $T['id']; // On board something
@@ -493,7 +493,7 @@ function Logistics($Fid,&$Things) {
   foreach ($Things as $T) {
     if (empty($T['Type'])) continue;
     $Props = $TTypes[$T['Type']]['Properties'];
-    if ($T['BuildState'] == 2 || $T['BuildState'] == 3) {
+    if ($T['BuildState'] == BS_SERVICE || $T['BuildState'] == BS_COMPLETE) {
       if ($TTypes[$T['Type']]['Prop2'] & THING_ALWAYS_OTHER) continue;
       if ($HasHomeLogistics && ($T['SystemId'] == $Facts[$T['Whose']]['HomeWorld'])) $T['Level'] /=2;
       if ($HomeArmyLogistics && ($Props & THING_HAS_ARMYMODULES) && ($T['SystemId'] == $FactionHome)) {
@@ -620,7 +620,7 @@ function Income_Calc($Fid) {
     $EccTxt .=  "<br>\n";
   }
   $EccTxt .=  "<br>";
-  $Things = Get_Things_Cond($Fid,'BuildState=3');
+  $Things = Get_Things_Cond($Fid,'BuildState=' . BS_COMPLETE);
   foreach ($Things as $T) {
     if (empty($TTypes[$T['Type']])) continue;
     switch ($TTypes[$T['Type']]['Name']) {
@@ -684,7 +684,7 @@ function Income_Calc($Fid) {
     }
   }
 
-  $OtherTs = Get_Things_Cond(0,"Type=17 AND OtherFaction=$Fid AND BuildState=3");
+  $OtherTs = Get_Things_Cond(0,"Type=17 AND OtherFaction=$Fid AND BuildState=" . BS_COMPLETE);
   foreach($OtherTs as $OT) {
     $OtherEmbs++;
   }

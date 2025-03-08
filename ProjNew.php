@@ -600,7 +600,8 @@
         $HSys = $Homes[$Hi]['SystemId'];
         $HLoc = $Homes[$Hi]['WithinSysLoc'];
         $TTs = Get_ThingTypes();
-        $Things = Get_Things_Cond($Fid," SystemId=$HSys AND ( BuildState=3 OR BuildState=2) "); // Get all things at xx then filter  by type == Ship & WithinSysLoc
+        $Things = Get_Things_Cond($Fid," SystemId=$HSys AND ( BuildState=" . BS_COMPLETE . " OR BuildState=" . BS_SERVICE . ") ");
+          // Get all things at xx then filter  by type == Ship & WithinSysLoc
         $RepShips = [];
         $Level1 = 0;
         $Count = 0;
@@ -622,7 +623,8 @@
         $FFdata = Get_FactionFactionsCarry($Fid);
         foreach($FFdata as $FC) {
           if ($FC['Props'] & 0xf000) {
-            $OThings = Get_Things_Cond($FC['FactionId1']," SystemId=$HSys AND ( BuildState=3 OR BuildState=2) AND Level<=$MaxLvl "); // Warp Gates
+            $OThings = Get_Things_Cond($FC['FactionId1']," SystemId=$HSys AND ( BuildState=" . BS_COMPLETE . " OR BuildState=" . BS_SERVICE .
+              ") AND Level<=$MaxLvl "); // Warp Gates
             foreach ($OThings as $T) {
               if ($TTs[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) {
                 $RepShips[$T['id']] = $T['Name'] . " - level " . $T['Level'] . " (" . $Factions[$T['Whose']]['Name'] . ")";
@@ -668,7 +670,7 @@
         $HSys = $Homes[$Hi]['SystemId'];
         $HLoc = $Homes[$Hi]['WithinSysLoc'];
         $TTs = Get_ThingTypes();
-        $Things = Get_Things_Cond($Fid," SystemId=$HSys AND ( BuildState=3 OR BuildState=2) "); // Get all things at xx then filter  by type == Ship & WithinSysLoc
+        $Things = Get_Things_Cond($Fid," SystemId=$HSys AND ( " . BS_COMPLETE . " OR BuildState=" . BS_SERVICE . ") ");
         $RepShips = [];
         $Level1 = 0;
         $Count = 0;
@@ -688,7 +690,7 @@
         $FFdata = Get_FactionFactionsCarry($Fid);
         foreach($FFdata as $FC) {
           if ($FC['Props'] & 0xf000) {
-            $OThings = Get_Things_Cond($FC['FactionId1']," SystemId=$HSys AND ( BuildState=3 OR BuildState=2) AND Level<=$MaxLvl "); // Warp Gates
+            $OThings = Get_Things_Cond($FC['FactionId1']," SystemId=$HSys AND ( " . BS_COMPLETE . " OR BuildState=" . BS_SERVICE . ") AND Level<=$MaxLvl ");
             foreach ($OThings as $T) {
               if (($TTs[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES)  && !($TTs[$T['Type']]['Prop2'] & THING_ALWAYS_OTHER) ) {
                 $RepShips[$T['id']] = $T['Name'] . " - level " . $T['Level'] . " (" . $Factions[$T['Whose']]['Name'] . ")";
@@ -778,7 +780,7 @@
       $HSys = $Homes[$Hi]['SystemId'];
       $HLoc = $Homes[$Hi]['WithinSysLoc'];
       $TTs = Get_ThingTypes();
-      $Things = Get_Things_Cond($Fid," SystemId=$HSys AND BuildState=3 "); // Get all things at xx then filter  by type == Ship & WithinSysLoc
+      $Things = Get_Things_Cond($Fid," SystemId=$HSys AND BuildState=" . BS_COMPLETE);
       $RepShips = [];
       $Level1 = 0;
       $Count = 0;
@@ -823,7 +825,7 @@
         $HSys = $Homes[$Hi]['SystemId'];
         $HLoc = $Homes[$Hi]['WithinSysLoc'];
         $TTs = Get_ThingTypes();
-        $Things = Get_Things_Cond($Fid," SystemId=$HSys AND BuildState=3 "); // Get all things at xx then filter  by type == Ship & WithinSysLoc
+        $Things = Get_Things_Cond($Fid," SystemId=$HSys AND BuildState=" . BS_COMPLETE);
         $RepShips = [];
         $Level1 = 0;
         $Count = 0;
@@ -919,7 +921,7 @@
       $HSys = $Homes[$Hi]['SystemId'];
       $HLoc = $Homes[$Hi]['WithinSysLoc'];
       $TTs = Get_ThingTypes();
-      $Things = Get_Things_Cond($Fid," SystemId=$HSys AND ( BuildState=3 OR BuildState=2) "); // Get all things at xx then filter  by type == Ship & WithinSysLoc
+      $Things = Get_Things_Cond($Fid," SystemId=$HSys AND ( " . BS_COMPLETE . " OR BuildState=" . BS_SERVICE . ") ");
       $RepShips = [];
       $Level1 = 0;
       $Count = 0;
@@ -939,7 +941,7 @@
       $FFdata = Get_FactionFactionsCarry($Fid);
       foreach($FFdata as $FC) {
         if ($FC['Props'] & 0xf000) {
-          $OThings = Get_Things_Cond($FC['FactionId1']," SystemId=$HSys AND ( BuildState=3 OR BuildState=2) AND Level<=$MaxLvl "); // Warp Gates
+          $OThings = Get_Things_Cond($FC['FactionId1']," SystemId=$HSys AND ( " . BS_COMPLETE . " OR BuildState=" . BS_SERVICE . ") AND Level<=$MaxLvl ");
           foreach ($OThings as $T) {
             if ($TTs[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) {
               $RepShips[$T['id']] = $T['Name'] . " - level " . $T['Level'] . " (" . $Factions[$T['Whose']]['Name'] . ")";
@@ -980,7 +982,7 @@
       $HSys = $Homes[$Hi]['SystemId'];
       $HLoc = $Homes[$Hi]['WithinSysLoc'];
       $TTs = Get_ThingTypes();
-      $Things = Get_Things_Cond($Fid," SystemId=$HSys AND BuildState=3 "); // Get all things at xx then filter  by type == Ship & WithinSysLoc
+      $Things = Get_Things_Cond($Fid," SystemId=$HSys AND BuildState=" . BS_COMPLETE);
       $RepShips = [];
       $Level1 = 0;
       $Count = 0;

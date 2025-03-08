@@ -73,7 +73,7 @@
         foreach ($Things as $Tid=>$T) {
           if ($StartSys && ($T['SystemId'] == 0)) $T['SystemId'] = $StartSys;
           Put_Thing($T);
-          if ($T['BuildState'] < 3) $T['BuildState'] = 3;
+          if ($T['BuildState'] < BS_COMPLETE) $T['BuildState'] = BS_COMPLETE;
           RefitRepair($T);
           echo "Setup thing $Tid - " . $T['Name'] . "<br>";
         }

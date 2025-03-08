@@ -3,12 +3,12 @@
   include_once("GetPut.php");
   include_once("ThingLib.php");
   include_once("ThingShow.php");
- 
- 
+
+
    dostaffhead("Prisoner Actions");
 
-  global $db, $GAME, $GAMEID,$BuildState;
-  
+  global $db, $GAME, $GAMEID;
+
 // START HERE
 //  var_dump($_REQUEST);
 
@@ -19,7 +19,7 @@
         dotail();
     }
   }
-  
+
   echo "Should never get here...<p>";
   dotail();
 ?>

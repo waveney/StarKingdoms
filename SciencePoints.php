@@ -5,7 +5,7 @@
   include_once("PlayerLib.php");
   include_once("ThingLib.php");
 
-global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$ThingInclrs;
+global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$ThingInstrs,$ThingInclrs;
 
 //var_dump($_COOKIE,$_REQUEST);
   A_Check('Player');

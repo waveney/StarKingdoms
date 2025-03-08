@@ -10,7 +10,7 @@
 
   dostaffhead("List Project Homes");
 
-  global $db, $GAME,$BuildState;
+  global $db, $GAME;
   global $HomeTypes;
 
   if (isset($_REQUEST['ACTION'])) {

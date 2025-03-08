@@ -290,11 +290,11 @@ function Outpost_In($Sid,$Who,$Create=1) {
   global $GAMEID;
   $TTYpes = Get_ThingTypes();
   $TTNames = array_flip(NamesList($TTYpes));
-  $OutPs = Get_Things_Cond(0,"Type=" . $TTNames['Outpost'] . " AND SystemId=$Sid AND BuildState=3");
+  $OutPs = Get_Things_Cond(0,"Type=" . $TTNames['Outpost'] . " AND SystemId=$Sid AND BuildState=" . BS_COMPLETE);
   if ($OutPs) {
     $OutP = $OutPs[0];
   } else if ($Create) {
-    $OutP = ['Type'=>$TTNames['Outpost'],'SystemId'=>$Sid,'Whose'=>$Who,'BuildState'=>3, 'GameId'=>$GAMEID];
+    $OutP = ['Type'=>$TTNames['Outpost'],'SystemId'=>$Sid,'Whose'=>$Who,'BuildState'=>BS_COMPLETE, 'GameId'=>$GAMEID];
     Put_Thing($OutP);
     $Control = System_Owner($Sid);
     if ($Control) {

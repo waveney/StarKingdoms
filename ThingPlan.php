@@ -51,7 +51,7 @@
       $FACTION = $Faction = Get_Faction($Fid);
     }
   } else {
-    $T = ['Whose'=>$Fid, 'BuildState'=>0, 'Type'=> 0, 'Level'=>1];
+    $T = ['Whose'=>$Fid, 'BuildState'=>BS_PLANNING, 'Type'=> 0, 'Level'=>1];
     $Tid = Put_Thing($T);
     $Exist = 0;
   }

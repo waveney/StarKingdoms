@@ -63,7 +63,7 @@ function Transfer_Things_Q() {
   $Things = Get_Things($Fid);
 
   foreach($Things as $Tid=>$T) {
-    if ($T['BuildState'] == 0 || $T['BuildState'] > 3 ) continue;
+    if ($T['BuildState'] == 0 || $T['BuildState'] > BS_COMPLETE ) continue;
 
     echo "<tr><td><a href=ThingEdit.php?id=$Tid>" . (empty($T['Name'])? "Nameless $Tid" : $T['Name']) .
          "<td>" . $TTypes[$T['Type']]['Name'] . "<td>" . $T['Level'] . "<td>" . ($T['SystemId'] > 0 ? $Systems[$T['SystemId']] : 'On Board') .

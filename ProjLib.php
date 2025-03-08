@@ -47,7 +47,7 @@ function  Where_Is_Home($PH,$Set=0) {
     return [$P['SystemId'],$loc];
   case '3': // Thing
     $T = Get_Thing($Home['ThingId']);
-    if ($T['BuildState'] > 0 && $T['BuildState'] < 5) return [$T['SystemId'],$T['WithinSysLoc']];
+    if ($T['BuildState'] > BS_PLANNING && $T['BuildState'] < BS_EX) return [$T['SystemId'],$T['WithinSysLoc']];
     return 0;
   }
 }
@@ -117,7 +117,7 @@ function Project_Finished(&$P,$Turn) {  // CODE ON HOLD
     case 'Train Agent':
     case 'Construct Ship':
       $T = Get_Thing($P['ThingId']);
-      if ($T['BuildState'] < 2) { // Planing/building
+      if ($T['BuildState'] < BS_SERVICE) { // Planing/building
         $T['TurnBuilt'] = $Turn;
         Put_Thing($T);
       }

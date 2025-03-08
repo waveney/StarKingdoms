@@ -44,7 +44,7 @@ function New_Thing(&$T) {
     echo "<tr><td>BuildState:<td>" . fm_select($BuildState,$T,'BuildState');
     echo "<tr><td>" . fm_submit("ACTION","Create");
   } else {
-    echo "<tr><td>Variant:<td>" . fm_select($VarList,$T,'Variant',1) . fm_hidden('BluePrint',$T['BluePrint']) .fm_hidden('BuildState',3);
+    echo "<tr><td>Variant:<td>" . fm_select($VarList,$T,'Variant',1) . fm_hidden('BluePrint',$T['BluePrint']) .fm_hidden('BuildState',BS_COMPLETE);
     echo "<tr><td>" . fm_submit("ACTION","Create Blueprint");
   }
   echo "</table></form>";
@@ -78,12 +78,12 @@ global $FACTION;
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
     case 'NEW' :
-      $T = ['Level'=>1, 'BuildState'=>3, 'LinkId'=>0, 'BluePrint'=>0];
+      $T = ['Level'=>1, 'BuildState'=>BS_COMPLETE, 'LinkId'=>0, 'BluePrint'=>0];
       New_Thing($T);
       break;
 
     case 'NEWBLUE' :
-      $T = ['Level'=>1, 'BuildState'=>3, 'LinkId'=>0, 'BluePrint'=>-1];
+      $T = ['Level'=>1, 'BuildState'=>BS_COMPLETE, 'LinkId'=>0, 'BluePrint'=>-1];
       New_Thing($T);
       break;
 
@@ -196,7 +196,8 @@ global $FACTION;
       $TTypes = Get_ThingTypes();
       echo "<table border>";
       foreach($Things as $T) {
-        if ( empty($T['Name']) || $T['BuildState'] <1 || $T['BuildState'] > 3 || (( $TTypes[$T['Type']]['Properties']??0) & THING_CANT_HAVENAMED) ) continue;
+        if ( empty($T['Name']) || $T['BuildState'] < BS_BUILDING || $T['BuildState'] > BS_COMPLETE ||
+          (( $TTypes[$T['Type']]['Properties']??0) & THING_CANT_HAVENAMED) ) continue;
         echo "<button class=projtype type=submit formaction=ThingEdit.php?ACTION=Select_Thing&Thing=" . $T['id'] . ">" . $T['Name'] . "</button><p>\n";
       }
       echo "</form>\n";
@@ -211,7 +212,7 @@ global $FACTION;
       $Home = Get_ProjectHome($World['Home']);
       $T['SystemId'] = $Home['SystemId'];
       $T['WithinSysLoc'] = $Home['WithinSysLoc'];
-      $T['BuildState'] = 3;
+      $T['BuildState'] = BS_COMPLETE;
       Put_Thing($T);
       break;
 
@@ -223,7 +224,7 @@ global $FACTION;
       $Host = Get_Thing($Thing);
       $T['LinkId'] = -1;
       $T['SystemId'] = $Thing;
-      $T['BuildState'] = 3;
+      $T['BuildState'] = BS_COMPLETE;
       Put_Thing($T);
       break;
 
@@ -269,7 +270,7 @@ global $FACTION;
       $T = Get_Thing($_REQUEST['id']);
       $T['Control'] = 0;
       $T['CurHealth'] = 0;
-      $T['BuildState'] = 4;  // Ex
+      $T['BuildState'] = BS_EX;  // Ex
       Put_Thing($T);
       Empty_Thing($T);
       break;
@@ -594,7 +595,7 @@ global $FACTION;
       $T = Get_Thing($tid);
       $Who = $T['Whose'];
 
-       $Wrecks = Get_Things_Cond(0,"SystemId=" . $T['SystemId'] . " AND BuildState>3");
+       $Wrecks = Get_Things_Cond(0,"SystemId=" . $T['SystemId'] . " AND BuildState>=" . BS_EX);
        $SalvageLevel = Has_Tech($Who,'Salvage Rigs');
        $HasWreck = Has_Tech($Who,'Wreckage Analysis');
        $TotMoney = 0;
@@ -823,7 +824,7 @@ global $FACTION;
   } else {
     Show_Thing($T,$Force);
   }
-  if (($GM && !empty($tid)) || ($T['BuildState'] == 0)) echo "<br><p><br><p><h2><a href=ThingEdit.php?ACTION=DELETE&id=$tid>Delete Thing</a></h2>";
+  if (($GM && !empty($tid)) || ($T['BuildState'] == BS_PLANNING)) echo "<br><p><br><p><h2><a href=ThingEdit.php?ACTION=DELETE&id=$tid>Delete Thing</a></h2>";
 
 
   dotail();

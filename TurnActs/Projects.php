@@ -130,7 +130,7 @@ function StartProjects() {
             $P['ThingId'] = $Tid;
             Put_Project($P);
           }
-          $T['BuildState'] = 1; // Building
+          $T['BuildState'] = BS_BUILDING; // Building
           $T['SystemId'] = $Where[0];
           $T['WithinSysLoc'] = $Where[1];
           $T['CurHealth'] = $T['OrigHealth'];
@@ -170,8 +170,8 @@ function StartProjects() {
         $OTid = $OP['ThingId'];
         if ($OTid) {
           $OT = Get_Thing($OTid);
-          if ($OT['BuildState'] == 1) { // Building
-            $OT['BuildState'] = 5; // Abandoned
+          if ($OT['BuildState'] == BS_BUILDING) { // Building
+            $OT['BuildState'] = BS_ABANDON; // Abandoned
             Put_Thing($OT);
           }
         }
@@ -596,7 +596,7 @@ function ProjectsCompleted($Pass) {
 
         case 'Construct Ship':
           $T = Get_Thing($P['ThingId']);
-          $T['BuildState'] = (Feature('Shakedowns')?2:3); // Shakedown
+          $T['BuildState'] = (Feature('Shakedowns')?BS_SERVICE:BS_COMPLETE); // Shakedown
           if (empty($T['SystemId'])) {
             //        $Where = Where_Is_Home($P['Home']);
             //        $T['SystemId'] = $Where[0];
@@ -634,7 +634,7 @@ function ProjectsCompleted($Pass) {
         case "Train $ARMY":
         case 'Train Agent':
           $T = Get_Thing($P['ThingId']);
-          $T['BuildState'] = 3; // Complete
+          $T['BuildState'] = BS_COMPLETE;
           $T['WithinSysLoc'] = ConstructLoc($P['Home'],1);
           TurnLog($Fid, $T['Name'] . " has been completed",$T);
           $T['ProjectId'] = 0;
@@ -711,7 +711,7 @@ function ProjectsCompleted($Pass) {
               break;
           }
           $NT = ['GameId'=>$GAME['id'], 'Type'=> 15, 'Level'=> 1, 'SystemId'=>$H['SystemId'], 'WithinSysLoc' => $H['WithinSysLoc'], 'Whose'=>$P['FactionId'],
-            'BuildState'=>3, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>($PH['Name'] . " warp gate" )];
+            'BuildState'=>BS_COMPLETE, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>($PH['Name'] . " warp gate" )];
           Put_Thing($NT);
           TurnLog($Fid,"A warp gate has been made for " . $PH['Name']);
 

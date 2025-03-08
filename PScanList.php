@@ -6,7 +6,7 @@
 
   dostaffhead("Move Things",["js/dropzone.js","css/dropzone.css" ]);
 
-  global $db, $GAME, $GAMEID, $BuildState, $Factions, $Dot, $FAnomalyStates, $AnStateCols;
+  global $db, $GAME, $GAMEID, $Factions, $Dot, $FAnomalyStates, $AnStateCols;
   global $FACTION;
 
   include_once("vendor/erusev/parsedown/Parsedown.php");

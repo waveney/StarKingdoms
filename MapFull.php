@@ -50,7 +50,7 @@
     $AllLinks = Has_Tech($Fid,'Know All Links');
     // Setup Extras
     $TTypes = Get_ThingTypes();
-    $Things = Get_Things_Cond_Ordered($Fid,"BuildState=3");
+    $Things = Get_Things_Cond_Ordered($Fid,"BuildState=" . BS_COMPLETE);
     foreach ($Things as $Tid => $T) {
       if (!($TTypes[$T['Type']]['Properties'] & THING_HAS_BLUEPRINTS)) continue;
       $TCat = 0;

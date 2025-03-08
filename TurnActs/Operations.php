@@ -23,7 +23,7 @@ function StartOperations() {
     $OrgId = $O['OrgId'];
 
     if ($Otp & OPER_OUTPOST) {
-      $OutPs = Get_Things_Cond(0,"Type=" . $NamesTTypes['Outpost'] . " AND SystemId=$Wh AND BuildState=3");
+      $OutPs = Get_Things_Cond(0,"Type=" . $NamesTTypes['Outpost'] . " AND SystemId=$Wh AND BuildState=" . BS_COMPLETE);
       if ($OutPs) {
         if (count($OutPs) >1) {
           GMLog("There are multiple Outposts in " . $Sys['Ref'] . " - Tell Richard");
@@ -143,7 +143,7 @@ function StartOperations() {
     $Team = Gen_Get_Cond1('Things', "Whose=$Fid AND Type=" . $NamesTTypes['Team'] . " AND Dist1=$OrgId");
 
     if (!$Team) {
-      $Team = ['Whose'=>$Fid,'Type'=>$NamesTTypes['Team'], 'Dist1'=>$OrgId,'BuildState'=>3,
+      $Team = ['Whose'=>$Fid,'Type'=>$NamesTTypes['Team'], 'Dist1'=>$OrgId,'BuildState'=>BS_COMPLETE,
         'Name'=>("Operations team for " . $Orgs[$OrgId]['Name'])];
       Put_Thing($Team);
       $Orgs[$OrgId]['Team'] = $Team['id'];
@@ -198,7 +198,7 @@ function StartOperationsStage2() {  // Making branches is checked
       $Team = Gen_Get_Cond1('Things', "Whose=$Fid AND Type=" . $NamesTTypes['Team'] . " AND Dist1=$OrgId");
 
       if (!$Team) {
-        $Team = ['Whose'=>$Fid,'Type'=>$NamesTTypes['Team'], 'Dist1'=>$OrgId,'BuildState'=>3,
+        $Team = ['Whose'=>$Fid,'Type'=>$NamesTTypes['Team'], 'Dist1'=>$OrgId,'BuildState'=>BS_COMPLETE,
           'Name'=>("Operations team for " . $Orgs[$OrgId]['Name'])];
         Put_Thing($Team);
         $Orgs[$OrgId]['Team'] = $Team['id'];

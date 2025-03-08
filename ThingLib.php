@@ -10,7 +10,7 @@ global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingIns
 $Fields = ['Engineering','Physics','Xenology','Special','Unknown'];
 $Tech_Cats = ['Core','Supp','Non Std','Levelled Non Std'];
 $CivMil = ['','Civilian','Military'];
-$BuildState = ['Planning','Building','Shakedown','Complete','Ex','Abandonded','Missing In Action','Captured'];
+$BuildState = ['Planning','Building','Servicing','Complete','Ex','Abandonded','Missing In Action','Captured'];
 $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse Anomaly','Establish Embassy','Make Outpost',
                 'Make Asteroid Mine','Make Minefield',//8
                 'Make Orbital Repair Yard','Build Space Station','Expand Space Station','Make Deep Space Sensor',
@@ -108,15 +108,15 @@ define('BS_Missing',50);
 define('BS_Captured',51);
 
 Old Values */
-define('BS_Planning',0);
-define('BS_Building',1);
-define('BS_Shakedown',2);
-define('BS_Repair',17);
-define('BS_Complete',3);
-define('BS_Ex',4);
-define('BS_Abandon',5);
-define('BS_Missing',6);
-define('BS_Captured',7);
+define('BS_NOT',-1);
+define('BS_PLANNING',0);
+define('BS_BUILDING',1);
+define('BS_SERVICE',2);
+define('BS_COMPLETE',3);
+define('BS_EX',4);
+define('BS_ABANDON',5);
+define('BS_MISSING',6);
+define('BS_CAPTURED',7);
 
 
 function ModFormulaes() {
@@ -490,7 +490,7 @@ function Calc_TechLevel($Fid,$MType) {
 
 function Thing_Finished($Tid) {
   $T = Get_Thing($Tid);
-  $T['BuildState'] = 3;
+  $T['BuildState'] = BS_COMPLETE;
   $T['CurHealth'] = $T['OrigHealth'];
   Put_Thing($T);
 }
@@ -825,7 +825,7 @@ function Thing_Duplicate($otid) {
   $T['SystemId'] = 0;
   $T['LinkId'] = 0;
   $T['WithinSysLoc'] = 0;
-  $T['BuildState'] = 0;
+  $T['BuildState'] = BS_PLANNING;
   $T['History'] = 0;
   $T['Instruction'] = 0;
   $T['LinkPay'] = 0;
@@ -880,7 +880,7 @@ function EyesInSystem($Fid,$Sid,$Of=0) { // Eyes 1 = in space, 2= sens, 4= neb s
   if ($Of) {
     $MyThings = [ Get_Thing($Of) ];
   } else {
-    $MyThings = Get_Things_Cond($Fid," SystemId=$Sid AND (BuildState=2 OR BuildState=3)");
+    $MyThings = Get_Things_Cond($Fid," SystemId=$Sid AND BuildState=" . BS_COMPLETE );
   }
   $N = Get_System($Sid);
   if ($N) $Neb = $N['Nebulae'];
@@ -948,7 +948,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
 // echo "Failed to see:" . $ThingTypes[$T['Type']]['SeenBy'] . ":$stm:$Eyes<p>";
         return '';
       }
-      if ($T['BuildState'] < 2 || $T['BuildState'] > 4) return ''; // Building or abandoned
+      if ($T['BuildState'] < BS_SERVICE || $T['BuildState'] >= BS_EX) return ''; // Building or abandoned
       if ($Div && $LastWhose && $LastWhose!= $T['Whose']) $txt .= "<P>";
       $Imgxtra = 0;
       if ($Div) {
@@ -956,7 +956,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
           if ($GM) {
             $txt .= "<div class='FullD SeeThingTxt' hidden>";
             $Imgxtra = 1;
-          } elseif ($T['BuildState'] >= 4) {
+          } elseif ($T['BuildState'] >= BS_EX) {
             $txt .= "<div class='FullD SeeThingTxt' hidden>The remains of: ";
             $Imgxtra = 1;
           } else {
@@ -1036,7 +1036,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
         if ($T['NebSensors']) $txt .= "N, ";
         $txt .= ")";
       } else {
-        if (($TTprops & THING_HAS_HEALTH) && ($T['BuildState'] < 4)) {
+        if (($TTprops & THING_HAS_HEALTH) && ($T['BuildState'] < BS_EX)) {
           if ($T['CurHealth']*10 <= $T['OrigHealth']) {
             $txt .= " - Badly Damaged ";
           } else if ($T['CurHealth']*2 <= $T['OrigHealth']) {
@@ -1076,7 +1076,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
         if ($T['Instruction']) {
           $txt .= "<br>Doing: " . $ThingInstrs[$T['Instruction']];
         }
-        $OnBoard = Get_Things_Cond(0,"(LinkId=-1 OR LinkId=-3 OR LinkId=-4) AND SystemId=$Tid AND BuildState=3");
+        $OnBoard = Get_Things_Cond(0,"(LinkId=-1 OR LinkId=-3 OR LinkId=-4) AND SystemId=$Tid AND BuildState=" . BS_COMPLETE);
  //       var_dump($Tid,$Contents,$OnBoard);
         if ($OnBoard) {
           $txt .= "<br>On Board: ";
@@ -1205,7 +1205,7 @@ function Update_Militia(&$W,&$Dists,$NewOwn=0,$Deploy=0) {
 
     foreach ($Mils as $Ml) $MNames[$Ml['Name']] = 1; // Didts & Dist2 give short cut to world and districts
     $M = ['Type'=>20, 'CurHealth'=>$Hlth, 'OrigHealth'=>$Hlth, 'Evasion'=>40,
-           'Whose'=>$FactN, 'SystemId'=>$Sys, 'WithinSysLoc'=>$loc, 'BuildState'=>3,
+           'Whose'=>$FactN, 'SystemId'=>$Sys, 'WithinSysLoc'=>$loc, 'BuildState'=>BS_COMPLETE,
            'Dist1'=> $W['ThingType'], 'Dist2'=>$W['ThingId'], 'LinkId' => ($Deploy?0:LINK_INBRANCH)  ];
     $Mn = 1;
     for ($Mnum = count($Mils); $Mnum < $Dcount; $Mnum++) {
@@ -1249,13 +1249,13 @@ function Check_MyThing(&$T,$Fid=0) {
 
 function Gates_Avail($Fid) {
   $Gates = [];
-  $OwnGates = Get_Things_Cond($Fid,' Type=15 AND BuildState=3'); // Warp Gates
+  $OwnGates = Get_Things_Cond($Fid,' Type=15 AND BuildState=' . BS_COMPLETE); // Warp Gates
   if (!empty($OwnGates)) $Gates = array_merge($Gates,$OwnGates);
 
   $FFdata = Get_FactionFactionsCarry($Fid);
   foreach($FFdata as $FC) {
     if ($FC['Props'] & 0xf00) {
-      $OGates = Get_Things_Cond($FC['FactionId1'],' Type=15 AND BuildState=3'); // Warp Gates
+      $OGates = Get_Things_Cond($FC['FactionId1'],' Type=15 AND BuildState=' . BS_COMPLETE); // Warp Gates
       if (!empty($OGates)) $Gates = array_merge($Gates,$OGates);
     }
   }
@@ -1273,7 +1273,7 @@ function Do_Mine_Damage(&$T,&$Mine,&$N=0,$InTurn=0) { // Needs changes
   if ($T['CurHealth'] > $Dam) {
     $T['CurHealth'] -= $Dam;
   } else {
-    $T['BuildState'] = 4;
+    $T['BuildState'] = BS_EX;
   }
   Put_Thing($T);
   $N0 = 0;
@@ -1283,21 +1283,22 @@ function Do_Mine_Damage(&$T,&$Mine,&$N=0,$InTurn=0) { // Needs changes
 
   if ($InTurn) {
     TurnLog($T['Whose'],"The " . $T['Name'] . " has recieved $Dam damage from a minefield in " . $N['Ref'] . " $LocText " .
-      ($T['BuildState'] > 3? " and has been destroyed." : ""),$T);
+      ($T['BuildState'] >= BS_EX ? " and has been destroyed." : ""),$T);
     GMLog("The <a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a> took $Dam from a minefield in " . $N['Ref'] . " $LocText " .
-      ($T['BuildState'] > 3? " and has been destroyed." : ""));
+      ($T['BuildState'] >= BS_EX ? " and has been destroyed." : ""));
     Report_Others($T['Whose'], $T['SystemId'],2,$T['Name'] . " has recieved damage from a minefield in " . $N['Ref'] . " $LocText " .
-      ($T['BuildState'] > 3? " and has been destroyed." : ""),$T);
+      ($T['BuildState'] >= BS_EX ? " and has been destroyed." : ""),$T);
       return "";
   } else {
     // Report Out Of Turn
     include_once("TurnTools.php");
-    $msg = "The " . $T['Name'] . " has recieved $Dam damage from a minefield in " . $N['Ref'] . " $LocText " . ($T['BuildState'] > 3? " and has been destroyed." : "");
+    $msg = "The " . $T['Name'] . " has recieved $Dam damage from a minefield in " . $N['Ref'] . " $LocText " .
+      ($T['BuildState'] >= BS_EX? " and has been destroyed." : "");
     TurnLog($T['Whose'],$msg,$T);
     GMLog4Later("The <a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a> took $Dam from a minefield in " . $N['Ref'] . " $LocText " .
-      ($T['BuildState'] > 3? " and has been destroyed." : ""));
+      ($T['BuildState'] >= BS_EX? " and has been destroyed." : ""));
     Report_Others($T['Whose'], $T['SystemId'],2,$T['Name'] . " has recieved damage from a minefield in " . $N['Ref'] . " $LocText " .
-      ($T['BuildState'] > 3? " and has been destroyed." : ""),$T);
+      ($T['BuildState'] >= BS_EX? " and has been destroyed." : ""),$T);
     return $msg;
   }
 }
@@ -1306,7 +1307,7 @@ function Move_Thing_Within_Sys(&$T,$Dest,$InTurn) {
   if ($T['WithinSysLoc'] == $Dest) return;
   $WSL = $T['WithinSysLoc'];
 // Is there a mine here?
-  $Mines = Get_Things_Cond(0,"Type=10 AND SystemId=" . $T['SystemId'] . " AND BuildState=3");
+  $Mines = Get_Things_Cond(0,"Type=10 AND SystemId=" . $T['SystemId'] . " AND BuildState=" . BS_COMPLETE);
   if (empty($Mines)) return;
   foreach($Mines as $i=>&$M) if ($M['WithinSysLoc']>500) unset($Mines[$i]); //
   if (empty($Mines)) return;

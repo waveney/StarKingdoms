@@ -107,7 +107,7 @@
     }
 
 
-    $BuildClass = ($T['BuildState']<4 ? $T['BuildState'] : 4);
+    $BuildClass = ($T['BuildState']<BS_EX ? $T['BuildState'] : BS_EX);
 
     echo "<tr class='ThingList Thing_$RowClass Thing_Build$BuildClass'><td><a href=ThingEdit.php?id=$tid>$tid</a>";
 

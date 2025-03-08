@@ -126,7 +126,7 @@ function AgentsMovements() {
 }
 
 function LoadTroops() {
-  $Things = Get_Things_Cond(0,"(BuildState=2 OR BuildState=3) AND (LinkId=-2 OR LinkId=-4)");
+  $Things = Get_Things_Cond(0,"(BuildState=" . BS_SERVICE . " OR BuildState=" . BS_COMPLETE . ") AND (LinkId=-2 OR LinkId=-4)");
   $TTypes = Get_ThingTypes();
   $Facts = Get_Factions();
   $MTs = Get_ModuleTypes();
@@ -227,7 +227,7 @@ function ShipMoveCheck($Mode=0) {  // Show all movements to allow for blocking
   $UsedLinks = [];
   if ($Mode) {
     foreach ($Things as $T) {
-      if ($T['BuildState'] <2 || $T['BuildState'] > 3 || $T['LinkId'] <= 0 ) continue;
+      if ($T['BuildState'] != BS_COMPLETE || $T['LinkId'] <= 0 ) continue;
       if ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER) {
       } else {
         $UsedLinks[$T['LinkId']][$T['Whose']] = ($T['SystemId'] == $T['NewSystemId']);
@@ -238,7 +238,7 @@ function ShipMoveCheck($Mode=0) {  // Show all movements to allow for blocking
 
   GMLog("<table border><tr><td>Who<td>What<td>Level<td>From<td>Link<td>To<td>" . ($LOWho?"Paid<td>":'') . "Stop<td>Why Stopping\n");
   foreach ($Things as $T) {
-    if ($T['BuildState'] <2 || $T['BuildState'] > 3 || $T['LinkId'] <= 0 || $T['Whose']==0 || $T['CurHealth']==0) continue;
+    if ($T['BuildState'] != BS_COMPLETE || $T['LinkId'] <= 0 || $T['Whose']==0 || $T['CurHealth']==0) continue;
     if (( $Mode == 0 &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER)) ||
       ( ($Mode ==1) &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER) ==0 ) ) continue;
 
@@ -319,7 +319,7 @@ function ShipMovements($Mode=0) {
   $LinkMethod = Feature('LinkMethod','Gates');
 
   foreach ($Things as $T) {
-    if ($T['BuildState'] <2 || $T['BuildState'] > 3 || $T['LinkId'] <= 0 || $T['CurHealth']==0) continue;
+    if ($T['BuildState'] != BS_COMPLETE || $T['LinkId'] <= 0 || $T['CurHealth']==0) continue;
     if (( ($Mode == 0) &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER)) ||
       ( ($Mode == 1) &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER) ==0 ) ) continue;
       if ($T['LastMoved'] == $Done) continue; // Already done
@@ -439,7 +439,7 @@ function ShipMovements($Mode=0) {
                 Do_Mine_Damage($T,$Mine, $OldN,1);
               }
             }
-            if ($T['BuildState'] != 3) continue 2;
+            if ($T['BuildState'] != BS_COMPLETE) continue 2;
           }
         }
 
@@ -567,7 +567,7 @@ function SaveWhatCanBeSeen() {
 
 
 function UnloadTroops() {
-  $Things = Get_Things_Cond(0,"(BuildState=2 OR BuildState=3) AND ( LinkId=-3 OR LinkId=-4)"); // -4 should have been converted on load to -3 (in theory)
+  $Things = Get_Things_Cond(0,"(BuildState=" . BS_COMPLETE . " AND ( LinkId=" . LINK_BOARDING . " OR LinkId=" . LINK_LOAD_AND_UNLOAD . ")");
   $TTypes = Get_ThingTypes();
   $Facts = Get_Factions();
 
@@ -599,7 +599,7 @@ function UnloadTroops() {
 
 function RetreatsSelection() {
   global $GAME,$GAMEID;
-  $Things = Get_Things_Cond_Ordered(0,"(BuildState=3) AND ( Retreat!=0 ) AND (GameId=$GAMEID)");
+  $Things = Get_Things_Cond_Ordered(0,"(BuildState=" . BS_COMPLETE . " ) AND ( Retreat!=0 ) AND (GameId=$GAMEID)");
   $TTypes = Get_ThingTypes();
   $Facts = Get_Factions();
   $SysHasNeb = [];
@@ -653,7 +653,7 @@ function RetreatsSelection() {
 
 function Retreats() {
   global $GAME,$GAMEID;
-  $Things = Get_Things_Cond_Ordered(0,"(BuildState=3) AND ( Retreat!=0 ) AND (GameId=$GAMEID)");
+  $Things = Get_Things_Cond_Ordered(0,"(BuildState=" . BS_COMPLETE . ") AND ( Retreat!=0 ) AND (GameId=$GAMEID)");
   $TTypes = Get_ThingTypes();
   $Facts = Get_Factions();
   $SysHasNeb = [];

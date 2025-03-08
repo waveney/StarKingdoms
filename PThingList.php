@@ -169,7 +169,7 @@
 
   $Things = Get_Things_Cond($Fid, "id>0 AND GameId=$GAMEID ORDER BY Priority DESC");
   if (!empty($FACTION['HasPrisoners'])) {
-    $Held = Get_Things_Cond(0,"PrisonerOf=$Fid AND BuildState=3");
+    $Held = Get_Things_Cond(0,"PrisonerOf=$Fid AND BuildState=" . BS_COMPLETE);
     $Things = array_merge($Things,$Held);
   }
   $ThingTypes = Get_ThingTypes();
@@ -190,11 +190,8 @@
   $ShowCats = ['All','Ships',$ARMIES,'','Chars', 'Other'];
   if (!empty($FACTION['HasPrisoners'])) $ShowCats[] = 'Prisoners';
   $Show['ThingShow'] = ($Faction[$GM?'GMThingType':'ThingType'] ?? 0);
-  if (Feature('Shakedown')) {
-    $BuildCats = ['All','Plan','Building','Shakedown','Complete','Other'];
-  } else {
-    $BuildCats = [0=>'All',1=>'Plan',2=>'Building',4=>'Complete',5=>'Other'];
-  }
+  $BuildCats = [0=>'All',1=>'Plan',2=>'Building',3=>'Servicing', 4=>'Complete',5=>'Other']; // VERY similar to Buildstate
+
   $Build['BuildShow'] = ($Faction[$GM?'GMThingBuild':'ThingBuild'] ?? 0);
 
   echo "<div class=floatright ><b>" . fm_radio("Show",$ShowCats,$Show,'ThingShow',' onchange=ThingListFilter()') . "<br>";
@@ -298,7 +295,7 @@
       $RowClass = 'Other';
     }
 
-    $BuildClass = ($T['BuildState']<4 ? $T['BuildState'] : 4);
+    $BuildClass = ($T['BuildState']<BS_EX ? $T['BuildState'] : BS_EX);
 
     if ($Fid) {
       $Logistics = Logistics($Fid,$Things);
@@ -333,7 +330,7 @@
         (empty($Systems[$T['SystemId']]) ?'': $Systems[$T['SystemId']]) : (($T['LinkId'] == LINK_INBRANCH ) ? 'Not Deployed' : 'On Board'));
       echo "<td>";
       if ($T['Instruction']) echo $ThingInstrs[abs($T['Instruction'])];
-      if (($T['Instruction'] == 0 || $T['Instruction'] == 5 ) && (($Props & THING_CAN_MOVE) && ( $T['BuildState'] == 3))) {
+      if (($T['Instruction'] == 0 || $T['Instruction'] == 5 ) && (($Props & THING_CAN_MOVE) && ( $T['BuildState'] == BS_COMPLETE))) {
         if ( (($T['LinkId'] >=0 ) || ($T['LinkId'] == LINK_FOLLOW) )&& ($T['CurHealth'] > 0 || ($Props & THING_HAS_HEALTH) ==0)) {
           if ($MovesValid && (($Faction['TurnState']??0) == 1)) {
             echo " <a href=PMoveThing.php?id=" . $T['id'] . ">Move</a>";

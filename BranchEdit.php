@@ -163,7 +163,7 @@ if (isset($_REQUEST['Action'])) {
           if ($Count < $Num) { // New ones
             while ($Count < $Num) {
               $Count++;
-              $T = ['Whose'=>$Fid, 'Type'=>$NTypes['Heavy Security'], 'BuildState'=>3, 'CurHealth'=>$Def, 'OrigHealth'=>$Def, 'ActDamage'=>$Off,
+              $T = ['Whose'=>$Fid, 'Type'=>$NTypes['Heavy Security'], 'BuildState'=>BS_COMPLETE, 'CurHealth'=>$Def, 'OrigHealth'=>$Def, 'ActDamage'=>$Off,
                 'SystemId'=>$Sid, 'WithinSysLoc'=>3, 'Class'=>'Heavy Security', 'Name'=>($B['Name']?$B['Name']:"Heavy Security $Bid") . ":$Count" ,
                 'Evasion'=>40, 'ProjectId'=>$Bid, 'LinkId'=>0];
               Put_Thing($T);
@@ -215,7 +215,7 @@ if (isset($_REQUEST['Action'])) {
           if ($Count < $Num) { // New ones
             while ($Count < $Num) {
               $Count++;
-              $T = ['Whose'=>$Fid, 'Type'=>$NTypes['Fighter Defences'], 'BuildState'=>3, 'CurHealth'=>$Def, 'OrigHealth'=>$Def, 'ActDamage'=>$Off,
+              $T = ['Whose'=>$Fid, 'Type'=>$NTypes['Fighter Defences'], 'BuildState'=>BS_COMPLETE, 'CurHealth'=>$Def, 'OrigHealth'=>$Def, 'ActDamage'=>$Off,
                 'SystemId'=>$Sid, 'WithinSysLoc'=>1, 'Class'=>'Defence Fighter Squadron', 'Name'=>($B['Name']?$B['Name']:"Squadron $Bid") . ":$Count" ,
                 'Evasion'=>40, 'ProjectId'=>$Bid, 'Speed'=>$Speed, 'LinkId'=>0];
               Put_Thing($T);
