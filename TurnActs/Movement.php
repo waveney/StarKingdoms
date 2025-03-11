@@ -567,7 +567,7 @@ function SaveWhatCanBeSeen() {
 
 
 function UnloadTroops() {
-  $Things = Get_Things_Cond(0,"(BuildState=" . BS_COMPLETE . " AND ( LinkId=" . LINK_BOARDING . " OR LinkId=" . LINK_LOAD_AND_UNLOAD . ")");
+  $Things = Get_Things_Cond(0,"BuildState=" . BS_COMPLETE . " AND ( LinkId=" . LINK_BOARDING . " OR LinkId=" . LINK_LOAD_AND_UNLOAD . ")");
   $TTypes = Get_ThingTypes();
   $Facts = Get_Factions();
 

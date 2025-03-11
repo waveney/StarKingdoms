@@ -1857,6 +1857,7 @@ function Show_Thing(&$T,$Force=0) {
   }
   echo "</table></div>\n";
   echo fm_submit("ACTION","Refresh",0);
+  if ($T['BuildState'] == BS_SERVICE) echo fm_submit('ACTION','Cancel Servicing');
   if ($GM) {
     echo fm_submit("ACTION",'GM Refit',0);
     if ($tprops & THING_LEAVES_DEBRIS) echo fm_submit("ACTION",'Destroy Thing (Leave debris)',0);

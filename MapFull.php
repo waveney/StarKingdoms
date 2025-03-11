@@ -287,7 +287,7 @@
         if ($Extras[$N['id']][3]??0) $atts .= '<font color="darkgreen">A</font>';
         $atts .= '> ';
 
-        $atts .= ' tooltip="' . $Extras[$N['id']][0] . '" ';
+        if ($Extras[$N['id']][0]??0) $atts .= ' tooltip="' . $Extras[$N['id']][0] . '" ';
 
       } else if (!empty($FS['Xlabel'])) {
           $atts .= " xlabel=\"" . $FS['Xlabel'] . '" ';

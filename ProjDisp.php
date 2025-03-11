@@ -9,7 +9,7 @@
   include_once("SystemLib.php");
   include_once("ProjLib.php");
 
-  global $FACTION,$ADDALL,$GAME,$ARMY, $GAMEID;
+  global $FACTION,$ADDALL,$GAME,$ARMY, $ARMIES, $GAMEID;
 
 // var_dump($_REQUEST);
 
@@ -96,16 +96,18 @@
             $Sels = $_REQUEST['Sel2'];
             $Count = count($Sels);
             if ($Count == 0 || $Count>2) {
-              echo "<h2 class=Err>You must select 1 (or up to two level 1 armies)</h2>\n";
+              echo "<h2 class=Err>You must select 1 (or up to two level 1 $ARMIES)</h2>\n";
               $Valid = 0;
               break;
             }
             if ($Count == 1) {
               $TthingId = $Sels[0];
             } else {
-              $TthingId =$Sels[0];
+              $TthingId = $Sels[0];
               $TthingId2 = $Sels[1];
               $T2 = Get_Thing($TthingId2);
+              $T2['BuildState'] = BS_SERVICE;
+              Put_Thing($T2);
             }
           } else {
             echo "<h2 class=Err>You must select an $ARMY</h2>\n";
@@ -113,6 +115,8 @@
             break;
           }
           $T1 = Get_Thing($TthingId);
+          $T1['BuildState'] = BS_SERVICE;
+          Put_Thing($T1);
 
           if (!isset($_REQUEST['Name'])) {
             $T1 = Get_Thing($TthingId);
@@ -144,6 +148,8 @@
               $TthingId =$Sels[0];
               $TthingId2 = $Sels[1];
               $T2 = Get_Thing($TthingId2);
+              $T2['BuildState'] = BS_SERVICE;
+              Put_Thing($T2);
             }
           } else {
             echo "<h2 class=Err>You must select a ship</h2>\n";
@@ -151,6 +157,9 @@
             break;
           }
           $T1 = Get_Thing($TthingId);
+          $T1['BuildState'] = BS_SERVICE;
+          Put_Thing($T1);
+
 
           if (!isset($_REQUEST['Name'])) {
             $T1 = Get_Thing($TthingId);
@@ -308,6 +317,17 @@
           $OpenHi = $Hi;
           $OpenDi = $Di;
           $Pid = Put_Project($Pro);
+
+          if ($TthingId??0) {
+            $T1 = Get_Thing(($TthingId));
+            $T1['ProjectId'] = $Pid;
+            Put_Thing($T1);
+            if ($TthingId2??0) {
+              $T1 = Get_Thing(($TthingId2));
+              $T1['ProjectId'] = $Pid;
+              Put_Thing($T1);
+            }
+          }
         }
       break;
 

@@ -600,8 +600,7 @@
         $HSys = $Homes[$Hi]['SystemId'];
         $HLoc = $Homes[$Hi]['WithinSysLoc'];
         $TTs = Get_ThingTypes();
-        $Things = Get_Things_Cond($Fid," SystemId=$HSys AND ( BuildState=" . BS_COMPLETE . " OR BuildState=" . BS_SERVICE . ") ");
-          // Get all things at xx then filter  by type == Ship & WithinSysLoc
+        $Things = Get_Things_Cond($Fid," SystemId=$HSys AND BuildState=" . BS_COMPLETE );
         $RepShips = [];
         $Level1 = 0;
         $Count = 0;
@@ -623,8 +622,7 @@
         $FFdata = Get_FactionFactionsCarry($Fid);
         foreach($FFdata as $FC) {
           if ($FC['Props'] & 0xf000) {
-            $OThings = Get_Things_Cond($FC['FactionId1']," SystemId=$HSys AND ( BuildState=" . BS_COMPLETE . " OR BuildState=" . BS_SERVICE .
-              ") AND Level<=$MaxLvl "); // Warp Gates
+            $OThings = Get_Things_Cond($FC['FactionId1']," SystemId=$HSys AND BuildState=" . BS_COMPLETE . " AND Level<=$MaxLvl AND Instruction=0 AND LinkId=0");
             foreach ($OThings as $T) {
               if ($TTs[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) {
                 $RepShips[$T['id']] = $T['Name'] . " - level " . $T['Level'] . " (" . $Factions[$T['Whose']]['Name'] . ")";
@@ -639,6 +637,7 @@
 
           $pc = Proj_Costs(1);
           if ($Count) {
+            echo "To be selectable ships must be idle: no movement or instructions<p>";
             if ($Count == 1) {
               foreach ($RepShips as $tid=>$Name) { // TODO Levls of ships need tweaking
                 echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi[$RP] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=$tid" .
@@ -704,6 +703,7 @@
 
         $pc = Proj_Costs(1);
         if ($Count) {
+          echo "To be selectable ships must be idle: no movement or instructions<p>";
           if ($Count == 1) {
             foreach ($RepShips as $tid=>$Name) {
               echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Refit and Repair'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=$tid" .
@@ -780,7 +780,7 @@
       $HSys = $Homes[$Hi]['SystemId'];
       $HLoc = $Homes[$Hi]['WithinSysLoc'];
       $TTs = Get_ThingTypes();
-      $Things = Get_Things_Cond($Fid," SystemId=$HSys AND BuildState=" . BS_COMPLETE);
+      $Things = Get_Things_Cond($Fid," SystemId=$HSys AND BuildState=" . BS_COMPLETE . " AND Instruction=0 AND LinkId=0");
       $RepShips = [];
       $Level1 = 0;
       $Count = 0;
@@ -797,6 +797,7 @@
 
       $pc = Proj_Costs(1);
       if ($Count) {
+        echo "To be selectable $ARMIES must be idle: no movement or instructions<p>";
         if ($Count == 1) {
           foreach ($RepShips as $tid=>$Name) {
             echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Re-equip and Reinforce'] .

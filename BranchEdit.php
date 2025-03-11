@@ -197,7 +197,7 @@ if (isset($_REQUEST['Action'])) {
           $Org = Gen_Get_Cond1('Organisations',$B['Organisation']);
           $Num = $Org['OfficeCount'];
 
-          $Squads = Get_Things_Cond($B['Whose'],"Type=" . $NTypes['Fighter Defences'] . " AND ProjectId=$Bid");
+          $Squads = Get_Things_Cond_Ordered($B['Whose'],"Type=" . $NTypes['Fighter Defences'] . " AND ProjectId=$Bid");
           $Count = 0;
           if ($Squads) foreach($Squads as $Tid=>$T) {
             if ($T['OrigHealth'] < $Def) {
@@ -209,6 +209,7 @@ if (isset($_REQUEST['Action'])) {
             $T['Speed'] = $Speed;
             $T['WithinSysLoc'] = 1;
             $T['LinkId'] = 0;
+            $T['ProjectId'] = $Bid;
             Put_Thing($T);
             $Count++;
           }

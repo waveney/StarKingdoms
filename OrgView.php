@@ -99,6 +99,10 @@ if ($Branches) {
     echo "<li>". $BTypes[$B['Type']]['Name'] . " at $Where" ;
     if ($B['HostType'] != 3) {
       $World = Gen_Get_Cond1('Worlds',"ThingType=" . $B['HostType'] . " AND ThingId=" . $B['HostId']);
+      if (!$World) {
+        echo "<h2 class=Err>Branch without a World tell Richard #" . $B['id'] . "</h2>";
+        break;
+      }
       $SocPs = Get_SocialPs($World['id']);
       if ($SocPs) {
         echo "<br>It's social principles are:<ul>";

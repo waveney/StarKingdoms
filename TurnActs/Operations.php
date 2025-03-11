@@ -358,10 +358,10 @@ function OperationsComplete() {
         New_Branch($Outpost,$NamesBTs['Forward Operating Base'],$O,$Org);
         TurnLog($Fid,"A new Forward Operating Base branch for " . $Org['Name'] . " has been set up on the Outpost in " . System_Name($Sys,$Fid) );
         if ($Outpost['Whose'] != $Fid) {
-          TurnLog($Outpost['Whose'],"A new Forward Operating Base branch for " . $Org['Name'] . " has been set up on the Outpost in  " .
+          TurnLog($Outpost['Whose'],"A new Forward Operating Base branch for " . $Org['Name'] . " has been set up on the Outpost in " .
             System_Name($Sys,$Outpost['Whose']) . " by " . $Facts[$Fid]['Name']);
         }
-        GMLog("A new Forward Operating Base branch for " . $Org['Name'] . " has been set up on the Outpost in  " .
+        GMLog("A new Forward Operating Base branch for " . $Org['Name'] . " has been set up on the Outpost in  " . ' ' .
           System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);
         break;
 
@@ -370,7 +370,7 @@ function OperationsComplete() {
         New_Branch($World,$NamesBTs['Black Market Trading Station'],$O,$Org);
         TurnLog($Fid,"A new Black Market Trading Station branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
           " in " . System_Name($Sys,$Fid) );
-        GMLog("A new Black Market Trading Station branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
+        GMLog("A new Black Market Trading Station branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] . ' ' .
           System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);
         break;
 
@@ -383,7 +383,7 @@ function OperationsComplete() {
           TurnLog($World['FactionId'],"A new Trading Station branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
             System_Name($Sys,$World['FactionId']) . " by " . $Facts[$Fid]['Name']);
         }
-        GMLog("A new Trading Station branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
+        GMLog("A new Trading Station branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] . ' ' .
           System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);
         break;
 
@@ -392,7 +392,7 @@ function OperationsComplete() {
         New_Branch($World,$NamesBTs['Safe House'],$O,$Org);
         TurnLog($Fid,"A new Safe House branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
           " in " . System_Name($Sys,$Fid) );
-        GMLog("A new Safe House branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
+        GMLog("A new Safe House branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] . ' ' .
           System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);
         break;
 
@@ -401,32 +401,32 @@ function OperationsComplete() {
         New_Branch($World,$NamesBTs['Hidden Lodge'],$O,$Org);
         TurnLog($Fid,"A new Hidden Lodge branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
           " in " . System_Name($Sys,$Fid) );
-        GMLog("A new Hidden Lodge branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
+        GMLog("A new Hidden Lodge branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] . ' ' .
           System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);
         break;
 
       case 'Establish Lodge':
         $World = World_in($O['SystemId'],$Fid);
         New_Branch($World,$NamesBTs['Trading Station'],$O,$Org);
-        TurnLog($Fid,"A new Lodge branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .  System_Name($Sys,$Fid) );
+        TurnLog($Fid,"A new Lodge branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] . ' ' . System_Name($Sys,$Fid) );
         if ($World['FactionId'] != $Fid) {
           TurnLog($World['FactionId'],"A new Lodge branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
             System_Name($Sys,$World['FactionId']) . " by " . $Facts[$Fid]['Name']);
         }
-        GMLog("A new Lodge branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
+        GMLog("A new Lodge branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] . ' ' .
           System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);
         break;
 
       case 'Establish Forward Operating Area':
         $World = World_in($O['SystemId'],$Fid);
         New_Branch($World,$NamesBTs['Forward Operating Area'],$O,$Org);
-        TurnLog($Fid,"A new Forward Operating Area branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
+        TurnLog($Fid,"A new Forward Operating Area branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] . ' ' .
           System_Name($Sys,$Fid) );
         if ($World['FactionId'] != $Fid) {
-          TurnLog($World['FactionId'],"A new Forward Operating Area branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
+          TurnLog($World['FactionId'],"A new Forward Operating Area branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] . ' ' .
             System_Name($Sys,$World['FactionId']) . " by " . $Facts[$Fid]['Name']);
         }
-        GMLog("A new Forward Operating Area branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
+        GMLog("A new Forward Operating Area branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] . ' ' .
           System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);
         break;
 
@@ -437,10 +437,10 @@ function OperationsComplete() {
         TurnLog($Fid,"A new Research Base branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
           System_Name($Sys,$Fid) );
         if ($World['FactionId'] != $Fid) {
-          TurnLog($World['FactionId'],"A new Research Base branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
+          TurnLog($World['FactionId'],"A new Research Base branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] . ' ' .
             System_Name($Sys,$World['FactionId']) . " by " . $Facts[$Fid]['Name']);
         }
-        GMLog("A new Research Base branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
+        GMLog("A new Research Base branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] . ' ' .
           System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);
         break;
 
@@ -590,7 +590,7 @@ function OperationsComplete() {
         if (($Anom['Complete']??3) ==0) {
           $Aid = $Anom['id']??0;
           $FA = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
-          $Prog = Has_Tech('Sensors')*$Org['OfficeCount'];
+          $Prog = Has_Tech($Fid,'Sensors')*$Org['OfficeCount'];
 
           if ($FA['Progress'] < $Anom['AnomalyLevel']) {
             $FA['Progress'] += $Prog;

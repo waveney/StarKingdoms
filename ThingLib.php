@@ -1073,7 +1073,9 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
       }
 
       if ($Contents) {
-        if ($T['Instruction']) {
+        if ($T['BuildState'] == BS_SERVICE) {
+          $txt .= "<br>Being Serviced";
+        } else if ($T['Instruction']) {
           $txt .= "<br>Doing: " . $ThingInstrs[$T['Instruction']];
         }
         $OnBoard = Get_Things_Cond(0,"(LinkId=-1 OR LinkId=-3 OR LinkId=-4) AND SystemId=$Tid AND BuildState=" . BS_COMPLETE);
@@ -1392,11 +1394,13 @@ function Empty_Thing(&$T) {
 
 function Thing_Delete($tid) {
   global $Project_Status,$Project_Statuses,$GAME;
+  include_once("SystemLib.php");
   $TTs = Get_ThingTypes();
   $TTNames = NamesList($TTs);
   $NameTT = array_flip($TTNames);
 
   $T = Get_Thing($tid);
+  if (!$T) return;
 
   $TT = $TTs[$T['Type']];
   switch ($TTNames[$T['Type']]) {
@@ -1406,7 +1410,7 @@ function Thing_Delete($tid) {
         include_once("TurnTools.php");
         $Fact = Get_Faction($T['Whose']);
         $Oper['Status'] = 6;
-        $Org = Gen_Get("Organisation" , $Oper['OrgId']);
+        $Org = Gen_Get("Organisations" , $Oper['OrgId']);
         TurnLog($T['Whose'], "The Team doing Operation " . $Oper['Name'] . " for " . $Org['Name'] . " has been destroyed, the operation has been lost.");
         GMLog("The Team doing Operation " . $Oper['Name'] . " for " . $Org['Name'] . " has been destroyed, the operation has been lost.");
       }

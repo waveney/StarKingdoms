@@ -3,6 +3,8 @@
   include_once("GetPut.php");
   include_once("ThingLib.php");
   include_once("ThingShow.php");
+  include_once("ProjLib.php");
+
 
 function New_Thing(&$T) {
   global $BuildState;
@@ -68,7 +70,7 @@ global $FACTION;
 
   dostaffhead("Edit and Create Things",["js/dropzone.js","css/dropzone.css" ]);
 
-  global $db, $GAME, $GAMEID,$BuildState;
+  global $db, $GAME, $GAMEID,$BuildState,$Project_Statuses;
   $ttypes = Get_ThingTypes();
 
 // START HERE
@@ -683,6 +685,28 @@ global $FACTION;
 
       Put_Thing($T);
       Put_Thing($OT);
+      break;
+
+    case 'Cancel Servicing': //Refits etc
+      $tid = $_REQUEST['id'];
+      $T = Get_Thing($tid);
+      if ($T['BuildState'] != BS_SERVICE) break;
+      $Pid = $T['ProjectId'];
+      $T['BuildState'] = BS_COMPLETE;
+      Put_Thing($T);
+      $P = Get_Project($Pid);
+      var_dump($P); exit;
+      if ($P['ThingId'] == $tid) {
+        $P['ThingId'] = 0;
+      } else if ($P['ThingId2'] == $tid) {
+        $P['ThingId2'] = 0;
+      }
+      if ($P['ThingId'] == 0 && $P['ThingId2'] == 0) {
+        $P['Status'] = $Project_Statuses['Cancelled'];
+        Put_Project($P);
+        echo "<h2>Project Cancelled</h2>";
+      }
+      echo "<h2>Servicing Cancelled</h2>";
       break;
 
     case 'None' :

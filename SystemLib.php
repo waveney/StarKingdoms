@@ -1009,6 +1009,7 @@ function System_Owner($Sid) {
   }
 //var_dump("Checking for outpost");
   $TTypes = Get_ThingTypes();
+  include_once("ThingLib.php");
   $Outpost = Gen_Get_Cond1('Things',"Type=" . array_flip(NamesList( $TTypes))['Outpost'] . " AND SystemId=$Sid AND BuildState=" . BS_COMPLETE);
   if ($Outpost) {
     if ($Outpost['Whose'] != $N['Control']) {
