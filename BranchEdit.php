@@ -190,21 +190,22 @@ if (isset($_REQUEST['Action'])) {
           $DefLevel = Has_Tech($Fid,'Starship Defences');
           $OffLevel = Has_Tech($Fid,'Starship  Weapons');
           $EngLevel = Has_Tech($Fid,'Engines');
-          $Def = 2*($DefLevel*3+12);
+          $Def = ($DefLevel*3+12);
           $Off = 2*($OffLevel+4);
           $Speed = 2*$EngLevel;
 
-          $Org = Gen_Get_Cond1('Organisations',$B['Organisation']);
+          $Org = Gen_Get('Organisations',$B['Organisation']);
           $Num = $Org['OfficeCount'];
 
           $Squads = Get_Things_Cond_Ordered($B['Whose'],"Type=" . $NTypes['Fighter Defences'] . " AND ProjectId=$Bid");
           $Count = 0;
+//          var_dump($B,$Oid,$Org,$Num, $Squads); exit;
           if ($Squads) foreach($Squads as $Tid=>$T) {
             if ($T['OrigHealth'] < $Def) {
               $T['CurHealth'] = $Def + $T['CurHealth'] - $T['OrigHealth'];
               $T['OrigHealth'] = $Def;
             }
-            $T['Damage'] = $Off;
+            $T['ActDamage'] = $Off;
             $T['SystemId'] = $Sid;
             $T['Speed'] = $Speed;
             $T['WithinSysLoc'] = 1;

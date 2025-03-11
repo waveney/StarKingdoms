@@ -790,7 +790,7 @@ function Show_Thing(&$T,$Force=0) {
                         (($D['Level']<$Mt[$D['Type']])? "<span class=green>(" . $Mt[$D['Type']] . ")</span>":'') :'<td>'). ' # '
                     . fm_number0('', $D,'Number', '',' class=Num3 ',"ModuleNumber-$did")
                     . (($Blue && !empty($BMods[$D['Type']]))? "<span class=Blue>(" . $BMods[$D['Type']]['Number'] . ')</span> ' :'')
-                    . "<button id=ModuleRemove-$did onclick=AutoInput('ModuleRemove-$did')>R</button>";
+                    . "<button type=button id=ModuleRemove-$did onclick=AutoInput('ModuleRemove-$did','Thing')>R</button>";
 
         if ( $Blue) {
           $FlexUsed += $D['Number'];
@@ -856,9 +856,9 @@ function Show_Thing(&$T,$Force=0) {
           $M = $MTs[$D['Type']];
           if ($M['BasedOn']) {
             if ($l = Has_Tech($T['Whose'],$M['BasedOn'])) {
-              echo "<span class=err>Invalid</span> " . $M['Name'] . ' Modules ' . (($T['Leveled']&1)? (" (Level " . $D['Level'] . ") ") :"") ;
+              echo "<span class=err>Invalid</span> " . $M['Name'] . ' Modules ' . (($MTs[$D['Type']]['Leveled']&1)? (" (Level " . $D['Level'] . ") ") :"") ;
             } else {
-              echo '<span class=err>Unknown</span> ' . $M['Name'] . ' Modules' . (($T['Leveled']&1)? (" (Level " . $D['Level'] . ") ") :"") ;
+              echo '<span class=err>Unknown</span> ' . $M['Name'] . ' Modules' . (($MTs[$D['Type']]['Leveled']&1)? (" (Level " . $D['Level'] . ") ") :"") ;
             }
           }
         }
