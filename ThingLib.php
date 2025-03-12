@@ -901,6 +901,7 @@ function EyesInSystem($Fid,$Sid,$Of=0) { // Eyes 1 = in space, 2= sens, 4= neb s
   }
 // echo "System " . $N['Ref'] . " eyes: $Eyes<br>";
   if (($Eyes&1) == 0) { // Check for Branch on outpost
+    include_once("OrgLib.php");
     $OP = Outpost_In($Sid,0,0);
     if ($OP) {
       $Bs = Gen_Get_Cond1('Branches',"Whose=$Fid AND HostType=3 AND HostId=" . $OP['id']);

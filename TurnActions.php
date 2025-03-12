@@ -1208,6 +1208,8 @@ function TidyUps() {
 
 function ClearConflictFlags() {
   global $ForceNoFaction;
+  GMLog("<h2>Please clear worlds of conflict where applicable</h2>Devastation is derived from conflict normally, only tweak if something special needs it");
+
   $_REQUEST['CONFLICT'] = 2; // Makes WorldList think its part of turn processing - 2 for clearing flags
   $ForceNoFaction = 1;
   include_once("WorldList.php");

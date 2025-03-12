@@ -108,6 +108,15 @@
 
         break;
 
+       case 'Pause This Turn':
+         $O['TurnState'] = 1;
+         Put_Operation($O);
+         break;
+
+       case 'Cancel Pause':
+         $O['TurnState'] = 0;
+         Put_Operation($O);
+         break;
 
     }
   }
@@ -152,6 +161,7 @@
     echo "<tr>" . fm_number('Level',$O,'Level') . "<td>Status<td>" . fm_select($Project_Status,$O,'Status') . fm_number1('Level Mod',$O,'GMLock');
 //    echo "<td class=NotSide>" . fm_checkbox('GM Lock',$O,'GMLock');
     echo "<tr>" . fm_number("Turn Start",$O,'TurnStart') . fm_number('Turn Ended', $O, 'TurnEnd');
+    if ($O['TurnState']) echo "<td>Paused This Turn";
     echo "<tr><td>Where:<td>" . fm_select($Systems,$O,'SystemId',1);
     if (Feature('OperationRushes')) echo "<td>" . fm_checkbox('GM Override',$O,'GMOverride') . " Set to override maxrush";
     echo "<tr>" . ($OpCosts?fm_number('Cost',$O,'Costs'):'') . fm_number('Prog Needed', $O,'ProgNeeded');
@@ -224,6 +234,13 @@
         echo fm_submit("ACTION",'Raise 1 Level',0);
       }
     }*/
+  }
+  if ($when <= 0) {
+    if (($O['TurnState']??0) == 0) {
+      echo fm_submit('ACTION','Pause This Turn');
+    } else {
+      echo fm_submit('ACTION','Cancel Pause');
+    }
   }
   echo "</h2>";
   echo "</form>";

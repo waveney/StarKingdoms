@@ -36,7 +36,7 @@ function GroundCombat() {
 
 function DevastationSelection() {
   global $ForceNoFaction;
-  GMLog("<h2>Please mark those worlds with combat on</h2>");
+  GMLog("<h2>Please mark those worlds with combat on</h2>Devastation is derived from conflict normally, only tweak if something special needs it");
 
   $_REQUEST['CONFLICT'] = 1; // Makes WorldList think its part of turn processing - 1 for setting flags
 
@@ -51,29 +51,18 @@ function Devastation() {
   foreach ($Worlds as $W) {
     $H = Get_ProjectHome($W['Home']);
     if ($W['Conflict']) {
-      $H['EconomyFactor'] = 50;
       $H['Devastation']++;
+    }
 
+    if ($H['Devastation'] >=5 || ($H['Economy']<1 && $H['Devastation']>0)) {
+      $H['Devastation'] = 0;
       $Dists = Get_DistrictsH($H['id']);
-      $Dcount = 0;
-      foreach ($Dists as $D) $Dcount += $D['Number'];
-
-      if ($H['Devastation'] > $Dcount) { // Lose districts...
-        $LogT = Devastate($H,$W,$Dists,1);
-        TurnLog($H['Whose'],$LogT);
-        GMLog($LogT,1);
-      }
+      $LogT = Devastate($H,$W,$Dists,1);
+      TurnLog($H['Whose'],$LogT);
+      GMLog($LogT,1);
       Put_ProjectHome($H);
-    } else { // Recovery?
-      if ($H['EconomyFactor'] != 100) {
-        $H['EconomyFactor'] = 100;
-        Put_ProjectHome($H);
-      }
-      //      $Things = Get_Things_Cond(0,"CurHealth != OrigHealth AND SystemId=$Sys AND WithinSysLoc=$Loc)
     }
   }
-
-  // Look for Militia to recover
 
   GMLog("Devastation is Complete<p>");
   return 1;

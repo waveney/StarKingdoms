@@ -4,7 +4,7 @@
 
 function Devastate(&$H,&$W,&$Dists,$Numb=1) {
   // Chose a district - reduce it, update economy etc if zero consider projects, return is text to GM and Player
-  
+
   $DTypes = Get_DistrictTypes();
   $Txt = 'Due to the conflict on ';
   switch ($H['ThingType']) {
@@ -19,11 +19,11 @@ function Devastate(&$H,&$W,&$Dists,$Numb=1) {
     break;
   }
   $Txt .= $P['Name'] . "<br>";
-    
+
   for($Hn = 1; $Hn <= $Numb; $Hn++) {
     $Dcount = 0;
     foreach ($Dists as $D) $Dcount += $D['Number'];
-  
+
     if ($Dcount) {
 //var_dump($Dcount);
       $Hit = rand(1,$Dcount);
@@ -35,9 +35,9 @@ function Devastate(&$H,&$W,&$Dists,$Numb=1) {
 //var_dump($D);
       $D['Number']--;
       Put_District($D);
-      $Txt .= "A " . $DTypes[$D['Type']]['Name'] . " has be destroyed.<br>";
+      $Txt .= "A " . $DTypes[$D['Type']]['Name'] . " has be destroyed because of the devastation.<br>";
       if ($D['Number']<1) {
-        $Txt .= "This causes bad things...<br>";  
+        $Txt .= "This causes bad things...<br>";
       }
     } else {
       $Txt .= "There are no districts left to be destroyed.<br>";
