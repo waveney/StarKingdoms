@@ -900,6 +900,35 @@ function EyesInSystem($Fid,$Sid,$Of=0) { // Eyes 1 = in space, 2= sens, 4= neb s
     if ($T['NebSensors']) $Eyes != 4;
   }
 // echo "System " . $N['Ref'] . " eyes: $Eyes<br>";
+  if (($Eyes&1) == 0) { // Check for Branch on outpost
+    $OP = Outpost_In($Sid,0,0);
+    if ($OP) {
+      $Bs = Gen_Get_Cond1('Branches',"Whose=$Fid AND HostType=3 AND HostId=" . $OP['id']);
+      if ($Bs) $Eyes |=1;
+    }
+  }
+  if (($Eyes&8) == 0) { // Check for branch on a world
+    $Ps = Get_Planets($Sid);
+    foreach ($Ps as $Pid=>$P) {
+      if ($P['Control']) {
+        $Bs = Gen_Get_Cond1('Branches',"Whose=$Fid AND HostType=1 AND HostId=$Pid");
+        if ($Bs) {
+          $Eyes |=8;
+          break;
+        }
+        $Ms = Get_Moons($Pid);
+        foreach ($Ms as $Mid=>$M) {
+          if ($M['Control']) {
+            $Bs = Gen_Get_Cond1('Branches',"Whose=$Fid AND HostType=2 AND HostId=$Mid");
+            if ($Bs) {
+              $Eyes |=8;
+              break 2;
+            }
+          }
+        }
+      }
+    }
+  }
   return $Eyes;
 }
 
@@ -948,7 +977,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
 // echo "Failed to see:" . $ThingTypes[$T['Type']]['SeenBy'] . ":$stm:$Eyes<p>";
         return '';
       }
-      if ($T['BuildState'] < BS_SERVICE || $T['BuildState'] >= BS_EX) return ''; // Building or abandoned
+      if ($T['BuildState'] < BS_SERVICE || ($T['BuildState'] >= BS_EX && !$Div)) return ''; // Building or abandoned
       if ($Div && $LastWhose && $LastWhose!= $T['Whose']) $txt .= "<P>";
       $Imgxtra = 0;
       if ($Div) {

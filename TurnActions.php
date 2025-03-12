@@ -559,64 +559,64 @@ function AffectActivities() {
   $Systems = Get_SystemsById();
   $Homes = Get_ProjectHomes();
 
-  echo "<H1>Affect ongoing Projects, Instructions and Operations</h1>";
-  echo "Pause - will stop any progress this turn.<p>" .
-    "Cancel - Will cancel the activity, Projects and Operations could be recovered by Richard, Instructions are lost permenantly.<p>";
+  GMLog("<H1>Affect ongoing Projects, Instructions and Operations</h1>");
+  GMLog("Pause - will stop any progress this turn.<p>" .
+    "Cancel - Will cancel the activity, Projects and Operations could be recovered by Richard, Instructions are lost permenantly.<p>");
 
-  echo "<form method=Post action=TurnActions.php?ACTION=DoStage2>" . fm_hidden('Stage','Affect Activities');
-  echo "<h2>Projects</h2>";
-  echo "<table border><tr><td>Activity<td>Who<td>Where<td>Progress<td>Pause<td>Cancel<td>Reason";
+  GMLog( "<form method=Post action=TurnActions.php?ACTION=DoStage2>" . fm_hidden('Stage','Affect Activities'));
+  GMLog( "<h2>Projects</h2>");
+  GMLog( "<table border><tr><td>Activity<td>Who<td>Where<td>Progress<td>Pause<td>Cancel<td>Reason");
 
   $Projects = Get_Projects_Cond("Status=1 AND GameId=$GAMEID");
   foreach ($Projects as $P) {
     $Pid = $P['id'];
-    echo "<tr><td><a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a><td>" . $Facts[$P['FactionId']]['Name'] . "<td>" . ($Systems[($Homes[$P['Home']]['SystemId']??0)]['Ref']??'??') . "<td>" .
+    GMLog( "<tr><td><a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a><td>" . $Facts[$P['FactionId']]['Name'] . "<td>" . ($Systems[($Homes[$P['Home']]['SystemId']??0)]['Ref']??'??') . "<td>" .
       $P['Progress'] . "/" . $P['ProgNeeded'] . "<td>" . fm_checkbox('',$_REQUEST,"Pause:Proj:$Pid") .
-      "<td>" . fm_checkbox('',$_REQUEST,"Cancel:Proj:$Pid") . fm_text1('',$_REQUEST,"Reason:Proj:$Pid");
+      "<td>" . fm_checkbox('',$_REQUEST,"Cancel:Proj:$Pid") . fm_text1('',$_REQUEST,"Reason:Proj:$Pid"));
   }
-  echo "</table><p>\n";
+  GMLog( "</table><p>\n");
 
-  echo "<h2>Operations</h2>";
+  GMLog( "<h2>Operations</h2>");
 
   $Ops = Gen_Get_Cond('Operations',"Status=1 AND GameId=$GAMEID");
-  echo "<table border><tr><td>Activity<td>Who<td>Where<td>Progress<td>Pause<td>Cancel<td>Reason";
+  GMLog( "<table border><tr><td>Activity<td>Who<td>Where<td>Progress<td>Pause<td>Cancel<td>Reason");
   foreach ($Ops as $OP) {
     $Oid = $OP['id'];
-    echo "<tr><td><a href=OperEdit.php?id=$Oid>" . $OP['Name'] . "</a><td>" . $Facts[$OP['Whose']]['Name'] . "<td>" . ($Systems[$OP['SystemId']]['Ref']??'??') . "<td>" .
+    GMLog( "<tr><td><a href=OperEdit.php?id=$Oid>" . $OP['Name'] . "</a><td>" . $Facts[$OP['Whose']]['Name'] . "<td>" . ($Systems[$OP['SystemId']]['Ref']??'??') . "<td>" .
       $P['Progress'] . "/" . $OP['ProgNeeded'] . "<td>" . fm_checkbox('',$_REQUEST,"Pause:Oper:$Oid") .
-      "<td>" . fm_checkbox('',$_REQUEST,"Cancel:Oper:$Oid") . fm_text1('',$_REQUEST,"Reason:Oper:$Oid");
+      "<td>" . fm_checkbox('',$_REQUEST,"Cancel:Oper:$Oid") . fm_text1('',$_REQUEST,"Reason:Oper:$Oid"));
   }
-  echo "</table><p>\n";
+  GMLog( "</table><p>\n");
 
-  echo "<h2>Instructions</h2>";
-  echo "Only those that can be affected are listed, scans are handled seperately later.<p>\n";
+  GMLog( "<h2>Instructions</h2>");
+  GMLog( "Only those that can be affected are listed, scans are handled seperately later.<p>\n");
 
 
   $Things = Get_Things_Cond(0,"Instruction!=0 AND ActionsNeeded!=0 AND GameId=$GAMEID AND (BuildState=" . BS_COMPLETE . " OR BuildState=" . BS_SERVICE . ")");
   if ($Things) {
-    echo "<table border><tr><td>Activity<td>Who<td>Where<td>Progress<td>Pause<td>Cancel<td>Reason";
+    GMLog( "<table border><tr><td>Activity<td>Who<td>Where<td>Progress<td>Pause<td>Cancel<td>Reason");
     foreach ($Things as $T) {
       $Tid = $T['id'];
-      echo "<tr><td><a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a> a " . $T['Class'] . "<td>" . $Facts[$T['Whose']]['Name'] .
-        "<td>" . ($Systems[$T['SystemId']]['Ref']??'??') . "<td>";
+      GMLog( "<tr><td><a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a> a " . $T['Class'] . "<td>" . $Facts[$T['Whose']]['Name'] .
+        "<td>" . ($Systems[$T['SystemId']]['Ref']??'??') . "<td>");
       switch ($ThingInstrs[abs($T['Instruction'])]) {
         case 'Analyse Anomaly': // Analyse
           $Aid = $T['ProjectId'];
           $Anom = Get_Anomaly($Aid);
           $FA = Gen_Get_Cond1('FactionAnomaly',"FactionId=" . $T['Whose'] . " AND AnomalyId=$Aid");
-          echo $FA['Progress']. "/" . $Anom['AnomalyLevel'] . "<td>" . fm_checkbox('',$_REQUEST,"Pause:Oper:$Oid") .
-          "<td>" . fm_text1('',$_REQUEST,"Reason:Oper:$Oid"); // No Cancel
+          GMLog( $FA['Progress']. "/" . $Anom['AnomalyLevel'] . "<td>" . fm_checkbox('',$_REQUEST,"Pause:Oper:$Oid") .
+          "<td>" . fm_text1('',$_REQUEST,"Reason:Oper:$Oid")); // No Cancel
           break;
 
         case 'Collaborative Space Construction': // Progress is elsewhere, only cancel is meaningful
         case 'Collaborative DSC':
         case 'Collaborative Planetary Construction':
-          echo "<td><td>" . fm_checkbox('',$_REQUEST,"Cancel:Oper:$Oid") . fm_text1('',$_REQUEST,"Reason:Oper:$Oid");
+          GMLog( "<td><td>" . fm_checkbox('',$_REQUEST,"Cancel:Oper:$Oid") . fm_text1('',$_REQUEST,"Reason:Oper:$Oid"));
           break;
 
         default:
-          echo $P['Progress'] . "/" . $T['ActionsNeeded'] . "<td>" . fm_checkbox('',$_REQUEST,"Pause:Oper:$Oid") .
-            "<td>" . fm_checkbox('',$_REQUEST,"Cancel:Oper:$Oid") . fm_text1('',$_REQUEST,"Reason:Oper:$Oid");
+          GMLog( $P['Progress'] . "/" . $T['ActionsNeeded'] . "<td>" . fm_checkbox('',$_REQUEST,"Pause:Oper:$Oid") .
+            "<td>" . fm_checkbox('',$_REQUEST,"Cancel:Oper:$Oid") . fm_text1('',$_REQUEST,"Reason:Oper:$Oid"));
           break;
       }
     }

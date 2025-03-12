@@ -449,6 +449,10 @@
         $Name .= " Principle: " . $SocP['Principle'];
       }
       if ($OpTypes[$op]['Props'] & OPER_MONEY) {
+        if (!$P2) {
+          echo "<h2 class=Err>No Faction selected to recieve the funds</h2>";
+          break;
+        }
         echo "Ammount: " . Credit() . $SP . " to " . $Facts[$P2]['Name'] . "<p>";
         $Name .= " " . $SP . " Credits to " . $Facts[$P2]['Name'];
       }
