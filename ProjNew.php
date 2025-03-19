@@ -1044,66 +1044,107 @@
       break;
 
   case 'Orbital Repair':
-      echo "<h2>Refit and Repair</h2>"; // THIS MUST be AFTER the simple buttons as the form gets lost
+    $HSys = $Homes[$Hi]['SystemId'];
+    $HLoc = $Homes[$Hi]['WithinSysLoc'];
+    $MaxLvl = Has_Tech($Fid,'Ship Construction');
+    $TTs = Get_ThingTypes();
+    $Things = Get_Things_Cond($Fid," SystemId=$HSys AND Level <= $MaxLvl AND BuildState=" . BS_COMPLETE );
+    $RepShips = $RefitShips = [];
+    $Level1 = 0;
+    $RepCount = $RefitCount = 0;
 
-      echo "You can only do this to ships at the same planet.<p>";
-      $HSys = $Homes[$Hi]['SystemId'];
-      $HLoc = $Homes[$Hi]['WithinSysLoc'];
-      $TTs = Get_ThingTypes();
-      $Things = Get_Things_Cond($Fid," SystemId=$HSys AND ( " . BS_COMPLETE . " OR BuildState=" . BS_SERVICE . ") ");
-      $RepShips = [];
-      $Level1 = 0;
-      $Count = 0;
-      $MaxLvl = Has_Tech($Fid,'Ship Construction');
+    $ModTypes = Get_ModuleTypes();
+    foreach ($ModTypes as &$Mt) {
+      if ($Mt['Leveled']& 1) $Mt['Target'] = Calc_TechLevel($Fid,$Mt['id']);
+    }
 
-      foreach ($Things as $T) {
-        if ($TTs[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) {
-//          if ($T['WithinSysLoc'] < 2 || $T['WithinSysLoc'] == $HLoc || $T['WithinSysLoc'] == ($HLoc-100)) {
-            $RepShips[$T['id']] = $T['Name'] . " - level " . $T['Level'];
-            if ($T['Level'] == 1) $Level1++;
-            $Count++;
+    foreach ($Things as $T) {
+      $Tid = $T['id'];
+      if ((($TTs[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) ) && !( $TTs[$T['Type']]['Prop2'] & THING_ALWAYS_OTHER) ) {
+        if ($T['CurHealth'] < $T['OrigHealth']) {
+          $RepShips[$T['id']] = $T['Name'] . " - level " . $T['Level'];
+          $RepCount++;
+        }
+/*
+        $Modules = Get_Modules($Tid);
+        foreach ($Modules as $M) {
+          if ((($ModTypes[$M['Type']]['Leveled']??0) & 1) && ($M['Level'] < ($ModTypes[$M['Type']]['Target']??0))) {
+            $RefitShips[$T['id']] = $T['Name'] . " - level " . $T['Level'];
+            $RefitCount++;
           }
-//        }
+        }*/
       }
+    }
 
-      $Factions = Get_Factions();
-      $FFdata = Get_FactionFactionsCarry($Fid);
-      foreach($FFdata as $FC) {
-        if ($FC['Props'] & 0xf000) {
-          $OThings = Get_Things_Cond($FC['FactionId1']," SystemId=$HSys AND ( " . BS_COMPLETE . " OR BuildState=" . BS_SERVICE . ") AND Level<=$MaxLvl ");
-          foreach ($OThings as $T) {
-            if ($TTs[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) {
-              $RepShips[$T['id']] = $T['Name'] . " - level " . $T['Level'] . " (" . $Factions[$T['Whose']]['Name'] . ")";
-              if ($T['Level'] == 1) $Level1++;
-              $Count++;
+    $Factions = Get_Factions();
+    $FFdata = Get_FactionFactionsCarry($Fid);
+    foreach($FFdata as $FC) {
+      if ($FC['Props'] & 0xf000) {
+        $OThings = Get_Things_Cond($FC['FactionId1']," SystemId=$HSys AND Level <= $MaxLvl AND BuildState=" . BS_COMPLETE );
+        foreach ($OThings as $T) {
+          $Tid = $T['id'];
+          if ((($TTs[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES)) && !( $TTs[$T['Type']]['Prop2'] & THING_ALWAYS_OTHER) ) {
+            if ($T['CurHealth'] < $T['OrigHealth']) {
+              $RepShips[$T['id']] = $T['Name'] . " - level " . $T['Level'];
+              $RepCount++;
             }
+/*
+            $Modules = Get_Modules($Tid);
+            foreach ($Modules as $M) {
+              if ((($ModTypes[$M['Type']]['Leveled']??0) & 1) && ($M['Level'] < ($ModTypes[$M['Type']]['Target']??0))) {
+                $RefitShips[$T['id']] = $T['Name'] . " - level " . $T['Level'];
+                $RefitCount++;
+              }
+            }*/
           }
         }
       }
+    }
 
-      $pc = Proj_Costs(1);
-      if ($Count) {
-        if ($Count == 1) {
-          foreach ($RepShips as $tid=>$Name) {
-            echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Refit and Repair'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=$tid" .
-                "&Name=" . base64_encode("Refit and Repair " . $Name ) . "&L=1&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                "Refit and Repair $Name $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
-          }
-        } else if ($Level1 < 2) {
-          echo "</form><form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Refit and Repair'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT'>";
-          echo "Select the ship to refit and repair: " . fm_select($RepShips, $_REQUEST, 'Sel', 0) ;
-          echo "<button class=projtype type=submit>Refit and Repair</button></form>";
-        } else {
-          echo "</form><form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Refit and Repair'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT'>";
-          echo "You may select <b>2</b> level 1 ships or 1 ship of level 2 or more. (For PCs and Linux hold down Ctrl to select 2nd ship)<p>";
-          echo "Select the ship to refit and repair: " . fm_select($RepShips, $_REQUEST, 'Sel', 0, ' multiple ','Sel2[]') ;
-          echo "<button class=projtype type=submit>Refit and Repair</button><form>";
+    //      var_dump($RepShips,$RefitShips);
+
+    if ($RefitCount) {
+      echo "<h2>Refit and Repair Ship</h2>";
+
+      echo "To be selectable the ship must be idle: no movement or instructions<p>";
+
+      foreach ($RefitShips as $tid=>$Name) {
+        $T = Get_Thing($tid);
+        $pc = Proj_Costs($T['Level']-1);
+
+        echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Refit and Repair'] .
+        "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=$tid" .
+        "&Name=" . base64_encode("Refit and Repair " . $Name ) . "&L=1&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
+        "Refit and Repair $Name $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+      }
+    }
+    if ($RepCount) {
+      echo "<h2>Repair Ship(s)</h2>";
+      echo "To be selectable the ship(s) must be idle: no movement or instructions<p>";
+      if ($RepCount == 1) {
+        foreach ($RepShips as $tid=>$Name) {
+
+          $T = Get_Thing($tid);
+          $pc = Proj_Costs(max(0,$T['Level']-2));
+
+          echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Repair Ship(s)'] .
+          "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=$tid" .
+          "&Name=" . base64_encode("Repair " . $Name ) . "&L=1&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
+          "Refit and Repair $Name $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
         }
 
       } else {
-        echo "No ships are currently near the yard that need repairing<p>";
+        echo "</form><form method=post action='ProjNew.php?ACTION=Service&id=$Fid&p=" . $PTi['Repair Ship(s)'] .
+        "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Pl=" . base64_encode($Place) . "'>";
+        echo "You may select up to 2 ships - costs and progress needed are worked out after selection. " .
+          "(For PCs and Linux hold down Ctrl to select 2nd ship)<p>";
+        echo "Select the ship(s) to repair: " . fm_select($RepShips, $_REQUEST, 'Sel', 0, ' multiple ','Sels[]') ;
+        echo "<button class=projtype type=submit>Refit and Repair</button><form>";
       }
-      break;
+    }
+
+    break;
+
 
   case 'Training Camp':
       echo "<h2>Re-equip and Reinforce $ARMY</h2>";

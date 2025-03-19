@@ -6,6 +6,10 @@ include_once("PlayerLib.php");
 include_once("OrgLib.php");
 
 
+function TTName($Name) {
+  global $TTNames;
+  return $TTNames[$Name]??-1;
+}
 
 
 function Show_Thing(&$T,$Force=0) {
@@ -13,7 +17,7 @@ function Show_Thing(&$T,$Force=0) {
   global $BuildState,$GAME,$GAMEID,$FACTION;
   global $Project_Status,$Advance;
   global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$ThingInclrs, $InstrMsg, $ValidMines;
-  global $Currencies,$InstrNotBy,$NOTBY;
+  global $Currencies,$InstrNotBy,$NOTBY,$TTNames;
 
   $ThingInclrs = ['white','lightgreen','lightpink','lightblue','lightyellow','bisque','#99ffcc','#b3b3ff',
                  'lightgreen','lightpink','lightblue','lightyellow','bisque','#99ffcc','#b3b3ff',
@@ -784,13 +788,18 @@ function Show_Thing(&$T,$Force=0) {
       foreach ($Mods as $D) {
         $did = $D['id'];
         if (($dc++)%2 == 0)  echo "<tr>";
+        //echo "<td>"; var_dump($D['Type'],$MTs[$D['Type']],$Mt,$BMods[$D['Type']]);
         echo "<td>" . (isset($MTNs[$D['Type']])? fm_Select($MTNs, $D , 'Type', 1,'',"ModuleType-$did") : "<span class=red>INV:" .
-                      fm_Select($MNs, $D , 'Type', 1,'',"ModuleType-$did") . "</span>" )
-                      . (($MTs[$D['Type']]['Leveled']&1) ? fm_number1('Level', $D,'Level', '', ' class=Num3 ',"ModuleLevel-$did") .
-                        (($D['Level']<$Mt[$D['Type']])? "<span class=green>(" . $Mt[$D['Type']] . ")</span>":'') :'<td>'). ' # '
-                    . fm_number0('', $D,'Number', '',' class=Num3 ',"ModuleNumber-$did")
-                    . (($Blue && !empty($BMods[$D['Type']]))? "<span class=Blue>(" . $BMods[$D['Type']]['Number'] . ')</span> ' :'')
-                    . "<button type=button id=ModuleRemove-$did onclick=AutoInput('ModuleRemove-$did','Thing')>R</button>";
+                      fm_Select($MNs, $D , 'Type', 1,'',"ModuleType-$did") . "</span>" );
+
+        echo (($MTs[$D['Type']]['Leveled']&1) ? fm_number1('Level', $D,'Level', '', ' class=Num3 ',"ModuleLevel-$did") .
+                        (($D['Level']<($Mt[$D['Type']]??0))? "<span class=green>(" . $Mt[$D['Type']] . ")</span>":'') :'<td>');
+
+        echo  ' # ' . fm_number0('', $D,'Number', '',' class=Num3 ',"ModuleNumber-$did");
+
+        echo (($Blue && !empty($BMods[$D['Type']]))? "<span class=Blue>(" . $BMods[$D['Type']]['Number'] . ')</span> ' :'');
+
+        echo "<button type=button id=ModuleRemove-$did onclick=AutoInput('ModuleRemove-$did','Thing')>R</button>";
 
         if ( $Blue) {
           $FlexUsed += $D['Number'];
@@ -1057,7 +1066,7 @@ function Show_Thing(&$T,$Force=0) {
     case 'Establish Embassy': // Establish Embassy
       if (!Get_ModulesType($Tid,'Diplomatic Facilities') || empty($N) ) continue 2;  // Check if have Embassy & at homeworld
       if (!isset($N['id'])) continue 2;
-      if (Get_Things_Cond($Fid,"Type=" . $TTNames['Embassy'] . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE)) continue 2; // Already have one
+      if (Get_Things_Cond($Fid,"Type=" . TTName('Embassy') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE)) continue 2; // Already have one
       $Facts = Get_Factions();
       foreach ($Facts as $F) {
         if ($F['id'] == $T['Whose'] || $F['HomeWorld'] == 0) continue 3;
@@ -1075,7 +1084,7 @@ function Show_Thing(&$T,$Force=0) {
     case 'Make Outpost': // Make Outpost
       if ($Moving || empty($N) || !$HasDeep || ($N['Control'] > 0 && $N['Control'] != $Fid) || empty($N) ) continue 2;
 
-      if (Get_Things_Cond($Fid,"Type=" . $TTNames['Outpost'] . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE)) continue 2; // Already have one
+      if (Get_Things_Cond($Fid,"Type=" . TTName('Outpost') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE)) continue 2; // Already have one
       break;
 
     case 'Make Asteroid Mine':
@@ -1085,7 +1094,7 @@ function Show_Thing(&$T,$Force=0) {
       foreach ($Ps as $P) if ($P['Type'] == 3) $Asts[]= $P;
       if (empty($Asts)) continue 2;
 
-      $Exist = Get_Things_Cond(0,"Type=" . $TTNames['Asteroid Mine'] . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE);
+      $Exist = Get_Things_Cond(0,"Type=" . TTName('Asteroid Mine') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE);
       if ($Exist || count($Asts) <= count($Exist)) continue 2;
       break 2;
 
@@ -1096,47 +1105,48 @@ function Show_Thing(&$T,$Force=0) {
       foreach ($Ps as $P) if ($P['Type'] == 3) $Asts[]= $P;
       if (empty($Asts)) continue 2;
 
-      $Exist = Get_Things_Cond(0,"Type=" . $TTNames['Asteroid Mine'] . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE);
+      $Exist = Get_Things_Cond(0,"Type=" . TTName('Asteroid Mine') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE);
       if ($Exist || count($Asts) <= count($Exist)) continue 2;
       break 2;
 
     case 'Make Minefield':
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Mine Layers') || empty($N) ) continue 2;
-      if (Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] .
+      if (Get_Things_Cond(0,"Type=" . TTName('Minefield') . " AND SystemId=" . $N['id'] .
         " AND BuildState=3 AND WithinSysLoc=" . $T['WithinSysLoc'])) continue 2;
       break;
 
     case 'Make Orbital Repair Yard':
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Orbital Repair Yards') || empty($N) ) continue 2;
-      if (Get_Things_Cond(0,"Type=" . $TTNames['Orbital Repair Yards'] . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE)) continue 2; // Already have one
+      if (Get_Things_Cond(0,"Type=" . TTName('Orbital Repair Yards') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE)) continue 2; // Already have one
       // Is there a world there
       $phs = Gen_Get_Cond('ProjectHomes',"SystemId=" . $N['id']);
-      if (isset($phs[0])) break;
+
+      if (!empty($phs)) break;
       // or a planetary mine
-      $PMines = Get_Things_Cond(0,"Type=" . $TTNames['Planet Mine'] . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE);
+      $PMines = Get_Things_Cond(0,"Type=" . TTName('Planet Mine') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE);
       if (isset($PMines[0])) break;
       continue 2; // Not valid here
 
     case 'Build Space Station':
       if ($Moving || !$HasDeep || empty($N) ) continue 2;
       if (!Has_Tech($Fid,'Space Stations')) continue 2;
-      if (Get_Things_Cond(0,"Type=" . $TTNames['Space Station'] . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE)) continue 2; // Already have one
+      if (Get_Things_Cond(0,"Type=" . TTName('Space Station') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE)) continue 2; // Already have one
       // Is there a world there
       $phs = Gen_Get_Cond('ProjectHomes',"SystemId=" . $N['id']);
       if (isset($phs[0])) break;
       // or a planetary mine
-      $PMines = Get_Things_Cond(0,"Type=" . $TTNames['Planet Mine'] . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE);
+      $PMines = Get_Things_Cond(0,"Type=" . TTName('Planet Mine') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE);
       if (isset($PMines[0])) break;
       continue 2; // Not valid here
 
     case 'Expand Space Station':
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Space Stations') || empty($N) ) continue 2;//
-      if (!(Get_Things_Cond($Fid,"Type=" . $TTNames['Space Station'] . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE))) continue 2; // Don't have one
+      if (!(Get_Things_Cond($Fid,"Type=" . TTName('Space Station') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE))) continue 2; // Don't have one
       break;
 
     case 'Make Deep Space Sensor':
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Remote Sensors') || empty($N) ) continue 2;
-      //      if (Get_Things_Cond(0,"Type=" . $TTNames['Deep Space Sensor'] . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE)) continue 2; // Already have one
+      //      if (Get_Things_Cond(0,"Type=" . TTName('Deep Space Sensor') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE)) continue 2; // Already have one
       break;
 
     case 'Build Stargate':
@@ -1150,7 +1160,7 @@ function Show_Thing(&$T,$Force=0) {
 
     case 'Make Planet Mine':
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Signal Jammer') || empty($N) ) continue 2;
-      $PMines = Get_Things_Cond(0,"Type=" . $TTNames['Planet Mine'] . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE);
+      $PMines = Get_Things_Cond(0,"Type=" . TTName('Planet Mine') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE);
       $Ps = Get_Planets($N['id']);
       $idx = $found = 0;
       foreach ($Ps as $P) {
@@ -1168,19 +1178,19 @@ function Show_Thing(&$T,$Force=0) {
 
     case 'Construct Command Relay Station':
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Signal Jammer') || empty($N) ) continue 2;
-      if (Get_Things_Cond(0,"Type=" . $TTNames['Command Relay Station'] . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE)) continue 2; // Already have one
+      if (Get_Things_Cond(0,"Type=" . TTName('Command Relay Station') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE)) continue 2; // Already have one
       break;
 
     case 'Repair Command Node': // Not coded yet
 //      continue 2;
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Signal Jammer') || empty($N) ) continue 2;
 
-      $Betas = Get_Things_Cond($Fid,"Type=" . $TTNames['Beta Node'] . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE);
+      $Betas = Get_Things_Cond($Fid,"Type=" . TTName('Beta Node') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE);
 
       if (!$Betas) continue 2;
 
-      $PMines = Get_Things_Cond($Fid,"Type=" . $TTNames['Planet Mine'] . " AND BuildState=3");
-      $CRelay = Get_Things_Cond($Fid,"Type=" . $TTNames['Command Relay Station'] . " AND BuildState=" . BS_COMPLETE);
+      $PMines = Get_Things_Cond($Fid,"Type=" . TTName('Planet Mine') . " AND BuildState=3");
+      $CRelay = Get_Things_Cond($Fid,"Type=" . TTName('Command Relay Station') . " AND BuildState=" . BS_COMPLETE);
 
 //      if ($GM) echo "Betas: " . count($Betas) . " PMines: " . count($PMines) . " Relays: " . count($CRelay) . "<br>";
 
@@ -1215,13 +1225,13 @@ function Show_Thing(&$T,$Force=0) {
 
     case 'Build Advanced Minefield' :
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Advanced Minefields') || empty($N) ) continue 2;
-      if (Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] .
+      if (Get_Things_Cond(0,"Type=" . TTName('Minefield') . " AND SystemId=" . $N['id'] .
         " AND BuildState=" . BS_COMPLETE . " AND WithinSysLoc=" . $T['WithinSysLoc'])) continue 2;
       break;
 
     case 'Clear Minefield':
       if ($Moving || !$HasDeep || !$HasMinesweep || empty($N) ) continue 2;
-      if (! Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] .
+      if (! Get_Things_Cond(0,"Type=" . TTName('Minefield') . " AND SystemId=" . $N['id'] .
         " AND BuildState=" . BS_COMPLETE . " AND WithinSysLoc=" . $T['WithinSysLoc'])) continue 2;
       break;
 
@@ -1256,7 +1266,7 @@ function Show_Thing(&$T,$Force=0) {
       $OtherThings = Get_AllThingsAt($T['SystemId']);
       $OtherList = [];
       foreach($OtherThings as $OT) {
-        if (($OT['Whose'] == $Fid) || $IHaveCollab || $HasColab[$OT['Whose']]) {
+        if (($OT['Whose'] == $Fid) || $IHaveCollab || ($HasColab[$OT['Whose']]??0)) {
           if ($ThingProps[$OT['Type']] & THING_HAS_MODULES) {
             $OMods = Get_ModulesType($OT['id'],'Deep Space Construction');
             if (empty($OMods) || $OT['id'] == $T['id']) continue;
@@ -1509,7 +1519,7 @@ function Show_Thing(&$T,$Force=0) {
       if ($T['NewSystemId'] == 0 && $T['NewLocation'] != 0) $WSL = $T['NewLocation'];
       $LocT = intdiv($WSL,100);
       if ($ValidMines[$LocT] == 0 ) echo "<span class=Err> the current location is unsuitable.</span>";
-      if (Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE .
+      if (Get_Things_Cond(0,"Type=" . TTName('Minefield') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE .
         " AND WithinSysLoc=" . $T['WithinSysLoc'])) {
         echo "<span class=Err>  There is already one here.</span>";
       }
@@ -1525,7 +1535,7 @@ function Show_Thing(&$T,$Force=0) {
       $LocT = intdiv($WSL,100);
 
       if ($ValidMines[$LocT] == 0 ) echo "<span class=Err> the current location is unsuitable.</span>";
-      if (Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] .
+      if (Get_Things_Cond(0,"Type=" . TTName('Minefield') . " AND SystemId=" . $N['id'] .
         " AND BuildState=" . BS_COMPLETE . " AND WithinSysLoc=" . $T['WithinSysLoc'])) {
         echo "<span class=Err>  There is already one here.</span>";
       }
@@ -1549,7 +1559,7 @@ function Show_Thing(&$T,$Force=0) {
     case 'Expand Space Station':
       $MaxDeep = Has_Tech($Fid,'Deep Space Construction')*2;
 
-      $SS = (Get_Things_Cond($Fid,"Type=" . $TTNames['Space Station'] . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE))[0];
+      $SS = (Get_Things_Cond($Fid,"Type=" . TTName('Space Station') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE))[0];
 
       if (empty($SS)) {
         echo "Tell Richard something hs gone wrong with this<p>";

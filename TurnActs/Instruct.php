@@ -1,9 +1,14 @@
 <?php
 
+function TTName($Name) {
+  global $TTNames;
+  return $TTNames[$Name]??-1;
+}
+
 function Instructions() {
   global $ThingInstrs,$GAME;
   global $Currencies,$ValidMines;
-  global $FACTION;
+  global $FACTION,$TTNames;
 
   $Things = Get_Things_Cond(0,"Instruction>0");
   $NeedColStage2 = 0;
@@ -375,7 +380,7 @@ function Instructions() {
           if ($ph['Whose'] == $T['Whose']) break 2; // Yes fine
         }
         // or a planetary mine
-        $PMines = Get_Things_Cond(0,"Type=" . $TTNames['Planet Mine'] . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE);
+        $PMines = Get_Things_Cond(0,"Type=" . TTName('Planet Mine') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE);
         if (isset($PMines[0]) && $PMines[0]['Whose'] == $T['Whose']) break; // Yes fine
         // By others?
         if (empty($phs) && empty($PMines)) {
@@ -453,7 +458,7 @@ function Instructions() {
           if ($ph['Whose'] == $T['Whose']) break 2; // Yes fine
         }
         // or a planetary mine
-        $PMines = Get_Things_Cond(0,"Type=" . $TTNames['Planet Mine'] . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE);
+        $PMines = Get_Things_Cond(0,"Type=" . TTName('Planet Mine') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE);
         if (isset($PMines[0]) && $PMines[0]['Whose'] == $T['Whose']) break; // Yes fine
         // By others?
         if (empty($phs) && empty($PMines)) {
@@ -828,7 +833,7 @@ function InstructionsStage2() { // And other Instructions
 }
 
 function InstructionsComplete() {
-  global $ThingInstrs,$GAME,$ValidMines,$GAMEID;
+  global $ThingInstrs,$GAME,$ValidMines,$GAMEID,$TTNames;
   $Things = Get_Things_Cond(0,"Instruction!=0 AND Progress>=ActionsNeeded ");
   $NeedColStage2 = 0;
   $Facts = Get_Factions();
@@ -1003,7 +1008,7 @@ function InstructionsComplete() {
         break;
 
       case 'Make Outpost':
-        $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Outpost'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'Whose'=>$T['Whose'],
+        $NT = ['GameId'=>$GAME['id'], 'Type'=> TTName('Outpost'), 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'Whose'=>$T['Whose'],
         'BuildState'=>BS_COMPETE, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
         Put_Thing($NT);
         $N = Get_System($T['SystemId']);
@@ -1017,7 +1022,7 @@ function InstructionsComplete() {
         break;
 
       case 'Make Advanced Asteroid Mine':
-        if (($NT = Get_Things_Cond(0,"Type=" . $TTNames['Asteroid Mine'] . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE))) {
+        if (($NT = Get_Things_Cond(0,"Type=" . TTName('Asteroid Mine') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE))) {
           $NT = array_shift($NT);
           $NT['Level'] = 2;  // Generalise how?
           Put_Thing($NT);
@@ -1035,7 +1040,7 @@ function InstructionsComplete() {
           GMLog($Facts[$Who]['Name'] . " Can't find an asteroid belt to mine in " . $N['Ref']);
           break;
         }
-        $Exist = Get_Things_Cond(0,"Type=" . $TTNames['Asteroid Mine'] . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE);
+        $Exist = Get_Things_Cond(0,"Type=" . TTName('Asteroid Mine') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE);
         if ($Exist || count($Asts) <= count($Exist))  {
           TurnLog($Who,"The asteroid " . Plural($Asts,'','belt','belts') . " in " . $N['Ref'] . " are already mined");
           GMLog($Facts[$Who]['Name'] . " The asteroid " . Plural($Asts,'','belt','belts') . " in " . $N['Ref'] . " are already mined");
@@ -1052,7 +1057,7 @@ function InstructionsComplete() {
           GMLog($Facts[$Who]['Name'] . " The asteroid belt in " . $N['Ref'] . " has no minerals");
           break;
         }
-        $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Asteroid Mine'], 'Level'=> (($Instr == 'Make Asteroid Mine')?1:2),
+        $NT = ['GameId'=>$GAME['id'], 'Type'=> TTName('Asteroid Mine'), 'Level'=> (($Instr == 'Make Asteroid Mine')?1:2),
           'SystemId'=>$T['SystemId'], 'Whose'=>$T['Whose'],
           'BuildState'=>BS_COMPLETE, 'TurnBuilt'=>$GAME['Turn'],
           'Name'=>$T['MakeName'],'Dist1'=>$Mine];
@@ -1072,7 +1077,7 @@ function InstructionsComplete() {
         $LocText = $Loc[$WLoc];
         $LocType = intdiv($WLoc,100);
         if ($ValidMines[$LocType] == 1 ) {
-          $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Minefield'], 'Level'=> (($Instr == 'Make Minefield') ?1:2),
+          $NT = ['GameId'=>$GAME['id'], 'Type'=> TTName('Minefield'), 'Level'=> (($Instr == 'Make Minefield') ?1:2),
             'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $WLoc, 'Whose'=>$T['Whose'],
             'BuildState'=>BS_COMPLETE, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
           Put_Thing($NT);
@@ -1128,17 +1133,18 @@ function InstructionsComplete() {
         break;
 
       case 'Make Orbital Repair Yard':
-        $NT = ['GameId'=>$GAME['id'], 'Type'=>  $TTNames['Orbital Repair Yards'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'],
+        $NT = ['GameId'=>$GAME['id'], 'Type'=>  TTName('Orbital Repair Yards'), 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'],
         'Whose'=>$T['Whose'], 'BuildState'=>BS_COMPLETE, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
         Put_Thing($NT);
         $N = Get_System($T['SystemId']);
         TurnLog($Who,"An Orbital Repair Yard has been made in " . $N['Ref']);
+        GMLog("An Orbital Repair Yard has been made in " . $N['Ref']);
         Report_Others($T['Whose'], $T['SystemId'],2,"An Orbital Repair Yard has been made in " . $N['Ref']);
         break;
 
       case 'Build Space Station':
         $Fid = $T['Whose'];
-        $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Space Station'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'],
+        $NT = ['GameId'=>$GAME['id'], 'Type'=> TTName('Space Station'), 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'],
           'Whose'=>$T['Whose'], 'BuildState'=>BS_COMPLETE, 'TurnBuilt'=>$GAME['Turn'], 'MaxDistricts'=>$T['Dist1'], 'Name'=>$T['MakeName']];
         $Sid = Put_Thing($NT);
         $D = ['HostType' =>3, 'HostId'=> $Sid, 'Type'=> $T['Dist2'], 'Number'=>1, 'GameId'=>$GAME['id'], 'TurnStart'=>$GAME['Turn']];
@@ -1152,7 +1158,7 @@ function InstructionsComplete() {
 
       case 'Expand Space Station' :
         $Fid = $T['Whose'];
-        $SS = Get_Things_Cond($Fid,"Type=" . $TTNames['Space Station'] . " AND SystemId=" . $T['SystemId'] . " AND BuildState=" . BS_COMPLETE);
+        $SS = Get_Things_Cond($Fid,"Type=" . TTName('Space Station') . " AND SystemId=" . $T['SystemId'] . " AND BuildState=" . BS_COMPLETE);
         if (empty($SS)) {
           TurnLog($Fid,"There is not a Space Station here to expand in " . $N['Ref']);
           GMLog("There is not a space station to extend in " . $N['Ref'] . " by " . $Facts[$Fid]['Name'],1);
@@ -1164,7 +1170,7 @@ function InstructionsComplete() {
         break;
 
       case 'Make Deep Space Sensor':
-        $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Deep Space Sensor'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'],
+        $NT = ['GameId'=>$GAME['id'], 'Type'=> TTName('Deep Space Sensor'), 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'],
         'Whose'=>$T['Whose'], 'BuildState'=>BS_COMPLETE, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
         Put_Thing($NT);
         $N = Get_System($T['SystemId']);
@@ -1173,7 +1179,7 @@ function InstructionsComplete() {
         break;
 
       case 'Make Advanced Deep Space Sensor':
-        $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Deep Space Sensor'], 'Level'=> 2, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'],
+        $NT = ['GameId'=>$GAME['id'], 'Type'=> TTName('Deep Space Sensor'), 'Level'=> 2, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'],
         'Whose'=>$T['Whose'], 'BuildState'=>BS_COMPLETE, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName'], 'Level'=>2, 'NebSensors'=>2];
         Put_Thing($NT);
         $N = Get_System($T['SystemId']);
@@ -1202,7 +1208,7 @@ function InstructionsComplete() {
         break;
 
       case 'Make Planet Mine':
-        $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Planet Mine'], 'Level'=> 1, 'SystemId'=>$T['SystemId'],
+        $NT = ['GameId'=>$GAME['id'], 'Type'=> TTName('Planet Mine'), 'Level'=> 1, 'SystemId'=>$T['SystemId'],
         'Whose'=>$T['Whose'], 'BuildState'=>BS_COMPLETE, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']]; // TODO add withinsysloc
         Put_Thing($NT);
         $N = Get_System($T['SystemId']);
@@ -1212,7 +1218,7 @@ function InstructionsComplete() {
         break;
 
       case 'Construct Command Relay Station':
-        $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Command Relay Station'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'],
+        $NT = ['GameId'=>$GAME['id'], 'Type'=> TTName('Command Relay Station'), 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'],
         'Whose'=>$T['Whose'], 'BuildState'=>BS_COMPLETE, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
         Put_Thing($NT);
         $N = Get_System($T['SystemId']);
@@ -1221,7 +1227,7 @@ function InstructionsComplete() {
         break;
 
       case 'Repair Command Node': // Not coded yet
-        $NT = ['GameId'=>$GAME['id'], 'Type'=> $TTNames['Beta Node'], 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'],
+        $NT = ['GameId'=>$GAME['id'], 'Type'=> TTName('Beta Node'), 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'],
         'Whose'=>$T['Whose'], 'BuildState'=>BS_COMPLETE, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName']];
         Put_Thing($NT);
 
@@ -1290,7 +1296,7 @@ function InstructionsComplete() {
         break;
 
       case 'Clear Minefield':
-        $Mines = Get_Things_Cond(0,"Type=" . $TTNames['Minefield'] . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE .
+        $Mines = Get_Things_Cond(0,"Type=" . TTName('Minefield') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE .
           " AND WithinSysLoc=" . $T['WithinSysLoc']);
         $N = Get_System($T['SystemId']);
         $Loc = Within_Sys_Locs($N);

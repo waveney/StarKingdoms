@@ -341,6 +341,7 @@
   $ShowOtherCat = 0;
 
   foreach ($Homes as &$H) {
+    $ButAdd = '';
     $PlanCon = $BPlanCon;
     // Homeworld +1, bio =, desolate -2, other -1
     $Hi = $H['id'];
@@ -361,7 +362,11 @@
       if ($ThingTypes[$PH['Type']]['Properties'] & THING_CAN_DO_PROJECTS) {
         $ORY = 0;
         foreach($DistTypes as $DT) {
-          if ($DT['Name'] == 'Orbital Repair') $ORY = $DT['id'];
+          if ($DT['Name'] == 'Orbital Repair') {
+            $ORY = $DT['id'];
+            $N = Get_System($PH['SystemId']);
+            $ButAdd = " (" . $N['Ref'] . " )";
+          }
           if (($DT['Props'] & 3) == 2) $ShowOtherCat = 1;
         }
         $Dists = [$ORY=>['HostType'=>3,'HostId'=>$PH['id'],'Type'=>$ORY,'Number'=>1, 'id'=>-1]];
@@ -384,7 +389,7 @@
 
     if ($NoC != 1 ) $Dists[] = ['HostType'=>-1, 'HostId' => $PH['id'], 'Type'=> -1, 'Number'=>0, 'id'=>-$PH['id']];
     $back = "style='background:" . $HomeColours[$PHx-1] . ";'";
-    $Headline1 .= "<th id=PHH$PHx $back><button type=button class=ProjHome id=PHome$Hi onclick=ToggleHome($Hi)>" . $PH['Name'] . "</button>";
+    $Headline1 .= "<th id=PHH$PHx $back><button type=button class=ProjHome id=PHome$Hi onclick=ToggleHome($Hi)>" . $PH['Name'] . "$ButAdd</button>";
 // if($Hi==199) { echo " THere"; var_dump($Headline1); };
     if ($FirstHome == 0) $FirstHome=$Hi;
 
@@ -411,7 +416,7 @@
         $HL .= $DistTypes[$D['Type']]['Name'] . "&nbsp;" . $D['Number'];
       }
 
-      $HL .= "</button><th $back class='PHLevel Group$Di Home$Hi'id=PHLevel$Hi:$Di $Hide>Lvl" .
+      $HL .= "$ButAdd</button><th $back class='PHLevel Group$Di Home$Hi'id=PHLevel$Hi:$Di $Hide>Lvl" .
         "<th $back class='PHCost Group$Di Home$Hi' id=PHCost$Hi:$Di $Hide>Cost" .
         "<th $back class='PHRush Group$Di Home$Hi' id=PHRush$Hi:$Di $Hide>Rush";
 
