@@ -23,14 +23,13 @@
   $Techs = Get_Techs(0,$AllG);
   $TechNames = Tech_Names($Techs);
 
-  if (UpdateMany('ProjectTypes','Put_ProjectType',$DT,0))  $DT=Get_ProjectTypes($AllG);
-
+  if (UpdateMany('ProjectTypes','Put_ProjectType',$DT,0,'','','','','Props'))  $DT=Get_ProjectTypes($AllG);
   $coln = 0;
 
   echo "Category 1=Academic,2=Ship Yard,4=Miltary,8=Intelligence,16=Construction, 32=Deep Space<p>";
-  echo "Props 1=Can Rush, 2=Thing, 4=Two things, 8=Other Faction, 16=Tight Loc match, 32=Instruction, 64=Don't Check Level, " .
-       "128 Raise 1 Level, 256 Exist Things, " .
-       "512=Refit type action<p>";
+  echo "Props 1=Can Rush, 2=Thing, 4=Two things, 8=Other Faction, 10=Tight Loc match, 20=Instruction, 40=Don't Check Level, " .
+       "80 Raise 1 Level, 100 Exist Things, " .
+       "200=Refit type action, 400=Servicing<p>";
   echo "Do NOT change the project names - code depends on them<p>";
 
   echo "<form method=post action=ProjTypes.php>";
@@ -62,7 +61,7 @@
     echo fm_number1("",$D,'Level','','',"Level$i");
     echo fm_number1("",$D,'CompTarget','','',"CompTarget$i");
  //   echo fm_number1("",$D,'Cost','','',"Cost$i");
-    echo fm_number1("",$D,'Props','','',"Props$i");
+    echo fm_hex1("",$D,'Props','','',"Props$i");
     echo "<td>" . fm_select($TechNames,$D,'BasedOn',1,'',"BasedOn$i");
   }
   $D = [];
@@ -75,7 +74,7 @@
     echo fm_number1("",$D,'Level','','',"Level0");
     echo fm_number1("",$D,'CompTarget','','',"CompTarget0");
 //    echo fm_number1("",$D,'Cost','','',"Cost0");
-    echo fm_number1("",$D,'Props','','',"Props0");
+    echo fm_hex1("",$D,'Props','','',"Props0");
     echo "<td>" . fm_select($TechNames,$D,'BasedOn',1,'',"BasedOn0");
   echo "</table></div>\n";
   echo "<input type=submit name=Update value=Update>\n";

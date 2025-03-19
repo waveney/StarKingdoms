@@ -158,13 +158,11 @@
           Put_Thing($T);
         }
 //echo "About to delete: "; var_dump( $mtch);
-      //  echo 'FORCELOADCHANGE54321:NOW' .
-        echo db_delete('Modules',$mtch[2]);
+        echo 'FORCELOADCHANGE54321:NOW' . db_delete('Modules',$mtch[2]);
       } else {
         $N[$mtch[1]] = $Value;
 //var_dump($N);
-        //echo 'FORCELOADCHANGE54321:NOW' .
-        echo Put_Module($N);
+        echo 'FORCELOADCHANGE54321:NOW' . Put_Module($N);
       }
       exit;
 

@@ -774,7 +774,7 @@ function CheckSurveyReports() {
       GMLog("<form method=post action=TurnActions.php?ACTION=DoStage2>" . fm_hidden('Stage','Check Survey Reports'));
       GMLog("<table border><tr><td>Faction<td>Where<td>Scan Level<td>Type<td>Control<td>Stop<td>Reason\n");
       if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
-      Register_AutoUpdate('ScansDue',0);
+//      Register_AutoUpdate('ScansDue',0);
       $Started = 1;
     }
 

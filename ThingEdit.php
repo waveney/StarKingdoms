@@ -695,16 +695,20 @@ global $FACTION;
       $T['BuildState'] = BS_COMPLETE;
       Put_Thing($T);
       $P = Get_Project($Pid);
-      var_dump($P); exit;
-      if ($P['ThingId'] == $tid) {
-        $P['ThingId'] = 0;
-      } else if ($P['ThingId2'] == $tid) {
-        $P['ThingId2'] = 0;
-      }
-      if ($P['ThingId'] == 0 && $P['ThingId2'] == 0) {
-        $P['Status'] = $Project_Statuses['Cancelled'];
+      if ($P) {
+        if ($P['ThingId'] == $tid) {
+          $P['ThingId'] = 0;
+        } else if ($P['ThingId2'] == $tid) {
+          $P['ThingId2'] = 0;
+        }
+        if ($P['ThingId'] == 0 && $P['ThingId2'] == 0) {
+          $P['Status'] = $Project_Statuses['Cancelled'];
+          echo "<h2>Project Cancelled</h2>";
+        }
         Put_Project($P);
-        echo "<h2>Project Cancelled</h2>";
+
+      } else {
+        GMLog4Later("Servicing cancelled for id $tid, Project $Pid could not be found - Tell Richard");
       }
       echo "<h2>Servicing Cancelled</h2>";
       break;

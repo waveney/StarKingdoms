@@ -567,6 +567,7 @@ function ProjectsCompleted($Pass) {
 
         case 'Re-equip and Reinforce':
         case 'Refit and Repair':
+        case 'Re-equip Detachment':
           $Where = Where_Is_Home($P['Home']);
 
           $Tid = $P['ThingId'];
@@ -577,7 +578,12 @@ function ProjectsCompleted($Pass) {
               GMLog($Facts[$Fid]['Name'] . "Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system",1);
             } else if ($P['ThingId']) {
               $T = Get_Thing($P['ThingId']);
+              $CurDam = $T['OrigHealth'] - $T['CurHealth'];
               RefitRepair($T,1,0,$P['FactionId']);
+              if (($PT['Name'] == 'Re-equip Detachment') && $CurDam) {
+                $T['CurHealth'] - $T['OrigHealth'] - $CurDam;
+                Put_Thing($T);
+              }
               TurnLog($P['FactionId'], $T['Name'] . " has been " . $PT['Name'] . "ed",$T);
             }
           }
@@ -588,11 +594,46 @@ function ProjectsCompleted($Pass) {
               GMLog($Facts[$Fid]['Name'] . "Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system",1);
             } else {
               $T = Get_Thing($Tid);
+              $CurDam = $T['OrigHealth'] - $T['CurHealth'];
               RefitRepair($T,1,0,$P['FactionId']);
+              if (($PT['Name'] == 'Re-equip Detachment') && $CurDam) {
+                $T['CurHealth'] - $T['OrigHealth'] - $CurDam;
+                Put_Thing($T);
+              }
               TurnLog($Fid, $T['Name'] . " has been " . $PT['Name'] . "ed",$T);
             }
           }
           break;
+
+        case 'Repair Ship(s)':
+        case 'Reinforce Detachment(s)':
+          $Tid = $P['ThingId'];
+          if ($Tid) {
+            $T = Get_Thing($Tid);
+            if (($T['SystemId'] != 0 && $T['SystemId'] != $Where[0])) {
+              TurnLog($Fid,"Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system");
+              GMLog($Facts[$Fid]['Name'] . "Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system",1);
+            } else if ($P['ThingId']) {
+              $T = Get_Thing($P['ThingId']);
+              $T['CurHealth'] = $T['OrigHealth'];
+              Put_Thing($T);
+              TurnLog($P['FactionId'], $T['Name'] . " has been " . firstword($PT['Name']) . "ed",$T);
+            }
+          }
+          if ($P['ThingId2']) {
+            $Tid = $P['ThingId2'];
+            if (($T['SystemId'] != 0 && $T['SystemId'] != $Where[0])) {
+              TurnLog($Fid,"Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system");
+              GMLog($Facts[$Fid]['Name'] . "Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system",1);
+            } else {
+              $T = Get_Thing($Tid);
+              $T['CurHealth'] = $T['OrigHealth'];
+              Put_Thing($T);
+              TurnLog($Fid, $T['Name'] . " has been " . firstword($PT['Name']) . "ed",$T);
+            }
+          }
+          break;
+
 
         case 'Construct Ship':
           $T = Get_Thing($P['ThingId']);

@@ -86,7 +86,7 @@ function Show_Thing(&$T,$Force=0) {
     $T['LinkId'] = 0;
     Put_Thing($T);
   }
-  $MovesValid = 1;
+  $MovesValid = ($T['BuildState'] == BS_COMPLETE);
   if (Has_Trait($Fid,'Star-Crossed')) {
     if (IsPrime($GAME['Turn'])) {
       $MovesValid = 0;
@@ -182,7 +182,7 @@ function Show_Thing(&$T,$Force=0) {
         if ($Proj['TurnStart']) echo " Start Turn: " . $Proj['TurnStart'];
         if ($Proj['TurnEnd']) echo " End Turn: " . $Proj['TurnEnd'];
       }
-    }
+    } else if (Access('God')) echo " ProjId " . $T['ProjectId'];
     if (($T['BuildState'] == BS_SERVICE) || ($T['BuildState'] == BS_COMPLETE) && ($tprops & THING_HAS_BLUEPRINTS)) {
       if ($GM && Feature('BluePrints')) {
         echo fm_number1('Blue Print',$T,'BluePrint','','min=-100 max=10000') ;
@@ -1320,7 +1320,8 @@ function Show_Thing(&$T,$Force=0) {
     if ($Moving && $HasDeep) echo " Note <span class=Red>Moving</span>, so no DSC instructions are shown";
     switch ($ThingInstrs[abs($T['Instruction'])]) {
     case 'None': // None
-      $T['ProjectId'] = $T['Dist1'] = $T['Dist2'] = 0;
+//      if ($T['BuildState'] == BS_COMPLETE) $T['ProjectId'] = 0;
+      $T['Dist1'] = $T['Dist2'] = 0;
       break;
 
     case 'Colonise': // Colonise

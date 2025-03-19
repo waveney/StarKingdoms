@@ -36,10 +36,36 @@
   }
   if (!$GM && $P['GMLock']) fm_addall('READONLY');
 
+  function TidyProject($Prid) {
+    $P = Get_Project($Prid);
+    $PTypes = Get_ProjectTypes();
+    if ($PTypes[$P['Type']]['Props'] & 0x400) {
+      if ($P['ThingId']) {
+        $T = Get_Thing($P['ThingId']);
+        if ($T['BuildState'] == BS_SERVICE) {
+          $T['BuildState'] = BS_COMPLETE;
+          $T['ProjectId'] = 0;
+          Put_Thing($T);
+        }
+      }
+    }
+    if ($P['ThingId2']) {
+      $T = Get_Thing($P['ThingId2']);
+      if ($T['BuildState'] == BS_SERVICE) {
+        $T['BuildState'] = BS_COMPLETE;
+        $T['ProjectId'] = 0;
+        Put_Thing($T);
+      }
+    }
+  }
+
+
+
 //var_dump($_REQUEST);
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
       case 'Delete':
+        TidyProject($Prid);
         db_delete('Projects',$Prid);
         echo "<h1>Deleted</h1>";
         db_delete_cond('ProjectTurn',"ProjectId=$Prid");
@@ -49,6 +75,7 @@
         dotail();
         exit;
       case 'Abandon Project':
+        TidyProject($Prid);
         if ($P['Status'] == 0) { // Never started
           db_delete('Projects',$Prid);
           echo "<h1>Deleted</h1>";

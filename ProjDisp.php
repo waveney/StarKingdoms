@@ -84,94 +84,10 @@
         $DT = (isset($_REQUEST['DT'])? $_REQUEST['DT'] : 0);
         $Valid = 1;
         $FreeRush = 0;
+        $TthingId = $_REQUEST['Sel']??0;
+        $TthingId2 = $_REQUEST['Sel2']??0;
 
         switch ($ProjTypes[$Ptype]['Name']) {
-
-        case 'Re-equip and Reinforce':
-          $Level = 1;
-          $TthingId2 = 0;
-          if (isset($_REQUEST['Sel'])) {
-            $TthingId = $_REQUEST['Sel'];
-          } else if (isset($_REQUEST['Sel2'])) {
-            $Sels = $_REQUEST['Sel2'];
-            $Count = count($Sels);
-            if ($Count == 0 || $Count>2) {
-              echo "<h2 class=Err>You must select 1 (or up to two level 1 $ARMIES)</h2>\n";
-              $Valid = 0;
-              break;
-            }
-            if ($Count == 1) {
-              $TthingId = $Sels[0];
-            } else {
-              $TthingId = $Sels[0];
-              $TthingId2 = $Sels[1];
-              $T2 = Get_Thing($TthingId2);
-              $T2['BuildState'] = BS_SERVICE;
-              Put_Thing($T2);
-            }
-          } else {
-            echo "<h2 class=Err>You must select an $ARMY</h2>\n";
-            $Valid = 0;
-            break;
-          }
-          $T1 = Get_Thing($TthingId);
-          $T1['BuildState'] = BS_SERVICE;
-          Put_Thing($T1);
-
-          if (!isset($_REQUEST['Name'])) {
-            $T1 = Get_Thing($TthingId);
-            $Name = "Re-equip and Reinforce " . $T1['Name'];
-            if ($TthingId2) $Name .= " and " . $T2['Name'];
-          }
-
-          $pc = Proj_Costs(1);
-          $Costs = $pc[1];
-          $ProgN = $pc[0];
-          break;
-
-        case 'Refit and Repair':
-          $Level = 1;
-          $TthingId2 = 0;
-          if (isset($_REQUEST['Sel'])) {
-            $TthingId = $_REQUEST['Sel'];
-          } else if (isset($_REQUEST['Sel2'])) {
-            $Sels = $_REQUEST['Sel2'];
-            $Count = count($Sels);
-            if ($Count == 0 || $Count>2) {
-              echo "<h2 class=Err>You must select 1 (or up to two level 1 ships)</h2>\n";
-              $Valid = 0;
-              break;
-            }
-            if ($Count == 1) {
-              $TthingId = $Sels[0];
-            } else {
-              $TthingId =$Sels[0];
-              $TthingId2 = $Sels[1];
-              $T2 = Get_Thing($TthingId2);
-              $T2['BuildState'] = BS_SERVICE;
-              Put_Thing($T2);
-            }
-          } else {
-            echo "<h2 class=Err>You must select a ship</h2>\n";
-            $Valid = 0;
-            break;
-          }
-          $T1 = Get_Thing($TthingId);
-          $T1['BuildState'] = BS_SERVICE;
-          Put_Thing($T1);
-
-
-          if (!isset($_REQUEST['Name'])) {
-            $T1 = Get_Thing($TthingId);
-            $Name = "Refit and Repair " . $T1['Name'];
-            if ($TthingId2) $Name .= " and " . $T2['Name'];
-          }
-
-          $pc = Proj_Costs(1);
-          $Costs = $pc[1];
-          $ProgN = $pc[0];
-          break;
-
         case 'Construct Ship':
         case "Train $ARMY":
         case 'Train Agent':
@@ -316,15 +232,20 @@
 
           $OpenHi = $Hi;
           $OpenDi = $Di;
-          $Pid = Put_Project($Pro);
+          Put_Project($Pro);
+          $Pid = $Pro['id'];
+
+ //         var_dump($Pro,$TthingId,$TthingId2,$ProjTypes[$Ptype]);
 
           if ($TthingId??0) {
             $T1 = Get_Thing(($TthingId));
             $T1['ProjectId'] = $Pid;
+            if ($ProjTypes[$Ptype]['Props'] & 0x400) $T1['BuildState'] = BS_SERVICE;
             Put_Thing($T1);
             if ($TthingId2??0) {
               $T1 = Get_Thing(($TthingId2));
               $T1['ProjectId'] = $Pid;
+              if ($ProjTypes[$Ptype]['Props'] & 0x400) $T1['BuildState'] = BS_SERVICE;
               Put_Thing($T1);
             }
           }
