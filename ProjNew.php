@@ -726,7 +726,7 @@
             echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Repair Ship(s)'] .
               "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=$tid" .
               "&Name=" . base64_encode("Repair " . $Name ) . "&L=1&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-              "Refit and Repair $Name $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+              "Repair $Name $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
           }
 
         } else {
@@ -735,7 +735,7 @@
           echo "You may select up to 2 ships - costs and progress needed are worked out after selection. " .
             "(For PCs and Linux hold down Ctrl to select 2nd ship)<p>";
           echo "Select the ship(s) to repair: " . fm_select($RepShips, $_REQUEST, 'Sel', 0, ' multiple ','Sels[]') ;
-          echo "<button class=projtype type=submit>Refit and Repair</button><form>";
+          echo "<button class=projtype type=submit>Repair</button><form>";
         }
       }
 
@@ -858,7 +858,7 @@
           echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Re-equip and Reinforce'] .
             "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=$tid" .
             "&Name=" . base64_encode("Re-equip and Reinforce " . $Name ) . "&L=1&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-            "Refit and Repair $Name $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+            "Re-equip $Name $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
         }
       }
       if ($RepCount) {

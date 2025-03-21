@@ -28,7 +28,7 @@ $IntructProps = [0,2,0,0,0,0,1,1,1,
                  1,1,0,0,1,0,1,1,
                  0,1,0,0,0,0,1,2,0]; // 1 = DSC, 2= Pc
 $InstrNotBy =   [0,0,1,0,0,1,0,
-                 1,0,
+                 0,0,
                  0,0,0,0,
                  0,1,
                  1,1,1,1,
@@ -118,6 +118,14 @@ define('BS_ABANDON',5);
 define('BS_MISSING',6);
 define('BS_CAPTURED',7);
 
+
+function TTName($Name) {
+  static $TTNames;
+  if (empty($TTNames)) {
+    $TTNames = Thing_Types_From_Names();
+  }
+  return $TTNames[$Name]??-1;
+}
 
 function ModFormulaes() {
   global $ModFormulaes;
@@ -1433,8 +1441,8 @@ function Thing_Delete($tid) {
   $T = Get_Thing($tid);
   if (!$T) return;
 
-  $TT = $TTs[$T['Type']];
-  switch ($TTNames[$T['Type']]) {
+  $TT = ($TTs[$T['Type']]??0);
+  switch ($TTNames[$T['Type']]??'Unknown') {
     case 'Team':
       $Oper = Get_Operation($T['ProjectId']);
       if ($Oper['Status'] ==1) {//is lost

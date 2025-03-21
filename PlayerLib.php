@@ -620,36 +620,27 @@ function Income_Calc($Fid) {
     $EccTxt .=  "<br>\n";
   }
   $EccTxt .=  "<br>";
-  $Things = Get_Things_Cond($Fid,'BuildState=' . BS_COMPLETE);
-  foreach ($Things as $T) {
-    if (empty($TTypes[$T['Type']])) continue;
-    switch ($TTypes[$T['Type']]['Name']) {
-      case "Outpost":
-        $OutPosts ++;
-        break;
 
-      case "Asteroid Mine":
-        $AstMines ++;
-        if (Feature('AstmineDSC')) {
-          $AstVal += $T['Level'];
-        } else {
-          $Plan = Get_Planet($T['Dist1']);
-          $AstVal += (($Plan['Minerals']??0) + ((Has_PTraitP($W['id'],'Rare Mineral Deposits') && Has_Tech($Fid,'Advanced Mineral Extraction'))?3:0))*$T['Level'];
-        }
-        break;
+  $OutPosts = count(Get_Things_Cond($Fid,'Type=' . TTName('Outpost') . ' AND BuildState=' . BS_COMPLETE));
+  $Embassies = count(Get_Things_Cond($Fid,'Type=' . TTName('Embassy') . ' AND BuildState=' . BS_COMPLETE));
+  $MineFields = count(Get_Things_Cond($Fid,'Type=' . TTName('Minefield') . ' AND BuildState=' . BS_COMPLETE));
+  $AstMines = Get_Things_Cond($Fid,'Type=' . TTName('Asteroid Mine') . ' AND BuildState=' . BS_COMPLETE . " ORDER BY SystemId");
 
-      case "Embassy":
-        $Embassies ++;
-        break;
+  $LastSid = 0;
+  $Asts = [];
 
-      case "Minefield":
-        $MineFields ++;
-        break;
-
-      default:
-        continue 2;
+  foreach ($AstMines as $AM) {
+    if ($AM['SystemId'] != $LastSid) {
+      $LastSid = $AM['SystemId'];
+      $Asts = Gen_Get_Cond('Planets', "SystemId=$LastSid AND Type=3 ORDER BY Minerals DESC");
+    }
+    $Ast = array_shift($Asts);
+    if ($Ast) {
+      $AstVal += (($Ast['Minerals']??0) + ((Has_PTraitP($W['id'],'Rare Mineral Deposits') && Has_Tech($Fid,'Advanced Mineral Extraction'))?3:0))*$AM['Level'];
     }
   }
+
+  $Things = Get_Things($Fid);
 
   $MyPTSBranches = Gen_Get_Cond('Branches',"Whose=$Fid AND HostType!=3 AND Type=" . ($NameBType['Trading Station']??0));
   $MyPBMPBranches = Gen_Get_Cond('Branches',"Whose=$Fid AND HostType!=3 AND Type=" . ($NameBType['Black Market Trade Station']??0));
@@ -695,7 +686,7 @@ function Income_Calc($Fid) {
   }
   if ($AstMines) {
     if (Feature('AstmineDSC')) $AstVal *= Has_Tech($Fid,'Deep Space Construction');
-    $EccTxt .= "Plus $AstMines Asteroid Mines worth a total of $AstVal<br>\n";
+    $EccTxt .= "Plus " . count($AstMines) . " Asteroid Mines worth a total of $AstVal<br>\n";
     $EconVal += $AstVal;
   }
   if ($Embassies) {

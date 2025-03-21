@@ -1,20 +1,14 @@
 <?php
 
-function TTName($Name) {
-  global $TTNames;
-  return $TTNames[$Name]??-1;
-}
-
 function Instructions() {
   global $ThingInstrs,$GAME;
   global $Currencies,$ValidMines;
-  global $FACTION,$TTNames;
+  global $FACTION;
 
   $Things = Get_Things_Cond(0,"Instruction>0");
   $NeedColStage2 = 0;
   $Facts = Get_Factions();
   $Systems = Get_SystemRefs();
-  $TTNames = Thing_Types_From_Names();
   $DTypes = Get_DistrictTypes();
   $DistNames = NamesList($DTypes);
   $NamesDists = array_flip($DistNames);
@@ -701,7 +695,6 @@ function InstructionsStage2() { // And other Instructions
   global $FACTION;
 
   $Things = Get_Things_Cond(0,"Instruction!=0");
-  $TTNames = Thing_Types_From_Names();
   $Systems = Get_SystemRefs();
   $Facts = Get_Factions();
   $NeedColStage3 = 0;
@@ -833,11 +826,10 @@ function InstructionsStage2() { // And other Instructions
 }
 
 function InstructionsComplete() {
-  global $ThingInstrs,$GAME,$ValidMines,$GAMEID,$TTNames;
+  global $ThingInstrs,$GAME,$ValidMines,$GAMEID;
   $Things = Get_Things_Cond(0,"Instruction!=0 AND Progress>=ActionsNeeded ");
   $NeedColStage2 = 0;
   $Facts = Get_Factions();
-  $TTNames = Thing_Types_From_Names();
   $TTypes = Get_ThingTypes();
   $Systems = [];
   $DTypes = Get_DistrictTypes();

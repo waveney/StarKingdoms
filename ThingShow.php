@@ -6,24 +6,17 @@ include_once("PlayerLib.php");
 include_once("OrgLib.php");
 
 
-function TTName($Name) {
-  global $TTNames;
-  return $TTNames[$Name]??-1;
-}
-
-
 function Show_Thing(&$T,$Force=0) {
   include_once("ProjLib.php");
   global $BuildState,$GAME,$GAMEID,$FACTION;
   global $Project_Status,$Advance;
   global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$ThingInclrs, $InstrMsg, $ValidMines;
-  global $Currencies,$InstrNotBy,$NOTBY,$TTNames;
+  global $Currencies,$InstrNotBy,$NOTBY;
 
   $ThingInclrs = ['white','lightgreen','lightpink','lightblue','lightyellow','bisque','#99ffcc','#b3b3ff',
                  'lightgreen','lightpink','lightblue','lightyellow','bisque','#99ffcc','#b3b3ff',
                  'lightgreen','lightpink','lightblue','lightyellow','bisque','#99ffcc','#b3b3ff'];
 
-  $Tid = $T['id'];
 
   if ($Force) {
     $GM = 0;
@@ -31,6 +24,7 @@ function Show_Thing(&$T,$Force=0) {
     $GM = Access('GM');
   }
 
+  $Tid = $T['id'];
   $Fid = $T['Whose'];
   $ttn = Thing_Type_Names();
   $ntt = array_flip($ttn);
@@ -949,11 +943,11 @@ function Show_Thing(&$T,$Force=0) {
   }
 
 // var_dump($HasDeep,$HasMinesweep,$HasSalvage);
-  $TTNames = Thing_Types_From_Names();
   $Moving = ($T['LinkId'] > 0);
 
   if (($T['BuildState'] == BS_SERVICE || $T['BuildState'] == BS_COMPLETE) && empty($T['PrisonerOf'])) foreach ($ThingInstrs as $i=>$Ins) {
 
+ //   var_dump($Ins,($InstrNotBy[$i] & $NOTBY));
     if (($InstrNotBy[$i] & $NOTBY) !=0) continue; // Not in this game
 
 //  echo "Checking: $Ins<br>";
@@ -1091,12 +1085,14 @@ function Show_Thing(&$T,$Force=0) {
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Asteroid Mining') || empty($N) ) continue 2;
       $Asts = [];
       $Ps = Get_Planets($N['id']);
-      foreach ($Ps as $P) if ($P['Type'] == 3) $Asts[]= $P;
+      foreach ($Ps as $P) if ($P['Type'] == 3) $Asts[$P['id']]= $P;
+
       if (empty($Asts)) continue 2;
 
       $Exist = Get_Things_Cond(0,"Type=" . TTName('Asteroid Mine') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE);
-      if ($Exist || count($Asts) <= count($Exist)) continue 2;
-      break 2;
+//      var_dump($Exist,count($Asts),count($Exist));
+      if (count($Asts) <= count($Exist)) continue 2;
+      break;
 
     case 'Make Advanced Asteroid Mine':
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Advanced Asteroid Mining') || empty($N) ) continue 2;
@@ -1106,8 +1102,8 @@ function Show_Thing(&$T,$Force=0) {
       if (empty($Asts)) continue 2;
 
       $Exist = Get_Things_Cond(0,"Type=" . TTName('Asteroid Mine') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE);
-      if ($Exist || count($Asts) <= count($Exist)) continue 2;
-      break 2;
+      if (count($Asts) <= count($Exist)) continue 2;
+      break;
 
     case 'Make Minefield':
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Mine Layers') || empty($N) ) continue 2;

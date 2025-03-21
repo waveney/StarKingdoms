@@ -365,7 +365,7 @@
           if ($DT['Name'] == 'Orbital Repair') {
             $ORY = $DT['id'];
             $N = Get_System($PH['SystemId']);
-            $ButAdd = " (" . $N['Ref'] . " )";
+            $ButAdd = " (" . $N['Ref'] . ")";
           }
           if (($DT['Props'] & 3) == 2) $ShowOtherCat = 1;
         }
