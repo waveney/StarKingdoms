@@ -573,7 +573,7 @@
                 $TotProg += $Prog;
               }
               $Pro['Progress'] = "$TotProg/" . $Pro['Acts'];
-              $Pro['Status'] = 'Started';
+              $Pro['Status'] = 'Started' ;
           }
 */
 

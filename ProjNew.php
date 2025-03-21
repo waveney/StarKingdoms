@@ -1,6 +1,6 @@
 <?php
 
-// Scan all plantets/moon's/Thing's for districts and deep space construction
+// Scan all plantets/moon's/Thing's for districts and deep  space construction
 
   include_once("sk.php");
   include_once("GetPut.php");
