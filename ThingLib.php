@@ -631,7 +631,7 @@ function Calc_Scanners(&$T) { // And lots of other attributes
   $T['CargoSpace'] = ($Cargo?1:0) + ($Cryo?2:0);
   /*  $T['CargoSpace'] = ( (($Cargo && ($Cargo['Number']>0))?$Cargo['Number']*($Cargo['Level']+1):0) +
                        (($Cryo  && ($Cryo['Number']>0))?$Cryo['Number']*($Cryo['Level']+3):0)); */
-  if (($Deep = Get_ModulesType($T['id'],'Deep Space Construction' )) && ($Deep['Number']>0)) {
+  if (($Deep = Get_ModulesType($T['id'],'Space Construction Gear' )) && ($Deep['Number']>0)) {
     $T['HasDeepSpace'] = $Deep['Number']*$Deep['Level'];
   } else {
     $T['HasDeepSpace'] = 0;
@@ -1307,7 +1307,7 @@ function Do_Mine_Damage(&$T,&$Mine,&$N=0,$InTurn=0) { // Needs changes
 // Do damage and report
 
   if (Get_ModulesType($T['id'],'Minesweepers')) return;
-  $Dsc = Has_Tech($Mine['Whose'],'Deep Space Construction');
+  $Dsc = Has_Tech($Mine['Whose'],'Space Construction Gear');
   $Dam = $Dsc * $Mine['Level']*5;
   if (empty($N)) $N = Get_System($Mine['SystemId']);
 

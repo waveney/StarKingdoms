@@ -915,7 +915,7 @@ function Show_Thing(&$T,$Force=0) {
       $MName = $MTs[$M['Type']]['Name'];
       switch ($MName) {
 
-      case 'Deep Space Construction':
+      case 'Space Construction Gear':
         $HasDeep += $M['Number'] * $M['Level'];
         break;
 
@@ -1264,7 +1264,7 @@ function Show_Thing(&$T,$Force=0) {
       foreach($OtherThings as $OT) {
         if (($OT['Whose'] == $Fid) || $IHaveCollab || ($HasColab[$OT['Whose']]??0)) {
           if ($ThingProps[$OT['Type']] & THING_HAS_MODULES) {
-            $OMods = Get_ModulesType($OT['id'],'Deep Space Construction');
+            $OMods = Get_ModulesType($OT['id'],'Space Construction Gear');
             if (empty($OMods) || $OT['id'] == $T['id']) continue;
             $OtherList[$OT['id']] = $OT['Name'];
           }
@@ -1543,7 +1543,7 @@ function Show_Thing(&$T,$Force=0) {
     case 'Build Space Station':
       $PrimeMods = [];
       $DTs = Get_DistrictTypes();
-      $MaxDeep = Has_Tech($Fid,'Deep Space Construction')*2;
+      $MaxDeep = Has_Tech($Fid,'Space Construction Gear')*2;
       foreach ($DTs as $D) if (($D['Props'] & 16) && ((eval("return " . $D['Gate'] . ";" )))) $PrimeMods[$D['id']] = $D['Name'];
       echo "<tr><td><td colspan=6>" . (($GM || $T['Progress'] == 0)? fm_number0('How many districts:',$T,'Dist1',''," max=$MaxDeep "): ("Districts: " . $T['Dist1']));
       echo " First District:" . fm_select($PrimeMods,$T,'Dist2',1);
@@ -1553,7 +1553,7 @@ function Show_Thing(&$T,$Force=0) {
       break;
 
     case 'Expand Space Station':
-      $MaxDeep = Has_Tech($Fid,'Deep Space Construction')*2;
+      $MaxDeep = Has_Tech($Fid,'Space Construction Gear')*2;
 
       $SS = (Get_Things_Cond($Fid,"Type=" . TTName('Space Station') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE))[0];
 

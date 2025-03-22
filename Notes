@@ -56,22 +56,8 @@ NEW GAME FEATURES & BUGS
 333 Sounds like a cached data issue
 I don't know why though since it's telling me you scanned L2 on turn 11
 So I'd have expected that to update the cached survey
-336 Orbital Repair Yards
 344 Office/branches in ASC
 
- 
- 
-Large updates to refit/repair and related projects, for which I use the generic term of servicing.
-
-1) To be selectable for a servicing project the thing must be:
- a) Not moving
- b) Not doing an instruction
- c) Not at a higher level than the faction could itself make
- 
-2) Once selected for any of these projects, the thing will be shown as "Servicing".  In this state it can't move, do an instruction or take part in combat.  
-However you will find a new button "Cancel Servicing".
-
-3) These projects now behave as in the rule book (I think)
 
 
    

@@ -685,7 +685,7 @@ function Income_Calc($Fid) {
     $EconVal += $OutPosts*2;
   }
   if ($AstMines) {
-    if (Feature('AstmineDSC')) $AstVal *= Has_Tech($Fid,'Deep Space Construction');
+    if (Feature('AstmineDSC')) $AstVal *= Has_Tech($Fid,'Space Construction Gear');
     $EccTxt .= "Plus " . count($AstMines) . " Asteroid Mines worth a total of $AstVal<br>\n";
     $EconVal += $AstVal;
   }

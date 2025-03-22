@@ -93,8 +93,8 @@ function ValidateTurn($For = 0) {
       case 'Make Something':
       case 'Make Warpgate':
       case 'Link Repair':
-        $Prog = Has_Tech($T['Whose'],'Deep Space Construction');
-        $Mods = Get_ModulesType($Tid, 'Deep Space Construction');
+        $Prog = Has_Tech($T['Whose'],'Space Construction Gear');
+        $Mods = Get_ModulesType($Tid, 'Space Construction Gear');
         $ProgGain = $Prog*$Mods[0]['Number'];
         GMLog("$ProgGain progress on " . $ThingInstrs[abs($T['Instruction'])] . " for " . $Facts[$T['Whose']]['Name'] . ":" . $T['Name']);
 
@@ -104,8 +104,8 @@ function ValidateTurn($For = 0) {
         break;
 
       case 'Collaborative DSC': // Dist1 has Thing number being helped
-        $Prog = Has_Tech($T['Whose'],'Deep Space Construction');
-        $Mods = Get_ModulesType($Tid, 'Deep Space Construction');
+        $Prog = Has_Tech($T['Whose'],'Space Construction Gear');
+        $Mods = Get_ModulesType($Tid, 'Space Construction Gear');
         $ProgGain = $Prog*$Mods[0]['Number'];
         $HT = Get_Thing($T['Dist1']);
         if ($HT && $HT['Instruction']) {
