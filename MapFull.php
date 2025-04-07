@@ -57,7 +57,7 @@
       $tex = '';
       if ($T['LinkId'] >=0) {
         $sid = $T['SystemId'];
-      } else {
+      } else if ($T['SystemId']>0) {
         $Carrier = $T['SystemId'];
         $sid = $Things[$Carrier]['SystemId'];
         $tex = " (on " .$Things[$Carrier]['Name'] . ")";

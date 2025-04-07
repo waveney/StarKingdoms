@@ -1076,7 +1076,7 @@ function Show_Thing(&$T,$Force=0) {
       continue 2;
 
     case 'Make Outpost': // Make Outpost
-      if ($Moving || empty($N) || !$HasDeep || ($N['Control'] > 0 && $N['Control'] != $Fid) || empty($N) ) continue 2;
+      if (!Has_Tech($Fid,'Make Outposts') || $Moving || empty($N) || !$HasDeep || ($N['Control'] > 0 && $N['Control'] != $Fid) || empty($N) ) continue 2;
 
       if (Get_Things_Cond($Fid,"Type=" . TTName('Outpost') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE)) continue 2; // Already have one
       break;

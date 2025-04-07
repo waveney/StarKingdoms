@@ -665,6 +665,7 @@ function ProjectsCompleted($Pass) {
               $DT['Name'] = "$OrigName $Dup";
               $DT['SystemId'] = $T['SystemId'];
               $DT['WithinSysLoc'] = $T['WithinSysLoc'];
+              $DT['BuildState'] = BS_COMPLETE;
               Put_Thing($DT);
               TurnLog($Fid, $DT['Name'] . " has been launched" . (Feature('Shakedowns')?" and will now start its shakedown cruise":''),$DT);
             }

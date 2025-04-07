@@ -26,6 +26,8 @@ function ValidateTurn($For = 0) {
 
   $ProjTypes = Get_ProjectTypes();
   $Projects = Get_Projects_Cond("FactionId=$Fid AND TurnStart=$Turn");
+  $TTypes = Get_ThingTypes();
+  $TNames = array_flip(NamesList($TTypes));
   foreach ($Projects as $P) {
     if (($ProjTypes[$P['Type']]['Props'] & 6) == 2) { // Has one thing but not 2
       $Pid = $P['id'];
@@ -52,7 +54,7 @@ function ValidateTurn($For = 0) {
           echo "<h2 class=Err>Warning - your project: <a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a>  is level " . $P['Level'] .
                " trying to make a level " . $T['Level'] . " thing</h2>\n";
           $Valid = 0;
-        } else {
+        } elseif ($T['Type'] != $TNames['Fighter']) {
           dostaffhead("Player Actions");
           echo "<h2 class=Err>Warning - your project: <a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a>  is level " . $P['Level'] .
                " trying to make a level " . $T['Level'] . " thing</h2>\n";

@@ -407,7 +407,7 @@ function OperationsComplete() {
 
       case 'Establish Lodge':
         $World = World_in($O['SystemId'],$Fid);
-        New_Branch($World,$NamesBTs['Trading Station'],$O,$Org);
+        New_Branch($World,$NamesBTs['Hidden Lodge'],$O,$Org);
         TurnLog($Fid,"A new Lodge branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] . ' ' . System_Name($Sys,$Fid) );
         if ($World['FactionId'] != $Fid) {
           TurnLog($World['FactionId'],"A new Lodge branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .

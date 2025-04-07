@@ -165,7 +165,7 @@ if (isset($_REQUEST['Action'])) {
               $Count++;
               $T = ['Whose'=>$Fid, 'Type'=>$NTypes['Heavy Security'], 'BuildState'=>BS_COMPLETE, 'CurHealth'=>$Def, 'OrigHealth'=>$Def, 'ActDamage'=>$Off,
                 'SystemId'=>$Sid, 'WithinSysLoc'=>3, 'Class'=>'Heavy Security', 'Name'=>($B['Name']?$B['Name']:"Heavy Security $Bid") . ":$Count" ,
-                'Evasion'=>40, 'ProjectId'=>$Bid, 'LinkId'=>0];
+                'Evasion'=>50, 'ProjectId'=>$Bid, 'LinkId'=>0];
               Put_Thing($T);
             }
           }

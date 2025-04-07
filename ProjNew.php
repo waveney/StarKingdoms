@@ -430,7 +430,7 @@
         $Lvl = $T['PreReqLevel'];
         $pc = Proj_Costs($Lvl);
         if (!$Tstart++) {
-          echo "<h2>Research Supplimental Planetary Construction Technology</h2>";
+          echo "<h2>Research Supplemental Planetary Construction Technology</h2>";
           echo "<table class=ProjTab border><tr><td>Project<td>Cost<td>Progress<br>Needed<td>Description";
         }
 
@@ -483,7 +483,7 @@
         }
         echo "</table>";
 
-    echo "<h2>Research Supplimental Technology</h2><table class=ProjTab border><th>Project<th>Cost<th>Progress<br>Needed<th>Description";
+    echo "<h2>Research Supplemental Technology</h2><table class=ProjTab border><th>Project<th>Cost<th>Progress<br>Needed<th>Description";
       $Techs = Get_TechsByCore($Fid);
       foreach ($Techs as $T) {
         if ($T['Cat'] == 0 || (isset($FactTechs[$T['id']]) && $FactTechs[$T['id']]['Level'])) continue;
@@ -592,7 +592,7 @@
         if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
 
         if (!$Tstart++) {
-          echo "<h2>Research Supplimental Ship Technology</h2>";
+          echo "<h2>Research Supplemental Ship Technology</h2>";
           echo "<table class=ProjTab border><tr><td>Project<td>Cost<td>Progress<br>Needed<td>Description";
         }
 
@@ -713,7 +713,10 @@
             "&Name=" . base64_encode("Refit and Repair " . $Name ) . "&L=1&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
             "Refit and Repair $Name $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
         }
+      } else {
+        echo "<h3>Nothing needs Refit and Repairing</h3>";
       }
+
       if ($RepCount) {
         echo "<h2>Repair Ship(s)</h2>";
         echo "To be selectable the ship(s) must be idle: no movement or instructions<p>";
@@ -737,6 +740,8 @@
           echo "Select the ship(s) to repair: " . fm_select($RepShips, $_REQUEST, 'Sel', 0, ' multiple ','Sels[]') ;
           echo "<button class=projtype type=submit>Repair</button><form>";
         }
+      } else {
+        echo "<h3>Nothing needs Repairing</h3>";
       }
 
       break;
@@ -776,7 +781,7 @@
         $pc = Proj_Costs($Lvl);
 
         if (!$Tstart++) {
-          echo "<h2>Research Supplimental Ship Technology</h2>";
+          echo "<h2>Research Supplemental Military Technology</h2>";
           echo "<table class=ProjTab border><tr><td>Project<td>Cost<td>Progress<br>Needed<td>Description";
         }
 
@@ -860,7 +865,10 @@
             "&Name=" . base64_encode("Re-equip and Reinforce " . $Name ) . "&L=1&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
             "Re-equip $Name $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
         }
+      } else {
+        echo "<h3>Nothing needs Re-equip and Reinforcing</h3>";
       }
+
       if ($RepCount) {
         echo "<h2>Reinforce $ARMIES</h2>";
         echo "To be selectable the $ARMIES must be idle: no movement or instructions<p>";
@@ -884,19 +892,24 @@
           echo "Select the $ARMIES to Reinforce: " . fm_select($RepArmy, $_REQUEST, 'Sel', 0, ' multiple ','Sels[]') ;
           echo "<button class=projtype type=submit>Refit</button><form>";
         }
+      } else {
+        echo "<h3>Nothing needs Reinforcing</h3>";
       }
 
       if (Has_Trait($Fid,"I Don't Want To Die") && $RefitCount) {
         echo "To be selectable the $ARMY must be idle: no movement or instructions<p>";
+        if ($RefitCount) {
+          foreach ($RefitArmy as $tid=>$Name) {
+            $T = Get_Thing($tid);
+            $pc = Proj_Costs($T['Level']-1);
 
-        foreach ($RefitArmy as $tid=>$Name) {
-          $T = Get_Thing($tid);
-          $pc = Proj_Costs($T['Level']-1);
-
-          echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Re-equip Detachment'] .
-          "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=$tid" .
-          "&Name=" . base64_encode("Re-equip " . $Name ) . "&L=1&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-          "Re-equip $Name $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+            echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Re-equip Detachment'] .
+            "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=$tid" .
+            "&Name=" . base64_encode("Re-equip " . $Name ) . "&L=1&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
+            "Re-equip $Name $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
+          }
+        } else {
+          echo "<h3>Nothing needs Re-equiping</h3>";
         }
 
       }
@@ -1033,7 +1046,7 @@
         }
 
         if ($Rbuts) {
-          echo "<h2>Research Supplimental Intelligence Technology</h2>";
+          echo "<h2>Research Supplemental Intelligence Technology</h2>";
           foreach ($Rbuts as $rb) echo $rb;
         }
       echo  "<h2>Seek Enemy Agents</h2>";

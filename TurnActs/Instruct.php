@@ -152,7 +152,7 @@ function Instructions() {
           $Rate = 0;
           if ($H['Whose'] == $Fid) $Rate = 2;
           $LDists = Get_DistrictsH($H['id']);
-          if ($LDists[$DistNames[$Dist]]??0) {
+          if ($LDists[$DistNames[$Dist]??0]??0) {
             $Rate += 1;
           }
           if ($Rate > $Rating) {
@@ -1494,8 +1494,7 @@ function InstructionsProgress() {
       case 'Make Something':
       case 'Make Warpgate':
       case 'Link Repair':
-        //        $Prog = Has_Tech($T['Whose'],'Deep Space Construction');
-        $Mods = Get_ModulesType($Tid, 'Deep Space Construction');
+        $Mods = Get_ModulesType($Tid, 'Space Construction Gear');
         $ProgGain = $Mods['Level']*$Mods['Number'];
         GMLog("$ProgGain progress on " . $ThingInstrs[abs($T['Instruction'])] . " for " . $Facts[$T['Whose']]['Name'] . ":" . $T['Name']);
 
@@ -1569,8 +1568,8 @@ function CollaborativeProgress() {
     switch ($ThingInstrs[abs($T['Instruction'])]) {
       case 'Collaborative Space Construction' :
       case 'Collaborative DSC': // Dist1 has Thing number being helped
-        //        $Prog = Has_Tech($T['Whose'],'Deep Space Construction');
-        $Mods = Get_ModulesType($Tid, 'Deep Space Construction');
+        //        $Prog = Has_Tech($T['Whose'],'Space Construction Gear');
+        $Mods = Get_ModulesType($Tid, 'Space Construction Gear');
         $ProgGain = $Mods['Level']*$Mods['Number'];
         $HT = Get_Thing($T['Dist1']);
         if ($HT) {

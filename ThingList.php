@@ -119,7 +119,7 @@
       echo "<td><a href=ThingList.php?AT=$Ref>$Ref</a><td>$Loc";
     } else if ($T['LinkId'] == -1 || $T['LinkId'] == -3) {
       $Host = Get_Thing($T['SystemId']);
-      echo "<td>On:<td>" . $Host['Name'];
+      echo "<td>On:<td>" . ($Host['Name']??'Unknown');
     } else if ($T['LinkId'] == -6) {
       echo "<td><a href=ThingList.php?AT=$Ref>$Ref</a><td>$Loc";
     }

@@ -583,7 +583,7 @@ function AffectActivities() {
   foreach ($Ops as $OP) {
     $Oid = $OP['id'];
     GMLog( "<tr><td><a href=OperEdit.php?id=$Oid>" . $OP['Name'] . "</a><td>" . $Facts[$OP['Whose']]['Name'] . "<td>" . ($Systems[$OP['SystemId']]['Ref']??'??') . "<td>" .
-      $P['Progress'] . "/" . $OP['ProgNeeded'] . "<td>" . fm_checkbox('',$_REQUEST,"Pause:Oper:$Oid") .
+      $OP['Progress'] . "/" . $OP['ProgNeeded'] . "<td>" . fm_checkbox('',$_REQUEST,"Pause:Oper:$Oid") .
       "<td>" . fm_checkbox('',$_REQUEST,"Cancel:Oper:$Oid") . fm_text1('',$_REQUEST,"Reason:Oper:$Oid"));
   }
   GMLog( "</table><p>\n");
@@ -620,7 +620,7 @@ function AffectActivities() {
           break;
       }
     }
-    echo "</table><p>\n";
+    GMLog("</table><p>\n");
 
   }
 
@@ -660,7 +660,7 @@ function AffectActivitiesActions() {
 
             case 'Inst':
               $T = Get_Thing($id);
-              $T['CurInst'] = -$T['CurInst'];
+              $T['CurInst'] = -abs($T['CurInst']);
 
               $Reason = ($_REQUEST["Reason:Inst:$id"]??'Unknown reason');
               TurnLog($T['Whose'], "Instruction: " . $ThingInstrs[abs($T['Instruction'])] . " had no progress because of: $Reason");

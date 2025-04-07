@@ -59,7 +59,17 @@ So I'd have expected that to update the cached survey
 344 Office/branches in ASC
 
 
-
-   
+347 Undefined array key 0 in /var/www/vhosts/starkingdoms.uk/httpdocs/OrgLib.php on line 43; 
+    PHP message: PHP Warning:  Trying to access array offset on value of type null in /var/www/vhosts/starkingdoms.uk/httpdocs/OrgLib.php on line 43', 
+    referer: https://starkingdoms.uk/Player.php
+349 Worms Health recovery
+350 0 progress on Make Asteroid Mine for Federation:Portioll ???
+351 [Mon Mar 24 20:10:18.688716 2025] [proxy_fcgi:error] [pid 1784194:tid 140378934052608] [client 86.132.58.174:0] AH01071: Got error 'PHP message: PHP Warning:  Trying to access array offset on value of type null in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActs/Instruct.php on line 1499; PHP message: PHP Warning:  Trying to access array offset on value of type null in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActs/Instruct.php on line 1499', referer: https://starkingdoms.uk/TurnActions.php?ACTION=Process&S=41
+[Mon Mar 24 20:11:50.504057 2025] [proxy_fcgi:error] [pid 1784195:tid 140378950838016] [client 86.132.58.174:0] AH01071: Got error 'PHP message: PHP Warning:  Array to string conversion in /var/www/vhosts/starkingdoms.uk/httpdocs/skdb.php on line 188; PHP message: PHP Warning:  Undefined array key "Progress" in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActs/Operations.php on line 595; PHP message: PHP Warning:  Undefined array key "Progress" in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActs/Operations.php on line 596', 
+referer: https://starkingdoms.uk/TurnActions.php?ACTION=Process&S=47
+352 New ship (copy of) extra page for name before project save
+355 Lodges still creating as trading stations
+356 Block anomaly progress - Ross 25/3 @9:24
+358
 
 
