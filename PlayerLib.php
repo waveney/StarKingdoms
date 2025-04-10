@@ -12,8 +12,8 @@ $PlayerStates = array_flip($PlayerState);
 $FoodTypes = ['Omnivore','Herbivore','Carnivore'];
 
 $Currencies = ['Credits','Physics Science Points','Engineering Science Points','Xenology Science Points','General Science Points'];
-$Relations = [9=>['Allied','lightgreen'],7=>['Friendly','lightyellow'],5=>['Neutral','lightblue'],3=>['Wary','Orange'],1=>['Hostile','Red'],
-  0=>['Bug','Purple']];
+$Relations = [9=>['Allied','lightgreen'],7=>['Friendly','lightyellow'],5=>['Neutral','lightblue'],3=>['Wary','Orange'],1=>['Hostile','Red']];
+//  0=>['Bug','Purple']];
 
 function CheckFaction($Prog='Player',$Fid=0) {
   if (!Access('Player') && !Access('GM')) {

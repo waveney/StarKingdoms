@@ -48,6 +48,8 @@
   $Boarding = ['No', 'This turn only', 'Ongoing'];
 
   $RelVals = $RelCols = $RelClass = [];
+
+  if (Access('God')) $Relations[0] = ['Bug','Purple'];
   foreach ($Relations as $i=>$D) {
     $RelVals[$i] = $D[0];
     $RelClass[$i] = $D[1];
