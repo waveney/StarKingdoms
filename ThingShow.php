@@ -26,12 +26,14 @@ function Show_Thing(&$T,$Force=0) {
 
   $Tid = $T['id'];
   $Fid = $T['Whose'];
+  $TTypes = Get_ThingTypes();
   $ttn = Thing_Type_Names();
   $ntt = array_flip($ttn);
   $FactNames = Get_Faction_Names();
   $Fact_Colours = Get_Faction_Colours();
   $ThingProps = Thing_Type_Props();
   $tprops = ($ThingProps[$T['Type']]??0);
+  $tprops2 = ($TTypes[$T['Type']]['Prop2']??0);
   $N = Get_System($T['SystemId']);
   $Syslocs = Within_Sys_Locs($N);
   $LinkTypes = Get_LinkLevels();
@@ -824,7 +826,7 @@ function Show_Thing(&$T,$Force=0) {
       } else {
         echo "<td>Module space used: $totmodc";
       }
-      if ($tprops & THING_HAS_SHIPMODULES ) {
+      if (($tprops & THING_HAS_SHIPMODULES) || ($tprops2 & THING_HAS_SPEED) ) {
         echo "<td>Speed: " . ceil(sprintf('%0.3g',$T['Speed']));
       } else if ($tprops & THING_HAS_ARMYMODULES ) {
         echo "<td>Mobility: " . ceil(sprintf('%0.3g',$T['Mobility']));
@@ -886,7 +888,7 @@ function Show_Thing(&$T,$Force=0) {
           echo "<td>Module space used: $totmodc";
         }
       }
-      if ($tprops & THING_HAS_SHIPMODULES ) {
+      if (($tprops & THING_HAS_SHIPMODULES ) || ($tprops2 & THING_HAS_SPEED)){
         echo "<td>Speed: " . ceil(sprintf('%0.3g',$T['Speed']));
       } else if ($tprops & THING_HAS_ARMYMODULES ) {
         echo "<td>Mobility: " . ceil(sprintf('%0.3g',$T['Mobility']));

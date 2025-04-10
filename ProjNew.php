@@ -291,6 +291,11 @@
         $DTs = Get_DistrictTypes();
         $DNames = [];
         foreach ($DTs as $DTz) {
+
+
+          $CProjs = Get_Projects_Cond("Home=$Hi AND TurnStart>0 AND TurnStart<$Turn AND Type=1 AND TurnEnd=0 AND ThingType=" . $DTz['id'] . " AND Status<2");
+//var_dump($DTz,$CProjs);
+
           if (($D['Number']??0) > $PlanCon) continue;
           if ($DTz['Gate'] && eval("return " . $DTz['Gate'] . ";" )) {
             $DNames[$DTz['id']] = $DTz['Name'];
@@ -303,7 +308,10 @@
               }
             }
 
-            // TODO bug if you already have that level in the pipeline - Add check to Turns Ready
+            if ($CProjs) {
+              $Lvl += count($CProjs);
+            }
+
             $etxt = '';
             if ($Lvl >= $PlanCon ) { // $DTz['MaxNum'])) {
               if (!$GM) continue;
@@ -336,8 +344,13 @@
         echo "</table><p>";
 
         if (Feature('Orgs') && count($Offices) < $PlanCon) {
+
+          // Look through projects now to when asked if build office then offices++
+          $CProjs = Get_Projects_Cond("Home=$Hi AND TurnStart>0 AND TurnStart<$Turn AND Type=1 AND TurnEnd=0 AND ThingType<0 AND Status<2");
+          if ($CProjs) $CurOff += count($CProjs);
+
           echo "<h2>Build Offices</h2>";
-          $Lvl = count($Offices)+1;
+          $Lvl = $CurOff+1;
           $pc = Proj_Costs($Lvl);
           $Orgs = Gen_Get_Cond('Organisations',"Whose=$Fid AND OfficeCount!=0");
           $Tstart = 0;

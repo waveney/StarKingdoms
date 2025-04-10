@@ -615,7 +615,7 @@ function AffectActivities() {
           break;
 
         default:
-          GMLog( $P['Progress'] . "/" . $T['ActionsNeeded'] . "<td>" . fm_checkbox('',$_REQUEST,"Pause:Oper:$Oid") .
+          GMLog( $T['Progress'] . "/" . $T['ActionsNeeded'] . "<td>" . fm_checkbox('',$_REQUEST,"Pause:Oper:$Oid") .
             "<td>" . fm_checkbox('',$_REQUEST,"Cancel:Oper:$Oid") . fm_text1('',$_REQUEST,"Reason:Oper:$Oid"));
           break;
       }

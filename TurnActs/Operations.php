@@ -589,7 +589,12 @@ function OperationsComplete() {
         $Anom = Gen_Get('Anomalies',$O['Para1']);
         if (($Anom['Complete']??3) ==0) {
           $Aid = $Anom['id']??0;
-          $FA = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
+          $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
+
+          if (!$FA) {
+            GMLog("Trying to study an anomaly $Aid as an operation - for Operation $Oid - Something has gone wrong call Richard...");
+            break;
+          }
           $Prog = Has_Tech($Fid,'Sensors')*$Org['OfficeCount'];
 
           if ($FA['Progress'] < $Anom['AnomalyLevel']) {

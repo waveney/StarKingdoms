@@ -82,6 +82,7 @@ define('THING_SHOW_CONTENTS',     1); // Prop2
 define('THING_HAS_RECOVERY',      2);
 define('THING_ALWAYS_OTHER',      4);
 define('THING_NO_LOGISTICS',      8);
+define('THING_HAS_SPEED',        16);
 
 define('LINK_ON_BOARD',-1);
 define('LINK_BOARDING',-2);

@@ -22,8 +22,9 @@ function New_Thing(&$T) {
 // var_dump($BPs);
 
 //  var_dump($T);
+  $IsBP = ($T['BluePrint']??0) <0;
   if (!isset($T['Whose'])) $T['Whose'] = 0;
-  if (($T['BluePrint']??0) >= 0 ) {
+  if (!$IsBP) {
     echo "<h1>Create Thing:</h1>";
   } else {
     foreach ($ttypes as $ti=>$tt) {
@@ -34,8 +35,8 @@ function New_Thing(&$T) {
   echo "<form method=post action=ThingEdit.php>";
   echo "<table><tr><td>Type:<td>" . fm_select($ttn,$T,'Type',0," onchange=ListSelection(event,'Type','BPSet','Tlevel')");
   echo "<tr>" . fm_text("Name",$T,'Name');
-  echo "<tr class=Tlevel>" . fm_number("Level",$T,'Level');
-  if (($T['BluePrint']??0) >= 0 ) {
+  echo "<tr " . ($IsBP?'':"class=Tlevel") . ">" . fm_number("Level",$T,'Level');
+  if (!$IsBP) {
     foreach ($ttypes as $i=>$tt) {
       if (($tt['Properties'] & THING_HAS_BLUEPRINTS) && !empty($BPs[$i])) {
         echo "<tr id=BPSet$i hidden><td>Blue print:<td>" . fm_select($BPs[$i],$T,'BluePrint',1,'',"BLIstZZ$i");

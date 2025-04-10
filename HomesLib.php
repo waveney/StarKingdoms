@@ -516,8 +516,8 @@ function Recalc_Economic_Rating(&$H,&$W,$Fid,$Turn=0) {
       $EText .= "Plus " . $MinFact*3 . " from Rare Mineral Deposits<br>\n";
     }
     if (Has_PTraitW($W['id'],'Automated Farming Robots')) {
-      $ERate += 5;
-      $EText .= "Plus 5 from Automated Farming Robots<br>\n";
+      $ERate += 4;
+      $EText .= "Plus 4 from Automated Farming Robots<br>\n";
     }
  //   var_dump($NumPrime,$NumInd,$MinFact, $W);
     return [$ERate,$EText];

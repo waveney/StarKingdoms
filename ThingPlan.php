@@ -154,6 +154,7 @@
   }
   $ThingProps = Thing_Type_Props();
   $tprops = (empty($T['Type'])? 0: $ThingProps[$T['Type']]??0);
+  $tprops2 = ($ThingTypes[$T['Type']]['Prop2']??0);
   $Valid = $CanMake = 1;
   $ResC =0;
   if ($T['Whose'] && $T['Whose'] == $FACTION['id']) {
@@ -429,7 +430,7 @@
       if ($tprops & (THING_HAS_ARMYMODULES | THING_HAS_MILSHIPMODS )) {
          echo "<tr><td>Basic Damage<td>$BaseDam$SPad<td colspan=3>At current Tech Levels.  Before special weapons etc";
       }
-      if ((($tprops & THING_CAN_MOVE) != 0) && (($tprops & THING_HAS_SHIPMODULES) != 0)) {
+      if (((($tprops & THING_CAN_MOVE) != 0) && (($tprops & THING_HAS_SHIPMODULES) != 0)) || ($tprops2 & THING_HAS_SPEED)) {
         $T['Speed'] = ceil($Engines*$Elvl/$T['Level']);
         echo "<tr><td>Speed:<td>" . sprintf('%0.3g',ceil($T['Speed'])) . "$SPad<td colspan=3>At current Tech Levels";
         $T['Stability'] = ceil($FluxStab*$Flvl/$T['Level']);

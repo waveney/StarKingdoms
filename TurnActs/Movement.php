@@ -670,7 +670,7 @@ function Retreats() {
       if (isset($_REQUEST["RetreatLink$Tid"])) {
         $T['NewSystemId'] = -1;
         if (($_REQUEST["RetreatBox$Tid"]??0) == 'on') {
-          TurnLog($Fid,$T['Name'] . " could have retreated, but didn't because " . $_REQUEST["RetreatTxt$Tid"]);
+          TurnLog($Fid,$T['Name'] . " could have retreated, but didn't because " . ($_REQUEST["RetreatTxt$Tid"]??'Unknown reason'));
           $T['Retreat'] = 0;
         } else {
           $Call = 1;

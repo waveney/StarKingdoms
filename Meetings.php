@@ -173,7 +173,7 @@ function ForceReport($Sid,$Cat) {
       $txt .= "<td><span id=StateOf$Tid>" . $T['CurHealth'] . " / " . $T['OrigHealth'];
       if ($T['ShieldPoints']) $txt .= " (" . $T['CurShield'] . "/" . $T['ShieldPoints'] . ") ";
       $txt .= "</span><td><span id=Attack$Tid>$BD</span><td>" . $T['ToHitBonus'] . "<td>";
-      if ($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE) {
+      if (($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE) || ($TTypes[$T['Type']]['Prop2'] & THING_HAS_SPEED)) {
         if ($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES) {
           $txt .= "Mobility: " . sprintf("%0.3g ",$T['Mobility']);
         } else {
