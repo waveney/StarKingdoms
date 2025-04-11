@@ -957,7 +957,8 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
   if (!$ModuleTypes) $ModuleTypes = Get_ModuleTypes();
   $Locations = Within_Sys_Locs_Id($T['SystemId']);
 
-  $txt = $itxt = '';
+  $txt = '';
+  $itxt = '';
   $Tid = $T['id'];
   $RawA = 0;
 
@@ -988,21 +989,25 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
         return '';
       }
       if ($T['BuildState'] < BS_SERVICE || ($T['BuildState'] >= BS_EX && !$Div)) return ''; // Building or abandoned
+      $LocClass='Space';
+      $LocType = intdiv($T['WithinSysLoc'],100);
+      if (($T['WithinSysLoc'] == 3) || $LocType==2 || $LocType==4 ) $LocClass = 'Ground';
+
       if ($Div && $LastWhose && $LastWhose!= $T['Whose']) $txt .= "<P>";
       $Imgxtra = 0;
       if ($Div) {
         if (($T['BuildState'] == 4) || (($T['Type'] == 23) && $GM)) { // Named Chars
           if ($GM) {
-            $txt .= "<div class='FullD SeeThingTxt' hidden>";
+            $txt .= "<div class='FullD SeeThingTxt $LocClass' hidden>";
             $Imgxtra = 1;
           } elseif ($T['BuildState'] >= BS_EX) {
-            $txt .= "<div class='FullD SeeThingTxt' hidden>The remains of: ";
+            $txt .= "<div class='FullD SeeThingTxt $LocClass' hidden>The remains of: ";
             $Imgxtra = 1;
           } else {
-            $txt .= "<div class=SeeThingTxt>";
+            $txt .= "<div class='SeeThingTxt $LocClass'>";
           }
         } else {
-          $txt .= "<div class=SeeThingTxt>";
+          $txt .= "<div class='SeeThingTxt $LocClass'>";
         }
       }
 
@@ -1120,7 +1125,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
         $OnBoard = Get_Things_Cond(0,"(LinkId=-1 OR LinkId=-3 OR LinkId=-4) AND SystemId=$Tid AND BuildState=" . BS_COMPLETE);
  //       var_dump($Tid,$Contents,$OnBoard);
         if ($OnBoard) {
-          $txt .= "<br>On Board: ";
+          $txt .= "<div class=$LocClass><br>On Board: ";
           foreach ($OnBoard as $H) {
             $Hid = $H['id'];
             $txt .= "<form method=post action=Meetings.php?ACTION=UNLOAD&id=$Hid>";
@@ -1138,6 +1143,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
             }
             echo "</form>";
           }
+          $txt .= "</div>";
         }
       }
 

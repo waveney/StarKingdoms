@@ -16,6 +16,8 @@
   echo "<form method=post action=FactionFaction.php>";
   Register_Autoupdate('FFaction',0);
 
+  if (Access('God')) $Relations[0] = ['Bug','Purple'];
+
   echo "<table border>";
   echo "<tr><th>Do These V know about &gt;<th>Aliens";
   $K = ['Y'=>1, 'N'=> 0];

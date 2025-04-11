@@ -560,3 +560,22 @@ function AddTrack(id) {
   mod.value = '';
   AutoInput(id,'Generic');
 }
+
+function WhereFilter() {
+	debugger;
+	var Where = document.querySelector('input[name="Where"]:checked').value;
+	switch (Where) {
+		case "0":
+			$('.Space').show();
+			$('.Ground').show();
+	    return;
+		case "1":
+			$('.Space').show();
+			$('.Ground').hide();
+		  return;
+		case "2":
+			$('.Space').hide();
+			$('.Ground').show();
+		  return;
+	}
+}

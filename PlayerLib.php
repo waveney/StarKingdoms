@@ -13,7 +13,6 @@ $FoodTypes = ['Omnivore','Herbivore','Carnivore'];
 
 $Currencies = ['Credits','Physics Science Points','Engineering Science Points','Xenology Science Points','General Science Points'];
 $Relations = [9=>['Allied','lightgreen'],7=>['Friendly','lightyellow'],5=>['Neutral','lightblue'],3=>['Wary','Orange'],1=>['Hostile','Red']];
-//  0=>['Bug','Purple']];
 
 function CheckFaction($Prog='Player',$Fid=0) {
   if (!Access('Player') && !Access('GM')) {
@@ -336,6 +335,7 @@ function Credit() {
 }
 
 function WhatCanBeSeenBy($Fid,$Mode=0) {
+  $Terrains = ['All','Space','Ground'];
   $MyThings = Get_Things($Fid);
   $MyHomes = Get_ProjectHomes($Fid);
   $ThingTypes = Get_ThingTypes();
@@ -346,7 +346,9 @@ function WhatCanBeSeenBy($Fid,$Mode=0) {
   $Places = [];
   $Hosts = [];
 
-  $txt = '';
+  $Where = ['Where'=>0];
+  $txt = "<div class=floatright>" . fm_radio('Show',$Terrains,$Where,'Where',' onchange=WhereFilter()') . "</div>";
+
 
   foreach ($MyThings as $T) {
     if ($T['BuildState'] < BS_SERVICE || $T['BuildState']> BS_COMPLETE) continue; // Ignore things not in use
@@ -398,11 +400,17 @@ function WhatCanBeSeenBy($Fid,$Mode=0) {
     foreach($Hosts as $Hid=>$H) {
       if (empty($H)) continue;
       $HostT = isset($MyThings[$Hid]) ? $MyThings[$Hid] : Get_Thing($Hid);
-      $txt .= "<h2>On Board " . (empty ($HostT['Name'])? "Unknown Thing" : $HostT['Name'])  . " is:</h2>";
+
+      $LocClass='Space';
+      $LocType = intdiv($HostT['WithinSysLoc'],100);
+      if (($HostT['WithinSysLoc'] == 3) || $LocType==2 || $LocType==4 ) $LocClass = 'Ground';
+
+      $txt .= "<div  class=$LocClass><h2>On Board " . (empty ($HostT['Name'])? "Unknown Thing" : $HostT['Name'])  . " is:</h2>";
       foreach($H as $Tid) {
         $T = Get_Thing($Tid);
         $txt .= SeeThing($T,$LastWhose,15,$T['Whose'],1,$Mode);
       }
+      $txt .= "</div>";
     }
   }
 
