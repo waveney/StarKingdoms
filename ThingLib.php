@@ -960,6 +960,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
   $txt = '';
   $itxt = '';
   $Tid = $T['id'];
+//  var_dump($Tid);
   $RawA = 0;
 
 //  if ($T['id'] == 238) { echo "Here with outpost<br>"; var_dump($T); }
@@ -1153,9 +1154,9 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
 
       if ($itxt) {
         if ($Imgxtra) {
-          $txt = "<div class=SeeThingwrap>$txt<div class='FullD SeeThingImg' hidden>$itxt</div></div>";
+          $txt = "<div class='SeeThingwrap $LocClass'>$txt<div class='FullD SeeThingImg' hidden>$itxt</div></div>";
         } else {
-          $txt = "<div class=SeeThingwrap>$txt<div class=SeeThingImg>$itxt</div></div>";
+          $txt = "<div class='SeeThingwrap $LocClass'>$txt<div class=SeeThingImg>$itxt</div></div>";
         }
       }
       $LastWhose = $T['Whose'];
@@ -1415,6 +1416,7 @@ function Empty_Thing(&$T) {
   $Have = Get_Things_Cond(0," (LinkId=-1 OR LinkId=-3) AND SystemId=$Tid ");
 
   if ($Have) {
+    include_once("TurnTools.php");
     foreach($Have as $CT) {
       $CTi = $CT['id'];
       if ($CT['Type'] != 23) {

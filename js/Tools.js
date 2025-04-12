@@ -568,14 +568,31 @@ function WhereFilter() {
 		case "0":
 			$('.Space').show();
 			$('.Ground').show();
-	    return;
+			break;
 		case "1":
 			$('.Space').show();
 			$('.Ground').hide();
-		  return;
+			break;
 		case "2":
 			$('.Space').hide();
 			$('.Ground').show();
-		  return;
+			break;
 	}
+	var FullDVis = $('#FullDButton').is(':visible');
+
+	if (FullDVis) {
+		$('.FullD').hide();
+		$('#FullDButton').show();
+	} else {
+		switch (Where) {
+			case "0":
+				break;
+			case "1":
+				$('.Ground').hide();
+				break;
+			case "2":
+				$('.Space').hide();
+				break;
+		}
+  }
 }
