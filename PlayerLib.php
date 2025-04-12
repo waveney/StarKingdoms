@@ -367,6 +367,38 @@ function WhatCanBeSeenBy($Fid,$Mode=0) {
     }
   }
 
+  // Check all branches
+
+  $Branches = Gen_Get_Cond('Branches',"Whose=$Fid");
+  if ($Branches) {
+    $BCheck = [];
+    foreach($Branches as $B) {
+      if (isset($BCheck[$B['HostType']][$B['HostId']])) continue;
+      $BCheck[$B['HostType']][$B['HostId']] = 1;
+
+      switch ($B['HostType']) {
+        case 1: // Planet
+          $P = Get_Planet($B['HostId']);
+          $Sid = $P['SystemId'];
+          $Places[$Sid] = (empty($Places[$Sid])? 8 : ($Places[$Sid] | 8));
+          break;
+
+        case 2: // Moon
+          $M = Get_Moon($B['HostId']);
+          $P = Get_Planet($M['PlanetId']);
+          $Sid = $P['SystemId'];
+          $Places[$Sid] = (empty($Places[$Sid])? 8 : ($Places[$Sid] | 8));
+          break;
+
+        case 3: // Thing
+          $T = Get_Thing($B['HostId']);
+          $Sid = $T['SystemId'];
+          $Places[$Sid] = (empty($Places[$Sid])? 1 : ($Places[$Sid] | 1));
+          break;
+      }
+    }
+  }
+
   $txt .= "Everything of yours and what they can see.<p>";
 //  echo "Note: Things on board other things (e.g. Named Characters) do not show up in this display - currently<p>";
 
