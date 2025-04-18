@@ -379,13 +379,15 @@
           }
 
           echo "<h3>Office for a new Organisation</h3>";
+          echo "You can edit this name and description, until the first office is built.<p>";
+          echo "You will not be able to start a 2nd office until this is finished.";
           echo "<table>";
           echo "<tr><td>Org Type:" . fm_select($ValidOrgs,$O,'OrgType',0,'',"NewOrgType");
-          echo fm_text1('',$O,'NewOrgName',2,'','placeholder="New Organisation Name"');
+          if ($GM) echo "<tr><td>Also type:" . fm_select($ValidOrgs,$O,'OrgType',1,'',"NewOrgType2");
+          echo "<tr>" . fm_text('New Organisation Name',$O,'NewOrgName',2,'','placeholder="New Organisation Name"');
           echo "<tr><td colspan=4>" . fm_basictextarea($O, 'NewOrgDescription',5,3,"placeholder='New Organisation Description' style='width=70%'");
           $SocPs = SocPrinciples($Fid);
           echo "<tr><td colspan=4>Social Priniple (Religious / Ideological only)" . fm_select($SocPs,$O,'NewOrgSocialPrinciple');
-          echo " You can edit this name and description from your list of organisations, until the first office is built.";
           echo "</table><br>";
           echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEWORG&id=$Fid&p=" . $PTi['Construction'] .
             "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=-$ot" .
@@ -809,7 +811,7 @@
 
       $HSys = $Homes[$Hi]['SystemId'];
       $HLoc = $Homes[$Hi]['WithinSysLoc'];
-      $MaxLvl = Has_Tech($Fid,'	Military Theory');
+      $MaxLvl = Has_Tech($Fid,'Military Theory');
       $TTs = Get_ThingTypes();
       $Things = Get_Things_Cond($Fid," SystemId=$HSys AND Level <= $MaxLvl AND BuildState=" . BS_COMPLETE );
       $RepArmy = $RefitArmy = [];

@@ -27,7 +27,7 @@ function StartProjects() {
       $Tid = $P['ThingId'];
       if ($Tid) {
         $T = Get_Thing($Tid);
-        if (!$T['DesignValid']) {
+        if (!($T['DesignValid']??0)) {
           $P['Status'] = 5; // Not Started
           TurnLog($P['FactionId'],'Not starting as design invalid: ' . $P['Name']);
           GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as design invalid: ' . $P['Name'],1);
@@ -519,9 +519,22 @@ function ProjectsCompleted($Pass) {
             }
             $D = ['HostType'=>$H['ThingType'], 'HostId'=>$PH['id'], 'Type'=>$P['ThingType'], 'Number'=>1, 'GameId' => $GAMEID];
             Put_District($D);
+          } else if ($P['ThingType'] == 0) { // New Office
+            $Org = ['Whose' => $P['FactionId'], 'Name'=>$P['OrgName'], 'Description' => $P['OrgDesc'], 'OfficeCount'=>1, 'OrgType'=>$P['ThingId'],
+              'OrgType2' =>$P['ThingId2'], 'GameId'=>$GAMEID, 'SocialPrinciple' => $P['OrgSP']];
+            $OrgId = Gen_Put('Organisations',$Org);
+
+            $World = Gen_Get_Cond1('Worlds',"Home=" . $P['Home']);
+            $Off = ['Organisation' => $OrgId, 'OrgType'=>$P['ThingId'], 'OrgType2'=>$P['ThingId2'], 'World'=>$World['id'], 'Whose'=>$P['FactionId'],
+              'Number'=>1];
+            Put_Office($Off);
+
           } else { // Office
             $World = Gen_Get_Cond1('Worlds',"Home=" . $P['Home']);
-            $Off = ['Organisation' => -$P['ThingType'], 'OrgType'=>$P['ThingId'], 'World'=>$World['id'], 'Whose'=>$P['FactionId'], 'Number'=>1];
+            $Org = Gen_Get('Organisations',-$P['ThingType'] );
+
+            $Off = ['Organisation' => -$P['ThingType'], 'OrgType'=>$Org['OrgType'], 'OrgType2'=>$Org['OrgType2'], 'World'=>$World['id'],
+              'Whose'=>$P['FactionId'], 'Number'=>1];
             Put_Office($Off);
           }
           TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");

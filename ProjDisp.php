@@ -63,17 +63,27 @@
 
   if (isset($_REQUEST['ACTION'])) {
     $Name = base64_decode($_REQUEST['Name']??'');
+    $OrgName = $OrgDest = '';
+    $OrgSP = $TType = 0;
 
     switch ($_REQUEST['ACTION']) {  // TODO This code is DREADFUL needs redoing
       case 'NEWORG':
+        $OrgName = $_REQUEST['NewOrgName'];
+        $OrgDesc = $_REQUEST['NewOrgDescription'];
+        $_REQUEST['Sel'] = $_REQUEST['NewOrgType'];
+        $_REQUEST['Sel2'] = $_REQUEST['NewOrgType2'];
+        $OrgSP = $_REQUEST['NewOrgSocialPrinciple'];
+        $Sel = 0;
+
+        /*
         $NOrg = ['Whose'=>$Fid, 'OrgType' => $_REQUEST['NewOrgType'], 'Name'=> $_REQUEST['NewOrgName'], 'Description'=>$_REQUEST['NewOrgDescription'],
                  'SocialPrinciple' => $_REQUEST['NewOrgSocialPrinciple'], 'OfficeCount'=>0, 'GameId'=>$GAMEID];
         $Orgid = Gen_Put('Organisations',$NOrg);
-        $_REQUEST['Sel'] = -$Orgid;
+        $_REQUEST['Sel'] = -$Orgid;*/
+
         if (str_contains($Name,'NNEEWW')) {
           $Name = preg_replace('/NNEEWW/',$_REQUEST['NewOrgName'],$Name);
         }
-
         // Drop through
 
       case 'NEW':
@@ -86,7 +96,6 @@
         $FreeRush = 0;
         $TthingId = $_REQUEST['Sel']??0;
         $TthingId2 = $_REQUEST['Sel2']??0;
-
         switch ($ProjTypes[$Ptype]['Name']) {
         case 'Construct Ship':
         case "Train $ARMY":
@@ -127,7 +136,7 @@
           $pc = Proj_Costs($Level-1);
           $Costs = $pc[1];
           $ProgN = $pc[0];
-          $Sel = $mtch[1];
+          $TType = $Sel = $mtch[1];
           $Tech = Get_Tech($Sel);
           $Fact = Get_Faction($With);
           $Name = "Share " . $Tech['Name'] . " at level $Level with " . $Fact['Name'];
@@ -222,9 +231,11 @@
           $Pro = ['FactionId'=>$Fid, 'Type'=>$Ptype, 'Level'=> $Level, 'Home'=>$Hi, 'Progress'=>0, 'Status'=>0, 'TurnStart'=>$Turn, 'Name'=>$Name,
                   'Costs' => $Costs, 'ProgNeeded' => $ProgN, 'BuildState'=>0, 'DType' => $DT, 'FreeRushes'=>$FreeRush, 'ThingType'=>($TType??0)];
           if (isset($With)) $Pro['ThingId'] = $With;
-          if (isset($Sel)) $Pro['ThingType'] = $Sel;
           if (isset($TthingId)) $Pro['ThingId'] = $TthingId;
           if (isset($TthingId2)) $Pro['ThingId2'] = $TthingId2;
+          if ($OrgName) $Pro['OrgName'] = $OrgName;
+          if ($OrgDesc) $Pro['OrgDesc'] = $OrgDesc;
+          if ($OrgSP) $Pro['OrgSP'] = $OrgSP;
 
           if (isset($OldPro['id'])) {
             $Pro['id'] = $OldPro['id'];
@@ -232,6 +243,7 @@
 
           $OpenHi = $Hi;
           $OpenDi = $Di;
+//          var_dump($Pro);
           Put_Project($Pro);
           $Pid = $Pro['id'];
 

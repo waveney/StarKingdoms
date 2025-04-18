@@ -243,12 +243,31 @@
     } else if (1 || $P['ThingType']) {
       echo "<tr>" . fm_number('ThingType',$P,'ThingType') . "<td>";
       if ($P['Type'] == 1) {
-        if ($P['ThingType'] < 0) {// Office
+        if ($P['ThingType'] < 0) {// Office existing Org
           $OTypes = Get_OrgTypes();
           $OfficeTypeN = [];
           foreach ($OTypes as $oi=>$O) $OfficeTypeN[-$oi] = $O['Name'];
           echo fm_select($OfficeTypeN,$P,'ThingType');
-        } else {
+        } else if ($P['ThingType'] == 0) { // New Org
+          include_once("OrgLib.php");
+
+          $OrgTypes = Get_OrgTypes();
+
+          $ValidOrgs = [];
+          foreach($OrgTypes as $ot=>$O) {
+            if ($O['Gate'] && !eval("return " . $O['Gate'] . ";" )) continue;
+            $ValidOrgs[$ot] = $O['Name'];
+          }
+
+          $SocPs = SocPrinciples($Fid);
+
+          echo "<tr><td colspan=6>Office for a New Org...<br>";
+          echo "You can edit this name and description here, until the first office is built.";
+          echo "<tr>" . fm_text('Org Name',$P,'OrgName') . "<td>Org Type: " . fm_select($ValidOrgs,$P,'ThingId');
+          echo "<tr><td colspan=4>Social Priniple (Religious / Ideological only)" . fm_select($SocPs,$P,'OrgSP');
+          echo "<tr><td>Org Description<td>" . fm_basictextarea($P,'OrgDesc',5,3);
+
+        } else { // District
           echo fm_select($DistTypeN,$P,'ThingType');
         }
       } else {
