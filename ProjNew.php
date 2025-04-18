@@ -275,10 +275,10 @@
 
     $PlanCon = PlanConst($Fid,$World['id']);
     $CurOff = $CurDists = 0;
+    $CurOff = Count($Offices);
     if ($MaxDists > 0) {
 
       foreach ($HDists[$Hi] as $DD) if ($DD['Type'] > 0) $CurDists += $DD['Number'];
-      $CurOff = Count($Offices);
 
       echo "Maximum Districts: $MaxDists<br>Current Districts: $CurDists<br>";
       if (Feature('Orgs')) echo "Offices: $CurOff<br>";
@@ -377,6 +377,8 @@
             if ($O['Gate'] && !eval("return " . $O['Gate'] . ";" )) continue;
             $ValidOrgs[$ot] = $O['Name'];
           }
+          $Lvl = $CurOff+1;
+          $pc = Proj_Costs($Lvl);
 
           echo "<h3>Office for a new Organisation</h3>";
           echo "You can edit this name and description, until the first office is built.<p>";
