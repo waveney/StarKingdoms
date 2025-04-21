@@ -997,7 +997,7 @@ function System_Owner($Sid) {
         if ($FS['Name']??'') $N['Name'] = $FS;
         Put_System($N);
    //     var_dump("Change 3 to " .$N['Control'] );
-        return "Control of " . $N['Ref'] . " now " . $Facts[$N['Control']]['Name'];
+        return "Control of " . $N['Ref'] . " now " . ($Facts[$N['Control']??0]['Name']??'Unknown');
       }
   //    var_dump("No change 4");
       if (($FS['Name']??'') && ($FS['Name'] != $N['Name'])){

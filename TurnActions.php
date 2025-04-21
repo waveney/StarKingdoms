@@ -809,9 +809,7 @@ function GiveSurveyReports() {
   foreach($Scans as $spid=>$S) {
 
     $Fid = $S['FactionId'];
-//    var_dump($spid);
-
-    if (!isset($_REQUEST["Scan$spid"]) || (isset($_REQUEST["Scan$spid"]) &&  ($_REQUEST["Scan$spid"] == "on"))) {
+    if (isset($_REQUEST["Scan$spid"]) &&  ($_REQUEST["Scan$spid"] == "on")) {
       $FS = Get_FactionSystemFS($Fid,$S['Sys']);
       $New = !isset($FS['id']);
       $Changed = $New;
