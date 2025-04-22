@@ -1239,12 +1239,13 @@ function Update_Militia(&$W,&$Dists,$NewOwn=0,$Deploy=0) {
       echo "<h2>Militia already setup</h2>";
     }
     foreach($Mils as $Ml) {
-      if (($Ml['OrigHealth'] != $Hlth) || ($Ml['Whose'] != $FactN) || ($Ml['ActDamage'] !=8)) {
+      if (($Ml['OrigHealth'] != $Hlth) || ($Ml['Whose'] != $FactN) || ($Ml['ActDamage'] !=8) || $Ml['Mobility'] != 2) {
         $Diff = $Hlth - $Ml['OrigHealth'];
         $Ml['OrigHealth'] = $Hlth;
         $Ml['CurHealth'] = min($Ml['CurHealth']+$Diff,$Hlth );
         $Ml['Whose'] = $FactN;
         $Ml['ActDamage'] = 8;
+        $Ml['Mobility'] = 2;
       }
       $Ml['LinkId'] = ($Deploy?0:LINK_INBRANCH);
       Put_Thing($Ml);
@@ -1256,7 +1257,7 @@ function Update_Militia(&$W,&$Dists,$NewOwn=0,$Deploy=0) {
     foreach ($Mils as $Ml) $MNames[$Ml['Name']] = 1; // Didts & Dist2 give short cut to world and districts
     $M = ['Type'=>20, 'CurHealth'=>$Hlth, 'OrigHealth'=>$Hlth, 'Evasion'=>40,
       'Whose'=>$FactN, 'SystemId'=>$Sys, 'WithinSysLoc'=>$loc, 'BuildState'=>BS_COMPLETE, 'ActDamage'=>8,
-           'Dist1'=> $W['ThingType'], 'Dist2'=>$W['ThingId'], 'LinkId' => ($Deploy?0:LINK_INBRANCH)  ];
+           'Dist1'=> $W['ThingType'], 'Dist2'=>$W['ThingId'], 'LinkId' => ($Deploy?0:LINK_INBRANCH), 'Mobility'=>2  ];
     $Mn = 1;
     for ($Mnum = count($Mils); $Mnum < $Dcount; $Mnum++) {
       while (isset($MNames["Militia $Mname $Mn"])) $Mn++;
@@ -1265,6 +1266,7 @@ function Update_Militia(&$W,&$Dists,$NewOwn=0,$Deploy=0) {
       unset($M['id']);
       Put_Thing($M);
       echo $M['Name'] . " created<br>";
+      $Mils[] = $M;
     }
   }
   foreach ($Mils as $Ml) {

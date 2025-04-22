@@ -994,7 +994,7 @@ function Show_Thing(&$T,$Force=0) {
 
     case 'Decommision': // Dissasemble
 
-      if ($Moving || ($tprops & THING_HAS_SHIPMODULES) == 0 ) continue 2;
+      if ($Moving || (($tprops & THING_HAS_SHIPMODULES) == 0 ) || (($tprops2 & THING_NO_LOGISTICS) != 0)) continue 2;
       // If home - yours or friendly - does not need a shipyard - just affects payout
       // Is there a Home here with a shipyard
       $Loc = $T['SystemId'];
@@ -1020,10 +1020,11 @@ function Show_Thing(&$T,$Force=0) {
       continue 2;
 
     case 'Disband': // Dissasemble
-      if ($Moving || ($tprops & THING_HAS_ARMYMODULES) == 0 ) continue 2;
+      if ($Moving || (($tprops & THING_HAS_ARMYMODULES) == 0 ) || (($tprops2 & THING_NO_LOGISTICS) != 0)) continue 2;
       // Is there a Home here with a Military
       $Loc = $T['SystemId'];
       $Homes = Gen_Get_Cond('ProjectHomes', "SystemId=$Loc");
+
 
       if (!$Homes) continue 2;
       foreach ($Homes as $H) {

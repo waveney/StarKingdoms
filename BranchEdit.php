@@ -132,7 +132,7 @@ if (isset($_REQUEST['Action'])) {
       $TTypes = Get_ThingTypes();
       $NTypes = array_flip(NamesList($TTypes));
 
-      $Branches = Gen_Get_Cond('Branches',"HostType<3 AND HostId=$Hid AND OrgType=3");
+      $Branches = Gen_Get_Cond('Branches',"HostType<3 AND HostId=$Hid AND (OrgType=3 OR OrgType2=3)");
 // var_dump($Branches);
       $TotC = 0;
       if ($Branches) {

@@ -74,16 +74,17 @@ function ReturnMilOrgForces() {
   $NTypes = array_flip(NamesList($TTypes));
   $Things = Get_Things_Cond(0,"( Type=" . $NTypes['Heavy Security'] . " OR Type=" . $NTypes['Fighter Defences'] . ") AND LinkId!=" . LINK_INBRANCH);
   $Count = 0;
-  foreach($Things as $Tid=>$T) {
+  foreach($Things as $T) {
     $Count++;
+    $Tid = $T['id'];
     $Bid = $T['ProjectId'];
     if (Gen_Get('Branches',$Bid)) {
       $T['LinkId'] = LINK_INBRANCH;
       $T['SystemId'] = 0;
       Put_Thing($T);
     } else { // Branch missing
-      GMLog( "BRANCH $Bid MISSING...");
-      Thing_Delete($Tid);
+      GMLog( "BRANCH $Bid MISSING... for $Tid");
+ //     Thing_Delete($Tid);
     }
   }
 

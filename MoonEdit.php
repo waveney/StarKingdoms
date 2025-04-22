@@ -2,7 +2,7 @@
   include_once("sk.php");
   include_once("GetPut.php");
   include_once("SystemLib.php");
-  
+
   A_Check('GM');
 
   dostaffhead("Edit Moon",["js/dropzone.js","css/dropzone.css" ]);
@@ -14,7 +14,7 @@
     $Mid = $_REQUEST['M'];
   } else if (isset($_REQUEST['id'])) {
     $Mid = $_REQUEST['id'];
-  } else { 
+  } else {
 
     echo "<h2>No Systems Requested</h2>";
     dotail();
@@ -34,7 +34,7 @@
   $N2Ps = array_flip($PTs);
 
 
-  
+
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
     case 'Delete Moon' :
@@ -43,15 +43,25 @@
       Show_Planet($P,1,1);
       dotail();
       break;
-      
-    default: 
+
+    case 'Tidy Districts':
+      $Ds = Get_DistrictsM($Mid,1);
+      foreach ($Ds as $D) {
+        if ($D['Number'] == 0) {
+          db_delete('Districts',$D['id']);
+        }
+      };
+      echo "<h2>Districts Tidied Up</h2>";
+      break;
+
+    default:
       break;
     }
   }
-  
-  
+
+
   Show_Moon($M,1);
-  
+
   echo "<center>" .
        "<form method=post action=SysEdit.php>" . fm_hidden('id', $Sid) .
        "<input type=submit name=NOACTION value='Back to System' class=Button> " .
@@ -59,10 +69,10 @@
        "<form method=post action=PlanEdit.php>" . fm_hidden('id', $Pid) .
        "<input type=submit name=NOACTION value='Back to Planet' class=Button> " .
        "</form>";
-    
+
     echo "<form method=post action=MoonEdit.php>" . fm_hidden('id', $Mid) .
          "<input type=submit name=ACTION value='Delete Moon' class=Button> " .
          "</form></center>";
- 
+
   dotail();
 ?>

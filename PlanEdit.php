@@ -101,6 +101,18 @@
       $P['Moons']++;
       Put_Planet($P);
       break;
+
+    case 'Tidy Districts':
+      $Ds = Get_DistrictsP($Pid,1);
+      foreach ($Ds as $D) {
+        if ($D['Number'] == 0) {
+          db_delete('Districts',$D['id']);
+        }
+      };
+      echo "<h2>Districts Tidied Up</h2>";
+      break;
+
+
     default:
       break;
     }

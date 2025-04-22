@@ -25,12 +25,12 @@ function StartOperations() {
     if ($Otp & OPER_OUTPOST) {
       $OutPs = Get_Things_Cond(0,"Type=" . $NamesTTypes['Outpost'] . " AND SystemId=$Wh AND BuildState=" . BS_COMPLETE);
       if ($OutPs) {
+        $Tid = $OutPs[0]['id'];
         if (count($OutPs) >1) {
           GMLog("There are multiple Outposts in " . $Sys['Ref'] . " - Tell Richard");
           exit;
         }
         if (($Otp & OPER_CREATE_OUTPOST)) {
-          $Tid = $OutPs[0]['id'];
           $EBs = Gen_Get_Cond('Branches', " HostType=3 AND HostId=$Tid");
 
           $MaxB = Has_Tech($OutPs[0]['Whose'],'Offworld Construction');

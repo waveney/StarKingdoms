@@ -73,6 +73,7 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Conflict?</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Blockade?</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Revolt?</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Devastation</a>\n";
   } else {
     echo "<th>Status";
   }
@@ -152,6 +153,7 @@
       echo fm_number1('Blockade?',$W,'Blockade','','min=0 max=' . feature('MaxBlockade',8),"Blockade:99:" . $W['id']);
  //     echo "<td>" . fm_checkbox("Blockade?", $W, 'Blockade','',"Blockade:99:" . $W['id']);
       echo "<td>" . fm_checkbox("Revolt?", $W, 'Revolt','',"Revolt:99:" . $W['id']);
+      echo fm_number1('',$H,'Devastation','','min=0 max=10','Devastation:100:'. $W['Home'] );
     } else {
       WorldFlags($W);
     }

@@ -421,11 +421,13 @@ function Show_Planet(&$P,$Mode=0,$Buts=0) {
 
   $NumDists = count($Ds);
   $dc=0;
+  $Tidy = 0;
 
   foreach ($Ds as $D) {
     $did = $D['id'];
     if ($dc++%3 == 0)  echo "<tr>";
     echo "<td>" . fm_Select($DTs, $D , 'Type', 1,'',"DistrictType-$did") . fm_number1('', $D,'Number', '',' class=Num3 ',"DistrictNumber-$did");
+    if ($D['Number'] == 0) $Tidy = 1;
     echo fm_number0("&Delta; ",$D,'Delta','',' class=Num3 ',"DistrictDelta-$did");
     };
 
@@ -461,6 +463,7 @@ function Show_Planet(&$P,$Mode=0,$Buts=0) {
 
       echo "<input type=submit name=ACTION value='Delete Planet' class=Button> " .
            "<input type=submit name=ACTION value='Delete Moons' class=Button>";
+      if ($Tidy) echo "<input type=submit name=ACTION value='Tidy Districts' class=Button>";
 
       echo fm_submit('Action','New Branch',0,"formaction=BranchEdit.php?Planid=$Pid");
       echo "</form></center>";
@@ -515,11 +518,13 @@ function Show_Moon(&$M,$Mode=0) {
 
   $NumDists = count($Ds);
   $dc=0;
+  $Tidy = 0;
 
   foreach ($Ds as $D) {
     $did = $D['id'];
     if ($dc++%4 == 0)  echo "<tr>";
     echo "<td>" . fm_Select($DTs, $D , 'Type', 1,'',"DistrictType-$did") . fm_number1('', $D,'Number', '',' class=Num3 ',"DistrictNumber-$did");
+    if ($D['Number'] == 0) $Tidy = 1;
     echo fm_number0("&Delta; ",$D,'Delta','',' class=Num3 ',"DistrictDelta-$did");
     };
 
@@ -537,6 +542,13 @@ function Show_Moon(&$M,$Mode=0) {
 
   if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "</table></div></form>\n";
+
+  if ($Tidy) {
+    echo "<center>" .
+      "<form method=post action=MoonEdit.php>" . fm_hidden('id', $Mid) .
+      "<input type=submit name=ACTION value='Tidy Districts' class=Button>";
+    echo "</form></center>";
+  }
 }
 
 

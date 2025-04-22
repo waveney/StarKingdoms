@@ -777,7 +777,7 @@ function InstructionsStage2() { // And other Instructions
         $P = Get_Planet($T['Spare1']);
 
         if ($N['Control'] > 0 && $N['Control'] != $T['Whose']) {  // Colonising system under control of others
-          if (!isset($_REQUEST["Col$Tid"]) ||  $_REQUEST["Col$Tid"] != "on") {
+          if (isset($_REQUEST["ReasonCol$Tid"]) && (!isset($_REQUEST["Col$Tid"]) ||  $_REQUEST["Col$Tid"] != "on")) {
             TurnLog($T['Whose'],"The colony was not created in " . $N['Ref'] . " because " . $_REQUEST["ReasonCol$Tid"] . "\n<br>",$T);
             $T['Instruction'] = 0;
             Put_Thing($T);

@@ -345,6 +345,10 @@
         $N = Get_World($mtch[3]);
         $N[$mtch[1]] = $Value;
         return Put_World($N);
+      case 100: // Home
+        $N = Get_ProjectHome($mtch[3]);
+        $N[$mtch[1]] = $Value;
+        return Put_ProjectHome($N);
       }
       echo "ERROR";
       var_dump($_REQUEST); //OK

@@ -392,6 +392,11 @@ function WhatCanBeSeenBy($Fid,$Mode=0) {
 
         case 3: // Thing
           $T = Get_Thing($B['HostId']);
+          if (!$T) {
+            GMLog("Branch " . $B[id] . " has a host error - call Richard");
+            break;
+          }
+
           $Sid = $T['SystemId'];
           $Places[$Sid] = (empty($Places[$Sid])? 1 : ($Places[$Sid] | 1));
           break;
@@ -601,7 +606,7 @@ function Income_Calc($Fid) {
       $EccTxt .=  "It is in <b>Revolt</b> no income<br>\n";
     } else {
       if ($H['Devastation']) {
-        $ECon = $ECon - $H['Devastation'];
+        $ECon = $ECon - $H['Devastation']*2;
         $EccTxt .= " It has devastation reducing it to: $ECon <br>\n";
       }
 
@@ -609,7 +614,7 @@ function Income_Calc($Fid) {
         $ECon = ceil($ECon*(10-$W['Blockade'])/10);
         $EccTxt .=  "It is blockaded income is reduced to $ECon\n";
       } else {
-        $ECon = ceil(($ECon - $H['Devastation'])*$H['EconomyFactor']/100);
+        $ECon = ceil(($ECon - $H['Devastation']*2)*$H['EconomyFactor']/100);
       }
     }
 
