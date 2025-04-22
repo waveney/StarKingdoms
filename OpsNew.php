@@ -301,7 +301,6 @@
             $Prin = Gen_Get('SocialPrinciples', $SP);
             echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&SP=$SP'>" .
             $Prin['Principle'] . " Currently has adherance of " . $SPr['Value'] . "</button><br>\n";
-
           }
           break;
         }
@@ -443,7 +442,7 @@
         $SocP = Get_SocialP($SP);
         echo "Principle:" . $SocP['Principle'] . "<p>";
         $Wid = WorldFromSystem($Wh,$Fid);
-        $CurVal = Gen_Get_Cond1('SocPsWorlds',"Principle=$SP AND World=$Wid");
+        $P2 = $CurVal = Gen_Get_Cond1('SocPsWorlds',"Principle=$SP AND World=$Wid");
 
         $TechLevel = $Level = ($CurVal['Value']??0);
         $Name .= " Principle: " . $SocP['Principle'];

@@ -776,6 +776,7 @@ function InstructionsStage2() { // And other Instructions
 
         $P = Get_Planet($T['Spare1']);
 
+ /*
         if ($N['Control'] > 0 && $N['Control'] != $T['Whose']) {  // Colonising system under control of others
           if (isset($_REQUEST["ReasonCol$Tid"]) && (!isset($_REQUEST["Col$Tid"]) ||  $_REQUEST["Col$Tid"] != "on")) {
             TurnLog($T['Whose'],"The colony was not created in " . $N['Ref'] . " because " . $_REQUEST["ReasonCol$Tid"] . "\n<br>",$T);
@@ -783,9 +784,9 @@ function InstructionsStage2() { // And other Instructions
             Put_Thing($T);
             break;
           }
-        }
+        }*/
 
-        if (($ThingInstrs[$T['Instruction']]) == 'Colonise') {
+        if (($ThingInstrs[abs($T['Instruction'])]) == 'Colonise') {
           TurnLog($T['Whose'],"The " . $T['Name'] . " is colonising " . $P['Name'] . " in " . $N['Ref'] ,$T);
           GMlog($Facts[$T['Whose']]['Name'] . " is starting to colonise " . $P['Name'] . " in " . $N['Ref']);
         } else {
@@ -1467,6 +1468,7 @@ function InstructionsProgress() {
   foreach ($Things as $T) {
     $N = Get_System($T['SystemId']);
     $Tid = $T['id'];
+    $Fid = $T['Whose'];
     switch ($ThingInstrs[abs($T['Instruction'])]) {
       case 'Colonise':
         $Prog = $T['Dist2'];
@@ -1475,6 +1477,8 @@ function InstructionsProgress() {
           FollowUp($T['Whose'],"Colonisation by <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a> Has zero progress - Tell Richard");
         }
         $T['Progress'] = min($T['ActionsNeeded'],($T['Progress']+$Prog)); // Progress stored in Dist2
+        TurnLog($Fid,$T['Name'] . " did $Prog progress towards colonising, now at " . $T['Progress'] . " / " . $T['ActionsNeeded']);
+
         Put_Thing($T);
         break;
       case 'Make Outpost':
@@ -1497,7 +1501,6 @@ function InstructionsProgress() {
         $Mods = Get_ModulesType($Tid, 'Space Construction Gear');
         $ProgGain = $Mods['Level']*$Mods['Number'];
         GMLog("$ProgGain progress on " . $ThingInstrs[abs($T['Instruction'])] . " for " . $Facts[$T['Whose']]['Name'] . ":" . $T['Name']);
-
         $T['Progress'] = min($T['ActionsNeeded'],$T['Progress']+$ProgGain);
         Put_Thing($T);
         break;
@@ -1508,7 +1511,6 @@ function InstructionsProgress() {
 
       case 'Analyse Anomaly':
         $Aid = $T['ProjectId'];
-        $Fid = $T['Whose'];
         if ($Aid) {
           $A = Get_Anomaly($Aid);
           $FA = Gen_Get_Cond1('FactionAnomaly',"FactionId=$Fid AND AnomalyId=$Aid");
@@ -1596,8 +1598,8 @@ function CollaborativeProgress() {
         $ProgGain = $Mods['Level']*$Mods['Number']; // For all except colonise
         $HT = Get_Thing($T['Dist1']);
         if ($HT) {
-          if ($HT['Instruction'] && ($IntructProps[abs($HT['Instruction'])] & 2)) {
-            if ($HT['Instruction'] == 1) { // Colonise
+          if ($HT['Instruction'] && (($IntructProps[abs($HT['Instruction'])] & 2)!=0) ) {
+            if (abs($HT['Instruction']) == 1) { // Colonise
  /*             $Fact = $Facts[$HT['Whose']];
               $Plan = $HT['Spare1'];
               $P = Get_Planet($Plan);

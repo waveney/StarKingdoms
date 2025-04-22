@@ -83,6 +83,7 @@ define('THING_HAS_RECOVERY',      2);
 define('THING_ALWAYS_OTHER',      4);
 define('THING_NO_LOGISTICS',      8);
 define('THING_HAS_SPEED',        16);
+define('THING_IS_BIG',           32); // Add Level to max modules
 
 define('LINK_ON_BOARD',-1);
 define('LINK_BOARDING',-2);
@@ -398,6 +399,7 @@ function Max_Modules(&$T) {
     } else {
       $v = [0,6,16,32,56,88,128,176,232,296,368][$T['Level']];
       if ($TTs['Properties'] & THING_IS_SMALL ) $v -= $T['Level'];
+      if ($TTs['Name'] == 'Satellite Defences') $v += ([0,1,1,3,6,10,15,21][$T['Level']]??0);
     }
     return $v;
   }
