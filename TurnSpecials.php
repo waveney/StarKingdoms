@@ -142,6 +142,33 @@
         Put_Thing($Team);
         echo "Set Team for " . $Org['Name'] . "<p>";
       }
+      echo "All Done";
+      dotail();
+
+    case 'ChangeFighters':
+      $ModTypes = Get_ModuleTypes();
+      $MTN = NamesList($ModTypes);
+      $NFM = array_flip($MTN);
+      $Arm = $NFM['Ship Armour'];
+      $Things = Get_Things(0,'Fighter');
+      $Facts = Get_Factions();
+
+      foreach($Things as $Tid=>$T) {
+        $Ms = Get_Modules($Tid);
+        if (isset($Ms[$Arm])) {
+          db_delete('Modules',$Ms[$Arm]['id']);
+          $T['OrigHealth'] = $T['CurHealth'] = 1;
+          $T['Evasion'] += 25;
+          $T['Level'] = 0;
+          $T['MaxModules'] = 4;
+//var_dump($T);
+          Put_Thing($T);
+          echo "Fixed <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . " </a>of " . ($Facts[$T['Whose']]['Name']??'Unknown') . "<br>";
+        }
+      }
+      echo "All Done";
+      dotail();
+
     }
   }
 
@@ -151,6 +178,7 @@
   echo "<li><a href=TurnSpecials.php?ACTION=RefitAll>Refit all and Complete all in planning</a><p>";
   echo "<li><a href=TurnSpecials.php?ACTION=FixFSdata2>Fix FS Data (again)</a><p>";
   echo "<li><a href=TurnSpecials.php?ACTION=SetTeamDescs>Set Team Descriptions</a><p>";
+  echo "<li><a href=TurnSpecials.php?ACTION=ChangeFighters>Change Fighters</a><p>";
 
 
 

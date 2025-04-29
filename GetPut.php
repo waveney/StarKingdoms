@@ -618,8 +618,12 @@ function Put_Thing(&$now) {
 
 function Get_Things($Fact,$type=0) {
   global $db,$GAMEID;
+  if (!is_numeric($type)) {
+    $TTypes = Get_ThingTypes();
+    $type = (array_flip(NamesList($TTypes))[$type]??0);
+  }
   $Ts = [];
-  $res = $db->query("SELECT * FROM Things WHERE GameId=$GAMEID AND Whose=$Fact " . ($type?" AND Type=$type":""));
+  $res = $db->query("SELECT * FROM Things WHERE GameId=$GAMEID " . ($Fact?"AND Whose=$Fact ":'') . ($type?" AND Type=$type":""));
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
   return $Ts;
 }
@@ -939,7 +943,7 @@ function Has_Tech($fid,$name) {
   global $db,$GAME;
   if (empty($fid)) {
     if (Feature('ReportEmptyHasTech') && Access('God') && !isset($_REQUEST['FORCE'])) {
-      var_dump($fid,$name); //OK
+//      var_dump($fid,$name); //OK
       debug_print_backtrace();
     }
     return 0;

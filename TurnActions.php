@@ -1126,7 +1126,7 @@ function TidyUps() {
   $res = $db->query("UPDATE Operations SET TurnState=0 WHERE GameId=$GAMEID");
 
   // Check for lid <-1...
-  $NotFin = Get_Things(0,"LinkId<-1");
+  $NotFin = Get_Things_Cond(0,"LinkId<-1");
   if ($NotFin) {
     GMLog( "<h2 class=Err>These things have a broken load/unload still in place get Richard to fix</h2>");
     FollowUp(0,"Things have broken load/unload get Richard to fix");

@@ -1034,7 +1034,7 @@ function InstructionsComplete() {
           break;
         }
         $Exist = Get_Things_Cond(0,"Type=" . TTName('Asteroid Mine') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE);
-        if ($Exist || count($Asts) <= count($Exist))  {
+        if (count($Asts) <= count($Exist))  {
           TurnLog($Who,"The asteroid " . Plural($Asts,'','belt','belts') . " in " . $N['Ref'] . " are already mined");
           GMLog($Facts[$Who]['Name'] . " The asteroid " . Plural($Asts,'','belt','belts') . " in " . $N['Ref'] . " are already mined");
           break;

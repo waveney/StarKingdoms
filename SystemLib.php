@@ -988,14 +988,14 @@ function System_Owner($Sid) {
       if ($P['Control'] != $N['Control']) {
         $N['Control'] = $P['Control'];
         $FS = Get_FactionSystemFS($N['Control'],$Sid);
-        if ($FS['Name']??'') $N['Name'] = $FS;
+        if ($FS['Name']??'') $N['Name'] = $FS['Name'];
         Put_System($N);
   //      var_dump("Change 1 to " .$N['Control'] );
         return "Control of " . $N['Ref'] . " now " . $Facts[$N['Control']]['Name'];
       }
       $FS = Get_FactionSystemFS($N['Control'],$Sid);
       if (($FS['Name']??'') && ($FS['Name'] != $N['Name'])){
-        $N['Name']= $FS;
+        $N['Name']= $FS['Name'];
         Put_System($N);
       }
 
@@ -1006,14 +1006,14 @@ function System_Owner($Sid) {
       if ($M['Control'] != $N['Control']) {
         $N['Control'] = $M['Control'];
         $FS = Get_FactionSystemFS($N['Control'],$Sid);
-        if ($FS['Name']??'') $N['Name'] = $FS;
+        if ($FS['Name']??'') $N['Name'] = $FS['Name'];
         Put_System($N);
    //     var_dump("Change 3 to " .$N['Control'] );
         return "Control of " . $N['Ref'] . " now " . ($Facts[$N['Control']??0]['Name']??'Unknown');
       }
   //    var_dump("No change 4");
       if (($FS['Name']??'') && ($FS['Name'] != $N['Name'])){
-        $N['Name']= $FS;
+        $N['Name'] = $FS['Name'];
         Put_System($N);
       }
       return;
@@ -1027,14 +1027,14 @@ function System_Owner($Sid) {
     if ($Outpost['Whose'] != $N['Control']) {
       $N['Control'] = $Outpost['Whose'];
       $FS = Get_FactionSystemFS($N['Control'],$Sid);
-      if ($FS['Name']??'') $N['Name'] = $FS;
+      if ($FS['Name']??'') $N['Name'] = $FS['Name'];
       Put_System($N);
  //     var_dump("Change 5 to " .$N['Control'] );
       return "Control of " . $N['Ref'] . " now " . $Facts[$N['Control']]['Name'];
     }
 //    var_dump("No change 6");
     if (($FS['Name']??'') && ($FS['Name'] != $N['Name'])){
-      $N['Name']= $FS;
+      $N['Name']= $FS['Name'];
       Put_System($N);
     }
     return;

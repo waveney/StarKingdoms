@@ -237,6 +237,7 @@
       }
       $atts = "";
 
+
       $Colour = "white";
       if ($N['Control'] && !$Hide) {
         $Colour = $Factions[$N['Control']]['MapColour'];
