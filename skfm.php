@@ -746,6 +746,12 @@ function NamesList(&$D,$fld='Name') {
   return $L;
 }
 
+function ListNames(&$D,$fld='Name') {
+  $L = [];
+  foreach ($D as $i=>$R) $L[$fld] = $i;
+  return $L;
+}
+
 function Cancel_AutoUpdate() {
   global $ADDALL,$AutoADD,$AutoAfter,$AutoType;
   $AutoADD = 0;
@@ -756,4 +762,37 @@ function ParseText($txt) {
   static $Parsedown = new Parsedown();
   $ftxt = $Parsedown->text(stripslashes($txt));
   return substr($ftxt,3);
+}
+
+// Call TableStart to start the table, TableHead for each col, then TableTop, then do table content and finish with TableEnd
+
+function TableStart($Class='',$Name='IndexTable') {
+  global $TableColn,$TableName;
+  static $TableNames;
+
+  $TableColn = 0;
+  if (isset($TableNames[$TableName])) {
+    $Rand = rand(1,1000000);
+    $TableName = $Name . $Rand;
+    $TableNames[$TableName] = 1;
+  } else {
+    $TableName = $Name;
+    $TableNames[$TableName] = 1;
+  }
+
+  echo "<div class=tablecont><table " . ($Class?" class=$Class":'') . " id=$Name border>\n";
+  echo "<thead><tr>";
+}
+
+function TableHead($Txt,$Type='T',$Fmt='') {
+  global $TableColn,$TableName;
+  echo "<th><a href=javascript:SortTable(" . $TableColn++ . ",$Type,$Fmt,$TableName)>$Txt</a>\n";
+}
+
+function TableTop() {
+  echo "</thead><tbody>";
+}
+
+function TableEnd() {
+  echo "</table></div>";
 }

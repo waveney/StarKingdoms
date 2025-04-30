@@ -29,7 +29,6 @@ var DoingTableSort = 0;
 //////////////////////////////////////
 var TableLastSortedColumn = -1;
 function SortTable() {
-debugger;
 DoingTableSort = 1;
 var Tabid = ((arguments.length>3)?arguments[3] :TableIDvalue);
 var sortColumn = parseInt(arguments[0]);
@@ -45,7 +44,6 @@ for(var i=0, len=rows.length; i<len; i++) {
 	arrayOfRows[i] = new Object;
 	arrayOfRows[i].oldIndex = i;
 	if (type =='O') {
-	  debugger;
 	  var ctext = rows[i].getElementsByTagName("td")[sortColumn].innerHTML;
 	  var mtch = ctext.match(/\<option.*?selected.*?\>(.*?)\<\/option/i);
 	  if (mtch) {
