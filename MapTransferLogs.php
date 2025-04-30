@@ -36,8 +36,8 @@ foreach ($FSs as $FS) {
 }
 asort($WRefs);
 
-$OutLogs = Gen_Get_Cond('TransferLog',"FromFact=$Fid");
-$InLogs = Gen_Get_Cond('TransferLog',"DestFact=$Fid");
+$OutLogs = Gen_Get_Cond('TransferLog',"FromFact=$Fid ORDER BY Turn DESC");
+$InLogs = Gen_Get_Cond('TransferLog',"DestFact=$Fid ORDER BY Turn DESC");
 
 // var_dump($OutLogs,$InLogs);
 
@@ -69,13 +69,13 @@ if ($OutLogs) {
   echo "<h1>Outgoing Transfers</h1>";
   $coln = 0;
 
-  echo "<div class=tablecont><table class=striped id=indextable border>\n";
+  echo "<div class=tablecont><table class=striped id=indextable2 border>\n";
   echo "<thead><tr>";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>To</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>System</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Survey Data</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Turn</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>When</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T','indextable2')>To</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T','indextable2')>System</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T','indextable2')>Survey Data</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N','indextable2')>Turn</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T','indextable2')>When</a>\n";
   echo "</thead><tbody>";
 
   foreach ($OutLogs as $Tr) {
