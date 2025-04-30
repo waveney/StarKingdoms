@@ -51,7 +51,7 @@ if ($InLogs) {
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>System</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Survey Data</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Turn</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>When</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'D')>When</a>\n";
   echo "</thead><tbody>";
 
   foreach ($InLogs as $Tr) {
@@ -71,11 +71,11 @@ if ($OutLogs) {
 
   echo "<div class=tablecont><table class=striped id=indextable2 border>\n";
   echo "<thead><tr>";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T','indextable2')>To</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T','indextable2')>System</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T','indextable2')>Survey Data</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N','indextable2')>Turn</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T','indextable2')>When</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T','','indextable2')>To</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T','','indextable2')>System</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T','','indextable2')>Survey Data</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N','','indextable2')>Turn</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'D','','indextable2')>When</a>\n";
   echo "</thead><tbody>";
 
   foreach ($OutLogs as $Tr) {

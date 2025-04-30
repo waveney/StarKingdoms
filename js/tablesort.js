@@ -29,6 +29,7 @@ var DoingTableSort = 0;
 //////////////////////////////////////
 var TableLastSortedColumn = -1;
 function SortTable() {
+debugger;
 DoingTableSort = 1;
 var Tabid = ((arguments.length>3)?arguments[3] :TableIDvalue);
 var sortColumn = parseInt(arguments[0]);
