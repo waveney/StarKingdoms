@@ -234,7 +234,7 @@
           if (isset($TthingId)) $Pro['ThingId'] = $TthingId;
           if (isset($TthingId2)) $Pro['ThingId2'] = $TthingId2;
           if ($OrgName) $Pro['OrgName'] = $OrgName;
-          if ($OrgDesc) $Pro['OrgDesc'] = $OrgDesc;
+          if (isset($OrgDesc)) $Pro['OrgDesc'] = $OrgDesc;
           if ($OrgSP) $Pro['OrgSP'] = $OrgSP;
 
           if (isset($OldPro['id'])) {

@@ -219,8 +219,9 @@
       $NeedOr = 1;
       $LimA = Has_Tech($Fid,'Military Theory');
       $LimS = Has_Tech($Fid,'Ship Construction');
-      $BPs = BluePrintList(max($LimA,$LimS)+$MaxOver,'',0);
-
+      $LimSat = Has_Tech($Fid,"Satellite Defences");
+      $BPs = BluePrintList(max($LimA,$LimS+$LimSat)+$MaxOver,'',0);
+//var_dump($BPs);
       $Direct = [];
       echo "<table>";
       foreach($ThingTypeNames as $TT=>$Name) {

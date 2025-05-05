@@ -179,15 +179,35 @@
 
       foreach($Things as $Tid=>$T) {
         $Ms = Get_Modules($Tid);
-var_dump($T,$Ms); echo "<p>";
+        //var_dump($T,$Ms); echo "<p>";
         $Ms[$Arm]['Number'] +=1;
         $Ms[$Wep]['Number'] -=1;
-        $ModHlth = $Ms['Arm']['Level']*3+12;
+        $ModHlth = $Ms[$Arm]['Level']*3+12;
         $T['OrigHealth'] += $ModHlth;
         $T['CurHealth'] += $ModHlth;
-var_dump($T,$Ms); exit;
+        //var_dump($T,$Ms); exit;
         Put_Module($Ms[$Arm]);
         Put_Module($Ms[$Wep]);
+        Put_Thing($T);
+        echo "Fixed <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . " </a>of " . ($Facts[$T['Whose']]['Name']??'Unknown') . "<br>";
+      }
+
+      echo "All Done";
+      dotail();
+
+    case 'ChangePatrolShips2':
+      $Things = Get_Things_Cond_Ordered(0,"Blueprint=2391 AND GameId=$GAMEID");
+      $ModTypes = Get_ModuleTypes();
+      $MTN = NamesList($ModTypes);
+      $NFM = array_flip($MTN);
+      $Arm = $NFM['Ship Armour'];
+      $Wep = $NFM['Ship Weapons'];
+
+      foreach($Things as $Tid=>$T) {
+        $Ms = Get_Modules($Tid);
+        $ModHlth = $Ms[$Arm]['Level']*3;
+        $T['OrigHealth'] += $ModHlth;
+        $T['CurHealth'] += $ModHlth;
         Put_Thing($T);
         echo "Fixed <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . " </a>of " . ($Facts[$T['Whose']]['Name']??'Unknown') . "<br>";
       }
@@ -206,6 +226,7 @@ var_dump($T,$Ms); exit;
   echo "<li><a href=TurnSpecials.php?ACTION=SetTeamDescs>Set Team Descriptions</a><p>";
   echo "<li><a href=TurnSpecials.php?ACTION=ChangeFighters>Change Fighters</a><p>";
   echo "<li><a href=TurnSpecials.php?ACTION=ChangePatrolShips>Change Patrol Ships</a><p>";
+  echo "<li><a href=TurnSpecials.php?ACTION=ChangePatrolShips2>Reccheck Change Patrol Ships</a><p>";
 
 
 

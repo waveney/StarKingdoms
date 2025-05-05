@@ -944,7 +944,7 @@ function Has_Tech($fid,$name) {
   if (empty($fid)) {
     if (Feature('ReportEmptyHasTech') && Access('God') && !isset($_REQUEST['FORCE'])) {
 //      var_dump($fid,$name); //OK
-      debug_print_backtrace();
+//      debug_print_backtrace();
     }
     return 0;
   }

@@ -56,7 +56,6 @@ NEW GAME FEATURES & BUGS
 333 Sounds like a cached data issue
 I don't know why though since it's telling me you scanned L2 on turn 11
 So I'd have expected that to update the cached survey
-344 Office/branches in ASC
 
 
 347 Undefined array key 0 in /var/www/vhosts/starkingdoms.uk/httpdocs/OrgLib.php on line 43; 
@@ -71,7 +70,15 @@ So I'd have expected that to update the cached survey
 362 Pause instruction
 367 Vashou 8/4 @13:09
 368 New combat rules and effects @ turn 15
+- fighters
+- - No armour, evasion, l0
+- New techs
+370
+
 390 Add Thing Type
 393 LVX survey report &wormholes - from clans
+
+394 Evasion of Sat defeences?  
+
 
 
