@@ -10,7 +10,7 @@
   include_once("TurnTools.php");
   include_once("vendor/erusev/parsedown/Parsedown.php");
 
-  global $LinkStates,$GAME;
+  global $LinkStates,$GAME,$GAMEID;
 
   A_Check('GM');
 
@@ -170,7 +170,7 @@
       dotail();
 
     case 'ChangePatrolShips':
-      $Things = Get_Things_Cond(0,"Blueprint=2391");
+      $Things = Get_Things_Cond_Ordered(0,"Blueprint=2391 AND GameId=$GAMEID");
       $ModTypes = Get_ModuleTypes();
       $MTN = NamesList($ModTypes);
       $NFM = array_flip($MTN);
@@ -179,14 +179,15 @@
 
       foreach($Things as $Tid=>$T) {
         $Ms = Get_Modules($Tid);
+var_dump($T,$Ms); echo "<p>";
         $Ms[$Arm]['Number'] +=1;
         $Ms[$Wep]['Number'] -=1;
-        Put_Module($Ms[$Arm]);
-        Put_Module($Ms[$Wep]);
         $ModHlth = $Ms['Arm']['Level']*3+12;
         $T['OrigHealth'] += $ModHlth;
         $T['CurHealth'] += $ModHlth;
 var_dump($T,$Ms); exit;
+        Put_Module($Ms[$Arm]);
+        Put_Module($Ms[$Wep]);
         Put_Thing($T);
         echo "Fixed <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . " </a>of " . ($Facts[$T['Whose']]['Name']??'Unknown') . "<br>";
       }
