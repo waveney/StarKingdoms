@@ -780,13 +780,13 @@ function TableStart($Class='',$Name='IndexTable') {
     $TableNames[$TableName] = 1;
   }
 
-  echo "<div class=tablecont><table " . ($Class?" class=$Class":'') . " id=$Name border>\n";
+  echo "<div class=tablecont><table " . ($Class?" class=$Class":'') . " id=$TableName border>\n";
   echo "<thead><tr>";
 }
 
 function TableHead($Txt,$Type='T',$Fmt='') {
   global $TableColn,$TableName;
-  echo "<th><a href=javascript:SortTable(" . $TableColn++ . ",$Type,$Fmt,$TableName)>$Txt</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $TableColn++ . ",'$Type','$Fmt','$TableName')>$Txt</a>\n";
 }
 
 function TableTop() {

@@ -43,23 +43,22 @@ $InLogs = Gen_Get_Cond('TransferLog',"DestFact=$Fid ORDER BY Turn DESC");
 
 if ($InLogs) {
   echo "<h1>Incoming Transfers</h1>";
-  $coln = 0;
-
-  echo "<div class=tablecont><table class=striped id=indextable border>\n";
-  echo "<thead><tr>";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>From</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>System</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Survey Data</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Turn</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'D')>When</a>\n";
-  echo "</thead><tbody>";
+  TableStart('striped');
+  TableHead('From');
+  TableHead('System');
+  TableHead('Survey Data');
+  TableHead('Turn','N');
+  TableHead('When','D');
+  TableTop();
 
   foreach ($InLogs as $Tr) {
     echo "<tr><td style=Background:" . $Facts[$Tr['FromFact']]['MapColour'] . ">" .$Facts[$Tr['FromFact']]['Name'];
     echo "<td>" . $WRefs[$Tr['SystemId']] . "<td>" . ($Tr['Survey']?'Yes':'No');
     echo "<td>" . $Tr['Turn'] . "<td>" . date("d/m/Y H:i:s", $Tr['XferWhen']);
   }
-  echo "</table><p>";
+  TableEnd();
+
+//  echo "</table><p>";
 
 } else {
   echo "<h1>No Incoming Transfers Logged</h1>";
@@ -67,23 +66,22 @@ if ($InLogs) {
 
 if ($OutLogs) {
   echo "<h1>Outgoing Transfers</h1>";
-  $coln = 0;
 
-  echo "<div class=tablecont><table class=striped id=indextable2 border>\n";
-  echo "<thead><tr>";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T','','indextable2')>To</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T','','indextable2')>System</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T','','indextable2')>Survey Data</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N','','indextable2')>Turn</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'D','','indextable2')>When</a>\n";
-  echo "</thead><tbody>";
+  TableStart('striped');
+  TableHead('To');
+  TableHead('System');
+  TableHead('Survey Data');
+  TableHead('Turn','N');
+  TableHead('When','D');
+  TableTop();
 
   foreach ($OutLogs as $Tr) {
     echo "<tr><td style=Background:" . $Facts[$Tr['DestFact']]['MapColour'] . ">" .$Facts[$Tr['DestFact']]['Name'];
     echo "<td>" . $WRefs[$Tr['SystemId']] . "<td>" . ($Tr['Survey']?'Yes':'No');
     echo "<td>" . $Tr['Turn'] . "<td>" . date("d/m/Y H:i:s", $Tr['XferWhen']);
   }
-  echo "</table><p>";
+  TableEnd();
+  //echo "</table><p>";
 
 } else {
   echo "<h1>No Outgoing Transfers Logged</h1>";

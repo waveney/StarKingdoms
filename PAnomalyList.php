@@ -58,7 +58,7 @@
     foreach($FAs as $FA) {
       $Aid = $FA['AnomalyId'];
       $A = Get_Anomaly($Aid);
-      if (empty($A['Name']) || $A['State'] ==0) continue;
+      if (empty($A['Name'])) continue;
       $Loc = 'Space';
       $LocGr = intdiv($A['WithinSysLoc'],100);
       if (($A['WithinSysLoc'] == 3) || ($LocGr == 2) || ($LocGr ==4)) $Loc = 'Ground';

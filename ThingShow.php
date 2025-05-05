@@ -185,7 +185,7 @@ function Show_Thing(&$T,$Force=0) {
     } else if (Access('God')) echo " ProjId " . $T['ProjectId'];
     if (($T['BuildState'] == BS_SERVICE) || ($T['BuildState'] == BS_COMPLETE) && ($tprops & THING_HAS_BLUEPRINTS)) {
       if ($GM && Feature('BluePrints')) {
-        echo fm_number1('Blue Print',$T,'BluePrint','','min=-100 max=10000') ;
+ //       echo fm_number1('Blue Print',$T,'BluePrint','','min=-100 max=10000') ;
         BlueShow($T,$GM);
       }
     }

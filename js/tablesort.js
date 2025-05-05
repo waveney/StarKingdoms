@@ -30,6 +30,7 @@ var DoingTableSort = 0;
 var TableLastSortedColumn = -1;
 function SortTable() {
 DoingTableSort = 1;
+debugger;
 var Tabid = ((arguments.length>3)?arguments[3] :TableIDvalue);
 var sortColumn = parseInt(arguments[0]);
 var type = arguments.length > 1 ? arguments[1] : 'T';
