@@ -393,7 +393,7 @@ function WhatCanBeSeenBy($Fid,$Mode=0) {
         case 3: // Thing
           $T = Get_Thing($B['HostId']);
           if (!$T) {
-            GMLog("Branch " . $B[id] . " has a host error - call Richard");
+            GMLog("Branch " . $B['id'] . " has a host error - call Richard");
             break;
           }
 

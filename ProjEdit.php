@@ -13,6 +13,10 @@
   if (isset($_REQUEST['id'])) {
     $Prid = $_REQUEST['id'];
     $P = Get_Project($Prid);
+    if (empty($P)) {
+      echo "<he class=err>Project Not Found</h2>";
+      dotail();
+    }
   } else {
     echo "No Project given";
     dotail();
@@ -293,9 +297,9 @@
     if ($P['ThingId'] ) {
       $Thing = Get_Thing($P['ThingId']);
       if ($GM) {
-        echo "<td><a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . $Thing['Name'] . "</a>"; // May need Tweek for player edit
+        echo "<td><a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . ($Thing['Name']??'Nameless') . "</a>"; // May need Tweek for player edit
       } else {
-        echo "<td><a href=ThingPlan.php?id=" . $P['ThingId'] . ">" . $Thing['Name'] . "</a>";
+        echo "<td><a href=ThingPlan.php?id=" . $P['ThingId'] . ">" . ($Thing['Name']??'Nameless') . "</a>";
       }
     } else if ($P['ThingType']) {
       echo "<td>";

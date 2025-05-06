@@ -1014,6 +1014,7 @@ function MilitiaArmyRecovery() {
 
       // Work out recovery
       if ($TTypes[$T['Type']]['Name'] == 'Militia') {
+        $SaveRec = 1;
         if ($LastHost != $T['Dist1'] || $LastId != $T['Dist2']) {
           $Dists = Gen_Get_Cond('Districts',"HostType=" . $T['Dist1'] . " AND HostId=" . $T['Dist2']);
           $Dcount = 0;
@@ -1126,7 +1127,7 @@ function TidyUps() {
   $res = $db->query("UPDATE Operations SET TurnState=0 WHERE GameId=$GAMEID");
 
   // Check for lid <-1...
-  $NotFin = Get_Things_Cond(0,"LinkId<-1");
+  $NotFin = Get_Things_Cond(0,"(LinkId<-1 AND LinkId>-8)");
   if ($NotFin) {
     GMLog( "<h2 class=Err>These things have a broken load/unload still in place get Richard to fix</h2>");
     FollowUp(0,"Things have broken load/unload get Richard to fix");

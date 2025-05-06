@@ -188,7 +188,7 @@ if (isset($_REQUEST['Action'])) {
         foreach ($Branches as $Bid=>$B) {
           $Fid = $B['Whose'];
           $DefLevel = Has_Tech($Fid,'Starship Defences');
-          $OffLevel = Has_Tech($Fid,'Starship  Weapons');
+          $OffLevel = Has_Tech($Fid,'Starship Weapons');
           $EngLevel = Has_Tech($Fid,'Engines');
           $Def = ($DefLevel*3+12);
           $Off = 2*($OffLevel+4);
@@ -199,12 +199,8 @@ if (isset($_REQUEST['Action'])) {
 
           $Squads = Get_Things_Cond_Ordered($B['Whose'],"Type=" . $NTypes['Fighter Defences'] . " AND ProjectId=$Bid");
           $Count = 0;
-//          var_dump($B,$Oid,$Org,$Num, $Squads); exit;
           if ($Squads) foreach($Squads as $Tid=>$T) {
-            if ($T['OrigHealth'] < $Def) {
-              $T['CurHealth'] = $Def + $T['CurHealth'] - $T['OrigHealth'];
-              $T['OrigHealth'] = $Def;
-            }
+            $T['CurHealth'] = $T['OrigHealth'] = 1;
             $T['ActDamage'] = $Off;
             $T['SystemId'] = $Sid;
             $T['Speed'] = $Speed;

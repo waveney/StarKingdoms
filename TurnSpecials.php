@@ -169,7 +169,22 @@
       echo "All Done";
       dotail();
 
+    case 'ChangeDefFighters':
+      $Things = Get_Things(0,'Fighter Defences');
+      $Facts = Get_Factions();
+
+      foreach($Things as $Tid=>$T) {
+        $T['OrigHealth'] = $T['CurHealth'] = 1;
+        $T['Evasion'] += 25;
+        $T['Level'] = 0;
+        Put_Thing($T);
+        echo "Fixed <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . " </a>of " . ($Facts[$T['Whose']]['Name']??'Unknown') . "<br>";
+      }
+      echo "All Done";
+      dotail();
+
     case 'ChangePatrolShips':
+      $Facts = Get_Factions();
       $Things = Get_Things_Cond_Ordered(0,"Blueprint=2391 AND GameId=$GAMEID");
       $ModTypes = Get_ModuleTypes();
       $MTN = NamesList($ModTypes);
@@ -196,6 +211,7 @@
       dotail();
 
     case 'ChangePatrolShips2':
+      $Facts = Get_Factions();
       $Things = Get_Things_Cond_Ordered(0,"Blueprint=2391 AND GameId=$GAMEID");
       $ModTypes = Get_ModuleTypes();
       $MTN = NamesList($ModTypes);
@@ -222,11 +238,12 @@
   echo "<h2>Actions: (Check with Richard before using any)</h2>";
   echo "<li><a href=TurnSpecials.php?ACTION=ExplodeLink>Explode Link</a><p>";
   echo "<li><a href=TurnSpecials.php?ACTION=RefitAll>Refit all and Complete all in planning</a><p>";
-  echo "<li><a href=TurnSpecials.php?ACTION=FixFSdata2>Fix FS Data (again)</a><p>";
+//  echo "<li><a href=TurnSpecials.php?ACTION=FixFSdata2>Fix FS Data (again)</a><p>";
   echo "<li><a href=TurnSpecials.php?ACTION=SetTeamDescs>Set Team Descriptions</a><p>";
-  echo "<li><a href=TurnSpecials.php?ACTION=ChangeFighters>Change Fighters</a><p>";
-  echo "<li><a href=TurnSpecials.php?ACTION=ChangePatrolShips>Change Patrol Ships</a><p>";
-  echo "<li><a href=TurnSpecials.php?ACTION=ChangePatrolShips2>Reccheck Change Patrol Ships</a><p>";
+//  echo "<li><a href=TurnSpecials.php?ACTION=ChangeFighters>Change Fighters</a><p>";
+  echo "<li><a href=TurnSpecials.php?ACTION=ChangeDefFighters>Change Defense Fighters</a><p>";
+  //  echo "<li><a href=TurnSpecials.php?ACTION=ChangePatrolShips>Change Patrol Ships</a><p>";
+//  echo "<li><a href=TurnSpecials.php?ACTION=ChangePatrolShips2>Reccheck Change Patrol Ships</a><p>";
 
 
 

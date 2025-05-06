@@ -94,7 +94,7 @@
         $DT = (isset($_REQUEST['DT'])? $_REQUEST['DT'] : 0);
         $Valid = 1;
         $FreeRush = 0;
-        $TthingId = $_REQUEST['Sel']??0;
+        $TType = $TthingId = $_REQUEST['Sel']??0;
         $TthingId2 = $_REQUEST['Sel2']??0;
         switch ($ProjTypes[$Ptype]['Name']) {
         case 'Construct Ship':
