@@ -35,7 +35,7 @@
   $Faction = $FACTION;
 
   $HasHomeLogistics = (Has_Tech($Fid,'Simplified Home Logistics') && Access('God'));
-  $HomeArmyLogistics = Has_PTraitW($Faction['HomeWorld'],'Universal Hunting Ground	');
+  $HomeArmyLogistics = Has_PTraitW($Faction['HomeWorld'],'Universal Hunting Ground');
   $HasOwnGalaxy = (Has_Tech($Fid,'Own the Galaxy'));
   $FactionHome = 0;
   if ($HasHomeLogistics || $HomeArmyLogistics) {

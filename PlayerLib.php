@@ -510,7 +510,7 @@ function Logistics($Fid,&$Things) {
   $HasOwnGalaxy = (Has_Trait($Fid,'Own the Galaxy'));
 
   $FactionHome = 0;
-  if ($HasHomeLogistics) {
+  if ($HasHomeLogistics || $HomeArmyLogistics) {
     $Home = $Faction['HomeWorld'];
     if ($Home) {
       $W = Get_World($Home);

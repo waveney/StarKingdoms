@@ -81,9 +81,9 @@
   $OrgId = $_REQUEST['O'];
   $Org = Gen_Get('Organisations',$OrgId);
   $OffType = $Org['OrgType'];
-  echo "<h1>New Operation for: " . $Org['Name'] . " - a " . $OrgTypes[$OffType]['Name'] . " org";
-  if ($Org['OrgType2'])
-  echo "</h1>";
+  echo "<h1>New Operation for: " . $Org['Name'] . " - a " . $OrgTypes[$OffType]['Name'];
+  if ($Org['OrgType2']) echo " / " . $OrgTypes[$Org['OrgType2']]['Name'];
+  echo " org</h1>";
 
   $Turn = $_REQUEST['t'];
 
@@ -445,8 +445,8 @@
         $SocP = Get_SocialP($SP);
         echo "Principle:" . $SocP['Principle'] . "<p>";
         $Wid = WorldFromSystem($Wh,$Fid);
-        $P2 = $CurVal = Gen_Get_Cond1('SocPsWorlds',"Principle=$SP AND World=$Wid");
-
+        $CurVal = Gen_Get_Cond1('SocPsWorlds',"Principle=$SP AND World=$Wid");
+        $P2 = $CurVal['id'];
         $TechLevel = $Level = ($CurVal['Value']??0);
         $Name .= " Principle: " . $SocP['Principle'];
       }

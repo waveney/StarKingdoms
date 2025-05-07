@@ -58,9 +58,6 @@ I don't know why though since it's telling me you scanned L2 on turn 11
 So I'd have expected that to update the cached survey
 
 
-347 Undefined array key 0 in /var/www/vhosts/starkingdoms.uk/httpdocs/OrgLib.php on line 43; 
-    PHP message: PHP Warning:  Trying to access array offset on value of type null in /var/www/vhosts/starkingdoms.uk/httpdocs/OrgLib.php on line 43', 
-    referer: https://starkingdoms.uk/Player.php
 352 New ship (copy of) extra page for name before project save
 356 Block anomaly progress - Ross 25/3 @9:24
 358 Luke's trade goods - achatgm 28/3/ @13:06
@@ -70,13 +67,7 @@ So I'd have expected that to update the cached survey
 362 Pause instruction
 367 Vashou 8/4 @13:09
 370
-
 390 Add Thing Type
 393 LVX survey report &wormholes - from clans
+410 Hak Planet trait
 
-402 Chriss ACGM 6/5 @7:08
-403 Spread the word "
-404 Stuck in servicing
-406 Spread the word - RQ 6/5
-408 data on two new orgs - thorian, clans
-410
