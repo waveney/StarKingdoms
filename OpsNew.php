@@ -351,11 +351,13 @@
           break;
         }
 
+        $DOP2 = 1;
         if ($To1 == $To2) $To2 = 0; // No choice
         if ($To1 && $To2) {
           echo "<h2>Who to?</h2>";
           $RList = [$To1 =>$Facts[$To1]['Name'], $To2 =>$Facts[$To2]['Name']];
-          echo fm_radio('Select', $RList,$_REQUEST,$P2) . "<p>";
+          echo fm_radio('Select', $RList,$_REQUEST,'P2') . "<p>";
+          $DOP2 = 0;
         } else if ($To1) {
           echo "Transfer to " . $Facts[$To1]['Name'];
           $P2 = $To1;
@@ -365,7 +367,8 @@
         }
 
         echo "<h2>How many Credits?</h2>";
-        echo fm_hidden('Stage',5) . fm_hidden('op',$op) . fm_hidden('W',$Wh) . fm_hidden('O',$OrgId) .fm_hidden('t',$Turn).fm_hidden('P2',$P2);
+        echo fm_hidden('Stage',5) . fm_hidden('op',$op) . fm_hidden('W',$Wh) . fm_hidden('O',$OrgId) .fm_hidden('t',$Turn);
+        if ($DOP2) echo fm_hidden('P2',$P2);
         echo fm_number('',$_REQUEST,'SP','','min=0 max=' . $Facts[$Fid]['Credits'] );
         echo "<button class=projtype type=submit>Send Money</button>";
         break;

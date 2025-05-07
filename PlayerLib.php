@@ -200,7 +200,7 @@ function Has_Trait($fid,$Name) {
     return false;
   }
   $Fact = Get_Faction($fid);
-  if ($Fact['Trait1'] == $Name || $Fact['Trait2'] == $Name || $Fact['Trait3'] == $Name) return true;
+  if ($Fact && ($Fact['Trait1'] == $Name || $Fact['Trait2'] == $Name || $Fact['Trait3'] == $Name)) return true;
   return false;
 }
 

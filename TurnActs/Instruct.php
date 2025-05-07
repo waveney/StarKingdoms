@@ -33,6 +33,7 @@ function Instructions() {
     }
 
     if ($T['Progress']>0 || $T['Instruction']<0) continue;
+    if ($T['InstCost']<0) $T['InstCost']=0;
 
     switch ($ThingInstrs[$T['Instruction']]) {
 
@@ -165,8 +166,13 @@ function Instructions() {
         $T['SystemId'] = 0;
         $T['Instruction'] = 0;
         $cash = 10*$Lvl*Has_Tech($SelectedH['Whose'],'Ship Construction');
-        TurnLog($T['Whose'], "The " . $T['Name'] . " has been $txt gaining you " . Credit() . $cash, $T);
         Spend_Credit($SelectedH['Whose'],-$cash,"$txt " . $T['Name']);
+        if ($Fid == $SelectedH['Whose']) {
+          TurnLog($T['Whose'], "The " . $T['Name'] . " has been $txt gaining you " . Credit() . $cash, $T);
+        } else {
+          TurnLog($T['Whose'], "The " . $T['Name'] . " has been $txt by " . $Facts[$SelectedH['Whose']]['Name'], $T);
+          TurnLog($SelectedH['Whose'], "You have $txt the " . $T['Name'] . " from " . $Facts[$T['Whose']]['Name'] . " gaining you " . Credit() . $cash);
+        }
         GMLog($Facts[$T['Whose']]['Name'] . " - " . $T['Name'] . " has been $txt");
 
         $Have = Get_Things_Cond(0," (LinkId<0 AND SystemId=$Tid) ");

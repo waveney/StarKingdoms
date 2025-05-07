@@ -595,10 +595,13 @@ function ProjectsCompleted($Pass) {
               RefitRepair($T,1,0,$P['FactionId']);
               if (($PT['Name'] == 'Re-equip Detachment') && $CurDam) {
                 $T['CurHealth'] - $T['OrigHealth'] - $CurDam;
-                Put_Thing($T);
               }
               TurnLog($P['FactionId'], $T['Name'] . " has been " . $PT['Name'] . "ed",$T);
             }
+
+            $T['BuildState'] = BS_COMPLETE;
+            Put_Thing($T);
+
           }
           if ($P['ThingId2']) {
             $Tid = $P['ThingId2'];
@@ -611,10 +614,12 @@ function ProjectsCompleted($Pass) {
               RefitRepair($T,1,0,$P['FactionId']);
               if (($PT['Name'] == 'Re-equip Detachment') && $CurDam) {
                 $T['CurHealth'] - $T['OrigHealth'] - $CurDam;
-                Put_Thing($T);
               }
               TurnLog($Fid, $T['Name'] . " has been " . $PT['Name'] . "ed",$T);
             }
+
+            $T['BuildState'] = BS_COMPLETE;
+            Put_Thing($T);
           }
           break;
 
