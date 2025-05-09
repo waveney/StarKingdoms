@@ -475,12 +475,15 @@ function Calc_Damage(&$T,&$Rescat) {
   if ($T['Variant']??0) {
     $V = Gen_Get('Variants',$T['Variant']);
     $vev = $V['Firepower'];
-    if ($vev) {
-      if (abs($vev)<5) {
-        $Dam = $Dam + ceil($Dam * $vev/4);
-      } else {
+    switch ($V['FireType']) {
+      case 0:
         $Dam += $vev;
-      }
+        break;
+      case 1:
+        $Dam += ceil($Dam*$vev/100);
+        break;
+      case 2:
+        $Dam = $vev;
     }
   }
 
@@ -665,13 +668,17 @@ function Calc_Evasion(&$T) {
   if (($T['Variant']??0)) {
     $V = Gen_Get('Variants',$T['Variant']);
     $vev = $V['Evasion'];
-    if ($vev) {
-      if (abs($vev)<5) {
-        $ev = $ev + ceil($ev * $vev/4);
-      } else {
-        $ev += $vev;
-      }
+    switch ($V['EvasionType']) {
+      case 0:
+        $Ev += $vev;
+        break;
+      case 1:
+        $Ev += ceil($Ev*$vev/100);
+        break;
+      case 2:
+        $Ev = $vev;
     }
+
     $T['TargetEvasion'] = $V['TargetEvasion']??0; // Actual Number calculated when in battle
   }
 

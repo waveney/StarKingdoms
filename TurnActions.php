@@ -1182,7 +1182,7 @@ function TidyUps() {
 
   $Ts = Get_Things_Cond(0,"Type=23 AND Dist1!=0");
   foreach($Ts as $T) {
-    $T['Dist1']++;
+    $T['Dist1']++; // Incrementing ages of characters
     Put_Thing($T);
   }
 

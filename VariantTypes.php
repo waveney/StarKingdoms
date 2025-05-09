@@ -10,6 +10,7 @@
 
   global $db, $GAME, $GAMEID,$NOTBY;
   global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil;
+  $PTypes = ['Fixed Mod','% Mod','Value'];
 
 // var_dump($_REQUEST);
   $AllG = 0;
@@ -31,7 +32,9 @@
 
   echo "Props (Hex) bits 0-3 Devastation Effect (0=normal,1=none,2=double),<br>" .
        "16=Can operate on ground, 32=Not 1st round, 64=Grant evasion, 128=Only 1st Round, 256=No Devastation<p>\n";
-  echo "Note for Firepower,Evasion and Target Evasion - A |value| <5 is +/-V*25%, 5+ is a simple number<br>\n";
+
+  echo "Note for Firepower, Evasion and Target Evasion - there are 3 options.<br><ul><li>Fixed Mod - A fixed numerical modification<br>" .
+    "<li>% Mod - % change to property<br><li>Value - Replaced by fixed number</ul><p>Target Evasion is recorded but not currently used.<p>";
   echo "<form method=post action=VariantTypes.php>";
   Register_AutoUpdate('Generic', 0); // Not compatible with Hex
 
@@ -43,8 +46,11 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
     if ($AllG) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>NotBy</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Props</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Firepower Type</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Firepower</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Evasion Type</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Evasion</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Target Evasion Type</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Target Evasion</a>\n";
     echo "</thead><tbody>";
 
@@ -54,8 +60,11 @@
       echo fm_text1("",$T,'Name',1,'','',"Variants:Name:$i");
       echo fm_notby($T,$i,$AllG,':');
       echo fm_number1('',$T,'Props','','',"Variants:Props:$i");
+      echo "<td>" . fm_select($PTypes,$T,'FireType',0,'',"Variants:FireType:$i");
       echo fm_number1('',$T,'Firepower','','min=-100 max=1000',"Variants:Firepower:$i");
+      echo "<td>" . fm_select($PTypes,$T,'EvasionType',0,'',"Variants:EvasionType:$i");
       echo fm_number1('',$T,'Evasion','','min=-100 max=1000',"Variants:Evasion:$i");
+      echo "<td>" . fm_select($PTypes,$T,'TargetType',0,'',"Variants:TargetType:$i");
       echo fm_number1('',$T,'TargetEvasion','','min=-100 max=1000',"Variants:TargetEvasion:$i");
       }
 
@@ -64,9 +73,12 @@
   echo fm_hidden('Variants:NotBy:0',$SETNOT);
   if ($AllG) echo "<td>$SETNOT";
   echo fm_number1('',$T,'Props','','',"Variants:Props:0");
-      echo fm_number1('',$T,'Firepower','','min=-100 max=1000',"Variants:Firepower:0");
-      echo fm_number1('',$T,'Evasion','','min=-100 max=1000',"Variants:Evasion:0");
-      echo fm_number1('',$T,'TargetEvasion','','min=-100 max=1000',"Variants:TargetEvasion:0");
+  echo "<td>" . fm_select($PTypes,$T,'FireType',0,'',"Variants:FireType:0");
+  echo fm_number1('',$T,'Firepower','','min=-100 max=1000',"Variants:Firepower:0");
+  echo "<td>" . fm_select($PTypes,$T,'TargetType',0,'',"Variants:EvasionType:0");
+  echo fm_number1('',$T,'Evasion','','min=-100 max=1000',"Variants:Evasion:0");
+      echo "<td>" . fm_select($PTypes,$T,'EvasionType',0,'',"Variants:EvasionType:0");
+      echo fm_number1('',$T,'TargetEvasion','','min=-100 max=1000',"Variants:EvasionEvasion:0");
        if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
       echo "</tbody></table></div>\n";
 

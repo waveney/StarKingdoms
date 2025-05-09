@@ -455,7 +455,7 @@
           echo "<h2 class=Err>No Faction selected to recieve the funds</h2>";
           break;
         }
-        echo "Ammount: " . Credit() . $SP . " to " . $Facts[$P2]['Name'] . "<p>";
+        echo "Amount: " . Credit() . $SP . " to " . $Facts[$P2]['Name'] . "<p>";
         $Name .= " " . $SP . " Credits to " . $Facts[$P2]['Name'];
       }
       if (($OpTypes[$op]['Props'] & OPER_ANOMALY)) {
