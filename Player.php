@@ -48,17 +48,19 @@ function ValidateTurn($For = 0) {
         echo "<h2 class=Err>Warning - your project: <a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a> is level " . $P['Level'] .
              " trying to make an unknown thing</h2>\n";
         $Valid = 0;
-      } else if ($P['Level'] != $T['Level']) {
-        if ($P['Level'] < $T['Level']) {
-          dostaffhead("Player Actions");
-          echo "<h2 class=Err>Warning - your project: <a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a>  is level " . $P['Level'] .
-               " trying to make a level " . $T['Level'] . " thing</h2>\n";
-          $Valid = 0;
-        } elseif ($T['Type'] != $TNames['Fighter']) {
-          dostaffhead("Player Actions");
-          echo "<h2 class=Err>Warning - your project: <a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a>  is level " . $P['Level'] .
-               " trying to make a level " . $T['Level'] . " thing</h2>\n";
-          $Valid = 0;
+      } else if (($ProjTypes[$P['Type']]['Props'] & 0x40) == 0) { //Surpress level check
+        if ($P['Level'] != $T['Level']) {
+          if ($P['Level'] < $T['Level']) {
+            dostaffhead("Player Actions");
+            echo "<h2 class=Err>Warning - your project: <a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a>  is level " . $P['Level'] .
+                 " trying to make a level " . $T['Level'] . " thing</h2>\n";
+            $Valid = 0;
+          } elseif ($T['Type'] != $TNames['Fighter']) {
+            dostaffhead("Player Actions");
+            echo "<h2 class=Err>Warning - your project: <a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a>  is level " . $P['Level'] .
+                 " trying to make a level " . $T['Level'] . " thing</h2>\n";
+            $Valid = 0;
+          }
         }
       }
     }

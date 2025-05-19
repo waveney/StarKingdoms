@@ -1330,7 +1330,7 @@ function Show_Thing(&$T,$Force=0) {
     switch ($ThingInstrs[abs($T['Instruction'])]) {
     case 'None': // None
 //      if ($T['BuildState'] == BS_COMPLETE) $T['ProjectId'] = 0;
-      $T['Dist1'] = $T['Dist2'] = 0;
+      $T['CurInst'] = $T['Dist1'] = $T['Dist2'] = $T['ProjectId'] = 0;
       break;
 
     case 'Colonise': // Colonise
@@ -1454,7 +1454,7 @@ function Show_Thing(&$T,$Force=0) {
         foreach($Anoms as $A) {
           $Aid = $A['id'];
 
-          $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
+          $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid AND State=1");
           if (empty($FA['id'])) continue;
           if ($FA['Progress'] < $A['AnomalyLevel']) {
             $LocGr = intdiv($A['WithinSysLoc'],100);

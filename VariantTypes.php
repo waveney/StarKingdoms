@@ -33,8 +33,8 @@
   echo "Props (Hex) bits 0-3 Devastation Effect (0=normal,1=none,2=double),<br>" .
        "16=Can operate on ground, 32=Not 1st round, 64=Grant evasion, 128=Only 1st Round, 256=No Devastation<p>\n";
 
-  echo "Note for Firepower, Evasion and Target Evasion - there are 3 options.<br><ul><li>Fixed Mod - A fixed numerical modification<br>" .
-    "<li>% Mod - % change to property<br><li>Value - Replaced by fixed number</ul><p>Target Evasion is recorded but not currently used.<p>";
+  echo "Note for Firepower, Evasion and To Hit Modifier - there are 3 options.<br><ul><li>Fixed Mod - A fixed numerical modification<br>" .
+    "<li>% Mod - % change to property<br><li>Value - Replaced by fixed number</ul><p>";
   echo "<form method=post action=VariantTypes.php>";
   Register_AutoUpdate('Generic', 0); // Not compatible with Hex
 
@@ -50,8 +50,8 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Firepower</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Evasion Type</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Evasion</a>\n";
-    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Target Evasion Type</a>\n";
-    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Target Evasion</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>To Hit Modifier Type</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>To Hit Modifier`  ` ` </a>\n";
     echo "</thead><tbody>";
 
     foreach($Ts as $T) {

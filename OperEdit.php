@@ -198,9 +198,9 @@
     echo "<tr><td>Organisation:<td>" . $OrgNames[$O['OrgId']];
     echo "<tr>" . fm_text("Operation Name",$O,'Name',2);
 
-    echo "<tr>" . fm_number('Level',$O,'Level') . "<td>Status<td>" . ($Project_Status[$O['Status']]);
-    echo "<tr>" . (($when > 0)?fm_number("Turn Start",$O,'TurnStart'): "<td>Started Turn" . $O['TurnStart']);
-    if ($when <0) echo "<td>Finished Turn" . $O['TurnEnd'];
+    echo "<tr><td>Level:<td>" . $O['Level'] . "<td>Status<td>" . ($Project_Status[$O['Status']]);
+    echo "<tr>" . (($when > 0)?fm_number("Turn Start",$O,'TurnStart'): "<td>Started Turn:<td>" . $O['TurnStart']);
+    if (($when <0) && ($O['TurnEnd']>0)) echo "<td>Finished Turn:<td>" . $O['TurnEnd'];
     echo "<tr><td>Where:<td>" . $Systems[$O['SystemId']];
 
     echo "<tr>" . ($OpCosts?"<td>Cost:<td>" . $O['Costs']:'') . "<td>Progress needed:<td>" . $O['ProgNeeded'];
@@ -238,6 +238,7 @@
   if ($when <= 0) {
     if (($O['TurnState']??0) == 0) {
       echo fm_submit('ACTION','Pause This Turn');
+      echo fm_submit('ACTION','Abandon Operation');
     } else {
       echo fm_submit('ACTION','Cancel Pause');
     }
