@@ -757,7 +757,7 @@ global $FACTION;
             $wsysloc = $_REQUEST["WithinSysLoc:$Hid"];
             $Syslocs = Within_Sys_Locs($N,0,0,0,1);
             $newloc = (isset($Syslocs[$wsysloc])? $Syslocs[$wsysloc] : 'Deep Space');
-            if ((preg_match('/Hospitable/',$newloc,$mtch)?true:false) || isset($_REQUEST['YES_SPACE'])) {
+            if ((($H['Prop2'] & THING_DISLIKES_SPACE) == 0) || (preg_match('/Hospitable/',$newloc,$mtch)?true:false) || isset($_REQUEST['YES_SPACE'])) {
               $H['LinkId'] = 0;
               $H['SystemId'] = $Sys;
               $H['WithinSysLoc'] = $wsysloc;

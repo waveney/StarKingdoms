@@ -446,10 +446,8 @@ function Show_Thing(&$T,$Force=0) {
         }
 
       }
-//var_dump("Here",$Lid,$tprops);
       if (($Lid == 0) && (($tprops & THING_CAN_BETRANSPORTED)) && (($T['PrisonerOf'] == 0) || ($T['PrisonerOf'] == ($FACTION['id']??0)))) {
         $XPorts = Get_AllThingsAt($T['SystemId']);
-// var_dump($XPorts);
         $NeedCargo = ($tprops & THING_NEEDS_CARGOSPACE);
         $TList = [];
         $FF = Get_FactionFactionsCarry($Fid);
@@ -464,7 +462,6 @@ function Show_Thing(&$T,$Force=0) {
             if (!$NeedCargo) $Carry >>= 4;
             if (($Carry&15) < 2) continue; // Don't carry Another
           }
-
           if ($NeedCargo) {
             $Mods = Get_Modules($X['id']);
             $CargoSpace = ($Mods[$NamesMod['Cargo Space']]['Number']??0);
@@ -472,7 +469,7 @@ function Show_Thing(&$T,$Force=0) {
 
             $OnBoard = Get_Things_Cond(0,"((LinkId=-1 OR LinkId=-3) AND SystemId=" . $X['id'] . ")");
             foreach($OnBoard as $OB) if ($ThingProps[$OB['Type']] & THING_NEEDS_CARGOSPACE) {
-              $Need = $OB['Level'];
+              $Need = min(1,$OB['Level']);
               if ($CryoSpace && ($ThingProps[$OB['Type']] & THING_HAS_ARMYMODULES)) {
                 $CryoSpace -= $Need;
                 if ($CryoSpace >= 0) {
@@ -495,7 +492,6 @@ function Show_Thing(&$T,$Force=0) {
           }
           $TList[$X['id']] = $X['Name'];
         }
-
         if ($TList) {
           echo "<tr><td colspan=3>" . ($NeedOr?" <b>Or</b> ":'') . "Board: " . fm_select($TList,$T,'BoardPlace') . fm_submit("ACTION",'Load on Turn',0);
           $Conflict = 0; // HOW?

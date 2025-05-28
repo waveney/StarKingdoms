@@ -83,7 +83,8 @@ define('THING_HAS_RECOVERY',      2);
 define('THING_ALWAYS_OTHER',      4);
 define('THING_NO_LOGISTICS',      8);
 define('THING_HAS_SPEED',        16);
-define('THING_IS_BIG',           32); // Add Level to max modules
+define('THING_DISLIKES_SPACE', 0x20);
+define('THING_IS_BIG',         0x40); // Add Level to max modules
 
 define('LINK_ON_BOARD',-1);
 define('LINK_BOARDING',-2);
@@ -670,13 +671,13 @@ function Calc_Evasion(&$T) {
     $vev = $V['Evasion'];
     switch ($V['EvasionType']) {
       case 0:
-        $Ev += $vev;
+        $ev += $vev;
         break;
       case 1:
-        $Ev += ceil($Ev*$vev/100);
+        $ev += ceil($ev*$vev/100);
         break;
       case 2:
-        $Ev = $vev;
+        $ev = $vev;
     }
 
     $T['TargetEvasion'] = $V['TargetEvasion']??0; // Actual Number calculated when in battle
