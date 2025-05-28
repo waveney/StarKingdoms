@@ -27,7 +27,7 @@ function StartProjects() {
       $Tid = $P['ThingId'];
       if ($Tid) {
         $T = Get_Thing($Tid);
-        if (!($T['DesignValid']??0)) {
+        if (0 && !($T['DesignValid']??0)) {
           $P['Status'] = 5; // Not Started
           TurnLog($P['FactionId'],'Not starting as design invalid: ' . $P['Name']);
           GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as design invalid: ' . $P['Name'],1);
@@ -124,7 +124,7 @@ function StartProjects() {
       GMLog($Facts[$P['FactionId']]['Name'] . ' Starting ' . $P['Name'] . " Cost: " . Credit() . " $Cost");
       if (($ProjTypes[$P['Type']]['Props'] & 2) && (($ProjTypes[$P['Type']]['Props'] & 20) ==0 )) { // Has ONE thing - 2nd test elimiates repair and construction
         if ($Tid) {
-          if ($T['BuildState'] !=0) {
+          if (($T['BuildState'] != BS_PLANNING) && ($T['BuildState'] != BS_SERVICE)) {
             $T = Thing_Duplicate($Tid);
             $Tid = $T['id'];
             $P['ThingId'] = $Tid;

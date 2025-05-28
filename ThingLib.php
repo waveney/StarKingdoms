@@ -35,7 +35,7 @@ $InstrNotBy =   [0,0,1,0,0,1,0,
                  1,0,1,
                  0,1,0,1,1,1,
                  0,0,
-                 0,1,0,2,2,2,
+                 0,1,1,2,2,2,
                  2,2];
 
 $Advance = ['','','Advanced ','Very Advanced ','Ultra Advanced ','Evolved '];
@@ -746,6 +746,7 @@ function RefitRepair(&$T,$Save=1,$KeepTechLvl=0,$Other=0) {
     $T['CurHealth'] = min($T['CurHealth'],$Health);
     $T['CurShield'] = $Sld;
   }
+// var_dump($T);
   Put_Thing($T);
   return $Etxt;
 }
