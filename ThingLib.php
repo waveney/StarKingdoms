@@ -958,6 +958,20 @@ function is_vowel(&$Text) {
   return strpos(" aeiou",strtolower(substr($Text,0,1)));
 }
 
+function is_on_ground(&$T) {
+  if ($T['LinkId']<0) return 0;
+  $LocType = intdiv($T['WithinSysLoc'],100);
+  if (($T['WithinSysLoc'] == 3) || $LocType==2 || $LocType==4 ) return 1;
+  return 0;
+}
+
+function is_in_space(&$T) {
+  if ($T['LinkId']<0) return 0;
+  $LocType = intdiv($T['WithinSysLoc'],100);
+  if (($T['WithinSysLoc'] == 3) || $LocType==2 || $LocType==4 ) return 0;
+  return 1;
+}
+
 function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0) {
   global $Advance,$FACTION,$ThingInstrs;
   static $ThingTypes;

@@ -621,8 +621,10 @@ function RetreatsSelection() {
             if ($SysHasNeb[$Loc][$Fid]) continue 2;
           } else {
             $Ship = Gen_Get_Cond1('Things',"SystemId=$Loc AND NebSensors>0 AND Whose=$Fid");
-            $SysHasNeb[$Loc][$Fid] = $Ship;
-            if ($Ship) continue 2;
+            if ($Ship) {
+              $SysHasNeb[$Loc][$Fid] = $Ship;
+              continue 2;
+            }
           }
           // Drop Through
         case 2: // Combat
@@ -637,6 +639,7 @@ function RetreatsSelection() {
             $Totxt = fm_select($SelLinks,$T,'LinkId',0," style=color:" . $SelCols[$T['LinkId']] ,"RetreatLink$Tid",0,$SelCols) .
                ' <span class=red>SET THIS!</span>';
           }
+
 
           GMLog("<tr><td>" . $Facts[$Fid]['Name'] . "<td><a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a><td>" .
             ['','From Nebula','From Combat'][$T['Retreat']] . "<td>" . $SRefs[$Loc] . "<td>$Totxt<td>" .

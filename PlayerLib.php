@@ -439,8 +439,10 @@ function WhatCanBeSeenBy($Fid,$Mode=0) {
       $HostT = isset($MyThings[$Hid]) ? $MyThings[$Hid] : Get_Thing($Hid);
 
       $LocClass='Space';
-      $LocType = intdiv($HostT['WithinSysLoc'],100);
-      if (($HostT['WithinSysLoc'] == 3) || $LocType==2 || $LocType==4 ) $LocClass = 'Ground';
+      if (isset($HostT['WithinSysLoc'])) {
+        $LocType = intdiv($HostT['WithinSysLoc'],100);
+        if (($HostT['WithinSysLoc'] == 3) || $LocType==2 || $LocType==4 ) $LocClass = 'Ground';
+      }
 
       $txt .= "<div  class=$LocClass><h2>On Board " . (empty ($HostT['Name'])? "Unknown Thing" : $HostT['Name'])  . " is:</h2>";
       foreach($H as $Tid) {

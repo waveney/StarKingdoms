@@ -59,8 +59,10 @@
         $sid = $T['SystemId'];
       } else if ($T['SystemId']>0) {
         $Carrier = $T['SystemId'];
-        $sid = $Things[$Carrier]['SystemId'];
-        $tex = " (on " .$Things[$Carrier]['Name'] . ")";
+        if (isset($Things[$Carrier])) {
+          $sid = $Things[$Carrier]['SystemId'];
+          $tex = " (on " .$Things[$Carrier]['Name'] . ")";
+        }
       }
       if (!isset($Extras[$sid])) $Extras[$sid] = ['',0,0];
       if ($TTypes[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) {

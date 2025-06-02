@@ -25,7 +25,8 @@
 
   dostaffhead("Meetups");
 
-  $Systems = Get_Systems();
+  $Sys = Get_Systems();
+  $Sids = [];
   $Facts = Get_Factions();
 
   $Homes = Get_ProjectHomes();
@@ -232,50 +233,24 @@ function SystemSee($Sid) {
   $TurnP = '';
   if (isset($_REQUEST['TurnP'])) $TurnP = "&TurnP=1";
   $Things = Get_AllThings();
-  $Sys = Get_Systems();
-  $Hostiles = [];
+//  $Hostiles = [];
   $Mtch = [];
-
-  /* NO idea what this was for
-  foreach($Homes as $H) {
-    switch ($H['ThingType']) {
-    case 1: // Planet
-      $P = Get_Planet($H['ThingId']);
-      $Sid = $P['SystemId'];
-      break;
-    case 2: // Moon
-      $M = Get_Moon($H['ThingId']);
-      $P = Get_Planet($M['PlanetId']);
-      $Sid = $P['SystemId'];
-      break;
-    case 3:// Thing - do later
-      continue 2;
-    }
-    $Sys[$Sid][$H['Whose']] = 1024;
-  }
-*/
 
 //  echo "Checked Homes<p>";
 
   foreach ($Things as $T){
-    if ($T['BuildState'] != BS_COMPLETE || ($T['LinkId'] < 0 && $T['LinkId'] > -5)) continue;
+    if ($T['BuildState'] != BS_COMPLETE || ($T['LinkId'] < 0)) continue;
     $Sid = $T['SystemId'];
-    $Eyes = ($TTypes[$T['Type']]['Eyes']??0);
     $Hostile = (($TTypes[$T['Type']]['Properties']??0) & THING_IS_HOSTILE) && ($T['PrisonerOf'] == 0);
-    if ($Eyes) {
-      if (isset($Sys[$Sid][$T['Whose']])) {
-        $Sys[$Sid][$T['Whose']] |= $Eyes;
-      } else {
-        $Sys[$Sid][$T['Whose']] = $Eyes;
-      }
-      if (isset($Hostiles[$Sid][$T['Whose']])) {
-        $Hostiles[$Sid][$T['Whose']] |= $Hostile;
-      } else {
-        $Hostiles[$Sid][$T['Whose']] = $Hostile;
-      }
+    $Ground = is_on_ground($T);
+//      var_dump($Sid,$T['Whose']);
+    if (!isset($Sids[$Sid][$Ground][$T['Whose']]) || $Hostile) {
+//    if ($Sid == 83) var_dump($Ground,$T);
+      $Sids[$Sid][$Ground][$T['Whose']] = $Hostile;
     }
   }
 
+//  var_dump($Sys);
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
     case 'Do ALL Damage':
@@ -384,76 +359,80 @@ function SystemSee($Sid) {
 
   echo "<span class=NotHostile>Factions</span> thus marked have only Never Hostile Things.<br>" .
        "The most hostile rating between factions present is displayed.<p>";
+
+  TableStart();
+  TableHead('System');
+  TableHead('Space');
+  TableHead('Ground');
+  TableTop();
 //  echo "Checked Things<p>";
 
+//  var_dump($Sids);
 
-  foreach ($Systems as $N) {
+  foreach ($Sys as $N) {
     $Sid = $N['id'];
-    $NumF = 0;
-    $Fs = [];
-    foreach($Facts as $Fid=>$F) {
-      if (isset($Sys[$Sid][$Fid])) {
-        $NumF++;
-        $Fs[$Fid] = $F;
-      }
-    }
-    if (isset($Sys[$Sid][0])) {
-      $NumF++;
-      $Fs[] = [];
-    }
-    if ($NumF > 1) {
-      echo "System: <a href=Meetings.php?ACTION=Check&S=$Sid$TurnP>" . $N['Ref'] . "</a> has ";
+    if (!isset($Sids[$Sid])) continue;
+//    var_dump($Sid,$Sids[$Sid]);
+    if ((isset($Sids[$Sid][0]) && (count($Sids[$Sid][0]) > 1)) || (isset($Sids[$Sid][1]) && (count($Sids[$Sid][1]) > 1))) {
 
-      $React = 9;
-      foreach ($Fs as $F1=>$FS1) {
-        if ($F1 == 0) continue;
-        $R1 = $Facts[$F1]['DefaultRelations'];
-        if ($R1 == 0) $R1 = 5;
-        foreach($Fs as $F2=>$FS2) {
-          if ($F1 == $F2) continue;
-          $R2 = $Facts[$F2]['DefaultRelations'];
-          if ($R2 == 0) $R2 = 5;
-          if (!isset($FactFact[$F1][$F2])) {
-            $FF = Gen_Get_Cond1('FactionFaction',"FactionId1=$F1 AND FactionId2=$F2");
-            if ($FF) {
-              $FactFact[$F1][$F2] = (($FF['Relationship']??0)?$FF['Relationship']:5);
-            } else {
-              $FactFact[$F1][$F2] = $R1;
+      echo "<tr><td><a href=Meetings.php?ACTION=Check&S=$Sid$TurnP>" . $N['Ref'] . "</a>";
+
+      for($gs=0;$gs<2;$gs++) {
+        $React = 9;
+        echo "<td>";
+        if (isset($Sids[$Sid][$gs]) && (count($Sids[$Sid][$gs]) > 1)) {
+          foreach ($Sids[$Sid][$gs] as $F1=>$Hostile1) {
+            if ($F1 == 0) continue;
+            $R1 = $Facts[$F1]['DefaultRelations'];
+            if ($R1 == 0) $R1 = 5;
+            foreach ($Sids[$Sid][$gs] as $F2=>$Hostile2) {
+              if ($F1 == $F2) continue;
+              $R2 = ($Facts[$F2]['DefaultRelations']??5);
+              if ($R2 == 0) $R2 = 5;
+              if (!isset($FactFact[$F1][$F2])) {
+                $FF = Gen_Get_Cond1('FactionFaction',"FactionId1=$F1 AND FactionId2=$F2");
+                if ($FF) {
+                  $FactFact[$F1][$F2] = (($FF['Relationship']??0)?$FF['Relationship']:5);
+                } else {
+                  $FactFact[$F1][$F2] = $R1;
+                }
+              }
+              if (!isset($FactFact[$F2][$F1])) {
+                $FF = Gen_Get_Cond1('FactionFaction',"FactionId1=$F2 AND FactionId2=$F1");
+                if ($FF) {
+                  $FactFact[$F2][$F1] = (($FF['Relationship']??0)?$FF['Relationship']:5);
+                } else {
+                  $FactFact[$F2][$F1] = $R2;
+                }
+              }
+              $React = min($React,$FactFact[$F1][$F2],$FactFact[$F2][$F1]);
             }
           }
-          if (!isset($FactFact[$F2][$F1])) {
-            $FF = Gen_Get_Cond1('FactionFaction',"FactionId1=$F2 AND FactionId2=$F1");
-            if ($FF) {
-              $FactFact[$F2][$F1] = (($FF['Relationship']??0)?$FF['Relationship']:5);
+
+          $DR = $Relations[$React];
+          echo "<span style='background:" . $DR[1]  . "'>" . $DR[0] . "</span> ";
+
+          foreach ($Sids[$Sid][$gs] as $Fid=>$Hostile) {
+            $F = ($Facts[$Fid]??[]);
+            if (empty($F['Name'])) {
+              echo 'Other , ';
             } else {
-              $FactFact[$F2][$F1] = $R2;
+              $Fid = $F['id'];
+              if ($Hostile) {
+                echo $F['Name'] . " , ";
+              } else {
+                echo "<span class=NotHostile>" . $F['Name'] . "</span> , ";
+              }
             }
           }
-          $React = min($React,$FactFact[$F1][$F2],$FactFact[$F2][$F1]);
-        }
-      }
-
-      $DR = $Relations[$React];
-      echo " <span style='background:" . $DR[1]  . "'>" . $DR[0] . "</span> ";
-
-      foreach($Fs as $F) {
-        if (empty($F['Name'])) {
-          echo 'Other , ';
         } else {
-          $Fid = $F['id'];
-          if (isset($Hostiles[$Sid][$Fid]) && $Hostiles[$Sid][$Fid]) {
-//if (isset($Hostiles[$Sid][$Fid])) echo $Hostiles[$Sid][$Fid] . ": ";
-            echo $F['Name'] . " , ";
-          } else {
-//echo "NOT HOSTILE ";
-            echo "<span class=NotHostile>" . $F['Name'] . "</span> , ";
-          }
+
         }
       }
-      echo "<br>";
     }
   }
 
+  TableEnd();
   echo "<P>Scan Finished<p>";
 
   if ($TurnP) echo "<h2><a href=TurnActions.php?ACTION=Complete&Stage=Meetups>Back To Turn Processing</a></h2>";

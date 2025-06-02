@@ -687,9 +687,10 @@ function PlanetScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
           foreach ($Offs as $i=>$Of) {
             $Org = Gen_Get('Organisations',$Of['Organisation']);
             $OrgType = Gen_Get('OfficeTypes',$Org['OrgType']);
-            if ($OrgType['Props']&1) continue; // Hidden
-            $Clean[]= $Org['Name'] . " (" . $OrgType['Name'] . ") ";
-
+            if ($OrgType) {
+              if ($OrgType['Props']&1) continue; // Hidden
+              $Clean[]= $Org['Name'] . " (" . $OrgType['Name'] . ") ";
+            }
           }
 
           if ($Clean) {
