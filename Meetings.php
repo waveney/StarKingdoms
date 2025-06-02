@@ -369,11 +369,31 @@ function SystemSee($Sid) {
 
 //  var_dump($Sids);
 
+  $Worlds = Get_Worlds();
+  $Homes = Get_ProjectHomes();
+
+  foreach ($Worlds as $W) {
+    $H = $Homes[$W['Home']];
+    $Sid = $H['SystemId'];
+    $Fid = $W['FationId'];
+
+    $Sids[$Sid][1][$Fid] = 1; // Ground present (Militia)
+  }
+
   foreach ($Sys as $N) {
     $Sid = $N['id'];
     if (!isset($Sids[$Sid])) continue;
 //    var_dump($Sid,$Sids[$Sid]);
     if ((isset($Sids[$Sid][0]) && (count($Sids[$Sid][0]) > 1)) || (isset($Sids[$Sid][1]) && (count($Sids[$Sid][1]) > 1))) {
+
+      $HostC = [0,0];
+      for($gs=0;$gs<2;$gs++) {
+        if (isset($Sids[$Sid][$gs])) {
+          foreach($Sids[$Sid][$gs] as $Fid=>$Host) if ($Host) $HostC[$gs]++;
+        }
+      }
+
+      if ($Host[0] <2 && $Host[1]<2) continue; // Not 2 hostile possibles present
 
       echo "<tr><td><a href=Meetings.php?ACTION=Check&S=$Sid$TurnP>" . $N['Ref'] . "</a>";
 
