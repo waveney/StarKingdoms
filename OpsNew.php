@@ -267,7 +267,7 @@
         }
 
         foreach ($MyTechs as $Tid=>$T) {
-          if (($Techs[$T['Tech_Id']]['Cat']??0) == 0 || !isset($FactTechs[$T['id']]) ) continue;
+          if (($Techs[$T['Tech_Id']]['Cat']??0) == 0 || isset($FactTechs[$Tid]) ) continue;
           if (!isset($FactTechs[$Techs[$Tid]['PreReqTech']]) ) continue;
           $Tec = $Techs[$Tid];
           $Lvl = $Tec['PreReqLevel'];
@@ -495,9 +495,10 @@
       echo "This operation is at a level of $BaseLevel from distance.  ";
       if ($Mod) {
         $BaseLevel += $Mod;
-
+        $BaseLevel = min(1,$BaseLevel);
         echo "With modifiers of +$Mod making the operation level $BaseLevel.<p>";
       }
+      $BaseLevel = min(1,$BaseLevel);
 
       $ProgNeed = Oper_Costs($BaseLevel)[0];
 
