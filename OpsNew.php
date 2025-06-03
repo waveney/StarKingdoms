@@ -495,10 +495,10 @@
       echo "This operation is at a level of $BaseLevel from distance.  ";
       if ($Mod) {
         $BaseLevel += $Mod;
-        $BaseLevel = min(1,$BaseLevel);
+        $BaseLevel = max(1,$BaseLevel);
         echo "With modifiers of +$Mod making the operation level $BaseLevel.<p>";
       }
-      $BaseLevel = min(1,$BaseLevel);
+      $BaseLevel = max(1,$BaseLevel);
 
       $ProgNeed = Oper_Costs($BaseLevel)[0];
 
