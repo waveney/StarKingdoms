@@ -27,6 +27,16 @@ function StartProjects() {
       $Tid = $P['ThingId'];
       if ($Tid) {
         $T = Get_Thing($Tid);
+
+        if (!$T) {
+          $P['Status'] = 5; // Not Started
+          TurnLog($P['FactionId'],'Not starting as Thing not found: ' . $P['Name']);
+          GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as Thing $Tid not found: ' . $P['Name'],1);
+          Put_Project($P);
+          continue;
+
+        }
+
         if (0 && !($T['DesignValid']??0)) {
           $P['Status'] = 5; // Not Started
           TurnLog($P['FactionId'],'Not starting as design invalid: ' . $P['Name']);
@@ -36,6 +46,7 @@ function StartProjects() {
         }
 
         if (($ProjTypes[$P['Type']]['Props'] & 256) ==0) { // Has a thing
+
           if ($T['BuildState'] > 0 ) {
             $T = Thing_Duplicate($Tid);
             $Tid = $T['id'];
@@ -520,7 +531,7 @@ function ProjectsCompleted($Pass) {
             $D = ['HostType'=>$H['ThingType'], 'HostId'=>$PH['id'], 'Type'=>$P['ThingType'], 'Number'=>1, 'GameId' => $GAMEID];
             Put_District($D);
           } else if ($P['ThingType'] == 0) { // New Office
-            $Org = ['Whose' => $P['FactionId'], 'Name'=>$P['OrgName'], 'Description' => $P['OrgDesc'], 'OfficeCount'=>1, 'OrgType'=>$P['ThingId'],
+            $Org = ['Whose' => $P['FactionId'], 'Name'=>$P['OrgName'], 'Description' => $P['OrgDesc'], 'OfficeCount'=>1, 'OrgType'=>max($P['ThingId'],1),
               'OrgType2' =>$P['ThingId2'], 'GameId'=>$GAMEID, 'SocialPrinciple' => $P['OrgSP']];
             $OrgId = Gen_Put('Organisations',$Org);
 
@@ -625,6 +636,7 @@ function ProjectsCompleted($Pass) {
 
         case 'Repair Ship(s)':
         case 'Reinforce Detachment(s)':
+          $Where = Where_Is_Home($P['Home']);
           $Tid = $P['ThingId'];
           if ($Tid) {
             $T = Get_Thing($Tid);

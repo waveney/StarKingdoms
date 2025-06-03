@@ -420,7 +420,7 @@ function Calc_Health(&$T,$KeepTechLvl=0,$Other=0) {
   $Shield = 0;
   $Ms = Get_Modules($T['id']);
   $Mts = Get_ModuleTypes();
-  $Techs = Get_Techs($Other);
+  $Techs = Get_Techs();
   $Rescat = 0;
   foreach ($Mts as $mt) if (($mt['DefWep'] == 1 ) || ($mt['DefWep'] == 3 )) {
     foreach ($Ms as $M) if (($Mts[$M['Type']]['Name'] == $mt['Name']) && ($M['Number'] > 0)) {

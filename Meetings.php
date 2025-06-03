@@ -375,7 +375,7 @@ function SystemSee($Sid) {
   foreach ($Worlds as $W) {
     $H = $Homes[$W['Home']];
     $Sid = $H['SystemId'];
-    $Fid = $W['FationId'];
+    $Fid = $W['FactionId'];
 
     $Sids[$Sid][1][$Fid] = 1; // Ground present (Militia)
   }
@@ -393,7 +393,7 @@ function SystemSee($Sid) {
         }
       }
 
-      if ($Host[0] <2 && $Host[1]<2) continue; // Not 2 hostile possibles present
+      if ($HostC[0] <2 && $HostC[1]<2) continue; // Not 2 hostile possibles present
 
       echo "<tr><td><a href=Meetings.php?ACTION=Check&S=$Sid$TurnP>" . $N['Ref'] . "</a>";
 

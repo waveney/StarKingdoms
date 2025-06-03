@@ -250,7 +250,7 @@
 
       if ($OpTypes[$op]['Props'] & OPER_TECH) {
         $With = $TSys['Control'];
-        $Techs = Get_Techs($Fid);
+        $Techs = Get_Techs();
         $FactTechs = Get_Faction_Techs($With);
         $MyTechs = Get_Faction_Techs($Fid);
 
@@ -266,15 +266,14 @@
           }
         }
 
-        foreach ($MyTechs as $T) {
+        foreach ($MyTechs as $Tid=>$T) {
           if (($Techs[$T['Tech_Id']]['Cat']??0) == 0 || !isset($FactTechs[$T['id']]) ) continue;
-          if (!isset($FactTechs[$T['PreReqTech']]) ) continue;
-          $Tid = $T['Tech_Id'];
+          if (!isset($FactTechs[$Techs[$Tid]['PreReqTech']]) ) continue;
           $Tec = $Techs[$Tid];
           $Lvl = $Tec['PreReqLevel'];
           if ($Lvl < 1) continue;
           echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&Te=$Tid&P2=$Lvl'>" .
-               $TT['Name'] . " at level $Lvl</button> \n";
+               $Tec['Name'] . " at level $Lvl</button> \n";
         }
         break;
       }

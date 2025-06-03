@@ -280,7 +280,7 @@ function Spend_Credit($Who,$Amount,$Why,$From='') { // Ammount is negative to ga
   }
 }
 
-function Gain_Science($Who,$What,$Amount,$Why) { // Ammount is negative to gain credits
+function Gain_Science($Who,$What,$Amount,$Why='') { // Ammount is negative to gain credits
   global $GAME;
   $Fact = Get_Faction($Who);
   switch ($What) {
@@ -294,16 +294,20 @@ function Gain_Science($Who,$What,$Amount,$Why) { // Ammount is negative to gain 
     $Fact['XenologySP'] = ($Fact['XenologySP'] ?? 0) + $Amount;
     break;
   case 4: // Random
+    $Why .= " - ";
     for($sp =1; $sp <= $Amount; $sp++) {
       switch (rand(1,3)) {
       case 1:
         $Fact['PhysicsSP'] = ($Fact['PhysicsSP'] ?? 0) + 1;
+        $Why .= "P";
         break;
       case 2:
         $Fact['EngineeringSP'] = ($Fact['EngineeringSP'] ?? 0) + 1;
+        $Why .= "E";
         break;
       case 3:
         $Fact['XenologySP'] = ($Fact['XenologySP'] ?? 0) + 1;
+        $Why .= "X";
         break;
       }
     }
@@ -311,6 +315,8 @@ function Gain_Science($Who,$What,$Amount,$Why) { // Ammount is negative to gain 
 
 //  var_dump($Fact);
   Put_Faction($Fact);
+  $Spog = ['GameId'=>$GAME['id'],'Turn'=>GAME['Turn'],'FactionId'=>$Who, 'Type'=>$What, 'Number'=>$Amount, 'Note'=>$Why];
+  Gen_Put('SciencePointLog',$Spog);
 }
 
 function Gain_Currency($Who,$What,$Amount,$Why) { // Ammount is negative to gain
@@ -792,4 +798,5 @@ function Has_Track($Fid,$Name) {
   $Have = Gen_Get_Cond('Resources',"Whose=$Fid AND Type=$Trackid");
   return $Have['Value']??0;
 }
+
 

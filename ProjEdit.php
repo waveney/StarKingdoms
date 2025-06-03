@@ -324,7 +324,7 @@
   if ($when > 0 || $GM )  {
     if ($P['Status'] == 0) echo fm_submit("ACTION",'Delete',0) . " ";
     if (($PProps & 128) && ($P['ThingType']>0)) {
-      if (($P['Type'] == 1) && ($P['Level'] >= $DistTypes[$P['ThingType']]['MaxNum'] )) {
+      if (($P['Type'] == 1) && ($P['Level'] >= ($DistTypes[$P['ThingType']]['MaxNum']??0) )) {
         if ($GM) echo "Not allowed (GM only): <input type=submit name=ACTION value='Raise 1 Level'>";
       } else {
         echo fm_submit("ACTION",'Raise 1 Level',0);

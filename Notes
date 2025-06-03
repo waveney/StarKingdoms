@@ -70,21 +70,17 @@ So I'd have expected that to update the cached survey
 390 Add Thing Type
 393 LVX survey report &wormholes - from clans
 411 Point Defence cannons - 
-412 Meetups Space/ground cols
 413 Modify Anomaly progress
 414 Improve Pay benevolence
-415 Nebula Retreat & friendly ship with sensors
-416 Reapir -> copy of...
-417 Clans new org 19/5 @21:56
+421 Anomalies stage 2's => found
+422 Automate Sposoor colonists
+424 HQB - how to treat as own biosphere
+425 Log science points
+426 Trade non-standard techs ross 3/6 @7am
+430 Fighter Evasion
+433 ImpSec office count
 
 
 
-[Mon May 19 17:07:32.478753 2025] [proxy_fcgi:error] [pid 268071:tid 140476770383616] [client 86.26.173.150:0] AH01071: Got error 'PHP message: PHP Warning:  Undefined array key 2983 in /var/www/vhosts/starkingdoms.uk/httpdocs/MapFull.php on line 62; PHP message: PHP Warning:  Trying to access array offset on value of type null in /var/www/vhosts/starkingdoms.uk/httpdocs/MapFull.php on line 62; PHP message: PHP Warning:  Undefined array key 2983 in /var/www/vhosts/starkingdoms.uk/httpdocs/MapFull.php on line 63; PHP message: PHP Warning:  Trying to access array offset on value of type null in /var/www/vhosts/starkingdoms.uk/httpdocs/MapFull.php on line 63; PHP message: PHP Warning:  Undefined array key 2983 in /var/www/vhosts/starkingdoms.uk/httpdocs/MapFull.php on line 62; PHP message: PHP Warning:  Trying to access array offset on value of type null in /var/www/vhosts/starkingdoms.uk/httpdocs/MapFull.php on line 62; PHP message: PHP Warning:  Undefined array key 2983 in /var/www/vhosts/starkingdoms.uk/httpdocs/MapFull.php on line 63; PHP message: PHP Warning:  Trying to access array offset on value of type null in /var/www/vhosts/starkingdoms.uk/httpdocs/MapFull.php on line 63', referer: https://starkingdoms.uk/Access.php?id=30&Key=QXNFERAHXKJXWMOSOVOCNMGARKZTNRTJZNFRHFOY
 
 
-
-[Mon May 19 18:14:51.945496 2025] [proxy_fcgi:error] [pid 268070:tid 140476761990912] [client 86.132.58.174:0] AH01071: Got error 'PHP message: PHP Warning:  Undefined array key "WithinSysLoc" in /var/www/vhosts/starkingdoms.uk/httpdocs/PlayerLib.php on line 442; PHP message: PHP Warning:  Undefined array key "WithinSysLoc" in /var/www/vhosts/starkingdoms.uk/httpdocs/PlayerLib.php on line 443', referer: https://starkingdoms.uk/TurnActions.php?ACTION=DoStage2
-
-[Mon May 19 19:18:49.116659 2025] [proxy_fcgi:error] [pid 268071:tid 140476927993600] [client 86.132.58.174:0] AH01071: Got error 'PHP message: PHP Warning:  Undefined array key "WithinSysLoc" in /var/www/vhosts/starkingdoms.uk/httpdocs/PlayerLib.php on line 442; PHP message: PHP Warning:  Undefined array key "WithinSysLoc" in /var/www/vhosts/starkingdoms.uk/httpdocs/PlayerLib.php on line 443', referer: https://starkingdoms.uk/TurnActions.php?ACTION=Process&S=58
-
-Mon May 19 19:32:11.636492 2025] [proxy_fcgi:error] [pid 268071:tid 140476711634688] [client 86.132.58.174:0] AH01071: Got error 'PHP message: PHP Warning:  Undefined array key "Props" in /var/www/vhosts/starkingdoms.uk/httpdocs/SystemLib.php on line 690; PHP message: PHP Warning:  Undefined array key "Name" in /var/www/vhosts/starkingdoms.uk/httpdocs/SystemLib.php on line 691', referer: https://starkingdoms.uk/TurnActions.php

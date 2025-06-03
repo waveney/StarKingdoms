@@ -98,7 +98,7 @@
 
         $S = [];
         echo "<form method=post><table>";
-        echo "<tr><td>Who:<td>" . fm_select($FactNames,$S,'Whose',0);
+        echo "<tr><td>Who:<td>" . fm_select($FactNames,$S,'Whose',1);
         echo "<tr>" . fm_text('Principle',$S,'Principle',2);
         echo "<tr><td>Where:<td>" . fm_select($WList,$S,'World');
         echo "<tr>" . fm_number('Adherence', $S,'Value','',"min=0 max=5");
