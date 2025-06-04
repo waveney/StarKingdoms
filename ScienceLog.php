@@ -21,6 +21,11 @@ if ($GM && !isset($FACTION)) {
 $Facts = Get_Factions();
 $TechCats = [['Unknown','??'],['Engineering','EngineeringSP'],['Physics','PhysicsSP'],['Xenology','XenologySP'],['General','']];
 
+if (!$Logs) {
+  echo "No Science Point Logs recorded yet<p>";
+  dotail();
+}
+
 
 TableStart();
 if ($Fid == 0) TableHead('Who');
