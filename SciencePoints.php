@@ -58,17 +58,20 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$ThingInstrs,$ThingInclrs;
           $CTech['Level'] = $Br['Level'];
           Put_Faction_Tech($CTech);
           echo 'Using ' . $Br['Cost'] . ' ' . $TechCats[$Br['Field']][0] . " science points " . $Tech['Name'] . " has been raised to level " . $Br['Level'];
-          $Faction[$TechCats[$Br['Field']][1]] = max(0, $Faction[$TechCats[$Br['Field']][1]] - $Br['Cost']);
-          Put_Faction($Faction);
+          Gain_Science($Fid,$Br['Field']+1,-$Br['Cost'],"Raising " . $Tech['Name'] . " to level " . $Br['Level']);
+
+//          $Faction[$TechCats[$Br['Field']][1]] = max(0, $Faction[$TechCats[$Br['Field']][1]] - $Br['Cost']);
+//          Put_Faction($Faction);
         } else {
           echo "You already know it.<p>";
         }
       } else if ($CTech['Level'] == 0) { // Supp
         $CTech['Level'] = 1;
         Put_Faction_Tech($CTech);
-        echo 'Using ' . $Br['Cost'] . $TechCats[$Br['Field']][0] . " science points " . $Tech['Name'] . " has been researched";
-        $Faction[$TechCats[$Br['Field']][1]] = max(0, $Faction[$TechCats[$Br['Field']][1]] - $Br['Cost']);
-        Put_Faction($Faction);
+        echo 'Using ' . $Br['Cost'] . ' ' . $TechCats[$Br['Field']][0] . " science points " . $Tech['Name'] . " has been researched";
+        Gain_Science($Fid,$Br['Field']+1,-$Br['Cost'],"Researching " . $Tech['Name'] . " (Level: " . $Br['Level'] . ")");
+//        $Faction[$TechCats[$Br['Field']][1]] = max(0, $Faction[$TechCats[$Br['Field']][1]] - $Br['Cost']);
+//        Put_Faction($Faction);
       }
       $Br['DoneTurn'] = $GAME['Turn']-1;
       Gen_Put('Breakthroughs',$Br);
@@ -115,7 +118,8 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$ThingInstrs,$ThingInclrs;
       if ($Br['DoneTurn']) {
         echo "<td>Already Done";
       } else {
-        echo "<td><a href=SciencePoints.php?ACTION=Cancel&Bid=" . $Br['id'] . ">Cancel</a>, <a href=SciencePoints.php?ACTION=Now&Bid=" . $Br['id'] . ">Do Now</a>\n";
+        echo "<td><a href=SciencePoints.php?ACTION=Cancel&Bid=" . $Br['id'] . ">Cancel</a>, <a href=SciencePoints.php?ACTION=Now&Bid=" .
+        $Br['id'] . ">Do Now</a>\n";
         $Used[$Br['Field']] += $Br['Cost'];
       }
 
@@ -146,7 +150,8 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$ThingInstrs,$ThingInclrs;
         }
 
         if ($Avail[$Fld]-$Used[$Fld] >= $SPCosts[$Lvl]) {
-          echo "<button class=projtype type=submit formaction='SciencePoints.php?ACTION=NEW&id=$Fid&Tid=" . $TT['id'] . "&L=$Lvl&C=" . $SPCosts[$Lvl] . "&Fld=$Fld'>" .
+          echo "<button class=projtype type=submit formaction='SciencePoints.php?ACTION=NEW&id=$Fid&Tid=" . $TT['id'] . "&L=$Lvl&C=" .
+                $SPCosts[$Lvl] . "&Fld=$Fld'>" .
                 "Research " . $TT['Name'] . " Level $Lvl; Cost " . $SPCosts[$Lvl] . "</button><p>";
         }
       }
@@ -161,7 +166,8 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$ThingInstrs,$ThingInclrs;
         if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
         $Lvl = $T['PreReqLevel'];
         if ($Avail[$Fld]-$Used[$Fld] >= $SPCosts[$Lvl]) {
-          echo "<button class=projtype type=submit formaction='SciencePoints.php?ACTION=NEW&id=$Fid&Tid=" . $T['id'] . "&L=$Lvl&C=" . $SPCosts[$Lvl] . "&Fld=$Fld'>" .
+          echo "<button class=projtype type=submit formaction='SciencePoints.php?ACTION=NEW&id=$Fid&Tid=" . $T['id'] . "&L=$Lvl&C=" .
+                $SPCosts[$Lvl] . "&Fld=$Fld'>" .
                 "Research " . $T['Name'] . " Level $Lvl; Cost " . $SPCosts[$Lvl] . "</button><p>";
         }
       }

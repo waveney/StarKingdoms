@@ -48,6 +48,7 @@ $NewResNames = NamesList($ResTypes);
 echo "<table border>";
 if ($GM) {
   echo "<h2><a href= Tracked.php?FORCE>This Page in Player Mode</a></h2>";
+  echo "Note: Changes to these here are not logged - use Pay Faction for logged changes<p>";
 
   echo "<form method=post>";
   Register_AutoUpdate('Generic',0);

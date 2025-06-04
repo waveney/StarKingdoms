@@ -125,6 +125,7 @@ function Player_Page() {
       }
       if ($FACTION['PhysicsSP'] >=5 || $FACTION['EngineeringSP'] >=5 || $FACTION['XenologySP'] >=5 ) {
         echo "<li><a href=SciencePoints.php>Spend Science Points</a>";
+        echo "<li><a href=ScienceLog.php>Science Point Logs</a>";
       }
       if ($Facts || $FACTION['NPC']) {
         echo "<li><a href=MapTransfer.php>Transfer Mapping knowledge to another Faction</a>\n";
@@ -285,15 +286,19 @@ function Gain_Science($Who,$What,$Amount,$Why='') { // Ammount is negative to ga
   $Fact = Get_Faction($Who);
   switch ($What) {
   case 1:
+  case 'Physics':
     $Fact['PhysicsSP'] = ($Fact['PhysicsSP'] ?? 0) + $Amount;
     break;
   case 2:
+  case 'Engineering':
     $Fact['EngineeringSP'] = ($Fact['EngineeringSP'] ?? 0) + $Amount;
     break;
   case 3:
+  case 'Xenology':
     $Fact['XenologySP'] = ($Fact['XenologySP'] ?? 0) + $Amount;
     break;
   case 4: // Random
+  case 'General':
     $Why .= " - ";
     for($sp =1; $sp <= $Amount; $sp++) {
       switch (rand(1,3)) {

@@ -7,17 +7,23 @@
 
 global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$ThingInstrs,$ThingInclrs;
 
-A_Check('GM');
+$GM = Access('GM');
 
 dostaffhead("Science Point Log");
 
-$Logs = Gen_Get_All_GameId('SciencePointLog');
+if ($GM && !isset($FACTION)) {
+  $Logs = Gen_Get_All_GameId('SciencePointLog');
+  $Fid = 0;
+} else {
+  $Fid = $FACTION['id'];
+  $Logs = Gen_Get_Cond('SciencePointLog',"FactionId=$Fid");
+}
 $Facts = Get_Factions();
 $TechCats = [['Unknown','??'],['Engineering','EngineeringSP'],['Physics','PhysicsSP'],['Xenology','XenologySP'],['General','']];
 
 
 TableStart();
-TableHead('Who');
+if ($Fid == 0) TableHead('Who');
 TableHead('Turn','N');
 TableHead('Science Point Type');
 TableHead('Amount','N');
@@ -25,7 +31,8 @@ TableHead('Reason');
 TableTop();
 
 foreach(array_reverse($Logs) as $L) {
-  echo "<tr><td>" . ($Facts[$L['FactionId']]['Name']??'Unknown');
+  echo "<tr>";
+  if ($Fid == 0) echo "<td>" . ($Facts[$L['FactionId']]['Name']??'Unknown');
   echo "<td>" . $L['Turn'];
   echo "<td>" . $TechCats[$L['Type']][0];
   echo "<td>" . $L['Number'];

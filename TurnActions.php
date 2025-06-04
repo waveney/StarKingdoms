@@ -295,8 +295,7 @@ function ScientificBreakthroughs() {
         $CTech['Level'] = $Br['Level'];
         Put_Faction_Tech($CTech);
         TurnLog($Br['FactionId'],'Using ' . $Br['Cost'] . $TechCats[$Br['Field']][0] . " science points " . $Tech['Name'] . " has been raised to level " . $Br['Level']);
-        $Fact[$TechCats[$Br['Field']][1]] = max(0, $Fact[$TechCats[$Br['Field']][1]] - $Br['Cost']);
-        Put_Faction($Fact);
+        Gain_Science($Fid,$Br['Field']+1,-$Br['Cost'],"Raising " . $Tech['Name'] . " to level " . $Br['Level']);
       } else {
         GMLog("Faction: " . $Fact['Name'] . " attempted to use science points to raise " . $Tech['Name'] . " to level " . $Br['Level'] .
               " already at level " . $CTech['Level']);
@@ -307,8 +306,7 @@ function ScientificBreakthroughs() {
       $CTech['Level'] = 1;
       Put_Faction_Tech($CTech);
       TurnLog($Br['FactionId'],'Using ' . $Br['Cost'] . $TechCats[$Br['Field']][0] . " science points " . $Tech['Name'] . " has been reserched");
-      $Fact[$TechCats[$Br['Field']][1]] = max(0, $Fact[$TechCats[$Br['Field']][1]] - $Br['Cost']);
-      Put_Faction($Fact);
+      Gain_Science($Fid,$Br['Field']+1,-$Br['Cost'],"Researching " . $Tech['Name'] . " (Level: " . $Br['Level'] . ")");
     } else {
       GMLog("Faction: " . $Fact['Name'] . " attempted to use science points to research " . $Tech['Name'] . " it is already known");
       TurnLog($Br['FactionId'],"You attempted to use science points to research " . $Tech['Name'] . " it is already known");
@@ -431,7 +429,8 @@ function TraitIncomes() {
                 $Ds = $DistF($Bid);
                 $D = ($Ds[$NamesDT[$SP[0]]]??0);
                 if ($D) {
-                  $Facts[$Fid][$SP[2] . "SP"] += $D['Number'];
+                  Gain_Science($Fid, $SP[2], $D['Number'],"Planetary trait " .$SP[1] . " in " . $Bod['Name']);
+//                  $Facts[$Fid][$SP[2] . "SP"] += $D['Number'];
                   TurnLog($Fid,"Gained " . $D['Number'] . " " . $SP[2] . " points from the planetary trait " .$SP[1] . " in " . $Bod['Name']);
                   GMLog($Facts[$Fid]['Name'] . " Gained " . $D['Number'] . " " . $SP[2] . " points from the planetary trait " .$SP[1] . " in " . $Bod['Name']);
                 }
@@ -439,13 +438,16 @@ function TraitIncomes() {
               case 2:// Tech
                 $T = Has_Tech($Fid,$SP[0]);
                 if ($T) {
-                  $Facts[$Fid][$SP[2] . "SP"] += $T;
+                  Gain_Science($Fid, $SP[2], $T,"Planetary trait " .$SP[1] . " in " . $Bod['Name']);
+
+//                  $Facts[$Fid][$SP[2] . "SP"] += $T;
                   TurnLog($Fid,"Gained " . $T . " " . $SP[2] . " points from the planetary trait " .$SP[1] . " in " . $Bod['Name']);
                   GMLog($Facts[$Fid]['Name'] . " Gained " . $T . " " . $SP[2] . " points from the planetary trait " .$SP[1] . " in " . $Bod['Name']);
                 }
                 break;
               case 3: //Fixed
-                $Facts[$Fid][$SP[2] . "SP"] += $SP[0];
+                Gain_Science($Fid, $SP[2], $SP[0],"Planetary trait " .$SP[1] . " in " . $Bod['Name']);
+//                $Facts[$Fid][$SP[2] . "SP"] += $SP[0];
                 TurnLog($Fid,"Gained " . $SP[0] . " " . $SP[2] . " points from the planetary trait " .$SP[1] . " in " . $Bod['Name']);
                 GMLog($Facts[$Fid]['Name'] . " Gained " . $SP[0] . " " . $SP[2] . " points from the planetary trait " .$SP[1] . " in " . $Bod['Name']);
                 break;
@@ -454,7 +456,8 @@ function TraitIncomes() {
                 $D = ($Ds[$NamesDT[$SP[0]]]??0);
                 if ($D) {
                   $Div = (Has_Tech($Fid,'Advanced Mineral Extraction')?1:2);
-                  $Facts[$Fid][$SP[2]] += ceil($D['Number']/$Div);
+                  Gain_Science($Fid, $SP[2], ceil($D['Number']/$Div),"Planetary trait " .$SP[1] . " in " . $Bod['Name']);
+//                  $Facts[$Fid][$SP[2]] += ceil($D['Number']/$Div);
                   TurnLog($Fid,"Gained " . ceil($D['Number']/$Div) . " " . Feature($SP[2],'Unknown') . " from the planetary trait " .
                     $SP[1] . " in " . $Bod['Name']);
                   GMLog($Facts[$Fid]['Name'] . " Gained " . ceil($D['Number']/$Div) . " " . Feature($SP[2],'Unknown') . " from the planetary trait " .
@@ -469,9 +472,10 @@ function TraitIncomes() {
     }
   }
 
+/*
   foreach ($Facts as $F){
     Put_Faction($F);
-  }
+  }*/
 
   GMLog("Done Planetary Trait Incomes<br>");
 

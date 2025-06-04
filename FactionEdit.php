@@ -49,7 +49,10 @@ function Show_Faction(&$F,$Mode) {
   if (Access('God')) echo "You can only delete a faction with -99 credits<br>";
 
   echo "<form method=post id=mainform enctype='multipart/form-data' action=FactionEdit.php>";
-  if ($GM) echo "<h2>GM: <a href=FactionEdit.php?id=$Fid&FORCE>This page in Player Mode</a></h2>";
+  if ($GM) {
+    echo "<h2>GM: <a href=FactionEdit.php?id=$Fid&FORCE>This page in Player Mode</a></h2>" .
+         "Note: Any Changes to credits, Science Points etc here are not logged - use Pay Faction for logged changes";
+  }
   echo "<div class=tablecont><table width=90% border class=SideTable>\n";
   Register_AutoUpdate('Faction',$Fid);
   echo fm_hidden('id',$Fid);
