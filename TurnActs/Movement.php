@@ -446,7 +446,10 @@ function ShipMovements($Mode=0) {
         if ($Fid) {
           $FS = Get_FactionSystemFS($Fid,$Sid);
           if ($N['Nebulae'] > $T['NebSensors']) {
-            $T['Retreat'] = 1;
+            // is there a ship with neb sensors?
+            $Ship = Gen_Get_Cond1('Things',"SystemId=$Sid AND NebSensors>0 AND Whose=$Fid");
+            //echo "Testing on Retreat - is there a ship? $Sid"; var_dump($Ship);
+            if (!$Ship) $T['Retreat'] = 1;
             if (!isset($FS['id']) || (($FS['ScanLevel'] < $ShipScanLevel) && ($N['Nebulae']<=$ShipNebScanLevel))) {
               $SP = ['FactionId'=>$Fid, 'Sys'=> $Sid, 'Scan'=>-1, 'Type'=>0,
                 'Turn'=>$GAME['Turn'], 'ThingId'=>$T['id'], 'GameId'=>$GAMEID];
@@ -621,6 +624,7 @@ function RetreatsSelection() {
             if ($SysHasNeb[$Loc][$Fid]) continue 2;
           } else {
             $Ship = Gen_Get_Cond1('Things',"SystemId=$Loc AND NebSensors>0 AND Whose=$Fid");
+            // echo "Testing on Retreat - is there a ship?"; var_dump($Ship);
             if ($Ship) {
               $SysHasNeb[$Loc][$Fid] = $Ship;
               continue 2;

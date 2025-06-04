@@ -146,7 +146,7 @@ function LinkProps($L) {
   $tprops = $ThingProps[$T['Type']];
   [$Links, $SelLinks, $SelCols ] = Moves_4_Thing($T,1,($tprops & (THING_HAS_GADGETS )));
 
-// var_dump($Links,$SelLinks);
+//  var_dump($Links,$SelLinks);
 
   $ThisSys = $T['SystemId'];
   $N = Get_System($ThisSys);

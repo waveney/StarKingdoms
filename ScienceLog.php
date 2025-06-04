@@ -11,7 +11,7 @@ $GM = Access('GM');
 
 dostaffhead("Science Point Log");
 
-if ($GM && !isset($FACTION)) {
+if ($GM && !isset($FACTION['id'])) {
   $Logs = Gen_Get_All_GameId('SciencePointLog');
   $Fid = 0;
 } else {
@@ -22,7 +22,7 @@ $Facts = Get_Factions();
 $TechCats = [['Unknown','??'],['Engineering','EngineeringSP'],['Physics','PhysicsSP'],['Xenology','XenologySP'],['General','']];
 
 if (!$Logs) {
-  echo "No Science Point Logs recorded yet<p>";
+  echo "<h2>No Science Point Logs recorded yet</h2>";
   dotail();
 }
 

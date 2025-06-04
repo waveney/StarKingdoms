@@ -524,6 +524,7 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0 ) {
   $Fid = $T['Whose'];
   if (!$N) $N = Get_System($T['SystemId']);
   $LinkTypes = Get_LinkLevels();
+  $Test = 0;
 
   $Links = (empty($N['Ref']) ? [] : Get_Links($N['Ref']));
   $SelLinks = [''];
@@ -544,6 +545,7 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0 ) {
 
     foreach ($Links as $Lid=>$L) {
       if (($L['Instability'] + $L['ThisTurnMod']) > $T['Stability']) {
+        if ($Test) echo "Drop $Lid:1<br>";
         unset($Links[$Lid]);
         continue;
       }
@@ -553,6 +555,7 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0 ) {
       if (($L['Concealment'] == 0) || ($FLK['Used']??0) || ($NS['SpaceScan'] >= $L['Concealment'])) {
 
       } else {
+        if ($Test) echo "Drop $Lid:2<br>";
         unset($Links[$Lid]);
         continue;
       }
@@ -578,6 +581,7 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0 ) {
             $LinkText = $FarSysRef;
           } else {
             if ($KnownOnly) {
+              if ($Test) echo "Drop $Lid:3<br>";
               unset($Links[$Lid]);
               continue;
             }
@@ -585,6 +589,7 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0 ) {
           }
         } else {
           if ($KnownOnly) {
+            if ($Test) echo "Drop $Lid:4<br>";
             unset($Links[$Lid]);
             continue;
           }
@@ -595,12 +600,14 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0 ) {
           $LinkText = $FarSysRef;
         } else {
           if ($KnownOnly) {
+            if ($Test) echo "Drop $Lid:5<br>";
             unset($Links[$Lid]);
             continue;
           }
           $LinkText = '?';
         }
       } else {
+        if ($Test) echo "Drop $Lid:6<br>";
         unset($Links[$Lid]);
         continue;
  //          $LinkText = '?';
