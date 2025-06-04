@@ -814,9 +814,9 @@ function Put_Tech(&$now) {
 function Get_Techs($Fact=0,$AllG=0) {
   global $db,$GAMEID,$NOTBY;  // $Fact not used now
   $Ms = [];
-    $res = $db->query("SELECT * FROM Technologies " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0 ") . " ORDER BY Cat,id");
-    if ($res) while ($ans = $res->fetch_assoc()) $Ms[$ans['id']] = $ans;
-    return $Ms;
+  $res = $db->query("SELECT * FROM Technologies " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0 ") . " ORDER BY Cat,id");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ms[$ans['id']] = $ans;
+  return $Ms;
 }
 
 function Get_TechsByCore($Fact=0, $All=0, $AllG=0) {

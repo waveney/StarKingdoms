@@ -315,7 +315,7 @@ function Gain_Science($Who,$What,$Amount,$Why='') { // Ammount is negative to ga
 
 //  var_dump($Fact);
   Put_Faction($Fact);
-  $Spog = ['GameId'=>$GAME['id'],'Turn'=>GAME['Turn'],'FactionId'=>$Who, 'Type'=>$What, 'Number'=>$Amount, 'Note'=>$Why];
+  $Spog = ['GameId'=>$GAME['id'],'Turn'=>$GAME['Turn'],'FactionId'=>$Who, 'Type'=>$What, 'Number'=>$Amount, 'Note'=>$Why];
   Gen_Put('SciencePointLog',$Spog);
 }
 

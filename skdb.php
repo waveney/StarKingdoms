@@ -65,7 +65,7 @@ function Gen_Get_All_Game($Table, $idx='id') {
 }
 
 function Gen_Get_All_GameId($Table, $idx='id') {
-  global $db,$GAMEID;
+  global $db,$GAME,$GAMEID;
   $Ts = [];
   $res = $db->query("SELECT * FROM $Table WHERE GameId=$GAMEID");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans[$idx]] = $ans;
