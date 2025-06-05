@@ -116,7 +116,14 @@
     }
   }
 
-  $SocPs = Gen_Get_Cond('SocialPrinciples', "GameId=$GAMEID " .($GM?'':"AND Whose=$Fid") . " ORDER BY Principle");
+  $SocPs = Gen_Get_Table('SocialPrinciples', " ORDER BY Principle");
+
+  if (!$GM) {
+    foreach ($Worlds as $Wid=>$W) {
+      $Spws = Get_SocialPs($Wid);
+      foreach ($Spws as $Sp) $SocPs[$Sp['Principle']]['Used']=1;
+    }
+  }
 
 //  Register_AutoUpdate('SocialPrinciples',0);
 
@@ -130,6 +137,8 @@
   echo "</thead><tbody>";
 
   foreach ($SocPs as $si=>$SP) {
+    if (!$GM && ($SP['Used']??0)==0) continue;
+
     echo "<tr>";
 
     if ($GM) echo "<td>$si<td>" . $Facts[$SP['Whose']]['Name'];

@@ -250,11 +250,15 @@
 
       if ($OpTypes[$op]['Props'] & OPER_TECH) {
         $With = $TSys['Control'];
+        if (!$With) {
+          echo "<h2>Nobody there to share with...</h2>";
+          break;
+        }
         $Techs = Get_Techs();
         $FactTechs = Get_Faction_Techs($With);
         $MyTechs = Get_Faction_Techs($Fid);
 
-        echo "<h2>Select Technology to Share with: " . $Facts[$With]['Name'] . "</h2>\n";
+        echo "<h2>Select Technology to Share with: " . ($Facts[$With]['Name']??"<h2 class=err>NOBODY</h2>") . "</h2>\n";
         $CTs = Get_CoreTechsByName();
 
         foreach ($CTs as $TT) {

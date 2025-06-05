@@ -609,7 +609,83 @@ function OperationsComplete() {
         }
         break;
 
+      case 'Sponsor Colonists':
+        $Where = $O['SystemId'];
+        $N = Get_System($Where);
+        $T = Get_Things_Cond1(0,"SystemId=$Where AND Instruction=1");
+        if (!$T) {
+          TurnLog($Fid,"The operation to sponsor colonists in " . System_Name($N,$Fid) . " cannot find any on going colonisation to help with.");
+          GMLog("The operation to sponsor colonists in " . System_Name($N,$Fid) . " by Operation $Oid, " .
+            " cannot find any on going colonisation to help with.");
+          break;
+        }
+        $PMod = $Org['OfficeCount'] * Has_Tech($Fid,'Offworld Construction');
+        $T['Progress'] += $PMod;
+        Put_Thing($T);
+        $SocP = Get_SocialP($Org['SocialPrinciple']);
+        TurnLog($Fid,"The colonisation by " . $T['Name'] . " has an extra $PMod progress");
+        FollowUp($Fid,"When the colonisation in " . $N['Ref'] . " finishes, give it an additional level of the social principle: " . $SocP['Name'] );
+        break;
+
       case 'Share Technology':
+        $Tech = Get_Tech($O['Para1']);
+        $Tsys = $O['SystemId'];
+        $N = Get_System($Tsys);
+        $Xfr2 = $N['Control'];
+
+        if ($Xfr2 == 0) {
+          TurnLog($Fid, "You tried to share " . $Tech['Name'] . " in system " . System_Name($N) . " but there is nobody in control to recieve it");
+          GMLog($Facts[$Fid]['Name'] . " tried to share " . $Tech['Name'] . " in system " . System_Name($N) . " but there is nobody in control to recieve it");
+          break;
+        }
+        $Level = $O['Level'];
+        $XFact = $Facts[$Xfr2];
+        $Have = Has_Tech($Xfr2,$Tech['id']);
+        //      var_dump($Tech,$XFact);
+        if ($Tech['Cat'] == 0) {
+          if ($Have >= $Level) {
+            TurnLog($Fid, "You tried to share " . $Tech['Name'] . " at level $Level. with " . $XFact['Name'] . " They already know it.");
+            TurnLog($Xfr2, $Facts[$Fid]['Name'] . " tried to share " . $Tech['Name'] . " at level $Level.  With you - you already have it at level $Have.");
+          } else if ($Have == $Level-1) {
+            $CTech = Get_Faction_TechFT($Xfr2 ,$Tech['id']);
+            $CTech['Level'] = $Level;
+            Put_Faction_Tech($CTech);
+            TurnLog($Fid, "Your have shared " . $Tech['Name'] . " at level $Level.  with " . $XFact['Name']);
+            TurnLog($Xfr2,  $Facts[$Fid]['Name'] . " has shared " . $Tech['Name'] . " at level $Level.  With you.");
+          } else if (0 ) { // Learn lower level option
+            $CTech = Get_Faction_TechFT($Xfr2 ,$Tech['id']);
+            $CTech['Level'] = $Have+1;
+            Put_Faction_Tech($CTech);
+            TurnLog($Fid, "You tried to share " . $Tech['Name'] . " at level $Level. with " . $XFact['Name'] .
+              " They only had it at level $Have.  They learnt level " . ($Have+1));
+            TurnLog($Xfr2,  $Facts[$Fid]['Name'] .  " tried to share " . $Tech['Name'] .
+              " at level $Level with you. You only have it at level $Have  so learnt it at level " . ($Have+1));
+          } else {
+            TurnLog($Fid, "You tried to share " . $Tech['Name'] . " at level $Level. with " . $XFact['Name'] .
+              " They only had it at level $Have - they don't understand what you sent");
+            TurnLog($Xfr2,  $Facts[$Fid]['Name'] .  " tried to share " . $Tech['Name'] .
+              " at level $Level with you. You only have it at level $Have so learnt nothing");
+          }
+        } else { // Supp techs
+          $PRHave = Has_Tech($Xfr2,$Tech['PreReqTech']);
+          if ($Have) {
+            TurnLog($Fid, "You tried to share " . $Tech['Name'] . " with " . $XFact['Name'] . " They already know it.");
+            TurnLog($Xfr2,  $Facts[$Fid]['Name'] . " tried to share " . $Tech['Name'] . " with you - you already have it.");
+          } else if ($PRHave >= $Tech['PreReqLevel']) {
+            $CTech = Get_Faction_TechFT($Xfr2 ,$Tech['id']);
+            $CTech['Level'] = $Level;
+            Put_Faction_Tech($CTech);
+            TurnLog($Fid, "Your have shared " . $Tech['Name'] . " with " . $XFact['Name']);
+            TurnLog($Xfr2,  $Facts[$Fid]['Name'] . " has shared " . $Tech['Name'] . " with you.");
+          } else {
+            TurnLog($Fid, "You tried to share " . $Tech['Name'] . " with " . $XFact['Name'] . " They don't understand what you sent");
+            TurnLog($Xfr2,  $Facts[$Fid]['Name'] .  " tried to share " . $Tech['Name'] . " with you. You don't understand it");
+          }
+        }
+        break;
+
+
+
       case 'Outcompete':
       case 'Send Asteroid Mining Expedition':
       case 'Transfer Resources Ongoing':
@@ -624,7 +700,6 @@ function OperationsComplete() {
       case 'Planetary Recon':
       case 'Police Crackdown':
       case 'Investigate Competition':
-      case 'Sponsor Colonists':
       case 'Gather Life':
       case 'Military Recon Through Wormhole':
 
