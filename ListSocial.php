@@ -121,7 +121,10 @@
   if (!$GM) {
     foreach ($Worlds as $Wid=>$W) {
       $Spws = Get_SocialPs($Wid);
-      foreach ($Spws as $Sp) $SocPs[$Sp['Principle']]['Used']=1;
+      foreach ($Spws as $Sp) {
+        $SocPs[$Sp['Principle']]['Used']=1;
+        $SocPs[$Sp['Principle']]["World:$Wid"]=$Sp['Value'];
+      }
     }
   }
 
@@ -134,6 +137,11 @@
   if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Whose</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Principle</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Description</a>\n";
+  if (!$GM) {
+    foreach($Worlds as $W) {
+      echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>" . World_Name($W) . " </a>\n";
+    }
+  }
   echo "</thead><tbody>";
 
   foreach ($SocPs as $si=>$SP) {
@@ -143,6 +151,12 @@
 
     if ($GM) echo "<td>$si<td>" . $Facts[$SP['Whose']]['Name'];
     echo "<td><a href=SocialEdit.php?id=$si>" . $SP['Principle'] . "</a><td>" . $Parsedown->text(stripslashes($SP['Description']));
+    if (!$GM) {
+      foreach($Worlds as $Wid=>$W) {
+        echo "<td>" . ($SP["World:$Wid"]??'');
+      }
+    }
+
   }
   echo "</table></div>\n";
 

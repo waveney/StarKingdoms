@@ -606,4 +606,19 @@ function WorldFlags(&$W) {
   }
 }
 
+function World_Name(&$W) {
+  switch ($W['ThingType']) {
+    case 1: //Planet
+      $P = Get_Planet($W['ThingId']);
+      return $P['Name'];
+
+    case 2: /// Moon
+      $M = Get_Moon($W['ThingId']);
+      return $M['Name'];
+
+    case 3: // Thing
+      $T = Get_Thing($W['ThingId']);
+      return $T['Name'];
+  }
+}
 ?>
