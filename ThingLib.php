@@ -670,7 +670,14 @@ function Calc_Evasion(&$T) {
   $ev += $TTypes[$T['Type']]['EvasionMod'];
   $SpeedMult = 1;
   foreach ($MMs as $M) {
-    $ev += $MTypes[$M['Type']]['EvasionMod']*$M['Number'];
+    $vev = $MTypes[$M['Type']]['EvasionMod'];
+    if ($vev == 0) continue;
+    if ($vev > -99) {
+      $ev += $MTypes[$M['Type']]['EvasionMod']*$M['Number'];
+    } else {
+      $Rescat = 0;
+      $ev += Mod_ValueSimple($M['Level'],$M['Type'],$Rescat) *$M['Number'];
+    }
   }
 
   if (($T['Variant']??0)) {

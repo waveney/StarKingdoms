@@ -345,41 +345,11 @@ function New_Branch(&$World,$Type,&$O,&$Org) {
   Gen_Put('Branches',$B);
 }
 
-function World_Name($Wid,$Fid=0) {
-  $World = Get_World($Wid);
-  switch ($World['ThingType']) {
-    case 1: // Planet
-      $P = Get_Planet($World['ThingId']);
-      $Sys = $P['SystemId'];
-      $FP = Get_FactionPlanetFS($Fid,$P['id']);
-      $N = Get_System($Sys);
-      $Name = (!empty($FP['Name'])?$FP['Name']:$P['Name']) . " in " . System_Name($N,$Fid);
-      return $Name;
-
-    case 2 : // Moon
-      $M = Get_Moon($World['ThingId']);
-      $FM = Get_FactionMoonFS($Fid,$M['id']);
-      $P = Get_Planet($M['PlanetId']);
-      $Sys = $P['SystemId'];
-      $FP = Get_FactionPlanetFS($Fid,$P['id']);
-      $N = Get_System($Sys);
-      $Name = ($FM['Name']?$FM['Name']:$M['Name']) . " a moon of " . ($FP['Name']?$FP['Name']:$P['Name']) . " in " . System_Name($N,$Fid);
-      return $Name;
-
-    case 3: // Thing
-      $T = Get_Thing($World['ThingId']);
-      $Sys = $T['SystemId'];
-      $N = Get_System($Sys);
-      $Name = $T['Name'] . " currently in " . System_Name($N,$Fid);
-      return $Name;
-  }
-}
-
 function Report_SP_Change($Fid,&$World) {
   include_once("TurnTools.php");
   $Fid = $World['FactionId'];
   if (empty($Fid)) return;
-  TurnLog($Fid,"There has been a change of Social Principles on " . World_Name($World['id'],$Fid));
+  TurnLog($Fid,"There has been a change of Social Principles on " . World_Name_Long($World['id'],$Fid));
 }
 
 function Oper_Costs($lvl) {

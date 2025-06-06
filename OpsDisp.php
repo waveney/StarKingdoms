@@ -234,6 +234,12 @@
     }
 
     $proj[$t][$OrgId] = $Pro;
+    if ($t == $O['TurnStart'] && isset($proj[$t-1][$OrgId]) && isset($proj[$t-1][$OrgId]['Status']) &&
+      ($proj[$t-1][$OrgId]['Status']!='Complete')) {
+        $proj[$t-1][$OrgId]['Status'] = "<b class=Err>Not Complete</b>";
+      }
+
+
     $Pro['Cost'] = 0;
     if ($Pro['Status'] == 'Complete') break;
   }

@@ -610,7 +610,7 @@ function RetreatsSelection() {
   $RefSs = array_flip($SRefs);
 
   if ($Things) {
-    GMLog("<h2>These could retreat - Do check, it does not yet check if there is a Ship with Nebula s to stop one, tick the stop box and say why</h2>");
+    GMLog("<h2>These could retreat - Do check, tick the stop box and say why if needed</h2>");
     GMLog("<form method=Post action=TurnActions.php?ACTION=DoStage2>" . fm_hidden('Stage','Retreats Selection'));
     GMLog("<table border><tr><th>Whose<th>What<th>Reason<th>From<th>To<th>Stop<th>Why");
     foreach ($Things as $Tid=>$T) {

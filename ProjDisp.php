@@ -590,6 +590,10 @@
 */
 
           $proj[$t][$Hi][$Di] = $Pro;
+          if ($t == $P['TurnStart'] && isset($proj[$t-1][$Hi][$Di]) && isset($proj[$t-1][$Hi][$Di]['Status']) &&
+            ($proj[$t-1][$Hi][$Di]['Status']!='Complete')) {
+              $proj[$t-1][$Hi][$Di]['Status'] = "<b class=Err>Not Complete</b>";
+          }
           $Pro['Cost'] = 0;
           if ($Pro['Status'] == 'Complete') break;
         }

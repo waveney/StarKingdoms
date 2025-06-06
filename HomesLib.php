@@ -606,7 +606,7 @@ function WorldFlags(&$W) {
   }
 }
 
-function World_Name(&$W) {
+function World_Name_Short(&$W) {
   switch ($W['ThingType']) {
     case 1: //Planet
       $P = Get_Planet($W['ThingId']);
@@ -621,4 +621,36 @@ function World_Name(&$W) {
       return $T['Name'];
   }
 }
+
+function World_Name_Long($Wid,$Fid=0) {
+  $World = Get_World($Wid);
+  switch ($World['ThingType']) {
+    case 1: // Planet
+      $P = Get_Planet($World['ThingId']);
+      $Sys = $P['SystemId'];
+      $FP = Get_FactionPlanetFS($Fid,$P['id']);
+      $N = Get_System($Sys);
+      $Name = (!empty($FP['Name'])?$FP['Name']:$P['Name']) . " in " . System_Name($N,$Fid);
+      return $Name;
+
+    case 2 : // Moon
+      $M = Get_Moon($World['ThingId']);
+      $FM = Get_FactionMoonFS($Fid,$M['id']);
+      $P = Get_Planet($M['PlanetId']);
+      $Sys = $P['SystemId'];
+      $FP = Get_FactionPlanetFS($Fid,$P['id']);
+      $N = Get_System($Sys);
+      $Name = ($FM['Name']?$FM['Name']:$M['Name']) . " a moon of " . ($FP['Name']?$FP['Name']:$P['Name']) . " in " . System_Name($N,$Fid);
+      return $Name;
+
+    case 3: // Thing
+      $T = Get_Thing($World['ThingId']);
+      $Sys = $T['SystemId'];
+      $N = Get_System($Sys);
+      $Name = $T['Name'] . " currently in " . System_Name($N,$Fid);
+      return $Name;
+  }
+}
+
+
 ?>

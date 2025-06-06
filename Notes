@@ -20,7 +20,6 @@ TODO
 
 NEW GAME FEATURES & BUGS
 16 All Operations to automate (list when started)
-      case 'Share Technology':
       case 'Outcompete':
       case 'Send Asteroid Mining Expedition':
       case 'Transfer Resources Ongoing': 
@@ -33,7 +32,6 @@ NEW GAME FEATURES & BUGS
       case 'Planetary Recon':
       case 'Police Crackdown':
       case 'Investigate Competition':
-      case 'Sponsor Colonists':
       Gather Life
   
 17 Where has X come from (from last line in things history) - add to see after movement (filter for unknown wormhole)
@@ -72,12 +70,13 @@ So I'd have expected that to update the cached survey
 411 Point Defence cannons - 
 413 Modify Anomaly progress
 414 Improve Pay benevolence
-421 Anomalies stage 2's => found
-422 Automate Sposoor colonists
-425 Log science points - part
-434 Judith operation weird 
+436
 
 
+[Wed Jun 04 13:59:30.362004 2025] [proxy_fcgi:error] [pid 2201963:tid 140476761990912] [client 45.155.109.73:0] AH01071: Got error 'PHP message: PHP Warning:  
+Undefined array key 0 in /var/www/vhosts/starkingdoms.uk/httpdocs/OpsNew.php on line 257; PHP message: PHP Warning:  
+Trying to access array offset on value of type null in /var/www/vhosts/starkingdoms.uk/httpdocs/OpsNew.php on line 257', 
+referer: https://starkingdoms.uk/OpsNew.php?t=20&O=9&Stage=1&op=5
 
 
 

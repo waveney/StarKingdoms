@@ -139,7 +139,7 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Description</a>\n";
   if (!$GM) {
     foreach($Worlds as $W) {
-      echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>" . World_Name($W) . " </a>\n";
+      echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>" . World_Name_Short($W) . " </a>\n";
     }
   }
   echo "</thead><tbody>";
@@ -161,7 +161,6 @@
   echo "</table></div>\n";
 
   if ($GM) echo "<h2><a href=ListSocial.php?ACTION=Add>Add Social Principle</a></h2>";
-
 
   dotail();
 

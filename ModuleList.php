@@ -36,6 +36,9 @@
   echo "Fire order: 5 = normal, 1 early, 9 late, -1 not first round.  Fire rate 1= every round, 0=once, 5=once every 5 rounds, -2 double first round<p>";
   echo "Properties: 1 = Leveled, 2=Non Std Def, 4=Non Std Atk, 8=Blueprints only - invalid real things, 16=Not Visible unless have based on tech<p>";
   echo "Click on the Desc by each type to edit the description.<p>";
+
+  echo "If Evasion is -100 it will use a formula<p>";
+
   echo "<form method=post action=ModuleList.php>";
   if ($AllG) echo fm_hidden('AllGames',1);
 

@@ -532,7 +532,7 @@ function OperationsComplete() {
         $SPW = Gen_Get_Cond1('SocPsWorlds',"Principle=" . $O['Para1'] . " AND World=$Wid");
 
         if (isset($SPW['Value']) && ($SPW['Value'] > $O['Para2'])) {
-          TurnLog($Fid,"Spread the Word of '" . $SocP['Principle']  . "' to " . World_Name($Wid,$Fid) . " failed it is already at " . $SPW['Value']);
+          TurnLog($Fid,"Spread the Word of '" . $SocP['Principle']  . "' to " . World_Name_Long($Wid,$Fid) . " failed it is already at " . $SPW['Value']);
           GMLog("Spread the Word of '" . $SocP['Principle']  . "' to " . World_Name($Wid,$Fid) . " by " . $Org['Name'] . " of " .
             $Facts[$Fid]['Name'] . " failed it is already at " . $SPW['Value']);
 
@@ -543,7 +543,7 @@ function OperationsComplete() {
             $SPW = ['Principle'=>$O['Para1'],'World'=>$Wid,'Value'=>1];
           }
           Gen_Put('SocPsWorlds',$SPW);
-          TurnLog($Fid,"Spread the Word of '" . $SocP['Principle']  . "' to " . World_Name($Wid,$Fid) . " succeeded it is now " . $SPW['Value']);
+          TurnLog($Fid,"Spread the Word of '" . $SocP['Principle']  . "' to " . World_Name_Long($Wid,$Fid) . " succeeded it is now " . $SPW['Value']);
 
           if ($World['FactionId'] != $Fid) {
             Report_SP_Change($Fid,$World);
@@ -558,9 +558,9 @@ function OperationsComplete() {
         $SPW = Gen_Get_Cond1('SocPsWorlds',"Principle=" . $O['Para1'] . " AND World=$Wid");
 
         if ($SPW['Value'] > $O['Para2']) {
-          TurnLog($Fid,"Burn the Heretics of '" . $SocP['Principle']  . "' to " . World_Name($Wid,$Fid) . " failed it is already at " .
+          TurnLog($Fid,"Burn the Heretics of '" . $SocP['Principle']  . "' to " . World_Name_Long($Wid,$Fid) . " failed it is already at " .
             $SPW['Value']);
-          GMLog("Burn the Heretics of '" . $SocP['Principle']  . "' to " . World_Name($Wid,$Fid) . " by " . $Org['Name'] . " of " .
+          GMLog("Burn the Heretics of '" . $SocP['Principle']  . "' to " . World_Name_Long($Wid,$Fid) . " by " . $Org['Name'] . " of " .
             $Facts[$Fid]['Name'] . " failed it is already at " . $SPW['Value']);
 
         } else {
@@ -568,17 +568,17 @@ function OperationsComplete() {
             $SPW['Value'] = max(0,$SPW['Value']-1);
             if ($SPW['Value']) {
               Gen_Put('SocPsWorlds',$SPW);
-              TurnLog($Fid,"Burn the Heretics of '" . $SocP['Principle']  . "' on " . World_Name($Wid,$Fid) . " succeeded it is now " .
+              TurnLog($Fid,"Burn the Heretics of '" . $SocP['Principle']  . "' on " . World_Name_Long($Wid,$Fid) . " succeeded it is now " .
                 $SPW['Value']);
             } else {
               db_delete('SocPsWorlds',$SPW['id']);
-              TurnLog($Fid,"Burn the Heretics '" . $SocP['Principle']  . "' on " . World_Name($Wid,$Fid) . " has been elminated");
+              TurnLog($Fid,"Burn the Heretics '" . $SocP['Principle']  . "' on " . World_Name_Long($Wid,$Fid) . " has been elminated");
             }
             if ($World['FactionId'] != $Fid) {
               Report_SP_Change($Fid,$World);
             }
           } else {
-            TurnLog($Fid,"Burn the Heretics of '" . $SocP['Principle']  . "' on " . World_Name($Wid,$Fid) .
+            TurnLog($Fid,"Burn the Heretics of '" . $SocP['Principle']  . "' on " . World_Name_Long($Wid,$Fid) .
               " failed as there was no adherence to it left to reduce." );
 
           }

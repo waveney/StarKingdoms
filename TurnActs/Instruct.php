@@ -996,7 +996,7 @@ function InstructionsComplete() {
                   TurnLog($Fid , "Completing " . $A['Name'] . " has opened up another anomaly that could be studied: " . $XA['Name'] .
                     " in " . $Systems[$XA['SystemId']] . "\n" .  ParseText($XA['Description']) .
                     "\nIt will take " . $XA['AnomalyLevel'] . " scan level actions to complete.\n\n");
-                  GMLog($Facts[$Fid]['Name'], "Have been told about anomaly " . $XA['Name']);
+                  GMLog($Facts[$Fid]['Name'] . " Have been told about anomaly " . $XA['Name']);
                 }
               }
             }
