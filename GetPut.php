@@ -1424,6 +1424,13 @@ function Get_FactionFactions($who) {
   return $Ts;
 }
 
+function Get_FactionFactionFF($who,$with) {
+  global $db,$GAMEID;
+  $res = $db->query("SELECT * FROM FactionFaction WHERE FactionId1=$who AND FactionId2=$with");
+  if ($res) while ($ans = $res->fetch_assoc()) return $ans;
+  return [];
+}
+
 function Get_FactionFactionsCarry($who) {
   global $db,$GAMEID;
   $Ts = [];

@@ -987,7 +987,7 @@ function is_in_space(&$T) {
 }
 
 function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0) {
-  global $Advance,$FACTION,$ThingInstrs;
+  global $Advance,$FACTION,$ThingInstrs,$Relations;
   static $ThingTypes;
   static $Factions;
   static $OpProps;
@@ -1094,6 +1094,21 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
           $txt .= " ( " . $Locations[$T['WithinSysLoc']] . " ) ";
         } else if ($GM) {
           $txt .= " ( Unknown Location " . $T['WithinSysLoc'] . " ) ";
+        }
+      }
+
+      if ($Div) {
+//        var_dump($Fid, $T['Whose']);
+        if ($T['Whose'] == $Fid) {
+          $txt .=  " <span style=background:limegreen> Yours </span>";
+        } else {
+          $FA = Get_FactionFactionFF($T['Whose'],$Fid);
+
+          $Rel = $FA['Relationship']??5;
+          if (!isset($Relations[$Rel])) $Rel = 5;
+          $R = $Relations[$Rel];
+// var_dump($FA,$R);
+          $txt .=  " <span style=background:" . $R[1] . ">" . $R[0] . " </span>";
         }
       }
 

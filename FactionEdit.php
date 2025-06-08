@@ -48,6 +48,17 @@ function Show_Faction(&$F,$Mode) {
 
   if (Access('God')) echo "You can only delete a faction with -99 credits<br>";
 
+  echo "<button class='floatright FullD' onclick=\"($('.FullD').toggle())\">Show Help</button>";
+
+  echo "<div class=FullD hidden>Features: <table Border><th>Feature<th>Default<th>Notes";
+  echo "<tr><td>BackHereHelp<td>1<td>Set to 0 to reduce the help at the top of the operations and projects displays";
+  echo "<tr><td>HideAnomsOnMap<td>1<td>Set to 0 to not show the unanalysed Anomalies on the map";
+  echo "<tr><td>Operations_Forward<td>10<td>How many forward turns to display operations without the all turns option selected";
+  echo "<tr><td>Operations_Back<td>-1<td>How many previous turns to display operations without the all turns option selected";
+  echo "<tr><td>Projects_Forward<td>10<td>How many forward turns to display projects without the all turns option selected";
+  echo "<tr><td>Projects_Back<td>-1<td>How many previous turns to display projects without the all turns option selected";
+  echo "</table></div><p>";
+
   echo "<form method=post id=mainform enctype='multipart/form-data' action=FactionEdit.php>";
   if ($GM) {
     echo "<h2>GM: <a href=FactionEdit.php?id=$Fid&FORCE>This page in Player Mode</a></h2>" .
