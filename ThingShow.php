@@ -1450,8 +1450,9 @@ function Show_Thing(&$T,$Force=0) {
         foreach($Anoms as $A) {
           $Aid = $A['id'];
 
-          $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid AND State=1");
+          $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid AND ( State=1 OR State=2)");
           if (empty($FA['id'])) continue;
+          if ( ($A['OtherReq']??0) && $FA['State']==1) continue; // It has other reqs and they are not met
           if ($FA['Progress'] < $A['AnomalyLevel']) {
             $LocGr = intdiv($A['WithinSysLoc'],100);
  //           echo "<tr><td>"; var_dump($tprops,$LocGr);
@@ -1839,7 +1840,7 @@ function Show_Thing(&$T,$Force=0) {
       if ($Cost>0 && ($T['Progress'] == 0)) {
         echo " - Will cost " . Credit() . ($GM?fm_number0('',$T,'InstCost'):$T['InstCost']) . " this turn";
       }
-      if ($T['Instruction'] != $T['CurInst']) {
+      if ($T['Instruction'] != abs($T['CurInst'])) {
         $T['CurInst'] = $T['Instruction'];
         $T['Progress'] = 0;
       }
@@ -1849,7 +1850,7 @@ function Show_Thing(&$T,$Force=0) {
   }
 
   if (Access('God') && !$IsaTeam) {
-    echo "<tr><td>GOD - Instruction:<td>" . fm_select($ThingInstrs,$T,'Instruction') . "<td>Stored: "  . fm_select($ThingInstrs,$T,'CurInst');
+    echo "<tr><td>GOD - Instruction:<td>" . fm_select($ThingInstrs,$T,'Instruction') . fm_number1('Stored',$T,'CurInst');
     echo fm_number1('Dist1',$T,'Dist1') . fm_number1('Dist2',$T,'Dist2') . fm_number1('Spare1',$T,'Spare1');
     if (($T['ProjectId'] ?? 0) && $T['BuildState'] > BS_BUILDING)
       echo "<tr>" . fm_number('Prog/Anom Id',$T,'ProjectId') . "<td colspan=2>Reminder progress from Anomaly itself";

@@ -67,7 +67,10 @@
       $N = Get_System($A['SystemId']);
       echo "<tr><td>" . $A['Name'] . "<td><a href=SurveyReport.php?R=" . $N['Ref'] . ">" . $N['Ref'] . "<td>$Loc";
 
-      if (($A['Complete']<2) || ($FA['State']>1)) {
+//      var_dump($FA['State'], $A);
+      if (($A['OtherReq']??0) && ($FA['State']==1)) {
+        echo "<td style='Background:orange'>Found, but has requirements to analyse you don't yet meet";
+      } else if (($A['Complete']<2) || ($FA['State']>1)) {
         echo "<td style='Background:" . $AnStateCols[$FA['State']] . ";'>" . $FAnomalyStates[$FA['State']];
       } else {
         echo "<td style='Background:coral'>" . $GAnomStates[$A['Complete']] . ($A['Complete'] ==2?' by someone else': ' for some reason');

@@ -601,26 +601,27 @@ function AffectActivities() {
     GMLog( "<table border><tr><td>Activity<td>Who<td>Where<td>Progress<td>Pause<td>Cancel<td>Reason");
     foreach ($Things as $T) {
       $Tid = $T['id'];
-      GMLog( "<tr><td><a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a> a " . $T['Class'] . "<td>" . $Facts[$T['Whose']]['Name'] .
+      GMLog( "<tr><td><a href=ThingEdit.php?id=$Tid>" . $T['Name'] . " a " . $T['Class'] . "</a> doing - " . $ThingInstrs[abs($T['Instruction'])] .
+        "<td>" . $Facts[$T['Whose']]['Name'] .
         "<td>" . ($Systems[$T['SystemId']]['Ref']??'??') . "<td>");
       switch ($ThingInstrs[abs($T['Instruction'])]) {
         case 'Analyse Anomaly': // Analyse
           $Aid = $T['ProjectId'];
           $Anom = Get_Anomaly($Aid);
           $FA = Gen_Get_Cond1('FactionAnomaly',"FactionId=" . $T['Whose'] . " AND AnomalyId=$Aid");
-          GMLog( $FA['Progress']. "/" . $Anom['AnomalyLevel'] . "<td>" . fm_checkbox('',$_REQUEST,"Pause:Oper:$Oid") .
-          "<td>" . fm_text1('',$_REQUEST,"Reason:Oper:$Oid")); // No Cancel
+          GMLog( $FA['Progress']. "/" . $Anom['AnomalyLevel'] . "<td>" . fm_checkbox('',$_REQUEST,"Pause:Inst:$Tid") .
+          "<td>" . fm_text1('',$_REQUEST,"Reason:Oper:$Tid")); // No Cancel
           break;
 
         case 'Collaborative Space Construction': // Progress is elsewhere, only cancel is meaningful
         case 'Collaborative DSC':
         case 'Collaborative Planetary Construction':
-          GMLog( "<td><td>" . fm_checkbox('',$_REQUEST,"Cancel:Oper:$Oid") . fm_text1('',$_REQUEST,"Reason:Oper:$Oid"));
+          GMLog( "<td><td>" . fm_checkbox('',$_REQUEST,"Cancel:Inst:$Tid") . fm_text1('',$_REQUEST,"Reason:Inst:$Tid"));
           break;
 
         default:
-          GMLog( $T['Progress'] . "/" . $T['ActionsNeeded'] . "<td>" . fm_checkbox('',$_REQUEST,"Pause:Oper:$Oid") .
-            "<td>" . fm_checkbox('',$_REQUEST,"Cancel:Oper:$Oid") . fm_text1('',$_REQUEST,"Reason:Oper:$Oid"));
+          GMLog( $T['Progress'] . "/" . $T['ActionsNeeded'] . "<td>" . fm_checkbox('',$_REQUEST,"Pause:Inst:$Tid") .
+            "<td>" . fm_checkbox('',$_REQUEST,"Cancel:Inst:$Tid") . fm_text1('',$_REQUEST,"Reason:Inst:$Tid"));
           break;
       }
     }
@@ -637,6 +638,7 @@ function AffectActivities() {
 function AffectActivitiesActions() {
   global $GAME,$Project_Statuses,$ThingInstrs;
   $mtch = [];
+var_dump($_REQUEST);
   foreach ($_REQUEST as $R=>$V) {
     if (preg_match('/(\w*):(\w*):(\d*)/', $R, $mtch)) {
       [$junk,$action,$area,$id] = $mtch;
@@ -668,7 +670,7 @@ function AffectActivitiesActions() {
 
               $Reason = ($_REQUEST["Reason:Inst:$id"]??'Unknown reason');
               TurnLog($T['Whose'], "Instruction: " . $ThingInstrs[abs($T['Instruction'])] . " had no progress because of: $Reason");
-
+var_dump($T);
               Put_Thing($T);
 
               break;

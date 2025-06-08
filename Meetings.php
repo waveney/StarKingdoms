@@ -41,14 +41,14 @@ function ForceReport($Sid,$Cat) {
   global $Facts, $Homes, $TTypes, $ModTypes, $N, $Techs, $ThingProps,$ARMY ;
   $Things = Get_Things_Cond(0,"SystemId=$Sid AND ( BuildState=" . BS_SERVICE . " OR BuildState=" . BS_COMPLETE . ") AND LinkId>=0 ORDER BY Whose");
   $LastF = $Home = $Control = -1;
-  $txt = $ftxt = $htxt = $Battct = '';
+  $txt = $ftxt = $htxt = $Battct = $rpt = '';
   $TMsk = ($Cat=='G'?1:2);
   $PlanMoon = [];
   $FirePower = $Wid = $Bat = 0;
   $HomeType = "Unknown";
 
   if ($Cat == 'G') {
-    $PTD = Get_PlanetTypes();  // ONLY works for single taget at present
+    $PTD = Get_PlanetTypes();  // ONLY works for single target at present
     $Planets = Get_Planets($Sid);
     foreach($Planets as $Pl) {
       if ($PTD[$Pl['Type']]['Hospitable']) {

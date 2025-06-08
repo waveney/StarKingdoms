@@ -103,7 +103,7 @@
   echo "<tr><td colspan=8><h2>Factions:</h2>";
   echo "<tr><td>Faction<td colspan=3>State<td>Progress<td colspan=7>Notes\n";
 
-  if (empty($A['OtherReq'])) unset($FAnomalyStates[2]);
+//  if (empty($A['OtherReq'])) unset($FAnomalyStates[2]);
   if (empty($A['Properties'])) unset($FAnomalyStates[-1]);
 
   foreach ($Facts as $F) {

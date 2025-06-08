@@ -9,7 +9,7 @@
   dostaffhead("List Anomalies");
 
   global $db, $GAME, $GAMEID;
-  global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$GAnomStates;
+  global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$GAnomStates,$FAnomalyStates;
 
   $As = Gen_Get_Cond('Anomalies',"GameId=$GAMEID ORDER BY SystemId");
 

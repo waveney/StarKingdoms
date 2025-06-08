@@ -51,33 +51,11 @@ NEW GAME FEATURES & BUGS
     to limit what we can see, its not a problem just yet, but I can forsee mine getting very long very quick (Ross)
 318 Planet/moon Day length - part of own system development code - also better planet image gallery
 323 Guide to Faction Features
-333 Sounds like a cached data issue
-I don't know why though since it's telling me you scanned L2 on turn 11
-So I'd have expected that to update the cached survey
-
-
 352 New ship (copy of) extra page for name before project save
-356 Block anomaly progress - Ross 25/3 @9:24
 358 Luke's trade goods - achatgm 28/3/ @13:06
-359 Projects/Operatios overlap...
-
-360 Portioss a Constructor	Federation	NSK	0/10 ,- should be 6/10
-362 Pause instruction
-367 Vashou 8/4 @13:09
-370
-390 Add Thing Type
 393 LVX survey report &wormholes - from clans
-411 Point Defence cannons - 
-413 Modify Anomaly progress
 414 Improve Pay benevolence
 436
-
-
-[Wed Jun 04 13:59:30.362004 2025] [proxy_fcgi:error] [pid 2201963:tid 140476761990912] [client 45.155.109.73:0] AH01071: Got error 'PHP message: PHP Warning:  
-Undefined array key 0 in /var/www/vhosts/starkingdoms.uk/httpdocs/OpsNew.php on line 257; PHP message: PHP Warning:  
-Trying to access array offset on value of type null in /var/www/vhosts/starkingdoms.uk/httpdocs/OpsNew.php on line 257', 
-referer: https://starkingdoms.uk/OpsNew.php?t=20&O=9&Stage=1&op=5
-
 
 
 
