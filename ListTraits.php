@@ -23,7 +23,7 @@
 
 
   echo "<h1>List of all Traits</h1>";
-  echo "Game No : Faction <b>(A)</b> = Automated<P>";
+  echo "Game No : Faction (:Cn) <b>(A)</b> = Automated - Cn means concealed value n<P>";
 
   $Factions = Gen_Get_Cond('Factions','id>0' . ($AllG?'':" AND GameId=$GAMEID"));
   foreach($Factions as $F) {
@@ -43,7 +43,7 @@
     foreach($TraitUse as $Use) {
       [$Fid,$TN,$Auto,$Conceal] = $Use;
       echo ($use++?', ':'') . "<a href=FactionEdit.php?F=$Fid>" . $Facts[$Fid]['GameId']  . ':' . $Facts[$Fid]['Name']
-      . ($Conceal?"<span class=red>C:$Conceal</span>":" 0") . ($Auto?['','<b>(A)</b>','<b>(P)</b>'][$Auto]:'') . "</a>";
+      . ($Conceal?"<span class=red>C:$Conceal</span>":"") . ($Auto?['','<b>(A)</b>','<b>(P)</b>'][$Auto]:'') . "</a>";
     }
   }
 

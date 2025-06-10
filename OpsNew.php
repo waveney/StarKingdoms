@@ -496,6 +496,8 @@
       }
       if (Has_Trait($Fid,'IMPSEC') && strstr($OpTypes[$op]['Name'],'Recon')) $Mod--;
 
+      if (Has_Trait($Fid,'Friends in All Places') && (($OpTypes[$op]['Props'] & OPER_NOT_FRIENDS) == 0)) $Mod--;
+
       echo "This operation is at a level of $BaseLevel from distance.  ";
       if ($Mod) {
         $BaseLevel += $Mod;

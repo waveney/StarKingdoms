@@ -604,14 +604,15 @@ function Get_Thing($id) {
 }
 
 function Put_Thing(&$now) {
-  global $db,$GAMEID;
+  global $db,$GAME;
   if (isset($now['id'])) {
     $e=$now['id'];
     $Cur = Get_Thing($e);
     return Update_db('Things',$Cur,$now);
   } else {
-    $now['GameId'] = $GAMEID;
+    $now['GameId'] = $GAME['id'];
     $now['LastMoved'] = -1;
+    $now['WhenBuilt'] = $GAME['Turn'];
     return $now['id'] = Insert_db ('Things', $now );
   }
 }

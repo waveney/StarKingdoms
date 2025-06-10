@@ -2,23 +2,24 @@
 include_once("sk.php");
 include_once("GetPut.php");
 
-define('OPER_LEVEL',          0xf);
-define('OPER_TECH',          0x10);
-define('OPER_SOCP',          0x20);
-define('OPER_OUTPOST',       0x40);
-define('OPER_CREATE_OUTPOST',0x80);
-define('OPER_BRANCH',       0x100);
-define('OPER_HIDDEN',       0x200);
-define('OPER_SOCPTARGET',   0x400);
-define('OPER_WORMHOLE',     0x800);
-define('OPER_CIVILISED',   0x1000);
-define('OPER_MONEY',       0x2000);
-define('OPER_DESC',        0x4000);
-define('OPER_ANOMALY',     0x8000);
-define('OPER_SCIPOINTS',  0x10000);
-define('OPER_ALLORGS',    0x20000);
-define('OPER_LEVELMOD',   0x40000);
-define('OPER_COLONISTS',  0x80000);
+define('OPER_LEVEL',             0xf);
+define('OPER_TECH',             0x10);
+define('OPER_SOCP',             0x20);
+define('OPER_OUTPOST',          0x40);
+define('OPER_CREATE_OUTPOST',   0x80);
+define('OPER_BRANCH',          0x100);
+define('OPER_HIDDEN',          0x200);
+define('OPER_SOCPTARGET',      0x400);
+define('OPER_WORMHOLE',        0x800);
+define('OPER_CIVILISED',      0x1000);
+define('OPER_MONEY',          0x2000);
+define('OPER_DESC',           0x4000);
+define('OPER_ANOMALY',        0x8000);
+define('OPER_SCIPOINTS',     0x10000);
+define('OPER_ALLORGS',       0x20000);
+define('OPER_LEVELMOD',      0x40000);
+define('OPER_COLONISTS',     0x80000);
+define('OPER_NOT_FRIENDS',  0x100000);
 
 
 define('ORG_HIDDEN',1);

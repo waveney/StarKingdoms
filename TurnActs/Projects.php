@@ -142,11 +142,12 @@ function StartProjects() {
             Put_Project($P);
           }
           $T['BuildState'] = BS_BUILDING; // Building
-          $T['SystemId'] = $Where[0];
+          $T['SystemId'] = $T['WhereBuilt'] = $Where[0];
           $T['WithinSysLoc'] = $Where[1];
           $T['CurHealth'] = $T['OrigHealth'];
         } else {
-          $T = ['Whose'=>$Fid, 'Type'=>$P['ThingType'], 'BuildState'=>1, 'SystemId' => $Where[0],  'WithinSysLoc' => $Where[1]];
+          $T = ['Whose'=>$Fid, 'Type'=>$P['ThingType'], 'BuildState'=>1, 'SystemId' => $Where[0],  'WithinSysLoc' => $Where[1],
+            $T['WhereBuilt'] =>$Where[0]];
         }
         $T['ProjectId'] = $P['id'];
         Calc_Scanners($T);
@@ -693,7 +694,7 @@ function ProjectsCompleted($Pass) {
             for ($Dup = 2;$Dup<=$Number;$Dup++) {
               $DT = Thing_Duplicate($T['id']);
               $DT['Name'] = "$OrigName $Dup";
-              $DT['SystemId'] = $T['SystemId'];
+              $DT['SystemId'] = $DT['WhereBuilt'] = $T['SystemId'];
               $DT['WithinSysLoc'] = $T['WithinSysLoc'];
               $DT['BuildState'] = BS_COMPLETE;
               Put_Thing($DT);
@@ -783,7 +784,7 @@ function ProjectsCompleted($Pass) {
               break;
           }
           $NT = ['GameId'=>$GAME['id'], 'Type'=> 15, 'Level'=> 1, 'SystemId'=>$H['SystemId'], 'WithinSysLoc' => $H['WithinSysLoc'], 'Whose'=>$P['FactionId'],
-            'BuildState'=>BS_COMPLETE, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>($PH['Name'] . " warp gate" )];
+            'BuildState'=>BS_COMPLETE, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>($PH['Name'] . " warp gate") , 'WhereBuilt'=>$H['SystemId']];
           Put_Thing($NT);
           TurnLog($Fid,"A warp gate has been made for " . $PH['Name']);
 

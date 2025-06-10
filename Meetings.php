@@ -273,10 +273,9 @@ function SystemSee($Sid) {
           }
 
           if (($T['CurHealth'] == 0) && ($ThingProps[$T['Type']] & (THING_HAS_SHIPMODULES | THING_HAS_ARMYMODULES)) != 0) {
-            $T['BuildState'] = BS_EX;
             TurnLog($T['Whose'],$T['Name'] . " took $RV damage and has been destroyed\n",$T);
             GMLog($T['Name'] . " took $RV damage and has been destroyed\n",$T);
-            Empty_Thing($T);
+            Thing_Destroy($T);
           } else {
             TurnLog($T['Whose'],$T['Name'] . " took $RV damage\n",$T);
           }

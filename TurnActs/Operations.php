@@ -120,12 +120,16 @@ function StartOperations() {
     }
 
     if (($Otp & OPER_LEVELMOD) == 0) { // reclac level
-    $Mod = ($Otp & OPER_LEVEL);
+      $Mod = ($Otp & OPER_LEVEL);
       if ($Mod >=4) {
         $Mod = ($Mod&3) + $Level*($Mod>>2);
       }
 
+      if (Has_Trait($Fid,'IMPSEC') && strstr($OpTypes[$O['Type']]['Name'],'Recon')) $Mod--;
+      if (Has_Trait($Fid,'Friends in All Places') && (($OpTypes[$O['Type']]['Props'] & OPER_NOT_FRIENDS) == 0)) $Mod--;
+
       $BaseLevel = Op_Level($OrgId,$Wh) + $Mod + $O['GMLock'];
+      $BaseLevel = max(1,$BaseLevel);
 
       if ($BaseLevel != $O['Level']) {
         $O['ProgNeeded'] = $ProgNeed = Oper_Costs($BaseLevel)[0];

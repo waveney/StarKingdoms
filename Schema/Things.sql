@@ -72,5 +72,7 @@ CREATE TABLE `Things` (
   `ActDamage` int NOT NULL,
   `ToHitBonus` int NOT NULL,
   `Conflict` int NOT NULL,
+  `WhereBuilt` int NOT NULL,
+  `WhenBuilt` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

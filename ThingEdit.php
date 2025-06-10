@@ -213,7 +213,7 @@ global $FACTION;
       $Wid = $_REQUEST['Wid'];
       $World = Get_World($Wid);
       $Home = Get_ProjectHome($World['Home']);
-      $T['SystemId'] = $Home['SystemId'];
+      $T['SystemId'] = $T['WhereBuilt'] = $Home['SystemId'];
       $T['WithinSysLoc'] = $Home['WithinSysLoc'];
       $T['BuildState'] = BS_COMPLETE;
       Put_Thing($T);
@@ -273,9 +273,7 @@ global $FACTION;
       $T = Get_Thing($_REQUEST['id']);
       $T['Control'] = 0;
       $T['CurHealth'] = 0;
-      $T['BuildState'] = BS_EX;  // Ex
-      Put_Thing($T);
-      Empty_Thing($T);
+      Thing_Destroy($T);
       break;
 
     case 'Warp Out':

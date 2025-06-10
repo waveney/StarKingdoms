@@ -1246,7 +1246,7 @@ function InstructionsComplete() {
         if ($D['Type'] == 0) $D['Type'] = 1;
         Put_District($D);
 
-        $T['BuildState'] = BS_EX;
+        Thing_Destroy($T);
         TurnLog($Who,$P['Name'] . " on " . $N['Ref'] . " has plantary mining established");
         GMLog($P['Name'] . " on " . $N['Ref'] . " has plantary mining by " . $Facts[$Who]['Name'],1);
         break; // The making homes and worlds in a later stage completes the colonisation I hope
@@ -1350,7 +1350,7 @@ function InstructionsComplete() {
         $Wrecks = Get_Things_Cond(0,"SystemId=" . $T['SystemId'] . " AND BuildState>" . BS_COMPLETE);
         $SalvageLevel = Has_Tech($Who,'Salvage Rigs');
         $HasWreck = Has_Tech($Who,'Wreckage Analysis');
-        $TotMoney = 0;
+        $TotMoney = $Xenology = 0;
         $ModTypes = Get_ModuleTypes();
         $DistTypes = Get_DistrictTypes();
 
@@ -1358,11 +1358,12 @@ function InstructionsComplete() {
 
         foreach ($Wrecks as $W) {
           if (($TTypes[$W['Type']]['Properties'] & (THING_HAS_DISTRICTS + THING_HAS_SHIPMODULES)) != 0) {
-            $Money = 0;
+            $Money = $Xeno = 0;
             $Wreck = [];
             switch ($TTypes[$W['Type']]['Name']) {
 
               case 'Military Ship':
+              case 'Ship':
               case 'Support Ship' :
               case 'Civilian Ship' :
               case 'Satellite Defences' :
@@ -1397,15 +1398,24 @@ function InstructionsComplete() {
                 break;
             }
             if ($Money) {
+              if (Has_Trait($W['Whose'],'Organic Units')) {
+                $Money = ceil($Money/4);
+                $Xeno = $W['Level'];
+                $Xenology += $Xeno;
+              }
+
               $TotMoney += $Money;
               TurnLog($Who,"The wreckage of the " . (empty($W['Name'])? ("Unknown Thing #" . $W['id']) : $W['Name']) .
-                " has been salvaged.  in " . $N['Ref'] . " Gaining " . Credit() . $Money );
+                " has been salvaged.  in " . $N['Ref'] . " Gaining " . Credit() . $Money . ($Xeno?" and $Xeno Xenology points":''));
               if ($Wreck) TurnLog($Who, "It had: " . implode(', ', $Wreck));
             }
           }
         }
         if ($TotMoney) {
           Spend_Credit($Who,- $TotMoney, "Salvage from " . $N['Ref']);
+          if ($Xenology) {
+            Gain_Science($Who,3, $Xenology,"Salvage from ". $N['Ref']);
+          }
         } else {
           TurnLog($Who,"Salvage was attempted in " .  $N['Ref'] . " but there are no wrecks currently present.");
           GMLog("Salvage was attempted in " .  $N['Ref'] . " by " . $Facts[$Who]['Name'] . " but there are no wrecks currently present.");

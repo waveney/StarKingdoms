@@ -184,7 +184,8 @@ function SaveAllLocations() {
   $Things = Get_AllThings();
   foreach ($Things as $T) {
     if ($T['BuildState'] == 0) continue;
-    $S = ['ThingId'=>$T['id'], 'SystemId'=>$T['SystemId'], 'Turn' => $GAME['Turn'],'BuildState'=> $T['BuildState'], 'CurHealth'=>$T['CurHealth'], 'Game'=>$GAMEID];
+    $S = ['ThingId'=>$T['id'], 'SystemId'=>$T['SystemId'], 'Turn' => $GAME['Turn'],'BuildState'=> $T['BuildState'],
+      'CurHealth'=>$T['CurHealth'], 'Game'=>$GAMEID];
     Insert_db('LocationSave',$S);
   }
 
@@ -542,6 +543,37 @@ function TraitIncomes() {
   }
 
   GMLog("Done Org/Branch based Incomes<br>");
+
+  $Confl = Gen_Get_Cond1('SocialPrinciples',"GameId=$GAMEID AND Principle='Confluence'");
+  $Benev = Gen_Get_Cond1('Resources',"GameId=$GAMEID AND Name='Benevolence'");
+  if ($Confl & $Benev) {
+    $CnfSP = $Confl['id'];
+    $BenevR = $Benev['id'];
+    $SPws = Gen_Get('SocPsWorlds', "Priniple=$CnfSP");
+    if ($SPws) {
+      foreach($Facts as $Fid=>$F) $Facts[$Fid]['Confl'] = 0;
+
+      foreach($SPws as $Spw) {
+        $W = Get_World($Spw['World']);
+        $Facts[$W['FactionId']]['Confl'] += $Spw['Value'];
+      }
+
+      foreach($Facts as $Fid=>$F) if ($F['Confl']) {
+        $C = Gen_Get_Cond1('Resources', "Type=$BenevR AND Whose=$Fid");
+        if ($C) {
+          $C['Value'] += $F['Confl'];
+          Gen_Put('Resources',$C);
+        } else {
+          $Rec = ['Type'=>$BenevR,'Whose'=>$Fid,'Value'=>$F['Confl']];
+          Gen_Put('Resources',$C);
+        }
+        TurnLog($Fid,"Gained " . $F['Confl'] . " Benevolence from Confluence");
+      }
+
+      GMLog("Done Confluence based Incomes<br>");
+    }
+  }
+
   return 1;
 }
 
@@ -574,7 +606,8 @@ function AffectActivities() {
   $Projects = Get_Projects_Cond("Status=1 AND GameId=$GAMEID");
   foreach ($Projects as $P) {
     $Pid = $P['id'];
-    GMLog( "<tr><td><a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a><td>" . $Facts[$P['FactionId']]['Name'] . "<td>" . ($Systems[($Homes[$P['Home']]['SystemId']??0)]['Ref']??'??') . "<td>" .
+    GMLog( "<tr><td><a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a><td>" . $Facts[$P['FactionId']]['Name'] .
+      "<td>" . ($Systems[($Homes[$P['Home']]['SystemId']??0)]['Ref']??'??') . "<td>" .
       $P['Progress'] . "/" . $P['ProgNeeded'] . "<td>" . fm_checkbox('',$_REQUEST,"Pause:Proj:$Pid") .
       "<td>" . fm_checkbox('',$_REQUEST,"Cancel:Proj:$Pid") . fm_text1('',$_REQUEST,"Reason:Proj:$Pid"));
   }
@@ -586,7 +619,8 @@ function AffectActivities() {
   GMLog( "<table border><tr><td>Activity<td>Who<td>Where<td>Progress<td>Pause<td>Cancel<td>Reason");
   foreach ($Ops as $OP) {
     $Oid = $OP['id'];
-    GMLog( "<tr><td><a href=OperEdit.php?id=$Oid>" . $OP['Name'] . "</a><td>" . $Facts[$OP['Whose']]['Name'] . "<td>" . ($Systems[$OP['SystemId']]['Ref']??'??') . "<td>" .
+    GMLog( "<tr><td><a href=OperEdit.php?id=$Oid>" . $OP['Name'] . "</a><td>" . $Facts[$OP['Whose']]['Name'] .
+      "<td>" . ($Systems[$OP['SystemId']]['Ref']??'??') . "<td>" .
       $OP['Progress'] . "/" . $OP['ProgNeeded'] . "<td>" . fm_checkbox('',$_REQUEST,"Pause:Oper:$Oid") .
       "<td>" . fm_checkbox('',$_REQUEST,"Cancel:Oper:$Oid") . fm_text1('',$_REQUEST,"Reason:Oper:$Oid"));
   }
@@ -1156,6 +1190,16 @@ function TidyUps() {
     Put_FactionFaction($F);
   }
   GMLog("Single Turn Player FF data Tidied Up<p>");
+
+  $Delayed = Gen_Get_Cond('DelayedDestroy',"GameId=$GAMEID AND Turn<" . $GAME['Turn']);
+  if ($Delayed) {
+    foreach($Delayed as $D) {
+      Thing_Delete($D['ThingId']);
+      db_delete('DelayedDestroy',$D['id']);
+    }
+  }
+
+  GMLog("Delayed Destruction Completed<p>");
 
   // Tidy up Scans due ?
 

@@ -30,13 +30,13 @@ Register_AutoUpdate('Generic', 0);
 echo "<div class=tablecont><table id=indextable border>\n";
 echo "<thead><tr>";
 echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Index</a>\n";
-echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
+echo "<th colspan=2><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
 echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Props</a>\n";
 
 echo "</thead><tbody>";
 if ($ResTypes) foreach($ResTypes as $i=>$Res) {
-  echo "<tr><td>$i" . fm_text1('',$Res,'Name',2,'',"ResourceTypes:Name:$i");
-  echo fm_number1('',$Res,'Props',2,'',"ResourceTypes:Props:$i");
+  echo "<tr><td>$i" . fm_text1('',$Res,'Name',2,'','',"ResourceTypes:Name:$i");
+  echo fm_number1('',$Res,'Props','','',"ResourceTypes:Props:$i");
 }
 $es = [];
 $NewResNames = NamesList($ResTypes);

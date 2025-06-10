@@ -857,7 +857,7 @@ function Thing_Duplicate($otid) {
   $T['Name'] = "Copy of " . $T['Name'];
   $T['id'] = $Tid = Insert_db('Things',$T);
 
-  $T['SystemId'] = 0;
+  $T['SystemId'] = $T['WhereBuilt'] = 0;
   $T['LinkId'] = 0;
   $T['WithinSysLoc'] = 0;
   $T['BuildState'] = BS_PLANNING;
@@ -1100,7 +1100,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
       if ($Div) {
 //        var_dump($Fid, $T['Whose']);
         if ($T['Whose'] == $Fid) {
-          $txt .=  " <span style=background:limegreen> Yours </span>";
+//          $txt .=  " <span style=background:limegreen> Yours </span>";
         } else {
           $FA = Get_FactionFactionFF($T['Whose'],$Fid);
 
@@ -1205,7 +1205,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
 
       if ($Images) $txt .= "<br clear=all>\n";
 
-      if ($Div) $txt .= "</div>";
+      if ($Div) $txt .= "<p></div>";
 
       if ($itxt) {
         if ($Imgxtra) {
@@ -1248,7 +1248,7 @@ function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0,$Mode=0) {
     }
     $LastWhose = 0;
     foreach ($Things as $T) {
-      $txt .= "<P>" . SeeThing($T,$LastWhose,$Eyes,$Fid,$Images,$GM,1,$GM); //,$ThingTypes,$Factions);
+      $txt .= SeeThing($T,$LastWhose,$Eyes,$Fid,$Images,$GM,1,$GM); //,$ThingTypes,$Factions);
     }
   return $txt;
 }
@@ -1379,7 +1379,7 @@ function Do_Mine_Damage(&$T,&$Mine,&$N=0,$InTurn=0) { // Needs changes
   if ($T['CurHealth'] > $Dam) {
     $T['CurHealth'] -= $Dam;
   } else {
-    $T['BuildState'] = BS_EX;
+    Thing_Destroy($T);
   }
   Put_Thing($T);
   $N0 = 0;
@@ -1552,6 +1552,18 @@ function Thing_Delete($tid) {
   }
   Empty_Thing($T);
   db_delete('Things',$tid);
+}
+
+function Thing_Destroy(&$T,$Turns=0) {
+  global $GAMEID,$GAME;
+  if (Has_Trait($T['Whose'],'Organic Units')) $Turns+=3;
+  if ($Turns) {
+    $Rec = ['GameId'=>$GAMEID,'Turn'=>$GAME['Turn']+$Turns,'ThingId'=>$T['id']];
+    Gen_Put("DelayedRemoval",$Rec);
+  }
+  $T['BuildState'] = BS_EX;
+  Put_Thing($T);
+  Empty_Thing($T);
 }
 
 function Recalc_Prisoner_Counts() {

@@ -1854,7 +1854,6 @@ function Show_Thing(&$T,$Force=0) {
     echo fm_number1('Dist1',$T,'Dist1') . fm_number1('Dist2',$T,'Dist2') . fm_number1('Spare1',$T,'Spare1');
     if (($T['ProjectId'] ?? 0) && $T['BuildState'] > BS_BUILDING)
       echo "<tr>" . fm_number('Prog/Anom Id',$T,'ProjectId') . "<td colspan=2>Reminder progress from Anomaly itself";
-    echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   }
 
   if ($IsaTeam) {
@@ -1862,6 +1861,18 @@ function Show_Thing(&$T,$Force=0) {
     $Oper = Get_Operation($T['ProjectId']);
     echo "<tr><td>Current Operation:<td colspan=3>" . ($Ops[$Oper['Type']]['Name']??'Unknown');
   }
+
+  $KnownSysL = Gen_Select("SELECT s.id,s.Ref FROM Systems s LEFT JOIN FactionSystem f ON f.SystemId=s.id WHERE f.FactionId=$Fid AND f.ScanLevel>=0 " .
+    "ORDER BY s.Ref");
+  $KnownSys = [];
+  foreach ($KnownSysL as $S) $KnownSys[$S['id']] = $S['Ref'];
+
+  if (Access('God')) {
+    echo "<tr><td>Built:<td>System: " . fm_select($KnownSys,$T,'WhereBuilt',1) . fm_number1('Turn',$T,'WhenBuilt');
+}
+
+  echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
+
   echo "</table></div>\n";
   echo fm_submit("ACTION","Refresh",0);
   if ($T['BuildState'] == BS_SERVICE) echo fm_submit('ACTION','Cancel Servicing');
