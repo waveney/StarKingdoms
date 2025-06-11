@@ -652,5 +652,29 @@ function World_Name_Long($Wid,$Fid=0) {
   }
 }
 
+function Set_System_List() {// sets list of Planets/Moons for each system that are colonised
+  $Systems = Get_Systems();
+  foreach ($Systems as $N) {
+    $Sid = $N['id'];
+    $WL = [];
+    $Planets = Get_Planets($Sid);
+    foreach ($Planets as $Pid=>$P) {
+      if ($P['Control']) {
+        if ($Pid == 0) var_dump($P);
+        $WL[] = $Pid;
+      }
+      $Moons = Get_Moons($Pid);
+      if ($Moons) foreach($Moons as $M) if ($M['Control']) {
+        $WL[] = -$M['id'];
+      }
+    }
+
+    if ($WL) {
+//var_dump($N['Ref'],$WL);
+       $N['WorldList'] = implode(',',$WL);
+      Put_System($N);
+    }
+  }
+}
 
 ?>

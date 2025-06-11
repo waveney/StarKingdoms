@@ -16,6 +16,7 @@
 
   Recalc_Worlds(); // All there now
   Recalc_Offices();
+  Set_System_List(); // Lists of worlds in Systems
 
   dotail();
 

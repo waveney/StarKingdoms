@@ -42,5 +42,6 @@ CREATE TABLE `Systems` (
   `Trait3Desc` text COLLATE utf8mb4_general_ci NOT NULL,
   `Trait3Auto` int NOT NULL,
   `Trait3Conceal` int NOT NULL,
+  `WorldList` text COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

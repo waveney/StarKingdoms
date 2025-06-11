@@ -608,11 +608,13 @@ function Put_Thing(&$now) {
   if (isset($now['id'])) {
     $e=$now['id'];
     $Cur = Get_Thing($e);
+    if ((($now['WhereBuilt']??0)==0) && ($Cur['SystemId']==0) && (($now['SystemId']??0)!=0)) $now['WhereBuilt'] = $now['SystemId'];
     return Update_db('Things',$Cur,$now);
   } else {
     $now['GameId'] = $GAME['id'];
     $now['LastMoved'] = -1;
     $now['WhenBuilt'] = $GAME['Turn'];
+    if (!isset($now['WhereBuilt']) && ($now['SystemId']??0)) $now['WhereBuilt'] = ($now['SystemId']??0);
     return $now['id'] = Insert_db ('Things', $now );
   }
 }

@@ -1320,6 +1320,7 @@ function RecalcProjectHomes() {
       }
     }
   }
+  Set_System_List(); // Lists of worlds in Systems
   GMLog("<br>Worlds Recalculated and indications of improved World and colony surveys given<p>\n");
 
   return 1;

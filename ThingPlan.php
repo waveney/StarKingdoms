@@ -417,6 +417,10 @@
         $Mobile = $MMs[$Mti]['Number'];
       }
 
+      if (($tprops & THING_HAS_ARMYMODULES) && Has_Tech($Fid,'Giant Kaiju')) {
+        $Elvl = $Flvl = $Mlvl = $T['Level'];
+      }
+
 
       echo "<tr><td><td><td><tr><td>Modules slots used:";
       echo fm_hidden('HighestModule',$Mti);

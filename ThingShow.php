@@ -751,6 +751,10 @@ function Show_Thing(&$T,$Force=0) {
     }
   }
 
+  $FixedLevel = 0;
+
+  if (Has_Trait($T['Whose'],'Giant Kaiju') && ($tprops & THING_HAS_ARMYMODULES)) $FixedLevel = $T['Level'];
+
   if ($tprops & THING_HAS_MODULES) {
     $MTNs = Get_Valid_Modules($T);
     $Mods = Get_Modules($Tid);
@@ -763,7 +767,7 @@ function Show_Thing(&$T,$Force=0) {
 
     $Mt = [];
     foreach ($MTNs as $Mi=>$Mn) {
-      $Lvl = Calc_TechLevel($Fid,$Mi);
+      $Lvl = ($FixedLevel?$FixedLevel:Calc_TechLevel($Fid,$Mi));
       $Mt[$Mi] = $Lvl;
     }
 
@@ -864,9 +868,11 @@ function Show_Thing(&$T,$Force=0) {
           }
         }
 
-        $CLvl = Calc_TechLevel($Fid,$D['Type']);
-        if (($MTs[$D['Type']]['Leveled']&1) && ($CLvl < $D['Level']) && ($T['BuildState'] != BS_PLANNING )) {
-          echo ". <span class=Blue> Note you have Level: $CLvl </span>";
+        if (!$FixedLevel) {
+          $CLvl = Calc_TechLevel($Fid,$D['Type']);
+          if (($MTs[$D['Type']]['Leveled']&1) && ($CLvl < $D['Level']) && ($T['BuildState'] != BS_PLANNING )) {
+            echo ". <span class=Blue> Note you have Level: $CLvl </span>";
+          }
         }
         if (!isset($MTNs[$D['Type']])) $BadMods += $D['Number'];
         if (($MTs[$D['Type']]['Leveled']&8) == 0 ) $totmodc += $D['Number'] * ($Slots?$MTs[$D['Type']]['SpaceUsed']:1);

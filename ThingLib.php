@@ -697,6 +697,17 @@ function Calc_Evasion(&$T) {
     $T['TargetEvasion'] = $V['TargetEvasion']??0; // Actual Number calculated when in battle
   }
 
+  /*
+  if (Has_Trait($T['Whose'],'Active Chronosphere') && ($TTypes[$T['Type']]['Props'] && THING_IS_SMALL) &&
+    ($TTypes[$T['Type']]['Props'] && THING_HAS_SHIPMODULES)) { // Its a fighter, now to see where built
+      $Bsys = ($T['WhereBuilt']??0);
+      if ($Bsys) {
+        $Has_Active = Gen_Select("SELECT P.* FROM Planets")
+      }
+      ^^ error
+
+  }*/
+
   $T['Evasion'] = $ev;
 }
 
@@ -713,6 +724,10 @@ function RefitRepair(&$T,$Save=1,$KeepTechLvl=0,$Other=0) {
   $Mods = Get_Modules($tid);
   $Etxt = "";
   $VMTs = Get_Valid_Modules($T,$Other) ;
+  $FixedLevel = 0;
+
+  if (Has_Trait($T['Whose'],'Giant Kaiju') && ($TTypes[$T['Type']]['Props']& THING_HAS_ARMYMODULES)) $FixedLevel = $T['Level'];
+
   if ($Mods) {
     foreach ($Mods as $M) {
       if ($KeepTechLvl) {
@@ -723,7 +738,7 @@ function RefitRepair(&$T,$Save=1,$KeepTechLvl=0,$Other=0) {
         continue;
       }
       if (isset($VMTs[$M['Type']])) {
-        $Lvl = Calc_TechLevel(($Other?$Other:$T['Whose']),$M['Type']);
+        $Lvl = ($FixedLevel?$FixedLevel:Calc_TechLevel(($Other?$Other:$T['Whose']),$M['Type']));
         if ($Lvl) {
           if ($M['Type'] == 5) {
             $Engines = $M['Number'];
@@ -852,6 +867,7 @@ function LogisticalSupport($Fid) {  // Note this sets the Economic rating of all
 
 function Thing_Duplicate($otid) {
   global $FACTION;
+  $TTypes = Get_ThingTypes();
   $OrigT = $T = Get_Thing($otid);
   unset($T['id']);
   $T['Name'] = "Copy of " . $T['Name'];
@@ -895,10 +911,14 @@ function Thing_Duplicate($otid) {
     }
   }
   $Mods = Get_Modules($otid);
+  $FixedLevel = 0;
+
+  if (Has_Trait($T['Whose'],'Giant Kaiju') && ($TTypes[$T['Type']]['Props']& THING_HAS_ARMYMODULES)) $FixedLevel = $T['Level'];
+
   if ($Mods) {
     foreach ($Mods as $M) {
       $M['ThingId'] = $Tid;
-      $Lvl = Calc_TechLevel($Fid,$M['Type']);
+      $Lvl = ($FixedLevel?$FixedLevel:Calc_TechLevel($Fid,$M['Type']));
       unset($M['id']);
       $M['Level'] = $Lvl;
       Insert_db('Modules',$M);
@@ -1300,6 +1320,7 @@ function Update_Militia(&$W,&$Dists,$NewOwn=0,$Deploy=0) {
         $Ml['Whose'] = $FactN;
         $Ml['ActDamage'] = 8;
         $Ml['Mobility'] = 2;
+        $Ml['WhereBuilt'] = $Ml['SystemId'];
       }
       $Ml['LinkId'] = ($Deploy?0:LINK_INBRANCH);
       Put_Thing($Ml);
@@ -1310,7 +1331,7 @@ function Update_Militia(&$W,&$Dists,$NewOwn=0,$Deploy=0) {
 
     foreach ($Mils as $Ml) $MNames[$Ml['Name']] = 1; // Didts & Dist2 give short cut to world and districts
     $M = ['Type'=>20, 'CurHealth'=>$Hlth, 'OrigHealth'=>$Hlth, 'Evasion'=>40,
-      'Whose'=>$FactN, 'SystemId'=>$Sys, 'WithinSysLoc'=>$loc, 'BuildState'=>BS_COMPLETE, 'ActDamage'=>8,
+      'Whose'=>$FactN, 'SystemId'=>$Sys, 'WithinSysLoc'=>$loc, 'BuildState'=>BS_COMPLETE, 'ActDamage'=>8, 'WhereBuilt'=>$Sys,
            'Dist1'=> $W['ThingType'], 'Dist2'=>$W['ThingId'], 'LinkId' => ($Deploy?0:LINK_INBRANCH), 'Mobility'=>2  ];
     $Mn = 1;
     for ($Mnum = count($Mils); $Mnum < $Dcount; $Mnum++) {

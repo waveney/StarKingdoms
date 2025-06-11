@@ -237,7 +237,10 @@ function Show_System(&$N,$Mode=0) {
     echo "<tr>" . fm_textarea('Description',$N,'Trait3Desc',5,2);
   }
 
-  if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
+  if (Access('God')) {
+    if ($N['WorldList']) echo "<tr><td colspan=3>Controlled Planets/Moons: " . ($N['WorldList']??'');
+    echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
+  }
   echo "<tr>" . fm_textarea('Notes',$N,'Notes',8,3);
 
   echo "</table></div>\n";

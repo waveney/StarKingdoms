@@ -154,7 +154,7 @@ if (isset($_REQUEST['Action'])) {
               $T['OrigHealth'] = $Def;
             }
             $T['Damage'] = $Off;
-            $T['SystemId'] = $Sid;
+            $T['SystemId'] = $T['WhereBuilt'] = $Sid;
             $T['WithinSysLoc'] = 3;
             $T['LinkId'] = 0;
             Put_Thing($T);
