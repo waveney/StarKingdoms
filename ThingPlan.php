@@ -157,7 +157,7 @@
   $tprops2 = ($ThingTypes[$T['Type']]['Prop2']??0);
   $Valid = $CanMake = 1;
   $ResC =0;
-  if ($T['Whose'] && $T['Whose'] == $FACTION['id']) {
+  if ($T['Type'] && $T['Whose'] && $T['Whose'] == $FACTION['id']) {
     RefitRepair($T,0);
     Calc_Health($T);
     Calc_Damage($T,$ResC);

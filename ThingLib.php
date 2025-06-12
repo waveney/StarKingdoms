@@ -697,16 +697,26 @@ function Calc_Evasion(&$T) {
     $T['TargetEvasion'] = $V['TargetEvasion']??0; // Actual Number calculated when in battle
   }
 
-  /*
   if (Has_Trait($T['Whose'],'Active Chronosphere') && ($TTypes[$T['Type']]['Props'] && THING_IS_SMALL) &&
     ($TTypes[$T['Type']]['Props'] && THING_HAS_SHIPMODULES)) { // Its a fighter, now to see where built
-      $Bsys = ($T['WhereBuilt']??0);
-      if ($Bsys) {
-        $Has_Active = Gen_Select("SELECT P.* FROM Planets")
-      }
-      ^^ error
 
-  }*/
+    $Bsys = ($T['WhereBuilt']??0);
+    if ($Bsys) {
+      $HomeSys = Get_System($Bsys);
+      $Plans = explode(',',$HomeSys['WorldList']);
+      if ($Plans) foreach ($Plans as $Pid) {
+        if ($Pid<0) {
+          if (Has_PTraitM(-$Pid,'Active Chronosphere')) {
+            $ev+=5;
+            break;
+          }
+        } else if (Has_PTraitP($Pid,'Active Chronosphere')) {
+          $ev+=5;
+          break;
+        }
+      }
+    }
+  }
 
   $T['Evasion'] = $ev;
 }
@@ -726,7 +736,7 @@ function RefitRepair(&$T,$Save=1,$KeepTechLvl=0,$Other=0) {
   $VMTs = Get_Valid_Modules($T,$Other) ;
   $FixedLevel = 0;
 
-  if (Has_Trait($T['Whose'],'Giant Kaiju') && ($TTypes[$T['Type']]['Props']& THING_HAS_ARMYMODULES)) $FixedLevel = $T['Level'];
+  if (Has_Trait($T['Whose'],'Giant Kaiju') && ($TTypes[$T['Type']]['Properties']& THING_HAS_ARMYMODULES)) $FixedLevel = $T['Level'];
 
   if ($Mods) {
     foreach ($Mods as $M) {
@@ -913,7 +923,7 @@ function Thing_Duplicate($otid) {
   $Mods = Get_Modules($otid);
   $FixedLevel = 0;
 
-  if (Has_Trait($T['Whose'],'Giant Kaiju') && ($TTypes[$T['Type']]['Props']& THING_HAS_ARMYMODULES)) $FixedLevel = $T['Level'];
+  if (Has_Trait($T['Whose'],'Giant Kaiju') && ($TTypes[$T['Type']]['Properties']& THING_HAS_ARMYMODULES)) $FixedLevel = $T['Level'];
 
   if ($Mods) {
     foreach ($Mods as $M) {

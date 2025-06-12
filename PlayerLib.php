@@ -244,7 +244,7 @@ function Has_PTraitP($Pid,$Name) { // Has Planet got trait Name
   return false;
 }
 
-function Has_PTraitM($Pid,$Name) { // Has Planet got trait Name
+function Has_PTraitM($Pid,$Name) { // Has Moon got trait Name
   $P = Get_Moon($Pid);
   if ($P && ($P['Trait1'] == $Name || $P['Trait2'] == $Name || $P['Trait3'] == $Name)) return true;
   return false;
