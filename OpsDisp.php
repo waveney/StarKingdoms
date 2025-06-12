@@ -28,6 +28,8 @@
   $OpRushs = Feature('OperationRushes');
 
   $OpTypes = Get_OpTypes();
+  $PostItType = 0;
+  foreach($OpTypes as $Pti=>$Pt) if ($Pt['Name'] == 'Post It') { $PostItType=$Pti; break;}
   $OrgTypes = Get_OrgTypes();
 
   $Fid = 0;
@@ -79,9 +81,10 @@
         $Wh = $_REQUEST['W']??0;
         $Te = $_REQUEST['Te']??0;
         $P2 = $TL = $_REQUEST['P2']??0;
-        $Name = base64_decode($_REQUEST['N']??0);
+        $Name = (isset($_REQUEST['Name'])?$_REQUEST['Name']:base64_decode($_REQUEST['N']??0));
         $Level = $_REQUEST['L']??0;
         $ProgN = $_REQUEST['PN']??0;
+        if ($Level && !$ProgN) $ProgN = Oper_Costs($Level)[0];
         $Costs = $_REQUEST['C']??0;
         $Desc = base64_decode($_REQUEST['Desc']??'');
 
@@ -90,6 +93,7 @@
 
         if ($Valid) {
           $OldPro = Get_OperationAt($OrgId, $Turn);
+
           $Pro = ['Whose'=>$Fid, 'Type'=>$Optype, 'Level'=> $Level, 'OrgId'=>$OrgId, 'Progress'=>0, 'Status'=>0, 'TurnStart'=>$Turn,
                   'Name'=>$Name, 'Costs' => $Costs, 'ProgNeeded' => $ProgN, 'Status'=>0, 'FreeRushes'=>$FreeRush, 'TurnEnd'=>0,
                   'SystemId'=>$Wh, 'Para1' => ($SP?$SP:$Te), 'Para2' => $P2, 'GameId'=>$GAMEID, 'Description'=>$Desc,
@@ -100,7 +104,6 @@
             $Pro['id'] = $OldPro['id'];
           }
           $OpenOrg = $OrgId;
-
           $Pid = Put_Operation($Pro);
         }
       break;
@@ -332,7 +335,7 @@ foreach ($Orgs as $OrgId=>$O) {
       }
       if (isset($proj[$Turn][$OrgId]['Type'])) {
         $PN = $proj[$Turn][$OrgId]['id'];
-        echo "\n<td $BG id=ProjN$Turn:$OrgId: class='PHName Home$OrgId" . ($proj[$Turn][$OrgId]['Type'] == 666?" PHpostit ":"") . "'>" .
+        echo "\n<td $BG id=ProjN$Turn:$OrgId: class='PHName Home$OrgId" . ($proj[$Turn][$OrgId]['Type'] == $PostItType?" PHpostit ":"") . "'>" .
               "<a href=OperEdit.php?id=" . $proj[$Turn][$OrgId]['id'] . ">";
         if ($proj[$Turn][$OrgId]['id'] != ($proj[$Turn-1][$OrgId]['id']??0)) echo "<b>";
         echo $proj[$Turn][$OrgId]['Name'] . "</b></a>";

@@ -59,6 +59,9 @@
 
   $OpenHi = $OpenDi = -99;
   $ProjTypes = Get_ProjectTypes();
+  $PostItType = 0;
+  foreach($ProjTypes as $Pti=>$Pt) if ($Pt['Name'] == 'Post It') { $PostItType=$Pti; break;}
+
   $ThingTypes = Get_ThingTypes();
 
   if (isset($_REQUEST['ACTION'])) {
@@ -708,7 +711,7 @@
         }
         if (isset($proj[$Turn][$Hi][$Di]['Type'])) {
           $PN = $proj[$Turn][$Hi][$Di]['id'];
-          echo "\n<td $BG id=ProjN$Turn:$Hi:$Di class='PHName Home$Hi" . ($proj[$Turn][$Hi][$Di]['Type'] == 38?" PHpostit ":"") . "'>" .
+          echo "\n<td $BG id=ProjN$Turn:$Hi:$Di class='PHName Home$Hi" . ($proj[$Turn][$Hi][$Di]['Type'] == $PostItType?" PHpostit ":"") . "'>" .
                 "<a href=ProjEdit.php?id=" . $proj[$Turn][$Hi][$Di]['id'] . ">";
           if ($proj[$Turn][$Hi][$Di]['id'] != ($proj[$Turn-1][$Hi][$Di]['id']??0)) echo "<b>";
           echo $proj[$Turn][$Hi][$Di]['Name'] . "</b></a>";

@@ -7,6 +7,7 @@
 
 function ValidateTurn($For = 0) {
   global $FACTION,$GAME;
+  dostaffhead("Player Actions");
   if ($For) {
     $Fid = $For;
     $Fact = Get_Faction($Fid);
@@ -17,14 +18,30 @@ function ValidateTurn($For = 0) {
   $Turn = $GAME['Turn'];
   $Valid = 1;
 
+  $ProjTypes = Get_ProjectTypes();
+  $PostItType = 0;
+  foreach($ProjTypes as $Pti=>$Pt) if ($Pt['Name'] == 'Post It') { $PostItType=$Pti; break;}
+
   // Check for Post it notes
-  $Projects = Get_Projects_Cond("FactionId=$Fid AND Type=38 AND ((TurnStart=$Turn AND Status=0 ) OR (Status=1 AND TurnStart<=$Turn AND ( TurnEnd=0 OR TurnEnd>=$Turn)))");
+  $Projects = Get_Projects_Cond("FactionId=$Fid AND Type=$PostItType AND ((TurnStart=$Turn AND Status=0 ) OR (Status=1 AND TurnStart<=$Turn " .
+    "AND ( TurnEnd=0 OR TurnEnd>=$Turn)))");
   if ($Projects) {
-    echo "<h2 class=Err>Warning - you have " . count($Projects) . " Post It Note this turn</h2>\n";
+    echo "<h2 class=Err>Warning - you have " . count($Projects) . " Post It Note projects this turn</h2>\n";
     $Valid = 0;
   }
 
-  $ProjTypes = Get_ProjectTypes();
+  $OpTypes = Get_OpTypes();
+  $PostItType = 0;
+  foreach($OpTypes as $Pti=>$Pt) if ($Pt['Name'] == 'Post It') { $PostItType=$Pti; break;}
+
+  // Check for Post it notes
+  $Operations = Gen_Get_Cond('Operations',"Whose=$Fid AND Type=$PostItType AND ((TurnStart=$Turn AND Status=0 ) OR (Status=1 AND TurnStart<=$Turn " .
+    "AND ( TurnEnd=0 OR TurnEnd>=$Turn)))");
+  if ($Operations) {
+    echo "<h2 class=Err>Warning - you have " . count($Operations) . " Post It Note operations this turn</h2>\n";
+    $Valid = 0;
+  }
+
   $Projects = Get_Projects_Cond("FactionId=$Fid AND TurnStart=$Turn");
   $TTypes = Get_ThingTypes();
   $TNames = array_flip(NamesList($TTypes));

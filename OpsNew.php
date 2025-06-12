@@ -59,9 +59,6 @@
   }
 
 
-
-
-
 //  echo "This is a short term bodge, A better way should follow...<p>";
 
   $Orgs = Gen_Get_Cond('Organisations',"( Whose=$Fid AND OfficeCount>0) ");
@@ -117,7 +114,12 @@
       echo "<h2>Select Operation:</h2>";
       echo "<table border><tr><th>Operation<th>Level<th>Description";
  //     var_dump($OpTypes);
+      $PostIt = 0;
       foreach ($OpTypes as $opi=>$OP) {
+        if ($OP['Name'] == 'Post It') {
+          $PostIt = $opi;
+          continue;
+        }
         if ($OP['Gate'] && !eval("return " . $OP['Gate'] . ";" )) continue;
         $Ltxt = "Level";
         if ($OP['Props']&3) $Ltxt .= "+" . ($OP['Props']&3);
@@ -131,6 +133,14 @@
       }
 
       echo "</table><p>\n";
+
+      echo "</form><h2>Or an Operational Post it Note</h2>";
+      echo "Block off some time for an operation you can't yet do.<p>\n";
+      echo "<form method=post action=OpsDisp.php?ACTION=NEW&id=$Fid&op=$PostIt&t=$Turn&O=$OrgId>";
+      echo fm_number0('Level',$_REQUEST,'L') . fm_text0("Message",$_REQUEST,'Name',2);
+      echo "<button class=postit type=submit>Post it</button>";
+      echo "</form><p>";
+
       break;
 
     case 1: // Where
@@ -496,7 +506,16 @@
       }
       if (Has_Trait($Fid,'IMPSEC') && strstr($OpTypes[$op]['Name'],'Recon')) $Mod--;
 
-      if (Has_Trait($Fid,'Friends in All Places') && (($OpTypes[$op]['Props'] & OPER_NOT_FRIENDS) == 0)) $Mod--;
+      if (Has_Trait($Fid,'Friends in All Places') && (($OpTypes[$op]['Props'] & OPER_NOT_FRIENDS) == 0)) {
+        $Wid = WorldFromSystem($Wh,$Fid);
+        $World = Get_World($Wid);
+        $SocPs = Get_SocialPs($Wid);
+        $CC = Gen_Get_Cond1('SocialPriciples',"Principle='Confluence'");
+        if ($CC) {
+          $Confl = $CC['id'];
+          foreach($SocPs as $S) if ($S['Principle'] == $Confl) { $Mod--; break; }
+        }
+      }
 
       echo "This operation is at a level of $BaseLevel from distance.  ";
       if ($Mod) {

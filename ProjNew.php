@@ -1231,7 +1231,7 @@
   echo "</form><h2>Post It Note</h2>\n";
   echo "Block off some time and money for a project you can't yet do.<p>\n";
   echo "<form method=post action=ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Post It'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT>";
-  echo fm_number0('Level',$_REQUEST,'Level') . fm_text0("Message",$_REQUEST,'PostItTxt');
+  echo fm_number0('Level',$_REQUEST,'Level') . fm_text0("Message",$_REQUEST,'PostItTxt',2);
   echo "<button class=postit type=submit>Post it</button>";
   echo "</form><p>";
 
