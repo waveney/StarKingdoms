@@ -95,7 +95,7 @@ function Gen_Select($Clause) {
   global $db;
   $Ts = [];
   $res = $db->query($Clause);
-  if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
+  if ($res && is_object($res)) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
   return $Ts;
 }
 

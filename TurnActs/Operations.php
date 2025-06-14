@@ -127,11 +127,11 @@ function StartOperations() {
 
       if (Has_Trait($Fid,'IMPSEC') && strstr($OpTypes[$O['Type']]['Name'],'Recon')) $Mod--;
 
-      if (Has_Trait($Fid,'Friends in All Places') && (($OpTypes[$op]['Props'] & OPER_NOT_FRIENDS) == 0)) {
+      if (Has_Trait($Fid,'Friends in All Places') && (($OpTypes[$O['Type']]['Props'] & OPER_NOT_FRIENDS) == 0)) {
         $Wid = WorldFromSystem($Wh,$Fid);
         $World = Get_World($Wid);
         $SocPs = Get_SocialPs($Wid);
-        $CC = Gen_Get_Cond1('SocialPriciples',"Principle='Confluence'");
+        $CC = Gen_Get_Cond1('SocialPrinciples',"Principle='Confluence'");
         if ($CC) {
           $Confl = $CC['id'];
           foreach($SocPs as $S) if ($S['Principle'] == $Confl) { $Mod--; break; }

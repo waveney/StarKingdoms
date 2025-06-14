@@ -4,6 +4,7 @@
   include_once("GetPut.php");
   include_once("PlayerLib.php");
   include_once("ThingLib.php");
+  include_once("OrgLib.php");
 
 
   global $PlayerState,$PlayerStates,$NewF;
@@ -102,7 +103,7 @@ function Transfer_Places_Q() {
   foreach($Planets as $Pl) {
     if ($Pl['Control'] == $Fid) {
       $Pid = $Pl['id'];
-      echo "<tr><td><a href=PlanEdit.php?id=$Pid>" . $Systems[$Pl['SystemId']]['Ref'] . "</a><td>" . $Pl['Name'] .
+      echo "<tr><td><a href=PlanEdit.php?id=$Pid>" . ($Systems[$Pl['SystemId']??0]['Ref']??'Unknown') . "</a><td>" . $Pl['Name'] .
            "<td>" . fm_checkbox('Transfer',$MT,"Transfer:P:$Pid");
     }
   }
@@ -383,6 +384,142 @@ function Transfer_Homes_and_Worlds() {
     }
   }
   echo "Projects moved<p>";
+  Divide_Orgs_Q();
+}
+
+function Divide_Orgs_Q() {
+  global $Fid, $FACTION, $Nid, $NewF;
+  $OrgOpts = ['Keep', 'Transfer', 'Copy', 'Drop'];
+  $OrgTypes = Get_OrgTypes();
+  $MT= [];
+
+  $Orgs = Gen_Get_Cond('Organisations',"Whose=$Fid");
+
+  echo "<h1>Split Faction - Stage 5 - Organisations</h1>";
+  echo "<table border><tr><td>Organisation<td>Type<td>Options";
+  foreach ($Orgs as $Oid=>$O) {
+    echo "<tr><td>" . $O['Name'] . "<td>" . $OrgTypes[$O['OrgType']]['Name'];
+    if ($O['OrgType2']) echo " / " . $OrgTypes[$O['OrgType2']]['Name'];
+    echo "<td>" . fm_radio('Choose',$OrgOpts,$MT,"OrgTran:$Oid");
+  }
+
+  echo "</table>" . fm_submit('ACTION',"Transfer Organisations");
+  echo "Offices and Branches will follow the Organisation where possible.<p>  " .
+    "However if the Organisation is copied, they follow the world they are on, if still ambiguos it will remain in the original faction.<p>" .
+    "If the orgisation is dropped all offices and branches will be destroyed.<p>";
+
+  echo "</form>";
+  dotail();
+}
+
+function Divide_Orgs_A() {
+  global $Fid, $FACTION, $Nid, $NewF;
+
+  $OrgTypes = Get_OrgTypes();
+
+  $Orgs = Gen_Get_Cond('Organisations',"Whose=$Fid");
+  $Copy = 0;
+  $MT = [];
+
+  foreach ($Orgs as $Oid=>$O) {
+    $Act = ($_REQUEST["OrgTran:$Oid"]??0);
+
+    switch ($Act) {
+      case 0: // Remains
+        break;
+
+      case 1: // Transfer
+        $O['Whose'] = $Nid;
+        Gen_Put('Organisations',$O);
+
+        Gen_Select("UPDATE Offices Set Whose=$Nid WHERE Organisation=$Oid ");
+        Gen_Select("UPDATE Branches Set Whose=$Nid WHERE Organisation=$Oid ");
+        Gen_Select("UPDATE Operations Set Whose=$Nid WHERE OrgId=$Oid ");
+
+        echo "Organisation " . $O['Name'] . " has been transfered to " . $NewF['Name'] . "<P>";
+        break;
+
+      case 2: // Copy - the complex one...
+        $NewO = $O;
+        $NewO['Whose'] = $Nid;
+        $NewO['Name'] = "The real " . $O['Name'];
+        Gen_Put('Organisations',$NewO);
+        $BTypes = Get_BranchTypes();
+
+        $Offices = Gen_Get_Cond('Offices',"Organisation=$Oid");
+        foreach ($Offices as $Ofid=>$Of) {
+          $W = Get_World($Of['World']);
+          if ($W['FactionId'] == $Nid) {
+            $Of['Whose'] = $Nid;
+            Gen_Put($Of);
+          }
+        }
+
+        echo "Organisation " . $O['Name'] . " has been Copied to " . $NewF['Name'] ;
+
+        $Branches = Gen_Get_Cond('Branches',"Organisation=$Oid");
+        if ($Branches) {
+          echo "<P>Please decide where each of these Branches goes:<p>";
+          echo "<table border><tr><td>Original Organisation<td>Type (s)<td>Where<td>Options";
+          $Copy = 1;
+          foreach ($Branches as $Bid=>$B) {
+            switch ($B['HostType']) {
+              case 1: // Planet
+                $P = Get_Planet($B['HostId']);
+                $Sys = Get_System($P['SystemId']);
+                $Where = $P['Name'] . " in " . System_Name($Sys,$Fid);
+                break;
+              case 2: // Moon
+                $M = Get_Moon($B['HostId']);
+                $P = Get_Planet($M['PlanetId']);
+                $Sys = Get_System($P['SystemId']);
+                $Where = $M['Name'] . " a moon of " . $P['Name'] . " in " . System_Name($Sys,$Fid);
+                break;
+              case 3:// Thing
+                $T = Get_Thing($B['HostId']);
+                $Sys = Get_System($T['SystemId']);
+                $Where = $T['Name'] . " in " . System_Name($Sys,$Fid);
+                break;
+            }
+            echo "<tr><td>". $O['Name'] . "<td>". $BTypes[$B['Type']]['Name'] . "<td>" . $OrgTypes[$O['OrgType']]['Name'];
+            if ($O['OrgType2']) echo " / " . $OrgTypes[$O['OrgType2']]['Name'];
+            echo "<td>$Where<td>" . fm_checkbox('Transfer',$MT,"BranTran:$Bid") ;
+          }
+        }
+        break;
+
+      case 3: // Drop
+        $GG = $O['GameId'] = -$O['GameId'];
+        Gen_Put('Organisations',$O);
+
+        Gen_Select("UPDATE Offices Set Whose=-$Nid, GameId=$GG WHERE Organisation=$Oid ");
+        Gen_Select("UPDATE Branches Set Whose=$Nid, GameId=$GG WHERE Organisation=$Oid ");
+
+        echo "Organisation " . $O['Name'] . " has been dropped<P>";
+
+    }
+  }
+
+  if ($Copy) {
+    echo fm_submit('ACTION','Transfer Branches');
+  } else {
+    Split_Resorces_Q();
+  }
+}
+
+function Transfer_Branches() {
+  global $Fid, $FACTION, $Nid, $NewF;
+
+  $Branches = Gen_Get_Cond('Branches',"Whose=$Fid");
+  foreach($Branches as $Bid=>$B) {
+    if (isset($_REQUEST["BranTran:$Bid"]) && ($_REQUEST["BranTran:$Bid"] =='on')) {
+      $B['Whose'] = $Nid;
+      Gen_Put('Branches',$B);
+    }
+  }
+
+  echo "<h2>Branches now moved</h2>";
+
   Split_Resorces_Q();
 }
 
@@ -390,7 +527,7 @@ function Split_Resorces_Q() {
   global $Fid, $FACTION, $Nid, $NewF;
   $MT = [];
 
-  echo "<h1>Split Faction - Stage 5 - Resources</h1>";
+  echo "<h1>Split Faction - Stage 6 - Resources</h1>";
 
   echo "<table border><tr>What<td>Amount<td>Transfer\n";
   foreach(['Credits','PhysicsSP','EngineeringSP','XenologySP'] as $R) {
@@ -428,6 +565,7 @@ function Split_Resorces_A() {
 
   echo "Setup the home world of " . $NewF['Name'] . " Manually afterwards (as well as Faction/Faction information).<p>";
   echo "THEN Rebuild Project Homes, then Rebuild list of Worlds and colonies.<p>";
+  echo "The Social Principles have remained with the worlds - you may wish to check them<p>";
   echo "<h1>All Done (I hope)</h1>";
   dotail();
 
@@ -446,7 +584,9 @@ function Split_Resorces_A() {
     $Nid = $_REQUEST['Nid'];
     $NewF = Get_Faction($Nid);
     echo fm_hidden('Nid',$Nid);
-  } else if (empty($_REQUEST['ACTION']) || ($_REQUEST['ACTION'] != 'Start' && $_REQUEST['ACTION'] != 'Create New' &&  $_REQUEST['ACTION'] != 'Existing Faction' )) {
+  } else if (empty($_REQUEST['ACTION']) ||
+    ($_REQUEST['ACTION'] != 'Start' && $_REQUEST['ACTION'] != 'Create New' &&  $_REQUEST['ACTION'] != 'Existing Faction' )) {
+
     echo "<h1 class=Err>Lost what it was being split into - please restart from the begining</h1>";
     dotail();
   }
@@ -474,6 +614,12 @@ function Split_Resorces_A() {
 
       case 'Transfer Places':
         Transfer_Places_A();
+
+      case 'Transfer Organisations':
+        Divide_Orgs_A();
+
+      case 'Transfer Branches':
+        Transfer_Branches();
 
       case 'Transfer Resources':
         Split_Resorces_A();

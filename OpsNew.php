@@ -510,7 +510,7 @@
         $Wid = WorldFromSystem($Wh,$Fid);
         $World = Get_World($Wid);
         $SocPs = Get_SocialPs($Wid);
-        $CC = Gen_Get_Cond1('SocialPriciples',"Principle='Confluence'");
+        $CC = Gen_Get_Cond1('SocialPrinciples',"Principle='Confluence'");
         if ($CC) {
           $Confl = $CC['id'];
           foreach($SocPs as $S) if ($S['Principle'] == $Confl) { $Mod--; break; }

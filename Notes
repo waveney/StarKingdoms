@@ -1,9 +1,8 @@
-TODO 
+TODO (Previous Game)
 1) Force Reports 
   * Multiple worlds in a system
 5) Prisoners
 6) Blockades & Launching ships
-9) Terraforming - Action input no actions in code
 12) Blockade busting
 14) Bombardment
 24) Meetings
@@ -29,8 +28,6 @@ NEW GAME FEATURES & BUGS
       Gather Life
   
 17 Where has X come from (from last line in things history) - add to see after movement (filter for unknown wormhole)
-63 Post It for operations
-125 Fed planet trait Active Chronosphere
 129 Combat
 173 Edit World font size mobile - see a chat gm 21/11
 179 Explore wormhole in nebula
@@ -43,7 +40,13 @@ NEW GAME FEATURES & BUGS
 352 New ship (copy of) extra page for name before project save
 358 Luke's trade goods - achatgm 28/3/ @13:06
 393 LVX survey report &wormholes - from clans
-437
+438 Split Faction
+  * Organisations
+  * Offices
+  * Branches
+  * Social Principles
+439
+
 
 
 
