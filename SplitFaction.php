@@ -432,9 +432,9 @@ function Divide_Orgs_A() {
         $O['Whose'] = $Nid;
         Gen_Put('Organisations',$O);
 
-        Gen_Select("UPDATE Offices Set Whose=$Nid WHERE Organisation=$Oid ");
-        Gen_Select("UPDATE Branches Set Whose=$Nid WHERE Organisation=$Oid ");
-        Gen_Select("UPDATE Operations Set Whose=$Nid WHERE OrgId=$Oid ");
+        Gen_Select("UPDATE Offices SET Whose=$Nid WHERE Organisation=$Oid ");
+        Gen_Select("UPDATE Branches SET Whose=$Nid WHERE Organisation=$Oid ");
+        Gen_Select("UPDATE Operations SET Whose=$Nid WHERE OrgId=$Oid ");
 
         echo "Organisation " . $O['Name'] . " has been transfered to " . $NewF['Name'] . "<P>";
         break;
