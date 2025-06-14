@@ -265,7 +265,7 @@
       $N = Get_ProjectTurnPT($Proj,$Turn);
       $N['Rush'] = $Value;
 //       echo 'FORCELOADCHANGE54321:NOW' .
-      Put_ProjectTurn($N);
+      return Put_ProjectTurn($N);
     }
     break;  // other fields handled by main code
 
