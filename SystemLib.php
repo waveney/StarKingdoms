@@ -888,7 +888,7 @@ function SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
       if (!$LinkKnow) {
         $FLs = Get_Factions4Link($L['id']);
         $mtch = [];
-        if (preg_match('/From (.*)/',$FLs['Fid'],$mtch)) {
+        if (preg_match('/From (.*)/',$FLs[$Fid],$mtch) && ($mtch[1] != $Ref)) {
           $LFromtxt .= "<li>Link " .  ($L['Name']?$L['Name']:"#" . $L['id']) . ' from ' .
              ReportEnd($ON) . " Instability: " . $L['Instability'] . " Concealment: " . $L['Concealment'];
         }
@@ -912,7 +912,8 @@ function SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
   }
   $txt .=  "</ul><p>\n";
   if ($LFromtxt) {
-    $txt .= "<h2>There are also these wormholes you know that come here</h2>You do not yet know how to use them from this end:<P><ul>$LFromtxt</ul><p>";
+    $txt .= "<h2>There are also these " . Feature('LinkRefText','Stargate') . "s:<h2>" .
+      "You know that come here.  You do not yet know how to use them from this end<P><ul>$LFromtxt</ul><p>";
   }
 
 // Known Space ANOMALIES
