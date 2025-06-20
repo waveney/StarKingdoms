@@ -26,7 +26,7 @@
 //  $Techs = Get_Techs(0,$AllG);
 //  $TechNames = Tech_Names($Techs);
 
-  if (UpdateMany('OrgActions','Put_OpType',$DTs,0,'','','Name','RemoveMe','Props','',':'))  $DTs=Get_OpTypes($AllG);
+  if (UpdateMany('OrgActions','Put_OpType',$DTs,1,'','','Name','RemoveMe','Props','',':'))  $DTs=Get_OpTypes($AllG);
 
   $coln = 0;
 

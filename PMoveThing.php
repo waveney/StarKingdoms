@@ -94,7 +94,8 @@ function LinkProps($L) {
   $Res = [1,'solid','#' . $L['id'],14,'black'];
 
   if ($LinkType == 'Wormholes') {
-    $EInst = $L['Instability'] + $L['ThisTurnMod'];
+    $EInst = $L['Instability'];
+    if ($L['ThisTurnMod']) $EInst = max(1,$EInst+$L['ThisTurnMod']);
     $Res[2] = $L['Name'];
     $Res[0] = LinkPropSet(1,$Levels[$L['Concealment']]['Width'],$InstaLevels[$EInst]['Width'],0);
     $Res[1] = LinkPropSet('solid',$Levels[$L['Concealment']]['Style'],$InstaLevels[$EInst]['Style'],'');
@@ -229,7 +230,7 @@ function LinkProps($L) {
         $Colrs = [];
         $LastWhose = 0;
         while ($Thing = $OtherShips->fetch_array()) {
-          $Ttxt = SeeThing($Thing,$LastWhose,$Eyes,$Fid,0,0,0); //$Thing['Name'] type Class, whose SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0)
+          $Ttxt = SeeThing($Thing,$LastWhose,($Eyes&15),$Fid,0,0,0); //$Thing['Name'] type Class, whose SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images,$GM=0)
           if ($Ttxt) {
             $List[$Thing['id']] = $Ttxt;
             $Colrs[$Thing['id']] = ($Facts[$Thing['Whose']]['MapColour']??'lime');

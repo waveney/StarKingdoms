@@ -150,7 +150,8 @@
     $Res = [1,'solid','#' . $L['id'],14,'black'];
 
     if ($LinkType == 'Wormholes') {
-      $EInst = $L['Instability'] + $L['ThisTurnMod'];
+      $EInst = $L['Instability'];
+      if ($L['ThisTurnMod']) $EInst = max(1,$EInst+$L['ThisTurnMod']);
       $Levels[$L['Concealment']]['Used']++;
       $InstaLevels[$EInst]['Used']++;
       $Res[2] = $L['Name'];

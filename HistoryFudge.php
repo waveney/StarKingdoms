@@ -10,17 +10,17 @@
 
 //  function FixFudge() { // Tempcode called to fix thi9ngs
   global $db,$GAMEID,$GAME;
-  
+
   dostaffhead("Fred");
-  
+
   echo "<h1>Fudges...</h1>";
-  
+
   // Save What can I see data
   $Factions = Get_Factions();
   if (!file_exists("Turns/$GAMEID/" . $GAME['Turn'])) mkdir(("Turns/$GAMEID/" . $GAME['Turn']));
   foreach($Factions as $F) {
     $Fid = $F['id'];
-    $CouldC = WhatCanBeSeenBy($Fid);
+    $CouldC = WhatCanBeSeenBy($Fid,1);
     $CB = fopen("Turns/$GAMEID/" . $GAME['Turn'] . "/CouldC$Fid.html", "w");
     fwrite($CB,$CouldC);
     fclose($CB);

@@ -218,28 +218,30 @@ function ProjectProgressActions($Pay4=0) {
     GMLog("Updating project " . $P['id'] . " " . $P['Name']);
 
     $H = $Homes[$P['Home']];
-    $Wid = 0;
-    $Fid = $P['FactionId'];
-    foreach($Worlds as $W) {
-      if ($W['Home'] == $P['Home']) {
-        $Wid = $W['id'];
-        break;
+    if ($H['ThingType']<3) {
+      $Wid = 0;
+      $Fid = $P['FactionId'];
+      foreach($Worlds as $W) {
+        if ($W['Home'] == $P['Home']) {
+          $Wid = $W['id'];
+          break;
+        }
       }
-    }
-    if ($Wid == 0) {
-      echo "<h2 class=Err>Something went wrong - can't find world for project " . $P['id'] . " call Richard...</h2>";
-      exit;
-    }
-    $W = $Worlds[$Wid];
+      if ($Wid == 0) {
+        echo "<h2 class=Err>Something went wrong - can't find world for project " . $P['id'] . " call Richard...</h2>";
+        exit;
+      }
+      $W = $Worlds[$Wid];
 
-    if (empty($H)) {
-      GMLog("<b>Project " . $P['id'] . " fails as the world does not exist.  </b><p>");
-      TurnLog($P['FactionId'], " <b>Project " . $P['Name'] . " fails as " . $P['Name'] . " is no longer controlled by you.");
+      if (empty($H)) {
+        GMLog("<b>Project " . $P['id'] . " fails as the world does not exist.  </b><p>");
+        TurnLog($P['FactionId'], " <b>Project " . $P['Name'] . " fails as " . $P['Name'] . " is no longer controlled by you.");
 
-      Abandon_Project($P);
-      continue;
+        Abandon_Project($P);
+        continue;
+      }
+      $Revolt = $W['Revolt'];
     }
-    $Revolt = $W['Revolt'];
 
     if (isset($H['ThingType'])) switch ($H['ThingType']) {
       case 1: // Planet

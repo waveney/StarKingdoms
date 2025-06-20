@@ -166,7 +166,7 @@
 
     echo "The " . ($N['Type2']?"principle star":"star");
     if (($N['StarName']??'') || ($FS && ($FS['Star1Name']??''))) {
-      echo " ( " . (($FS && $FS['Star1Name'])?$FS['Star1Name']:$N['StarName']) . " ) " ;
+      echo " ( " . (($FS && ($FS['Star1Name']??''))?$FS['Star1Name']:$N['StarName']) . " ) " ;
     }
     echo " is a " . $N['Type'] . ".<br>";
 
@@ -182,7 +182,7 @@
       echo "The companion star ";
 
       if (($N['StarName2']??'') || ($FS && ($FS['Star2Name']??''))) {
-        echo " ( " . (($FS && $FS['Star2Name'])?$FS['Star2Name']:$N['StarName2']) . " ) " ;
+        echo " ( " . (($FS && ($FS['Star2Name']??''))?$FS['Star2Name']:$N['StarName2']) . " ) " ;
       }
 
       echo " is a " . $N['Type2']  . ".<br>";

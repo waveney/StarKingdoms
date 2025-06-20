@@ -28,8 +28,7 @@
         Gain_Currency($_REQUEST['F'],$What, $_REQUEST['C'],$_REQUEST['R']);
         echo  "<h1>" . $Facts[$_REQUEST['F']] . " have gained " . $_REQUEST['C'] . " " . $Currencies[$What] . "</h1>";
       }
-      break;
-
+      if (!isset($_REQUEST['O'])) break;
 
     case 'Pay Next Turn' :
       $BankRec = ['FactionId'=>0, 'Recipient'=>$_REQUEST['F'], 'Amount'=>$_REQUEST['C'],
@@ -37,7 +36,7 @@
                     'YourRef' => $_REQUEST['R'],'What'=>$_REQUEST['What'],'GameId'=>$GAMEID ];
 
       Put_Banking($BankRec);
-      echo "<h1>" . $Facts[$_REQUEST['F']] . " Will been paid " . $_REQUEST['C'] . "Next Turn</h1>";
+      echo "<h1>" . $Facts[$_REQUEST['F']] . " Will been paid " . $_REQUEST['C'] . ' ' . $Currencies[$What] . " Next Turn</h1>";
 
       break;
 

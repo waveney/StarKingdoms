@@ -545,11 +545,11 @@ function TraitIncomes() {
   GMLog("Done Org/Branch based Incomes<br>");
 
   $Confl = Gen_Get_Cond1('SocialPrinciples',"GameId=$GAMEID AND Principle='Confluence'");
-  $Benev = Gen_Get_Cond1('Resources',"GameId=$GAMEID AND Name='Benevolence'");
-  if ($Confl & $Benev) {
+  $Benev = Gen_Get_Cond1('ResourceTypes',"GameId=$GAMEID AND Name='Benevolence'");
+  if ($Confl && $Benev) {
     $CnfSP = $Confl['id'];
     $BenevR = $Benev['id'];
-    $SPws = Gen_Get('SocPsWorlds', "Priniple=$CnfSP");
+    $SPws = Gen_Get('SocPsWorlds', "Principle=$CnfSP");
     if ($SPws) {
       foreach($Facts as $Fid=>$F) $Facts[$Fid]['Confl'] = 0;
 
@@ -672,7 +672,7 @@ function AffectActivities() {
 function AffectActivitiesActions() {
   global $GAME,$Project_Statuses,$ThingInstrs;
   $mtch = [];
-var_dump($_REQUEST);
+// var_dump($_REQUEST);
   foreach ($_REQUEST as $R=>$V) {
     if (preg_match('/(\w*):(\w*):(\d*)/', $R, $mtch)) {
       [$junk,$action,$area,$id] = $mtch;
@@ -704,7 +704,7 @@ var_dump($_REQUEST);
 
               $Reason = ($_REQUEST["Reason:Inst:$id"]??'Unknown reason');
               TurnLog($T['Whose'], "Instruction: " . $ThingInstrs[abs($T['Instruction'])] . " had no progress because of: $Reason");
-var_dump($T);
+// var_dump($T);
               Put_Thing($T);
 
               break;
@@ -1139,14 +1139,14 @@ function GenerateTurns() {
   return 1;
 }
 
-function FixFudge() { // Tempcode called to fix thi9ngs
+function FixFudge() { // Tempcode called to fix things - left in case needed again
   return 1;
   global $db,$GAMEID,$GAME;
   // Save What can I see data
   $Factions = Get_Factions();
   foreach($Factions as $F) {
     $Fid = $F['id'];
-    $CouldC = WhatCanBeSeenBy($Fid);
+    $CouldC = WhatCanBeSeenBy($Fid,1);
     $CB = fopen("Turns/$GAMEID/" . ($GAME['Turn']-1) . "/CouldC$Fid.html", "w");
     fwrite($CB,$CouldC);
     fclose($CB);
@@ -1191,11 +1191,11 @@ function TidyUps() {
   }
   GMLog("Single Turn Player FF data Tidied Up<p>");
 
-  $Delayed = Gen_Get_Cond('DelayedDestroy',"GameId=$GAMEID AND Turn<" . $GAME['Turn']);
+  $Delayed = Gen_Get_Cond('DelayedRemoval',"GameId=$GAMEID AND Turn<" . $GAME['Turn']);
   if ($Delayed) {
     foreach($Delayed as $D) {
       Thing_Delete($D['ThingId']);
-      db_delete('DelayedDestroy',$D['id']);
+      db_delete('DelayedRemoval',$D['id']);
     }
   }
 
@@ -1221,8 +1221,8 @@ function TidyUps() {
     $Sid1 = $Systems[$L['System1Ref']]['id'];
     $Sid2 = $Systems[$L['System2Ref']]['id'];
 
-    $Stabs = Get_Things_Cond(0,"Type=$WormStab AND (SystemId=$Sid1 OR SystemId=$Sid2) AND id=$Lid" );
-    if ($Stabs) foreach($Stabs as $S) $L['NextTurnMod']-=$S['Level'];
+    $Stabs = Get_Things_Cond(0,"Type=$WormStab AND (SystemId=$Sid1 OR SystemId=$Sid2) AND Dist1=$Lid" );
+    if ($Stabs) foreach($Stabs as $S) $L['ThisTurnMod']-=$S['Level'];
     Put_Link($L);
   }
   GMLog("Links: Wormhole Stabilisers and Cret-Chath tidied<p>");
@@ -1484,7 +1484,7 @@ function Do_Turn() {
 
       case 'Skip':
         if (isset($TurnActions[$S][2] )) {
-          GMLog("<b>" . $TurnActions[$S][2] . " Skipped<b>");
+          GMLog("<b>" . $TurnActions[$S][2] . " Skipped</b>");
           SKLog("Skipped " . $TurnActions[$S][2]);
           $Sand['Progress'] |= 1<<$S;
         } else {
@@ -1494,7 +1494,7 @@ function Do_Turn() {
 
       case 'Revert':
         if (isset($TurnActions[$S][2] )) {
-          GMLog("<b>" . $TurnActions[$S][2] . " Reverted<b>");
+          GMLog("<b>" . $TurnActions[$S][2] . " Reverted</b>");
           SKLog("Reverted " . $TurnActions[$S][2]);
           $Sand['Progress'] &= ~(1<<$S);
         } else {
@@ -1504,7 +1504,7 @@ function Do_Turn() {
 
       case 'Redo' : //Revert and Do Now
         if (isset($TurnActions[$S][2] )) {
-          GMLog("<b>" . $TurnActions[$S][2] . " Reverted<b>");
+          GMLog("<b>" . $TurnActions[$S][2] . " Reverted</b>");
           SKLog("Reverted " . $TurnActions[$S][2]);
           $Sand['Progress'] &= ~(1<<$S);
 

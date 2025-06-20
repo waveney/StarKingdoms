@@ -20,13 +20,13 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
                 'Make Something','Make Warpgate','Retire','Stop Support','Make Advanced Minefield','Clear Minefield',
                 'Make Advanced Deep Space Sensor','Salvage',//29
                 'Terraform','Link Repair','Collaborative DSC','Space Survey','Planetary Survey','Collaborative Planetary Construction',
-                'Collaborative Space Construction',
+                'Collaborative Space Construction','Build Wormhole Stabiliser',
 ];
-$IntructProps = [0,2,0,0,0,0,1,1,1,
-                 1,1,1,1,1,1,
-                 1,1,1,1,1,0,0,
-                 1,1,0,0,1,0,1,1,
-                 0,1,0,0,0,0,1,2,0]; // 1 = DSC, 2= Pc
+$IntructProps = [0,2,0,0,0,0,1, 1,1,
+                 1,1,1,1, 1,1,//14
+                 1,1,1,1, 1,0,0, //21
+                 1,1,0,0,1,0, 1,1, //29
+                 0,1,0,0,0,0, 1,1]; // 1 = DSC, 2= Pc
 $InstrNotBy =   [0,0,1,0,0,1,0,
                  0,0,
                  0,0,0,0,
@@ -36,7 +36,7 @@ $InstrNotBy =   [0,0,1,0,0,1,0,
                  0,1,0,1,1,1,
                  0,0,
                  0,1,1,2,2,2,
-                 2,2];
+                 2,2,2];
 
 $Advance = ['','','Advanced ','Very Advanced ','Ultra Advanced ','Evolved '];
 $ValidMines = [0,1,0,1,0,1,0,0,0,0,0];
@@ -90,7 +90,7 @@ define('LINK_ON_BOARD',-1);
 define('LINK_BOARDING',-2);
 define('LINK_UNLOAD',-3);
 define('LINK_LOAD_AND_UNLOAD',-4);
-define('LINK_VALUE_UNUSED',-5);
+define('LINK_NOT_MOVING',-5);
 define('LINK_DIRECTMOVE',-6);
 define('LINK_FOLLOW',-7);
 define('LINK_INBRANCH',-8);
@@ -531,7 +531,10 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0 ) {
   $SelCols = [''];
   if ($GM || Has_Tech($T['Whose'],'Know All Links')) {
     foreach ($Links as $Lid=>$L) {
-      if (($L['Instability'] + $L['ThisTurnMod']) > $T['Stability']) {
+      $EInst = $L['Instability'];
+      if ($L['ThisTurnMod']) $EInst = max(1,$EInst+$L['ThisTurnMod']);
+
+      if ($EInst > $T['Stability']) {
         unset($Links[$Lid]);
         continue;
       }
@@ -544,7 +547,9 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0 ) {
     $NS = (($Fid && $N['id'])?Get_FactionSystemFS($Fid,$N['id']):[]);
 
     foreach ($Links as $Lid=>$L) {
-      if (($L['Instability'] + $L['ThisTurnMod']) > $T['Stability']) {
+      $EInst = $L['Instability'];
+      if ($L['ThisTurnMod']) $EInst = max(1,$EInst+$L['ThisTurnMod']);
+      if ($EInst > $T['Stability']) {
         if ($Test) echo "Drop $Lid:1<br>";
         unset($Links[$Lid]);
         continue;
@@ -697,8 +702,8 @@ function Calc_Evasion(&$T) {
     $T['TargetEvasion'] = $V['TargetEvasion']??0; // Actual Number calculated when in battle
   }
 
-  if (Has_Trait($T['Whose'],'Active Chronosphere') && ($TTypes[$T['Type']]['Props'] && THING_IS_SMALL) &&
-    ($TTypes[$T['Type']]['Props'] && THING_HAS_SHIPMODULES)) { // Its a fighter, now to see where built
+  if (Has_Trait($T['Whose'],'Active Chronosphere') && ($TTypes[$T['Type']]['Properties'] && THING_IS_SMALL) &&
+    ($TTypes[$T['Type']]['Properties'] && THING_HAS_SHIPMODULES)) { // Its a fighter, now to see where built
 
     $Bsys = ($T['WhereBuilt']??0);
     if ($Bsys) {
@@ -938,7 +943,7 @@ function Thing_Duplicate($otid) {
   return $T;
 }
 
-function EyesInSystem($Fid,$Sid,$Of=0) { // Eyes 1 = in space, 2= sens, 4= neb sens, 8=ground
+function EyesInSystem($Fid,$Sid,$Of=0) { // Eyes 1 = in space, 2= sens, 4= neb sens, 8=ground, 16=static this turn
 //var_dump($Fid,$Sid);
   $Neb = $Eyes = 0;
   $ThingTypes = Get_ThingTypes();
@@ -957,12 +962,13 @@ function EyesInSystem($Fid,$Sid,$Of=0) { // Eyes 1 = in space, 2= sens, 4= neb s
       $eye = ($T['WithinSysLoc']==1)?1:8;
     } else {
       $eye = $ThingTypes[$T['Type']]['Eyes'];
+      if ($T['LinkId'] == 0) $eye +=16;
     }
     if (($Neb > 0) && ($T['NebSensors'] < $Neb) && (($eye&4 ==0))) continue;
     if ($T['PrisonerOf']) continue;
     $Eyes |= $eye;
     if ($T['Sensors']) $Eyes |= 2;
-    if ($T['NebSensors']) $Eyes != 4;
+    if ($T['NebSensors']) $Eyes |= 4;
   }
 // echo "System " . $N['Ref'] . " eyes: $Eyes<br>";
   if (($Eyes&1) == 0) { // Check for Branch on outpost
@@ -970,7 +976,7 @@ function EyesInSystem($Fid,$Sid,$Of=0) { // Eyes 1 = in space, 2= sens, 4= neb s
     $OP = Outpost_In($Sid,0,0);
     if ($OP) {
       $Bs = Gen_Get_Cond1('Branches',"Whose=$Fid AND HostType=3 AND HostId=" . $OP['id']);
-      if ($Bs) $Eyes |=1;
+      if ($Bs) $Eyes |= 0x11;  // Space+Static
     }
   }
   if (($Eyes&8) == 0) { // Check for branch on a world
@@ -1585,16 +1591,20 @@ function Thing_Delete($tid) {
   db_delete('Things',$tid);
 }
 
-function Thing_Destroy(&$T,$Turns=0) {
+function Thing_Destroy(&$T,$Turns=0,$Remains=true) {
   global $GAMEID,$GAME;
   if (Has_Trait($T['Whose'],'Organic Units')) $Turns+=3;
   if ($Turns) {
     $Rec = ['GameId'=>$GAMEID,'Turn'=>$GAME['Turn']+$Turns,'ThingId'=>$T['id']];
     Gen_Put("DelayedRemoval",$Rec);
   }
-  $T['BuildState'] = BS_EX;
-  Put_Thing($T);
-  Empty_Thing($T);
+  if ($Remains) {
+    $T['BuildState'] = BS_EX;
+    Put_Thing($T);
+    Empty_Thing($T);
+  } else {
+    Thing_Delete($T['id']);
+  }
 }
 
 function Recalc_Prisoner_Counts() {

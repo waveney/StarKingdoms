@@ -50,11 +50,13 @@
   }
 
   echo "<form method=post id=mainform enctype='multipart/form-data' action=LinkEdit.php>";
+  echo "The Next Turn Mod does not include any Wormhole Stabilisers, the Current Mod does.<p>";
   echo "<div class=tablecont><table width=90% border class=SideTable>\n";
   Register_AutoUpdate('Links',$Lid);
 
   echo "<tr><td>Id: $Lid<td>Game: $GAMEID " . fm_text('Name',$L,'Name');
-  echo "<tr>" . fm_number('Concealment',$L,'Concealment') . fm_number('Instablity',$L,'Instablity');
+  echo "<tr>" . fm_number('Concealment',$L,'Concealment') . fm_number('Instablity',$L,'Instability');
+  echo "<tr>" . fm_number('Current Mod',$L,'ThisTurnMod') . fm_number('Next Turn Mod',$L,'NextTurnMod');
   echo "<tr>" . fm_text('From',$L,'System1Ref') . "<td>" . NameFind($N1) . fm_text('To',$L,'System2Ref') . "<td>" . NameFind($N2);
   echo "<tr><td><b>Known by</b>";
 

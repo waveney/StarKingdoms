@@ -436,12 +436,12 @@
          echo "<tr><td>Basic Damage<td>$BaseDam$SPad<td colspan=3>At current Tech Levels.  Before special weapons etc";
       }
       if (((($tprops & THING_CAN_MOVE) != 0) && (($tprops & THING_HAS_SHIPMODULES) != 0)) || ($tprops2 & THING_HAS_SPEED)) {
-        $T['Speed'] = ceil($Engines*$Elvl/$T['Level']);
+        $T['Speed'] = ceil($Engines*$Elvl/(max($T['Level'],1)));
         echo "<tr><td>Speed:<td>" . sprintf('%0.3g',ceil($T['Speed'])) . "$SPad<td colspan=3>At current Tech Levels";
-        $T['Stability'] = ceil($FluxStab*$Flvl/$T['Level']);
+        $T['Stability'] = ceil($FluxStab*$Flvl/max($T['Level'],1));
         echo "<tr><td>Stability:<td>" . sprintf('%0.3g',ceil($T['Stability'])) . "$SPad<td colspan=3>At current Tech Levels";
       } else if ((($tprops & THING_CAN_MOVE) != 0) && (($tprops & THING_HAS_ARMYMODULES) != 0)) {
-        $T['Mobility'] = ceil($Mobile*$Mlvl/$T['Level']);
+        $T['Mobility'] = ceil($Mobile*$Mlvl/max($T['Level'],1));
         echo "<tr><td>Mobility:<td>" . sprintf('%0.3g',ceil($T['Mobility'])) . "$SPad<td colspan=3>At current Tech Levels";
         $T['Stability'] = 1;
         echo "<tr><td>Stability:<td>" . sprintf('%0.3g',ceil($T['Stability'])) . "$SPad<td colspan=3>At current Tech Levels";

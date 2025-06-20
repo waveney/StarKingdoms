@@ -90,7 +90,7 @@ function ForceReport($Sid,$Cat) {
   }
 
   echo "<table border>";
-  echo "<tr><td>What<td>Type<td>Level<td>Evasion<td>Health<td>Attack<td>To Hit<td>Speed<td>Actions\n";
+  echo "<tr><td>What<td>Type<td>Level<td>Evasion<td>Health<td>Attack<td>To Hit<td>" . (($Cat == 'S')?'Speed':'Mobility') . "<td>Actions\n";
   foreach($Things as $T) {
     if ((($Cat == 'S') && ((($TTypes[$T['Type']]['Properties']??0) & 8) != 0)) ||
         (($Cat == 'G') && ((($TTypes[$T['Type']]['Properties']??0) & 0x20) != 0))) {
@@ -183,6 +183,7 @@ function ForceReport($Sid,$Cat) {
       }
       $txt .=  fm_number1(" Do",$T,'Damage', ''," class=Num3 onchange=Do_Damage($Tid,$LastF,'$Cat')","Damage:$Tid") . " damage";
       $txt .= fm_checkbox(', Retreat?',$T,'RetreatMe','',"RetreatMe:$Tid");
+      $txt .= fm_checkbox(', No Debris?',$T,'NoDebris','',"NoDebris:$Tid");
 
       $FirePower += $BD;
     } else {
@@ -275,11 +276,16 @@ function SystemSee($Sid) {
           if (($T['CurHealth'] == 0) && ($ThingProps[$T['Type']] & (THING_HAS_SHIPMODULES | THING_HAS_ARMYMODULES)) != 0) {
             TurnLog($T['Whose'],$T['Name'] . " took $RV damage and has been destroyed\n",$T);
             GMLog($T['Name'] . " took $RV damage and has been destroyed\n",$T);
-            Thing_Destroy($T);
+            if (isset($_REQUEST["NoDebris:$Tid"])) {
+              Thing_Delete($Tid);
+            } else {
+              Thing_Destroy($T);
+              Put_Thing($T);
+            }
           } else {
             TurnLog($T['Whose'],$T['Name'] . " took $RV damage\n",$T);
+            Put_Thing($T);
           }
-          Put_Thing($T);
 
           // Reports??
         }

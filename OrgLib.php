@@ -191,6 +191,29 @@ function Op_Level($Orgid,$Sys,$Mod=0) {
     }
   }
 
+  if (Has_Trait($Fid,'Goverwhat now?')) { // Add offices
+    $Offices = Gen_Get_Cond('Offices',"Whose=$Fid");
+    foreach ($Offices as $O) {
+      if (isset($Worlds[$O['World']])) continue;
+      $W = Get_World($O['World']);
+      switch ($W['ThingType']) {
+        case 1: //Planets
+          $P = Get_Planet($W['ThingId']);
+          $Targets[$P['SystemId']] = 2;
+          break;
+        case 2: // Moon
+          $M = Get_Moon($W['ThingId']);
+          $P = Get_Planet($M['PlanetId']);
+          $Targets[$P['SystemId']] = 2;
+          break;
+        case 3: // Thing
+          $P = Get_Thing($W['ThingId']);
+          $Targets[$P['SystemId']] = 2;
+          break;
+      }
+    }
+  }
+
   // Targets should now identify the systems it needs to reach
   if (isset($_REQUEST['SHOWTARGS'])) var_dump($Targets,$ValidLinks);
   if (isset($Targets[$Sys])) return 0; // Range 0

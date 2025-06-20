@@ -269,7 +269,7 @@ function Show_Thing(&$T,$Force=0) {
         } else if ($Lid == LINK_FOLLOW ) {
           $Fol = Get_Thing($T['NewSystemId']);
           $LastWhose = 0;
-          $tting = SeeThing($Fol,$LastWhose,7,$Fid,0,0,0);
+//          $tting = SeeThing($Fol,$LastWhose,7,$Fid,0,0,0);
           echo "<tr><td colspan=3>Following: " . "<span style='background:" . $Fact_Colours[$Fol['Whose']] . "'>" .
                SeeThing($Fol,$LastWhose,7,$Fid,0,0,0) . "</span>";
           echo fm_submit("ACTION",'Cancel Follow',0);
@@ -428,7 +428,7 @@ function Show_Thing(&$T,$Force=0) {
               $Colrs = [];
               $LastWhose = 0;
               while ($Thing = $OtherShips->fetch_array()) {
-                $Ttxt = SeeThing($Thing,$LastWhose,$Eyes,$Fid,0,0,0);
+                $Ttxt = SeeThing($Thing,$LastWhose,($Eyes &15),$Fid,0,0,0);
                 if ($Ttxt) {
                   $List[$Thing['id']] = $Ttxt;
                   $Colrs[$Thing['id']] = $Fact_Colours[$Thing['Whose']];
@@ -1311,6 +1311,12 @@ function Show_Thing(&$T,$Force=0) {
       if ($Moving || (($tprops & THING_HAS_ARMYMODULES) ==0) || ($T['Sensors']==0) ) continue 2;
       break;
 
+    case 'Build Wormhole Stabiliser':
+      if ($Moving || !$HasDeep || !Has_Tech($Fid,'Wormhole Stabilisers') ) continue 2;
+      // Need to select link before testing if has one at this end
+      break;
+
+
     default:
       continue 2;
 
@@ -1817,6 +1823,30 @@ function Show_Thing(&$T,$Force=0) {
     case 'Planetary Survey':
       break;
 
+    case 'Build Wormhole Stabiliser':
+      $Ref = $N['Ref'];
+      $Ls = Get_Links($Ref);
+      $Sites = [];
+
+      foreach ($Ls as $Lid=>$L) {
+        if ($L['Instability']<2) continue; // Only works on 2+
+        $OSysRef = ($L['System1Ref']==$Ref? $L['System2Ref']:$L['System1Ref']);
+        $FLK = Gen_Get_Cond1('FactionLinkKnown',"FactionId=$Fid AND LinkId=". $L['id']);
+
+        $LinkKnow = LinkVis($Fid,$L['id'],$T['SystemId']);
+        if ($LinkKnow) $Sites[$Lid] = $L['Name'];
+      }
+
+      $Existing = Get_Things_Cond(0,"SystemId=" . $T['SystemId'] . " AND Type=" . TTName('Wormhole Stabiliser'));
+      if ($Existing) {
+        foreach ($Existing as $Ws) {
+          if (isset($Sites[$Ws['Dist1']])) unset($Sites[$Ws['Dist1']]);
+        }
+      }
+      echo "<br>Link to stabilise: " . fm_select($Sites,$T,'Dist1',1) ;
+      $ProgShow = 2;
+      $Acts = $PTNs['Build Wormhole Stabiliser']['CompTarget'];
+      break;
 
     default:
       break;

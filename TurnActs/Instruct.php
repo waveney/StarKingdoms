@@ -681,6 +681,14 @@ function Instructions() {
         }
         break;
 
+      case 'Build Wormhole Stabiliser':
+        if (!Spend_Credit($T['Whose'],$T['InstCost'],"Make Wormhole Stabiliser in " . $N['Ref']) ) {
+          $T['Progress'] = -1; // Stalled
+          TurnLog($T['Whose'],"Could not afford to start an Wormhole Stabiliser in " .$N['Ref'],$T);
+        }
+        $T['Instruction'] = -$T['Instruction'];
+        break;
+
       default: // everything else
 
     }
@@ -1450,6 +1458,15 @@ function InstructionsComplete() {
       case 'Collaborative DSC':
         break; // All handled by the progress
 
+      case 'Build Wormhole Stabiliser' :
+        $L = Get_Link($T['Dist1']);
+        $NT = ['GameId'=>$GAME['id'], 'Type'=> TTName('Wormhole Stabiliser'), 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> 1,
+          'Whose'=>$T['Whose'], 'BuildState'=>BS_COMPLETE, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>"At wormhole " . $L['Name'], 'Dist1' => $T['Dist1']];
+        Put_Thing($NT);
+        TurnLog($T['Whose'],"Link " . $L['Name'] . " has a wormhole stabiliser in " . $N['Ref']);
+        GMLog($Facts[$T['Whose']]['Name'] . " has built a wormhole stabiliser for link " . $L['Name'] . " in " . $N['Ref']);
+        break;
+
       default:
         GMLog("Instruction: $Instr has completed, for " . $Facts[$Who]['Name'] . " by <a href=ThingEdit.php?id=$Tid>" . $T['Name'] .
         ".  No automation - probable bug",1);
@@ -1513,6 +1530,7 @@ function InstructionsProgress() {
       case 'Repair Command Node': // Not coded yet
       case 'Make Something':
       case 'Make Warpgate':
+      case 'Build Wormhole Stabiliser' :
       case 'Link Repair':
         $Mods = Get_ModulesType($Tid, 'Space Construction Gear');
         $ProgGain = $Mods['Level']*$Mods['Number'];

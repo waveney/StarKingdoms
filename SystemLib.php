@@ -287,7 +287,7 @@ function Show_System(&$N,$Mode=0) {
   } else if ($LinkType=='Wormholes') {
     echo "<h2>Wormholes</h2>";
     echo "Go to link to mark as Used, otherwise change scan levels.<p>";
-    echo "<table border><tr><td>Link<td>To<td>Instability<td>Concealment";
+    echo "<table border><tr><td>Link<td>To<td>Instability<td>Mod<td>Concealment";
     foreach ($Facts as $F) echo "<td>" . $F['Name'];
     echo "\n";
 
@@ -299,9 +299,11 @@ function Show_System(&$N,$Mode=0) {
       $ONid = $ON['id'];
       $Know = Get_Factions4Link($L['id']);
       $OName = NameFind($ON);
+      $EInst = $L['Instability'];
+      if ($L['ThisTurnMod']) $EInst = max(1,$EInst+$L['ThisTurnMod']);
 
-      echo "<tr><td><a href=LinkEdit.php?id=$Lid>" . $L['Name'] . "</a><td><a href=SysEdit.php?id=$ONid>$OSysRef - $OName</a><td>" .
-      ($L['Instability']+ $L['ThisTurnMod'] ). "<td>" . $L['Concealment'];
+      echo "<tr><td><a href=LinkEdit.php?id=$Lid>" . $L['Name'] . "</a><td><a href=SysEdit.php?id=$ONid>$OSysRef - $OName</a><td>" . $L['Instability'] .
+        "<td>" . $L['ThisTurnMod'] . "<td>" . $L['Concealment'] ;
       foreach ($Facts as $F) echo "<td>" . (isset($Know[$F['id']])?$Know[$F['id']]:"No");
       echo "\n";
     }
@@ -865,7 +867,7 @@ function Record_PlanetScan(&$FS) {
 }
 
 function SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
-  global $LinkStates,$GAMEID,$FAnomalyStates;
+  global $LinkStates,$GAMEID,$FAnomalyStates,$GAME;
 
   $txt = '';
   $LFromtxt = '';
@@ -876,9 +878,11 @@ function SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
   $Ls = Get_Links($Ref);
   $txt .= "<BR CLEAR=ALL><h2>There are " . Feature('LinkRefText','Stargate') . "s to:</h2><ul>\n";
 
-  foreach ($Ls as $L) {
+  foreach ($Ls as $Lid=>$L) {
     $OSysRef = ($L['System1Ref']==$Ref? $L['System2Ref']:$L['System1Ref']);
     $ON = Get_SystemR($OSysRef);
+    $EInst = $L['Instability'];
+    if ($L['ThisTurnMod']) $EInst = max(1,$EInst+$L['ThisTurnMod']);
     if ($GM ) {
       $LinkKnow = 1;
     } else {
@@ -888,9 +892,10 @@ function SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
       if (!$LinkKnow) {
         $FLs = Get_Factions4Link($L['id']);
         $mtch = [];
-        if (preg_match('/From (.*)/',$FLs[$Fid],$mtch) && ($mtch[1] != $Ref)) {
+        if (preg_match('/From (.*)/',($FLs[$Fid]??''),$mtch) && ($mtch[1] != $Ref)) {
           $LFromtxt .= "<li>Link " .  ($L['Name']?$L['Name']:"#" . $L['id']) . ' from ' .
              ReportEnd($ON) . " Instability: " . $L['Instability'] . " Concealment: " . $L['Concealment'];
+          if ($L['ThisTurnMod']) $LFromtxt .= " - Currently Instability $EInst (Turn " . $GAME['Turn'] . ")";
         }
         continue;
       }
@@ -908,6 +913,7 @@ function SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
       //Level " .  $LinkLevels[abs($L['Level'])]['Colour'];
     }
     if ($L['Status'] != 0) $txt .= " <span class=Red>" . $LinkStates[$L['Status']] . "</span>";
+    if ($L['ThisTurnMod']) $txt .= " - Currently Instability $EInst (Turn " . $GAME['Turn'] . ")";
 
   }
   $txt .=  "</ul><p>\n";

@@ -33,11 +33,13 @@ function Follow() {
         $Lid = $Fol['LinkId'];
         if ($Lid >= 0) {
           $L = Get_Link($Lid);
-          if ($T['Stability'] < ($L['Instability']+$L['ThisTurnMod'])) {
+          $EInst = $L['Instability'];
+          if ($L['ThisTurnMod']) $EInst = max(1,$EInst+$L['ThisTurnMod']);
+          if ($T['Stability'] < $EInst) {
             TurnLog($T['Whose'],  $T['Name'] . " Can not follow " . $Fol['Name'] . " as the link's Instability is too high " .
-              ($L['ThisTurnMod']? ( " it is currently " . ($L['Instability']+$L['ThisTurnMod'])) : (" it is " . $L['Instability']) ));
+              ($L['ThisTurnMod']? " it is currently $EInst" : (" it is " . $L['Instability']) ));
             GMLog($Factions[$T['Whose']]['Name'] . " - " . $T['Name'] . " Can not follow " . $Fol['Name'] . " as the link's Instability is too high " .
-              ($L['ThisTurnMod']? ( " it is currently " . ($L['Instability']+$L['ThisTurnMod'])) : (" it is " . $L['Instability']) ));
+              ($L['ThisTurnMod']? " it is currently $EInst" : (" it is " . $L['Instability']) ));
             $T['LinkId'] = $T['LinkCost'] = $T['LinkPay'] = 0;
             Put_Thing($T);
             continue;
@@ -415,12 +417,16 @@ function ShipMovements($Mode=0) {
 
           if ($T['BuildFlags'] & BUILD_FLAG1) $L['NextTurnMod']++;
 
-          if (($LinkMethod == 'Wormholes') && $T['Stability'] < ($L['Instability']+$L['ThisTurnMod'])) {
-            TurnLog($Fid,$T['Name'] . " Did not have enough Stability to go through Link " . ($L['Name']?$L['Name']:"#$Lid") . " it currently has instability " .
-              ($L['Instability']+$L['ThisTurnMod']) . ".\nA few small fragments where spayed into $Ref the rest is deposited across the multiverse.", $T);
+          $EInst = $L['Instability'];
+          if ($L['ThisTurnMod']) $EInst = max(1,$EInst+$L['ThisTurnMod']);
+
+          if (($LinkMethod == 'Wormholes') && $T['Stability'] < $EInst) {
+            TurnLog($Fid,$T['Name'] . " Did not have enough Stability to go through Link " . ($L['Name']?$L['Name']:"#$Lid") .
+              " it currently has instability $EInst.\nA few small fragments where spayed into $Ref the rest is deposited across the multiverse.", $T);
             GMLog($Facts[$Fid]['Name'] . " - <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a> did not have enough Stability to go through Link " .
-              ($L['Name']?$L['Name']:"#$Lid") . " it currently has instability " . ($L['Instability']+$L['ThisTurnMod']) . " It should be destroyed (no debris)");
-            Report_Others(0, $Sid, 31, "A spray of debris that may once have been part of a ship is seen leaving the wormhole " . ($L['Name']?$L['Name']:"#$Lid"));
+              ($L['Name']?$L['Name']:"#$Lid") . " it currently has instability $EInst It should be destroyed (no debris)");
+            Report_Others(0, $Sid, 31, "A spray of debris that may once have been part of a ship is seen leaving the wormhole " .
+              ($L['Name']?$L['Name']:"#$Lid"));
           }
 
           Put_Link($L);
@@ -543,7 +549,7 @@ function SeeAfterMove() {
   $Factions = Get_Factions();
   foreach($Factions as $F) {
     $Fid = $F['id'];
-    $CouldC = WhatCanBeSeenBy($Fid);
+    $CouldC = WhatCanBeSeenBy($Fid,1);
     $CB = fopen("Turns/$GAMEID/" . $GAME['Turn'] . "/CouldM$Fid.html", "w");
     fwrite($CB,$CouldC);
     fclose($CB);
@@ -559,7 +565,7 @@ function SaveWhatCanBeSeen() {
   $Factions = Get_Factions();
   foreach($Factions as $F) {
     $Fid = $F['id'];
-    $CouldC = WhatCanBeSeenBy($Fid);
+    $CouldC = WhatCanBeSeenBy($Fid,1);
     $CB = fopen("Turns/$GAMEID/" . $GAME['Turn'] . "/CouldC$Fid.html", "w");
     fwrite($CB,$CouldC);
     fclose($CB);

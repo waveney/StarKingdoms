@@ -23,7 +23,7 @@
   $Techs = Get_Techs(0,$AllG);
   $TechNames = Tech_Names($Techs);
 
-  if (UpdateMany('ProjectTypes','Put_ProjectType',$DT,0,'','','','','Props'))  $DT=Get_ProjectTypes($AllG);
+  if (UpdateMany('ProjectTypes','Put_ProjectType',$DT,0,'','','Name','','Props'))  $DT=Get_ProjectTypes($AllG);
   $coln = 0;
 
   echo "Category 1=Academic,2=Ship Yard,4=Miltary,8=Intelligence,16=Construction, 32=Deep Space<p>";

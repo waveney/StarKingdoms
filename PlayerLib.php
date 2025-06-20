@@ -135,7 +135,7 @@ function Player_Page() {
 
     echo "<p><li><a href=PlayerTurnTxt.php>Turn Actions Automated Response Text</a>";
     echo "<ul>";
-    if (Access('God')) echo "<li><a href=EditText.php>Edit Auto Text</a>";
+    if (Access('God')) echo "<li>God: <a href=EditText.php>Edit Auto Text</a>";
     echo "<li><a href=WhatCanIC.php>What Things can I See?</a></ul>\n";
 
 
@@ -284,21 +284,26 @@ function Spend_Credit($Who,$Amount,$Why,$From='') { // Ammount is negative to ga
 function Gain_Science($Who,$What,$Amount,$Why='') { // Ammount is negative to gain credits
   global $GAME;
   $Fact = Get_Faction($Who);
+  $ltype = 0;
   switch ($What) {
   case 1:
   case 'Physics':
     $Fact['PhysicsSP'] = ($Fact['PhysicsSP'] ?? 0) + $Amount;
+    $ltype = 1;
     break;
   case 2:
   case 'Engineering':
     $Fact['EngineeringSP'] = ($Fact['EngineeringSP'] ?? 0) + $Amount;
+    $ltype = 2;
     break;
   case 3:
   case 'Xenology':
     $Fact['XenologySP'] = ($Fact['XenologySP'] ?? 0) + $Amount;
+    $ltype = 3;
     break;
   case 4: // Random
   case 'General':
+    $ltype = 4;
     $Why .= " - ";
     for($sp =1; $sp <= $Amount; $sp++) {
       switch (rand(1,3)) {
@@ -320,7 +325,7 @@ function Gain_Science($Who,$What,$Amount,$Why='') { // Ammount is negative to ga
 
 //  var_dump($Fact);
   Put_Faction($Fact);
-  $Spog = ['GameId'=>$GAME['id'],'Turn'=>$GAME['Turn'],'FactionId'=>$Who, 'Type'=>$What, 'Number'=>$Amount, 'Note'=>$Why];
+  $Spog = ['GameId'=>$GAME['id'],'Turn'=>$GAME['Turn'],'FactionId'=>$Who, 'Type'=>$ltype, 'Number'=>$Amount, 'Note'=>$Why];
   Gen_Put('SciencePointLog',$Spog);
 }
 
@@ -345,7 +350,7 @@ function Credit() {
   return "&#8373;";
 }
 
-function WhatCanBeSeenBy($Fid,$Mode=0) {
+function WhatCanBeSeenBy($Fid,$Move=0) { // If Move = 1, it will report previous moves of things if the eyes are static
   $Terrains = ['All','Space','Ground'];
   $MyThings = Get_Things($Fid);
   $MyHomes = Get_ProjectHomes($Fid);
@@ -439,6 +444,7 @@ function WhatCanBeSeenBy($Fid,$Mode=0) {
   foreach ($SRefs as $Sid=>$Ref) {
     if (!isset($Places[$Sid])) continue;
     $Eyes = $Places[$Sid];
+    if (!$Move) $Eyes = ($Eyes&15);
     $txt .= SeeInSystem($Sid,$Eyes,1,1,$Fid);
   }
 
@@ -458,7 +464,7 @@ function WhatCanBeSeenBy($Fid,$Mode=0) {
       $txt .= "<div  class=$LocClass><h2>On Board " . (empty ($HostT['Name'])? "Unknown Thing" : $HostT['Name'])  . " is:</h2>";
       foreach($H as $Tid) {
         $T = Get_Thing($Tid);
-        $txt .= SeeThing($T,$LastWhose,15,$T['Whose'],1,$Mode);
+        $txt .= SeeThing($T,$LastWhose,15,$T['Whose'],1);
       }
       $txt .= "</div>";
     }
