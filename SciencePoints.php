@@ -30,7 +30,7 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$ThingInstrs,$ThingInclrs,$Cu
   }
 
   dostaffhead("Science Points",["js/ProjectTools.js"]);
-  $TechCats = [['Engineering','EngineeringSP'],['Physics','PhysicsSP'],['Xenology','XenologySP']];
+  $TechCats = [['Physics','PhysicsSP'],['Engineering','EngineeringSP'],['Xenology','XenologySP']];
 
 // var_dump($_REQUEST);
 

@@ -1422,7 +1422,7 @@ function InstructionsComplete() {
         if ($TotMoney) {
           Spend_Credit($Who,- $TotMoney, "Salvage from " . $N['Ref']);
           if ($Xenology) {
-            Gain_Science($Who,3, $Xenology,"Salvage from ". $N['Ref']);
+            Gain_Science($Who,'Xenology', $Xenology,"Salvage from ". $N['Ref']);
           }
         } else {
           TurnLog($Who,"Salvage was attempted in " .  $N['Ref'] . " but there are no wrecks currently present.");

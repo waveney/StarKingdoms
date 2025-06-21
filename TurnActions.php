@@ -278,7 +278,7 @@ function ScientificBreakthroughs() {
   global $GAME,$GAMEID;
 //  GMLog("Scientific Breakthroughs is currently Manual<p>");
 
-  $TechCats = [['Engineering','EngineeringSP'],['Physics','PhysicsSP'],['Xenology','XenologySP']];
+  $TechCats = [['Physics','PhysicsSP'],['Engineering','EngineeringSP'],['Xenology','XenologySP']];
   $Breaks = Gen_Get_Cond('Breakthroughs',"Game=$GAMEID AND Turn=" . $GAME['Turn'] . " AND DoneTurn=0");
 
 // var_dump($Breaks);
@@ -491,7 +491,7 @@ function TraitIncomes() {
     $Who = $O['Whose'];
     $Pow = $O['OfficeCount'];
     if ($Pow == 0) continue;
-    Gain_Science($Who,4,$Pow*$Pow,'Offices of ' . $O['Name']);
+    Gain_Science($Who,'General',$Pow*$Pow,'Offices of ' . $O['Name']);
     TurnLog($Who,"Gained " . ($Pow*$Pow) . " Science points for offices of " . $O['Name']);
 
     $Branches = Gen_Get_Cond('Branches', "GameId=$GAMEID AND Organisation=$Oid");
@@ -499,15 +499,15 @@ function TraitIncomes() {
     foreach ($Branches as $B) {
       switch ($BTypes[$B['Type']]['Name']) {
         case 'Science Branch (Xenology)':
-          Gain_Science($Who,3,$Pow,"From a branch");
+          Gain_Science($Who,'Xenology',$Pow,"From a branch");
           $SPs[3] += $Pow;
           break;
         case 'Science Branch (Physics)':
-          Gain_Science($Who,1,$Pow,"From a branch");
+          Gain_Science($Who,'Physics',$Pow,"From a branch");
           $SPs[1] += $Pow;
           break;
         case 'Science Branch (Engineering)':
-          Gain_Science($Who,2,$Pow,"From a branch");
+          Gain_Science($Who,Engineering,$Pow,"From a branch");
           $SPs[2] += $Pow;
           break;
         case 'Science Space Base':
@@ -535,7 +535,7 @@ function TraitIncomes() {
         }
       }
       if ($Mult) {
-        Gain_Science($Who,3,$Pow*$Mult,"From Ecoline");
+        Gain_Science($Who,'Xenology',$Pow*$Mult,"From Ecoline");
         TurnLog($Who,"Gained " . $Pow*$Mult . " Xenology points from Ecoline");
       }
     }
