@@ -99,18 +99,6 @@ define('BUILD_FLAG1',1);
 define('BUILD_FLAG2',2);
 define('BUILD_FLAG3',4);
 
-/* New Values
-define('BS_Planning',0);
-define('BS_Building',1);
-define('BS_Shakedown',16);
-define('BS_Repair',17);
-define('BS_Complete',32);
-define('BS_Ex',48);
-define('BS_Abandon',49);
-define('BS_Missing',50);
-define('BS_Captured',51);
-
-Old Values */
 define('BS_NOT',-1);
 define('BS_PLANNING',0);
 define('BS_BUILDING',1);
@@ -121,6 +109,8 @@ define('BS_ABANDON',5);
 define('BS_MISSING',6);
 define('BS_CAPTURED',7);
 
+$MoveNames = [0=>'Move',-1=>'On Board',-2=>'Boarding',-3=>'Unloading',-4=>'Load & Unload',-5=>'Not Moving',-6=>'Direct',-7=>'Following',-8=>'In Branch'];
+$MoveProps = [0=>1,-1=>2,-2=>2,-3=>2,-4=>2,-5=>1,-6=>0,-7=>3,-8=>0]; // 1=PMove,2=Other Thing
 
 function TTName($Name) {
   static $TTNames;

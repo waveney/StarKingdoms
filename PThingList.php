@@ -6,6 +6,7 @@
   include_once("ThingLib.php");
 
   global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$ThingInclrs,$GAMEID,$LogistCost,$ARMY,$ARMIES,$GAME;
+  global $MoveNames,$MoveProps;
 
   $Fid = 0;
 //var_dump($_COOKIE,$_REQUEST);
@@ -131,6 +132,14 @@
       $T['LinkId'] = 0;
       Put_Thing($T);
       break;
+
+    case 'DONOTMOVE' :
+      $Tid = $_REQUEST['T'];
+      $T = Get_Thing($Tid);
+      $T['LinkId'] = LINK_NOT_MOVING;
+      Put_Thing($T);
+      break;
+
     case 'Pay on Turn':
       $Tid = $_REQUEST['T'];
       $T = Get_Thing($Tid);
@@ -330,9 +339,9 @@
       echo "<td>";
       if ($T['Instruction']) echo $ThingInstrs[abs($T['Instruction'])];
       if (($T['Instruction'] == 0 || $T['Instruction'] == 5 ) && (($Props & THING_CAN_MOVE) && ( $T['BuildState'] == BS_COMPLETE))) {
-        if ( (($T['LinkId'] >=0 ) || ($T['LinkId'] == LINK_FOLLOW) )&& ($T['CurHealth'] > 0 || ($Props & THING_HAS_HEALTH) ==0)) {
+        if ( ($T['LinkId'] >=0 ) || (($MoveProps[$T['LinkId']] & 1) && ($T['CurHealth'] > 0 || ($Props & THING_HAS_HEALTH) ==0))) {
           if ($MovesValid && (($Faction['TurnState']??0) == 1)) {
-            echo " <a href=PMoveThing.php?id=" . $T['id'] . ">Move</a>";
+            echo " <a href=PMoveThing.php?id=" . $T['id'] . ">" . (($T['LinkId'] >=0 )?'Move':$MoveNames[$T['LinkId']]) . "</a>";
           } else {
           }
           if ($T['Retreat']) {
@@ -347,11 +356,19 @@
               echo "<td> ? ";
             }
           } elseif ($T['LinkId'] == LINK_FOLLOW ) {
-            echo "<td>Following<td>?";
+            $FT = Get_Thing($T['NewSystemId']);
+            if ($FT) {
+              echo "<td>" . $FT['Name'] . "<td>";
+            } else {
+              echo "<td>Confused...<td>";
+            }
           } else {
             echo "<td><td>";
           }
-        } else {
+        } else if ($T['LinkId'] == LINK_NOT_MOVING) {
+
+        }
+          else {
           echo "<td>";
           if ($T['LinkId'] < 0) {
             $Host = Get_Thing($T['SystemId']);

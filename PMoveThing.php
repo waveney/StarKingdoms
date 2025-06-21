@@ -249,7 +249,7 @@ function LinkProps($L) {
     }
   }
 
-  echo "<h2><a href=PThingList.php?ACTION=CANCELMOVE&T=$Tid>Cancel Move Order</a></h2>\n";
+  echo "<h2><a href=PThingList.php?ACTION=CANCELMOVE&T=$Tid>Cancel Move Order</a>, <a href=PThingList.php?ACTION=DONOTMOVE&T=$Tid>Don't Move</a></h2>\n";
   dotail();
 
 ?>
