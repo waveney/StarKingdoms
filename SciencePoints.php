@@ -5,7 +5,7 @@
   include_once("PlayerLib.php");
   include_once("ThingLib.php");
 
-global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$ThingInstrs,$ThingInclrs;
+global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$ThingInstrs,$ThingInclrs,$Currencies;
 
 //var_dump($_COOKIE,$_REQUEST);
   A_Check('Player');
@@ -152,7 +152,7 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$ThingInstrs,$ThingInclrs;
         if ($Avail[$Fld]-$Used[$Fld] >= $SPCosts[$Lvl]) {
           echo "<button class=projtype type=submit formaction='SciencePoints.php?ACTION=NEW&id=$Fid&Tid=" . $TT['id'] . "&L=$Lvl&C=" .
                 $SPCosts[$Lvl] . "&Fld=$Fld'>" .
-                "Research " . $TT['Name'] . " Level $Lvl; Cost " . $SPCosts[$Lvl] . "</button><p>";
+                "Research " . $TT['Name'] . " Level $Lvl; Cost " . $SPCosts[$Lvl] . ' ' . $TechCats[$Fld][0] . "</button><p>";
         }
       }
 
@@ -168,7 +168,7 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$ThingInstrs,$ThingInclrs;
         if ($Avail[$Fld]-$Used[$Fld] >= $SPCosts[$Lvl]) {
           echo "<button class=projtype type=submit formaction='SciencePoints.php?ACTION=NEW&id=$Fid&Tid=" . $T['id'] . "&L=$Lvl&C=" .
                 $SPCosts[$Lvl] . "&Fld=$Fld'>" .
-                "Research " . $T['Name'] . " Level $Lvl; Cost " . $SPCosts[$Lvl] . "</button><p>";
+                "Research " . $T['Name'] . " Level $Lvl; Cost " . $SPCosts[$Lvl] . ' ' . $TechCats[$Fld][0] . "</button><p>";
         }
       }
 

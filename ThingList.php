@@ -7,7 +7,7 @@
 
   dostaffhead("List Things",["js/ProjectTools.js"]," onload=ListThingSetup(0,1,0,0)");
 
-  global $db, $GAME,$BuildState,$ThingInstrs,$GAMEID,$ARMY,$ARMIES;
+  global $db, $GAME,$BuildState,$ThingInstrs,$GAMEID,$ARMY,$ARMIES,$MoveNames,$MoveProps;;
   $Blue = isset($_REQUEST['Blue']);
 
   $Systems = Get_SystemRefs();
@@ -122,6 +122,8 @@
       echo "<td>On:<td>" . ($Host['Name']??'Unknown');
     } else if ($T['LinkId'] == -6) {
       echo "<td><a href=ThingList.php?AT=$Ref>$Ref</a><td>$Loc";
+    } else {
+      echo "<td>" . $MoveNames[$T['LinkId']];
     }
 
     echo "<td><a href=ThingEdit.php?id=$tid>$Name</a>";

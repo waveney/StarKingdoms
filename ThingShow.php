@@ -11,7 +11,7 @@ function Show_Thing(&$T,$Force=0) {
   global $BuildState,$GAME,$GAMEID,$FACTION;
   global $Project_Status,$Advance;
   global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$ThingInclrs, $InstrMsg, $ValidMines;
-  global $Currencies,$InstrNotBy,$NOTBY;
+  global $Currencies,$InstrNotBy,$NOTBY,$MoveNames,$MoveProps;
 
   $ThingInclrs = ['white','lightgreen','lightpink','lightblue','lightyellow','bisque','#99ffcc','#b3b3ff',
                  'lightgreen','lightpink','lightblue','lightyellow','bisque','#99ffcc','#b3b3ff',
@@ -276,7 +276,7 @@ function Show_Thing(&$T,$Force=0) {
         } else if ($Lid == LINK_INBRANCH ) {
           echo "<tr><td>Within the Branch";
           if ($GM) echo "<td><a href=BranchEdit.php?id=" . $T['ProjectId'] . ">Branch</a>";
-        } else { // On Board
+        } else if ($Lid >= LINK_LOAD_AND_UNLOAD ) { // On Board
           $Host = Get_Thing($T['SystemId']);
           if ($Host) {
             echo "<tr><td colspan=3>In: " . $Host['Name'];
@@ -308,7 +308,10 @@ function Show_Thing(&$T,$Force=0) {
             echo "<tr><td colspan=3>In limbo... (Richard can fix)";
             if (Access('God')) $T['SystemId'] = $T['LinkId'] = 0;
           }
-      }
+        } else {
+          echo "<tr><td>" . $MoveNames[$Lid];
+
+        }
       if ($Lid == -2 || $Lid == -4) {
         $Host = Get_Thing($T['NewSystemId']);
         echo "<tr><td colspan=3>Loading on to: <b>" . $Host['Name'] . "</b> on the turn";
