@@ -1013,7 +1013,7 @@ function is_in_space(&$T) {
 }
 
 function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0) {
-  global $Advance,$FACTION,$ThingInstrs,$Relations;
+  global $Advance,$FACTION,$ThingInstrs,$Relations,$MoveNames,$MoveProps;
   static $ThingTypes;
   static $Factions;
   static $OpProps;
@@ -1115,7 +1115,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
       }
 
 //var_dump($Locations);exit;
-      if ($Div && $T['LinkId'] >= 0 && $T['SystemId'] > 0 && isset($T['WithinSysLoc']) && ($T['WithinSysLoc'] > 0)) {
+      if ($Div && ($T['LinkId'] >= 0 || ($MoveProps[$T['LinkId']]&1)) && $T['SystemId'] > 0 && isset($T['WithinSysLoc']) && ($T['WithinSysLoc'] > 0)) {
         if (isset($Locations[$T['WithinSysLoc']])) {
           $txt .= " ( " . $Locations[$T['WithinSysLoc']] . " ) ";
         } else if ($GM) {

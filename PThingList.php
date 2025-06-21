@@ -334,8 +334,19 @@
       echo "<td>Direct<td>";
       echo "<td>" . ($T['NewSystemId'] == 0? "" : $Systems[$T['NewSystemId']]);
     } else {
-      echo "<td>" . ((($T['LinkId'] >= 0) || ($T['LinkId'] == LINK_FOLLOW )) ?
-        (empty($Systems[$T['SystemId']]) ?'': $Systems[$T['SystemId']]) : (($T['LinkId'] == LINK_INBRANCH ) ? 'Not Deployed' : 'On Board'));
+      $Lid = $T['LinkId'];
+
+      echo "<td>";
+      if ($Lid >= 0 || ($MoveProps[$Lid] &1)) {
+        echo (empty($Systems[$T['SystemId']]) ?'': $Systems[$T['SystemId']]);
+      } else if ($Lid == LINK_INBRANCH ) {
+        echo 'Not Deployed';
+      } else if (($MoveProps[$Lid] &2)) {
+        echo 'On Board';
+      } else {
+        echo $MoveNames[$Lid];
+      }
+
       echo "<td>";
       if ($T['Instruction']) echo $ThingInstrs[abs($T['Instruction'])];
       if (($T['Instruction'] == 0 || $T['Instruction'] == 5 ) && (($Props & THING_CAN_MOVE) && ( $T['BuildState'] == BS_COMPLETE))) {
