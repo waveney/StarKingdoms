@@ -72,7 +72,8 @@ function Devastation() {
 function ReturnMilOrgForces() {
   $TTypes = Get_ThingTypes();
   $NTypes = array_flip(NamesList($TTypes));
-  $Things = Get_Things_Cond(0,"( Type=" . $NTypes['Heavy Security'] . " OR Type=" . $NTypes['Fighter Defences'] . ") AND LinkId!=" . LINK_INBRANCH);
+  $Things = Get_Things_Cond(0,"( BuildState=3 AND Type=" . $NTypes['Heavy Security'] . " OR Type=" . $NTypes['Fighter Defences'] .
+    ") AND LinkId!=" . LINK_INBRANCH);
   $Count = 0;
   foreach($Things as $T) {
     $Count++;

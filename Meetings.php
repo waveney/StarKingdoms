@@ -92,8 +92,11 @@ function ForceReport($Sid,$Cat) {
   echo "<table border>";
   echo "<tr><td>What<td>Type<td>Level<td>Evasion<td>Health<td>Attack<td>To Hit<td>" . (($Cat == 'S')?'Speed':'Mobility') . "<td>Actions\n";
   foreach($Things as $T) {
-    if ((($Cat == 'S') && ((($TTypes[$T['Type']]['Properties']??0) & 8) != 0)) ||
-        (($Cat == 'G') && ((($TTypes[$T['Type']]['Properties']??0) & 0x20) != 0))) {
+    $Ground = is_on_ground($T);
+    if ((($Cat == 'S') && !$Ground) || (($Cat == 'G') && $Ground)) {
+
+ //   if ((($Cat == 'S') && ((($TTypes[$T['Type']]['Properties']??0) & 8) != 0)) ||
+ //       (($Cat == 'G') && ((($TTypes[$T['Type']]['Properties']??0) & 0x20) != 0))) {
       if (($T['CurHealth'] == 0) && ($T['Type'] == 20)) continue; // Skip Militia at zero
       if ($T['PrisonerOf'] != 0) continue; // Prisoners
       $Tid = $T['id'];

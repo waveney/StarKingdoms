@@ -353,6 +353,25 @@
           $Lvl = $CurOff+1;
           $pc = Proj_Costs($Lvl);
           $Orgs = Gen_Get_Cond('Organisations',"Whose=$Fid AND OfficeCount!=0");
+
+          $Factions = Get_Factions();
+          $Lizard = 0;
+          foreach ($Factions as $LFid=>$LF) {
+            if (Has_Trait($LFid,'Goverwhat now?')) {
+              $Lizard = $LFid;
+              break;
+            }
+          }
+          $FS = Get_FactionFactionFF($Fid,$LFid);
+          if ($FS && ($FS['Relationship']==0 || $FS['Relationship']>=5)) {
+            // Know Lizards and are at least Neutral
+            $Lorgs = Gen_Get_Cond('Organisations',"Whose=$Lizard AND OfficeCount!=0");
+            foreach ($Lorgs as $LOrgId=>$Org) {
+              $Org['Name'] .= " (Lizards)";
+              $Orgs[$LOrgId]= $Org;
+            }
+          }
+
           $Tstart = 0;
           if (count($Offices)< count($Orgs)) {
             foreach ($Orgs as $OrgId=>$Org) {

@@ -1631,6 +1631,10 @@ function CollaborativeProgress() {
         $Mods = Get_ModulesType($Tid, 'Engineering Corps');
         $ProgGain = $Mods['Level']*$Mods['Number']; // For all except colonise
         $HT = Get_Thing($T['Dist1']);
+        if (!$HT) {
+          $HT = Get_Things_Cond1($T['Whose'],"SystemId=" . $T['SystemId'] . " AND Instruction=1");
+        }
+
         if ($HT) {
           if ($HT['Instruction'] && (($IntructProps[abs($HT['Instruction'])] & 2)!=0) ) {
             if (abs($HT['Instruction']) == 1) { // Colonise
@@ -1660,6 +1664,8 @@ function CollaborativeProgress() {
             TurnLog($T['Whose'], $T['Name'] . " Was collaborating with " . $HT['Name'] . ", but " . $HT['Name'] .
               " is not doing any Planetary Construction.");
           }
+        } else {
+          TurnLog($HT['Whose'],$T['Name'] . " can't find anything to Collaborate with.");
         }
         break;
 

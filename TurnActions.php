@@ -549,7 +549,7 @@ function TraitIncomes() {
   if ($Confl && $Benev) {
     $CnfSP = $Confl['id'];
     $BenevR = $Benev['id'];
-    $SPws = Gen_Get('SocPsWorlds', "Principle=$CnfSP");
+    $SPws = Gen_Get_Cond('SocPsWorlds', "Principle=$CnfSP");
     if ($SPws) {
       foreach($Facts as $Fid=>$F) $Facts[$Fid]['Confl'] = 0;
 
@@ -565,7 +565,7 @@ function TraitIncomes() {
           Gen_Put('Resources',$C);
         } else {
           $Rec = ['Type'=>$BenevR,'Whose'=>$Fid,'Value'=>$F['Confl']];
-          Gen_Put('Resources',$C);
+          Gen_Put('Resources',$Rec);
         }
         TurnLog($Fid,"Gained " . $F['Confl'] . " Benevolence from Confluence");
       }
@@ -1162,12 +1162,13 @@ function TidyUps() {
   $TNames = NamesList($TTypes);
   $ThingNames = array_flip($TNames);
   $WormStab = $ThingNames['Wormhole Stabiliser'];
-  $res = $db->query("UPDATE Things SET LinkId=0, LinkPay=0, LinkCost=0, Retreat=0, CurInst=ABS(Instruction) WHERE LinkId>0 AND GameId=$GAMEID");
+  $res = $db->query("UPDATE Things SET LinkId=0, LinkPay=0, LinkCost=0, Retreat=0, CurInst=ABS(Instruction) " .
+    "WHERE (LinkId>=0 OR LinkId=-5 OR LinkId=-6 OR LinkId=-7 AND GameId=$GAMEID");
   $res = $db->query("UPDATE Things SET Conflict=0 WHERE Conflict>0 AND GameId=$GAMEID");
   $res = $db->query("UPDATE Operations SET TurnState=0 WHERE GameId=$GAMEID");
 
   // Check for lid <-1...
-  $NotFin = Get_Things_Cond(0,"(LinkId<-1 AND LinkId>-8)");
+  $NotFin = Get_Things_Cond(0,"(LinkId<-1 AND LinkId>-5)");
   if ($NotFin) {
     GMLog( "<h2 class=Err>These things have a broken load/unload still in place get Richard to fix</h2>");
     FollowUp(0,"Things have broken load/unload get Richard to fix");
