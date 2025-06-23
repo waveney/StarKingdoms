@@ -938,7 +938,7 @@ function SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0,$DEBUG
       if ($LocCat ==2 || $LocCat == 4) $Loc=1; // Ground;
       if (($Loc == 1) && $A['VisFromSpace']) $Loc=3; // Vis From Space
 
-      if (($A['ScanLevel']<=$SpaceLevel) && ($Loc ==0 || $Loc==3)) {
+      if ($A['ScanLevel']>=0 && ($A['ScanLevel']<=$SpaceLevel) && ($Loc ==0 || $Loc==3)) {
         if ($A['Complete'] > 1) continue; // Completed or Removed
 
         if (!$GM){
