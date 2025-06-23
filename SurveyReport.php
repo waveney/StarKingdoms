@@ -71,12 +71,12 @@
     $SpaceBlob = $FS['SpaceSurvey'];
     $PlanBlob = $FS['PlanetSurvey'];
 
-    if ($REDO || (empty($SpaceBlob) && $SpaceLevel>=0)) {
-      $SpaceBlob = Record_SpaceScan($FS);
+    if ($REDO || $DEBUG || (empty($SpaceBlob) && $SpaceLevel>=0)) {
+      $SpaceBlob = Record_SpaceScan($FS,$DEBUG);
     }
 
-    if ($REDO || (empty($PlanBlob) && $PlanetLevel>0)) {
-      $PlanBlob = Record_PlanetScan($FS);
+    if ($REDO || $DEBUG || (empty($PlanBlob) && $PlanetLevel>0)) {
+      $PlanBlob = Record_PlanetScan($FS,$DEBUG);
     }
 
   } else { // GM access
@@ -102,8 +102,8 @@
     }
 
 
-    $SpaceBlob =  SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,$Syslocs,$GM);
-    $PlanBlob = PlanetScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,$Syslocs,$GM);
+    $SpaceBlob =  SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,$Syslocs,$GM,$DEBUG);
+    $PlanBlob = PlanetScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,$Syslocs,$GM,$DEBUG);
   }
   $RawBlobs = explode('::::',$PlanBlob);
   $Blobs = [];

@@ -855,18 +855,21 @@ function PlanetScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
   return implode('::::',$blobs);
 }
 
-function Record_PlanetScan(&$FS) {
+function Record_PlanetScan(&$FS,$DEBUG=0) {
   global $GAME;
   $N = Get_System($FS['SystemId']);
   $SLocs = Within_Sys_Locs($N);
 
-  $FS['PlanetSurvey'] = PlanetScanBlob($FS['SystemId'],$FS['FactionId'],$FS['SpaceScan'],$FS['PlanetScan'],$SLocs);
-  $FS['PlanetTurn'] = $GAME['Turn'];
-  Put_FactionSystem($FS);
-  return $FS['PlanetSurvey'];
+  $Res = PlanetScanBlob($FS['SystemId'],$FS['FactionId'],$FS['SpaceScan'],$FS['PlanetScan'],$SLocs,0,$DEBUG);
+  if (!$DEBUG) {
+    $FS['PlanetSurvey'] = $Res;
+    $FS['PlanetTurn'] = $GAME['Turn'];
+    Put_FactionSystem($FS);
+  }
+  return $Res;
 }
 
-function SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
+function SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0,$DEBUG=0) {
   global $LinkStates,$GAMEID,$FAnomalyStates,$GAME;
 
   $txt = '';
@@ -886,17 +889,18 @@ function SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
     if ($GM ) {
       $LinkKnow = 1;
     } else {
-      $FLK = Gen_Get_Cond1('FactionLinkKnown',"FactionId=$Fid AND LinkId=". $L['id']);
+ //     $FLK = Gen_Get_Cond1('FactionLinkKnown',"FactionId=$Fid AND LinkId=". $L['id']);
 
       $LinkKnow = LinkVis($Fid,$L['id'],$Sid);
       if (!$LinkKnow) {
-        $FLs = Get_Factions4Link($L['id']);
+        $FLs = Get_Factions4Link($Lid);
         $mtch = [];
         if (preg_match('/From (.*)/',($FLs[$Fid]??''),$mtch) && ($mtch[1] != $Ref)) {
           $LFromtxt .= "<li>Link " .  ($L['Name']?$L['Name']:"#" . $L['id']) . ' from ' .
              ReportEnd($ON) . " Instability: " . $L['Instability'] . " Concealment: " . $L['Concealment'];
           if ($L['ThisTurnMod']) $LFromtxt .= " - Currently Instability $EInst (Turn " . $GAME['Turn'] . ")";
         }
+        if ($DEBUG) $txt .= "<li>Link" . ($L['Name']?$L['Name']:"#" . $L['id']) . " NOT KNOWN";
         continue;
       }
     }
@@ -987,15 +991,18 @@ function SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
   return $txt;
 }
 
-function Record_SpaceScan(&$FS) {
+function Record_SpaceScan(&$FS,$DEBUG=0) {
   global $GAME;
   $N = Get_System($FS['SystemId']);
   $SLocs = Within_Sys_Locs($N);
 
-  $FS['SpaceSurvey'] = SpaceScanBlob($FS['SystemId'],$FS['FactionId'],$FS['SpaceScan'],$FS['PlanetScan'],$SLocs);
-  $FS['SpaceTurn'] = $GAME['Turn'];
-  Put_FactionSystem($FS);
-  return $FS['SpaceSurvey'];
+  $Res = SpaceScanBlob($FS['SystemId'],$FS['FactionId'],$FS['SpaceScan'],$FS['PlanetScan'],$SLocs,0,$DEBUG);
+  if (!$DEBUG) {
+    $FS['SpaceSurvey'] = $Res;
+    $FS['SpaceTurn'] = $GAME['Turn'];
+    Put_FactionSystem($FS);
+  }
+  return $Res;
 }
 
 function System_Owner($Sid) {

@@ -546,10 +546,13 @@ function ProjectsCompleted($Pass) {
           } else { // Office
             $World = Gen_Get_Cond1('Worlds',"Home=" . $P['Home']);
             $Org = Gen_Get('Organisations',-$P['ThingType'] );
-
-            $Off = ['Organisation' => -$P['ThingType'], 'OrgType'=>$Org['OrgType'], 'OrgType2'=>$Org['OrgType2'], 'World'=>$World['id'],
-              'Whose'=>$P['FactionId'], 'Number'=>1];
-            Put_Office($Off);
+            if (!$Org) {
+              TurnLog($Fid,'Project <a ProjEdit.php?id=' . $P['id'] . "</a> is making an office for an unknown Org - BUG - call Richard");
+            } else {
+              $Off = ['Organisation' => -$P['ThingType'], 'OrgType'=>$Org['OrgType'], 'OrgType2'=>$Org['OrgType2'], 'World'=>$World['id'],
+                'Whose'=>$P['FactionId'], 'Number'=>1];
+              Put_Office($Off);
+            }
           }
           TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");
           break;
