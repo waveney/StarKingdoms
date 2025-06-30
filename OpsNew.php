@@ -445,7 +445,7 @@
       if ($TechId) {
         $Tech = Get_Tech($TechId);
         echo "Tech: " . $Tech['Name'] . "<p>";
-        $Name .= "Tech: " . $Tech['Name'] ;
+        $Name .= " Tech: " . $Tech['Name'] ;
         if ($Tech['Cat'] == 0) {
           echo " at Level $TechLevel<p>";
           $Name .= " L$TechLevel";

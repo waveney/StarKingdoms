@@ -373,13 +373,14 @@
             } else {
               echo "<td>Confused...<td>";
             }
+          } else if ($T['LinkId'] == LINK_NOT_MOVING) {
+            echo "<td>Not Moving<td>";
           } else {
             echo "<td><td>";
           }
         } else if ($T['LinkId'] == LINK_NOT_MOVING) {
-
-        }
-          else {
+          echo "<td>Not Moving<td>";
+        } else {
           echo "<td>";
           if ($T['LinkId'] < 0) {
             $Host = Get_Thing($T['SystemId']);

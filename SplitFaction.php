@@ -531,6 +531,7 @@ function Split_Resorces_Q() {
 
   echo "<table border><tr>What<td>Amount<td>Transfer\n";
   foreach(['Credits','PhysicsSP','EngineeringSP','XenologySP'] as $R) {
+    $MT["Transfer:$R"] = 0;
     echo "<tr><td>$R<td>" . $FACTION[$R] . fm_Number1('',$MT,"Transfer:$R");
   }
 
@@ -563,10 +564,13 @@ function Split_Resorces_A() {
   $NewF['HomeWorld'] = 0;
   Put_Faction($NewF);
 
-  echo "Setup the home world of " . $NewF['Name'] . " Manually afterwards (as well as Faction/Faction information).<p>";
-  echo "THEN Rebuild Project Homes, then Rebuild list of Worlds and colonies.<p>";
-  echo "The Social Principles have remained with the worlds - you may wish to check them<p>";
-  echo "<h1>All Done (I hope)</h1>";
+  echo "<h1>All Automation done - do thing following by hand:</h1><ol>";
+  echo "<li>Setup the home world of " . $NewF['Name'] . " Manually afterwards";
+  echo "<li>THEN Rebuild Project Homes<li>THEN Rebuild list of Worlds and colonies";
+  echo "<li>Setup Faction/Faction information - as appropriate for the splinter faction";
+  echo "<li>The Social Principles have remained with the worlds - you may wish to check them";
+  echo "<li>The Traits have been copied - you may wish to check them<p>";
+  echo "/ol><h1>All Done (I hope)</h1>";
   dotail();
 
 }

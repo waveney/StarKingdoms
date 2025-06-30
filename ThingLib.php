@@ -1170,12 +1170,12 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
           }
         }
       }
-      if ( $GM && ($TTprops & THING_ISA_TEAM)) {
+//      if ( $GM && ($TTprops & THING_ISA_TEAM)) {
         if ($T['Description']) {
           $txt .= "<br>" . ParseText($T['Description']);
           $Images = 1; // To add the br at end
         }
-      }
+//      }
       if ($TTprops2 & THING_SHOW_CONTENTS) {
         switch ($ThingTypes[$T['Type']]['Name']) {
           case 'Outpost':
