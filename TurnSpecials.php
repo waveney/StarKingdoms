@@ -61,7 +61,7 @@
       foreach ($Facts as $Fid=>$F) {
         echo "Starting " . $F['Name'] . "<p>";
         $Wid = $F['HomeWorld'];
-        if (!$Wid) {
+        if ($Wid <= 0) {
           echo "No homeworld - missing out seting starting loc<p>";
           $StartSys = 0;
         } else {
@@ -86,7 +86,7 @@
       $Facts = Get_Factions();
       foreach ($Facts as $Fid=>$F) {
         $HW = $F['HomeWorld'];
-        if (!$HW) {
+        if ($HW <= 0) {
           echo "Skipping " . $F['Name'] . " no homeworld found.<p>";
           continue;
         }

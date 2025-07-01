@@ -117,9 +117,11 @@
             $pc[1] = 0; // Mining
           } else if ($Newlvl>1 ) {
             $HomeW = $FACTION['HomeWorld'];
-            $World = Get_World($HomeW);
-            if ($World['Home'] == $P['Home']) {
-              $pc = Proj_Costs(max($Newlvl-1,1));
+            if ($HomeW > 0) {
+              $World = Get_World($HomeW);
+              if ($World['Home'] == $P['Home']) {
+                $pc = Proj_Costs(max($Newlvl-1,1));
+              }
             }
           }
         }

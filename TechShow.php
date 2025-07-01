@@ -79,6 +79,7 @@
 
 //  if (Access('God')) echo "<table></tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea></table>";
   if ($Setup) {
+    echo "<form method=post>";
     Register_AutoUpdate('FactTech',$Fid);
   }
   foreach ($CTs as $ctind=>$CT) {
@@ -114,6 +115,7 @@
     }
   }
 
+  if (Access('God')) echo "<table><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea></table>";
 
 
   dotail();

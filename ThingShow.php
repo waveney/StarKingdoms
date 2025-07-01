@@ -1071,7 +1071,7 @@ function Show_Thing(&$T,$Force=0) {
       if (Get_Things_Cond($Fid,"Type=" . TTName('Embassy') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE)) continue 2; // Already have one
       $Facts = Get_Factions();
       foreach ($Facts as $F) {
-        if ($F['id'] == $T['Whose'] || $F['HomeWorld'] == 0) continue 3;
+        if ($F['id'] == $T['Whose'] || $F['HomeWorld'] <= 0) continue 3;
         $W = Get_World($F['HomeWorld']);
         if ($W) {
           $H = Get_ProjectHome($W['Home']);
@@ -1908,7 +1908,7 @@ function Show_Thing(&$T,$Force=0) {
 
   if (Access('God')) {
     echo "<tr><td>Built:<td>System: " . fm_select($KnownSys,$T,'WhereBuilt',1) . fm_number1('Turn',$T,'WhenBuilt');
-}
+  }
 
   echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
 

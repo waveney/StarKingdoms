@@ -192,7 +192,7 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0,$M
 
   if ($Fact && ($T['Cat']==0 || $T['Cat']==3) && isset($FactTechs[$T['id']]['Level']) ) echo " ( at Level " . $FactTechs[$T['id']]['Level'] . " )";
   if ($Fact && $T['Cat']>0) {
-    if (isset($FactTechs[$T['id']]) && $FactTechs[$Tid]['Level'] ) {
+    if (isset($FactTechs[$T['id']]) && ($FactTechs[$Tid]['Level'] || ( $T['Cat']==3)) ) {
       echo " ( Known )";
     } else if (!isset($FactTechs[$T['PreReqTech']]) || ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) {
       echo " <span class=NotAllow>( Not yet allowed )</span>";
@@ -206,9 +206,14 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0,$M
   if ($Setup) {
     if (($T['Cat'] == 0) || ($T['Cat'] == 3)) {
       echo fm_number0("Level",$FactTechs[$Tid],'Level',''," min=0 max=$MaxLvl","Tech$Tid");
+      if ($T['Cat'] == 3) {
+        $Know['Level'] = 0;
+        if (isset($FactTechs[$Tid])) $Know['Level'] = 1;
+        echo ' ' . fm_checkbox("Know about",$Know,'Level','',"Know$Tid");
+      }
     } else {
       echo fm_checkbox("Have",$FactTechs[$Tid],'Level','',"Tech$Tid");
-      if ($T['Cat'] == 2) echo fm_checkbox("Know about",$FactTechs[$Tid],'Level','',"Know$Tid");
+      if ($T['Cat'] == 2) echo ' ' . fm_checkbox("Know about",$FactTechs[$Tid],'Level','',"Know$Tid");
     }
   }
 
@@ -225,10 +230,10 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0,$M
       if ($T['PreReqTech3']) echo " and  " . $AllTechs[$T['PreReqTech3']]['Name'];
       echo "<br>";
     }
-    if ($T['MinThingLevel']) echo "Size Limitation - Requires at least level " . $T['MinThingLevel'] . " ship<br>";
+    if ($T['MinThingLevel']) echo " Size Limitation - Requires at least level " . $T['MinThingLevel'] . " ship<br>";
     break;
   case 3: // Specials
-    echo "<span class=orange>Special Leveled Tech outside the normal tech trees.</span><br>";
+    echo " <span class=orange>Special Leveled Tech outside the normal tech trees.</span><br>";
     break;
   }
 
@@ -1167,6 +1172,8 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
             $txt .= " - Badly Damaged ";
           } else if ($T['CurHealth']*2 <= $T['OrigHealth']) {
             $txt .= " - Damaged ";
+          } else if ($T['CurHealth'] <= ($T['OrigHealth']*0.8)) {
+            $txt .= " - Minor Damage ";
           }
         }
       }

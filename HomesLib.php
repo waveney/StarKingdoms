@@ -431,10 +431,10 @@ function Recalc_Worlds($Silent=0) {
   }
 
   foreach ($Facts as $F) {
-    if (isset($F['HomeWorld']) && isset($Worlds[$F['HomeWorld']])) {
+    if (isset($F['HomeWorld']) && $F['HomeWorld']>0 && isset($Worlds[$F['HomeWorld']])) {
       if (!$Silent) echo "Faction " . $F['Name'] . " has a homeworld<br>\n";
       if (empty($Worlds[$F['HomeWorld']]['Done'])) if (!$Silent) echo "Faction " . $F['Name'] . " Homeworld Not USED!<br>\n";
-    } else {
+    } else if ($F['HomeWorld']==0)  {
       if (!$Silent) echo "Faction " . $F['Name'] . " does <b>NOT</b> have a homeworld<br>\n";
       $HW = 0;
       $Ord = 0;
@@ -451,6 +451,9 @@ function Recalc_Worlds($Silent=0) {
       } else {
        if (!$Silent)  echo "No Worlds for faction<p>";
       }
+    } else {
+      if (!$Silent) echo "Faction " . $F['Name'] . " does not have a homeworld\n";
+
     }
   }
 

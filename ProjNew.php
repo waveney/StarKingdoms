@@ -324,9 +324,11 @@
                 $pc[1] = 0; // Mining
               } else if ($Lvl>1 ) {
                 $HomeW = $FACTION['HomeWorld'];
-                $World = Get_World($HomeW);
-                if ($World['Home'] == $Hi) {
-                  $pc = Proj_Costs($Lvl-1);
+                if ($HomeW > 0) {
+                  $World = Get_World($HomeW);
+                  if ($World['Home'] == $Hi) {
+                    $pc = Proj_Costs($Lvl-1);
+                  }
                 }
               }
             }

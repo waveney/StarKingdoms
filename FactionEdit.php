@@ -146,8 +146,8 @@ function Show_Faction(&$F,$Mode) {
     }
   } else {
     echo "<tr><td>Home World<td colspan=6>";
-    if (empty($F['HomeWorld']) || $F['HomeWorld']==0) {
-      echo "Not set up!";
+    if (empty($F['HomeWorld']) || $F['HomeWorld']<=0) {
+      echo ($F['HomeWorld']== 0?"Not set up!":"None");
     } else {
       $W = Get_World($F['HomeWorld']);
 //var_dump($W);

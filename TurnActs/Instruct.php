@@ -746,7 +746,7 @@ function InstructionsStage2() { // And other Instructions
 
         $Facts = Get_Factions();
         foreach ($Facts as $F) {
-          if ($F['id'] == $T['Whose'] || $F['HomeWorld'] == 0) continue;
+          if ($F['id'] == $T['Whose'] || $F['HomeWorld'] <= 0) continue;
           $W = Get_World($F['HomeWorld']);
           $H = Get_ProjectHome($W['Home']);
           if ($H['SystemId'] == $T['SystemId']) break;

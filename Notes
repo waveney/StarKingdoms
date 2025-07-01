@@ -49,6 +49,21 @@ NEW GAME FEATURES & BUGS
 462 Split build district from build office to remove side effects of duff data
 468 Military branches / offices should show on the "Meetups" page as they have the potential to deploy forces.
 469 judith BCZ map and links
-474 
+475 Deep Flux Crystal Deposits on FPX
+476 District 622 is invalid - tell Richard - Office build
+477 Build wormhole stabaliser in BVZ on link to ass
+478 
 
+[Mon Jun 30 19:11:56.188213 2025] [proxy_fcgi:error] [pid 1414949:tid 140475923146496] [client 86.132.58.174:0] AH01071: Got error 'PHP message: 
+PHP Warning:  Undefined array key "Name" in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActs/Instruct.php on line 1464; PHP message: PHP Warning:  
+Undefined array key "Name" in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActs/Instruct.php on line 1466; PHP message: PHP Warning:  
+Undefined array key "Name" in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActs/Instruct.php on line 1467', 
+referer: https://starkingdoms.uk/TurnActions.php?ACTION=Process&S=48
+
+New Trait - Deep Flux Crystal Deposits on FPX
+
+Narrative: Deep in this planet's crust are rich veins of Flux Crystals.  Extraction is difficult, but with a dedicated effort will be quite rewarding.
+Base Effect: If you have the “Advanced Mineral Extraction” technology and at least 2 Industrial Districts here, generate 2 Flux Crystals per turn.
+
+[Mon Jun 30 19:45:47.486251 2025] [proxy_fcgi:error] [pid 1414949:tid 140476854482688] [client 86.132.58.174:0] AH01071: Got error 'PHP message: PHP Fatal error:  Uncaught mysqli_sql_exception: You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 1 in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php:911\nStack trace:\n#0 /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php(911): mysqli->query()\n#1 /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php(1163): TidyUps()\n#2 /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php(1229): Do_Phase()\n#3 /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php(1323): Do_Turn()\n#4 {main}\n  thrown in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActions.php on line 911', referer: https://starkingdoms.uk/TurnActions.php?ACTION=Process&S=60
 

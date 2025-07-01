@@ -509,7 +509,7 @@ function TraitIncomes() {
           $SPs[1] += $Pow;
           break;
         case 'Science Branch (Engineering)':
-          Gain_Science($Who,Engineering,$Pow,"From a branch");
+          Gain_Science($Who,'Engineering',$Pow,"From a branch");
           $SPs[2] += $Pow;
           break;
         case 'Science Space Base':
@@ -907,7 +907,7 @@ function TidyUps() {
   $ThingNames = array_flip($TNames);
   $WormStab = $ThingNames['Wormhole Stabiliser'];
   $res = $db->query("UPDATE Things SET LinkId=0, LinkPay=0, LinkCost=0, Retreat=0, CurInst=ABS(Instruction) " .
-    "WHERE (LinkId>=0 OR LinkId=-5 OR LinkId=-6 OR LinkId=-7 AND GameId=$GAMEID");
+    "WHERE (LinkId>=0 OR LinkId=-5 OR LinkId=-6 OR LinkId=-7) AND GameId=$GAMEID");
   $res = $db->query("UPDATE Things SET Conflict=0 WHERE Conflict>0 AND GameId=$GAMEID");
   $res = $db->query("UPDATE Operations SET TurnState=0 WHERE GameId=$GAMEID");
 

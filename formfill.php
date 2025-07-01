@@ -239,7 +239,7 @@
         $N['Level'] = 0;
         echo Put_Faction_Tech($N);
       } else if ($N['id']) {
-        db_delete('FactionTechs',$mtch[1]);
+        db_delete('FactionTechs',$N['id']);
       }
       exit;
     }

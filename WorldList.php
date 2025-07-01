@@ -80,7 +80,7 @@
   echo "</thead><tbody>";
 
   foreach ($Facts as $F) {
-    if (!empty($F['HomeWorld'])) {
+    if (!empty($F['HomeWorld']) && ($F['HomeWorld']>0)) {
       if (isset($Worlds[$F['HomeWorld']])) {
         if (empty($Worlds[$F['HomeWorld']]['HomeOf'])) {
           $Worlds[$F['HomeWorld']]['HomeOf'] = $F['id'];

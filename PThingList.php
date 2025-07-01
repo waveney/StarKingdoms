@@ -254,7 +254,7 @@
     if ($HasHomeLogistics) {
       $Faction = Get_Faction($Fid);
       $Home = $Faction['HomeWorld'];
-      if ($Home) {
+      if ($Home > 0) {
         $W = Get_World($Home);
         if ($W) {
           switch ($W['ThingType']) {

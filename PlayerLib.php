@@ -206,6 +206,7 @@ function Has_Trait($fid,$Name) {
 }
 
 function Has_PTraitW($Wid,$Name) { // Has World got trait Name
+  if ($Wid <=0) return false;
   $W = Get_World($Wid);
   if (!$W) return false;
   switch ($W['ThingType']){
@@ -223,6 +224,7 @@ function Has_PTraitW($Wid,$Name) { // Has World got trait Name
 }
 
 function Has_PTraitH($Hid,$Name) { // Has Home got trait Name
+  if ($Hid <=0) return false;
   $W = Get_ProjectHome($Hid);
   switch ($W['ThingType']){
     case 1:// Planet
@@ -239,18 +241,21 @@ function Has_PTraitH($Hid,$Name) { // Has Home got trait Name
 }
 
 function Has_PTraitP($Pid,$Name) { // Has Planet got trait Name
+  if ($Pid <=0) return false;
   $P = Get_Planet($Pid);
   if ($P && ($P['Trait1'] == $Name || $P['Trait2'] == $Name || $P['Trait3'] == $Name)) return true;
   return false;
 }
 
 function Has_PTraitM($Pid,$Name) { // Has Moon got trait Name
+  if ($Pid <=0) return false;
   $P = Get_Moon($Pid);
   if ($P && ($P['Trait1'] == $Name || $P['Trait2'] == $Name || $P['Trait3'] == $Name)) return true;
   return false;
 }
 
 function Has_PTraitT($Tid,$Name) { // Has Thing got trait Name - from system it is in
+  if ($Tid <=0) return false;
   $T = Get_Thing($Tid);
   $N = Get_System($T['SystemId']);
   if ($N && ($N['Trait1'] == $Name || $N['Trait2'] == $Name || $N['Trait3'] == $Name)) return true;
@@ -480,22 +485,24 @@ function PlanConst($Fid,$worldid) { // Effective Plan Construction
   $PC = Has_Tech($Fid,"Planetary Construction");
 
   if ($worldid == $Fact['HomeWorld']) $PC++;
-  $World = Get_World($worldid);
+  if ($worldid >0) {
+    $World = Get_World($worldid);
 
-  switch ($World['ThingType']) {
-    case 1: // Planet
-      $P = Get_Planet($World['ThingId']);
-      $Target = $P['Type'];
-      break;
+    switch ($World['ThingType']) {
+      case 1: // Planet
+        $P = Get_Planet($World['ThingId']);
+        $Target = $P['Type'];
+        break;
 
-    case 2: // Moon
-      $P = Get_Moon($World['ThingId']);
-      $Target = $P['Type'];
-      break;
+      case 2: // Moon
+        $P = Get_Moon($World['ThingId']);
+        $Target = $P['Type'];
+        break;
 
-    case 3: // Thing
-      $Target = $Fact['Biosphere'];
-      break;
+      case 3: // Thing
+        $Target = $Fact['Biosphere'];
+        break;
+    }
   }
 
   if (($Target != $Fact['Biosphere']) && ($Target != $Fact['Biosphere2']) && ($Target != $Fact['Biosphere3'])) {
@@ -531,7 +538,7 @@ function Logistics($Fid,&$Things) {
   $FactionHome = 0;
   if ($HasHomeLogistics || $HomeArmyLogistics) {
     $Home = $Faction['HomeWorld'];
-    if ($Home) {
+    if ($Home > 0) {
       $W = Get_World($Home);
       if ($W) {
         switch ($W['ThingType']) {

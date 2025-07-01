@@ -23,7 +23,7 @@ $F = $FACTION;
       $Facts = Get_Factions();
         echo "Starting " . $F['Name'] . "<p>";
         $Wid = $F['HomeWorld'];
-        if (!$Wid) {
+        if ($Wid <= 0) {
           echo "No homeworld - missing out seting starting loc<p>";
           $StartSys = 0;
         } else {
