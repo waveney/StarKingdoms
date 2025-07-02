@@ -287,6 +287,7 @@ function Spend_Credit($Who,$Amount,$Why,$From='') { // Ammount is negative to ga
 }
 
 function Gain_Science($Who,$What,$Amount,$Why='') { // Ammount is negative to gain credits
+//  var_dump($Who,$What,$Amount,$Why);
   global $GAME;
   $Fact = Get_Faction($Who);
   $ltype = 0;

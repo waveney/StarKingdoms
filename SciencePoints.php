@@ -30,7 +30,7 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$ThingInstrs,$ThingInclrs,$Cu
   }
 
   dostaffhead("Science Points",["js/ProjectTools.js"]);
-  $TechCats = [['Physics','PhysicsSP'],['Engineering','EngineeringSP'],['Xenology','XenologySP']];
+  $TechFields = [['Engineering','EngineeringSP'],['Physics','PhysicsSP'],['Xenology','XenologySP']];
 
 // var_dump($_REQUEST);
 
@@ -57,24 +57,21 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$ThingInstrs,$ThingInclrs,$Cu
         if ($CTech['Level'] < $Br['Level']) {
           $CTech['Level'] = $Br['Level'];
           Put_Faction_Tech($CTech);
-          echo 'Using ' . $Br['Cost'] . ' ' . $TechCats[$Br['Field']][0] . " science points " . $Tech['Name'] . " has been raised to level " . $Br['Level'];
-          Gain_Science($Fid,$Br['Field']+1,-$Br['Cost'],"Raising " . $Tech['Name'] . " to level " . $Br['Level']);
+          echo 'Using ' . $Br['Cost'] . ' ' . $TechFields[$Br['Field']][0] . " science points " . $Tech['Name'] . " has been raised to level " . $Br['Level'];
+          Gain_Science($Fid,$TechFields[$Br['Field']][0],-$Br['Cost'],"Raising " . $Tech['Name'] . " to level " . $Br['Level']);
 
-//          $Faction[$TechCats[$Br['Field']][1]] = max(0, $Faction[$TechCats[$Br['Field']][1]] - $Br['Cost']);
-//          Put_Faction($Faction);
         } else {
           echo "You already know it.<p>";
         }
       } else if ($CTech['Level'] == 0) { // Supp
         $CTech['Level'] = 1;
         Put_Faction_Tech($CTech);
-        echo 'Using ' . $Br['Cost'] . ' ' . $TechCats[$Br['Field']][0] . " science points " . $Tech['Name'] . " has been researched";
-        Gain_Science($Fid,$Br['Field']+1,-$Br['Cost'],"Researching " . $Tech['Name'] . " (Level: " . $Br['Level'] . ")");
-//        $Faction[$TechCats[$Br['Field']][1]] = max(0, $Faction[$TechCats[$Br['Field']][1]] - $Br['Cost']);
-//        Put_Faction($Faction);
+        echo 'Using ' . $Br['Cost'] . ' ' . $TechFields[$Br['Field']][0] . " science points " . $Tech['Name'] . " has been researched";
+        Gain_Science($Fid,$TechFields[$Br['Field']][0],-$Br['Cost'],"Researching " . $Tech['Name'] . " (Level: " . $Br['Level'] . ")");
       }
       $Br['DoneTurn'] = $GAME['Turn']-1;
       Gen_Put('Breakthroughs',$Br);
+      $Faction = Get_Faction($Fid);
       break;
     }
   }
@@ -99,20 +96,13 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$ThingInstrs,$ThingInclrs,$Cu
   echo "<table border style='width:300'><tr><th>Tech Level<th>Points Required";
   for ($i = 1;$i<6; $i++) echo "<tr><td>$i<td>" . $SPCosts[$i];
   echo "</table>";
-/*
-  echo "<h2>Current Points</h2>";
-  foreach($TechCats as $Fld=>$TC) {
-    [$FName,$FldName] = $TC;
-    echo "<b>$FName Science Points</b>: " . $Avail[$Fld] . "<br>\n";
-  }
-*/
   $Breaks = Gen_Get_Cond('Breakthroughs',"FactionId=$Fid AND Turn=" . $GAME['Turn']);
 
   if ($Breaks) {
     echo "<h2>Planned Breakthroughs</h2>";
     echo "<table border><tr><td>Field<td>Technology<td>Level<td>Cost<td>Cancel\n";
     foreach($Breaks as $Br) {
-      echo "<tr><td>" . $TechCats[$Br['Field']][0] . "<td>" . $Ts[$Br['TechId']]['Name'] . "<td>" . $Br['Level'] . "<td>" . $Br['Cost'];
+      echo "<tr><td>" . $TechFields[$Br['Field']][0] . "<td>" . $Ts[$Br['TechId']]['Name'] . "<td>" . $Br['Level'] . "<td>" . $Br['Cost'];
 
     if ($Faction['TurnState'] == 4 ) continue;
       if ($Br['DoneTurn']) {
@@ -129,7 +119,7 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$ThingInstrs,$ThingInclrs,$Cu
 
   echo "<form method=post action=SciencePoints.php>";
   echo fm_hidden('id',$Fid);
-  foreach($TechCats as $Fld=>$TC) {
+  foreach($TechFields as $Fld=>$TC) {
     [$FName,$FldName] = $TC;
     echo "<br><h1>$FName Science Points</h1>\n";
 
@@ -152,7 +142,7 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$ThingInstrs,$ThingInclrs,$Cu
         if ($Avail[$Fld]-$Used[$Fld] >= $SPCosts[$Lvl]) {
           echo "<button class=projtype type=submit formaction='SciencePoints.php?ACTION=NEW&id=$Fid&Tid=" . $TT['id'] . "&L=$Lvl&C=" .
                 $SPCosts[$Lvl] . "&Fld=$Fld'>" .
-                "Research " . $TT['Name'] . " Level $Lvl; Cost " . $SPCosts[$Lvl] . ' ' . $TechCats[$Fld][0] . "</button><p>";
+                "Research " . $TT['Name'] . " Level $Lvl; Cost " . $SPCosts[$Lvl] . ' ' . $TechFields[$Fld][0] . "</button><p>";
         }
       }
 
@@ -168,7 +158,7 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$ThingInstrs,$ThingInclrs,$Cu
         if ($Avail[$Fld]-$Used[$Fld] >= $SPCosts[$Lvl]) {
           echo "<button class=projtype type=submit formaction='SciencePoints.php?ACTION=NEW&id=$Fid&Tid=" . $T['id'] . "&L=$Lvl&C=" .
                 $SPCosts[$Lvl] . "&Fld=$Fld'>" .
-                "Research " . $T['Name'] . " Level $Lvl; Cost " . $SPCosts[$Lvl] . ' ' . $TechCats[$Fld][0] . "</button><p>";
+                "Research " . $T['Name'] . " Level $Lvl; Cost " . $SPCosts[$Lvl] . ' ' . $TechFields[$Fld][0] . "</button><p>";
         }
       }
 

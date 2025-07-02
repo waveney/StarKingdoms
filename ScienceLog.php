@@ -19,7 +19,7 @@ if ($GM && !isset($FACTION['id'])) {
   $Logs = Gen_Get_Cond('SciencePointLog',"FactionId=$Fid");
 }
 $Facts = Get_Factions();
-$TechCats = [['Unknown','??'],['Engineering','EngineeringSP'],['Physics','PhysicsSP'],['Xenology','XenologySP'],['General','']];
+$TechFields = [['Unknown','??'],['Engineering','EngineeringSP'],['Physics','PhysicsSP'],['Xenology','XenologySP'],['General','']];
 
 if (!$Logs) {
   echo "<h2>No Science Point Logs recorded yet</h2>";
@@ -39,7 +39,7 @@ foreach(array_reverse($Logs) as $L) {
   echo "<tr>";
   if ($Fid == 0) echo "<td>" . ($Facts[$L['FactionId']]['Name']??'Unknown');
   echo "<td>" . $L['Turn'];
-  echo "<td>" . $TechCats[$L['Type']][0];
+  echo "<td>" . $TechFields[$L['Type']][0];
   echo "<td>" . $L['Number'];
   echo "<td>" . $L['Note'];
 

@@ -280,7 +280,7 @@ function ScientificBreakthroughs() {
   global $GAME,$GAMEID;
 //  GMLog("Scientific Breakthroughs is currently Manual<p>");
 
-  $TechCats = [['Physics','PhysicsSP'],['Engineering','EngineeringSP'],['Xenology','XenologySP']];
+  $TechFields = [['Engineering','EngineeringSP'],['Physics','PhysicsSP'],['Xenology','XenologySP']];
   $Breaks = Gen_Get_Cond('Breakthroughs',"Game=$GAMEID AND Turn=" . $GAME['Turn'] . " AND DoneTurn=0");
 
 // var_dump($Breaks);
@@ -297,8 +297,8 @@ function ScientificBreakthroughs() {
       if ($CTech['Level'] < $Br['Level']) {
         $CTech['Level'] = $Br['Level'];
         Put_Faction_Tech($CTech);
-        TurnLog($Br['FactionId'],'Using ' . $Br['Cost'] . $TechCats[$Br['Field']][0] . " science points " . $Tech['Name'] . " has been raised to level " . $Br['Level']);
-        Gain_Science($Fid,$Br['Field']+1,-$Br['Cost'],"Raising " . $Tech['Name'] . " to level " . $Br['Level']);
+        TurnLog($Br['FactionId'],'Using ' . $Br['Cost'] . $TechFields[$Br['Field']][0] . " science points " . $Tech['Name'] . " has been raised to level " . $Br['Level']);
+        Gain_Science($Fid,$TechFields[$Br['Field']][0],-$Br['Cost'],"Raising " . $Tech['Name'] . " to level " . $Br['Level']);
       } else {
         GMLog("Faction: " . $Fact['Name'] . " attempted to use science points to raise " . $Tech['Name'] . " to level " . $Br['Level'] .
               " already at level " . $CTech['Level']);
@@ -308,8 +308,8 @@ function ScientificBreakthroughs() {
     } else if ($CTech['Level'] == 0) { // Supp
       $CTech['Level'] = 1;
       Put_Faction_Tech($CTech);
-      TurnLog($Br['FactionId'],'Using ' . $Br['Cost'] . $TechCats[$Br['Field']][0] . " science points " . $Tech['Name'] . " has been reserched");
-      Gain_Science($Fid,$Br['Field']+1,-$Br['Cost'],"Researching " . $Tech['Name'] . " (Level: " . $Br['Level'] . ")");
+      TurnLog($Br['FactionId'],'Using ' . $Br['Cost'] . $TechFields[$Br['Field']][0] . " science points " . $Tech['Name'] . " has been reserched");
+      Gain_Science($Fid,$TechFields[$Br['Field']][0],-$Br['Cost'],"Researching " . $Tech['Name'] . " (Level: " . $Br['Level'] . ")");
     } else {
       GMLog("Faction: " . $Fact['Name'] . " attempted to use science points to research " . $Tech['Name'] . " it is already known");
       TurnLog($Br['FactionId'],"You attempted to use science points to research " . $Tech['Name'] . " it is already known");
@@ -377,6 +377,7 @@ function TraitIncomes() {
     [2,'High Tectonic Activity','Engineering',3],
     ['Industrial','Necessity is the Mother of Invention','Engineering',1],
     ['Industrial','Cret-Chath Deposits','Currency3',4],
+    ['Industrial','Deep Flux Crystal Deposits','Currency1',5],
   ];
 
   $DTypes = Get_DistrictTypes();
@@ -467,6 +468,19 @@ function TraitIncomes() {
                     $SP[1] . " in " . $Bod['Name']);
                 }
                 break;
+
+              case 5: // Deep Flux Crystal Deposits
+                $Ds = $DistF($Bid);
+                $D = ($Ds[$NamesDT[$SP[0]]]??0);
+                if (($D >= 2) && (Has_Tech($Fid,'Advanced Mineral Extraction'))) {
+                  Gain_Science($Fid, $SP[2], 2,"Planetary trait " .$SP[1] . " in " . $Bod['Name']);
+                  TurnLog($Fid,"Gained 2 " . Feature($SP[2],'Unknown') . " from the planetary trait " .
+                    $SP[1] . " in " . $Bod['Name']);
+                  GMLog($Facts[$Fid]['Name'] . " Gained 2 " . Feature($SP[2],'Unknown') . " from the planetary trait " .
+                    $SP[1] . " in " . $Bod['Name']);
+                }
+
+
             }
           }
 

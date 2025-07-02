@@ -26,6 +26,7 @@ foreach ($FSs as $i=>$FS) {
   $FS['FName'] = System_Name($N,$Fid);
   $OFSs[$N['Ref']] = $FS;
 }
+$PlanetTypes = Get_PlanetTypes();
 
 $coln = 0;
 
@@ -42,7 +43,26 @@ echo "</thead><tbody>";
 ksort($OFSs);
 foreach($OFSs as $R=>$FS) {
   $N = $Systems[$FS['SystemId']];
-  echo "<tr><td><a href=SurveyReport.php?R=$R>$R</a><td><a href=SurveyReport.php?R=$R>" . ($FS['Name']??$FS['FName']) . "</a>";
+
+  $Sid = $N['id'];
+  $Hospitable = 0;
+  $Planets = Get_Planets($Sid);
+  foreach ($Planets as $Pid=>$P) {
+    if ($PlanetTypes[$P['Type']]['Hospitable']) {
+      $Hospitable = 1;
+      break;
+    }
+    $Moons = Get_Moons($Pid);
+    foreach ($Moons as $Mid=>$M) {
+      if ($PlanetTypes[$M['Type']]['Hospitable']) {
+        $Hospitable = 1;
+        break 2;
+      }
+    }
+  }
+
+  echo "<tr><td><a href=SurveyReport.php?R=$R>$R</a><td>" . ($Hospitable?'<b>':'') . "<a href=SurveyReport.php?R=$R>" .
+    ($FS['Name']??$FS['FName']) . "</a>" . ($Hospitable?'</b>':'');
   if ($N['Control']) {
     echo "<td style='background:" . $Facts[$N['Control']]['MapColour']. "'>" . $Facts[$N['Control']]['Name'];
   } else {

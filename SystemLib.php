@@ -752,7 +752,7 @@ function PlanetScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
           $dc = 0;
           foreach ($Ds as $D) {
             if ($dc++) $ptxt .= ", ";
-            $ptxt .= $DistTypes[$D['Type']]['Name'] . ": " . $D['Number'];
+            $ptxt .= ($DistTypes[$D['Type']]['Name']??'Unknown') . ": " . $D['Number'];
           }
           $ptxt .= "<p>";
 

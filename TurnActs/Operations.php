@@ -652,7 +652,7 @@ function OperationsComplete() {
           GMLog($Facts[$Fid]['Name'] . " tried to share " . $Tech['Name'] . " in system " . System_Name($N) . " but there is nobody in control to recieve it");
           break;
         }
-        $Level = $O['Level'];
+        $Level = $O['Para2'];
         $XFact = $Facts[$Xfr2];
         $Have = Has_Tech($Xfr2,$Tech['id']);
         //      var_dump($Tech,$XFact);
