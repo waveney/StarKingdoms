@@ -18,6 +18,7 @@ CREATE TABLE `Things` (
   `Notes` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `GM_Notes` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `MaxDistricts` int NOT NULL DEFAULT '0',
+  `MaxOffices` int NOT NULL,
   `MaxModules` int NOT NULL DEFAULT '0',
   `Image` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `Gadgets` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,

@@ -333,6 +333,9 @@
       echo "<td>" . ($Systems[$T['SystemId']]??'???');
       echo "<td>Direct<td>";
       echo "<td>" . ($T['NewSystemId'] == 0? "" : $Systems[$T['NewSystemId']]);
+    } else if ($Prop2 & THING_AT_LINK) {
+      $L = Get_Link($T['Dist1']);
+      echo "<td><td><td>At: " . ($L['Name']??'Unknown') . "<td>";
     } else {
       $Lid = $T['LinkId'];
 

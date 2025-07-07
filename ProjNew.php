@@ -183,7 +183,7 @@
   $PHx = 1;
   $Dis = [];
   $Offices = [];
-  $MaxDists = 0;
+  $MaxDists = $MaxOff = 0;
   $ThingLevel = 1;
   foreach ($Homes as &$H) {
     $Hix = $H['id'];
@@ -214,12 +214,12 @@
         $H['Skip'] = 1;
         continue 2;  // Remove things without districts
       }
-      $MaxDists = $PH['MaxDistricts'];
       $ThingLevel = $PH['Level'];
       $Sid = $PH['SystemId'];
       break;
     }
-
+    $MaxDists = $PH['MaxDistricts'];
+    $MaxOff = $PH['MaxOffices'];
 
     //TODO Construction and Districts...
 
@@ -281,12 +281,21 @@
       foreach ($HDists[$Hi] as $DD) if ($DD['Type'] > 0) $CurDists += $DD['Number'];
 
       echo "Maximum Districts: $MaxDists<br>Current Districts: $CurDists<br>";
-      if (Feature('Orgs')) echo "Offices: $CurOff<br>";
+      if (Feature('Orgs')) {
+        if ($MaxOff) {
+          if ($MaxOff >0) {
+            echo "Max Offices: $MaxOff<br>";
+          } else {
+            echo "The $CurOff Offices count to the max districts<br";
+          }
+        }
+        echo "Offices: $CurOff<br>";
+      }
     }
 
 //         echo "Maximum Districts: $MaxDists<br>Current Districts: $CurDists<br>";
 
-      if ($MaxDists==0 || (($CurOff + $CurDists) < $MaxDists)) {
+      if ($MaxDists==0 || (($MaxOff >=0) && ($CurDists < $MaxDists)) || (($MaxOff<0) && ($CurOff + $CurDists) < $MaxDists)) {
         echo "<table class=ProjTab border><tr><td>Project<td>Cost<td>Progress<br>Needed<td>Description";
         $DTs = Get_DistrictTypes();
         $DNames = [];
@@ -344,9 +353,12 @@
         }
 
         echo "</table><p>";
+      } else {
+        echo "<h2>No space for another district</h2>";
+      }
 
-        if (Feature('Orgs') && count($Offices) < $PlanCon) {
-
+      if (Feature('Orgs') && (count($Offices) < $PlanCon)) {
+        if (($MaxOff == 0) || (($MaxOff>0) && ($CurOff < $MaxOff)) || (($MaxOff<0) && ($CurOff + $CurDists) < $MaxDists)) {
           // Look through projects now to when asked if build office then offices++
           $CProjs = Get_Projects_Cond("Home=$Hi AND TurnStart>0 AND TurnStart<$Turn AND Type=1 AND TurnEnd=0 AND ThingType<0 AND Status<2");
           if ($CProjs) $CurOff += count($CProjs);
@@ -418,6 +430,8 @@
             "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
             "Build New Orgs Office; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>\n";
 
+        } else {
+          echo "<h2>No space for another office</h2>";
         }
       }
 

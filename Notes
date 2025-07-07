@@ -53,6 +53,10 @@ NEW GAME FEATURES & BUGS
 477 Build wormhole stabaliser in BVZ on link to ass
 484 Kage 30/6 @ 21:47
 485 Luke 1/7 @20:01
+486 Use Flux Crystals
+489 Science branches
+490 better turn validation
+493
 
 
 [Mon Jun 30 19:11:56.188213 2025] [proxy_fcgi:error] [pid 1414949:tid 140475923146496] [client 86.132.58.174:0] AH01071: Got error 'PHP message: 

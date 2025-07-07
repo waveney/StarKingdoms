@@ -81,6 +81,7 @@
         if ($PlanetTypes[$P['Type']]['Append']) $type .= " Planet";
         $Name = $P['Name'];
         $SysId = $P['SystemId'];
+        $EditP = "PlanEdit.php";
         break;
 
       case 2: /// Moon
@@ -90,6 +91,7 @@
         $Name = $M['Name'];
         $P = Get_Planet($M['PlanetId']);
         $SysId = $P['SystemId'];
+        $EditP = "MoonEdit.php";
         break;
 
       case 3: // Thing
@@ -97,6 +99,7 @@
         $type = $TTypes[$T['Type']]['Name'];
         $Name = $T['Name'];
         $SysId = $T['SystemId'];
+        $EditP = "ThingEdit.php";
         break;
       default: // Error
         echo "<h2 class=Err>There is a fault with World " . $W['id'] . " Tell Richard</h2>";
@@ -149,6 +152,8 @@
 
   $dc=0;
   $totdisc = 0;
+  $MaxDists = $WH['MaxDistricts']??0;
+  $MaxOff = $WH['MaxOffices']??0;
 
   echo "<h1>Edit World</h1>";
   echo "The only things you can change (currently) is the name, description and relative importance - higher numbers appear first when planning projects.<p>\n";
@@ -168,6 +173,18 @@
      echo "<tr><td>Minerals<td>" . $W['Minerals'];
   }
   echo "<tr>" . fm_number("Relative Importance", $W, 'RelOrder');
+  if ($MaxDists == 0) {
+    echo "<tr><td>No limit to number of Districts";
+  } else {
+    echo "<tr><td>Max Districts:<td>$MaxDists";
+    if ($MaxOff > 0) {
+      echo "<td>Max Offices:<td>$MaxOff";
+    } else if ($MaxOff<0) {
+      echo "<td>And Offices";
+    }
+  }
+  if ($GM) echo "<td><a href=$EditP?i=" . $W['ThingId'] . ">Edit</a>";
+
 /*
   if ($GM) {
     echo "<tr>" . fm_number('Devastation',$W,'Devastation');
@@ -232,6 +249,10 @@
     $NumSp = 0;
     foreach ($SocPs as $si=>$SP) {
       $Prin = Get_SocialP($SP['Principle']);
+      if (!$Prin) {
+        echo "<tr><td>Error - Tell Richard";
+        continue;
+      }
 //var_dump($Prin,$SP);
       if ($NumSp++) echo "<tr>";
       if ($GM) {

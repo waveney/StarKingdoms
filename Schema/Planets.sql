@@ -34,5 +34,7 @@ CREATE TABLE `Planets` (
   `Trait3Conceal` int NOT NULL,
   `ColonyTweak` int NOT NULL,
   `DayLength` double NOT NULL,
+  `MaxDistricts` int NOT NULL,
+  `MaxOffices` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

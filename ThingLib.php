@@ -84,7 +84,8 @@ define('THING_ALWAYS_OTHER',      4);
 define('THING_NO_LOGISTICS',      8);
 define('THING_HAS_SPEED',        16);
 define('THING_DISLIKES_SPACE', 0x20);
-define('THING_IS_BIG',         0x40); // Add Level to max modules
+define('THING_AT_LINK',        0x40);
+define('THING_IS_BIG',         0x80); // Add Level to max modules
 
 define('LINK_ON_BOARD',-1);
 define('LINK_BOARDING',-2);
@@ -1121,7 +1122,10 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
 
 //var_dump($Locations);exit;
       if ($Div && ($T['LinkId'] >= 0 || ($MoveProps[$T['LinkId']]&1)) && $T['SystemId'] > 0 && isset($T['WithinSysLoc']) && ($T['WithinSysLoc'] > 0)) {
-        if (isset($Locations[$T['WithinSysLoc']])) {
+        if ($TTprops2 & THING_AT_LINK) {
+          $L = Get_Link($T['Dist1']);
+          $txt .= " ( At " . ($L['Name']??'Unknown') . " ) ";
+        } else if (isset($Locations[$T['WithinSysLoc']])) {
           $txt .= " ( " . $Locations[$T['WithinSysLoc']] . " ) ";
         } else if ($GM) {
           $txt .= " ( Unknown Location " . $T['WithinSysLoc'] . " ) ";

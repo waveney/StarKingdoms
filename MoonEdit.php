@@ -14,6 +14,8 @@
     $Mid = $_REQUEST['M'];
   } else if (isset($_REQUEST['id'])) {
     $Mid = $_REQUEST['id'];
+  } else if (isset($_REQUEST['i'])) {
+    $Mid = $_REQUEST['i'];
   } else {
 
     echo "<h2>No Systems Requested</h2>";

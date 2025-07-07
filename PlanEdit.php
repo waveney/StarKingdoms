@@ -14,6 +14,8 @@
     $Pid = $_REQUEST['P'];
   } else if (isset($_REQUEST['id'])) {
     $Pid = $_REQUEST['id'];
+  } else if (isset($_REQUEST['i'])) {
+    $Pid = $_REQUEST['i'];
   } else {
 
     echo "<h2>No Systems Requested</h2>";

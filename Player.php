@@ -3,10 +3,11 @@
   global $FACTION,$GAMEID,$USER,$GAME;
   include_once("GetPut.php");
   include_once("PlayerLib.php");
+  include_once("ThingLib.php");
   global $PlayerState,$PlayerStates;
 
 function ValidateTurn($For = 0) {
-  global $FACTION,$GAME;
+  global $FACTION,$GAME,$ThingInstrs;
   dostaffhead("Player Actions");
   if ($For) {
     $Fid = $For;
@@ -245,6 +246,50 @@ function ValidateTurn($For = 0) {
         echo "<h2 class=Err>Warning - <b>This can be optimised</b> on $Name Does not Sum to Zero</h2>";
         $Valid = 0;
       }
+    }
+  }
+
+  $Tings = Get_Things_Cond_Ordered($Fid,"Instruction!=0");
+
+//  var_dump($ThingInstrs,$Tings);
+  foreach ($Tings as $Tid=>$T) {
+    switch ($ThingInstrs[$T['Instruction']]) {
+
+      case 'Analyse Anomaly':
+
+      case 'Transfer':
+
+      case 'Link Repair':
+        if ($T['Dist1'] == 0) {
+          echo "<h2 class=Err>Warning - <a href=ThingEdit.php?i=$Tid>" . $T['Name'] .
+            "</a> is repairing a link - please select which link</h2>";
+          $Valid = 0;
+        }
+        break;
+
+      case 'Collaborative DSC':
+      case 'Collaborative Planetary Construction':
+      case 'Collaborative Space Construction':
+       $CTid = $T['Dist1'];
+       $CT = Get_Thing($CTid);
+       if (!CT) {
+         echo "<h2 class=Err>Warning - <a href=ThingEdit.php?i=$Tid>" . $T['Name'] .
+           "</a> is Collaborating, but no thing to collaborate with has been selected</h2>";
+         $Valid = 0;
+       }
+       break;
+
+
+      case 'Build Wormhole Stabiliser':
+        if ($T['Dist1'] == 0) {
+          echo "<h2 class=Err>Warning - <a href=ThingEdit.php?i=$Tid>" . $T['Name'] .
+            "</a> is Building Wormhole Stabiliser - please select which wormhole</h2>";
+          $Valid = 0;
+        }
+        break;
+
+      default: // Nothing to validate
+        break;
     }
   }
 
