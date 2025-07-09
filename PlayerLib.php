@@ -124,12 +124,15 @@ function Player_Page() {
         echo "<li><a href=ThingPlan.php>Plan a Thing</a> - Planning Things (Ships, $ARMIES, Named Characters, Space stations etc)";
       }
       if ($FACTION['PhysicsSP'] >=5 || $FACTION['EngineeringSP'] >=5 || $FACTION['XenologySP'] >=5 ) {
-        echo "<li><a href=SciencePoints.php>Spend Science Points</a>";
-        echo "<li><a href=ScienceLog.php>Science Point Logs</a>";
+        echo "<li><a href=SciencePoints.php>Spend Science Points</a> - Also Science Point logs";
+//        echo "<li><a href=ScienceLog.php>Science Point Logs</a>";
       }
       if ($Facts || $FACTION['NPC']) {
-        echo "<li><a href=MapTransfer.php>Transfer Mapping knowledge to another Faction</a>\n";
-        echo "<li><a href=MapTransferLogs.php>Logs of Mapping Transfers</a>\n";
+        echo "<li><a href=MapTransfer.php>Transfer Mapping knowledge to another Faction</a> - Also transfer logs\n";
+//        echo "<li><a href=MapTransferLogs.php>Logs of Mapping Transfers</a>\n";
+      }
+      if ((Feature('Currency1') == 'Flux Crystals') && $FACTION['Currency1']) {
+        echo "<li><a href=FluxCrystals.php>Use Flux Crystals</a>\n";
       }
     echo "</ul>";
 
@@ -295,12 +298,12 @@ function Gain_Science($Who,$What,$Amount,$Why='') { // Ammount is negative to ga
   case 1:
   case 'Physics':
     $Fact['PhysicsSP'] = ($Fact['PhysicsSP'] ?? 0) + $Amount;
-    $ltype = 1;
+    $ltype = 2;
     break;
   case 2:
   case 'Engineering':
     $Fact['EngineeringSP'] = ($Fact['EngineeringSP'] ?? 0) + $Amount;
-    $ltype = 2;
+    $ltype = 1;
     break;
   case 3:
   case 'Xenology':

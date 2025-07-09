@@ -11,6 +11,9 @@ $GM = Access('GM');
 
 dostaffhead("Science Point Log");
 
+echo "<h1>Science Point Logs, <a href=SciencePoints.php>Spend Science Points</a></h1>";
+
+
 if ($GM && !isset($FACTION['id'])) {
   $Logs = Gen_Get_All_GameId('SciencePointLog');
   $Fid = 0;

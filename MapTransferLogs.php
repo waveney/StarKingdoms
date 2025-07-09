@@ -36,6 +36,8 @@ foreach ($FSs as $FS) {
 }
 asort($WRefs);
 
+echo "<h1>Map Transfer Logs, <a href=MapTransfer.php>Transfer Mapping Knowledge</a></h1>";
+
 $OutLogs = Gen_Get_Cond('TransferLog',"FromFact=$Fid ORDER BY Turn DESC");
 $InLogs = Gen_Get_Cond('TransferLog',"DestFact=$Fid ORDER BY Turn DESC");
 

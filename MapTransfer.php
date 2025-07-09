@@ -135,7 +135,7 @@ foreach ($Facts as $Fi=>$Fa) {
 
 
 
-echo "<h1>Transfer Mapping Knowledge</h1>";
+echo "<h1>Transfer Mapping Knowledge, <a href=MapTransferLogs.php>Map Transfer Logs</a></h1>";
 echo "You can transfer for one system or all systems.  Note there is no undo to this.<p>";
 echo "<form method=post>" . fm_hidden('F',$Fid);
 if ($GM) {
