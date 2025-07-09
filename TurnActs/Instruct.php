@@ -1462,7 +1462,7 @@ function InstructionsComplete() {
         $L = Get_Link($T['Dist1']);
         if ($L) {
           $NT = ['GameId'=>$GAME['id'], 'Type'=> TTName('Wormhole Stabiliser'), 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> 1,
-            'Whose'=>$T['Whose'], 'BuildState'=>BS_COMPLETE, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName'], 'Dist1' => $T['Dist1']];
+            'Whose'=>$T['Whose'], 'BuildState'=>BS_COMPLETE, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName'], 'Dist1' => $T['Dist1'], 'Stability'=>100];
           Put_Thing($NT);
           TurnLog($T['Whose'],"Link " . $L['Name'] . " has a wormhole stabiliser in " . $N['Ref']);
           GMLog($Facts[$T['Whose']]['Name'] . " has built a wormhole stabiliser for link " . $L['Name'] . " in " . $N['Ref']);

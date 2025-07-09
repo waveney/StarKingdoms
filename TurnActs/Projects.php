@@ -668,6 +668,9 @@ function ProjectsCompleted($Pass) {
               TurnLog($Fid, $T['Name'] . " has been " . firstword($PT['Name']) . "ed",$T);
             }
           }
+          $T['BuildState'] = BS_COMPLETE;
+          Put_Thing($T);
+
           break;
 
 

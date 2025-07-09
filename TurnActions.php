@@ -24,7 +24,7 @@
     [ 5,'',         'Cash Transfers','Coded'],
     [ 6,'',         'Spare',''],
     [ 7,'Movement',  'Follow','Coded'],
-    [ 8,'',         'Spare',''],
+    [ 8,'',         'Faction Actions','Coded'],
     [ 9,'',         'Scientific Breakthroughs','Coded'],
     [10,'Projects',  'Start Projects','Coded,M'],
     [11,'Operations','Start Operations','Coded,M'],
@@ -275,6 +275,41 @@ function CashTransfers() {
   GMLog("All Cash trasfered complete.<br>\n");
   return 1;
 }
+
+function FactionActions() { // Faction level actions other the science points
+  global $GAME,$GAMEID;
+  $Facts = Get_Factions();
+
+  $FCUs = Gen_Get_Cond("FluxCrystalUse","GameId=$GAMEID AND Turn=" . $GAME['Turn'] . " ORDER BY rand()");
+  if ($FCUs) {
+    foreach($FCUs as $F) {
+      $L = Get_Link($F['LinkId']);
+      if (!$Facts[$F['FactionId']]['Currency1']) {
+        TurnLog($F['FactionId'],"You attemptted to use of Flux Crystal on Link " . $L['Name'] . " but you don't have any left");
+        GMLog($Facts[$F['FactionId']]['Name'] . " attemptted to use of Flux Crystal on Link " . $L['Name'] . " but they don't have any left");
+        continue;
+      }
+      $Facts[$F['FactionId']]['Currency1']--;
+      Put_Faction($Facts[$F['FactionId']]);
+      if ($L['FluxCrystals']) {
+        TurnLog($F['FactionId'],"You attemptted to use a Flux Crystal on Link " . $L['Name'] . ", one has already been used this turn it had no effect");
+        GMLog($Facts[$F['FactionId']]['Name'] . " attemptted to use a Flux Crystal on Link " . $L['Name'] .
+          ", one has already been used this turn it had no effect");
+        continue;
+      }
+      $L['FluxCrystals'] = 1;
+      $L['ThisTurnMod']--;
+      $EInst = $L['Instability'];
+      if ($L['ThisTurnMod']) $EInst = max(0,$EInst+$L['ThisTurnMod']);
+      Put_Link($L);
+      TurnLog($F['FactionId'],"You have used a Flux Crystal on Link " . $L['Name'] . ", its now effectvely instability $EInst for the rest of this turn");
+      GMLog($Facts[$F['FactionId']]['Name'] . "  have used a Flux Crystal on Link " . $L['Name'] .
+        ", its now effectvely instability $EInst for the rest of this turn");
+    }
+  }
+  return 1;
+}
+
 
 function ScientificBreakthroughs() {
   global $GAME,$GAMEID;
@@ -976,6 +1011,7 @@ function TidyUps() {
     // Mods this/next
     $L['ThisTurnMod'] = $L['NextTurnMod'];
     $L['NextTurnMod'] = 0;
+    $L['FluxCrystals'] = 0;
 
     $Sid1 = $Systems[$L['System1Ref']]['id'];
     $Sid2 = $Systems[$L['System2Ref']]['id'];
