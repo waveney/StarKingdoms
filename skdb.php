@@ -369,7 +369,7 @@ function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$M
   $HexFlds = explode(',',$Hexflds);
   $indxname = ($TableIndexes[$table]??'id');
 
-// var_dump($Sep,$Mstr,$MstrNot);
+// var_dump($Sep,$Mstr,$MstrNot,$Hexflds,$MstrChk);
 //return;
   if (isset($_POST['Update'])) {
     $Pfx = '';
@@ -398,6 +398,7 @@ function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$M
         } else {
           $recpres = 0;
           foreach ($Flds as $fld=>$ftyp) {
+            // var_dump($fld,$ftyp);
             if ($fld == $indxname) continue;
             if (in_array($fld,$DateFlds)) {
               $t[$fld] = Date_BestGuess($_POST["$Pfx$fld$Sep$i"]);

@@ -53,7 +53,7 @@
   echo "<table border>";
   echo "<tr><Td>Pay:<td>" . fm_select($Facts,$_REQUEST,'F');
 
-  echo "<tr>" . fm_radio('',$Currencies,$_REQUEST,'What');
+  echo "<tr>" . fm_radio('',$Currencies,$_REQUEST,'What',' colspan=4');
   echo "<tr>" . fm_number("Amount",$_REQUEST,'C');
   echo "<tr>" . fm_text("Reason",$_REQUEST,'R');
   echo "<tr><td>" . fm_checkbox("Ongoing:<td>",$_REQUEST,'O',1);

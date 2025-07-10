@@ -265,6 +265,7 @@
   Register_Autoupdate('Thing',$Tid); //'ModuleCheck');
   echo fm_hidden('id',$Tid) . fm_hidden('F',$Fid);
   $T['MaxModules'] = Max_Modules($T);
+  $OtherCosts = [0,0,0,0];
   // Sanitise thing type names
   echo "<table border>";
   echo "<tr><td>Planning a:<td>" . (Feature('BluePrints')?($ThingTypeNames[ $T['Type']]??'Unknown') :fm_select($ThingTypeNames, $T,'Type'));
@@ -392,10 +393,28 @@
           $totmodc += $MMs[$Mti]['Number'] * ($Slots?$MTs[$Mti]['SpaceUsed']:1);
         }
 
+        if (($MMs[$Mti]['Number']??0)>0) {
+          if ($Mtype['ExtraCost']) {
+            $OtherCosts[0] += $Mtype['ExtraCost']*$MMs[$Mti]['Number'];
+          }
+          for($i=1;$i<4;$i++) if ($Mtype['Leveled'] & (1<<(7+$i))) {
+            $OtherCosts[$i] += $MMs[$Mti]['Number'];
+          }
+        }
+
       }
       if (Has_Tech($Fid,'Cret-Chath Engineering') && ($tprops & (THING_HAS_SHIPMODULES | THING_HAS_ARMYMODULES ))) {
         echo "<tr><td>" . fm_checkflagbox('Use Cret-Chath',$T,'BuildFlags',BUILD_FLAG1,'','',1) . "<td>Needed: " . $T['Level'] .
              "<td>Construction will fail if not available at start.";
+      }
+
+      if ($OtherCosts[0] || $OtherCosts[1] || $OtherCosts[2] || $OtherCosts[3]) {
+        echo "<tr><td>Other Costs:<td colspan=2>";
+        if ($OtherCosts[0]) echo " Credits: " . $OtherCosts[0] . ", ";
+        for($i=1;$i<4;$i++) {
+          if ($OtherCosts[$i]) echo " " . Feature("Currency$i") . ": " . $OtherCosts[$i] . ", ";
+        }
+        echo "<td>Construction will fail if not available at start.";
       }
 
       $ModNames = NamesList($MTs);

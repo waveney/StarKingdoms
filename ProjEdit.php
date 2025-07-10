@@ -229,6 +229,11 @@
     echo "<tr>" . fm_number("Turn Start",$P,'TurnStart') . fm_number('Turn Ended', $P, 'TurnEnd');
     echo "<tr>" . fm_number("Where",$P,'Home') . "<td>" . $PH['Name'] . " in " . NameFind($System);
     echo "<td>" . fm_checkbox('GM Override',$P,'GMOverride') . " Set to override maxrush";
+    echo "<tr>";
+    for ($i=1;$i<4;$i++) {
+      $cn = Feature("Currency$i");
+      if ($cn) echo fm_number1($cn,$P,"CostCur$i");
+    }
     echo "<tr>" . fm_number('Cost',$P,'Costs') . fm_number('Prog Needed', $P,'ProgNeeded') . fm_number('DType',$P,'DType');
     echo "<tr>" . fm_number("Progress",$P,'Progress') . fm_number('Last Updated',$P,'LastUpdate');
     if ($PProps &2) {
@@ -295,6 +300,12 @@
     if ($when <0) echo "<td>Finished Turn" . $P['TurnEnd'];
     echo "<tr><td>Where:<td>" . $PH['Name'] . " in " . NameFind($System);
     echo "<tr><td>Cost:<td>" . $P['Costs'] . "<td>Progress needed:<td>" . $P['ProgNeeded'];
+    if ($P["CostCur1"] || $P["CostCur2"] ||$P["CostCur2"])
+    echo "<tr><td>Other Costs:";
+    for ($i=1;$i<4;$i++) {
+      $cn = Feature("Currency$i");
+      if ($cn && $P["CostCur$i"]) echo "<td>$cn: " . $P["CostCur$i"];
+    }
     echo "<tr><td>Progress:<td>" . $P['Progress'];
     if ($P['ThingId'] ) {
       $Thing = Get_Thing($P['ThingId']);

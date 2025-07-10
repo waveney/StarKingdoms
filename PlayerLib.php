@@ -131,7 +131,7 @@ function Player_Page() {
         echo "<li><a href=MapTransfer.php>Transfer Mapping knowledge to another Faction</a> - Also transfer logs\n";
 //        echo "<li><a href=MapTransferLogs.php>Logs of Mapping Transfers</a>\n";
       }
-      if ((Feature('Currency1') == 'Flux Crystals') && $FACTION['Currency1']) {
+      if ((Feature('Currency1') == 'Flux Crystals') && $FACTION['Currency1'] && Has_Tech($Fid,'Flux Crystal Use')) {
         echo "<li><a href=FluxCrystals.php>Use Flux Crystals</a>\n";
       }
     echo "</ul>";

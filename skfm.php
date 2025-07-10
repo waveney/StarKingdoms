@@ -736,8 +736,9 @@ function Ordinal($n) {
   return $ends[$n % 10];
 }
 
-function fm_notby(&$D,$i,$AllG=0,$Div='') {
-  return fm_number1('',$D,'NotBy',($AllG?'':'hidden'),'',"NotBy$Div$i");
+function fm_notby(&$D,$i,$AllG=0,$Div='',$pfx='') {
+  if ($pfx) $pfx .= $Div;
+  return fm_number1('',$D,'NotBy',($AllG?'':'hidden'),'',$pfx . "NotBy$Div$i");
 }
 
 function NamesList(&$D,$fld='Name') {

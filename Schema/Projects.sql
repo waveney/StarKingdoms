@@ -24,5 +24,8 @@ CREATE TABLE `Projects` (
   `OrgName` text COLLATE utf8mb4_general_ci NOT NULL,
   `OrgDesc` text COLLATE utf8mb4_general_ci NOT NULL,
   `OrgSP` int NOT NULL,
+  `CostCur1` int NOT NULL,
+  `CostCur2` int NOT NULL,
+  `CostCur3` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

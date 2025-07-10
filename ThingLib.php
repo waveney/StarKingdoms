@@ -1690,5 +1690,16 @@ function LinkVis($Fid,$Lid,$Sid) {
   return ($KnowAll || (($L['Concealment'] == 0) && ($Sys['Nebulae']==0)) || ($FLK['Used']??0) || $L['Concealment']<=$FS['SpaceScan']);
 }
 
+function OtherCosts($Tid) {
+  $MTypes = Get_ModuleTypes();
+  $OtherCosts = [0,0,0,0];
+  $MMs = Get_Modules($Tid);
+  foreach ($MMs as $M) {
+    if ($MTypes[$M['Type']]['ExtraCost']) $OtherCosts[0] += $MTypes[$M['Type']]['ExtraCost'] * $M['Number'];
+    if ($MTypes[$M['Type']]['Leveled'] & 0x700)
+      for ($i=1;$i<4;$i++) if ($MTypes[$M['Type']]['Leveled'] & (1<<(7+$i))) $OtherCosts[$i] += $M['Number'];
+  }
+  return $OtherCosts;
+}
 
 ?>

@@ -77,6 +77,7 @@
         $_REQUEST['Sel2'] = $_REQUEST['NewOrgType2'];
         $OrgSP = $_REQUEST['NewOrgSocialPrinciple'];
         $Sel = 0;
+        $ExtraCosts = [0,0,0,0];
 
         /*
         $NOrg = ['Whose'=>$Fid, 'OrgType' => $_REQUEST['NewOrgType'], 'Name'=> $_REQUEST['NewOrgName'], 'Description'=>$_REQUEST['NewOrgDescription'],
@@ -127,7 +128,7 @@
             $Place = Get_Thing($PH['ThingId']);
             break;
           }
-
+          $ExtraCosts = OtherCosts($TthingId);
           $Name = "Build " . $T['Name'] . " (level $Level) on " . $Place['Name'] ;
           break;
 
@@ -232,7 +233,9 @@
         if ($Valid) {
           $OldPro = Get_ProjectAt($Hi, $DT, $Turn);
           $Pro = ['FactionId'=>$Fid, 'Type'=>$Ptype, 'Level'=> $Level, 'Home'=>$Hi, 'Progress'=>0, 'Status'=>0, 'TurnStart'=>$Turn, 'Name'=>$Name,
-                  'Costs' => $Costs, 'ProgNeeded' => $ProgN, 'BuildState'=>0, 'DType' => $DT, 'FreeRushes'=>$FreeRush, 'ThingType'=>($TType??0)];
+                  'Costs' => $Costs + $ExtraCosts[0], 'ProgNeeded' => $ProgN, 'BuildState'=>0, 'DType' => $DT, 'FreeRushes'=>$FreeRush,
+                  'ThingType'=>($TType??0),'CostCur1'=>$ExtraCosts[1],'CostCur2'=>$ExtraCosts[2],'CostCur3'=>$ExtraCosts[3]
+          ];
           if (isset($With)) $Pro['ThingId'] = $With;
           if (isset($TthingId)) $Pro['ThingId'] = $TthingId;
           if (isset($TthingId2)) $Pro['ThingId2'] = $TthingId2;

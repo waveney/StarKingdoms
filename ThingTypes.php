@@ -28,8 +28,6 @@
 
   echo "<h1>Thing Types</h1>";
 
-//  echo "<h2 class=red>YOU NEED TO CLICK UPDATE ON THIS PAGE - Autoupdate does not work with Hex</h2>";
-
   echo "Props (Hex) 1=Districts, 2=Modules, 4=Leveled, 8=Ship, 10=Gadgets, 20=Army, 40=Mil, 80=Civil, " .
        "100=Normal Move, 200=Army Move, 400= Two Factions, 800=Inherit Minerals,<br>" .
        "1000=Can be Advanced, 2000=Instant Create, 4000=Need Cargo Space, 8000=No Named Chars, " .
