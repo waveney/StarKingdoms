@@ -278,6 +278,9 @@ function CashTransfers() {
 
 function FactionActions() { // Faction level actions other the science points
   global $GAME,$GAMEID;
+
+  return 1; // code here is redundant currently
+
   $Facts = Get_Factions();
 
   $FCUs = Gen_Get_Cond("FluxCrystalUse","GameId=$GAMEID AND Turn=" . $GAME['Turn'] . " ORDER BY rand()");

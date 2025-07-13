@@ -17,9 +17,22 @@ if (isset($_REQUEST['ACTION'])) {
       db_delete('FluxCrystalUse',$Cid);
       break;
     case 'USE':
+      if ($FACTION['Currency1'] == 0) {
+        echo "<h2>You dont have any Flux Crystals left</h2>";
+        break;
+      }
+      $FACTION['Currency1']--;
+      Put_Faction($FACTION);
       $Lid = $_REQUEST['L']??0;
-      $FCU = ['GameId'=>$GAMEID,'Turn'=>$GAME['Turn'],'LinkId'=>$Lid,'FactionId'=>$Fid];
-      Gen_Put('FluxCrystalUse',$FCU);
+
+      $L = Get_Link($Lid);
+      if (!$L['FluxCrystals']) {
+        $L['FluxCrystals'] = 1;
+        $L['ThisTurnMod']--;
+        Put_Link($L);
+      }
+//      $FCU = ['GameId'=>$GAMEID,'Turn'=>$GAME['Turn'],'LinkId'=>$Lid,'FactionId'=>$Fid];
+//      Gen_Put('FluxCrystalUse',$FCU);
       break;
     default:
       break;
@@ -58,8 +71,9 @@ if ($Cuse) {
   }
   TableEnd();
 }
-echo "Using $Used Flux Crystals.  ";
-if ($Used > $FACTION['Currency1']) echo "<span class=err>This is more than you have - results will be random...</span>";
+
+// echo "Using $Used Flux Crystals.  ";
+// if ($Used > $FACTION['Currency1']) echo "<span class=err>This is more than you have - results will be random...</span>";
 // Current list of use
 
 // New Use
@@ -84,6 +98,7 @@ foreach(array_keys($Sys) as $Sid) {
   $Ref = $N['Ref'];
   $Ls = Get_Links($Ref);
   foreach ($Ls as $Lid=>$L) {
+    if ($L['FluxCrystals']) continue;
     $EInst = $L['Instability'] + $L['ThisTurnMod'] ;
     if ($EInst < 1) continue;  // Link can't be improved
     $LinkKnow = LinkVis($Fid,$L['id'],$Sid);
