@@ -470,7 +470,7 @@ function WhatCanBeSeenBy($Fid,$Move=0) { // If Move = 1, it will report previous
         if (($HostT['WithinSysLoc'] == 3) || $LocType==2 || $LocType==4 ) $LocClass = 'Ground';
       }
 
-      $txt .= "<div  class=$LocClass><h2>On Board " . (empty ($HostT['Name'])? "Unknown Thing" : $HostT['Name'])  . " is:</h2>";
+      $txt .= "<hr><div  class=$LocClass><h2>On Board " . (empty ($HostT['Name'])? "Unknown Thing" : $HostT['Name'])  . " is:</h2>";
       foreach($H as $Tid) {
         $T = Get_Thing($Tid);
         $txt .= SeeThing($T,$LastWhose,15,$T['Whose'],1);

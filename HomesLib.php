@@ -560,7 +560,24 @@ function Control_Propogate($Sid,$Who) {
   }
   Put_System($N);
 
-  // TODO Worlds within system
+  $Plans = Get_Planets($Sid);
+  foreach ($Plans as $Pid=>$P) {
+    $PS = Get_FactionPlanetFS($Who,$Pid);
+    if (!empty($PS['Name'])) {
+      $P['Name'] = $PS['Name'];
+      $P['ShortName'] = $PS['ShortName'];
+      Put_Planet($P);
+    }
+    $Moons = Get_Moons($Pid);
+    foreach ($Moons as $Mid=>$M) {
+      $MS = Get_FactionMoonFS($Who,$Mid);
+      if (!empty($MS['Name'])) {
+        $M['Name'] = $MS['Name'];
+        $M['ShortName'] = $MS['ShortName'];
+        Put_Moon($M);
+      }
+    }
+  }
 }
 
 function ConstructLoc($Hid,$Posn=0) {

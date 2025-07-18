@@ -11,7 +11,10 @@ $GM = Access('GM');
 
 dostaffhead("Science Point Log");
 
-echo "<h1>Science Point Logs, <a href=SciencePoints.php>Spend Science Points</a></h1>";
+echo "<h1>Resource Type Logs, ";
+if ($FACTION['PhysicsSP'] >=5 || $FACTION['EngineeringSP'] >=5 || $FACTION['XenologySP'] >=5 ) echo " <a href=SciencePoints.php>Spend Science Points</a>, ";
+if ($FACTION['Currency1']) echo " <a href=FluxCrystals.php>Use Flux Crystals</a>, ";
+echo "</h1>";
 
 
 if ($GM && !isset($FACTION['id'])) {
@@ -22,10 +25,12 @@ if ($GM && !isset($FACTION['id'])) {
   $Logs = Gen_Get_Cond('SciencePointLog',"FactionId=$Fid");
 }
 $Facts = Get_Factions();
-$TechFields = [['Unknown','??'],['Engineering','EngineeringSP'],['Physics','PhysicsSP'],['Xenology','XenologySP'],['General','']];
+$TechFields = [0=>['Unknown','??'],1=>['Engineering','EngineeringSP'],2=>['Physics','PhysicsSP'],3=>['Xenology','XenologySP'],4=>['General',''],
+  -1=>[Feature('Currency1'),'Currency1'], -2=>[Feature('Currency2'),'Currency2'], -3=>[Feature('Currency3'),'Currency3'],
+];
 
 if (!$Logs) {
-  echo "<h2>No Science Point Logs recorded yet</h2>";
+  echo "<h2>No Logs recorded yet</h2>";
   dotail();
 }
 
@@ -33,7 +38,7 @@ if (!$Logs) {
 TableStart();
 if ($Fid == 0) TableHead('Who');
 TableHead('Turn','N');
-TableHead('Science Point Type');
+TableHead('Resource Type');
 TableHead('Amount','N');
 TableHead('Reason');
 TableTop();

@@ -91,7 +91,7 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$ThingInstrs,$ThingInclrs,$Cu
   $Avail = [$Faction['EngineeringSP'],$Faction['PhysicsSP'],$Faction['XenologySP']];
   $Used = [0,0,0];
 
-  echo "<h1>Spend Science Points, <a href=ScienceLog.php>Science Point Logs</a></h1>";
+  echo "<h1>Spend Science Points, <a href=ScienceLog.php>Resource Logs</a></h1>";
 
   echo "<table border style='width:300'><tr><th>Tech Level<th>Points Required";
   for ($i = 1;$i<6; $i++) echo "<tr><td>$i<td>" . $SPCosts[$i];

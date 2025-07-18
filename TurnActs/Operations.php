@@ -111,7 +111,7 @@ function StartOperations() {
         Put_Operation($O);
         continue;
       }
-      $Level = $O['Para2'];
+      $Level = max(1,$O['Para2']-1);
     }
 
     if ($Otp & OPER_SOCPTARGET) {

@@ -110,7 +110,10 @@
       echo "<td>" . $OrgTypeNames[$O['OrgType']];
       echo "<td colspan=4>" . $O['Name'] . "<br>";
       echo $Parsedown->text(stripslashes($O['Description']));
-      if ($O['OrgType'] == 5) echo "<br>Social Principle (Religious / Ideological Orgs only): " . $SocPs[$Of][$O['SocialPrinciple']];
+      if ($O['OrgType'] == 5) {
+        if (!isset($SocPs[$Fid][$O['SocialPrinciple']])) $SocPs[$Fid][$O['SocialPrinciple']] = Get_SocialP($O['SocialPrinciple']);
+        echo "<br>Social Principle (Religious / Ideological Orgs only): " . $SocPs[$Of][$O['SocialPrinciple']];
+      }
     }
     echo fm_number1('',$O,'RelOrder','','',"Organisations:RelOrder:$i");
     if ($GM) {
@@ -131,6 +134,8 @@
       echo "Set up a Social Principle (if appropriate) after creating the Organisation";
     } else {
       if (!isset($SocPs[$Fid])) $SocPs[$Fid] = SocPrinciples($Fid);
+      if (!isset($SocPs[$Fid][$O['SocialPrinciple']])) $SocPs[$Fid][$O['SocialPrinciple']] = Get_SocialP($O['SocialPrinciple']);
+
       echo "<br>Social Priniple (Religious / Ideological only)" . fm_select($SocPs[$Fid],$O,'SocialPrinciple:0');
     }
     echo fm_number1('',$O,'RelOrder','','',"Organisations:RelOrder:0");

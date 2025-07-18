@@ -55,13 +55,15 @@
       if (!($TTypes[$T['Type']]['Properties'] & THING_HAS_BLUEPRINTS)) continue;
       $TCat = 0;
       $tex = '';
-      if ($T['LinkId'] >=0) {
+      if ($T['LinkId'] >=0 || $T['LinkId'] <= -5) {
         $sid = $T['SystemId'];
       } else if ($T['SystemId']>0) {
         $Carrier = $T['SystemId'];
         if (isset($Things[$Carrier])) {
           $sid = $Things[$Carrier]['SystemId'];
           $tex = " (on " .$Things[$Carrier]['Name'] . ")";
+        } else {
+          $sid = 0;
         }
       }
       if (!isset($Extras[$sid])) $Extras[$sid] = ['',0,0];

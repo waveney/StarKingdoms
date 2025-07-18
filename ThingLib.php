@@ -1073,6 +1073,9 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
           if ($GM) {
             $txt .= "<div class='FullD SeeThingTxt $LocClass' hidden>";
             $Imgxtra = 1;
+          } elseif ($T['BuildState'] == BS_ABANDON) {
+            $txt .= "<div class='SeeThingTxt $LocClass' >The Abandoned: ";
+            $Imgxtra = 1;
           } elseif ($T['BuildState'] >= BS_EX) {
             $txt .= "<div class='FullD SeeThingTxt $LocClass' hidden>The remains of: ";
             $Imgxtra = 1;

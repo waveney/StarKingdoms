@@ -386,7 +386,7 @@ global $FACTION;
         break;
       }
       Check_MyThing($T,$Fid,$H);
-      if ($H['LinkId'] < 0) {
+      if ($H['LinkId'] < 0 && $H['LinkId'] > -5) {
         $T['LinkId'] = -1;
         $T['SystemId'] = $H['SystemId'];
         $OH = Get_Thing($H['SystemId']);

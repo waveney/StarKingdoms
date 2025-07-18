@@ -207,6 +207,7 @@ if (isset($_REQUEST['Action'])) {
             $T['WithinSysLoc'] = 1;
             $T['LinkId'] = 0;
             $T['ProjectId'] = $Bid;
+var_dump($T);
             Put_Thing($T);
             $Count++;
           }
@@ -216,6 +217,7 @@ if (isset($_REQUEST['Action'])) {
               $T = ['Whose'=>$Fid, 'Type'=>$NTypes['Fighter Defences'], 'BuildState'=>BS_COMPLETE, 'CurHealth'=>$Def, 'OrigHealth'=>$Def, 'ActDamage'=>$Off,
                 'SystemId'=>$Sid, 'WithinSysLoc'=>1, 'Class'=>'Defence Fighter Squadron', 'Name'=>($B['Name']?$B['Name']:"Squadron $Bid") . ":$Count" ,
                 'Evasion'=>40, 'ProjectId'=>$Bid, 'Speed'=>$Speed, 'LinkId'=>0];
+var_dump($T);
               Put_Thing($T);
             }
           }

@@ -8,7 +8,7 @@ A_Check('Player');
 $Fid = $FACTION['id'];
 
 dostaffhead("Use Flux Crystals");
-echo "<h1>Use Flux Crystals</h1>";
+echo "<h1>Use Flux Crystals, <a href=ScienceLog.php>Resource Logs</a></h1>";
 
 if (isset($_REQUEST['ACTION'])) {
   switch ($_REQUEST['ACTION']) {
@@ -26,11 +26,14 @@ if (isset($_REQUEST['ACTION'])) {
       $Lid = $_REQUEST['L']??0;
 
       $L = Get_Link($Lid);
-      if (!$L['FluxCrystals']) {
-        $L['FluxCrystals'] = 1;
+      if (($L['FluxCrystals']++) == 0) {
         $L['ThisTurnMod']--;
-        Put_Link($L);
       }
+      Put_Link($L);
+      $EInst = $L['Instability'];
+      if ($L['ThisTurnMod']) $EInst = max(1,$EInst+$L['ThisTurnMod']);
+      echo "<h2>Link " . $L['Name'] . " has its current instablity set to $EInst</h2>";
+
 //      $FCU = ['GameId'=>$GAMEID,'Turn'=>$GAME['Turn'],'LinkId'=>$Lid,'FactionId'=>$Fid];
 //      Gen_Put('FluxCrystalUse',$FCU);
       break;

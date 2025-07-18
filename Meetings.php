@@ -92,14 +92,17 @@ function ForceReport($Sid,$Cat) {
   echo "<table border>";
   echo "<tr><td>What<td>Type<td>Level<td>Evasion<td>Health<td>Attack<td>To Hit<td>" . (($Cat == 'S')?'Speed':'Mobility') . "<td>Actions\n";
   foreach($Things as $T) {
+    $Tid = $T['id'];
     $Ground = is_on_ground($T);
+//    if ($Tid==2517) var_dump($Ground,$Cat);
+    $Kaiju = 0;
+
     if ((($Cat == 'S') && !$Ground) || (($Cat == 'G') && $Ground)) {
 
  //   if ((($Cat == 'S') && ((($TTypes[$T['Type']]['Properties']??0) & 8) != 0)) ||
  //       (($Cat == 'G') && ((($TTypes[$T['Type']]['Properties']??0) & 0x20) != 0))) {
       if (($T['CurHealth'] == 0) && ($T['Type'] == 20)) continue; // Skip Militia at zero
       if ($T['PrisonerOf'] != 0) continue; // Prisoners
-      $Tid = $T['id'];
       if ($LastF != $T['Whose']) {
         if ($LastF >=0) {
           echo $htxt;
@@ -114,7 +117,9 @@ function ForceReport($Sid,$Cat) {
         $txt = $Battct = $ftxt = '';
         $txt .= "<br>Damage recieved: <span id=DamTot$Cat$LastF>0</span>";
 
+        $Kaiju = Has_Trait($LastF,'Giant Kaiju')?1:0;
         $FTs = Get_Faction_Techs($LastF);
+//        if ($Tid==2517) var_dump("120");
 
         foreach ($FTs as $FT) {
           if (empty($FT['Tech_Id']) || empty($Techs[$FT['Tech_Id']])) continue;
@@ -159,6 +164,7 @@ function ForceReport($Sid,$Cat) {
           }
         }
       }
+//      if ($Tid==2517) var_dump("165");
 
       $txt .= "<tr><td><a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a>";
 
@@ -172,6 +178,13 @@ function ForceReport($Sid,$Cat) {
       [$BD,$ToHit] = Calc_Damage($T,$Resc);
       $tprops = $ThingProps[$T['Type']];
 
+      if ($Kaiju) {
+        if (str_contains($T['Class'], 'Kaiju')) {
+          $Kaiju = min($Kaiju,$T['Level']);
+        } else {
+          $Kaiju = $Bat;
+        }
+      }
       $txt .= fm_hidden("OrigData$Tid",implode(":",[$T['CurHealth'], $T['OrigHealth'],0,$T['CurShield'],$T['ShieldPoints']]));
       $txt .= "<td>" . $TTypes[$T['Type']]['Name'] . "<td>" . $T['Level'] . "<td>" . $T['Evasion'];
       $txt .= "<td><span id=StateOf$Tid>" . $T['CurHealth'] . " / " . $T['OrigHealth'];
@@ -195,7 +208,7 @@ function ForceReport($Sid,$Cat) {
   }
   if ($htxt) {
     echo $htxt;
-    if ($Bat) echo "Battle Tactics: Effectively $Bat ( $Battct ) <br>";
+    if ($Bat) echo "Battle Tactics: Effectively " . ($Kaiju?$Kaiju:$Bat) . " ( $Battct ) <br>";
     echo  $ftxt. "<br>Total Firepower: <span id=FirePower:$LastF>$FirePower</span>" . $txt;
   }
 //  var_dump($txt,$htxt);

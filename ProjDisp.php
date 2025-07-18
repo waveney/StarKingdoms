@@ -60,6 +60,8 @@
   $OpenHi = $OpenDi = -99;
   $ProjTypes = Get_ProjectTypes();
   $PostItType = 0;
+  $ExtraCosts = [0,0,0,0];
+
   foreach($ProjTypes as $Pti=>$Pt) if ($Pt['Name'] == 'Post It') { $PostItType=$Pti; break;}
 
   $ThingTypes = Get_ThingTypes();
@@ -77,7 +79,6 @@
         $_REQUEST['Sel2'] = $_REQUEST['NewOrgType2'];
         $OrgSP = $_REQUEST['NewOrgSocialPrinciple'];
         $Sel = 0;
-        $ExtraCosts = [0,0,0,0];
 
         /*
         $NOrg = ['Whose'=>$Fid, 'OrgType' => $_REQUEST['NewOrgType'], 'Name'=> $_REQUEST['NewOrgName'], 'Description'=>$_REQUEST['NewOrgDescription'],

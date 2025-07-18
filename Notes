@@ -42,21 +42,29 @@ NEW GAME FEATURES & BUGS
 445 devastation
 446 affect activities actions - 
 451 Judith wormholes
-457 Build office for other
 458 Multiple fighters
 460 Achatgm 17/6 @13:50
 461 b-thor 17/6@14:36 /EMN??
 462 Split build district from build office to remove side effects of duff data
 468 Military branches / offices should show on the "Meetups" page as they have the potential to deploy forces.
-469 judith BCZ map and links
 476 District 622 is invalid - tell Richard - Office build
-477 Build wormhole stabaliser in BVZ on link to ass
-484 Kage 30/6 @ 21:47
-485 Luke 1/7 @20:01
-486 Use Flux Crystals
-489 Science branches
-490 better turn validation
-493
+498 Log Flux Crystals
+499 Load on turn - not enough space
+500 Octopi on meetups
+504 Deploy fighters (lizards) in YZA did nothing why?
+508 Octopi in ARV why!
+513 New org (again VAS Science)
+519 
+
+
+
+
+[Mon Jul 14 19:17:11.883005 2025] [proxy_fcgi:error] [pid 3223038:tid 140476854400768] [client 86.143.37.252:0] AH01071: Got error 'PHP message: PHP Warning:  
+Undefined array key "Progress" in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActs/Operations.php on line 637; PHP message: PHP Warning:  
+Undefined array key "Name" in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActs/Operations.php on line 640; PHP message: PHP Warning:  
+Undefined array key "Name" in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActs/Operations.php on line 641', 
+referer: https://starkingdoms.uk/TurnActions.php?ACTION=Process&S=47
+[Mon Jul 14 19:26:51.291921 2025] [proxy_fcgi:error] [pid 3223038:tid 140476669703936] [client 86.26.173.150:0] AH01071: Got error 'PHP message: PHP Warning:  Undefined variable $What in /var/www/vhosts/starkingdoms.uk/httpdocs/PayFaction.php on line 39; PHP message: PHP Warning:  Undefined array key "" in /var/www/vhosts/starkingdoms.uk/httpdocs/PayFaction.php on line 39', referer: https://starkingdoms.uk/PayFaction.php
 
 
 [Mon Jun 30 19:11:56.188213 2025] [proxy_fcgi:error] [pid 1414949:tid 140475923146496] [client 86.132.58.174:0] AH01071: Got error 'PHP message: 
@@ -64,4 +72,3 @@ PHP Warning:  Undefined array key "Name" in /var/www/vhosts/starkingdoms.uk/http
 Undefined array key "Name" in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActs/Instruct.php on line 1466; PHP message: PHP Warning:  
 Undefined array key "Name" in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActs/Instruct.php on line 1467', 
 referer: https://starkingdoms.uk/TurnActions.php?ACTION=Process&S=48
-

@@ -159,9 +159,10 @@ function LoadTroops() {
       $OnBoard[]= $T;
       $CargoSpace = ($Mods[$NamesMod['Cargo Space']]['Number']??0);
       $CryoSpace = ($Mods[$NamesMod['Cryo Pods']]['Number']??0)*2;
+      $Need = 0;
 
       foreach($OnBoard as $OB) if ($TTypes[$OB['Type']]['Properties'] & THING_NEEDS_CARGOSPACE) {
-        $Need = $OB['Level'];
+        $Need = max(1,$OB['Level']);
         if (($CryoSpace>0) && ($TTypes[$OB['Type']]['Properties'] & THING_HAS_ARMYMODULES)) {
           $CryoSpace -= $Need;
           if ($CryoSpace >= 0) {

@@ -258,6 +258,7 @@ function ValidateTurn($For = 0) {
       case 'Analyse Anomaly':
 
       case 'Transfer':
+        break;
 
       case 'Link Repair':
         if ($T['Dist1'] == 0) {
@@ -272,7 +273,7 @@ function ValidateTurn($For = 0) {
       case 'Collaborative Space Construction':
        $CTid = $T['Dist1'];
        $CT = Get_Thing($CTid);
-       if (!CT) {
+       if (!$CT) {
          echo "<h2 class=Err>Warning - <a href=ThingEdit.php?i=$Tid>" . $T['Name'] .
            "</a> is Collaborating, but no thing to collaborate with has been selected</h2>";
          $Valid = 0;

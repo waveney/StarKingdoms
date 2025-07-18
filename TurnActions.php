@@ -840,8 +840,8 @@ function MilitiaArmyRecovery() {
   }
 
   foreach ($Things as $T) {
-    if ($T['Conflict']) continue;
     if ($TTypes[$T['Type']]['Prop2'] & THING_HAS_RECOVERY) {
+      if ($T['Conflict']) continue;
       // if not in conflit, recovery some
       $Conflict = 0;
       $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
@@ -969,7 +969,7 @@ function TidyUps() {
     GMLog( "<h2 class=Err>These things have a broken load/unload still in place get Richard to fix</h2>");
     FollowUp(0,"Things have broken load/unload get Richard to fix");
     foreach ($NotFin as $T) {
-      GMLog("<a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . " has a lid of " . $T['LinkId']);
+      GMLog("<a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . " </a> has a lid of " . $T['LinkId']);
     }
   }
 

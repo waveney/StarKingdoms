@@ -23,7 +23,7 @@ $GameStatus = ['Planning','In Setup','Active','Historical'];
 $PlayerLevel = ['Player','GM','No Access','Read Only'];
 $AutoLevel = ['Manual','Automated','Partial'];
 
-date_default_timezone_set('GMT');
+date_default_timezone_set('Europe/London');
 function Check_Login($check=0) {
   global $db,$USER,$USERID,$AccessType,$YEAR,$FACTION;
   if (!empty($USER)) return true;
