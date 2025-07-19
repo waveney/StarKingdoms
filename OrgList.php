@@ -98,7 +98,7 @@
     if (!$All && ($Of != $Fid)) continue;
     echo "<tr>";
     if (!isset($SocPs[$Of][$O['SocialPrinciple']])) {
-      $SocPs[$Of][$O['SocialPrinciple']] = Get_SocialP($O['SocialPrinciple']);
+      $SocPs[$Of][$O['SocialPrinciple']] = Get_SocialP($O['SocialPrinciple'])['Principle'];
 
     }
     if ($GM) {

@@ -375,7 +375,7 @@
               $FS = Get_FactionFactionFF($Fid,$LFid);
               if ($FS && ($FS['Relationship']==0 || $FS['Relationship']>=5)) {
               // Know Lizards and are at least Neutral
-                $Lorgs = Gen_Get_Cond('Organisations',"Whose=$LFid AND OfficeCount!=0");
+                $Lorgs = Gen_Get_Cond('Organisations',"Whose=$LFid");
                 foreach ($Lorgs as $LOrgId=>$Org) {
                   $Org['Name'] .= " (" . $LF['Name'] . ")";
                   $Orgs[$LOrgId]= $Org;
