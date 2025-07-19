@@ -211,7 +211,7 @@
   if ($Fid) echo "If the Thing would benefit from refit/repair/re-equipping/reinforcing then the Refit has the number of modules (+1 if it needs repair as well)</br>";
   if ($FACTION['HasPrisoners']??0) echo "The Prisoner Tab shows Prisoners YOU have<p>\n";
   if ($GM) echo "Notes: <B>N</b> - GM Notes, Coloured start of name = hidden control<P>";
-  if (!$GM) echo "StSN = Stability / Speed or Mobility  N= Nebula Sensors<p>";
+  if (!$GM) echo "StSpN = Stability, Speed or Mobility  N= Nebula Sensors<p>";
   echo "For loading/unloading of troops and characters, go to the thing<p>\n";
 //  echo "Use only ONE of the filters to the right<br>\n";
 
@@ -234,7 +234,7 @@
   if (!$Fid) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Whose</a>\n";
   if (Feature('Orders')) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Orders</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Health</a>\n";
-  if (!$GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>StSN</a>\n";
+  if (!$GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>StSpN</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>State</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Where</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Actions</a>\n";
@@ -323,7 +323,7 @@
     echo "<td><center>" . (($Props & THING_HAS_HEALTH)? $T['CurHealth'] . ' / ' . $T['OrigHealth'] : "-");
     if (!$GM) {
       if (($Props & THING_CAN_MOVE) || ($Prop2 & THING_HAS_SPEED)) {
-        echo "<td>" . $T['Stability'] . "/";
+        echo "<td>" . $T['Stability'] . ",";
         echo ceil(sprintf('%0.3g', ($Props  & THING_HAS_ARMYMODULES)?$T['Mobility']:$T['Speed']));
         if ($T['NebSensors']) echo " N";
       } else echo "<td>-";
