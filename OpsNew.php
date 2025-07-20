@@ -270,6 +270,7 @@
 
         echo "<h2>Select Technology to Share with: " . ($Facts[$With]['Name']??"<h2 class=err>NOBODY</h2>") . "</h2>\n";
         $CTs = Get_CoreTechsByName();
+        $Shown = 0;
 
         foreach ($CTs as $TT) {
           $Tid = $TT['id'];
@@ -277,6 +278,7 @@
             $Lvl = $FactTechs[$Tid]['Level']+1;
             echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&Te=$Tid&P2=$Lvl'>" .
                  $TT['Name'] . " at level $Lvl</button> \n";
+            $Shown = 1;
           }
         }
 
@@ -288,7 +290,10 @@
           if ($Lvl < 1) continue;
           echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&Te=$Tid&P2=$Lvl'>" .
                $Tec['Name'] . " at level $Lvl</button> \n";
+          $Shown = 1;
         }
+
+        if (!$Shown) echo "<h2>There are no Techs you know that could be shared with " . ($Facts[$With]['Name']??"<h2 class=err>NOBODY</h2>") . "</h2>\n";
         break;
       }
 
