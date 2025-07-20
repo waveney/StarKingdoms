@@ -156,6 +156,7 @@
   $tprops = (empty($T['Type'])? 0: $ThingProps[$T['Type']]??0);
   $tprops2 = ($ThingTypes[$T['Type']]['Prop2']??0);
   $Valid = $CanMake = 1;
+  $InValid = '';
   $ResC =0;
   if ($T['Type'] && $T['Whose'] && $T['Whose'] == $FACTION['id']) {
     RefitRepair($T,0);
@@ -295,7 +296,10 @@
       }
     }
     echo "<tr>" . fm_text('Name',$T,'Name') . "$SPad<td" . (empty($T['Name'])? " class=Err" : "") . ">This is needed";
-    if (empty($T['Name'])) $Valid = 0;
+    if (empty($T['Name'])) {
+      $Valid = 0;
+      $InValid .= "No Name, ";
+    }
     if ($tprops & THING_HAS_BLUEPRINTS ) {
       echo "<tr><td>Class:<td>" . $T['Class'];
     } else {
@@ -359,7 +363,14 @@
 
           if ($MT == 'Flexible') {
             echo "<td id=FlexSpace>$FlexM<td>Space left: <span id=UnusedFlex " . ($SpareFlex<0?'class=Err':'') . ">$SpareFlex</span>";
-            if ($SpareFlex != 0) $Valid = 0;
+            if ($SpareFlex > 0) {
+              $Valid = 0;
+              $InValid .= "Unused Flex Slots, ";
+            } else if ($SpareFlex < 0) {
+              $Valid = 0;
+              $InValid .= "Overused Flex Slots, ";
+            }
+
             continue;
           }
 
@@ -390,6 +401,7 @@
           echo fm_hidden('Mid',$MMs[$Mti]['id']);
           echo "<input type=submit name=ACTION value='Remove Module'>";
           $Valid = 0;
+          $InValid .= "Invalid module " . $Mtype['Name'] . ", ";
           $totmodc += $MMs[$Mti]['Number'] * ($Slots?$MTs[$Mti]['SpaceUsed']:1);
         }
 
@@ -445,7 +457,10 @@
       echo fm_hidden('HighestModule',$Mti);
 
       echo "<td id=CurrentModules" . ($totmodc > $T['MaxModules'] ? " class=Err":"") . ">$totmodc\n";
-      if ($totmodc > $T['MaxModules'] ) $Valid = 0;
+      if ($totmodc > $T['MaxModules'] ) {
+        $Valid = 0;
+        $InValid .= "Too many modules, ";
+      }
       [$T['OrigHealth'],$T['ShieldPoints']] = Calc_Health($T);
       echo "<tr><td>Health/Hull<td>" . $T['OrigHealth'] . "$SPad<td colspan=3>At current Tech Levels";
       if ($T['ShieldPoints']) echo "<tr><td>Shields<td>" . $T['ShieldPoints'] . "$SPad<td colspan=3>At current Tech Levels";
@@ -508,7 +523,7 @@
   } else {
     echo "<input type=submit name=Validate value=Validate>\n";
     echo "<input type=submit name=ACTION value=Delete>\n";
-    echo "<h2 class=Err>Warning.  If you try and make an Invalid thing. The action will fail</h2>\n";
+    echo "<h2 class=Err>Warning: <b>$InValid</b> - If you try and make an Invalid thing. The action will fail</h2>\n";
   }
   echo "</form>";
   echo "<h2><a href=PThingList.php>Back to List of Things</a></h2>\n";

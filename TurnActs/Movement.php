@@ -154,7 +154,7 @@ function LoadTroops() {
     }
 
     if ($NeedCargo) {
-      $Mods = Get_Modules($T['id']);
+      $Mods = Get_Modules($H['id']);
       $OnBoard = Get_Things_Cond(0,"(LinkId=-1 OR LinkId=-3) AND SystemId=" . $H['id']);
       $OnBoard[]= $T;
       $CargoSpace = ($Mods[$NamesMod['Cargo Space']]['Number']??0);
@@ -182,6 +182,7 @@ function LoadTroops() {
         if ($Need) break;
       }
       if ($Need) {
+//        var_dump($Need, $CargoSpace);
         TurnLog($T['Whose'],"You tried to load " . $T['Name'] . " on to " . $H['Name'] . " there is not enough space",$T);
         if ($H['Whose'] != $T['Whose'])
           TurnLog($H['Whose'],  $Facts[$T['Whose']]['Name'] . " tried to load " . $T['Name'] . " on to " . $H['Name'] . " there is not enough space");

@@ -398,7 +398,18 @@ function SystemSee($Sid) {
     $Sid = $H['SystemId'];
     $Fid = $W['FactionId'];
 
-    $Sids[$Sid][1][$Fid] = 1; // Ground present (Militia)
+    switch ($H['ThingType']) {
+      case 1: // Planet
+        $Dat = Get_Planet($H['ThingId']);
+        break;
+      case 2: // Moon
+        $Dat = Get_Moon($H['ThingId']);
+        break;
+      case 3: // Tghing
+        $Dat = [];
+        break;
+    }
+    if ((($Dat['Attributes']??0)& 1) == 0) $Sids[$Sid][1][$Fid] = 1; // Ground present (Militia)
   }
 
   foreach ($Sys as $N) {
