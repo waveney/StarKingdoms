@@ -301,6 +301,7 @@ function CheckBranches() {
 
   foreach ($Branches as $B) {
     $B['OrgType'] = $Orgs[$B['Organisation']]['OrgType'];
+    $B['OrgType2'] = $Orgs[$B['Organisation']]['OrgType2'];
     $B['Whose'] = $Orgs[$B['Organisation']]['Whose'];
     Gen_Put('Branches',$B);
   }
@@ -360,11 +361,11 @@ function New_Branch(&$World,$Type,&$O,&$Org) {
 
   if (isset($World['BuildState'])) { // Outpost
     $B = ['HostType'=>3, 'HostId'=>$World['id'], 'Whose'=>$O['Whose'], 'Type'=>$Type,
-      'Organisation'=>$O['OrgId'],'OrgType'=>$Org['OrgType'], 'GameId'=>$GAMEID];
+      'Organisation'=>$O['OrgId'],'OrgType'=>$Org['OrgType'], 'OrgType2'=>$Org['OrgType2'], 'GameId'=>$GAMEID];
 
   } else {
     $B = ['HostType'=>$World['ThingType'], 'HostId'=>$World['ThingId'], 'Whose'=>$O['Whose'], 'Type'=>$Type,
-    'Organisation'=>$O['OrgId'],'OrgType'=>$Org['OrgType'], 'GameId'=>$GAMEID];
+      'Organisation'=>$O['OrgId'],'OrgType'=>$Org['OrgType'], 'OrgType2'=>$Org['OrgType2'], 'GameId'=>$GAMEID];
   }
   Gen_Put('Branches',$B);
 }

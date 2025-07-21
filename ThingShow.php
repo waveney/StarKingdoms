@@ -660,7 +660,7 @@ function Show_Thing(&$T,$Force=0) {
         case 2:
         case 3:
           $BBL[] = $B['Name'] . " A " . $BTypes[$B['Type']]['Name'] . " of <span $style>" . $Org['Name'] .
-            " ( " . $OrgTypes[$Org['OrgType']]['Name'] . ")</span>";
+            " ( " . $OrgTypes[$Org['OrgType']]['Name'] . ")</span>"; // Only shows first org type
           break;
         case 1:
           continue 2;
@@ -669,7 +669,7 @@ function Show_Thing(&$T,$Force=0) {
         case 6:
         case 7:
           $BBL[] = "<a href=BranchEdit.php?id=$bid>" . $B['Name'] . " A " . $BTypes[$B['Type']]['Name'] . " of </a><span $style>" . $Org['Name'] .
-            " ( " . $OrgTypes[$Org['OrgType']]['Name'] . ")</span>";
+          " ( " . $OrgTypes[$Org['OrgType']]['Name'] . ")</span>"; // Only shows first org type
           break;
       }
     }

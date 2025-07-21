@@ -239,7 +239,8 @@
       foreach ($Clean as $i=>$Of) {
         if ($Show++) echo "<tr>";
         echo "<td colspan=4>" . ($Orgs[$Of['Organisation']]['Name']??'Unknown') .
-          " ( " . ($OrgTypes[$Orgs[$Of['Organisation']]['OrgType']]['Name']??'Unknown') . " )";
+          " ( " . ($OrgTypes[$Orgs[$Of['Organisation']]['OrgType']]['Name']??'Unknown') .
+          ($Orgs[$Of['Organisation']]['OrgType2']? '/' . ($OrgTypes[$Orgs[$Of['Organisation']]['OrgType']]['Name']??'Unknown'):'') . " )";
       }
     }
   }

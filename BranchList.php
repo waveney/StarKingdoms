@@ -56,6 +56,7 @@
   foreach ($Offs as $i=>$O) {
     echo "<tr><td>$i";
     echo "<td>" . fm_select($OrgTypeNames,$O,'OrgType',0,'',"Branches:OrgType:$i");
+    if ($O['OrgType2']) echo "<br>Also: " .  fm_select($OrgTypeNames,$O,'OrgType2',0,'',"Branches:OrgType2:$i");
     echo "<td>" . fm_select($OrgNames,$O,'Organisation',1,'',"Branches:Organisation:$i");
     echo "<td>" . fm_select($BTypeNames,$O,'Type',1,'',"Branches:Type:$i");
     echo "<td>" . fm_select($FactNames,$O,'Whose',1,'',"Branches:Whose:$i");

@@ -473,6 +473,11 @@ function Recalc_Worlds($Silent=0) {
       $Up = 1;
     }
 
+    if ($Orgs[$OrgId]['OrgType2'] != $B['OrgType2']) {
+      $B['OrgType2'] = $Orgs[$OrgId]['OrgType2'];
+      $Up = 1;
+    }
+
     if ($Orgs[$OrgId]['Whose'] != $B['Whose']) {
       $B['Whose'] = $Orgs[$OrgId]['Whose'];
       $Up = 1;

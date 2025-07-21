@@ -104,7 +104,11 @@ echo fm_number('World',$B,'World');
 echo "<tr><td>Whose:<td>" . fm_select($FactNames,$B,'Whose');
 echo "<tr>" . fm_text('Name (not yet used)',$B,'Name');
 echo "<tr><td>Organisation:<td>" . fm_select($OrgList,$B,'Organisation',1);
-if ($Org) echo "<tr><td>Org is type:<td>" . $OrgTypes[$Org['OrgType']]['Name'] . "<td>Refresh page if Org changed";
+if ($Org) {
+  echo "<tr><td>Org is type:<td>" . $OrgTypes[$Org['OrgType']]['Name'] . "<td>Refresh page if Org changed";
+  if ($Org['OrgType2']) echo "<tr><td>Org Also type:<td>" . $OrgTypes[$Org['OrgType2']]['Name'] . "<td>Refresh page if Org changed";
+
+}
 echo "<tr><td>Location:<td>$Where";
 echo "</table>";
 

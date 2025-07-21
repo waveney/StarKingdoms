@@ -84,14 +84,14 @@
 
   $Turn = $_REQUEST['t'];
 
-  if ($OrgTypes[$Org['OrgType']]['Props'] & ORG_ALLOPS) {
+  if (($OrgTypes[$Org['OrgType']]['Props'] & ORG_ALLOPS) || ($Org['OrgType2'] && ($OrgTypes[$Org['OrgType2']]['Props'] & ORG_ALLOPS)) ) {
     $OpTypes = Gen_Get_Cond('OrgActions',"(NotBy&$NOTBY)=0 ORDER BY Name");
   } else {
     $OpTypes = Gen_Get_Cond('OrgActions',"(NotBy&$NOTBY)=0 AND ( Office=$OffType OR Office=" . $Org['OrgType2'] .
       " OR ((Props&" . OPER_ALLORGS . ")!=0))  ORDER BY Name");
   }
 
-  if ($OrgTypes[$Org['OrgType']]['Props'] & ORG_NO_BRANCHES) {
+  if (($OrgTypes[$Org['OrgType']]['Props'] & ORG_NO_BRANCHES) || ($Org['OrgType2'] && ($OrgTypes[$Org['OrgType2']]['Props'] & ORG_NO_BRANCHES)) ) {
     foreach ($OpTypes as $i=>$Op) if ($Op['Props'] & OPER_BRANCH) unset($OpTypes[$i]);
   }
   $Stage = ($_REQUEST['Stage']??0);

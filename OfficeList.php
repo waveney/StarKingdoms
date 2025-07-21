@@ -52,6 +52,7 @@
   foreach ($Offs as $i=>$O) {
     echo "<tr><td>$i";
     echo "<td>" . fm_select($OrgTypeNames,$O,'OrgType',0,'',"Offices:OrgType:$i");
+    echo "<br>Also: " . fm_select($OrgTypeNames,$O,'OrgType2',0,'',"Offices:OrgType2:$i");
     echo "<td>" . fm_select($OrgNames,$O,'Organisation',1,'',"Offices:Organisation:$i");
     echo "<td>" . fm_select($FactNames,$O,'Whose',1,'',"Offices:Whose:$i");
     $World = Get_World($O['World']);

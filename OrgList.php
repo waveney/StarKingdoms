@@ -98,7 +98,7 @@
     if (!$All && ($Of != $Fid)) continue;
     echo "<tr>";
     if (!isset($SocPs[$Of][$O['SocialPrinciple']])) {
-      $SocPs[$Of][$O['SocialPrinciple']] = Get_SocialP($O['SocialPrinciple'])['Principle'];
+      $SocPs[$Of][$O['SocialPrinciple']] = (Get_SocialP($O['SocialPrinciple'])['Principle']??'None');
 
     }
     if ($GM) {
@@ -138,7 +138,7 @@
     echo fm_text1('',$O,'Organisations:Name:0',4,'','placeholder="New Organisation Name"');
     echo "<br>" . fm_basictextarea($O, 'Organisations:Description:0',5,4,"placeholder='New Organisation Description' style='width=70%'");
     if ($GM) {
-      echo "Set up a Social Principle (if appropriate) after creating the Organisation";
+      echo "Set up a Social Principle and 2nd Org type (if appropriate) after creating the Organisation";
     } else {
       if (!isset($SocPs[$Fid])) $SocPs[$Fid] = SocPrinciples($Fid);
       if (!isset($SocPs[$Fid][$O['SocialPrinciple']])) $SocPs[$Fid][$O['SocialPrinciple']] = Get_SocialP($O['SocialPrinciple']);

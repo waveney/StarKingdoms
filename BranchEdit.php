@@ -54,6 +54,7 @@ if (isset($_REQUEST['Action'])) {
         echo "<h2 class=err>Owner of Org not same as owner of Branch...</h2>";
       } else {
         $B['OrgType'] = $Org['OrgType'];
+        $B['OrgType2'] = $Org['OrgType2'];
         Gen_Put('Branches',$B);
       }
 
@@ -181,7 +182,7 @@ if (isset($_REQUEST['Action'])) {
       $TTypes = Get_ThingTypes();
       $NTypes = array_flip(NamesList($TTypes));
 
-      $Branches = Gen_Get_Cond('Branches',"HostType=3 AND HostId=$Oid AND OrgType=3");
+      $Branches = Gen_Get_Cond('Branches',"HostType=3 AND HostId=$Oid AND (OrgType=3 OR OrgType2=3)");
       // var_dump($Branches);
       $TotC = 0;
       if ($Branches) {
@@ -207,7 +208,7 @@ if (isset($_REQUEST['Action'])) {
             $T['WithinSysLoc'] = 1;
             $T['LinkId'] = 0;
             $T['ProjectId'] = $Bid;
-var_dump($T);
+            //var_dump($T);
             Put_Thing($T);
             $Count++;
           }
@@ -217,7 +218,7 @@ var_dump($T);
               $T = ['Whose'=>$Fid, 'Type'=>$NTypes['Fighter Defences'], 'BuildState'=>BS_COMPLETE, 'CurHealth'=>$Def, 'OrigHealth'=>$Def, 'ActDamage'=>$Off,
                 'SystemId'=>$Sid, 'WithinSysLoc'=>1, 'Class'=>'Defence Fighter Squadron', 'Name'=>($B['Name']?$B['Name']:"Squadron $Bid") . ":$Count" ,
                 'Evasion'=>40, 'ProjectId'=>$Bid, 'Speed'=>$Speed, 'LinkId'=>0];
-var_dump($T);
+              //var_dump($T);
               Put_Thing($T);
             }
           }

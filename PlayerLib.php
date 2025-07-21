@@ -623,7 +623,7 @@ function Income_Calc($Fid) {
     $H['Economy'] = $ECon;
     $EccTxt .= $Rtxt;
 
-    $Offs = Gen_Get_Cond('Offices',"World=$Wid AND OrgType=2");
+    $Offs = Gen_Get_Cond('Offices',"World=$Wid AND (OrgType=2 OR OrgType2=2)");
     if ($Offs && !$HasOwnGalaxy ) {
       foreach ($Offs as $Off ) {
         $Org = Gen_Get('Organisations',$Off['Organisation']);

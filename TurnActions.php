@@ -537,7 +537,7 @@ function TraitIncomes() {
   // Science Points for Offices and Branches
   $Sci = OrgType('Science');
 
-  $Orgs = Gen_Get_Cond("Organisations", "GameId=$GAMEID AND OrgType=$Sci");
+  $Orgs = Gen_Get_Cond("Organisations", "GameId=$GAMEID AND (OrgType=$Sci OR OrgType2=$Sci)");
   $BTypes = Get_BranchTypes();
   $BTindex = array_flip(NamesList($BTypes));
 
