@@ -48,7 +48,7 @@ $NewResNames = NamesList($ResTypes);
 echo "<table border>";
 if ($GM) {
   echo "<h2><a href= Tracked.php?FORCE>This Page in Player Mode</a></h2>";
-  echo "Note: Changes to these here are not logged - use Pay Faction for logged changes<p>";
+  echo "Note: Changes to these here are not yet logged - use Pay Faction for logged changes<p>";
 
   echo "<form method=post>";
   Register_AutoUpdate('Generic',0);
@@ -81,8 +81,8 @@ if ($GM) {
   $es = [];
   Cancel_AutoUpdate();
   if ($NewResNames) {
-    echo "<tr><td colspan=2>New Track";
-    echo "<tr><td>" . fm_select($NewResNames,$es,'Type',1) . fm_submit('ACTION','Add');
+    echo "<tr><td>New Track";
+    echo "<td colspan=2>" . fm_select($NewResNames,$es,'Type',1) . fm_submit('ACTION','Add');
   }
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
 

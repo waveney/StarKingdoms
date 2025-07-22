@@ -35,7 +35,7 @@ function Get_Factions($Force=0,$AllG=0) {
 
 function Get_Faction_Names($None=1) {
   global $db,$GAMEID;
-  $res = $db->query("SELECT * FROM Factions WHERE GameId=$GAMEID ORDER BY id ");
+  $res = $db->query("SELECT id,Name FROM Factions WHERE GameId=$GAMEID ORDER BY id ");
   $F = [];
   if ($None) $F[0] = "None";
   if ($res) {
@@ -46,7 +46,7 @@ function Get_Faction_Names($None=1) {
 
 function Get_Faction_Colours() {
   global $db,$GAMEID;
-  $res = $db->query("SELECT * FROM Factions WHERE GameId=$GAMEID ORDER BY id ");
+  $res = $db->query("SELECT id,Mapcolour FROM Factions WHERE GameId=$GAMEID ORDER BY id ");
   $F = [];
   $F[0] = "white";
   if ($res) {
@@ -198,39 +198,6 @@ function Get_Links1end($sysref) {
 }
 
 // Link knnowledge
-/*
-function Get_FactionLink($id) {
-  global $db;
-  $res = $db->query("SELECT * FROM FactionLink WHERE id=$id");
-  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
-  return [];
-}
-
-function Get_FactionLinkFL($Fact, $Lid) {
-  global $db;
-  $res = $db->query("SELECT * FROM FactionLink WHERE FactionId=$Fact AND LinkId=$Lid");
-  if ($res) if ($ans = $res->fetch_assoc()) return $ans;
-  return ['FactionId'=>$Fact, 'LinkId'=>$Lid, 'Known'=>0, 'NebScanned'=>0];
-}
-
-function Put_FactionLink(&$now) {
-  if (isset($now['id'])) {
-    $e=$now['id'];
-    $Cur = Get_FactionLink($e);
-    return Update_db('FactionLink',$Cur,$now);
-  } else {
-    return $now['id'] = Insert_db ('FactionLink', $now );
-  }
-}*/
-
-/*
-function Get_Factions4Link($Lid) {
-  global $db;
-  $FL = [];
-  $res = $db->query("SELECT * FROM FactionLink WHERE LinkId=$Lid");
-  if ($res) while ($ans = $res->fetch_assoc()) $FL[$ans['FactionId']] = $ans;
-  return $FL;
-} */
 
 function Get_Factions4Link($Lid) {
   $L = Get_Link($Lid);

@@ -25,30 +25,36 @@ if ($GM && !isset($FACTION['id'])) {
   $Logs = Gen_Get_Cond('SciencePointLog',"FactionId=$Fid");
 }
 $Facts = Get_Factions();
-$TechFields = [0=>['Unknown','??'],1=>['Engineering','EngineeringSP'],2=>['Physics','PhysicsSP'],3=>['Xenology','XenologySP'],4=>['General',''],
-  -1=>[Feature('Currency1'),'Currency1'], -2=>[Feature('Currency2'),'Currency2'], -3=>[Feature('Currency3'),'Currency3'],
-];
+//$TechFields = [0=>['Unknown','??'],1=>['Engineering','EngineeringSP'],2=>['Physics','PhysicsSP'],3=>['Xenology','XenologySP'],4=>['General',''],
+//  -1=>[Feature('Currency1'),'Currency1'], -2=>[Feature('Currency2'),'Currency2'], -3=>[Feature('Currency3'),'Currency3'],
+//];
 
 if (!$Logs) {
   echo "<h2>No Logs recorded yet</h2>";
   dotail();
 }
 
+$Tracks = TrackIndexes();
 
+//var_dump($Tracks);
 TableStart();
 if ($Fid == 0) TableHead('Who');
 TableHead('Turn','N');
 TableHead('Resource Type');
 TableHead('Amount','N');
+TableHead('Total','N');
 TableHead('Reason');
 TableTop();
+
+$Runtot = GameFeature('RunningResTotals',0);
 
 foreach(array_reverse($Logs) as $L) {
   echo "<tr>";
   if ($Fid == 0) echo "<td>" . ($Facts[$L['FactionId']]['Name']??'Unknown');
   echo "<td>" . $L['Turn'];
-  echo "<td>" . $TechFields[$L['Type']][0];
+  echo "<td>" . $Tracks[$L['Type']][0];
   echo "<td>" . $L['Number'];
+  echo "<td>" . ((($L['Turn']<$Runtot) || ($Tracks[$L['Type']][3] &16))?'-':$L['EndVal']);
   echo "<td>" . $L['Note'];
 
 }

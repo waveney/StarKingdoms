@@ -124,7 +124,7 @@ function Player_Page() {
         echo "<li><a href=ThingPlan.php>Plan a Thing</a> - Planning Things (Ships, $ARMIES, Named Characters, Space stations etc)";
       }
       if ($FACTION['PhysicsSP'] >=5 || $FACTION['EngineeringSP'] >=5 || $FACTION['XenologySP'] >=5 ) {
-        echo "<li><a href=SciencePoints.php>Spend Science Points</a> - Also Science Point logs";
+        echo "<li><a href=SciencePoints.php>Spend Science Points</a> - Also Resource Logs";
 //        echo "<li><a href=ScienceLog.php>Science Point Logs</a>";
       }
       if ($Facts || $FACTION['NPC']) {
@@ -294,20 +294,21 @@ function Gain_Science($Who,$What,$Amount,$Why='') { // Ammount is negative to ga
   global $GAME;
   $Fact = Get_Faction($Who);
   $ltype = 0;
+  $Now = 0;
   switch ($What) {
   case 1:
   case 'Physics':
-    $Fact['PhysicsSP'] = ($Fact['PhysicsSP'] ?? 0) + $Amount;
+    $Now = $Fact['PhysicsSP'] = ($Fact['PhysicsSP'] ?? 0) + $Amount;
     $ltype = 2;
     break;
   case 2:
   case 'Engineering':
-    $Fact['EngineeringSP'] = ($Fact['EngineeringSP'] ?? 0) + $Amount;
+    $Now = $Fact['EngineeringSP'] = ($Fact['EngineeringSP'] ?? 0) + $Amount;
     $ltype = 1;
     break;
   case 3:
   case 'Xenology':
-    $Fact['XenologySP'] = ($Fact['XenologySP'] ?? 0) + $Amount;
+    $Now = $Fact['XenologySP'] = ($Fact['XenologySP'] ?? 0) + $Amount;
     $ltype = 3;
     break;
   case 4: // Random
@@ -334,7 +335,7 @@ function Gain_Science($Who,$What,$Amount,$Why='') { // Ammount is negative to ga
 
 //  var_dump($Fact);
   Put_Faction($Fact);
-  $Spog = ['GameId'=>$GAME['id'],'Turn'=>$GAME['Turn'],'FactionId'=>$Who, 'Type'=>$ltype, 'Number'=>$Amount, 'Note'=>$Why];
+  $Spog = ['GameId'=>$GAME['id'],'Turn'=>$GAME['Turn'],'FactionId'=>$Who, 'Type'=>$ltype, 'Number'=>$Amount, 'Note'=>$Why, 'EndVal'=>$Now];
   Gen_Put('SciencePointLog',$Spog);
 }
 
@@ -347,6 +348,10 @@ function Gain_Currency($Who,$What,$Amount,$Why) { // Ammount is negative to gain
   if (($Fact["Currency$CNum"] + $Amount) < 0 ) return 0;
   $Fact["Currency$CNum"] += $Amount;
   Put_Faction($Fact);
+
+  $Spog = ['GameId'=>$GAME['id'],'Turn'=>$GAME['Turn'],'FactionId'=>$Who, 'Type'=>$What+6, 'Number'=>$Amount, 'Note'=>$Why, 'EndVal'=>$Fact["Currency$CNum"]];
+  Gen_Put('SciencePointLog',$Spog);
+
   return 1;
 }
 
@@ -821,4 +826,26 @@ function Has_Track($Fid,$Name) {
   return $Have['Value']??0;
 }
 
+// index (0=credits 1-9 SPs, 11-19 Currencies, 20+ Tracked resources
+// Ref Name (used in code), Name - if blank Ref Name used, Field name, bits 0-3 datatype 0= Faction, 1= Resourc, bit 4 no running total
+function &TrackIndexes() {
+  static $LTracks;
+  if ($LTracks) return $LTracks;
+  $LTracks = [0=>['Credits','Credits','Credits',0],
+    1=>['Engineering','Engineering Science Points','EngineeringSP',0],
+    2=>['Physics','Physics Science Points','PhysicsSP',0],
+    3=>['Xenology','Xenology Science Points','XenologySP',0],
+    4=>['General','General Science Points','',16],
 
+    11=>[Feature('Currency1'),'Currency1','',0],
+    12=>[Feature('Currency2'),'Currency2','',0],
+    13=>[Feature('Currency3'),'Currency3','',0],
+  ];
+
+  $RTracks = Tracks();
+  foreach ($RTracks as $Rid=>$R) {
+    $LTracks[$Rid+20] = [$R['Name'],'','',1];
+  }
+
+  return $LTracks;
+}

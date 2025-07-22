@@ -10,7 +10,7 @@
   $GM = Access('GM');
 
   dostaffhead("What can I see");
-  if (isset($FACTION)) {
+  if (!empty($FACTION)) {
     $Fid = $FACTION['id'];
     if ( $FACTION['TurnState'] == 3) Player_Page();
   } else if ($GM) {
@@ -19,6 +19,7 @@
     } else {
       $Fid = 0;
       echo "<h2>Note you are here without a faction...</h2>\n";
+      dotail();
     }
   } else {
     if ( $FACTION['TurnState'] == 3) Player_Page();
