@@ -498,6 +498,18 @@ function ListSelection(_event,evid,Listshowid,xclass='') {
   }
 }
 
+function ListFilter(Key) {
+debugger;
+  var Show = $("input[name=" + Key + "]:checked").val();
+
+	if (Show == 0) {
+		$('.ShowAll').show();
+	} else {
+		$('.ShowAll').hide();
+		$('.Show' + Show).show();
+	}
+}
+
 function CheckModSpace() {
   debugger;
   var slots = 0;

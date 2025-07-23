@@ -18,11 +18,11 @@ echo "</h1>";
 
 
 if ($GM && !isset($FACTION['id'])) {
-  $Logs = Gen_Get_All_GameId('SciencePointLog');
+  $Logs = Gen_Get_Cond('SciencePointLog',"Game=$GAMEID ORDER BY id DESC");
   $Fid = 0;
 } else {
   $Fid = $FACTION['id'];
-  $Logs = Gen_Get_Cond('SciencePointLog',"FactionId=$Fid");
+  $Logs = Gen_Get_Cond('SciencePointLog',"FactionId=$Fid ORDER BY id DESC");
 }
 $Facts = Get_Factions();
 //$TechFields = [0=>['Unknown','??'],1=>['Engineering','EngineeringSP'],2=>['Physics','PhysicsSP'],3=>['Xenology','XenologySP'],4=>['General',''],
@@ -35,6 +35,20 @@ if (!$Logs) {
 }
 
 $Tracks = TrackIndexes();
+$Tracked = [];
+
+// Scan for used types
+foreach($Logs as $L) {
+  $Tracked[$L['Type']] = 1;
+}
+
+$Reses = ['All'];
+foreach ($Tracks as $RTi=>$RT) {
+  if (isset($Tracked[$RTi])) $Reses[$RTi] = $RT[1];
+}
+
+$Show['Show'] = 0;
+echo "<div class=floatright ><b>" . fm_radio("Show",$Reses,$Show,'Show',' onchange=ListFilter("Show")') . "</div>";
 
 //var_dump($Tracks);
 TableStart();
@@ -48,13 +62,14 @@ TableTop();
 
 $Runtot = GameFeature('RunningResTotals',0);
 
-foreach(array_reverse($Logs) as $L) {
-  echo "<tr>";
+foreach($Logs as $L) {
+  $LType = $L['Type'];
+  echo "<tr class='ShowAll Show$LType'>";
   if ($Fid == 0) echo "<td>" . ($Facts[$L['FactionId']]['Name']??'Unknown');
   echo "<td>" . $L['Turn'];
-  echo "<td>" . $Tracks[$L['Type']][0];
+  echo "<td>" . $Tracks[$LType][1];
   echo "<td>" . $L['Number'];
-  echo "<td>" . ((($L['Turn']<$Runtot) || ($Tracks[$L['Type']][3] &16))?'-':$L['EndVal']);
+  echo "<td>" . ((($L['Turn']<$Runtot) || ($Tracks[$LType][3] &16))?'-':$L['EndVal']);
   echo "<td>" . $L['Note'];
 
 }

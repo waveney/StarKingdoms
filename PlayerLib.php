@@ -837,14 +837,14 @@ function &TrackIndexes() {
     3=>['Xenology','Xenology Science Points','XenologySP',0],
     4=>['General','General Science Points','',16],
 
-    11=>[Feature('Currency1'),'Currency1','',0],
-    12=>[Feature('Currency2'),'Currency2','',0],
-    13=>[Feature('Currency3'),'Currency3','',0],
+    11=>[$n = Feature('Currency1'),$n,'Currency1',0],
+    12=>[$n = Feature('Currency2'),$n,'Currency2',0],
+    13=>[$n = Feature('Currency3'),$n,'Currency3',0],
   ];
 
   $RTracks = Tracks();
   foreach ($RTracks as $Rid=>$R) {
-    $LTracks[$Rid+20] = [$R['Name'],'','',1];
+    $LTracks[$Rid+20] = [$R['Name'],$R['Name'],'',1];
   }
 
   return $LTracks;
