@@ -626,7 +626,7 @@ function OperationsComplete() {
       case 'Sponsor Colonists':
         $Where = $O['SystemId'];
         $N = Get_System($Where);
-        $T = Get_Things_Cond(0,"SystemId=$Where AND Instruction=1");
+        $T = Get_Things_Cond1(0,"SystemId=$Where AND Instruction=1");
         if (!$T) {
           TurnLog($Fid,"The operation to sponsor colonists in " . System_Name($N,$Fid) . " cannot find any on going colonisation to help with.");
           GMLog("The operation to sponsor colonists in " . System_Name($N,$Fid) . " by Operation $Oid, " .

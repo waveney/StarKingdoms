@@ -31,6 +31,7 @@
       if (!isset($_REQUEST['O'])) break;
 
     case 'Pay Next Turn' :
+      $What = $_REQUEST['What'];
       $BankRec = ['FactionId'=>0, 'Recipient'=>$_REQUEST['F'], 'Amount'=>$_REQUEST['C'],
                     'StartTurn'=> $GAME['Turn'], 'EndTurn' => (isset($_REQUEST['O']) ?1000 :$GAME['Turn']),
                     'YourRef' => $_REQUEST['R'],'What'=>$_REQUEST['What'],'GameId'=>$GAMEID ];

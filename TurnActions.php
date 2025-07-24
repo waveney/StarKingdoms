@@ -744,12 +744,12 @@ function AffectActivitiesActions() {
               break;
 
             case 'Oper':
-              $P = Get_Operation($id);
-              $P['LastUpdate'] = $GAME['Turn'];
+              $O = Get_Operation($id);
+              $O['TurnState'] = 1;
 
               $Reason = ($_REQUEST["Reason:Oper:$id"]??'Unknown reason');
-              TurnLog($P['Whose'], "Operation " . $P['Name'] . " had no progress because of: $Reason");
-              Put_Operation($P);
+              TurnLog($O['Whose'], "Operation " . $O['Name'] . " had no progress because of: $Reason");
+              Put_Operation($O);
               break;
 
             case 'Inst':
