@@ -687,6 +687,8 @@ function Instructions() {
           TurnLog($T['Whose'],"Could not afford to start an Wormhole Stabiliser in " .$N['Ref'],$T);
         }
         $T['Instruction'] = -$T['Instruction'];
+        GMLog($T['Whose']['Name'] . " is starting a Wormhole Stabiliser in " . $N['Ref']);
+        TurnLog($T['Whose'],"Starting a Wormhole Stabiliser in " . $N['Ref'],$T);
         break;
 
       default: // everything else
@@ -1541,7 +1543,9 @@ function InstructionsProgress() {
         $Mods = Get_ModulesType($Tid, 'Space Construction Gear');
         $ProgGain = $Mods['Level']*$Mods['Number'];
         GMLog("$ProgGain progress on " . $ThingInstrs[abs($T['Instruction'])] . " for " . $Facts[$T['Whose']]['Name'] . ":" . $T['Name']);
+        TurnLog($Fid,"$ProgGain progress on " . $ThingInstrs[abs($T['Instruction'])] . " by " . $T['Name'],$T);
         $T['Progress'] = min($T['ActionsNeeded'],$T['Progress']+$ProgGain);
+ //var_dump($T);
         Put_Thing($T);
         break;
 
