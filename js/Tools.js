@@ -566,7 +566,7 @@ function HideTechSet(idx) {
   $('#HideSupTechs' + idx).hide();
 }
 
-function AddTrack(id) {
+function OldAddTrack(id) {
   debugger;
   var mod = document.getElementById('Ignore:' + id);
   var mval = mod.value;
@@ -574,6 +574,23 @@ function AddTrack(id) {
   Cval.value = Number(Cval.value) + Number(mval);
   mod.value = '';
   AutoInput(id,'Generic');
+}
+
+function AddTrack(id,ti) {
+  debugger;
+  var mod = document.getElementById('Ignore:' + id);
+  var mval = mod.value;
+  var Cval = document.getElementById(id);
+  var newtot = Cval.innerText = Number(Cval.innerText) + Number(mval);
+  mod.value = '';
+	var Reasn = document.getElementById('ReasonFor:' +id);
+	var Reason = Reasn.value;
+	Reasn.value = '';
+
+  $.post("addformfill.php", {'F':id, 'V':mval, 'R':Reason, 'T':newtot, 'K':ti}, function( data ) {
+	    var dbg = document.getElementById('Debug');
+	    if (dbg) $('#Debug').html( data) ;  
+		  });
 }
 
 function WhereFilter() {

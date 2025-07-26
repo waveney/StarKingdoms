@@ -124,8 +124,13 @@ function StartProjects() {
         Put_Thing($T);
       } else {
         $Facts[$Fid]['Currency3'] -= $T['Level'];
+        $Why = 'Spent ' . $T['Level'] . ' ' . GameFeature('Currency3','Unknown') . ' starting ' . $T['Name'];
+        $RLog = ['GameId'=>$GAME['id'],'Turn'=>$GAME['Turn'],'FactionId'=>$P['FactionId'], 'Type'=>13, 'Number'=> -$T['Level'],
+          'Note'=>$Why, 'EndVal'=>$Facts[$Fid]['Currency3']];
+        Gen_Put('SciencePointLog',$RLog);
+
         Put_Faction($Facts[$Fid]);
-        TurnLog($P['FactionId'],'Spent ' . $T['Level'] . ' ' . GameFeature('Currency3','Unknown') . ' starting ' . $T['Name']);
+        TurnLog($P['FactionId'],$Why);
       }
     }
 
@@ -139,8 +144,13 @@ function StartProjects() {
         Put_Thing($T);
       } else {
         $Facts[$Fid]["Currency$i"] -= $P["CostCur$i"];
+        $Why = 'Spent ' . $T['Level'] . ' ' . GameFeature("Currency$i",'Unknown') . ' starting ' . $T['Name'];
+        $RLog = ['GameId'=>$GAME['id'],'Turn'=>$GAME['Turn'],'FactionId'=>$P['FactionId'], 'Type'=>10+$i, 'Number'=> -$P["CostCur$i"],
+          'Note'=>$Why, 'EndVal'=>$Facts[$Fid]["Currency$i"]];
+        Gen_Put('SciencePointLog',$RLog);
+
         Put_Faction($Facts[$Fid]);
-        TurnLog($P['FactionId'],'Spent ' . $T['Level'] . ' ' . GameFeature("Currency$i",'Unknown') . ' starting ' . $T['Name']);
+        TurnLog($P['FactionId'],$Why);
       }
     }
 

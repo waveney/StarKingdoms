@@ -138,6 +138,8 @@
   echo "<h2>Recent transactions - Look back <input type=number size=3 style='width:30px;' min=0 name=LookBack id=LookBack " .
        "value=$LookBack  onchange=this.form.submit() > Turns</h2>";
   $Creds = Get_CreditLogs($Fid,max($Turn-$LookBack,0),$Turn);
+
+//  var_dump($Creds);
   echo "<div class=CLwrap><table class=CreditLog>";
   echo "<thead><tr><td class=CLTurn>Turn<td class=CLCredit>Start<td class=CLCredit>Credit<td class=CLCredit>Debit<td class=CLCredit>" .
        "end<td class=CLWhat>What<td class=CLFrom>From / To</thead>\n<tbody>";

@@ -50,31 +50,55 @@ if ($GM) {
   echo "<h2><a href= Tracked.php?FORCE>This Page in Player Mode</a></h2>";
   echo "Note: Changes to these here are not yet logged - use Pay Faction for logged changes<p>";
 
+
+
   echo "<form method=post>";
-  Register_AutoUpdate('Generic',0);
+//  Register_AutoUpdate('Generic',0);
   echo "<input type=submit hidden name=Ignore>";
-  echo "<tr><th>Track<th>Value<th colspan=2>Actions";
+  echo "<tr><th>Track<th>Current Value<th colspan=4>Actions";
   $Ign = [];
-  echo "<tr>" . fm_number('Credits',$FACTION,'Credits','','',"Factions:Credits:$Fid") .
-    fm_number1('',$Ign,"Ignore:Factions:Credits:$Fid") . "<button type=button onclick=AddTrack('Factions:Credits:$Fid')>Add</button>";
-  echo "<tr>" . fm_number('Physics Points', $FACTION,'PhysicsSP','','',"Factions:PhysicsSP:$Fid").
-    fm_number1('',$Ign,"Ignore:Factions:PhysicsSP:$Fid") . "<button type=button onclick=AddTrack('Factions:PhysicsSP:$Fid')>Add</button>";
-  echo "<tr>" . fm_number('Engineering Points', $FACTION,'EngineeringSP','','',"Factions:EngineeringSP:$Fid") .
-    fm_number1('',$Ign,"Ignore:Factions:EngineeringSP:$Fid") . "<button type=button onclick=AddTrack('Factions:EngineeringSP:$Fid')>Add</button>";
-  echo "<tr>" . fm_number('Xenology Points', $FACTION,'XenologySP','','',"Factions:XenologySP:$Fid") .
-    fm_number1('',$Ign,"Ignore:Factions:XenologySP:$Fid") . "<button type=button onclick=AddTrack('Factions:XenologySP:$Fid')>Add</button>";
-  if ($Nam = GameFeature('Currency1')) echo "<tr>" . fm_number($Nam, $FACTION,'Currency1','','',"Factions:Currency1:$Fid") .
-    fm_number1('',$Ign,"Ignore:Factions:Currency1:$Fid") . "<button type=button onclick=AddTrack('Factions:Currency1:$Fid')>Add</button>";
-  if ($Nam = GameFeature('Currency2')) echo "<tr>" . fm_number($Nam, $FACTION,'Currency2','','',"Factions:Currency2:$Fid").
-    fm_number1('',$Ign,"Ignore:Factions:Currency2:$Fid") . "<button type=button onclick=AddTrack('Factions:Currency2:$Fid')>Add</button>";
-  if ($Nam = GameFeature('Currency3')) echo "<tr>" . fm_number($Nam, $FACTION,'Currency3','','',"Factions:Currency3:$Fid").
-    fm_number1('',$Ign,"Ignore:Factions:Currency3:$Fid") . "<button type=button onclick=AddTrack('Factions:Currency3:$Fid')>Add</button>";
+  echo "<tr><td>Credits<td align=right id='Factions:Credits:$Fid'>" . $FACTION['Credits'] .
+    fm_number1('Number',$Ign,"Ignore:Factions:Credits:$Fid") .
+    fm_text1('Reason',$Ign,"ReasonFor:Factions:Credits:$Fid",2) .
+    "<button type=button onclick=AddTrack('Factions:Credits:$Fid',0)>Add</button>";
+
+  echo "<tr><td>Physics Science Points<td align=right id='Factions:PhysicsSP:$Fid'>" . $FACTION['PhysicsSP'] .
+    fm_number1('Number',$Ign,"Ignore:Factions:PhysicsSP:$Fid") .
+    fm_text1('Reason',$Ign,"ReasonFor:Factions:PhysicsSP:$Fid",2) .
+    "<button type=button onclick=AddTrack('Factions:PhysicsSP:$Fid',1)>Add</button>";
+
+  echo "<tr><td>Engineering Science Points<td align=right id='Factions:EngineeringSP:$Fid'>" . $FACTION['EngineeringSP'] .
+    fm_number1('Number',$Ign,"Ignore:Factions:EngineeringSP:$Fid") .
+    fm_text1('Reason',$Ign,"ReasonFor:Factions:EngineeringSP:$Fid",2) .
+    "<button type=button onclick=AddTrack('Factions:EngineeringSP:$Fid',2)>Add</button>";
+
+  echo "<tr><td>Xenology Science Points<td align=right id='Factions:XenologySP:$Fid'>" . $FACTION['XenologySP'] .
+    fm_number1('Number',$Ign,"Ignore:Factions:XenologySP:$Fid") .
+    fm_text1('Reason',$Ign,"ReasonFor:Factions:XenologySP:$Fid",2) .
+    "<button type=button onclick=AddTrack('Factions:XenologySP:$Fid',3)>Add</button>";
+
+  if ($Nam = GameFeature('Currency1')) echo "<tr><td>$Nam<td align=right id='Factions:Currency1:$Fid'>" . $FACTION['Currency1'] .
+    fm_number1('Number',$Ign,"Ignore:Factions:Currency1:$Fid") .
+    fm_text1('Reason',$Ign,"ReasonFor:Factions:Currency1:$Fid",2) .
+    "<button type=button onclick=AddTrack('Factions:Currency1:$Fid',11)>Add</button>";
+
+  if ($Nam = GameFeature('Currency2')) echo "<tr><td>$Nam<td align=right id='Factions:Currency2:$Fid'>" . $FACTION['Currency2'] .
+    fm_number1('Number',$Ign,"Ignore:Factions:Currency2:$Fid") .
+    fm_text1('Reason',$Ign,"ReasonFor:Factions:Currency2:$Fid",2) .
+    "<button type=button onclick=AddTrack('Factions:Currency2:$Fid',12)>Add</button>";
+
+  if ($Nam = GameFeature('Currency3')) echo "<tr><td>$Nam<td align=right id='Factions:Currency3:$Fid'>" . $FACTION['Currency3'] .
+    fm_number1('Number',$Ign,"Ignore:Factions:Currency3:$Fid") .
+    fm_text1('Reason',$Ign,"ReasonFor:Factions:Currency3:$Fid",2) .
+    "<button type=button onclick=AddTrack('Factions:Currency3:$Fid',13)>Add</button>";
 
   foreach ($Tracks as $ti=>$Tr) {
-    echo "<tr>" . fm_number(($ResTypes[$Tr['Type']]['Name']??'Unknown'),$Tr,'Value','','',"Resources:Value:$ti") .
-      fm_number1('',$Ign,"Ignore:Resources:Value:$ti") . "<button type=button onclick=AddTrack('Resources:Value:$ti')>Add</button>" .
-      fm_submit('ACTION','Remove',1,"formaction=Tracked.php?Ti=$ti");
-      unset($NewResNames[$Tr['Type']]);
+    echo "<tr><td>" . ($ResTypes[$Tr['Type']]['Name']??'Unknown') . "<td align=right id='Resources:Value:$Fid'>" . $Tr['Value'] .
+      fm_number1('Number',$Ign,"Ignore:Resources:Value:$ti") .
+      fm_text1('Reason',$Ign,"ReasonFor:Resources:Value:$Fid",2) .
+      "<button type=button onclick=AddTrack('Resources:Value:$ti',20+$ti)>Add</button>" .
+    fm_submit('ACTION','Remove',1,"formaction=Tracked.php?Ti=$ti");
+    unset($NewResNames[$Tr['Type']]);
   }
 
 //  var_dump($NewResNames);

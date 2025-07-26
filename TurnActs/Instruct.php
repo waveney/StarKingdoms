@@ -1550,6 +1550,7 @@ function InstructionsProgress() {
         break;
 
       case 'Collaborative Planetary Construction' :
+      case 'Collaborative Space Construction' :
       case 'Collaborative DSC':
         break; // Now in second pass
 
