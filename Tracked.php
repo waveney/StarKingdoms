@@ -91,9 +91,9 @@ if ($GM) {
     "<button type=button onclick=AddTrack('Factions:Currency3:$Fid',13)>Add</button>";
 
   foreach ($Tracks as $ti=>$Tr) {
-    echo "<tr><td>" . ($ResTypes[$Tr['Type']]['Name']??'Unknown') . "<td align=right id='Resources:Value:$Fid'>" . $Tr['Value'] .
+    echo "<tr><td>" . ($ResTypes[$Tr['Type']]['Name']??'Unknown') . "<td align=right id='Resources:Value:$ti'>" . $Tr['Value'] .
       fm_number1('Number',$Ign,"Ignore:Resources:Value:$ti") .
-      fm_text1('Reason',$Ign,"ReasonFor:Resources:Value:$Fid",2) .
+      fm_text1('Reason',$Ign,"ReasonFor:Resources:Value:$ti",2) .
       "<button type=button onclick=AddTrack('Resources:Value:$ti',20+$ti)>Add</button>" .
     fm_submit('ACTION','Remove',1,"formaction=Tracked.php?Ti=$ti");
     unset($NewResNames[$Tr['Type']]);

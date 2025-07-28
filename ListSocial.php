@@ -149,7 +149,7 @@
 
     echo "<tr>";
 
-    if ($GM) echo "<td>$si<td>" . $Facts[$SP['Whose']]['Name'];
+    if ($GM) echo "<td>$si<td>" . ($Facts[$SP['Whose']]['Name']??'Unknown');
     echo "<td><a href=SocialEdit.php?id=$si>" . $SP['Principle'] . "</a><td>" . $Parsedown->text(stripslashes($SP['Description']));
     if (!$GM) {
       foreach($Worlds as $Wid=>$W) {

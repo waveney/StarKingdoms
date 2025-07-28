@@ -86,7 +86,7 @@ echo "<table border>";
 Register_AutoUpdate('Generic', 0);
 if ($GM) {
   echo "<tr><td>id: $Sid";
-  echo "<tr><td>Whose:<td>" . fm_select($FactNames,$Prin,'Whose');
+  echo "<tr><td>Whose:<td>" . fm_select($FactNames,$Prin,'Whose',0,'',"SocialPrinciples:Whose:$Sid");
   echo "<tr>" . fm_text('Principle Name',$Prin,'Principle',2,'','',"SocialPrinciples:Principle:$Sid");
   echo "<tr>" . fm_textarea("Description",$Prin,'Description',3,3,'','',"SocialPrinciples:Description:$Sid");
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
