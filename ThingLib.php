@@ -698,7 +698,7 @@ function Calc_Evasion(&$T) {
     $T['TargetEvasion'] = $V['TargetEvasion']??0; // Actual Number calculated when in battle
   }
 
-  if (Has_Trait($T['Whose'],'Active Chronosphere') && ($TTypes[$T['Type']]['Properties'] && THING_IS_SMALL) &&
+  if (Has_Trait(($T['Whose']??0),'Active Chronosphere') && ($TTypes[$T['Type']]['Properties'] && THING_IS_SMALL) &&
     ($TTypes[$T['Type']]['Properties'] && THING_HAS_SHIPMODULES)) { // Its a fighter, now to see where built
 
     $Bsys = ($T['WhereBuilt']??0);

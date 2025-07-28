@@ -1019,6 +1019,7 @@ function System_Owner($Sid) {
 
   $Cont = 0;
   foreach ($Ps as $P) {
+    if ($P['Attributes'] & 1) continue; // Hidden
     if ($P['Control']) {
       if ($P['Control'] != $N['Control']) {
         $N['Control'] = $P['Control'];
@@ -1038,6 +1039,7 @@ function System_Owner($Sid) {
     }
     $Ms = Get_Moons($P['id']);
     foreach ($Ms as $M) {
+      if ($M['Attributes'] & 1) continue; // Hidden
       if ($M['Control'] != $N['Control']) {
         $N['Control'] = $M['Control'];
         $FS = Get_FactionSystemFS($N['Control'],$Sid);

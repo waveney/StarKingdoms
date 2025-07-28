@@ -131,7 +131,7 @@ function Show_Thing(&$T,$Force=0) {
     if ($T['BluePrint']<0) echo fm_text1('Gated On',$T,'GatedOn',2,'class=NotSide');
 //    if (feature('HiddenControl')) echo "<td colspan=2>Hidden Control: " . fm_select($FactNames,$T,'HiddenControl');
     echo "<tr><td>Type:<td>" . fm_select($ttn,$T,'Type',1);
-    if (($tprops & THING_HAS_LEVELS) || ($tprops & THING_CAN_BE_ADVANCED)) echo fm_number1("Level",$T,'Level');
+    if (($tprops & THING_HAS_LEVELS) || ($tprops & THING_CAN_BE_ADVANCED) || ($T['BluePrint']<0) ) echo fm_number1("Level",$T,'Level');
     if ($tprops & THING_HAS_VARIANTS) {
       $varlist = NamesList($Varies);
       echo "<td>Varient: " . fm_select($varlist, $T, 'Variant',1);
