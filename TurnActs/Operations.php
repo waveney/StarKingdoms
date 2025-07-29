@@ -618,6 +618,7 @@ function OperationsComplete() {
           } else {
             TurnLog($Fid,"The anomaly " . $Anom['Name'] . " is already studied");
           }
+          AnomalyComplete($Aid,$Fid);
         } else {
           TurnLog($Fid,"The anomaly " . $Anom['Name'] . " can no longer be studied");
         }

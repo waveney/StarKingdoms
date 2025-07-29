@@ -463,8 +463,12 @@ function Calc_Damage(&$T,&$Rescat) {
     if (!isset($Ms[$mti])) continue;
     $M = $Ms[$mti];
     if ($mt['DefWep'] == 2 ) {
-      $dam = ($M['Level'] > 0?$M['Number'] * Mod_ValueSimple($M['Level'],$mti,$Rescat):0);
-      $Dam += $dam;
+      if ($M['Level'] > 0) {
+        $dpm = Mod_ValueSimple($M['Level'],$mti,$Rescat);
+        if ($T['BuildFlags'] & BUILD_FLAG1) $dpm+=2;
+        $dam = $M['Number'] * $dpm;
+        $Dam += $dam;
+      }
     }
     $ToHit += $M['Number']*$mt['ToHitMod'];
   }

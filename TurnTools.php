@@ -99,4 +99,64 @@ function SetAllLinks($Ref, $Sid, $LinkState) {
   }
 }
 
+
+function AnomalyComplete($Aid,$Fid) {
+  static $Systems;
+  if (!$Aid) return;
+  $Fact = Get_Faction($Fid);
+
+  $A = Get_Anomaly($Aid);
+  $FA = Gen_Get_Cond1('FactionAnomaly',"FactionId=$Fid AND AnomalyId=$Aid");
+  if (!$FA) return;
+
+  if (($FA['Progress'] >= $A['AnomalyLevel']) && ($FA['State'] < 3)) {
+    $FA['State'] = 3;
+    Gen_Put('FactionAnomaly',$FA);
+    TurnLog($Fid ,'<p>Anomaly study on ' . $A['Name'] .
+      " has been completed - See sperate response from the GMs for what you get");
+    if (!empty($A['Completion'])) {
+      TurnLog($Fid ,"Completion Text: " . ParseText($A['Completion']) );
+      $ctxt = '';
+    } else {
+      $ctxt = "  AND the completion text.";
+    }
+    GMLog($Fact['Name'] . " has completed anomaly study : <a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] .
+      "</a> has been completed - give them the reward.  $ctxt");
+    FollowUp($Fid,$Fact['Name'] . " has completed anomaly study : <a href=AnomalyEdit.php?id=$Aid>" . $A['Name'] .
+      "</a> has been completed - give them the reward. $ctxt");
+    $T['ProjectId'] = 0;
+
+    if ($A['Complete'] == 1) { // ONe Use
+      $A['Complete'] = 2;
+      Put_Anomaly($A);
+    }
+
+    for ($i=1; $i<=4; $i++) {
+      if (!empty($A["ChainedOn$i"])) {
+        if (empty($Systems)) $Systems = Get_SystemRefs();
+
+        $Xid = $A["ChainedOn$i"];
+        $XA = Get_Anomaly($Xid);
+        $FS = Get_System($XA['SystemId']);
+        if (empty($FS['id'])) continue;
+
+        $FA = Gen_Get_Cond1('FactionAnomaly',"FactionId=$Fid AND AnomalyId=$Xid");
+        if (!$FA) {
+          $FA = ['FactionId'=>$Fid, 'AnomalyId'=>$Xid, 'State' =>2,  'Notes'=>''];
+        } else {
+          if ($FA['State'] >=2) continue;
+          $FA['State'] = 2;
+        }
+        Gen_Put('FactionAnomaly',$FA);
+
+        TurnLog($Fid , "Completing " . $A['Name'] . " has opened up another anomaly that could be studied: " . $XA['Name'] .
+          " in " . $Systems[$XA['SystemId']] . "\n" .  ParseText($XA['Description']) .
+          "\nIt will take " . $XA['AnomalyLevel'] . " scan level actions to complete.\n\n");
+        GMLog($Fact['Name'] . " Have been told about anomaly " . $XA['Name']);
+      }
+    }
+  }
+}
+
+
 ?>
