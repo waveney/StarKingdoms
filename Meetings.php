@@ -298,9 +298,18 @@ function SystemSee($Sid) {
               Thing_Destroy($T);
               Put_Thing($T);
             }
-          } else {
+          } else if ($T['CurHealth']) {
             TurnLog($T['Whose'],$T['Name'] . " took $RV damage\n",$T);
             Put_Thing($T);
+          } else {
+            TurnLog($T['Whose'],$T['Name'] . " took $RV damage and has been destroyed\n",$T);
+            GMLog($T['Name'] . " took $RV damage and has been destroyed\n",$T);
+            if (isset($_REQUEST["NoDebris:$Tid"])) {
+              Thing_Delete($Tid);
+            } else {
+              Thing_Destroy($T);
+              Put_Thing($T);
+            }
           }
 
           // Reports??

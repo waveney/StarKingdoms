@@ -10,7 +10,7 @@ global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingIns
 $Fields = ['Engineering','Physics','Xenology','Special','Unknown'];
 $Tech_Cats = ['Core','Supp','Non Std','Levelled Non Std'];
 $CivMil = ['','Civilian','Military'];
-$BuildState = ['Planning','Building','Servicing','Complete','Ex','Abandonded','Missing In Action','Captured'];
+$BuildState = ['Planning','Building','Servicing','Complete','Ex','Abandonded','Missing In Action','Captured','Pending Deletion'];
 $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse Anomaly','Establish Embassy','Make Outpost',
                 'Make Asteroid Mine','Make Minefield',//8
                 'Make Orbital Repair Yard','Build Space Station','Expand Space Station','Make Deep Space Sensor',
@@ -109,6 +109,7 @@ define('BS_EX',4);
 define('BS_ABANDON',5);
 define('BS_MISSING',6);
 define('BS_CAPTURED',7);
+define('BS_DELETE',8);
 
 $MoveNames = [0=>'Move',-1=>'On Board',-2=>'Boarding',-3=>'Unloading',-4=>'Load & Unload',-5=>'Not Moving',-6=>'Direct',-7=>'Following',-8=>'In Branch'];
 $MoveProps = [0=>1,-1=>2,-2=>2,-3=>2,-4=>2,-5=>1,-6=>0,-7=>3,-8=>0]; // 1=PMove,2=Other Thing
@@ -1080,6 +1081,9 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
           } elseif ($T['BuildState'] == BS_ABANDON) {
             $txt .= "<div class='SeeThingTxt $LocClass' >The Abandoned: ";
             $Imgxtra = 1;
+          } elseif ($T['BuildState'] == BS_DELETE) {
+            $txt .= "<div class='SeeThingTxt $LocClass' >The pending deletion remains of: ";
+            $Imgxtra = 1;
           } elseif ($T['BuildState'] >= BS_EX) {
             $txt .= "<div class='FullD SeeThingTxt $LocClass' hidden>The remains of: ";
             $Imgxtra = 1;
@@ -1542,9 +1546,21 @@ function Empty_Thing(&$T) {
   }
 }
 
-function Thing_Delete($tid) {
-  global $Project_Status,$Project_Statuses,$GAME;
-  include_once("SystemLib.php");
+function OperTeamLost(&$T) {
+  $Oper = Get_Operation($T['ProjectId']);
+  if ($Oper['Status'] ==1) {//is lost
+    include_once("TurnTools.php");
+    $Fact = Get_Faction($T['Whose']);
+    $Oper['Status'] = 6;
+    $Org = Gen_Get("Organisations" , $Oper['OrgId']);
+    TurnLog($T['Whose'], "The Team doing Operation " . $Oper['Name'] . " for " . $Org['Name'] . " has been destroyed, the operation has been lost.");
+    GMLog("The Team doing Operation " . $Oper['Name'] . " for " . $Org['Name'] . " has been destroyed, the operation has been lost.");
+  }
+
+}
+
+function Thing_Delete($tid,$now=0) {
+  global $Project_Status,$Project_Statuses,$GAME,$GAMEID;
   $TTs = Get_ThingTypes();
   $TTNames = NamesList($TTs);
   $NameTT = array_flip($TTNames);
@@ -1553,20 +1569,24 @@ function Thing_Delete($tid) {
   if (!$T) return;
 
   $TT = ($TTs[$T['Type']]??0);
+  if (!$now) {
+    if (($TTNames[$T['Type']]??'Unknown')== 'Team') {
+      OperTeamLost($T);
+    }
+    $Rec = ['GameId'=>$GAMEID,'Turn'=>$GAME['Turn'],'ThingId'=>$tid];
+    Gen_Put("DelayedRemoval",$Rec);
+    $T['BuildState'] = BS_DELETE;
+    Put_Thing($T);
+    return;
+  }
+
   switch ($TTNames[$T['Type']]??'Unknown') {
     case 'Team':
-      $Oper = Get_Operation($T['ProjectId']);
-      if ($Oper['Status'] ==1) {//is lost
-        include_once("TurnTools.php");
-        $Fact = Get_Faction($T['Whose']);
-        $Oper['Status'] = 6;
-        $Org = Gen_Get("Organisations" , $Oper['OrgId']);
-        TurnLog($T['Whose'], "The Team doing Operation " . $Oper['Name'] . " for " . $Org['Name'] . " has been destroyed, the operation has been lost.");
-        GMLog("The Team doing Operation " . $Oper['Name'] . " for " . $Org['Name'] . " has been destroyed, the operation has been lost.");
-      }
+      OperTeamLost($T);
       break;
 
     case 'Outpost':
+      include_once("SystemLib.php");
       $Brans = Gen_Get_Cond('Branches',"HostType=3 AND HostId=$tid");
       if ($Brans) foreach ($Brans as $Bid=>$B) {
         db_delete('Branches',$Bid);

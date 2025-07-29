@@ -62,7 +62,8 @@ function StartProjects() {
           GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as not in same system: ' . $P['Name'],1);
           Put_Project($P);
           continue;
-        }if ($ProjTypes[$P['Type']]['Props'] & 16) { // Tight Location check
+        }
+        if ($ProjTypes[$P['Type']]['Props'] & 16) { // Tight Location check
           if (($T['WithinSysLoc'] == $Where[1] || $T['WithinSysLoc'] == $Where[1]-100)) {
             // OK
           } else {

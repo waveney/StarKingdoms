@@ -77,10 +77,10 @@
     [56,'Combat',   'Return Mil Org Forces','Coded'],
     [57,'',         'Clear Conflict Flags','Coded'],
     [58,'',         'Check Follow Ups','Coded'],
-    [59,'Movement',  'Save What Can Be Seen','Coded'],
-    [60,'',         'Recalc Project Homes','Coded'],
-    [61,'',         'Tidy Ups','Coded'],
-    [62,'',         'Spare',''],
+    [59,'',         'Actually Delete Stuff','To be Coded'],
+    [60,'Movement',  'Save What Can Be Seen','Coded'],
+    [61,'',         'Recalc Project Homes','Coded'],
+    [62,'',         'Tidy Ups','Coded'],
     [63,'',         'Enable Factions Access','Coded'],
 
   ];
@@ -405,7 +405,7 @@ function Economy() {
 
 function TraitIncomes() {
   // Incomes from Planetary Traits and Faction Traits (If not handled elsewhere
-  global $GAMEID;
+  global $GAMEID,$GAME;
 
   $SPs = [
     ['Academic','Abundant Wildlife','Xenology',1],
@@ -618,10 +618,13 @@ function TraitIncomes() {
           $C['Value'] += $F['Confl'];
           Gen_Put('Resources',$C);
         } else {
-          $Rec = ['Type'=>$BenevR,'Whose'=>$Fid,'Value'=>$F['Confl']];
-          Gen_Put('Resources',$Rec);
+          $C = ['Type'=>$BenevR,'Whose'=>$Fid,'Value'=>$F['Confl']];
+          Gen_Put('Resources',$C);
         }
         TurnLog($Fid,"Gained " . $F['Confl'] . " Benevolence from Confluence");
+        $Spog = ['GameId'=>$GAME['id'],'Turn'=>$GAME['Turn'],'FactionId'=>$Fid, 'Type'=>$BenevR+20, 'Number'=>$F['Confl'], 'Note'=>"From Confluence",
+          'EndVal'=>$C['Value']];
+        Gen_Put('SciencePointLog',$Spog);
       }
 
       GMLog("Done Confluence based Incomes<br>");
@@ -949,6 +952,21 @@ function FixFudge() { // Tempcode called to fix things - left in case needed aga
     GMLog("Saved What could be seen for " . $F['Name']);
   }
 
+}
+
+function ActuallyDeleteStuff() {
+  global $GAMEID,$GAME;
+
+  $Delayed = Gen_Get_Cond('DelayedRemoval',"GameId=$GAMEID AND Turn<=" . $GAME['Turn']);
+
+  if ($Delayed) {
+    foreach($Delayed as $D) {
+      Thing_Delete($D['ThingId'],1);
+      db_delete('DelayedRemoval',$D['id']);
+    }
+  }
+
+  return 1;
 }
 
 function TidyUps() {

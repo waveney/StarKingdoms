@@ -153,7 +153,7 @@
 
     if ($LinkType == 'Wormholes') {
       $EInst = $L['Instability'];
-      if ($L['ThisTurnMod']) $EInst = max(1,$EInst+$L['ThisTurnMod']);
+      if ($L['ThisTurnMod']) $EInst = min(max(1,$EInst+$L['ThisTurnMod']),array_key_last($InstaLevels));
       $Levels[$L['Concealment']]['Used']++;
       $InstaLevels[$EInst]['Used']++;
       $Res[2] = $L['Name'];

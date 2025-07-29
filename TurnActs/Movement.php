@@ -419,6 +419,12 @@ function ShipMovements($Mode=0) {
 
           if ($T['BuildFlags'] & BUILD_FLAG1) $L['NextTurnMod']++;
 
+          // Check for any transported things as well
+          $Have = Get_Things_Cond(0," LinkId<0 AND LinkId>=" . LINK_LOAD_AND_UNLOAD . " AND SystemId=$Tid AND (BuildFlags & " . BUILD_FLAG1 . ")!=0");
+          if ($Have) {
+            $L['NextTurnMod'] += count($Have);
+          }
+
           $EInst = $L['Instability'];
           if ($L['ThisTurnMod']) $EInst = max(1,$EInst+$L['ThisTurnMod']);
 
@@ -576,9 +582,8 @@ function SaveWhatCanBeSeen() {
   return 1;
 }
 
-
 function UnloadTroops() {
-  $Things = Get_Things_Cond(0,"BuildState=" . BS_COMPLETE . " AND ( LinkId=" . LINK_BOARDING . " OR LinkId=" . LINK_LOAD_AND_UNLOAD . ")");
+  $Things = Get_Things_Cond(0,"BuildState=" . BS_COMPLETE . " AND ( LinkId=" . LINK_UNLOAD . " OR LinkId=" . LINK_LOAD_AND_UNLOAD . ")");
   $TTypes = Get_ThingTypes();
   $Facts = Get_Factions();
 

@@ -45,6 +45,7 @@ function  Where_Is_Home($PH,$Set=0) {
     $Home['WithinSysLoc'] = $loc;
     Put_ProjectHome($Home);
     return [$P['SystemId'],$loc];
+
   case '3': // Thing
     $T = Get_Thing($Home['ThingId']);
     if ($T['BuildState'] > BS_PLANNING && $T['BuildState'] < BS_EX) return [$T['SystemId'],$T['WithinSysLoc']];
