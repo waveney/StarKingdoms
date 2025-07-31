@@ -199,6 +199,8 @@
 
 
         case 'Construction':
+        case 'Build Office':
+        case 'Build Head Office':
           // Mostly default apart from Lewis...
           if (Has_PTraitH($Hi,'New Home')) {
             $FreeRush = 99;  // Will be reduced to actual limit

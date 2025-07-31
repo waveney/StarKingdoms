@@ -390,8 +390,8 @@
               foreach ($Offices as $O) if ($O['Organisation'] == $OrgId) continue 2;
               if (!$Tstart++) echo "<table class=ProjTab border><tr><td>Project<td>Cost<td>Progress<br>Needed<td>Description";
 
-              echo "<tr><td><button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Construction'] .
-                    "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=-$OrgId" .
+              echo "<tr><td><button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Build Office'] .
+                    "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=$OrgId" .
                     "&Name=" . base64_encode("Build " . $Org['Name'] . " Office $Place") .
                     "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
                     "Build " . $Org['Name'] . " Office</button><td>" . $pc[1] . " <td> " . $pc[0] .
@@ -422,8 +422,8 @@
           $SocPs = SocPrinciples($Fid);
           echo "<tr><td colspan=4>Social Priniple (Religious / Ideological only)" . fm_select($SocPs,$O,'NewOrgSocialPrinciple');
           echo "</table><br>";
-          echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEWORG&id=$Fid&p=" . $PTi['Construction'] .
-            "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=-$ot" .
+          echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEWORG&id=$Fid&p=" . $PTi['Build Head Office'] .
+            "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=$ot" .
             "&Name=" . base64_encode("Build NNEEWW Office $Place") .
             "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
             "Build New Orgs Office; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>\n";

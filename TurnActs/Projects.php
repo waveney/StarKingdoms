@@ -560,6 +560,10 @@ function ProjectsCompleted($Pass) {
             $D = ['HostType'=>$H['ThingType'], 'HostId'=>$PH['id'], 'Type'=>$P['ThingType'], 'Number'=>1, 'GameId' => $GAMEID];
             Put_District($D);
           } else if ($P['ThingType'] == 0) { // New Office
+            if (!$P['OrgName'] || !$P['ThingId']) {
+              FollowUp($Fid,'Project ' . $P['Name'] . " looks corrupt - making a blank organisation - what project should it have been? - Call Richard");
+              break 2;
+            }
             $Org = ['Whose' => $P['FactionId'], 'Name'=>$P['OrgName'], 'Description' => $P['OrgDesc'], 'OfficeCount'=>1, 'OrgType'=>max($P['ThingId'],1),
               'OrgType2' =>$P['ThingId2'], 'GameId'=>$GAMEID, 'SocialPrinciple' => $P['OrgSP']];
             $OrgId = Gen_Put('Organisations',$Org);
@@ -582,6 +586,36 @@ function ProjectsCompleted($Pass) {
           }
           TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");
           break;
+
+        case 'Build Office':
+          $World = Gen_Get_Cond1('Worlds',"Home=" . $P['Home']);
+          $Org = Gen_Get('Organisations',$P['ThingType'] );
+          if (!$Org) {
+            TurnLog($Fid,'Project <a ProjEdit.php?id=' . $P['id'] . "</a> is making an office for an unknown Org - BUG - call Richard");
+          } else {
+            $Off = ['Organisation' => -$P['ThingType'], 'OrgType'=>$Org['OrgType'], 'OrgType2'=>$Org['OrgType2'], 'World'=>$World['id'],
+              'Whose'=>$P['FactionId'], 'Number'=>1];
+            Put_Office($Off);
+          }
+          TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");
+          break;
+
+        case 'Build New Office':
+          if (!$P['OrgName'] || !$P['ThingId']) {
+            FollowUp($Fid,'Project ' . $P['Name'] . " looks corrupt - making a blank organisation - what project should it have been? - Call Richard");
+            break 2;
+          }
+          $Org = ['Whose' => $P['FactionId'], 'Name'=>$P['OrgName'], 'Description' => $P['OrgDesc'], 'OfficeCount'=>1, 'OrgType'=>max($P['ThingId'],1),
+          'OrgType2' =>$P['ThingId2'], 'GameId'=>$GAMEID, 'SocialPrinciple' => $P['OrgSP']];
+          $OrgId = Gen_Put('Organisations',$Org);
+
+          $World = Gen_Get_Cond1('Worlds',"Home=" . $P['Home']);
+          $Off = ['Organisation' => $OrgId, 'OrgType'=>$P['ThingId'], 'OrgType2'=>$P['ThingId2'], 'World'=>$World['id'], 'Whose'=>$P['FactionId'],
+            'Number'=>1];
+          Put_Office($Off);
+          TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");
+          break;
+
 
         case 'Research Planetary Construction':
         case 'Research Core Technology':

@@ -749,7 +749,7 @@ function NamesList(&$D,$fld='Name') {
 
 function ListNames(&$D,$fld='Name') {
   $L = [];
-  foreach ($D as $i=>$R) $L[$fld] = $i;
+  foreach ($D as $i=>$R) $L[$D[$fld]] = $i;
   return $L;
 }
 

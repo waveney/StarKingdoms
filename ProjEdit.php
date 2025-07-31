@@ -6,6 +6,7 @@
   include_once("PlayerLib.php");
   include_once("SystemLib.php");
   include_once("ProjLib.php");
+  include_once("OrgLib.php");
 
   global $FACTION,$GAME,$Project_Status,$Fields;
   dostaffhead("Edit a Project");
@@ -23,6 +24,8 @@
   }
 
   $GM = Access('GM');
+  $God = Access('God');
+  $Inside = isset($_REQUEST['INSIDE']);
   if ($GM ) {
     $Fid = $_REQUEST['id'];
     $Faction = Get_Faction($Fid);
@@ -30,6 +33,7 @@
       $GM = 0;
     } else {
       echo "<h2><a href=ProjEdit.php?id=$Prid&FORCE>This page in player mode</a></h2>";
+      if ($God) echo "<h2><a href=ProjEdit.php?id=$Prid&INSIDE>This page with all editable data - dangerous...</a></h2>";
     }
   } else if (Access('Player')) {
     if (!$FACTION) {
@@ -178,9 +182,10 @@
   $TTypes = Get_ThingTypes();
   $Techs = Get_Techs();
   $TechNames = Tech_Names($Techs);
-  $ProjTypeNames = [];
-  foreach ($ProjTypes as $PT) $ProjTypeNames[$PT['id']] = $PT['Name'];
-
+  $ProjTypeNames = NamesList($ProjTypes);
+  $NamesProjTypes = array_flip($ProjTypeNames);
+  $Facts = Get_Factions();
+//  var_dump($P,$ProjTypes);
   $H = Get_ProjectHome($P['Home']);
 
   if (!isset($H['ThingType'])) {
@@ -222,8 +227,8 @@
 
   if ($GM) {
     echo "<tr><td>Project Id:<td>$Prid<td>For<td>" . fm_select($FactionNames,$P,'FactionId');
-    echo "<tr><td>Project Type<td>" . fm_select($ProjTypeNames,$P,'Type');
-    echo fm_text("Project Name",$P,'Name',2);
+    echo "<tr><td>Project Type<td>" . fm_select($ProjTypeNames,$P,'Type') . "<td>Refresh if changed";
+    echo "<tr>" . fm_text("Project Name",$P,'Name',4);
     echo "<tr>" . fm_number('Level',$P,'Level') . "<td>Status<td>" . fm_select($Project_Status,$P,'Status');
 //    echo "<td class=NotSide>" . fm_checkbox('GM Lock',$P,'GMLock');
     echo "<tr>" . fm_number("Turn Start",$P,'TurnStart') . fm_number('Turn Ended', $P, 'TurnEnd');
@@ -234,12 +239,13 @@
       $cn = Feature("Currency$i");
       if ($cn) echo fm_number1($cn,$P,"CostCur$i");
     }
-    echo "<tr>" . fm_number('Cost',$P,'Costs') . fm_number('Prog Needed', $P,'ProgNeeded') . fm_number('DType',$P,'DType');
+    echo "<tr>" . fm_number('Cost',$P,'Costs') . fm_number('Prog Needed', $P,'ProgNeeded');
+    if ($Inside) echo fm_number('DType',$P,'DType');
     echo "<tr>" . fm_number("Progress",$P,'Progress') . fm_number('Last Updated',$P,'LastUpdate');
     if ($PProps &2) {
       if ($P['ThingId']) {
         $Thing = Get_Thing($P['ThingId']);
-        echo "<tr>" . fm_number('Thing',$P,'ThingId') . "<td><b><a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . $Thing['Name'] . "</a></b>";
+        echo "<tr>" . fm_number('Thing',$P,'ThingId') . "<td><b><a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . ($Thing['Name']??'Unknown') . "</a></b>";
       } else {
         echo "<tr>" . fm_number('Thing',$P,'ThingId');
       }
@@ -251,16 +257,16 @@
           echo fm_number('Thing 2',$P,'ThingId2');
         }
       }
-    } else if (1 || $P['ThingType']) {
-      echo "<tr>" . fm_number('ThingType',$P,'ThingType') . "<td>";
+    } else if ($God || $P['ThingType']) { // WRONG
+      echo "<tr>";
+      if ($Inside) echo fm_number('ThingType',$P,'ThingType');
       if ($P['Type'] == 1) {
-        if ($P['ThingType'] < 0) {// Office existing Org
+        if ($P['ThingType'] < 0) {// Office existing Org - Code now redunant
           $OTypes = Get_OrgTypes();
           $OfficeTypeN = [];
           foreach ($OTypes as $oi=>$O) $OfficeTypeN[-$oi] = $O['Name'];
-          echo fm_select($OfficeTypeN,$P,'ThingType');
+          echo "<td>" . fm_select($OfficeTypeN,$P,'ThingType');
         } else if ($P['ThingType'] == 0) { // New Org
-          include_once("OrgLib.php");
 
           $OrgTypes = Get_OrgTypes();
 
@@ -279,21 +285,56 @@
           echo "<tr><td>Org Description<td>" . fm_basictextarea($P,'OrgDesc',5,3);
 
         } else { // District
-          echo fm_select($DistTypeN,$P,'ThingType');
+          echo "<td>" . fm_select($DistTypeN,$P,'ThingType');
         }
       } else {
-        echo fm_select($TechNames, $P, 'ThingType'). "<td>" . $Fields[($Techs[$P['ThingType']]['Cat']??4)];
+        $P['ThingType'] = abs($P['ThingType']);
+      }
 
+      var_dump($PProps);
+      if ($PProps & 0x2000) echo "<td>Tech:<td>" . fm_select($TechNames, $P, 'ThingType'). "<td>" . $Fields[($Techs[$P['ThingType']]['Cat']??4)];
+      if ($PProps & 0x1000) {
+        $OTypes = Get_OrgTypes();
+        $Orgs = Gen_Get_All_GameId('Organisations');
+        $OrgList = [];
+        foreach ($Orgs as $Oid=>$O) {
+          $OrgList[$Oid] = $O['Name'] . " a " . $OTypes[$O['OrgType']]['Name'] . (($O['OrgType2'])?'/' . $OTypes[$O['OrgType2']]['Name']:'') .
+            " - " . ($Facts[$O['Whose']]['Name']??'Unknown');
+        }
+        echo "<td>Org:<td>" . fm_select($OrgList,$P,'ThingType');
       }
       if ($PProps & 8) {
-        echo fm_select($FactionNames,$P,'ThingId');
+        echo "<td>" . fm_select($FactionNames,$P,'ThingId');
       }
+      if ($PProps & 0x800) {
+        $OrgTypes = Get_OrgTypes();
+
+        $ValidOrgs = [];
+        foreach($OrgTypes as $ot=>$O) {
+          if ($O['Gate'] && !eval("return " . $O['Gate'] . ";" )) continue;
+          $ValidOrgs[$ot] = $O['Name'];
+        }
+
+        $SocPs = SocPrinciples($Fid);
+
+        echo "<tr><td colspan=6>Office for a New Org...<br>";
+        if ($P['Status']<2) {
+          echo "You can edit this name and description here, until the first office is built.";
+          echo "<tr>" . fm_text('Org Name',$P,'OrgName') . "<td>Org Type: " . fm_select($ValidOrgs,$P,'ThingId');
+          echo "<tr><td colspan=4>Social Priniple (Religious / Ideological only)" . fm_select($SocPs,$P,'OrgSP');
+          echo "<tr><td>Org Description<td>" . fm_basictextarea($P,'OrgDesc',5,3);
+        } else {
+          echo "<tr><td>Name:<td>" . $P['OrgName'] . "<td>Org Type: <td>" . $ValidOrgs[$P['ThingId']];
+        }
+      }
+
+
     }
     echo "<tr>" . fm_textarea('Notes',$P,'Notes',8,2);
 
   } else { // Player TODO Testing
     echo "<tr><td>Project Type<td>" . $ProjTypes[$P['Type']]['Name'];
-    echo fm_text("Project Name",$P,'Name',2);
+    echo fm_text("Project Name",$P,'Name',4);
 
     echo "<tr><td>Level:<td>" . $P['Level'] . "<td>Status<td>" . ($Project_Status[$P['Status']]);
     echo "<tr>" . (($when > 0)?fm_number("Turn Start",$P,'TurnStart','',"min=".$GAME['Turn']): "<td>Started Turn" . $P['TurnStart']);
@@ -326,10 +367,51 @@
         echo " Recipient: " . $FactionNames[$P['ThingId']];
       }
     }
+    if ($P['ThingType']) {
+      echo "<tr>";
+      if (($P['Type'] == 1) && ($P['ThingType']>0) ) {
+        echo "<td>District Type:<td>" . ($DistTypeN[$P['ThingType']]??'??');
+      }
+      if ($PProps & 0x2000) echo "<td>Tech:<td>" . ($TechNames[$P['ThingType']]??'??') . "<td>" . $Fields[($Techs[$P['ThingType']]['Cat']??4)];
+      if ($PProps & 0x1000) {
+        $OTypes = Get_OrgTypes();
+        $Orgs = Gen_Get_All_GameId('Organisations');
+        $OrgList = [];
+        foreach ($Orgs as $Oid=>$O) {
+          $OrgList[$Oid] = $O['Name'] . " a " . $OTypes[$O['OrgType']]['Name'] . " - " . ($Facts[$O['Whose']]['Name']??'Unknown');
+        }
+        echo "<td>Organisation: " . ($OrgList[$P['ThingType']]??'Unknown');
+      }
+      if ($PProps & 8) {
+        echo "<td>" . fm_select($FactionNames,$P,'ThingId');
+      }
+      if ($PProps & 0x800) {
+
+        $OrgTypes = Get_OrgTypes();
+
+        $ValidOrgs = [];
+        foreach($OrgTypes as $ot=>$O) {
+          if ($O['Gate'] && !eval("return " . $O['Gate'] . ";" )) continue;
+          $ValidOrgs[$ot] = $O['Name'];
+        }
+
+        $SocPs = SocPrinciples($Fid);
+
+        echo "<tr><td colspan=6>Office for a New Org...<br>";
+        echo "You can edit this name and description here, until the first office is built.";
+        echo "<tr>" . fm_text('Org Name',$P,'OrgName') . "<td>Org Type: " . fm_select($ValidOrgs,$P,'ThingId');
+        echo "<tr><td colspan=4>Social Priniple (Religious / Ideological only)" . fm_select($SocPs,$P,'OrgSP');
+        echo "<tr><td>Org Description<td>" . fm_basictextarea($P,'OrgDesc',5,3);
+
+      }
+
+
+    }
+
     echo "<tr>" . fm_textarea('Notes',$P,'Notes',8,2);
   }
 
-  if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
+  if ($God) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
 
   echo "</table><h2>";
   echo fm_submit("Ignore","Ignore",0," hidden");

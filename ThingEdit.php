@@ -712,6 +712,16 @@ global $FACTION;
       echo "<h2>Servicing Cancelled</h2>";
       break;
 
+    case 'Delete NOW!':
+      $tid = $_REQUEST['id'];
+      $T = Get_Thing($tid);
+      Thing_Delete($tid,1);
+
+      echo "<h1>Deleted NOW - No recovery</h1>";
+      echo "<h2><a href=PThingList.php>Back to Thing list</a></h2>";
+      dotail();
+
+
     case 'None' :
     default:
       break;

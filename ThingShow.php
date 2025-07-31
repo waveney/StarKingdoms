@@ -1949,6 +1949,7 @@ function Show_Thing(&$T,$Force=0) {
     echo fm_submit("ACTION",'GM Refit',0);
     if ($tprops & THING_LEAVES_DEBRIS) echo fm_submit("ACTION",'Destroy Thing (Leave debris)',0);
     echo fm_submit("ACTION",'Remove Thing (No debris)',0);
+    if ($T['BuildState'] == BS_DELETE) echo fm_submit("ACTION",'Delete NOW!',0);
     if (Feature('WarpOut') && $tprops & THING_CAN_MOVE) echo fm_submit("ACTION",'Warp Out',0);
     if ($T['CurShield']) {
       echo fm_number0(" Do",$T,'Damage', '',' class=Num3 ') . fm_submit("ACTION","Damage",0);
