@@ -498,7 +498,7 @@ function TraitIncomes() {
                 $D = ($Ds[$NamesDT[$SP[0]]]??0);
                 if ($D) {
                   $Div = (Has_Tech($Fid,'Advanced Mineral Extraction')?1:2);
-                  Gain_Science($Fid, $SP[2], ceil($D['Number']/$Div),"Planetary trait " .$SP[1] . " in " . $Bod['Name']);
+                  Gain_Currency($Fid, Feature($SP[2],'Unknown'), ceil($D['Number']/$Div),"Planetary trait " .$SP[1] . " in " . $Bod['Name']);
 //                  $Facts[$Fid][$SP[2]] += ceil($D['Number']/$Div);
                   TurnLog($Fid,"Gained " . ceil($D['Number']/$Div) . " " . Feature($SP[2],'Unknown') . " from the planetary trait " .
                     $SP[1] . " in " . $Bod['Name']);
@@ -511,7 +511,7 @@ function TraitIncomes() {
                 $Ds = $DistF($Bid);
                 $D = ($Ds[$NamesDT[$SP[0]]]??0);
                 if (($D >= 2) && (Has_Tech($Fid,'Advanced Mineral Extraction'))) {
-                  Gain_Science($Fid, $SP[2], 2,"Planetary trait " .$SP[1] . " in " . $Bod['Name']);
+                  Gain_Currency($Fid, Feature($SP[2],'Unknown'), 2,"Planetary trait " .$SP[1] . " in " . $Bod['Name']);
                   TurnLog($Fid,"Gained 2 " . Feature($SP[2],'Unknown') . " from the planetary trait " .
                     $SP[1] . " in " . $Bod['Name']);
                   GMLog($Facts[$Fid]['Name'] . " Gained 2 " . Feature($SP[2],'Unknown') . " from the planetary trait " .
@@ -964,8 +964,10 @@ function ActuallyDeleteStuff() {
       Thing_Delete($D['ThingId'],1);
       db_delete('DelayedRemoval',$D['id']);
     }
-  }
 
+//    $_REQUEST['TurnP'] = 1; // Makes FollowUps think its part of turn processing
+//    include_once("FollowUp.php"); // Second call if needed
+  }
   return 1;
 }
 

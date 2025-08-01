@@ -124,7 +124,7 @@ function Player_Page() {
         echo "<li><a href=ThingPlan.php>Plan a Thing</a> - Planning Things (Ships, $ARMIES, Named Characters, Space stations etc)";
       }
       if ($FACTION['PhysicsSP'] >=5 || $FACTION['EngineeringSP'] >=5 || $FACTION['XenologySP'] >=5 ) {
-        echo "<li><a href=SciencePoints.php>Spend Science Points</a> - Also Resource Logs";
+        echo "<li><a href=SciencePoints.php>Spend Science Points</a> - Also <a href=ScienceLog.php>Resource Logs</a>";
 //        echo "<li><a href=ScienceLog.php>Science Point Logs</a>";
       }
       if ($Facts || $FACTION['NPC']) {
@@ -341,16 +341,26 @@ function Gain_Science($Who,$What,$Amount,$Why='') { // Ammount is negative to ga
 }
 
 function Gain_Currency($Who,$What,$Amount,$Why) { // Ammount is negative to gain
-  if ($What <=4) return 0; // Should be handled by spend_credit and Gain Science TODO generalise in long term
-  global $GAME,$Currencies;
+  global $GAME;
   $Fact = Get_Faction($Who);
-  $CNum = $What-4;
-  if ($CNum > 3) { echo "INVALID CURRENCY!!!"; exit; }
+  if (is_null($What)) {
+    if ($What <=4) return 0; // Should be handled by spend_credit and Gain Science TODO generalise in long term
+    global $GAME,$Currencies;
+    $CNum = $What-4;
+    if ($CNum > 3) { echo "INVALID CURRENCY!!!"; exit; }
+  } else {
+    for ($CNum=1;$CNum<4;$CNum++) {
+      if ($What == Feature("Currency$CNum")) break;
+    }
+    if ($CNum > 3) { echo "INVALID CURRENCY!!!"; exit; }
+  }
+
   if (($Fact["Currency$CNum"] + $Amount) < 0 ) return 0;
   $Fact["Currency$CNum"] += $Amount;
   Put_Faction($Fact);
 
-  $Spog = ['GameId'=>$GAME['id'],'Turn'=>$GAME['Turn'],'FactionId'=>$Who, 'Type'=>$What+6, 'Number'=>$Amount, 'Note'=>$Why, 'EndVal'=>$Fact["Currency$CNum"]];
+  $Spog = ['GameId'=>$GAME['id'],'Turn'=>$GAME['Turn'],'FactionId'=>$Who, 'Type'=>$CNum+10, 'Number'=>$Amount, 'Note'=>$Why,
+    'EndVal'=>$Fact["Currency$CNum"]];
   Gen_Put('SciencePointLog',$Spog);
 
   return 1;
@@ -649,8 +659,6 @@ function Income_Calc($Fid) {
       if ($W['Blockade'] ) {
         $ECon = ceil($ECon*(10-$W['Blockade'])/10);
         $EccTxt .=  "It is blockaded income is reduced to $ECon\n";
-      } else {
-        $ECon = ceil(($ECon - $H['Devastation']*2)*$H['EconomyFactor']/100);
       }
     }
 
@@ -662,7 +670,8 @@ function Income_Calc($Fid) {
     if ($ECon <=0 && $Name) {
       $EccTxt .= "Economic value is None\n";
     } else {
-      $EccTxt .= "Economic value is: $ECon " . ($H['Devastation']? " after devastation effect of -" . $H['Devastation'] : "");
+      if ($H['EconomyFactor'] != 100) $ECon = ceil($ECon*$H['EconomyFactor']/100);
+      $EccTxt .= "Economic value is: $ECon ";
       if ($H['EconomyFactor'] < 100) {
         $EccTxt .= " - at " . $H['EconomyFactor'] . "%<br>\n";
       } else if ($H['EconomyFactor'] > 100) {

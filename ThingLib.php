@@ -1517,7 +1517,7 @@ function Move_Thing_Within_Sys(&$T,$Dest,$InTurn) {
   $T['WithinSysLoc'] = $Dest;
 }
 
-function Empty_Thing(&$T) {
+function Empty_Thing(&$T,$OnlyNamed=0) {
   $Tid = $T['id'];
   $Have = Get_Things_Cond(0," (LinkId=-1 OR LinkId=-3) AND SystemId=$Tid ");
 
@@ -1530,17 +1530,21 @@ function Empty_Thing(&$T) {
         if ($InnerHave) {
           foreach($InnerHave as $InId=>$Inner) {
             FollowUp($Inner['Whose'], "<a href=ThingEdit.php?id=$InId>" . $Inner['Name'] . "</a> was on board " . $T['Name'] . " when it was destoyed.");
-            $Inner['LinkId'] = 0;
-            $Inner['SystemId'] = GameFeature('Limbo',0);
-            Put_Thing($Inner);
+            if (!$OnlyNamed) {
+              $Inner['LinkId'] = 0;
+              $Inner['SystemId'] = GameFeature('Limbo',0);
+              Put_Thing($Inner);
+            }
           }
         }
-        db_delete('Things',$CTi);
+        if (!$OnlyNamed) db_delete('Things',$CTi);
       } else {
         FollowUp($CT['Whose'], "<a href=ThingEdit.php?id=$CTi>" . $CT['Name'] . "</a> was on board " . $T['Name'] . " when it was destoyed.");
-        $CT['LinkId'] = 0;
-        $CT['SystemId'] = GameFeature('Limbo',0);
-        Put_Thing($CT);
+        if (!$OnlyNamed) {
+          $CT['LinkId'] = 0;
+          $CT['SystemId'] = GameFeature('Limbo',0);
+          Put_Thing($CT);
+        }
       }
     }
   }
@@ -1577,6 +1581,9 @@ function Thing_Delete($tid,$now=0) {
     Gen_Put("DelayedRemoval",$Rec);
     $T['BuildState'] = BS_DELETE;
     Put_Thing($T);
+
+    Empty_Thing($T,1);
+
     return;
   }
 
