@@ -2,6 +2,7 @@
   include_once("sk.php");
   include_once("GetPut.php");
   include_once("ThingLib.php");
+  include_once("PlayerLib.php");
 
   A_Check('GM');
 
@@ -105,10 +106,10 @@
     foreach ($Techuses as $Tu) {
       if (($Tu['Faction_Id']==0) || (!isset($Facts[$Tu['Faction_Id']])) || ($Facts[$Tu['Faction_Id']]['Listed'] ?? 0)) continue;
       if ($Tu['Level'] == 0) {
-        echo "(<span style=background:" . $Facts[$Tu['Faction_Id']]['MapColour'] . ">" . $Facts[$Tu['Faction_Id']]['GameId'] . ": " .
+        echo "(<span " . FactColours($Tu['Faction_Id']) . ">" . $Facts[$Tu['Faction_Id']]['GameId'] . ": " .
           $Facts[$Tu['Faction_Id']]['Name'] . "</span>), ";
       } else {
-        echo "<span style=background:" . $Facts[$Tu['Faction_Id']]['MapColour'] . ">" . $Facts[$Tu['Faction_Id']]['GameId'] . ": " .
+        echo "<span " . FactColours($Tu['Faction_Id']) . ">" . $Facts[$Tu['Faction_Id']]['GameId'] . ": " .
           $Facts[$Tu['Faction_Id']]['Name'] . "</span> - L" . $Tu['Level'] . ", ";
       }
       $Facts[$Tu['Faction_Id']]['Listed'] = 1;

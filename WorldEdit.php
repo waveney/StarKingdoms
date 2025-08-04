@@ -258,7 +258,7 @@
       if ($NumSp++) echo "<tr>";
       if ($GM) {
         echo "<td>" . $Prin['Principle'] . "<td>Adherence: " . $SP['Value'];
-        echo "<td style='background:" . ($Facts[$Prin['Whose']]['MapColour']??'White') . "'>" . ($Facts[$Prin['Whose']]['Name']??'Unknown');
+        echo "<td " . FactColours($Prin['Whose']) . ">" . ($Facts[$Prin['Whose']]['Name']??'Unknown');
         echo "<td><a href=SocialEdit.php?Action=Edit&id=" . $SP['Principle'] . ">Change</a>";
         echo "<td colspan=6>" . ParseText($Prin['Description']);
 
@@ -288,7 +288,7 @@
         if ($GM || ($B['Whose']== $Fid) || (($BTypes[$B['Type']]['Props']&1)==0)) {
           echo "A <b>" . $BTypes[$B['Type']]['Name'] . "</b> of the <b>" . $Orgs[$B['Organisation']]['Name'] .
                "</b> ( " . $OrgTypes[$Orgs[$B['Organisation']]['OrgType']]['Name'] . " ) - " .
-               "<span style='background:" . $Facts[$B['Whose']]['MapColour'] . "'>" . $Facts[$B['Whose']]['Name'] . "</span>";
+               "<span " . FactColours($B['Whose']) . ">" . $Facts[$B['Whose']]['Name'] . "</span>";
           if (($BTypes[$B['Type']]['Props']&1) != 0) echo " [Hidden]";
           echo "<br>";
         }

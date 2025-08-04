@@ -81,7 +81,7 @@
   foreach($FactFacts as $FF) {
     $F = Get_Faction($FF['FactionId2']);
     $id = $FF['id'];
-    echo "<tr height=50 style='background:" . $F['MapColour'] . "'><Td>" . $F['Name'];
+    echo "<tr height=50 " . FactColour($F['id']) . "><Td>" . $F['Name'];
     //    &$Options,$data,$field,$blank=0,$selopt='',$field2='',$Max=0, &$optclass=0, $Raw=0, &$BGColour=0) {
 // style='background:" . $RelCols[$FF['Relationship']] . "'
 //    function fm_radio($Desc,&$defn,&$data,$field,$extra='',$tabs=1,$extra2='',$field2='',$colours=0,$multi=0,$extra3='',$extra4='') {

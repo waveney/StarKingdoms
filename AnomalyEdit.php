@@ -112,7 +112,7 @@
     $FA = Gen_Get_Cond('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
     if ($FA) $FA = array_pop($FA);
     echo "<form method=post action=AnomalyEdit.php>";
-    echo "<tr><td style='background:" . $F['MapColour'] . ";'>" . $F['Name'];
+    echo "<tr><td " . FactColours($Fid) . ">" . $F['Name'];
     echo "<td colspan=3>". fm_radio('',$FAnomalyStates,$FA,'State','',0,'',"State:$Fid");
     echo fm_number1('',$FA,'Progress','','',"Progress:$Fid");
     echo fm_text1('',$FA,'Notes',5,'','',"Notes:$Fid");

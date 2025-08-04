@@ -66,7 +66,8 @@ function Show_Thing(&$T,$Force=0) {
   $T['MaxModules'] = Max_Modules($T);
   if  (($tprops & THING_HAS_MODULES) && ($T['PrisonerOf'] == 0)) [$T['OrigHealth'],$T['ShieldPoints']] = Calc_Health($T,1);
 
-  if (($T['BuildState'] == BS_COMPLETE) && (($tprops & THING_CAN_MOVE) || ( $tprops2 & THING_AT_LINK)) && ($T['CurHealth'] > 0) &&
+  if (($T['BuildState'] == BS_COMPLETE) && (($tprops & THING_CAN_MOVE) || ( $tprops2 & THING_AT_LINK)) &&
+      ((($tprops & THING_HAS_HEALTH) == 0) || ($T['CurHealth'] > 0)) &&
       ($T['LinkId']>=0) ) { // Complete Only
     $res = Moves_4_Thing($T,$Force, ($tprops & (THING_HAS_GADGETS | THING_CAN_BETRANSPORTED)), $N);
 //var_dump($res);exit;
@@ -372,7 +373,7 @@ function Show_Thing(&$T,$Force=0) {
       $NeedOr = 0;
       if ((($tprops & THING_CAN_MOVE)) && ($Lid >= 0) && ($T['BuildState']>BS_BUILDING) && $T['SystemId']) {
 
-        if (($T['BuildState'] == BS_SERVICE) || ($T['CurHealth'] == 0) || (empty($SelLinks) && !$ChangeBox) ) { // Servicing or just warped out
+        if (($T['BuildState'] == BS_SERVICE) || (($tprops & THING_HAS_HEALTH) && ($T['CurHealth'] == 0)) || (empty($SelLinks) && !$ChangeBox) ) {
           echo "<tr><td colspan=3>This is unable to use links, it can move within the system.<br>Where in the system should it go? " .
                 fm_select($Syslocs,$T,'WithinSysLoc');
         } else {

@@ -3,6 +3,7 @@
   include_once("GetPut.php");
   include_once("SystemLib.php");
   include_once("ThingLib.php");
+  include_once("PlayerLib.php");
   include_once("vendor/erusev/parsedown/Parsedown.php");
 
   dostaffhead("Survey Report",["js/dropzone.js","css/dropzone.css" ]);
@@ -154,9 +155,9 @@
 
     if ($N['Description']) echo $Parsedown->text(stripslashes($N['Description'])) . "<p>";
 
-    if ($N['Control']) echo "Controlled by: " . "<span style='background:" . $Fs[$N['Control']]['MapColour'] . "; padding=2;'>" . $Fs[$N['Control']]['Name'] . "</span><p>";
-    if ($GM && $SurveyLevel >= 10 && $N['HistoricalControl']) echo "Historically controlled by: " . "<span style='background:" . $Fs[$N['HistoricalControl']]['MapColour'] .
-        "; padding=2;'>" . $Fs[$N['HistoricalControl']]['Name'] . "</span><p>"; // GM only
+    if ($N['Control']) echo "Controlled by: " . "<span " . FactColours($N['Control'],'white','padding=2') . ">" . $Fs[$N['Control']]['Name'] . "</span><p>";
+    if ($GM && $SurveyLevel >= 10 && $N['HistoricalControl']) echo "Historically controlled by: " .
+        "<span " . FactColours($N['Control'],'white','padding=2') . ">" . $Fs[$N['HistoricalControl']]['Name'] . "</span><p>"; // GM only
 
     // Star (s)
 
@@ -289,7 +290,7 @@
         echo PM_Type($PTD[$P['Type']],"Planet") . "</b>.  ";
 
         if ($SurveyLevel >= 4 && $P['Control']>0) { // && $P['Control'] != $N['Control']) {
-          echo "Colonised by: " . "<span style='background:" . $Fs[$P['Control']]['MapColour'] . "; padding=2;'>" . $Fs[$P['Control']]['Name'] . "</span><p>";
+          echo "Colonised by: " . "<span " . FactColours($P['Control'],'white',"padding=2") . ">" . $Fs[$P['Control']]['Name'] . "</span><p>";
         }
 
         echo $Blobs["A$Pid"]??'';
@@ -379,7 +380,7 @@
             echo PM_Type($PTD[$M['Type']],"Moon") . "</b>.  ";
 
             if ( ($SurveyLevel >= 4) && ($M['Control']>0)) { // && $M['Control'] != $P['Control']) {
-              echo "Colonised by: " . "<span style='background:" . $Fs[$M['Control']]['MapColour'] . "; padding=2;'>" . $Fs[$M['Control']]['Name'] . "</span><p>";
+              echo "Colonised by: " . "<span " . FactColours($M['Control'],'white','padding=2') . ">" . $Fs[$M['Control']]['Name'] . "</span><p>";
             }
 
             echo $Blobs["C$Mid"]??'';

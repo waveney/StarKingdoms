@@ -31,6 +31,7 @@ function Create_Faction_Q() {
   echo "<tr><td colspan=5><h1>OR create a new faction</h1>";
   echo "<tr>" . fm_text('Name',$MT,'Name');
   echo "<tr>" . fm_text('Map Colour',$FACTION,'MapColour');
+  echo "<tr>" . fm_text('Text Colour',$FACTION,'MapText');
   echo "<tr><td><input type=submit name=ACTION value='Create New'>";
   echo "</table>";
   echo "</form>";
@@ -132,6 +133,7 @@ function Create_Faction_A() {
   $NewF = $FACTION;
   $NewF['Name'] = $_REQUEST['Name'];
   $NewF['MapColour'] = $_REQUEST['MapColour'];
+  $NewF['MapText'] = $_REQUEST['MapText'];
   unset($NewF['id']);
 
   $Nid = Put_Faction($NewF);

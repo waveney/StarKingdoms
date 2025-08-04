@@ -104,7 +104,7 @@ function CheckTurnsReady() {
     $Fid = $F['id'];
     GMLog( "<tr><td><a href=FactionEdit.php?F=$Fid>" . $F['Name'] . "</a>");
     GMLog( "<td>" . $F['Player']);
-    GMLog( "<td style='background:" . $F['MapColour'] . ";'>"
+    GMLog( "<td " . FactColours($Fid) . ">"
          . (isset($F['LastActive']) && $F['LastActive']? date('d/m/y H:i:s',$F['LastActive']) :"Never") );
     GMLog( "<td <span style='background:" . $PlayerStateColours[$F['TurnState']] . "'>"  . $PlayerState[$F['TurnState']]);
     if ($F['TurnState'] < 2) {

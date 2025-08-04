@@ -64,7 +64,7 @@ foreach($OFSs as $R=>$FS) {
   echo "<tr><td><a href=SurveyReport.php?R=$R>$R</a><td>" . ($Hospitable?'<b>':'') . "<a href=SurveyReport.php?R=$R>" .
     ($FS['Name']??$FS['FName']) . "</a>" . ($Hospitable?'</b>':'');
   if ($N['Control']) {
-    echo "<td style='background:" . $Facts[$N['Control']]['MapColour']. "'>" . $Facts[$N['Control']]['Name'];
+    echo "<td " . FactColours($N['Control']) . ">" . $Facts[$N['Control']]['Name'];
   } else {
     echo "<td>";
   }

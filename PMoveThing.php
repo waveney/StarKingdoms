@@ -2,6 +2,7 @@
   include_once("sk.php");
   include_once("GetPut.php");
   include_once("ThingLib.php");
+  include_once("PlayerLib.php");
 
   dostaffhead("Move Things",["js/dropzone.js","css/dropzone.css" ]);
 
@@ -59,8 +60,11 @@ function Node_Show($Fid,$Tid, $Lid, $N, $url='') {
     $atts = "";
 
     $Colour = "white";
+    $FontCol = 'black';
     if ($N['Control'] ) {
       $Colour = $Factions[$N['Control']]['MapColour'];
+      $FontCol = $Factions[$N['Control']]['MapText'];
+      if (!$FontCol) $FontCol = 'black';
       $Factions[$N['Control']]['Seen']=1;
     } else {
       $Colour = "White";
@@ -68,7 +72,7 @@ function Node_Show($Fid,$Tid, $Lid, $N, $url='') {
 
     $BdrColour = "Black";
 
-    $atts .= "  shape=box style=filled fillcolor=\"$Colour\" color=$BdrColour";
+    $atts .= "  shape=box style=filled fillcolor=\"$Colour\" fontcolor=\"$FontCol\" color=$BdrColour";
     if ($NodeName) {
       $atts .= NodeLab($ShortName, $N['Ref']); //($Faction==0?$N['Ref']:""));
     }

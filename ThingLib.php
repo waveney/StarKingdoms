@@ -1116,7 +1116,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
           $Who = ($Factions[$T['Whose']]['Adjective']?$Factions[$T['Whose']]['Adjective']:$Factions[$T['Whose']]['Name']);
           if ($RawA && is_vowel($Who)) $txt .= "n";
           if ($Div) {
-            $txt .= " <span style='background:" . $Factions[$T['Whose']]['MapColour'] . "'>$Who</span>";
+            $txt .= " <span " . FactColours($T['Whose']) . ">$Who</span>";
           } else {
             $txt .= " $Who";
           }
@@ -1161,7 +1161,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
       if ($T['PrisonerOf']) {
         if ($GM || (isset($FACTION['id']) && $T['PrisonerOf'] == $FACTION['id'])) {
           $Fact = Get_Faction($T['PrisonerOf']);
-          $txt .= ", Prisoner Of: <span style='background:" . $Fact['MapColour'] . "'>" . $Fact['Name'] . "</span>";
+          $txt .= ", Prisoner Of: <span " . FactColours($T['PrisonerOf']) . ">" . $Fact['Name'] . "</span>";
         }
       } else if ($GM && !empty($T['Orders'])) $txt .= ", <span style='background:#ffd966;'>Orders: " . $T['Orders'] . "</span>";
       if ($Images && !empty($T['Image'])) {
@@ -1285,12 +1285,10 @@ function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0,$Mode=0) {
 //if ($Sid == 4) var_dump ($Things); echo "XX<p>";
     $N = Get_System($Sid);
     if ($heading) {
-       $Col = Feature('DefaultSeeCol','White');
        if ($N['Control']) {
          $Fac = Get_Faction($N['Control']);
-         $Col = $Fac['MapColour'];
        }
-       $txt .= "<p><h2 style='background:$Col;'><a href=SurveyReport.php?id=$Sid>System " . System_Name($N,$Fid) . "</a></h2>";
+       $txt .= "<p><h2 " . FactColours($N['Control']) . "><a href=SurveyReport.php?id=$Sid>System " . System_Name($N,$Fid) . "</a></h2>";
     } else {
        $txt .= "<h2>In the System is:</h2>";
     }

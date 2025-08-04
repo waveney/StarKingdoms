@@ -69,7 +69,7 @@ foreach($Logs as $L) {
   echo "<td>" . $L['Turn'];
   echo "<td>" . $Tracks[$LType][1];
   echo "<td>" . $L['Number'];
-  echo "<td>" . ((($L['Turn']<$Runtot) || ($Tracks[$LType][3] &16))?'-':$L['EndVal']);
+  echo "<td>" . ((($L['Turn']<$Runtot) || ($Tracks[$LType][3] &16))?'?':$L['EndVal']);
   echo "<td>" . $L['Note'];
 
 }

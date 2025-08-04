@@ -112,7 +112,7 @@ function ForceReport($Sid,$Cat) {
         $BD = $Bat = 0;
         $LastF = $T['Whose'];
         $FirePower = 0;
-        $htxt = "<tr><td colspan=9 style='background:" . ($Facts[$LastF]['MapColour']??'Bisque') . "'><h2>" .
+        $htxt = "<tr><td colspan=9 " . FactColours($LastF,'bisque') . "><h2>" .
           ($Facts[$LastF]['Name']??'Independant') . "</h2><tr><td colspan=9>";
         $txt = $Battct = $ftxt = '';
         $txt .= "<br>Damage recieved: <span id=DamTot$Cat$LastF>0</span>";

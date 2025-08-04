@@ -51,7 +51,7 @@ function CheckSurveyReports() {
 
     //   if ($N['Nebulae'] > $S['Neb']) $S['Scan'] = 0; // Blind - in nebula wo neb scanners
     GMLog("<tr><td>" . $Facts[$Fid]['Name'] . "<td>" . $N['Ref'] . "<td>" . $S['Scan'] . "<td>" . $SurveyTypes[$S['Type']] .
-      ($N['Control'] ? ( "<td style='background:" . $Facts[$N['Control']]['MapColour'] . ";'>" . $Facts[$N['Control']]['Name'])  : '<td>None') .
+      ($N['Control'] ? ( "<td " . FactColours($N['Control']) . ">" . $Facts[$N['Control']]['Name'])  : '<td>None') .
       "<td>Allow? " . fm_YesNo("Scan$spid",1, "Reason to reject") . "\n<br>");
       $LastSys = $Sid;
       $LastType = $S['Type'];

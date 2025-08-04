@@ -317,8 +317,8 @@
     echo "<td>" . $Name;
     if ($T['Variant']) echo " ( " . $Varies[$T['Variant']]['Name'] . " )";
     echo "<td>" . (($Props & THING_HAS_LEVELS)?$T['Level']:'');
-    if ($Fid == 0) echo "<td style='background:" . ($Factions[$T['Whose']]['MapColour']??'white') . "'>" . ($Factions[$T['Whose']]['Name']??'Unknown');
-    if (0) echo "<td>" . (($RowClass == 'Prisoner') ? "<span style='background:" . ($Factions[$T['Whose']]['MapColour']??'white') . "'>[" .
+    if ($Fid == 0) echo "<td " . FactColours($T['Whose']) . ">" . ($Factions[$T['Whose']]['Name']??'Unknown');
+    if (0) echo "<td>" . (($RowClass == 'Prisoner') ? "<span " . FactColours($T['Whose']) . ">[" .
                  ($Factions[$T['Whose']]['Name']??'Unknown') . "]</span>" : $T['Orders']);
     echo "<td><center>" . (($Props & THING_HAS_HEALTH)? $T['CurHealth'] . ' / ' . $T['OrigHealth'] : "-");
     if (!$GM) {
@@ -420,7 +420,7 @@
 
       if (($T['CurHealth'] < $T['OrigHealth']) && ($Props & THING_HAS_HEALTH) && (($Props & THING_CAN_BE_SPLATED) == 0)) $Up++;
       if ($RowClass == 'Prisoner'){
-        echo "<td><span style='background:" . ($Factions[$T['Whose']]['MapColour']??'white') . "'>[" .
+        echo "<td><span " . FactColours($T['Whose']) . ">[" .
            ($Factions[$T['Whose']]['Name']??'Unknown') . "]</span>";
       } else {
         echo "<td>" . ($Up?$Up:'');
@@ -434,7 +434,7 @@
 
       echo "<td>";
       if ($T['GM_Notes']) echo "<b>N</b> ";
-      if ($T['HiddenControl']) echo "<span style='background:" , $Factions[$T['HiddenControl']]['MapColour'] . "'>" .
+      if ($T['HiddenControl']) echo "<span " . FactColours($T['HiddenControl']) . ">" .
         substr($Factions[$T['HiddenControl']]['Name'],0,3) . "</span> ";
     }
  //   echo "<td>" . (isset($Systems[$T['NewSystemId']]) ? $Systems[$T['NewSystemId']] :"") ;

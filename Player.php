@@ -350,9 +350,7 @@ global $SkipAccessCheck;
   if (count($Fs) > 1) {
     foreach($Fs as $Fid) {
       $F = $Facts[$Fid];
-      echo "<a href=Access.php?id=$Fid&Key=" . $F['AccessKey'] . " style='background:" . $F['MapColour'] . "; color: " .
-         ($F['MapText']?$F['MapText']:'black') .
-         ";text-shadow: 2px 2px 3px white;padding:2px'><b>"  . $F['Name'] . "</b></a> ";
+      echo "<a href=Access.php?id=$Fid&Key=" . $F['AccessKey'] . FactColours($Fid) . "><b>"  . $F['Name'] . "</b></a> ";
     }
 
     echo "<p>\n";

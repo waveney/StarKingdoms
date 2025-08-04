@@ -2,6 +2,7 @@
   include_once("sk.php");
   include_once("GetPut.php");
   include_once("ThingLib.php");
+  include_once("PlayerLib.php");
 
   global $FACTION,$GAMEID,$LinkType,$USERID;
 
@@ -244,8 +245,11 @@
 
 
       $Colour = "white";
+      $FontCol = 'black';
       if ($N['Control'] && !$Hide) {
         $Colour = $Factions[$N['Control']]['MapColour'];
+        $FontCol = $Factions[$N['Control']]['MapText'];
+        if (!$FontCol) $FontCol = 'black';
         $Factions[$N['Control']]['Seen']=1;
       } else if ($N['Category']) {
         $Colour = ($Fid?"White":$CatCols[$N['Category']]);
@@ -273,7 +277,7 @@
         ($N['Hospitable']?(($N['Hospitable']>1)?$MultiHabitableShape:$HabitableShape):$InHabitableShape);
       if ($typ) $atts .=
         " pos=\"" . ($N['GridX']*$XScale+(5-$N['GridY'])/2) . "," . (9-$N['GridY'])*$Scale . "!\"";
-      $atts .= " style=filled fillcolor=\"$Colour\" color=\"$BdrColour\"";
+      $atts .= " style=filled fillcolor=\"$Colour\" color=\"$BdrColour\" fontcolor=\"$FontCol\" ";
       if ($NodeName) {
         $atts .= NodeLab($ShortName, $N['Ref']);
       }

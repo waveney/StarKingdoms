@@ -639,7 +639,7 @@ function Income_Calc($Fid) {
     $H['Economy'] = $ECon;
     $EccTxt .= $Rtxt;
 
-    $Offs = Gen_Get_Cond('Offices',"World=$Wid AND (OrgType=2 OR OrgType2=2)");
+    $Offs = Gen_Get_Cond('Offices',"World=$Wid AND (OrgType=2 OR OrgType2=2) AND Whose=$Fid");
     if ($Offs && !$HasOwnGalaxy ) {
       foreach ($Offs as $Off ) {
         $Org = Gen_Get('Organisations',$Off['Organisation']);
@@ -693,7 +693,7 @@ function Income_Calc($Fid) {
       }
     }
 
-    $OtherOffices = Gen_Get_Cond('Offices',"Whose!=$Fid AND World=$Wid AND OrgType=2");
+    $OtherOffices = Gen_Get_Cond('Offices',"Whose!=$Fid AND World=$Wid AND (OrgType=2 OR OrgType2=2)");
     if ($OtherOffices) {
       $OtherTrade = 0;
       foreach( $OtherOffices as $O) {
@@ -763,6 +763,21 @@ function Income_Calc($Fid) {
       $EccTxt .= "Plus Outgoing trade of my trade organisations worth: $MyTrade<br>\n";
       $EconVal += $MyTrade;
     }
+  }
+
+  if (Has_Trait($Fid,'Goverwhat now?')) { //Look for remote offices
+    $Offs = Gen_Get_Cond('Offices',"Whose=$Fid AND (OrgType=2 OR OrgType2=2)");
+    foreach ($Offs as $Off) {
+      $W = Get_World($Off['World']);
+      if ($W['FactionId'] != $Fid) { // Remote office...
+        $H = Get_ProjectHome($W['Home']);
+        $N = Get_System($H['SystemId']);
+        $Org = Gen_Get('Organisations',$Off['Organisation']);
+        $EconVal += $Org['OfficeCount'];
+        $EccTxt .= "Plus " . $Org['OfficeCount'] . " From an office of " . $Org['Name'] . " in " . $N['Ref'] . "<br\n";
+      }
+    }
+
   }
 
   $OtherTs = Get_Things_Cond(0,"Type=17 AND OtherFaction=$Fid AND BuildState=" . BS_COMPLETE);
@@ -858,4 +873,17 @@ function &TrackIndexes() {
   }
 
   return $LTracks;
+}
+
+function FactColours($Fid,$deflt='White',$xtra='') {
+  static $FCols = [];
+  if (!isset($FCols[$Fid])) {
+    $Fact = Get_Faction($Fid);
+    if ($Fact ) {
+      $FCols[$Fid] = "style='background:" . $Fact['MapColour'] . "; color: " . ($Fact['MapText']??'black') . ";$xtra' ";
+    } else {
+      $FCols[$Fid] = "style='background:$deflt; $xtra'";
+    }
+  }
+  return $FCols[$Fid];
 }
