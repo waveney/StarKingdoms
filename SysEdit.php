@@ -114,7 +114,13 @@ echo "No tds<p>";
               $P['Type'] = $N2Ps['Other Planet'];
               $P['Name'] .= $things['Type'];
             }
-            if (isset($things['Image'])) $P['Image'] = $things['Image'];
+
+            if ($PTD[$P['Type']]['ImgPrefix']) {
+              $pfx = $PTD[$P['Type']]['ImgPrefix'];
+              $files = glob("Bodies/$pfx*");
+              $img = array_rand(array_flip($files));
+              $P['Image'] = $img;
+            } else if (isset($things['Image'])) $P['Image'] = $things['Image'];
             PTrim($P,$things,'Orbital Radius','OrbitalRadius');
             PTrim($P,$things,'Period');
             PTrim($P,$things,'Radius');

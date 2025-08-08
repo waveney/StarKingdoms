@@ -172,7 +172,7 @@ function Mod_ValueSimple($tl,$modtypeid,&$Rescat) {
     $v = 0;
   }
   $v = $v + $mf['Num3x'];
-  if ($mf['Name'] != 'Basic Weapons') $Rescat = 1;
+  if ($mt['Leveled']&0x6) $Rescat = 1;
 //echo "Is $v<p>";
   return $v;
 }
@@ -458,7 +458,6 @@ function Calc_Damage(&$T,&$Rescat) {
   $Ms = Get_Modules($T['id']);
   $Mts = Get_ModuleTypes();
   $ToHit = 0;
-
   $Rescat = 0;
   foreach ($Mts as $mti=>$mt) {
     if (!isset($Ms[$mti])) continue;
@@ -1287,8 +1286,10 @@ function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0,$Mode=0) {
     if ($heading) {
        if ($N['Control']) {
          $Fac = Get_Faction($N['Control']);
+       } else {
+         $Fac = [];
        }
-       $txt .= "<p><h2 " . FactColours($N['Control']) . "><a href=SurveyReport.php?id=$Sid>System " . System_Name($N,$Fid) . "</a></h2>";
+       $txt .= "<p><h2 " . FactColours($N['Control']??0) . "><a href=SurveyReport.php?id=$Sid>System " . System_Name($N,$Fid) . "</a></h2>";
     } else {
        $txt .= "<h2>In the System is:</h2>";
     }

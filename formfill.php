@@ -373,6 +373,7 @@
       if (($t == 'Ignore') || ($i==0)) exit;
       $N = Gen_Get($t,$i);
       $N[$f] = $Value;
+//      var_dump($N);
       echo Gen_Put($t,$N);
     }
     if ((preg_match('/Ignore:(\w*):(\w*):(\d*)/',$field,$mtch)?true:false)) {

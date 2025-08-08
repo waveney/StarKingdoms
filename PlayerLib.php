@@ -662,7 +662,7 @@ function Income_Calc($Fid) {
       }
     }
 
-    if (Has_PTraitW($W['id'],'Thin Atmosphere')) {
+    if ($ECon && Has_PTraitW($W['id'],'Thin Atmosphere')) {
       $ECon = max(0,$ECon-2);
       $EccTxt .=  " Reduced by 2 due to a Thin Atmosphere leaving you with a rating of $ECon<br>\n";
     }
@@ -880,7 +880,7 @@ function FactColours($Fid,$deflt='White',$xtra='') {
   if (!isset($FCols[$Fid])) {
     $Fact = Get_Faction($Fid);
     if ($Fact ) {
-      $FCols[$Fid] = "style='background:" . $Fact['MapColour'] . "; color: " . ($Fact['MapText']??'black') . ";$xtra' ";
+      $FCols[$Fid] = "style='background:" . $Fact['MapColour'] . "; color: " . ($Fact['MapText']?$Fact['MapText']:'black') . ";$xtra' ";
     } else {
       $FCols[$Fid] = "style='background:$deflt; $xtra'";
     }

@@ -829,10 +829,11 @@ function FinishShakedowns() {
 
 
 function MilitiaArmyRecovery() {
+  global $GAMEID,$GAME;
 //  GMLog("Militia Recovery is currently Manual<p>");
 //  GMLog("Also Self Repair Armour<p>");
 
-  $Things = Get_Things_Cond(0,"(CurHealth>0 OR (CurHealth=0 AND BuildState=" . BS_COMPLETE . ")) AND (CurHealth<OrigHealth OR CurShield<ShieldPoints)");
+  $Things = Get_Things_Cond(0,"BuildState=" . BS_COMPLETE . " AND (CurHealth<OrigHealth OR CurShield<ShieldPoints)");
   $TTypes = Get_ThingTypes();
   $MTypes = Get_ModuleTypes();
   $MTNs = Mod_Types_From_Names($MTypes);
@@ -843,7 +844,8 @@ function MilitiaArmyRecovery() {
   }
 
   foreach ($Things as $T) {
-    if ($TTypes[$T['Type']]['Prop2'] & THING_HAS_RECOVERY) {
+//    var_dump($T);
+    if (($TTypes[$T['Type']]['Prop2']??0) & THING_HAS_RECOVERY) {
       if ($T['Conflict']) continue;
       // if not in conflit, recovery some
       $Conflict = 0;
@@ -886,8 +888,8 @@ function MilitiaArmyRecovery() {
       }
     }
 
-    if (isset($MTNs['Self Repairing Robot Armour']) && (($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES))) {
-      $RepMods = ['Medical Corps', 'Self Repairing Robot Armour'];
+    if ((isset($MTNs['Self Repairing Robot Armour']) ) && (($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES))) {
+      $RepMods = ['Medical Corps', 'Self Repairing Robot Armour']; // Old Medical Corp Code
       foreach ($RepMods as $Mt) {
         $Med = Get_ModulesType($T['id'],$MTNs[$Mt]);
         if (isset($Med[0])) {
@@ -929,6 +931,82 @@ function MilitiaArmyRecovery() {
     }
 
   }
+
+  GMLog("<p>Basic Healling done - now to do Medical Corps");
+
+  $Things = Gen_Select("SELECT T.*,M.Level AS ModLevel, M.Number AS ModNumber FROM Things T INNER JOIN Modules AS M ON M.ThingId=T.id " .
+    "WHERE T.GameId=$GAMEID AND T.BuildState=" . BS_COMPLETE . " AND M.Type=" . $MTNs['Medical Corps'] . " ORDER BY T.Whose,T.SystemId");
+
+//  var_dump($Things); exit;
+  if ($Things) {
+    $LastWho = $LastSys = -1;
+    $Allies = [];
+    $Damaged = [];
+    $Facts = Get_Factions();
+    foreach ($Things as $T) {
+      if ($T['Whose'] != $LastWho) { // Redo Allies
+        $LastWho = $T['Whose'];
+        $LastSys = -1;
+        $FF = Get_FactionFactions($LastWho);
+        foreach($Facts as $Fid=>$F) if (($FF[$Fid]['Relationship']??5) >= 9 ) $Allies[$Fid] = 1;
+        $Allies[$LastWho] = 1;
+      }
+
+      if ($T['LinkId'] >= 0) {
+        $Sid = $T['SystemId'];
+      } else {
+        if ($T['LinkId'] >= LINK_LOAD_AND_UNLOAD) { // On board - these wont be in the ideal order to process but tough
+          $H = Get_Thing($T['SystemId']);
+          $Sid = $H['SystemId'];
+        } else {
+          $Sid = $T['SystemId'];
+        }
+      }
+
+      // Find damaged allies with army modules in same system
+
+      if ($LastSys < 0 || $LastSys != $Sid) {
+        $Healable = Gen_Get_Cond('Things',"BuildState=3 AND SystemId=$Sid AND CurHealth<OrigHealth");
+        $Heals = [];
+        foreach ($Healable as $Hid=>$H) {
+          if (($Allies[$H['Whose']]??0) && ( $TTypes[$H['Type']]['Properties'] & THING_HAS_ARMYMODULES )) {
+            $Heals[] = $Hid;
+          }
+        }
+        $LastSys = $Sid;
+      }
+
+      if ($Heals) {
+        $HealVal = 3*$T['ModLevel'];
+        for($i = 0; $i < $T['ModNumber']; $i++) {
+          if (empty($Heals)) break;
+          $RandT = rand(0,count($Heals)-1);
+          // var_dump($RandT,$Heals,$HealVal);
+          $Tgtid = $Heals[$RandT];
+          $Tgt = Get_Thing($Tgtid);
+
+          $OrdHealth = $Tgt['CurHealth'];
+          $HVal = min($HealVal,$Tgt['OrigHealth']-$Tgt['CurHealth']);
+          $Tgt['CurHealth'] += $HVal;
+          if ($Tgt['OrigHealth'] <= $Tgt['CurHealth']) {
+            array_splice($Heals,$RandT,1); //unset($Heals[$RandT]);
+          }
+
+          Put_Thing($Tgt);
+          TurnLog($Fid,$T['Name'] . " restored $HVal health to " . $Tgt['Name'],$Tgt);
+          GMLog($T['Name'] . " restored $HVal health to " . $Tgt['Name']);
+          if ($Tgt['Whose']!=$LastWho) TurnLog($Tgt['Whose'],$T['Name'] . " restored $HVal health to " . $Tgt['Name']);
+
+        }
+
+      }
+
+    }
+  } else {
+    GMLog("Nothing has a Medical Corp Module");
+  }
+
+  GMLog("All Medical Corps handled");
 
   return 1;
 }

@@ -238,7 +238,7 @@ function Show_System(&$N,$Mode=0) {
   }
 
   if (Access('God')) {
-    if ($N['WorldList']) echo "<tr><td colspan=3>Controlled Planets/Moons: " . ($N['WorldList']??'');
+    if ($N['WorldList']??0) echo "<tr><td colspan=3>Controlled Planets/Moons: " . ($N['WorldList']??'');
     echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   }
   echo "<tr>" . fm_textarea('Notes',$N,'Notes',8,3);
@@ -405,6 +405,7 @@ function Show_Planet(&$P,$Mode=0,$Buts=0) {
 
 //  $heat = $N['Luminosity']/(($P['OrbitalRadius']*1000)^2);
   echo "<tr><td>Heat:<td>" . RealHeat($N,$P); //sprintf("%0.2f", $heat) . "<td> = " . sprintf("%0.2f Earth", $heat*(1.496e11^2)/3.83e26);
+  if (Access('God')) echo "<td>" . $P['Image'];
   if (Access('GM')) echo "</tbody><tfoot><td><a href=PlanEdit.php?id=$Pid&ACTION=RECALC>Recalc</a>";
   if ($Mns) {
     echo "<tr><td>Editable Moons\n";

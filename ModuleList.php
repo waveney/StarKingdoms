@@ -69,7 +69,7 @@
 
     foreach($MTs as $MT) {
       $i = $MT['id'];
-      echo "<tr><td>$i" . fm_text1("",$MT,'Name',1,'','',"ModuleTypes:Name:$i") . fm_hidden("Description$i",$MT['Description']);
+      echo "<tr><td>$i" . fm_text1("",$MT,'Name',1,'','',"ModuleTypes:Name:$i") . fm_hidden("ModuleTypes:Description:$i",$MT['Description']);
       echo fm_notby($MT,$i,$AllG,':','ModuleTypes');
       echo "<td>" . fm_select($ModuleCats,$MT,'CivMil',1,'',"ModuleTypes:CivMil:$i");
       echo "<td>" . fm_select($DefWep,$MT,'DefWep',0,'',"ModuleTypes:DefWep:$i");
@@ -78,14 +78,13 @@
       echo fm_number1("",$MT,'MinShipLevel','','min=0 max=10',"Modules:MinShipLevel$i");
       echo fm_number1("",$MT,'FireOrder','','min=-5 max=10',"ModuleTypes:FireOrder:$i") .
            fm_number1("",$MT,'FireRate',"",'min=0 max=10',"ModuleTypes:FireRate:$i");
-      echo "<td>" . fm_select($Forms,$MT,'Formula',1,'',"ModuleTypes:Formula$i");
+      echo "<td>" . fm_select($Forms,$MT,'Formula',1,'',"ModuleTypes:Formula:$i");
       echo fm_hex1("",$MT,'Leveled','','',"ModuleTypes:Leveled:$i");
       echo fm_number1("",$MT,'EvasionMod','','min=-100 max=100',"ModuleTypes:EvasionMod:$i");
       echo fm_number1("",$MT,'ToHitMod','','min=-100 max=100',"ModuleTypes:ToHitMod:$i");
       echo fm_number1('',$MT,'ExtraCost','','min=0 max=100',"ModuleTypes:ExtraCost:$i");
       echo "<td><a href=ModuleEdit.php?id=$i>Desc</a>";
     }
-
 
   $MT = [];
   echo "<tr><td><td><input type=text name=Name0 >";
@@ -104,6 +103,13 @@
   echo fm_number1("",$MT,'ToHitMod','','min=-100 max=100',"ModuleTypes:ToHitMod:0");
   echo fm_number1('',$MT,'ExtraCost','','min=0 max=100',"ModuleTypes:ExtraCost:0");
   echo "</tbody></table></div>\n";
+
+  if (Access('God')) {
+    echo "<table border>";
+    echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
+    echo "</table>";
+  }
+
 
   echo "<h2><input type=submit name=Update value=Update></h2>";
   echo "</form></div>";

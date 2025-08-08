@@ -161,7 +161,7 @@
 
     // Star (s)
 
-    if ($N['Image']) echo "<img src=" . $N['Image'] . ">";
+    if ($N['Image']) echo "<img class=SeeSImage src=" . $N['Image'] . ">";
     $Acc = "%0.2g";
     if (isset($N['Flags']) && ($N['Flags'] &1)) $Acc="%0.8g";
 
@@ -179,7 +179,7 @@
 
     if ($N['Type2']) {
 
-      if ($N['Image2']) echo "<br clear=all><img src=" . $N['Image2'] . ">";
+      if ($N['Image2']) echo "<br clear=all><img class=SeeSImage src=" . $N['Image2'] . ">";
       echo "The companion star ";
 
       if (($N['StarName2']??'') || ($FS && ($FS['Star2Name']??''))) {
@@ -280,7 +280,7 @@
 
         echo "<li><span class=SRName>" . $pname . "</span>";
   //var_dump($P);
-        if ($P['Image']) echo "<img src=" . $P['Image'] . ">";
+        if ($P['Image']) echo "<img class=SeeImage src=" . $P['Image'] . ">";
         if ($SurveyLevel >= 4) {
           echo " Is " . (isset($P['Hidden'])?' (hidden) ':'') .
                ($PTNs[$P['Type']] == 'Asteroid Belt'?" an ":($PTD[$P['Type']]['Hospitable']?" a <b>habitable ":" an uninhabitable "));

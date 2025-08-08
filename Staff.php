@@ -76,7 +76,7 @@
   foreach($Factions as $F) {
     $Fid = $F['id'];
 
-    echo "<a href=Access.php?id=$Fid&Key=" . $F['AccessKey'] . " " . FactColours($Fid) . "><b>"  . NoBreak($F['Name']) . "</b></a> ";
+    echo "<a href=Access.php?id=$Fid&Key=" . $F['AccessKey'] . " " . FactColours($Fid,'white','padding:2px') . "><b>"  . NoBreak($F['Name']) . "</b></a> ";
   }
 
   echo "</span><p>\n";
@@ -221,7 +221,7 @@
 
     $txt .= "<li><a href=ListSocial.php>List Social Principles</a><p>\n";
     $txt .= "<li><a href=TrackedTypes.php>Tracked Properties</a><p>\n";
-    $txt .= "<li><a href=ScienceLog.php>Science Point Logs</a> (Only some actions)<p>\n";
+    $txt .= "<li><a href=ScienceLog.php>Science Point Logs</a><p>\n";
 
 //    if (Access('God')) $txt .= "<li><a href=BuildFactLink.php>Build Factions link Knowledge</a>\n";
 

@@ -81,20 +81,20 @@
   foreach($FactFacts as $FF) {
     $F = Get_Faction($FF['FactionId2']);
     $id = $FF['id'];
-    echo "<tr height=50 " . FactColour($F['id']) . "><Td>" . $F['Name'];
+    echo "<tr height=50 " . FactColours($F['id']) . "><Td>" . $F['Name'];
     //    &$Options,$data,$field,$blank=0,$selopt='',$field2='',$Max=0, &$optclass=0, $Raw=0, &$BGColour=0) {
 // style='background:" . $RelCols[$FF['Relationship']] . "'
 //    function fm_radio($Desc,&$defn,&$data,$field,$extra='',$tabs=1,$extra2='',$field2='',$colours=0,$multi=0,$extra3='',$extra4='') {
     if ($FF['Relationship'] == 0) $FF['Relationship']= 5;
-    echo "<td>" . fm_radio('',$RelVals,$FF,'Relationship','',-2,'',"Relationship:$id",$RelCols);
-    echo "<td colspan=4>Details:<br>" . fm_basictextarea($FF,'Description',3,6,'',"Description:$id");
+    echo "<td style=color:black>" . fm_radio('',$RelVals,$FF,'Relationship','',-2,'',"Relationship:$id",$RelCols);
+    echo "<td style=color:black colspan=4>Details:<br>" . fm_basictextarea($FF,'Description',3,6,'',"Description:$id");
 //echo  "\nProps:" . dechex($FF['Props']) . "\n";
     $perms = [ $FF['Props'] & 15, (($FF['Props'] >>4)&15), (($FF['Props'] >>8)&15),(($FF['Props'] >>12)&15),];
 //var_dump($perms);
-    echo "<td>" . fm_radio('',$Boarding,$perms,0,'',-2,'',"Set:0:" . $FF['id']);
-    echo "<td>" . fm_radio('',$Boarding,$perms,1,'',-2,'',"Set:1:" . $FF['id']);
- //   echo "<td>" . fm_radio('',$Boarding,$perms,2,'',-2,'',"Set:2:" . $FF['id']); // Warp gates
-    echo "<td>" . fm_radio('',$Boarding,$perms,3,'',-2,'',"Set:3:" . $FF['id']);
+    echo "<td style=color:black>" . fm_radio('',$Boarding,$perms,0,'',-2,'',"Set:0:" . $FF['id']);
+    echo "<td style=color:black>" . fm_radio('',$Boarding,$perms,1,'',-2,'',"Set:1:" . $FF['id']);
+    //   echo "<td style=color:black>" . fm_radio('',$Boarding,$perms,2,'',-2,'',"Set:2:" . $FF['id']); // Warp gates
+    echo "<td style=color:black>" . fm_radio('',$Boarding,$perms,3,'',-2,'',"Set:3:" . $FF['id']);
   }
   if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "</table></div></form>\n";
