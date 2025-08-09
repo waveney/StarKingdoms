@@ -405,7 +405,9 @@ function Show_Planet(&$P,$Mode=0,$Buts=0) {
 
 //  $heat = $N['Luminosity']/(($P['OrbitalRadius']*1000)^2);
   echo "<tr><td>Heat:<td>" . RealHeat($N,$P); //sprintf("%0.2f", $heat) . "<td> = " . sprintf("%0.2f Earth", $heat*(1.496e11^2)/3.83e26);
-  if (Access('God')) echo "<td>" . $P['Image'];
+  if (Access('God')) echo fm_text1('',$P,'Image',3);
+  $Pfx = $PTD[$P['Type']]['ImgPrefix'];
+  echo "<td><a href=SelectImage.php?t=Planets&i=$Pid&P=Bodies/$Pfx&R=PlanEdit>Select New Image</a>";
   if (Access('GM')) echo "</tbody><tfoot><td><a href=PlanEdit.php?id=$Pid&ACTION=RECALC>Recalc</a>";
   if ($Mns) {
     echo "<tr><td>Editable Moons\n";
@@ -524,6 +526,9 @@ function Show_Moon(&$M,$Mode=0) {
   echo "<tr>" . fm_number('Period',$M,'Period',1,"class=NotCSide") . "<td>Hr = " . RealWorld($M,'Period');
   echo "<tr>" . fm_number('Gravity',$M,'Gravity',1,"class=NotCSide") . "<td>m/s<sup>2</sup> = " . RealWorld($M,'Gravity');
   echo "<tr>" . fm_number('Radius',$M,'Radius',1,"class=NotCSide") . "<td>Km = " . RealWorld($M,'Radius');
+  if (Access('God')) echo "<tr>" . fm_text1('',$P,'Image',3);
+  $Pfx = $PTD[$M['Type']]['ImgPrefix'];
+  echo "<td><a href=SelectImage.php?t=Moons&i=$Mid&P=Bodies/$Pfx&R=MoonEdit>Select New Image</a>";
 
 //  $heat = $N['Luminosity']/(($P['OrbitalRadius']*1000)^2);
 
