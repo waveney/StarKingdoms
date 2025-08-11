@@ -46,3 +46,51 @@ NEW GAME FEATURES & BUGS
 543
 
 
+Star:
+Luminosity:                        L = M^3
+Diameter:                           D = M^0.74
+Surface Temperature:       T = M^0.505
+Lifetime:                             V = M^-2.5
+Habitable zone (inner) :     R = sqrt(L) x 0.95
+Habitable zone (outer):      R = sqrt(L) x 1.37
+
+Planet system:
+Inner limit:        I = 0.1 x M
+Outer limit:      O = 40 x M
+Frost Line:       R = 4.85 x sqrt(L)
+
+
+
+Planets
+
+Planet-maker: G = M/R^2 = R(P)
+Escape Velocity: V = sqrt(M/R)
+Surface area: A = 4piR^2
+Circumference: 2piR
+Volume: 4/3piR^3
+
+
+Terestial planets:
+Equations used in this video:
+
+Planet maker: G = M/R^2 = R(P)
+Escape Velocity = sqrt(M/R)
+
+(G = Gravity relative to earth
+M = Mass relative to earth
+R = Radius relative to earth
+P = Density relative to earth)
+
+
+Circumference = 2piR
+Surface Area = 4piR^2
+Volume = 4/3piR^3
+
+Orbits:
+
+Eccentricity Indicator: 0.584*N^(-1.2)
+Periapsis: a(1-e)
+Apoapsis: a(1+e)
+Orbital Period: sqrt(a^3/M)
+Orbital Velocity: sqrt(M/R)
+

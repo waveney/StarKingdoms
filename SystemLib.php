@@ -187,11 +187,16 @@ function Show_System(&$N,$Mode=0) {
 
   if ($N['Flags'] & 1) Dynamic_Update($N);
 
+  if ($N['GameId'] != $GAMEID) {
+    echo "<h1>This is not a system in the current game - go to game: " . $N['GameId'] . "</h1>";
+    dotail;
+  }
+
   echo "<form method=post id=mainform enctype='multipart/form-data' action=SysEdit.php>";
   echo "<div class=tablecont><table width=90% border class=SideTable>\n";
   Register_AutoUpdate('Systems',$Sid);
   echo fm_hidden('id',$Sid);
-  echo "<tr class=NotSide><td class=NotSide>Id:<td class=NotSide>$Sid<td class=NotSide>Game<td class=NotSide>$GAMEID" .
+  echo "<tr class=NotSide><td class=NotSide>Id:<td class=NotSide>$Sid<td class=NotSide>Game<td class=NotSide>" . $N['GameId'] .
        "<td class=NotSide>" . $GAME['Name'];
   echo "<tr class=NotSide>" . fm_text('Grid X',$N,'GridX',1,"class=NotSide") . fm_text('Grid Y',$N,'GridY',1,"class=NotSide") . fm_text('Ref',$N,'Ref',1,"class=NotSide");
 

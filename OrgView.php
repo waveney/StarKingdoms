@@ -37,22 +37,26 @@ if ($Offices) {
   $Head = 0;
   foreach ($Offices as $Off) {
     $W = Get_World($Off['World']);
+    $control = 0;
     switch ($W['ThingType']) {
       case 1: // Planet
         $P = Get_Planet($W['ThingId']);
         $Sys = Get_System($P['SystemId']);
         $Where = $P['Name'] . " in " . System_Name($Sys,$Fid);
+        $control = $P['Control'];
         break;
       case 2: // Moon
         $M = Get_Moon($W['ThingId']);
         $P = Get_Planet($M['PlanetId']);
         $Sys = Get_System($P['SystemId']);
         $Where = $M['Name'] . " a moon of " . $P['Name'] . " in " . System_Name($Sys,$Fid);
+        $control = $M['Control'];
         break;
       case 3:// Thing
         $T = Get_Thing($W['ThingId']);
         $Sys = Get_System($T['SystemId']);
         $Where = $T['Name'] . " Currently in " . System_Name($Sys,$Fid);
+        $control = $T['Whose'];
         break;
     }
     echo "<li>$Where";
@@ -60,6 +64,23 @@ if ($Offices) {
       echo " [ Head Office ]";
       $Head = 1;
     }
+
+    if (Has_Trait($Fid,'Goverwhat now?') && ($control != $Fid)) {
+      $World = Gen_Get_Cond1('Worlds',"ThingType=" . $W['ThingType'] . " AND ThingId=" . $W['ThingId']);
+      $SocPs = Get_SocialPs($World['id']);
+      if ($SocPs) {
+        echo "<br>It's social principles are:<ul>";
+        foreach ($SocPs as $si=>$SP) {
+          $Prin = Get_SocialP($SP['Principle']);
+          echo "<li><b>" . $Prin['Principle'] . "</b> - Adherence: " . $SP['Value'];
+          echo "<br>" . ParseText($Prin['Description']);
+        }
+        echo "</ul>";
+      } else {
+        echo "<br>No Social Principles Currently";
+      }
+    }
+
     echo "<br>";
   }
 } else {
