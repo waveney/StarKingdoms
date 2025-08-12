@@ -91,11 +91,11 @@ function ForceReport($Sid,$Cat) {
 
   echo "<table border>";
   echo "<tr><td>What<td>Type<td>Level<td>Evasion<td>Health<td>Attack<td>To Hit<td>" . (($Cat == 'S')?'Speed':'Mobility') . "<td>Actions\n";
+  $Kaiju = $KaijuL = 0;
   foreach($Things as $T) {
     $Tid = $T['id'];
     $Ground = is_on_ground($T);
 //    if ($Tid==2517) var_dump($Ground,$Cat);
-    $Kaiju = 0;
 
     if ((($Cat == 'S') && !$Ground) || (($Cat == 'G') && $Ground)) {
 
@@ -106,7 +106,7 @@ function ForceReport($Sid,$Cat) {
       if ($LastF != $T['Whose']) {
         if ($LastF >=0) {
           echo $htxt;
-          if ($Bat) echo "Battle Tactics: Effectively $Bat ( $Battct ) <br>";
+          if ($Bat) echo "Battle Tactics: Effectively " . ($Kaiju?$KaijuL:$Bat) . " ( $Battct ) <br>";
           echo  $ftxt. "<br>Total Firepower: $FirePower" . $txt;
         }
         $BD = $Bat = 0;
@@ -118,6 +118,7 @@ function ForceReport($Sid,$Cat) {
         $txt .= "<br>Damage recieved: <span id=DamTot$Cat$LastF>0</span>";
 
         $Kaiju = Has_Trait($LastF,'Giant Kaiju')?1:0;
+        $KaijuL = 0;
         $FTs = Get_Faction_Techs($LastF);
 //        if ($Tid==2517) var_dump("120");
 
@@ -180,9 +181,9 @@ function ForceReport($Sid,$Cat) {
 
       if ($Kaiju) {
         if (str_contains($T['Class'], 'Kaiju')) {
-          $Kaiju = min($Kaiju,$T['Level']);
+          $KaijuL = max($KaijuL,$T['Level']);
         } else {
-          $Kaiju = $Bat;
+          $KaijuL = $Bat;
         }
       }
       $txt .= fm_hidden("OrigData$Tid",implode(":",[$T['CurHealth'], $T['OrigHealth'],0,$T['CurShield'],$T['ShieldPoints']]));
@@ -208,7 +209,7 @@ function ForceReport($Sid,$Cat) {
   }
   if ($htxt) {
     echo $htxt;
-    if ($Bat) echo "Battle Tactics: Effectively " . ($Kaiju?$Kaiju:$Bat) . " ( $Battct ) <br>";
+    if ($Bat) echo "Battle Tactics: Effectively " . ($Kaiju?$KaijuL:$Bat) . " ( $Battct ) <br>";
     echo  $ftxt. "<br>Total Firepower: <span id=FirePower:$LastF>$FirePower</span>" . $txt;
   }
 //  var_dump($txt,$htxt);

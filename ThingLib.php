@@ -177,6 +177,19 @@ function Mod_ValueSimple($tl,$modtypeid,&$Rescat) {
   return $v;
 }
 
+function Mod_FormulaValue($tl,$Num,$form) {
+  $mf = Get_ModFormula($form);
+
+  if (($mf['Name']??'None') == 'None') return 0;
+  if (Access('GM') && !isset($mf['Num2x'])) echo "Report Module formula value error $tl,$Num,$form<p>";
+  if ($mf['Num2x']) {
+    $v = ($mf['Num1x'] + $tl) * $mf['Num2x'];
+  } else {
+    $v = 0;
+  }
+  $v = $v + $mf['Num3x'];
+  return $v;
+}
 
 function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0,$MaxLvl=10) {
   global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil;

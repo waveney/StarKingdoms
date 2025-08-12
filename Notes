@@ -44,18 +44,15 @@ NEW GAME FEATURES & BUGS
 527 Ship: Exploratory Fighter Squadron has no System Setup - Call Richard...
 537 Vasou and ARV GXE links
 ===543 start of turn 
-545 Massive enterprises targetting sps
-547 Octopi battle tactics 
-548 [Mon Aug 11 18:26:53.468956 2025] [proxy_fcgi:error] [pid 2930475:tid 140088268809984] [client 86.132.57.84:0] AH01071: Got error 'PHP message: 
-PHP Warning:  Undefined array key "Control" in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActs/Operations.php on line 22', 
-referer: https://starkingdoms.uk/TurnActions.php?ACTION=Process&S=10
 550 Outposts - in YPK not appear 
 551 Ship: Copy of Exploratory Fighter Squadron has no System Setup - Call Richard... see 527
 552 refresh all own system scans every turn
 553 scans active scan all except districts etc 
-555
-
-
+556 Asc 11/8 @21:30
+557 I suspect its not ACTUALLY an automation thing, but on the "OrgView" it might be nice if there was a
+  "split" between "Outpost Branches" and "Planetside Branches"
+559 Defence Satellites are not showing on the map in the "numbers" I assume its because they are Satellites not ships, but feels wrong
+564
 
 
 Star:

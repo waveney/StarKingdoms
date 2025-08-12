@@ -10,5 +10,7 @@ CREATE TABLE `Branches` (
   `OrgType` int NOT NULL,
   `OrgType2` int NOT NULL,
   `Suppressed` int NOT NULL,
+  `RewardType` int NOT NULL,
+  `RewardNumber` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

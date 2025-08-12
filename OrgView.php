@@ -21,7 +21,7 @@ $BTypes = Get_BranchTypes();
 $Facts = Get_Factions();
 
 $Offices = Gen_Get_Cond('Offices',"Organisation=$OrgId");
-$Branches = Gen_Get_Cond('Branches',"Organisation=$OrgId");
+$Branches = Gen_Get_Cond('Branches',"Organisation=$OrgId ORDER BY HostType");
 
 dostaffhead("Organisation");
 

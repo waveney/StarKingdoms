@@ -19,7 +19,7 @@ function StartOperations() {
     $Otp = $OpTypes[$O['Type']]['Props'];
     $Wh = $O['SystemId'];
     $Sys = Get_System($Wh);
-    $TWho = $Sys['Control'];
+    $TWho = ($Sys['Control']??0);
     $OrgId = $O['OrgId'];
 
     if ($Otp & OPER_OUTPOST) {

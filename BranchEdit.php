@@ -286,6 +286,15 @@ if ($Org) {
   if ($Org['OrgType2']) echo "<tr><td>Org also type:<td>" . ($OrgTypes[$Org['OrgType2']]['Name']??'') . "<td>Refresh page if Org changed";
 }
 echo "<tr><td>Location:<td>$Where<td>Only changeable by Richard";
+if ($BTypeNames[$B['Type']] == 'Science Space Base') {
+  global $Currencies;
+  $RTypes = $Currencies;
+  $RTypes[-1] = 'No Reward';
+  $RTypes[0] = 'Not Setup yet';
+  echo "<tr><td>Ongoing Reward:<td>" . fm_select($RTypes,$B,'RewardType') . fm_number("Amount",$B,'RewardNumber');
+}
+
+
 echo "</table>";
 
 if ($GM) {

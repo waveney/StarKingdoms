@@ -9,7 +9,7 @@
   include_once("SystemLib.php");
   include_once("ProjLib.php");
 
-  global $FACTION,$ADDALL,$GAME,$ARMY, $ARMIES, $GAMEID;
+  global $FACTION,$ADDALL,$GAME,$ARMY, $ARMIES, $GAMEID, $Project_Status;
 
 // var_dump($_REQUEST);
 
@@ -76,7 +76,7 @@
         $OrgName = $_REQUEST['NewOrgName'];
         $OrgDesc = $_REQUEST['NewOrgDescription'];
         $_REQUEST['Sel'] = $_REQUEST['NewOrgType'];
-        $_REQUEST['Sel2'] = $_REQUEST['NewOrgType2'];
+        $_REQUEST['Sel2'] = ($_REQUEST['NewOrgType2']??0);
         $OrgSP = $_REQUEST['NewOrgSocialPrinciple'];
         $Sel = 0;
 
@@ -457,7 +457,7 @@
 
     foreach ($Projs as &$P) {
 //      var_dump($P);
-      if (!isset($P['Status']) || ($P['Status'] > 2 )) continue; // Cancelled, On Hold or Could not start
+      if (!isset($P['Status'])) continue; // Cancelled, On Hold or Could not start
       $TurnStuff = Get_ProjectTurns($P['id']);
       $TSi = 0;
       while (isset($TurnStuff[$TSi]['TurnNumber']) && ($TurnStuff[$TSi]['TurnNumber'] < $P['TurnStart'])) $TSi++;
@@ -555,7 +555,10 @@
             if ($PNam == 'Train Detachment' || $PNam == 'Reinforce Detachment' || $PNam == 'Refit Detachment') $Bonus = -1;
           }
 
-          if ($t == $P['TurnEnd']) {
+          if ($P['Status'] > 2) { // Ended in some way
+            $Pro['Status'] = $Project_Status[$P['Status']];
+            $Pro['Progress'] = $P['Progress'] . "/" .  $Pro['Acts'];
+          } else if ($t == $P['TurnEnd']) {
             $Pro['Status'] = 'Complete';
             $Pro['Progress'] = $Pro['Acts'] . "/" . $Pro['Acts'];
           } else if ($t < $GAME['Turn'] -1) {

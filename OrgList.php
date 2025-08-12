@@ -76,7 +76,10 @@
   $SocPs = [];
 
   echo "<h1>Organisations</h1>";
-  if ($GM) echo "To add a new one, fill in name, description and org type at the bottom and click the <b>Add New Organisation</b> button<p>";
+  if ($GM) {
+    echo "To add a new one, fill in name, description and org type at the bottom and click the <b>Add New Organisation</b> button<p>";
+    echo "The Extra Ops are additional operations outside the normal trees this org can do, comma seperated, must EXACTLY match names of the operations<p>";
+  }
   echo "Click on the View link under the office count, to see location of all Offices and Branches<p>";
   Register_AutoUpdate('Generic',0);
   echo "<form method=post>";
@@ -112,6 +115,7 @@
         echo "<br>Social Principle (Religious / Ideological Orgs only)" .
           fm_select($SocPs[$Of],$O,'SocialPrinciple',1,'',"Organisations:SocialPrinciple:$i");
       }
+      echo "<br>" . fm_text0('Extra Ops',$O,'ExtraOps',4,'','',"Organisations:ExtraOps:$i");
     } else {
       echo "<td>" . $OrgTypeNames[$O['OrgType']];
       if ($O['OrgType2']) echo "<br>also: " . $OrgTypeNames[$O['OrgType2']];
@@ -120,6 +124,9 @@
       if ($O['OrgType'] == 5 || $O['OrgType2'] == 5) {
         if (!isset($SocPs[$Fid][$O['SocialPrinciple']])) $SocPs[$Fid][$O['SocialPrinciple']] = Get_SocialP($O['SocialPrinciple']);
         echo "<br>Social Principle (Religious / Ideological Orgs only): " . $SocPs[$Of][$O['SocialPrinciple']];
+      }
+      if ($O['ExtraOps']) {
+        echo "<br>Additional operations this org can perform: " . $O['ExtraOps'];
       }
     }
     echo fm_number1('',$O,'RelOrder','','',"Organisations:RelOrder:$i");

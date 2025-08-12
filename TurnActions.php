@@ -565,12 +565,21 @@ function TraitIncomes() {
           $SPs[2] += $Pow;
           break;
         case 'Science Space Base':
+          if ($B['RewardType'] <0 )break;
           $T = Get_Thing($B['HostId']);
           $N = Get_System($T['SystemId']);
+
           $Ref = $N['Ref'];
 
-          FollowUp($Who, "A Science base of " . $O['Name'] . " (" . $Facts[$Who]['Name'] . ") power $Pow on an outpost in $Ref may get something");
-          // No idea what goes here...
+          if ($B['RewardType']) {
+            Gain_Science($Who,$B['RewardType'],$B['RewardNumber'],"From a branch of " . $O['Name'] . " in $Ref");
+            $SPs[$B['RewardType']] += $B['RewardNumber'];
+          } else {
+            $Bid = $B['id'];
+
+            FollowUp($Who, "A Science base of " . $O['Name'] . " (" . $Facts[$Who]['Name'] .
+              ") power $Pow on an outpost in $Ref may get something - either way change the <a href=BranchEdit.php?id$Bid>Branch</a> settings");
+          }
       }
     }
     if ($SPs[1] || $SPs[2] || $SPs[3]) {
@@ -943,6 +952,9 @@ function MilitiaArmyRecovery() {
     $Allies = [];
     $Damaged = [];
     $Facts = Get_Factions();
+
+    $Form = $MTypes[$MTNs['Medical Corps']]['Formula'];
+
     foreach ($Things as $T) {
       if ($T['Whose'] != $LastWho) { // Redo Allies
         $LastWho = $T['Whose'];
@@ -977,7 +989,9 @@ function MilitiaArmyRecovery() {
       }
 
       if ($Heals) {
-        $HealVal = 3*$T['ModLevel']+12;  // Should use formulas
+        $HealVal = Mod_FormulaValue($T['ModLevel'],1,$Form);
+
+ //       var_dump($T['ModLevel'],$HealVal);
         for($i = 0; $i < $T['ModNumber']; $i++) {
           if (empty($Heals)) break;
           $RandT = rand(0,count($Heals)-1);

@@ -89,6 +89,23 @@
   } else {
     $OpTypes = Gen_Get_Cond('OrgActions',"(NotBy&$NOTBY)=0 AND ( Office=$OffType OR Office=" . $Org['OrgType2'] .
       " OR ((Props&" . OPER_ALLORGS . ")!=0))  ORDER BY Name");
+
+    if ($Org['ExtraOps']) {
+      $AllOps = Get_OpTypes();
+      $OpNames = NamesList($AllOps);
+      $NamesOps = array_flip($OpNames);
+      $xtras = explode(',',$Org['ExtraOps']);
+
+      foreach ($xtras as $Op) {
+        trim($Op);
+        if (isset($NamesOps[$Op])) {
+          $OpTypes[]= $AllOps[$NamesOps[$Op]];
+        } else {
+          echo "This is a problem with Operation: $Op - tell Richard<p>";
+          break;
+        }
+      }
+    }
   }
 
   if (($OrgTypes[$Org['OrgType']]['Props'] & ORG_NO_BRANCHES) || ($Org['OrgType2'] && ($OrgTypes[$Org['OrgType2']]['Props'] & ORG_NO_BRANCHES)) ) {

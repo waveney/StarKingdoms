@@ -10,5 +10,6 @@ CREATE TABLE `Organisations` (
   `SocialPrinciple` int NOT NULL,
   `RelOrder` int NOT NULL,
   `Team` int NOT NULL,
+  `ExtraOps` text COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
