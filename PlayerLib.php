@@ -343,16 +343,16 @@ function Gain_Science($Who,$What,$Amount,$Why='') { // Ammount is negative to ga
 function Gain_Currency($Who,$What,$Amount,$Why) { // Ammount is negative to gain
   global $GAME;
   $Fact = Get_Faction($Who);
-  if (is_null($What)) {
+  if (is_numeric($What)) {
     if ($What <=4) return 0; // Should be handled by spend_credit and Gain Science TODO generalise in long term
     global $GAME,$Currencies;
     $CNum = $What-4;
-    if ($CNum > 3) { echo "INVALID CURRENCY!!!"; exit; }
+    if ($CNum > 3) { echo "INVALID CURRENCY!!! $What - $Who - $Amount - $Why "; debug_print_backtrace(); exit; }
   } else {
     for ($CNum=1;$CNum<4;$CNum++) {
       if ($What == Feature("Currency$CNum")) break;
     }
-    if ($CNum > 3) { echo "INVALID CURRENCY!!!"; exit; }
+    if ($CNum > 3) { echo "INVALID CURRENCY!!! $What - $Who - $Amount - $Why "; debug_print_backtrace(); exit; }
   }
 
   if (($Fact["Currency$CNum"] + $Amount) < 0 ) return 0;
@@ -644,7 +644,7 @@ function Income_Calc($Fid) {
       foreach ($Offs as $Off ) {
         $Org = Gen_Get('Organisations',$Off['Organisation']);
         $ECon += $Org['OfficeCount'];
-        $EccTxt .= "Plus " . $Org['OfficeCount'] . " From an office of " . $Org['Name'] . "<br\n";
+        $EccTxt .= "Plus " . $Org['OfficeCount'] . " From an office of " . $Org['Name'] . "<br>\n";
       }
     }
     if ($W['Revolt']) {
@@ -676,6 +676,8 @@ function Income_Calc($Fid) {
         $EccTxt .= " - at " . $H['EconomyFactor'] . "%<br>\n";
       } else if ($H['EconomyFactor'] > 100) {
         $EccTxt .= " - at " . $H['EconomyFactor'] . "%<br>\n";
+      } else {
+        $EccTxt .= "<br>\n";
       }
       $EconVal += $ECon;
     }

@@ -59,6 +59,7 @@
     echo "Set Concealment to -1 to remove a link<p>";
   }
 
+  echo "Props: 1=Highlight for blocking<p>";
 
   echo "<form method=post action=EditLinks.php>";
   echo "<div class=tablecont><table id=indextable border>\n";
@@ -82,6 +83,7 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Mod This Turn</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Mod Next Turn</a>\n";
   }
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Props</a>\n";
 
   echo "</thead><tbody>";
   foreach($DT as $D) {
@@ -112,6 +114,8 @@
       echo fm_number1('',$D,'ThisTurnMod','','',"ThisTurnMod$i");
       echo fm_number1('',$D,'NextTurnMod','','',"NextTurnMod$i");
     }
+    echo fm_number1('',$D,'Props','','',"Props$i");
+
   }
   $D = ['Weight'=>1,'Concealment'=>-1];
   echo "<tr><td>" . fm_hidden('GameId0',$GAMEID);
@@ -128,7 +132,8 @@
       echo fm_number1('',$D,'ThisTurnMod','','',"ThisTurnMod0");
       echo fm_number1('',$D,'NextTurnMod','','',"NextTurnMod0");
     }
-//  echo "<td><input type=text name=Level0 value=0>";
+    echo fm_number1('',$D,'Props','','',"Props0");
+    //  echo "<td><input type=text name=Level0 value=0>";
   echo "</table></div>\n";
   echo "<input type=submit name=Update value=Update>\n";
   if ($LinkMethod == 'Gates') {

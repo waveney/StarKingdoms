@@ -935,7 +935,7 @@ function MilitiaArmyRecovery() {
   GMLog("<p>Basic Healling done - now to do Medical Corps");
 
   $Things = Gen_Select("SELECT T.*,M.Level AS ModLevel, M.Number AS ModNumber FROM Things T INNER JOIN Modules AS M ON M.ThingId=T.id " .
-    "WHERE T.GameId=$GAMEID AND T.BuildState=" . BS_COMPLETE . " AND M.Type=" . $MTNs['Medical Corps'] . " ORDER BY T.Whose,T.SystemId");
+    "WHERE T.GameId=$GAMEID AND T.BuildState=" . BS_COMPLETE . " AND M.Type=" . $MTNs['Medical Corps'] . " AND T.SystemId!=0 ORDER BY T.Whose,T.SystemId");
 
 //  var_dump($Things); exit;
   if ($Things) {
@@ -977,7 +977,7 @@ function MilitiaArmyRecovery() {
       }
 
       if ($Heals) {
-        $HealVal = 3*$T['ModLevel'];
+        $HealVal = 3*$T['ModLevel']+12;  // Should use formulas
         for($i = 0; $i < $T['ModNumber']; $i++) {
           if (empty($Heals)) break;
           $RandT = rand(0,count($Heals)-1);

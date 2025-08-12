@@ -42,8 +42,20 @@ NEW GAME FEATURES & BUGS
 461 b-thor 17/6@14:36 /EMN??
 468 Military branches / offices should show on the "Meetups" page as they have the potential to deploy forces.
 527 Ship: Exploratory Fighter Squadron has no System Setup - Call Richard...
-537 Vasou and ARV GXE links 
-543
+537 Vasou and ARV GXE links
+===543 start of turn 
+545 Massive enterprises targetting sps
+547 Octopi battle tactics 
+548 [Mon Aug 11 18:26:53.468956 2025] [proxy_fcgi:error] [pid 2930475:tid 140088268809984] [client 86.132.57.84:0] AH01071: Got error 'PHP message: 
+PHP Warning:  Undefined array key "Control" in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActs/Operations.php on line 22', 
+referer: https://starkingdoms.uk/TurnActions.php?ACTION=Process&S=10
+550 Outposts - in YPK not appear 
+551 Ship: Copy of Exploratory Fighter Squadron has no System Setup - Call Richard... see 527
+552 refresh all own system scans every turn
+553 scans active scan all except districts etc 
+555
+
+
 
 
 Star:
@@ -93,4 +105,17 @@ Periapsis: a(1-e)
 Apoapsis: a(1+e)
 Orbital Period: sqrt(a^3/M)
 Orbital Velocity: sqrt(M/R)
+
+Q1 system type single star, double star.
+if binary either S-type - all go round one star, other star is a VERY LONG way out
+or P-type - stars tightly coupled then position the planets futher out
+Hot Jupiter tightly into parent (retrograde) gap then habitble planets
+Average habitable system 5-9 planets (inc ast belts) 
+
+13% F, 34% G, 53% K
+1.04-1.4 S, 0.6-1.04 S, 0.45-0.8S
+
+
+
+
 

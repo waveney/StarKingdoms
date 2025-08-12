@@ -224,6 +224,7 @@ function ShipMoveCheck($Mode=0) {  // Show all movements to allow for blocking
   $LOWho = GameFeature('LinkOwner',0);
 
   GMLog("<h2>These movements are planned - to stop one, tick the stop box and say why</h2>");
+  GMLog("If there is a thing in <span class=Err>Bold Red</span>, it is moving along a link that has been flagged for extra checking<p>");
   //  GMLog("<form method=Post action=TurnActions.php?ACTION=Complete>" . fm_hidden('S',($Mode?34:32)));
   GMLog("<form method=Post action=TurnActions.php?ACTION=DoStage2>" . fm_hidden('Stage',($Mode?'Agents Move Check':'Ship Move Check')));
 
@@ -258,7 +259,9 @@ function ShipMoveCheck($Mode=0) {  // Show all movements to allow for blocking
         $SR1 = Get_SystemR($L['System1Ref']);
         $SR2 = Get_SystemR($L['System2Ref']);
 
-        GMLog("<tr><td>" . $Facts[$Fid]['Name'] . "<td><a href=ThingEdit.php?id=$Tid>" . $T['Name']  . "<td>" . $T['Level']);
+        $class = (($L['Props']&1)?" class=Err":'');
+
+        GMLog("<tr><td $class>" . $Facts[$Fid]['Name'] . "<td><a href=ThingEdit.php?id=$Tid>" . $T['Name']  . "<td>" . $T['Level']);
         if ($T['SystemId'] == $SR1['id']) {
           GMLog("<td>" . $L['System1Ref'] . "<td style=color:" . $LinkLevels[abs($L['Level'])]['Colour'] . ";>" .
             ($L['Name']?$L['Name']:"#$Lid"). "<td>" . $L['System2Ref']);

@@ -181,6 +181,7 @@
     $N[$field] = $Value;
     if (($field == 'LinkId') && ($Value>0)) {
       Set_Faction();
+      include_once("ThingLib.php");
       $L = Get_Link($Value);
       $SYS1 = Get_SystemR($L['System1Ref']);
       $SYS2 = Get_SystemR($L['System2Ref']);
