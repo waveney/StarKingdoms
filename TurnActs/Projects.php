@@ -22,6 +22,9 @@ function StartProjects() {
 
     if ($ProjTypes[$P['Type']]['Props'] & 2) { // Has a thing
       $Where = Where_Is_Home($P['Home']);
+      if ($Where[0] == 0) {
+        GMLog("<span class=Err>Project ". $P['Name'] . " can't set start location for what it's making - fix before continuing - call Richard</span>");
+      }
       $T = 0;
 
       $Tid = $P['ThingId'];

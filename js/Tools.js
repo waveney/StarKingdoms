@@ -628,3 +628,7 @@ function WhereFilter() {
 		}
   }
 }
+
+function ToggleClass(c) {
+	$('.' +c).toggle();
+}

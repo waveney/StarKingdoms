@@ -124,12 +124,15 @@
        "<h2><a href=OpsDisp.php>Refresh</a></h2>" .
        "</div>";
 
-  echo "Click on Organisation to Expand/Contract<br>";
-  echo "Click on Showing Options top right to see more than 2 turns back<br>\n";
-  echo "Click on the Organisation to expand/contract that area<p><p>";
-  echo "Click on <button type=submit class=PHStart id=StartExample formaction=''>+</button> buttons to start/change Operations<br>\n";
-  echo "Click up/down or write number to rush projects<br>\n";
-  echo "Only Organisations with at least one office are shown<br>\n";
+  echo "<div class=HelpT><button type=button onclick=ToggleClass('HelpT') >Show Help</div><div class=HelpT hidden>";
+
+    echo "Click on Organisation to Expand/Contract<br>";
+    echo "Click on Showing Options top right to see more than 2 turns back<br>\n";
+    echo "Click on the Organisation to expand/contract that area<p><p>";
+    echo "Click on <button type=submit class=PHStart id=StartExample formaction=''>+</button> buttons to start/change Operations<br>\n";
+    echo "Click up/down or write number to rush projects<br>\n";
+    echo "Only Organisations with at least one office are shown<br>\n";
+  echo "</div>";
 
   $Headline1 = '';
   $Headline2 = [];

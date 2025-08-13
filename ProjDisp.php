@@ -289,18 +289,20 @@
        "<h2><a href=ProjDisp.php>Refresh</a></h2>" .
        "</div>";
 
-  echo "Click on Place to Expand/Contract<br>";
-  echo "Click on Showing Options top right to see more than 2 turns back<br>\n";
-  echo "Click on the World, Distict type or Construction to expand/contract that area<p><p>";
-  echo "Click on <button type=submit class=PHStart id=StartExample formaction=''>+</button> buttons to start/change projects<br>\n";
-  echo "Click up/down or write number to rush projects<br>\n";
+  echo "<div class=HelpT><button type=button onclick=ToggleClass('HelpT') >Show Help</div><div class=HelpT hidden>";
+    echo "Click on Place to Expand/Contract<br>";
+    echo "Click on Showing Options top right to see more than 2 turns back<br>\n";
+    echo "Click on the World, Distict type or Construction to expand/contract that area<p><p>";
+    echo "Click on <button type=submit class=PHStart id=StartExample formaction=''>+</button> buttons to start/change projects<br>\n";
+    echo "Click up/down or write number to rush projects<br>\n";
 
-  echo "Note the cost totals are on the far right<br>" .
-       "The credits left on current turn is a rough guide only - it does not take account of other expenditure other than for the current turn " .
-       "- or any additional income.<p>";
+    echo "Note the cost totals are on the far right<br>" .
+         "The credits left on current turn is a rough guide only - it does not take account of other expenditure other than for the current turn " .
+         "- or any additional income.<p>";
 
-  echo "Note 2: The amount of progress before the end of the previous turn is at best a guess.  " .
-       "If the number of districts/planetary construction has changed they will be wrong.<p>\n";
+    echo "Note 2: The amount of progress before the end of the previous turn is at best a guess.  " .
+         "If the number of districts/planetary construction has changed they will be wrong.<p>\n";
+  echo "</div>";
 
 //  echo "Currently this display is for district based projects only.<br>\n";
 
