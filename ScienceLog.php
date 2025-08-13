@@ -51,7 +51,7 @@ $Show['Show'] = 0;
 echo "<div class=floatright ><b>" . fm_radio("Show",$Reses,$Show,'Show',' onchange=ListFilter("Show")') . "</div>";
 
 //var_dump($Tracks);
-TableStart();
+TableStart('striped');
 if ($Fid == 0) TableHead('Who');
 TableHead('Turn','N');
 TableHead('Resource Type');

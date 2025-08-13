@@ -130,8 +130,8 @@ if ($Branches) {
         echo "<br>It's social principles are:<ul>";
         foreach ($SocPs as $si=>$SP) {
           $Prin = Get_SocialP($SP['Principle']);
-          echo "<li><b>" . $Prin['Principle'] . "</b> - Adherence: " . $SP['Value'];
-          echo "<br>" . ParseText($Prin['Description']);
+          echo "<li><b>" . ($Prin['Principle']??'Unknown') . "</b> - Adherence: " . $SP['Value'];
+          echo "<br>" . ParseText($Prin['Description']??'Unknown');
         }
         echo "</ul>";
       } else {

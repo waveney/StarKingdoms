@@ -201,7 +201,7 @@
     echo "<tr><td>Level:<td>" . $O['Level'] . "<td>Status<td>" . ($Project_Status[$O['Status']]);
     echo "<tr>" . (($when > 0)?fm_number("Turn Start",$O,'TurnStart'): "<td>Started Turn:<td>" . $O['TurnStart']);
     if (($when <0) && ($O['TurnEnd']>0)) echo "<td>Finished Turn:<td>" . $O['TurnEnd'];
-    echo "<tr><td>Where:<td>" . $Systems[$O['SystemId']];
+    echo "<tr><td>Where:<td>" . ($Systems[$O['SystemId']]??'Unknown');
 
     echo "<tr>" . ($OpCosts?"<td>Cost:<td>" . $O['Costs']:'') . "<td>Progress needed:<td>" . $O['ProgNeeded'];
     echo "<tr><td>Progress:<td>" . $O['Progress'];
