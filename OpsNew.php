@@ -231,9 +231,27 @@
       } else if ($OpTypes[$op]['Props'] & OPER_BRANCH) {
         $Plan = HabPlanetFromSystem($Wh);
         if ($Plan) {
+          $P = Get_Planet($Plan);
+
+/*          if ($P['HistoricalControl']) {
+            if (Has_Tech($Fid,'Sub-Aquatic Combat')) {
+              $Moon = Gen_Get_Cond1('Moons',"PlanetId=$Plan");
+              if ($Moon) {
+                $Mid = $Moon['id'];
+                $FS = Get_FactionSystemFS($Fid,$Wh );
+                if ($FS['PlanetScan'] >= 4) // Octopi known about
+                $FM = Gen_Get_Cond1('FactionMoon',"id=$Mid");
+                if ($FM) {
+
+                }
+
+              }
+            }
+          }
+ */
+
           $AllReady = Gen_Get_Cond('Branches'," HostType=1 AND HostId=$Plan AND Organisation=$OrgId" );
           if ($AllReady) {
-            $P = Get_Planet($Plan);
             echo "There is already a branch of " . $Org['Name'] . " on " . $P['Name'] . " in " . System_Name($TSys,$Fid) . "</h2>\n";
             break;
           }

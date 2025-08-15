@@ -82,7 +82,7 @@ function Dynamic_Update(&$N,$Tinc=0)  {
   }
 }
 
-function RealWorld(&$Data,$fld) {
+function RealWorld(&$Data,$fld,$AU=0) {
     $Star = (isset($Data['SystemId'])?1:0);
     $val = $Data[$fld] ?? 0;
     $Acc = "%0.2f";
@@ -109,7 +109,7 @@ function RealWorld(&$Data,$fld) {
 
     case 'Luminosity' :
     case 'Luminosity2' :
-      return sprintf("%0.2f x Sun",$val/3.83e26);
+      return sprintf("%0.2f x Sun",$val/3.828E26);
 
     case 'OrbitalRadius' :
       if ($val < 1e7) {
@@ -142,6 +142,9 @@ function RealWorld(&$Data,$fld) {
       }
 
     default:
+      if ($AU) {
+        return sprintf("%0.2f AU",$val/1.496e8);
+      }
       return "";
     }
 }
@@ -198,7 +201,8 @@ function Show_System(&$N,$Mode=0) {
   echo fm_hidden('id',$Sid);
   echo "<tr class=NotSide><td class=NotSide>Id:<td class=NotSide>$Sid<td class=NotSide>Game<td class=NotSide>" . $N['GameId'] .
        "<td class=NotSide>" . $GAME['Name'];
-  echo "<tr class=NotSide>" . fm_text('Grid X',$N,'GridX',1,"class=NotSide") . fm_text('Grid Y',$N,'GridY',1,"class=NotSide") . fm_text('Ref',$N,'Ref',1,"class=NotSide");
+  echo "<tr class=NotSide>" . fm_text('Grid X',$N,'GridX',1,"class=NotSide") . fm_text('Grid Y',$N,'GridY',1,"class=NotSide") .
+       fm_text('Ref',$N,'Ref',1,"class=NotSide");
 
   echo "<tr>" . fm_radio('Control',$FactNames ,$N,'Control','',1,'colspan=6','',$Fact_Colours,0);
   echo "<tr>" . fm_text('Name',$N,'Name',4);
@@ -391,7 +395,8 @@ function Show_Planet(&$P,$Mode=0,$Buts=0) {
        "<td class=NotSide>" . $GAME['Name'] . fm_text('System Ref',$N,'Ref',1,"class=NotSide");
   echo "<tr>" . fm_radio('Control',$FactNames ,$P,'Control','',1,'colspan=5','',$Fact_Colours,0);
   echo "<tr>" . fm_text('Name',$P,'Name',4) . fm_number('Colonise Mod',$P,'ColonyTweak');  // TODO Image
-  echo "<tr>" . fm_text('Short Name',$P,'ShortName') . fm_number('Attributes',$P,'Attributes') . fm_number('Mined',$P,'Mined');
+  echo "<tr>" . fm_text('Short Name',$P,'ShortName') . fm_number('Attributes',$P,'Attributes') . fm_number('Mined',$P,'Mined') .
+       fm_number('Concealment', $P,'Concealment');
   echo "<tr>" . fm_number('Max Districts', $P,'MaxDistricts') . fm_number('Max Offices', $P,'MaxOffices');
   echo "<tr>" . fm_textarea('Description',$P,'Description',4,3);
   echo "<tr><td>Type:<td>" . fm_Select($PTNs,$P,'Type',1) . fm_number('Minerals',$P,'Minerals',1,"class=NotCSide");
@@ -493,7 +498,7 @@ function Show_Moon(&$M,$Mode=0) {
     echo "<span class=NotSide>Fields marked are not visible to factions.</span>";
     echo "  <span class=NotCSide>Marked are visible if set, but not changeable by factions.</span>";
   }
-  echo "Attributes:1=Hide,2,4,8=Inherit System Traits1,2,3<br>";
+  echo "Attributes:1=Was Hide,2,4,8=Inherit System Traits1,2,3<br>";
   echo "Max Districts: 0 = no limit.  Max Offices:0 No limit, -1 include in district limit<p>";
 
   $Pid = $M['PlanetId'];
@@ -516,7 +521,9 @@ function Show_Moon(&$M,$Mode=0) {
   echo "<tr><td class=NotSide>Moon Id:<td class=NotSide>$Mid";
   echo "<tr>" . fm_radio('Control',$FactNames ,$M,'Control','',1,'colspan=6','',$Fact_Colours,0);
   echo "<tr>" . fm_text('Name',$M,'Name',8) . fm_number('Colonise Mod',$P,'ColonyTweak');  // TODO Image
-  echo "<tr>" . fm_text('Short Name',$M,'ShortName') . fm_number('Attributes',$M,'Attributes') . fm_number('Mined',$M,'Mined');
+  echo "<tr>" . fm_text('Short Name',$M,'ShortName') . fm_number('Attributes',$M,'Attributes') . fm_number('Mined',$M,'Mined') .
+       fm_number('Concealment', $M,'Concealment');
+
   echo "<tr>" . fm_number('Max Districts', $P,'MaxDistricts') . fm_number('Max Offices', $P,'MaxOffices');
   echo "<tr>" . fm_textarea('Description',$M,'Description',8,3);
   echo "<tr><td>Type:<td>" . fm_Select($PTNs,$M,'Type',1) . fm_number('Minerals',$M,'Minerals',1,"class=NotCSide");
@@ -1030,7 +1037,7 @@ function System_Owner($Sid) {
 
   $Cont = 0;
   foreach ($Ps as $P) {
-    if ($P['Attributes'] & 1) continue; // Hidden
+    if ($P['Concealment']) continue; // Concealed - need to improve on this
     if ($P['Control']) {
       if ($P['Control'] != $N['Control']) {
         $N['Control'] = $P['Control'];
@@ -1050,7 +1057,7 @@ function System_Owner($Sid) {
     }
     $Ms = Get_Moons($P['id']);
     foreach ($Ms as $M) {
-      if ($M['Attributes'] & 1) continue; // Hidden
+      if ($M['Attributes']) continue; // Concealed - need to improve on this
       if ($M['Control'] != $N['Control']) {
         $N['Control'] = $M['Control'];
         $FS = Get_FactionSystemFS($N['Control'],$Sid);

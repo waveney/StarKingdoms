@@ -522,9 +522,11 @@ function ChunkSplit($txt,$maxlen,$maxchnks) {
 
 global $DDdata;
 $DDdata = [
-    'Image'    => [ 'UseGame'=>1, 'AddState'=>0, 'tr'=>0, 'SetValue'=>'URL', 'Extra'=>"acceptedFiles: 'image/*',", 'cols'=>[4,1], 'path'=>'images', 'Show'=>1 ],
-    'Image2'    => [ 'UseGame'=>1, 'AddState'=>0, 'tr'=>0, 'SetValue'=>'URL', 'Extra'=>"acceptedFiles: 'image/*',", 'cols'=>[4,1], 'path'=>'images', 'Show'=>1 ],
-];
+    'Image'    => [ 'UseGame'=>1, 'AddState'=>0, 'tr'=>0, 'SetValue'=>'URL', 'Extra'=>"acceptedFiles: 'image/*',", 'cols'=>[4,1],
+      'path'=>'images', 'Show'=>1 ],
+    'Image2'    => [ 'UseGame'=>1, 'AddState'=>0, 'tr'=>0, 'SetValue'=>'URL', 'Extra'=>"acceptedFiles: 'image/*',", 'cols'=>[4,1],
+      'path'=>'images', 'Show'=>1 ],
+]; // To accept video add video/* to accepted files -+ other as yet unknown changes
 
 
 //var_dump($DDdata); exit;
