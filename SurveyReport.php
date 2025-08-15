@@ -201,7 +201,7 @@
       $Ps = Get_Planets($Sid);
       $Planets = $Asteroids = 0;
       foreach ($Ps as $Pi=>$P) {
-        if ($P['Attributes'] & 1) {
+        if (($P['Attributes'] & 1) || ($P['Concealment']>$SpaceLevel)) {
           if ($GM || $P['Control'] == $Fid) {
             $Ps[$Pi]['Hidden'] = 1;
           } else {
@@ -209,6 +209,7 @@
             continue;
           }
         }
+        if ($P['Concealment']) echo "It has a conealment rating of: " . $P['Concealment'] . "<br>";
         if ($PTNs[$P['Type']] == 'Asteroid Belt') {
           $Asteroids++;
         } else {
@@ -252,7 +253,7 @@
         if ($P['Moons']) $Mns = Get_Moons($Pid);
 
         foreach ($Mns as $Mip=>$MM) {
-          if ($MM['Attributes'] & 1) {
+          if (($MM['Attributes'] & 1) || ($MM['Concealment']>$PlanetLevel)) {
             if ($GM || $MM['Control'] == $Fid) {
               $Mns[$Mip]['Hidden'] = 1;
             } else {
@@ -346,8 +347,12 @@
           }
         }*/
 
-        if ($SurveyLevel >= 4 && $Mns) {
-          echo Plural($Mns,'',"  The moon of note is:", "  The moons of note are: ") . "<p><ul>";
+        if ($SurveyLevel >= 4 && $Mns) { // NOte this does not yet handle multiple embeded moons or some of each
+          if ((count($Mns) == 1) && ($Mns[array_key_first($Mns)]['OrbitalRadius'] < $P['Radius'])) {
+            echo "Embeded within " . $P['Name'] . " is:<p> ";
+          } else {
+            echo Plural($Mns,'',"  The moon of note is:", "  The moons of note are: ") . "<p><ul>";
+          }
           foreach ($Mns as $M) {
             $Mid = $M['id'];
 
@@ -391,6 +396,7 @@
               if ($M['Radius']) echo ", it has a radius of " . sprintf('%0.2g', $M['Radius']) . " Km = " .  RealWorld($M,'Radius') .
                                    " and gravity at " . sprintf('%0.2g', $M['Gravity']) . " m/s<sup>2</sup> = " .  RealWorld($M,'Gravity');
             }
+            if ($M['Concealment']) echo "It has a conealment rating of: " . $M['Concealment'] . "<br>";
 
             if ($SurveyLevel > 4 && $M['Description']) echo "<p>" . $Parsedown->text(stripslashes($M['Description']));
 

@@ -674,6 +674,7 @@ function PlanetScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
   $Ps = Get_Planets($Sid);
   if (!$Ps) return '';
   foreach ($Ps as $P) {
+    if ($P['Concealment'] > $SpaceLevel) continue;
     $ptxt = '';
 
     $Pid = $P['id'];
@@ -749,6 +750,7 @@ function PlanetScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
     if ($Mns) {
       //Moons of
       foreach ($Mns as $M) {
+        if ($M['Concealment'] > $PlanetLevel) continue;
         $Mid = $M['id'];
 
         if ($M['Minerals']) {
