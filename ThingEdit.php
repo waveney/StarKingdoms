@@ -13,7 +13,7 @@ function New_Thing(&$T) {
   $ttn = Thing_Type_Names();
   $ttypes = Get_ThingTypes();
   $FactNames = Get_Faction_Names();
-  $Fact_Colours = Get_Faction_Colours();
+  [$Fact_Colours,$Fact_Text_Colours] = Get_Faction_Colours();
   $Systems = Get_SystemRefs();
   $BPs = BluePrintList(10000);
   $Varies = Gen_Get_All_Game('Variants');
@@ -42,7 +42,7 @@ function New_Thing(&$T) {
         echo "<tr id=BPSet$i hidden><td>Blue print:<td>" . fm_select($BPs[$i],$T,'BluePrint',1,'',"BLIstZZ$i");
       }
     }
-    echo "<tr>" . fm_radio('Whose',$FactNames ,$T,'Whose','',1,'colspan=6','',$Fact_Colours,0);
+    echo "<tr>" . fm_radio('Whose',$FactNames ,$T,'Whose','',1,'colspan=6','',$Fact_Colours,0,'','',$Fact_Text_Colours);
     echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId',1);
     echo "<tr><td>BuildState:<td>" . fm_select($BuildState,$T,'BuildState');
     echo "<tr><td>" . fm_submit("ACTION","Create");

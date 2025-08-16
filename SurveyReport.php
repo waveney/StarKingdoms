@@ -387,7 +387,7 @@
               echo "Colonised by: " . "<span " . FactColours($M['Control'],'white','padding=2') . ">" . $Fs[$M['Control']]['Name'] . "</span><p>";
             }
 
-            if ($M['Concealment']) echo "<br>It has a conealment rating of: " . $M['Concealment'] . "<br>";
+            if ($M['Concealment']) echo "It has a conealment rating of: " . $M['Concealment'] . "<br>";
 
             echo $Blobs["C$Mid"]??'';
 

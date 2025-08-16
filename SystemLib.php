@@ -181,7 +181,7 @@ function Show_System(&$N,$Mode=0) {
 
   $FactNames = Get_Faction_Names();
   $Facts = Get_Factions();
-  $Fact_Colours = Get_Faction_Colours();
+  [$Fact_Colours,$Fact_Text_Colours] = Get_Faction_Colours();
   $Planets = Get_Planets($Sid);
   $PTNs = Get_PlanetTypeNames();
   $PTD = Get_PlanetTypes();
@@ -204,7 +204,7 @@ function Show_System(&$N,$Mode=0) {
   echo "<tr class=NotSide>" . fm_text('Grid X',$N,'GridX',1,"class=NotSide") . fm_text('Grid Y',$N,'GridY',1,"class=NotSide") .
        fm_text('Ref',$N,'Ref',1,"class=NotSide");
 
-  echo "<tr>" . fm_radio('Control',$FactNames ,$N,'Control','',1,'colspan=6','',$Fact_Colours,0);
+  echo "<tr>" . fm_radio('Control',$FactNames ,$N,'Control','',1,'colspan=6','',$Fact_Colours,0,'','',$Fact_Text_Colours);
   echo "<tr>" . fm_text('Name',$N,'Name',4);
   if (Feature ('OtherControl') && $Mode) echo "<td class=NotSide colspan=2>Other Control: " . fm_select($FactNames,$N,'HistoricalControl');
   echo "<tr>" . fm_text('Short Name',$N,'ShortName') . fm_text1('Nebulae',$N,'Nebulae',1,"class=NotCSide") .
@@ -379,7 +379,7 @@ function Show_Planet(&$P,$Mode=0,$Buts=0) {
 
   $FactNames = Get_Faction_Names();
   $Facts = Get_Factions();
-  $Fact_Colours = Get_Faction_Colours();
+  [$Fact_Colours,$Fact_Text_Colours] = Get_Faction_Colours();
   $DTs = Get_DistrictTypeNames();
   $Ds = Get_DistrictsP($Pid,1);
   $N = Get_System($P['SystemId']);
@@ -393,7 +393,7 @@ function Show_Planet(&$P,$Mode=0,$Buts=0) {
   echo fm_hidden('id',$Pid);
   echo "<tr class=NotSide><td class=NotSide>Id:<td class=NotSide>$Pid<td class=NotSide>Game<td class=NotSide>$GAMEID" .
        "<td class=NotSide>" . $GAME['Name'] . fm_text('System Ref',$N,'Ref',1,"class=NotSide");
-  echo "<tr>" . fm_radio('Control',$FactNames ,$P,'Control','',1,'colspan=5','',$Fact_Colours,0);
+  echo "<tr>" . fm_radio('Control',$FactNames ,$P,'Control','',1,'colspan=5','',$Fact_Colours,0,'','',$Fact_Text_Colours);
   echo "<tr>" . fm_text('Name',$P,'Name',4) . fm_number('Colonise Mod',$P,'ColonyTweak');  // TODO Image
   echo "<tr>" . fm_text('Short Name',$P,'ShortName') . fm_number('Attributes',$P,'Attributes') . fm_number('Mined',$P,'Mined') .
        fm_number('Concealment', $P,'Concealment');
@@ -505,7 +505,7 @@ function Show_Moon(&$M,$Mode=0) {
   $P = Get_Planet($Pid);
   $FactNames = Get_Faction_Names();
   $Facts = Get_Factions();
-  $Fact_Colours = Get_Faction_Colours();
+  [$Fact_Colours,$Fact_Text_Colours] = Get_Faction_Colours();
   $DTs = Get_DistrictTypeNames();
   $Ds = Get_DistrictsM($Mid,1);
   $N = Get_System($P['SystemId']);
@@ -519,7 +519,7 @@ function Show_Moon(&$M,$Mode=0) {
   echo "<tr class=NotSide><td class=NotSide>PlanetId:<td class=NotSide>$Pid<td class=NotSide>Game<td class=NotSide>$GAMEID" .
        "<td class=NotSide>" . $GAME['Name'] . fm_text('System Ref',$N,'Ref',1,"class=NotSide");
   echo "<tr><td class=NotSide>Moon Id:<td class=NotSide>$Mid";
-  echo "<tr>" . fm_radio('Control',$FactNames ,$M,'Control','',1,'colspan=6','',$Fact_Colours,0);
+  echo "<tr>" . fm_radio('Control',$FactNames ,$M,'Control','',1,'colspan=6','',$Fact_Colours,0,'','',$Fact_Text_Colours);
   echo "<tr>" . fm_text('Name',$M,'Name',8) . fm_number('Colonise Mod',$P,'ColonyTweak');  // TODO Image
   echo "<tr>" . fm_text('Short Name',$M,'ShortName') . fm_number('Attributes',$M,'Attributes') . fm_number('Mined',$M,'Mined') .
        fm_number('Concealment', $M,'Concealment');

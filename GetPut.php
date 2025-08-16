@@ -46,13 +46,17 @@ function Get_Faction_Names($None=1) {
 
 function Get_Faction_Colours() {
   global $db,$GAMEID;
-  $res = $db->query("SELECT id,MapColour FROM Factions WHERE GameId=$GAMEID ORDER BY id ");
-  $F = [];
+  $res = $db->query("SELECT id,MapColour,MapText FROM Factions WHERE GameId=$GAMEID ORDER BY id ");
+  $F = $T = [];
   $F[0] = "white";
+  $T[0] = 'black';
   if ($res) {
-    while ($ans = $res->fetch_assoc()) { $F[$ans['id']] = $ans['MapColour']; }
+    while ($ans = $res->fetch_assoc()) {
+      $F[$ans['id']] = $ans['MapColour'];
+      $T[$ans['id']] = $ans['MapText'];
     }
-  return $F;
+  }
+  return [$F,$T];
 }
 
 

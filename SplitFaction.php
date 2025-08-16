@@ -20,13 +20,13 @@ function Create_Faction_Q() {
 
   $MT = [];
   $FactNames = Get_Faction_Names();
-  $Fact_Colours = Get_Faction_Colours();
+  [$Fact_Colours,$Fact_Text_Colours] = Get_Faction_Colours();
 
   echo "<h1>Split Faction - Stage 1 - Into What?</h1>";
 
   echo "<table border>";
   echo "<tr><td colspan=5><h1>Select either one of</h1>";
-  echo "<tr>" . fm_radio('These', $FactNames ,$MT,'Nid','',1,'colspan=6','',$Fact_Colours,0);
+  echo "<tr>" . fm_radio('These', $FactNames ,$MT,'Nid','',1,'colspan=6','',$Fact_Colours,0,'','',$Fact_Text_Colours);
   echo "<tr><td><input type=submit name=ACTION value='Existing Faction'>";
   echo "<tr><td colspan=5><h1>OR create a new faction</h1>";
   echo "<tr>" . fm_text('Name',$MT,'Name');

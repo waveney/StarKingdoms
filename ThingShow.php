@@ -30,7 +30,7 @@ function Show_Thing(&$T,$Force=0) {
   $ttn = Thing_Type_Names();
   $ntt = array_flip($ttn);
   $FactNames = Get_Faction_Names();
-  $Fact_Colours = Get_Faction_Colours();
+  [$Fact_Colours,$Fact_Text_Colours] = Get_Faction_Colours();
   $ThingProps = Thing_Type_Props();
   $tprops = ($ThingProps[$T['Type']]??0);
   $tprops2 = ($TTypes[$T['Type']]['Prop2']??0);
@@ -276,7 +276,7 @@ function Show_Thing(&$T,$Force=0) {
           $Fol = Get_Thing($T['NewSystemId']);
           $LastWhose = 0;
 //          $tting = SeeThing($Fol,$LastWhose,7,$Fid,0,0,0);
-          echo "<tr><td colspan=3>Following: " . "<span style='background:" . $Fact_Colours[$Fol['Whose']] . "'>" .
+          echo "<tr><td colspan=3>Following: " . "<span " . FactColours($Fol['Whose']) . ">" .
                SeeThing($Fol,$LastWhose,7,$Fid,0,0,0) . "</span>";
           echo fm_submit("ACTION",'Cancel Follow',0);
         } else if ($Lid == LINK_INBRANCH ) {
@@ -435,17 +435,19 @@ function Show_Thing(&$T,$Force=0) {
             if ($OtherShips) {
               $List = [];
               $Colrs = [];
+              $TCols = [];
               $LastWhose = 0;
               while ($Thing = $OtherShips->fetch_array()) {
                 $Ttxt = SeeThing($Thing,$LastWhose,($Eyes &15),$Fid,0,0,0);
                 if ($Ttxt) {
                   $List[$Thing['id']] = $Ttxt;
                   $Colrs[$Thing['id']] = $Fact_Colours[$Thing['Whose']];
+                  $TCols[$Thing['id']] = $Fact_Text_Colours[$Thing['Whose']];
                 }
               }
               if ($List) {
                 echo "<td>Or Follow:<td colspan=2>";
-                echo fm_select($List,$T,'FollowId',blank:1,Raw:1,BGColour:$Colrs);
+                echo fm_select($List,$T,'FollowId',blank:1,Raw:1,BGColour:$Colrs,TxtColour:$TCols);
 //            echo fm_radio('',$List,$_REQUEST,'ToFollow',tabs:0,colours:$Colrs, extra4:' onchange=this.form.submit()');
               } else {
                 echo "<td>Nothing to follow";
@@ -526,7 +528,7 @@ function Show_Thing(&$T,$Force=0) {
     }
 
 
-  if ($GM) echo "<tr>" . fm_radio('Whose',$FactNames ,$T,'Whose','',1,'colspan=6','',$Fact_Colours,0);
+  if ($GM) echo "<tr>" . fm_radio('Whose',$FactNames ,$T,'Whose','',1,'colspan=6','',$Fact_Colours,0,'','',$Fact_Text_Colours);
   if  ($tprops & THING_HAS_GADGETS) echo "<tr>" . fm_textarea("Gadgets",$T,'Gadgets',8,3);
   echo "\n<tr>";
   if  (feature('Orders') && ($tprops & THING_HAS_LEVELS)) echo fm_text("Orders",$T,'Orders',2);
@@ -680,7 +682,9 @@ function Show_Thing(&$T,$Force=0) {
   }
 
 
-  if ($tprops & THING_HAS_2_FACTIONS) echo "<tr>" . fm_radio('Other Faction',$FactNames ,$T,'OtherFaction','',1,'colspan=6','',$Fact_Colours,0);
+  if ($tprops & THING_HAS_2_FACTIONS) {
+     echo "<tr>" . fm_radio('Other Faction',$FactNames ,$T,'OtherFaction','',1,'colspan=6','',$Fact_Colours,0,'','',$Fact_Text_Colours);
+  }
   if  ($tprops & (THING_HAS_MODULES | THING_HAS_ARMYMODULES | THING_HAS_HEALTH)) {
     if ($GM) {
       echo "<tr>" . fm_number1('Orig Health',$T,'OrigHealth','','min=0 max=10000');

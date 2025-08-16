@@ -117,11 +117,11 @@
          break;
        case 'XMilitia' : // Transfer to who?
          $FactNames = Get_Faction_Names();
-         $Fact_Colours = Get_Faction_Colours();
+         [$Fact_Colours,$Fact_Text_Colours] = Get_Faction_Colours();
 
          echo "<form method=post action=WorldEdit.php?ACTION=XMilitia2>";
          echo fm_hidden('id',$Wid);
-         echo  fm_radio('Whose',$FactNames ,$_REQUEST,'Whose','',1,'','',$Fact_Colours,0);
+         echo  fm_radio('Whose',$FactNames ,$_REQUEST,'Whose','',1,'','',$Fact_Colours,0,'','',$Fact_Text_Colours);
          echo "<br><input type=submit value='Transfer'>";
          dotail();
 
