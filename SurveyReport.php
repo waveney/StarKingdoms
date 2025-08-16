@@ -157,7 +157,7 @@
 
     if ($N['Control']) echo "Controlled by: " . "<span " . FactColours($N['Control'],'white','padding=2') . ">" . $Fs[$N['Control']]['Name'] . "</span><p>";
     if ($GM && $SurveyLevel >= 10 && $N['HistoricalControl']) echo "Historically controlled by: " .
-        "<span " . FactColours($N['Control'],'white','padding=2') . ">" . $Fs[$N['HistoricalControl']]['Name'] . "</span><p>"; // GM only
+        "<span " . FactColours($N['HistoricalControl'],'white','padding=2') . ">" . $Fs[$N['HistoricalControl']]['Name'] . "</span><p>"; // GM only
 
     // Star (s)
 
@@ -209,7 +209,7 @@
             continue;
           }
         }
-        if ($P['Concealment']) echo "It has a conealment rating of: " . $P['Concealment'] . "<br>";
+        if ($P['Concealment']) echo "<br>It has a conealment rating of: " . $P['Concealment'] . "<br>";
         if ($PTNs[$P['Type']] == 'Asteroid Belt') {
           $Asteroids++;
         } else {
@@ -249,8 +249,7 @@
     if ($SurveyLevel >= 3) {
       foreach ($Ps as $P) {
         $Pid = $P['id'];
-        $Mns = [];
-        if ($P['Moons']) $Mns = Get_Moons($Pid);
+        $Mns = Get_Moons($Pid);
 
         foreach ($Mns as $Mip=>$MM) {
           if (($MM['Attributes'] & 1) || ($MM['Concealment']>$PlanetLevel)) {
@@ -388,15 +387,18 @@
               echo "Colonised by: " . "<span " . FactColours($M['Control'],'white','padding=2') . ">" . $Fs[$M['Control']]['Name'] . "</span><p>";
             }
 
+            if ($M['Concealment']) echo "<br>It has a conealment rating of: " . $M['Concealment'] . "<br>";
+
             echo $Blobs["C$Mid"]??'';
 
-            if ($SurveyLevel >= 4) {
-              echo "It's orbital radius is " . sprintf('%0.2g', $M['OrbitalRadius']) . " Km = " .  RealWorld($M,'OrbitalRadius') .
-                   ($M['Radius']?" ,":" and") . " a period of " . sprintf('%0.2g', $M['Period']) . " Hr = " .  RealWorld($M,'Period');
-              if ($M['Radius']) echo ", it has a radius of " . sprintf('%0.2g', $M['Radius']) . " Km = " .  RealWorld($M,'Radius') .
-                                   " and gravity at " . sprintf('%0.2g', $M['Gravity']) . " m/s<sup>2</sup> = " .  RealWorld($M,'Gravity');
+            if ($M['OrbitalRadius'] >  $P['Radius']) {
+              if ($SurveyLevel >= 4) {
+                echo "It's orbital radius is " . sprintf('%0.2g', $M['OrbitalRadius']) . " Km = " .  RealWorld($M,'OrbitalRadius') .
+                     ($M['Radius']?" ,":" and") . " a period of " . sprintf('%0.2g', $M['Period']) . " Hr = " .  RealWorld($M,'Period');
+                if ($M['Radius']) echo ", it has a radius of " . sprintf('%0.2g', $M['Radius']) . " Km = " .  RealWorld($M,'Radius') .
+                                     " and gravity at " . sprintf('%0.2g', $M['Gravity']) . " m/s<sup>2</sup> = " .  RealWorld($M,'Gravity');
+              }
             }
-            if ($M['Concealment']) echo "It has a conealment rating of: " . $M['Concealment'] . "<br>";
 
             if ($SurveyLevel > 4 && $M['Description']) echo "<p>" . $Parsedown->text(stripslashes($M['Description']));
 

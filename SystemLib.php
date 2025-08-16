@@ -678,8 +678,7 @@ function PlanetScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
     $ptxt = '';
 
     $Pid = $P['id'];
-    $Mns = [];
-    if ($P['Moons']) $Mns = Get_Moons($Pid);
+    $Mns = Get_Moons($Pid);
     if ($P['Minerals']) {
       if (( $PTD[$P['Type']]['Hospitable'] && ($PlanetLevel>0)) ||
         (!$PTD[$P['Type']]['Hospitable'] && ($SpaceLevel>0))) {
@@ -816,7 +815,7 @@ function PlanetScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
       }
 
       if ($ptxt) {
-        $blobs[]= "D$Pid";
+        $blobs[]= "D$Mid";
         $blobs[]= $ptxt;
         $ptxt = '';
       }
