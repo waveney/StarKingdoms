@@ -170,7 +170,7 @@
   if ($GM) {
     echo "<tr>" . fm_number("Minerals", $W, 'Minerals');
   } else {
-     echo "<tr><td>Minerals<td>" . $W['Minerals'];
+    echo "<tr><td>Minerals<td>" . $W['Minerals'];
   }
   echo "<tr>" . fm_number("Relative Importance", $W, 'RelOrder');
   if ($MaxDists == 0) {

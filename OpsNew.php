@@ -118,9 +118,31 @@
   $P2 = $TechLevel = $_REQUEST['P2']??0;
   $P1 = $SP = $_REQUEST['SP']??0;
   $Desc = $_REQUEST['Description']??'';
+  $Target = $_REQUEST['Target']??0;
   $TTYpes = Get_ThingTypes();
   $TTNames = array_flip(NamesList($TTYpes));
   $BTypes = Get_BranchTypes();
+  $ExtraLevels = 0;
+
+  if ($Target) {
+    if ($Target > 0) {
+      $Body = Get_Planet($Target);
+      $ThingType =1;
+      $ThingId = $Target;
+    } else {
+      $Body = Get_Moon(-$Target);
+      $ThingType = 2;
+      $ThingId = -$Target;
+    }
+    if ($Body['TargetMod']) $ExtraLevels = $Body['TargetMod'];
+  } elseif ($Wh) { // Outpost - this is not very satisfactory at the moment
+    $ThingType = 3;
+    $ThingId = 0;
+    $Body = [];
+  } else { // Not setup yet
+    $ThingType = $ThingId = 0;
+    $Body = [];
+  }
 
  // var_dump($Stage,$P1,$P2,$SP,$Wh,$Desc);
   echo "<form method=post action=OpsNew.php>";
@@ -228,40 +250,90 @@
           echo "There is not currently an Outpost there, this operation can't create one.<p>";
           break;
         }
-      } else if ($OpTypes[$op]['Props'] & OPER_BRANCH) {
-        $Plan = HabPlanetFromSystem($Wh);
-        if ($Plan) {
-          $P = Get_Planet($Plan);
+      } else if ($OpTypes[$op]['Props'] & (OPER_BRANCH | OPER_CIVILISED | OPER_SOCP )) {
+// echo "Here<p>";
+        $WLs = WorldsFromSystem($Wh);
 
-/*          if ($P['HistoricalControl']) {
-            if (Has_Tech($Fid,'Sub-Aquatic Combat')) {
-              $Moon = Gen_Get_Cond1('Moons',"PlanetId=$Plan");
-              if ($Moon) {
-                $Mid = $Moon['id'];
-                $FS = Get_FactionSystemFS($Fid,$Wh );
-                if ($FS['PlanetScan'] >= 4) // Octopi known about
-                $FM = Gen_Get_Cond1('FactionMoon',"id=$Mid");
-                if ($FM) {
-
-                }
-
-              }
-            }
+        if (!$WLs) {
+          if ($OpTypes[$op]['Props'] & OPER_BRANCH) {
+            echo "There is no world in " . System_Name($TSys,$Fid) . " that can support a Branch.<p>\n";
+          } else {
+            echo "There is no world in " . System_Name($TSys,$Fid) . " with a civilisation.<p>\n";
           }
- */
+          break;
+        }
 
-          $AllReady = Gen_Get_Cond('Branches'," HostType=1 AND HostId=$Plan AND Organisation=$OrgId" );
+        $WList = [];
+        $FS = Get_FactionSystemFS($Fid,$Wh);
+        if ($WLs) foreach ($WLs as $Wid) {
+          if ($Wid > 0) {
+            $Body = Get_Planet($Wid);
+            if (($Body['Concealment']??0) > $FS['SpaceScan']) continue;
+          } else {
+            $Body = Get_Moon(-$Wid);
+            if (($Body['Concealment']??0) > $FS['PlanetScan']) continue;
+          }
+          if ($Body['TargetGate'] && !eval("return " . $Body['TargetGate'] . ";" )) continue;
+          $WList []= $Wid;
+        }
+// var_dump($WList);
+        if (empty($WList)) {
+          if ($OpTypes[$op]['Props'] & OPER_BRANCH) {
+            echo "There is no world in " . System_Name($TSys,$Fid) . " that can support a Branch.<p>\n";
+          } else {
+            echo "There is no world in " . System_Name($TSys,$Fid) . " with a civilisation.<p>\n";
+          }
+          break;
+        }
+
+        if (count($WList) == 1) {
+          $Target = $WList[0];
+          if ($Target > 0) {
+            $Body = Get_Planet($Target);
+          } else {
+            $Body = Get_Moon(-$Target);
+          }
+        } else {
+          echo "<h2>Select the target within " . System_Name($TSys,$Fid) . "</h2>";
+          foreach ($WList as $Wid) {
+            if ($Wid > 0) {
+              $Body = Get_Planet($Wid);
+            } else {
+              $Body = Get_Moon(-$Wid);
+            }
+            $xtra = '';
+            if ($Body['TargetMod']) $xtra = " (Level +" . $Body['TargetMod'] . ")";
+            echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=3&op=$op&W=$Wh&Target=$Wid'>" .
+              $Body['Name'] . "$xtra</button> \n";
+          }
+          break;
+        } // Deliberate fallthrough
+
+      }
+
+      case 3: // Secondary location
+
+        if ($OpTypes[$op]['Props'] & OPER_BRANCH) {
+          $AllReady = Gen_Get_Cond('Branches'," HostType=$ThingType AND HostId=$ThingId AND Organisation=$OrgId" );
           if ($AllReady) {
-            echo "There is already a branch of " . $Org['Name'] . " on " . $P['Name'] . " in " . System_Name($TSys,$Fid) . "</h2>\n";
+            echo "There is already a branch of " . $Org['Name'] . " on " . $Body['Name'] . " in " . System_Name($TSys,$Fid) . "</h2>\n";
             break;
           }
 
           if ($OpTypes[$op]['Props'] & OPER_SCIPOINTS) {
-            if (Get_DistrictsP($Plan)) { // It has a space age civ
+            if ($Target > 0) {
+              $Ds = Get_DistrictsP($ThingId);
+            } else if ($Target < 0) {
+              $Ds = Get_DistrictsM($ThingId);
+            } else {
+              $Ds = 0;
+            }
+
+            if ($Ds) { // It has a space age civ
 
               echo "<h2>Select Type of Science Points to Collect</h2>";
               for ($i=1;$i<4;$i++) {
-                echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&SP=$i'>" .
+                echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&Target=$Target&SP=$i'>" .
                    $Fields[$i-1] . "</button>\n";
               }
               break;
@@ -272,29 +344,27 @@
             }
           }
 
-        } else {
-          echo "There is no planet in " . System_Name($TSys,$Fid) . " that can support a Branch.<p>\n";
-          break;
         }
-
-      }
       // Drop through
 
 
     case 4: // Secondary Questions
 
       $TSys = Get_System($Wh);
-      $TFid = $TSys['Control'];
-      if (!$Head) echo "<h2>Selected: " . $OpTypes[$op]['Name'] . " in " . System_Name($TSys,$Fid) . "</h2>\n";
+
+      $Name =  $OpTypes[$op]['Name'] . " in " . System_Name($TSys,$Fid) ;
+      if (isset($Body['Name'])) $Name .= " at " . $Body['Name'];
+      if (empty($Head)) echo "<h2>Selected: $Name</h2>\n";
       $Head = 1;
+
       if ($Wh) {
-        $Wid = WorldFromSystem($Wh);
+//        $Wid = WorldFromSystem($Wh);
 //        var_dump("Wid",$Wid);
       }
       $Drop = 0;
 
       if ($OpTypes[$op]['Props'] & OPER_TECH) {
-        $With = $TSys['Control'];
+        $With = $Body['Control']??0;
         if (!$With) {
           echo "<h2>Nobody there to share with...</h2>";
           break;
@@ -311,7 +381,7 @@
           $Tid = $TT['id'];
           if ($MyTechs[$Tid]['Level'] > $FactTechs[$Tid]['Level']) {
             $Lvl = $FactTechs[$Tid]['Level']+1;
-            echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&Te=$Tid&P2=$Lvl'>" .
+            echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&Target=$Target&Te=$Tid&P2=$Lvl'>" .
                  $TT['Name'] . " at level $Lvl</button> \n";
             $Shown = 1;
           }
@@ -323,7 +393,7 @@
           $Tec = $Techs[$Tid];
           $Lvl = $Tec['PreReqLevel'];
           if ($Lvl < 1) continue;
-          echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&Te=$Tid&P2=$Lvl'>" .
+          echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&Target=$Target&Te=$Tid&P2=$Lvl'>" .
                $Tec['Name'] . " at level $Lvl</button> \n";
           $Shown = 1;
         }
@@ -333,14 +403,25 @@
       }
 
       if ($OpTypes[$op]['Props'] & OPER_SOCP) { // Burn Heretics
-        $Wid = WorldFromSystem($Wh,$Fid);
-        $World = Get_World($Wid);
+        if ($Target > 0) {
+          $ThingType = 1;
+          $ThingId = $Target;
+        } else if ($Target <0) {
+          $ThingType = 2;
+          $ThingId = -$Target;
+        } else {
+          var_dump("Here without a Target setup...");
+        }
+
+//        var_dump($ThingType,$ThingId);
+        $World = Gen_Get_Cond1('Worlds',"ThingType=$ThingType AND ThingId=$ThingId");
+        $Wid = ($World['id']??0);
         $SP = $Org['SocialPrinciple'];
         $SocPs = Get_SocialPs($Wid);
 
-        //  var_dump($World,$Wid,$Fid);
-        if ($World['FactionId'] != $Fid) { // Not own World, find if branch
-          $Brs = Gen_Get_Cond('Branches',"Whose=$Fid AND HostType=" . $World['ThingType'] . " AND HostId=" . $World['ThingId']);
+//        var_dump($World,$Wid,$Fid);
+        if (($World['FactionId']??0) != $Fid) { // Not own World, find if branch
+          $Brs = Gen_Get_Cond('Branches',"Whose=$Fid AND HostType=$ThingType AND HostId=$ThingId");
           if (!$Brs) {
             echo "<h2 class=Err>You don't know what the social principles are for that world</h2>";
             break;
@@ -352,8 +433,8 @@
           foreach ($SocPs as $Si=>$SPr) {
             $SP = $SPr['Principle'];
             $Prin = Gen_Get('SocialPrinciples', $SP);
-            echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&SP=$SP'>" .
-            $Prin['Principle'] . " Currently has adherance of " . $SPr['Value'] . "</button><br>\n";
+            if ($Prin) echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&Target=$Target&SP=$SP'>" .
+              $Prin['Principle'] . " Currently has adherance of " . $SPr['Value'] . "</button><br>\n";
           }
           break;
         }
@@ -373,7 +454,7 @@
 //          $OSysRef = ($L['System1Ref']==$Ref? $L['System2Ref']:$L['System1Ref']);
 //          $ON = Get_SystemR($OSysRef);
           if (LinkVis($Fid,$Lid,$Wh)) {
-            echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&SP=$Lid'>" .
+            echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&Target=$Target&SP=$Lid'>" .
             $L['Name'] . "</button> \n";
           }
         }
@@ -381,12 +462,7 @@
       }
 
       if (($OpTypes[$op]['Props'] & OPER_MONEY)) {
-        $Wid = WorldFromSystem($Wh,$Fid);
-        $To1 = $To2 = 0;
-        if ($Wid) {
-          $World = Get_World($Wid);
-          $To1 = $World['FactionId'];
-        }
+        $To1 = $Body['Control']??0;
 
         $OutPs = Get_Things_Cond(0,"Type=" . $TTNames['Outpost'] . " AND SystemId=$Wh AND BuildState=" . BS_COMPLETE);
         if ($OutPs) {
@@ -446,7 +522,7 @@
           } else {
             echo "<h2>Please select which Anomaly?</h2>";
             foreach($AnomList as $Aid=>$AL) {
-              echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&SP=$Aid'>$AL</button> \n";
+              echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&Target=$Target&SP=$Aid'>$AL</button> \n";
             }
           }
         } else {
@@ -457,7 +533,7 @@
 
       // COmpound questions
       if (($OpTypes[$op]['Props'] & (OPER_LEVELMOD | OPER_DESC))) {
-        echo fm_hidden('Stage',5) . fm_hidden('op',$op) . fm_hidden('W',$Wh) . fm_hidden('O',$OrgId) .fm_hidden('t',$Turn);
+        echo fm_hidden('Stage',5) . fm_hidden('op',$op) . fm_hidden('W',$Wh) . fm_hidden('O',$OrgId) .fm_hidden('t',$Turn) . fm_hidden('Target',$Target);
 
         if ($OpTypes[$op]['Props'] & OPER_LEVELMOD) {
           echo fm_number('Level Modifier',$_REQUEST,'SP','','min=0');
@@ -479,8 +555,11 @@
       $Level = 0;
       $Name =  $OpTypes[$op]['Name'] . " in " . System_Name($TSys,$Fid) ;
 
+//      var_dump($Body);
+      if (isset($Body['Name'])) $Name .= " at " . $Body['Name'];
+
       if (!isset($Head)) {
-        echo "<h2>Selected: " . $OpTypes[$op]['Name'] . " in " . System_Name($TSys,$Fid) . "</h2>\n";
+        echo "<h2>Selected: $Name</h2>\n";
       }
       if ($TechId) {
         $Tech = Get_Tech($TechId);
@@ -521,15 +600,16 @@
         $Name .= " Wormhole: " . $L['Name'];
       }
       if (($OpTypes[$op]['Props'] & OPER_SCIPOINTS)) { // Science Points
-        $Name .= " " . $Fields[$SP-1];
+        $Name .= " - " . $Fields[$SP-1];
       }
       if (($OpTypes[$op]['Props'] & OPER_LEVELMOD)) {
         $AMod = $SP;
       }
 
       if (($OpTypes[$op]['Props'] & OPER_DESC)) {
-        $Name .= " $Desc";
+        $Name .= " - $Desc";
       }
+
 
 //      var_dump($OpTypes[$op]['Props'],$Name);
       if (($OpTypes[$op]['Props'] & OPER_LEVELMOD) == 0) $Mod = ($OpTypes[$op]['Props'] & OPER_LEVEL);
@@ -539,7 +619,7 @@
       }
       $Mod += $AMod;
 
-      $BaseLevel = Op_Level($OrgId,$Wh);
+      $BaseLevel = Op_Level($OrgId,$Wh) + $ExtraLevels;
       if ($BaseLevel<0) {
         echo "<h2 class=Err>No path found to one of your worlds or branches</h2>";
         break;
@@ -570,7 +650,7 @@
       echo "This operation will be at level $BaseLevel (Needing $ProgNeed progress).  You currently do " . $Org['OfficeCount'] . " progress per turn.<p>";
 
       echo "<button class=projtype type=submit " .
-           "formaction='OpsDisp.php?ACTION=NEW&t=$Turn&O=$OrgId&op=$op&W=$Wh&SP=$SP&Te=$TechId&P2=$P2&N=" .
+           "formaction='OpsDisp.php?ACTION=NEW&t=$Turn&O=$OrgId&op=$op&W=$Wh&Target=$Target&SP=$SP&Te=$TechId&P2=$P2&N=" .
            base64_encode("$Name") . "&L=$BaseLevel&PN=$ProgNeed&Desc=" . base64_encode("$Desc") . "'>$Name</button> \n";
 
       echo "Click to confirm<p>";

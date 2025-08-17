@@ -292,6 +292,14 @@ function HabPlanetFromSystem($Sid) {
   return 0;
 }
 
+function WorldsFromSystem($Sid) {
+  $Sys = Get_System($Sid);
+  $WL = $Sys['WorldList'];
+  if (!$WL) return 0;
+  $WLs = explode(',',$WL);
+  return $WLs;
+}
+
 function CheckBranches() {
   global $GAMEID;
   $OrgTypes = Get_OrgTypes();
@@ -336,6 +344,7 @@ function Outpost_In($Sid,$Who,$Create=1) {
 
 function World_In($Sid,$Who) {
   global $GAMEID;
+
   $Plan = HabPlanetFromSystem($Sid);
   if ($Plan == 0) return 0;
   $World = Gen_Get_Cond1('Worlds',"ThingType=1 AND ThingId=$Plan");
@@ -352,8 +361,8 @@ function World_In($Sid,$Who) {
     }
   }
   $World['Name'] = $P['Name'];
-
   return $World;
+
 }
 
 function New_Branch(&$World,$Type,&$O,&$Org) {

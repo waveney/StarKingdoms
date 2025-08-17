@@ -79,6 +79,7 @@
         $OrgId = $_REQUEST['O'];
         $SP = $_REQUEST['SP']??0;
         $Wh = $_REQUEST['W']??0;
+        $Target = $_REQUEST['Target']??0;
         $Te = $_REQUEST['Te']??0;
         $P2 = $TL = $_REQUEST['P2']??0;
         $Name = (isset($_REQUEST['Name'])?$_REQUEST['Name']:base64_decode($_REQUEST['N']??0));
@@ -96,7 +97,7 @@
 
           $Pro = ['Whose'=>$Fid, 'Type'=>$Optype, 'Level'=> $Level, 'OrgId'=>$OrgId, 'Progress'=>0, 'Status'=>0, 'TurnStart'=>$Turn,
                   'Name'=>$Name, 'Costs' => $Costs, 'ProgNeeded' => $ProgN, 'Status'=>0, 'FreeRushes'=>$FreeRush, 'TurnEnd'=>0,
-                  'SystemId'=>$Wh, 'Para1' => ($SP?$SP:$Te), 'Para2' => $P2, 'GameId'=>$GAMEID, 'Description'=>$Desc,
+                  'SystemId'=>$Wh, 'Para1' => ($SP?$SP:$Te), 'Para2' => $P2, 'GameId'=>$GAMEID, 'Description'=>$Desc, 'Target'=>$Target,
 
           ];
 

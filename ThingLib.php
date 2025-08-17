@@ -489,15 +489,30 @@ function Calc_Damage(&$T,&$Rescat) {
   if ($T['Variant']??0) {
     $V = Gen_Get('Variants',$T['Variant']);
     $vev = $V['Firepower'];
-    switch ($V['FireType']) {
-      case 0:
-        $Dam += $vev;
-        break;
-      case 1:
-        $Dam += ceil($Dam*$vev/100);
-        break;
-      case 2:
-        $Dam = $vev;
+    if ($vev) {
+      switch ($V['FireType']) {
+        case 0:
+          $Dam += $vev;
+          break;
+        case 1:
+          $Dam += ceil($Dam*$vev/100);
+          break;
+        case 2:
+          $Dam = $vev;
+      }
+    }
+    $vev = $V['TargetEvasion'];
+    if ($vev) {
+      switch ($V['TargetType']) {
+        case 0:
+          $ToHit += $vev;
+          break;
+        case 1:
+          $ToHit += ceil($Dam*$vev/100);
+          break;
+        case 2:
+          $ToHit = $vev;
+      }
     }
   }
 
@@ -715,7 +730,7 @@ function Calc_Evasion(&$T) {
     $T['TargetEvasion'] = $V['TargetEvasion']??0; // Actual Number calculated when in battle
   }
 
-  if (Has_Trait(($T['Whose']??0),'Active Chronosphere') && ($TTypes[$T['Type']]['Properties'] && THING_IS_SMALL) &&
+  if (Has_Trait(($T['Whose']??0),'Active Chronosphere') && ($TTypes[$T['Type']]['Properties'] & THING_IS_SMALL) &&
     ($TTypes[$T['Type']]['Properties'] && THING_HAS_SHIPMODULES)) { // Its a fighter, now to see where built
 
     $Bsys = ($T['WhereBuilt']??0);

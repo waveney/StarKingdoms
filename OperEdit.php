@@ -162,7 +162,7 @@
 //    echo "<td class=NotSide>" . fm_checkbox('GM Lock',$O,'GMLock');
     echo "<tr>" . fm_number("Turn Start",$O,'TurnStart') . fm_number('Turn Ended', $O, 'TurnEnd');
     if ($O['TurnState']) echo "<td>Paused This Turn";
-    echo "<tr><td>Where:<td>" . fm_select($Systems,$O,'SystemId',1);
+    echo "<tr><td>Where:<td>" . fm_select($Systems,$O,'SystemId',1) . fm_number('Target',$O,'Target');
     if (Feature('OperationRushes')) echo "<td>" . fm_checkbox('GM Override',$O,'GMOverride') . " Set to override maxrush";
     echo "<tr>" . ($OpCosts?fm_number('Cost',$O,'Costs'):'') . fm_number('Prog Needed', $O,'ProgNeeded');
     echo "<tr>" . fm_number("Progress",$O,'Progress') . fm_number('Last Updated',$O,'LastUpdate');
@@ -211,8 +211,8 @@
     } else if ($PProps & OPER_SOCP) {
       $SP = Get_SocialP($O['Para1']);
       echo "<tr><td>Social Principe:<td>" . $SP['Principle'];
-    } else if ($PProps & OPER_CIVILISED) {
-      echo "<tr><td>Science Points:<td>" . $Fields[$O['Para1']-1];
+    } else if ($PProps & OPER_SCIPOINTS) {
+      echo "<tr><td>Science Points:<td>" . ($Fields[$O['Para1']-1]??'Unknown - Tell Richard');
     } else if ($PProps & OPER_MONEY) {
       echo "<tr><td>Credits:<td>" . Credit() . $O['Para1'];
     }
