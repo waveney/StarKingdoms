@@ -87,7 +87,7 @@
     }
 
   $MT = [];
-  echo "<tr><td><td><input type=text name=Name0 >";
+  echo "<tr><td><td><input type=text name=ModuleTypes:Name:0 >";
 //  echo "<td>" . fm_basictextarea($MT,'Description',1,2,'',"Description0");
   echo fm_hidden('ModuleTypes:NotBy:0',$SETNOT);
   if ($AllG) echo "<td>$SETNOT";

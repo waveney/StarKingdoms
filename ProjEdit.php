@@ -291,7 +291,7 @@
         $P['ThingType'] = abs($P['ThingType']);
       }
 
-      var_dump($PProps);
+//      var_dump($PProps);
       if ($PProps & 0x2000) echo "<td>Tech:<td>" . fm_select($TechNames, $P, 'ThingType'). "<td>" . $Fields[($Techs[$P['ThingType']]['Cat']??4)];
       if ($PProps & 0x1000) {
         $OTypes = Get_OrgTypes();
@@ -415,7 +415,7 @@
 
   echo "</table><h2>";
   echo fm_submit("Ignore","Ignore",0," hidden");
-  if ($when >=0) echo fm_submit("ACTION",'Abandon Project',0) . " ";
+  echo fm_submit("ACTION",'Abandon Project',0) . " ";
   if ($when > 0 || $GM )  {
     if ($P['Status'] == 0) echo fm_submit("ACTION",'Delete',0) . " ";
     if (($PProps & 128) && ($P['ThingType']>0)) {

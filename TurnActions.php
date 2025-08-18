@@ -941,86 +941,94 @@ function MilitiaArmyRecovery() {
 
   }
 
-  GMLog("<p>Basic Healling done - now to do Medical Corps");
+  GMLog("<p>Basic Healling done - now to do Medical Corps/Medical Bays");
 
-  $Things = Gen_Select("SELECT T.*,M.Level AS ModLevel, M.Number AS ModNumber FROM Things T INNER JOIN Modules AS M ON M.ThingId=T.id " .
-    "WHERE T.GameId=$GAMEID AND T.BuildState=" . BS_COMPLETE . " AND M.Type=" . $MTNs['Medical Corps'] . " AND T.SystemId!=0 ORDER BY T.Whose,T.SystemId");
+  foreach(['Medical Corps','Medical Bays'] as $Med ) {
+    $Things = Gen_Select("SELECT T.*,M.Level AS ModLevel, M.Number AS ModNumber FROM Things T INNER JOIN Modules AS M ON M.ThingId=T.id " .
+      "WHERE T.GameId=$GAMEID AND T.BuildState=" . BS_COMPLETE . " AND M.Type=" . $MTNs[$Med] . " AND T.SystemId!=0 ORDER BY T.Whose,T.SystemId");
 
-//  var_dump($Things); exit;
-  if ($Things) {
-    $LastWho = $LastSys = -1;
-    $Allies = [];
-    $Damaged = [];
-    $Facts = Get_Factions();
+  //  var_dump($Things); exit;
+    if ($Things) {
+      $LastWho = $LastSys = -1;
+      $Allies = [];
+      $Facts = Get_Factions();
 
-    $Form = $MTypes[$MTNs['Medical Corps']]['Formula'];
+      $Form = $MTypes[$MTNs[$Med]]['Formula'];
 
-    foreach ($Things as $T) {
-      if ($T['Whose'] != $LastWho) { // Redo Allies
-        $LastWho = $T['Whose'];
-        $LastSys = -1;
-        $FF = Get_FactionFactions($LastWho);
-        foreach($Facts as $Fid=>$F) if (($FF[$Fid]['Relationship']??5) >= 9 ) $Allies[$Fid] = 1;
-        $Allies[$LastWho] = 1;
-      }
+      foreach ($Things as $T) {
+        if ($T['Whose'] != $LastWho) { // Redo Allies
+          $LastWho = $T['Whose'];
+          $LastSys = -1;
+          $FF = Get_FactionFactions($LastWho);
+          foreach($Facts as $Fid=>$F) if (($FF[$Fid]['Relationship']??5) >= 9 ) $Allies[$Fid] = 1;
+          $Allies[$LastWho] = 1;
+        }
 
-      if ($T['LinkId'] >= 0) {
-        $Sid = $T['SystemId'];
-      } else {
-        if ($T['LinkId'] >= LINK_LOAD_AND_UNLOAD) { // On board - these wont be in the ideal order to process but tough
-          $H = Get_Thing($T['SystemId']);
-          $Sid = $H['SystemId'];
-        } else {
+        $FindM = 0;
+        if ($Med == 'Medical Bays') {
+          $FindM = 1;
+        } else if ($T['LinkId'] >= 0) {
           $Sid = $T['SystemId'];
-        }
-      }
-
-      // Find damaged allies with army modules in same system
-
-      if ($LastSys < 0 || $LastSys != $Sid) {
-        $Healable = Gen_Get_Cond('Things',"BuildState=3 AND SystemId=$Sid AND CurHealth<OrigHealth");
-        $Heals = [];
-        foreach ($Healable as $Hid=>$H) {
-          if (($Allies[$H['Whose']]??0) && ( $TTypes[$H['Type']]['Properties'] & THING_HAS_ARMYMODULES )) {
-            $Heals[] = $Hid;
+        } else {
+          if ($T['LinkId'] >= LINK_LOAD_AND_UNLOAD) { // On board - these wont be in the ideal order to process but tough
+            $H = Get_Thing($T['SystemId']);
+            $FindM = 1;
+          } else {
+            $Sid = $T['SystemId'];
           }
         }
-        $LastSys = $Sid;
-      }
 
-      if ($Heals) {
-        $HealVal = Mod_FormulaValue($T['ModLevel'],1,$Form);
+        // Find damaged allies with army modules in same system
 
- //       var_dump($T['ModLevel'],$HealVal);
-        for($i = 0; $i < $T['ModNumber']; $i++) {
-          if (empty($Heals)) break;
-          $RandT = rand(0,count($Heals)-1);
-          // var_dump($RandT,$Heals,$HealVal);
-          $Tgtid = $Heals[$RandT];
-          $Tgt = Get_Thing($Tgtid);
-
-          $OrdHealth = $Tgt['CurHealth'];
-          $HVal = min($HealVal,$Tgt['OrigHealth']-$Tgt['CurHealth']);
-          $Tgt['CurHealth'] += $HVal;
-          if ($Tgt['OrigHealth'] <= $Tgt['CurHealth']) {
-            array_splice($Heals,$RandT,1); //unset($Heals[$RandT]);
+        if ($LastSys < 0 || $LastSys != $Sid || $FindM) {
+          if ($FindM) {
+            $Healable = Gen_Get_Cond('Things',"BuildState=3 AND SystemId=" . $T['id'] . " AND LinkId=-1 AND CurHealth<OrigHealth");
+          } else {
+            $Healable = Gen_Get_Cond('Things',"BuildState=3 AND SystemId=$Sid AND CurHealth<OrigHealth");
           }
+          $Heals = [];
+          foreach ($Healable as $Hid=>$H) {
+            if (($Allies[$H['Whose']]??0) && ( $TTypes[$H['Type']]['Properties'] & THING_HAS_ARMYMODULES )) {
+              $Heals[] = $Hid;
+            }
+          }
+          $LastSys = $Sid;
+        }
 
-          Put_Thing($Tgt);
-          TurnLog($Fid,$T['Name'] . " restored $HVal health to " . $Tgt['Name'],$Tgt);
-          GMLog($T['Name'] . " restored $HVal health to " . $Tgt['Name']);
-          if ($Tgt['Whose']!=$LastWho) TurnLog($Tgt['Whose'],$T['Name'] . " restored $HVal health to " . $Tgt['Name']);
+        if ($Heals) {
+          $HealVal = Mod_FormulaValue($T['ModLevel'],1,$Form);
+
+   //       var_dump($T['ModLevel'],$HealVal);
+          for($i = 0; $i < $T['ModNumber']; $i++) {
+            if (empty($Heals)) break;
+            $RandT = rand(0,count($Heals)-1);
+            // var_dump($RandT,$Heals,$HealVal);
+            $Tgtid = $Heals[$RandT];
+            $Tgt = Get_Thing($Tgtid);
+
+            $OrdHealth = $Tgt['CurHealth'];
+            $HVal = min($HealVal,$Tgt['OrigHealth']-$Tgt['CurHealth']);
+            $Tgt['CurHealth'] += $HVal;
+            if ($Tgt['OrigHealth'] <= $Tgt['CurHealth']) {
+              array_splice($Heals,$RandT,1); //unset($Heals[$RandT]);
+            }
+
+            Put_Thing($Tgt);
+            TurnLog($Fid,$T['Name'] . " restored $HVal health to " . $Tgt['Name'],$Tgt);
+            GMLog($T['Name'] . " restored $HVal health to " . $Tgt['Name']);
+            if ($Tgt['Whose']!=$LastWho) TurnLog($Tgt['Whose'],$T['Name'] . " restored $HVal health to " . $Tgt['Name']);
+
+          }
 
         }
 
       }
-
+    } else {
+      GMLog("Nothing has a $Med Module");
     }
-  } else {
-    GMLog("Nothing has a Medical Corp Module");
-  }
 
-  GMLog("All Medical Corps handled");
+  }
+  GMLog("All Medical Corps?Bays handled");
 
   return 1;
 }

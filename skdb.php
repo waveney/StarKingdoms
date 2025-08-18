@@ -383,7 +383,6 @@ function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$M
         break;
       }
     }
-
     if ($data) foreach($data as $t) {
       $i = $t[$indxname];
       if ($i) {
@@ -428,7 +427,8 @@ function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$M
         }
       }
     }
-    if (isset($_POST["$Mstr$Sep" . "0"] ) && $_POST["$Mstr$Sep" . "0"] != $MstrNot) {
+
+    if (isset($_POST["$Pfx$Mstr$Sep" . "0"] ) && $_POST["$Pfx$Mstr$Sep" . "0"] != $MstrNot) {
       $t = array();
       foreach ($Flds as $fld=>$ftyp) {
         if ($fld == $indxname) continue;
