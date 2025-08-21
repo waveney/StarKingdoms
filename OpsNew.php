@@ -268,10 +268,10 @@
         if ($WLs) foreach ($WLs as $Wid) {
           if ($Wid > 0) {
             $Body = Get_Planet($Wid);
-            if (($Body['Concealment']??0) > $FS['SpaceScan']) continue;
+            if ((($Body['Concealment']??0) > 0) && (($Body['Concealment']??0) > $FS['SpaceScan'])) continue;
           } else {
             $Body = Get_Moon(-$Wid);
-            if (($Body['Concealment']??0) > $FS['PlanetScan']) continue;
+            if ((($Body['Concealment']??0) > 0) && (($Body['Concealment']??0) > $FS['PlanetScan'])) continue;
           }
           if ($Body['TargetGate'] && !eval("return " . $Body['TargetGate'] . ";" )) continue;
           $WList []= $Wid;

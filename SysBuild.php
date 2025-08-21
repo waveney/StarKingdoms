@@ -57,7 +57,7 @@
         $LineF = sqrt($L/$SunStats['Luminosity']);
         $N = ['Mass'=>$Mass*$SunStats['Mass'], 'Luminosity' => $L, 'Radius' =>$SunStats['Radius']*($Mass**0.74),
           'Temperature' => $SunStats['Temperature']*($Mass**0.505), 'Type'=>$Stype, 'InnerLim'=>0.1*$Mass*$AU, 'OuterLim'=>40*$Mass*$AU,
-          'FrostLine'=>4.85*$LineF*$AU, 'HabInner'=>0.80*$LineF*$AU, 'HabOuter'=>1.37*$LineF*$AU,
+          'FrostLine'=>4.85*$LineF*$AU, 'HabInner'=>0.70*$LineF*$AU, 'HabOuter'=>1.45*$LineF*$AU,
         ];
 //        $N['Roche'] = 0.78*(($N['Mass']/5400)**(1/3));
 

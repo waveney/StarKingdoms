@@ -273,7 +273,7 @@
         }
       }
 
-      if ($GM || (($FS['ScanLevel']??0)>=0)) $atts .= " shape=" .
+      if ($GM || (($FS['ScanLevel']??-1)>=0)) $atts .= " shape=" .
         ($N['Hospitable']?(($N['Hospitable']>1)?$MultiHabitableShape:$HabitableShape):$InHabitableShape);
       if ($typ) $atts .=
         " pos=\"" . ($N['GridX']*$XScale+(5-$N['GridY'])/2) . "," . (9-$N['GridY'])*$Scale . "!\"";

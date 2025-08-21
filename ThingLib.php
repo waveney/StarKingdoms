@@ -483,7 +483,14 @@ function Calc_Damage(&$T,&$Rescat) {
         $Dam += $dam;
       }
     }
-    $ToHit += $M['Number']*$mt['ToHitMod'];
+
+    if ($mt['ToHitMod']) {
+      if ($mt['ToHitMod'] == -100){
+        $ToHit += Mod_ValueSimple($M['Level'],$mti,$Rescat)*$M['Number'];
+      } else {
+        $ToHit += $M['Number']*$mt['ToHitMod'];
+      }
+    }
   }
 
   if ($T['Variant']??0) {
