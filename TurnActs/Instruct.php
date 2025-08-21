@@ -634,6 +634,7 @@ function Instructions() {
         break;
 
       case 'Salvage':
+      case 'Scavenge':
         $T['Instruction'] = -$T['Instruction'];
         break;
 
@@ -1374,6 +1375,68 @@ function InstructionsComplete() {
         } else {
           TurnLog($Who,"Salvage was attempted in " .  $N['Ref'] . " but there are no wrecks currently present.");
           GMLog("Salvage was attempted in " .  $N['Ref'] . " by " . $Facts[$Who]['Name'] . " but there are no wrecks currently present.");
+        }
+        break;
+
+      case 'Scavenge':  // Find all Ex things on ground, go through each work out money, if have Wrecage analysis give that report as well
+        $Wrecks = Get_Things_Cond(0,"SystemId=" . $T['SystemId'] . " AND BuildState>" . BS_COMPLETE);
+        $SalvageLevel = Has_Tech($Who,'Scavengers');
+        $HasWreck = Has_Tech($Who,'Wreckage Analysis');
+        $TotMoney = $Xenology = 0;
+        $ModTypes = Get_ModuleTypes();
+
+        $N = Get_System($T['SystemId']);
+
+        foreach ($Wrecks as $W) {
+          if (($TTypes[$W['Type']]['Properties'] & THING_HAS_ARMYMODULES) != 0) {
+            $Money = $Xeno = 0;
+            $Wreck = [];
+            switch ($TTypes[$W['Type']]['Name']) {
+
+              case 'Detachment':
+              case 'Planetary Defence Force':
+              case 'Heavy Security' :
+                $Money = min(10*$W['Level']*$SalvageLevel,Proj_Costs($W['Level'])[1]*0.9);
+                if ($HasWreck) {
+                  $Modules = Get_Modules($W['id']);
+                  foreach ($Modules as $Mod) {
+                    $L = Has_Tech($W['Whose'],$ModTypes[$Mod['Type']]['BasedOn']);
+                    if ($L) {
+                      $Wreck[]= $Mod['Number'] . " " . $ModTypes[$Mod['Type']]['Name'] . " L$L";
+                    } else {
+                      $Wreck[]= $Mod['Number'] . " Unknown modules.";
+                    }
+                  }
+                }
+
+                Thing_Delete($W['id']);
+                break;
+
+              default:
+                break;
+            }
+            if ($Money) {
+              if (Has_Trait($W['Whose'],'Organic Units')) {
+                $Money = ceil($Money/4);
+                $Xeno = $W['Level'];
+                $Xenology += $Xeno;
+              }
+
+              $TotMoney += $Money;
+              TurnLog($Who,"The wreckage of the " . (empty($W['Name'])? ("Unknown Thing #" . $W['id']) : $W['Name']) .
+                " has been Scavenged.  in " . $N['Ref'] . " Gaining " . Credit() . $Money . ($Xeno?" and $Xeno Xenology points":''));
+              if ($Wreck) TurnLog($Who, "It had: " . implode(', ', $Wreck));
+            }
+          }
+        }
+        if ($TotMoney) {
+          Spend_Credit($Who,- $TotMoney, "Scavenging from " . $N['Ref']);
+          if ($Xenology) {
+            Gain_Science($Who,'Xenology', $Xenology,"Scavenging from ". $N['Ref']);
+          }
+        } else {
+          TurnLog($Who,"Scavenging was attempted in " .  $N['Ref'] . " but there are no wrecks currently present.");
+          GMLog("Scavenging was attempted in " .  $N['Ref'] . " by " . $Facts[$Who]['Name'] . " but there are no wrecks currently present.");
         }
         break;
 

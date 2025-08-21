@@ -587,6 +587,76 @@ global $FACTION;
       Put_Thing($T);
       break;
 
+    case 'Scavenge' : // To Be Written
+      include_once("TurnTools.php");
+      include_once("ProjLib.php");
+      $TTypes = Get_ThingTypes();
+      echo "Doing Scavenging<br>";
+      $tid = $_REQUEST['id'];
+      $T = Get_Thing($tid);
+      $Who = $T['Whose'];
+
+      $Wrecks = Get_Things_Cond(0,"SystemId=" . $T['SystemId'] . " AND BuildState>" . BS_COMPLETE);
+      $SalvageLevel = Has_Tech($Who,'Scavengers');
+      $HasWreck = Has_Tech($Who,'Wreckage Analysis');
+      $TotMoney = $Xenology = 0;
+      $ModTypes = Get_ModuleTypes();
+
+      $N = Get_System($T['SystemId']);
+
+      foreach ($Wrecks as $W) {
+        if (($TTypes[$W['Type']]['Properties'] & THING_HAS_ARMYMODULES) != 0) {
+          $Money = $Xeno = 0;
+          $Wreck = [];
+          switch ($TTypes[$W['Type']]['Name']) {
+
+            case 'Detachment':
+            case 'Planetary Defence Force':
+            case 'Heavy Security' :
+              $Money = min(10*$W['Level']*$SalvageLevel,Proj_Costs($W['Level'])[1]*0.9);
+              if ($HasWreck) {
+                $Modules = Get_Modules($W['id']);
+                foreach ($Modules as $Mod) {
+                  $L = Has_Tech($W['Whose'],$ModTypes[$Mod['Type']]['BasedOn']);
+                  if ($L) {
+                    $Wreck[]= $Mod['Number'] . " " . $ModTypes[$Mod['Type']]['Name'] . " L$L";
+                  } else {
+                    $Wreck[]= $Mod['Number'] . " Unknown modules.";
+                  }
+                }
+              }
+
+              Thing_Delete($W['id']);
+              break;
+
+            default:
+              break;
+          }
+          if ($Money) {
+            if (Has_Trait($W['Whose'],'Organic Units')) {
+              $Money = ceil($Money/4);
+              $Xeno = $W['Level'];
+              $Xenology += $Xeno;
+            }
+
+            $TotMoney += $Money;
+            TurnLog($Who,"The wreckage of the " . (empty($W['Name'])? ("Unknown Thing #" . $W['id']) : $W['Name']) .
+              " has been Scavenged.  in " . $N['Ref'] . " Gaining " . Credit() . $Money . ($Xeno?" and $Xeno Xenology points":''));
+            if ($Wreck) TurnLog($Who, "It had: " . implode(', ', $Wreck));
+          }
+        }
+      }
+      if ($TotMoney) {
+        Spend_Credit($Who,- $TotMoney, "Scavenging from " . $N['Ref']);
+        if ($Xenology) {
+          Gain_Science($Who,'Xenology', $Xenology,"Scavenging from ". $N['Ref']);
+        }
+      } else {
+        TurnLog($Who,"Scavenging was attempted in " .  $N['Ref'] . " but there are no wrecks currently present.");
+        GMLog("Scavenging was attempted in " .  $N['Ref'] . " but there are no wrecks currently present.");
+      }
+      break;
+
     case 'Salvage' : // As in turn action called by GM for wierd cases (eg you forgot)
       include_once("TurnTools.php");
       include_once("ProjLib.php");
@@ -599,7 +669,7 @@ global $FACTION;
        $Wrecks = Get_Things_Cond(0,"SystemId=" . $T['SystemId'] . " AND BuildState>=" . BS_EX);
        $SalvageLevel = Has_Tech($Who,'Salvage Rigs');
        $HasWreck = Has_Tech($Who,'Wreckage Analysis');
-       $TotMoney = 0;
+       $TotMoney = $Xenology = 0;
        $ModTypes = Get_ModuleTypes();
        $DistTypes = Get_DistrictTypes();
 
@@ -646,9 +716,15 @@ global $FACTION;
              break;
            }
            if ($Money) {
+             if (Has_Trait($W['Whose'],'Organic Units')) {
+               $Money = ceil($Money/4);
+               $Xeno = $W['Level'];
+               $Xenology += $Xeno;
+             }
+
              $TotMoney += $Money;
              TurnLog($Who,"The wreckage of the " . (empty($W['Name'])? ("Unknown Thing #" . $W['id']) : $W['Name']) .
-                " has been salvaged.  in " . $N['Ref'] . " Gaining " . Credit() . $Money );
+               " has been salvaged.  in " . $N['Ref'] . " Gaining " . Credit() . $Money . ($Xeno?" and $Xeno Xenology points":''));
              if ($Wreck) TurnLog($Who, "It had: " . implode(', ', $Wreck));
            }
          }
@@ -656,12 +732,17 @@ global $FACTION;
 
        if ($TotMoney) {
          Spend_Credit($Who,- $TotMoney, "Salvage from " . $N['Ref']);
+         if ($Xenology) {
+           Gain_Science($Who,'Xenology', $Xenology,"Salvage from ". $N['Ref']);
+         }
          echo "Salvaged a total of " . Credit() . $TotMoney . "<p>";
        } else {
          TurnLog($Who,"Salvage was attempted in " .  $N['Ref'] . " but there are no wrecks currently present.");
          echo "Salvage was attempted in " .  $N['Ref'] . " but there are no wrecks currently present.<p>";
        }
        break;
+
+
     case 'Takeover': // Construction Lead
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);

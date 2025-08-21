@@ -39,7 +39,7 @@
   echo "100=Need 1 Curn1, 200=Need 1 Curn2, 400=Need 1 Curn3<p>";
   echo "Click on the Desc by each type to edit the description.<p>";
 
-  echo "If Evasion is -100 it will use a formula<p>";
+  echo "If Evasion or To Hit is -100 it will use a formula<p>";
 
   echo "<form method=post action=ModuleList.php>";
   Register_AutoUpdate('Generic', 0);

@@ -926,7 +926,7 @@ function Show_Thing(&$T,$Force=0) {
     }
   }
   $SpecOrders = []; $SpecCount = 0;
-  $HasDeep = $HasPlanet = $HasMinesweep = $HasSalvage = $HasTerraform = $EngCorpLevel = 0;
+  $HasDeep = $HasPlanet = $HasMinesweep = $HasSalvage = $HasScavenge = $HasTerraform = $EngCorpLevel = 0;
   if ($tprops & THING_HAS_MODULES) {
     foreach ($Mods as $M) {
       $MName = $MTs[$M['Type']]['Name'];
@@ -952,7 +952,11 @@ function Show_Thing(&$T,$Force=0) {
       case 'Engineering Corps' :
         $HasPlanet  += $M['Number'];
         $EngCorpLevel = $M['Level'];
+        break;
 
+      case 'Scavengers':
+        $HasScavenge += $M['Number'] * $M['Level'];
+        break;
 
       default:
       }
@@ -1255,6 +1259,10 @@ function Show_Thing(&$T,$Force=0) {
 
     case 'Salvage':
       if ($Moving || !$HasSalvage) continue 2;
+      break;
+
+    case 'Scavenge':
+      if ($Moving || !$HasScavenge) continue 2;
       break;
 
     case 'Terraform':
@@ -1794,6 +1802,11 @@ function Show_Thing(&$T,$Force=0) {
       $Cost = -1;
       break;
 
+    case 'Scavenge':
+      $Acts = 1;
+      $Cost = -1;
+      break;
+
     case 'Terraform':
     // World - Planet or Moon, Current size, target type
       break;
@@ -1976,6 +1989,7 @@ function Show_Thing(&$T,$Force=0) {
 
     echo " &nbsp; " . fm_submit("ACTION","Duplicate",0) . fm_submit("ACTION","GM Recalc",0);
     if ($HasSalvage) echo fm_submit("ACTION","Salvage",0);
+    if ($HasScavenge) echo fm_submit("ACTION","Scavenge",0);
     if (($ttn[$T['Type']]??0) == 'Outpost') echo fm_submit("Action",'Add Branch',0,"formaction=BranchEdit.php?T=$Tid");
     echo "</h2>";
   } else if (!empty($Fid)) {
