@@ -81,7 +81,7 @@
         if (Access('GM')) echo " , <a href=ProjList.php?F=$Fid>Back to Project List</a>";
         echo "</h2>\n";
         dotail();
-        exit;
+
       case 'Abandon Project':
         TidyProject($Prid);
         if ($P['Status'] == 0) { // Never started
@@ -92,13 +92,13 @@
         if (Access('GM')) echo " , <a href=ProjList.php?F=$Fid>Back to Project List</a>";
           echo "</h2>\n";
           dotail();
-          exit;
         }
         if ($P['Status'] == 1) { // Started some mmoney back
           $Cost = intdiv($P['Costs'],2);
-          Spend_Credit($Fid,-$Cost,'Recovered from cancelled Project');
+          Spend_Credit($Fid,-$Cost,'Recovered from cancelled Project ' . $P['Name']);
           echo "Recovered " . credit() . " $Cost";
         }
+        $P['TurnEnd'] = $GAME['Turn']-1;
         $P['Status'] = 3;
         Put_Project($P);
         echo "<h1>Abandoned</h1>";
@@ -107,9 +107,8 @@
         if (Access('GM')) echo " , <a href=ProjList.php?F=$Fid>Back to Project List</a>";
         echo "</h2>\n";
         dotail();
-        exit;
-      case 'Raise 1 Level':
 
+      case 'Raise 1 Level':
         $DTs = Get_DistrictTypes();
         $OldLvl = $P['Level'];
         $P['Level'] ++;

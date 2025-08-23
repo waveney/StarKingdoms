@@ -36,6 +36,14 @@
 
   $Wid = $_REQUEST['id'];
 
+  if ($GM) {
+    if (isset($_REQUEST['FORCE'])) {
+      $GM = 0;
+    } else {
+      echo "<h2>GM: <a href=WorldEdit.php?id=$Wid&FORCE>This page in Player Mode</a></h2>";
+    }
+  }
+
   if (isset($_REQUEST['ACTION'])) { // Pre Home actions
     switch ($_REQUEST['ACTION']) {
       case 'DELETE':

@@ -61,7 +61,7 @@ function TransferSys($SysR) {
       foreach($Anoms as $Aid=>$A) {
         $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
         $FTA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Tid");
-        if (isset($FA['id'])&& !isset($FTA['id'])) {
+        if (isset($FA['id'])&& !isset($FTA['id']) && ($FA['State']>1)) {
           $FTA = ['State' => 1, 'FactionId'=>$Tid, 'AnomalyId'=>$Aid, 'Progress'=>0];
           Gen_Put('FactionAnomaly',$FTA);
         }

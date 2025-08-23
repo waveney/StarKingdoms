@@ -687,11 +687,11 @@ function Income_Calc($Fid) {
       $OtherTrade = 0;
       foreach( $OtherPTSBranches as $B) {
         $Org = Gen_Get('Organisations',$B['Organisation']);
-        $OtherTrade += $Org['OfficeCount'];
-      }
-      if ($OtherTrade){
-        $EccTxt .= "Plus incomming trade of other's trade organisations Branches worth: $OtherTrade<br>\n";
-        $EconVal += $OtherTrade;
+        if ($Org['OfficeCount']) {
+          $EccTxt .= "Plus incomming trade from " . $Org['Name'] . " (<span " . FactColours($Org['Whose']) . ">" . $Facts[$Org['Whose']]['Name'] .
+            "</span>) branch worth: " . $Org['OfficeCount'] . "<br>\n";
+          $EconVal += $Org['OfficeCount'];
+        }
       }
     }
 
@@ -700,11 +700,11 @@ function Income_Calc($Fid) {
       $OtherTrade = 0;
       foreach( $OtherOffices as $O) {
         $Org = Gen_Get('Organisations',$O['Organisation']);
-        $OtherTrade += $Org['OfficeCount'];
-      }
-      if ($OtherTrade){
-        $EccTxt .= "Plus incomming trade of other's trade organisations Offices worth: $OtherTrade<br>\n";
-        $EconVal += $OtherTrade;
+        if ($Org['OfficeCount']) {
+          $EccTxt .= "Plus incomming trade from " . $Org['Name'] . " (<span " . FactColours($Org['Whose']) . ">" . $Facts[$Org['Whose']]['Name'] .
+          "</span>) trade organisations offices worth: " . $Org['OfficeCount'] . "<br>\n";
+          $EconVal += $Org['OfficeCount'];
+        }
       }
     }
 
