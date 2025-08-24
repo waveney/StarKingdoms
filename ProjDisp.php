@@ -695,6 +695,7 @@
 
     echo "<tr class=$RowClass $hide><td class=PHTurn >$Turn";
     $TotCost = 0;
+    $Hover = '';
 
     foreach ($Homes as &$H) {
 
@@ -736,8 +737,11 @@
           echo "\n<td $BG id=ProjP$Turn:$Hi:$Di class='PHProg Group$Di Home$Hi' $Hide>" . $proj[$Turn][$Hi][$Di]['Progress'];
           echo "\n<td $BG id=ProjT$Turn:$Hi:$Di class='PHStatus Group$Di Home$Hi' $Hide>" . $proj[$Turn][$Hi][$Di]['Status'] . "";
 
-          $TotCost += $proj[$Turn][$Hi][$Di]['Cost'] +
-          ( $proj[$Turn][$Hi][$Di]['FreeRushes']?0:($proj[$Turn][$Hi][$Di]['Rush']*Rush_Cost($Fid,$proj[$Turn][$Hi][$Di]['Type'],$Hi)));
+          $Cost = $proj[$Turn][$Hi][$Di]['Cost'];
+          $RCost = ( $proj[$Turn][$Hi][$Di]['FreeRushes']?0:($proj[$Turn][$Hi][$Di]['Rush']*Rush_Cost($Fid,$proj[$Turn][$Hi][$Di]['Type'],$Hi)));
+          $TotCost += $Cost + $RCost;
+          if ($Cost) $Hover .= "Starting " . $P['Name'] . " Cost $Cost\n";
+          if ($RCost) $Hover .= "Rushing " . $P['Name'] . " Cost $RCost\n";
 
         } else {
           echo "<td $BG id=ProjN$Turn:$Hi:$Di class='PHName Home$Hi'>";
@@ -751,7 +755,8 @@
 //      break;
     }
 
-    echo "<td id=TotCost$Turn class=PHTurn>$TotCost<td class=PHTurn>";
+    $Hover .= "Total Cost: $TotCost";
+    echo "<td id=TotCost$Turn class=PHTurn><div title='$Hover'>$TotCost</div><td class=PHTurn>";
 
     $Spend = 0;
     if ($Turn >= $GAME['Turn']) {
