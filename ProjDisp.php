@@ -756,7 +756,8 @@
     }
 
     $Hover .= "Total Cost: $TotCost";
-    echo "<td id=TotCost$Turn class=PHTurn><div title='$Hover'>$TotCost</div><td class=PHTurn>";
+
+    echo "<td id=TotCost$Turn class=PHTurn><div title='" . htmlspecialchars($Hover) . "'>$TotCost</div><td class=PHTurn>";
 
     $Spend = 0;
     if ($Turn >= $GAME['Turn']) {
