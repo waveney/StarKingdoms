@@ -34,6 +34,7 @@ function StartOperations() {
         $ThingId = -$Target;
       }
     } else {
+      $Target = 0;
       $ThingType = 3;
       $ThingId = 0;
       $Body = [];
@@ -82,7 +83,14 @@ function StartOperations() {
       }
 
     } else if ($Otp & OPER_BRANCH) {
-      if ($Target) {
+      if (($Target??0) == 0) {
+        $Plan = HabPlanetFromSystem($Wh); // Bodge for old operations
+        $Target = $Plan;
+        $ThingType = 1;
+        $ThingId = $Plan;
+        $Body = $P = Get_Planet($Plan);
+      }
+      if ($Target ?? 0) {
         $AllReady = Gen_Get_Cond('Branches'," HostType=$ThingType AND HostId=$ThingId AND Organisation=$OrgId" );
         if ($AllReady) {
           $O['Status'] = 5; // Not Started

@@ -77,7 +77,7 @@
     [56,'Combat',   'Return Mil Org Forces','Coded'],
     [57,'',         'Clear Conflict Flags','Coded'],
     [58,'',         'Check Follow Ups','Coded'],
-    [59,'',         'Actually Delete Stuff','To be Coded'],
+    [59,'',         'Actually Delete Stuff','Coded'],
     [60,'Movement',  'Save What Can Be Seen','Coded'],
     [61,'',         'Recalc Project Homes','Coded'],
     [62,'',         'Tidy Ups','Coded'],
@@ -943,7 +943,7 @@ function MilitiaArmyRecovery() {
 
   GMLog("<p>Basic Healling done - now to do Medical Corps/Medical Bays");
 
-  foreach(['Medical Corps','Medical Bays'] as $Med ) {
+  foreach(['Medical Corps','Medical Bay'] as $Med ) {
     $Things = Gen_Select("SELECT T.*,M.Level AS ModLevel, M.Number AS ModNumber FROM Things T INNER JOIN Modules AS M ON M.ThingId=T.id " .
       "WHERE T.GameId=$GAMEID AND T.BuildState=" . BS_COMPLETE . " AND M.Type=" . $MTNs[$Med] . " AND T.SystemId!=0 ORDER BY T.Whose,T.SystemId");
 
@@ -1064,10 +1064,15 @@ function ActuallyDeleteStuff() {
       Thing_Delete($D['ThingId'],1);
       db_delete('DelayedRemoval',$D['id']);
     }
-
-//    $_REQUEST['TurnP'] = 1; // Makes FollowUps think its part of turn processing
-//    include_once("FollowUp.php"); // Second call if needed
   }
+
+  $Pending = Get_Things_Cond_Ordered(0,"GameId=$GAMEID AND BuildState=" . BS_DELETE);
+  if ($Pending) {
+    foreach($Pending as $D) {
+      Thing_Delete($D['ThingId']);
+    }
+  }
+
   return 1;
 }
 
@@ -1108,6 +1113,9 @@ function TidyUps() {
   }
   GMLog("Single Turn Player FF data Tidied Up<p>");
 
+  ActuallyDeleteStuff();
+
+/*
   $Delayed = Gen_Get_Cond('DelayedRemoval',"GameId=$GAMEID AND Turn<" . $GAME['Turn']);
   if ($Delayed) {
     foreach($Delayed as $D) {
@@ -1117,6 +1125,8 @@ function TidyUps() {
   }
 
   GMLog("Delayed Destruction Completed<p>");
+
+*/
 
   // Tidy up Scans due ?
 

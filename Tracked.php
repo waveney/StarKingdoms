@@ -26,12 +26,20 @@ if (isset($FACTION)) {
 
 if (isset($_REQUEST['FORCE'])) $GM = 0;
 // var_dump($_REQUEST);
+$Tracks = Gen_Get_Cond('Resources',"Whose=$Fid");
+$ResTypes = Gen_Get_All('ResourceTypes');
+$NewResNames = NamesList($ResTypes);
 
 if (isset($_REQUEST['ACTION'])) {
   switch ($_REQUEST['ACTION']) {
-    case 'Add':
-      $Res = ['Type'=>$_REQUEST['Type'], 'Whose'=>$Fid, 'Value'=>0];
-      Gen_Put('Resources',$Res);
+    case 'Add New Track':
+      if ($_REQUEST['Type']) {
+        $Res = ['Type'=>$_REQUEST['Type'], 'Whose'=>$Fid, 'Value'=>0];
+        Gen_Put('Resources',$Res);
+        echo "New track for " . $NewResNames[$Res['Type']] . " added<p>";
+      } else {
+        echo "To add a new track, please select the new resourse<p>";
+      }
       break;
     case 'Remove':
       $Ti = $_REQUEST['Ti'];
@@ -40,15 +48,13 @@ if (isset($_REQUEST['ACTION'])) {
   }
 }
 
-$Tracks = Gen_Get_Cond('Resources',"Whose=$Fid");
-$ResTypes = Gen_Get_All('ResourceTypes');
-$NewResNames = NamesList($ResTypes);
 //var_dump($ResTypes);
 
 echo "<table border>";
 if ($GM) {
   echo "<h2><a href= Tracked.php?FORCE>This Page in Player Mode</a></h2>";
 //  echo "Note: Changes to these here are no yet logged - use Pay Faction for logged changes<p>";
+  echo "For most changes, input the number to be added/subtracted, put the reason and click on the add in that row.<p>";
 
   echo "<form method=post>";
 //  Register_AutoUpdate('Generic',0);
@@ -104,7 +110,7 @@ if ($GM) {
   Cancel_AutoUpdate();
   if ($NewResNames) {
     echo "<tr><td>New Track";
-    echo "<td colspan=2>" . fm_select($NewResNames,$es,'Type',1) . fm_submit('ACTION','Add');
+    echo "<td colspan=2>" . fm_select($NewResNames,$es,'Type',1) . fm_submit('ACTION','Add New Track');
   }
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
 

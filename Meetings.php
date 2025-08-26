@@ -320,8 +320,8 @@ function SystemSee($Sid) {
           $T = Get_Thing($Tid);
 
           $T['Retreat'] = 2;
-          TurnLog($T['Whose'],$T['Name'] . " Will retreat from combat\n",$T);
-          GMLog($T['Name'] . " will retreat from combat\n",$T);
+          TurnLog($T['Whose'],$T['Name'] . " Will retreat from combat",$T);
+          GMLog($T['Name'] . " will retreat from combat",$T);
           Put_Thing($T);
         }
 
