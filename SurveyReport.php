@@ -140,7 +140,7 @@
       echo "This system has been passively scanned. " .
         (($SpaceLevel>0)?("Has been space scanned at level " . $FS['SpaceScan'] . ($FS['SpaceTurn']?(" on Turn " . $FS['SpaceTurn']):'') .".  ")
           :"No Space Survey has been Made. ") .
-        (($PlanetLevel>0)?("Has been planetary scanned at level " . $FS['PlanetScan'] . ($FS['PlanetTurn']?(" on Turn " . $FS['PlanetTurn']):''))
+        (($PlanetLevel>0)?("Has been planetary scanned at level " . $FS['PlanetScan'] . (($FS['PlanetTurn']??0)?(" on Turn " . $FS['PlanetTurn']):''))
           :"No Planetary Survey has been made.")  . "<p>";
     } else if ($N['Nebulae']) {
       echo "This system is in a Nebula, you have not scanned it with nebula sensors<p>";

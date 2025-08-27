@@ -740,8 +740,8 @@
           $Cost = $proj[$Turn][$Hi][$Di]['Cost'];
           $RCost = ( $proj[$Turn][$Hi][$Di]['FreeRushes']?0:($proj[$Turn][$Hi][$Di]['Rush']*Rush_Cost($Fid,$proj[$Turn][$Hi][$Di]['Type'],$Hi)));
           $TotCost += $Cost + $RCost;
-          if ($Cost) $Hover .= "Starting " . $P['Name'] . " Cost $Cost\n";
-          if ($RCost) $Hover .= "Rushing " . $P['Name'] . " Cost $RCost\n";
+          if ($Cost) $Hover .= "Starting " . $proj[$Turn][$Hi][$Di]['Name'] . " Cost $Cost\n";
+          if ($RCost) $Hover .= "Rushing " . $proj[$Turn][$Hi][$Di]['Name'] . " Cost $RCost\n";
 
         } else {
           echo "<td $BG id=ProjN$Turn:$Hi:$Di class='PHName Home$Hi'>";

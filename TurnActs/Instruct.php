@@ -209,7 +209,7 @@ function Instructions() {
           }
         }
 
-        db_delete('Things',$Tid);
+        Thing_Delete($Tid);
         continue 2;
 
 /*      case 'Disband': // Dissasemble
@@ -1306,7 +1306,7 @@ function InstructionsComplete() {
         $Wrecks = Get_Things_Cond(0,"SystemId=" . $T['SystemId'] . " AND BuildState>" . BS_COMPLETE);
         $SalvageLevel = Has_Tech($Who,'Salvage Rigs');
         $HasWreck = Has_Tech($Who,'Wreckage Analysis');
-        $TotMoney = $Xenology = 0;
+        $TotMoney = $Xenology = $Engineering = 0;
         $ModTypes = Get_ModuleTypes();
         $DistTypes = Get_DistrictTypes();
 
@@ -1314,7 +1314,7 @@ function InstructionsComplete() {
 
         foreach ($Wrecks as $W) {
           if (($TTypes[$W['Type']]['Properties'] & (THING_HAS_DISTRICTS + THING_HAS_SHIPMODULES)) != 0) {
-            $Money = $Xeno = 0;
+            $Money = $Xeno = $Eng = 0;
             $Wreck = [];
             switch ($TTypes[$W['Type']]['Name']) {
 
@@ -1354,6 +1354,11 @@ function InstructionsComplete() {
                 break;
             }
             if ($Money) {
+              if (Has_Trait($Who,'How Does This Work?')) {
+                $Eng += ceil($Money/20);
+                $Engineering += $Eng;
+              }
+
               if (Has_Trait($W['Whose'],'Organic Units')) {
                 $Money = ceil($Money/4);
                 $Xeno = $W['Level'];
@@ -1362,7 +1367,8 @@ function InstructionsComplete() {
 
               $TotMoney += $Money;
               TurnLog($Who,"The wreckage of the " . (empty($W['Name'])? ("Unknown Thing #" . $W['id']) : $W['Name']) .
-                " has been salvaged.  in " . $N['Ref'] . " Gaining " . Credit() . $Money . ($Xeno?" and $Xeno Xenology points":''));
+                " has been salvaged.  in " . $N['Ref'] . " Gaining " . Credit() . $Money .
+                ($Xeno?" and $Xeno Xenology points":'') . ($Eng?" and $Eng Engineering Points":''));
               if ($Wreck) TurnLog($Who, "It had: " . implode(', ', $Wreck));
             }
           }
@@ -1371,6 +1377,9 @@ function InstructionsComplete() {
           Spend_Credit($Who,- $TotMoney, "Salvage from " . $N['Ref']);
           if ($Xenology) {
             Gain_Science($Who,'Xenology', $Xenology,"Salvage from ". $N['Ref']);
+          }
+          if ($Engineering) {
+            Gain_Science($Who,'Engineering', $Engineering,"Salvage from ". $N['Ref']);
           }
         } else {
           TurnLog($Who,"Salvage was attempted in " .  $N['Ref'] . " but there are no wrecks currently present.");
@@ -1416,11 +1425,16 @@ function InstructionsComplete() {
                 break;
             }
             if ($Money) {
+              if (Has_Trait($Who,'How Does This Work?')) {
+                $Xeno += ceil($Money/20);
+              }
+
               if (Has_Trait($W['Whose'],'Organic Units')) {
                 $Money = ceil($Money/4);
-                $Xeno = $W['Level'];
-                $Xenology += $Xeno;
+                $Xeno += $W['Level'];
               }
+
+              if ($Xeno) $Xenology += $Xeno;
 
               $TotMoney += $Money;
               TurnLog($Who,"The wreckage of the " . (empty($W['Name'])? ("Unknown Thing #" . $W['id']) : $W['Name']) .
@@ -1605,6 +1619,15 @@ function InstructionsProgress() {
         $T['Progress'] = min($T['ActionsNeeded'],$T['Progress']+$Prog);
         Put_Thing($T);
         break;
+
+      case 'Scavenge':
+        $Mods = Get_ModulesType($Tid,'Scavengers');
+        $ProgGain = $Mods['Level']*$Mods['Number'];
+        GMLog("$Prog progress on " . $ThingInstrs[abs($T['Instruction'])] . " for " . $Facts[$T['Whose']]['Name'] . ":" . $T['Name']);
+        $T['Progress'] = min($T['ActionsNeeded'],$T['Progress']+$Prog);
+        Put_Thing($T);
+        break;
+
 
       default:
         break;

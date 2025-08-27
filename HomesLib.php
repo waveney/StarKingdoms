@@ -515,8 +515,10 @@ function Recalc_Economic_Rating(&$H,&$W,$Fid,$Turn=0) {
 //var_dump($NumPrime);
   $MinFact = (Has_Tech($Fid,'Improved Mining')?1.5:1);
   if (feature('Industrial')) {
-    $ERate = $NumPrime*4;
-    $EText = $NumPrime*4 . " from districts<br>\n";
+    $PrimeMult = Feature('PrimeMult',4);
+    if (Has_PTraitW($W['id'],'Friendly Wildlife')) $PrimeMult = 6;
+    $ERate = $NumPrime*$PrimeMult;
+    $EText = $NumPrime*$PrimeMult . " from districts<br>\n";
     $Min = $W['Minerals']*$NumInd;
     if ($Min) {
       $ERate += $Min;

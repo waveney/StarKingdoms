@@ -132,12 +132,28 @@ if (isset($_REQUEST['Action'])) {
       $Hid = $_REQUEST['Hid'];
       $TTypes = Get_ThingTypes();
       $NTypes = array_flip(NamesList($TTypes));
+      $BTypes = Get_BranchTypes();
 
       $Branches = Gen_Get_Cond('Branches',"HostType<3 AND HostId=$Hid AND (OrgType=3 OR OrgType2=3)");
+      $Sys = Get_System($Sid);
+      $Offices = [];
+      if ($Sys['WorldList']) {
+        $Worlds = explode(',',$Sys['WorldList']);
+        foreach ($Worlds as $Wid) {
+          $Offs = Gen_Get_Cond('Offices',"World=$Wid AND (OrgType=3 OR OrgType2=3)");
+          if ($Offs) $Offices = array_merge($Offices,$Offs);
+        }
+
+        if ($Offices) foreach($Offices as $Oid=>$Of) {
+          $Branches[-$Oid] = $Of;
+        }
+      }
+      $Offices =
 // var_dump($Branches);
       $TotC = 0;
       if ($Branches) {
         foreach ($Branches as $Bid=>$B) {
+//          if ($BTypes[$B['Type']]['Props'] &1) continue; // Hidden
           $Fid = $B['Whose'];
           $DefLevel = Has_Tech($Fid,'Infantry Defences');
           $OffLevel = Has_Tech($Fid,'Infantry Weapons');
@@ -165,8 +181,10 @@ if (isset($_REQUEST['Action'])) {
             while ($Count < $Num) {
               $Count++;
               $T = ['Whose'=>$Fid, 'Type'=>$NTypes['Heavy Security'], 'BuildState'=>BS_COMPLETE, 'CurHealth'=>$Def, 'OrigHealth'=>$Def, 'ActDamage'=>$Off,
-                'SystemId'=>$Sid, 'WithinSysLoc'=>3, 'Class'=>'Heavy Security', 'Name'=>($B['Name']?$B['Name']:"Heavy Security $Bid") . ":$Count" ,
+                'SystemId'=>$Sid, 'WithinSysLoc'=>3, 'Class'=>'Heavy Security',
+                'Name'=>($B['Name']?$B['Name']:"Heavy Security $Bid") . ":" . $Org['Name'] . ":$Count" ,
                 'Evasion'=>50, 'ProjectId'=>$Bid, 'LinkId'=>0];
+              if ($Bid>0 && ($BTypes[$B['Type']]['Props'] &1)) $T['Name'] .= " (Hidden)";
               Put_Thing($T);
             }
           }

@@ -138,7 +138,7 @@ function Player_Page() {
 
     echo "<p><li><a href=PlayerTurnTxt.php>Turn Actions Automated Response Text</a>";
     echo "<ul>";
-    if (Access('God')) echo "<li>God: <a href=EditText.php>Edit Auto Text</a>";
+//    if (Access('God')) echo "<li>God: <a href=EditText.php>Edit Auto Text</a>";
     echo "<li><a href=WhatCanIC.php>What Things can I See?</a></ul>\n";
 
 

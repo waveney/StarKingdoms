@@ -936,7 +936,7 @@ function ProjectsCompleted($Pass) {
 
         default:
           GMLog("A project to " . $PT['Name'] . " at level " . $P['Level'] .
-          " has completed, this is not automated yet.  See <a href=ProjEdit.php?id=" . $P['id'] . ">Project</a>",1);
+            " has completed, this is not automated yet.  See <a href=ProjEdit.php?id=" . $P['id'] . ">Project</a>",1);
           FollowUp($Fid,"A project to " . $PT['Name'] . " at level " . $P['Level'] .
             " has completed, this is not automated yet.  See <a href=ProjEdit.php?id=" . $P['id'] . ">Project</a>");
       }
@@ -949,11 +949,15 @@ function ProjectsCompleted($Pass) {
 
 function RefitProjectsComplete() {
   //  echo "Projects Complete is currently Manual<p>";
+  ProjectsCompleted(0);
+  ProjectsCompleted(0);
   return ProjectsCompleted(0);
 }
 
 function ProjectsComplete() {
   //  echo "Projects Complete is currently Manual<p>";
+  ProjectsCompleted(1);
+  ProjectsCompleted(1);
   return ProjectsCompleted(1);
 }
 

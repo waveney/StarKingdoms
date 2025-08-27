@@ -49,7 +49,7 @@ function TransferSys($SysR) {
       $TFS['SpaceScan'] = $FS['SpaceScan'];
       $TFS['SpaceTurn'] = $FS['SpaceTurn']??$GAME['Turn'];
     }
-    if (($TFS['PlanetScan'] < $FS['PlanetScan']) || (($TFS['PlanetScan'] == $FS['PlanetScan']) && ($TFS['PlanetTurn'] < $TFS['PlanetTurn']))) {
+    if (($TFS['PlanetScan'] < $FS['PlanetScan']) || (($TFS['PlanetScan'] == $FS['PlanetScan']) && (($TFS['PlanetTurn']??0) < ($TFS['PlanetTurn']??0)))) {
       $TFS['PlanetSurvey'] = $FS['PlanetSurvey'];
       $TFS['PlanetScan'] = $FS['PlanetScan'];
       $TFS['PlanetTurn'] = $FS['PlanetTurn']??$GAME['Turn'];
