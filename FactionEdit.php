@@ -79,7 +79,7 @@ function Show_Faction(&$F,$Mode) {
   echo "<tr><td $cls>Native BioSphere<td colspan=2 $cls>" . (($GM || $Setup)?fm_select($PTs,$F,'Biosphere',1): $PTs[$F['Biosphere']]);
   if ($GM) {
     echo ", " . fm_select($PTs,$F,'Biosphere2',1) . ", " . fm_select($PTs,$F,'Biosphere3',1);
-  } else if (feature('MultiBiosphere')) {
+  } else if (Feature('MultiBiosphere')) {
     if ($F['Biosphere2']) {
       echo ", " .  $PTs[$F['Biosphere2']];
     } else if ($F['Biosphere3']) {

@@ -452,7 +452,7 @@ function Recalc_Worlds($Silent=0) {
        if (!$Silent)  echo "No Worlds for faction<p>";
       }
     } else {
-      if (!$Silent) echo "Faction " . $F['Name'] . " does not have a homeworld\n";
+      if (!$Silent && ($F['HomeWorld']==0)) echo "Faction " . $F['Name'] . " does not have a homeworld<br>\n";
 
     }
   }
@@ -514,7 +514,7 @@ function Recalc_Economic_Rating(&$H,&$W,$Fid,$Turn=0) {
   }
 //var_dump($NumPrime);
   $MinFact = (Has_Tech($Fid,'Improved Mining')?1.5:1);
-  if (feature('Industrial')) {
+  if (Feature('Industrial')) {
     $PrimeMult = Feature('PrimeMult',4);
     if (Has_PTraitW($W['id'],'Friendly Wildlife')) $PrimeMult = 6;
     $ERate = $NumPrime*$PrimeMult;

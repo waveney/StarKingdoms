@@ -305,7 +305,7 @@
   }
 
   // *********************** Misc *****************************************************************
-  if (feature('Orgs') && ($x = SKTable('Any','Organisations'))) {
+  if (Feature('Orgs') && ($x = SKTable('Any','Organisations'))) {
     $txt .= $x;
     $txt .= "<ul>\n";
     $txt .= "<li><a href=OperList.php>List Operations</a><p>\n";

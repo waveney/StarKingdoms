@@ -254,8 +254,8 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0,$M
 
   if (!$Descs) echo "<div id=TDesc$Tid hidden>";
 
-  if (feature('ShowModuleSlots') && $T['Slots']) echo "Uses " . $T['Slots'] . " module " . Plural($T['Slots'],"","slot","slots") . "  ";
-  if (feature('ShowCivMilInfo') && $T['CivMil']) echo "<b>" . $CivMil[$T['CivMil']] . " ships</b>";
+  if (Feature('ShowModuleSlots') && $T['Slots']) echo "Uses " . $T['Slots'] . " module " . Plural($T['Slots'],"","slot","slots") . "  ";
+  if (Feature('ShowCivMilInfo') && $T['CivMil']) echo "<b>" . $CivMil[$T['CivMil']] . " ships</b>";
   echo "<br>";
 
   if ($T['Description']) echo ParseText($T['Description']);
@@ -330,7 +330,7 @@ function Within_Sys_Locs(&$N,$PM=0,$Boarding=0,$Restrict=0,$Hab=0) {// $PM +ve =
   if ($PM) return 0;
   $LKs = Get_Links($N['Ref']);
   $Li = 1;
-  if (feature('LinksValidLocations') && $Restrict !=1) foreach($LKs as $lk) { // Code currently goes wrong if concealed links used
+  if (Feature('LinksValidLocations') && $Restrict !=1) foreach($LKs as $lk) { // Code currently goes wrong if concealed links used
     if (1) $L[500+$Li] = "At " . Feature('LinkRefText','stargate to link') . " " . $lk['id'];
     $Li++;
   }
@@ -1360,7 +1360,7 @@ function Update_Militia(&$W,&$Dists,$NewOwn=0,$Deploy=0) {
 
   $FactN = ($NewOwn?$NewOwn:$W['FactionId']);
   $Mils = Get_Things_Cond(0,"Type=20 AND SystemId=$Sys AND WithinSysLoc=$loc ");
-  $Hlth = feature('MilitiaHealth',25)+Has_Tech($FactN,'Militia Training Techniques')*2;
+  $Hlth = Feature('MilitiaHealth',25)+Has_Tech($FactN,'Militia Training Techniques')*2;
 
   $Dcount = 0;
   $DTs = Get_DistrictTypes();

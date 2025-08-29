@@ -357,10 +357,6 @@
       if (empty($Head)) echo "<h2>Selected: $Name</h2>\n";
       $Head = 1;
 
-      if ($Wh) {
-//        $Wid = WorldFromSystem($Wh);
-//        var_dump("Wid",$Wid);
-      }
       $Drop = 0;
 
       if ($OpTypes[$op]['Props'] & OPER_TECH) {
@@ -576,9 +572,10 @@
       if ($OpTypes[$op]['Props'] & OPER_SOCP) {
         $SocP = Get_SocialP($SP);
         echo "Principle:" . $SocP['Principle'] . "<p>";
-        $Wid = WorldFromSystem($Wh,$Fid);
+        $World = WorldFromTarget($Target);
+        $Wid = $World['id']??0;
         $CurVal = Gen_Get_Cond1('SocPsWorlds',"Principle=$SP AND World=$Wid");
-        $P2 = $CurVal['id'];
+        $P2 = ($CurVal['id']??0);
         $TechLevel = $Level = ($CurVal['Value']??0);
         $Name .= " Principle: " . $SocP['Principle'];
       }
@@ -627,8 +624,8 @@
       if (Has_Trait($Fid,'IMPSEC') && strstr($OpTypes[$op]['Name'],'Recon')) $Mod--;
 
       if (Has_Trait($Fid,'Friends in All Places') && (($OpTypes[$op]['Props'] & OPER_NOT_FRIENDS) == 0)) {
-        $Wid = WorldFromSystem($Wh,$Fid);
-        $World = Get_World($Wid);
+        $Wid = WorldFromTarget($Target);
+        $World = $World['Id']??0;
         $SocPs = Get_SocialPs($Wid);
         $CC = Gen_Get_Cond1('SocialPrinciples',"Principle='Confluence'");
         if ($CC) {

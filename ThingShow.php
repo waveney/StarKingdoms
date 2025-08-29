@@ -130,7 +130,7 @@ function Show_Thing(&$T,$Force=0) {
     echo "<tr class=NotSide><td class=NotSide>Id: $Tid<td class=NotSide>Game: $GAMEID - " . $GAME['Name'];
     echo fm_number('Seen Mask',$T,'SeenTypeMask','class=NotSide','class=NotSide');
     if ($T['BluePrint']<0) echo fm_text1('Gated On',$T,'GatedOn',2,'class=NotSide');
-//    if (feature('HiddenControl')) echo "<td colspan=2>Hidden Control: " . fm_select($FactNames,$T,'HiddenControl');
+//    if (Feature('HiddenControl')) echo "<td colspan=2>Hidden Control: " . fm_select($FactNames,$T,'HiddenControl');
     echo "<tr><td>Type:<td>" . fm_select($ttn,$T,'Type',1);
     if (($tprops & THING_HAS_LEVELS) || ($tprops & THING_CAN_BE_ADVANCED) || ($T['BluePrint']<0) ) echo fm_number1("Level",$T,'Level');
     if ($tprops & THING_HAS_VARIANTS) {
@@ -531,7 +531,7 @@ function Show_Thing(&$T,$Force=0) {
   if ($GM) echo "<tr>" . fm_radio('Whose',$FactNames ,$T,'Whose','',1,'colspan=6','',$Fact_Colours,0,'','',$Fact_Text_Colours);
   if  ($tprops & THING_HAS_GADGETS) echo "<tr>" . fm_textarea("Gadgets",$T,'Gadgets',8,3);
   echo "\n<tr>";
-  if  (feature('Orders') && ($tprops & THING_HAS_LEVELS)) echo fm_text("Orders",$T,'Orders',2);
+  if  (Feature('Orders') && ($tprops & THING_HAS_LEVELS)) echo fm_text("Orders",$T,'Orders',2);
   if ($GM) {
     echo "<td>Prisoner of: " . fm_select($FactNames,$T,'PrisonerOf');
     echo "<td colspan=2>Hidden Control: " . fm_select($FactNames,$T,'HiddenControl');

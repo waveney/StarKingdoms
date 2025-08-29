@@ -41,7 +41,7 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Last Access</a>\n";
   //  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Roll</a>\n";
 //  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Rel Order</a>\n";
-//  if (feature('ShowContactPhotos')) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Image</a>\n";
+//  if (Feature('ShowContactPhotos')) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Image</a>\n";
 //  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Public</a>\n";
   if ($Full) {
 //    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Test User</a>\n";
@@ -62,7 +62,7 @@
     echo "<td>" . $usr['Login'] . "<td>" . $usr['Email'] . "<td>" . $Access_Levels[$usr['AccessLevel']] . "<td>" . $usr['LastIP'];
     if ($usr['LastAccess']) echo "<td>" . date('d/m/y H:i:s',$usr['LastAccess']);
     //    echo "<td>" . $usr['Roll'] . "<td>" . $usr['RelOrder'] ;
-    if (feature('ShowContactPhotos')) {
+    if (Feature('ShowContactPhotos')) {
       echo "<td>";
       if ($usr['Image']) echo "<img src='" . $usr['Image'] . "' width=50>";
       }

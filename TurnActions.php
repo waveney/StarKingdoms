@@ -1275,7 +1275,7 @@ function CheckFollowUps() {
 }
 
 function EnableFactionsAccess() {
-  global $GAME,$Sand;
+  global $GAME,$Sand,$GAMEID;
   $Facts = Get_Factions();
   foreach ($Facts as $F) {
     $F['TurnState'] = 1;
@@ -1283,6 +1283,32 @@ function EnableFactionsAccess() {
   }
 
   GMLog("<br>All Factions marked as Turn Planning<p>\n");
+
+  $ProjTypes = Get_ProjectTypes();
+  $Projects = Get_Projects_Cond("GameId=$GAMEID AND Status=0 AND TurnStart=" . $GAME['Turn']+1);
+  foreach ($Projects as $Pid=>$P) {
+    if ($ProjTypes[$P['Type']]['Props'] & 0x400) { // Servicing
+      if ($P['ThingId']??0) {
+        $T1 = Get_Thing($P['ThingId']);
+        if ($T1['BuildState'] == BS_COMPLETE) {
+          $T1['ProjectId'] = $Pid;
+          $T1['BuildState'] = BS_SERVICE;
+          Put_Thing($T1);
+        }
+        if ($P['ThingId2']??0) {
+          $T1 = Get_Thing($P['ThingId2']);
+          if ($T1['BuildState'] == BS_COMPLETE) {
+            $T1['ProjectId'] = $Pid;
+            $T1['BuildState'] = BS_SERVICE;
+            Put_Thing($T1);
+          }
+        }
+      }
+    }
+  }
+
+
+  GMLog("<br>Set to servicing all things being serviced this turn");
 
   $GAME['Turn'] ++;
   $Sand['DateCompleted'] = $GAME['DateCompleted'] = time();

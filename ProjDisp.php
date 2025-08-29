@@ -258,16 +258,18 @@
 
  //         var_dump($Pro,$TthingId,$TthingId2,$ProjTypes[$Ptype]);
 
-          if ($TthingId??0) {
-            $T1 = Get_Thing(($TthingId));
-            $T1['ProjectId'] = $Pid;
-            if ($ProjTypes[$Ptype]['Props'] & 0x400) $T1['BuildState'] = BS_SERVICE;
-            Put_Thing($T1);
-            if ($TthingId2??0) {
-              $T1 = Get_Thing(($TthingId2));
+          if ($Turn == $GAME['Turn']) {
+            if ($TthingId??0) {
+              $T1 = Get_Thing(($TthingId));
               $T1['ProjectId'] = $Pid;
               if ($ProjTypes[$Ptype]['Props'] & 0x400) $T1['BuildState'] = BS_SERVICE;
               Put_Thing($T1);
+              if ($TthingId2??0) {
+                $T1 = Get_Thing(($TthingId2));
+                $T1['ProjectId'] = $Pid;
+                if ($ProjTypes[$Ptype]['Props'] & 0x400) $T1['BuildState'] = BS_SERVICE;
+                Put_Thing($T1);
+              }
             }
           }
         }

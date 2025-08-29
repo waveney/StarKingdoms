@@ -150,7 +150,7 @@
 
     if ($GM) {
       echo "<td>" . fm_checkbox("Conflict?", $W, 'Conflict','',"Conflict:99:" . $W['id']);
-      echo fm_number1('Blockade?',$W,'Blockade','','min=0 max=' . feature('MaxBlockade',8),"Blockade:99:" . $W['id']);
+      echo fm_number1('Blockade?',$W,'Blockade','','min=0 max=' . Feature('MaxBlockade',8),"Blockade:99:" . $W['id']);
  //     echo "<td>" . fm_checkbox("Blockade?", $W, 'Blockade','',"Blockade:99:" . $W['id']);
       echo "<td>" . fm_checkbox("Revolt?", $W, 'Revolt','',"Revolt:99:" . $W['id']);
       echo fm_number1('',$H,'Devastation','','min=0 max=10','Devastation:100:'. $W['Home'] );

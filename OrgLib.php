@@ -262,7 +262,7 @@ function OrgColours() {
   return $Cols;
 }
 
-function WorldFromSystem($Sid,$Fid=-1) {
+function WorldFromSystem($Sid,$Fid=-1) { // Probably should never be used now
   $Ps = Get_Planets($Sid);
   $PTypes = Get_PlanetTypes();
   $Hab = [];
@@ -298,6 +298,17 @@ function WorldsFromSystem($Sid) {
   if (!$WL) return 0;
   $WLs = explode(',',$WL);
   return $WLs;
+}
+
+function WorldFromTarget($Target) {
+  if ($Target>0) {
+    return Gen_Get_Cond1('Worlds',"ThingType=1 AND ThingId=$Target");
+  } else if ($Target<0) {
+    return Gen_Get_Cond1('Worlds',"ThingType=2 AND ThingId=" . -$Target);
+  } else {
+    echo "No Target Found when checking - Tell Richard what you did please";
+    return [];
+  }
 }
 
 function CheckBranches() {

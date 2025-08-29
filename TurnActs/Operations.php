@@ -123,8 +123,17 @@ function StartOperations() {
     }
 
     $Level = 0;
-    if ($Otp & OPER_TECH ) {
+    if ($Otp & OPER_SOCP) {
+      $SP = $O['Para1'];
+      $SocP = Get_SocialP($SP);
+      $World = WorldFromTarget($Target);
+      $Wid = $World['id']??0;
+      $CurVal = Gen_Get_Cond1('SocPsWorlds',"Principle=$SP AND World=$Wid");
+      $P2 = ($CurVal['id']??0);
+      $TechLevel = $Level = ($CurVal['Value']??0);
+    }
 
+    if ($Otp & OPER_TECH ) {
       $Tech = Get_Tech($O['Para1']);
       $Got = Has_Tech($TWho,$O['Para1']);
       if ($Got && $Got>= $O['Para2']) {
@@ -152,8 +161,8 @@ function StartOperations() {
       if (Has_Trait($Fid,'IMPSEC') && strstr($OpTypes[$O['Type']]['Name'],'Recon')) $Mod--;
 
       if (Has_Trait($Fid,'Friends in All Places') && (($OpTypes[$O['Type']]['Props'] & OPER_NOT_FRIENDS) == 0)) {
-        $Wid = WorldFromSystem($Wh,$Fid);
-        $World = Get_World($Wid);
+        $World = WorldFromTarget($Target);
+        $Wid = $World['id']??0;
         $SocPs = Get_SocialPs($Wid);
         $CC = Gen_Get_Cond1('SocialPrinciples',"Principle='Confluence'");
         if ($CC) {
