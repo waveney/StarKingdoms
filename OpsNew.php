@@ -322,13 +322,14 @@
 
           if ($OpTypes[$op]['Props'] & OPER_SCIPOINTS) {
             if ($Target > 0) {
-              $Ds = Get_DistrictsP($ThingId);
+              $Ds = Get_DistrictsP($Target);
             } else if ($Target < 0) {
-              $Ds = Get_DistrictsM($ThingId);
+              $Ds = Get_DistrictsM($Target);
             } else {
               $Ds = 0;
             }
 
+//            var_dump($Target,$Ds);
             if ($Ds) { // It has a space age civ
 
               echo "<h2>Select Type of Science Points to Collect</h2>";

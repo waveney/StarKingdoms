@@ -297,7 +297,8 @@
         if ($Extras[$N['id']][3]??0) $atts .= '<font color="darkgreen">A</font>';
         $atts .= '> ';
 
-        if ($Extras[$N['id']][0]??0) $atts .= ' tooltip="' . $Extras[$N['id']][0] . '" ';
+        if ($Extras[$N['id']][0]??0) $atts .= ' tooltip="Space Scan:' . ($FS['SpaceScan']>0?$FS['SpaceScan']:'-') . "\nPlanet Scan:" .
+          ($FS['PlanetScan']>0?$FS['PlanetScan']:'-') . "\n" . $Extras[$N['id']][0] . '" ';
 
       } else if (!empty($FS['Xlabel'])) {
           $atts .= " xlabel=\"" . $FS['Xlabel'] . '" ';
