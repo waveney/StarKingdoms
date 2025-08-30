@@ -289,21 +289,24 @@
       if ($Fid) {
         $atts .= " href=\"/SurveyReport.php?R=" . $N['Ref'] . '" ';
 
+        if ($Extras[$N['id']]??0) {
+          $atts .= " xlabel=<";
+          if ($Extras[$N['id']][1]??0) $atts .= '<font color="red">' . $Extras[$N['id']][1] . ' </font>';
+          if ($Extras[$N['id']][2]??0) $atts .= '<font color="blue">' . $Extras[$N['id']][2] . ' </font>';
+          if ($Extras[$N['id']][3]??0) $atts .= '<font color="darkgreen">A</font>';
+          $atts .= '> ';
 
-      if ($Extras[$N['id']]??0) {
-        $atts .= " xlabel=<";
-        if ($Extras[$N['id']][1]??0) $atts .= '<font color="red">' . $Extras[$N['id']][1] . ' </font>';
-        if ($Extras[$N['id']][2]??0) $atts .= '<font color="blue">' . $Extras[$N['id']][2] . ' </font>';
-        if ($Extras[$N['id']][3]??0) $atts .= '<font color="darkgreen">A</font>';
-        $atts .= '> ';
+          if ($Extras[$N['id']][0]??0) $atts .= ' tooltip="Space Scan:' . ($FS['SpaceScan']>0?$FS['SpaceScan']:'-') . "\nPlanet Scan:" .
+            ($FS['PlanetScan']>0?$FS['PlanetScan']:'-') . "\n" . $Extras[$N['id']][0] . '" ';
 
-        if ($Extras[$N['id']][0]??0) $atts .= ' tooltip="Space Scan:' . ($FS['SpaceScan']>0?$FS['SpaceScan']:'-') . "\nPlanet Scan:" .
-          ($FS['PlanetScan']>0?$FS['PlanetScan']:'-') . "\n" . $Extras[$N['id']][0] . '" ';
-
-      } else if (!empty($FS['Xlabel'])) {
+        } else if (!empty($FS['Xlabel'])) {
           $atts .= " xlabel=\"" . $FS['Xlabel'] . '" ';
+        } else if ($FS) {
+          $atts .=  ' tooltip="Space Scan:' . ($FS['SpaceScan']>0?$FS['SpaceScan']:'-') . "\nPlanet Scan:" .
+            ($FS['PlanetScan']>0?$FS['PlanetScan']:'-') . '" ';
+
         }
-      } else {
+      } else if ($GM) {
         $atts .= " href=\"/SysEdit.php?N=" . $N['id'] . '" ';
       }
 
