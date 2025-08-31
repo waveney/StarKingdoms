@@ -262,7 +262,7 @@
 
   }
 
-  echo "<form method=post action=ThingPlan.php>";
+  echo "<form method=post action=ThingPlan.php >";
   Register_Autoupdate('Thing',$Tid); //'ModuleCheck');
   echo fm_hidden('id',$Tid) . fm_hidden('F',$Fid);
   $T['MaxModules'] = Max_Modules($T);
@@ -516,13 +516,13 @@
         }
       }
       echo "<input type=submit name=Validate value=Validate>\n";
-      echo "<input type=submit name=ACTION value=Delete>\n";
+      echo "<input formnovalidate type=submit name=ACTION value=Delete >\n";
       if ($CanMake) echo "<h2>Once planned, go to where you want to make it and select an appropriate project</h2>";
       echo "You can customise by adding crew names, an images, notes and gadgets by selecting the thing while it is being made or used later.<p>\n";
     }
   } else {
     echo "<input type=submit name=Validate value=Validate>\n";
-    echo "<input type=submit name=ACTION value=Delete>\n";
+    echo "<input formnovalidate type=submit name=ACTION value=Delete>\n";
     echo "<h2 class=Err>Warning: <b>$InValid</b> - If you try and make an Invalid thing. The action will fail</h2>\n";
   }
   echo "</form>";

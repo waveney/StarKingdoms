@@ -9,6 +9,10 @@
 
   dostaffhead("Experiments for now..");
 
+  function frand($Bound=1) {
+    return ($Bound*rand(0,1E10)/1e10);
+  }
+
   $AU = 1.496e8;
   $SunStats = ['Mass'=>2E30,'Radius'=>695700,'Luminosity'=>3.828E26,'Temperature'=>5772];
   $EarthStats = ['Mass'=>5.97e24,'Radius'=>6378,'OrbitalRadius'=>$AU,'Period'=>365.25,'Gravity'=>9.8];
@@ -56,7 +60,8 @@
         $L = $SunStats['Luminosity']*($Mass**3);
         $LineF = sqrt($L/$SunStats['Luminosity']);
         $N = ['Mass'=>$Mass*$SunStats['Mass'], 'Luminosity' => $L, 'Radius' =>$SunStats['Radius']*($Mass**0.74),
-          'Temperature' => $SunStats['Temperature']*($Mass**0.505), 'Type'=>$Stype, 'InnerLim'=>0.1*$Mass*$AU, 'OuterLim'=>40*$Mass*$AU,
+          'Temperature' => $SunStats['Temperature']*($Mass**0.505), 'Type'=>$Stype,
+          'InnerLim'=>(0.1+frand(0.4))* $Mass*$AU, 'OuterLim'=>(30+frand(15))*$Mass*$AU,
           'FrostLine'=>4.85*$LineF*$AU, 'HabInner'=>0.70*$LineF*$AU, 'HabOuter'=>1.45*$LineF*$AU,
         ];
 //        $N['Roche'] = 0.78*(($N['Mass']/5400)**(1/3));
