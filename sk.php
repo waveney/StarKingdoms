@@ -346,7 +346,7 @@ function dostaffhead($title,$extras=[],$bodyextra='') {
     include_once("skgame.php");
     if ($extras) doextras($extras);
     echo "<meta http-equiv='cache-control' content=no-cache>";
-    echo "</head><body>\n";
+    echo "</head><body $bodyextra>\n";
     include_once("files/Newnavigation.php");
     echo "<div class=content>";
   } else {

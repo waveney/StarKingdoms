@@ -1093,11 +1093,9 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
   }
 
   $stm = (int) (~ (int)$T['SeenTypeMask']);
-//echo "Failed to see:" . $ThingTypes[$T['Type']]['SeenBy'] . ":$stm:" . $T['SeenTypeMask'] . ":$Eyes<p>";
 //var_dump($stm);
       if ($Fid >=0 && ($T['Whose'] != $Fid) && ($T['PrisonerOf'] != $Fid) &&
           (((($ThingTypes[$T['Type']]['SeenBy']??0) & $stm & $Eyes) == 0 ))) {
-// echo "Failed to see:" . $ThingTypes[$T['Type']]['SeenBy'] . ":$stm:$Eyes<p>";
         return '';
       }
       if ($T['BuildState'] < BS_SERVICE || ($T['BuildState'] >= BS_EX && !$Div)) return ''; // Building or abandoned
@@ -1108,7 +1106,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
       if ($Div && $LastWhose && $LastWhose!= $T['Whose']) $txt .= "<P>";
       $Imgxtra = 0;
       if ($Div) {
-        if (($T['BuildState'] == 4) || (($T['Type'] == 23) && $GM)) { // Named Chars
+        if (($T['BuildState'] >= BS_EX) || (($T['Type'] == 23) && $GM)) { // Named Chars
           if ($GM) {
             $txt .= "<div class='FullD SeeThingTxt $LocClass' hidden>";
             $Imgxtra = 1;
@@ -1116,7 +1114,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
             $txt .= "<div class='SeeThingTxt $LocClass' >The Abandoned: ";
             $Imgxtra = 1;
           } elseif ($T['BuildState'] == BS_DELETE) {
-            $txt .= "<div class='SeeThingTxt $LocClass' >The pending deletion remains of: ";
+            $txt .= "<div class='FullD SeeThingTxt $LocClass' hidden>The pending deletion remains of: ";
             $Imgxtra = 1;
           } elseif ($T['BuildState'] >= BS_EX) {
             $txt .= "<div class='FullD SeeThingTxt $LocClass' hidden>The remains of: ";

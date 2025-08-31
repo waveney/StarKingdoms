@@ -136,18 +136,14 @@ debugger;
   var dbg = document.getElementById('Debug');
   if (Show != ListType && ListFaction) {
     $.post("setfield.php", {'T':'Factions', 'I':ListFaction, 'F':(ListGM?'GMThingType':'ThingType'), 'V':Show} , function( data ) { 
-      if (dbg) { 
-        $('#Debug').html( data)
-        }
+      if (dbg) $('#Debug').html( data)
       }
     );
   }
   var Build = $("input[name=BuildShow]:checked").val();
   if (Build != ListBuild && ListFaction) {
     $.post("setfield.php", {'T':'Factions', 'I':ListFaction, 'F':(ListGM?'GMThingBuild':'ThingBuild'), 'V':Build}, function( data ) { 
-      if (dbg) { 
-        $('#Debug').html( data);
-        }
+      if (dbg) $('#Debug').html( data);
       }
     );  
   }

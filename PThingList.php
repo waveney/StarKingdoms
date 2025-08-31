@@ -36,11 +36,12 @@
 
   if ($GM && isset($_REQUEST['FORCE'])) $GM = 0;
 
-  dostaffhead("Things",["js/ProjectTools.js"],
-             " onload=ListThingSetup(" . ($FACTION['id']??0) . ",$GM," .
-             ($GM?($FACTION['GMThingType']??0):($Faction['ThingType']??0)) . "," .
+  dostaffhead("Things",["js/ProjectTools.js"]) ;
+  /*,
+             " onload=ListThingSetup($Fid," . ($GM?1:0) . "," .
+    ($GM?($Faction['GMThingType']??0):($Faction['ThingType']??0)) . "," .
              ($GM?($Faction['GMThingBuild']??0):($Faction['ThingBuild']??0)) . ")" );
-
+*/
   if ($GM && $Fid) {
     echo "<h2><a href=PThingList.php?FORCE>This page in Player Mode</a></h2>";
   }
@@ -441,8 +442,11 @@
 
   }
   if (Access('God'))  echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=15 class=NotSide><textarea id=Debug></textarea>";
-  echo "</table></div onload=ListThingSetup($Fid,$GM," . ($GM?($Faction['GMThingType']??0):$Faction['ThingType']) . "," .
-       ($GM?($Faction['GMThingBuild']??0):$Faction['ThingBuild']) . ")>\n";
+  echo "</table></div>\n";
+
+  echo "<script type=text/javascript>$(document).ready(function(){ ListThingSetup($Fid," . ($GM?1:0) . "," .
+       ($GM?($Faction['GMThingType']??0):$Faction['ThingType']) . "," .
+       ($GM?($Faction['GMThingBuild']??0):$Faction['ThingBuild']) . ");});</script>\n";
 
   if ($Fid) {
     echo "<h1>Logistics</h1>";
