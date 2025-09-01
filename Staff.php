@@ -115,7 +115,7 @@
   if ($x = SKTable('Any','Mapping')) {
     $txt .= $x;
     $txt .= "<ul>\n";
-    $txt .= "<li><a href=MapShow.php>Full Map Show</a>\n";
+//    $txt .= "<li><a href=MapShow.php>Full Map Show</a>\n";
     $txt .= "<li><a href=MapShow.php?Hex>Hex Map Show</a>\n<p>";
 
     /*
@@ -128,8 +128,10 @@
                 fm_select($Facts,0,'f1',1," onchange=this.form.submit()") . "</form>\n";*/
 
 
-    $txt .= "<li><a href=MapFull.php?Links=0>Full Map Generate</a>\n";
-    $txt .= "<li><a href=MapFull.php?Hex&Links=0>Hex Map Generate</a>\n<p>";
+//    $txt .= "<li><a href=MapFull.php?Links=0>Full Map Generate</a>\n";
+    $txt .= "<li><a href=MapFull.php?Hex&Links=0>Hex Map Generate</a>";
+    $txt .= "<li><a href=MapSelect.php?Hex&Links=0>Selective Hex Map</a>\n<p>";
+
     if (0 && Access('God')) {
       $txt .= "<li><a href=MapEdit.php>Map Edit</a><p>\n";
       $txt .= "<li><a href=MapValid.php>Map Validation</a>\n";

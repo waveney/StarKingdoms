@@ -13,6 +13,7 @@
   $Scale = ($_REQUEST['Scale']??1);
   $XScale = Feature('XScale',1)*$Scale;
   $ShowLinks = ($_REQUEST['Links']??1);
+  $OnlyShowConceal = $OnlyShowInsta = [];
 
   if (isset($_REQUEST['f'])) {
     $Fid = $_REQUEST['f'];
@@ -33,6 +34,14 @@
   if ($GM) {
     if (isset($_REQUEST['FORCE'])) $GM=0;
     if ($GM && $Fid) echo "<h2><a href=MapFull.php?Hex&Links=0&FORCE>This page in Player Mode</a></h2>";
+    if (isset($_REQUEST['ONLY'])) {
+      $sets = explode(',',$_REQUEST['ONLY']);
+      foreach ($sets as $s) $OnlyShowConceal[$s] = 1;
+    }
+    if (isset($_REQUEST['INSTA'])) {
+      $sets = explode(',',$_REQUEST['INSTA']);
+      foreach ($sets as $s) $OnlyShowInsta[$s] = 1;
+    }
   } else {
     if ($Fact['TurnState'] > 2) Player_Page();
   }
@@ -94,6 +103,8 @@
   if (isset($_REQUEST['Hex'])) {
     if ($GM) {
       $typ = 'Hex';
+
+      if ($OnlyShowConceal || $OnlyShowInsta) $typ .= 'O';
     } elseif (Access('Player')) {
       if (Has_Tech($Fid,'Astral Mapping') || Feature('MapsinHex')) {
  //       echo "Found Hex...";
@@ -103,6 +114,7 @@
       $typ = 'Hex';
     }
   }
+
 
 
 //var_dump($typ);exit;
@@ -378,6 +390,9 @@
         $Links = Get_Links1end($from);
 
         foreach ($Links as $L) {
+          if ($OnlyShowConceal && !($OnlyShowConceal[$L['Concealment']]??0)) continue;
+          if ($OnlyShowInsta && !($OnlyShowInsta[$L['Instability']]??0)) continue;
+
           $Ldat = LinkProps($L);
           fwrite($Dot,$L['System1Ref'] . " -- " . $L['System2Ref'] .
             " [color=" . $Ldat[4] .
