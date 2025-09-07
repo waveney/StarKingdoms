@@ -90,15 +90,19 @@ function RealWorld(&$Data,$fld,$AU=0) {
     switch ($fld) {
     case 'Radius' :
     case 'Radius2' :
-      if ($val > 20000) {
+      if ($val > 100000) {
         return sprintf("%0.2f x Sun",$val/695700);
+      } else if ($val > 20000) {
+        return sprintf("%0.2f x Jupiter",$val/69911);
       } else {
         return sprintf("%0.2f x Earth",$val/6378);
       }
     case 'Mass' :
     case 'Mass2' :
-      if ($val > 1E28) {
+      if ($val > 1E29) {
         return sprintf("%0.2f x Sun",$val/2E30);
+      } else if ($val >1e26)  {
+        return sprintf("%0.2f x Jupiter",$val/1.8982e27);
       } else {
         return sprintf("%0.2f x Earth",$val/5.97e24);
       }
@@ -141,6 +145,13 @@ function RealWorld(&$Data,$fld,$AU=0) {
         return sprintf("$Acc x Radius of Stars",$val/($Data['Radius']+$Data['Radius2']));
       }
 
+    case 'Heat' :
+      return sprintf("%0.2f Earth",$val*(1.496e11^2)/3.83e26);
+
+    case 'Density' :
+      return sprintf("%0.2f g/cc",$val);
+
+
     default:
       if ($AU) {
         return sprintf("%0.2f AU",$val/1.496e8);
@@ -150,7 +161,7 @@ function RealWorld(&$Data,$fld,$AU=0) {
 }
 
 function RealHeat(&$N,&$P) {
-  $heat = $N['Luminosity']/(($P['OrbitalRadius']*1000)^2);
+  $heat = ($N['Luminosity']+($N['Type2']?$N['Luminosity2']:0))/(($P['OrbitalRadius']*1000)^2);
   return sprintf("%0.2f Earth", $heat*(1.496e11^2)/3.83e26);
 }
 

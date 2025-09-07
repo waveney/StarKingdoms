@@ -25,7 +25,8 @@
   echo "<form method=post action=PlanetTypes.php>";
   if ($AllG) echo fm_hidden('AllGames',1);
 
-  echo "Hospitable: 1 - starting Biospheres, 2= other hospitable<p>";
+  echo "Hospitable: 1 - starting Biospheres, 2= other hospitable, 3=Habitable - see below<p>";
+  echo "Habitable is an interim state these will all become Temperate/Water/Desert/Desolte/Actic when anlysis complete<p>";
 
   echo "<div class=tablecont><table id=indextable border>\n";
   echo "<thead><tr>";
@@ -36,6 +37,8 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Moon Factor</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Append Planet/Moon</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Image Prefix</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Mass Formula</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Density Formula</a>\n";
   echo "</thead><tbody>";
   foreach($DT as $D) {
     $i = $Did = $D['id'];
@@ -46,6 +49,8 @@
     echo fm_number1("",$D,'MoonFactor','','',"MoonFactor$i");
     echo fm_number1("",$D,'Append','','',"Append$i");
     echo fm_text1("",$D,'ImgPrefix',1,'','',"ImgPrefix$i");
+    echo fm_text1("",$D,'MassForm',1,'','',"MassForm$i");
+    echo fm_text1("",$D,'DenForm',1,'','',"DenForm$i");
   }
   echo "<tr><td><td><input type=text name=Name0 >";
   echo fm_hidden('NotBy0',$SETNOT);
@@ -53,7 +58,9 @@
   echo "<td><input type=number name=Hospitable0 value=0>";
   echo "<td><input type=number name=MoonFactor0 value=0>";
   echo "<td><input type=number name=Append0 value=0>";
-  echo "<td><input type=number name=ImgPrefix0>";
+  echo "<td><input type=text name=ImgPrefix0>";
+  echo "<td><input type=text name=MassForm0>";
+  echo "<td><input type=text name=DenForm0>";
   echo "</table></div>\n";
   echo "<input type=submit name=Update value=Update>\n";
   echo "</form></div>";

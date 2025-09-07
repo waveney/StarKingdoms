@@ -351,7 +351,7 @@ function Put_LinkLevel(&$now) {
 function Get_LinkLevels($AllG=0) {
   global $db,$GAMEID,$NOTBY;
   $Lvls = [];
-  $res = $db->query("SELECT * FROM LinkLevel " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0 ") . " ORDER BY Level");
+  $res = $db->query("SELECT * FROM LinkLevel " . ($AllG?'':"WHERE (NotBy=0 OR (NotBy&$NOTBY)!=0) ") . " ORDER BY Level");
   if ($res) while ($ans = $res->fetch_assoc()) $Lvls[$AllG?$ans['id']:$ans['Level']] = $ans;
   return $Lvls;
 }
@@ -372,7 +372,7 @@ function Put_LinkInstaLevel(&$now) {
 function Get_LinkInstaLevels($AllG=0) {
   global $db,$GAMEID,$NOTBY;
   $Lvls = [];
-  $res = $db->query("SELECT * FROM LinkInstaLevel " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0 ") . " ORDER BY Instability");
+  $res = $db->query("SELECT * FROM LinkInstaLevel " . ($AllG?'':"WHERE (NotBy=0 OR (NotBy&$NOTBY)!=0) ") . " ORDER BY Instability");
   if ($res) while ($ans = $res->fetch_assoc()) $Lvls[$AllG?$ans['id']:$ans['Instability']] = $ans;
   return $Lvls;
 }
@@ -398,7 +398,7 @@ function Get_DistrictTypes($All=0) {
   if ($All) {
     $res = $db->query("SELECT * FROM DistrictTypes");
   } else {
-    $res = $db->query("SELECT * FROM DistrictTypes WHERE (NotBy&$NOTBY)=0");
+    $res = $db->query("SELECT * FROM DistrictTypes WHERE (NotBy=0 OR (NotBy&$NOTBY)!=0)");
   }
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
   return $Ts;
@@ -410,7 +410,7 @@ function Get_DistrictTypeNames($All=0) {
   if ($All) {
     $res = $db->query("SELECT * FROM DistrictTypes");
   } else {
-    $res = $db->query("SELECT * FROM DistrictTypes WHERE (NotBy&$NOTBY)=0");
+    $res = $db->query("SELECT * FROM DistrictTypes WHERE (NotBy=0 OR (NotBy&$NOTBY)!=0)");
   }
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans['Name'];
   return $Ts;
@@ -517,7 +517,7 @@ function Get_PlanetTypes($AllG=0) {
   if ($AllG) {
     $res = $db->query("SELECT * FROM PlanetTypes");
   } else {
-    $res = $db->query("SELECT * FROM PlanetTypes WHERE (NotBy&$NOTBY)=0");
+    $res = $db->query("SELECT * FROM PlanetTypes WHERE (NotBy=0 OR (NotBy&$NOTBY)!=0)");
   }
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
   return $Ts;
@@ -529,7 +529,7 @@ function Get_PlanetTypeNames($AllG=0) {
   if ($AllG) {
     $res = $db->query("SELECT * FROM PlanetTypes");
   } else {
-    $res = $db->query("SELECT * FROM PlanetTypes WHERE (NotBy&$NOTBY)=0");
+    $res = $db->query("SELECT * FROM PlanetTypes WHERE (NotBy=0 OR (NotBy&$NOTBY)!=0)");
   }
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans['Name'];
   return $Ts;
@@ -731,7 +731,7 @@ function Get_ModuleTypes($All=0) {
   if ($All) {
     $res = $db->query("SELECT * FROM ModuleTypes ORDER BY id");
   } else {
-    $res = $db->query("SELECT * FROM ModuleTypes WHERE (NotBy&$NOTBY)=0 ORDER BY id");
+    $res = $db->query("SELECT * FROM ModuleTypes WHERE (NotBy=0 OR (NotBy&$NOTBY)!=0) ORDER BY id");
   }
   $Ms = [];
   if ($res) while ($ans = $res->fetch_assoc()) $Ms[$ans['id']] = $ans;
@@ -789,7 +789,7 @@ function Put_Tech(&$now) {
 function Get_Techs($Fact=0,$AllG=0) {
   global $db,$GAMEID,$NOTBY;  // $Fact not used now
   $Ms = [];
-  $res = $db->query("SELECT * FROM Technologies " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0 ") . " ORDER BY Cat,id");
+  $res = $db->query("SELECT * FROM Technologies " . ($AllG?'':"WHERE (NotBy=0 OR (NotBy&$NOTBY)!=0) ") . " ORDER BY Cat,id");
   if ($res) while ($ans = $res->fetch_assoc()) $Ms[$ans['id']] = $ans;
   return $Ms;
 }
@@ -801,10 +801,10 @@ function Get_TechsByCore($Fact=0, $All=0, $AllG=0) {
     if ($AllG) {
       $res = $db->query("SELECT * FROM Technologies ORDER BY PreReqTech, PreReqLevel, Name");
     } else {
-      $res = $db->query("SELECT * FROM Technologies WHERE (NotBy&$NOTBY)=0 ORDER BY PreReqTech, PreReqLevel, Name");
+      $res = $db->query("SELECT * FROM Technologies WHERE (NotBy=0 OR (NotBy&$NOTBY)!=0) ORDER BY PreReqTech, PreReqLevel, Name");
     }
   } else {
-    $res = $db->query("SELECT DISTINCT t.* FROM Technologies t, FactionTechs ft WHERE ((NotBy&$NOTBY)=0) AND (" .
+    $res = $db->query("SELECT DISTINCT t.* FROM Technologies t, FactionTechs ft WHERE (NotBy=0 OR (NotBy&$NOTBY)!=0) AND (" .
            "(t.Cat<2 OR (t.Cat=2 AND ft.Faction_Id=$Fact AND ft.Tech_Id=t.id))) ORDER BY t.PreReqTech, t.PreReqLevel, t.Name");
   }
   if ($res) while ($ans = $res->fetch_assoc()) $Ms[$ans['id']] = $ans;
@@ -814,7 +814,7 @@ function Get_TechsByCore($Fact=0, $All=0, $AllG=0) {
 function Get_CoreTechs($AllG=0) {
   global $db,$NOTBY;
   $Ms = [];
-  $res = $db->query("SELECT * FROM Technologies WHERE Cat=0 " . ($AllG?'':"AND (NotBy&$NOTBY)=0")  . " ORDER BY id");
+  $res = $db->query("SELECT * FROM Technologies WHERE Cat=0 " . ($AllG?'':"AND (NotBy=0 OR (NotBy&$NOTBY)!=0)")  . " ORDER BY id");
   if ($res) while ($ans = $res->fetch_assoc()) $Ms[$ans['id']] = $ans;
   return $Ms;
 }
@@ -822,7 +822,7 @@ function Get_CoreTechs($AllG=0) {
 function Get_CoreTechsByName($AllG=0) {
   global $db,$NOTBY;
   $Ms = [];
-  $res = $db->query("SELECT * FROM Technologies WHERE Cat=0 " . ($AllG?'':"AND (NotBy&$NOTBY)=0")  . " ORDER BY Name");
+  $res = $db->query("SELECT * FROM Technologies WHERE Cat=0 " . ($AllG?'':"AND (NotBy=0 OR (NotBy&$NOTBY)!=0)")  . " ORDER BY Name");
   if ($res) while ($ans = $res->fetch_assoc()) $Ms[$ans['id']] = $ans;
   return $Ms;
 }
@@ -901,7 +901,7 @@ function Put_ThingType(&$now) {
 function Get_ThingTypes($AllG=0) {
   global $db,$NOTBY;
   $Ts = [];
-  $res = $db->query("SELECT * FROM ThingTypes " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0") );
+  $res = $db->query("SELECT * FROM ThingTypes " . ($AllG?'':"WHERE (NotBy=0 OR (NotBy&$NOTBY)!=0)") );
   if ($res) while ($ans = $res->fetch_assoc()) {
     $Ts[$ans['id']] = $ans;
   }
@@ -1114,7 +1114,7 @@ function Get_ProjectType($id) {
 function Get_ProjectTypes($AllG=0) {
   global $db,$NOTBY;
   $Ts = [];
-  $res = $db->query("SELECT * FROM ProjectTypes " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0") );
+  $res = $db->query("SELECT * FROM ProjectTypes " . ($AllG?'':"WHERE (NotBy=0 OR (NotBy&$NOTBY)!=0)") );
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
   return $Ts;
 }
@@ -1141,7 +1141,7 @@ function Get_OrgType($id) {
 function Get_OrgTypes($AllG=0) {
   global $db,$NOTBY;
   $Ts = [];
-  $res = $db->query("SELECT * FROM OfficeTypes " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0") );
+  $res = $db->query("SELECT * FROM OfficeTypes " . ($AllG?'':"WHERE (NotBy=0 OR (NotBy&$NOTBY)!=0)") );
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
   return $Ts;
 }
@@ -1202,7 +1202,7 @@ function Get_OpType($id) {
 function Get_OpTypes($AllG=0) {
   global $db,$NOTBY;
   $Ts = [];
-  $res = $db->query("SELECT * FROM OrgActions " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0") . " ORDER BY Office, Name");
+  $res = $db->query("SELECT * FROM OrgActions " . ($AllG?'':"WHERE (NotBy=0 OR (NotBy&$NOTBY)!=0)") . " ORDER BY Office, Name");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
   return $Ts;
 }
@@ -1229,7 +1229,7 @@ function Get_BranchType($id) {
 function Get_BranchTypes($AllG=0) {
   global $db,$NOTBY;
   $Ts = [];
-  $res = $db->query("SELECT * FROM BranchTypes " . ($AllG?'':"WHERE (NotBy&$NOTBY)=0") );
+  $res = $db->query("SELECT * FROM BranchTypes " . ($AllG?'':"WHERE (NotBy=0 OR (NotBy&$NOTBY)!=0)") );
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['id']] = $ans;
   return $Ts;
 }

@@ -215,7 +215,7 @@ function Get_Game($y=0) {
     $GAMEID = $GAME['id'];
     Feature_Reset();
     $SETNOT = (Feature('NotByMask',0)+0);
-    $NOTBY = ~$SETNOT;
+    $NOTBY = $SETNOT;
     $ARMY = Feature('Army','Army');
     $ARMIES = Feature('Armies','Armys');
   } else {

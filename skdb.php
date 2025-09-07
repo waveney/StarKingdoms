@@ -59,7 +59,7 @@ function Gen_Get_All($Table, $extra='', $idx='id') {
 function Gen_Get_All_Game($Table, $idx='id') {
   global $db,$NOTBY;
   $Ts = [];
-  $res = $db->query("SELECT * FROM $Table WHERE (NotBy&$NOTBY)=0");
+  $res = $db->query("SELECT * FROM $Table WHERE (NotBy=0 OR (NotBy&$NOTBY)!=0)");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans[$idx]] = $ans;
   return $Ts;
 }

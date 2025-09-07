@@ -85,9 +85,9 @@
   $Turn = $_REQUEST['t'];
 
   if (($OrgTypes[$Org['OrgType']]['Props'] & ORG_ALLOPS) || ($Org['OrgType2'] && ($OrgTypes[$Org['OrgType2']]['Props'] & ORG_ALLOPS)) ) {
-    $OpTypes = Gen_Get_Cond('OrgActions',"(NotBy&$NOTBY)=0 ORDER BY Name");
+    $OpTypes = Gen_Get_Cond('OrgActions',"(NotBy=0 OR (NotBy&$NOTBY)!=0) ORDER BY Name");
   } else {
-    $OpTypes = Gen_Get_Cond('OrgActions',"(NotBy&$NOTBY)=0 AND ( Office=$OffType OR Office=" . $Org['OrgType2'] .
+    $OpTypes = Gen_Get_Cond('OrgActions',"(NotBy=0 OR (NotBy&$NOTBY)!=0) AND ( Office=$OffType OR Office=" . $Org['OrgType2'] .
       " OR ((Props&" . OPER_ALLORGS . ")!=0))  ORDER BY Name");
 
     if ($Org['ExtraOps']) {
@@ -625,8 +625,8 @@
       if (Has_Trait($Fid,'IMPSEC') && strstr($OpTypes[$op]['Name'],'Recon')) $Mod--;
 
       if (Has_Trait($Fid,'Friends in All Places') && (($OpTypes[$op]['Props'] & OPER_NOT_FRIENDS) == 0)) {
-        $Wid = WorldFromTarget($Target);
-        $World = $World['Id']??0;
+        $World = WorldFromTarget($Target);
+        $Wid = $World['Id']??0;
         $SocPs = Get_SocialPs($Wid);
         $CC = Gen_Get_Cond1('SocialPrinciples',"Principle='Confluence'");
         if ($CC) {

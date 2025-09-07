@@ -209,7 +209,7 @@
             continue;
           }
         }
-        if ($P['Concealment']) echo "<br>It has a conealment rating of: " . $P['Concealment'] . "<br>";
+        if ($P['Concealment']) echo "<br>It has a concealment rating of: " . $P['Concealment'] . "<br>";
         if ($PTNs[$P['Type']] == 'Asteroid Belt') {
           $Asteroids++;
         } else {
@@ -387,7 +387,7 @@
               echo "Colonised by: " . "<span " . FactColours($M['Control'],'white','padding=2') . ">" . $Fs[$M['Control']]['Name'] . "</span><p>";
             }
 
-            if ($M['Concealment']) echo "It has a conealment rating of: " . $M['Concealment'] . "<br>";
+            if ($M['Concealment']) echo "It has a concealment rating of: " . $M['Concealment'] . "<br>";
 
             echo $Blobs["C$Mid"]??'';
 

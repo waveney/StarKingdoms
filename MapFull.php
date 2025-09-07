@@ -410,7 +410,9 @@
     $ls=0;
     foreach ($Factions as $F) {
       if (isset($F['Seen'])) {
-        fwrite($Dot,"FF" . $F['id'] . " [shape=$LegendShape style=filled fillcolor=\"" . $F['MapColour'] . '"' .
+        $FontCol = $F['MapText'];
+        if (!$FontCol) $FontCol = 'black';
+        fwrite($Dot,"FF" . $F['id'] . " [shape=$LegendShape style=filled fillcolor=\"" . $F['MapColour'] . '"' . "fontcolor=\"$FontCol\" " .
           NodeLab($F['Name']) . ($typ?" penwidth=2 pos=\"" . $HexLegPos[$ls][0]*$XScale . "," . $HexLegPos[$ls][1]*$Scale . "!\"" : "") . "];\n");
         $ls++;
       }
