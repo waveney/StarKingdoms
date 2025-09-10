@@ -39,7 +39,7 @@
 
   foreach($Banks as $B) {
     $i = $B['id'];
-    echo "<tr><td>$i";
+    echo "<tr><td>$i" . fm_hidden("GameId$i",$B['GameId']);
     echo "<td>" . fm_select($Facts,$B,'Recipient',1,'',"Recipient$i");
     echo "<td>" . fm_select($Currencies,$B,'What',0,'',"What$i");
     echo fm_number1('',$B,'Amount','','',"Amount$i");
