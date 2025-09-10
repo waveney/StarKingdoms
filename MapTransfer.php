@@ -44,7 +44,7 @@ function TransferSys($SysR) {
   $TFS['ScanLevel'] = max($FS['ScanLevel'],$TFS['ScanLevel']);
   if (isset($_REQUEST['SURV'])) {
     if (empty($TFS['Name'])) $TFS['Name'] = $FS['Name'];
-    if (($TFS['SpaceScan'] < $FS['SpaceScan']) || (($TFS['SpaceScan'] == $FS['SpaceScan']) && ($TFS['SpaceTurn'] < $TFS['SpaceTurn']))) {
+    if ((($TFS['SpaceScan']??-2) < $FS['SpaceScan']) || (($TFS['SpaceScan'] == $FS['SpaceScan']) && (($TFS['SpaceTurn']??0) < $TFS['SpaceTurn']))) {
       $TFS['SpaceSurvey'] = $FS['SpaceSurvey'];
       $TFS['SpaceScan'] = $FS['SpaceScan'];
       $TFS['SpaceTurn'] = $FS['SpaceTurn']??$GAME['Turn'];

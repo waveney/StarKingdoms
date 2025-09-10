@@ -160,22 +160,25 @@ if (isset($_REQUEST['Action'])) {
           $Def = 3*($DefLevel*3+12);
           $Off = 3*($OffLevel+4);
 
-          $Org = Gen_Get_Cond1('Organisations',$B['Organisation']);
+          $Org = Gen_Get('Organisations',$B['Organisation']);
           $Num = $Org['OfficeCount'];
 
           $Teams = Get_Things_Cond($B['Whose'],"Type=" . $NTypes['Heavy Security'] . " AND ProjectId=$Bid");
           $Count = 0;
-          if ($Teams) foreach($Teams as $Tid=>$T) {
-            if ($T['OrigHealth'] < $Def) {
-              $T['CurHealth'] = $Def + $T['CurHealth'] - $T['OrigHealth'];
-              $T['OrigHealth'] = $Def;
+          if ($Teams) {
+            foreach($Teams as $T) {
+              if ($T['OrigHealth'] < $Def) {
+                $T['CurHealth'] = $Def + $T['CurHealth'] - $T['OrigHealth'];
+                $T['OrigHealth'] = $Def;
+              }
+              $T['Damage'] = $Off;
+              $T['SystemId'] = $T['WhereBuilt'] = $Sid;
+              $T['WithinSysLoc'] = 3;
+              $T['LinkId'] = 0;
+              if (!preg_match('/\:.*\:/',$T['Name'])) $T['Name'] = ($B['Name']?$B['Name']:"Heavy Security $Bid") . ":" . $Org['Name'] . ":" . ($Count+1);
+              Put_Thing($T);
+              $Count++;
             }
-            $T['Damage'] = $Off;
-            $T['SystemId'] = $T['WhereBuilt'] = $Sid;
-            $T['WithinSysLoc'] = 3;
-            $T['LinkId'] = 0;
-            Put_Thing($T);
-            $Count++;
           }
           if ($Count < $Num) { // New ones
             while ($Count < $Num) {

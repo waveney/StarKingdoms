@@ -374,7 +374,7 @@
             $L = Get_Link($T['LinkId']);
             echo "<td style=color:" . $LinkTypes[abs($L['Level'])]['Colour'] . " >Link " . ($L['Name']?$L['Name']: "#" . $T['LinkId']);
             if ($L['Level'] <0 ) echo "- Note under repair...";
-            if ($T['NewSystemId']>0 && $T['TargetKnown'] || Has_Tech($T['Whose'],'Know All Links')) {
+            if ($T['NewSystemId']>0 && $T['TargetKnown'] || Has_Tech($T['Whose'],'Know All Links') || Feature('AllwaysShowLinkEnds') ) {
               echo "<td>" . $Systems[$T['NewSystemId']];
             } else {
               echo "<td> ? ";

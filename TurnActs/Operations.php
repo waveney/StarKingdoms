@@ -56,6 +56,7 @@ function StartOperations() {
 
           if ($MaxB >= $EBs) {
             $O['Status'] = 5; // Not Started
+            $O['TurnEnd'] = $GAME['Turn'];
             TurnLog($Fid,'Not Starting ' . $O['Name'] . " as the Outpost is full");
             GMLog('Not Starting ' . $O['Name'] . " for " . $Facts[$O['Whose']]['Name'] . " as the <a href=ThingEdit.php?id=$Tid>Outpost</a> is full");
             Put_Operation($O);
@@ -67,6 +68,7 @@ function StartOperations() {
           $AllReady = Gen_Get_Cond('Branches'," HostType=3 AND HostId=$Tid AND Organisation=$OrgId" );
           if ($AllReady) {
             $O['Status'] = 5; // Not Started
+            $O['TurnEnd'] = $GAME['Turn'];
             TurnLog($Fid,'Not Starting ' . $O['Name'] . " as there is already a branch there");
             GMLog('Not Starting ' . $O['Name'] . " for " . $Facts[$O['Whose']]['Name'] . " as there is already a branch there");
             Put_Operation($O);
@@ -75,6 +77,7 @@ function StartOperations() {
         }
       } else if (!($Otp & OPER_CREATE_OUTPOST)) { // No out post and can't create
         $O['Status'] = 5; // Not Started
+        $O['TurnEnd'] = $GAME['Turn'];
         TurnLog($Fid,'Not Starting ' . $O['Name'] . " for " . $Facts[$O['Whose']]['Name'] .
           " There is not currently an Outpost there, this operation can't create one");
         GMLog('Not Starting ' . $O['Name']  . " There is not currently an Outpost there, this operation can't create one");
@@ -94,6 +97,7 @@ function StartOperations() {
         $AllReady = Gen_Get_Cond('Branches'," HostType=$ThingType AND HostId=$ThingId AND Organisation=$OrgId" );
         if ($AllReady) {
           $O['Status'] = 5; // Not Started
+          $O['TurnEnd'] = $GAME['Turn'];
           TurnLog($Fid,'Not Starting ' . $O['Name'] . " There is already a branch of " . $Orgs[$OrgId]['Name'] . " on " . $Body['Name'] . " in " .
             System_Name($Sys,$Fid) );
           GMLog('Not Starting ' . $O['Name']  . " There is already a branch of " . $Orgs[$OrgId]['Name'] . " on " . $Body['Name'] . " in " .
@@ -103,6 +107,7 @@ function StartOperations() {
         }
       } else {
         $O['Status'] = 5; // Not Started
+        $O['TurnEnd'] = $GAME['Turn'];
         TurnLog($Fid,"There is no world in " . System_Name($Sys,$Fid) . " that can support a Branch" );
         GMLog('Not Starting ' . $O['Name']  . " for " . $Facts[$O['Whose']]['Name'] . " There is no world in " . System_Name($Sys,$Fid) .
           " that can support a Branch" );

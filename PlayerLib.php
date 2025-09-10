@@ -696,6 +696,14 @@ function Income_Calc($Fid) {
       }
     }
 
+    $OtherPBMPBranches = Gen_Get_Cond('Branches',"HostType!=3 AND HostId=" . $W['ThingId'] . " AND Type=" . ($NameBType['Black Market Trading Station']??0));
+    if ($OtherPBMPBranches) {
+      $BM2 = min($EconVal,count($OtherPBMPBranches)*2);
+      $EccTxt .= "Lost $BM2 due to Black Market" . Plural($BM2,'','','s') . "<br>\n";
+      $EconVal -= $BM2;
+    }
+
+
     $OtherOffices = Gen_Get_Cond('Offices',"Whose!=$Fid AND World=$Wid AND (OrgType=2 OR OrgType2=2)");
     if ($OtherOffices) {
       $OtherTrade = 0;
@@ -752,7 +760,7 @@ function Income_Calc($Fid) {
     if ($MyPBMPBranches&& !$HasOwnGalaxy ) {
       foreach ($MyPTSBranches as $Bid=>$B ) {
         if (!isset($Orgs[$B['Organisation']])) $Orgs[$B['Organisation']] = Gen_Get('Organisations',$B['Organisation']);
-        $MyTrade += $Orgs[$B['Organisation']]['OfficeCount'];
+        $MyTrade += $Orgs[$B['Organisation']]['OfficeCount']*2;
       }
     }
     if ($MyOPBranches && !$HasOwnGalaxy ) {

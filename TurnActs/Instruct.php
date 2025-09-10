@@ -1498,6 +1498,13 @@ function InstructionsComplete() {
             " <b>BUT NO LINK SPECIFIED</b>");
         }
 
+      case 'Decommision':
+      case 'Disband':
+      case 'Transfer':
+      case 'Retire':
+      case 'Stop Support':
+        break; // Handled at Start
+
       default:
         GMLog("Instruction: $Instr has completed, for " . $Facts[$Who]['Name'] . " by <a href=ThingEdit.php?id=$Tid>" . $T['Name'] .
         ".  No automation - probable bug",1);

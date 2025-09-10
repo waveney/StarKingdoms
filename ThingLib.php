@@ -579,7 +579,7 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0 ) {
     }
   } else {
     $NearNeb = ($N['Nebulae']??0);
-    $NS = (($Fid && $N['id'])?Get_FactionSystemFS($Fid,$N['id']):[]);
+    $NS = (($Fid && ($N['id']??0))?Get_FactionSystemFS($Fid,$N['id']):[]);
 
     foreach ($Links as $Lid=>$L) {
       $EInst = $L['Instability'];
@@ -1368,7 +1368,7 @@ function Update_Militia(&$W,&$Dists,$NewOwn=0,$Deploy=0) {
 //echo count($Mils);
   if (count($Mils) >= $Dcount) {
     if (count($Mils) > $Dcount) {
-      echo "<h2 class=Err>Too many setup...</h2>";
+      echo "<h2 class=Err>Too many setup...  Should be $Dcount, there are " . count($Mils) . "</h2>";
     } else {
       echo "<h2>Militia already setup</h2>";
     }
@@ -1383,6 +1383,7 @@ function Update_Militia(&$W,&$Dists,$NewOwn=0,$Deploy=0) {
         $Ml['WhereBuilt'] = $Ml['SystemId'];
       }
       $Ml['LinkId'] = ($Deploy?0:LINK_INBRANCH);
+      $Ml['WithinSysLoc'] = $loc;
       Put_Thing($Ml);
     }
 
@@ -1408,6 +1409,7 @@ function Update_Militia(&$W,&$Dists,$NewOwn=0,$Deploy=0) {
     if ($Ml['OrigHealth'] != $Hlth) {
       $Ml['OrigHealth'] = $Hlth;
       $Ml['LinkId'] = ($Deploy?0:LINK_INBRANCH);
+      $Ml['WithinSysLoc'] = $loc;
       Put_Thing($Ml);
     }
   }

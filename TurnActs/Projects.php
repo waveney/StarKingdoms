@@ -33,6 +33,7 @@ function StartProjects() {
 
         if (!$T) {
           $P['Status'] = 5; // Not Started
+          $P['TurnEnd'] = $GAME['Turn'];
           TurnLog($P['FactionId'],'Not starting as Thing not found: ' . $P['Name']);
           GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as Thing $Tid not found: ' . $P['Name'],1);
           Put_Project($P);
@@ -42,6 +43,7 @@ function StartProjects() {
 
         if (0 && !($T['DesignValid']??0)) {
           $P['Status'] = 5; // Not Started
+          $P['TurnEnd'] = $GAME['Turn'];
           TurnLog($P['FactionId'],'Not starting as design invalid: ' . $P['Name']);
           GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as design invalid: ' . $P['Name'],1);
           Put_Project($P);
@@ -61,6 +63,7 @@ function StartProjects() {
         if (($T['SystemId'] != 0 && $T['SystemId'] != $Where[0])) {
           //var_dump($Where,$T);
           $P['Status'] = 5; // Not Started
+          $P['TurnEnd'] = $GAME['Turn'];
           TurnLog($P['FactionId'],'Not starting as not in same system: ' . $P['Name']);
           GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as not in same system: ' . $P['Name'],1);
           Put_Project($P);
@@ -71,6 +74,7 @@ function StartProjects() {
             // OK
           } else {
             $P['Status'] = 5; // Not Started
+            $P['TurnEnd'] = $GAME['Turn'];
             TurnLog($P['FactionId'],'Not starting as not at the same planet: ' . $P['Name']);
             GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as not at the same planet: ' . $P['Name'],1);
             Put_Project($P);
@@ -81,6 +85,7 @@ function StartProjects() {
           if ($T['Level'] != $P['Level']) {
             if ($T['Level'] > $P['Level']) {
               $P['Status'] = 5; // Not Started
+              $P['TurnEnd'] = $GAME['Turn'];
 
               TurnLog($P['FactionId'],'Not starting as project level less than Thing Level: ' . $P['Name']);
               GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as project level less than Thing Level: ' . $P['Name'],1);
@@ -97,6 +102,7 @@ function StartProjects() {
           $T2 = Get_Thing($Tid2);
           if ($T2['SystemId'] != 0 && $T2['SystemId'] != $Where[0]) {
             $P['Status'] = 5; // Not Started
+            $P['TurnEnd'] = $GAME['Turn'];
             TurnLog($P['FactionId'],'Not starting as not in same system: ' . $P['Name']);
             GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as not in same system: ' . $P['Name'],1);
             Put_Project($P);
@@ -107,6 +113,7 @@ function StartProjects() {
               // OK
             } else {
               $P['Status'] = 5; // Not Started
+              $P['TurnEnd'] = $GAME['Turn'];
               TurnLog($P['FactionId'],'Not starting as not at the same planet: ' . $P['Name']);
               GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as not at the same planet: ' . $P['Name'],1);
               Put_Project($P);
@@ -141,6 +148,7 @@ function StartProjects() {
     for ($i=1;$i<4;$i++) if ($P["CostCur$i"]) {
       if ($Facts[$Fid]["Currency$i"] < $P["CostCur$i"]) {
         $P['Status'] = 5; // Not Started
+        $P['TurnEnd'] = $GAME['Turn'];
         TurnLog($P['FactionId'],'Not enough ' . GameFeature("Currency$i",'Unknown') . ': ' . $P['Name'] . " building of " . $T['Name'] . " Not started.");
         GMLog($Facts[$P['FactionId']]['Name'] . ' Not enough ' . GameFeature("Currency$i",'Unknown') . ': ' . $P['Name']  . " building of " . $T['Name'] .
            " Not started.",1);
@@ -195,6 +203,7 @@ function StartProjects() {
       }
     } else {
       $P['Status'] = 5; // Not Started
+      $P['TurnEnd'] = $GAME['Turn'];
       TurnLog($P['FactionId'],'Not starting as not enough Credits: ' . $P['Name']);
       GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as not enough Credits: ' . $P['Name'],1);
       Put_Project($P);

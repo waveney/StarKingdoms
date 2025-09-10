@@ -82,6 +82,8 @@ function ValidateTurn($For = 0) {
         }
       }
     }
+
+
   }
 
  /*

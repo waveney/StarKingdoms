@@ -55,7 +55,7 @@ if ($InLogs) {
 
   foreach ($InLogs as $Tr) {
     echo "<tr><td " . FactColours($Tr['FromFact']) . ">" .$Facts[$Tr['FromFact']]['Name'];
-    echo "<td>" . $WRefs[$Tr['SystemId']] . "<td>" . ($Tr['Survey']?'Yes':'No');
+    echo "<td>" . ($WRefs[$Tr['SystemId']]??'??') . "<td>" . ($Tr['Survey']?'Yes':'No');
     echo "<td>" . $Tr['Turn'] . "<td>" . date("d/m/Y H:i:s", $Tr['XferWhen']);
   }
   TableEnd();
@@ -79,7 +79,7 @@ if ($OutLogs) {
 
   foreach ($OutLogs as $Tr) {
     echo "<tr><td " . FactColours($Tr['DestFact']) . ">" .$Facts[$Tr['DestFact']]['Name'];
-    echo "<td>" . $WRefs[$Tr['SystemId']] . "<td>" . ($Tr['Survey']?'Yes':'No');
+    echo "<td>" . ($WRefs[$Tr['SystemId']]??'??') . "<td>" . ($Tr['Survey']?'Yes':'No');
     echo "<td>" . $Tr['Turn'] . "<td>" . date("d/m/Y H:i:s", $Tr['XferWhen']);
   }
   TableEnd();

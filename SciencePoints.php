@@ -154,6 +154,8 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$ThingInstrs,$ThingInclrs,$Cu
         if ($T['Cat'] == 0 || (isset($FactTechs[$T['id']]) && $FactTechs[$T['id']]['Level'])) continue;
         if (!isset($FactTechs[$T['PreReqTech']]) ) continue;
         if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
+        if ($T['PreReqTech2'] && !isset($FactTechs[$T['PreReqTech2']])) continue;
+        if ($T['PreReqTech3'] && !isset($FactTechs[$T['PreReqTech3']])) continue;
         $Lvl = $T['PreReqLevel'];
         if ($Avail[$Fld]-$Used[$Fld] >= $SPCosts[$Lvl]) {
           echo "<button class=projtype type=submit formaction='SciencePoints.php?ACTION=NEW&id=$Fid&Tid=" . $T['id'] . "&L=$Lvl&C=" .
