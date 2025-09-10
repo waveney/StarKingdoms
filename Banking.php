@@ -3,7 +3,7 @@
   global $FACTION,$GAMEID,$USER,$GAME;
   include_once("GetPut.php");
   include_once("PlayerLib.php");
-  global $PlayerState,$PlayerStates,$Currencies;
+  global $PlayerState,$PlayerStates,$Currencies,$PayFactionRates;
 
   A_Check('Player');
 
@@ -58,7 +58,8 @@
       case 'Setup' :
         $BankRec = ['FactionId'=>$Fid, 'Recipient'=>$_REQUEST['Recipient'], 'Amount'=>$_REQUEST['Amount'],
                     'StartTurn'=> $_REQUEST['StartTurn'], 'EndTurn' => (empty( $_REQUEST['EndTurn'])? $_REQUEST['StartTurn'] : $_REQUEST['EndTurn']),
-                    'YourRef' => $_REQUEST['YourRef'],'What'=>(isset($_REQUEST['What'])?$_REQUEST['What']:0),'GameId'=>$GAMEID ];
+                    'YourRef' => $_REQUEST['YourRef'],'What'=>(isset($_REQUEST['What'])?$_REQUEST['What']:0),'GameId'=>$GAMEID, 'Frequency'=>$_REQUEST['Freq'],
+                    ];
 
         if (empty($BankRec['YourRef'])) $BankRec['YourRef'] = "Unspecified";
         Put_Banking($BankRec);
@@ -71,11 +72,12 @@
       case 'Transfer Now' :
 
         dostaffhead("Banking");
-        $B = ['FactionId'=>$Fid, 'Recipient'=>$_REQUEST['Recipient'], 'Amount'=>$_REQUEST['Amount'],
+        $B = ['FactionId'=>$Fid, 'Recipient'=>$_REQUEST['Recipient'], 'Amount'=>$_REQUEST['Amount'],'TurnDone'=>$GAME['Turn'],
                     'StartTurn'=> $_REQUEST['StartTurn'], 'EndTurn' => (empty( $_REQUEST['EndTurn'])? $_REQUEST['StartTurn'] : $_REQUEST['EndTurn']),
-          'YourRef' => $_REQUEST['YourRef'], 'What'=>(isset($_REQUEST['What'])?$_REQUEST['What']:0),'GameId'=>$GAMEID];
+          'YourRef' => $_REQUEST['YourRef'], 'What'=>(isset($_REQUEST['What'])?$_REQUEST['What']:0),'GameId'=>$GAMEID, 'Frequency'=>($_REQUEST['Freq']??0)];
         if (empty($BankRec['YourRef'])) $BankRec['YourRef'] = "Unspecified";
 
+        if ($B['Frequency']) Put_Banking($B);
 
         if (empty($_REQUEST['What'])) {
           if (Spend_Credit($Fid,$B['Amount'],$B['YourRef'],$B['Recipient'])) {
@@ -162,7 +164,7 @@
 
   if ($Banks) {
     if ($Turn >= $GAME['Turn']) echo "Cancel will stop the transfer.  To edit it click Your Reference.<br>";
-    echo "<table border><tr><td>Recipient<td>" . ($OtherC? "What<td>" : "") . "Amount<td>Your Reference<td>Start Turn<td>Last Turn\n";
+    echo "<table border><tr><td>Recipient<td>" . ($OtherC? "What<td>" : "") . "Amount<td>Your Reference<td>Start Turn<td>Last Turn<td>When\n";
     if ($Turn >= $GAME['Turn']) echo "<td>Actions\n";
     foreach ($Banks as $B) {
       echo "<tr><td>" . $FactList[$B['Recipient']];
@@ -171,6 +173,7 @@
       echo "<td><a href=BankEdit.php?id=" . $B['id'] . ">" . $B['YourRef'] . "</a>";
       echo "<td>" . $B['StartTurn'];
       echo "<td>" . ($B['EndTurn']? $B['EndTurn']: $B['StartTurn']);
+      echo "<td>" . $PayFactionRates[$B['Frequency']];
       if ($Turn >= $GAME['Turn']) echo fm_submit("DELETE" . $B['id'],"Cancel");
     }
     echo "</table><p>\n";
@@ -192,6 +195,7 @@
 
   if (empty($_REQUEST['StartTurn'])) $_REQUEST['StartTurn'] = $Turn;
   echo "<form method=post action=Banking.php>\n";
+  /*
   echo "<h2>Setup One Off Transfer</h2>";
   echo "<table border>";
   echo fm_hidden('StartTurn',$GAME['Turn']);
@@ -201,9 +205,9 @@
   echo "<tr>" . fm_text('Your Reference',$_REQUEST,'YourRef') . "<td>Will be seen by both parties";
   echo "<tr><td>" . fm_submit("ACTION",'Transfer Now') . fm_submit("ACTION",'Transfer on Turn');
   echo "</table></form>";
-
+*/
   echo "<form method=post action=Banking.php>\n";
-  echo "<h2>Setup Ongoing or Future Transfer</h2>";
+  echo "<h2>Setup One-off, Ongoing or Future Transfer</h2>";
   echo "<table border>";
   echo "<tr><td>To:<td>" . fm_select($FactList,$_REQUEST,'Recipient') . "<td>Select <b>Other</b> for RP actions";
   if ($CCount>1) echo "<tr>" . fm_radio('Currency',$Currens,$_REQUEST,'What','',1,'colspan=2');
@@ -211,6 +215,8 @@
   echo "<tr>" . fm_number('Start Turn', $_REQUEST,'StartTurn');
   echo "<tr>" . fm_number('Last Turn', $_REQUEST,'EndTurn') . "<td>Leave blank for a one off payment";
   echo "<tr>" . fm_text('Your Reference',$_REQUEST,'YourRef') . "<td>Will be seen by both parties";
+  $_REQUEST['Freq'] = 0;
+  echo "<tr>" . fm_radio('Frequency',$PayFactionRates,$_REQUEST,'Freq'); // fm_checkbox("Ongoing:<td>",$_REQUEST,'O',1);
   echo "<tr><td>" . fm_submit("ACTION",'Setup');
   echo "</table></form>";
 

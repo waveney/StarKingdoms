@@ -2,7 +2,7 @@
 
 // Conflict code ...
 
-function Devastate(&$H,&$W,&$Dists,$Numb=1) {
+function Devastate(&$H,&$W,&$Dists,&$Offs,$Numb=1) {
   // Chose a district - reduce it, update economy etc if zero consider projects, return is text to GM and Player
 
   $DTypes = Get_DistrictTypes();
@@ -21,13 +21,28 @@ function Devastate(&$H,&$W,&$Dists,$Numb=1) {
   $Txt .= $P['Name'] . "<br>";
 
   for($Hn = 1; $Hn <= $Numb; $Hn++) {
-    $Dcount = 0;
+    $Dcount = $OCount = count($Offs);
     foreach ($Dists as $D) $Dcount += $D['Number'];
 
     if ($Dcount) {
 //var_dump($Dcount);
       $Hit = rand(1,$Dcount);
-      $DFind = 0;
+      if ($Hit <= $OCount) {
+        $Ofind = 0;
+        foreach ($Offs as $O) {
+          if (++$Ofind == $Hit) {
+            $O['GameId'] = -$O['GameId'];
+            $O['World'] = -$W['id'];
+            Gen_Put('Offices',$O);
+            $Org = Gen_Get('Organisations',$O['Organisation']);
+            $Txt .= "The office of " . $Org['Name'] . " has been destroyed because of the devastation.<br>";
+            if (--$Org['OfficeCount'] < 1) $Txt .= "The organisation is now inactive.<p>";
+            Gen_Put('Organisations',$Org);
+            continue;
+          }
+        }
+      }
+      $DFind = $OCount;
       foreach ($Dists as $D) {
         $DFind += $D['Number'];
         if ($DFind >= $Hit) break;
@@ -35,12 +50,12 @@ function Devastate(&$H,&$W,&$Dists,$Numb=1) {
 //var_dump($D);
       $D['Number']--;
       Put_District($D);
-      $Txt .= "A " . $DTypes[$D['Type']]['Name'] . " has be destroyed because of the devastation.<br>";
+      $Txt .= "A " . $DTypes[$D['Type']]['Name'] . " has been destroyed because of the devastation.<br>";
       if ($D['Number']<1) {
         $Txt .= "This causes bad things...<br>";
       }
     } else {
-      $Txt .= "There are no districts left to be destroyed.<br>";
+      $Txt .= "There are no districts or offices left to be destroyed.<br>";
       break;
     }
   }

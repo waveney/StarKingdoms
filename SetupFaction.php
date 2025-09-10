@@ -247,7 +247,7 @@ function SetupStage3() {
       $ThingType = 1;
 
       $PH = ['HostType'=>1, 'HostId' => $ThingId, 'GameId'=>$GAMEID, 'Whose'=>$Fid, 'SystemId' =>$HomeSys,
-        'WithinSysLoc' => $Pidx*200, 'EconomyFactor' => 100];
+        'WithinSysLoc' => $Pidx*200, 'EconomyFactor' => 100, 'EconomyMod' => 0];
 
       $PHnumber = Put_ProjectHome($PH);
       $Place['ProjHome'] = $PHnumber;
@@ -274,7 +274,7 @@ function SetupStage3() {
       $ThingType = 1;
 
       $PH = ['HostType'=>2, 'HostId' => $ThingId, 'GameId'=>$GAMEID, 'Whose'=>$Fid, 'SystemId' =>$HomeSys,
-        'WithinSysLoc' => $Pidx*400, 'EconomyFactor' => 100];
+        'WithinSysLoc' => $Pidx*400, 'EconomyFactor' => 100, 'EconomyMod' => 0];
 
       $PHnumber = Put_ProjectHome($PH);
       $Place['ProjHome'] = $PHnumber;

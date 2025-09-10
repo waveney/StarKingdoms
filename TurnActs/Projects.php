@@ -603,7 +603,7 @@ function ProjectsCompleted($Pass) {
           TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");
           break;
 
-        case 'Build New Office':
+        case 'Build Head Office':
           if (!$P['OrgName'] || !$P['ThingId']) {
             FollowUp($Fid,'Project ' . $P['Name'] . " looks corrupt - making a blank organisation - what project should it have been? - Call Richard");
             break 2;

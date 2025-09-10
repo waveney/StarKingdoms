@@ -7,7 +7,7 @@
 
   dostaffhead("GM Payments to Factions",["js/dropzone.js","css/dropzone.css" ]);
 
-  global $db, $GAME,$GAMEID,$Currencies;
+  global $db, $GAME,$GAMEID,$Currencies,$PayFactionRates;
 
   $Factions = Get_Factions();
   $Facts = Get_Faction_Names();
@@ -28,13 +28,14 @@
         Gain_Currency($_REQUEST['F'],$What, $_REQUEST['C'],$_REQUEST['R']);
         echo  "<h1>" . $Facts[$_REQUEST['F']] . " have gained " . $_REQUEST['C'] . " " . $Currencies[$What] . "</h1>";
       }
-      if (!isset($_REQUEST['O'])) break;
+      if (!($_REQUEST['Freq']??0)) break;
 
     case 'Pay Next Turn' :
       $What = $_REQUEST['What'];
       $BankRec = ['FactionId'=>0, 'Recipient'=>$_REQUEST['F'], 'Amount'=>$_REQUEST['C'],
-                    'StartTurn'=> $GAME['Turn'], 'EndTurn' => (isset($_REQUEST['O']) ?1000 :$GAME['Turn']),
-                    'YourRef' => $_REQUEST['R'],'What'=>$_REQUEST['What'],'GameId'=>$GAMEID ];
+                    'StartTurn'=> $GAME['Turn'], 'EndTurn' => (isset($_REQUEST['Freq'])?1000 :$GAME['Turn']),
+                    'YourRef' => $_REQUEST['R'],'What'=>$_REQUEST['What'],'GameId'=>$GAMEID,'Frequency'=>$_REQUEST['Freq'],
+                    'DoneTurn'=>$GAME['Turn'] ];
 
       Put_Banking($BankRec);
       echo "<h1>" . $Facts[$_REQUEST['F']] . " Will been paid " . $_REQUEST['C'] . ' ' . $Currencies[$What] . " Next Turn</h1>";
@@ -57,7 +58,8 @@
   echo "<tr>" . fm_radio('',$Currencies,$_REQUEST,'What',' colspan=4');
   echo "<tr>" . fm_number("Amount",$_REQUEST,'C');
   echo "<tr>" . fm_text("Reason",$_REQUEST,'R');
-  echo "<tr><td>" . fm_checkbox("Ongoing:<td>",$_REQUEST,'O',1);
+  $_REQUEST['Freq'] = 0;
+  echo "<tr>" . fm_radio('Frequency',$PayFactionRates,$_REQUEST,'Freq'); // fm_checkbox("Ongoing:<td>",$_REQUEST,'O',1);
   echo "</table>\n";
 
   echo "<input type=submit name=ACTION value='Pay Now'> <input type=submit name=ACTION value='Pay Next Turn'>";

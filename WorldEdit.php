@@ -158,6 +158,8 @@
     $NumDists = 0;
   }
 
+  ShowWorld($W,($GM?2:1),$NeedDelta);
+  /*
   $dc=0;
   $totdisc = 0;
   $MaxDists = $WH['MaxDistricts']??0;
@@ -170,7 +172,7 @@
   echo "<table border>";
   if ($GM) echo "<tr><td>Id:<td>$Wid\n";
   if (Access('God')) {
-    echo "<tr>" . fm_number('ThingType',$W,'ThingType') . fm_number('ThingId',$W,'ThingId');
+    echo "<tr>" . fm_number('God: ThingType',$W,'ThingType') . fm_number('ThingId',$W,'ThingId');
   }
   echo "<tr>" . fm_text('Name',$WH,'Name',3,'','',"Name:" . $W['ThingType'] . ":" . $W['ThingId']);
   WorldFlags($W);
@@ -193,11 +195,11 @@
   }
   if ($GM) echo "<td><a href=$EditP?i=" . $W['ThingId'] . ">Edit</a>";
 
-/*
-  if ($GM) {
-    echo "<tr>" . fm_number('Devastation',$W,'Devastation');
-    echo "<tr>" . fm_number('Economy Factor
-*/
+
+//  if ($GM) {
+//    echo "<tr>" . fm_number('Devastation',$W,'Devastation');
+//    echo "<tr>" . fm_number('Economy Factor
+
   $NumCom = 0;
   $NumPrime = $Mines = 0; $DeltaSum = 0;
   if ($NumDists) {
@@ -313,7 +315,7 @@
       }
     }
   }
-
+/
   [$H['Economy'],$Rtxt] = Recalc_Economic_Rating($H,$W,$Fid);
   if (isset($H['id'])) Put_ProjectHome($H);
 
@@ -331,8 +333,8 @@
   if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
 
   echo "</table>";
-
-  if (Access('GM')) {
+*/
+  if ($GM) {
     echo "<h2><a href=WorldEdit.php?ACTION=Militia&id=$Wid>Update Militia</a>, <a href=WorldEdit.php?ACTION=XMilitia&id=$Wid>Transfer Militia</a>, ";
     if (!isset($H['id'])) {
       echo "No Home! - <a href=WorldEdit.php?ACTION=DELETE&id=$Wid>No Home! Delete?</a>, \n";

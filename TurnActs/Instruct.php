@@ -904,7 +904,7 @@ function InstructionsComplete() {
         }
 
         $NewHome = ['ThingType'=>1, 'ThingId'=>$P['id'], 'Whose'=>$Who, 'SystemId'=>$P['SystemId'], 'WithinSysLoc'=>$T['WithinSysLoc'],
-          'EconomyFactor'=>100, 'GameId'=>$GAMEID ];
+          'EconomyFactor'=>100, 'GameId'=>$GAMEID, 'EconomyMod' => 0 ];
         Put_ProjectHome($NewHome);
         $NewWorld = ['FactionId'=>$Who, 'Home'=>$NewHome['id'], 'Minerals'=>$P['Minerals'],'ThingType'=>1, 'ThingId'=>$P['id'], 'GameId'=>$GAMEID ];
         Put_World($NewWorld);

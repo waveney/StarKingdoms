@@ -304,7 +304,8 @@ function Show_Home($Hid) {
   echo "<tr>" . fm_number('Id of thing', $H,'ThingId');
   echo "<tr>" . fm_number('Economy',$H,'Economy');
   echo "<tr>" . fm_number('Devastation',$H,'Devastation');
-  echo "<tr>" . fm_number('Economy % Modifier',$H,'EconomyFactor') . "<td>For example during an invasion\n";
+  echo "<tr>" . fm_number('Economy Modifier',$H,'EconomyMod') . "<td>Amount to be added/subtracted before other effects\n";
+  echo "<tr>" . fm_number('Economy % Factor',$H,'EconomyFactor') . "<td>For example during an invasion - normally 100(%)\n";
   if ($H['ThingType'] != 3) {
     $Systems = Get_Systems();
     $SysNames = [0=>''];
@@ -532,6 +533,11 @@ function Recalc_Economic_Rating(&$H,&$W,$Fid,$Turn=0) {
       $ERate += 4;
       $EText .= "Plus 4 from Automated Farming Robots<br>\n";
     }
+
+    if ($H['EconomyMod']) {
+      $ERate += $H['EconomyMod'];
+      $EText .= ($H['EconomyMod'] > 0?"Plus " . $H['EconomyMod'] : "Less " . -$H['EconomyMod']) . " from other reasons<br>\n";
+    }
  //   var_dump($NumPrime,$NumInd,$MinFact, $W);
     return [$ERate,$EText];
   } else {
@@ -704,4 +710,248 @@ function Set_System_List() {// sets list of Planets/Moons for each system that a
   }
 }
 
-?>
+function ShowWorld(&$W,$Mode=0,$NeedDelta=0) { // Mode 0 = View, 1=Owner, 2 = GM
+  include_once("SystemLib.php");
+  global $GAMEID;
+  $Wid = $W['id'];
+
+  $TTypes = Get_ThingTypes();
+  $PlanetTypes = Get_PlanetTypes();
+  $Fid = $W['FactionId'];
+  $DTs = Get_DistrictTypes();
+  $DistTypes = 0;
+  $SysId = 0;
+  $Facts = Get_Factions();
+  $SocPs = [];
+
+  $H = Get_ProjectHome($W['Home']);
+  if (isset($H['id'])) {
+    if ($H['ThingType'] == 0 || $H['ThingId'] == 0 ) {
+      echo "<h2 class=Err>There is a fault with Project Home " . $H['id'] . " Tell Richard</h2>";
+    }
+
+    $Dists = Get_DistrictsH($H['id']);
+    $SocPs = Get_SocialPs($W['id']);
+
+    // var_dump($Dists);
+    switch ($W['ThingType']) {
+      case 1: //Planet
+        $WH = $P = Get_Planet($W['ThingId']);
+        $type = $PlanetTypes[$P['Type']]['Name'];
+        if ($PlanetTypes[$P['Type']]['Append']) $type .= " Planet";
+        $Name = $P['Name'];
+        $SysId = $P['SystemId'];
+        $EditP = "PlanEdit.php";
+        break;
+
+      case 2: /// Moon
+        $WH = $M = Get_Moon($W['ThingId']);
+        $type = $PlanetTypes[$M['Type']]['Name'];
+        if ($PlanetTypes[$M['Type']]['Append']) $type .= " Moon";
+        $Name = $M['Name'];
+        $P = Get_Planet($M['PlanetId']);
+        $SysId = $P['SystemId'];
+        $EditP = "MoonEdit.php";
+        break;
+
+      case 3: // Thing
+        $WH = $T = Get_Thing($W['ThingId']);
+        $type = $TTypes[$T['Type']]['Name'];
+        $Name = $T['Name'];
+        $SysId = $T['SystemId'];
+        $EditP = "ThingEdit.php";
+        break;
+      default: // Error
+        echo "<h2 class=Err>There is a fault with World " . $W['id'] . " Tell Richard</h2>";
+        break;
+    }
+
+    $FS = Get_FactionSystemFS($Fid,$SysId);
+    $PlanetLevel = max(1,($FS['PlanetScan']??1));
+    $NumDists = 0;
+    foreach ($Dists as $DT) {
+      $NumDists += $DT['Number'];
+      $DistTypes++;
+    }
+    $System = Get_System($SysId);
+  } else {
+    $NumDists = 0;
+  }
+
+  $dc=0;
+  $totdisc = 0;
+  $MaxDists = $WH['MaxDistricts']??0;
+  $MaxOff = $WH['MaxOffices']??0;
+
+//  var_dump($Mode,$NeedDelta);
+  echo "<h2>" . $WH['Name'] . " in " . System_Name($System,$Fid) . "</h2>";
+  echo "<table border>";
+  if ($Mode) {
+    echo "The only things you can change (currently) is the name, description and relative importance - higher numbers appear first when planning projects.<p>\n";
+    Register_AutoUpdate("Worlds",$Wid);
+    echo fm_hidden('id', $Wid);
+  }
+  if ($Mode ==2) echo "<tr><td>Id:<td>$Wid\n";
+  if (Access('God')) {
+    echo "<tr>" . fm_number('God: ThingType',$W,'ThingType') . fm_number('ThingId',$W,'ThingId');
+  }
+  echo "<tr>" . ($Mode? fm_text('Name',$WH,'Name',3,'','',"Name:" . $W['ThingType'] . ":" . $W['ThingId']) : "<td>Name:<td>" . $WH['Name']);
+  WorldFlags($W);
+  echo "<tr>" . ($Mode? fm_textarea('Description',$WH,'Description',8,3,'','', "Description:" . $W['ThingType'] . ":" . $W['ThingId']) :
+     "<td colspan=4>" . ParseText($WH['Description']));
+  if ($Mode ==2) {
+    echo "<tr>" . fm_number("Minerals", $W, 'Minerals');
+  } else {
+    echo "<tr><td>Minerals<td>" . $W['Minerals'];
+  }
+  if ($Mode) {
+    echo "<tr>" . fm_number("Relative Importance", $W, 'RelOrder');
+  }
+  if ($MaxDists == 0) {
+    if ($Mode >0) echo "<tr><td>No limit to number of Districts";
+  } else {
+    echo "<tr><td>Max Districts:<td>$MaxDists";
+    if ($MaxOff > 0) {
+      echo "<td>Max Offices:<td>$MaxOff";
+    } else if ($MaxOff<0) {
+      echo "<td>And Offices";
+    }
+  }
+  if ($Mode ==2) echo "<td><a href=$EditP?i=" . $W['ThingId'] . ">Edit</a>";
+
+  /*
+   if ($GM) {
+   echo "<tr>" . fm_number('Devastation',$W,'Devastation');
+   echo "<tr>" . fm_number('Economy Factor
+   */
+  $NumCom = 0;
+  $NumPrime = $Mines = 0; $DeltaSum = 0;
+  if ($NumDists) {
+    if ($NumDists) echo "<tr><td rowspan=" . ($DistTypes+1) . ">Districts:";
+    foreach ($Dists as $D) {
+      if ($D['Number'] == 0) continue;
+      //      var_dump($D);
+      echo "<tr><td>" . ($DTs[$D['Type']]['Name'] ?? 'Illegal') . ": " . $D['Number'];
+      if ($NeedDelta) {
+        echo fm_number1("Delta",$D,'Delta',''," min=-$NeedDelta max=$NeedDelta ","Dist:Delta:" . $D['id']);
+        $DeltaSum += $D['Delta'];
+      }
+      if ( (($DTs[$D['Type']]['Name']??0) == 'Intelligence') && Has_Tech($Fid,'Defensive Intelligence' )) {
+        $Agents = Get_Things_Cond($Fid," Type=5 AND Class='Military' AND SystemId=$SysId ORDER BY Level DESC");
+        if ($Agents) {
+          $Bi = ($Agents[0]['Level']/2);
+          echo " ( +$Bi From Defensive Intelligence)";
+        }
+
+      }
+    }
+    if ($NeedDelta && $DeltaSum != 0) {
+      echo "<tr><td colspan=3 class=Err>The Deltas do not sum to zero";
+    }
+  } else {
+    echo "<tr><td>No Districts currently\n";
+  }
+
+  $OrgTypes = Get_OrgTypes();
+  $Orgs = Gen_Get_Cond('Organisations',"GameId=$GAMEID");
+
+  // Offices
+  $Offs = Gen_Get_Cond('Offices',"World=$Wid");
+  if ($Offs) {
+    $Clean = [];
+    foreach ($Offs as $i=>$Of) {
+      if ($Orgs[$Of['Organisation']]??0) {
+        $Clean[$i] = $Of;
+      } else {
+        db_delete('Offices',$Of['id']);
+      }
+    }
+
+    if ($Clean) {
+      echo "<tr><td rowspan=" . count($Clean) . ">Offices:";
+      $Show = 0;
+      foreach ($Clean as $i=>$Of) {
+        if ($Show++) echo "<tr>";
+        echo "<td colspan=4>" . ($Orgs[$Of['Organisation']]['Name']??'Unknown') .
+        " ( " . ($OrgTypes[$Orgs[$Of['Organisation']]['OrgType']]['Name']??'Unknown') .
+        ($Orgs[$Of['Organisation']]['OrgType2']? '/' . ($OrgTypes[$Orgs[$Of['Organisation']]['OrgType']]['Name']??'Unknown'):'') . " )";
+      }
+    }
+  }
+
+  if ($SocPs) {
+    echo "<tr><td rowspan=" . count($SocPs)*2 . ">Social\nPrinciples:";
+    $NumSp = 0;
+    foreach ($SocPs as $si=>$SP) {
+      $Prin = Get_SocialP($SP['Principle']);
+      if (!$Prin) {
+        echo "<tr><td>Error - Tell Richard";
+        continue;
+      }
+      //var_dump($Prin,$SP);
+      if ($NumSp++) echo "<tr>";
+      if ($Mode ==2) {
+        echo "<td><b>" . $Prin['Principle'] . "</b><td>Adherence: " . $SP['Value'];
+        echo "<td " . FactColours($Prin['Whose']) . ">" . ($Facts[$Prin['Whose']]['Name']??'Unknown');
+        echo "<td><a href=SocialEdit.php?Action=Edit&id=" . $SP['Principle'] . ">Change</a>";
+        echo "<tr><td colspan=6>" . ParseText($Prin['Description']);
+
+      } else { // Player
+        echo "<td><b>" . $Prin['Principle'] . "</b><td>Adherence: " . $SP['Value'];
+        echo "<tr><td colspan=6>" . ParseText($Prin['Description']);
+      }
+    }
+  } else {
+    echo "<tr><td colsan=2>No Social Principles Currently\n";
+  }
+
+  $Branches = Gen_Get_Cond('Branches', "HostType=" . $W['ThingType'] . " AND HostId=" . $W['ThingId'] );
+  $BTypes = Get_BranchTypes();
+
+  if ($Branches) {
+    $Show = 0;
+    if ($Mode ==2) {
+      $Show = 1;
+    } else {
+      foreach ($Branches as $bi=>$B) if (($B['Whose']== $Fid) || (($BTypes[$B['Type']]['Props']&1)==0)) { $Show = 1; break;}
+    }
+    if ($Show) {
+      echo "<tr><td>Branches:<td colspan=5>";
+      foreach ($Branches as $bi=>$B) {
+        //       var_dump($B);
+        if ($Mode ==2 || ($B['Whose']== $Fid) || (($BTypes[$B['Type']]['Props']&1)==0)) {
+          echo "A <b>" . $BTypes[$B['Type']]['Name'] . "</b> of the <b>" . $Orgs[$B['Organisation']]['Name'] .
+          "</b> ( " . $OrgTypes[$Orgs[$B['Organisation']]['OrgType']]['Name'] . " ) - " .
+          "<span " . FactColours($B['Whose']) . ">" . $Facts[$B['Whose']]['Name'] . "</span>";
+          if (($BTypes[$B['Type']]['Props']&1) != 0) echo " [Hidden]";
+          echo "<br>";
+        }
+      }
+    }
+  }
+
+  // Traits - need planet survey level
+
+  if ($WH) {
+    for($i=1;$i<4;$i++) {
+      if ($WH["Trait$i"] && ($WH["Trait$i" . "Conceal"] <= $PlanetLevel)) {
+        echo "<tr><td>Trait:<td><b>" . $P["Trait$i"] . "</b><td colspan=4>" . ParseText($P["Trait$i" . "Desc"]);
+      }
+    }
+  }
+  [$H['Economy'],$Rtxt] = Recalc_Economic_Rating($H,$W,$Fid);
+  if (isset($H['id'])) Put_ProjectHome($H);
+
+  if (!empty($W['MaxDistricts'])) echo "<td>Max Districts: " . $WH['MaxDistricts'];
+  echo "<tr><td>Economy:<td>" . $H['Economy'];
+  if ($W['Devastation']??0) {
+    if ($W['Devastation'] <= $NumDists) {
+      echo "<tr><td>Devastation:<td>" . $H['Devastation'] . " If this ever goes higher than the number of districts ($NumDists), districts will be lost.";
+    } else {
+      echo "<tr><td class=Err>Devastation:<td class=Err>" . $W['Devastation'] . "  This is higher than the number of districts ($NumDists), districts will be lost.";
+    }
+  }
+  if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
+  echo "</table>";
+
+}

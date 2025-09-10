@@ -55,6 +55,7 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Economy</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Devastation</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Economy Modifier</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Economy Factor %</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Projects</a>\n";
   echo "</thead><tbody>";
 
@@ -81,7 +82,8 @@
     echo "<td>" . ($Factions[$H['Whose']]['Name']??'Unknown');
     echo "<td>" . $H['Economy'];
     echo "<td>" . $H['Devastation'];
-    echo "<td>" . $H['EconomyFactor'];
+    echo "<td>" . $H['EconomyMod'];
+    echo "<td>" . $H['EconomyFactor'] . "%";
     echo "<td><a href=ProjDisp.php?id=" . $H['Whose'] . ">Projects</a>\n";
   }
   if (Access('God')) echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";

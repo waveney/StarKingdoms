@@ -8,6 +8,7 @@ CREATE TABLE `ProjectHomes` (
   `WithinSysLoc` int NOT NULL,
   `Devastation` int NOT NULL,
   `EconomyFactor` int NOT NULL DEFAULT '100',
+  `EconomyMod` int NOT NULL,
   `Props` int NOT NULL,
   `GameId` int NOT NULL,
   PRIMARY KEY (`id`)

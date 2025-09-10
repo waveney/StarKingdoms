@@ -213,6 +213,7 @@ function CashTransfers() {
       continue;
     }
     if ($B['DoneTurn'] >= $GAME['Turn']) continue; // Already done
+    if (($B['Frequency'] > 1) && (($B['DoneTurn']-$GAME['Turn']) < $B['Frequency'])) continue; // not this turn
     if ($B['What'] == 0) {
       if ($B['FactionId'] == 0) {
           Spend_Credit($B['Recipient'], - $B['Amount'],$B['YourRef']);
@@ -1061,7 +1062,7 @@ function ActuallyDeleteStuff() {
 
   if ($Delayed) {
     foreach($Delayed as $D) {
-      Thing_Delete($D['ThingId'],1);
+      Thing_Delete($D['id'],1);
       db_delete('DelayedRemoval',$D['id']);
     }
   }
@@ -1069,7 +1070,7 @@ function ActuallyDeleteStuff() {
   $Pending = Get_Things_Cond_Ordered(0,"GameId=$GAMEID AND BuildState=" . BS_DELETE);
   if ($Pending) {
     foreach($Pending as $D) {
-      Thing_Delete($D['ThingId']);
+      Thing_Delete($D['id']);
     }
   }
 

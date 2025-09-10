@@ -49,15 +49,17 @@ function DevastationSelection() {
 function Devastation() {
   $Worlds = Get_Worlds();
   foreach ($Worlds as $W) {
+    $Wid = $W['id'];
     $H = Get_ProjectHome($W['Home']);
-    if ($W['Conflict']) {
+    if ($W['Conflict'] && Feature('Devastation on conflict')) {
       $H['Devastation']++;
     }
 
     if ($H['Devastation'] >=5 || ($H['Economy']<1 && $H['Devastation']>0)) {
       $H['Devastation'] = 0;
       $Dists = Get_DistrictsH($H['id']);
-      $LogT = Devastate($H,$W,$Dists,1);
+      $Offs = Gen_Get_Cond('Offices',"World=$Wid");
+      $LogT = Devastate($H,$W,$Dists,$Offs,1);
       TurnLog($H['Whose'],$LogT);
       GMLog($LogT,1);
       Put_ProjectHome($H);

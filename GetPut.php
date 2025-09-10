@@ -476,8 +476,6 @@ function Get_DistrictsT($Tid,$Cvl=0,$Turn=0) {
 function Get_DistrictsH($Hid,$Cvl=0,$Turn=0) {
   global $db,$GAMEID,$GAME;
   $Ts = [];
-/*  $res = $db->query("SELECT D.* FROM Districts D, ProjectHomes H WHERE D.HostType=H.ThingType AND H.id=$Hid AND D.HostId=H.ThingId " .
-                    " AND TurnStart<=" . ($Turn? $Turn : $GAME['Turn']) . "ORDER BY Type, TurnStart");*/
   $res = $db->query("SELECT D.* FROM Districts D, ProjectHomes H WHERE D.HostType=H.ThingType AND H.id=$Hid AND D.HostId=H.ThingId " .
                     "ORDER BY Type");
   if ($res) while ($ans = $res->fetch_assoc()) {

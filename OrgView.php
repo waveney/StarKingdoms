@@ -31,12 +31,25 @@ if ($Org['OrgType2']) echo "Also Type: <b>" . ($OrgTypes[$Org['OrgType2']]['Name
 
 
 echo "Decription: <p>" . ParseText($Org['Description']);
-echo "<h2>Offices:</h2>";
+
+$Teamid = $Org['Team'];
+if ($Teamid == 0) {
+  echo "Team not currently deployed.<p>";
+} else {
+  $Team = Get_Thing($Teamid);
+  $N = Get_System($Team['SystemId']);
+  echo "Team: <a href=ThingEdit.php?id=$Teamid>" . $Team['Name'] . "</a> currently in " . System_Name($N,$Org['Whose']) . "<P>";
+}
+
+echo "<h1>Offices:</h1>";
 
 if ($Offices) {
   $Head = 0;
   foreach ($Offices as $Off) {
     $W = Get_World($Off['World']);
+
+
+
     $control = 0;
     switch ($W['ThingType']) {
       case 1: // Planet
@@ -85,15 +98,6 @@ if ($Offices) {
   }
 } else {
   echo "None Found<p>";
-}
-
-$Teamid = $Org['Team'];
-if ($Teamid == 0) {
-  echo "Team not currently deployed.<p>";
-} else {
-  $Team = Get_Thing($Teamid);
-  $N = Get_System($Team['SystemId']);
-  echo "Team: <a href=ThingEdit.php?id=$Teamid>" . $Team['Name'] . "</a> currently in " . System_Name($N,$Org['Whose']) . "<P>";
 }
 
 echo "<p><h2>Branches:</h2>";

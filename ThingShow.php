@@ -969,7 +969,7 @@ function Show_Thing(&$T,$Force=0) {
   if (($T['BuildState'] == BS_SERVICE || $T['BuildState'] == BS_COMPLETE) && empty($T['PrisonerOf'])) foreach ($ThingInstrs as $i=>$Ins) {
 
  //   var_dump($Ins,($InstrNotBy[$i] & $NOTBY));
-    if (($InstrNotBy[$i] & $NOTBY) !=0) continue; // Not in this game - MAY BE DUFF..
+    if ($InstrNotBy[$i] >0 && ($InstrNotBy[$i] & $NOTBY) ==0) continue; // Not in this game - MAY BE DUFF..
 
 //  echo "Checking: $Ins<br>";
     switch ($Ins) {

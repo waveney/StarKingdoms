@@ -13,6 +13,7 @@ $FoodTypes = ['Omnivore','Herbivore','Carnivore'];
 
 $Currencies = ['Credits','Physics Science Points','Engineering Science Points','Xenology Science Points','General Science Points'];
 $Relations = [9=>['Allied','lightgreen'],7=>['Friendly','lightyellow'],5=>['Neutral','lightblue'],3=>['Wary','Orange'],1=>['Hostile','Red']];
+$PayFactionRates = ['Once Only','Every Turn','Every 2nd Turn','Every 3rd Turn'];
 
 function CheckFaction($Prog='Player',$Fid=0) {
   if (!Access('Player') && !Access('GM')) {
@@ -735,7 +736,7 @@ function Income_Calc($Fid) {
   $Things = Get_Things($Fid);
 
   $MyPTSBranches = Gen_Get_Cond('Branches',"Whose=$Fid AND HostType!=3 AND Type=" . ($NameBType['Trading Station']??0));
-  $MyPBMPBranches = Gen_Get_Cond('Branches',"Whose=$Fid AND HostType!=3 AND Type=" . ($NameBType['Black Market Trade Station']??0));
+  $MyPBMPBranches = Gen_Get_Cond('Branches',"Whose=$Fid AND HostType!=3 AND Type=" . ($NameBType['Black Market Trading Station']??0));
   $MyOPBranches = Gen_Get_Cond('Branches',"Whose=$Fid AND HostType=3 AND Type=" . ($NameBType['Trading Station']??0));
 // var_dump($MyPTSBranches,$MyPBMPBranches,$MyOPBranches,$OtherPTSBranches);
   $MyTrade = 0;

@@ -10,7 +10,7 @@
   dostaffhead("List Payments");
 
 
-  global $GAME,$GAMEID,$Currencies;
+  global $GAME,$GAMEID,$Currencies,$PayFactionRates;
 
   AddCurrencies();
   $Facts = Get_Faction_Names();
@@ -32,6 +32,8 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Start Turn</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>End Turn</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Decay Rate</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>When</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Last Paid</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Reference</a>\n";
   echo "</thead><tbody>";
 
@@ -41,9 +43,11 @@
     echo "<td>" . fm_select($Facts,$B,'Recipient',1,'',"Recipient$i");
     echo "<td>" . fm_select($Currencies,$B,'What',0,'',"What$i");
     echo fm_number1('',$B,'Amount','','',"Amount$i");
-    echo fm_number1('',$B,'StartTurn','','',"StartTurn$i");
-    echo fm_number1('',$B,'EndTurn','','',"EndTurn$i");
+    echo fm_number1('',$B,'StartTurn','',' min=0 max=1000',"StartTurn$i");
+    echo fm_number1('',$B,'EndTurn','',' min=0 max=1000',"EndTurn$i");
     echo fm_number1('',$B,'DecayRate','','',"DecayRate$i");
+    echo "<td>" .fm_select($PayFactionRates,$B,'Frequency',0,'',"Frequency$i");
+    echo fm_number1('',$B,'DoneTurn','',' min=0 max=1000',"DoneTurn$i");
     echo fm_text1('',$B,'YourRef',1,'','',"YourRef$i");
   }
   echo "</table>\n";
