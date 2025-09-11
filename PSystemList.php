@@ -18,6 +18,50 @@ dostaffhead("Known Systems");
 
 $FSs = Gen_Get_Cond('FactionSystem',"FactionId=$Fid");
 
+$Details = []; $ODetails = []; $Windxs = [];
+
+$Worlds = Get_Worlds($Fid);
+foreach ($Worlds as $Wid=>$W) {
+  $Home = Get_ProjectHome($W['Home']);
+  $Details[$Home['SystemId']] = 1;
+  $Windxs[$Wid] = $Home['SystemId'];
+}
+
+if (Has_Trait($Fid,'Goverwhat now?')) {
+  $Offices = Gen_Get_Cond('Offices',"Whose=$Fid");
+  foreach ($Offices as $O) {
+    if (!isset($Windxs[$O['World']])) {
+      $W = Get_World($O['World']);
+      $Home = Get_ProjectHome($W['Home']);
+      $Details[$Home['SystemId']] = 1;
+      $Windxs[$Wid] = $Home['SystemId'];
+    }
+  }
+}
+
+$Branches = Gen_Get_Cond("Branches","Whose=$Fid");
+foreach ($Branches as $B) {
+  switch ($B['HostType']) {
+    case 1://Planet
+      $P = Get_Planet($B['HostId']);
+      $Sid = $P['SystemId'];
+      $Details[$Sid] = 1;
+      break;
+    case 2://Moon
+      $M = Get_Moon($B['HostId']);
+      $P = Get_Planet($M['PlanetId']);
+      $Sid = $P['SystemId'];
+      $Details[$Sid] = 1;
+      break;
+    case 3://Thing
+      $T = Get_Thing($B['HostId']);
+      $Sid = $T['SystemId'];
+      $ODetails[$Sid] = 1;
+      break;
+  }
+}
+
+
 //var_dump($Systems);
 $OFSs = [];
 foreach ($FSs as $i=>$FS) {
@@ -30,6 +74,9 @@ $PlanetTypes = Get_PlanetTypes();
 
 $coln = 0;
 
+echo "World details are where you have branches, offices or districts on the ground - lots of info.<P>" .
+     "Outpost details currently only gives you details of other branches on the outpost.<p>";
+
 echo "<div class=tablecont><table class=striped id=indextable border>\n";
 echo "<thead><tr>";
 echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Ref</a>\n";
@@ -37,6 +84,8 @@ echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
 echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Whose</a>\n";
 echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Space Scan</a>\n";
 echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Planet Scan</a>\n";
+echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>World Details</a>\n";
+echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Outpost Details</a>\n";
 echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Grid</a>\n";
 echo "</thead><tbody>";
 
@@ -78,6 +127,8 @@ foreach($OFSs as $R=>$FS) {
   } else {
     echo "<td>-";
   }
+  echo "<td>" . (empty($Details[$Sid])?'':"<a href=Details.php?R=$R>Details</a>");
+  echo "<td>" . (empty($ODetails[$Sid])?'':"<a href=Details.php?O=$R>Details</a>");
   echo "<td>" . floor($N['GridX']) . "," . floor($N['GridY']);
 }
 

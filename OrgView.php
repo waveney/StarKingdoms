@@ -5,6 +5,7 @@ include_once("ThingLib.php");
 include_once("PlayerLib.php");
 include_once("SystemLib.php");
 include_once("OrgLib.php");
+include_once("HomesLib.php");
 global $FACTION,$GAMEID;
 
 $OrgId = $_REQUEST['id'];
@@ -46,6 +47,8 @@ echo "<h1>Offices:</h1>";
 if ($Offices) {
   $Head = 0;
   foreach ($Offices as $Off) {
+
+    $Offid = $Off['id'];
     $W = Get_World($Off['World']);
 
 
@@ -78,6 +81,12 @@ if ($Offices) {
       $Head = 1;
     }
 
+    echo "<button type=button class=Off$Offid onclick=ToggleClass('Off$Offid')>Show Details</button><br>";
+    echo "<div class=Off$Offid hidden>";
+    ShowWorld($W);
+    echo "</div>";
+
+ /*
     if (Has_Trait($Fid,'Goverwhat now?') && ($control != $Fid)) {
       $World = Gen_Get_Cond1('Worlds',"ThingType=" . $W['ThingType'] . " AND ThingId=" . $W['ThingId']);
       $SocPs = Get_SocialPs($World['id']);
@@ -94,7 +103,7 @@ if ($Offices) {
       }
     }
 
-    echo "<br>";
+   echo "<br>";*/
   }
 } else {
   echo "None Found<p>";
@@ -104,6 +113,7 @@ echo "<p><h2>Branches:</h2>";
 
 if ($Branches) {
   foreach ($Branches as $B) {
+    $Bid = $B['id'];
     switch ($B['HostType']) {
       case 1: // Planet
         $P = Get_Planet($B['HostId']);
@@ -123,12 +133,19 @@ if ($Branches) {
         break;
     }
     echo "<li>". $BTypes[$B['Type']]['Name'] . " at $Where" ;
+
     if ($B['HostType'] != 3) {
       $World = Gen_Get_Cond1('Worlds',"ThingType=" . $B['HostType'] . " AND ThingId=" . $B['HostId']);
       if (!$World) {
         echo "<h2 class=Err>Branch without a World tell Richard #" . $B['id'] . "</h2>";
         break;
       }
+
+      echo "<button type=button class=Branch$Bid onclick=ToggleClass('Branch$Bid')>Show Details</button><br>";
+      echo "<div class=Branch$Bid hidden>";
+      ShowWorld($World);
+      echo "</div>";
+      /*
       $SocPs = Get_SocialPs($World['id']);
       if ($SocPs) {
         echo "<br>It's social principles are:<ul>";
@@ -140,7 +157,7 @@ if ($Branches) {
         echo "</ul>";
       } else {
         echo "<br>No Social Principles Currently";
-      }
+      }*/
 
     }
     if ($B['Suppressed']) echo "<span class=Red> This branch is suppressed and can not do any thing for " . $B['Suppressed'] . " turns.";

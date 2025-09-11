@@ -8,7 +8,7 @@
   include_once("ProjLib.php");
   include_once("OrgLib.php");
 
-  global $FACTION,$GAME,$Project_Status,$Fields;
+  global $FACTION,$GAME,$Project_Status,$Fields,$GAMEID;
 
   dostaffhead("Edit an Operation");
 
@@ -50,6 +50,7 @@
     echo "No Project given";
     dotail();
   }
+  $OpTypes = Get_OpTypes();
 
 //var_dump($_REQUEST);
   if (isset($_REQUEST['ACTION'])) {
@@ -118,6 +119,29 @@
          Put_Operation($O);
          break;
 
+       case 'Deploy Team': // For fixing weird cases
+         $TTYpes = Get_ThingTypes();
+         $TTNames = NamesList($TTYpes);
+         $NamesTTypes = array_flip($TTNames);
+         $Orgs = Gen_Get_Cond('Organisations',"GameId=$GAMEID");
+         $OrgId = $O['OrgId'];
+         $Team = Gen_Get_Cond1('Things', "Whose=$Fid AND Type=" . $NamesTTypes['Team'] . " AND Dist1=$OrgId");
+
+         if (!$Team) {
+           $Team = ['Whose'=>$Fid,'Type'=>$NamesTTypes['Team'], 'Dist1'=>$OrgId,'BuildState'=>BS_COMPLETE,
+             'Name'=>("Operations team for " . $Orgs[$OrgId]['Name'])];
+           Put_Thing($Team);
+           $Orgs[$OrgId]['Team'] = $Team['id'];
+           Gen_Put('Organisations',$Orgs[$OrgId]);
+         }
+         $Team['SystemId'] = $O['SystemId'];
+         $Team['ProjectId'] = $Oid;
+         $Team['WithinSysLoc'] = (($OpTypes[$O['Type']]['TeamProps'] & TEAM_INSPACE)?0:3);
+         Put_Thing($Team);
+         echo "Team now deployed<p>";
+         break;
+
+
     }
   }
 
@@ -132,7 +156,6 @@
 // var_dump($O);
 
   $FactionNames = Get_Faction_Names();
-  $OpTypes = Get_OpTypes();
   $OpCosts = Feature('OperationCosts');
   $OpRushs = Feature('OperationRushes');
 
@@ -242,6 +265,10 @@
     } else {
       echo fm_submit('ACTION','Cancel Pause');
     }
+  }
+
+  if ($GM && $Project_Status[$O['Status']]=='Started') {
+    echo fm_submit('ACTION','Deploy Team');
   }
   echo "</h2>";
   echo "</form>";

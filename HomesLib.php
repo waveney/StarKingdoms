@@ -742,6 +742,7 @@ function ShowWorld(&$W,$Mode=0,$NeedDelta=0) { // Mode 0 = View, 1=Owner, 2 = GM
         $Name = $P['Name'];
         $SysId = $P['SystemId'];
         $EditP = "PlanEdit.php";
+        $Who = $P['Control'];
         break;
 
       case 2: /// Moon
@@ -752,6 +753,7 @@ function ShowWorld(&$W,$Mode=0,$NeedDelta=0) { // Mode 0 = View, 1=Owner, 2 = GM
         $P = Get_Planet($M['PlanetId']);
         $SysId = $P['SystemId'];
         $EditP = "MoonEdit.php";
+        $Who = $M['Control'];
         break;
 
       case 3: // Thing
@@ -760,6 +762,7 @@ function ShowWorld(&$W,$Mode=0,$NeedDelta=0) { // Mode 0 = View, 1=Owner, 2 = GM
         $Name = $T['Name'];
         $SysId = $T['SystemId'];
         $EditP = "ThingEdit.php";
+        $Who = $M['Whose'];
         break;
       default: // Error
         echo "<h2 class=Err>There is a fault with World " . $W['id'] . " Tell Richard</h2>";
@@ -799,6 +802,7 @@ function ShowWorld(&$W,$Mode=0,$NeedDelta=0) { // Mode 0 = View, 1=Owner, 2 = GM
   WorldFlags($W);
   echo "<tr>" . ($Mode? fm_textarea('Description',$WH,'Description',8,3,'','', "Description:" . $W['ThingType'] . ":" . $W['ThingId']) :
      "<td colspan=4>" . ParseText($WH['Description']));
+  echo "<tr><td>Controlled by:<td " . FactColours($Who) . ">" . ($Facts[$Who]['Name']??'No One');
   if ($Mode ==2) {
     echo "<tr>" . fm_number("Minerals", $W, 'Minerals');
   } else {
