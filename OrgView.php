@@ -83,7 +83,7 @@ if ($Offices) {
 
     echo "<button type=button class=Off$Offid onclick=ToggleClass('Off$Offid')>Show Details</button><br>";
     echo "<div class=Off$Offid hidden>";
-    ShowWorld($W);
+    ShowWorld($W,($GM?2:0));
     echo "</div>";
 
  /*
@@ -143,7 +143,7 @@ if ($Branches) {
 
       echo "<button type=button class=Branch$Bid onclick=ToggleClass('Branch$Bid')>Show Details</button><br>";
       echo "<div class=Branch$Bid hidden>";
-      ShowWorld($World);
+      ShowWorld($World,($GM?2:0));
       echo "</div>";
       /*
       $SocPs = Get_SocialPs($World['id']);
@@ -163,7 +163,7 @@ if ($Branches) {
       $Tid = $T['id'];
       echo "<button type=button class=OutPost$Tid onclick=ToggleClass('OutPost$Tid')>Show Details</button><br>";
       echo "<div class=OutPost$Tid hidden>";
-      ShowOutpost($T,$Fid,$GM);
+      ShowOutpost($Tid,$Fid,$GM);
       echo "</div>";
 
     }

@@ -976,12 +976,12 @@ function ShowOutpost($Tid,$Fid,$GM=0) {
     echo "<tr><td>Branches:<td>";
     foreach ($Branches as $B) {
       $BT = Gen_Get('BranchTypes',$B['Type']);
-      if (($B['Whose'] != $Fid) && ($BT['Props'] & BRANCH_HIDDEN)) continue;
+      if (($B['Whose'] != $Fid) && ($BT['Props'] & BRANCH_HIDDEN) && !$GM) continue;
       $Org = Gen_Get('Organisations',$B['Organisation']);
       $OrgType = Gen_Get('OfficeTypes', $B['OrgType']);
       if ($B['OrgType2'] && ($GM || $B['Whose']==$Fid)) $OrgType2 = Gen_Get('OfficeTypes', $B['OrgType2']);
-      echo $Org['Name'] . " (" . $OrgType['Name'] . (($OrgType2??0)? "/" . $OrgType2['Name']:'') . ")<br>";
-      echo "<td " . FactColours($B['Whose']) . ">" . ($Facts[$B['Whose']]['Name']??'No One');
+      echo $Org['Name'] . " (" . $OrgType['Name'] . (($OrgType2??0)? "/" . $OrgType2['Name']:'') . ") ";
+      echo "<span " . FactColours($B['Whose']) . ">" . ($Facts[$B['Whose']]['Name']??'No One') . "</span><br>";
     }
     echo "</table>";
   }

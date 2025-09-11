@@ -4,6 +4,7 @@
   include_once("ThingLib.php");
   include_once("PlayerLib.php");
   include_once("HomesLib.php");
+  include_once("OrgLib.php");
   include_once("SystemLib.php");
   global $FACTION;
 
@@ -38,7 +39,7 @@
         Gen_Select("SELECT O.* FROM Offices O INNER JOIN Worlds W on O.World=W.id WHERE W.ThingType=$TType AND W.ThingId=$Tid")
         ) {
         $W = Gen_Get_Cond1('Worlds',"ThingType=$TType AND ThingId=$Tid" );
-        ShowWorld($W);
+        ShowWorld($W,($GM?2:0));
         $Shown = 1;
       }
 
@@ -61,20 +62,7 @@
       if (!$Found) {
         echo "<h1>No branches of yours at that Outpost</h1>";
       } else {
-        echo "<h1>Details of " . ($OutP['Name']??'') . " Outpost in " . System_Name($System,$Fid) . "<h1>";
-        echo "<table border>";
-        echo "<tr><td>Controlled by:<td " . FactColours($OutP['Whose']) . ">" . ($Facts[$OutP['Whose']]['Name']??'No One');
-        echo "<tr><td>Branches:<td>";
-        foreach ($Branches as $B) {
-          $BT = Gen_Get('BranchTypes',$B['Type']);
-          if (($B['Whose'] != $Fid) && ($BT['Props'] & BRANCH_HIDDEN)) continue;
-          $Org = Gen_Get('Organisations',$B['Organisation']);
-          $OrgType = Gen_Get('OfficeTypes', $B['OrgType']);
-          if ($B['OrgType2'] && ($GM || $B['Whose']==$Fid)) $OrgType2 = Gen_Get('OfficeTypes', $B['OrgType2']);
-          echo $Org['Name'] . " (" . $OrgType['Name'] . (($OrgType2??0)? "/" . $OrgType2['Name']:'') . ")<br>";
-          echo "<td " . FactColours($B['Whose']) . ">" . ($Facts[$B['Whose']]['Name']??'No One');
-        }
-        echo "</table>";
+        ShowOutpost($OutP,$Fid,$GM);
       }
     }
   }
