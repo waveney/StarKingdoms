@@ -159,6 +159,13 @@ if ($Branches) {
         echo "<br>No Social Principles Currently";
       }*/
 
+    } else { // OutPost
+      $Tid = $T['id'];
+      echo "<button type=button class=OutPost$Tid onclick=ToggleClass('OutPost$Tid')>Show Details</button><br>";
+      echo "<div class=OutPost$Tid hidden>";
+      ShowOutpost($T,$Fid,$GM);
+      echo "</div>";
+
     }
     if ($B['Suppressed']) echo "<span class=Red> This branch is suppressed and can not do any thing for " . $B['Suppressed'] . " turns.";
   }

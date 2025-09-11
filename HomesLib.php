@@ -959,3 +959,30 @@ function ShowWorld(&$W,$Mode=0,$NeedDelta=0) { // Mode 0 = View, 1=Owner, 2 = GM
   echo "</table>";
 
 }
+
+function ShowOutpost($Tid,$Fid,$GM=0) {
+  $Branches = Gen_Get_Cond('Branches',"HostType=3 AND HostId=$Tid");
+  $Facts = Get_Factions();
+  $OutP = Get_Thing($Tid);
+  $Found = 0;
+  foreach ($Branches as $B) if ($GM || $B['Whose']==$Fid) $Found = 1;
+  if (!$Found) {
+    echo "<h1>No branches of yours at that Outpost</h1>";
+  } else {
+    $System = Get_System($OutP['SystemId']);
+    echo "<h1>Details of " . ($OutP['Name']??'') . " Outpost in " . System_Name($System,$Fid) . "<h1>";
+    echo "<table border>";
+    echo "<tr><td>Controlled by:<td " . FactColours($OutP['Whose']) . ">" . ($Facts[$OutP['Whose']]['Name']??'No One');
+    echo "<tr><td>Branches:<td>";
+    foreach ($Branches as $B) {
+      $BT = Gen_Get('BranchTypes',$B['Type']);
+      if (($B['Whose'] != $Fid) && ($BT['Props'] & BRANCH_HIDDEN)) continue;
+      $Org = Gen_Get('Organisations',$B['Organisation']);
+      $OrgType = Gen_Get('OfficeTypes', $B['OrgType']);
+      if ($B['OrgType2'] && ($GM || $B['Whose']==$Fid)) $OrgType2 = Gen_Get('OfficeTypes', $B['OrgType2']);
+      echo $Org['Name'] . " (" . $OrgType['Name'] . (($OrgType2??0)? "/" . $OrgType2['Name']:'') . ")<br>";
+      echo "<td " . FactColours($B['Whose']) . ">" . ($Facts[$B['Whose']]['Name']??'No One');
+    }
+    echo "</table>";
+  }
+}
