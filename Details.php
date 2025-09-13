@@ -62,7 +62,7 @@
       if (!$Found) {
         echo "<h1>No branches of yours at that Outpost</h1>";
       } else {
-        ShowOutpost($OutP,$Fid,$GM);
+        ShowOutpost($OutP['id'],$Fid,$GM);
       }
     }
   }

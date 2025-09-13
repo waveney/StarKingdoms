@@ -81,8 +81,8 @@ if ($Offices) {
       $Head = 1;
     }
 
-    echo "<button type=button class=Off$Offid onclick=ToggleClass('Off$Offid')>Show Details</button><br>";
-    echo "<div class=Off$Offid hidden>";
+    echo "<button type=button class=Off$Offid onclick=ToggleClass('Off$Offid')>Show Details</button>";
+    echo "<div class=Off$Offid hidden><button type=button onclick=ToggleClass('Off$Offid')>Hide Details</button>";
     ShowWorld($W,($GM?2:0));
     echo "</div>";
 
@@ -141,8 +141,8 @@ if ($Branches) {
         break;
       }
 
-      echo "<button type=button class=Branch$Bid onclick=ToggleClass('Branch$Bid')>Show Details</button><br>";
-      echo "<div class=Branch$Bid hidden>";
+      echo "<button type=button class=Branch$Bid onclick=ToggleClass('Branch$Bid')>Show Details</button>";
+      echo "<div class=Branch$Bid hidden><button type=button onclick=ToggleClass('Branch$Bid')>Hide Details</button>";
       ShowWorld($World,($GM?2:0));
       echo "</div>";
       /*
@@ -161,8 +161,8 @@ if ($Branches) {
 
     } else { // OutPost
       $Tid = $T['id'];
-      echo "<button type=button class=OutPost$Tid onclick=ToggleClass('OutPost$Tid')>Show Details</button><br>";
-      echo "<div class=OutPost$Tid hidden>";
+      echo "<button type=button class=OutPost$Tid onclick=ToggleClass('OutPost$Tid')>Show Details</button>";
+      echo "<div class=OutPost$Tid hidden><button type=button onclick=ToggleClass('OutPost$Tid')>Hide Details</button>";
       ShowOutpost($Tid,$Fid,$GM);
       echo "</div>";
 

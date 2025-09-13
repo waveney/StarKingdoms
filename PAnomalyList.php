@@ -43,6 +43,9 @@
   $AnStateCols = ['White','Lightgreen','Yellow','Pink','Green'];
   $FAs = Gen_Get_Cond('FactionAnomaly',"FactionId=$Fid AND State>0");
 
+  echo "<form><div class=floatright><button class=AnomDone type=button onclick=ToggleClass('AnomDone')>Show Completed Anomalies</button>" .
+       "<button type=button class=AnomDone hidden onclick=ToggleClass('AnomDone')>Only Show Uncompleted Anomalies</button></div>";
+
   if ($FAs) {
     $coln = 0;
     echo "<div class=tablecont><table id=indextable border width=100% style='min-width:1400px'>\n";
@@ -65,21 +68,27 @@
 
 
       $N = Get_System($A['SystemId']);
-      echo "<tr><td>" . $A['Name'] . "<td><a href=SurveyReport.php?R=" . $N['Ref'] . ">" . $N['Ref'] . "<td>$Loc";
+
+      $txt = "<td>" . $A['Name'] . "<td><a href=SurveyReport.php?R=" . $N['Ref'] . ">" . $N['Ref'] . "<td>$Loc";
+      $cl = '';
 
 //      var_dump($FA['State'], $A);
       if (($A['OtherReq']??0) && ($FA['State']==1)) {
-        echo "<td style='Background:orange'>Found, but has requirements to analyse you don't yet meet";
+        $txt .= "<td style='Background:orange'>Found, but has requirements to analyse you don't yet meet";
       } else if (($A['Complete']<2) || ($FA['State']>1)) {
-        echo "<td style='Background:" . $AnStateCols[$FA['State']] . ";'>" . $FAnomalyStates[$FA['State']];
+        $txt .=  "<td style='Background:" . $AnStateCols[$FA['State']] . ";'>" . $FAnomalyStates[$FA['State']];
+        if ($FA['State'] ==4) $cl = "class=AnomDone hidden";
       } else {
-        echo "<td style='Background:coral'>" . $GAnomStates[$A['Complete']] . ($A['Complete'] ==2?' by someone else': ' for some reason');
+        $txt .=  "<td style='Background:coral'>" . $GAnomStates[$A['Complete']] . ($A['Complete'] ==2?' by someone else': ' for some reason');
+        $cl = "class=AnomDone hidden";
       }
-      echo  "<td>" . $FA['Progress'] . " / " . $A['AnomalyLevel'] . "<td colspan=4>" .  ParseText($A['Description']);
+      $txt .=   "<td>" . $FA['Progress'] . " / " . $A['AnomalyLevel'] . "<td colspan=4>" .  ParseText($A['Description']);
 
       if (($FA['State']>=3) && ($A['Completion'])){
-        echo "<p>Complete:<p>" . ParseText($A['Completion']);
+        $txt .=  "<p>Complete:<p>" . ParseText($A['Completion']);
       }
+
+      echo "<tr $cl>$txt";
 //      echo "</tr>";
     }
     echo "</tbody></table></div>";
