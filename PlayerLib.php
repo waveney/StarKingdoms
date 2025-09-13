@@ -614,6 +614,7 @@ function Logistics($Fid,&$Things) {
 function Income_Calc($Fid) {
   global $GAMEID,$ARMY,$ARMIES,$LogistCost;
   include_once("HomesLib.php");
+  include_once("SystemLib.php");
 
   $Worlds = Get_Worlds($Fid);
   $Facts = Get_Factions();
@@ -751,27 +752,52 @@ function Income_Calc($Fid) {
   $Orgs = [];
 
   if ($MyPTSBranches || $MyOPBranches || $MyPBMPBranches) {
+    $OGtrade = '';
     if ($MyPTSBranches && !$HasOwnGalaxy ) {
       foreach ($MyPTSBranches as $Bid=>$B ) {
         if (!isset($Orgs[$B['Organisation']])) $Orgs[$B['Organisation']] = Gen_Get('Organisations',$B['Organisation']);
         $MyTrade += $Orgs[$B['Organisation']]['OfficeCount'];
+        if ($B['HostType'] ==1 ) {
+          $Body = Get_Planet($B['HostId']);
+          $Sys = Get_System($Body['SystemId']);
+        } else {
+          $Body = Get_Moon($B['HostId']);
+          $Plan = Get_Planet($Body['PlanetId']);
+          $Sys = Get_System($Plan['SystemId']);
+        }
+        $OGtrade .= $Orgs[$B['Organisation']]['OfficeCount'] . " from Trading Station " . ($B['Name']??'') . " on " . $Body['Name'] .
+          " in " . System_Name($Sys, $Fid). "<br>";
       }
     }
-    if ($MyPBMPBranches&& !$HasOwnGalaxy ) {
-      foreach ($MyPTSBranches as $Bid=>$B ) {
+    if ($MyPBMPBranches && !$HasOwnGalaxy ) {
+      foreach ($MyPBMPBranches as $Bid=>$B ) {
         if (!isset($Orgs[$B['Organisation']])) $Orgs[$B['Organisation']] = Gen_Get('Organisations',$B['Organisation']);
         $MyTrade += $Orgs[$B['Organisation']]['OfficeCount']*2;
+        if ($B['HostType'] ==1 ) {
+          $Body = Get_Planet($B['HostId']);
+          $Sys = Get_System($Body['SystemId']);
+        } else {
+          $Body = Get_Moon($B['HostId']);
+          $Plan = Get_Planet($Body['PlanetId']);
+          $Sys = Get_System($Plan['SystemId']);
+        }
+        $OGtrade .= $Orgs[$B['Organisation']]['OfficeCount']*2 . " from Black Market Trading Station " . ($B['Name']??'') . " on " .
+          $Body['Name'] . " in " . System_Name($Sys, $Fid). "<br>";
       }
     }
     if ($MyOPBranches && !$HasOwnGalaxy ) {
       foreach ($MyOPBranches as $Bid=>$B ) {
   //      if (!isset($Orgs[$B['Organisation']])) $Orgs[$B['Organisation']] = Gen_Get('Organisations',$B['Organisation']);
         $MyTrade += 2;
+        $Out = Get_Thing($B['HostId']);
+        $Sys = Get_System($Out['SystemId']);
+        $OGtrade .= "2 from Trading Station " . ($B['Name']??'') . " on the Outpost " . $Out['Name'] . " in " . System_Name($Sys, $Fid). "<br>";
       }
     }
 
     if ($MyTrade){
-      $EccTxt .= "Plus Outgoing trade of my trade organisations worth: $MyTrade<br>\n";
+      $EccTxt .= "Plus Outgoing trade of my trade organisations worth: $MyTrade " .
+        "<button type=button class=OGBreakdown$Wid onclick=ToggleClass('OGBreakdown$Wid')>Details</button><span class=OGBreakdown$Wid hidden><br>$OGtrade</span><br>\n";
       $EconVal += $MyTrade;
     }
   }

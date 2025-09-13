@@ -68,14 +68,14 @@
       case 2:// Moon
         $M = Get_Moon($O['HostId']);
         $P = $M['PlanetId'];
-        $Where = $P['SystemId'];
+        $Where = ($P['SystemId']??0);
         break;
       case 3: // Thing;
         $T = get_Thing($O['HostId']);
         $Where = $T['SystemId'];
         break;
     }
-    echo "<td>" . $SysRs[$Where];
+    echo "<td>" . ($SysRs[$Where]??'???');
     echo fm_number1('',$O,'HostType','','min=1 max=9',"Branches:HostType:$i");
     echo fm_number1('',$O,'HostId','','min=0 max=10000',"Branches:HostId:$i");
     echo fm_text1('',$O,'Name',1,'','',"Branches:Name:$i");
