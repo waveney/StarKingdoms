@@ -1057,6 +1057,17 @@ function is_in_space(&$T) {
   return 1;
 }
 
+function Blockaded(&$T) {
+  static $Blockades = [];
+
+  if (is_in_space($T)) return 0;
+  if (!isset($Blockades[$T['SystemId']])) {
+    $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Blockade>0");
+    $Blockades[$T['SystemId']] = (max(1,$T['Speed']) <= $Conf[0].Blockade);
+  }
+  return $Blockades[$T['SystemId']];
+}
+
 function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0) {
   global $Advance,$FACTION,$ThingInstrs,$Relations,$MoveNames,$MoveProps;
   static $ThingTypes;

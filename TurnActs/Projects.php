@@ -571,7 +571,7 @@ function ProjectsCompleted($Pass) {
             }
             $D = ['HostType'=>$H['ThingType'], 'HostId'=>$PH['id'], 'Type'=>$P['ThingType'], 'Number'=>1, 'GameId' => $GAMEID];
             Put_District($D);
-          } else if ($P['ThingType'] == 0) { // New Office
+          } else if ($P['ThingType'] == 0) { // New Office - old code should never get here now
             if (!$P['OrgName'] || !$P['ThingId']) {
               FollowUp($Fid,'Project ' . $P['Name'] . " looks corrupt - making a blank organisation - what project should it have been? - Call Richard");
               break 2;
@@ -585,7 +585,7 @@ function ProjectsCompleted($Pass) {
               'Number'=>1];
             Put_Office($Off);
 
-          } else { // Office
+          } else { // Office - old code should never get here now
             $World = Gen_Get_Cond1('Worlds',"Home=" . $P['Home']);
             $Org = Gen_Get('Organisations',-$P['ThingType'] );
             if (!$Org) {
@@ -688,6 +688,7 @@ function ProjectsCompleted($Pass) {
               TurnLog($P['FactionId'], $T['Name'] . " has been " . $PT['Name'] . "ed",$T);
             }
 
+            if (Blockaded($T)) $T['WithinSysLoc'] = 2;
             $T['BuildState'] = BS_COMPLETE;
             Put_Thing($T);
 
@@ -707,6 +708,7 @@ function ProjectsCompleted($Pass) {
               TurnLog($Fid, $T['Name'] . " has been " . $PT['Name'] . "ed",$T);
             }
 
+            if (Blockaded($T)) $T['WithinSysLoc'] = 2;
             $T['BuildState'] = BS_COMPLETE;
             Put_Thing($T);
           }
@@ -741,6 +743,7 @@ function ProjectsCompleted($Pass) {
             }
           }
           $T['BuildState'] = BS_COMPLETE;
+          if (Blockaded($T)) $T['WithinSysLoc'] = 2;
           Put_Thing($T);
 
           break;
@@ -760,8 +763,12 @@ function ProjectsCompleted($Pass) {
 
 
           $WSL = ConstructLoc($P['Home'],0);
-          $T['WithinSysLoc'] = 1;
-          Move_Thing_Within_Sys($T,$WSL,1);
+          if (Blockaded($T)) {
+            $T['WithinSysLoc'] = 2;
+          } else {
+            $T['WithinSysLoc'] = 1;
+            Move_Thing_Within_Sys($T,$WSL,1);
+          }
           Calc_Scanners($T);
           $T['ProjectId'] = 0;
           TurnLog($Fid, $T['Name'] . " has been launched" . (Feature('Shakedowns')?" and will now start its shakedown cruise":''),$T);
@@ -789,6 +796,7 @@ function ProjectsCompleted($Pass) {
           $T = Get_Thing($P['ThingId']);
           $T['BuildState'] = BS_COMPLETE;
           $T['WithinSysLoc'] = ConstructLoc($P['Home'],1);
+          if (Blockaded($T)) $T['WithinSysLoc'] = 2;
           TurnLog($Fid, $T['Name'] . " has been completed",$T);
           $T['ProjectId'] = 0;
           Put_Thing($T);
