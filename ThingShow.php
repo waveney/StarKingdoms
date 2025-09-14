@@ -255,12 +255,14 @@ function Show_Thing(&$T,$Force=0) {
           } else {
             echo "<tr><td>Current System:<td>" . (empty($N)? 'Unknown' : $N['Ref']) . "<td>";
             if ($T['BuildState']> BS_SERVICE ) {
-              $Conflict = 0;
-              $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] .
-                " AND W.Home=PH.id AND W.Conflict=1");
-              if ($Conf) $Conflict = $Conf[0]['Conflict'];
-
-              if ($Conflict || ($tprops & THING_ISA_TEAM)) {
+              $Conflict = $Blockade = 0;
+              $Conf = Gen_Select("SELECT W.* FROM Worlds W LEFT JOIN ProjectHomes PH ON W.Home=PH.id WHERE PH.SystemId=" . $T['SystemId'] .
+                " AND (W.Conflict=1 OR W.Blockade>0)");
+              if ($Conf){
+                $Conflict = $Conf[0]['Conflict'];
+                $Blockade = $Conf[0]['Blockade'];
+              }
+              if ($Conflict || (is_on_ground($T) && ($Blockade >= max($T['Speed'],1))) || ($tprops & THING_ISA_TEAM)) {
                 echo ($Syslocs[$T['WithinSysLoc'] ?? 0] ?? 'Deep Space');
               } else if ($tprops2 & THING_AT_LINK ){
                 echo "At Link: " . fm_select($SelLinks,$T,'Dist1',1);
@@ -409,14 +411,37 @@ function Show_Thing(&$T,$Force=0) {
           } else if (!$MovesValid) {
             echo "<tr><td>Star Crossed<td>No Movement<td>";
           } else {
-            echo "<tr><td>Taking Link:<td>" . fm_select($SelLinks,$T,'LinkId',0," style=color:" . $SelCols[$T['LinkId']] ,'',0,$SelCols);
-            if ($ll && $LinkTypes[$ll]['Cost'] && $LOWho && $LOWho != $T['Whose'] ) {
-              echo fm_checkbox('Pay',$T,'LinkPay') . " " . Credit() . $T['LinkCost'];
-            }
-            if ($Lid > 0 && !strpos($SelLinks[$Lid],'?')) {
-              echo "<td>To:  " . fm_select($NewSyslocs,$T,'NewLocation');
+            if (is_on_ground($T)) {
+              $Conflict = $Blockade = 0;
+              $Conf = Gen_Select("SELECT W.* FROM Worlds W LEFT JOIN ProjectHomes PH ON W.Home=PH.id WHERE PH.SystemId=" . $T['SystemId'] .
+                " AND (W.Conflict=1 OR W.Blockade>0)");
+              if ($Conf){
+                $Conflict = $Conf[0]['Conflict'];
+                $Blockade = $Conf[0]['Blockade'];
+              }
+              if ($Blockade && (max($T['Speed'],1) <= $Blockade)) {
+                echo "<tr><td colspan=2>No movement because of a blockade";
+              } else {
+                echo "<tr><td>Taking Link:<td>" . fm_select($SelLinks,$T,'LinkId',0," style=color:" . $SelCols[$T['LinkId']] ,'',0,$SelCols);
+                if ($ll && $LinkTypes[$ll]['Cost'] && $LOWho && $LOWho != $T['Whose'] ) {
+                  echo fm_checkbox('Pay',$T,'LinkPay') . " " . Credit() . $T['LinkCost'];
+                }
+                if ($Lid > 0 && !strpos($SelLinks[$Lid],'?')) {
+                  echo "<td>To:  " . fm_select($NewSyslocs,$T,'NewLocation');
+                } else {
+                  echo "<td>Move to:  " . fm_select($Syslocs,$T,'NewLocation');
+                }
+              }
             } else {
-              echo "<td>Move to:  " . fm_select($Syslocs,$T,'NewLocation');
+              echo "<tr><td>Taking Link:<td>" . fm_select($SelLinks,$T,'LinkId',0," style=color:" . $SelCols[$T['LinkId']] ,'',0,$SelCols);
+              if ($ll && $LinkTypes[$ll]['Cost'] && $LOWho && $LOWho != $T['Whose'] ) {
+                echo fm_checkbox('Pay',$T,'LinkPay') . " " . Credit() . $T['LinkCost'];
+              }
+              if ($Lid > 0 && !strpos($SelLinks[$Lid],'?')) {
+                echo "<td>To:  " . fm_select($NewSyslocs,$T,'NewLocation');
+              } else {
+                echo "<td>Move to:  " . fm_select($Syslocs,$T,'NewLocation');
+              }
             }
           }
 

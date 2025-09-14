@@ -755,8 +755,6 @@ function Income_Calc($Fid) {
     $OGtrade = '';
     if ($MyPTSBranches && !$HasOwnGalaxy ) {
       foreach ($MyPTSBranches as $Bid=>$B ) {
-        if (!isset($Orgs[$B['Organisation']])) $Orgs[$B['Organisation']] = Gen_Get('Organisations',$B['Organisation']);
-        $MyTrade += $Orgs[$B['Organisation']]['OfficeCount'];
         if ($B['HostType'] ==1 ) {
           $Body = Get_Planet($B['HostId']);
           $Sys = Get_System($Body['SystemId']);
@@ -765,33 +763,46 @@ function Income_Calc($Fid) {
           $Plan = Get_Planet($Body['PlanetId']);
           $Sys = Get_System($Plan['SystemId']);
         }
-        $OGtrade .= $Orgs[$B['Organisation']]['OfficeCount'] . " from Trading Station " . ($B['Name']??'') . " on " . $Body['Name'] .
+        $BW = Gen_Get_Cond1('Worlds',"ThingType=" . $B['HostType'] . " AND ThingId=" . $B['HostId']);
+        if ($BW && $BW['Blockade']) {
+          $OGtrade .= "Due to a blockade nothing from the Trading Station " . ($B['Name']??'') . " on " . $Body['Name'] .
           " in " . System_Name($Sys, $Fid). "<br>";
+        } else {
+          if (!isset($Orgs[$B['Organisation']])) $Orgs[$B['Organisation']] = Gen_Get('Organisations',$B['Organisation']);
+          $MyTrade += $Orgs[$B['Organisation']]['OfficeCount'];
+          $OGtrade .= $Orgs[$B['Organisation']]['OfficeCount'] . " from Trading Station " . ($B['Name']??'') . " on " . $Body['Name'] .
+            " in " . System_Name($Sys, $Fid). "<br>";
+        }
       }
     }
     if ($MyPBMPBranches && !$HasOwnGalaxy ) {
       foreach ($MyPBMPBranches as $Bid=>$B ) {
-        if (!isset($Orgs[$B['Organisation']])) $Orgs[$B['Organisation']] = Gen_Get('Organisations',$B['Organisation']);
-        $MyTrade += $Orgs[$B['Organisation']]['OfficeCount']*2;
-        if ($B['HostType'] ==1 ) {
-          $Body = Get_Planet($B['HostId']);
-          $Sys = Get_System($Body['SystemId']);
-        } else {
-          $Body = Get_Moon($B['HostId']);
-          $Plan = Get_Planet($Body['PlanetId']);
-          $Sys = Get_System($Plan['SystemId']);
+          if (!isset($Orgs[$B['Organisation']])) $Orgs[$B['Organisation']] = Gen_Get('Organisations',$B['Organisation']);
+          $MyTrade += $Orgs[$B['Organisation']]['OfficeCount']*2;
+          if ($B['HostType'] ==1 ) {
+            $Body = Get_Planet($B['HostId']);
+            $Sys = Get_System($Body['SystemId']);
+          } else {
+            $Body = Get_Moon($B['HostId']);
+            $Plan = Get_Planet($Body['PlanetId']);
+            $Sys = Get_System($Plan['SystemId']);
+          }
+          $OGtrade .= $Orgs[$B['Organisation']]['OfficeCount']*2 . " from Black Market Trading Station " . ($B['Name']??'') . " on " .
+            $Body['Name'] . " in " . System_Name($Sys, $Fid). "<br>";
         }
-        $OGtrade .= $Orgs[$B['Organisation']]['OfficeCount']*2 . " from Black Market Trading Station " . ($B['Name']??'') . " on " .
-          $Body['Name'] . " in " . System_Name($Sys, $Fid). "<br>";
-      }
     }
     if ($MyOPBranches && !$HasOwnGalaxy ) {
       foreach ($MyOPBranches as $Bid=>$B ) {
-  //      if (!isset($Orgs[$B['Organisation']])) $Orgs[$B['Organisation']] = Gen_Get('Organisations',$B['Organisation']);
-        $MyTrade += 2;
         $Out = Get_Thing($B['HostId']);
         $Sys = Get_System($Out['SystemId']);
-        $OGtrade .= "2 from Trading Station " . ($B['Name']??'') . " on the Outpost " . $Out['Name'] . " in " . System_Name($Sys, $Fid). "<br>";
+        $BW = Gen_Select("SELECT W.Blockade FROM Worlds W INNER JOIN ProjectHomes H ON W.Home=H.id WHERE H.SystemId=" . $Out['SystemId']);
+        if ($BW) {
+          $OGtrade .= "Due to a blockade nothing from Trading Station " . ($B['Name']??'') . " on the Outpost " . $Out['Name'] . " in " .
+          System_Name($Sys, $Fid). "<br>";
+        } else {
+          $MyTrade += 2;
+          $OGtrade .= "2 from Trading Station " . ($B['Name']??'') . " on the Outpost " . $Out['Name'] . " in " . System_Name($Sys, $Fid). "<br>";
+        }
       }
     }
 

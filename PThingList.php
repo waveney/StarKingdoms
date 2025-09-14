@@ -194,6 +194,8 @@
     }
   }
 
+  $Blockades[] = 0;
+
   echo "<h1>Things</h1>";
 
   $ShowCats = ['All','Ships',$ARMIES,'','Chars', 'Other'];
@@ -361,10 +363,16 @@
       }
 
       echo "<td>";
+
+      if (!isset($Blockades[$T['SystemId']])) {
+        $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Blockade>0");
+        $Blockades[$T['SystemId']] = ($Conf?$Conf[0]['Blockade']:0);
+      }
+//      var_dump($T['SystemId'],$Blockades[$T['SystemId']]);
       if ($T['Instruction']) echo $ThingInstrs[abs($T['Instruction'])];
       if (($T['Instruction'] == 0 || $T['Instruction'] == 5 ) && (($Props & THING_CAN_MOVE) && ( $T['BuildState'] == BS_COMPLETE))) {
         if ( ($T['LinkId'] >=0 ) || (($MoveProps[$T['LinkId']] & 1) && ($T['CurHealth'] > 0 || ($Props & THING_HAS_HEALTH) ==0))) {
-          if ($MovesValid && (($Faction['TurnState']??0) == 1)) {
+          if ($MovesValid && (($Faction['TurnState']??0) == 1) && (is_in_space($T) || $Blockades[$T['SystemId']] < max($T['Speed'],1))) {
             echo " <a href=PMoveThing.php?id=" . $T['id'] . ">" . (($T['LinkId'] >=0 )?'Move':$MoveNames[$T['LinkId']]) . "</a>";
           } else {
           }
