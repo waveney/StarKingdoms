@@ -21,7 +21,8 @@ function Follow() {
   // Do follows if possible, if not set again needed
   // If again needed and depth < Limit repeat
   $Factions = Get_Factions();
-  $Depth = $Again = 0;
+  $Depth = $Again = $NeedStage2 = 0;
+  $Stage2Link = "<form method=post action=TurnActions.php?ACTION=DoStage2&Stage=Follow>";
   do {
     $Again = 0;
     $Things = Get_Things_Cond(0," LinkId=" . LINK_FOLLOW);
@@ -56,10 +57,12 @@ function Follow() {
             Put_Thing($T);
             GMLog($T['Name'] . " ( " . $Factions[$T['Whose']]['Name'] . " ) is following " . $Fol['Name'] . " ( " . $Factions[$Fol['Whose']]['Name'] . " )" );
           } else {
+            if (!$NeedStage2) {
+              $NeedStage2 = 1;
+              GMLog($Stage2Link);
+            }
             GMLog($Factions[$Fid]['Name'] . " - " . $T['Name'] . " Can not follow " . $Fol['Name'] .
-              " as the link they used is unknown to you ");
-            $T['LinkId'] = $T['LinkCost'] = $T['LinkPay'] = 0;
-            Put_Thing($T);
+              " as the link they used was unknown to them - Allow? " . fm_YesNo("Follow" . $T['id'],1, "Reason to reject") . "\n<br>");
             continue;
           }
 
@@ -75,7 +78,41 @@ function Follow() {
   if ($Again) {
     GMLog("Follows aborted after $Depth");
   }
-  GMLog("Follows evaluated.<br>\n");
+  if ($NeedStage2) {
+    echo "<input type=submit name=Ignore value=Chosen>\n";
+    dotail();
+  }
+  return 2;
+}
+
+function FollowStage2() {
+
+  $Factions = Get_Factions();
+  foreach ($_REQUEST as $R=>$V) {
+    $mtch = [];
+    if (preg_match('/^Follow(\d*)/',$R,$mtch)) {
+      $Tid = $mtch[1];
+      $T = Get_Thing($Tid);
+      $Folid = $T['NewSystemId'];
+      $Fol = Get_Thing($Folid);
+      $Fid = $T['Whose'];
+
+      if ($V == 'on') {
+        $T['LinkId'] = $Fol['LinkId'];
+        $T['LinkCost'] = $Fol['LinkCost'];
+        $T['LinkPay'] = 1;
+        $T['NewSystemId'] = $Fol['NewSystemId'];
+        Put_Thing($T);
+        GMLog($T['Name'] . " ( " . $Factions[$T['Whose']]['Name'] . " ) is following " . $Fol['Name'] . " ( " . $Factions[$Fol['Whose']]['Name'] . " )" );
+      } else {
+        GMLog($Factions[$Fid]['Name'] . " - " . $T['Name'] . " Can not follow " . $Fol['Name'] .
+          " as the link they used is unknown to them ");
+        TurnLog($Fid,$T['Name'] . " Can not follow " . $Fol['Name'] . " as the link they used is unknown");
+        $T['LinkId'] = $T['LinkCost'] = $T['LinkPay'] = 0;
+        Put_Thing($T);
+      }
+    }
+  }
   return 1;
 }
 

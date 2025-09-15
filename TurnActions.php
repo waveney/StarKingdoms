@@ -22,8 +22,8 @@
     [ 3,'',         'Save All Locations','Coded'],
     [ 4,'',         'Spare',''], //Remove Unsupported Minefields
     [ 5,'',         'Cash Transfers','Coded'],
-    [ 6,'',         'Spare',''],
-    [ 7,'Movement',  'Follow','Coded'],
+    [ 6,'Movement',  'Follow','Coded'],
+    [ 7,'Movement',  'Follow Stage 2','Coded'],
     [ 8,'',         'Faction Actions','Coded'],
     [ 9,'',         'Scientific Breakthroughs','Coded'],
     [10,'Projects',  'Start Projects','Coded,M'],
