@@ -829,7 +829,9 @@ function Show_Thing(&$T,$Force=0) {
         echo (($MTs[$D['Type']]['Leveled']&1) ? fm_number1('Level', $D,'Level', '', ' class=Num3 ',"ModuleLevel-$did") .
                         (($D['Level']<($Mt[$D['Type']]??0))? "<span class=green>(" . $Mt[$D['Type']] . ")</span>":'') :'<td>');
 
-        echo  ' # ' . fm_number0('', $D,'Number', '',' class=Num3 ',"ModuleNumber-$did");
+        $min = 0;
+        $max = ($MTs[$D['Type']]['MaxPerThing']?$MTs[$D['Type']]['MaxPerThing']:1000);
+        echo  ' # ' . fm_number0('', $D,'Number', ''," class=Num3 min=$min max=$max ","ModuleNumber-$did");
 
         echo (($Blue && !empty($BMods[$D['Type']]))? "<span class=Blue>(" . $BMods[$D['Type']]['Number'] . ')</span> ' :'');
 

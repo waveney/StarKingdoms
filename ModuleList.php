@@ -34,9 +34,10 @@
   $Slots = Feature('ModuleSlots');
 
   echo "<h1>Module Types</h1>";
-  echo "Fire order: 5 = normal, 1 early, 9 late, -1 not first round.  Fire rate 1= every round, 0=once, 5=once every 5 rounds, -2 double first round<p>";
+//  echo "Fire order: 5 = normal, 1 early, 9 late, -1 not first round.  Fire rate 1= every round, 0=once, 5=once every 5 rounds, -2 double first round<p>";
   echo "Properties: 1 = Leveled, 2=Non Std Def, 4=Non Std Atk, 8=Blueprints only - invalid real things, 10=Not Visible unless have based on tech<br>";
   echo "100=Need 1 Curn1, 200=Need 1 Curn2, 400=Need 1 Curn3<p>";
+  echo "Max Per Thing: 0 = No limit<p>";
   echo "Click on the Desc by each type to edit the description.<p>";
 
   echo "If Evasion or To Hit is -100 it will use a formula<p>";
@@ -55,9 +56,10 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Wep / Def</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Based on</a>\n";
     if ($Slots) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Space</a>\n";
-    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Min Ship Lvl</a>\n";
-    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>FireOrd</a>\n";
-    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>FireRate</a>\n";
+//    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Min Ship Lvl</a>\n";
+//    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>FireOrd</a>\n";
+//    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>FireRate</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Max Per Thing</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Formula</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Properties</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Evasion Mod</a>\n";
@@ -75,9 +77,10 @@
       echo "<td>" . fm_select($DefWep,$MT,'DefWep',0,'',"ModuleTypes:DefWep:$i");
       echo "<td>" . fm_select($TechNames,$MT,'BasedOn',1,'',"ModuleTypes:BasedOn:$i");
       if ($Slots) echo fm_number1("",$MT,'SpaceUsed','','min=0 max=10',"ModuleTypes:SpaceUsed:$i");
-      echo fm_number1("",$MT,'MinShipLevel','','min=0 max=10',"Modules:MinShipLevel$i");
-      echo fm_number1("",$MT,'FireOrder','','min=-5 max=10',"ModuleTypes:FireOrder:$i") .
-           fm_number1("",$MT,'FireRate',"",'min=0 max=10',"ModuleTypes:FireRate:$i");
+//      echo fm_number1("",$MT,'MinShipLevel','','min=0 max=10',"Modules:MinShipLevel$i");
+//      echo fm_number1("",$MT,'FireOrder','','min=-5 max=10',"ModuleTypes:FireOrder:$i") .
+//           fm_number1("",$MT,'FireRate',"",'min=0 max=10',"ModuleTypes:FireRate:$i");
+      echo fm_number1("",$MT,'MaxPerThing','','min=0 max=100',"ModuleTypes:MaxPerThing:$i");
       echo "<td>" . fm_select($Forms,$MT,'Formula',1,'',"ModuleTypes:Formula:$i");
       echo fm_hex1("",$MT,'Leveled','','',"ModuleTypes:Leveled:$i");
       echo fm_number1("",$MT,'EvasionMod','','min=-100 max=100',"ModuleTypes:EvasionMod:$i");
@@ -95,8 +98,9 @@
   echo "<td>" . fm_select($DefWep,$MT,'DefWep',0,'',"ModuleTypes:DefWep:0");
   echo "<td>" . fm_select($TechNames,$MT,'BasedOn',1,'',"ModuleTypes:BasedOn:0");
   if ($Slots) echo fm_number1("",$MT,'SpaceUsed','','min=0 max=10',"ModuleTypes:SpaceUsed:0");
-  echo fm_number1("",$MT,'MinShipLevel','','min=0 max=10',"ModuleTypes:MinShipLevel:0");
-  echo fm_number1("",$MT,'FireOrder',"",'min=-5 max=10',"ModuleTypes:FireOrder:0") . fm_number1("",$MT,'FireRate',"",'min=0 max=10',"ModuleTypes:FireRate:0");
+//  echo fm_number1("",$MT,'MinShipLevel','','min=0 max=10',"ModuleTypes:MinShipLevel:0");
+//  echo fm_number1("",$MT,'FireOrder',"",'min=-5 max=10',"ModuleTypes:FireOrder:0") . fm_number1("",$MT,'FireRate',"",'min=0 max=10',"ModuleTypes:FireRate:0");
+  echo fm_number1("",$MT,'MaxPerThing','','min=0 max=100',"ModuleTypes:MaxPerThing:0");
   echo "<td>" . fm_select($Forms,$MT,'Formula',1,'',"ModuleTypes:Formula:0");
   echo fm_number1("",$MT,'Leveled','','min=0 max=100',"ModuleTypes:Leveled:0");
   echo fm_number1("",$MT,'EvasionMod','','min=-100 max=100',"ModuleTypes:EvasionMod:0");

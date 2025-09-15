@@ -378,15 +378,19 @@
             $min=0;
             if ($IsBlue) {
               $min = ($BMs[$Mti]['Number']??0);
-              $max = $min+$FlexM;
+              $max = ($MTs[$Mti]['MaxPerThing']==0?$min+$FlexM:$MTs[$Mti]['MaxPerThing']);
               echo "<td>$min";
+            } else {
+              $max = ($MTs[$Mti]['MaxPerThing']==0?1000:$MTs[$Mti]['MaxPerThing']);
             }
+ //           var_dump($IsBlue,$min,$max,$FlexM);
             if ($FlexM) echo fm_number1('',$MMs[$Mti],'Number','',"min=$min max=$max onchange=CheckModSpace()","ModuleNumber-" . $MMs[$Mti]['id']);
             $totmodc += $MMs[$Mti]['Number'] * ($Slots?$MTs[$Mti]['SpaceUsed']:1);
           } else  {
             if ($IsBlue) echo '<td>0';
             if ($FlexM) {
-              echo fm_number1('',$ZZnull,'Number','',"min=0 max=$FlexM  onchange=CheckModSpace()","ModuleAddType-$Mti");
+              $max = ($MTs[$Mti]['MaxPerThing']==0?$min+$FlexM:$MTs[$Mti]['MaxPerThing']);
+              echo fm_number1('',$ZZnull,'Number','',"min=0 max=$max  onchange=CheckModSpace()","ModuleAddType-$Mti");
             } else {
               echo "<td>" . ($MMs[$Mti]['Number']??0);
             }
