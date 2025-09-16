@@ -118,8 +118,8 @@ define('MOD_BLUEONLY',   8);
 define('MOD_NEEDTECH',   0x10);
 define('MOD_LIMPERLEVEL',0x20);
 define('MOD_NEEDRES1',   0x100);
-define('MOD_NEEDRES1',   0x200);
-define('MOD_NEEDRES1',   0x400);
+define('MOD_NEEDRES2',   0x200);
+define('MOD_NEEDRES3',   0x400);
 
 $MoveNames = [0=>'Move',-1=>'On Board',-2=>'Boarding',-3=>'Unloading',-4=>'Load & Unload',-5=>'Not Moving',-6=>'Direct',-7=>'Following',-8=>'In Branch'];
 $MoveProps = [0=>1,-1=>2,-2=>2,-3=>2,-4=>2,-5=>1,-6=>0,-7=>3,-8=>0]; // 1=PMove,2=Other Thing
