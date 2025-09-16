@@ -101,7 +101,7 @@
             }
             $Mods = [];
             $Ms = Get_Modules($Tid);
-            foreach ($Ms as $Mi=>$M) if (($MTypes[$Mi]['Leveled'] &8)== 0) $Mods[]= $M['Number'] . " " . ($MTypes[$Mi]['Name']??"Unknown $Mi");
+            foreach ($Ms as $Mi=>$M) if (($MTypes[$Mi]['Leveled'] & MOD_BLUEONLY)== 0) $Mods[]= $M['Number'] . " " . ($MTypes[$Mi]['Name']??"Unknown $Mi");
             $Moddesc = implode(', ',$Mods);
 
             echo "<tr><td><button class=projtype formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=$Ptype&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&ThingId=$Tid'>" .
@@ -714,7 +714,7 @@
 
           $Modules = Get_Modules($Tid);
           foreach ($Modules as $M) {
-            if ((($ModTypes[$M['Type']]['Leveled']??0) & 1) && ($M['Level'] < ($ModTypes[$M['Type']]['Target']??0))) {
+            if ((($ModTypes[$M['Type']]['Leveled']??0) & MOD_LEVELED) && ($M['Level'] < ($ModTypes[$M['Type']]['Target']??0))) {
               $RefitShips[$T['id']] = $T['Name'] . " - level " . $T['Level'];
               $RefitCount++;
             }
@@ -737,7 +737,7 @@
 
               $Modules = Get_Modules($Tid);
               foreach ($Modules as $M) {
-                if ((($ModTypes[$M['Type']]['Leveled']??0) & 1) && ($M['Level'] < ($ModTypes[$M['Type']]['Target']??0))) {
+                if ((($ModTypes[$M['Type']]['Leveled']??0) & MOD_LEVELED) && ($M['Level'] < ($ModTypes[$M['Type']]['Target']??0))) {
                   $RefitShips[$T['id']] = $T['Name'] . " - level " . $T['Level'];
                   $RefitCount++;
                 }
@@ -1131,7 +1131,7 @@
 /*
         $Modules = Get_Modules($Tid);
         foreach ($Modules as $M) {
-          if ((($ModTypes[$M['Type']]['Leveled']??0) & 1) && ($M['Level'] < ($ModTypes[$M['Type']]['Target']??0))) {
+          if ((($ModTypes[$M['Type']]['Leveled']??0) & MOD_LEVELED ) && ($M['Level'] < ($ModTypes[$M['Type']]['Target']??0))) {
             $RefitShips[$T['id']] = $T['Name'] . " - level " . $T['Level'];
             $RefitCount++;
           }

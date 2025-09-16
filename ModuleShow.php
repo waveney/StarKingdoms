@@ -50,7 +50,7 @@
   echo "Click on Modules name to Toggle showing the definition and examples or <button type=button onclick=SeeAll('MDesc')>Expand All</button>\n<p>";
 
   foreach ($Mods as $Mid=>$M) {
-    if ($M['Leveled'] & 16) {
+    if ($M['Leveled'] & MOD_NEEDTECH) {
       if (!Has_Tech($Fid,$M['BasedOn'])) continue;
     }
 

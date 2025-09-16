@@ -826,7 +826,7 @@ function Show_Thing(&$T,$Force=0) {
         echo "<td>" . (isset($MTNs[$D['Type']])? fm_Select($MTNs, $D , 'Type', 1,'',"ModuleType-$did") : "<span class=red>INV:" .
                       fm_Select($MNs, $D , 'Type', 1,'',"ModuleType-$did") . "</span>" );
 
-        echo (($MTs[$D['Type']]['Leveled']&1) ? fm_number1('Level', $D,'Level', '', ' class=Num3 ',"ModuleLevel-$did") .
+        echo (($MTs[$D['Type']]['Leveled']& MOD_LEVELED) ? fm_number1('Level', $D,'Level', '', ' class=Num3 ',"ModuleLevel-$did") .
                         (($D['Level']<($Mt[$D['Type']]??0))? "<span class=green>(" . $Mt[$D['Type']] . ")</span>":'') :'<td>');
 
         $min = 0;
@@ -843,7 +843,7 @@ function Show_Thing(&$T,$Force=0) {
         }
         if ($D['Number'] < 0) echo " <b>Inactive</b>";
         if (!isset($MTNs[$D['Type']])) $BadMods += $D['Number'];
-        if (($MTs[$D['Type']]['Leveled']&8) == 0 ) $totmodc += $D['Number'] * ($Slots?$MTs[$D['Type']]['SpaceUsed']:1);
+        if (($MTs[$D['Type']]['Leveled'] & MOD_BLUEONLY) == 0 ) $totmodc += $D['Number'] * ($Slots?$MTs[$D['Type']]['SpaceUsed']:1);
 
 /*        if ($D['Type'] == 4) {
           $T['Sensors'] = $D['Number'];
@@ -885,8 +885,8 @@ function Show_Thing(&$T,$Force=0) {
         if (($dc++)%4 == 0)  echo "<tr>";
         echo "<td><b>" . abs($D['Number']). "</b> of ";
         if (isset($MTNs[$D['Type']])) {
-          echo $MTNs[$D['Type']] . (($MTs[$D['Type']]['Leveled']&1)? (" (Level " . $D['Level'] . ") ") :"") ;
-          if (($MTs[$D['Type']]['Leveled']&1) && ($D['Level']<$Mt[$D['Type']])) echo " <span class=green>(" . $Mt[$D['Type']] . ")</span>";
+          echo $MTNs[$D['Type']] . (($MTs[$D['Type']]['Leveled'] & MOD_LEVELED)? (" (Level " . $D['Level'] . ") ") :"") ;
+          if (($MTs[$D['Type']]['Leveled'] & MOD_LEVELED) && ($D['Level']<$Mt[$D['Type']])) echo " <span class=green>(" . $Mt[$D['Type']] . ")</span>";
           switch ($MTs[$D['Type']]['Name']) {
             case 'Cargo Space':
               echo " - Capacity: " . $T['Level'];
@@ -901,21 +901,21 @@ function Show_Thing(&$T,$Force=0) {
           $M = $MTs[$D['Type']];
           if ($M['BasedOn']) {
             if ($l = Has_Tech($T['Whose'],$M['BasedOn'])) {
-              echo "<span class=err>Invalid</span> " . $M['Name'] . ' Modules ' . (($MTs[$D['Type']]['Leveled']&1)? (" (Level " . $D['Level'] . ") ") :"") ;
+              echo "<span class=err>Invalid</span> " . $M['Name'] . ' Modules ' . (($MTs[$D['Type']]['Leveled'] & MOD_LEVELED)? (" (Level " . $D['Level'] . ") ") :"") ;
             } else {
-              echo '<span class=err>Unknown</span> ' . $M['Name'] . ' Modules' . (($MTs[$D['Type']]['Leveled']&1)? (" (Level " . $D['Level'] . ") ") :"") ;
+              echo '<span class=err>Unknown</span> ' . $M['Name'] . ' Modules' . (($MTs[$D['Type']]['Leveled'] & MOD_LEVELED)? (" (Level " . $D['Level'] . ") ") :"") ;
             }
           }
         }
 
         if (!$FixedLevel) {
           $CLvl = Calc_TechLevel($Fid,$D['Type']);
-          if (($MTs[$D['Type']]['Leveled']&1) && ($CLvl < $D['Level']) && ($T['BuildState'] != BS_PLANNING )) {
+          if (($MTs[$D['Type']]['Leveled'] & MOD_LEVELED) && ($CLvl < $D['Level']) && ($T['BuildState'] != BS_PLANNING )) {
             echo ". <span class=Blue> Note you have Level: $CLvl </span>";
           }
         }
         if (!isset($MTNs[$D['Type']])) $BadMods += $D['Number'];
-        if (($MTs[$D['Type']]['Leveled']&8) == 0 ) $totmodc += $D['Number'] * ($Slots?$MTs[$D['Type']]['SpaceUsed']:1);
+        if (($MTs[$D['Type']]['Leveled'] & MOD_BLUEONLY) == 0 ) $totmodc += $D['Number'] * ($Slots?$MTs[$D['Type']]['SpaceUsed']:1);
         };
 
       echo "<tr>";

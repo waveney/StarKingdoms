@@ -171,8 +171,9 @@ function ForceReport($Sid,$Cat) {
 
       $Mods = Get_Modules($T['id']);
       foreach($Mods as $M) {
-        if ($ModTypes[$M['Type']]['Leveled'] & 6) {
-          $txt .= "<br>" . $ModTypes[$M['Type']]['Name'] . (($ModTypes[$M['Type']]['Leveled'] & 1)?" Lvl:" . $M['Level'] :'') . " Num: " . $M['Number'] . "\n";
+        if ($ModTypes[$M['Type']]['Leveled'] & MOD_LEVELED) {
+          $txt .= "<br>" . $ModTypes[$M['Type']]['Name'] . (($ModTypes[$M['Type']]['Leveled'] & MOD_LEVELED)?" Lvl:" .
+            $M['Level'] :'') . " Num: " . $M['Number'] . "\n";
         }
       }
       $Resc = 0;
