@@ -609,6 +609,7 @@ function SeeAfterMove() {
 
 function SaveWhatCanBeSeen() {
   global $db,$GAMEID,$GAME;
+  include_once("PThingListCore.php");
   // Save What can I see data
   $Factions = Get_Factions();
   foreach($Factions as $F) {
@@ -617,8 +618,16 @@ function SaveWhatCanBeSeen() {
     $CB = fopen("Turns/$GAMEID/" . $GAME['Turn'] . "/CouldC$Fid.html", "w");
     fwrite($CB,$CouldC);
     fclose($CB);
+
+    $LThings = PTListCore($Fid,$F,0,1);
+    $TL = fopen("Turns/$GAMEID/" . $GAME['Turn'] . "/ThingList$Fid.html", "w");
+    fwrite($TL,$LThings);
+    fclose($TL);
+
     GMLog("Saved What could be seen for " . $F['Name']);
   }
+
+
   return 1;
 }
 

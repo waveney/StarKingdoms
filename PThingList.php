@@ -4,6 +4,7 @@
   include_once("GetPut.php");
   include_once("PlayerLib.php");
   include_once("ThingLib.php");
+  include_once("PThingListCore.php");
 
   global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$ThingInclrs,$GAMEID,$LogistCost,$ARMY,$ARMIES,$GAME;
   global $MoveNames,$MoveProps;
@@ -42,13 +43,34 @@
     ($GM?($Faction['GMThingType']??0):($Faction['ThingType']??0)) . "," .
              ($GM?($Faction['GMThingBuild']??0):($Faction['ThingBuild']??0)) . ")" );
 */
-  if ($GM && $Fid) {
+  if ($GM && $Fid && (($_REQUEST['ACTION']??'')!='OLDER')) {
     echo "<h2><a href=PThingList.php?FORCE>This page in Player Mode</a></h2>";
   }
 
   if ($GM && isset($Fid) && $Fid==0) {
   } else {
     CheckFaction('PThingList',$Fid);
+  }
+
+  function Show_Older($Fid) {
+    global $GAME,$GAMEID;
+    echo "<div class=floatright><h2>";
+    if ($GAME['Turn'] <5 ) {
+      echo "End of Older Turns =&gt;";
+      for($turn=1; $turn <= $GAME['Turn']; $turn++) {
+        if ($turn == ($GAME['Turn'] - 5)) echo "</div><div class=InLine>";
+        if (file_exists("Turns/$GAMEID/$turn/ThingList$Fid.html")) echo " <a href=PThingList.php?ACTION=OLDER&Turn=$turn>$turn</a>";
+      }
+      echo "</h2>";
+    } else {
+      echo "End of Older Turns =&gt; <div id=ExpandTurnsDots class=InLine><b onclick=ExpandTurns()>...</b></div><div id=HiddenTurns hidden>";
+      for($turn=1; $turn <= $GAME['Turn']; $turn++) {
+        if ($turn == ($GAME['Turn'] - 5)) echo "</div><div class=InLine>";
+        if (file_exists("Turns/$GAMEID/$turn/ThingList$Fid.html")) echo " <a href=PThingList.php?ACTION=OLDER&Turn=$turn>$turn</a>";
+      }
+      echo "</div></h2>";
+    }
+    echo "</div>";
   }
 
   if (isset($_REQUEST['ACTION'])) {
@@ -168,312 +190,37 @@
       }
       break;
 
+    case 'OLDER':
+      $Turn = $_REQUEST['Turn'];
+      $html =  file_get_contents("Turns/$GAMEID/$Turn/ThingList$Fid.html");
+      if (!$html) {
+        echo "<h1 class=Err>Save file $Turn not found</h1>";
+        dotail();
+      }
 
+      Show_Older($Fid);
 
-    }
-  }
+      echo "<h1>The list of things from the end of Turn $Turn</h1>";
+      echo "If the thing is in <span class=blue>blue</span> it is a link to it currently<br>" .
+        "If the thing is in <span class=red>red</span> it no longer exists<p>";
 
-/* Select types
-  Name, Class, What, sub cat, where, move, Level, Action
-  */
-
-  $Things = Get_Things_Cond($Fid, "id>0 AND GameId=$GAMEID ORDER BY Priority DESC");
-  if (!empty($FACTION['HasPrisoners'])) {
-    $Held = Get_Things_Cond(0,"PrisonerOf=$Fid AND BuildState=" . BS_COMPLETE);
-    $Things = array_merge($Things,$Held);
-  }
-  $ThingTypes = Get_ThingTypes();
-  $Systems = Get_SystemRefs();
-  $Varies = Gen_Get_All_Game('Variants');
-  $Factions = Get_Factions();
-  $ModTypes = Get_ModuleTypes();
-  if ($Fid) {
-    foreach ($ModTypes as &$Mt) {
-      $Lvl = Calc_TechLevel($Fid,$Mt['id']);
-      $Mt['Target'] = $Lvl;
-    }
-  }
-
-  $Blockades[] = 0;
-
-  echo "<h1>Things</h1>";
-
-  $ShowCats = ['All','Ships',$ARMIES,'','Chars', 'Other'];
-  if (!empty($FACTION['HasPrisoners'])) $ShowCats[] = 'Prisoners';
-  $Show['ThingShow'] = ($Faction[$GM?'GMThingType':'ThingType'] ?? 0);
-  $BuildCats = [0=>'All',1=>'Plan',2=>'Building',3=>'Servicing', 4=>'Complete',5=>'Other']; // VERY similar to Buildstate
-
-  $Build['BuildShow'] = ($Faction[$GM?'GMThingBuild':'ThingBuild'] ?? 0);
-
-  echo "<div class=floatright ><b>" . fm_radio("Show",$ShowCats,$Show,'ThingShow',' onchange=ThingListFilter()') . "<br>";
-  echo fm_radio("Build State",$BuildCats, $Build,'BuildShow',' onchange=ThingListFilter()') . "</b></div>";
-
-  echo "To see more information about each thing and to do movement and changes click on the name<p>\n";
-  echo "Click on column heading to sort by column - toggles up/down<br>\n";
-  echo "Ex things only show up under state <b>Other</b><br>\n";
-  if ($Fid) echo "If the Thing would benefit from refit/repair/re-equipping/reinforcing then the Refit has the number of modules (+1 if it needs repair as well)</br>";
-  if ($FACTION['HasPrisoners']??0) echo "The Prisoner Tab shows Prisoners YOU have<p>\n";
-  if ($GM) echo "Notes: <B>N</b> - GM Notes, Coloured start of name = hidden control<P>";
-  if (!$GM) echo "StSpN = Stability, Speed or Mobility  N= Nebula Sensors<p>";
-  echo "For loading/unloading of troops and characters, go to the thing<p>\n";
-//  echo "Use only ONE of the filters to the right<br>\n";
-
-  $MovesValid = 1;
-  if (Has_Trait($Fid,'Star-Crossed')) {
-    if (IsPrime($GAME['Turn'])) {
-      $MovesValid = 0;
-      echo "You are Star Crossed - No movement this turn<p>";
-    }
-  }
-
-  $coln = 0;
-
-  echo "<div class=tablecont><table class=striped id=indextable border width=100% style='min-width:1400px'>\n";
-  echo "<thead><tr>";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Class</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Type</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Level</a>\n";
-  if (!$Fid) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Whose</a>\n";
-  if (Feature('Orders')) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Orders</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Health</a>\n";
-  if (!$GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>StSpN</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>State</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Where</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Actions</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Using Link / Details</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Moving to</a>\n";
-  if ($Fid) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Refit?</a>\n";
-  if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Sensors</a>\n";
-  if ($GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Notes</a>\n";
-  if (!$GM) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Prio</a>\n";
-
-  echo "</thead><tbody>";
-
-  $LinkTypes = Get_LinkLevels();
-
-  if ($Fid) {
-    $Logistics = [0,0,0]; // Ship, Army, Intelligence
-    $HasHomeLogistics = (Has_Tech($Fid,'Simplified Home Logistics') && Access('God'));
-    $FactionHome = 0;
-    if ($HasHomeLogistics) {
-      $Faction = Get_Faction($Fid);
-      $Home = $Faction['HomeWorld'];
-      if ($Home > 0) {
-        $W = Get_World($Home);
-        if ($W) {
-          switch ($W['ThingType']) {
-            case 1: // Planet
-              $P = Get_Planet($W['ThingId']);
-              $FactionHome = $P['SystemId'];
-              break;
-            case 2: // Moon
-              $M = Get_Moon($W['ThingId']);
-              $P = Get_Planet($W['PlanetId']);
-              $FactionHome = $P['SystemId'];
-              break;
-            case 3: // Things
-              $TH = Get_Thing($W['ThingId']);
-              $FactionHome = $TH['SystemId'];
-              break;
+      echo preg_replace_callback('/\<a href\=ThingEdit\.php\?id\=(\d*)>(.*?)\<\/a\>/', function ($mtchs) {
+          $Tid = $mtchs[1];
+          $Name = $mtchs[2];
+          $T = Get_Thing($Tid);
+          if ($T) {
+            return "<a href=ThingEdit.php?id=$Tid>$Name</a>";
           }
-        }
-      }
+          return "<span class=red>$Name</span>";
+        }, $html);
+      dotail();
+
     }
   }
 
+  Show_Older($Fid);
 
-  foreach ($Things as $T) {
-    if (empty($T['Type'])) continue;
-    $Props = ($ThingTypes[$T['Type']]['Properties']??0);
-    $Prop2 = ($ThingTypes[$T['Type']]['Prop2']??0);
-
-    $Tid = $T['id'];
-    $Name = ($ThingTypes[$T['Type']]['Name']??'Unknown');
-    if (!$Name) $Name = "Unknown Thing $Tid";
-
-    if ($Fid && ($T['Whose'] != $Fid)) {
-      $RowClass = 'Prisoner';
-    } else if ($Prop2 & THING_ALWAYS_OTHER) {
-      $RowClass = 'Other';
-    } else if ($Props & THING_HAS_SHIPMODULES) {
-      $RowClass = 'Ship';
-    } else  if ($Props & THING_HAS_ARMYMODULES) {
-      $RowClass = 'Army';
-    } else  if ($Props & THING_HAS_GADGETS) {
-      $RowClass = 'Agent';
-    } else  if ($Name == 'Named Character') {
-      $RowClass = 'Chars';
-    } else {
-      $RowClass = 'Other';
-    }
-
-    $BuildClass = ($T['BuildState']<BS_EX ? $T['BuildState'] : BS_EX);
-
-    if ($Fid) {
-      $Logistics = Logistics($Fid,$Things);
-    }
-
-    echo "\n<tr class='ThingList Thing_$RowClass Thing_Build$BuildClass'>";
-    echo "<td><a href=" . ($T['BuildState']? "ThingEdit.php" : "ThingPlan.php") . "?id=$Tid>" . ($T['Name'] ? $T['Name'] : "Nameless" ) . "</a>";
-    echo "<td>" . $T['Class'];
-    echo "<td>" . $Name;
-    if ($T['Variant']) echo " ( " . $Varies[$T['Variant']]['Name'] . " )";
-    echo "<td>" . (($Props & THING_HAS_LEVELS)?$T['Level']:'');
-    if ($Fid == 0) echo "<td " . FactColours($T['Whose']) . ">" . ($Factions[$T['Whose']]['Name']??'Unknown');
-    if (0) echo "<td>" . (($RowClass == 'Prisoner') ? "<span " . FactColours($T['Whose']) . ">[" .
-                 ($Factions[$T['Whose']]['Name']??'Unknown') . "]</span>" : $T['Orders']);
-    echo "<td><center>" . (($Props & THING_HAS_HEALTH)? $T['CurHealth'] . ' / ' . $T['OrigHealth'] : "-");
-    if (!$GM) {
-      if (($Props & THING_CAN_MOVE) || ($Prop2 & THING_HAS_SPEED)) {
-        echo "<td>" . $T['Stability'] . ",";
-        echo ceil(sprintf('%0.3g', ($Props  & THING_HAS_ARMYMODULES)?$T['Mobility']:$T['Speed']));
-        if ($T['NebSensors']) echo " N";
-      } else echo "<td>-";
-    }
-    if (!empty($T['PrisonerOf'])) {
-      echo "<td>Prisoner";
-      if (($T['Whose'] == $Fid) && (!$GM)) {
-        echo "<td><td><td><td>";
-        if ($Fid) echo "<td>";
-        continue;
-      }
-    } else {
-      echo "<td>" . $BuildState[$T['BuildState']];
-    }
-    if ($Props & THING_MOVES_DIRECTLY) {
-      echo "<td>" . ($Systems[$T['SystemId']]??'???');
-      echo "<td>Direct<td>";
-      echo "<td>" . ($T['NewSystemId'] == 0? "" : $Systems[$T['NewSystemId']]);
-    } else if ($Prop2 & THING_AT_LINK) {
-      $L = Get_Link($T['Dist1']);
-      echo "<td><td><td>At: " . ($L['Name']??'Unknown') . "<td>";
-    } else {
-      $Lid = $T['LinkId'];
-
-      echo "<td>";
-      if ($Lid >= 0 || ($MoveProps[$Lid] &1)) {
-        echo (empty($Systems[$T['SystemId']]) ?'': $Systems[$T['SystemId']]);
-      } else if ($Lid == LINK_INBRANCH ) {
-        echo 'Not Deployed';
-      } else if (($MoveProps[$Lid] &2)) {
-        echo 'On Board';
-      } else {
-        echo $MoveNames[$Lid];
-      }
-
-      echo "<td>";
-
-      if (!isset($Blockades[$T['SystemId']])) {
-        $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Blockade>0");
-        $Blockades[$T['SystemId']] = ($Conf?$Conf[0]['Blockade']:0);
-      }
-//      var_dump($T['SystemId'],$Blockades[$T['SystemId']]);
-      if ($T['Instruction']) echo $ThingInstrs[abs($T['Instruction'])];
-      if (($T['Instruction'] == 0 || $T['Instruction'] == 5 ) && (($Props & THING_CAN_MOVE) && ( $T['BuildState'] == BS_COMPLETE))) {
-        if ( ($T['LinkId'] >=0 ) || (($MoveProps[$T['LinkId']] & 1) && ($T['CurHealth'] > 0 || ($Props & THING_HAS_HEALTH) ==0))) {
-          if ($MovesValid && (($Faction['TurnState']??0) == 1) && (is_in_space($T) || $Blockades[$T['SystemId']] < max($T['Speed'],1))) {
-            echo " <a href=PMoveThing.php?id=" . $T['id'] . ">" . (($T['LinkId'] >=0 )?'Move':$MoveNames[$T['LinkId']]) . "</a>";
-          } else {
-          }
-          if ($T['Retreat']) {
-            echo "<td>" . (($T['LastMoved'] <0)?'Retreated':'Retreating');
-          } elseif ($T['LinkId'] > 0) {
-            $L = Get_Link($T['LinkId']);
-            echo "<td style=color:" . $LinkTypes[abs($L['Level'])]['Colour'] . " >Link " . ($L['Name']?$L['Name']: "#" . $T['LinkId']);
-            if ($L['Level'] <0 ) echo "- Note under repair...";
-            if ($T['NewSystemId']>0 && $T['TargetKnown'] || Has_Tech($T['Whose'],'Know All Links') || Feature('AllwaysShowLinkEnds') ) {
-              echo "<td>" . $Systems[$T['NewSystemId']];
-            } else {
-              echo "<td> ? ";
-            }
-          } elseif ($T['LinkId'] == LINK_FOLLOW ) {
-            $FT = Get_Thing($T['NewSystemId']);
-            if ($FT) {
-              echo "<td>" . $FT['Name'] . "<td>";
-            } else {
-              echo "<td>Confused...<td>";
-            }
-          } else if ($T['LinkId'] == LINK_NOT_MOVING) {
-            echo "<td>Not Moving<td>";
-          } else {
-            echo "<td><td>";
-          }
-        } else if ($T['LinkId'] == LINK_NOT_MOVING) {
-          echo "<td>Not Moving<td>";
-        } else {
-          echo "<td>";
-          if ($T['LinkId'] < 0) {
-            $Host = Get_Thing($T['SystemId']);
-            if ($Host) echo $Host['Name'];
-          }
-          echo "<td>";
-        }
-      } else {
-        if ($GM && ($Props & THING_HAS_HEALTH) && ($Props & THING_CAN_BE_SPLATED) && ($T['CurHealth']>0)) {
-          echo "<a href=PThingList.php?ACTION=SPLAT&T=$Tid&F=$Fid>SPLAT</a>";
-        }
-        echo "<td><td>";
-      }
-    }
-    $Up = 0;
-    if ($Fid) {
-      $Modules = Get_Modules($Tid);
-      foreach ($Modules as $M) {
-        $Mt = ($ModTypes[$M['Type']]??0);
-        if ((($Mt['Leveled']??0) & 1) == 0) continue;
-        if ($M['Level'] < $Mt['Target']) {
-          $Up += $M['Number'];
-        }
-      }
-
-      if (($T['CurHealth'] < $T['OrigHealth']) && ($Props & THING_HAS_HEALTH) && (($Props & THING_CAN_BE_SPLATED) == 0)) $Up++;
-      if ($RowClass == 'Prisoner'){
-        echo "<td><span " . FactColours($T['Whose']) . ">[" .
-           ($Factions[$T['Whose']]['Name']??'Unknown') . "]</span>";
-      } else {
-        echo "<td>" . ($Up?$Up:'');
-      }
-    }
-    if (!$GM) echo "<td>" . $T['Priority'];
-
-    if ($GM) {
-      echo "<td>" . (($T['Sensors'] ? ($T['Sensors'] . '*L' . $T['SensorLevel']) : ''));
-      if ($T['NebSensors'])  echo ' N';
-
-      echo "<td>";
-      if ($T['GM_Notes']) echo "<b>N</b> ";
-      if ($T['HiddenControl']) echo "<span " . FactColours($T['HiddenControl']) . ">" .
-        substr($Factions[$T['HiddenControl']]['Name'],0,3) . "</span> ";
-    }
- //   echo "<td>" . (isset($Systems[$T['NewSystemId']]) ? $Systems[$T['NewSystemId']] :"") ;
-
-  }
-  if (Access('God'))  echo "</tbody><tfoot><tr><td class=NotSide>Debug<td colspan=15 class=NotSide><textarea id=Debug></textarea>";
-  echo "</table></div>\n";
-
-  echo "<script type=text/javascript>$(document).ready(function(){ ListThingSetup($Fid," . ($GM?1:0) . "," .
-       ($GM?($Faction['GMThingType']??0):$Faction['ThingType']) . "," .
-       ($GM?($Faction['GMThingBuild']??0):$Faction['ThingBuild']) . ");});</script>\n";
-
-  if ($Fid) {
-    echo "<h1>Logistics</h1>";
-
-    $LogAvail = LogisticalSupport($Fid);
-
-    $LogCats = ['Ships',$ARMIES,'Agents'];
-
-    echo "<table border>";
-    echo "<tr><td>Category<td>Logistical Support<td>Logistics needed<td>Logistics Penalty\n";
-    foreach ($LogCats as $i => $n) {
-      if ($Logistics[$i]) {
-        $pen = min(0,$LogAvail[$i]-$Logistics[$i]);
-        echo "<tr><td>$n<td>" . $LogAvail[$i] . "<td>" . $Logistics[$i] . "<td " . ($pen < 0? " class=Err":'') . ">$pen" ;
-      }
-    }
-    echo "</table><p>\n";
-  }
-
+  echo PTListCore($Fid,$Faction,$GM,0);
   echo "<h2><a href=ThingPlan.php?F=$Fid>Plan a new thing</a></h2>\n";
 
   dotail();
