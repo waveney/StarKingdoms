@@ -151,7 +151,7 @@
   switch ($Stage) {
     case 0: //Select Op Type
       echo "<h2>Select Operation:</h2>";
-      echo "<table border><tr><th>Operation<th>Level<th>Description";
+      echo "<table border><tr><th>Operation<th>Level<th>Hidden<th>Description";
  //     var_dump($OpTypes);
       $PostIt = 0;
       foreach ($OpTypes as $opi=>$OP) {
@@ -168,7 +168,7 @@
         echo "<tr><td><button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=1&op=$opi'>" . $OP['Name'] .
           "</button><br>";
 
-        echo "<td>$Ltxt<td>" . $OP['Description'];
+        echo "<td>$Ltxt<td>" . (($OP['TeamProps']&1)?'Hidden':'Not Hidden') . "<td>" . $OP['Description'];
       }
 
       echo "</table><p>\n";

@@ -173,4 +173,32 @@ if ($Branches) {
   echo "None Found<p>";
 }
 
+$DTs = Get_OpTypes(0);
+$coln = 0;
+echo "<h1>Operations it can do:</h1>";
+echo "<form method=post>";
+echo "<div class=tablecont><table id=indextable border>\n";
+echo "<thead><tr>";
+echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
+echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Hidden?</a>\n";
+echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Level</a>\n";
+echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Description</a>\n";
+
+echo "</thead><tbody>";
+if ($DTs) foreach($DTs as $D) {
+  if ($D['Office'] != $Org['OrgType'] && $D['Office'] != $Org['OrgType2']) continue;
+  if ($D['Gate'] && !eval("return " . $D['Gate'] . ";" )) continue;
+
+  echo "<tr><td>" . $D['Name'] . "<td>" . (($D['TeamProps']&1)?'Yes':'No');
+
+  $Ltxt = "Level";
+  if ($D['Props']&3) $Ltxt .= "+" . ($D['Props']&3);
+  if (($D['Props']& 0Xc)) {
+    $Ltxt .= "+" . ((($D['Props']&15)>>2)>1?(($D['Props']&15)>>2):'') . "X";
+  }
+  echo "<td>$Ltxt<td>" . $D['Description'];
+}
+echo "</table></div>";
+
+
 dotail();
