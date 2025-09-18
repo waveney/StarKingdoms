@@ -54,6 +54,7 @@
 
   function Show_Older($Fid) {
     global $GAME,$GAMEID;
+    if ($GAME['Turn'] < Feature('StartOfThingLists',1)) return;
     echo "<div class=floatright><h2>";
     if ($GAME['Turn'] <5 ) {
       echo "End of Older Turns =&gt;";

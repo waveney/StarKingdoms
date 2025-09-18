@@ -997,7 +997,7 @@ function MilitiaArmyRecovery() {
         }
 
         if ($Heals) {
-          $HealVal = Mod_FormulaValue($T['ModLevel'],1,$Form);
+          $HealVal = Mod_FormulaValue($T['ModLevel'],$T['Level'],1,$Form);
 
    //       var_dump($T['ModLevel'],$HealVal);
           for($i = 0; $i < $T['ModNumber']; $i++) {

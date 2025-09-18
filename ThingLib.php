@@ -139,9 +139,17 @@ function ModFormulaes() {
   $MFs = Get_ModFormulaes();
 
   foreach ($MFs as $M) {
-    $f = $M['Num1x']?"(" . $M['Num1x'] . " +TL)":"TL";
-    if ($M['Num2x']>1) $f = $f . "*" . $M['Num2x'];
+    $f = (($M['Num2x'] >1)?"TL*" . $M['Num2x'] :( $M['Num2x']?'TL':''));
+    if ($M['Num4x'] && $f) $f .= " + " . $M['Num4x'];
+    if ($M['Num1x']) {
+      if ($M['Num1x'] > 1) {
+        $f = "($f)*Lvl*" . $M['Num1x'];
+      } else {
+        $f = "($f)*Lvl";
+      }
+    }
     if ($M['Num3x']) $f = "$f + " . $M['Num3x'];
+
     $ModFormulaes[$M['id']] = $f;
   }
   return $ModFormulaes;
@@ -168,36 +176,31 @@ function Mod_Value($fid,$modtypeid) {
   return $v;
 }
 
-function Mod_ValueSimple($tl,$modtypeid,&$Rescat) {
+function Mod_ValueSimple($techlvl,$thinglvl,$modtypeid,&$Rescat) {
 //echo "Mod Value of $tl, $modtypeid<p>";
   $mt = Get_ModuleType($modtypeid);
   if (!$mt['Formula']) return 0;
   $mf = Get_ModFormula($mt['Formula']);
 
   if ($mf['Name'] == 'None') return 0;
+  // (TechLevel*P1+P2)*max(1,ThingLevel*P3)+P4
+  // P[1,2,3,4] = Num[2,4,1,3]
+
   if (Access('GM') && !isset($mf['Num2x'])) echo "Report Module formula error $modtypeid<p>";
-  if ($mf['Num2x']) {
-    $v = ($mf['Num1x'] + $tl) * $mf['Num2x'];
-  } else {
-    $v = 0;
-  }
-  $v = $v + $mf['Num3x'];
+
+  $v = ($techlvl*$mf['Num2x'] + $mf['Num4x'])*max(1,$thinglvl*$mf['Num1x'])+$mf['Num3x'];
+
   if ($mt['Leveled']&0x6) $Rescat = 1;
 //echo "Is $v<p>";
   return $v;
 }
 
-function Mod_FormulaValue($tl,$Num,$form) {
+function Mod_FormulaValue($techlvl,$thinglvl,$Num,$form) {
   $mf = Get_ModFormula($form);
 
   if (($mf['Name']??'None') == 'None') return 0;
-  if (Access('GM') && !isset($mf['Num2x'])) echo "Report Module formula value error $tl,$Num,$form<p>";
-  if ($mf['Num2x']) {
-    $v = ($mf['Num1x'] + $tl) * $mf['Num2x'];
-  } else {
-    $v = 0;
-  }
-  $v = $v + $mf['Num3x'];
+  if (Access('GM') && !isset($mf['Num2x'])) echo "Report Module formula value error $techlvl,$Num,$form<p>";
+  $v = ($techlvl*$mf['Num2x'] + $mf['Num4x'])*max(1,$thinglvl*$mf['Num1x'])+$mf['Num3x'];
   return $v;
 }
 
@@ -440,36 +443,38 @@ function Calc_Health(&$T,$KeepTechLvl=0,$Other=0) {
   $Shield = 0;
   $Ms = Get_Modules($T['id']);
   $Mts = Get_ModuleTypes();
-  $Techs = Get_Techs();
+  if ($KeepTechLvl == 0) $Techs = Get_Techs();
   $Rescat = 0;
-  foreach ($Mts as $mt) if (($mt['DefWep'] == 1 ) || ($mt['DefWep'] == 3 )) {
-    foreach ($Ms as $M) if (($Mts[$M['Type']]['Name'] == $mt['Name']) && ($M['Number'] > 0)) {
+  foreach ($Ms as $M) {
+    $mt = $Mts[$M['Type']];
+    if ($M['Number'] && (($mt['DefWep'] == 1 ) || ($mt['DefWep'] == 3 ))) {
       if ($KeepTechLvl) {
-          $Mhlth = $M['Number'] * Mod_ValueSimple($M['Level']+$Plus,$M['Type'],$Rescat);
-          if ($mt['DefWep'] == 1 ) {
-            $Health += $Mhlth;
-          } else {
-            $Shield += $Mhlth;
-            $Health +=  $M['Number'] * 15;
-          }
+        $l = $M['Level'];
       } else {
+        $l = 0;
         $based = $Mts[$M['Type']]['BasedOn'];
         if ($based && ($l = Has_Tech($Other,$based))) {
           if ((($Techs[$based]['Cat'])??0) >= 1) {
             $l = Has_Tech($Other,$Techs[$based]['PreReqTech']);
           }
-          $Mhlth = $M['Number'] * Mod_ValueSimple($l+$Plus,$M['Type'],$Rescat);
-          if ($mt['DefWep'] == 1 ) {
-            $Health += $Mhlth;
-          } else {
-            $Shield += $Mhlth;
-            $Health +=  $M['Number'] * 15;
-          }
         }
+      }
+
+      $Mhlth = $M['Number'] * Mod_ValueSimple($l+$Plus,$T['Level'],$M['Type'],$Rescat);
+      if ($mt['DefWep'] == 1 ) {
+        $Health += $Mhlth;
+      } else {
+        $Shield += $Mhlth;
       }
     }
   }
 
+  if ($Shield) {
+/*    $Boost = 0;
+    foreach ($Ms as $M) if ($Mts[$M['Type']]['Name'] == 'Antimatter Deflector Shields') $Boost = 1;
+    if ($Boost) $Shield = ceil($Shield *5/3); */
+    $Health += $Shield;
+  }
   return [$Health,$Shield];
 }
 
@@ -487,7 +492,7 @@ function Calc_Damage(&$T,&$Rescat) {
     $M = $Ms[$mti];
     if ($mt['DefWep'] == 2 ) {
       if ($M['Level'] > 0) {
-        $dpm = Mod_ValueSimple($M['Level'],$mti,$Rescat);
+        $dpm = Mod_ValueSimple($M['Level'],$T['Level'],$mti,$Rescat);
         if ($T['BuildFlags'] & BUILD_FLAG1) $dpm+=2;
         $dam = $M['Number'] * $dpm;
         $Dam += $dam;
@@ -496,7 +501,7 @@ function Calc_Damage(&$T,&$Rescat) {
 
     if ($mt['ToHitMod']) {
       if ($mt['ToHitMod'] == -100){
-        $ToHit += Mod_ValueSimple($M['Level'],$mti,$Rescat)*$M['Number'];
+        $ToHit += Mod_ValueSimple($M['Level'],$T['Level'],$mti,$Rescat)*$M['Number'];
       } else {
         $ToHit += $M['Number']*$mt['ToHitMod'];
       }
@@ -726,7 +731,7 @@ function Calc_Evasion(&$T) {
       $ev += $MTypes[$M['Type']]['EvasionMod']*$M['Number'];
     } else {
       $Rescat = 0;
-      $ev += Mod_ValueSimple($M['Level'],$M['Type'],$Rescat) *$M['Number'];
+      $ev += Mod_ValueSimple($M['Level'],$T['Level'],$M['Type'],$Rescat) *$M['Number'];
     }
   }
 

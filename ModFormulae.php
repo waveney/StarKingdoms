@@ -25,18 +25,22 @@
 
 
   echo "<h1>Module Fomulas</h1>";
+
+  echo "Final Formula is (TechLevel*P1+P2)*max(1,ThingLevel*P3)+P4<p>";
+
   echo "<form method=post action=ModFormulae.php>";
 
-
+  // P[1,2,3,4] = Num[2,4,1,3]
     $coln = 0;
     echo "<div class=tablecont><table id=indextable border width=100% style='min-width:1400px'>\n";
     echo "<thead><tr>";
-    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'n')>id</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>id</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Fomulae</a>\n";
-    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Num1</a>\n";
-    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Num2</a>\n";
-    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Num3</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>P1</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>P2</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>P3</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>P4</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Base Tech</a>\n";
     echo "</thead><tbody>";
 
@@ -45,8 +49,9 @@
       if (!isset($MFN[$i])) continue;
       echo "<tr><td>$i" . fm_text1("",$M,'Name',1,'','',"Name$i");
       echo "<td>" . $MFN[$i];
-      echo fm_number1("",$M,'Num1x','','',"Num1x$i");
       echo fm_number1("",$M,'Num2x','','',"Num2x$i");
+      echo fm_number1("",$M,'Num4x','','',"Num4x$i");
+      echo fm_number1("",$M,'Num1x','','',"Num1x$i");
       echo fm_number1("",$M,'Num3x','','',"Num3x$i");
       echo "<td>" . fm_select($CTNs,$M,'BaseTech',0,'',"BaseTech$i");
 //      echo fm_number1("",$M,'BaseTech','','',"BaseTech$i"); // Will be select later
@@ -56,8 +61,9 @@
   echo "<tr><td>";
   $M = [];
   echo fm_text1("",$M,'Name',1,'','',"Name0") . "<td>";
-  echo fm_number1("",$M,'Num1x','','',"Num1x0");
   echo fm_number1("",$M,'Num2x','','',"Num2x0");
+  echo fm_number1("",$M,'Num4x','','',"Num4x0");
+  echo fm_number1("",$M,'Num1x','','',"Num1x0");
   echo fm_number1("",$M,'Num3x','','',"Num3x0");
   echo "<td>" . fm_select($CTNs,$M,'BaseTech',0,'',"BaseTech0");
 //  echo fm_number1("",$M,'BaseTech','','',"BaseTech0");
