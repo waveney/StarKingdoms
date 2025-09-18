@@ -887,17 +887,6 @@ function MilitiaArmyRecovery() {
 
     }
 
-    if (isset($MTNs['Self-Repairing Armour']) && (($TTypes[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES))) {
-      $Self = Get_ModulesType($T['id'],$MTNs['Self-Repairing Armour']);
-      if (isset($Self['Number'])) {
-        $Rep = $Self['Number']*$Self['Level']*2;
-        $T['CurHealth'] = min($T['OrigHealth'],$T['CurHealth']+$Rep);
-        Put_Thing($T);
-        if ($T['Whose']) TurnLog($T['Whose'],$T['Name'] . " recovered $Rep health",$T);
-        GMLog("<a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a> recovered $Rep health");
-      }
-    }
-
     if ((isset($MTNs['Self Repairing Robot Armour']) ) && (($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES))) {
       $RepMods = ['Medical Corps', 'Self Repairing Robot Armour']; // Old Medical Corp Code
       foreach ($RepMods as $Mt) {
@@ -1029,7 +1018,30 @@ function MilitiaArmyRecovery() {
     }
 
   }
+
   GMLog("All Medical Corps?Bays handled");
+
+  // Ship Self Repair
+  $Things = Gen_Select("SELECT T.*,M.Level AS ModLevel, M.Number AS ModNumber FROM Things T INNER JOIN Modules AS M ON M.ThingId=T.id " .
+    "WHERE T.GameId=$GAMEID AND T.BuildState=" . BS_COMPLETE . " AND M.Type=" . $MTNs['Self-Repairing Armour'] .
+    " AND T.SystemId!=0 AND T.CurHealth<T.OrigHealth");
+
+  //  var_dump($Things); exit;
+  if ($Things) {
+    $Form = $MTypes[$MTNs['Self-Repairing Armour']]['Formula'];
+    foreach ($Things as $T) {
+      $Tid = $T['id'];
+      $HealPCent = Mod_FormulaValue($T['ModLevel'],$T['Level'],1,$Form);
+      var_dump($HealPCent,$T['OrigHealth'],$T['ModNumber'],$T['ModLevel'],$Form);
+      $HealValue = min($T['OrigHealth']- $T['CurHealth'],ceil($T['OrigHealth']*$HealPCent*$T['ModNumber']/100));
+      $T['CurHealth'] = $T['CurHealth'] +$HealValue;
+      Put_Thing($T);
+      TurnLog($Fid,$T['Name'] . " restored $HealValue health to " . $T['Name'],$T);
+      GMLog($T['Name'] . " restored $HealValue health to <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a>");
+    }
+  }
+
+  GMLog("All Ship Self Repair handled");
 
   return 1;
 }
