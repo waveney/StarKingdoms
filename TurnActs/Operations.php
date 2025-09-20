@@ -289,6 +289,7 @@ function OperationsProgress() {
     $O['Progress'] += $Orgs[$O['OrgId']]['OfficeCount'];
     $O['TurnState'] = 1;
     Put_Operation($O);
+//    if (($OpTypes[$O['Type']]['Props'] & OPER_ALWAYS1TURN) == 0)
     TurnLog($O['Whose'],$Orgs[$O['OrgId']]['Name'] . " has " . $Orgs[$O['OrgId']]['OfficeCount'] . " Progress on " . $O['Name']);
   }
   GMLog("All Operations Progressed<p>");
@@ -670,9 +671,17 @@ function OperationsComplete() {
           }
           $Prog = Has_Tech($Fid,'Sensors')*$Org['OfficeCount'];
 
+          if (!$Prog) {
+            FollowUp($Fid, "Anomaly Study $Aid has duff Progress - $Prog - Sensors are: " . Has_Tech($Fid,'Sensors') .
+              " Org is: " . $Org['Name'] . " For Richard...");
+            GMLog("<span class=red>$Prog progress on analysing anomaly: " . $Anom['Name'] . " by " . $Facts[$Fid]['Name'] . " Something is very wrong</span>");
+            break;
+          }
+
           if ($FA['Progress'] < $Anom['AnomalyLevel']) {
             $FA['Progress'] += $Prog;
             TurnLog($Fid,"$Prog progress on analysing anomaly: " . $Anom['Name']);
+            GMLog("$Prog progress on analysing anomaly: " . $Anom['Name'] . " by " . $Facts[$Fid]['Name']);
             Gen_Put('FactionAnomaly',$FA);
           } else {
             TurnLog($Fid,"The anomaly " . $Anom['Name'] . " is already studied");

@@ -1032,7 +1032,7 @@ function MilitiaArmyRecovery() {
     foreach ($Things as $T) {
       $Tid = $T['id'];
       $HealPCent = Mod_FormulaValue($T['ModLevel'],$T['Level'],1,$Form);
-      var_dump($HealPCent,$T['OrigHealth'],$T['ModNumber'],$T['ModLevel'],$Form);
+ //     var_dump($HealPCent,$T['OrigHealth'],$T['ModNumber'],$T['ModLevel'],$Form);
       $HealValue = min($T['OrigHealth']- $T['CurHealth'],ceil($T['OrigHealth']*$HealPCent*$T['ModNumber']/100));
       $T['CurHealth'] = $T['CurHealth'] +$HealValue;
       Put_Thing($T);

@@ -795,8 +795,8 @@ function Income_Calc($Fid) {
       foreach ($MyOPBranches as $Bid=>$B ) {
         $Out = Get_Thing($B['HostId']);
         $Sys = Get_System($Out['SystemId']);
-        $BW = Gen_Select("SELECT W.Blockade FROM Worlds W INNER JOIN ProjectHomes H ON W.Home=H.id WHERE H.SystemId=" . $Out['SystemId']);
-        if ($BW && $BW['Blockade']) {
+        $BW = Gen_Select("SELECT W.Blockade FROM Worlds W INNER JOIN ProjectHomes H ON W.Home=H.id WHERE H.SystemId=" . $Out['SystemId'] . " LIMIT 1");
+        if ($BW && $BW[0]['Blockade']) {
           $OGtrade .= "Due to a blockade nothing from Trading Station " . ($B['Name']??'') . " on the Outpost " . $Out['Name'] . " in " .
           System_Name($Sys, $Fid). "<br>";
         } else {

@@ -20,6 +20,7 @@ define('OPER_ALLORGS',       0x20000);
 define('OPER_LEVELMOD',      0x40000);
 define('OPER_COLONISTS',     0x80000);
 define('OPER_NOT_FRIENDS',  0x100000);
+define('OPER_ALWAYS1TURN',  0x200000); // Not used
 
 
 define('ORG_HIDDEN',1);

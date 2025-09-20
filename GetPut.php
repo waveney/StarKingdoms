@@ -907,7 +907,7 @@ function Get_ThingTypes($AllG=0) {
 }
 
 function Has_Tech($fid,$name) {
-  global $db,$GAME;
+  global $db,$GAME,$NOTBY;
   if (empty($fid)) {
     if (Feature('ReportEmptyHasTech') && Access('God') && !isset($_REQUEST['FORCE'])) {
 //      var_dump($fid,$name); //OK
@@ -919,7 +919,7 @@ function Has_Tech($fid,$name) {
     if ($name == 0) return 1;
     $Tech = Get_Tech($name);
   } else {
-    $res = $db->query("SELECT * FROM Technologies WHERE Name='$name'");
+    $res = $db->query("SELECT * FROM Technologies WHERE Name='$name' AND (NotBy=0 OR (NotBy&$NOTBY)!=0)");
     if (!$res || !($Tech = $res->fetch_assoc())) return 0;
     $name= $Tech['id'];
   }

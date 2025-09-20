@@ -33,7 +33,7 @@
 //  echo "Category 1=Academic,2=Ship Yard,4=Miltary,8=Intelligence,16=Construction, 32=Deep Space<p>";
   echo "Props: 4 lower bits: 0 = Operation is at Level, 1 = +1, 2 = +2, (3=+3), 4=+X 8 = +2X.  10 = Tech Select, 20 = SocPrin, 40=Outpost, " .
        "80=Outpost Create, 100=New Branch, 200=Hidden, 400=SocialP of Target, 800=Target Wormhole, 1000=Inhabited W, 2000=Money Q, 4000=Desc Needed, " .
-       "8000=Anomaly at Target, 10000=Sci Points, 20000=All Orgs, 40000=Level Mod, 80000=Colonists, 10000=Not Friends<p>";
+       "8000=Anomaly at Target, 10000=Sci Points, 20000=All Orgs, 40000=Level Mod, 80000=Colonists, 100000=Not Friends, 200000=Always 1 Turn<p>";
   echo "Team Props: 1=hidden, 2=in space, 4=ground<p>";
   echo "Do NOT change the Op names - code depends on them<p>";
 

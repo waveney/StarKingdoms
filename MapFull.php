@@ -239,7 +239,7 @@
 //  if (!$typ) fwrite($Dot, "[size=\"10,20!\"];\n");
 
     foreach ($Nodes as $N) {
-      if (!ctype_alnum($N['Ref'])) continue;
+      if (!ctype_alnum($N['Ref']) || ($N['Flags']&2)) continue;
       if (!isset($N['GridX']) || ( $N['GridX'] == 0 && $N['GridY'] == 0)) continue;
       $NodeName = $N['Name']?$N['Name']:"";
       $ShortName = $N['ShortName']?$N['ShortName']:$NodeName;
