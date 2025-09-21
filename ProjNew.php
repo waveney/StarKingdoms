@@ -756,7 +756,7 @@
 
         foreach ($RefitShips as $tid=>$Name) {
           $T = Get_Thing($tid);
-          $pc = Proj_Costs($T['Level']-1);
+          $pc = Proj_Costs(max(0,$T['Level']-1));
 
           echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Refit and Repair'] .
             "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=$tid" .

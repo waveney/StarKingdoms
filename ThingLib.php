@@ -421,7 +421,7 @@ function Max_Modules(&$T) {
         }
       }
     } else {
-      $v = [0,6,16,36,68,110,128,176,232,296,368][$T['Level']];
+      $v = [4,6,16,36,68,110,128,176,232,296,368][$T['Level']];
       if ($TTs['Properties'] & THING_IS_SMALL ) $v -= $T['Level'];
       if ($TTs['Name'] == 'Satellite Defences') $v += ([0,1,1,3,6,10,15,21][$T['Level']]??0);
     }
