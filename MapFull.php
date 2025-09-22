@@ -248,7 +248,7 @@
       if ($Fid) {
         $FS = ($FSs[$N['id']]??[]);
         if (empty($FS) && !$AllLinks) continue;
-        if ($N['Control'] != $Fid) {
+        if ($N['Control'] != $Fid && isset($FS['Name'])) {
           if ($FS['Name']) $ShortName = $NodeName = $FS['Name'];
           if ($FS['ShortName']) $ShortName = $FS['ShortName'];
         }

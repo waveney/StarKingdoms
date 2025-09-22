@@ -138,7 +138,7 @@
   if ($Fid) {
     if ($ScanLevel>=0) {
       echo "This system has been passively scanned. " .
-        (($SpaceLevel>0)?("Has been space scanned at level " . $FS['SpaceScan'] . ($FS['SpaceTurn']?(" on Turn " . $FS['SpaceTurn']):'') .".  ")
+        (($SpaceLevel>0)?("Has been space scanned at level " . $FS['SpaceScan'] . (($FS['SpaceTurn']??0)?(" on Turn " . $FS['SpaceTurn']):'') .".  ")
           :"No Space Survey has been Made. ") .
         (($PlanetLevel>0)?("Has been planetary scanned at level " . $FS['PlanetScan'] . (($FS['PlanetTurn']??0)?(" on Turn " . $FS['PlanetTurn']):''))
           :"No Planetary Survey has been made.")  . "<p>";
