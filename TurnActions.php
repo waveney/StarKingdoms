@@ -839,7 +839,7 @@ function FinishShakedowns() {
 
 
 function MilitiaArmyRecovery() {
-  global $GAMEID,$GAME;
+  global $GAMEID,$GAME,$NOTBY;
 //  GMLog("Militia Recovery is currently Manual<p>");
 //  GMLog("Also Self Repair Armour<p>");
 
@@ -1024,7 +1024,7 @@ function MilitiaArmyRecovery() {
   // Ship Self Repair
   $Things = Gen_Select("SELECT T.*,M.Level AS ModLevel, M.Number AS ModNumber FROM Things T INNER JOIN Modules AS M ON M.ThingId=T.id " .
     "WHERE T.GameId=$GAMEID AND T.BuildState=" . BS_COMPLETE . " AND M.Type=" . $MTNs['Self-Repairing Armour'] .
-    " AND T.SystemId!=0 AND T.CurHealth<T.OrigHealth");
+    " AND T.SystemId!=0 AND T.CurHealth<T.OrigHealth AND  (M.NotBy=0 OR (M.NotBy&$NOTBY)!=0)");
 
   //  var_dump($Things); exit;
   if ($Things) {
@@ -1177,12 +1177,14 @@ function TidyUps() {
     Put_Thing($T);
   }
 
-  $Branches = Gen_Get('Branches', "GameId=$GAMEID AND Suppressed>0");
+  $Branches = Gen_Get_Cond('Branches', "GameId=$GAMEID AND Suppressed>0 AND (SupressStart=0 OR SupressStart<=" . $GAME['Turn'] . ")");
   if ($Branches) foreach ($Branches as $B) {
     $B['Suppressed']--;
     Gen_Put('Branches',$B);
+    $rb = Report_Branch($B);
+    if ($B['Suppressed']==0 ) TurnLog($B['Whose']," $rb is no longer Suppressed" );
+    GMLog("Suppression of Branch for $rb  has its Suppression reduced to " . $B['Suppressed']);
   }
-
 
   $Facts = Get_Factions();
   foreach ($Facts as $F) {
@@ -1220,7 +1222,7 @@ function RecalcProjectHomes() {
 
   $DSys = Gen_Get_Cond('Systems',"GameId=$GAMEID AND Flags>0");
   foreach($DSys as $N) {
-    Dynamic_Update($N,1);
+    if ($N['Flags']==1) Dynamic_Update($N,1);
   }
 
   Recalc_Mined_locs();

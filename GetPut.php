@@ -578,6 +578,7 @@ function Put_Thing(&$now) {
     $e=$now['id'];
     $Cur = Get_Thing($e);
     if ((($now['WhereBuilt']??0)==0) && ($Cur['SystemId']==0) && (($now['SystemId']??0)!=0)) $now['WhereBuilt'] = $now['SystemId'];
+    if ((($now['WhenBuilt']??0) == 0) && (($now['BuildState']??0) == 3)) $now['WhenBuilt'] = $GAME['Turn'];
     return Update_db('Things',$Cur,$now);
   } else {
     $now['GameId'] = $GAME['id'];

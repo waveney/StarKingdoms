@@ -753,12 +753,8 @@ function ProjectsCompleted($Pass) {
           $T = Get_Thing($P['ThingId']);
           $T['BuildState'] = (Feature('Shakedowns')?BS_SERVICE:BS_COMPLETE); // Shakedown
           if (empty($T['SystemId'])) {
-            //        $Where = Where_Is_Home($P['Home']);
-            //        $T['SystemId'] = $Where[0];
-            //        if (empty($T['SystemId'])) {
-            GMLog("Ship: <a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . $T['Name'] . "</a> has no System Setup - Call Richard...");
-            FollowUp($Fid,"Ship: <a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . $T['Name'] . "</a> has no System Setup - Call Richard...");
-            //        }
+            $Where = Where_Is_Home($P['Home']);
+            $T['SystemId'] = $Where[0];
           }
 
 
@@ -795,6 +791,10 @@ function ProjectsCompleted($Pass) {
         case 'Train Agent':
           $T = Get_Thing($P['ThingId']);
           $T['BuildState'] = BS_COMPLETE;
+          if (empty($T['SystemId'])) {
+            $Where = Where_Is_Home($P['Home']);
+            $T['SystemId'] = $Where[0];
+          }
           $T['WithinSysLoc'] = ConstructLoc($P['Home'],1);
           if (Blockaded($T)) $T['WithinSysLoc'] = 2;
           TurnLog($Fid, $T['Name'] . " has been completed",$T);

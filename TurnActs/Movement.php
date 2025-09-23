@@ -30,10 +30,17 @@ function Follow() {
       $Folid = $T['NewSystemId'];
       $Fol = Get_Thing($Folid);
       $Fid = $T['Whose'];
+      $Tid = $T['id'];
       if ($Fol) {
         $Lid = $Fol['LinkId'];
-        if ($Lid >= 0) {
+        if ($Lid > 0) {
           $L = Get_Link($Lid);
+          if (!$L) {
+            GMLog($Factions[$T['Whose']]['Name'] . " - <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a> Can not follow " . $Fol['Name'] .
+              " as the link's $Lid - does not exist - Call Richard");
+            var_dump($T,$Fol); // Diagnostic path
+            exit;
+          }
           $EInst = $L['Instability'];
           if ($L['ThisTurnMod']) $EInst = max(1,$EInst+$L['ThisTurnMod']);
           if ($T['Stability'] < $EInst) {
@@ -65,7 +72,13 @@ function Follow() {
               " as the link they used was unknown to them - Allow? " . fm_YesNo("Follow" . $T['id'],1, "Reason to reject") . "\n<br>");
             continue;
           }
-
+        } else if ($Lid == 0) {
+          $T['LinkId'] = $Fol['LinkId'];
+          $T['LinkCost'] = $Fol['LinkCost'];
+          $T['LinkPay'] = 1;
+          $T['NewSystemId'] = $Fol['NewSystemId'];
+          Put_Thing($T);
+          GMLog($T['Name'] . " ( " . $Factions[$T['Whose']]['Name'] . " ) is following " . $Fol['Name'] . " ( " . $Factions[$Fol['Whose']]['Name'] . " )" );
         } else {
           $Again = 1;
         }

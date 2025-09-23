@@ -373,8 +373,9 @@
       $i = $mtch[3];
       if (($t == 'Ignore') || ($i==0)) exit;
       $N = Gen_Get($t,$i);
+      if (($t == 'Branches') && ($f == 'Suppressed') && ($N['Suppressed'] == 0) ) $N['SuppressStart']=$GAME['Turn']+1;
       $N[$f] = $Value;
-//      var_dump($N);
+//            var_dump($N);
       echo Gen_Put($t,$N);
     }
     if ((preg_match('/Ignore:(\w*):(\w*):(\d*)/',$field,$mtch)?true:false)) {

@@ -928,6 +928,7 @@ function ShowWorld(&$W,$Mode=0,$NeedDelta=0) { // Mode 0 = View, 1=Owner, 2 = GM
           "</b> ( " . $OrgTypes[$Orgs[$B['Organisation']]['OrgType']]['Name'] . " ) - " .
           "<span " . FactColours($B['Whose']) . ">" . $Facts[$B['Whose']]['Name'] . "</span>";
           if (($BTypes[$B['Type']]['Props']&1) != 0) echo " [Hidden]";
+          if ($B['Suppressed']) echo " - Suppresed " . $B['Suppressed'] . Plural($B['Suppressed'],'','turn',' turns');
           echo "<br>";
         }
       }

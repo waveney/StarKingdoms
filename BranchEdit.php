@@ -314,7 +314,7 @@ if ($BTypeNames[$B['Type']] == 'Science Space Base') {
   $RTypes[0] = 'Not Setup yet';
   echo "<tr><td>Ongoing Reward:<td>" . fm_select($RTypes,$B,'RewardType') . fm_number("Amount",$B,'RewardNumber');
 }
-
+echo "<tr>" . fm_number('Suppressed',$B,'Suppressed') . fm_number('From Turn', $B,'SuppressStart');
 
 echo "</table>";
 

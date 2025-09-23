@@ -1348,7 +1348,9 @@ function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0,$Mode=0) {
        } else {
          $Fac = [];
        }
-       $txt .= "<p><h2 " . FactColours($N['Control']??0,'beige') . "><a href=SurveyReport.php?id=$Sid>System " . System_Name($N,$Fid) . "</a></h2>";
+       $xtra = '';
+       if ($GM && $N['Nebulae']) $xtra = " - Nebula " . Plural($N['Nebulae'],'',''," (" . $N['Nebulae'] . ")");
+       $txt .= "<p><h2 " . FactColours($N['Control']??0,'beige') . "><a href=SurveyReport.php?id=$Sid>System " . System_Name($N,$Fid) . $xtra . "</a></h2>";
     } else {
        $txt .= "<h2>In the System is:</h2>";
     }

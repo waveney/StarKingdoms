@@ -55,7 +55,7 @@ if (isset($_REQUEST['Action'])) {
       dotail();
 
     case 'Report':
-      $SocPW = Gen_Get('SocPWorlds',$Pwi);
+      $SocPW = Gen_Get('SocPsWorlds',$Pwi);
 
       $Wid = $SocPW['World'];
       $World = Get_World($Wid);

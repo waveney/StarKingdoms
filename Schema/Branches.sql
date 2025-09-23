@@ -10,6 +10,7 @@ CREATE TABLE `Branches` (
   `OrgType` int NOT NULL,
   `OrgType2` int NOT NULL,
   `Suppressed` int NOT NULL,
+  `SuppressStart` int NOT NULL,
   `RewardType` int NOT NULL,
   `RewardNumber` int NOT NULL,
   PRIMARY KEY (`id`)
