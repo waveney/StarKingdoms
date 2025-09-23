@@ -1023,8 +1023,9 @@ function MilitiaArmyRecovery() {
 
   // Ship Self Repair
   $Things = Gen_Select("SELECT T.*,M.Level AS ModLevel, M.Number AS ModNumber FROM Things T INNER JOIN Modules AS M ON M.ThingId=T.id " .
+    "INNER JOIN ModuleTypes as MT ON M.Type=MT.id " .
     "WHERE T.GameId=$GAMEID AND T.BuildState=" . BS_COMPLETE . " AND M.Type=" . $MTNs['Self-Repairing Armour'] .
-    " AND T.SystemId!=0 AND T.CurHealth<T.OrigHealth AND  (M.NotBy=0 OR (M.NotBy&$NOTBY)!=0)");
+    " AND T.SystemId!=0 AND T.CurHealth<T.OrigHealth AND  (MT.NotBy=0 OR (MT.NotBy&$NOTBY)!=0)");
 
   //  var_dump($Things); exit;
   if ($Things) {

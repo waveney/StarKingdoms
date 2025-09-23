@@ -946,7 +946,7 @@
         echo "<h3>Nothing needs Reinforcing</h3>";
       }
 
-      if (Has_Trait($Fid,"I Don't Want To Die") && $RefitCount) {
+      if (Has_Trait($Fid,"I Don't Want To Die")  && !Has_PTraitH($Hi,'I Want To Die') && $RefitCount) {
         echo "To be selectable the $ARMY must be idle: no movement or instructions<p>";
         if ($RefitCount) {
           foreach ($RefitArmy as $tid=>$Name) {
@@ -1011,7 +1011,7 @@
         echo "No armies are currently there<p>";
       }
 
-      if (Has_Trait($Fid,"I Don't Want To Die")) {
+      if (Has_Trait($Fid,"I Don't Want To Die")  && !Has_PTraitH($Hi,'I Want To Die')) {
         echo "<h2>Re-equip $ARMY</h2>"; // THIS MUST be AFTER the simple buttons as the form gets lost
         echo "You can only do this to $ARMIES on the same planet.<p>";
         $HSys = $Homes[$Hi]['SystemId'];

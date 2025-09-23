@@ -443,7 +443,7 @@ function ProjectProgressActions($Pay4=0) {
     $Bonus = 0;
     if (!empty($TurnStuff['Bonus'])) $Bonus = $TurnStuff['Bonus'];
 
-    if (Has_Trait($Fid,"I Don't Want To Die")) {
+    if (Has_Trait($Fid,"I Don't Want To Die") && !Has_PTraitH($P['Home'],'I Want To Die')) {
       $PNam = $ProjTypes[$P['Type']]['Name'];
       if ($PNam == 'Train Detachment' || $PNam == 'Reinforce Detachment' || $PNam == 'Refit Detachment') $Bonus -= 1;
     }
