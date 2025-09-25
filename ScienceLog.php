@@ -37,6 +37,7 @@ if (!$Logs) {
 $Tracks = TrackIndexes();
 $Tracked = [];
 
+var_dump($Tracks);
 // Scan for used types
 foreach($Logs as $L) {
   $Tracked[$L['Type']] = 1;

@@ -151,7 +151,7 @@
     case 0: //Select Op Type
       echo "<h2>Select Operation:</h2>";
       echo "<table border><tr><th>Operation<th>Level<th>Hidden<th>Description";
-      var_dump($OpTypes);
+ //     var_dump($OpTypes);
       $PostIt = 0;
       foreach ($OpTypes as $opi=>$OP) {
         if ($OP['Name'] == 'Post It') {

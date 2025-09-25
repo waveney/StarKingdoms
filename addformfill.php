@@ -27,15 +27,15 @@
 
     $Fact = Get_Faction($i);
     if ($GAME['id'] != $Fact['GameId']) Get_Game( $Fact['GameId']);
-
     if (($t == 'Factions') && ($f == 'Credits')) {
       Spend_Credit($i,-$Value,$Reason);
     } else {
       $N = Gen_Get($t,$i);
       $N[$f] = $NewTot;
       echo Gen_Put($t,$N);
-
-      $Spog = ['GameId'=>$GAME['id'],'Turn'=>$GAME['Turn'],'FactionId'=>$i, 'Type'=>$ResTyp, 'Number'=>$Value, 'Note'=>$Reason, 'EndVal'=>$NewTot];
+      $Fid = (($t == 'Factions')?$i:$N['Whose']);
+      $Spog = ['GameId'=>$GAME['id'],'Turn'=>$GAME['Turn'],'FactionId'=>$Fid, 'Type'=>$ResTyp, 'Number'=>$Value, 'Note'=>$Reason, 'EndVal'=>$NewTot];
+// var_dump($Spog);
       Gen_Put('SciencePointLog',$Spog);
     }
 
