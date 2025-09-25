@@ -374,8 +374,8 @@
             continue;
           }
 
+          $min=0;
           if (isset($MMs[$Mti])) {
-            $min=0;
             if ($IsBlue) {
               $min = ($BMs[$Mti]['Number']??0);
               $max = ($MTs[$Mti]['MaxPerThing']==0?$min+$FlexM:$MTs[$Mti]['MaxPerThing']);

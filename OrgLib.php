@@ -472,16 +472,16 @@ function Report_Branch(&$B) {
     case 1 : // Planet
       $P = Get_Planet($B['HostId']);
       $N = Get_System($P['SystemId']);
-      return $B['Name'] . " a branch of " . $Org['Name'] . " in " . System_Name($N,$B['Whose']);
+      return ($B['Name']??'') . " a branch of " . $Org['Name'] . " in " . System_Name($N,$B['Whose']);
     case 2 : //Moon
       $M = Get_Moon($B['HostId']);
       $P = Get_Planet($M['PlanetId']);
       $N = Get_System($P['SystemId']);
-      return $B['Name'] . " a branch of " . $Org['Name'] . " in " . System_Name($N,$B['Whose']);
+      return ($B['Name']??'') . " a branch of " . $Org['Name'] . " in " . System_Name($N,$B['Whose']);
     case 3 : //Thing
       $T = Get_Thing($B['HostId']);
       $N = Get_System($T['SystemId']);
-      return $B['Name'] . " a branch of " . $Org['Name'] . " on " . $T['Name'] . " in " . System_Name($N,$B['Whose']);
+      return ($B['Name']??'') . " a branch of " . $Org['Name'] . " on " . $T['Name'] . " in " . System_Name($N,$B['Whose']);
   }
 }
 

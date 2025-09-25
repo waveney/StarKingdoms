@@ -184,7 +184,7 @@
     $Pro['GMOverride'] = $O['GMOverride'];
     $Pro['FreeRushes'] = $O['FreeRushes'];
 
-    $Optype = $OpTypes[$O['Type']];
+    $Optype = ($OpTypes[$O['Type']]??0);
 //      $PCat = $PPtype['Category'];
 
 

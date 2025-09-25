@@ -935,3 +935,25 @@ function FactColours($Fid,$deflt='White',$xtra='') {
   }
   return $FCols[$Fid];
 }
+
+function Relationship($Fac1,$Fac2,$Atleast) {
+  global $Relations;
+  static $Friends = [];
+  static $Relate = [];
+  if ($Fac1 == $Fac2) return true;
+  if (empty($Friends)) {
+    foreach($Relations as $V => $R) $Friends[$R[0]] = $V;
+  }
+  if (isset($Relate[$Fac1][$Fac2])) return ($Relate[$Fac1][$Fac2]>=$Friends[$Atleast]);
+
+  $FF = Get_FactionFactionFF($Fac1,$Fac2);
+var_dump($FF,$Friends,$Atleast);
+  if (!$FF) {
+    $Relate[$Fac1][$Fac2] = 0;
+    return false;
+  }
+  if ($FF['Relationship'] == 0) $FF['Relationship'] = 5;
+  $Relate[$Fac1][$Fac2] = $FF['Relationship'];
+
+  return ($FF['Relationship'] >= $Friends[$Atleast]);
+}

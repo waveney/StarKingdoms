@@ -1168,7 +1168,7 @@ function InstructionsComplete() {
         Put_Thing($NT);
         $N = Get_System($T['SystemId']);
         TurnLog($T['Whose'],"A Planet Mine has been made in " . $N['Ref']);
-        GMLog("A Planet Mine has been setup in " . $N['Ref'] . " by " . $Facts[$T['Whose']]['Name'] . ".  Tell Richard to set the right withinsysloc",1);
+        Error("A Planet Mine has been setup in " . $N['Ref'] . " by " . $Facts[$T['Whose']]['Name'] . ".  Tell Richard to set the right withinsysloc",1);
         FollowUp($T['Whose'],"A Planet Mine has been setup in " . $N['Ref'] . " by " . $Facts[$T['Whose']]['Name'] . ".  Tell Richard to set the right withinsysloc");
         break;
 
@@ -1191,7 +1191,7 @@ function InstructionsComplete() {
         Put_District($D);
 
         TurnLog($Who,"A Command Node has been repaired " . $N['Ref']);
-        GMLog("A Command Node has been repaired in " . $N['Ref'] . " by " . $Facts[$Who]['Name'] . ".  Tell Richard to set the right stuff up",1);
+        Error("A Command Node has been repaired in " . $N['Ref'] . " by " . $Facts[$Who]['Name'] . ".  Tell Richard to set the right stuff up",1);
         FollowUp($Who,"A Command Node has been repaired in " . $N['Ref'] . " by " . $Facts[$Who]['Name'] . ".  Tell Richard to set the right stuff up");
         break;
 
@@ -1544,7 +1544,7 @@ function InstructionsProgress() {
       case 'Colonise':
         $Prog = $T['Dist2'];
         if ($Prog == 0) {
-          GMLog("Colonisation by <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a> Has zero progress - Tell Richard");
+          Error("Colonisation by <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a> Has zero progress - Tell Richard");
           FollowUp($T['Whose'],"Colonisation by <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a> Has zero progress - Tell Richard");
         }
         $T['Progress'] = min($T['ActionsNeeded'],($T['Progress']+$Prog)); // Progress stored in Dist2

@@ -23,7 +23,7 @@ function StartProjects() {
     if ($ProjTypes[$P['Type']]['Props'] & 2) { // Has a thing
       $Where = Where_Is_Home($P['Home']);
       if ($Where[0] == 0) {
-        GMLog("<span class=Err>Project ". $P['Name'] . " can't set start location for what it's making - fix before continuing - call Richard</span>");
+        Error("Project ". $P['Name'] . " can't set start location for what it's making - fix before continuing - call Richard");
       }
       $T = 0;
 
@@ -35,7 +35,7 @@ function StartProjects() {
           $P['Status'] = 5; // Not Started
           $P['TurnEnd'] = $GAME['Turn'];
           TurnLog($P['FactionId'],'Not starting as Thing not found: ' . $P['Name']);
-          GMLog($Facts[$P['FactionId']]['Name'] . ' Not starting as Thing $Tid not found: ' . $P['Name'],1);
+          GMLog($Facts[$P['FactionId']]['Name'] . " Not starting as Thing $Tid not found: " . $P['Name'],1);
           Put_Project($P);
           continue;
 

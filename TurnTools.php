@@ -13,6 +13,10 @@ function GMLog($text,$Bold=0) {
   echo "$text<br>";
 }
 
+function Error($text) {
+  GMLog("<span class=Err>$text</span>");
+}
+
 function SKLog($text,$e=0) {
   global $Sand,$USER;
   $Sand['ActivityLog'] .= date("Y-m-d H:i:s - ") . $USER['Login'] . " - " . $text . "\n";  // Who?

@@ -46,6 +46,14 @@
   }
   $Parsedown = new Parsedown();
 
+  if ($GM) {
+    if (isset($_REQUEST['FORCE'])) {
+      $GM=false;
+    } else {
+      echo "<h2><a href=ModuleShow.php?F=$Fid&FORCE>This Page in Player Mode</a></h2>";
+    }
+  }
+
   echo "<h1>Modules</h1>\n";
   echo "Click on Modules name to Toggle showing the definition and examples or <button type=button onclick=SeeAll('MDesc')>Expand All</button>\n<p>";
 
@@ -55,7 +63,8 @@
     }
 
     echo "<div class=TechDesc><h2 onclick=Toggle('MDesc$Mid')>" . $M['Name'] . "</h2>\n";
-    if ($M['BasedOn']) echo "Based On: " . $TNames[$M['BasedOn']];
+    if ($M['BasedOn']) echo "Based On: " . ($TNames[$M['BasedOn']]??'Unknown');
+
     if ($M['MinShipLevel']) echo " - Min Ship Level: " . $M['MinShipLevel'];
     if ($GM && ($M['Leveled'] & 16)!=0) echo " - <span class=red>Restricted</span>";
 

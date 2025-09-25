@@ -254,8 +254,14 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0,$M
   case 1:
     echo " Requires " . $CTNs[$T['PreReqTech']] . " at level " . $T['PreReqLevel'] . ".  Field: <b>" . $Fields[$T['Field']] . "</b><br>";
     if ($T['PreReqTech2']) {
-      echo "Also requires: " . $AllTechs[$T['PreReqTech2']]['Name'];
-      if ($T['PreReqTech3']) echo " and  " . $AllTechs[$T['PreReqTech3']]['Name'];
+      $cls = '';
+      if (!isset($FactTechs[$T['PreReqTech2']])) $cls='class=red';
+      echo "Also requires: <span $cls>" . $AllTechs[$T['PreReqTech2']]['Name'] . "</span>";
+      if ($T['PreReqTech3']) {
+        $cls = '';
+        if (!isset($FactTechs[$T['PreReqTech3']])) $cls='class=red';
+        echo " and <span $cls>" . $AllTechs[$T['PreReqTech3']]['Name'] . "</span>";
+      }
       echo "<br>";
     }
     if ($T['MinThingLevel']) echo " Size Limitation - Requires at least level " . $T['MinThingLevel'] . " ship<br>";

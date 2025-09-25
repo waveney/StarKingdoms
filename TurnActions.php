@@ -1105,7 +1105,7 @@ function TidyUps() {
   // Check for lid <-1...
   $NotFin = Get_Things_Cond(0,"(LinkId<-1 AND LinkId>-5)");
   if ($NotFin) {
-    GMLog( "<h2 class=Err>These things have a broken load/unload still in place get Richard to fix</h2>");
+    Error( "<h2 class=Err>These things have a broken load/unload still in place get Richard to fix</h2>");
     FollowUp(0,"Things have broken load/unload get Richard to fix");
     foreach ($NotFin as $T) {
       GMLog("<a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . " </a> has a lid of " . $T['LinkId']);
@@ -1178,7 +1178,7 @@ function TidyUps() {
     Put_Thing($T);
   }
 
-  $Branches = Gen_Get_Cond('Branches', "GameId=$GAMEID AND Suppressed>0 AND (SupressStart=0 OR SupressStart<=" . $GAME['Turn'] . ")");
+  $Branches = Gen_Get_Cond('Branches', "GameId=$GAMEID AND Suppressed>0 AND (SuppressStart=0 OR SuppressStart<=" . $GAME['Turn'] . ")");
   if ($Branches) foreach ($Branches as $B) {
     $B['Suppressed']--;
     Gen_Put('Branches',$B);
@@ -1361,6 +1361,7 @@ function Do_Phase($S) {
     }
     //       var_dump($S);
     if ($S > 63) {
+ //     var_dump('AAA',$_REQUEST,$SName);
       GMLog("Stage $SName not found");
       return;
     } else {
@@ -1422,6 +1423,7 @@ function Do_Turn() {
     switch ($_REQUEST['ACTION']) {
       case 'StagesDone': // Not used now
         $S = StageNumber();
+//        var_dump('BBB',$_REQUEST,$S);
         if ($S < 0 ) {
           GMLog("Stage " . $_REQUEST['Stage'] . " not found");
           break;
@@ -1432,6 +1434,7 @@ function Do_Turn() {
       case 'Complete':
         $S = StageNumber();
         if ($S < 0 ) {
+//          var_dump('CCC',$_REQUEST,$S);
           GMLog("Stage " . $_REQUEST['Stage'] . " not found");
           break;
         }
@@ -1441,6 +1444,7 @@ function Do_Turn() {
       case 'DoStage2':
         $S = StageNumber();
         if ($S < 0 ) {
+//          var_dump('DDD',$_REQUEST,$S);
           GMLog("Stage " . $_REQUEST['Stage'] . " not found");
           break;
         }

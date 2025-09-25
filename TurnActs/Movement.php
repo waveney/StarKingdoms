@@ -369,18 +369,19 @@ function ShipMovements($Mode=0) {
       break;
   }
 
+
   $TTypes = Get_ThingTypes();
   $Facts = Get_Factions();
   $LOwner = GameFeature('LinkOwner',0);
   $LinkState = array_flip($LinkStates);
   $LinkMethod = Feature('LinkMethod','Gates');
+  $StopRepeat = Feature('StopMoveRepeats',0);
 
   foreach ($Things as $T) {
-    if ($T['BuildState'] != BS_COMPLETE || $T['LinkId'] <= 0 || $T['CurHealth']==0) continue;
+    if ($T['BuildState'] != BS_COMPLETE || $T['LinkId'] <= 0 || (($TTypes[$T['Type']]['Properties'] & THING_HAS_HEALTH) && ($T['CurHealth']==0))) continue;
     if (( ($Mode == 0) &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER)) ||
       ( ($Mode == 1) &&  ($TTypes[$T['Type']]['Properties'] & THING_MOVES_AFTER) ==0 ) ) continue;
-      if ($T['LastMoved'] == $Done) continue; // Already done
-
+      if (!$StopRepeat && ($T['LastMoved'] == $Done)) continue; // Already done
       $Tid = $T['id'];
       $Fid = $T['Whose'];
       $Lid = $T['LinkId'];
@@ -395,7 +396,6 @@ function ShipMovements($Mode=0) {
         Put_Thing($T);
         continue;
       }
-
       if ($T['LinkId']>0 && $T['NewSystemId'] != $T['SystemId'] ) {
         // if link out & not spider - cant move
 
@@ -600,6 +600,55 @@ function ShipMovements($Mode=0) {
         Put_Thing($T);
       }
 
+  }
+
+  if ($Mode == 0) { // deeper check for retreats from nebulae - Outposts and other things with Neb sens
+    $Things = Gen_Get_Cond('Things', "GameId=$GAMEID AND Retreat=1");
+
+//    var_dump($Things);
+    if ($Things) {
+      foreach($Things as $T) {
+        $Sid = $T['SystemId'];
+        $Outp = Gen_Get_Cond1('Things',"Type=6 AND SystemId=$Sid AND GameId=$GAMEID");
+        if ($Outp) { // Outpost
+          if (Relationship($Outp['Whose'],$T['Whose'], 'Friendly')) {
+            $T['Retreat'] = 0;
+            Put_Thing($T);
+            continue;
+          }
+        }
+        $Sys = Get_System($Sid);
+        if ($Sys['WorldList']) {
+          $Worlds = explode(',',$Sys['WorldList']);
+          foreach($Worlds as $W) {
+            if ($W>0) {
+              $Plan = Get_Planet($W);
+              if (Relationship($Plan['Control'],$T['Whose'], 'Friendly')) {
+                $T['Retreat'] = 0;
+                Put_Thing($T);
+                continue;
+              }
+            } else {
+              $Plan = Get_Moon(-$W);
+              if (Relationship($Plan['Control'],$T['Whose'], 'Friendly')) {
+                $T['Retreat'] = 0;
+                Put_Thing($T);
+                continue;
+              }
+            }
+          }
+        }
+
+        $OtherThings = Get_Things_Cond(0,"SystemId=$Sid AND NebSensors>0");
+        if ($OtherThings) foreach ($OtherThings as $OT) {
+          if (Relationship($OT['Whose'],$T['Whose'], 'Friendly')) {
+            $T['Retreat'] = 0;
+            Put_Thing($T);
+            continue 2;
+          }
+        }
+      }
+    }
   }
   return 1;
 }

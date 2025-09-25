@@ -45,7 +45,7 @@ function StartOperations() {
       if ($OutPs) {
         $Tid = $OutPs[0]['id'];
         if (count($OutPs) >1) {
-          GMLog("There are multiple Outposts in " . $Sys['Ref'] . " - Tell Richard");
+          Error("There are multiple Outposts in " . $Sys['Ref'] . " - Tell Richard");
           exit;
         }
         if (($Otp & OPER_CREATE_OUTPOST)) {
@@ -118,7 +118,7 @@ function StartOperations() {
 
     if (($Otp & OPER_BRANCH) && !($Otp & OPER_HIDDEN ) && ($Sys['Control'] != $Fid)){
       if ($NeedColStage2 == 0) {
-        GMLog("<form method=post action=TurnActions.php?ACTION=DoStage2&Stage=Operations>");
+        GMLog("<form method=post action=TurnActions.php?ACTION=DoStage2&Stage=StartOperations>");
         $NeedColStage2 = 1;
       }
       GMLog($Facts[$Fid]['Name'] . " is setting up a branch of  " . $Orgs[$O['OrgId']]['Name'] .
@@ -521,7 +521,7 @@ function OperationsComplete() {
       case 'Explore Wormhole':
         $L = Get_Link($O['Para1']);
         if (!$L) {
-          GMLog("<h2 class=Err>Exploring a Wormhole with no data for Operation $Oid - Call Richard</h2>");
+          Error("<h2 class=Err>Exploring a Wormhole with no data for Operation $Oid - Call Richard</h2>");
           break;
         }
         $N = Get_System($O['SystemId']);
@@ -666,13 +666,13 @@ function OperationsComplete() {
           $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
 
           if (!$FA) {
-            GMLog("Trying to study an anomaly $Aid as an operation - for Operation $Oid - Something has gone wrong call Richard...");
+            Error("Trying to study an anomaly $Aid as an operation - for Operation $Oid - Something has gone wrong call Richard...");
             break;
           }
           $Prog = Has_Tech($Fid,'Sensors')*$Org['OfficeCount'];
 
           if (!$Prog) {
-            FollowUp($Fid, "Anomaly Study $Aid has duff Progress - $Prog - Sensors are: " . Has_Tech($Fid,'Sensors') .
+            Error($Fid, "Anomaly Study $Aid has duff Progress - $Prog - Sensors are: " . Has_Tech($Fid,'Sensors') .
               " Org is: " . $Org['Name'] . " For Richard...");
             GMLog("<span class=red>$Prog progress on analysing anomaly: " . $Anom['Name'] . " by " . $Facts[$Fid]['Name'] . " Something is very wrong</span>");
             break;
