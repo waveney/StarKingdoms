@@ -568,7 +568,7 @@ function Thing_Finished($Tid) {
 }
 
 
-function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0 ) {
+function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0,$InstaChk=1 ) {
   global $LinkStates;
   if ($Force) {
     $GM = 0;
@@ -587,12 +587,14 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0 ) {
   $SelCols = [''];
   if ($GM || Has_Tech($T['Whose'],'Know All Links')) {
     foreach ($Links as $Lid=>$L) {
-      $EInst = $L['Instability'];
-      if ($L['ThisTurnMod']) $EInst = max(1,$EInst+$L['ThisTurnMod']);
+      if ($InstaChk) {
+        $EInst = $L['Instability'];
+        if ($L['ThisTurnMod']) $EInst = max(1,$EInst+$L['ThisTurnMod']);
 
-      if ($EInst > $T['Stability']) {
-        unset($Links[$Lid]);
-        continue;
+        if ($EInst > $T['Stability']) {
+          unset($Links[$Lid]);
+          continue;
+        }
       }
       $Lnam = ($L['Name']?$L['Name']:"#" .$L['id']);
       $SelLinks[$L['id']] = "$Lnam to " . (($L['System1Ref'] == $N['Ref'])?$L['System2Ref']: $L['System1Ref'] );

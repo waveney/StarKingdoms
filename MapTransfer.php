@@ -74,13 +74,13 @@ function TransferSys($SysR) {
   foreach ($Links as $Lid=>$L) {
     $FLK = Gen_Get_Cond1('FactionLinkKnown',"FactionId=$Fid AND LinkId=$Lid");
     if ($FLK['USED']??0) {
-      $FLK = Gen_Get_Cond1('FactionLinkKnown',"FactionId=$Tid AND LinkId=$Lid");
-      if ($FLK['id']??0) {
-        $FLK['Used'] = 1;
-        Gen_Put('FactionLinkKnown',$FLK);
+      $TLK = Gen_Get_Cond1('FactionLinkKnown',"FactionId=$Tid AND LinkId=$Lid");
+      if ($TLK['id']??0) {
+        $TLK['Used'] = 1;
+        Gen_Put('FactionLinkKnown',$TLK);
       } else {
-        $FLK = ['LinkId'=>$Lid, 'FactionId'=>$Tid, 'Used'=>1 ];
-        Gen_Put('FactionLinkKnown',$FLK);
+        $NTLK = ['LinkId'=>$Lid, 'FactionId'=>$Tid, 'Used'=>1 ];
+        Gen_Put('FactionLinkKnown',$NTLK);
       }
     }
   }

@@ -855,6 +855,7 @@
       $MaxLvl = Has_Tech($Fid,'Military Theory');
       $TTs = Get_ThingTypes();
       $Things = Get_Things_Cond($Fid," SystemId=$HSys AND Level <= $MaxLvl AND BuildState=" . BS_COMPLETE );
+ //var_dump($Things,$MaxLvl);
       $RepArmy = $RefitArmy = [];
       $Level1 = 0;
       $RepCount = $RefitCount = 0;

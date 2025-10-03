@@ -146,15 +146,14 @@ function LinkProps($L) {
   $Fid = $T['Whose'];
   $LinkType = Feature('LinkMethod','Gates');
   $AllLinks = Has_Tech($Fid,'Know All Links');
+  $ThisSys = $T['SystemId'];
+  $N = Get_System($ThisSys);
 
-  $ThingProps = Thing_Type_Props();
-  $tprops = $ThingProps[$T['Type']];
-  [$Links, $SelLinks, $SelCols ] = Moves_4_Thing($T,1,($tprops & (THING_HAS_GADGETS )));
+  $TType = Get_ThingType($T['Type']);
+  [$Links, $SelLinks, $SelCols ] = Moves_4_Thing($T,1,($TType['Properties'] & (THING_HAS_GADGETS )),$N,(($TType['Prop2'] & THING_HAS_AGE)?0:1));
 
 //  var_dump($Links,$SelLinks);
 
-  $ThisSys = $T['SystemId'];
-  $N = Get_System($ThisSys);
 
   echo "<h1>Click on the destination to move:</h1><h2> " . $T['Name'] . " - from " . $N['Ref'] . " next turn</h2>";
   echo "Note: This should only show you the links that can be used by " . $T['Name'] . ".<p>";
@@ -228,7 +227,7 @@ function LinkProps($L) {
     $Facts = Get_Factions();
     if ($Eyes) {
       $OtherShips = $db->query("SELECT t.* FROM Things t, ThingTypes tt WHERE t.type=tt.id AND t.BuildState=" . BS_COMPLETE . " AND " .
-          "(tt.Properties&0x100)!=0 AND t.SystemId=$ThisSys AND Whose!=$Fid AND t.LinkId>=0 AND  AND GameId=$GAMEID");
+          "(tt.Properties&0x100)!=0 AND t.SystemId=$ThisSys AND Whose!=$Fid AND t.LinkId>=0 AND t.GameId=$GAMEID");
       if ($OtherShips) {
         $List = [];
         $Colrs = [];
