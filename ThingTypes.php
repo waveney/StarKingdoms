@@ -76,6 +76,7 @@
       }
 
   $T = ['MaxLvl'=>10];
+  Cancel_AutoUpdate();
   echo "<tr><td>" . fm_text1("",$T,'Name',1,'','',"Name:0");
   echo fm_hidden('NotBy:0',$SETNOT);
   if ($AllG) echo "<td>$SETNOT";

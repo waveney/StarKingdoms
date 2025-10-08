@@ -686,10 +686,31 @@ function Instructions() {
         if (!Spend_Credit($T['Whose'],$T['InstCost'],"Make Wormhole Stabiliser in " . $N['Ref']) ) {
           $T['Progress'] = -1; // Stalled
           TurnLog($T['Whose'],"Could not afford to start an Wormhole Stabiliser in " .$N['Ref'],$T);
+          GMLog($T['Whose']['Name'] . "Could not afford to start an Wormhole Stabiliser in " . $N['Ref']);
+          break;
         }
         $T['Instruction'] = -$T['Instruction'];
         GMLog($T['Whose']['Name'] . " is starting a Wormhole Stabiliser in " . $N['Ref']);
         TurnLog($T['Whose'],"Starting a Wormhole Stabiliser in " . $N['Ref'],$T);
+        break;
+
+      case 'Build Wormhole Destabiliser':
+        if ($Facts[$T['Whose']]['Currency3'] ==0) {
+          $T['Progress'] = -1; // Stalled
+          TurnLog($T['Whose'],"Could not start an Wormhole Destabiliser in " .$N['Ref'] . " as it requires a Cret-Chath",$T);
+          GMLog($T['Whose']['Name'] . "Could not start an Wormhole Destabiliser in " .$N['Ref'] . " as it requires a Cret-Chath");
+          break;
+        }
+
+        if (!Spend_Credit($T['Whose'],$T['InstCost'],"Make Wormhole Destabiliser in " . $N['Ref']) ) {
+          $T['Progress'] = -1; // Stalled
+          TurnLog($T['Whose'],"Could not afford to start an Wormhole Destabiliser in " .$N['Ref'],$T);
+          GMLog($T['Whose']['Name'] . "Could not afford to start an Wormhole Destabiliser in " . $N['Ref']);
+          break;
+        }
+        $T['Instruction'] = -$T['Instruction'];
+        GMLog($T['Whose']['Name'] . " is starting a Wormhole Destabiliser in " . $N['Ref']);
+        TurnLog($T['Whose'],"Starting a Wormhole Destabiliser in " . $N['Ref'],$T);
         break;
 
       default: // everything else
@@ -1498,6 +1519,23 @@ function InstructionsComplete() {
             " <b>BUT NO LINK SPECIFIED</b>");
         }
 
+      case 'Build Wormhole Destabiliser' :
+        $L = Get_Link($T['Dist1']);
+        if ($L && isset($L['id'])) {
+          $NT = ['GameId'=>$GAME['id'], 'Type'=> TTName('Wormhole Destabiliser'), 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> 1,
+            'Whose'=>$T['Whose'], 'BuildState'=>BS_COMPLETE, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName'], 'Dist1' => $T['Dist1'],
+            'Stability'=>100];
+          Put_Thing($NT);
+          TurnLog($T['Whose'],"Link " . $L['Name'] . " has a wormhole Destabiliser in " . $N['Ref']);
+          GMLog($Facts[$T['Whose']]['Name'] . " has built a wormhole Destabiliser for link " . $L['Name'] . " in " . $N['Ref']);
+          break;
+        } else {
+          TurnLog($T['Whose'],"Link " . $L['Name'] . " has built a wormhole Destabiliser in " . $N['Ref'] . " <b>BUT NO LINK SPECIFIED</b>");
+          GMLog($Facts[$T['Whose']]['Name'] . " has built a wormhole Destabiliser for link " . $L['Name'] . " in " . $N['Ref'] .
+            " <b>BUT NO LINK SPECIFIED</b>");
+        }
+
+
       case 'Decommision':
       case 'Disband':
       case 'Transfer':
@@ -1569,6 +1607,7 @@ function InstructionsProgress() {
       case 'Make Something':
       case 'Make Warpgate':
       case 'Build Wormhole Stabiliser' :
+      case 'Build Wormhole Destabiliser' :
       case 'Link Repair':
         $Mods = Get_ModulesType($Tid, 'Space Construction Gear');
         $ProgGain = $Mods['Level']*$Mods['Number'];

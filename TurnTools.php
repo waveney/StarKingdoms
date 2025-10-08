@@ -35,7 +35,7 @@ function TurnLog($Fid,$text,&$T=0) {
   global $GAME,$GAMEID;
   static $LF = [];
   if ($Fid == 0) {
-    echo "<h2 class=Err>Loging a turn action for Faction 0! - Call Richard</h2>\n";
+    echo "<h2 class=Err>Logging a turn action for Faction 0! - Call Richard</h2>\n";
     debug_print_backtrace();
     dotail();
   }

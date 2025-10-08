@@ -645,8 +645,12 @@ function Income_Calc($Fid) {
     if ($Offs && !$HasOwnGalaxy ) {
       foreach ($Offs as $Off ) {
         $Org = Gen_Get('Organisations',$Off['Organisation']);
-        $ECon += $Org['OfficeCount'];
-        $EccTxt .= "Plus " . $Org['OfficeCount'] . " From an office of " . $Org['Name'] . "<br>\n";
+        if ($Org) {
+          $ECon += $Org['OfficeCount'];
+          $EccTxt .= "Plus " . $Org['OfficeCount'] . " From an office of " . $Org['Name'] . "<br>\n";
+        } else {
+          GMLog4Later("Failed to fetch org " . $Off['Organisation'] . " When doing Income Calc on $Wid for $Fid - For Richard");
+        }
       }
     }
     if ($W['Revolt']) {
@@ -697,7 +701,8 @@ function Income_Calc($Fid) {
       }
     }
 
-    $OtherPBMPBranches = Gen_Get_Cond('Branches',"HostType!=3 AND HostId=" . $W['ThingId'] . " AND Type=" . ($NameBType['Black Market Trading Station']??0));
+    $OtherPBMPBranches = Gen_Get_Cond('Branches',"HostType!=3 AND HostId=" . $W['ThingId'] .
+      " AND Suppressed=0 AND Type=" . ($NameBType['Black Market Trading Station']??0));
     if ($OtherPBMPBranches) {
       $BM2 = min($EconVal,count($OtherPBMPBranches)*2);
       $EccTxt .= "Lost $BM2 due to Black Market" . Plural($BM2,'','','s') . "<br>\n";
@@ -738,7 +743,8 @@ function Income_Calc($Fid) {
     }
     $Ast = array_shift($Asts);
     if ($Ast) {
-      $AstVal += (($Ast['Minerals']??0) + ((Has_PTraitP($W['id'],'Rare Mineral Deposits') && Has_Tech($Fid,'Advanced Mineral Extraction'))?3:0))*$AM['Level'];
+      $AstVal += (($Ast['Minerals']??0) +
+        ((Has_PTraitP($W['id'],'Rare Mineral Deposits') && Has_Tech($Fid,'Advanced Mineral Extraction'))?3:0))*$AM['Level'];
     }
   }
 

@@ -213,8 +213,10 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
             $L = Get_Link($T['LinkId']);
             $txt .=  "<td style=color:" . $LinkTypes[abs($L['Level'])]['Colour'] . " >Link " . ($L['Name']?$L['Name']: "#" . $T['LinkId']);
             if ($L['Level'] <0 ) $txt .=  "- Note under repair...";
-            if ($T['NewSystemId']>0 && $T['TargetKnown'] || Has_Tech($T['Whose'],'Know All Links') || Feature('AllwaysShowLinkEnds') ) {
+            if ($T['NewSystemId']>0 && $T['TargetKnown']) {
               $txt .=  "<td>" . $Systems[$T['NewSystemId']];
+            } else if (Has_Tech($T['Whose'],'Know All Links') || Feature('AllwaysShowLinkEnds')) {
+              $txt .=  "<td>" . $Systems[$T['SystemId']];
             } else {
               $txt .=  "<td> ? ";
             }

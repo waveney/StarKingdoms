@@ -20,13 +20,13 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
                 'Make Something','Make Warpgate','Retire','Stop Support','Make Advanced Minefield','Clear Minefield',
                 'Make Advanced Deep Space Sensor','Salvage',//29
                 'Terraform','Link Repair','Collaborative DSC','Space Survey','Planetary Survey','Collaborative Planetary Construction',
-                'Collaborative Space Construction','Build Wormhole Stabiliser', 'Scavenge',
+                'Collaborative Space Construction','Build Wormhole Stabiliser', 'Scavenge', 'Build Wormhole Destabiliser',
 ];
 $IntructProps = [0,2,0,0,0,0,1, 1,1,
                  1,1,1,1, 1,1,//14
                  1,1,1,1, 1,0,0, //21
                  1,1,0,0,1,0, 1,1, //29
-                 0,1,0,0,0,0, 1,1,0]; // 1 = DSC, 2= Pc
+                 0,1,0,0,0,0, 1,1,0,1]; // 1 = DSC, 2= Pc
 $InstrNotBy =   [0,0,1,0,0,1,0,
                  0,0,
                  0,0,0,0,
@@ -36,7 +36,7 @@ $InstrNotBy =   [0,0,1,0,0,1,0,
                  0,1,0,1,1,1,
                  0,0,
                  0,1,1,2,2,2,
-                 2,2,2,2];
+                 2,2,2,2,2];
 
 $Advance = ['','','Advanced ','Very Advanced ','Ultra Advanced ','Evolved '];
 $ValidMines = [0,1,0,1,0,1,0,0,0,0,0];
@@ -863,6 +863,7 @@ function LogisticalSupport($Fid) {  // Note this sets the Economic rating of all
   $ThingTypes = Get_ThingTypes();
   $DistTypes = Get_DistrictTypes();
   $Dists = [];
+  $LogisticMult = Feature('LogisticMultiplier',5);
 
   foreach($PHomes as $H) {
 //    $PH['Economy'] = 0;
@@ -895,7 +896,6 @@ function LogisticalSupport($Fid) {  // Note this sets the Economic rating of all
 
     $Prime = $Mine = 0;
     $District_Type = [];
-    $LogisticMult = Feature('LogisticMultiplier',5);
     foreach ($Dists as $D) {
       if ($D['Type'] == 0) continue;
       if ($DistTypes[$D['Type']]['Props'] &1) {

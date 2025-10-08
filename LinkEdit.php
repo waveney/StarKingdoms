@@ -50,7 +50,7 @@
   }
 
   echo "<form method=post id=mainform enctype='multipart/form-data' action=LinkEdit.php>";
-  echo "The Next Turn Mod does not include any Wormhole Stabilisers, the Current Mod does.<p>";
+  echo "The Next Turn Mod does not include any Wormhole (de)Stabilisers, the Current Mod does.<p>";
   echo "<div class=tablecont><table width=90% border class=SideTable>\n";
   Register_AutoUpdate('Links',$Lid);
 

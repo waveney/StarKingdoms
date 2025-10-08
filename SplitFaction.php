@@ -572,7 +572,7 @@ function Split_Resorces_A() {
   echo "<li>Setup Faction/Faction information - as appropriate for the splinter faction";
   echo "<li>The Social Principles have remained with the worlds - you may wish to check them";
   echo "<li>The Traits have been copied - you may wish to check them<p>";
-  echo "/ol><h1>All Done (I hope)</h1>";
+  echo "</ol><h1>All Done (I hope)</h1>";
   dotail();
 
 }

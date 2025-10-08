@@ -817,6 +817,7 @@ function AffectActivitiesActions() {
       }
     }
   }
+  return 1;
 }
 
 
@@ -1097,6 +1098,7 @@ function TidyUps() {
   $TNames = NamesList($TTypes);
   $ThingNames = array_flip($TNames);
   $WormStab = $ThingNames['Wormhole Stabiliser'];
+  $DeWormStab = $ThingNames['Wormhole Destabiliser'];
   $res = $db->query("UPDATE Things SET LinkId=0, LinkPay=0, LinkCost=0, Retreat=0, CurInst=ABS(Instruction) " .
     "WHERE (LinkId>=0 OR LinkId=-5 OR LinkId=-6 OR LinkId=-7) AND GameId=$GAMEID");
   $res = $db->query("UPDATE Things SET Conflict=0 WHERE Conflict>0 AND GameId=$GAMEID");
@@ -1164,7 +1166,9 @@ function TidyUps() {
     $Sid2 = $Systems[$L['System2Ref']]['id'];
 
     $Stabs = Get_Things_Cond(0,"Type=$WormStab AND (SystemId=$Sid1 OR SystemId=$Sid2) AND Dist1=$Lid" );
+    $DeStabs = Get_Things_Cond(0,"Type=$DeWormStab AND (SystemId=$Sid1 OR SystemId=$Sid2) AND Dist1=$Lid" );
     if ($Stabs) foreach($Stabs as $S) $L['ThisTurnMod']-=$S['Level'];
+    if ($DeStabs) foreach($DeStabs as $S) $L['ThisTurnMod']+=$S['Level']*2;
     Put_Link($L);
   }
   GMLog("Links: Wormhole Stabilisers and Cret-Chath tidied<p>");

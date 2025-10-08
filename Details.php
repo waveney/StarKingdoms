@@ -18,6 +18,16 @@
   $TTypes = Get_ThingTypes();
   $TTNames = ListNames($TTypes);
 
+  if ($GM) {
+    if (isset($_REQUEST['FORCE'])) {
+      $GM = 0;
+    } else {
+      $R = (isset($_REQUEST['R'])?"&R=" . $_REQUEST['R'] : '');
+      $O = (isset($_REQUEST['O'])?"&O=" . $_REQUEST['O'] : '');
+      echo "<h2><a href=Details.php?FORCE$R$O>This page in Player Mode</a></h2>";
+    }
+  }
+
 //  var_dump($TTNames);
   // Validate caller against world control or owner of branch/office
 

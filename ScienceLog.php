@@ -12,13 +12,15 @@ $GM = Access('GM');
 dostaffhead("Science Point Log");
 
 echo "<h1>Resource Type Logs, ";
-if ($FACTION['PhysicsSP'] >=5 || $FACTION['EngineeringSP'] >=5 || $FACTION['XenologySP'] >=5 ) echo " <a href=SciencePoints.php>Spend Science Points</a>, ";
-if ($FACTION['Currency1']) echo " <a href=FluxCrystals.php>Use Flux Crystals</a>, ";
+if ($FACTION) {
+  if ($FACTION['PhysicsSP'] >=5 || $FACTION['EngineeringSP'] >=5 || $FACTION['XenologySP'] >=5 ) echo " <a href=SciencePoints.php>Spend Science Points</a>, ";
+  if ($FACTION['Currency1']) echo " <a href=FluxCrystals.php>Use Flux Crystals</a>, ";
+}
 echo "</h1>";
 
 
 if ($GM && !isset($FACTION['id'])) {
-  $Logs = Gen_Get_Cond('SciencePointLog',"Game=$GAMEID ORDER BY id DESC");
+  $Logs = Gen_Get_Cond('SciencePointLog',"GameId=$GAMEID ORDER BY id DESC");
   $Fid = 0;
 } else {
   $Fid = $FACTION['id'];
@@ -37,7 +39,7 @@ if (!$Logs) {
 $Tracks = TrackIndexes();
 $Tracked = [];
 
-var_dump($Tracks);
+// var_dump($Tracks);
 // Scan for used types
 foreach($Logs as $L) {
   $Tracked[$L['Type']] = 1;

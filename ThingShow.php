@@ -1383,6 +1383,29 @@ function Show_Thing(&$T,$Force=0) {
       if (!$Sites) continue 2;
       break;
 
+    case 'Build Wormhole Destabiliser':
+      if ($Moving || !$HasDeep || !Has_Tech($Fid,'	Wormhole Destabilisation') ) continue 2;
+      $Ref = $N['Ref'];
+      $Ls = Get_Links($Ref);
+      $Sites = [];
+
+      foreach ($Ls as $Lid=>$L) {
+        $OSysRef = ($L['System1Ref']==$Ref? $L['System2Ref']:$L['System1Ref']);
+        $FLK = Gen_Get_Cond1('FactionLinkKnown',"FactionId=$Fid AND LinkId=". $L['id']);
+
+        $LinkKnow = LinkVis($Fid,$L['id'],$T['SystemId']);
+        if ($LinkKnow) $Sites[$Lid] = $L['Name'];
+      }
+
+      $Existing = Get_Things_Cond(0,"SystemId=" . $T['SystemId'] . " AND Type=" . TTName('Wormhole Destabiliser'));
+      if ($Existing) {
+        foreach ($Existing as $Ws) {
+          if (isset($Sites[$Ws['Dist1']])) unset($Sites[$Ws['Dist1']]);
+        }
+      }
+      if (!$Sites) continue 2;
+      break;
+
 
     default:
       continue 2;
@@ -1924,6 +1947,36 @@ function Show_Thing(&$T,$Force=0) {
       }
       $ProgShow = 2;
       $Acts = $PTNs['Build Wormhole Stabiliser']['CompTarget'];
+      break;
+
+    case 'Build Wormhole Destabiliser':
+      $Ref = $N['Ref'];
+      $Ls = Get_Links($Ref);
+      $Sites = [];
+
+      foreach ($Ls as $Lid=>$L) {
+        $OSysRef = ($L['System1Ref']==$Ref? $L['System2Ref']:$L['System1Ref']);
+        $FLK = Gen_Get_Cond1('FactionLinkKnown',"FactionId=$Fid AND LinkId=". $L['id']);
+
+        $LinkKnow = LinkVis($Fid,$L['id'],$T['SystemId']);
+        if ($LinkKnow) $Sites[$Lid] = $L['Name'];
+      }
+
+      $Existing = Get_Things_Cond(0,"SystemId=" . $T['SystemId'] . " AND Type=" . TTName('Wormhole Destabiliser'));
+      if ($Existing) {
+        foreach ($Existing as $Ws) {
+          if (isset($Sites[$Ws['Dist1']])) unset($Sites[$Ws['Dist1']]);
+        }
+      }
+      if ($Sites) {
+        echo "<br>Link to stabilise: " . fm_select($Sites,$T,'Dist1',1) ;
+        echo "<br>" . fm_text0("Name of Wormhole Destabiliser",$T,'MakeName');
+      } else {
+        $T['Instruction'] = 0;
+        echo "No Links can be destabilsed";
+      }
+      $ProgShow = 2;
+      $Acts = $PTNs['Build Wormhole Destabiliser']['CompTarget'];
       break;
 
     default:

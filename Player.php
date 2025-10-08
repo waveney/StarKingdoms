@@ -291,6 +291,14 @@ function ValidateTurn($For = 0) {
         }
         break;
 
+      case 'Build Wormhole Destabiliser':
+        if ($T['Dist1'] == 0) {
+          echo "<h2 class=Err>Warning - <a href=ThingEdit.php?i=$Tid>" . $T['Name'] .
+          "</a> is Building Wormhole Destabiliser - please select which wormhole</h2>";
+          $Valid = 0;
+        }
+        break;
+
       default: // Nothing to validate
         break;
     }

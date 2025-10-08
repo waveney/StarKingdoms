@@ -527,7 +527,7 @@
         }
         $pc = Proj_Costs($Lvl);
 
-        Show_Research($TT['Name'],"ProjDisp.php?ACTION=NEW&id=$Fid&p=" .
+        Show_Research($TT['Name'] . " Level $Lvl","ProjDisp.php?ACTION=NEW&id=$Fid&p=" .
                 $PTi['Research Core Technology'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $TT['id'] .
                 "&Name=" . base64_encode("Research " . $TT['Name'] . " $Lvl$Place"). "&L=$Lvl&C=" . $pc[1] . "&PN=" . $pc[0],
           $pc[1],$pc[0],$TT['Description']);

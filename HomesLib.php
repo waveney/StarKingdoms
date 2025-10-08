@@ -526,8 +526,8 @@ function Recalc_Economic_Rating(&$H,&$W,$Fid,$Turn=0) {
       $EText .= "Plus $Min from minerals<br>\n";
     }
     if (Has_PTraitW($W['id'],'Rare Mineral Deposits') && Has_Tech($Fid,'Advanced Mineral Extraction')) {
-      $ERate += $MinFact*3;
-      $EText .= "Plus " . $MinFact*3 . " from Rare Mineral Deposits<br>\n";
+      $ERate += $MinFact*3*$NumInd;
+      $EText .= "Plus " . $MinFact*3*$NumInd . " from Rare Mineral Deposits<br>\n";
     }
     if (Has_PTraitW($W['id'],'Automated Farming Robots')) {
       $ERate += 4;

@@ -359,13 +359,13 @@ function OperationsComplete() {
 
       case 'Establish Outpost Defences':
         $Outpost = Outpost_in($O['SystemId'],$Fid);
-        New_Branch($Outpost,$NamesBTs['Forward Operating Area'],$O,$Org);
-        TurnLog($Fid,"A new Forward Operating Area branch for " . $Org['Name'] . " has been set up on the Outpost in " . System_Name($Sys,$Fid) );
+        New_Branch($Outpost,$NamesBTs['Outpost Defences'],$O,$Org);
+        TurnLog($Fid,"A new Outpost Defences for " . $Org['Name'] . " has been set up on the Outpost in " . System_Name($Sys,$Fid) );
         if ($Outpost['Whose'] != $Fid) {
-          TurnLog($Outpost['Whose'],"A new Forward Operating Area branch for " . $Org['Name'] . " has been set up on the Outpost in  " .
+          TurnLog($Outpost['Whose'],"A new Outpost Defences branch for " . $Org['Name'] . " has been set up on the Outpost in  " .
             System_Name($Sys,$Outpost['Whose']) . " by " . $Facts[$Fid]['Name']);
         }
-        GMLog("A new Forward Operating Area branch for " . $Org['Name'] . " has been set up on the Outpost in  " .
+        GMLog("A new Outpost Defences branch for " . $Org['Name'] . " has been set up on the Outpost in  " .
           System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);
         break;
 

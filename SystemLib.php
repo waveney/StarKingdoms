@@ -855,7 +855,7 @@ function PlanetScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
         }
 
         if (!$Shown) {
-          $ptxt .=  "<h2>Ground Anomalies</h2>" .
+          $ptxt = ($ptxt??'') . "<h2>Ground Anomalies</h2>" .
             "For up to date information on their state look at your <a href=PAnomalyList.php>Anomaly List</a>.";
 
           $Shown = 1;
