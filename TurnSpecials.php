@@ -231,6 +231,15 @@
       echo "All Done";
       dotail();
 
+    case 'ActuallyDelete':
+      $Pending = Get_Things_Cond_Ordered(0,"GameId=$GAMEID AND BuildState=" . BS_DELETE);
+      if ($Pending) {
+        foreach($Pending as $Did=>$D) {
+          Thing_Delete($Did,1);
+        }
+      }
+      echo "All Done";
+      dotail();
     }
   }
 
@@ -244,6 +253,8 @@
   echo "<li><a href=TurnSpecials.php?ACTION=ChangeDefFighters>Change Defense Fighters</a><p>";
   //  echo "<li><a href=TurnSpecials.php?ACTION=ChangePatrolShips>Change Patrol Ships</a><p>";
 //  echo "<li><a href=TurnSpecials.php?ACTION=ChangePatrolShips2>Reccheck Change Patrol Ships</a><p>";
+
+  echo "<li><a href=TurnSpecials.php?ACTION=ActuallyDelete>Delete all things Pending Deletion</a><p>";
 
 
 

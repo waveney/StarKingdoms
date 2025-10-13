@@ -183,12 +183,14 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
       $Lid = $T['LinkId'];
 
       $txt .=  "<td>";
+      $Host = 0;
       if ($Lid >= 0 || ($MoveProps[$Lid] &1)) {
         $txt .=  (empty($Systems[$T['SystemId']]) ?'': $Systems[$T['SystemId']]);
       } else if ($Lid == LINK_INBRANCH ) {
         $txt .=  'Not Deployed';
       } else if (($MoveProps[$Lid] &2)) {
         $txt .=  'On Board';
+        $Host = Get_Thing($T['SystemId']);
       } else {
         $txt .=  $MoveNames[$Lid];
       }
@@ -223,22 +225,36 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
           } elseif ($T['LinkId'] == LINK_FOLLOW ) {
             $FT = Get_Thing($T['NewSystemId']);
             if ($FT) {
-              $txt .=  "<td>" . $FT['Name'] . "<td>";
+              $link = ((($FT['Whose']==$T['Whose']) || $GM)?"<a href=ThingEdit.php?id=" .$T['NewSystemId'] . ">":'');
+              $txt .=  "<td>$link" . $FT['Name'] . "</a><td>";
             } else {
               $txt .=  "<td>Confused...<td>";
             }
           } else if ($T['LinkId'] == LINK_NOT_MOVING) {
             $txt .=  "<td>Not Moving<td>";
           } else {
-            $txt .=  "<td><td>";
+            $txt .=  "<td>";
+            if ($Host) {
+              if ($Host['Whose']==$T['Whose']) {
+                $txt .= "<a href=ThingEdit.php?id=" . $Host['id'] . ">" . $Host['Name'] . "</a>";
+              } else {
+                $txt .= $Host['Name'];
+              }
+            }
+            $txt .=  "<td>";
           }
         } else if ($T['LinkId'] == LINK_NOT_MOVING) {
           $txt .=  "<td>Not Moving<td>";
         } else {
           $txt .=  "<td>";
           if ($T['LinkId'] < 0) {
-            $Host = Get_Thing($T['SystemId']);
-            if ($Host) $txt .=  $Host['Name'];
+            if ($Host) {
+              if ($Host['Whose']==$T['Whose']) {
+                $txt .= "<a href=ThingEdit.php?id=" . $Host['id'] . ">" . $Host['Name'] . "</a>";
+              } else {
+                $txt .= $Host['Name'];
+              }
+            }
           }
           $txt .=  "<td>";
         }
@@ -246,7 +262,15 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
         if ($GM && ($Props & THING_HAS_HEALTH) && ($Props & THING_CAN_BE_SPLATED) && ($T['CurHealth']>0)) {
           $txt .=  "<a href=PThingList.php?ACTION=SPLAT&T=$Tid&F=$Fid>SPLAT</a>";
         }
-        $txt .=  "<td><td>";
+        $txt .=  "<td>";
+        if ($Host) {
+          if ($Host['Whose']==$T['Whose']) {
+            $txt .= "<a href=ThingEdit.php?id=" . $Host['id'] . ">" . $Host['Name'] . "</a>";
+          } else {
+            $txt .= $Host['Name'];
+          }
+        }
+        $txt .=  "<td>";
       }
     }
     $Up = 0;

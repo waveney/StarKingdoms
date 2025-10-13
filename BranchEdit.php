@@ -130,26 +130,23 @@ if (isset($_REQUEST['Action'])) {
       // Get each branch on world, Get Dets for branch, Create/ update as nes
       $Sid = $_REQUEST['Sid'];
       $Hid = $_REQUEST['Hid'];
+      $Wid = $_REQUEST['Wid'];
+      $Hyp = $_REQUEST['Hyp'];
       $TTypes = Get_ThingTypes();
       $NTypes = array_flip(NamesList($TTypes));
       $BTypes = Get_BranchTypes();
 
-      $Branches = Gen_Get_Cond('Branches',"HostType<3 AND HostId=$Hid AND (OrgType=3 OR OrgType2=3)");
+      $Branches = Gen_Get_Cond('Branches',"HostType=$Hyp AND HostId=$Hid AND (OrgType=3 OR OrgType2=3)");
+
       $Sys = Get_System($Sid);
       $Offices = [];
       if ($Sys['WorldList']) {
-        $Worlds = explode(',',$Sys['WorldList']);
-        foreach ($Worlds as $Wid) {
-          $Offs = Gen_Get_Cond('Offices',"World=$Wid AND (OrgType=3 OR OrgType2=3)");
-          if ($Offs) $Offices = array_merge($Offices,$Offs);
-        }
-
+        $Offices = Gen_Get_Cond('Offices',"World=$Wid AND (OrgType=3 OR OrgType2=3)");
         if ($Offices) foreach($Offices as $Oid=>$Of) {
           $Branches[-$Oid] = $Of;
         }
       }
-      $Offices =
-// var_dump($Branches);
+ // var_dump($Branches);
       $TotC = 0;
       if ($Branches) {
         foreach ($Branches as $Bid=>$B) {
@@ -160,10 +157,13 @@ if (isset($_REQUEST['Action'])) {
           $Def = 3*($DefLevel*3+12);
           $Off = 3*($OffLevel+4);
 
+          $Ox = ($Bid<0)?" Office ":'';
+          $Rid = abs($Bid);
+
           $Org = Gen_Get('Organisations',$B['Organisation']);
           $Num = $Org['OfficeCount'];
 
-          $Teams = Get_Things_Cond($B['Whose'],"Type=" . $NTypes['Heavy Security'] . " AND ProjectId=$Bid");
+          $Teams = Get_Things_Cond($B['Whose'],"Type=" . $NTypes['Heavy Security'] . " AND ProjectId=$Rid");
           $Count = 0;
           if ($Teams) {
             foreach($Teams as $T) {
@@ -175,7 +175,7 @@ if (isset($_REQUEST['Action'])) {
               $T['SystemId'] = $T['WhereBuilt'] = $Sid;
               $T['WithinSysLoc'] = 3;
               $T['LinkId'] = 0;
-              if (!preg_match('/\:.*\:/',$T['Name'])) $T['Name'] = ($B['Name']?$B['Name']:"Heavy Security $Bid") . ":" . $Org['Name'] . ":" . ($Count+1);
+              if (!preg_match('/\:.*\:/',$T['Name'])) $T['Name'] = ($B['Name']?$B['Name']:"Heavy $Ox Security $Rid") . ":" . $Org['Name'] . ":" . ($Count+1);
               Put_Thing($T);
               $Count++;
             }
@@ -185,8 +185,8 @@ if (isset($_REQUEST['Action'])) {
               $Count++;
               $T = ['Whose'=>$Fid, 'Type'=>$NTypes['Heavy Security'], 'BuildState'=>BS_COMPLETE, 'CurHealth'=>$Def, 'OrigHealth'=>$Def, 'ActDamage'=>$Off,
                 'SystemId'=>$Sid, 'WithinSysLoc'=>3, 'Class'=>'Heavy Security',
-                'Name'=>($B['Name']?$B['Name']:"Heavy Security $Bid") . ":" . $Org['Name'] . ":$Count" ,
-                'Evasion'=>50, 'ProjectId'=>$Bid, 'LinkId'=>0];
+                'Name'=>($B['Name']?$B['Name']:"Heavy $Ox Security $Rid") . ":" . $Org['Name'] . ":$Count" ,
+                'Evasion'=>50, 'ProjectId'=>$Rid, 'LinkId'=>0];
               if ($Bid>0 && ($BTypes[$B['Type']]['Props'] &1)) $T['Name'] .= " (Hidden)";
               Put_Thing($T);
             }

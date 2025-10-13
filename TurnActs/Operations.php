@@ -305,6 +305,7 @@ function OperationsComplete() {
   $OrgTypes = Get_OrgTypes();
   $TTYpes = Get_ThingTypes();
   $TTNames = NamesList($TTYpes);
+  $NamesTTypes = array_flip($TTNames);
   $Orgs = Gen_Get_Cond('Organisations',"GameId=$GAMEID");
   $NameOps = NamesList($OpTypes);
   $OpNames = array_flip($NameOps);
@@ -798,6 +799,17 @@ function OperationsComplete() {
     $O['TurnEnd'] = $GAME['Turn'];
 //    var_dump($O);
     Put_Operation($O);
+
+
+    $Team = Gen_Get_Cond1('Things', "Whose=$Fid AND Type=" . $NamesTTypes['Team'] . " AND Dist1=$Oid");
+
+    if ($Team) {
+      $Team['SystemId'] = 0;
+//      $Team['LinkId'] = LINK_INBRANCH;
+      $Team['Description'] = 'Awaiting a new Operation';
+      Put_Thing($Team);
+    }
+
   }
   return 1;
 }

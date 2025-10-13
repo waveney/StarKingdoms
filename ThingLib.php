@@ -86,6 +86,7 @@ define('THING_HAS_SPEED',        16);
 define('THING_DISLIKES_SPACE', 0x20);
 define('THING_AT_LINK',        0x40);
 define('THING_IS_BIG',         0x80); // Add Level to max modules
+define('THING_IS_IMMORTAL',   0x100); // Militia etc
 
 define('LINK_ON_BOARD',-1);
 define('LINK_BOARDING',-2);
@@ -1411,11 +1412,11 @@ function Update_Militia(&$W,&$Dists,$NewOwn=0,$Deploy=0) {
       echo "<h2>Militia already setup</h2>";
     }
     foreach($Mils as $Ml) {
-      if (($Ml['OrigHealth'] != $Hlth) || ($Ml['Whose'] != $FactN) || ($Ml['ActDamage'] !=8) || $Ml['Mobility'] != 2) {
+      if (($Ml['OrigHealth'] != $Hlth) || ($Ml['ActDamage'] !=8) || $Ml['Mobility'] != 2) { // No longer check whose
         $Diff = $Hlth - $Ml['OrigHealth'];
         $Ml['OrigHealth'] = $Hlth;
         $Ml['CurHealth'] = min($Ml['CurHealth']+$Diff,$Hlth );
-        $Ml['Whose'] = $FactN;
+ //       $Ml['Whose'] = $FactN;
         $Ml['ActDamage'] = 8;
         $Ml['Mobility'] = 2;
         $Ml['WhereBuilt'] = $Ml['SystemId'];

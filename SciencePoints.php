@@ -129,7 +129,8 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$ThingInstrs,$ThingInclrs,$Cu
 
     if ($Faction['TurnState'] == 4 ) continue;
 
-    echo "<h2>Research Core Technology</h2>";
+    echo "<table>";
+    echo "<tr><td colspan=2><h2>Research Core $FName Technology</h2>";
       foreach ($CTs as $TT) {
         if ($TT['Field'] != $Fld) continue;
         foreach($Breaks as $Br) if ($Br['TechId'] == $TT['id']) continue 2;
@@ -140,13 +141,14 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$ThingInstrs,$ThingInclrs,$Cu
         }
 
         if ($Avail[$Fld]-$Used[$Fld] >= $SPCosts[$Lvl]) {
-          echo "<button class=projtype type=submit formaction='SciencePoints.php?ACTION=NEW&id=$Fid&Tid=" . $TT['id'] . "&L=$Lvl&C=" .
+          echo "<tr><td><button class=projtype type=submit formaction='SciencePoints.php?ACTION=NEW&id=$Fid&Tid=" . $TT['id'] . "&L=$Lvl&C=" .
                 $SPCosts[$Lvl] . "&Fld=$Fld'>" .
-                "Research " . $TT['Name'] . " Level $Lvl; Cost " . $SPCosts[$Lvl] . ' ' . $TechFields[$Fld][0] . "</button><p>";
+                "Research " . $TT['Name'] . " Level $Lvl; Cost " . $SPCosts[$Lvl] . ' ' . $TechFields[$Fld][0] . "</button>" .
+                "<td><div class=ProjDesc>" . ParseText($TT['Description']) . "</div></tr>";
         }
       }
 
-    echo "<h2>Research Supplimental Technology</h2>";
+    echo "<tr><td colspan=2><h2>Research Supplimental $FName Technology</h2>";
       $Techs = Get_TechsByCore($Fid);
       foreach ($Techs as $T) {
         if ($T['Field'] != $Fld) continue;
@@ -158,11 +160,14 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$ThingInstrs,$ThingInclrs,$Cu
         if ($T['PreReqTech3'] && !isset($FactTechs[$T['PreReqTech3']])) continue;
         $Lvl = $T['PreReqLevel'];
         if ($Avail[$Fld]-$Used[$Fld] >= $SPCosts[$Lvl]) {
-          echo "<button class=projtype type=submit formaction='SciencePoints.php?ACTION=NEW&id=$Fid&Tid=" . $T['id'] . "&L=$Lvl&C=" .
+          echo "<tr><td><button class=projtype type=submit formaction='SciencePoints.php?ACTION=NEW&id=$Fid&Tid=" . $T['id'] . "&L=$Lvl&C=" .
                 $SPCosts[$Lvl] . "&Fld=$Fld'>" .
-                "Research " . $T['Name'] . " Level $Lvl; Cost " . $SPCosts[$Lvl] . ' ' . $TechFields[$Fld][0] . "</button><p>";
+                "Research " . $T['Name'] . " Level $Lvl; Cost " . $SPCosts[$Lvl] . ' ' . $TechFields[$Fld][0] . "</button>" .
+                "<td><div class=ProjDesc>" . ParseText($T['Description']) . "</div></tr>";
+
         }
       }
+      echo "</table>";
 
   }
   echo "</form>";

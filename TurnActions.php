@@ -1083,8 +1083,8 @@ function ActuallyDeleteStuff() {
 
   $Pending = Get_Things_Cond_Ordered(0,"GameId=$GAMEID AND BuildState=" . BS_DELETE);
   if ($Pending) {
-    foreach($Pending as $D) {
-      Thing_Delete($D['id']);
+    foreach($Pending as $Did=>$D) {
+      Thing_Delete($Did,1);
     }
   }
 
@@ -1165,8 +1165,8 @@ function TidyUps() {
     $Sid1 = $Systems[$L['System1Ref']]['id'];
     $Sid2 = $Systems[$L['System2Ref']]['id'];
 
-    $Stabs = Get_Things_Cond(0,"Type=$WormStab AND (SystemId=$Sid1 OR SystemId=$Sid2) AND Dist1=$Lid" );
-    $DeStabs = Get_Things_Cond(0,"Type=$DeWormStab AND (SystemId=$Sid1 OR SystemId=$Sid2) AND Dist1=$Lid" );
+    $Stabs = Get_Things_Cond(0,"Type=$WormStab AND (SystemId=$Sid1 OR SystemId=$Sid2) AND Dist1=$Lid AND BuildState=3" );
+    $DeStabs = Get_Things_Cond(0,"Type=$DeWormStab AND (SystemId=$Sid1 OR SystemId=$Sid2) AND Dist1=$Lid AND BuildState=3" );
     if ($Stabs) foreach($Stabs as $S) $L['ThisTurnMod']-=$S['Level'];
     if ($DeStabs) foreach($DeStabs as $S) $L['ThisTurnMod']+=$S['Level']*2;
     Put_Link($L);

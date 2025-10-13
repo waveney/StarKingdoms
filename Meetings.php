@@ -55,11 +55,9 @@ function ForceReport($Sid,$Cat) {
         $PlanMoon = $Pl;
         $HomeType = $PTD[$Pl['Type']]['Name'];
         $Control = (!empty($Pl['Control']) ? $Pl['Control'] : $N['Control']);
-//echo "Looking for " . $Pl['id'] . "<p>";
         foreach ($Homes as $H) if (($H['ThingType'] == 1) && ($H['ThingId'] == $Pl['id'])) {
           $Home = $H;
           $World = Gen_Get_Cond1('Worlds',"ThingType=" . $H['ThingType'] . " AND ThingId=" . $H['ThingId']);
-// var_dump($World);
           if (isset($World['id'])) $Wid = $World['id'];
           break 2;
         }
@@ -74,9 +72,11 @@ function ForceReport($Sid,$Cat) {
        " ($HomeType)" :'') . "</h2>\n";
   if ($Cat =='G' && $Wid) {
     echo "<h2><a href=WorldEdit.php?ACTION=MilitiaDeploy&id=$Wid>Deploy Militia</a></h2>";
-    $MilOrg = Gen_Get_Cond('Branches',"HostType=" . $H['ThingType'] . " AND HostId=" . $H['ThingId'] . " AND (OrgType=3 OR OrgType2=3)");
-    if ($MilOrg) {
-      echo "<h2><a href=BranchEdit.php?Action=SPAWN_HS&Hid=" . $H['ThingId'] . "&Sid=$Sid>Deploy Heavy Security</a></h2>";
+    $MilOrgB = Gen_Get_Cond('Branches',"HostType=" . $H['ThingType'] . " AND HostId=" . $H['ThingId'] . " AND (OrgType=3 OR OrgType2=3)");
+    $MilOrgO = Gen_Get_Cond('Offices',"World=$Wid AND (OrgType=3 OR OrgType2=3)");
+    if ($MilOrgB || $MilOrgO) {
+      echo "<h2><a href=BranchEdit.php?Action=SPAWN_HS&Hid=" . $H['ThingId'] . "&Sid=$Sid&Wid=$Wid&Hyp=" . $H['ThingType'] .
+        ">Deploy Heavy Security</a></h2>";
     }
   } else if ($Cat == 'S') {
     $Outpost = Outpost_In($Sid,0,0);
@@ -200,8 +200,8 @@ function ForceReport($Sid,$Cat) {
         }
       }
       $txt .=  fm_number1(" Do",$T,'Damage', ''," class=Num3 onchange=Do_Damage($Tid,$LastF,'$Cat')","Damage:$Tid") . " damage";
-      $txt .= fm_checkbox(', Retreat?',$T,'RetreatMe','',"RetreatMe:$Tid");
-      $txt .= fm_checkbox(', No Debris?',$T,'NoDebris','',"NoDebris:$Tid");
+      if ($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE ) $txt .= fm_checkbox(', Retreat?',$T,'RetreatMe','',"RetreatMe:$Tid");
+      if ($TTypes[$T['Type']]['Properties'] & THING_LEAVES_DEBRIS ) $txt .= fm_checkbox(', No Debris?',$T,'NoDebris','',"NoDebris:$Tid");
 
       $FirePower += $BD;
     } else {
