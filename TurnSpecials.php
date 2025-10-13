@@ -240,6 +240,28 @@
       }
       echo "All Done";
       dotail();
+
+    case 'LinkMods':
+      $Systems = Get_Systems();
+      $Links = Get_LinksGame();
+      $TTypes = Get_ThingTypes();
+      $TNames = NamesList($TTypes);
+      $ThingNames = array_flip($TNames);
+      $WormStab = $ThingNames['Wormhole Stabiliser'];
+      $DeWormStab = $ThingNames['Wormhole Destabiliser'];
+      foreach ($Links as $Lid=>$L) {
+        $Sid1 = $Systems[$L['System1Ref']]['id'];
+        $Sid2 = $Systems[$L['System2Ref']]['id'];
+
+        $Stabs = Get_Things_Cond(0,"Type=$WormStab AND (SystemId=$Sid1 OR SystemId=$Sid2) AND Dist1=$Lid AND BuildState=3" );
+        $DeStabs = Get_Things_Cond(0,"Type=$DeWormStab AND (SystemId=$Sid1 OR SystemId=$Sid2) AND Dist1=$Lid AND BuildState=3" );
+        if ($Stabs) foreach($Stabs as $S) $L['ThisTurnMod']-=$S['Level'];
+        if ($DeStabs) foreach($DeStabs as $S) $L['ThisTurnMod']+=$S['Level']*2;
+        Put_Link($L);
+      }
+      echo "All Done";
+      dotail();
+
     }
   }
 
@@ -255,6 +277,7 @@
 //  echo "<li><a href=TurnSpecials.php?ACTION=ChangePatrolShips2>Reccheck Change Patrol Ships</a><p>";
 
   echo "<li><a href=TurnSpecials.php?ACTION=ActuallyDelete>Delete all things Pending Deletion</a><p>";
+  echo "<li><a href=TurnSpecials.php?ACTION=LinkMods>Recalc Link Mods</a><p>";
 
 
 
