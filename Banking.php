@@ -6,9 +6,25 @@
   global $PlayerState,$PlayerStates,$Currencies,$PayFactionRates;
 
   A_Check('Player');
+  $Fid = 0;
+
+  if (Access('Player')) {
+    if (!isset($FACTION['id'])) {
+      //     var_dump($FACTION); exit;
+      if (!Access('GM') ) Error_Page("Sorry you need to be a GM or a Player to access this");
+    } else {
+      $Fid = $FACTION['id'];
+      $Faction = $FACTION;
+    }
+  }
+
+  if ($Fid == 0) {
+    dostaffhead("Banking When no Faction selected");
+    echo "<h1>Banking When no Faction selected</h1>";
+    dotail();
+  }
 
   $FACTION['LastActive'] = time();
-  $Fid = $FACTION['id'];
 
   CheckFaction('Banking',$Fid);
 
@@ -164,6 +180,7 @@
   // Look for other currencies
 
   $OtherC = 0;
+  $CXFR = $GM || Feature('TransferMoney');
   foreach ($Banks as $B) if ($B['What']>0) $OtherC=1;
 
 //var_dump($Banks);
@@ -176,7 +193,7 @@
       echo "<tr><td>" . $FactList[$B['Recipient']];
       if ($OtherC) echo "<td>" . $Currencies[$B['What']];
       echo "<td>" . $B['Amount'] ;
-      echo "<td><a href=BankEdit.php?id=" . $B['id'] . ">" . $B['YourRef'] . "</a>";
+      echo "<td>" . ($CXFR?"<a href=BankEdit.php?id=" . $B['id'] . ">" . $B['YourRef'] . "</a>":$B['YourRef']);
       echo "<td>" . $B['StartTurn'];
       echo "<td>" . ($B['EndTurn']? $B['EndTurn']: $B['StartTurn']);
       echo "<td>" . $PayFactionRates[$B['Frequency']];
@@ -190,8 +207,7 @@
   }
   echo "</form>";
 
-  if ($GM || Feature('TransferMoney')) {
-//var_dump($GM);
+  if ($CXFR) {
     $Currens = [];
     $CCount = 0;
     foreach ($Currencies as $idx=>$CName) {

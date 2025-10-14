@@ -24,14 +24,14 @@ function CheckFaction($Prog='Player',$Fid=0) {
     dotail();
   }
   if (!$Fid) {
-      dostaffhead("Faction needed");
-      echo "<h1>For What faction?</h1>";
-      echo "<form method=post action=$Prog.php>";
-      $Facts = Get_Faction_Names();
-      echo fm_select($Facts,$_REQUEST,'F');
-      echo "<input type=submit value=Submit>";
-      dotail();
-    }
+    dostaffhead("Faction needed");
+    echo "<h1>For What faction?</h1>";
+    echo "<form method=post action=$Prog.php>";
+    $Facts = Get_Faction_Names();
+    echo fm_select($Facts,$_REQUEST,'F');
+    echo "<input type=submit value=Submit>";
+    dotail();
+  }
 }
 
 function AddCurrencies() {
