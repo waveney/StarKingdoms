@@ -470,6 +470,7 @@
 
       if (($OpTypes[$op]['Props'] & OPER_MONEY)) {
         $To1 = $Body['Control']??0;
+        $To2 = 0;
 
         $OutPs = Get_Things_Cond(0,"Type=" . $TTNames['Outpost'] . " AND SystemId=$Wh AND BuildState=" . BS_COMPLETE);
         if ($OutPs) {

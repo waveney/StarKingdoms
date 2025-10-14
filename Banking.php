@@ -18,6 +18,14 @@
     Put_Faction($FACTION);
   }
 
+  dostaffhead("Banking");
+
+  if (isset($_REQUEST['FORCE'])) {
+    $GM = 0;
+  } else {
+    if ($Fid) echo "<h2>GM: <a href=Banking.php?FORCE>This page in Player Mode</a></h2>";
+  }
+
   $Factions = Get_Factions();
   $Facts = Get_FactionFactions($Fid);
 
@@ -121,8 +129,6 @@
   }
 
 
-  dostaffhead("Banking");
-
   echo "<h1>" . $FACTION['Name'] . " - Banking - Turn $Turn</h1>\n";
   echo "<form method=post action=Banking.php>\n";
 
@@ -184,53 +190,43 @@
   }
   echo "</form>";
 
-  $Currens = [];
-  $CCount = 0;
-  foreach ($Currencies as $idx=>$CName) {
-    if ($GM || ( ($Trade[$idx]??0) && ($idx>4) && ($idx<8) && (($Factions[$Fid]["Currency" . ($idx-4)])??0))) {
-      $Currens[$idx] = $CName;
-      $CCount++;
+  if ($GM || Feature('TransferMoney')) {
+//var_dump($GM);
+    $Currens = [];
+    $CCount = 0;
+    foreach ($Currencies as $idx=>$CName) {
+      if ($GM || ( ($Trade[$idx]??0) && ($idx>4) && ($idx<8) && (($Factions[$Fid]["Currency" . ($idx-4)])??0))) {
+        $Currens[$idx] = $CName;
+        $CCount++;
+      }
+    }
+
+    if (empty($_REQUEST['StartTurn'])) $_REQUEST['StartTurn'] = $Turn;
+    echo "<form method=post action=Banking.php>\n";
+    echo "<h2>Setup One-off, Ongoing or Future Transfer</h2>";
+    echo "<table border>";
+    echo "<tr><td>To:<td>" . fm_select($FactList,$_REQUEST,'Recipient') . "<td>Select <b>Other</b> for RP actions";
+    if ($CCount>1) echo "<tr>" . fm_radio('Currency',$Currens,$_REQUEST,'What','',1,'colspan=2');
+    echo "<tr>" . fm_number('Amount',$_REQUEST,'Amount');
+    echo "<tr>" . fm_number('Start Turn', $_REQUEST,'StartTurn');
+    echo "<tr>" . fm_number('Last Turn', $_REQUEST,'EndTurn') . "<td>Leave blank for a one off payment";
+    echo "<tr>" . fm_text('Your Reference',$_REQUEST,'YourRef') . "<td>Will be seen by both parties";
+    $_REQUEST['Freq'] = 0;
+    echo "<tr>" . fm_radio('Frequency',$PayFactionRates,$_REQUEST,'Freq'); // fm_checkbox("Ongoing:<td>",$_REQUEST,'O',1);
+    echo "<tr><td>" . fm_submit("ACTION",'Setup');
+    echo "</table></form>";
+
+    if (Feature('IncomeCheck')) {
+      echo "<form method=post action=Banking.php>\n";
+      echo "<h2>Other expected income</h2>\n";
+      echo "What do expect from others, and amount - may stop annoying nag messages that you have overspent in your plans. No other effect. These are not checked<p>";
+      echo "<table border>";
+      echo "<tr>" . fm_textarea("Description",$_REQUEST,'IncomeText',2,2);
+      echo "<tr>" . fm_number('Amount',$_REQUEST,'IncomeAmount');
+
+      echo "</table></form>";
     }
   }
-
-  if (empty($_REQUEST['StartTurn'])) $_REQUEST['StartTurn'] = $Turn;
-  echo "<form method=post action=Banking.php>\n";
-  /*
-  echo "<h2>Setup One Off Transfer</h2>";
-  echo "<table border>";
-  echo fm_hidden('StartTurn',$GAME['Turn']);
-  echo "<tr><td>To:<td>" . fm_select($FactList,$_REQUEST,'Recipient') . "<td>Select <b>Other</b> for RP actions";
-  if ($CCount>1) echo "<tr>" . fm_radio('Currency',$Currens,$_REQUEST,'What','',1,'colspan=2');
-  echo "<tr>" . fm_number('Amount',$_REQUEST,'Amount');
-  echo "<tr>" . fm_text('Your Reference',$_REQUEST,'YourRef') . "<td>Will be seen by both parties";
-  echo "<tr><td>" . fm_submit("ACTION",'Transfer Now') . fm_submit("ACTION",'Transfer on Turn');
-  echo "</table></form>";
-*/
-  echo "<form method=post action=Banking.php>\n";
-  echo "<h2>Setup One-off, Ongoing or Future Transfer</h2>";
-  echo "<table border>";
-  echo "<tr><td>To:<td>" . fm_select($FactList,$_REQUEST,'Recipient') . "<td>Select <b>Other</b> for RP actions";
-  if ($CCount>1) echo "<tr>" . fm_radio('Currency',$Currens,$_REQUEST,'What','',1,'colspan=2');
-  echo "<tr>" . fm_number('Amount',$_REQUEST,'Amount');
-  echo "<tr>" . fm_number('Start Turn', $_REQUEST,'StartTurn');
-  echo "<tr>" . fm_number('Last Turn', $_REQUEST,'EndTurn') . "<td>Leave blank for a one off payment";
-  echo "<tr>" . fm_text('Your Reference',$_REQUEST,'YourRef') . "<td>Will be seen by both parties";
-  $_REQUEST['Freq'] = 0;
-  echo "<tr>" . fm_radio('Frequency',$PayFactionRates,$_REQUEST,'Freq'); // fm_checkbox("Ongoing:<td>",$_REQUEST,'O',1);
-  echo "<tr><td>" . fm_submit("ACTION",'Setup');
-  echo "</table></form>";
-
-  if (Feature('IncomeCheck')) {
-    echo "<form method=post action=Banking.php>\n";
-    echo "<h2>Other expected income</h2>\n";
-    echo "What do expect from others, and amount - may stop annoying nag messages that you have overspent in your plans. No other effect. These are not checked<p>";
-    echo "<table border>";
-    echo "<tr>" . fm_textarea("Description",$_REQUEST,'IncomeText',2,2);
-    echo "<tr>" . fm_number('Amount',$_REQUEST,'IncomeAmount');
-
-    echo "</table></form>";
-  }
-
 //  Player_Page();
   dotail();
 ?>
