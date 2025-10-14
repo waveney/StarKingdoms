@@ -21,6 +21,7 @@ define('OPER_LEVELMOD',      0x40000);
 define('OPER_COLONISTS',     0x80000);
 define('OPER_NOT_FRIENDS',  0x100000);
 define('OPER_ALWAYS1TURN',  0x200000); // Not used
+define('OPER_OWNWORLD',     0x400000);
 
 
 define('ORG_HIDDEN',1);
@@ -307,7 +308,7 @@ function WorldFromTarget($Target) {
   } else if ($Target<0) {
     return Gen_Get_Cond1('Worlds',"ThingType=2 AND ThingId=" . -$Target);
   } else {
-    echo "No Target Found when checking - Tell Richard what you did please";
+    echo "No Target Found when checking - Tell Richard what you did please<p>";
     return [];
   }
 }

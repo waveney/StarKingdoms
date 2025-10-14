@@ -184,20 +184,31 @@
     case 1: // Where
       echo "<h2>Selected: " . $OpTypes[$op]['Name'] . "</h2>\n" . $OpTypes[$op]['Description'] . "<p>";
       $SRefs = Get_SystemRefs();
-      $FSs = Gen_Get_Cond('FactionSystem', "FactionId=$Fid");
-      $WRefs = [];
-      foreach ($FSs as $FS) {
-        $WRefs[$FS['SystemId']] = $SRefs[$FS['SystemId']];
+
+      if ($OpTypes[$op]['Props'] & OPER_OWNWORLD) {
+        $Worlds = Get_Worlds($Fid);
+        foreach ($Worlds as $Wid=>$W) {
+          $H = Get_ProjectHome($W['Home']);
+          $WRefs[$H['SystemId']] = $SRefs[$H['SystemId']];
+        }
+
+      } else {
+        $FSs = Gen_Get_Cond('FactionSystem', "FactionId=$Fid");
+        $WRefs = [];
+        foreach ($FSs as $FS) {
+          $WRefs[$FS['SystemId']] = $SRefs[$FS['SystemId']];
+        }
+        asort($WRefs);
       }
-      asort($WRefs);
 
       echo "<h2>Select the Target System</h2>";
-      echo "For an operation through a wormhole, that is the system with the known end of the wormhole.<p>";
+      if ($OpTypes[$op]['Props'] & OPER_WORMHOLE) echo "For an operation through a wormhole, that is the system with the known end of the wormhole.<p>";
       $WRC = 0;
       foreach ($WRefs as $Wi=>$Ref) {
         echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=2&op=$op&W=$Wi'>$Ref</button> \n";
         if ((++$WRC%15) == 0) echo "<br>";
       }
+
       break;
 
     case 2: // Planet or Outpost
@@ -492,7 +503,7 @@
         }
 
         echo "<h2>How many Credits?</h2>";
-        echo fm_hidden('Stage',5) . fm_hidden('op',$op) . fm_hidden('W',$Wh) . fm_hidden('O',$OrgId) .fm_hidden('t',$Turn);
+        echo fm_hidden('Stage',5) . fm_hidden('op',$op) . fm_hidden('W',$Wh) . fm_hidden('O',$OrgId) . fm_hidden('t',$Turn) . fm_hidden('Target',$Target);
         if ($DOP2) echo fm_hidden('P2',$P2);
         echo fm_number('',$_REQUEST,'SP','','min=0 max=' . $Facts[$Fid]['Credits'] );
         echo "<button class=projtype type=submit>Send Money</button>";
