@@ -203,7 +203,7 @@ function StartOperations() {
       $Orgs[$OrgId]['Team'] = $Team['id'];
       Gen_Put('Organisations',$Orgs[$OrgId]);
     }
-    $Team['SystemId'] = $Wh;
+    $Team['SystemId'] = (($OpTypes[$O['Type']]['TeamProps'] & TEAM_HIDDEN)?0:$Wh);
     $Team['ProjectId'] = $Oid;
     $Team['WithinSysLoc'] = (($OpTypes[$O['Type']]['TeamProps'] & TEAM_INSPACE)?0:3);
     $Team['Description'] = $O['Name'] . ' ' . $O['Description'];
@@ -258,7 +258,7 @@ function StartOperationsStage2() {  // Making branches is checked
         $Orgs[$OrgId]['Team'] = $Team['id'];
         Gen_Put('Organisations',$Orgs[$OrgId]);
       }
-      $Team['SystemId'] = $Wh;
+      $Team['SystemId'] = (($OpTypes[$O['Type']]['TeamProps'] & TEAM_HIDDEN)?0:$Wh);
       $Team['ProjectId'] = $Oid;
       $Team['WithinSysLoc'] = (($OpTypes[$O['Type']]['TeamProps'] & TEAM_INSPACE)?0:3);
       Put_Thing($Team);

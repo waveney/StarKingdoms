@@ -43,7 +43,7 @@
     echo "<tr><td>$oid";
     echo "<td><a href=OperEdit.php?id=$oid>" . $O['Name'] . "</a>";
     echo "<td>" . $Factions[$O['Whose']]['Name'];
-    echo "<td>" . ($Orgs[$O['OrgId']]? $Orgs[$O['OrgId']]['Name'] . " (" . $OrgTypes[$Orgs[$O['OrgId']]['OrgType']]['Name'] .
+    echo "<td>" . (isset($Orgs[$O['OrgId']])? $Orgs[$O['OrgId']]['Name'] . " (" . $OrgTypes[$Orgs[$O['OrgId']]['OrgType']]['Name'] .
       ($Orgs[$O['OrgId']]['OrgType2']?"/" . $OrgTypes[$Orgs[$O['OrgId']]['OrgType2']]['Name']:'') . " )" : 'Unknown');
     echo "<td>" . $Project_Status[$O['Status']];
     echo "<td>" . $O['TurnStart'];
