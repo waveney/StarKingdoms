@@ -96,6 +96,7 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$ThingInstrs,$ThingInclrs,$Cu
   echo "<table border style='width:300'><tr><th>Tech Level<th>Points Required";
   for ($i = 1;$i<6; $i++) echo "<tr><td>$i<td>" . $SPCosts[$i];
   echo "</table>";
+
   $Breaks = Gen_Get_Cond('Breakthroughs',"FactionId=$Fid AND Turn=" . $GAME['Turn']);
 
   if ($Breaks) {
@@ -114,14 +115,20 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$ThingInstrs,$ThingInclrs,$Cu
       }
 
     }
-    echo "</table>\n";
+    echo "</table><p>\n";
+  }
+
+  echo "<p>";
+  foreach($TechFields as $Fld=>$TC) {
+    [$FName,$FldName] = $TC;
+    echo "Current $FName Points: " . $Avail[$Fld] . " Used: " . $Used[$Fld] . " Left: " . ($Avail[$Fld] - $Used[$Fld]) . "<br>";
   }
 
   echo "<form method=post action=SciencePoints.php>";
   echo fm_hidden('id',$Fid);
   foreach($TechFields as $Fld=>$TC) {
     [$FName,$FldName] = $TC;
-    echo "<br><h1>$FName Science Points</h1>\n";
+    echo "<h1>$FName Science Points</h1>\n";
 
     echo "Current Points: " . $Avail[$Fld] . " Used: " . $Used[$Fld] . " Left: " . ($Avail[$Fld] - $Used[$Fld]);
 

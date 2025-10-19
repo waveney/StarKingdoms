@@ -146,7 +146,7 @@ if (isset($_REQUEST['Action'])) {
           $Branches[-$Oid] = $Of;
         }
       }
- // var_dump($Branches);
+//  var_dump($Branches);
       $TotC = 0;
       if ($Branches) {
         foreach ($Branches as $Bid=>$B) {
@@ -173,9 +173,19 @@ if (isset($_REQUEST['Action'])) {
               }
               $T['Damage'] = $Off;
               $T['SystemId'] = $T['WhereBuilt'] = $Sid;
-              $T['WithinSysLoc'] = 3;
-              $T['LinkId'] = 0;
-              if (!preg_match('/\:.*\:/',$T['Name'])) $T['Name'] = ($B['Name']?$B['Name']:"Heavy $Ox Security $Rid") . ":" . $Org['Name'] . ":" . ($Count+1);
+              if ($T['CurHealth']) {
+                $T['WithinSysLoc'] = 3;
+                $T['LinkId'] = 0;
+                if (!preg_match('/\:.*\:/',$T['Name']))
+                  $T['Name'] = ($B['Name']?$B['Name']:"Heavy $Ox Security $Rid") . ":" . $Org['Name'] . ":" . ($Count+1);
+                echo $T['Name'] . " deployed.<br>";
+                $TotC++;
+              } else {
+                echo $T['Name'] . " not deployed as it is currently at 0 health<p>";
+                $T['LinkId'] = LINK_INBRANCH;
+              }
+              $T['Evasion'] = 50;
+              $T['ProjectId'] = $Rid;
               Put_Thing($T);
               $Count++;
             }
@@ -183,15 +193,17 @@ if (isset($_REQUEST['Action'])) {
           if ($Count < $Num) { // New ones
             while ($Count < $Num) {
               $Count++;
-              $T = ['Whose'=>$Fid, 'Type'=>$NTypes['Heavy Security'], 'BuildState'=>BS_COMPLETE, 'CurHealth'=>$Def, 'OrigHealth'=>$Def, 'ActDamage'=>$Off,
+              $T = ['Whose'=>$Fid, 'Type'=>$NTypes['Heavy Security'], 'BuildState'=>BS_COMPLETE, 'CurHealth'=>$Def, 'OrigHealth'=>$Def,
+                'ActDamage'=>$Off,
                 'SystemId'=>$Sid, 'WithinSysLoc'=>3, 'Class'=>'Heavy Security',
                 'Name'=>($B['Name']?$B['Name']:"Heavy $Ox Security $Rid") . ":" . $Org['Name'] . ":$Count" ,
                 'Evasion'=>50, 'ProjectId'=>$Rid, 'LinkId'=>0];
               if ($Bid>0 && ($BTypes[$B['Type']]['Props'] &1)) $T['Name'] .= " (Hidden)";
               Put_Thing($T);
+              echo "Created " . $T['Name'] . " $Count<br>";
+              $TotC++;
             }
           }
-          $TotC += $Count;
         }
       }
       echo "$TotC Heavy Security Forces have been deployed.<p><h2><a href=Meetings.php?ACTION=Check&S=$Sid>Return to Meetups</a></h2>";
@@ -228,6 +240,8 @@ if (isset($_REQUEST['Action'])) {
             $T['Speed'] = $Speed;
             $T['WithinSysLoc'] = 1;
             $T['LinkId'] = 0;
+            $T['ProjectId'] = $Bid;
+            $T['Evasion'] = 40;
             $T['ProjectId'] = $Bid;
             //var_dump($T);
             Put_Thing($T);

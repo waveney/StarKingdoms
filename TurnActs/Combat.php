@@ -85,8 +85,10 @@ function ReturnMilOrgForces() {
       $T['LinkId'] = LINK_INBRANCH;
       $T['SystemId'] = 0;
       Put_Thing($T);
+      GMLog( "Returned " . $T['Name']);
+
     } else { // Branch missing
-      GMLog( "BRANCH $Bid MISSING... for $Tid");
+      GMLog( "BRANCH $Bid MISSING... for $Tid - <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a>");
  //     Thing_Delete($Tid);
     }
   }
@@ -94,6 +96,7 @@ function ReturnMilOrgForces() {
   $Things = Get_Things_Cond(0,"Type=" . $NTypes['Militia'] . " AND LinkId!=" . LINK_INBRANCH);
   foreach($Things as $Tid=>$T) {
     $Count++;
+    GMLog( "Returned " . $T['Name']);
     $T['LinkId'] = LINK_INBRANCH;
     Put_Thing($T);
   }
