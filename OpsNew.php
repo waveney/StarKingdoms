@@ -319,6 +319,10 @@
           break;
         } // Deliberate fallthrough
 
+      } else if ($OpTypes[$op]['Props'] & OPER_OWNEDSPACE) {
+        if ($TSys['Control']) {
+          $Target = -9999999;
+        }
       }
 
       case 3: // Secondary location

@@ -22,6 +22,8 @@ define('OPER_COLONISTS',     0x80000);
 define('OPER_NOT_FRIENDS',  0x100000);
 define('OPER_ALWAYS1TURN',  0x200000); // Not used
 define('OPER_OWNWORLD',     0x400000);
+define('OPER_OWNEDSPACE',   0x800000);
+
 
 
 define('ORG_HIDDEN',1);

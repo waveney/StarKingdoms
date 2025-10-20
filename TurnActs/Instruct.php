@@ -690,7 +690,7 @@ function Instructions() {
           break;
         }
         $T['Instruction'] = -$T['Instruction'];
-        GMLog($T['Whose']['Name'] . " is starting a Wormhole Stabiliser in " . $N['Ref']);
+        GMLog($Facts[$T['Whose']]['Name'] . " is starting a Wormhole Stabiliser in " . $N['Ref']);
         TurnLog($T['Whose'],"Starting a Wormhole Stabiliser in " . $N['Ref'],$T);
         break;
 
@@ -698,18 +698,18 @@ function Instructions() {
         if ($Facts[$T['Whose']]['Currency3'] ==0) {
           $T['Progress'] = -1; // Stalled
           TurnLog($T['Whose'],"Could not start an Wormhole Destabiliser in " .$N['Ref'] . " as it requires a Cret-Chath",$T);
-          GMLog($T['Whose']['Name'] . "Could not start an Wormhole Destabiliser in " .$N['Ref'] . " as it requires a Cret-Chath");
+          GMLog($Facts[$T['Whose']]['Name'] . "Could not start an Wormhole Destabiliser in " .$N['Ref'] . " as it requires a Cret-Chath");
           break;
         }
 
         if (!Spend_Credit($T['Whose'],$T['InstCost'],"Make Wormhole Destabiliser in " . $N['Ref']) ) {
           $T['Progress'] = -1; // Stalled
           TurnLog($T['Whose'],"Could not afford to start an Wormhole Destabiliser in " .$N['Ref'],$T);
-          GMLog($T['Whose']['Name'] . "Could not afford to start an Wormhole Destabiliser in " . $N['Ref']);
+          GMLog($Facts[$T['Whose']]['Name'] . "Could not afford to start an Wormhole Destabiliser in " . $N['Ref']);
           break;
         }
         $T['Instruction'] = -$T['Instruction'];
-        GMLog($T['Whose']['Name'] . " is starting a Wormhole Destabiliser in " . $N['Ref']);
+        GMLog($Facts[$T['Whose']]['Name'] . " is starting a Wormhole Destabiliser in " . $N['Ref']);
         TurnLog($T['Whose'],"Starting a Wormhole Destabiliser in " . $N['Ref'],$T);
         break;
 

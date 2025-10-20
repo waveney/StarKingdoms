@@ -59,15 +59,20 @@ NEW GAME FEATURES & BUGS
 673 Re-equip and Reinforce Sergyar Batallion 1 - level 2
 
 === 675 start of turn 26
-676 Deploy Hvy Sec from Offices (Vasou - ARV)
 677 hvy sec & logistics
 695
 
-===
 === start of turn 27
 === start of turn 28
 
-
+Deploy Nameless:Bolotny Mil/tra:1 0
+Deploy Nameless:Bolotny Mil/tra:2 1
+Deploy Heavy Office Security 21:Bolotny Mil/tra:1 0
+Deploy Heavy Office Security 21:Bolotny Mil/tra:2 1
+Deploy Heavy Office Security 23:sdsf Tra/Mil:1 0
+Deploy Heavy Office Security 23:sdsf Tra/Mil:2 1
+Deploy Heavy Office Security 29:Testing 1 2 3 4 5 ZZ Alpha:1 0
+Deploy Heavy Office Security 29:Testing 1 2 3 4 5 ZZ Alpha:2 1
 
 
 Star:
