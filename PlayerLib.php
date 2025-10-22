@@ -901,7 +901,7 @@ function Tracks() {
 function Has_Track($Fid,$Name) {
   $TNames = array_flip(NamesList(Tracks()));
   $Trackid = $TNames[$Name];
-  $Have = Gen_Get_Cond('Resources',"Whose=$Fid AND Type=$Trackid");
+  $Have = Gen_Get_Cond1('Resources',"Whose=$Fid AND Type=$Trackid");
   return $Have['Value']??0;
 }
 
@@ -953,7 +953,7 @@ function Relationship($Fac1,$Fac2,$Atleast) {
   if (isset($Relate[$Fac1][$Fac2])) return ($Relate[$Fac1][$Fac2]>=$Friends[$Atleast]);
 
   $FF = Get_FactionFactionFF($Fac1,$Fac2);
-var_dump($FF,$Friends,$Atleast);
+// var_dump($FF,$Friends,$Atleast);
   if (!$FF) {
     $Relate[$Fac1][$Fac2] = 0;
     return false;

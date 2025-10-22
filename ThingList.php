@@ -123,7 +123,7 @@
     } else if ($T['LinkId'] == -6) {
       echo "<td><a href=ThingList.php?AT=$Ref>$Ref</a><td>$Loc";
     } else {
-      echo "<td>" . $MoveNames[$T['LinkId']];
+      echo "<td><a href=ThingList.php?AT=$Ref>$Ref</a><td>" . $MoveNames[$T['LinkId']];
     }
 
     echo "<td><a href=ThingEdit.php?id=$tid>$Name</a>";

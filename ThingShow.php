@@ -1253,7 +1253,7 @@ function Show_Thing(&$T,$Force=0) {
       break;
 
     case 'Make Something': // Generic GM special for weird DSC projects
-      if ($Moving || !$HasDeep ) continue 2;
+      if ($Moving || (!$HasDeep && !$HasPlanet)) continue 2;
       break;
 
     case 'Make Warpgate': // Warp gate through DSC

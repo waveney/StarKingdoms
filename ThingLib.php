@@ -33,7 +33,7 @@ $InstrNotBy =   [0,0,1,0,0,1,0,
                  0,1,
                  1,1,1,1,
                  1,0,1,
-                 0,1,0,1,1,1,
+                 2,1,0,1,1,1,
                  0,0,
                  0,1,1,2,2,2,
                  2,2,2,2,2];
@@ -1405,9 +1405,23 @@ function Update_Militia(&$W,&$Dists,$NewOwn=0,$Deploy=0) {
     if (($DTs[$D['Type']]['Props'] &128) == 0) $Dcount += ($D['Number'] * ($D['Type'] ==2?2:1));
   }
 //echo count($Mils);
-  if (count($Mils) >= $Dcount) {
-    if (count($Mils) > $Dcount) {
-      echo "<h2 class=Err>Too many setup...  Should be $Dcount, there are " . count($Mils) . "</h2>";
+  $CMils = count($Mils);
+  if ($CMils >= $Dcount) {
+    if ($CMils > $Dcount) {
+      $CopyMils = $Mils;
+      foreach($CopyMils as $CMid=>$Ml) {
+        if ($Ml['CurHealth'] == 0) {
+          Thing_Delete($Ml['id'],1);
+          unset($Mils[$CMid]);
+          $CMils--;
+          if ($CMils <= $Dcount) break;
+        }
+      }
+
+      if ($CMils > $Dcount) {
+        echo "<h2 class=Err>Too many setup...  Should be $Dcount, there are " . count($Mils) .
+          " - They will all be deployed - GMs to decide what to do</h2>";
+      }
     } else {
       echo "<h2>Militia already setup</h2>";
     }

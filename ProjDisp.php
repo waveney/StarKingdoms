@@ -223,6 +223,7 @@
         case 'Rebuild and Repair':
         case 'Grow Modules' :
         case 'Produce Adianite' :
+        case 'Flux Crystal Synthesis' :
         default:
 
           if (isset($_REQUEST['Sel'])) $Sel = $_REQUEST['Sel'];
@@ -232,7 +233,6 @@
           break;
 
         }
-
         if ($Valid) {
           $OldPro = Get_ProjectAt($Hi, $DT, $Turn);
           $Pro = ['FactionId'=>$Fid, 'Type'=>$Ptype, 'Level'=> $Level, 'Home'=>$Hi, 'Progress'=>0, 'Status'=>0, 'TurnStart'=>$Turn, 'Name'=>$Name,

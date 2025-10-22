@@ -39,7 +39,8 @@
 
 function ForceReport($Sid,$Cat) {
   global $Facts, $Homes, $TTypes, $ModTypes, $N, $Techs, $ThingProps,$ARMY ;
-  $Things = Get_Things_Cond(0,"SystemId=$Sid AND ( BuildState=" . BS_SERVICE . " OR BuildState=" . BS_COMPLETE . ") AND LinkId>=0 ORDER BY Whose");
+  $Things = Get_Things_Cond(0,
+    "SystemId=$Sid AND ( BuildState=" . BS_SERVICE . " OR BuildState=" . BS_COMPLETE . ") AND (LinkId>=0 OR LinkId=" . LINK_NOT_MOVING .") ORDER BY Whose");
   $LastF = $Home = $Control = -1;
   $txt = $ftxt = $htxt = $Battct = $rpt = '';
   $TMsk = ($Cat=='G'?1:2);

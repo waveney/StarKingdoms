@@ -167,7 +167,8 @@ if ($Branches) {
       echo "</div>";
 
     }
-    if ($B['Suppressed']) echo "<span class=Red> This branch is suppressed and cannot do any thing for " . Plural($B['Suppressed'],'','turn',' turns');
+    if ($B['Suppressed']) echo "<span class=Red> This branch is suppressed and cannot do any thing for " .
+      Plural($B['Suppressed'],'','a turn',$B['Suppressed']. ' turns');
 
   }
 } else {

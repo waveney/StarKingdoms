@@ -218,7 +218,7 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
             if ($T['NewSystemId']>0 && $T['TargetKnown']) {
               $txt .=  "<td>" . $Systems[$T['NewSystemId']];
             } else if (Has_Tech($T['Whose'],'Know All Links') || Feature('AllwaysShowLinkEnds')) {
-              $txt .=  "<td>" . $Systems[$T['SystemId']];
+              $txt .=  "<td>" . $Systems[$T['NewSystemId']];
             } else {
               $txt .=  "<td> ? ";
             }

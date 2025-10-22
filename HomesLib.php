@@ -630,8 +630,10 @@ function ConstructLoc($Hid,$Posn=0) {
 function WorldFlags(&$W) {
   $Stat = [];
   if ($W['Conflict']) $Stat[]= 'Conflict';
-  if ($W['Blockade']) $Stat[]= 'Blockade:' . $W['Blockade'];
+  if ($W['Blockade']) $Stat[]= 'Blockade: ' . $W['Blockade'];
   if ($W['Revolt'])   $Stat[]= 'Revolt';
+  $H = Get_ProjectHome($W['Home']);
+  if ($H['Devastation']) $Stat[]= 'Devastation: '. $H['Devastation'];
   if ($Stat) {
     echo "<td class=Red>" . implode(', ',$Stat);
   } else {

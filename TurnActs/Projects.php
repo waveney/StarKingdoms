@@ -681,7 +681,8 @@ function ProjectsCompleted($Pass) {
             } else if ($P['ThingId']) {
               $T = Get_Thing($P['ThingId']);
               $CurDam = $T['OrigHealth'] - $T['CurHealth'];
-              RefitRepair($T,1,0,$P['FactionId']);
+              RefitRepair($T,1,0,$P['FactionId']);          var_dump($D);
+
               if (($PT['Name'] == 'Re-equip Detachment') && $CurDam) {
                 $T['CurHealth'] - $T['OrigHealth'] - $CurDam;
               }
@@ -930,9 +931,22 @@ function ProjectsCompleted($Pass) {
           break;
 
         case 'Academic Contemplation':
-          Gain_Science($Fid, rand(1,3), 30, 'Academic Contemplation');
+          for ($i=0;$i<3;$i++) Gain_Science($Fid, rand(1,3), 10, 'Academic Contemplation');
 
           TurnLog($Fid,"Gained 30 Science points from Academic Contemplation");
+          break;
+
+        case 'Flux Crystal Synthesis':
+          $H = Get_ProjectHome($P['Home']);
+          $D = Gen_Get_Cond1('Districts',"Type=5 AND HostType=" . $H['ThingType'] . " AND HostId=" . $H['ThingId']);
+
+          if ($D) {
+            Gain_Currency($Fid,"Flux Crystals", $D['Number'], "Synthesis");
+            TurnLog($Fid,"Gained ".  $D['Number'] . " Flux Crystals from Synthesis");
+          } else {
+            Error("<a href=ProjEdit.php?id=" . $P['id'] . ">Project</a> to gain Flux crystals can't find any academic districts");
+          }
+
           break;
 
 
