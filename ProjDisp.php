@@ -366,7 +366,7 @@
   $ShowOtherCat = 0;
 
   foreach ($Homes as &$H) {
-    $ButAdd = '';
+    $HLAdd = $ButAdd = '';
     $PlanCon = $BPlanCon;
     // Homeworld +1, bio =, desolate -2, other -1
     $Hi = $H['id'];
@@ -377,10 +377,15 @@
     case 1: // Planet
       $PH = Get_Planet($H['ThingId']);
       $Dists = Get_DistrictsP($H['ThingId']);
+      $N = Get_System($PH['SystemId']);
+      $ButAdd = " (" . $N['Ref'] . ")";
       break;
     case 2: // Moon
       $PH = Get_Moon($H['ThingId']);
       $Dists = Get_DistrictsM($H['ThingId']);
+      $Pl = Get_Planet($PH['PlanetId']);
+      $N = Get_System($Pl['SystemId']);
+      $ButAdd = " (" . $N['Ref'] . ")";
       break;
     case 3: // Thing
       $PH = Get_Thing($H['ThingId']);
@@ -390,7 +395,7 @@
           if ($DT['Name'] == 'Orbital Repair') {
             $ORY = $DT['id'];
             $N = Get_System($PH['SystemId']);
-            $ButAdd = " (" . $N['Ref'] . ")";
+            $HLAdd = $ButAdd = " (" . $N['Ref'] . ")";
           }
           if (($DT['Props'] & 3) == 2) $ShowOtherCat = 1;
         }
@@ -441,7 +446,7 @@
         $HL .= $DistTypes[$D['Type']]['Name'] . "&nbsp;" . $D['Number'];
       }
 
-      $HL .= "$ButAdd</button><th $back class='PHLevel Group$Di Home$Hi'id=PHLevel$Hi:$Di $Hide>Lvl" .
+      $HL .= "$HLAdd</button><th $back class='PHLevel Group$Di Home$Hi'id=PHLevel$Hi:$Di $Hide>Lvl" .
         "<th $back class='PHCost Group$Di Home$Hi' id=PHCost$Hi:$Di $Hide>Cost" .
         "<th $back class='PHRush Group$Di Home$Hi' id=PHRush$Hi:$Di $Hide>Rush";
 

@@ -950,6 +950,7 @@ function MilitiaArmyRecovery() {
         if ($T['Whose'] != $LastWho) { // Redo Allies
           $LastWho = $T['Whose'];
           $LastSys = -1;
+          $Allies = [];
           $FF = Get_FactionFactions($LastWho);
           foreach($Facts as $Fid=>$F) if (($FF[$Fid]['Relationship']??5) >= 9 ) $Allies[$Fid] = 1;
           $Allies[$LastWho] = 1;
@@ -1020,7 +1021,7 @@ function MilitiaArmyRecovery() {
 
   }
 
-  GMLog("All Medical Corps?Bays handled");
+  GMLog("All Medical Corps/Bays handled");
 
   // Ship Self Repair
   $Things = Gen_Select("SELECT T.*,M.Level AS ModLevel, M.Number AS ModNumber FROM Things T INNER JOIN Modules AS M ON M.ThingId=T.id " .

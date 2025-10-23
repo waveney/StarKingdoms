@@ -605,7 +605,7 @@ function ProjectsCompleted($Pass) {
           if (!$Org) {
             TurnLog($Fid,'Project <a ProjEdit.php?id=' . $P['id'] . "</a> is making an office for an unknown Org - BUG - call Richard");
           } else {
-            $Off = ['Organisation' => -$P['ThingType'], 'OrgType'=>$Org['OrgType'], 'OrgType2'=>$Org['OrgType2'], 'World'=>$World['id'],
+            $Off = ['Organisation' => abs($P['ThingType']), 'OrgType'=>$Org['OrgType'], 'OrgType2'=>$Org['OrgType2'], 'World'=>$World['id'],
               'Whose'=>$P['FactionId'], 'Number'=>1];
             Put_Office($Off);
           }
