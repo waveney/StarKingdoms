@@ -272,9 +272,12 @@ function ShipMoveCheck($Mode=0) {  // Show all movements to allow for blocking
   $TTypes = Get_ThingTypes();
   $Facts = Get_Factions();
   $LOWho = GameFeature('LinkOwner',0);
+  $LinkMethod = Feature('LinkMethod','Gates');
 
   GMLog("<h2>These movements are planned - to stop one, tick the stop box and say why</h2>");
-  GMLog("If there is a thing in <span class=Err>Bold Red</span>, it is moving along a link that has been flagged for extra checking<p>");
+  GMLog("If there is a thing in <span class=Err>Bold Red</span>, it is moving along a link that has been flagged for extra checking");
+  GMLog("If there is a thing in <span class=BoldBlue>Bold Blue</span>, It is attempting a link with insufficient stability - stoping is assumed");
+
   //  GMLog("<form method=Post action=TurnActions.php?ACTION=Complete>" . fm_hidden('S',($Mode?34:32)));
   GMLog("<form method=Post action=TurnActions.php?ACTION=DoStage2>" . fm_hidden('Stage',($Mode?'Agents Move Check':'Ship Move Check')));
 
@@ -309,15 +312,24 @@ function ShipMoveCheck($Mode=0) {  // Show all movements to allow for blocking
         $SR1 = Get_SystemR($L['System1Ref']);
         $SR2 = Get_SystemR($L['System2Ref']);
 
-        $class = (($L['Props']&1)?" class=Err":'');
+        $class = (($L['Props']&1)?" class=Err":''); // Always check this link
 
-        GMLog("<tr><td $class>" . $Facts[$Fid]['Name'] . "<td><a href=ThingEdit.php?id=$Tid>" . $T['Name']  . "<td>" . $T['Level']);
+        $EInst = $L['Instability'];
+        if ($L['ThisTurnMod']) $EInst = max(1,$EInst+$L['ThisTurnMod']);
+
+        if (($LinkMethod == 'Wormholes') && $T['Stability'] < $EInst) {
+          if (!$class) $class=' class=BoldBlue';
+          $_REQUEST["Prevent$Tid"] = 1;
+          $_REQUEST["Reason$Tid"] = "You need $EInst stability for this link";
+        }
+
+        GMLog("<tr><td $class>" . $Facts[$Fid]['Name'] . "<td $class><a href=ThingEdit.php?id=$Tid>" . $T['Name']  . "<td $class>" . $T['Level']);
         if ($T['SystemId'] == $SR1['id']) {
-          GMLog("<td>" . $L['System1Ref'] . "<td style=color:" . $LinkLevels[abs($L['Level'])]['Colour'] . ";>" .
-            ($L['Name']?$L['Name']:"#$Lid"). "<td>" . $L['System2Ref']);
+          GMLog("<td $class>" . $L['System1Ref'] . "<td style=color:" . $LinkLevels[abs($L['Level'])]['Colour'] . ";>" .
+            ($L['Name']?$L['Name']:"#$Lid"). "<td $class>" . $L['System2Ref']);
         } else {
-          GMLog("<td>" . $L['System2Ref'] . "<td style=color:" . $LinkLevels[abs($L['Level'])]['Colour'] . ";>" .
-            ($L['Name']?$L['Name']:"#$Lid"). "<td>" . $L['System1Ref']);
+          GMLog("<td $class>" . $L['System2Ref'] . "<td style=color:" . $LinkLevels[abs($L['Level'])]['Colour'] . ";>" .
+            ($L['Name']?$L['Name']:"#$Lid"). "<td $class>" . $L['System1Ref']);
         }
 
         // var_dump($CheckNeeded,$T['LinkPay']);
@@ -326,13 +338,13 @@ function ShipMoveCheck($Mode=0) {  // Show all movements to allow for blocking
           if ($L['Status'] != 0) {
             GMLog("<td class=Err>" . $LinkStates[$L['Status']]);
           } else if ($L['Level'] ==1 || $T['LinkPay']<0 || ($LOWho>0 && $Fid == $LOWho)) {
-            GMLog("<td>Free");
+            GMLog("<td $class>Free");
           } elseif ($T['LinkPay'] > 0) {
-            GMLog("<td>Yes");
+            GMLog("<td $class>Yes");
           } elseif ($CheckNeeded && isset($UsedLinks[$Lid][$T['Whose']]) && $UsedLinks[$Lid][$T['Whose']]) {
-            GMLog("<td>Following");
+            GMLog("<td $class>Following");
           } else {
-            GMLog("<td><b>No</b");
+            GMLog("<td $class><b>No</b");
           }
         }
 
