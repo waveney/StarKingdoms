@@ -205,6 +205,24 @@ function Mod_FormulaValue($techlvl,$thinglvl,$Num,$form) {
   return $v;
 }
 
+function BluePrintDetails(&$T) {
+  static $MTypes;
+  if(!isset($MTypes)) $MTypes = Get_ModuleTypes();
+
+  $txt = '';
+  $Bps = Get_Things_Cond(0,"BluePrint<0 AND GatedOn LIKE '%" . $T['Name'] . "%'");
+  if ($Bps) foreach($Bps as $B) {
+    if (count($Bps)>1) $txt .= "<br>BluePrint: <b>" . $B['Name'] . "</b><br>";
+    $txt .= "Level: " . $B['Level'] . "<br>";
+    $Mods = Get_Modules($B['id']);
+//    var_dump($T,$Mods);
+    foreach($Mods as $M) {
+      $txt .= $MTypes[$M['Type']]['Name'] . ": " . $M['Number'] . "<br>";
+    }
+  }
+  return $txt;
+}
+
 function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0,$MaxLvl=10) {
   global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil;
   static $AllTechs;
@@ -279,6 +297,7 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0,$M
   echo "<br>";
 
   if ($T['Description']) echo ParseText($T['Description']);
+  if ($Blue) echo BluePrintDetails($T);
 
 //  if ($lvl == 0) {
     if (!$Descs) echo "</div>";
