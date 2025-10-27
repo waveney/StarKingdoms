@@ -206,7 +206,7 @@ function Mod_FormulaValue($techlvl,$thinglvl,$Num,$form) {
 }
 
 function BluePrintDetails(&$T) {
-  static $MTypes;
+  static $MTypes,$Varies;
   if(!isset($MTypes)) $MTypes = Get_ModuleTypes();
 
   $txt = '';
@@ -214,6 +214,10 @@ function BluePrintDetails(&$T) {
   if ($Bps) foreach($Bps as $B) {
     if (count($Bps)>1) $txt .= "<br>BluePrint: <b>" . $B['Name'] . "</b><br>";
     $txt .= "Level: " . $B['Level'] . "<br>";
+    if ($B['Variant']) {
+      if (!isset($Varies)) $Varies = Gen_Get_All_Game('Variants');
+      $txt .= "Varient: " . $Varies[$B['Variant']]['Name'];
+    }
     $Mods = Get_Modules($B['id']);
 //    var_dump($T,$Mods);
     foreach($Mods as $M) {

@@ -60,7 +60,7 @@ table-layout: fixed;
 }
 
 .creditlog table{
- height:200px; 
+ height:500px; 
  display: table;
  border: 2px solid black;
  background:lightgrey;
@@ -68,7 +68,7 @@ table-layout: fixed;
 
 .creditlog tbody{
   overflow-y: scroll;      
-  height: 150px;
+  height: 450px;
 
   position: absolute;
 }
@@ -92,7 +92,7 @@ table-layout: fixed;
 
 
 .CLWrap {
- height:200px; 
+ height:500px; 
  display: block; 
 }
 

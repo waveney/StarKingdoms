@@ -259,17 +259,18 @@ function SystemSee($Sid) {
 //  echo "Checked Homes<p>";
 
   foreach ($Things as $T){
-    if ($T['BuildState'] != BS_COMPLETE || ($T['LinkId'] < 0)) continue;
+    if ($T['BuildState'] != BS_COMPLETE || (($T['LinkId'] < 0) && ($T['LinkId'] != LINK_NOT_MOVING))) continue;
+// var_dump($T['id']);
     $Sid = $T['SystemId'];
     $Hostile = (($TTypes[$T['Type']]['Properties']??0) & THING_IS_HOSTILE) && ($T['PrisonerOf'] == 0);
     $Ground = is_on_ground($T);
 //      var_dump($Sid,$T['Whose']);
     if (!isset($Sids[$Sid][$Ground][$T['Whose']]) || $Hostile) {
-//    if ($Sid == 83) var_dump($Ground,$T);
       $Sids[$Sid][$Ground][$T['Whose']] = $Hostile;
     }
   }
 
+//  var_dump($Sids);
 //  var_dump($Sys);
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
@@ -393,6 +394,15 @@ function SystemSee($Sid) {
   echo "<span class=NotHostile>Factions</span> thus marked have only Never Hostile Things.<br>" .
        "The most hostile rating between factions present is displayed.<p>";
 
+  $RelNames = $RelCols = [];
+  foreach($Relations as $r=>$v) {
+    $RelNames[$r] = $v[0];
+    $RelCols[$r] = $v[1];
+  }
+
+  $RR['Show'] = 5;
+  echo fm_radio("Min relationship to Show",$RelNames,$RR,'Show',' onchange=MeetupFilter()',1,'','',$RelCols);
+
   TableStart();
   TableHead('System');
   TableHead('Space');
@@ -429,7 +439,7 @@ function SystemSee($Sid) {
     if (!isset($Sids[$Sid])) continue;
 //    var_dump($Sid,$Sids[$Sid]);
     if ((isset($Sids[$Sid][0]) && (count($Sids[$Sid][0]) > 1)) || (isset($Sids[$Sid][1]) && (count($Sids[$Sid][1]) > 1))) {
-
+// var_dump($Sid);
       $HostC = [0,0];
       for($gs=0;$gs<2;$gs++) {
         if (isset($Sids[$Sid][$gs])) {
@@ -437,13 +447,15 @@ function SystemSee($Sid) {
         }
       }
 
+//      var_dump($HostC);
       if ($HostC[0] <2 && $HostC[1]<2) continue; // Not 2 hostile possibles present
 
-      echo "<tr><td><a href=Meetings.php?ACTION=Check&S=$Sid$TurnP>" . $N['Ref'] . "</a>";
 
+      $WorstRel=100;
+      $ltxt = '';
       for($gs=0;$gs<2;$gs++) {
         $React = 9;
-        echo "<td>";
+        $ltxt .= "<td>";
         if (isset($Sids[$Sid][$gs]) && (count($Sids[$Sid][$gs]) > 1)) {
           foreach ($Sids[$Sid][$gs] as $F1=>$Hostile1) {
             if ($F1 == 0) continue;
@@ -474,18 +486,19 @@ function SystemSee($Sid) {
           }
 
           $DR = $Relations[$React];
-          echo "<span style='background:" . $DR[1]  . "'>" . $DR[0] . "</span> ";
+          $ltxt .= "<span style='background:" . $DR[1]  . "'>" . $DR[0] . "</span> ";
+          if ($React < $WorstRel) $WorstRel = $React;
 
           foreach ($Sids[$Sid][$gs] as $Fid=>$Hostile) {
             $F = ($Facts[$Fid]??[]);
             if (empty($F['Name'])) {
-              echo 'Other , ';
+              $ltxt .=  'Other , ';
             } else {
               $Fid = $F['id'];
               if ($Hostile) {
-                echo $F['Name'] . " , ";
+                $ltxt .= $F['Name'] . " , ";
               } else {
-                echo "<span class=NotHostile>" . $F['Name'] . "</span> , ";
+                $ltxt .=  "<span class=NotHostile>" . $F['Name'] . "</span> , ";
               }
             }
           }
@@ -493,6 +506,10 @@ function SystemSee($Sid) {
 
         }
       }
+
+      $hide = ($WorstRel<=$RR['Show']?'':' hidden');
+      echo "\n<tr class=WorstRel$WorstRel $hide><td><a href=Meetings.php?ACTION=Check&S=$Sid$TurnP>" . $N['Ref'] . "</a>";
+      echo $ltxt;
     }
   }
 

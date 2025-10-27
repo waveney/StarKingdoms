@@ -632,3 +632,18 @@ function WhereFilter() {
 function ToggleClass(c) {
 	$('.' +c).toggle();
 }
+
+function MeetupFilter() {
+	debugger;
+	var Rel = document.querySelector('input[name="Show"]:checked').value;
+	
+	for(var R=1; R<10; R+=2) {
+		if (R<=Rel) {
+ 		  $('.WorstRel' + R).show();
+		} else {
+			$('.WorstRel' + R).hide();
+  	}
+	}
+}
+
+
