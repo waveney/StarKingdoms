@@ -771,6 +771,11 @@
       $Bs = Get_BankingFT($Fid,$Turn);
 //var_dump($Bs);
       foreach($Bs as $B) $Spend += $B['Amount'];
+
+      $IBs = Gen_Get_Cond('Banking',"What=0 AND Recipient=$Fid AND Amount>0 AND (StartTurn=$Turn OR ( StartTurn<$Turn AND EndTurn >= $Turn ))");
+      if ($IBs) foreach($IBs as $B) {
+        $Spend -= $B['Amount'];
+      }
     }
 
     if ($Turn == $GAME['Turn']) {

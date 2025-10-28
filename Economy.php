@@ -142,7 +142,18 @@
   [$EconVal,$Txt] = Income_Calc($Fid);
   echo $Txt;
 
+
+  // Incoming credits
+
+  $Turn = $GAME['Turn'];
+  $IBs = Gen_Get_Cond('Banking',"What=0 AND Recipient=$Fid AND Amount>0 AND (StartTurn=$Turn OR ( StartTurn<$Turn AND EndTurn >= $Turn ))");
+  if ($IBs) foreach($IBs as $B) {
+    $Spend -= $B['Amount'];
+    echo "Recieving " . $B['Amount'] . " for " . $B['YourRef'] . " from " . $Facts[$B['FactionId']]['Name'] . "<br>";
+  }
+
   $Final =  $FACTION['Credits'] - $Spend + $EconVal*10;
+
   echo "<h2>Expected End Credits is &#8373;" . ($Final < 0? "<span class=Red>$Final</span>":$Final) .  "</h2>";
 
   if ($FACTION['PhysicsSP'] >0 || $FACTION['EngineeringSP'] > 0 || $FACTION['XenologySP'] > 0 ) {
