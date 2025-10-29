@@ -766,7 +766,7 @@
 
     echo "<td id=TotCost$Turn class=PHTurn><div title='" . htmlspecialchars($Hover) . "'>$TotCost</div><td class=PHTurn>";
 
-    $Spend = 0;
+    $Spend = $Gain = 0;
     if ($Turn >= $GAME['Turn']) {
       $Bs = Get_BankingFT($Fid,$Turn);
 //var_dump($Bs);
@@ -774,24 +774,32 @@
 
       $IBs = Gen_Get_Cond('Banking',"What=0 AND Recipient=$Fid AND Amount>0 AND (StartTurn=$Turn OR ( StartTurn<$Turn AND EndTurn >= $Turn ))");
       if ($IBs) foreach($IBs as $B) {
-        $Spend -= $B['Amount'];
+        $Gain += $B['Amount'];
       }
     }
 
     if ($Turn == $GAME['Turn']) {
-      $Left = $FACTION['Credits'] - ($SkipProgress?0:$TotCost) - $DeepSpace -$LinkCosts -$Spend;
+      $Hover = "Current Credit : " . $FACTION['Credits'] . "\nProjects Cost: " .($SkipProgress?0:$TotCost);
+      if ($DeepSpace) $Hover .= "\nConstruction Costs: $DeepSpace";
+      if ($LinkCosts ) $Hover .= "\nLink Costs: $LinkCosts";
+      if ($Spend ) $Hover .= "\nOther Spending: $Spend";
+      if ($Gain ) $Hover .= "\nOther Income: $Gain";
+
+      $Left = $FACTION['Credits'] - ($SkipProgress?0:$TotCost) - $DeepSpace -$LinkCosts -$Spend + $Gain;
+      echo "<div title='" . htmlspecialchars($Hover) . "'>";
       if ($Left >=0 ) {
         echo $Left;
       } else {
         echo "<span class=Red>$Left</span>";
       }
+      echo "</div>";
     } else if ($Turn < $GAME['Turn']-1) {
       echo "?";
     } else if ($Turn == $GAME['Turn']-1) {
       echo $FACTION['Credits'];
     } else { // Future
 //var_dump($Left,$Income,$TotCost,$Spend);\
-      $Left = $Left + $Income - $TotCost - $Spend;
+      $Left = $Left + $Income - $TotCost - $Spend + $Gain;
       if ($Left >=0 ) {
         echo $Left;
       } else {
