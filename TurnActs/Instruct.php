@@ -1596,7 +1596,7 @@ function InstructionsProgress() {
       case 'Make Orbital Repair Yard':
       case 'Build Space Station':
       case 'Expand Space Station' :
-      case 'Make Adbanced Deep Space Sensor':
+      case 'Make Advanced Deep Space Sensor':
       case 'Make Deep Space Sensor':
       case 'Make Advanced Asteroid Mine':
       case 'Dismantle Stargate':
@@ -1609,7 +1609,11 @@ function InstructionsProgress() {
       case 'Build Wormhole Stabiliser' :
       case 'Build Wormhole Destabiliser' :
       case 'Link Repair':
-        $Mods = Get_ModulesType($Tid, 'Space Construction Gear');
+        if (is_in_space($T)) {
+          $Mods = Get_ModulesType($Tid, 'Space Construction Gear');
+        } else {
+          $Mods = Get_ModulesType($Tid, 'Engineering Corps');
+        }
         $ProgGain = $Mods['Level']*$Mods['Number'];
         GMLog("$ProgGain progress on " . $ThingInstrs[abs($T['Instruction'])] . " for " . $Facts[$T['Whose']]['Name'] . ":" . $T['Name']);
         TurnLog($Fid,"$ProgGain progress on " . $ThingInstrs[abs($T['Instruction'])] . " by " . $T['Name'],$T);

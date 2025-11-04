@@ -39,10 +39,8 @@ NEW GAME FEATURES & BUGS
 444 fed heavy security not visible on ground
 451 Judith wormholes
 461 b-thor 17/6@14:36 /EMN??
-468 Military branches / offices should show on the "Meetups" page as they have the potential to deploy forces.
 537 Vasou and ARV GXE links
-===543 start of turn 22
-550 Outposts - in YPK not appear 
+=== 543 start of turn 22
 552 refresh all own system scans every turn
 553 scans active scan all except districts etc 
 === 579 start of turn 23
@@ -51,7 +49,6 @@ NEW GAME FEATURES & BUGS
 592 bar plan details anomaly twice QTE - also link missing from map QTE - ELV??
 === 608 start of turn 24
 622 GM option to select dist/off for devastation.
-630 Order of forces in meetups
 === 644 start of turn 25
 657 Kage - Eclipse 09 - not full health.
 659 Ascendency WRS-LDX link -acg 23/9 @9:53
@@ -61,9 +58,24 @@ NEW GAME FEATURES & BUGS
 === 695 start of turn 27
 708 bar link zfl-tay 
 713 Judith op distance
-717
+717 transfer setups and outposts
+=== 718 start of turn 28
+718 Dont stop hidden branch setup
+719 ship 4609 speed/stability wrong?
+720 Deploy miltia in cha
+725 BRANCH 60 MISSING... for 5016 - Heavy Office Security 60:Tyrannotech:1
+BRANCH 60 MISSING... for 5017 - Heavy Office Security 60:Tyrannotech:2
+BRANCH 60 MISSING... for 5018 - Heavy Office Security 60:Tyrannotech:3
+BRANCH 60 MISSING... for 5019 - Heavy Office Security 60:Tyrannotech:4
+726 Have/know about and techs
+728 Devastation from meetups directly
+729 Links around LDX
+730 Ross 3/11 @22:10
+732 agm 4/11 @ 9:43
+733 Kage 10:27 - We have sent you our most recent navigational data of Centro - it should provide you with the details of the ASS --> ARV wormhole.
+734 What can I see no neb sensors on ship in nebula
+735
 
-=== start of turn 28
 === start of turn 29
 === start of turn 30
 === start of turn 31

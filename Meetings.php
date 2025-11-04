@@ -10,7 +10,7 @@
   include_once("OrgLib.php");
   A_Check('GM');
 
-  global $Relations;
+  global $Relations,$GAME, $GAMEID;
 
   $FactFact = [];
 
@@ -406,7 +406,9 @@ function SystemSee($Sid) {
   TableStart();
   TableHead('System');
   TableHead('Space');
+  TableHead('Done?');
   TableHead('Ground');
+  TableHead('Done?');
   TableTop();
 //  echo "Checked Things<p>";
 
@@ -414,6 +416,7 @@ function SystemSee($Sid) {
 
   $Worlds = Get_Worlds();
   $Homes = Get_ProjectHomes();
+  $Turn = $GAME['Turn'];
 
   foreach ($Worlds as $W) {
     $H = $Homes[$W['Home']];
@@ -434,12 +437,19 @@ function SystemSee($Sid) {
     if ((($Dat['Attributes']??0)& 1) == 0) $Sids[$Sid][1][$Fid] = 1; // Ground present (Militia)
   }
 
+  echo "<form method=post>";
+  Register_AutoUpdate('Generic', 0);
   foreach ($Sys as $N) {
     $Sid = $N['id'];
     if (!isset($Sids[$Sid])) continue;
-//    var_dump($Sid,$Sids[$Sid]);
+
+    $MeetupTurn = Gen_Get_Cond1('MeetupTurn',"GameId=$GAMEID AND Turn=$Turn AND SystemId=$Sid");
+    if (!$MeetupTurn) {
+      $MeetupTurn = ['GameId'=>$GAMEID,'Turn'=>$Turn,'SystemId'=>$Sid,'Ground'=>0,'Space'=>0];
+      Gen_Put('MeetupTurn',$MeetupTurn);
+    }
+    $MTid = $MeetupTurn['id'];
     if ((isset($Sids[$Sid][0]) && (count($Sids[$Sid][0]) > 1)) || (isset($Sids[$Sid][1]) && (count($Sids[$Sid][1]) > 1))) {
-// var_dump($Sid);
       $HostC = [0,0];
       for($gs=0;$gs<2;$gs++) {
         if (isset($Sids[$Sid][$gs])) {
@@ -450,10 +460,10 @@ function SystemSee($Sid) {
 //      var_dump($HostC);
       if ($HostC[0] <2 && $HostC[1]<2) continue; // Not 2 hostile possibles present
 
-
       $WorstRel=100;
       $ltxt = '';
       for($gs=0;$gs<2;$gs++) {
+        $height = ['Space','Ground'][$gs];
         $React = 9;
         $ltxt .= "<td>";
         if (isset($Sids[$Sid][$gs]) && (count($Sids[$Sid][$gs]) > 1)) {
@@ -505,6 +515,7 @@ function SystemSee($Sid) {
         } else {
 
         }
+        $ltxt .= "<td>" . fm_checkbox('', $MeetupTurn, $height,'',"MeetupTurn:$height:$MTid");
       }
 
       $hide = ($WorstRel<=$RR['Show']?'':' hidden');

@@ -7,7 +7,7 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
   global $MoveNames,$MoveProps;
 
   $txt = '';
-  $Things = Get_Things_Cond($Fid, "id>0 AND GameId=$GAMEID ORDER BY Priority DESC");
+  $Things = Get_Things_Cond($Fid, "id>0 AND GameId=$GAMEID ORDER BY Priority DESC, Name");
   if (!empty($FACTION['HasPrisoners'])) {
     $Held = Get_Things_Cond(0,"PrisonerOf=$Fid AND BuildState=" . BS_COMPLETE);
     $Things = array_merge($Things,$Held);

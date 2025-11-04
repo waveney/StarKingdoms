@@ -55,7 +55,13 @@ function Devastation() {
       $H['Devastation']++;
     }
 
-    if ($H['Devastation'] >=5 || ($H['Economy']<1 && $H['Devastation']>0)) {
+    $DevLimit = Feature('DevastationLimit',5);
+
+    if ($W['FactionId']) {
+      if (Has_Tech($W['FactionId'],'Hardened Materials')) $DevLimit += Feature('DevastationHardMat',2);
+    }
+
+    if ($H['Devastation'] >=$DevLimit || ($H['Economy']<1 && $H['Devastation']>0)) {
       $H['Devastation'] = 0;
       $Dists = Get_DistrictsH($H['id']);
       $Offs = Gen_Get_Cond('Offices',"World=$Wid");

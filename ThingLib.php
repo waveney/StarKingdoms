@@ -1711,9 +1711,11 @@ function Thing_Delete($tid,$now=0) {
 
       $Control = System_Owner($T['SystemId']);
       if ($Control) {
+        include_once('TurnTools.php');
         TurnLog($T['Whose'], $Control);
         GMLog($Control);
       }
+      System_Owner($T['SystemId']);
       break;
 
     default:

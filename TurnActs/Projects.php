@@ -681,7 +681,7 @@ function ProjectsCompleted($Pass) {
             } else if ($P['ThingId']) {
               $T = Get_Thing($P['ThingId']);
               $CurDam = $T['OrigHealth'] - $T['CurHealth'];
-              RefitRepair($T,1,0,$P['FactionId']);          var_dump($D);
+              RefitRepair($T,1,0,$P['FactionId']); //         var_dump($D);
 
               if (($PT['Name'] == 'Re-equip Detachment') && $CurDam) {
                 $T['CurHealth'] - $T['OrigHealth'] - $CurDam;

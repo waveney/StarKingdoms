@@ -630,7 +630,7 @@ function Get_ThingsSys($Sid,$type=0,$Fid=0) {
 function Get_Things_Cond($Fact=0,$Cond='') {
   global $db,$GAMEID;
   $Ts = [];
-  $res = $db->query("SELECT * FROM Things WHERE GameId=$GAMEID " . ($Fact? " AND Whose=$Fact ":'') . ($Cond? " AND $Cond ":''));
+  $res = $db->query("SELECT * FROM Things WHERE GameId=$GAMEID " . ($Fact? " AND Whose=$Fact ":'') . ($Cond? " AND $Cond ":'') );
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
   return $Ts;
 }

@@ -579,7 +579,7 @@ function TraitIncomes() {
             $Bid = $B['id'];
 
             FollowUp($Who, "A Science base of " . $O['Name'] . " (" . $Facts[$Who]['Name'] .
-              ") power $Pow on an outpost in $Ref may get something - either way change the <a href=BranchEdit.php?id$Bid>Branch</a> settings");
+              ") power $Pow on an outpost in $Ref may get something - either way change the <a href=BranchEdit.php?id=$Bid>Branch</a> settings");
           }
       }
     }
@@ -1198,6 +1198,10 @@ function TidyUps() {
     $F['TurnState'] = 1;
     Put_Faction($F);
   }
+
+  $Turn = $GAME['Turn'];
+  $res = $db->query("UPDATE Projects SET TurnEnd=$Turn WHERE Status>2 AND TurnEnd=0 AND GameId=$GAMEID");
+  $res = $db->query("UPDATE Operations SET TurnEnd=$Turn WHERE Status>2 AND TurnEnd=0 AND GameId=$GAMEID");
 
   GMLog("<br>NPC Factions marked as Turn Planning<p>\n");
 

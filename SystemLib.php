@@ -1094,6 +1094,7 @@ function System_Owner($Sid) {
   $TTypes = Get_ThingTypes();
   include_once("ThingLib.php");
   $Outpost = Gen_Get_Cond1('Things',"Type=" . array_flip(NamesList( $TTypes))['Outpost'] . " AND SystemId=$Sid AND BuildState=" . BS_COMPLETE);
+// var_dump($Outpost);
   if ($Outpost) {
     if ($Outpost['Whose'] != $N['Control']) {
       $N['Control'] = $Outpost['Whose'];
@@ -1101,7 +1102,7 @@ function System_Owner($Sid) {
       if ($FS['Name']??'') $N['Name'] = $FS['Name'];
       Put_System($N);
  //     var_dump("Change 5 to " .$N['Control'] );
-      return "Control of " . $N['Ref'] . " now " . $Facts[$N['Control']]['Name'];
+      return "Control of " . ($N['Ref']??'Unknown') . " now " . ($Facts[$N['Control']]['Name']??'Unknown');
     }
 //    var_dump("No change 6");
     if (($FS['Name']??'') && ($FS['Name'] != $N['Name'])){

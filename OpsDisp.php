@@ -10,7 +10,7 @@
   include_once("ProjLib.php");
   include_once("OrgLib.php");
 
-  global $FACTION,$ADDALL,$GAME,$ARMY,$GAMEID;
+  global $FACTION,$ADDALL,$GAME,$ARMY,$GAMEID,$Project_Status;
 
 // var_dump($_REQUEST);
 
@@ -167,7 +167,7 @@
     if ($Org['OfficeCount']==0) continue;
 
 //     var_dump($O);
-    if (!isset($O['Status']) || ($O['Status'] > 2 )) continue; // Cancelled, On Hold or Could not start
+    if (!isset($O['Status'])) continue; // Cancelled, On Hold or Could not start
     $TurnStuff = Gen_Get_Cond('OperationTurn', " OperationId=" . $O['id'] . " ORDER BY TurnNumber");
 
     $TSi = 0;
@@ -206,51 +206,56 @@
 
     $TotProg = $O['Progress'];
     for ($t = $O['TurnStart']; $t <= ($O['TurnEnd']?$O['TurnEnd']:$O['TurnStart']+50); $t++) {
+      if (($O['Status']> 2) && ($O['TurnEnd'] || ($t>$O['TurnStart']))) continue;
 
       $Pro['Rush'] = $Rush = $BonusRush = $Bonus = 0;
       $Pro['MaxRush'] = $Org['OfficeCount'];
       if ($O['FreeRushes']) $Pro['Rush'] = $Rush = $Pro['MaxRush'];
 
-    if (isset($TurnStuff[$TSi])) {
-      if ($TurnStuff[$TSi]['TurnNumber'] == $t) {
-        $Rush = $Pro['Rush'] = min($TurnStuff[$TSi]['Rush'], $Pro['MaxRush']);
-        if (!empty($TurnStuff[$TSi]['Bonus'])) $Bonus = $Pro['Bonus'] = $TurnStuff[$TSi]['Bonus'];
-        $TSi ++;
+      if (isset($TurnStuff[$TSi])) {
+        if ($TurnStuff[$TSi]['TurnNumber'] == $t) {
+          $Rush = $Pro['Rush'] = min($TurnStuff[$TSi]['Rush'], $Pro['MaxRush']);
+          if (!empty($TurnStuff[$TSi]['Bonus'])) $Bonus = $Pro['Bonus'] = $TurnStuff[$TSi]['Bonus'];
+          $TSi ++;
+        }
       }
-    }
 
-    if ($t == $O['TurnEnd']) {
-      $Pro['Status'] = 'Complete';
-      $Pro['Progress'] = $Pro['Acts'] . "/" . $Pro['Acts'];
-    } else if ($t < $GAME['Turn'] -1) {
-      $Pro['Progress'] = "? /" . $Pro['Acts'];
-      $Pro['Status'] = (($t == $O['TurnStart'])?'Started' : 'Ongoing' );
-    } else if ($t == $GAME['Turn'] -1) {
-      $Pro['Progress'] = $O['Progress'] . "/" .  $Pro['Acts'];
-      $Pro['Status'] = (($t == $O['TurnStart'])?'Started' : 'Ongoing' );
-    } else {
-      $Prog = min($Pro['Acts'] - $TotProg,$Pro['MaxRush'] + $Rush + $Bonus+ $BonusRush ); // Note Bonus can be negative
-      if ($t == $GAME['Turn']) {
-        if ($SkipProgress) $Prog = 0;
-        $TotProg = $O['Progress'] + $Prog;
+      if ($O['Status'] > 2) { // Ended in some way
+        $Pro['Status'] = $Project_Status[$O['Status']];
+        $Pro['Progress'] = $O['Progress'] . "/" .  $Pro['Acts'];
+      } else if ($t == $O['TurnEnd']) {
+        $Pro['Status'] = 'Complete';
+        $Pro['Progress'] = $Pro['Acts'] . "/" . $Pro['Acts'];
+      } else if ($t < $GAME['Turn'] -1) {
+        $Pro['Progress'] = "? /" . $Pro['Acts'];
+        $Pro['Status'] = (($t == $O['TurnStart'])?'Started' : 'Ongoing' );
+      } else if ($t == $GAME['Turn'] -1) {
+        $Pro['Progress'] = $O['Progress'] . "/" .  $Pro['Acts'];
+        $Pro['Status'] = (($t == $O['TurnStart'])?'Started' : 'Ongoing' );
       } else {
-        $TotProg += $Prog;
+        $Prog = min($Pro['Acts'] - $TotProg,$Pro['MaxRush'] + $Rush + $Bonus+ $BonusRush ); // Note Bonus can be negative
+        if ($t == $GAME['Turn']) {
+          if ($SkipProgress) $Prog = 0;
+          $TotProg = $O['Progress'] + $Prog;
+        } else {
+          $TotProg += $Prog;
+        }
+        $Pro['Progress'] = "$TotProg/" . $Pro['Acts'];
+        $Pro['Status'] = (($TotProg >= $Pro['Acts'])? 'Complete' : (($t == $O['TurnStart'])?'Started' : 'Ongoing' ));
       }
-      $Pro['Progress'] = "$TotProg/" . $Pro['Acts'];
-      $Pro['Status'] = (($TotProg >= $Pro['Acts'])? 'Complete' : (($t == $O['TurnStart'])?'Started' : 'Ongoing' ));
+
+      $proj[$t][$OrgId] = $Pro;
+      if ($t == $O['TurnStart'] && isset($proj[$t-1][$OrgId]) && isset($proj[$t-1][$OrgId]['Status']) &&
+        ($proj[$t-1][$OrgId]['Status']!='Complete')) {
+          $proj[$t-1][$OrgId]['Status'] = "<b class=Err>Not Complete</b>";
+        }
+
+
+      $Pro['Cost'] = 0;
+      if ($Pro['Status'] == 'Complete') break;
     }
 
-    $proj[$t][$OrgId] = $Pro;
-    if ($t == $O['TurnStart'] && isset($proj[$t-1][$OrgId]) && isset($proj[$t-1][$OrgId]['Status']) &&
-      ($proj[$t-1][$OrgId]['Status']!='Complete')) {
-        $proj[$t-1][$OrgId]['Status'] = "<b class=Err>Not Complete</b>";
-      }
-
-
-    $Pro['Cost'] = 0;
-    if ($Pro['Status'] == 'Complete') break;
   }
-}
 
 foreach ($Orgs as $OrgId=>$O) {
   if ($O['OfficeCount']==0) continue;

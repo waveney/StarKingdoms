@@ -528,7 +528,7 @@
 
         $TotProg = $P['Progress'];
         for ($t = $P['TurnStart']; $t <= ($P['TurnEnd']?$P['TurnEnd']:$P['TurnStart']+50); $t++) {
-
+          if (($P['Status']> 2) && ($P['TurnEnd'] || ($t>$P['TurnStart']))) continue;
           $Pro['Rush'] = $Rush = $BonusRush = $Bonus = 0;
 //          $Pro['MaxRush'] = ( ($ProjTypes[$P['Type']]['Category'] & 16) ? $PlanCon : $District_Type[$WantedDT]);
           $Pro['MaxRush'] = (( $WantedDT < 0) ? $PlanCon : $District_Type[$WantedDT]);
