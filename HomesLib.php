@@ -771,12 +771,6 @@ function ShowWorld(&$W,$Mode=0,$NeedDelta=0) { // Mode 0 = View, 1=Owner, 2 = GM
         break;
     }
 
-    if (!$WH) {
-      echo "<h2 class=Err>There is a fault with World " . $W['id'] . " - Can't find project home " . $W['ThingId'] . " Tell Richard</h2>";
-
-      echo "<a href=WorldEdit.php?ACTION=Delete&id=" . $W['ThingId'] . ">Delete Project World?</a>";
-      dotail();
-    }
     $FS = Get_FactionSystemFS($Fid,$SysId);
     $PlanetLevel = max(1,($FS['PlanetScan']??1));
     $NumDists = 0;
@@ -787,6 +781,13 @@ function ShowWorld(&$W,$Mode=0,$NeedDelta=0) { // Mode 0 = View, 1=Owner, 2 = GM
     $System = Get_System($SysId);
   } else {
     $NumDists = 0;
+  }
+
+  if (!$WH) {
+    echo "<h2 class=Err>There is a fault with World " . $W['id'] . " - Can't find project home " . $W['ThingId'] . " Tell Richard</h2>";
+
+    echo "<a href=WorldEdit.php?ACTION=Delete&id=" . $W['ThingId'] . ">Delete Project World?</a>";
+    dotail();
   }
 
   $dc=0;
