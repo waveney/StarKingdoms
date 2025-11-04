@@ -786,7 +786,7 @@ function ShowWorld(&$W,$Mode=0,$NeedDelta=0) { // Mode 0 = View, 1=Owner, 2 = GM
   if (!$WH) {
     echo "<h2 class=Err>There is a fault with World " . $W['id'] . " - Can't find project home " . $W['ThingId'] . " Tell Richard</h2>";
 
-    echo "<a href=WorldEdit.php?ACTION=Delete&id=" . $W['ThingId'] . ">Delete Project World?</a>";
+    echo "<a href=WorldEdit.php?ACTION=Delete&id=" . $W['id'] . ">Delete Project World?</a>";
     dotail();
   }
 
