@@ -358,17 +358,6 @@
           echo "<td><a href=ThingEdit.php?id=" . $P['ThingId2'] . ">" . $Thing2['Name'] . "</a>";
         }
       }
-    } else if ($P['ThingType']) {
-      echo "<td>";
-      if (($P['Type']??0) == 1) {
-        echo ($DistTypeN[$P['ThingType']]??'??');
-      } else {
-        echo ($TechNames[$P['ThingType']]??'??') . "<td>" . $Fields[$Techs[$P['ThingType']]['Cat']];
-
-      }
-      if ($PProps & 8) {
-        echo " Recipient: " . $FactionNames[$P['ThingId']];
-      }
     }
     if ($P['ThingType']) {
       echo "<tr>";
