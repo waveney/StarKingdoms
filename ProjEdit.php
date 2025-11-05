@@ -347,12 +347,16 @@
       if ($cn && $P["CostCur$i"]) echo "<td>$cn: " . $P["CostCur$i"];
     }
     echo "<tr><td>Progress:<td>" . $P['Progress'];
-    if ($P['ThingId'] ) {
-      $Thing = Get_Thing($P['ThingId']);
-      if ($GM) {
-        echo "<td><a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . ($Thing['Name']??'Nameless') . "</a>"; // May need Tweek for player edit
-      } else {
-        echo "<td><a href=ThingPlan.php?id=" . $P['ThingId'] . ">" . ($Thing['Name']??'Nameless') . "</a>";
+    if ($PProps &2) {
+      if ($P['ThingId']) {
+        $Thing = Get_Thing($P['ThingId']);
+        echo "<td><b><a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . ($Thing['Name']??'Unknown') . "</a></b>";
+      }
+      if ($PProps & 4) {
+        if ($P['ThingId2']) {
+          $Thing2 = Get_Thing($P['ThingId2']);
+          echo "<td><a href=ThingEdit.php?id=" . $P['ThingId2'] . ">" . $Thing2['Name'] . "</a>";
+        }
       }
     } else if ($P['ThingType']) {
       echo "<td>";

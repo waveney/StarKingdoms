@@ -34,11 +34,12 @@
   $ModTypes = Get_ModuleTypes();
   $Techs = Get_Techs();
   $ThingProps = Thing_Type_Props();
+  $DevTotal = 0;
 
 //  var_dump($_REQUEST);
 
 function ForceReport($Sid,$Cat) {
-  global $Facts, $Homes, $TTypes, $ModTypes, $N, $Techs, $ThingProps,$ARMY ;
+  global $Facts, $Homes, $TTypes, $ModTypes, $N, $Techs, $ThingProps,$ARMY,$DevTotal ;
   $Things = Get_Things_Cond(0,
     "SystemId=$Sid AND ( BuildState=" . BS_SERVICE . " OR BuildState=" . BS_COMPLETE . ") AND (LinkId>=0 OR LinkId=" . LINK_NOT_MOVING .") ORDER BY Whose");
   $LastF = $Home = $Control = -1;
@@ -47,6 +48,8 @@ function ForceReport($Sid,$Cat) {
   $PlanMoon = [];
   $FirePower = $Wid = $Bat = 0;
   $HomeType = "Unknown";
+  $Variants = Gen_Get_All('Variants');
+  $VarIndex = NamesList($Variants);
 
   if ($Cat == 'G') {
     $PTD = Get_PlanetTypes();  // ONLY works for single target at present
@@ -170,6 +173,10 @@ function ForceReport($Sid,$Cat) {
 
       $txt .= "<tr><td><a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a>";
 
+      if (($Cat == 'G') && ($TTypes[$T['Type']]['Name'] != 'Militia') && (($VarIndex[$T['Variant']]['Name']??'') != 'Precision')) {
+        $DevTotal += $T['Level'];
+      }
+
       $Mods = Get_Modules($T['id']);
       foreach($Mods as $M) {
         if ($ModTypes[$M['Type']]['Leveled'] & MOD_LEVELED) {
@@ -219,6 +226,7 @@ function ForceReport($Sid,$Cat) {
 }
 
 function SystemSee($Sid) {
+  global $DevTotal;
  // echo "<form>";
   $txt = SeeInSystem($Sid,31,1,0,-1,1);
 
@@ -243,6 +251,45 @@ function SystemSee($Sid) {
   ForceReport($Sid,'S');
 
   echo fm_submit("ACTION",'Do ALL Damage',0);
+  if ($DevTotal) {
+    $Sys = Get_System($Sid);
+
+    $Worlds = explode(',',$Sys['WorldList']);
+
+    if ($Worlds) {
+      if (count($Worlds) == 1) {
+        $Wid = $Worlds[0];
+        if ($Wid >0) {
+          $WH = Get_Planet($Wid);
+        } else {
+          $WH = Get_Moon(-$Wid);
+        }
+
+        $Wtxt = fm_hidden('Place',$Wid) . $WH['Name'];
+      } else {
+        $Places = $Data = [];
+        $Place = 0;
+        foreach ($Worlds as $Wid) {
+          if ($Wid >0) {
+            $WH = Get_Planet($Wid);
+          } else {
+            $WH = Get_Moon(-$Wid);
+          }
+          if ($Place ==0) $Place = $Wid;
+          $Data['Place'] = $Place;
+          $Places[$Wid] = $WH['Name'];
+        }
+
+        $Wtxt = fm_radio('World',$Places,$Data,'Place');
+      }
+      $Devo = intdiv($DevTotal + rand(0,9),10);
+      $Dev = ['Devastate'=>$Devo];
+      echo "<br>Total Ground Force Levels: <b>$DevTotal</b> - Do " . fm_number1('',$Dev,'Devastate','', ' min=0 max=100') .
+           fm_submit("ACTION", "Devastation") . " to <b>$Wtxt</b> " .
+           " and set the conflict flag - this assumes all ground forces are fighting, adjust if they are not";
+    }
+
+  }
   echo "</form>";
 
 
@@ -386,6 +433,57 @@ function SystemSee($Sid) {
       $N = Get_System($Sid);
       ForceReport($Sid,'S');
       break;
+
+    case 'Devastation':
+      $Dev = $_REQUEST['Devastate'];
+      $Place = $_REQUEST['Place'];
+
+      if ($Place>0) { //Planet
+        $P = Get_Planet($Place);
+        $Home = Gen_Get_Cond1('ProjectHomes', "ThingType=1 AND ThingId=$Place");
+        if(!$Home) {
+          echo "Could not find Project home for planet $Place<p>";
+          break;
+        }
+        $Home['Devastation'] += $Dev;
+        Put_ProjectHome($Home);
+        $World = Gen_Get_Cond1('Worlds',"Home=" . $Home['id']);
+        $World['Conflict'] = 1;
+        Put_World($World);
+        echo "$Dev devastation applied to " . $P['Name'] . "<p>";
+      } else { /// Moon
+        $P = Get_Moon(-$Place);
+        $Home = Gen_Get_Cond1('ProjectHomes', "ThingType=2 AND ThingId=-$Place");
+        if(!$Home) {
+          echo "Could not find Project home for Moon $Place<p>";
+          break;
+        }
+        $Home['Devastation'] += $Dev;
+        Put_ProjectHome($Home);
+        $World = Gen_Get_Cond1('Worlds',"Home=" . $Home['id']);
+        $World['Conflict'] = 1;
+        Put_World($World);
+        echo "$Dev devastation applied to " . $P['Name'] . "<p>";
+      }
+
+    case 'Check 2': // Same as above
+      if (isset($_REQUEST['S'])) {
+        $Sid = $_REQUEST['S'];
+        $N = Get_System($Sid);
+      } else if (isset($_REQUEST['R'])) {
+        $Ref = $_REQUEST['R'];
+        $N = Get_SystemR($Ref);
+        $Sid = $N['id'];
+      } else {
+        echo "Should Never Get Here";
+        exit;
+      }
+      SystemSee($Sid);
+      break;
+
+      // Not Complete
+
+
 
     }
   }
