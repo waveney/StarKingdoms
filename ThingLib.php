@@ -263,8 +263,16 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0,$M
         echo ' ' . fm_checkbox("Know about",$Know,'Level','',"Know$Tid");
       }
     } else {
-      echo fm_checkbox("Have",$FactTechs[$Tid],'Level','',"Tech$Tid");
-      if ($T['Cat'] == 2) echo ' ' . fm_checkbox("Know about",$FactTechs[$Tid],'Level','',"Know$Tid");
+      if ($T['Cat'] == 2) {
+        $ft[0] = ($FactTechs[$Tid]??-1);
+        $Sets = [1=>'Have',0=>'Know About',-1=>'No Knowledge'];
+//        function fm_radio($Desc,&$defn,&$data,$field,$extra='',$tabs=1,$extra2='',$field2='',$colours=0,$multi=0,$extra3='',$extra4='',$textcolours=0) {
+
+        echo fm_radio('',$Sets,$ft,0,'',0,'',"Set$Tid");
+      } else {
+        echo fm_checkbox("Have",$FactTechs[$Tid],'Level','',"Tech$Tid");
+      }
+ //     if ($T['Cat'] == 2) echo ' ' . fm_checkbox("Know about",$FactTechs[$Tid],'Level','',"Know$Tid");
     }
   }
 

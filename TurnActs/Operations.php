@@ -125,6 +125,85 @@ function StartOperations() {
         " (" . $OrgTypes[$Orgs[$O['OrgId']]['OrgType']]['Name'] . " ) in " . System_Name($Sys,$Fid) . " it is controlled by " .
         ($Facts[$Sys['Control']]['Name']??'Nobody') .
         " - Allow? " . fm_YesNo("Org$Oid",1, "Reason to reject") . "\n<br>");
+    } else if (($Otp & OPER_BRANCH) && ($Otp & OPER_HIDDEN )) {
+      if ($Otp & OPER_OUTPOST) {
+        $OutPs = Get_Things_Cond1(0,"Type=" . $NamesTTypes['Outpost'] . " AND SystemId=$Wh AND BuildState=" . BS_COMPLETE);
+        if (!$OutPs) {
+          if (!($Otp & OPER_CREATE_OUTPOST)) {
+            $O['Status'] = 5; // Not Started
+            $O['TurnEnd'] = $GAME['Turn'];
+            TurnLog($Fid,'Not Starting ' . $O['Name'] . " for " . $Facts[$O['Whose']]['Name'] .
+              " There is not currently an Outpost there, this operation can't create one");
+            GMLog('Not Starting ' . $O['Name']  . " There is not currently an Outpost there, this operation can't create one");
+            Put_Operation($O);
+            continue;
+          }
+        }
+        $Brans = Gen_Get_Cond('Branches',"HostType=3 AND HostId=" . $OutPs['HostId'] . " AND (OrgType=4 OR OrgType2=4)");
+        if ($Brans) {
+          if ($NeedColStage2 == 0) {
+            GMLog("<form method=post action=TurnActions.php?ACTION=DoStage2&Stage=StartOperations>");
+            $NeedColStage2 = 1;
+          }
+
+          $log = $Facts[$Fid]['Name'] . " is setting up a hidden branch of  " . $Orgs[$O['OrgId']]['Name'] .
+                 " (" . $OrgTypes[$Orgs[$O['OrgId']]['OrgType']]['Name'] . " ) in " . System_Name($Sys,$Fid) . " it is controlled by " .
+                 ($Facts[$Sys['Control']]['Name']??'Nobody');
+
+          if (count($Brans)>1) {
+            $log .= " there are branches of ";
+            foreach ($Brans as $Br) {
+              $Org = Gen_Get('Organisation',$Br['Organisation']);
+              $log .= $Org['Name'] . ", ";
+            }
+            $log .= " that may interfere";
+
+          } else {
+            $Org = Gen_Get('Organisation',$Brans[0]['Organisation']);
+            $log .=  " there is a branch of " . $Org['Name'] . " that may interfere";
+          }
+
+          GMLog( "$log - Allow? " . fm_YesNo("Org$Oid",1, "Reason to reject") . "\n<br>");
+
+        } else {
+          // Always allowed - Silent
+        }
+      } else { //World - need to check for offices and branches
+        $World = WorldFromTarget($Target);
+        $Wid = $World['id']??0;
+        $Offs = Gen_Get_Cond('Offices',"World=$Wid AND (OrgType=4 OR OrgType2=4)");
+        $Brans = Gen_Get_Cond('Branches',"HostType=$ThingType AND HostId$ThingId AND (OrgType=4 OR OrgType2=4)");
+
+        if ($Offs || $Brans) {
+          if ($NeedColStage2 == 0) {
+            GMLog("<form method=post action=TurnActions.php?ACTION=DoStage2&Stage=StartOperations>");
+            $NeedColStage2 = 1;
+          }
+
+          $log = $Facts[$Fid]['Name'] . " is setting up a hidden branch of  " . $Orgs[$O['OrgId']]['Name'] .
+                " (" . $OrgTypes[$Orgs[$O['OrgId']]['OrgType']]['Name'] . " ) in " . System_Name($Sys,$Fid) . " it is controlled by " .
+                ($Facts[$Sys['Control']]['Name']??'Nobody');
+
+          if ($Offs) {
+            foreach ($Offs as $Of) {
+              $Org = Gen_Get('Organisation',$Of['Organisation']);
+              $log .= " there is an office of " . $Org['Name'] . ", ";
+            }
+          }
+          if ($Brans) {
+            foreach ($Brans as $Br) {
+              $Org = Gen_Get('Organisation',$Br['Organisation']);
+              $log .= " there is an branch of " . $Org['Name'] . ", ";
+            }
+          }
+
+          GMLog( "$log - Allow? " . fm_YesNo("Org$Oid",1, "Reason to reject") . "\n<br>");
+
+        } else {
+          // Always allowed - Silent
+        }
+      }
+      // Look for intel/esp branch/office - if present show to GMs
     }
 
     $Level = 0;

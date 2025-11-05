@@ -229,21 +229,35 @@
     exit;
 
   case 'FactTech' :
-    if (preg_match('/Tech(\d*)/',$field,$mtch)?true:false) {
+    if (preg_match('/(\w*)(\d*)/',$field,$mtch)?true:false) {
       $N = Get_Faction_TechFT($id,$mtch[1]);
-      $N['Level'] = $Value;
-      echo Put_Faction_Tech($N);
-      exit;
-    } else if (preg_match('/Know(\d*)/',$field,$mtch)?true:false) {
-      $N = Get_Faction_TechFT($id,$mtch[1]);
-      if ($Value) {
-        $N['Level'] = 0;
-        echo Put_Faction_Tech($N);
-      } else if ($N['id']) {
-        db_delete('FactionTechs',$N['id']);
+      switch ($mtch[1]) {
+        case 'Set':
+          if ($Value <0) {
+            if ($N['id']) db_delete('FactionTechs',$N['id']);
+          } else {
+            $N['Level'] = $Value;
+            echo Put_Faction_Tech($N);
+          }
+          exit;
+
+        case 'Tech':
+          $N['Level'] = $Value;
+          echo Put_Faction_Tech($N);
+          exit;
+
+        case 'Know':
+          if ($Value) {
+            $N['Level'] = 0;
+            echo Put_Faction_Tech($N);
+          } else if ($N['id']) {
+            db_delete('FactionTechs',$N['id']);
+          }
+          exit;
+
       }
-      exit;
     }
+
     echo "Unknown... $field";
     exit;
 

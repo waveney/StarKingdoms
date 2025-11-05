@@ -87,15 +87,27 @@ function ReturnMilOrgForces() {
     $Count++;
     $Tid = $T['id'];
     $Bid = $T['ProjectId'];
-    if (Gen_Get('Branches',$Bid)) {
-      $T['LinkId'] = LINK_INBRANCH;
-      $T['SystemId'] = 0;
-      Put_Thing($T);
-      GMLog( "Returned " . $T['Name']);
+    if (str_contains($T['Name'],' Office ')) {
+      if (Gen_Get('Office',$Bid)) {
+        $T['LinkId'] = LINK_INBRANCH;
+        $T['SystemId'] = 0;
+        Put_Thing($T);
+        GMLog( "Returned " . $T['Name']);
 
-    } else { // Branch missing
-      GMLog( "BRANCH $Bid MISSING... for $Tid - <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a>");
- //     Thing_Delete($Tid);
+      } else { // Office missing
+        GMLog( "Office $Bid MISSING... for $Tid - <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a>");
+      }
+    } else {
+      if (Gen_Get('Branches',$Bid)) {
+        $T['LinkId'] = LINK_INBRANCH;
+        $T['SystemId'] = 0;
+        Put_Thing($T);
+        GMLog( "Returned " . $T['Name']);
+
+      } else { // Branch missing
+        GMLog( "BRANCH $Bid MISSING... for $Tid - <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a>");
+   //     Thing_Delete($Tid);
+      }
     }
   }
 
