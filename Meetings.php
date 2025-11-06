@@ -175,7 +175,7 @@ function ForceReport($Sid,$Cat) {
 
       if (($Cat == 'G') && ($TTypes[$T['Type']]['Name'] != 'Militia') && (($VarIndex[$T['Variant']]['Name']??'') != 'Precision')) {
         $DevTotal += $T['Level'];
-        if (($VarIndex[$T['Variant']]['Name']??'') != 'Artillery') $DevTotal += $T['Level'];
+        if (($VarIndex[$T['Variant']]['Name']??'') == 'Artillery') $DevTotal += $T['Level'];
       }
 
       $Mods = Get_Modules($T['id']);

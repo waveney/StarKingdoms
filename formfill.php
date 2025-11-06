@@ -229,14 +229,16 @@
     exit;
 
   case 'FactTech' :
-    if (preg_match('/(\w*)(\d*)/',$field,$mtch)?true:false) {
-      $N = Get_Faction_TechFT($id,$mtch[1]);
+    if (preg_match('/(\w*):(\d*)/',$field,$mtch)?true:false) {
+
+      $N = Get_Faction_TechFT($id,$mtch[2]);
       switch ($mtch[1]) {
         case 'Set':
           if ($Value <0) {
             if ($N['id']) db_delete('FactionTechs',$N['id']);
           } else {
             $N['Level'] = $Value;
+ var_dump($N);
             echo Put_Faction_Tech($N);
           }
           exit;

@@ -256,21 +256,19 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0,$M
 
   if ($Setup) {
     if (($T['Cat'] == 0) || ($T['Cat'] == 3)) {
-      echo fm_number0("Level",$FactTechs[$Tid],'Level',''," min=0 max=$MaxLvl","Tech$Tid");
+      echo fm_number0("Level",$FactTechs[$Tid],'Level',''," min=0 max=$MaxLvl","Tech:$Tid");
       if ($T['Cat'] == 3) {
         $Know['Level'] = 0;
         if (isset($FactTechs[$Tid])) $Know['Level'] = 1;
-        echo ' ' . fm_checkbox("Know about",$Know,'Level','',"Know$Tid");
+        echo ' ' . fm_checkbox("Know about",$Know,'Level','',"Know:$Tid");
       }
     } else {
       if ($T['Cat'] == 2) {
-        $ft[0] = ($FactTechs[$Tid]??-1);
+        $ft['l'] = ($FactTechs[$Tid]['Level']??-1);
         $Sets = [1=>'Have',0=>'Know About',-1=>'No Knowledge'];
-//        function fm_radio($Desc,&$defn,&$data,$field,$extra='',$tabs=1,$extra2='',$field2='',$colours=0,$multi=0,$extra3='',$extra4='',$textcolours=0) {
-
-        echo fm_radio('',$Sets,$ft,0,'',0,'',"Set$Tid");
+        echo fm_radio('',$Sets,$ft,'l','',0,'',"Set:$Tid");
       } else {
-        echo fm_checkbox("Have",$FactTechs[$Tid],'Level','',"Tech$Tid");
+        echo fm_checkbox("Have",$FactTechs[$Tid],'Level','',"Tech:$Tid");
       }
  //     if ($T['Cat'] == 2) echo ' ' . fm_checkbox("Know about",$FactTechs[$Tid],'Level','',"Know$Tid");
     }
