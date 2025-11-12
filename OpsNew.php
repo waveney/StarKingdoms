@@ -337,15 +337,21 @@
             $Match = 0;
             foreach ($WList as $Wid) {
               if ($Wid > 0) {
+                $TargType = 1;
                 $Body = Get_Planet($Wid);
               } else {
+                $TargType = 2;
                 $Body = Get_Moon(-$Wid);
               }
               if ($Body['Control'] == $OutP['Whose']) $Match = 1;
             }
             if ($Match == 0) $WList []= -1000000-$OutP['id'];
           }
-          $SelectTarget = 1;
+          if (count($WList) > 1 ) {
+            $SelectTarget = 1;
+          } else {
+            $Target = abs($Wid);
+          }
         }
       }
 
