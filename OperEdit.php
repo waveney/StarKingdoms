@@ -185,7 +185,7 @@
 //    echo "<td class=NotSide>" . fm_checkbox('GM Lock',$O,'GMLock');
     echo "<tr>" . fm_number("Turn Start",$O,'TurnStart') . fm_number('Turn Ended', $O, 'TurnEnd');
     if ($O['TurnState']) echo "<td>Paused This Turn";
-    echo "<tr><td>Where:<td>" . fm_select($Systems,$O,'SystemId',1) . fm_number('Target',$O,'Target');
+    echo "<tr><td>Where:<td>" . fm_select($Systems,$O,'SystemId',1) . fm_number('Target',$O,'Target') . fm_number('TargType',$O,'TargType');
     if (Feature('OperationRushes')) echo "<td>" . fm_checkbox('GM Override',$O,'GMOverride') . " Set to override maxrush";
     echo "<tr>" . ($OpCosts?fm_number('Cost',$O,'Costs'):'') . fm_number('Prog Needed', $O,'ProgNeeded');
     echo "<tr>" . fm_number("Progress",$O,'Progress') . fm_number('Last Updated',$O,'LastUpdate');

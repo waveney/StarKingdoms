@@ -95,7 +95,7 @@
         }
         if ($P['Status'] == 1) { // Started some mmoney back
           $Cost = intdiv($P['Costs'],2);
-          Spend_Credit($Fid,-$Cost,'Recovered from cancelled Project ' . $P['Name']);
+          Spend_Credit($P['FactionId'],-$Cost,'Recovered from cancelled Project ' . $P['Name']);
           echo "Recovered " . credit() . " $Cost";
         }
         $P['TurnEnd'] = $GAME['Turn']-1;
@@ -407,7 +407,14 @@
 
   echo "</table><h2>";
   echo fm_submit("Ignore","Ignore",0," hidden");
-  echo fm_submit("ACTION",'Abandon Project',0) . " ";
+
+  if ($P['Status'] == 0 ) {
+    echo fm_submit("ACTION",'Abandon Project',0) . " ";
+  } else if ($P['Status'] == 1 ) {
+    echo fm_submit("ACTION",'Abandon Project',0,
+      "onClick=\"javascript:return confirm('Are you sure you want to abandon this?   Click OK to confirm, Cancel if it was in error');\"");
+  }
+
   if ($when > 0 || $GM )  {
     if ($P['Status'] == 0) echo fm_submit("ACTION",'Delete',0) . " ";
     if (($PProps & 128) && ($P['ThingType']>0)) {

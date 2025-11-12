@@ -23,6 +23,9 @@ define('OPER_NOT_FRIENDS',  0x100000);
 define('OPER_ALWAYS1TURN',  0x200000); // Not used
 define('OPER_OWNWORLD',     0x400000);
 define('OPER_OWNEDSPACE',   0x800000);
+define('OPER_TARGETORG',   0x1000000);
+define('OPER_NOT_OWNWORLD',0x2000000);
+define('OPER_OTHERTRADE',  0x4000000); // Not Used
 
 
 

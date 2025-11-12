@@ -6,6 +6,7 @@ CREATE TABLE `Operations` (
   `Para2` int NOT NULL,
   `SystemId` int NOT NULL,
   `Target` int NOT NULL,
+  `TargType` int NOT NULL,
   `Progress` int NOT NULL,
   `Status` int NOT NULL,
   `GameId` int NOT NULL,

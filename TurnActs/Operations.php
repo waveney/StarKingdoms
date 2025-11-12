@@ -22,7 +22,23 @@ function StartOperations() {
     $TWho = ($Sys['Control']??0);
     $OrgId = $O['OrgId'];
 
-    if ($O['Target']) {
+    if ($O['TargType'] ) {
+      $ThingType = $O['TargType'];
+      $Target = $O['Target'];
+      switch ($ThingType) {
+        case 1 :// Planet
+          $Body = Get_Planet($Target);
+          break;
+        case 2: // Moon
+          $Body = Get_Moon($Target);
+          break;
+        case 3:// Thing
+          $Body = ($Target>0?Get_Thing($Target):[]);
+          break;
+
+      }
+
+    } else if ($O['Target']) {
       $Target = $O['Target'];
       if ($Target > 0) {
         $Body = Get_Planet($Target);
@@ -35,6 +51,7 @@ function StartOperations() {
       }
     } else {
       $Target = 0;
+      $TargType = 3;
       $ThingType = 3;
       $ThingId = 0;
       $Body = [];
@@ -406,7 +423,21 @@ function OperationsComplete() {
     }
 
     $Target = $O['Target'];
-    if ($Target) {
+    if ($O['TargType'] ) {
+      $ThingType = $O['TargType'];
+      switch ($ThingType) {
+        case 1 :// Planet
+          $Body = Get_Planet($Target);
+          break;
+        case 2: // Moon
+          $Body = Get_Moon($Target);
+          break;
+        case 3:// Thing
+          $Body = ($Target>0?Get_Thing($Target):[]);
+          break;
+
+      }
+    } else if ($Target) {
       if ($Target > 0) {
         $Body = Get_Planet($Target);
         $ThingType = 1;
