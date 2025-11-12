@@ -333,7 +333,18 @@
             $Target = - $Target;
           }
         } else {
-          if ($OutP) $WList []= -1000000-$OutP['id'];
+          if ($OutP) {
+            $Match = 0;
+            foreach ($WList as $Wid) {
+              if ($Wid > 0) {
+                $Body = Get_Planet($Wid);
+              } else {
+                $Body = Get_Moon(-$Wid);
+              }
+              if ($Body['Control'] == $OutP['Whose']) $Match = 1;
+            }
+            if ($Match == 0) $WList []= -1000000-$OutP['id'];
+          }
           $SelectTarget = 1;
         }
       }
