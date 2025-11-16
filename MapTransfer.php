@@ -44,12 +44,12 @@ function TransferSys($SysR) {
   $TFS['ScanLevel'] = max($FS['ScanLevel'],$TFS['ScanLevel']);
   if (isset($_REQUEST['SURV'])) {
     if (empty($TFS['Name'])) $TFS['Name'] = $FS['Name'];
-    if ((($TFS['SpaceScan']??-2) < $FS['SpaceScan']) || (($TFS['SpaceScan'] == $FS['SpaceScan']) && (($TFS['SpaceTurn']??0) < $TFS['SpaceTurn']))) {
+    if ((($TFS['SpaceScan']??-2) < $FS['SpaceScan']) || (($TFS['SpaceScan'] == $FS['SpaceScan']) && (($TFS['SpaceTurn']??0) < $FS['SpaceTurn']))) {
       $TFS['SpaceSurvey'] = $FS['SpaceSurvey'];
       $TFS['SpaceScan'] = $FS['SpaceScan'];
       $TFS['SpaceTurn'] = $FS['SpaceTurn']??$GAME['Turn'];
     }
-    if (($TFS['PlanetScan'] < $FS['PlanetScan']) || (($TFS['PlanetScan'] == $FS['PlanetScan']) && (($TFS['PlanetTurn']??0) < ($TFS['PlanetTurn']??0)))) {
+    if (($TFS['PlanetScan'] < $FS['PlanetScan']) || (($TFS['PlanetScan'] == $FS['PlanetScan']) && (($TFS['PlanetTurn']??0) < ($FS['PlanetTurn']??0)))) {
       $TFS['PlanetSurvey'] = $FS['PlanetSurvey'];
       $TFS['PlanetScan'] = $FS['PlanetScan'];
       $TFS['PlanetTurn'] = $FS['PlanetTurn']??$GAME['Turn'];
@@ -73,8 +73,8 @@ function TransferSys($SysR) {
   $Links = Get_Links($SysR);
   foreach ($Links as $Lid=>$L) {
     $FLK = Gen_Get_Cond1('FactionLinkKnown',"FactionId=$Fid AND LinkId=$Lid");
+    $TLK = Gen_Get_Cond1('FactionLinkKnown',"FactionId=$Tid AND LinkId=$Lid");
     if ($FLK['USED']??0) {
-      $TLK = Gen_Get_Cond1('FactionLinkKnown',"FactionId=$Tid AND LinkId=$Lid");
       if ($TLK['id']??0) {
         $TLK['Used'] = 1;
         Gen_Put('FactionLinkKnown',$TLK);
@@ -82,6 +82,9 @@ function TransferSys($SysR) {
         $NTLK = ['LinkId'=>$Lid, 'FactionId'=>$Tid, 'Used'=>1 ];
         Gen_Put('FactionLinkKnown',$NTLK);
       }
+    } else if (($FLK['id']??0) && empty($TLK['id'])) {
+      $NTLK = ['LinkId'=>$Lid, 'FactionId'=>$Tid];
+      Gen_Put('FactionLinkKnown',$NTLK);
     }
   }
   $LogE = ['FromFact'=>$Fid,'DestFact'=>$Tid,'SystemId'=>$Sid,'Survey'=>(isset($_REQUEST['SURV'])?1:0),'XferWhen'=>time(),'Turn'=>$GAME['Turn']];

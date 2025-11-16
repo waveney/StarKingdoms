@@ -532,8 +532,9 @@ var_dump($FS);
 
       // Deliberate fallthrough
 
-      case 3: // Secondary location
+    case 3: // Secondary questions
 
+      $Data = "t=$Turn&O=$OrgId&Stage=4&op=$op&W=$Wh&TType=$TargType&Target=$Target";
       if ($OpTypes[$op]['Props'] & OPER_BRANCH) {
         $AllReady = Gen_Get_Cond('Branches'," HostType=$TargType AND HostId=$Target AND Organisation=$OrgId" );
         if ($AllReady) {
@@ -555,7 +556,7 @@ var_dump($FS);
 
           echo "<h2>Select Type of Science Points to Collect</h2>";
           for ($i=1;$i<4;$i++) {
-            echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&TType=$TargType&Target=$Target&SP=$i'>" .
+            echo "<button class=projtype type=submit formaction='OpsNew.php?$Data&SP=$i'>" .
                $Fields[$i-1] . "</button>\n";
           }
           break;
@@ -565,20 +566,6 @@ var_dump($FS);
           // Xenology only
         }
       }
-       // Drop through
-
-
-    case 4: // Secondary Questions
-
-//      var_dump($Target,$TargType);
-      $TSys = Get_System($Wh);
-
-      $Name =  $OpTypes[$op]['Name'] . " in " . System_Name($TSys,$Fid) ;
-      if (isset($Body['Name'])) $Name .= " at " . $Body['Name'];
-      if (empty($Head)) echo "<h2>Selected: $Name</h2>\n";
-      $Head = 1;
-
-      $Drop = 0;
 
       if ($OpTypes[$op]['Props'] & OPER_TECH) {
         $With = $Body['Control']??0;
@@ -598,8 +585,8 @@ var_dump($FS);
           $Tid = $TT['id'];
           if ($MyTechs[$Tid]['Level'] > $FactTechs[$Tid]['Level']) {
             $Lvl = $FactTechs[$Tid]['Level']+1;
-            echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&TType=$TargType&Target=$Target&Te=$Tid&P2=$Lvl'>" .
-                 $TT['Name'] . " at level $Lvl</button> \n";
+            echo "<button class=projtype type=submit formaction='OpsNew.php?$Data&Te=$Tid&P2=$Lvl'>" .
+            $TT['Name'] . " at level $Lvl</button> \n";
             $Shown = 1;
           }
         }
@@ -610,8 +597,8 @@ var_dump($FS);
           $Tec = $Techs[$Tid];
           $Lvl = $Tec['PreReqLevel'];
           if ($Lvl < 1) continue;
-          echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&TType=$TargType&Target=$Target&Te=$Tid&P2=$Lvl'>" .
-               $Tec['Name'] . " at level $Lvl</button> \n";
+          echo "<button class=projtype type=submit formaction='OpsNew.php?$Data&Te=$Tid&P2=$Lvl'>" .
+          $Tec['Name'] . " at level $Lvl</button> \n";
           $Shown = 1;
         }
 
@@ -620,13 +607,13 @@ var_dump($FS);
       }
 
       if ($OpTypes[$op]['Props'] & OPER_SOCP) { // Burn Heretics
-//        var_dump($ThingType,$ThingId);
+        //        var_dump($ThingType,$ThingId);
         $World = Gen_Get_Cond1('Worlds',"ThingType=$TargType AND ThingId=$Target");
         $Wid = ($World['id']??0);
         $SP = $Org['SocialPrinciple'];
         $SocPs = Get_SocialPs($Wid);
 
-//        var_dump($World,$Wid,$Fid);
+        //        var_dump($World,$Wid,$Fid);
         if (($World['FactionId']??0) != $Fid) { // Not own World, find if branch
           $Brs = Gen_Get_Cond('Branches',"Whose=$Fid AND HostType=$TargType AND HostId=$Target");
           if (!$Brs) {
@@ -640,13 +627,12 @@ var_dump($FS);
           foreach ($SocPs as $Si=>$SPr) {
             $SP = $SPr['Principle'];
             $Prin = Gen_Get('SocialPrinciples', $SP);
-            if ($Prin) echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&TType=$TargType&Target=$Target&SP=$SP'>" .
-              $Prin['Principle'] . " Currently has adherance of " . $SPr['Value'] . "</button><br>\n";
+            if ($Prin) echo "<button class=projtype type=submit formaction='OpsNew.php?$Data&SP=$SP'>" .
+            $Prin['Principle'] . " Currently has adherance of " . $SPr['Value'] . "</button><br>\n";
           }
           break;
         }
       }
-
 
       if (($OpTypes[$op]['Props'] & OPER_WORMHOLE)) {
         $Ref = $TSys['Ref'];
@@ -658,15 +644,124 @@ var_dump($FS);
         //    $GM = Access('GM');
 
         foreach ($Ls as $Lid=>$L) {
-//          $OSysRef = ($L['System1Ref']==$Ref? $L['System2Ref']:$L['System1Ref']);
-//          $ON = Get_SystemR($OSysRef);
+          //          $OSysRef = ($L['System1Ref']==$Ref? $L['System2Ref']:$L['System1Ref']);
+          //          $ON = Get_SystemR($OSysRef);
           if (LinkVis($Fid,$Lid,$Wh)) {
-            echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&Target=$Target&SP=$Lid'>" .
+            echo "<button class=projtype type=submit formaction='OpsNew.php?$Data&SP=$Lid'>" .
             $L['Name'] . "</button> \n";
           }
         }
         break;
       }
+
+      if (($OpTypes[$op]['Props'] & OPER_ANOMALY)) {
+        // Look for anomalies at target, if any, are they not analysed, if so record list, if list empty - err msg, if one select, if many give choice
+        $Anoms = Gen_Get_Cond('Anomalies',"GameId=$GAMEID AND SystemId=$Wh");
+        if ($Anoms) {
+          echo "<h2>Anomalies</h2>";
+          $AnomList = [];
+          foreach($Anoms as $A) {
+            $Aid = $A['id'];
+            $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
+            if ($FA && (($FA['State'] ==1) || ($FA['State'] ==2))) $AnomList[$Aid] = $A['Name'];
+          }
+          if (empty($AnomList)) {
+            echo "<h2>There are no known anomalies there</h2>";
+            break;
+          } else if (count($AnomList) == 1) {
+            $SP = $Aid; // Then drop through
+          } else {
+            echo "<h2>Please select which Anomaly?</h2>";
+            foreach($AnomList as $Aid=>$AL) {
+              echo "<button class=projtype type=submit formaction='OpsNew.php?$Data&SP=$Aid'>$AL</button> \n";
+            }
+          }
+        } else {
+          echo "<h2>There are no known anomalies there</h2>";
+          break;
+        }
+      }
+
+      if (($OpTypes[$op]['Props'] & OPER_TARGETORG)) {
+        // Orgs from offices and non hidden branches on target
+        $OrgList = [];
+        $Orgs = Gen_Get_All_GameId('Organisations');
+
+        $Branches = Gen_Get_Cond('Branches',"HostType=$TargType AND HostId=$Target");
+        // var_dump($Branches);
+        if ($Branches) {
+          $BTs = Gen_Get_All('BranchTypes');
+          foreach ($Branches as $B) {
+            if (!($BTs[$B['Type']]['Props'] & BRANCH_HIDDEN)) $OrgList[$B['Organisation']] = $Orgs[$B['Organisation']]['Name'];
+          }
+        }
+
+        $Wid = 0;
+        if ($TargType) {
+          $PH = Gen_Get_Cond1('ProjectHomes',"ThingType=$TargType AND ThingId=$Target");
+          if ($PH) {
+            $World = Gen_Get_Cond1('Worlds',"Home=" . $PH['id']);
+            if ($World) $Wid = $World['id'];
+          }
+        }
+
+        if ($Wid) {
+          $Offices = Gen_Get_Cond('Offices',"World=$Wid");
+          // var_dump($Offices);
+          if ($Offices) {
+            foreach ($Offices as $O) {
+              $OrgList[$O['Organisation']] = $Orgs[$O['Organisation']]['Name'];
+            }
+          }
+        }
+        // var_dump($OrgList);
+        if ($OrgList) {
+          echo "<h2>Select the Organisation to Recon:</h2>";
+
+          foreach ($OrgList as $Oid=>$O) {
+            echo "<button class=projtype type=submit formaction='OpsNew.php?$Data&SP=$Oid'>" .
+            $Org['Name'] . "</button> \n";
+          }
+          break;
+
+        } else {
+          echo "<h2>There are no known Organisations there</h2>";
+          break;
+        }
+      }
+      // Drop through
+
+
+    case 4: // Tertary Questions
+
+//      var_dump($Target,$TargType);
+      $TSys = Get_System($Wh);
+
+      $Name =  $OpTypes[$op]['Name'] . " in " . System_Name($TSys,$Fid) ;
+      if (isset($Body['Name'])) $Name .= " at " . $Body['Name'];
+      if (empty($Head)) echo "<h2>Selected: $Name</h2>\n";
+      $Head = 1;
+
+      $Drop = 0;
+
+      if (($OpTypes[$op]['Props'] & (OPER_LEVELMOD | OPER_DESC))) {
+        echo fm_hidden('Stage',5) . fm_hidden('op',$op) . fm_hidden('W',$Wh) . fm_hidden('O',$OrgId) .fm_hidden('t',$Turn) .
+        fm_hidden('TType',$TargType) . fm_hidden('Target',$Target);
+
+        if ($OpTypes[$op]['Props'] & OPER_LEVELMOD) {
+          echo fm_number('Level Modifier',$_REQUEST,'SP','','min=0');
+          echo " As specified by the GMs.<p>";
+        }
+
+        if (($OpTypes[$op]['Props'] & OPER_DESC)) {
+          echo "<h2>Describe what is being done - this Operation is not automated</h2>";
+          echo fm_text('',$_REQUEST,'Description',6);
+        }
+        echo "<button class=projtype type=submit>Proceed</button>";
+        break;
+      }
+
+      // COmpound questions
 
       if (($OpTypes[$op]['Props'] & OPER_MONEY)) {
         $To1 = $Body['Control']??0;
@@ -707,110 +802,13 @@ var_dump($FS);
 
         echo "<h2>How many Credits?</h2>";
         echo fm_hidden('Stage',5) . fm_hidden('op',$op) . fm_hidden('W',$Wh) . fm_hidden('O',$OrgId) . fm_hidden('t',$Turn) .
-          fm_hidden('TType',$TargType). fm_hidden('Target',$Target);
+        fm_hidden('TType',$TargType). fm_hidden('Target',$Target);
         if ($DOP2) echo fm_hidden('P2',$P2);
         echo fm_number('',$_REQUEST,'SP','','min=0 max=' . $Facts[$Fid]['Credits'] );
         echo "<button class=projtype type=submit>Send Money</button>";
         break;
       }
 
-      if (($OpTypes[$op]['Props'] & OPER_ANOMALY)) {
-        // Look for anomalies at target, if any, are they not analysed, if so record list, if list empty - err msg, if one select, if many give choice
-        $Anoms = Gen_Get_Cond('Anomalies',"GameId=$GAMEID AND SystemId=$Wh");
-        if ($Anoms) {
-          echo "<h2>Anomalies</h2>";
-          $AnomList = [];
-          foreach($Anoms as $A) {
-            $Aid = $A['id'];
-            $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
-            if ($FA && (($FA['State'] ==1) || ($FA['State'] ==2))) $AnomList[$Aid] = $A['Name'];
-          }
-          if (empty($AnomList)) {
-            echo "<h2>There are no known anomalies there</h2>";
-            break;
-          } else if (count($AnomList) == 1) {
-            $SP = $Aid; // Then drop through
-          } else {
-            echo "<h2>Please select which Anomaly?</h2>";
-            foreach($AnomList as $Aid=>$AL) {
-              echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&TType=$TargType&Target=$Target&SP=$Aid'>$AL</button> \n";
-            }
-          }
-        } else {
-          echo "<h2>There are no known anomalies there</h2>";
-          break;
-        }
-      }
-      if (($OpTypes[$op]['Props'] & OPER_TARGETORG)) {
-        // Orgs from offices and non hidden branches on target
-        $OrgList = [];
-        $Orgs = Gen_Get_All_GameId('Organisations');
-
-
-        $Branches = Gen_Get_Cond('Branches',"HostType=$TargType AND HostId=$Target");
-// var_dump($Branches);
-        if ($Branches) {
-          $BTs = Gen_Get_All('BranchTypes');
-          foreach ($Branches as $B) {
-            if (!($BTs[$B['Type']]['Props'] & BRANCH_HIDDEN)) $OrgList[$B['Organisation']] = $Orgs[$B['Organisation']]['Name'];
-          }
-        }
-
-        $Wid = 0;
-        if ($TargType) {
-          $PH = Gen_Get_Cond1('ProjectHomes',"ThingType=$TargType AND ThingId=$Target");
-          if ($PH) {
-            $World = Gen_Get_Cond1('Worlds',"Home=" . $PH['id']);
-            if ($World) $Wid = $World['id'];
-          }
-        }
-
-        if ($Wid) {
-          $Offices = Gen_Get_Cond('Offices',"World=$Wid");
-// var_dump($Offices);
-          if ($Offices) {
-            foreach ($Offices as $O) {
-              $OrgList[$O['Organisation']] = $Orgs[$O['Organisation']]['Name'];
-            }
-          }
-        }
-// var_dump($OrgList);
-        if ($OrgList) {
-          echo "<h2>Select the Organisation to Recon:</h2>";
-
-          foreach ($OrgList as $Oid=>$O) {
-            echo "<button class=projtype type=submit formaction='OpsNew.php?t=$Turn&O=$OrgId&Stage=5&op=$op&W=$Wh&TType=$TargType&Target=$Target&SP=$Oid'>" .
-              $Org['Name'] . "</button> \n";
-          }
-          break;
-
-        } else {
-          echo "<h2>There are no known Organisations there</h2>";
-          break;
-
-        }
-
-
-
-      }
-
-      // COmpound questions
-      if (($OpTypes[$op]['Props'] & (OPER_LEVELMOD | OPER_DESC))) {
-        echo fm_hidden('Stage',5) . fm_hidden('op',$op) . fm_hidden('W',$Wh) . fm_hidden('O',$OrgId) .fm_hidden('t',$Turn) .
-             fm_hidden('TType',$TargType) . fm_hidden('Target',$Target);
-
-        if ($OpTypes[$op]['Props'] & OPER_LEVELMOD) {
-          echo fm_number('Level Modifier',$_REQUEST,'SP','','min=0');
-          echo " As specified by the GMs.<p>";
-        }
-
-       if (($OpTypes[$op]['Props'] & OPER_DESC)) {
-          echo "<h2>Describe what is being done - this Operation is not automated</h2>";
-          echo fm_text('',$_REQUEST,'Description',6);
-       }
-      echo "<button class=projtype type=submit>Proceed</button>";
-      break;
-      }
       // else drop through
 
     case 5: // Complete /Restart/ etc
@@ -825,6 +823,8 @@ var_dump($FS);
       if (!isset($Head)) {
         echo "<h2>Selected: $Name</h2>\n";
       }
+
+
       if ($TechId) {
         $Tech = Get_Tech($TechId);
         echo "Tech: " . $Tech['Name'] . "<p>";
