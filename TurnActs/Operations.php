@@ -157,8 +157,11 @@ function StartOperations() {
           }
         }
 
-        $OutP = array_shift($OutPs);
-        $Brans = Gen_Get_Cond('Branches',"HostType=3 AND HostId=" . $OutP['HostId'] . " AND (OrgType=4 OR OrgType2=4)");
+        $OutP = $Brans = [];
+        if ($OutPs) {
+          $OutP = array_shift($OutPs);
+          if ($OutP) $Brans = Gen_Get_Cond('Branches',"HostType=3 AND HostId=" . $OutP['HostId'] . " AND (OrgType=4 OR OrgType2=4)");
+        }
         if ($Brans) {
           if ($NeedColStage2 == 0) {
             GMLog("<form method=post action=TurnActions.php?ACTION=DoStage2&Stage=StartOperations>");
