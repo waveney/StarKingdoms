@@ -215,7 +215,7 @@
               $Known = 0;
           }
         } else {
-          if (!Has_Tech($Fid,'Know All Links')) echo "Error!"; exit;// Can't see that link
+          if (!Has_Tech($Fid,'Know All Links')) $Known = 0; //echo "Error!"; exit;// Can't see that link
         }
       $N['TargetKnown'] = $Known;
     }

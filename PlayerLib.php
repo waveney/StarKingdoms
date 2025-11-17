@@ -744,7 +744,7 @@ function Income_Calc($Fid) {
     $Ast = array_shift($Asts);
     if ($Ast) {
       $AstVal += (($Ast['Minerals']??0) +
-        ((Has_PTraitP($W['id'],'Rare Mineral Deposits') && Has_Tech($Fid,'Advanced Mineral Extraction'))?3:0))*$AM['Level'];
+        ((Has_PTraitP($Ast['id'],'Rare Mineral Deposits') && Has_Tech($Fid,'Advanced Mineral Extraction'))?3:0))*$AM['Level'];
     }
   }
 
