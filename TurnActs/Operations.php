@@ -144,7 +144,7 @@ function StartOperations() {
         " - Allow? " . fm_YesNo("Org$Oid",1, "Reason to reject") . "\n<br>");
     } else if (($Otp & OPER_BRANCH) && ($Otp & OPER_HIDDEN )) {
       if ($Otp & OPER_OUTPOST) {
-        $OutPs = Get_Things_Cond1(0,"Type=" . $NamesTTypes['Outpost'] . " AND SystemId=$Wh AND BuildState=" . BS_COMPLETE);
+        $OutPs = Get_Things_Cond(0,"Type=" . $NamesTTypes['Outpost'] . " AND SystemId=$Wh AND BuildState=" . BS_COMPLETE);
         if (!$OutPs) {
           if (!($Otp & OPER_CREATE_OUTPOST)) {
             $O['Status'] = 5; // Not Started
@@ -156,7 +156,9 @@ function StartOperations() {
             continue;
           }
         }
-        $Brans = Gen_Get_Cond('Branches',"HostType=3 AND HostId=" . $OutPs['HostId'] . " AND (OrgType=4 OR OrgType2=4)");
+
+        $OutP = array_shift($OutPs);
+        $Brans = Gen_Get_Cond('Branches',"HostType=3 AND HostId=" . $OutP['HostId'] . " AND (OrgType=4 OR OrgType2=4)");
         if ($Brans) {
           if ($NeedColStage2 == 0) {
             GMLog("<form method=post action=TurnActions.php?ACTION=DoStage2&Stage=StartOperations>");
