@@ -33,8 +33,6 @@
 
   $DEBUG = $REDO = 0;
 
-  $REDO = 1;  // Forces new data to cache
-
   if ($GM) {
     if (isset($_REQUEST['FORCE'])) {
       $GM = 0;
@@ -67,6 +65,28 @@
       echo "<h1>Unknown system</h1>\n";
       dotail();
     }
+
+    $OwnSys = ($N['Control'] == $Fid);
+    if (!$OwnSys) {
+      $WL = $N['WorldList'];
+      if ($WL) {
+        $WLs = explode(',',$WL);
+        foreach ($WLs as $Wid) {
+          if ($Wid>0) {
+            $P = Get_Planet($Wid);
+            $OwnSys = ($P['Control'] == $Fid);
+            if ($OwnSys) break;
+          } else {
+            $P = Get_Moon(-$Wid);
+            $OwnSys = ($P['Control'] == $Fid);
+            if ($OwnSys) break;
+          }
+        }
+      }
+    }
+
+    if ($OwnSys) $REDO = 1;
+
     $ScanLevel = $FS['ScanLevel'];
     $PlanetLevel = max(0,$FS['PlanetScan']);
     $SpaceLevel = max(0,$FS['SpaceScan']);
