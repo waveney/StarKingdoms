@@ -887,6 +887,10 @@ var_dump($FS);
         $Mod = ($Mod&3) + $Level*($Mod>>2);
       }
       $Mod += $AMod;
+      if ($Body['TargetMod']??0) {
+        $ExtraLevels = $Body['TargetMod'];
+        $xtra = " (Level +" . $Body['TargetMod'] . ")";
+      }
 
       $BaseLevel = Op_Level($OrgId,$Wh) + $ExtraLevels;
       if ($BaseLevel<0) {
