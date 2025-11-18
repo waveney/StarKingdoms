@@ -300,9 +300,11 @@
             $Target = array_pop($WList);
             if ($Target > 0) {
               $TargType = 1;
+              $Body = Get_Planet($Target);
             } else {
               $TargType = 2;
               $Target = - $Target;
+              $Body = Get_Moon($Target);
             }
           } else {
             $SelectTarget = 1;
@@ -328,9 +330,11 @@
           $Target = array_pop($WList);
           if ($Target > 0) {
             $TargType = 1;
+            $Body = Get_Planet($Target);
           } else {
             $TargType = 2;
             $Target = - $Target;
+            $Body = Get_Moon($Target);
           }
         } else {
           if ($OutP) {

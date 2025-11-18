@@ -33,6 +33,8 @@
 
   $DEBUG = $REDO = 0;
 
+  $REDO = 1;  // Forces new data to cache
+
   if ($GM) {
     if (isset($_REQUEST['FORCE'])) {
       $GM = 0;
