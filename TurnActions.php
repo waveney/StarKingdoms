@@ -213,7 +213,7 @@ function CashTransfers() {
       continue;
     }
     if ($B['DoneTurn'] >= $GAME['Turn']) continue; // Already done
-    if (($B['Frequency'] > 1) && (($B['DoneTurn']-$GAME['Turn']) < $B['Frequency'])) continue; // not this turn
+    if (($B['Frequency'] > 1) && (($GAME['Turn']- $B['DoneTurn']) < $B['Frequency'])) continue; // not this turn
     if ($B['What'] == 0) {
       if ($B['FactionId'] == 0) {
           Spend_Credit($B['Recipient'], - $B['Amount'],$B['YourRef']);

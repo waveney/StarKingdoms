@@ -173,11 +173,6 @@ function ForceReport($Sid,$Cat) {
 
       $txt .= "<tr><td><a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a>";
 
-      if (($Cat == 'G') && ($TTypes[$T['Type']]['Name'] != 'Militia') && (($VarIndex[$T['Variant']]['Name']??'') != 'Precision') && $T['Damage']>0) {
-        $DevTotal += $T['Level'];
-        if (($VarIndex[$T['Variant']]['Name']??'') == 'Artillery') $DevTotal += $T['Level'];
-      }
-
       $Mods = Get_Modules($T['id']);
       foreach($Mods as $M) {
         if ($ModTypes[$M['Type']]['Leveled'] & MOD_LEVELED) {
@@ -188,6 +183,11 @@ function ForceReport($Sid,$Cat) {
       $Resc = 0;
       [$BD,$ToHit] = Calc_Damage($T,$Resc);
       $tprops = $ThingProps[$T['Type']];
+      if (($Cat == 'G') && ($TTypes[$T['Type']]['Name'] != 'Militia') && (($VarIndex[$T['Variant']]['Name']??'') != 'Precision') && $BD>0) {
+        $DevTotal += $T['Level'];
+        if (($VarIndex[$T['Variant']]['Name']??'') == 'Artillery') $DevTotal += $T['Level'];
+      }
+
 
       if ($Kaiju) {
         if (str_contains($T['Class'], 'Kaiju')) {

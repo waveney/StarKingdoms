@@ -118,7 +118,7 @@
   $P1 = $SP = $_REQUEST['SP']??0;
   $Desc = $_REQUEST['Description']??'';
   $Target = $_REQUEST['Target']??0;
-  $TargType = $_REQUEST['TargType']??0;
+  $TargType = $_REQUEST['TType']??0;
   $TTYpes = Get_ThingTypes();
   $TTNames = array_flip(NamesList($TTYpes));
   $BTypes = Get_BranchTypes();
