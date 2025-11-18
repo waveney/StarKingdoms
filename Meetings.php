@@ -173,7 +173,7 @@ function ForceReport($Sid,$Cat) {
 
       $txt .= "<tr><td><a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a>";
 
-      if (($Cat == 'G') && ($TTypes[$T['Type']]['Name'] != 'Militia') && (($VarIndex[$T['Variant']]['Name']??'') != 'Precision')) {
+      if (($Cat == 'G') && ($TTypes[$T['Type']]['Name'] != 'Militia') && (($VarIndex[$T['Variant']]['Name']??'') != 'Precision') && $T['Damage']>0) {
         $DevTotal += $T['Level'];
         if (($VarIndex[$T['Variant']]['Name']??'') == 'Artillery') $DevTotal += $T['Level'];
       }

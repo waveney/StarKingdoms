@@ -88,7 +88,7 @@ function ReturnMilOrgForces() {
     $Tid = $T['id'];
     $Bid = $T['ProjectId'];
     if (str_contains($T['Name'],' Office ')) {
-      if (Gen_Get('Office',$Bid)) {
+      if (Gen_Get('Offices',$Bid)) {
         $T['LinkId'] = LINK_INBRANCH;
         $T['SystemId'] = 0;
         Put_Thing($T);

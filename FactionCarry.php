@@ -45,6 +45,8 @@
   */
 
   $FactFacts = Get_FactionFactions($Fid);
+
+//  var_dump($FactFacts);
   $Boarding = ['No', 'This turn only', 'Ongoing'];
 
   $RelVals = $RelCols = $RelClass = [];

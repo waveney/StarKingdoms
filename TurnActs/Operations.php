@@ -160,7 +160,7 @@ function StartOperations() {
         $OutP = $Brans = [];
         if ($OutPs) {
           $OutP = array_shift($OutPs);
-          if ($OutP) $Brans = Gen_Get_Cond('Branches',"HostType=3 AND HostId=" . $OutP['HostId'] . " AND (OrgType=4 OR OrgType2=4)");
+          $Brans = Gen_Get_Cond('Branches',"HostType=3 AND HostId=" . $OutP['id'] . " AND (OrgType=4 OR OrgType2=4)");
         }
         if ($Brans) {
           if ($NeedColStage2 == 0) {
@@ -191,10 +191,14 @@ function StartOperations() {
           // Always allowed - Silent
         }
       } else { //World - need to check for offices and branches
-        $World = WorldFromTarget($Target);
+        $World = WorldFromTarget($Target,1);
+        if (!$World) {
+          Error("Could not find Target for Operation <a href=OperEdit.php?id=$Oid>$Oid</a> - Tell Richard");
+          continue;
+        }
         $Wid = $World['id']??0;
         $Offs = Gen_Get_Cond('Offices',"World=$Wid AND (OrgType=4 OR OrgType2=4)");
-        $Brans = Gen_Get_Cond('Branches',"HostType=$ThingType AND HostId$ThingId AND (OrgType=4 OR OrgType2=4)");
+        $Brans = Gen_Get_Cond('Branches',"HostType=$ThingType AND HostId=$ThingId AND (OrgType=4 OR OrgType2=4)");
 
         if ($Offs || $Brans) {
           if ($NeedColStage2 == 0) {
@@ -208,13 +212,13 @@ function StartOperations() {
 
           if ($Offs) {
             foreach ($Offs as $Of) {
-              $Org = Gen_Get('Organisation',$Of['Organisation']);
+              $Org = Gen_Get('Organisations',$Of['Organisation']);
               $log .= " there is an office of " . $Org['Name'] . ", ";
             }
           }
           if ($Brans) {
             foreach ($Brans as $Br) {
-              $Org = Gen_Get('Organisation',$Br['Organisation']);
+              $Org = Gen_Get('Organisations',$Br['Organisation']);
               $log .= " there is an branch of " . $Org['Name'] . ", ";
             }
           }
@@ -232,7 +236,7 @@ function StartOperations() {
     if ($Otp & OPER_SOCP) {
       $SP = $O['Para1'];
       $SocP = Get_SocialP($SP);
-      $World = WorldFromTarget($Target);
+      $World = WorldFromTarget($Target,1);
       $Wid = $World['id']??0;
       $CurVal = Gen_Get_Cond1('SocPsWorlds',"Principle=$SP AND World=$Wid");
       $P2 = ($CurVal['id']??0);
@@ -267,7 +271,7 @@ function StartOperations() {
       if (Has_Trait($Fid,'IMPSEC') && strstr($OpTypes[$O['Type']]['Name'],'Recon')) $Mod--;
 
       if (Has_Trait($Fid,'Friends in All Places') && (($OpTypes[$O['Type']]['Props'] & OPER_NOT_FRIENDS) == 0)) {
-        $World = WorldFromTarget($Target);
+        $World = WorldFromTarget($Target,1);
         $Wid = $World['id']??0;
         $SocPs = Get_SocialPs($Wid);
         $CC = Gen_Get_Cond1('SocialPrinciples',"Principle='Confluence'");

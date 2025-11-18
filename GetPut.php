@@ -33,6 +33,18 @@ function Get_Factions($Force=0,$AllG=0) {
   return $F;
 }
 
+function Get_Factions_Ordered($Force=0,$AllG=0) {
+  global $db,$GAMEID;
+  static $F;
+  if ($F && !$Force) return $F;
+  $res = $db->query("SELECT * FROM Factions " . ($AllG?'':"WHERE GameId=$GAMEID ") . " ORDER BY NPC,Name ");
+  $F = [];
+  if ($res) {
+    while ($ans = $res->fetch_assoc()) { $F[$ans['id']] = $ans; }
+  }
+  return $F;
+}
+
 function Get_Faction_Names($None=1) {
   global $db,$GAMEID;
   $res = $db->query("SELECT id,Name FROM Factions WHERE GameId=$GAMEID ORDER BY id ");
@@ -1393,8 +1405,8 @@ function Get_FactionFaction($id) {
 function Get_FactionFactions($who) {
   global $db,$GAMEID;
   $Ts = [];
-  $res = $db->query("SELECT * FROM FactionFaction WHERE FactionId1=$who");
-  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['FactionId2']] = $ans;
+  $res = $db->query("SELECT ff.*, F.Name FROM FactionFaction ff INNER JOIN Factions F ON ff.FactionId2=F.id WHERE ff.FactionId1=$who ORDER BY F.NPC,F.Name");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ts[$ans['FactionId2']] = $ans; //
   return $Ts;
 }
 

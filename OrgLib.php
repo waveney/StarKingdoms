@@ -307,13 +307,13 @@ function WorldsFromSystem($Sid) {
   return $WLs;
 }
 
-function WorldFromTarget($Target) {
+function WorldFromTarget($Target, $Turns=0) {
   if ($Target>0) {
     return Gen_Get_Cond1('Worlds',"ThingType=1 AND ThingId=$Target");
   } else if ($Target<0) {
     return Gen_Get_Cond1('Worlds',"ThingType=2 AND ThingId=" . -$Target);
   } else {
-    echo "No Target Found when checking - Tell Richard what you did please<p>";
+    if ($Turns) echo "No Target Found when checking - Tell Richard what you did please<p>";
     return [];
   }
 }

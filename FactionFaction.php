@@ -6,7 +6,7 @@
   global $Relations;
   A_Check('GM');
 
-  $Facts = Get_Factions();
+  $Facts = Get_Factions_Ordered();
 
   dostaffhead("A Knows B");
 
