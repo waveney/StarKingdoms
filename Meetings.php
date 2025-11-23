@@ -267,7 +267,6 @@ function SystemSee($Sid) {
 
   echo $txt;
 
-
   echo "</form><p><hr><h1>To Run Combat do the following in order:</h1>";
   echo "<ol><li>Make sure you have unloaded troops, and deployed any Militia and Mil Org Forces<p>";
   echo "<li>Look through the force report and mark to return any Militia/Mil Org Forces, and tick the Exclude from Battle boxes" .
@@ -331,7 +330,7 @@ function SystemSee($Sid) {
       $Dev = ['Devastate'=>$Devo];
       echo "<br>Total Ground Force Levels: <b>$DevTotal</b> - Do " . fm_number1('',$Dev,'Devastate','', ' min=0 max=100') .
            fm_submit("ACTION", "Devastation") . " to <b>$Wtxt</b> " .
-           " and set the conflict flag - this assumes all ground forces are fighting, adjust if they are not";
+           " and set the conflict flag - this assumes all ground forces are fighting, adjust if they are not<br>";
     }
 
   }
