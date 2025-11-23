@@ -84,6 +84,13 @@ function ReturnMilOrgForces() {
     ")) AND LinkId!=" . LINK_INBRANCH);
   $Count = 0;
   foreach($Things as $T) {
+
+    if ($T['Conflict']) continue;
+    $Conflict = 0;
+    $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
+    if ($Conf) $Conflict = $Conf[0]['Conflict'];
+    if ($Conflict) continue;
+
     $Count++;
     $Tid = $T['id'];
     $Bid = $T['ProjectId'];
@@ -113,6 +120,12 @@ function ReturnMilOrgForces() {
 
   $Things = Get_Things_Cond(0,"Type=" . $NTypes['Militia'] . " AND LinkId!=" . LINK_INBRANCH);
   foreach($Things as $Tid=>$T) {
+    if ($T['Conflict']) continue;
+    $Conflict = 0;
+    $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
+    if ($Conf) $Conflict = $Conf[0]['Conflict'];
+    if ($Conflict) continue;
+
     $Count++;
     GMLog( "Returned " . $T['Name']);
     $T['LinkId'] = LINK_INBRANCH;

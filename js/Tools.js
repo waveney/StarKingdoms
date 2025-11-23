@@ -646,4 +646,8 @@ function MeetupFilter() {
 	}
 }
 
+function BattleExclude(F) {
+	$('.Exclude' + F ).prop("checked", true);
+}
+
 

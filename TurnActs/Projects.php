@@ -448,6 +448,12 @@ function ProjectProgressActions($Pay4=0) {
       if ($PNam == 'Train Detachment' || $PNam == 'Reinforce Detachment' || $PNam == 'Refit Detachment') $Bonus -= 1;
     }
 
+/*
+    if (0 && Has_PTraitH($P['Home'],'Untrusted')) {
+      $PNam = $ProjTypes[$P['Type']]['Name'];
+      if ($PNam == 'Construct Ship' || $PNam == 'Train Detachment') $Bonus = -1;
+    }*/
+
     $PActs = $Acts = min($MaxActs,$P['ProgNeeded']-$P['Progress']-$Bonus);
 
     if ($Revolt) {

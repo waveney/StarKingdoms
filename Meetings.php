@@ -36,10 +36,38 @@
   $ThingProps = Thing_Type_Props();
   $DevTotal = 0;
 
-//  var_dump($_REQUEST);
+
+  //  var_dump($_REQUEST);
+
+  function Set_Excludes() {
+    Global $Excludes,$ExcludeList,$Battle;
+    $ExcludeList = explode(',',$Battle['Excludes']);
+    $Excludes = [];
+    if ($ExcludeList) {
+      foreach ($ExcludeList as $Ex) if ($Ex) $Excludes[$Ex] = 1 ;
+    }
+  }
+
+  function Save_Excludes() {
+    Global $Excludes,$ExcludeList,$Battle;
+    if ($Excludes) {
+      $Battle['Excludes'] = implode(',',array_keys($Excludes));
+    } else {
+      $Battle['Excludes'] = '';
+    }
+    Gen_Put('MeetupTurn',$Battle);
+  }
+
+  function Get_Battle($Sid) {
+    global $Battle, $GAME, $GAMEID;
+    static $BatLoc;
+    if ($BatLoc == $Sid) return;
+    $Battle = Gen_Get_Cond1('MeetupTurn',"GameId=$GAMEID AND Turn=" . $GAME['Turn'] . " AND SystemId=$Sid");
+    $BatLoc = $Sid;
+  }
 
 function ForceReport($Sid,$Cat) {
-  global $Facts, $Homes, $TTypes, $ModTypes, $N, $Techs, $ThingProps,$ARMY,$DevTotal ;
+  global $Facts, $Homes, $TTypes, $ModTypes, $N, $Techs, $ThingProps,$ARMY,$DevTotal,$Battle,$Excludes;
   $Things = Get_Things_Cond(0,
     "SystemId=$Sid AND ( BuildState=" . BS_SERVICE . " OR BuildState=" . BS_COMPLETE . ") AND (LinkId>=0 OR LinkId=" . LINK_NOT_MOVING .") ORDER BY Whose");
   $LastF = $Home = $Control = -1;
@@ -50,6 +78,8 @@ function ForceReport($Sid,$Cat) {
   $HomeType = "Unknown";
   $Variants = Gen_Get_All('Variants');
   $VarIndex = NamesList($Variants);
+
+  Set_Excludes();
 
   if ($Cat == 'G') {
     $PTD = Get_PlanetTypes();  // ONLY works for single target at present
@@ -94,10 +124,12 @@ function ForceReport($Sid,$Cat) {
   }
 
   echo "<table border>";
-  echo "<tr><td>What<td>Type<td>Level<td>Evasion<td>Health<td>Attack<td>To Hit<td>" . (($Cat == 'S')?'Speed':'Mobility') . "<td>Actions\n";
+  echo "<tr><td>What<td>Type<td>Level<td>Evasion<td>Health<td>Attack<td>To Hit<td>" . (($Cat == 'S')?'Speed':'Mobility') . "<td>Actions<td>Return /<br>Exclude\n";
   $Kaiju = $KaijuL = 0;
   foreach($Things as $T) {
     $Tid = $T['id'];
+
+    if ($Excludes[$Tid] ??0) continue;
     $Ground = is_on_ground($T);
 //    if ($Tid==2517) var_dump($Ground,$Cat);
 
@@ -117,7 +149,8 @@ function ForceReport($Sid,$Cat) {
         $LastF = $T['Whose'];
         $FirePower = 0;
         $htxt = "<tr><td colspan=9 " . FactColours($LastF,'bisque') . "><h2>" .
-          ($Facts[$LastF]['Name']??'Independant') . "</h2><tr><td colspan=9>";
+          ($Facts[$LastF]['Name']??'Independant') . "</h2><td>" . fm_checkbox('All',$_REQUEST,"ExcludeFact:$LastF"," onchange=BattleExclude($LastF)")
+          . "<tr><td colspan=9>";
         $txt = $Battct = $ftxt = '';
         $txt .= "<br>Damage recieved: <span id=DamTot$Cat$LastF>0</span>";
 
@@ -212,6 +245,7 @@ function ForceReport($Sid,$Cat) {
       if ($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE ) $txt .= fm_checkbox(', Retreat?',$T,'RetreatMe','',"RetreatMe:$Tid");
       if ($TTypes[$T['Type']]['Properties'] & THING_LEAVES_DEBRIS ) $txt .= fm_checkbox(', No Debris?',$T,'NoDebris','',"NoDebris:$Tid");
 
+      $txt .= "<td>" . fm_checkbox('',$T,'Exclude','',"Exclude:$LastF:$Tid class=Exclude$LastF");
       $FirePower += $BD;
     } else {
     }
@@ -227,25 +261,35 @@ function ForceReport($Sid,$Cat) {
 }
 
 function SystemSee($Sid) {
-  global $DevTotal;
+  global $DevTotal,$Battle,$GAMEID,$GAME,$Excludes;
  // echo "<form>";
   $txt = SeeInSystem($Sid,31,1,0,-1,1);
 
   echo $txt;
 
-  echo "</form><p><hr>Make sure you have unloaded troops BEFORE looking at the Ground Combat Report.<p>";
+
+  echo "</form><p><hr><h1>To Run Combat do the following in order:</h1>";
+  echo "<ol><li>Make sure you have unloaded troops, and deployed any Militia and Mil Org Forces<p>";
+  echo "<li>Look through the force report and mark to return any Militia/Mil Org Forces, and tick the Exclude from Battle boxes" .
+        " - if you have done any of these click the Remove forces button<p>";
+  echo "<li>For Ground combat click the 'Devastation' button<p>";
+  echo "<li>Run the fight and apply damage and/or set retreat, when happy click the 'Do All Damage' Button<p>";
+  echo "<li>After the fight tick the appropriate Fight done box on the system lists</ol>";
 
 
   echo "<form method=post action=Meetings.php?ACTION=Check&S=$Sid onkeydown=\"return event.key != 'Enter';\">";
 
   $_REQUEST['IgnoreShield'] = 0;
-  echo "<h2>" . fm_checkbox('Bipass shields - (eg missiles)',$_REQUEST,'IgnoreShield') . "</h2><p>";
+  echo "<h2>" . fm_checkbox('Bypass shields - (eg missiles)',$_REQUEST,'IgnoreShield') . "</h2><p>";
   $mtch = [];
   if (preg_match('/<div class=FullD hidden>/',$txt,$mtch)) {
     echo "<button class='floatright FullD' onclick=\"($('.FullD').toggle())\">Show Remains of Things and Named Characters</button>";
   }
 
+  Get_Battle($Sid);
+  Set_Excludes();
 
+  // var_dump($Battle, $Excludes);
   //      Register_AutoUpdate('Meetings',$Sid);
 
   ForceReport($Sid,'G');
@@ -291,6 +335,9 @@ function SystemSee($Sid) {
     }
 
   }
+  echo fm_submit('ACTION','Remove Forces');
+
+  if ($Excludes) echo fm_submit('ACTION','Reset the excluded Forces');
   echo "</form>";
 
 
@@ -466,6 +513,43 @@ function SystemSee($Sid) {
         Put_World($World);
         echo "$Dev devastation applied to " . $P['Name'] . "<p>";
       }
+
+    case 'Remove Forces':
+      $Sid = $_REQUEST['S'];
+      $N = Get_System($Sid);
+      Get_Battle($Sid);
+      Set_Excludes();
+
+      foreach ($_REQUEST as $R=>$V) {
+        if (preg_match('/Exclude:(\d*):(\d*)/',$R,$Mtch)) {
+          $Fid = $Mtch[1];
+          $Tid = $Mtch[2];
+          $T = Get_Thing($Tid);
+          if ($TTypes[$T['Type']]['Prop2'] & THING_HAS_RECOVERY) {
+            $T['LinkId'] = LINK_INBRANCH;
+            Put_Thing($T);
+          } else {
+            $Excludes[$Tid] = 1;
+          }
+        }
+      }
+
+      Save_Excludes();
+      SystemSee($Sid);
+
+      break;
+
+    case 'Reset the excluded Forces':
+      $Sid = $_REQUEST['S'];
+      $N = Get_System($Sid);
+      Get_Battle($Sid);
+      Set_Excludes();
+      $Excludes = [];
+      Save_Excludes();
+      SystemSee($Sid);
+      break;
+
+
 
     case 'Check 2': // Same as above
       if (isset($_REQUEST['S'])) {

@@ -299,6 +299,9 @@
     if (empty($T['Name'])) {
       $Valid = 0;
       $InValid .= "No Name, ";
+    } else if (preg_match('/^Copy (\#\d* )?of /',$T['Name'])) {
+      $Valid = 0;
+      $InValid .= "No Original Name, ";
     }
     if ($tprops & THING_HAS_BLUEPRINTS ) {
       echo "<tr><td>Class:<td>" . $T['Class'];

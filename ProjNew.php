@@ -90,9 +90,11 @@
 
           echo "<form method=post action=ProjDisp.php?ACTION=NEW&id=$Fid&p=$Ptype&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT>";
 
+          $Home = $Hi;
+
           foreach($Things as $T) {
             $Tid = $T['id'];
-            $pc = Proj_Costs($T['Level']);
+            $pc = Proj_Costs($T['Level'] + (Has_PTraitH($Home,'Untrusted')?1:0));
             $Extra = '';
             if ($_REQUEST['ACTION'] == 'NEWARMY' && Has_Tech($Fid,'Efficient Robot Construction')) $pc[0] = max(1, $pc[0] - $T['Level']);
             if ($_REQUEST['ACTION'] == 'NEWSHIP' && Has_Tech($Fid,'Space Elevator')) $pc[0] = max(1, $pc[0] - $T['Level']);

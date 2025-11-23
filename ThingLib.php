@@ -975,7 +975,8 @@ function Thing_Duplicate($otid) {
   unset($T['id']);
   $T['id'] = $Tid = Insert_db('Things',$T);
   $BName = preg_replace('/Copy of /','',$T['Name']);
-  $T['Name'] = "Copy #$Tid of $BName";
+  $CName = preg_replace('/Copy #(\d*) of/','',$BName);
+  $T['Name'] = "Copy #$Tid of $CName";
 
   $T['SystemId'] = $T['WhereBuilt'] = 0;
   $T['LinkId'] = 0;
