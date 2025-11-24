@@ -126,6 +126,8 @@ function ForceReport($Sid,$Cat) {
   echo "<table border>";
   echo "<tr><td>What<td>Type<td>Level<td>Evasion<td>Health<td>Attack<td>To Hit<td>" . (($Cat == 'S')?'Speed':'Mobility') . "<td>Actions<td>Return /<br>Exclude\n";
   $Kaiju = $KaijuL = 0;
+  $FactLvls = $Movement = 0;
+
   foreach($Things as $T) {
     $Tid = $T['id'];
 
@@ -143,9 +145,14 @@ function ForceReport($Sid,$Cat) {
         if ($LastF >=0) {
           echo $htxt;
           if ($Bat) echo "Battle Tactics: Effectively " . ($Kaiju?$KaijuL:$Bat) . " ( $Battct ) <br>";
-          echo  $ftxt. "<br>Total Firepower: $FirePower" . $txt;
+          echo  $ftxt. "<br>Total Firepower: $FirePower";
+
+          echo "<br>Average " . (($Cat == 'S')?'Speed':'Mobility') . ": $Movement / $FactLvls = " . ceil($Movement / $FactLvls);
+          echo $txt;
         }
         $BD = $Bat = 0;
+        $FactLvls = $Movement = 0;
+
         $LastF = $T['Whose'];
         $FirePower = 0;
         $htxt = "<tr><td colspan=9 " . FactColours($LastF,'bisque') . "><h2>" .
@@ -235,10 +242,13 @@ function ForceReport($Sid,$Cat) {
       if ($T['ShieldPoints']) $txt .= " (" . $T['CurShield'] . "/" . $T['ShieldPoints'] . ") ";
       $txt .= "</span><td><span id=Attack$Tid>$BD</span><td>" . $T['ToHitBonus'] . "<td>";
       if (($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE) || ($TTypes[$T['Type']]['Prop2'] & THING_HAS_SPEED)) {
+        $FactLvls += $T['Level'];
         if ($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES) {
           $txt .= "Mobility: " . sprintf("%0.3g ",$T['Mobility']);
+          $Movement += ceil($T['Mobility']);
         } else {
           $txt .= "Speed: " . sprintf("%0.3g ",$T['Speed']);
+          $Movement += ceil($T['Speed']);
         }
       }
       $txt .=  fm_number1(" Do",$T,'Damage', ''," class=Num3 onchange=Do_Damage($Tid,$LastF,'$Cat')","Damage:$Tid") . " damage";
