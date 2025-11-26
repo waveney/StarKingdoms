@@ -12,11 +12,22 @@
   global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$GAnomStates,$FAnomalyStates;
 
   $As = Gen_Get_Cond('Anomalies',"GameId=$GAMEID ORDER BY SystemId");
+  $Facts = Get_Factions();
 
+ // var_dump($As);
   echo "<h1>List Anomalies</h1>";
   echo "click on id or name to edit description<p>";
 
   $Systems = Get_SystemRefs();
+
+  $FAns = Gen_Get_Cond('FactionAnomaly',"FactionId>0 AND AnomalyId>0 AND (State>0 OR Progress>0) ");
+//  var_dump($FAns);
+  foreach ($FAns as $FA) {
+    if (isset($Facts[$FA['FactionId']]) && ($Facts[$FA['FactionId']]['NPC']==0)) {
+    //var_dump($FA);
+      if (isset($As[$FA['AnomalyId']])) $As[$FA['AnomalyId']]['UseCount'] = ( $As[$FA['AnomalyId']]['UseCount']??0) + 1;
+    }
+  }
 
   echo "<form method=post>";
   Register_AutoUpdate('Generic',0);
@@ -33,6 +44,7 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Location</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Ground /<br>Space</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Status</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Player Count</a>\n";
   echo "</thead><tbody>";
 
   foreach($As as $A) {
@@ -48,6 +60,7 @@
     if (($A['WithinSysLoc'] == 3) || ($LocGr == 2) || ($LocGr ==4)) $Loc = 'Ground';
     echo "<td>$Loc";
     echo "<td>" . fm_select($GAnomStates,$A,'Complete',0,'',"Anomalies:Complete:$i");
+    echo "<td>" . ($A['UseCount']??0);
   }
   echo "</tbody></table></div>\n";
 
