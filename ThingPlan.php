@@ -487,6 +487,7 @@
         $T['Stability'] = 1;
         echo "<tr><td>Stability:<td>" . sprintf('%0.3g',ceil($T['Stability'])) . "$SPad<td colspan=3>At current Tech Levels";
       }
+      echo "<tr><td>Evasion:<td>" . $T['Evasion'] . "$SPad<td colspan=3>At current Tech Levels";
       if (($CS = ($MMs[$NamesMod['Cargo Space']]['Number']??0))) echo "<tr><td>Cargo Capacity:<td>$CS$SPad<td colspan=3>At current Tech Levels";
 
     }
