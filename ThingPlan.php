@@ -10,7 +10,7 @@
   include_once("PlayerLib.php");
   include_once("ProjLib.php");
 
-  global $FACTION,$GAME,$ARMY;
+  global $FACTION,$GAME,$ARMY,$GAMEID;
   A_Check('Player');
   $Fid = 0;
 
@@ -524,7 +524,13 @@
         }
       }
       echo "<input type=submit name=Validate value=Validate>\n";
-      echo "<input formnovalidate type=submit name=ACTION value=Delete >\n";
+
+      $Projs = Gen_Get_Cond('Projects',"GameId=$GAMEID AND (ThingId=$Tid OR ThingId2=$Tid)");
+      if ($Projs) {
+        echo "Can't <b>Delete</b> as it is being used in " . plural($Projs,"no!","a Project", count($Projs) . " Projects") . "<br>";
+      } else {
+        echo "<input formnovalidate type=submit name=ACTION value=Delete >\n";
+      }
       if ($CanMake) echo "<h2>Once planned, go to where you want to make it and select an appropriate project</h2>";
       echo "You can customise by adding crew names, an images, notes and gadgets by selecting the thing while it is being made or used later.<p>\n";
     }
