@@ -44,8 +44,9 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
   if ($Fid) $txt .=  "If the Thing would benefit from refit/repair/re-equipping/reinforcing then the Refit has the number of modules (+1 " .
     "if it needs repair as well)</br>";
   if ($FACTION['HasPrisoners']??0) $txt .=  "The Prisoner Tab shows Prisoners YOU have<p>\n";
-  if ($GM) $txt .=  "Notes: <B>N</b> - GM Notes, Coloured start of name = hidden control<P>";
-  if (!$GM) $txt .=  "StSpN = Stability, Speed or Mobility  N= Nebula Sensors<p>";
+  $txt .=  "Notes: <b>G/S/O</b> - Ground/Space/Other<br>";
+  if ($GM) $txt .=  "<B>N</b> - GM Notes, Coloured start of name = hidden control<P>";
+  if (!$GM) $txt .=  "<b>StSpN</b> = Stability, Speed or Mobility  N= Nebula Sensors<p>";
   $txt .=  "For loading/unloading of troops and characters, go to the thing<p>\n";
 //  $txt .=  "Use only ONE of the filters to the right<br>\n";
 
@@ -71,6 +72,7 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
   if (!$GM) $txt .=  "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>StSpN</a>\n";
   $txt .=  "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>State</a>\n";
   $txt .=  "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Where</a>\n";
+  $txt .=  "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>G/S/O</a>\n";
   $txt .=  "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Actions</a>\n";
   $txt .=  "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Using Link / Details</a>\n";
   $txt .=  "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Moving to</a>\n";
@@ -176,9 +178,10 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
       $txt .=  "<td>" . ($Systems[$T['SystemId']]??'???');
       $txt .=  "<td>Direct<td>";
       $txt .=  "<td>" . ($T['NewSystemId'] == 0? "" : $Systems[$T['NewSystemId']]);
+      $txt .=  "<td>"; //GSO to be set
     } else if ($Prop2 & THING_AT_LINK) {
       $L = Get_Link($T['Dist1']);
-      $txt .=  "<td><td><td>At: " . ($L['Name']??'Unknown') . "<td>";
+      $txt .=  "<td><td><td>At: " . ($L['Name']??'Unknown') . "<td>S<td>";
     } else {
       $Lid = $T['LinkId'];
 
@@ -186,13 +189,16 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
       $Host = 0;
       if ($Lid >= 0 || ($MoveProps[$Lid] &1)) {
         $txt .=  (empty($Systems[$T['SystemId']]) ?'': $Systems[$T['SystemId']]);
+        $txt .=  "<td>" . (($T['BuildState'] == BS_PLANNING)?'-':(is_in_space($T)?'S':'G'));
       } else if ($Lid == LINK_INBRANCH ) {
-        $txt .=  'Not Deployed';
+        $txt .=  'Not Deployed<td>O';
       } else if (($MoveProps[$Lid] &2)) {
-        $txt .=  'On Board';
+        $txt .=  'On Board<td>O';
         $Host = Get_Thing($T['SystemId']);
       } else {
         $txt .=  $MoveNames[$Lid];
+        $IS = (is_in_space($T)?'S':'G');
+        $txt .= "<td>" . [0=>'?', -1=>'O', -2=>'G', -3=>'S', -4=>'G' ,-5=>$IS, -6=>$IS, -7=>$IS, -8=>'O'];
       }
 
       $txt .=  "<td>";

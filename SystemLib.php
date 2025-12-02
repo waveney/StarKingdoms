@@ -689,7 +689,7 @@ function PlanetScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
   $Ps = Get_Planets($Sid);
   if (!$Ps) return '';
   foreach ($Ps as $P) {
-    if ($P['Concealment'] > $SpaceLevel) continue;
+    if ($P['Concealment'] > max(0,$SpaceLevel)) continue;
     $ptxt = '';
 
     $Pid = $P['id'];
@@ -884,7 +884,7 @@ function PlanetScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0) {
       }
     }
 
-    if ($ptxt) {
+    if ($ptxt??0) {
       $blobs[]= "Z0";
       $blobs[]= $ptxt;
       $ptxt = '';
@@ -961,7 +961,7 @@ function SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0,$DEBUG
   }
   $txt .=  "</ul><p>\n";
   if ($LFromtxt) {
-    $txt .= "<h2>There are also these " . Feature('LinkRefText','Stargate') . "s:<h2>" .
+    $txt .= "<h2>There are also these " . Feature('LinkRefText','Stargate') . "s:</h2>" .
       "You know that come here.  You do not yet know how to use them from this end<P><ul>$LFromtxt</ul><p>";
   }
 

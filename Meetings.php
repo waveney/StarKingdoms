@@ -147,7 +147,7 @@ function ForceReport($Sid,$Cat) {
           if ($Bat) echo "Battle Tactics: Effectively " . ($Kaiju?$KaijuL:$Bat) . " ( $Battct ) <br>";
           echo  $ftxt. "<br>Total Firepower: $FirePower";
 
-          echo "<br>Average " . (($Cat == 'S')?'Speed':'Mobility') . ": $Movement / $FactLvls = " . ceil($Movement / $FactLvls);
+          echo "<br>Average " . (($Cat == 'S')?'Speed':'Mobility') . ": $Movement / $FactLvls = " . ceil($Movement / max($FactLvls,1));
           echo $txt;
         }
         $BD = $Bat = 0;
@@ -223,9 +223,9 @@ function ForceReport($Sid,$Cat) {
       $Resc = 0;
       [$BD,$ToHit] = Calc_Damage($T,$Resc);
       $tprops = $ThingProps[$T['Type']];
-      if (($Cat == 'G') && ($TTypes[$T['Type']]['Name'] != 'Militia') && (($VarIndex[$T['Variant']]['Name']??'') != 'Precision') && $BD>0) {
+      if (($Cat == 'G') && ($TTypes[$T['Type']]['Name'] != 'Militia') && (($VarIndex[$T['Variant']]??'') != 'Precision') && $BD>0) {
         $DevTotal += $T['Level'];
-        if (($VarIndex[$T['Variant']]['Name']??'') == 'Artillery') $DevTotal += $T['Level'];
+        if (($VarIndex[$T['Variant']]??'') == 'Artillery') $DevTotal += $T['Level'];
       }
 
 

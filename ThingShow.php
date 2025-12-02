@@ -945,7 +945,7 @@ function Show_Thing(&$T,$Force=0) {
  // Max modules, current count, what e
   }
 
-  if ($GM && ($tprops & (THING_HAS_CIVSHIPMODS | THING_HAS_ARMYMODULES))) {
+  if ($GM && ($tprops & (THING_HAS_CIVSHIPMODS | THING_HAS_ARMYMODULES)) || Access('God')) {
     echo "<tr>" . fm_number1('Sensors',$T,'Sensors','','min=0 max=99') . fm_number1(' Level',$T,'SensorLevel','','min=0 max=20') .
          "<td>Neb Sensors: " . fm_checkbox('', $T,'NebSensors') . fm_number1('Stability',$T,'Stability','','min=0 max=1000');
     if (($T['BuildFlags'] & BUILD_FLAG1 ) || ($Fid && Has_Tech($Fid,'Cret-Chath Engineering'))) {
@@ -1647,7 +1647,8 @@ function Show_Thing(&$T,$Force=0) {
       $DTs = Get_DistrictTypes();
       $MaxDeep = Has_Tech($Fid,'Space Construction Gear')*2;
       foreach ($DTs as $D) if (($D['Props'] & 16) && ((eval("return " . $D['Gate'] . ";" )))) $PrimeMods[$D['id']] = $D['Name'];
-      echo "<tr><td><td colspan=6>" . (($GM || $T['Progress'] == 0)? fm_number0('How many districts:',$T,'Dist1',''," max=$MaxDeep "): ("Districts: " . $T['Dist1']));
+      echo "<tr><td><td colspan=6>" .
+        (($GM || $T['Progress'] == 0)? fm_number0('How many districts:',$T,'Dist1',''," max=$MaxDeep "): ("Districts: " . $T['Dist1']));
       echo " First District:" . fm_select($PrimeMods,$T,'Dist2',1);
       echo "<br>" . fm_text0("Name of Space Station",$T,'MakeName');
       $Acts = - $PTNs['Build Space Station']['CompTarget']*$T['Dist1'];

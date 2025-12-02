@@ -241,19 +241,25 @@
     echo "<tr>" . fm_number('Cost',$P,'Costs') . fm_number('Prog Needed', $P,'ProgNeeded');
     if ($Inside) echo fm_number('DType',$P,'DType');
     echo "<tr>" . fm_number("Progress",$P,'Progress') . fm_number('Last Updated',$P,'LastUpdate');
-    if ($PProps &2) {
+    if ($PProps & PROJ_THING) {
       if ($P['ThingId']) {
         $Thing = Get_Thing($P['ThingId']);
         echo "<tr>" . fm_number('Thing',$P,'ThingId') . "<td><b><a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . ($Thing['Name']??'Unknown') . "</a></b>";
       } else {
         echo "<tr>" . fm_number('Thing',$P,'ThingId');
       }
-      if ($PProps & 4) {
+      if ($PProps & PROJ_2THINGS) {
         if ($P['ThingId2']) {
           $Thing2 = Get_Thing($P['ThingId2']);
           echo fm_number('Thing 2',$P,'ThingId2') . "<td><a href=ThingEdit.php?id=" . $P['ThingId2'] . ">" . $Thing2['Name'] . "</a>";
         } else {
           echo fm_number('Thing 2',$P,'ThingId2');
+        }
+      } else {
+        if ($PProps & PROJ_EXIST) {
+
+        } else {
+          if (($Thing['BuildState']>0) || ($Thing['BluePrint']<0)) echo "<tr>" . fm_text('New Name',$P,'OrgName');
         }
       }
     } else if ($God || $P['ThingType']) { // WRONG

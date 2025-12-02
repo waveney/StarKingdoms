@@ -1012,6 +1012,8 @@ function MilitiaArmyRecovery() {
 
           }
 
+        } else {
+          TurnLog($Fid,"Nothing found for " . $T['Name'] . " to heal");
         }
 
       }

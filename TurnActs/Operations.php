@@ -424,6 +424,11 @@ function OperationsComplete() {
     $Otp = $OpTypes[$O['Type']]['Props'];
     $Wh = $O['SystemId'];
     $Sys = Get_System($Wh);
+    if (!$Sys) {
+      Error("Could not identify the World to do Operation <a href=OperEdit.php?id=>$Oid>" . $O['Name'] . "</a> - bug - call Richard");
+      continue;
+    }
+
     $TWho = $Sys['Control'];
     $Org = Gen_Get('Organisations',$O['OrgId']);
     if ($O['TurnState'] >1) {

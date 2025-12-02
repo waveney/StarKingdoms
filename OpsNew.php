@@ -596,7 +596,7 @@ var_dump($FS);
         }
 
         foreach ($MyTechs as $Tid=>$T) {
-          if (($Techs[$T['Tech_Id']]['Cat']??0) == 0 || isset($FactTechs[$Tid]) ) continue;
+          if (($Techs[$T['Tech_Id']]['Cat']??0) == 0 || (isset($FactTechs[$Tid]) && ($FactTechs[$Tid]['Level']>0)) ) continue;
           if (!isset($FactTechs[$Techs[$Tid]['PreReqTech']]) ) continue;
           $Tec = $Techs[$Tid];
           $Lvl = $Tec['PreReqLevel'];

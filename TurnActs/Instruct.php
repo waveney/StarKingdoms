@@ -1612,8 +1612,8 @@ function InstructionsProgress() {
         $SMods = Get_ModulesType($Tid, 'Space Construction Gear');
         $GMods = Get_ModulesType($Tid, 'Engineering Corps');
         $ProgGain = 0;
-        if ($SMods) $SMods['Level']*$SMods['Number'];
-        if ($GMods) $GMods['Level']*$GMods['Number'];
+        if ($SMods) $ProgGain += $SMods['Level']*$SMods['Number'];
+        if ($GMods) $ProgGain += $GMods['Level']*$GMods['Number'];
         GMLog("$ProgGain progress on " . $ThingInstrs[abs($T['Instruction'])] . " for " . $Facts[$T['Whose']]['Name'] . ":" . $T['Name']);
         TurnLog($Fid,"$ProgGain progress on " . $ThingInstrs[abs($T['Instruction'])] . " by " . $T['Name'],$T);
         $T['Progress'] = min($T['ActionsNeeded'],$T['Progress']+$ProgGain);

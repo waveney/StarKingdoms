@@ -2,6 +2,17 @@
 
 // Things far handling projects
 
+define('PROJ_RUSH',        1);
+define('PROJ_THING',       2);
+define('PROJ_2THINGS',     4);
+define('PROJ_OTHERFACT',   8);
+define('PROJ_TIGHTLOC', 0x10);
+define('PROJ_INSTUCT',  0x20);
+define('PROJ_NOLVLCHCK',0x40);
+define('PROJ_PLUS1LVL', 0x80);
+define('PROJ_EXIST',   0x100);
+define('PROJ_REFIT',   0x200);
+
 function Proj_Costs($lvl) {
   if ($lvl<0) return [1E6,1E6]; // Should be never but...
   if ($lvl <=16) return [[1,50],[1,50],[4,200],[9,450],[16,800],[25,1250],[36,1800],[49,2450],[64,4300],[81,4050],[100,5000],[121,5550],
@@ -23,7 +34,7 @@ $Project_Statuses = array_flip($Project_Status);
 
 function  Where_Is_Home($PH,$Set=0) {
   $Home = Get_ProjectHome($PH);
-// var_dump("Home",$Home);echo "<p>";
+  var_dump("Home",$Home);echo "<p>";
   switch ($Home['ThingType']) {
   case '1': // Planet
     if (!$Set) return [$Home['SystemId'],$Home['WithinSysLoc']];

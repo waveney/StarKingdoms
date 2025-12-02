@@ -178,6 +178,7 @@ function StartProjects() {
             $P['ThingId'] = $Tid;
             Put_Project($P);
           }
+          if ($P['OrgName']) $T['Name'] = $P['OrgName'];
           $T['BuildState'] = BS_BUILDING; // Building
           $T['SystemId'] = $T['WhereBuilt'] = $Where[0];
           $T['WithinSysLoc'] = $Where[1];
