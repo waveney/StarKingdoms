@@ -76,7 +76,7 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
   $txt .=  "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Actions</a>\n";
   $txt .=  "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Using Link / Details</a>\n";
   $txt .=  "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Moving to</a>\n";
-  if ($Fid) $txt .=  "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Refit?</a>\n";
+  if ($Fid) $txt .=  "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Refit?</a>\n";
   if ($GM) $txt .=  "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Sensors</a>\n";
   if ($GM) $txt .=  "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Notes</a>\n";
   if (!$GM) $txt .=  "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Prio</a>\n";
@@ -181,7 +181,7 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
       $txt .=  "<td>"; //GSO to be set
     } else if ($Prop2 & THING_AT_LINK) {
       $L = Get_Link($T['Dist1']);
-      $txt .=  "<td><td><td>At: " . ($L['Name']??'Unknown') . "<td>S<td>";
+      $txt .=  "<td>" . (empty($Systems[$T['SystemId']]) ?'': $Systems[$T['SystemId']]) . "<td>S<td>At: " . ($L['Name']??'Unknown') . "<td>S<td>";
     } else {
       $Lid = $T['LinkId'];
 
