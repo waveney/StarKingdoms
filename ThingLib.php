@@ -1436,6 +1436,10 @@ function Update_Militia(&$W,&$Dists,$NewOwn=0,$Deploy=0) {
   foreach($Dists as $D) {
     if (($DTs[$D['Type']]['Props'] &128) == 0) $Dcount += ($D['Number'] * ($D['Type'] ==2?2:1));
   }
+
+  $MilitiaEvade = (Has_Tech($FactN,'Guerilla Warfare Techniques')?50:40);
+  var_dump($FactN,$MilitiaEvade);
+
 //echo count($Mils);
   $CMils = count($Mils);
   if ($CMils >= $Dcount) {
@@ -1458,7 +1462,7 @@ function Update_Militia(&$W,&$Dists,$NewOwn=0,$Deploy=0) {
       echo "<h2>Militia already setup</h2>";
     }
     foreach($Mils as $Ml) {
-      if (($Ml['OrigHealth'] != $Hlth) || ($Ml['ActDamage'] !=8) || $Ml['Mobility'] != 2) { // No longer check whose
+      if (($Ml['OrigHealth'] != $Hlth) || ($Ml['ActDamage'] !=8) || ($Ml['Mobility'] != 2) || ($Ml['Evasion'] != $MilitiaEvade) ) { // No longer check whose
         $Diff = $Hlth - $Ml['OrigHealth'];
         $Ml['OrigHealth'] = $Hlth;
         $Ml['CurHealth'] = min($Ml['CurHealth']+$Diff,$Hlth );
@@ -1466,6 +1470,7 @@ function Update_Militia(&$W,&$Dists,$NewOwn=0,$Deploy=0) {
         $Ml['ActDamage'] = 8;
         $Ml['Mobility'] = 2;
         $Ml['WhereBuilt'] = $Ml['SystemId'];
+        $Ml['Evasion'] = $MilitiaEvade;
       }
       $Ml['LinkId'] = ($Deploy?0:LINK_INBRANCH);
       $Ml['WithinSysLoc'] = $loc;
@@ -1476,7 +1481,7 @@ function Update_Militia(&$W,&$Dists,$NewOwn=0,$Deploy=0) {
     $MNames = [];
 
     foreach ($Mils as $Ml) $MNames[$Ml['Name']] = 1; // Didts & Dist2 give short cut to world and districts
-    $M = ['Type'=>20, 'CurHealth'=>$Hlth, 'OrigHealth'=>$Hlth, 'Evasion'=>40,
+    $M = ['Type'=>20, 'CurHealth'=>$Hlth, 'OrigHealth'=>$Hlth, 'Evasion'=>$MilitiaEvade,
       'Whose'=>$FactN, 'SystemId'=>$Sys, 'WithinSysLoc'=>$loc, 'BuildState'=>BS_COMPLETE, 'ActDamage'=>8, 'WhereBuilt'=>$Sys,
            'Dist1'=> $W['ThingType'], 'Dist2'=>$W['ThingId'], 'LinkId' => ($Deploy?0:LINK_INBRANCH), 'Mobility'=>2  ];
     $Mn = 1;

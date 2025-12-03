@@ -2019,7 +2019,7 @@ function Show_Thing(&$T,$Force=0) {
         case 2: // On Planet
           $Ps = Get_Planets($T['SystemId']);
           $Panidx = $T['WithinSysLoc']%100;
-          $Pix = 0;
+          $Pix = 1;
           foreach ($Ps as $Pid=>$P) {
             if ($Pix == $Panidx) break;
             $Pix++;
