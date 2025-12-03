@@ -732,6 +732,7 @@ function Income_Calc($Fid) {
   $Embassies = count(Get_Things_Cond($Fid,'Type=' . TTName('Embassy') . ' AND BuildState=' . BS_COMPLETE));
   $MineFields = count(Get_Things_Cond($Fid,'Type=' . TTName('Minefield') . ' AND BuildState=' . BS_COMPLETE));
   $AstMines = Get_Things_Cond($Fid,'Type=' . TTName('Asteroid Mine') . ' AND BuildState=' . BS_COMPLETE . " ORDER BY SystemId");
+  $StripMines = Get_Things_Cond($Fid,'Type=' . TTName('Strip Mine') . ' AND BuildState=' . BS_COMPLETE);
 
   $LastSid = 0;
   $Asts = [];
@@ -746,6 +747,18 @@ function Income_Calc($Fid) {
       $AstVal += (($Ast['Minerals']??0) +
         ((Has_PTraitP($Ast['id'],'Rare Mineral Deposits') && Has_Tech($Fid,'Advanced Mineral Extraction'))?3:0))*$AM['Level'];
     }
+  }
+
+  foreach ($StripMines as $SM) {
+    $Bid = $SM['Dist1'];
+    if ($Bid>0) {
+      $Body = Get_Planet($Bid);
+    } else {
+      $Body = Gen_Moon(-$Bid);
+    }
+    $SMSys = Get_System($SM['SystemId']);
+    $EconVal += $Body['Minerals'] * 3;
+    $EccTxt .= "Plus " . $Body['Minerals'] * 3 . " From a Strip Mine on " . $Body['Name'] . " in " . $SMSys['Ref'] . "<br\n";
   }
 
   $Things = Get_Things($Fid);
@@ -781,6 +794,7 @@ function Income_Calc($Fid) {
         }
       }
     }
+
     if ($MyPBMPBranches && !$HasOwnGalaxy ) {
       foreach ($MyPBMPBranches as $Bid=>$B ) {
           if (!isset($Orgs[$B['Organisation']])) $Orgs[$B['Organisation']] = Gen_Get('Organisations',$B['Organisation']);

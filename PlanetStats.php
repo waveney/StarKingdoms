@@ -7,6 +7,8 @@
 
   dostaffhead("Planet Statistics");
 
+  echo "If Locn is Red, then a Moon.<br>A number in Brackets is Minerals, if any<p>";
+
   global $db, $GAME,$GAMEID;
 
   $PTD = Get_PlanetTypes();
@@ -30,7 +32,8 @@
         $pt = $M['Type'];
         if (!isset($PTD[$pt]['MCount'])) $PTD[$pt]['MCount']=0;
         $PTD[$pt]['MCount']++;
-        }
+        $PTD[$pt]['Where'] .= ' <a href=SysEdit.php?R=' . $N['Ref'] . " style='color:red'>" . $N['Ref'] . "</a> ";
+      }
       }
     if (!$Ps && (($N['Flags']&2) == 0)) {
       $unpop++;

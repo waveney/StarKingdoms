@@ -181,7 +181,7 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
       $txt .=  "<td>"; //GSO to be set
     } else if ($Prop2 & THING_AT_LINK) {
       $L = Get_Link($T['Dist1']);
-      $txt .=  "<td>" . (empty($Systems[$T['SystemId']]) ?'': $Systems[$T['SystemId']]) . "<td>S<td>At: " . ($L['Name']??'Unknown') . "<td>S<td>";
+      $txt .=  "<td>" . (empty($Systems[$T['SystemId']]) ?'': $Systems[$T['SystemId']]) . "<td>S<td><td>At: " . ($L['Name']??'Unknown') . "<td>";
     } else {
       $Lid = $T['LinkId'];
 
@@ -198,7 +198,7 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
       } else {
         $txt .=  $MoveNames[$Lid];
         $IS = (is_in_space($T)?'S':'G');
-        $txt .= "<td>" . [0=>'?', -1=>'O', -2=>'G', -3=>'S', -4=>'G' ,-5=>$IS, -6=>$IS, -7=>$IS, -8=>'O'];
+        $txt .= "<td>" . [0=>'?', -1=>'O', -2=>'G', -3=>'S', -4=>'G' ,-5=>$IS, -6=>$IS, -7=>$IS, -8=>'O'][$Lid];
       }
 
       $txt .=  "<td>";

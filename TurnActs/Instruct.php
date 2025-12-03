@@ -713,6 +713,25 @@ function Instructions() {
         TurnLog($T['Whose'],"Starting a Wormhole Destabiliser in " . $N['Ref'],$T);
         break;
 
+      case 'Build Strip Mine':
+        if (!Spend_Credit($T['Whose'],$T['InstCost'],"Make Strip Mine in " . $N['Ref']) ) {
+          $T['Progress'] = -1; // Stalled
+          TurnLog($T['Whose'],"Could not afford to start a Strip Mine in " .$N['Ref'],$T);
+          break;
+        }
+        $Existing = Get_Things_Cond(0,"SystemId=" . $T['SystemId'] . " AND WithinSysLoc=" . $T['WithinSysLoc'] . " AND Type=" . TTName('Strip Mine'));
+        if ($Existing) {
+          $T['Progress'] = -1; // Stalled
+          TurnLog($T['Whose'],"Could not start a Strip Mine in " .$N['Ref'] . " as there is already one there",$T);
+          break;
+        }
+        GMLog($Facts[$T['Whose']]['Name'] . " is starting a Strip Mine in " . $N['Ref']);
+
+        $T['Instruction'] = -$T['Instruction'];
+        break;
+
+
+
       default: // everything else
 
     }
@@ -1535,6 +1554,21 @@ function InstructionsComplete() {
             " <b>BUT NO LINK SPECIFIED</b>");
         }
 
+      case 'Build Strip Mine':
+        if ($T['Dist1']>0 ) {
+          $Body = Get_Planet($T['Dist1']);
+        } else {
+          $Body = Get_Moon(-$T['Dist1']);
+        }
+
+        $NT = ['GameId'=>$GAME['id'], 'Type'=> TTName('Strip Mine'), 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'],
+          'Whose'=>$T['Whose'], 'BuildState'=>BS_COMPLETE, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName'], 'Dist1' => $T['Dist1']];
+        Put_Thing($NT);
+        TurnLog($T['Whose'],"A strip mine has been established on " . $Body['Name'] . " in " . $N['Ref']);
+        GMLog($Facts[$T['Whose']]['Name'] . " has built a strip mine on " . $Body['Name'] . " in " . $N['Ref']);
+        break;
+
+
 
       case 'Decommision':
       case 'Disband':
@@ -1609,6 +1643,7 @@ function InstructionsProgress() {
       case 'Build Wormhole Stabiliser' :
       case 'Build Wormhole Destabiliser' :
       case 'Link Repair':
+      case 'Build Strip Mine':
         $SMods = Get_ModulesType($Tid, 'Space Construction Gear');
         $GMods = Get_ModulesType($Tid, 'Engineering Corps');
         $ProgGain = 0;
@@ -1679,6 +1714,7 @@ function InstructionsProgress() {
 
 
       default:
+        if (Access('God')) echo "Not progressing Instruction for $Tid - " . $ThingInstrs[abs($T['Instruction'])];
         break;
     }
   }

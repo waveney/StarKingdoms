@@ -21,12 +21,13 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
                 'Make Advanced Deep Space Sensor','Salvage',//29
                 'Terraform','Link Repair','Collaborative DSC','Space Survey','Planetary Survey','Collaborative Planetary Construction',
                 'Collaborative Space Construction','Build Wormhole Stabiliser', 'Scavenge', 'Build Wormhole Destabiliser',
+                'Build Strip Mine',
 ];
 $IntructProps = [0,2,0,0,0,0,1, 1,1,
                  1,1,1,1, 1,1,//14
                  1,1,1,1, 1,0,0, //21
                  1,1,0,0,1,0, 1,1, //29
-                 0,1,0,0,0,0, 1,1,0,1]; // 1 = DSC, 2= Pc
+                 0,1,0,0,0,0, 1,1,0,1,1]; // 1 = DSC, 2= Pc
 $InstrNotBy =   [0,0,1,0,0,1,0,
                  0,0,
                  0,0,0,0,
@@ -36,7 +37,7 @@ $InstrNotBy =   [0,0,1,0,0,1,0,
                  2,1,0,1,1,1,
                  0,0,
                  0,1,1,2,2,2,
-                 2,2,2,2,2];
+                 2,2,2,2,2,2];
 
 $Advance = ['','','Advanced ','Very Advanced ','Ultra Advanced ','Evolved '];
 $ValidMines = [0,1,0,1,0,1,0,0,0,0,0];
@@ -1099,14 +1100,14 @@ function is_vowel(&$Text) {
 }
 
 function is_on_ground(&$T) {
-  if ($T['LinkId']<0) return 0;
+  if ($T['LinkId']<0 && ($T['linkId'] != LINK_NOT_MOVING)) return 0;
   $LocType = intdiv($T['WithinSysLoc'],100);
   if (($T['WithinSysLoc'] == 3) || $LocType==2 || $LocType==4 ) return 1;
   return 0;
 }
 
 function is_in_space(&$T) {
-  if ($T['LinkId']<0) return 0;
+  if ($T['LinkId']<0 && ($T['linkId'] != LINK_NOT_MOVING)) return 0;
   $LocType = intdiv($T['WithinSysLoc'],100);
   if (($T['WithinSysLoc'] == 3) || $LocType==2 || $LocType==4 ) return 0;
   return 1;

@@ -1,5 +1,6 @@
 CREATE TABLE `Moons` (
   `id` int NOT NULL AUTO_INCREMENT,
+  `SystemId` int NOT NULL,
   `PlanetId` int NOT NULL,
   `Name` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `ShortName` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,

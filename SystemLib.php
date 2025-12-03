@@ -270,12 +270,12 @@ function Show_System(&$N,$Mode=0) {
   } else {
     echo "<h1>Planets</h1>";
     echo "<div class=tablecont><table width=90% border class=SideTable>\n";
-    echo "<tr><td>Name<td>Type<td>AU<td>Heat<td>Habitable\n";
+    echo "<tr><td>Name<td>Type<td>AU<td>Heat<td>Habitable<td>Minerals\n";
 //    if (Access('God')) echo "<td>Orbital Number";
     foreach ($Planets as $P) {
       $Pid = $P['id'];
       echo "<tr><td><a href=PlanEdit.php?id=$Pid>" . ($P['Name']?$P['Name']:$Pid) . "</a><td>" . PM_Type($PTD[$P['Type']], "Planet") . "<td>" . RealWorld($P,'OrbitalRadius')
-           . "<td>Heat: " . RealHeat($N,$P) . "<td>" . ($PTD[$P['Type']]['Hospitable']?'Yes':'No');
+           . "<td>Heat: " . RealHeat($N,$P) . "<td>" . ($PTD[$P['Type']]['Hospitable']?'Yes':'No') . "<td>" . $P['Minerals'];
 //      if (Access('God')) echo "<td>" . sqrt($P['OrbitalRadius']**3/($N['Mass']));
       }
     echo "</table></div>\n";

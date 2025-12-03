@@ -1384,7 +1384,7 @@ function Show_Thing(&$T,$Force=0) {
       break;
 
     case 'Build Wormhole Destabiliser':
-      if ($Moving || !$HasDeep || !Has_Tech($Fid,'	Wormhole Destabilisation') ) continue 2;
+      if ($Moving || !$HasDeep || !Has_Tech($Fid,'Wormhole Destabilisation') ) continue 2;
       $Ref = $N['Ref'];
       $Ls = Get_Links($Ref);
       $Sites = [];
@@ -1406,6 +1406,38 @@ function Show_Thing(&$T,$Force=0) {
       if (!$Sites) continue 2;
       break;
 
+    case 'Build Strip Mine':
+      if ($Moving || !$HasPlanet || !Has_Tech($Fid,'Strip-Mining') ) continue 2;
+      if (!is_on_ground($T)) continue 2;
+      $Existing = Get_Things_Cond(0,"SystemId=" . $T['SystemId'] . " AND WithinSysLoc=" . $T['WithinSysLoc'] . " AND Type=" . TTName('Strip Mine'));
+      if ($Existing) continue 2;
+      $LocType = intdiv($T['WithinSysLoc'],100);
+      $Body = [];
+      $PlanTypes = Get_PlanetTypes();
+      switch ($LocType) {
+        case 2: // On Planet
+          $Ps = Get_Planets($T['SystemId']);
+          $Panidx = $T['WithinSysLoc']%100;
+
+ //         var_dump($T['WithinSysLoc'],$LocType,$Panidx );
+          $Pix = 1;
+          foreach ($Ps as $Pid=>$P) {
+            if ($Pix == $Panidx) break;
+            $Pix++;
+          }
+          $Body = $P;
+          break;
+        case 4: //On Moon
+          // Not YET coded..
+          break;
+        default:
+          continue 3;
+      }
+
+//      var_dump($Body,$PlanTypes[$Body['Type']]);
+      if ($PlanTypes[$Body['Type']]['Hospitable'] > 0 ) continue 2;
+      if (!(($Body['Minerals']??0) >0)) continue 2;
+      break;
 
     default:
       continue 2;
@@ -1980,16 +2012,45 @@ function Show_Thing(&$T,$Force=0) {
       $Acts = $PTNs['Build Wormhole Destabiliser']['CompTarget'];
       break;
 
+    case 'Build Strip Mine':
+      $LocType = intdiv($T['WithinSysLoc'],100);
+      $Body = [];
+      switch ($LocType) {
+        case 2: // On Planet
+          $Ps = Get_Planets($T['SystemId']);
+          $Panidx = $T['WithinSysLoc']%100;
+          $Pix = 0;
+          foreach ($Ps as $Pid=>$P) {
+            if ($Pix == $Panidx) break;
+            $Pix++;
+          }
+          $Body = $P;
+          $T['Dist1'] = $Body['id'];
+          break;
+        case 4: //On Moon
+          // Not YET coded..
+          $T['Dist1'] = -$Body['id'];
+          break;
+        default:
+      }
+      $ProgShow = 2;
+      $Acts = $PTNs['Build Strip Mine']['CompTarget'];
+      echo "<br>" . fm_text0("Name of Strip Mine",$T,'MakeName');
+      echo "<br>Strip Mine on " . $Body['Name'] . " where there are " . $Body['Minerals'] . " Minerals";
+      break;
+
     default:
       break;
     }
+
+
     $T['ActionsNeeded'] = $Acts;
     if ($Cost < 0) {
       $T['InstCost'] = $Cost = 0;
     } else {
       $T['InstCost'] = $Cost = $Acts*Feature('ConstructionCost',10);
     }
-    if (Has_Trait($Fid,'Built for Construction and Logistics') && ($Cost>200)) {
+    if (($Cost>200) && Has_Trait($Fid,'Built for Construction and Logistics')) {
       $T['InstCost'] = $Cost = (200+($Cost-200)/2);
     }
     if ($ProgShow) {
