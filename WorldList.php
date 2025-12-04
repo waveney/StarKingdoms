@@ -92,7 +92,7 @@
     }
   }
 
-  foreach ($Worlds as $W) {
+  foreach ($Worlds as $Wid=> $W) {
 // var_dump($W);
     echo "<tr>";
     if ($GM) echo "<td><a href=WorldEdit.php?id=" . $W['id'] . ">" . $W['id'] . "</a>";
@@ -118,6 +118,10 @@
 
       case 3: // Thing
         $T = Get_Thing($W['ThingId']);
+        if (!$T) {
+          echo "World " . $W['id'] . " has a Thing as Home, that thing no longer exists... <a href=WorldEdit.php?ACTION=DELETE&id=$Wid>Delete World</a>";
+          break;
+        }
         $type = $TTypes[$T['Type']]['Name'];
         $Name = $T['Name'];
         $Fid = $T['Whose'];
