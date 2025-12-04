@@ -98,7 +98,8 @@
         break;
       }
 
-      $M = ['PlanetId'=>$Pid, 'Name'=> ($P['Name'] . " moon " . number2roman($MC+1)), 'Radius' => $rad, 'OrbitalRadius' => $Orb, 'Period' => $Peri, 'Gravity'=> $Grav, 'Type' => $type];  // ADD TYPE
+      $M = ['PlanetId'=>$Pid, 'Name'=> ($P['Name'] . " moon " . number2roman($MC+1)), 'Radius' => $rad, 'OrbitalRadius' => $Orb, 'Period' => $Peri,
+            'Gravity'=> $Grav, 'Type' => $type, 'SystemId' => $P['SystemId']];  // ADD TYPE
       Put_Moon($M);
       $P['Moons']++;
       Put_Planet($P);

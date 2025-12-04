@@ -133,6 +133,7 @@ function Get_SystemRefs() {
 
 function Get_Planet($id) {
   global $db;
+  if ($id < 0) return Get_Moon(-$id);
   $res = $db->query("SELECT * FROM Planets WHERE id=$id");
   if ($res) if ($ans = $res->fetch_assoc()) return $ans;
   return [];
