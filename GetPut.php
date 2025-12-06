@@ -576,6 +576,14 @@ function Get_Moons($Pid) {
   return $Ms;
 }
 
+function Get_MoonsSys($Sid) {
+  global $db,$GAMEID;
+  $Ms = [];
+  $res = $db->query("SELECT * FROM Moons WHERE SystemId=$Sid ORDER BY id");
+  if ($res) while ($ans = $res->fetch_assoc()) $Ms[$ans['id']] = $ans;
+  return $Ms;
+}
+
 //
 
 function Get_Thing($id) {

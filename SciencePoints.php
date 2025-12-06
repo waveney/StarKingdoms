@@ -101,6 +101,8 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$ThingInstrs,$ThingInclrs,$Cu
 
   if ($Breaks) {
     echo "<h2>Planned Breakthroughs</h2>";
+    echo "These will be done at the beginning of the next turn, before any projects, instructions or operations start.<br>";
+    echo "If you change your mind click cancel.   If you really need it now - click do now (no going back)<p>";
     echo "<table border><tr><td>Field<td>Technology<td>Level<td>Cost<td>Cancel\n";
     foreach($Breaks as $Br) {
       echo "<tr><td>" . $TechFields[$Br['Field']][0] . "<td>" . $Ts[$Br['TechId']]['Name'] . "<td>" . $Br['Level'] . "<td>" . $Br['Cost'];

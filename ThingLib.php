@@ -349,6 +349,7 @@ function Within_Sys_Locs(&$N,$PM=0,$Boarding=0,$Restrict=0,$Hab=0) {// $PM +ve =
   if (!isset($N['id'])) return $L;
   $Ps = Get_Planets($N['id']);
   $PTD = Get_PlanetTypes();
+  $Moons = Get_MoonsSys($N['id']);
 
   if ($Ps) {
     $pi = $mi = 1;
@@ -360,18 +361,20 @@ function Within_Sys_Locs(&$N,$PM=0,$Boarding=0,$Restrict=0,$Hab=0) {// $PM +ve =
         $L[200 +$pi] = "On $PName";
         if ($Hab && $PTD[$P['Type']]['Hospitable'])  $L[200 +$pi] .= " (Hospitable)";
       }
-      $Ms = Get_Moons($P['id']);
-      if ($Ms) {
-        foreach ($Ms as $M) {
-          if ($M['Attributes']&1) continue;
-          if ($PM == -$M['id']) return 400+$mi;
-          $MName = PM_Type($PTD[$M['Type']],"Moon") . " - " . NameFind($M);
-          if ($Restrict !=1) $L[300 +$mi] = "Orbiting $MName";
-          if ($Restrict == 0 || ($Restrict == 2 && $PTD[$M['Type']]['Hospitable'])) {
-            $L[400 +$mi] = "On $MName";
-            if ($Hab && $PTD[$M['Type']]['Hospitable'])  $L[400 +$mi] .= " (Hospitable)";
+      if ($Moons) {
+        $Ms = Get_Moons($P['id']);
+        if ($Ms) {
+          foreach ($Ms as $M) {
+            if ($M['Attributes']&1) continue;
+            if ($PM == -$M['id']) return 400+$mi;
+            $MName = PM_Type($PTD[$M['Type']],"Moon") . " - " . NameFind($M);
+            if ($Restrict !=1) $L[300 +$mi] = "Orbiting $MName";
+            if ($Restrict == 0 || ($Restrict == 2 && $PTD[$M['Type']]['Hospitable'])) {
+              $L[400 +$mi] = "On $MName";
+              if ($Hab && $PTD[$M['Type']]['Hospitable'])  $L[400 +$mi] .= " (Hospitable)";
+            }
+            $mi++;
           }
-          $mi++;
         }
       }
       $pi++;

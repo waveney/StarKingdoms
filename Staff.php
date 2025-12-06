@@ -378,7 +378,11 @@
       $txt .= "<li><a href=MasterData.php>Star Kingdoms System Data Settings</a> \n";
       $txt .= "<li><a href=SysBuild.php?ACTION=X>Experimental System Building</a>\n";
     }
-    if (Access('God')) $txt .= "<li><a href=FixMoonData.php>Fix Moon Data</a>\n";
+    if (Access('God')) {
+      $txt .= "<li><a href=EmbedTest.php>Embeded Test Code</a>\n";
+
+      if (0) $txt .= "<li><a href=FixMoonData.php>Fix Moon Data</a>\n";
+    }
 
     $txt .= "</ul>\n";
   }

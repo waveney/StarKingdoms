@@ -1428,7 +1428,13 @@ function Show_Thing(&$T,$Force=0) {
           $Body = $P;
           break;
         case 4: //On Moon
-          // Not YET coded..
+          $Ms = Get_MoonsSys($T['SystemId']);
+          if (count($Ms) ==1) {
+            $Body = array_shift($Ms);
+          } else {
+            // Multi moon Not YET coded..
+          }
+
           break;
         default:
           continue 3;
@@ -2028,10 +2034,17 @@ function Show_Thing(&$T,$Force=0) {
           $T['Dist1'] = $Body['id'];
           break;
         case 4: //On Moon
-          // Not YET coded..
+          $Ms = Get_MoonsSys($T['SystemId']);
+          if (count($Ms) ==1) {
+            $Body = array_shift($Ms);
+          } else {
+            // Multi moon Not YET coded..
+          }
           $T['Dist1'] = -$Body['id'];
           break;
         default:
+          $T['Instruction'] = 0;
+          break 2;
       }
       $ProgShow = 2;
       $Acts = $PTNs['Build Strip Mine']['CompTarget'];

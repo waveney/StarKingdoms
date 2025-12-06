@@ -19,7 +19,8 @@ function help($fld) {
 }
 
 function htmlspec($data) {
-  return utf8_decode(htmlspecialchars(utf8_encode(stripslashes($data)), ENT_COMPAT|ENT_SUBSTITUTE));
+   return  mb_convert_encoding(htmlspecialchars(mb_convert_encoding(stripslashes($data), 'UTF-8', 'ISO-8859-1')), 'ISO-8859-1', 'UTF-8');
+//  return utf8_decode(htmlspecialchars(utf8_encode(stripslashes($data)), ENT_COMPAT|ENT_SUBSTITUTE));
 }
 
 $ADDALL = '';
