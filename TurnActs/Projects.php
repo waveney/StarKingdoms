@@ -804,7 +804,9 @@ function ProjectsCompleted($Pass) {
             $T['SystemId'] = $Where[0];
           }
           $T['WithinSysLoc'] = ConstructLoc($P['Home'],1);
-          if (Blockaded($T)) $T['WithinSysLoc'] = 2;
+          if ($T['WithinSysLoc'] == 0) {
+            Error("ConstructLoc(" . $P['Home'] . ",1) returned 0 - tell Richard");
+          }
           TurnLog($Fid, $T['Name'] . " has been completed",$T);
           $T['ProjectId'] = 0;
           Put_Thing($T);

@@ -844,7 +844,7 @@ var_dump($FS);
       if ($OpTypes[$op]['Props'] & OPER_SOCP) {
         $SocP = Get_SocialP($SP);
         echo "Principle:" . $SocP['Principle'] . "<p>";
-        $World = WorldFromTarget($Target);
+        $World = WorldFromTarget($TargType,$Target);
         $Wid = $World['id']??0;
         $CurVal = Gen_Get_Cond1('SocPsWorlds',"Principle=$SP AND World=$Wid");
         $P2 = ($CurVal['id']??0);
@@ -886,7 +886,7 @@ var_dump($FS);
       if ($Mod >= 4) {
         $Mod = ($Mod&3) + $Level*($Mod>>2);
       }
-      $Mod += $AMod;
+      if($AMod) $Mod += $AMod;
       if ($Body['TargetMod']??0) {
         $ExtraLevels = $Body['TargetMod'];
         $xtra = " (Level +" . $Body['TargetMod'] . ")";
@@ -900,7 +900,7 @@ var_dump($FS);
       if (Has_Trait($Fid,'IMPSEC') && strstr($OpTypes[$op]['Name'],'Recon')) $Mod--;
 
       if (Has_Trait($Fid,'Friends in All Places') && (($OpTypes[$op]['Props'] & OPER_NOT_FRIENDS) == 0)) {
-        $World = WorldFromTarget($Target);
+        $World = WorldFromTarget($TargType,$Target);
         $Wid = $World['Id']??0;
         $SocPs = Get_SocialPs($Wid);
         $CC = Gen_Get_Cond1('SocialPrinciples',"Principle='Confluence'");

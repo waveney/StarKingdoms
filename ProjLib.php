@@ -34,7 +34,7 @@ $Project_Statuses = array_flip($Project_Status);
 
 function  Where_Is_Home($PH,$Set=0) {
   $Home = Get_ProjectHome($PH);
-  var_dump("Home",$Home);echo "<p>";
+ // var_dump("Home",$Home);echo "<p>";
   switch ($Home['ThingType']) {
   case '1': // Planet
     if (!$Set) return [$Home['SystemId'],$Home['WithinSysLoc']];
