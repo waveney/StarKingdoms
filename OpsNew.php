@@ -902,11 +902,11 @@ var_dump($FS);
       if (Has_Trait($Fid,'Friends in All Places') && (($OpTypes[$op]['Props'] & OPER_NOT_FRIENDS) == 0)) {
         $World = WorldFromTarget($TargType,$Target);
         $Wid = $World['Id']??0;
-        $SocPs = Get_SocialPs($Wid);
         $CC = Gen_Get_Cond1('SocialPrinciples',"Principle='Confluence'");
         if ($CC) {
           $Confl = $CC['id'];
-          foreach($SocPs as $S) if ($S['Principle'] == $Confl) { $Mod--; break; }
+          $SPW = Gen_Get_Cond1('SocPsWorlds',"World=$Wid AND Principle=$Confl");
+          if ($SPW && $SPW['Suppression']==0) $Mod--;
         }
       }
 

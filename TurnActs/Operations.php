@@ -191,7 +191,7 @@ function StartOperations() {
           // Always allowed - Silent
         }
       } else { //World - need to check for offices and branches
-        $World = WorldFromTarget($Target,1);
+        $World = WorldFromTarget($TargType,$Target);
         if (!$World) {
           Error("Could not find Target for Operation <a href=OperEdit.php?id=$Oid>$Oid</a> - Tell Richard");
           continue;
@@ -236,7 +236,7 @@ function StartOperations() {
     if ($Otp & OPER_SOCP) {
       $SP = $O['Para1'];
       $SocP = Get_SocialP($SP);
-      $World = WorldFromTarget($Target,1);
+      $World = WorldFromTarget($TargType,$Target);
       $Wid = $World['id']??0;
       $CurVal = Gen_Get_Cond1('SocPsWorlds',"Principle=$SP AND World=$Wid");
       $P2 = ($CurVal['id']??0);
@@ -271,13 +271,13 @@ function StartOperations() {
       if (Has_Trait($Fid,'IMPSEC') && strstr($OpTypes[$O['Type']]['Name'],'Recon')) $Mod--;
 
       if (Has_Trait($Fid,'Friends in All Places') && (($OpTypes[$O['Type']]['Props'] & OPER_NOT_FRIENDS) == 0)) {
-        $World = WorldFromTarget($Target,1);
+        $World = WorldFromTarget($TargType,$Target);
         $Wid = $World['id']??0;
-        $SocPs = Get_SocialPs($Wid);
         $CC = Gen_Get_Cond1('SocialPrinciples',"Principle='Confluence'");
         if ($CC) {
           $Confl = $CC['id'];
-          foreach($SocPs as $S) if ($S['Principle'] == $Confl) { $Mod--; break; }
+          $SPW = Gen_Get_Cond1('SocPsWorlds',"World=$Wid AND Principle=$Confl");
+          if ($SPW && $SPW['Suppression']==0) $Mod--;
         }
       }
 
