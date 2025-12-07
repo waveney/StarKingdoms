@@ -901,7 +901,7 @@ var_dump($FS);
 
       if (Has_Trait($Fid,'Friends in All Places') && (($OpTypes[$op]['Props'] & OPER_NOT_FRIENDS) == 0)) {
         $World = WorldFromTarget($TargType,$Target);
-        $Wid = $World['Id']??0;
+        $Wid = $World['id']??0;
         $CC = Gen_Get_Cond1('SocialPrinciples',"Principle='Confluence'");
         if ($CC) {
           $Confl = $CC['id'];
