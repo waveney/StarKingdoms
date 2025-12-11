@@ -39,6 +39,7 @@
   $DistTypes = Get_DistrictTypes();
   $ProjTypes = Get_ProjectTypes();
   $OrgTypes = Get_OrgTypes();
+  $Designs = Feature('Designs');
   $PTi = [];
   foreach ($ProjTypes as $PT) $PTi[$PT['Name']] = $PT['id'];
 
@@ -84,7 +85,7 @@
 
         if ($Things) {
           echo "<h2>Select a design to make</h2>";
-          echo "If it is in planning, you will build that, if already built then it will be a copy.<br>";
+ //         echo "If it is in planning, you will build that, if already built then it will be a copy.<br>";
 
           echo "<table class=ProjThingTab border><tr><td>Project<td>Level<td>Cost<td>Other<br>Cost<td>Progress<br>Needed<td>Description";
 
@@ -106,19 +107,48 @@
             foreach ($Ms as $Mi=>$M) if (($MTypes[$Mi]['Leveled'] & MOD_BLUEONLY)== 0) $Mods[]= $M['Number'] . " " . ($MTypes[$Mi]['Name']??"Unknown $Mi");
             $Moddesc = implode(', ',$Mods);
 
-            echo "<tr><td><button class=projtype formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=$Ptype&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&ThingId=$Tid'>" .
-              $T['Name'] . (empty($T['Class'])?'': ", a " . $T['Class']) . "</buton><td>" . $T['Level'] . "<td>" . $pc[1] .  "<td>$Extra<td>" . $pc[0] .
-              "<td>$Moddesc";
+            if ($Designs) {
+              $ClassName = ClassName($T);
+              echo "<tr><td><button class=projtype formaction='ProjNew.php?ACTION=THINGNAME&id=$Fid&p=$Ptype&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&ThingId=$Tid'>" .
+                "$ClassName</buton><td>" . $T['Level'] . "<td>" . $pc[1] .  "<td>$Extra<td>" . $pc[0] . "<td>$Moddesc";
+
+            } else {
+              echo "<tr><td><button class=projtype formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=$Ptype&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&ThingId=$Tid'>" .
+                $T['Name'] . (empty($T['Class'])?'': ", a " . $T['Class']) . "</buton><td>" . $T['Level'] . "<td>" . $pc[1] .  "<td>$Extra<td>" . $pc[0] .
+                "<td>$Moddesc";
+            }
             }
           echo "</table><p>";
 
         } else {
-          echo "<h2>Sorry you do not have any plans for these - go to <a href=ThingPlan.php?F=$Fid>Thing Planning</a> first</h2>";
+          if ($Designs) {
+            echo "<h2>Sorry you do not have any Designs for these - go to <a href=PlanDesign.php?F=$Fid>Design Planning</a> first</h2>";
+          } else {
+            echo "<h2>Sorry you do not have any plans for these - go to <a href=ThingPlan.php?F=$Fid>Thing Planning</a> first</h2>";
+          }
         }
         echo "<h2><a href=ProjDisp.php?id=$Fid>Cancel</a></h2>\n";
         dotail();
 
       break;
+
+    case 'THINGNAME':
+      $Ptype = $_REQUEST['p'];
+      $Turn = $_REQUEST['t'];
+      $Hi = $_REQUEST['Hi'];
+      $Di = $_REQUEST['Di'];
+      $DT = $_REQUEST['DT'];
+      $Tid = $_REQUEST['ThingId'];
+      $T = Get_Thing($Tid);
+
+      echo "<form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=$Ptype&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&ThingId=$Tid'>";
+      $ClassName = ClassName($T);
+      echo "Please provide the name of the $ClassName, when built:" . fm_text1('',$_REQUEST,'NewOrgName',3);
+      echo fm_submit('Ignored','Build');
+ //     echo "<button class=projtype formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=$Ptype&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&ThingId=$Tid'>Build $ClassName</buton>";
+      echo "<h2><a href=ProjDisp.php?id=$Fid>Cancel</a></h2>\n";
+      echo "</form>";
+      dotail();
 
 
     case 'Service': // Service Projects that need costs calculated - Those that don't go strait to ProjDisp

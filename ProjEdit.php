@@ -25,6 +25,7 @@
 
   $GM = Access('GM');
   $God = Access('God');
+  $Designs = Feature('Designs');
   $Inside = isset($_REQUEST['INSIDE']);
   if ($GM ) {
     $Fid = $_REQUEST['id'];
@@ -244,7 +245,18 @@
     if ($PProps & PROJ_THING) {
       if ($P['ThingId']) {
         $Thing = Get_Thing($P['ThingId']);
-        echo "<tr>" . fm_number('Thing',$P,'ThingId') . "<td><b><a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . ($Thing['Name']??'Unknown') . "</a></b>";
+        if ($Designs && ($PProps & PROJ_NEWNAME)) {
+          echo "<tr>" . fm_number('Design',$P,'ThingId') . "<td><b><a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . ($Thing['Name']??'Unknown') . "</a></b>";
+          echo "<tr>" . fm_text('Name of Thing once made',$P,'OrgName',2);
+
+          if ($P['Status'] > 0) { // Building etc
+            $Thing2 = Get_Thing($P['ThingId2']);
+            echo "<tr>" . fm_number('Building',$P,'ThingId2') . "<td><b><a href=ThingEdit.php?id=" . $P['ThingId2'] . ">" .
+              ($Thing2['Name']??'Unknown') . "</a></b>";
+          }
+        } else {
+          echo "<tr>" . fm_number('Thing',$P,'ThingId') . "<td><b><a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . ($Thing['Name']??'Unknown') . "</a></b>";
+        }
       } else {
         echo "<tr>" . fm_number('Thing',$P,'ThingId');
       }
@@ -356,7 +368,17 @@
     if ($PProps &2) {
       if ($P['ThingId']) {
         $Thing = Get_Thing($P['ThingId']);
-        echo "<td><b><a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . ($Thing['Name']??'Unknown') . "</a></b>";
+        if ($Designs && ($PProps & PROJ_NEWNAME)) {
+          echo "<tr><td>Design<td><b><a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . ($Thing['Name']??'Unknown') . "</a></b>";
+          if ($P['Status'] > 0) { // Building etc
+            $Thing2 = Get_Thing($P['ThingId2']);
+            echo "<tr><td>Thing:<td><b><a href=ThingEdit.php?id=" . $P['ThingId2'] . ">" . ($Thing2['Name']??'Unknown') . "</a></b>";
+          } else {
+            echo "<tr>" . fm_text('Name of Thing once made',$P,'OrgName',2);
+          }
+        } else {
+          echo "<tr><td>Thing:<td><b><a href=ThingEdit.php?id=" . $P['ThingId'] . ">" . ($Thing['Name']??'Unknown') . "</a></b>";
+        }
       }
       if ($PProps & 4) {
         if ($P['ThingId2']) {

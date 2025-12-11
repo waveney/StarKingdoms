@@ -10,7 +10,7 @@ global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingIns
 $Fields = ['Engineering','Physics','Xenology','Special','Unknown'];
 $Tech_Cats = ['Core','Supp','Non Std','Levelled Non Std'];
 $CivMil = ['','Civilian','Military'];
-$BuildState = ['Planning','Building','Servicing','Complete','Ex','Abandonded','Missing In Action','Captured','Pending Deletion'];
+$BuildState = ['Planning','Building','Servicing','Complete','Ex','Abandonded','Missing In Action','Captured','Pending Deletion',-1=>'Undefined'];
 $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse Anomaly','Establish Embassy','Make Outpost',
                 'Make Asteroid Mine','Make Minefield',//8
                 'Make Orbital Repair Yard','Build Space Station','Expand Space Station','Make Deep Space Sensor',
@@ -88,6 +88,7 @@ define('THING_DISLIKES_SPACE', 0x20);
 define('THING_AT_LINK',        0x40);
 define('THING_IS_BIG',         0x80); // Add Level to max modules
 define('THING_IS_IMMORTAL',   0x100); // Militia etc
+define('THING_HASNT_DESIGNS', 0x200);
 
 define('LINK_ON_BOARD',-1);
 define('LINK_BOARDING',-2);
@@ -972,15 +973,17 @@ function LogisticalSupport($Fid) {  // Note this sets the Economic rating of all
   return $Logistics;
 }
 
-function Thing_Duplicate($otid) {
+function Thing_Duplicate($otid,$KeepName=0) {
   global $FACTION;
   $TTypes = Get_ThingTypes();
   $OrigT = $T = Get_Thing($otid);
   unset($T['id']);
   $T['id'] = $Tid = Insert_db('Things',$T);
-  $BName = preg_replace('/Copy of /','',$T['Name']);
-  $CName = preg_replace('/Copy #(\d*) of/','',$BName);
-  $T['Name'] = "Copy #$Tid of $CName";
+  if ($KeepName==0) {
+    $BName = preg_replace('/Copy of /','',$T['Name']);
+    $CName = preg_replace('/Copy #(\d*) of/','',$BName);
+    $T['Name'] = "Copy #$Tid of $CName";
+  }
 
   $T['SystemId'] = $T['WhereBuilt'] = 0;
   $T['LinkId'] = 0;
@@ -1863,6 +1866,12 @@ function OtherCosts($Tid) {
       for ($i=1;$i<4;$i++) if ($MTypes[$M['Type']]['Leveled'] & (1<<(7+$i))) $OtherCosts[$i] += $M['Number'];
   }
   return $OtherCosts;
+}
+
+function ClassName(&$T) {
+  if (empty($T['BluePrint']) || $T['BluePrint']<0) return $T['Class'];
+  $Blue = Get_Thing($T['BluePrint']);
+  return $T['Name'] . " " . AorAn($Blue['Class']);
 }
 
 ?>

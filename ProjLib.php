@@ -2,16 +2,21 @@
 
 // Things far handling projects
 
-define('PROJ_RUSH',        1);
-define('PROJ_THING',       2);
-define('PROJ_2THINGS',     4);
-define('PROJ_OTHERFACT',   8);
-define('PROJ_TIGHTLOC', 0x10);
-define('PROJ_INSTUCT',  0x20);
-define('PROJ_NOLVLCHCK',0x40);
-define('PROJ_PLUS1LVL', 0x80);
-define('PROJ_EXIST',   0x100);
-define('PROJ_REFIT',   0x200);
+define('PROJ_RUSH',         1);
+define('PROJ_THING',        2);
+define('PROJ_2THINGS',      4);
+define('PROJ_OTHERFACT',    8);
+define('PROJ_TIGHTLOC',  0x10);
+define('PROJ_INSTUCT',   0x20);
+define('PROJ_NOLVLCHCK', 0x40);
+define('PROJ_PLUS1LVL',  0x80);
+define('PROJ_EXIST',    0x100);
+define('PROJ_REFIT',    0x200);
+define('PROJ_SERVICE',  0x400);
+define('PROJ_NEWORG',   0x800);
+define('PROJ_ORG',     0x1000);
+define('PROJ_TECH',    0x2000);
+define('PROJ_NEWNAME', 0x4000);
 
 function Proj_Costs($lvl) {
   if ($lvl<0) return [1E6,1E6]; // Should be never but...
@@ -34,6 +39,11 @@ $Project_Statuses = array_flip($Project_Status);
 
 function  Where_Is_Home($PH,$Set=0) {
   $Home = Get_ProjectHome($PH);
+
+  if (empty($Home)) {
+    GMLog4Later("Project Home $PH not found - call Richard");
+    return [0,0];
+  }
  // var_dump("Home",$Home);echo "<p>";
   switch ($Home['ThingType']) {
   case '1': // Planet

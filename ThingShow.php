@@ -46,6 +46,8 @@ function Show_Thing(&$T,$Force=0) {
     $Org = Gen_Get('Organisations',$T['Dist1']);
   }
   $Varies = Gen_Get_All_Game('Variants');
+  $Designs = Feature('Designs');
+  if ($Designs) $BuildState[BS_PLANNING] = 'Design';
 
   if ($T['SystemId'] == $T['NewSystemId'] || $T['NewSystemId'] == 0) {
     $NewSyslocs = $Syslocs;
@@ -505,7 +507,7 @@ function Show_Thing(&$T,$Force=0) {
 
             $OnBoard = Get_Things_Cond(0,"((LinkId=-1 OR LinkId=-3) AND SystemId=" . $X['id'] . ")");
             foreach($OnBoard as $OB) if ($ThingProps[$OB['Type']] & THING_NEEDS_CARGOSPACE) {
-              $Need = min(1,$OB['Level']);
+              $Need = max(1,$OB['Level']);
               if ($CryoSpace && ($ThingProps[$OB['Type']] & THING_HAS_ARMYMODULES)) {
                 $CryoSpace -= $Need;
                 if ($CryoSpace >= 0) {
@@ -2118,6 +2120,12 @@ function Show_Thing(&$T,$Force=0) {
   echo "</table></div>\n";
   echo fm_submit("ACTION","Refresh",0);
   if ($T['BuildState'] == BS_SERVICE) echo fm_submit('ACTION','Cancel Servicing');
+  if ($Designs && ($T['BuildState'] >0)) {
+    $Already = Get_Things_Cond($Fid,"Type=" . $T['Type'] . " AND Name='" . $T['Name'] . "' AND BuildState=0");
+    if (!$Already) {
+      echo fm_submit('ACTION','Make a Design of this');
+    }
+  }
   if ($GM) {
     echo fm_submit("ACTION",'GM Refit',0);
     if ($tprops & THING_LEAVES_DEBRIS) echo fm_submit("ACTION",'Destroy Thing (Leave debris)',0);

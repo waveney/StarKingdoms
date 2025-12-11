@@ -92,12 +92,17 @@ if ($files) {
 
 $target_dir = $pdir;
 umask(0);
-if (!file_exists($target_dir)) mkdir($target_dir,0775,true);
+if (!file_exists($target_dir)) {
+//  echo "Making $target_dir<br>";
+  mkdir($target_dir,0775,true);
+}
 
 $suffix = pathinfo($_FILES["Upload"]["name"],PATHINFO_EXTENSION);
 $target_file = "$target_dir/$id.$suffix";
 
+//var_dump($target_file);
 if (!move_uploaded_file($_FILES["Upload"]["tmp_name"], $target_file)) {
+//  var_dump($_FILES["Upload"],$target_file);
   echo fm_DragonDrop(0,$Type,$Cat,$id,$Data,'',$Mode,1,"Uploaded file failed to be stored",1,'',$Class);
   exit;
 }
@@ -110,6 +115,7 @@ if (is_numeric($DDd['SetValue'])) {
   $Data[$Type] = $DDd['SetValue'];
 }
 // var_dump($Data);
+// var_dump($Put,$Data);
 $Put($Data);
 
 if ($files) {

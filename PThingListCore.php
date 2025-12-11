@@ -6,6 +6,8 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
   global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$ThingInclrs,$GAMEID,$LogistCost,$ARMY,$ARMIES,$GAME;
   global $MoveNames,$MoveProps;
 
+  $Designs = Feature('Designs');
+  if ($Designs) $BuildState[BS_PLANNING] = 'Design';
   $txt = '';
   $Things = Get_Things_Cond($Fid, "id>0 AND GameId=$GAMEID ORDER BY Priority DESC, Name");
   if (!empty($FACTION['HasPrisoners'])) {
@@ -31,7 +33,7 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
   $ShowCats = ['All','Ships',$ARMIES,'','Chars', 'Other'];
   if (!empty($FACTION['HasPrisoners'])) $ShowCats[] = 'Prisoners';
   $Show['ThingShow'] = ($Faction[$GM?'GMThingType':'ThingType'] ?? 0);
-  $BuildCats = [0=>'All',1=>'Plan',2=>'Building',3=>'Servicing', 4=>'Complete',5=>'Other']; // VERY similar to Buildstate
+  $BuildCats = [0=>'All',1=>($Designs?'Design':'Plan'),2=>'Building',3=>'Servicing', 4=>'Complete',5=>'Other']; // VERY similar to Buildstate
 
   $Build['BuildShow'] = ($Faction[$GM?'GMThingBuild':'ThingBuild'] ?? 0);
 
@@ -172,7 +174,7 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
         continue;
       }
     } else {
-      $txt .=  "<td>" . $BuildState[$T['BuildState']];
+      $txt .=  "<td>" . ($BuildState[$T['BuildState']]??'Undefined');
     }
     if ($Props & THING_MOVES_DIRECTLY) {
       $txt .=  "<td>" . ($Systems[$T['SystemId']]??'???');

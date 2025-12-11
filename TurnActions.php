@@ -1107,6 +1107,9 @@ function TidyUps() {
   $res = $db->query("UPDATE Things SET Conflict=0 WHERE Conflict>0 AND GameId=$GAMEID");
   $res = $db->query("UPDATE Operations SET TurnState=0 WHERE GameId=$GAMEID");
 
+  $Things = Get_Things_Cond(0,"GameId=$GAMEID AND (BuildState<0 OR Type=0)");
+  foreach ($Things as $T) Thing_Delete($T['id']);
+
   // Check for lid <-1...
   $NotFin = Get_Things_Cond(0,"(LinkId<-1 AND LinkId>-5)");
   if ($NotFin) {

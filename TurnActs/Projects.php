@@ -11,6 +11,7 @@ function StartProjects() {
   $Projects = Get_Projects_Cond("GameId=$GAMEID AND Status=0 AND TurnStart=" . $GAME['Turn']);
   $TTypes = Get_ThingTypes();
   //var_dump("Projects",$Projects);
+  $Designs = Feature('Designs');
 
 
   foreach ($Projects as $P) {
@@ -172,11 +173,26 @@ function StartProjects() {
       GMLog($Facts[$P['FactionId']]['Name'] . ' Starting ' . $P['Name'] . " Cost: " . Credit() . " $Cost");
       if (($ProjTypes[$P['Type']]['Props'] & 2) && (($ProjTypes[$P['Type']]['Props'] & 20) ==0 )) { // Has ONE thing - 2nd test elimiates repair and construction
         if ($Tid) {
-          if (($T['BuildState'] != BS_PLANNING) && ($T['BuildState'] != BS_SERVICE)) {
+          if ($Designs) {
+            $Desid = $Tid;
+            $Des = Get_Thing($Desid);
             $T = Thing_Duplicate($Tid);
             $Tid = $T['id'];
-            $P['ThingId'] = $Tid;
+            if (!empty($P['ThingId2'])) {
+              Thing_Destroy($P['ThingId2']);
+            }
+
+            $P['ThingId2'] = $Tid;
             Put_Project($P);
+            $ClassName = ClassName($Des);
+            $T['Class'] = $ClassName;
+          } else {
+            if (($T['BuildState'] != BS_PLANNING) && ($T['BuildState'] != BS_SERVICE)) {
+              $T = Thing_Duplicate($Tid);
+              $Tid = $T['id'];
+              $P['ThingId'] = $Tid;
+              Put_Project($P);
+            }
           }
           if ($P['OrgName']) $T['Name'] = $P['OrgName'];
           $T['BuildState'] = BS_BUILDING; // Building
@@ -523,6 +539,7 @@ function ProjectsCompleted($Pass) {
   // Pass 0 = Refits only, 1 = rest
 
   global $GAME,$GAMEID,$Currencies,$Facts,$ARMY;
+  $Designs = Feature('Designs');
 
   $ProjTypes = Get_ProjectTypes();
   $Projects = Get_Projects_Cond("GameId=$GAMEID AND Status=1 AND Progress>=ProgNeeded");
@@ -758,7 +775,11 @@ function ProjectsCompleted($Pass) {
 
 
         case 'Construct Ship':
-          $T = Get_Thing($P['ThingId']);
+          if ($Designs && $P['ThingId2']) {
+            $T = Get_Thing($P['ThingId2']);
+          } else {
+            $T = Get_Thing($P['ThingId']);
+          }
           $T['BuildState'] = (Feature('Shakedowns')?BS_SERVICE:BS_COMPLETE); // Shakedown
           if (empty($T['SystemId'])) {
             $Where = Where_Is_Home($P['Home']);
@@ -797,7 +818,11 @@ function ProjectsCompleted($Pass) {
 
         case "Train $ARMY":
         case 'Train Agent':
-          $T = Get_Thing($P['ThingId']);
+          if ($Designs && $P['ThingId2']) {
+            $T = Get_Thing($P['ThingId2']);
+          } else {
+            $T = Get_Thing($P['ThingId']);
+          }
           $T['BuildState'] = BS_COMPLETE;
           if (empty($T['SystemId'])) {
             $Where = Where_Is_Home($P['Home']);

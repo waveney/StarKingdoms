@@ -151,6 +151,10 @@ global $FACTION;
 
 
     case 'CREATE' : // Named Chars
+      if (empty($T['Name'])) {
+        echo "<h2 class=Err>Please provide a name</h2>";
+        include_once('CreateNamed.php');  // No return
+      }
       echo "<h2>Choose a world to start on:</h2>\n";
       $Worlds = Get_Worlds($Fid);
       $PlanetTypes = Get_PlanetTypes();
@@ -190,18 +194,18 @@ global $FACTION;
 
         $H = Get_ProjectHome($W['Home']);
 
-        echo "<button class=projtype type=submit formaction=ThingEdit.php?ACTION=Select_World&Wid=" . $W['id'] . ">$Name</button><p>\n";
+        echo "<button class=projtype type=submit formaction=ThingEdit.php?ACTION=Select_World&Wid=" . $W['id'] . ">$Name</button><br>\n";
 
       }
 
       echo "<h2>Or a Thing to start in:</h2>\n";
-      $Things = Get_Things($Fid);
+      $Things = Gen_Get_Cond('Things',"Whose=$Fid ORDER BY Name");
       $TTypes = Get_ThingTypes();
       echo "<table border>";
       foreach($Things as $T) {
         if ( empty($T['Name']) || $T['BuildState'] < BS_BUILDING || $T['BuildState'] > BS_COMPLETE ||
           (( $TTypes[$T['Type']]['Properties']??0) & THING_CANT_HAVENAMED) ) continue;
-        echo "<button class=projtype type=submit formaction=ThingEdit.php?ACTION=Select_Thing&Thing=" . $T['id'] . ">" . $T['Name'] . "</button><p>\n";
+        echo "<button class=projtype type=submit formaction=ThingEdit.php?ACTION=Select_Thing&Thing=" . $T['id'] . ">" . $T['Name'] . "</button><br>\n";
       }
       echo "</form>\n";
       dotail();
@@ -802,6 +806,23 @@ global $FACTION;
       echo "<h2><a href=PThingList.php>Back to Thing list</a></h2>";
       dotail();
 
+
+    case 'Make a Design of this':
+      $tid = $_REQUEST['id'];
+      $T = Get_Thing($tid);
+      $Des = Thing_Duplicate($tid,1);
+      $Des['BuildState'] = BS_PLANNING;
+      if ($T['BluePrint']) {
+        $Blue = Get_Thing($T['BluePrint']);
+        $Des['Class'] = $Blue['Class'];
+      }
+
+      $Des['SystemId'] = 0;
+      Put_Thing($Des);
+      echo "<h1>This is the Design - You may wish to change the name.  Click <a href=ThingEdit.php?id=$tid>Here</a> to go back to the original thing</h1>";
+      $tid = $Des['id'];
+      $T = $Des;
+      break;
 
     case 'None' :
     default:

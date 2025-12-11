@@ -65,6 +65,7 @@ function Player_Page() {
   }
 
   $Fid = $FACTION['id'];
+  $Designs = Feature('Designs');
 
   if (!$GM || $FACTION['NPC'] ) {
     $FACTION['LastActive'] = time();
@@ -120,8 +121,13 @@ function Player_Page() {
     echo "<li>Doing Stuff<ul>";
       echo "<li><a href=ProjDisp.php>Projects</a>\n";
       if (Feature('Orgs')) echo "<li><a href=OpsDisp.php>Operations</a>\n";
-      echo "<li><a href=PThingList.php>List of Things</a> - List of Things (Ships, $ARMIES, Named Characters, Space stations etc)";
+      echo "<li><a href=PThingList.php>List of Things</a> - List of Things (Ships, $ARMIES, Designs, Named Characters, Space stations etc)";
       if ($PlayerState[$FACTION['TurnState']] != 'Frozen') {
+        if ($Designs) {
+          echo "<li><a href=PlanDesign.php>" . ($Designs?'Plan a Design':'Plan a Thing') . "</a> - Designing Classes of Things (Ships, $ARMIES, Space stations etc)";
+          echo "<li><a href=CreateNamed.php>Create a Named Character</a>";
+        } else {
+        }
         echo "<li><a href=ThingPlan.php>Plan a Thing</a> - Planning Things (Ships, $ARMIES, Named Characters, Space stations etc)";
       }
       if ($FACTION['PhysicsSP'] >=5 || $FACTION['EngineeringSP'] >=5 || $FACTION['XenologySP'] >=5 ) {

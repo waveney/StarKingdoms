@@ -48,6 +48,7 @@
     if (isset($Fid)) $Faction = Get_Faction($Fid);
   }
 
+  $Designs = Feature('Designs');
   if ($Fid == 0) {
     dostaffhead("Display Projects When no Faction selected");
     echo "<h1>Display Projects When no Faction selected</h1>";
@@ -73,18 +74,11 @@
 
     switch ($_REQUEST['ACTION']) {  // TODO This code is DREADFUL needs redoing
       case 'NEWORG':
-        $OrgName = $_REQUEST['NewOrgName'];
         $OrgDesc = $_REQUEST['NewOrgDescription'];
         $_REQUEST['Sel'] = $_REQUEST['NewOrgType'];
         $_REQUEST['Sel2'] = ($_REQUEST['NewOrgType2']??0);
         $OrgSP = $_REQUEST['NewOrgSocialPrinciple'];
         $Sel = 0;
-
-        /*
-        $NOrg = ['Whose'=>$Fid, 'OrgType' => $_REQUEST['NewOrgType'], 'Name'=> $_REQUEST['NewOrgName'], 'Description'=>$_REQUEST['NewOrgDescription'],
-                 'SocialPrinciple' => $_REQUEST['NewOrgSocialPrinciple'], 'OfficeCount'=>0, 'GameId'=>$GAMEID];
-        $Orgid = Gen_Put('Organisations',$NOrg);
-        $_REQUEST['Sel'] = -$Orgid;*/
 
         if (str_contains($Name,'NNEEWW')) {
           $Name = preg_replace('/NNEEWW/',$_REQUEST['NewOrgName'],$Name);
@@ -92,6 +86,7 @@
         // Drop through
 
       case 'NEW':
+        if (isset($_REQUEST['NewOrgName'])) $OrgName = $_REQUEST['NewOrgName'];
         $Ptype = $_REQUEST['p'];
         $Turn = $_REQUEST['t'];
         $Hi = $_REQUEST['Hi'];
@@ -101,15 +96,30 @@
         $FreeRush = 0;
         $TType = $TthingId = $_REQUEST['Sel']??0;
         $TthingId2 = $_REQUEST['Sel2']??0;
+
+        if ($Designs && ($ProjTypes[$Ptype]['Props'] & PROJ_NEWNAME) && empty($OrgName)) {
+          $Tid = $_REQUEST['ThingId'];
+          $T = Get_Thing($Tid);
+          $ClassName = $T['Name'] . AorAn($T['Class']);
+          echo "<form method=post action='ProjDisp.php?ACTION=NEW&id=$Fid&p=$Ptype&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&ThingId=$Tid'>";
+          echo "<h2 class=Err>Please provide a name for your $ClassName</h2>";
+          echo "Please provide the name of the $ClassName, when built:" . fm_text1('',$_REQUEST,'NewOrgName',3);
+          echo fm_submit('Ignored','Build');
+          //     echo "<button class=projtype formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=$Ptype&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&ThingId=$Tid'>Build $ClassName</buton>";
+          echo "<h2><a href=ProjDisp.php?id=$Fid>Cancel</a></h2>\n";
+          echo "</form>";
+          dotail();
+        }
         switch ($ProjTypes[$Ptype]['Name']) {
         case 'Construct Ship':
         case "Train $ARMY":
         case 'Train Agent':
           $T = Get_Thing($_REQUEST['ThingId']);
-          if ($T['BuildState'] > 0) {
+          if (!$Designs && $T['BuildState'] > 0) {
             $T = Thing_Duplicate($T['id']);
           }
           $Level = $T['Level'];
+          $ClassName = ClassName($T);
           $pc = Proj_Costs($Level);
           if ($ProjTypes[$Ptype]['Name'] == "Train $ARMY" && Has_Tech($Fid,'Efficient Robot Construction')) $pc[0] = max(1, $pc[0] - $T['Level']);
           if ($ProjTypes[$Ptype]['Name'] == 'Construct Ship' && Has_Tech($Fid,'Space Elevator')) $pc[0] = max(1, $pc[0] - $T['Level']);
@@ -130,7 +140,11 @@
             break;
           }
           $ExtraCosts = OtherCosts($TthingId);
-          $Name = "Build " . $T['Name'] . " (level $Level) on " . $Place['Name'] ;
+          if ($Designs) {
+            $Name = "Build $OrgName " . AorAn($ClassName) . " (level $Level) on " . $Place['Name'] ;
+          } else {
+            $Name = "Build " . $T['Name'] . " (level $Level) on " . $Place['Name'] ;
+          }
           break;
 
         case 'Share Technology':

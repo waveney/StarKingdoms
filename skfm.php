@@ -803,3 +803,7 @@ function TableTop() {
 function TableEnd() {
   echo "</table></div>";
 }
+
+function AorAn($txt) {
+  return ((str_contains('aeiou', strtolower(substr($txt,0,1))))?'an ':'a ') . $txt;
+}

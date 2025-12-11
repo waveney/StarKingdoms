@@ -17,3 +17,4 @@ $txt = "\$VERSION=\"" . gmdate('Y') . ".$ctot" . '"';
 file_put_contents("Version.php","<?php
 $txt;
 ?>");
+$Ignore = `git add -A`;
