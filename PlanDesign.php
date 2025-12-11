@@ -510,6 +510,8 @@
     dotail();
   }
 
+  echo "<tr>" . fm_textarea('Notes',$T,'Notes',8,2);
+
   if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
   echo "</table>";
   Put_Thing($T);

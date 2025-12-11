@@ -1871,7 +1871,7 @@ function OtherCosts($Tid) {
 function ClassName(&$T) {
   if (empty($T['BluePrint']) || $T['BluePrint']<0) return $T['Class'];
   $Blue = Get_Thing($T['BluePrint']);
-  return $T['Name'] . " " . AorAn($Blue['Class']);
+  return $T['Name'] . " class " . $Blue['Class'];
 }
 
 ?>

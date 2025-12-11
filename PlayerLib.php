@@ -127,8 +127,8 @@ function Player_Page() {
           echo "<li><a href=PlanDesign.php>" . ($Designs?'Plan a Design':'Plan a Thing') . "</a> - Designing Classes of Things (Ships, $ARMIES, Space stations etc)";
           echo "<li><a href=CreateNamed.php>Create a Named Character</a>";
         } else {
+          echo "<li><a href=ThingPlan.php>Plan a Thing</a> - Planning Things (Ships, $ARMIES, Named Characters, Space stations etc)";
         }
-        echo "<li><a href=ThingPlan.php>Plan a Thing</a> - Planning Things (Ships, $ARMIES, Named Characters, Space stations etc)";
       }
       if ($FACTION['PhysicsSP'] >=5 || $FACTION['EngineeringSP'] >=5 || $FACTION['XenologySP'] >=5 ) {
         echo "<li><a href=SciencePoints.php>Spend Science Points</a> - Also <a href=ScienceLog.php>Resource Logs</a>";
