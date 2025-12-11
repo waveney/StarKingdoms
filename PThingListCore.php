@@ -27,7 +27,7 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
   }
 
   $Blockades[] = 0;
-  $DesLink = (Feature('Designs')?'DesignPlan.php':'ThingPlan.php');
+  $DesLink = (Feature('Designs')?'PlanDesign.php':'ThingPlan.php');
 
   $txt .= "<h1>Things</h1>";
 

@@ -14,7 +14,7 @@
   $Factions = Get_Factions();
   $xtra = '';
   $Varies = Gen_Get_All_Game('Variants');
-  $DesLink = (Feature('Designs')?'DesignPlan.php':'ThingPlan.php');
+  $DesLink = (Feature('Designs')?'PlanDesign.php':'ThingPlan.php');
   $DesName = (Feature('Designs')?'Design':'Planning');
 
 
