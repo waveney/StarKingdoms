@@ -27,6 +27,7 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
   }
 
   $Blockades[] = 0;
+  $DesLink = (Feature('Designs')?'DesignPlan.php':'ThingPlan.php');
 
   $txt .= "<h1>Things</h1>";
 
@@ -149,7 +150,7 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
     }
 
     $txt .=  "\n<tr class='ThingList Thing_$RowClass Thing_Build$BuildClass'>";
-    $txt .=  "<td><a href=" . (($T['BuildState'] || $Mode==1)? "ThingEdit.php" : "ThingPlan.php") . "?id=$Tid>" .
+    $txt .=  "<td><a href=" . (($T['BuildState'] || $Mode==1)? "ThingEdit.php" : $DesLink) . "?id=$Tid>" .
       ($T['Name'] ? $T['Name'] : "Nameless" ) . "</a>";
     $txt .=  "<td>" . $T['Class'];
     $txt .=  "<td>" . $Name;

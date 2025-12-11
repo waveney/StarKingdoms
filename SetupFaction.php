@@ -584,10 +584,13 @@ function SetupStage8() {
 
   echo "Plan " . Feature('StartingShips',2) . " Level 1 ships and " . Feature('StartingArmies',2) . " Level 1 $ARMIES<p>";
 
+  echo "Use the <a href=ThingPlan.php>Plan a Thing Tool</a> to plan them.  They will be created when the game starts.<p>";
+
+  ### THIS IS BROKEN
+
   echo "You MAY also create some Named Characters - these have no game mechanics other than being somewhere (on a world, in a ship etc) " .
        "but allow for RP actions.  This is <b>OPTIONAL</b>.<p>";
 
-  echo "Use the <a href=ThingPlan.php>Plan a Thing Tool</a> to plan them.  They will be created when the game starts.<p>";
 
   echo "Use the <a href=PThingList.php>List of Things</a> to see what you have planned.<p>";
 

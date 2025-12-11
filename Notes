@@ -68,16 +68,18 @@ NEW GAME FEATURES & BUGS
 777 p2p bar-asc 1/12 @ 21:46 (How to stop overlapping operations)
 780 Fed - I have a ship in GWK (nebula) which wants to move to ARV, escorted by the Vashou - but I can't see the link.
 789 Designs:
- a: Plan a Thing -> Design a Thing
- b: Designs have optional images
- c: Promote Thing to Design
+ 			a: Plan a Thing -> Design a Thing
+ 			b: Designs have optional images
+ 			c: Promote Thing to Design
  			d: Create Named Chars TICK
  e: Designs for Outposts/Mines etc
- f: List of Designs
- g: Make a Thing ALWAYS copies a design
+ 			f: List of Designs
+ 			g: Make a Thing ALWAYS copies a design
  			h: Name prompt on Projects
 			i: BuildState = 0 == a Design TICK
  			j: Behind a Feature
+ k: SetupFaction needs big change
+      l: ThingPlan links to DesignPlan links
 791 
 
 === start of turn 31

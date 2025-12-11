@@ -222,7 +222,11 @@
   Show_Older($Fid);
 
   echo PTListCore($Fid,$Faction,$GM,0);
-  echo "<h2><a href=ThingPlan.php?F=$Fid>Plan a new thing</a></h2>\n";
+  if (Feature('Designs')) {
+    echo "<h2><a href=PlanDesign.php>Plan a Design</a>, <a href=CreateNamed.php>Create a Named Character</a></h2>";
+  } else {
+    echo "<h2><a href=ThingPlan.php?F=$Fid>Plan a new thing</a></h2>\n";
+  }
 
   dotail();
 ?>

@@ -14,6 +14,8 @@
   $Factions = Get_Factions();
   $xtra = '';
   $Varies = Gen_Get_All_Game('Variants');
+  $DesLink = (Feature('Designs')?'DesignPlan.php':'ThingPlan.php');
+  $DesName = (Feature('Designs')?'Design':'Planning');
 
 
   if (isset($_REQUEST['AT'])) {
@@ -129,7 +131,7 @@
     echo "<td><a href=ThingEdit.php?id=$tid>$Name</a>";
     echo "<td>" . ($T['BluePrint']<0?'Blue Print':($who? $Factions[$T['Whose']]['Name'] : ""));
     echo "<td>" . $ThingInstrs[$T['Instruction']];
-    echo "<td>" . ($T['BuildState']? $BuildState[$T['BuildState']] : "<a href=ThingPlan.php?F=" . $T['Whose'] . "&id=$tid>Planning</a>" );
+    echo "<td>" . ($T['BuildState']? $BuildState[$T['BuildState']] : "<a href=$DesLink?F=" . $T['Whose'] . "&id=$tid>$DesName</a>" );
     echo "<td>" . sprintf('%0.3g',$T['Speed']);
 
   }

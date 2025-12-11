@@ -40,6 +40,7 @@
   $ProjTypes = Get_ProjectTypes();
   $OrgTypes = Get_OrgTypes();
   $Designs = Feature('Designs');
+
   $PTi = [];
   foreach ($ProjTypes as $PT) $PTi[$PT['Name']] = $PT['id'];
 
@@ -75,7 +76,11 @@
         }
 
         if (!$Things) {
-          echo "<h2>Sorry you do not have any plans for these - go to <a href=ThingPlan.php?F=$Fid>Thing Planning</a> first</h2>";
+          if ($Designs) {
+            echo "<h2>Sorry you do not have any designs for these - go to <a href=PlanDesign.php?F=$Fid>Design Planning</a> first</h2>";
+          } else {
+            echo "<h2>Sorry you do not have any plans for these - go to <a href=ThingPlan.php?F=$Fid>Thing Planning</a> first</h2>";
+          }
           break;
         }
 
@@ -656,10 +661,15 @@
   case 'Shipyard':
       echo "<h2>Build a Ship</h2>";
 
-      echo "This action is to build an already designed ship.  If you want a new design please go to <a href=ThingPlan.php>The Thing Planning Tool</a> first.<p>\n";
-      echo "<button class=projtype type=submit formaction='ProjNew.php?ACTION=NEWSHIP&id=$Fid&p=10&t=$Turn&Hi=$Hi&Di=$Di$pl&DT=$DT'>Build a new ship$Place</button><p>";
+      echo "This action is to build an already designed ship.  If you want a new design please go to ";
+      if ($Designs) {
+        echo "<a href=PlanDesign.php?F=$Fid>Design Planning</a> first";
+      } else {
+        echo "<a href=ThingPlan.php>The Thing Planning Tool</a> first.<p>\n";
+      }
 
-
+      echo "<button class=projtype type=submit formaction='ProjNew.php?ACTION=NEWSHIP&id=$Fid&p=10&t=$Turn&Hi=$Hi&Di=$Di$pl&DT=$DT'>" .
+        "Build a new ship$Place</button><p>";
 
       $FactTechs = Get_Faction_Techs($Fid, $Turn);
       $Techs = Get_TechsByCore($Fid);
@@ -844,8 +854,14 @@
 
   case 'Military':
       echo "<h2>Train a $ARMY</h2>";
-//      echo "Not yet<p>";
-      echo "This action is to build an already designed $ARMY.  If you want a new design please go to <a href=ThingPlan.php>The Thing Planning Tool</a> first.<p>\n";
+
+      echo "This action is to build an already designed $ARMY.  If you want a new design please go to ";
+      if ($Designs) {
+        echo "<a href=PlanDesign.php?F=$Fid>Design Planning</a> first";
+      } else {
+        echo "<a href=ThingPlan.php>The Thing Planning Tool</a> first.<p>\n";
+      }
+
       echo "<button class=projtype type=submit formaction='ProjNew.php?ACTION=NEWARMY&id=$Fid&p=" . $PTi["Train $ARMY"] .
            "&t=$Turn&Hi=$Hi&Di=$Di$pl&DT=$DT'>Train a new $ARMY$Place</button><p>";
 
@@ -1111,12 +1127,15 @@
 */
   case 'Intelligence':
       echo "<h2>Train an Agent</h2>";
-//      echo "Not yet<p>";
-      echo "This action is to build an already designed Agent.  If you want a new design please go to <a href=ThingPlan.php>The Thing Planning Tool</a> first.<p>\n";
+
+      echo "This action is to build an already designed Agent.  If you want a new design please go to ";
+      if ($Designs) {
+        echo "<a href=PlanDesign.php?F=$Fid>Design Planning</a> first";
+      } else {
+        echo "<a href=ThingPlan.php>The Thing Planning Tool</a> first.<p>\n";
+      }
       echo "<button class=projtype type=submit formaction='ProjNew.php?ACTION=NEWAGENT&id=$Fid&p=" . $PTi['Train Agent'] .
            "&t=$Turn&Hi=$Hi&Di=$Di$pl&DT=$DT'>Train an agent$Place</button><p>";
-
-
 
       echo "<h2>Research Intelligence Operations</h2><p>";
         $OldPc = Has_Tech($Fid,4);

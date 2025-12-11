@@ -95,7 +95,12 @@ function Player_Page() {
     echo "<li><a href=SetupFaction.php>Faction Setup</a>\n";
     if (!$GM && $FACTION['Horizon'] == 0) break; // This prevents access to things until setup completed
     echo "<li><a href=PThingList.php>List of Things</a> - List of Things (Ships, $ARMIES, Named Characters, Space stations etc)";
-    echo "<li><a href=ThingPlan.php>Plan a Thing</a> - Planning Things (Ships, $ARMIES, Named Characters, Space stations etc)";
+    if ($Designs) {
+      echo "<li><a href=PlanDesign.php>Plan a Design</a> - Designing Classes of Things (Ships, $ARMIES, Space stations etc)";
+      echo "<li><a href=CreateNamed.php>Create a Named Character</a>";
+    } else {
+      echo "<li><a href=ThingPlan.php>Plan a Thing</a> - Planning Things (Ships, $ARMIES, Named Characters, Space stations etc)";
+    }
     if (!Access('God')) break;
 
   case 'Frozen':
@@ -124,7 +129,7 @@ function Player_Page() {
       echo "<li><a href=PThingList.php>List of Things</a> - List of Things (Ships, $ARMIES, Designs, Named Characters, Space stations etc)";
       if ($PlayerState[$FACTION['TurnState']] != 'Frozen') {
         if ($Designs) {
-          echo "<li><a href=PlanDesign.php>" . ($Designs?'Plan a Design':'Plan a Thing') . "</a> - Designing Classes of Things (Ships, $ARMIES, Space stations etc)";
+          echo "<li><a href=PlanDesign.php>Plan a Design</a> - Designing Classes of Things (Ships, $ARMIES, Space stations etc)";
           echo "<li><a href=CreateNamed.php>Create a Named Character</a>";
         } else {
           echo "<li><a href=ThingPlan.php>Plan a Thing</a> - Planning Things (Ships, $ARMIES, Named Characters, Space stations etc)";
