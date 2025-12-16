@@ -91,11 +91,11 @@ function Gen_Get_Cond1($Table,$Cond) {
   return [];
 }
 
-function Gen_Select($Clause) {
+function Gen_Select($Clause,$idx='id') {
   global $db;
   $Ts = [];
   $res = $db->query($Clause);
-  if ($res && is_object($res)) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
+  if ($res && is_object($res)) while ($ans = $res->fetch_assoc()) $Ts[$ans[$idx]] = $ans;
   return $Ts;
 }
 

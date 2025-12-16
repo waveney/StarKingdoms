@@ -1714,7 +1714,7 @@ function InstructionsProgress() {
 
 
       default:
-        if (Access('God')) echo "Not progressing Instruction for $Tid - " . $ThingInstrs[abs($T['Instruction'])] ."<br>";
+        if ($T['ActionsNeeded'] > 1 && Access('God')) echo "Not progressing Instruction for $Tid - " . $ThingInstrs[abs($T['Instruction'])] ."<br>";
         break;
     }
   }

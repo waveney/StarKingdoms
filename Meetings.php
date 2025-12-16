@@ -68,8 +68,14 @@
 
 function ForceReport($Sid,$Cat) {
   global $Facts, $Homes, $TTypes, $ModTypes, $N, $Techs, $ThingProps,$ARMY,$DevTotal,$Battle,$Excludes;
+/*
   $Things = Get_Things_Cond(0,
-    "SystemId=$Sid AND ( BuildState=" . BS_SERVICE . " OR BuildState=" . BS_COMPLETE . ") AND (LinkId>=0 OR LinkId=" . LINK_NOT_MOVING .") ORDER BY Whose");
+    "SystemId=$Sid AND ( BuildState=" . BS_SERVICE . " OR BuildState=" . BS_COMPLETE . ") AND (LinkId>=0 OR LinkId=" . LINK_NOT_MOVING .
+    ") ORDER BY Whose, Type, Level, Class");*/
+
+  $Things = Gen_Select("SELECT t.* FROM Things t LEFT JOIN ThingTypes tt ON t.Type=tt.id WHERE SystemId=$Sid AND ( BuildState=" . BS_SERVICE .
+    " OR BuildState=" . BS_COMPLETE . ") AND (LinkId>=0 OR LinkId=" . LINK_NOT_MOVING .
+    ") ORDER BY Whose, tt.Priority DESC, Level DESC, Class, Name");
   $LastF = $Home = $Control = -1;
   $txt = $ftxt = $htxt = $Battct = $rpt = '';
   $TMsk = ($Cat=='G'?1:2);

@@ -76,7 +76,11 @@
         break;
       case 'Thing':
         $P = Get_Thing($H['ThingId']);
-        echo "<td>" . $Systems[$P['SystemId']] . "<td>" .$P['Name'];
+        if ($P) {
+          echo "<td>" . $Systems[$P['SystemId']] . "<td>" .$P['Name'];
+        } else {
+          echo "<td>Gone<td>Home has been destroyed";
+        }
         break;
     }
     echo "<td>" . ($Factions[$H['Whose']]['Name']??'Unknown');

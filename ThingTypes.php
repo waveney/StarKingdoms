@@ -58,6 +58,7 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>SeenBy</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Max Level</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Evasion Mod</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Priority</a>\n";
     //    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Game</a>\n";
     echo "</thead><tbody>";
 
@@ -73,6 +74,7 @@
       echo fm_number1('',$T,'SeenBy','','min=0 max=100',"SeenBy:$i");
       echo fm_number1('',$T,'MaxLvl','','min=0 max=100',"MaxLvl:$i");
       echo fm_number1('',$T,'EvasionMod','','min=0 max=100',"EvasionMod:$i");
+      echo fm_number1('',$T,'Priority','','min=0 max=1000',"Priority:$i");
       echo fm_hidden("GameId:$i",$T['GameId']);
       }
 
@@ -89,6 +91,7 @@
       echo fm_number1('',$T,'SeenBy','','min=0 max=100',"SeenBy:0");
       echo fm_number1('',$T,'MaxLvl','','min=0 max=100',"MaxLvl:0");
       echo fm_number1('',$T,'EvasionMod','','min=0 max=100',"EvasionMod:0");
+      echo fm_number1('',$T,'Priority','','min=0 max=1000',"Priority:0");
       echo fm_hidden("GameId:0",$GAMEID);
       if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
       echo "</tbody></table></div>\n";
