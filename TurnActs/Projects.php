@@ -21,7 +21,7 @@ function StartProjects() {
     $Fid = $P['FactionId'];
     $T = 0;
 
-    if ($ProjTypes[$P['Type']]['Props'] & 2) { // Has a thing
+    if ($ProjTypes[$P['Type']]['Props'] & PROJ_THING) { // Has a thing
       $Where = Where_Is_Home($P['Home']);
       if ($Where[0] == 0) {
         Error("Project ". $P['Name'] . " can't set start location for what it's making - fix before continuing - call Richard");
@@ -51,15 +51,15 @@ function StartProjects() {
           continue;
         }
 
-        if (($ProjTypes[$P['Type']]['Props'] & 256) ==0) { // Has a thing
-
+/*
+        if (($ProjTypes[$P['Type']]['Props'] & PROJ_EXIST) ==0) { // Has a thing
           if ($T['BuildState'] > 0 ) {
             $T = Thing_Duplicate($Tid);
             $Tid = $T['id'];
             $P['ThingId'] = $Tid;
             Put_Project($P);
           }
-        }
+        } */
 
         if (($T['SystemId'] != 0 && $T['SystemId'] != $Where[0])) {
           //var_dump($Where,$T);
@@ -97,7 +97,7 @@ function StartProjects() {
           // Warning?
         }
       } // TODO 2nd thing for repair
-      if ($ProjTypes[$P['Type']]['Props'] & 4) { // Has can have a 2nd thing
+      if ($ProjTypes[$P['Type']]['Props'] & PROJ_2THINGS) { // Has can have a 2nd thing
         $Tid2 = $P['ThingId2'];
         if ($Tid2) {
           $T2 = Get_Thing($Tid2);
@@ -109,7 +109,7 @@ function StartProjects() {
             Put_Project($P);
             continue;
           }
-          if ($ProjTypes[$P['Type']]['Props'] & 16) { // Tight Location check
+          if ($ProjTypes[$P['Type']]['Props'] & PROJ_TIGHTLOC) { // Tight Location check
             if (($T['WithinSysLoc'] == $Where[1] || $T['WithinSysLoc'] == $Where[1]-100)) {
               // OK
             } else {

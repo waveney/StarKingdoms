@@ -4,6 +4,9 @@
 
 function Devastate(&$H,&$W,&$Dists,&$Offs,$Numb=1) {
   // Chose a district - reduce it, update economy etc if zero consider projects, return is text to GM and Player
+  $TTypes = Get_ThingTypes();
+  $TNames = ListNames($TTypes);
+  $Something = $TNames['Something'];
 
   $DTypes = Get_DistrictTypes();
   $Txt = 'Due to the conflict on ';
@@ -19,6 +22,14 @@ function Devastate(&$H,&$W,&$Dists,&$Offs,$Numb=1) {
     break;
   }
   $Txt .= $P['Name'] . "<br>";
+
+  $Walls = Get_Things_Cond(0,"Type=$Something AND (Name='Shield Wall' OR Name='Sea Wall')");
+  if ($Walls) {
+    $Wall = array_shift($Walls);
+    Thing_Delete($Wall['id']);
+    $Txt .= " the " . $Wall['Name'] . " has been destroyed by Devastation (instead of a Distict or Office)";
+    return $Txt;
+  }
 
   for($Hn = 1; $Hn <= $Numb; $Hn++) {
     $Dcount = $OCount = count($Offs);

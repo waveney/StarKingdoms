@@ -10,7 +10,7 @@
   include_once("PlayerLib.php");
   include_once("ProjLib.php");
 
-  global $FACTION,$GAME,$ARMY,$GAMEID;
+  global $FACTION,$GAME,$ARMY,$GAMEID,$PlayerState;
   A_Check('Player');
   $Fid = 0;
 
@@ -522,6 +522,10 @@
       if (isset($_REQUEST['Validate'])) {
         if ($CanMake) {
           echo "<h2 class=Green>Design is valid</h2>";
+
+          if ($GM || ($PlayerState[$FACTION['State']] == 'Setup')) {
+            // TODO
+          }
         } else {
           echo "<h2 class=Green>Design is valid, but can't currently be made</h2>";
         }

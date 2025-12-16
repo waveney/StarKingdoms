@@ -245,10 +245,10 @@ function ForceReport($Sid,$Cat) {
         $FactLvls += $T['Level'];
         if ($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES) {
           $txt .= "Mobility: " . sprintf("%0.3g ",$T['Mobility']);
-          $Movement += ceil($T['Mobility']);
+          $Movement += ceil($T['Mobility'])*$T['Level'];
         } else {
           $txt .= "Speed: " . sprintf("%0.3g ",$T['Speed']);
-          $Movement += ceil($T['Speed']);
+          $Movement += ceil($T['Speed'])*$T['Level'];
         }
       }
       $txt .=  fm_number1(" Do",$T,'Damage', ''," class=Num3 onchange=Do_Damage($Tid,$LastF,'$Cat')","Damage:$Tid") . " damage";
@@ -399,12 +399,20 @@ function SystemSee($Sid) {
 
           if (($T['CurHealth'] == 0) && ($ThingProps[$T['Type']] & (THING_HAS_SHIPMODULES | THING_HAS_ARMYMODULES)) != 0) {
             TurnLog($T['Whose'],$T['Name'] . " took $RV damage and has been destroyed\n",$T);
-            GMLog($T['Name'] . " took $RV damage and has been destroyed\n",$T);
-            if (isset($_REQUEST["NoDebris:$Tid"])) {
-              Thing_Delete($Tid);
+
+            $tprops = $ThingProps[$T['Type']];
+
+            if ($$TTypes[$T['Type']]['Props2'] & THING_HAS_RECOVERY) {
+              GMLog($T['Name'] . " took $RV damage\n",$T);
+
             } else {
-              Thing_Destroy($T);
-              Put_Thing($T);
+              GMLog($T['Name'] . " took $RV damage and has been destroyed\n",$T);
+              if (isset($_REQUEST["NoDebris:$Tid"])) {
+                Thing_Delete($Tid);
+              } else {
+                Thing_Destroy($T);
+                Put_Thing($T);
+              }
             }
           } else if ($T['CurHealth']) {
             TurnLog($T['Whose'],$T['Name'] . " took $RV damage\n",$T);

@@ -923,7 +923,7 @@ var_dump($FS);
       echo "This operation will be at level $BaseLevel (Needing $ProgNeed progress).  You currently do " . $Org['OfficeCount'] . " progress per turn.<p>";
 
       echo "<button class=projtype type=submit " .
-           "formaction='OpsDisp.php?ACTION=NEW&t=$Turn&O=$OrgId&op=$op&W=$Wh&TType=$TargType&Target=$Target&SP=$SP&Te=$TechId&P2=$P2&N=" .
+           "formaction='OpsDisp.php?ACTION=NEW&t=$Turn&O=$OrgId&op=$op&W=$Wh&TargType=$TargType&Target=$Target&SP=$SP&Te=$TechId&P2=$P2&N=" .
            base64_encode("$Name") . "&L=$BaseLevel&PN=$ProgNeed&Desc=" . base64_encode("$Desc") . "'>$Name</button> \n";
 
       echo "Click to confirm<p>";

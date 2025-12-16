@@ -184,7 +184,7 @@ if (isset($_REQUEST['Action'])) {
                 echo $T['Name'] . " not deployed as it is currently at 0 health<p>";
                 $T['LinkId'] = LINK_INBRANCH;
               }
-              $T['Evasion'] = 50;
+              $T['Evasion'] = 40;
               $T['ProjectId'] = $Rid;
               Put_Thing($T);
               $Count++;
@@ -197,7 +197,7 @@ if (isset($_REQUEST['Action'])) {
                 'ActDamage'=>$Off,
                 'SystemId'=>$Sid, 'WithinSysLoc'=>3, 'Class'=>'Heavy Security',
                 'Name'=>($B['Name']?$B['Name']:"Heavy $Ox Security $Rid") . ":" . $Org['Name'] . ":$Count" ,
-                'Evasion'=>50, 'ProjectId'=>$Rid, 'LinkId'=>0];
+                'Evasion'=>40, 'ProjectId'=>$Rid, 'LinkId'=>0];
               if ($Bid>0 && ($BTypes[$B['Type']]['Props'] &1)) $T['Name'] .= " (Hidden)";
               Put_Thing($T);
               echo "Created " . $T['Name'] . " $Count<br>";

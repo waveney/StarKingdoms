@@ -2121,10 +2121,11 @@ function Show_Thing(&$T,$Force=0) {
   echo fm_submit("ACTION","Refresh",0);
   if ($T['BuildState'] == BS_SERVICE) echo fm_submit('ACTION','Cancel Servicing');
   if ($Designs && ($T['BuildState'] >0)) {
-    $Already = Get_Things_Cond($Fid,"Type=" . $T['Type'] . " AND Name='" . $T['Name'] . "' AND BuildState=0");
+    $Already = Get_Things_Cond($Fid,"Type=" . $T['Type'] . ' AND Name="' . $T['Name'] . '" AND BuildState=0');
     if (!$Already) {
       echo fm_submit('ACTION','Make a Design of this');
     }
+    echo fm_submit('ACTION','This should be from a Design'); // Temp capability
   }
   if ($GM) {
     echo fm_submit("ACTION",'GM Refit',0);

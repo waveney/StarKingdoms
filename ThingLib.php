@@ -801,16 +801,18 @@ function Calc_Evasion(&$T) {
     $Bsys = ($T['WhereBuilt']??0);
     if ($Bsys) {
       $HomeSys = Get_System($Bsys);
-      $Plans = explode(',',$HomeSys['WorldList']);
-      if ($Plans) foreach ($Plans as $Pid) {
-        if ($Pid<0) {
-          if (Has_PTraitM(-$Pid,'Active Chronosphere')) {
+      if ($HomeSys['WorldList']) {
+        $Plans = explode(',',$HomeSys['WorldList']);
+        if ($Plans) foreach ($Plans as $Pid) {
+          if ($Pid<0) {
+            if (Has_PTraitM(-$Pid,'Active Chronosphere')) {
+              $ev+=5;
+              break;
+            }
+          } else if (Has_PTraitP($Pid,'Active Chronosphere')) {
             $ev+=5;
             break;
           }
-        } else if (Has_PTraitP($Pid,'Active Chronosphere')) {
-          $ev+=5;
-          break;
         }
       }
     }

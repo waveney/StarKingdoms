@@ -100,7 +100,8 @@
 
           foreach($Things as $T) {
             $Tid = $T['id'];
-            $pc = Proj_Costs($T['Level'] + (Has_PTraitH($Home,'Untrusted')?1:0));
+            $Level = $T['Level'] + (Has_PTraitH($Home,'Untrusted')?1:0);
+            $pc = Proj_Costs($Level);
             $Extra = '';
             if ($_REQUEST['ACTION'] == 'NEWARMY' && Has_Tech($Fid,'Efficient Robot Construction')) $pc[0] = max(1, $pc[0] - $T['Level']);
             if ($_REQUEST['ACTION'] == 'NEWSHIP' && Has_Tech($Fid,'Space Elevator')) $pc[0] = max(1, $pc[0] - $T['Level']);
@@ -115,11 +116,11 @@
             if ($Designs) {
               $ClassName = ClassName($T);
               echo "<tr><td><button class=projtype formaction='ProjNew.php?ACTION=THINGNAME&id=$Fid&p=$Ptype&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&ThingId=$Tid'>" .
-                "$ClassName</buton><td>" . $T['Level'] . "<td>" . $pc[1] .  "<td>$Extra<td>" . $pc[0] . "<td>$Moddesc";
+                "$ClassName</buton><td>$Level<td>" . $pc[1] .  "<td>$Extra<td>" . $pc[0] . "<td>$Moddesc";
 
             } else {
               echo "<tr><td><button class=projtype formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=$Ptype&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&ThingId=$Tid'>" .
-                $T['Name'] . (empty($T['Class'])?'': ", a " . $T['Class']) . "</buton><td>" . $T['Level'] . "<td>" . $pc[1] .  "<td>$Extra<td>" . $pc[0] .
+                $T['Name'] . (empty($T['Class'])?'': ", a " . $T['Class']) . "</buton><td>$Level<td>" . $pc[1] .  "<td>$Extra<td>" . $pc[0] .
                 "<td>$Moddesc";
             }
             }
@@ -1130,7 +1131,7 @@
 
       echo "This action is to build an already designed Agent.  If you want a new design please go to ";
       if ($Designs) {
-        echo "<a href=PlanDesign.php?F=$Fid>Design Planning</a> first";
+        echo "<a href=PlanDesign.php?F=$Fid>Design Planning</a> first<p>";
       } else {
         echo "<a href=ThingPlan.php>The Thing Planning Tool</a> first.<p>\n";
       }

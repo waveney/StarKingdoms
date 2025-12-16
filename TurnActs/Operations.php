@@ -21,10 +21,11 @@ function StartOperations() {
     $Sys = Get_System($Wh);
     $TWho = ($Sys['Control']??0);
     $OrgId = $O['OrgId'];
+    $TargType = $O['TargType'];
 
-    if ($O['TargType'] ) {
+    if ($TargType ) {
       $ThingType = $O['TargType'];
-      $Target = $O['Target'];
+      $ThingId = $Target = $O['Target'];
       switch ($ThingType) {
         case 1 :// Planet
           $Body = Get_Planet($Target);
@@ -42,11 +43,11 @@ function StartOperations() {
       $Target = $O['Target'];
       if ($Target > 0) {
         $Body = Get_Planet($Target);
-        $ThingType = 1;
+        $TargType = $ThingType = 1;
         $ThingId = $Target;
       } else if ($Target < 0){
         $Body = Get_Moon(-$Target);
-        $ThingType = 2;
+        $TargType = $ThingType = 2;
         $ThingId = -$Target;
       }
     } else {
@@ -270,7 +271,7 @@ function StartOperations() {
 
       if (Has_Trait($Fid,'IMPSEC') && strstr($OpTypes[$O['Type']]['Name'],'Recon')) $Mod--;
 
-      if (Has_Trait($Fid,'Friends in All Places') && (($OpTypes[$O['Type']]['Props'] & OPER_NOT_FRIENDS) == 0)) {
+      if (Has_Trait($Fid,'Friends in All Places') && (($Otp & OPER_NOT_FRIENDS) == 0)) {
         $World = WorldFromTarget($TargType,$Target);
         $Wid = $World['id']??0;
         $CC = Gen_Get_Cond1('SocialPrinciples',"Principle='Confluence'");
@@ -422,51 +423,53 @@ function OperationsComplete() {
 //    var_dump("Completing",$O);
     $Fid = $O['Whose'];
     $Otp = $OpTypes[$O['Type']]['Props'];
-    $Wh = $O['SystemId'];
-    $Sys = Get_System($Wh);
-    if (!$Sys) {
-      Error("Could not identify the World to do Operation <a href=OperEdit.php?id=>$Oid>" . $O['Name'] . "</a> - bug - call Richard");
-      continue;
-    }
+    if (($Otp & OPER_NO_TARGET) == 0){
+      $Wh = $O['SystemId'];
+      $Sys = Get_System($Wh);
+      if (!$Sys) {
+        Error("Could not identify the World to do Operation <a href=OperEdit.php?id=>$Oid>" . $O['Name'] . "</a> - bug - call Richard");
+        continue;
+      }
 
-    $TWho = $Sys['Control'];
-    $Org = Gen_Get('Organisations',$O['OrgId']);
-    if ($O['TurnState'] >1) {
-      GMLog("Skipping Operation <a href=OperEdit.php?id=$Oid>" . $O['Name'] . " </a> as already completed.");
-      continue;
-    }
+      $TWho = $Sys['Control'];
+      $Org = Gen_Get('Organisations',$O['OrgId']);
+      if ($O['TurnState'] >1) {
+        GMLog("Skipping Operation <a href=OperEdit.php?id=$Oid>" . $O['Name'] . " </a> as already completed.");
+        continue;
+      }
 
-    $Target = $O['Target'];
-    if ($O['TargType'] ) {
-      $ThingType = $O['TargType'];
-      switch ($ThingType) {
-        case 1 :// Planet
+      $Target = $O['Target'];
+      if ($O['TargType'] ) {
+        $ThingType = $O['TargType'];
+        switch ($ThingType) {
+          case 1 :// Planet
+            $Body = Get_Planet($Target);
+            break;
+          case 2: // Moon
+            $Body = Get_Moon($Target);
+            break;
+          case 3:// Thing
+            $Body = ($Target>0?Get_Thing($Target):[]);
+            break;
+
+        }
+      } else if ($Target) {
+        if ($Target > 0) {
           $Body = Get_Planet($Target);
-          break;
-        case 2: // Moon
-          $Body = Get_Moon($Target);
-          break;
-        case 3:// Thing
-          $Body = ($Target>0?Get_Thing($Target):[]);
-          break;
-
+          $ThingType = 1;
+          $ThingId = $Target;
+        } else if ($Target < 0){
+          $Body = Get_Moon(-$Target);
+          $ThingType = 2;
+          $ThingId = -$Target;
+        }
+        $World = Gen_Get_Cond1('Worlds',"ThingType=$ThingType AND ThingId=$ThingId");
+        $World['Name'] = $Body['Name'];
+      } else {
+        $ThingType = 3;
+        $ThingId = 0;
+        $Body = [];
       }
-    } else if ($Target) {
-      if ($Target > 0) {
-        $Body = Get_Planet($Target);
-        $ThingType = 1;
-        $ThingId = $Target;
-      } else if ($Target < 0){
-        $Body = Get_Moon(-$Target);
-        $ThingType = 2;
-        $ThingId = -$Target;
-      }
-      $World = Gen_Get_Cond1('Worlds',"ThingType=$ThingType AND ThingId=$ThingId");
-      $World['Name'] = $Body['Name'];
-    } else {
-      $ThingType = 3;
-      $ThingId = 0;
-      $Body = [];
     }
 
     switch ($NameOps[$O['Type']]) {
@@ -820,19 +823,22 @@ function OperationsComplete() {
       case 'Sponsor Colonists':
         $Where = $O['SystemId'];
         $N = Get_System($Where);
-        $T = Get_Things_Cond1(0,"SystemId=$Where AND Instruction=1");
-        if (!$T) {
+        $Ts = Get_Things_Cond(0,"SystemId=$Where AND Instruction=1");
+        if (!$Ts) {
           TurnLog($Fid,"The operation to sponsor colonists in " . System_Name($N,$Fid) . " cannot find any on going colonisation to help with.");
           GMLog("The operation to sponsor colonists in " . System_Name($N,$Fid) . " by Operation $Oid, " .
             " cannot find any on going colonisation to help with.");
           break;
         }
-        $PMod = $Org['OfficeCount'] * Has_Tech($Fid,'Offworld Construction');
-        $T['Progress'] += $PMod;
-        Put_Thing($T);
-        $SocP = Get_SocialP($Org['SocialPrinciple']);
-        TurnLog($Fid,"The colonisation by " . $T['Name'] . " has an extra $PMod progress");
-        FollowUp($Fid,"When the colonisation in " . $N['Ref'] . " finishes, give it an additional level of the social principle: " . $SocP['Name'] );
+        $T = array_shift($Ts);
+        if ($T) {
+          $PMod = $Org['OfficeCount'] * Has_Tech($Fid,'Offworld Construction');
+          $T['Progress'] += $PMod;
+          Put_Thing($T);
+          $SocP = Get_SocialP($Org['SocialPrinciple']);
+          TurnLog($Fid,"The colonisation by " . $T['Name'] . " has an extra $PMod progress");
+          FollowUp($Fid,"When the colonisation in " . $N['Ref'] . " finishes, give it an additional level of the social principle: " . $SocP['Name'] );
+        }
         break;
 
       case 'Share Technology':

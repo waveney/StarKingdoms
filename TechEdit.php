@@ -8,7 +8,7 @@
 
   dostaffhead("Edit Technoiology");
 
-  global $db, $GAME, $NOTBY,$SETNOT;
+  global $db, $GAME, $GAMEID, $NOTBY,$SETNOT;
   global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil;
 
 //  var_dump($_REQUEST);
@@ -104,8 +104,15 @@
   $Facts = Get_Factions(1,1);
 
   if ($Techuses) {
+    $OGames = 0;
     foreach ($Techuses as $Tu) {
+      $OGame = 0;
       if (($Tu['Faction_Id']==0) || (!isset($Facts[$Tu['Faction_Id']])) || ($Facts[$Tu['Faction_Id']]['Listed'] ?? 0)) continue;
+      if ($Facts[$Tu['Faction_Id']]['GameId'] != $GAMEID) {
+        $OGame = 1;
+        $OGames ++;
+        echo "<div class=OGames hidden>";
+      }
       if ($Tu['Level'] == 0) {
         echo "(<span " . FactColours($Tu['Faction_Id']) . ">" . $Facts[$Tu['Faction_Id']]['GameId'] . ": " .
           $Facts[$Tu['Faction_Id']]['Name'] . "</span>), ";
@@ -113,7 +120,12 @@
         echo "<span " . FactColours($Tu['Faction_Id']) . ">" . $Facts[$Tu['Faction_Id']]['GameId'] . ": " .
           $Facts[$Tu['Faction_Id']]['Name'] . "</span> - L" . $Tu['Level'] . ", ";
       }
+      if ($OGame) echo "</div>";
       $Facts[$Tu['Faction_Id']]['Listed'] = 1;
+    }
+
+    if ($OGames) {
+      echo "<button type=button class=OGames onclick=ToggleClass('OGames')>Other Games</button>";
     }
   } else {
     echo "Not known by any Faction";
