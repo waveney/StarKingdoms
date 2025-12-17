@@ -116,11 +116,11 @@
             if ($Designs) {
               $ClassName = ClassName($T);
               echo "<tr><td><button class=projtype formaction='ProjNew.php?ACTION=THINGNAME&id=$Fid&p=$Ptype&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&ThingId=$Tid'>" .
-                "$ClassName</buton><td>$Level<td>" . $pc[1] .  "<td>$Extra<td>" . $pc[0] . "<td>$Moddesc";
+              "$ClassName</buton><td>" . $T['Level'] . "<td>" . $pc[1] .  "<td>$Extra<td>" . $pc[0] . "<td>$Moddesc";
 
             } else {
               echo "<tr><td><button class=projtype formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=$Ptype&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&ThingId=$Tid'>" .
-                $T['Name'] . (empty($T['Class'])?'': ", a " . $T['Class']) . "</buton><td>$Level<td>" . $pc[1] .  "<td>$Extra<td>" . $pc[0] .
+                $T['Name'] . (empty($T['Class'])?'': ", a " . $T['Class']) . "</buton><td>" . $T['Level'] . "<td>" . $pc[1] .  "<td>$Extra<td>" . $pc[0] .
                 "<td>$Moddesc";
             }
             }
@@ -664,7 +664,7 @@
 
       echo "This action is to build an already designed ship.  If you want a new design please go to ";
       if ($Designs) {
-        echo "<a href=PlanDesign.php?F=$Fid>Design Planning</a> first";
+        echo "<a href=PlanDesign.php?F=$Fid>Design Planning</a> first<p>";
       } else {
         echo "<a href=ThingPlan.php>The Thing Planning Tool</a> first.<p>\n";
       }

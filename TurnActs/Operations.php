@@ -423,6 +423,7 @@ function OperationsComplete() {
 //    var_dump("Completing",$O);
     $Fid = $O['Whose'];
     $Otp = $OpTypes[$O['Type']]['Props'];
+    $Org = Gen_Get('Organisations',$O['OrgId']);
     if (($Otp & OPER_NO_TARGET) == 0){
       $Wh = $O['SystemId'];
       $Sys = Get_System($Wh);
@@ -432,7 +433,6 @@ function OperationsComplete() {
       }
 
       $TWho = $Sys['Control'];
-      $Org = Gen_Get('Organisations',$O['OrgId']);
       if ($O['TurnState'] >1) {
         GMLog("Skipping Operation <a href=OperEdit.php?id=$Oid>" . $O['Name'] . " </a> as already completed.");
         continue;

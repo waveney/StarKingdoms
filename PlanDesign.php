@@ -524,7 +524,7 @@
           echo "<h2 class=Green>Design is valid</h2>";
 
           if ($GM || ($PlayerState[$FACTION['State']] == 'Setup')) {
-            // TODO
+            // TODO make now
           }
         } else {
           echo "<h2 class=Green>Design is valid, but can't currently be made</h2>";

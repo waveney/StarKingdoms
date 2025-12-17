@@ -111,7 +111,7 @@ if (isset($_REQUEST['Action'])) {
         $Wid = $World['id'];
       }
 
-      $AOrgs = Gen_Get_Cond('Organisations',"GameId=$GAMEID");
+      $AOrgs = Gen_Get_Cond('Organisations',"GameId=$GAMEID ORDER BY Name");
       $AOrgList = NamesList($AOrgs);
 
       echo "<table border>";
