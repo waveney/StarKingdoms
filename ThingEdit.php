@@ -824,6 +824,63 @@ global $FACTION;
       $T = $Des;
       break;
 
+    case 'Make a Design of this':
+      $tid = $_REQUEST['id'];
+      $T = Get_Thing($tid);
+      $Des = Thing_Duplicate($tid,1);
+      $Des['BuildState'] = BS_PLANNING;
+      if ($T['BluePrint']) {
+        $Blue = Get_Thing($T['BluePrint']);
+        $Des['Class'] = $Blue['Class'];
+      }
+
+      $Des['SystemId'] = 0;
+      Put_Thing($Des);
+      echo "<h1>This is the Design - You may wish to change the name.  Click <a href=ThingEdit.php?id=$tid>Here</a> to go back to the original thing</h1>";
+      $tid = $Des['id'];
+      $T = $Des;
+      break;
+
+    case 'This should be from a Design':
+      $tid = $_REQUEST['id'];
+      $T = Get_Thing($tid);
+      $Mods = Get_Modules($tid);
+      $CMds = count($Mods);
+
+//      var_dump($Mods);
+      // Find possible designs, List them, Choose
+      $Designs = Get_Things_Cond_Ordered($Fid,"BuildState=0 AND Type=" . $T['Type'] . " AND Level=" . $T['Level'] . " AND Variant=" . $T['Variant']);
+      $Count = 0;
+      echo "<form method=post action=ThingEdit.php?ACTION=FromDesign2&id=$tid><h2>Select The Design:</h2>";
+
+      foreach ($Designs as $Did=>$DT) {
+        $DMods = Get_Modules($Did);
+        if ($CMds != count($DMods)) continue;
+ //       var_dump($DMods);
+        foreach ($DMods as $i=>$Ms) {
+          if (($Ms['Type'] != $Mods[$i]['Type']) || ($Ms['Number'] != $Mods[$i]['Number'])) continue 2;
+        }
+
+        $Count++;
+        echo "<button type=submit name=Design value=$Did>" . $DT['Name'] . "</button>";
+      }
+
+      if ($Count) {
+        dotail();
+      }
+      echo "No designs found that match the Type, Level, Variant and Modules<p>";
+      break;
+
+    case 'FromDesign2':
+      $tid = $_REQUEST['id'];
+      $T = Get_Thing($tid);
+      $Did = $_REQUEST['Design'];
+      $DT = Get_Thing($Did);
+      $T['Image'] = $DT['Image'];
+      $T['Class'] = ClassName($DT);
+      Put_Thing($T);
+      break;
+
     case 'None' :
     default:
       break;

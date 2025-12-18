@@ -208,7 +208,7 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
 
       if (!isset($Blockades[$T['SystemId']])) {
         $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Blockade>0");
-        $Blockades[$T['SystemId']] = ($Conf?$Conf[0]['Blockade']:0);
+        $Blockades[$T['SystemId']] = ($Conf?array_shift($Conf)['Blockade']:0);
       }
 //      var_dump($T['SystemId'],$Blockades[$T['SystemId']]);
       if ($T['Instruction']) $txt .=  $ThingInstrs[abs($T['Instruction'])];
