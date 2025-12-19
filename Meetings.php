@@ -73,7 +73,7 @@ function ForceReport($Sid,$Cat) {
     "SystemId=$Sid AND ( BuildState=" . BS_SERVICE . " OR BuildState=" . BS_COMPLETE . ") AND (LinkId>=0 OR LinkId=" . LINK_NOT_MOVING .
     ") ORDER BY Whose, Type, Level, Class");*/
 
-  $Things = Gen_Select("SELECT t.* FROM Things t LEFT JOIN ThingTypes tt ON t.Type=tt.id WHERE SystemId=$Sid AND ( BuildState=" . BS_SERVICE .
+  $Things = Gen_Select_Ordered("SELECT t.* FROM Things t LEFT JOIN ThingTypes tt ON t.Type=tt.id WHERE SystemId=$Sid AND ( BuildState=" . BS_SERVICE .
     " OR BuildState=" . BS_COMPLETE . ") AND (LinkId>=0 OR LinkId=" . LINK_NOT_MOVING .
     ") ORDER BY Whose, tt.Priority DESC, Level DESC, Class, Name");
   $LastF = $Home = $Control = -1;

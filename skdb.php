@@ -95,6 +95,14 @@ function Gen_Select($Clause,$idx='id') {
   global $db;
   $Ts = [];
   $res = $db->query($Clause);
+  if ($res && is_object($res)) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
+  return $Ts;
+}
+
+function Gen_Select_Ordered($Clause,$idx='id') {
+  global $db;
+  $Ts = [];
+  $res = $db->query($Clause);
   if ($res && is_object($res)) while ($ans = $res->fetch_assoc()) $Ts[$ans[$idx]] = $ans;
   return $Ts;
 }
