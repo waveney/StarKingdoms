@@ -641,10 +641,10 @@
         echo "<h2>Academic Contemplation</h2>";
         $Lvl = 2;
         $pc = Proj_Costs($Lvl);
-        echo "<form><button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" .
-        $PTi['Academic Contemplation'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $TT['id'] .
-        "&Name=" . base64_encode('Academic Contemplation' . " $Lvl$Place"). "&L=$Lvl&C=" . $pc[1] . "&PN=" . $pc[0] ."'>" .
-        'Academic Contemplation' . " $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button></form><p>";
+        echo "<form method=post action=ProjDisp.php?ACTION=NEW&id=$Fid&p=" .
+          $PTi['Academic Contemplation'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $TT['id'] .
+          "&Name=" . base64_encode('Academic Contemplation' . " $Lvl$Place"). "&L=$Lvl&C=" . $pc[1] . "&PN=" . $pc[0] .">";
+        echo "<button class=projtype type=submit>Academic Contemplation" . " $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button></form><p>";
       }
 
       if (Has_Tech($Fid,'Flux Crystal Synthesis')) { /// Should drive from projects but this is a quick hack
@@ -652,9 +652,9 @@
         $Lvl = 1;
         $pc = Proj_Costs($Lvl);
         echo "<form method=post><button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" .
-        $PTi['Flux Crystal Synthesis'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $TT['id'] .
-        "&Name=" . base64_encode('Flux Crystal Synthesis' . " $Place"). "&L=$Lvl&C=" . $pc[1] . "&PN=" . $pc[0] ."'>" .
-        'Flux Crystal Synthesis' . " $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button></form><p>";
+          $PTi['Flux Crystal Synthesis'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $TT['id'] .
+          "&Name=" . base64_encode('Flux Crystal Synthesis' . " $Place"). "&L=$Lvl&C=" . $pc[1] . "&PN=" . $pc[0] ."'>" .
+          'Flux Crystal Synthesis' . " $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button></form><p>";
       }
       break;
 

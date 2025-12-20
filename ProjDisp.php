@@ -11,7 +11,7 @@
 
   global $FACTION,$ADDALL,$GAME,$ARMY, $ARMIES, $GAMEID, $Project_Status;
 
-// var_dump($_REQUEST);
+//  var_dump($_REQUEST);
 
   $HomeColours = ['#ff99ff', '#ccffff', '#ccffcc', '#ffffcc', '#ffcccc', '#e6ccff', '#cce6ff', '#ffd9b3', '#ecc6c6', '#ecc6d6', '#d6b3ff', '#d1e0e0', '#d6ff99',
      '#ffb3ff', '#b3b3ff', '#b3ffff', '#b3ffb3', '#ffffb3', '#ffb3b3', '#ecc6c6', '#ffb3cc', '#ffb3d9', '#ecc6d9', '#ffb3ff', '#ecc6ec', '#ecb3ff', '#e0b3ff',

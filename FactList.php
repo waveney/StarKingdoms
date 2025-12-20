@@ -8,7 +8,7 @@
 
   dostaffhead("List Factions");
 
-  global $db, $GAME;
+  global $db, $GAME,$GAMEID;
   global $PlayerState,$PlayerStates,$PlayerStateColours;
   $Factions = Get_Factions();
 
@@ -48,7 +48,8 @@
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Economy</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Sens</a>\n";
   echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>NPC</a>\n";
-  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Use</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Naval<br>Logistics</a>\n";
+  echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Ground<br>Logistics</a>\n";
   echo "</thead><tbody>";
 
   foreach($Factions as $F) {
@@ -66,7 +67,15 @@
     echo "<td>" . $Econ*10;
     echo "<td>" . Has_Tech($Fid,'Sensors');
     echo "<td>" . ($F['NPC']?'Y':'N');
-    echo "<td><a href=Access.php?id=$Fid&Key=" . $F['AccessKey'] . " ><b>Use</b></a>";
+
+    $Things = Get_Things_Cond($Fid, "id>0 AND GameId=$GAMEID ORDER BY Priority DESC, Name");
+    $Logistics = Logistics($Fid,$Things);
+    $LogAvail = LogisticalSupport($Fid);
+
+    echo "<td>" . $Logistics[0] . "/" . $LogAvail[0];
+    echo "<td>" . $Logistics[1] . "/" . $LogAvail[1];
+
+ //   echo "<td><a href=Access.php?id=$Fid&Key=" . $F['AccessKey'] . " ><b>Use</b></a>";
   }
 
   echo "</tbody></table></div>\n";

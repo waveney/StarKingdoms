@@ -836,6 +836,8 @@ global $FACTION;
 
       $Des['SystemId'] = 0;
       Put_Thing($Des);
+      $T['Class'] = ClassName($Des);
+      Put_Thing($T);
       echo "<h1>This is the Design - You may wish to change the name.  Click <a href=ThingEdit.php?id=$tid>Here</a> to go back to the original thing</h1>";
       $tid = $Des['id'];
       $T = $Des;

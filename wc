@@ -1,0 +1,167 @@
+AnomalyEdit.php:  echo "<tr><td>Location:<td>" . fm_select($Systems,$A,'SystemId',1,' onchange=SetSysLoc("SystemId","AnomalyLoc","WithinSysLoc")');
+AnomalyEdit.php:    echo "<td id=AnomalyLoc>" . fm_select($syslocs,$A,'WithinSysLoc');
+AnomalyList.php:    $LocGr = intdiv($A['WithinSysLoc'],100);
+AnomalyList.php:    if (($A['WithinSysLoc'] == 3) || ($LocGr == 2) || ($LocGr ==4)) $Loc = 'Ground';
+BranchEdit.php:                $T['WithinSysLoc'] = 3;
+BranchEdit.php:                'SystemId'=>$Sid, 'WithinSysLoc'=>3, 'Class'=>'Heavy Security',
+BranchEdit.php:            $T['WithinSysLoc'] = 1;
+BranchEdit.php:                'SystemId'=>$Sid, 'WithinSysLoc'=>1, 'Class'=>'Defence Fighter Squadron', 'Name'=>($B['Name']?$B['Name']:"Squadron $Bid") . ":$Count" ,
+HomesLib.php:                    $H['WithinSysLoc'] = $loc;
+HomesLib.php:              $H['WithinSysLoc'] = $loc;
+HomesLib.php:                $H['WithinSysLoc'] = $loc;
+HomesLib.php:                        $H['WithinSysLoc'] = $loc;
+HomesLib.php:                    $H['WithinSysLoc'] = $loc;
+HomesLib.php:              $H['WithinSysLoc'] = $T['WithinSysLoc'];
+HomesLib.php:          $H = ['ThingType'=>3, 'ThingId'=>$T['id'], 'Whose'=>$T['Whose'], 'Inuse'=>1, 'SystemId' => $T['SystemId'], 'WithinSysLoc' => $T['WithinSysLoc']];
+HomesLib.php:    echo "<tr><td>Where:<td>" . fm_select($SysLocs, $H,'WithinSysLoc');
+HomesLib.php:      return $T['WithinSysLoc']; // Ignores Posn
+Meetings.php:        $T['WithinSysLoc'] =3;
+Meetings.php:        $T['WithinSysLoc'] =1;
+MinedLib.php:    $WLoc = $M['WithinSysLoc'];
+OperEdit.php:         $Team['WithinSysLoc'] = (($OpTypes[$O['Type']]['TeamProps'] & TEAM_INSPACE)?0:3);
+PAnomalyList.php:      $LocGr = intdiv($A['WithinSysLoc'],100);
+PAnomalyList.php:      if (($A['WithinSysLoc'] == 3) || ($LocGr == 2) || ($LocGr ==4)) $Loc = 'Ground';
+PlayerLib.php:      if (isset($HostT['WithinSysLoc'])) {
+PlayerLib.php:        $LocType = intdiv($HostT['WithinSysLoc'],100);
+PlayerLib.php:        if (($HostT['WithinSysLoc'] == 3) || $LocType==2 || $LocType==4 ) $LocClass = 'Ground';
+ProjLib.php:    if (!$Set) return [$Home['SystemId'],$Home['WithinSysLoc']];
+ProjLib.php:    $Home['WithinSysLoc'] = $loc;
+ProjLib.php:    if (!$Set) return [$Home['SystemId'],$Home['WithinSysLoc']];
+ProjLib.php:    $Home['WithinSysLoc'] = $loc;
+ProjLib.php:    if ($T['BuildState'] > BS_PLANNING && $T['BuildState'] < BS_EX) return [$T['SystemId'],$T['WithinSysLoc']];
+ProjNew.php:      $HLoc = $Homes[$Hi]['WithinSysLoc'];
+ProjNew.php:      $HLoc = $Homes[$Hi]['WithinSysLoc'];
+ProjNew.php:      $HLoc = $Homes[$Hi]['WithinSysLoc'];
+ProjNew.php:          if ($T['WithinSysLoc'] == $HLoc ) {
+ProjNew.php:        $HLoc = $Homes[$Hi]['WithinSysLoc'];
+ProjNew.php:            if ($T['WithinSysLoc'] == $HLoc ) {
+ProjNew.php:    $HLoc = $Homes[$Hi]['WithinSysLoc'];
+ProjNew.php:      $HLoc = $Homes[$Hi]['WithinSysLoc'];
+ProjNew.php:          if ($T['WithinSysLoc'] == $HLoc ) {
+SetupFaction.php:        'WithinSysLoc' => $Pidx*200, 'EconomyFactor' => 100, 'EconomyMod' => 0];
+SetupFaction.php:        'WithinSysLoc' => $Pidx*400, 'EconomyFactor' => 100, 'EconomyMod' => 0];
+SetupTeams.php:  $Team['WithinSysLoc'] = (($OpTypes[$O['Type']]['TeamProps'] & TEAM_INSPACE)?1:3);
+sysloc.php:echo "<td id=AnomalyLoc>" . fm_select($syslocs,$A,'WithinSysLoc');
+SystemLib.php:      $LocCat = intdiv($A['WithinSysLoc'],100);
+SystemLib.php:           ($Syslocs[$A['WithinSysLoc']]? $Syslocs[$A['WithinSysLoc']]: "Space") . "<p>";
+SystemLib.php:      $LocCat = intdiv($A['WithinSysLoc'],100);
+SystemLib.php:        $txt .=  "<br><h3>Anomaly: " . $A['Name'] . "</h3>Location: " . ($Syslocs[$A['WithinSysLoc']]? $Syslocs[$A['WithinSysLoc']]: "Space") . "<p>";
+ThingEdit.php:      $T['WithinSysLoc'] = $Home['WithinSysLoc'];
+ThingEdit.php:          $T['WithinSysLoc'] = $Gates[0]['WithinSysLoc'];
+ThingEdit.php:      $T['WithinSysLoc'] = $Gate['WithinSysLoc'];
+ThingEdit.php:      $T['WithinSysLoc'] = $H['WithinSysLoc'];
+ThingEdit.php:      echo fm_select($Syslocs,$T,'WithinSysLoc');
+ThingEdit.php:      $T['WithinSysLoc'] = $_REQUEST['WithinSysLoc'];
+ThingEdit.php:            $wsysloc = $_REQUEST["WithinSysLoc:$Hid"];
+ThingEdit.php:              $H['WithinSysLoc'] = $wsysloc;
+ThingLib.php:  $T['WithinSysLoc'] = 0;
+ThingLib.php:      $eye = ($T['WithinSysLoc']==1)?1:8;
+ThingLib.php:  $LocType = intdiv($T['WithinSysLoc'],100);
+ThingLib.php:  if (($T['WithinSysLoc'] == 3) || $LocType==2 || $LocType==4 ) return 1;
+ThingLib.php:  $LocType = intdiv($T['WithinSysLoc'],100);
+ThingLib.php:  if (($T['WithinSysLoc'] == 3) || $LocType==2 || $LocType==4 ) return 0;
+ThingLib.php:      $LocType = intdiv($T['WithinSysLoc'],100);
+ThingLib.php:      if (($T['WithinSysLoc'] == 3) || $LocType==2 || $LocType==4 ) $LocClass = 'Ground';
+ThingLib.php:      if ($Div && ($T['LinkId'] >= 0 || ($MoveProps[$T['LinkId']]&1)) && $T['SystemId'] > 0 && isset($T['WithinSysLoc']) && ($T['WithinSysLoc'] > 0)) {
+ThingLib.php:        } else if (isset($Locations[$T['WithinSysLoc']])) {
+ThingLib.php:          $txt .= " ( " . $Locations[$T['WithinSysLoc']] . " ) ";
+ThingLib.php:          $txt .= " ( Unknown Location " . $T['WithinSysLoc'] . " ) ";
+ThingLib.php:  $Mils = Get_Things_Cond(0,"Type=20 AND SystemId=$Sys AND WithinSysLoc=$loc ");
+ThingLib.php:      $Ml['WithinSysLoc'] = $loc;
+ThingLib.php:      'Whose'=>$FactN, 'SystemId'=>$Sys, 'WithinSysLoc'=>$loc, 'BuildState'=>BS_COMPLETE, 'ActDamage'=>8, 'WhereBuilt'=>$Sys,
+ThingLib.php:      $Ml['WithinSysLoc'] = $loc;
+ThingLib.php:  $LocText = $Locations[$Mine['WithinSysLoc']];
+ThingLib.php:  if ($T['WithinSysLoc'] == $Dest) return;
+ThingLib.php:  $WSL = $T['WithinSysLoc'];
+ThingLib.php:  foreach($Mines as $i=>&$M) if ($M['WithinSysLoc']>500) unset($Mines[$i]); //
+ThingLib.php:        if ($M['WithinSysLoc'] == ($WSL-100)) {
+ThingLib.php:        if ($M['WithinSysLoc'] == $Dest) {
+ThingLib.php:        if ($M['WithinSysLoc'] == ($Dest-100)) {
+ThingLib.php:  $T['WithinSysLoc'] = $Dest;
+ThingList.php:    if ($T['WithinSysLoc'] == 1) {
+ThingList.php:      if (!isset($Locs[$T['WithinSysLoc']])) {
+ThingList.php:        if ($T['WithinSysLoc'] > 2) {
+ThingList.php:          $Loc = $T['WithinSysLoc'] . " <span class=red>CONFUSED</span>";
+ThingList.php:        $Loc = $Locs[$T['WithinSysLoc']];
+ThingShow.php:            echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId',1,' onchange=SetSysLoc("SystemId","WithinNow","WithinSysLoc")');
+ThingShow.php:              echo "<td id=WithinNow>" . fm_select($Syslocs,$T,'WithinSysLoc');
+ThingShow.php:            echo "<tr><td>Current System:<td>" . $N['Ref'] . "<td>" . $Syslocs[$T['WithinSysLoc']];
+ThingShow.php:                echo fm_select($Syslocs,$T,'WithinSysLoc');
+ThingShow.php:                echo ($Syslocs[$T['WithinSysLoc'] ?? 0] ?? 'Deep Space');
+ThingShow.php:                echo fm_select($Syslocs,$T,'WithinSysLoc');
+ThingShow.php:                fm_select($Syslocs,$T,'WithinSysLoc');
+ThingShow.php:    if (Access('God')) echo "<tr><td>GOD!: " . fm_number0('SystemId',$T,'SystemId') . fm_number1('WithinSysLoc',$T,'WithinSysLoc') .
+ThingShow.php:      echo " to: " . ($N['Ref']??'???') . " - " . fm_select($Syslocs,$H,'WithinSysLoc',0,'',"WithinSysLoc:$Hid");
+ThingShow.php:      echo " to: " . $N['Ref'] . " - " . fm_select($Syslocs,$H,'WithinSysLoc',0,'',"WithinSysLoc:$Hid");
+ThingShow.php:          $LocGr = intdiv($A['WithinSysLoc'],100);
+ThingShow.php:          if (($A['WithinSysLoc'] == 3) || ($LocGr == 2) || ($LocGr ==4)) { // Ground
+ThingShow.php:        " AND BuildState=3 AND WithinSysLoc=" . $T['WithinSysLoc'])) continue 2;
+ThingShow.php:          if ($PM['WithinSysLoc'] == $idx+200) continue 4; // Already have mine on this planet
+ThingShow.php:        " AND BuildState=" . BS_COMPLETE . " AND WithinSysLoc=" . $T['WithinSysLoc'])) continue 2;
+ThingShow.php:        " AND BuildState=" . BS_COMPLETE . " AND WithinSysLoc=" . $T['WithinSysLoc'])) continue 2;
+ThingShow.php:      $Existing = Get_Things_Cond(0,"SystemId=" . $T['SystemId'] . " AND WithinSysLoc=" . $T['WithinSysLoc'] . " AND Type=" . TTName('Strip Mine'));
+ThingShow.php:      $LocType = intdiv($T['WithinSysLoc'],100);
+ThingShow.php:          $Panidx = $T['WithinSysLoc']%100;
+ThingShow.php: //         var_dump($T['WithinSysLoc'],$LocType,$Panidx );
+ThingShow.php:            $LocGr = intdiv($A['WithinSysLoc'],100);
+ThingShow.php:            if (($A['WithinSysLoc'] == 3) || ($LocGr == 2) || ($LocGr ==4)) { // Ground
+ThingShow.php:      $WSL = $T['WithinSysLoc'];
+ThingShow.php:        " AND WithinSysLoc=" . $T['WithinSysLoc'])) {
+ThingShow.php:      $WSL = $T['WithinSysLoc'];
+ThingShow.php:        " AND BuildState=" . BS_COMPLETE . " AND WithinSysLoc=" . $T['WithinSysLoc'])) {
+ThingShow.php:      $LocType = intdiv($T['WithinSysLoc'],100);
+ThingShow.php:          $Panidx = $T['WithinSysLoc']%100;
+TurnActions.php:    $LocText = $SysLocs[$T['WithinSysLoc']];
+TurnActs/Instruct.php:            $T['WithinSysLoc'] = $Gate['WithinSysLoc'];
+TurnActs/Instruct.php:            $T['WithinSysLoc'] = $Gates[0]['WithinSysLoc'];
+TurnActs/Instruct.php:            $H['WithinSysLoc'] = $DLid;
+TurnActs/Instruct.php:            $H['WithinSysLoc'] = 0;
+TurnActs/Instruct.php:            $H['WithinSysLoc'] = 0;
+TurnActs/Instruct.php:        $WSL = $T['WithinSysLoc'];
+TurnActs/Instruct.php:          $LocText = $Loc[$T['WithinSysLoc']];
+TurnActs/Instruct.php:        $Existing = Get_Things_Cond(0,"SystemId=" . $T['SystemId'] . " AND WithinSysLoc=" . $T['WithinSysLoc'] . " AND Type=" . TTName('Strip Mine'));
+TurnActs/Instruct.php:        $T['WithinSysLoc'] = $Gate['WithinSysLoc'];
+TurnActs/Instruct.php:        $NT = ['GameId'=>$GAME['id'], 'Type'=> 17, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=>$H['WithinSysLoc'], 'Whose'=>$T['Whose'],
+TurnActs/Instruct.php:              $H['WithinSysLoc'] = $Loc;
+TurnActs/Instruct.php:        $NewHome = ['ThingType'=>1, 'ThingId'=>$P['id'], 'Whose'=>$Who, 'SystemId'=>$P['SystemId'], 'WithinSysLoc'=>$T['WithinSysLoc'],
+TurnActs/Instruct.php:        $WLoc = $T['WithinSysLoc'];
+TurnActs/Instruct.php:            'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $WLoc, 'Whose'=>$T['Whose'],
+TurnActs/Instruct.php:        $NT = ['GameId'=>$GAME['id'], 'Type'=>  TTName('Orbital Repair Yards'), 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'],
+TurnActs/Instruct.php:        $NT = ['GameId'=>$GAME['id'], 'Type'=> TTName('Space Station'), 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'],
+TurnActs/Instruct.php:        $NT = ['GameId'=>$GAME['id'], 'Type'=> TTName('Deep Space Sensor'), 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'],
+TurnActs/Instruct.php:        $NT = ['GameId'=>$GAME['id'], 'Type'=> TTName('Deep Space Sensor'), 'Level'=> 2, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'],
+TurnActs/Instruct.php:        $NT = ['GameId'=>$GAME['id'], 'Type'=> TTName('Command Relay Station'), 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'],
+TurnActs/Instruct.php:        $NT = ['GameId'=>$GAME['id'], 'Type'=> TTName('Beta Node'), 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'],
+TurnActs/Instruct.php:        $NT = ['GameId'=>$GAME['id'], 'Type'=> 15, 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc' => $T['WithinSysLoc'], 'Whose'=>$Who,
+TurnActs/Instruct.php:          " AND WithinSysLoc=" . $T['WithinSysLoc']);
+TurnActs/Instruct.php:        $WLoc = $T['WithinSysLoc'];
+TurnActs/Instruct.php:          $NT = ['GameId'=>$GAME['id'], 'Type'=> TTName('Wormhole Stabiliser'), 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> 1,
+TurnActs/Instruct.php:          $NT = ['GameId'=>$GAME['id'], 'Type'=> TTName('Wormhole Destabiliser'), 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> 1,
+TurnActs/Instruct.php:        $NT = ['GameId'=>$GAME['id'], 'Type'=> TTName('Strip Mine'), 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> $T['WithinSysLoc'],
+TurnActs/Movement.php:    $T['WithinSysLoc'] = $T['NewLocation'];
+TurnActs/Movement.php:        $T['WithinSysLoc'] = $T['NewLocation'];
+TurnActs/Movement.php:      } else if ( $T['WithinSysLoc'] != $T['NewLocation'] && $T['NewLocation']>1) {
+TurnActs/Movement.php:          $T['WithinSysLoc'] = $T['NewLocation'];
+TurnActs/Movement.php:      $T['WithinSysLoc'] = $T['NewLocation'];
+TurnActs/Movement.php:      $T['WithinSysLoc'] = 1;
+TurnActs/Movement.php:    TurnLog($T['Whose'], $T['Name'] . " has been unloaded from " . $H['Name'] . " in " . $N['Ref'] . " to " . $Syslocs[$T['WithinSysLoc']], $T);
+TurnActs/Movement.php:      $Syslocs[$T['WithinSysLoc']]);
+TurnActs/Movement.php:    GMLog($T['Name'] . " has been unloaded from " . $H['Name'] . " in " . $N['Ref'] . " to " . $Syslocs[$T['WithinSysLoc']]);
+TurnActs/Operations.php:    $Team['WithinSysLoc'] = (($OpTypes[$O['Type']]['TeamProps'] & TEAM_INSPACE)?0:3);
+TurnActs/Operations.php:      $Team['WithinSysLoc'] = (($OpTypes[$O['Type']]['TeamProps'] & TEAM_INSPACE)?0:3);
+TurnActs/Projects.php:          if (($T['WithinSysLoc'] == $Where[1] || $T['WithinSysLoc'] == $Where[1]-100)) {
+TurnActs/Projects.php:            if (($T['WithinSysLoc'] == $Where[1] || $T['WithinSysLoc'] == $Where[1]-100)) {
+TurnActs/Projects.php:          $T['WithinSysLoc'] = $Where[1];
+TurnActs/Projects.php:          $T = ['Whose'=>$Fid, 'Type'=>$P['ThingType'], 'BuildState'=>1, 'SystemId' => $Where[0],  'WithinSysLoc' => $Where[1],
+TurnActs/Projects.php:            if (Blockaded($T)) $T['WithinSysLoc'] = 2;
+TurnActs/Projects.php:            if (Blockaded($T)) $T['WithinSysLoc'] = 2;
+TurnActs/Projects.php:          if (Blockaded($T)) $T['WithinSysLoc'] = 2;
+TurnActs/Projects.php:            $T['WithinSysLoc'] = 2;
+TurnActs/Projects.php:            $T['WithinSysLoc'] = 1;
+TurnActs/Projects.php:              $DT['WithinSysLoc'] = $T['WithinSysLoc'];
+TurnActs/Projects.php:          $T['WithinSysLoc'] = ConstructLoc($P['Home'],1);
+TurnActs/Projects.php:          if ($T['WithinSysLoc'] == 0) {
+TurnActs/Projects.php:          $NT = ['GameId'=>$GAME['id'], 'Type'=> 15, 'Level'=> 1, 'SystemId'=>$H['SystemId'], 'WithinSysLoc' => $H['WithinSysLoc'], 'Whose'=>$P['FactionId'],
+TurnActs/Survey.php:          $LocCat = intdiv($A['WithinSysLoc'],100);
+TurnActs/Survey.php:                  " location: " . ($Syslocs[$A['WithinSysLoc']]? $Syslocs[$A['WithinSysLoc']]: "Space") . "<p>" .
+TurnActs/Survey.php:        " location: " . ($Syslocs[$A['WithinSysLoc']]? $Syslocs[$A['WithinSysLoc']]: "Space") . "<p>" .

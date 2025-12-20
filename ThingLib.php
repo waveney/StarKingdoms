@@ -1154,6 +1154,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
   $TTprops2 = ($ThingTypes[$T['Type']]['Prop2']??0);
 
   if ($T['CurHealth'] == 0 && ($TTprops & THING_CAN_BE_SPLATED)) return '';
+  if ($T['LinkId'] == LINK_INBRANCH) return '';
   if ($TTprops & THING_ISA_TEAM) {
     if ($T['Whose'] != $Fid) {
       include_once('OrgLib.php');
@@ -1213,7 +1214,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
       }
       if ($T['Class']) {
         if ($RawA && is_vowel($T['Class'])) $txt .= "n";
-        $txt .= " " . $T['Class'] . " class ";
+        $txt .= " " . $T['Class'];
         $RawA = 0;
       }
       if ($T['Whose']) {
