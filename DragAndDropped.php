@@ -58,6 +58,11 @@ case 'Faction':
   $Put = 'Put_Faction';
   break;
 
+case 'GenericImage':
+  $Data = Gen_Get('GenericImages',$id);
+  $Put = 'Put_Generic';
+  break;
+
 default:
   echo fm_DragonDrop(0,$Type,$Cat,$id,$Data,$Mode,"Unknown Data Category $Cat",1,'',$Class);
   exit;
@@ -68,6 +73,9 @@ if (!$Data) {
   exit;
 }
 
+function Put_Generic($data) {
+  return Gen_Put('GenericImages',$data);
+}
 //TODO paths bellow only work for per year data not fixed eg PA
 
 // Existing file?

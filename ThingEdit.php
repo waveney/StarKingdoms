@@ -860,11 +860,11 @@ global $FACTION;
         if ($CMds != count($DMods)) continue;
  //       var_dump($DMods);
         foreach ($DMods as $i=>$Ms) {
-          if (($Ms['Type'] != $Mods[$i]['Type']) || ($Ms['Number'] != $Mods[$i]['Number'])) continue 2;
+          if (empty($Mods[$i]) || ($Ms['Type'] != $Mods[$i]['Type']) || ($Ms['Number'] != $Mods[$i]['Number'])) continue 2;
         }
 
         $Count++;
-        echo "<button type=submit name=Design value=$Did>" . $DT['Name'] . "</button>";
+        echo "<button type=submit name=Design value=$Did>" . $DT['Name'] . "</button><br>";
       }
 
       if ($Count) {

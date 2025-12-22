@@ -534,7 +534,7 @@ $DDdata = [
 
 
 //var_dump($DDdata); exit;
-function fm_DragonDrop($Call, $Type,$Cat,$id,&$Data,$Mode=0,$Mess='',$Cond=1,$tddata1='',$tdclass='',$hide=0) {
+function fm_DragonDrop($Call, $Type,$Cat,$id,&$Data,$Mode=0,$Mess='',$Cond=1,$tddata1='',$tdclass='',$hide=0,$default='') {
 //  global $db,$InsuranceStates,$YEAR,$DDdata;
   global $db,$GAME,$GAMEID,$DDdata;
 
@@ -560,6 +560,8 @@ function fm_DragonDrop($Call, $Type,$Cat,$id,&$Data,$Mode=0,$Mess='',$Cond=1,$td
       $str .= "<td class=Drop$Type >";
       if (isset($Data[$Type]) && $Data[$Type]) {
         $str .= "<img id=Thumb$Type src=" . $Data[$Type] . " height=120>";
+      } else if(!empty($default)){
+        $str .= "<img id=Thumb$Type src=$default height=120>";
       } else {
         $str .= "No Photo Yet";
       }

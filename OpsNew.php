@@ -252,21 +252,25 @@
       } else {
         $OutP = 0;
       }
-      $WLs = WorldsFromSystem($Wh);
-      $WList = [];
-      $FS = Get_FactionSystemFS($Fid,$Wh);
-      if ($WLs) foreach ($WLs as $Wid) {
-        if ($Wid > 0) {
-          $Body = Get_Planet($Wid);
-          if ((($Body['Concealment']??0) > 0) && (($Body['Concealment']??0) > $FS['SpaceScan'])) continue;
-        } else {
-          $Body = Get_Moon(-$Wid);
-          if ((($Body['Concealment']??0) > 0) && (($Body['Concealment']??0) > $FS['PlanetScan'])) continue;
+      if (($OpTypes[$op]['Props'] & OPER_OUTPOST) ==0 ) {
+        $WLs = WorldsFromSystem($Wh);
+        $WList = [];
+        $FS = Get_FactionSystemFS($Fid,$Wh);
+        if ($WLs) foreach ($WLs as $Wid) {
+          if ($Wid > 0) {
+            $Body = Get_Planet($Wid);
+            if ((($Body['Concealment']??0) > 0) && (($Body['Concealment']??0) > $FS['SpaceScan'])) continue;
+          } else {
+            $Body = Get_Moon(-$Wid);
+            if ((($Body['Concealment']??0) > 0) && (($Body['Concealment']??0) > $FS['PlanetScan'])) continue;
+          }
+          if (($OpTypes[$op]['Props'] & OPER_OWNWORLD) && ($Body['Control'] != $Fid) ) continue;
+          if (($OpTypes[$op]['Props'] & OPER_NOT_OWNWORLD) && ($Body['Control'] == $Fid) ) continue;
+          if ($Body['TargetGate'] && !eval("return " . $Body['TargetGate'] . ";" )) continue;
+          $WList []= $Wid;
         }
-        if (($OpTypes[$op]['Props'] & OPER_OWNWORLD) && ($Body['Control'] != $Fid) ) continue;
-        if (($OpTypes[$op]['Props'] & OPER_NOT_OWNWORLD) && ($Body['Control'] == $Fid) ) continue;
-        if ($Body['TargetGate'] && !eval("return " . $Body['TargetGate'] . ";" )) continue;
-        $WList []= $Wid;
+      } else {
+
       }
 
 //      var_dump($WList,$OutP);

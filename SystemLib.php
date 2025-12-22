@@ -998,7 +998,7 @@ function SpaceScanBlob($Sid,$Fid,$SpaceLevel,$PlanetLevel,&$Syslocs,$GM=0,$DEBUG
         if ($A['Description']) $txt .=  "Description: " . ParseText($A['Description']) . "<p>";
 
         if ((($FA['State']??0) >= 3) && $A['Completion']) {
-          $ptxt .=  "Complete: " . ParseText($A['Completion']) . "<p>";
+          $txt .=  "Complete: " . ParseText($A['Completion']) . "<p>";
         }
 
         if (!$GM) {

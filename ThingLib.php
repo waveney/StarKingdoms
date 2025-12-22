@@ -1274,8 +1274,14 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
           $txt .= ", Prisoner Of: <span " . FactColours($T['PrisonerOf']) . ">" . $Fact['Name'] . "</span>";
         }
       } else if ($GM && !empty($T['Orders'])) $txt .= ", <span style='background:#ffd966;'>Orders: " . $T['Orders'] . "</span>";
-      if ($Images && !empty($T['Image'])) {
-        $itxt .= " <img valign=top src=" . $T['Image'] . " height=100 class=SeeImage> ";
+      if ($Images) {
+        if (!empty($T['Image'])) {
+          $itxt .= " <img valign=top src=" . $T['Image'] . " height=100 class=SeeImage> ";
+        } else {
+          $dflt = DefaultImage($Fid, $T['Type']);
+// var_dump($dflt);
+          if ($dflt) $itxt .= " <img valign=top src=$dflt height=100 class=SeeImage> ";
+        }
       }
 
       if ($GM) {
@@ -1876,6 +1882,14 @@ function ClassName(&$T) {
   $Blue = Get_Thing($T['BluePrint']);
   if ($Blue['Class']??'') return $T['Name'] . " class " . $Blue['Class'];
   return $T['Name'];
+}
+
+function DefaultImage($Fid,$Type) {
+  static $Defaults = [];
+
+  if (isset($Defaults[$Fid][$Type])) return $Defaults[$Fid][$Type];
+  $Rec = Gen_Get_Cond1('GenericImages',"FactionId=$Fid AND Type=$Type");
+  return $Defaults[$Fid][$Type] = ($Rec?$Rec['Image']:null);
 }
 
 ?>

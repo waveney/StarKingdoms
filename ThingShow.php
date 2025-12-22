@@ -154,7 +154,7 @@ function Show_Thing(&$T,$Force=0) {
   echo "<tr>" . fm_text('Name',$T,'Name',2);
 
   echo "<td rowspan=4 colspan=4><table><tr>";
-    echo fm_DragonDrop(1,'Image','Thing',$Tid,$T,1,'',1,'','Thing');
+    echo fm_DragonDrop(1,'Image','Thing',$Tid,$T,1,'',1,'','Thing',0,DefaultImage($Fid, $T['Type']));
   echo "</table>";
 
   $ChangeBox = 0;

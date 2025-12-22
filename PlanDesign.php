@@ -260,6 +260,14 @@
           echo "<button type=submit name=Create value=$di>" .  $ThingTypeNames[$di] . "</button><br>";
         }
       }
+
+
+     echo "<h2><a href=GenericImages.php>Generic Images for other types of Things</a></h2>";
+
+  //    $TTypesUsed = Gen_Select('SELECT tt.* FROM ThingTypes tt LEFT JOIN Things t ON t.Type=tt.id WHERE t.FactionId=$Fid');
+
+
+
     dotail();
 
   }
