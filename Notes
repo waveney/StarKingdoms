@@ -72,7 +72,7 @@ NEW GAME FEATURES & BUGS
  			b: Designs have optional images
  			c: Promote Thing to Design
  			d: Create Named Chars TICK
- e: Designs for Outposts/Mines etc
+ 			e: Designs for Outposts/Mines etc
  			f: List of Designs
  			g: Make a Thing ALWAYS copies a design
  			h: Name prompt on Projects
@@ -81,16 +81,13 @@ NEW GAME FEATURES & BUGS
  k: SetupFaction needs big change
       l: ThingPlan links to DesignPlan links
  			m: Back promote existing things to a common design
-791 ACG 12/12
 
 === 792 start of turn 31
 796 Command Posts (& space equiv)
 809 Outposts eyes and Nebula
 814 Lewis HOG surveys
-815 acg 20/12 @111:49
-816 Branch for judith
 817 DFE error judith
-
+818
 
 
 
