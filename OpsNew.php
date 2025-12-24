@@ -602,12 +602,12 @@ var_dump($FS);
 
         foreach ($MyTechs as $Tid=>$T) {
           $Tec = $Techs[$Tid];
-          if (($Techs[$T['Tech_Id']]['Cat']??0) == 0 || (isset($FactTechs[$Tid]) && ($FactTechs[$Tid] > 0)) ) continue;
+          if (($Techs[$T['Tech_Id']]['Cat']??0) == 0 || (isset($FactTechs[$Tid]) && ($FactTechs[$Tid]['Level'] > 0)) ) continue;
           if (!isset($FactTechs[$Tec['PreReqTech']]) ) continue;
           if ($FactTechs[$Tec['PreReqTech']]['Level'] < $Tec['PreReqLevel'] ) continue;
 
-          if ($Tec['PreReqTech2'] && ((! isset($FactTechs[$T['PreReqTech2']])) || $FactTechs[$Tec['PreReqTech2']] == 0)) continue;
-          if ($Tec['PreReqTech3'] && ((! isset($FactTechs[$T['PreReqTech3']])) || $FactTechs[$Tec['PreReqTech3']] == 0)) continue;
+          if ($Tec['PreReqTech2'] && ((! isset($FactTechs[$Tec['PreReqTech2']])) || $FactTechs[$Tec['PreReqTech2']]['Level'] == 0)) continue;
+          if ($Tec['PreReqTech3'] && ((! isset($FactTechs[$Tec['PreReqTech3']])) || $FactTechs[$Tec['PreReqTech3']]['Level'] == 0)) continue;
 
           $Lvl = $Tec['PreReqLevel'];
           if ($Lvl < 1) continue;
