@@ -601,14 +601,14 @@ var_dump($FS);
 
 
         foreach ($MyTechs as $Tid=>$T) {
-          if (($Techs[$T['Tech_Id']]['Cat']??0) == 0 || (isset($FactTechs[$Tid]) && ($FactTechs[$Tid]['Level']> 0)) ) continue;
-          if (!isset($FactTechs[$Techs[$Tid]['PreReqTech']]) ) continue;
-          if ($FactTechs[$Techs[$Tid]]['Level'] < $T['PreReqLevel'] ) continue;
-
-          if ($T['PreReqTech2'] && ((! isset($FactTechs[$T['PreReqTech2']])) || $FactTechs[$T['PreReqTech2']]['Level'] == 0)) continue;
-          if ($T['PreReqTech3'] && ((! isset($FactTechs[$T['PreReqTech3']])) || $FactTechs[$T['PreReqTech3']]['Level'] == 0)) continue;
-
           $Tec = $Techs[$Tid];
+          if (($Techs[$T['Tech_Id']]['Cat']??0) == 0 || (isset($FactTechs[$Tid]) && ($FactTechs[$Tid] > 0)) ) continue;
+          if (!isset($FactTechs[$Tec['PreReqTech']]) ) continue;
+          if ($FactTechs[$Tec['PreReqTech']]['Level'] < $Tec['PreReqLevel'] ) continue;
+
+          if ($Tec['PreReqTech2'] && ((! isset($FactTechs[$T['PreReqTech2']])) || $FactTechs[$Tec['PreReqTech2']] == 0)) continue;
+          if ($Tec['PreReqTech3'] && ((! isset($FactTechs[$T['PreReqTech3']])) || $FactTechs[$Tec['PreReqTech3']] == 0)) continue;
+
           $Lvl = $Tec['PreReqLevel'];
           if ($Lvl < 1) continue;
           echo "<button class=projtype type=submit formaction='OpsNew.php?$Data&Te=$Tid&P2=$Lvl'>" .
