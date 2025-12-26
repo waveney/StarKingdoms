@@ -891,7 +891,7 @@ function Show_Thing(&$T,$Force=0) {
           if (($MTs[$D['Type']]['Leveled'] & MOD_LEVELED) && ($D['Level']<$Mt[$D['Type']])) echo " <span class=green>(" . $Mt[$D['Type']] . ")</span>";
           switch ($MTs[$D['Type']]['Name']) {
             case 'Cargo Space':
-              echo " - Capacity: " . $T['Level'];
+              if (Feature('CargoLevels')) echo " - Capacity: " . $T['Level'];
               break;
             case 'Sublight Engines':
               echo " - Speed: " . ceil(sprintf('%0.3g',$T['Speed']));
