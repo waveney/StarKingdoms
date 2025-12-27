@@ -879,6 +879,7 @@ global $FACTION;
       $Did = $_REQUEST['Design'];
       $DT = Get_Thing($Did);
       $T['Image'] = $DT['Image'];
+      $T['Priority'] = $DT['Priority'];
       $T['Class'] = ClassName($DT);
       Put_Thing($T);
       break;
