@@ -604,7 +604,7 @@ function Thing_Finished($Tid) {
 
 
 function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0,$InstaChk=1 ) {
-  global $LinkStates;
+  global $LinkStates,$GAMEID;
   if ($Force) {
     $GM = 0;
   } else {
@@ -616,6 +616,7 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0,$InstaChk=1 ) {
   if (!$N) $N = Get_System($T['SystemId']);
   $LinkTypes = Get_LinkLevels();
   $Test = 0;
+  $UsedLink = 0;
 
   $Links = (empty($N['Ref']) ? [] : Get_Links($N['Ref']));
   $SelLinks = [''];
@@ -639,6 +640,48 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0,$InstaChk=1 ) {
     $NearNeb = ($N['Nebulae']??0);
     $NS = (($Fid && ($N['id']??0))?Get_FactionSystemFS($Fid,$N['id']):[]);
 
+    if ($NearNeb  && !$T['NebSensors']) { // Have we Friends with sensors or an Outpost?
+      $TTypes = Get_ThingTypes();
+      $OTings = Get_ThingsSys($N['id']);
+      $Friend = $FriendLevel = 0;
+
+      foreach ($OTings as $OT) {
+        if (Relationship($T['Whose'], $OT['Whose'], 'Friendly')) {
+          if ($OT['NebSensors'] || (($TTypes[$OT['Type']]['Name'] == 'Outpost') && Has_Tech($OT['Whose'],'Nebula Sensors'))) {
+            if (!$Friend) {
+              $Friend = $OT['Whose'];
+              $NS = $FFS = Get_FactionSystemFS($Friend,$N['id']);
+              $FriendLevel = max(0,($FFS['SpaceScan']??-1));
+            } else {
+              $FFS = Get_FactionSystemFS($Friend,$N['id']);
+              if ($FriendLevel < max(0,($FFS['SpaceScan']??-1))) {
+                $Friend = $OT['Whose'];
+                $FriendLevel = max(0,($FFS['SpaceScan']??-1));
+                $NS = $FFS;
+              }
+            }
+          }
+        }
+      }
+      if (!$Friend) { // check for way we came
+        $NewHist = Gen_Get_Cond('ThingHistory',"ThingId=" . $T['id'] . " ORDER BY id DESC");
+        if ($NewHist) {
+          $mtch = [];
+          foreach($NewHist as $H) {
+            if (preg_match('/along link (.*) to (.*)/',$H,$mtch)) {
+              if ($mtch[2] == $N['Ref']) {
+                $LName = $mtch[1];
+                $L = Gen_Get_Cond1('Links', "GameId=$GAMEID AND Name=$LName");
+                if ($L) $UsedLink = $L['id'];
+              }
+            }
+          }
+        }
+
+
+      }
+    }
+
     foreach ($Links as $Lid=>$L) {
       $EInst = $L['Instability'];
       if ($L['ThisTurnMod']) $EInst = max(1,$EInst+$L['ThisTurnMod']);
@@ -650,7 +693,7 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0,$InstaChk=1 ) {
       $LinkText = "Unknown";
       $FLK = Gen_Get_Cond1('FactionLinkKnown',"FactionId=$Fid AND LinkId=$Lid");
 
-      if (($L['Concealment'] == 0) || ($FLK['Used']??0) || ($NS['SpaceScan'] >= $L['Concealment'])) {
+      if (($L['Concealment'] == 0) || ($UsedLink == $Lid) || ($FLK['Used']??0) || ($NS['SpaceScan'] >= $L['Concealment'])) {
 
       } else {
         if ($Test) echo "Drop $Lid:2<br>";
@@ -669,7 +712,7 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0,$InstaChk=1 ) {
       $FarNeb = $FSN['Nebulae'];
       $FS = Get_FactionSystemFS($Fid,$FSN['id']);
  //echo "<p>doing link " . $L['id'] . " to $FarSysRef ". $FSN['id'] ; var_dump($FS);
-      if ($FLK['Used']??0) {
+      if (($FLK['Used']??0) || ($UsedLink == $Lid)) {
         $LinkText = $FarSysRef;
       } else if ($NearNeb == 0) {
         if (isset($FS['id'])) {
