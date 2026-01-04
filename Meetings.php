@@ -23,7 +23,21 @@
   For each system with more than 1 faction - report (Embassy?) - simple list and details button - details == WWhatCanIC
 */
 
-  dostaffhead("Meetups");
+  if (isset($_REQUEST['CSV'])) {
+    $Sid = $_REQUEST['S'];
+    $N = Get_System($Sid);
+    $filename = "SK:$GAMEID:" .$GAME['Turn'] . ':' . $N['Ref'] . ':' . rand(1,1000);
+    header('Content-Type: text/csv; charset=utf-8');
+    header("Content-Disposition: attachment; filename=$filename.csv");
+
+    // create a file pointer connected to the output stream
+    $CSV = fopen('php://output', 'w');
+    $CSVHead = 0;
+
+  } else {
+    dostaffhead("Meetups");
+    $CSV = 0;
+  }
 
   $Sys = Get_Systems();
   $Sids = [];
@@ -67,7 +81,7 @@
   }
 
 function ForceReport($Sid,$Cat) {
-  global $Facts, $Homes, $TTypes, $ModTypes, $N, $Techs, $ThingProps,$ARMY,$DevTotal,$Battle,$Excludes;
+  global $Facts, $Homes, $TTypes, $ModTypes, $N, $Techs, $ThingProps,$ARMY,$DevTotal,$Battle,$Excludes,$CSV,$CSVHead;
 /*
   $Things = Get_Things_Cond(0,
     "SystemId=$Sid AND ( BuildState=" . BS_SERVICE . " OR BuildState=" . BS_COMPLETE . ") AND (LinkId>=0 OR LinkId=" . LINK_NOT_MOVING .
@@ -108,29 +122,38 @@ function ForceReport($Sid,$Cat) {
     }
   }
 
-  echo "<h2>" . ($Cat =='G' ?'Ground':'Space') . " Force Report for " . $N['Ref'] . ($Cat =='G' ? " - " . ($PlanMoon['Name'] ?? 'Nameless') .
-       " ($HomeType)" :'') . "</h2>\n";
-  if ($Cat =='G' && $Wid) {
-    echo "<h2><a href=WorldEdit.php?ACTION=MilitiaDeploy&id=$Wid>Deploy Militia</a></h2>";
-    $MilOrgB = Gen_Get_Cond('Branches',"HostType=" . $H['ThingType'] . " AND HostId=" . $H['ThingId'] . " AND (OrgType=3 OR OrgType2=3)");
-    $MilOrgO = Gen_Get_Cond('Offices',"World=$Wid AND (OrgType=3 OR OrgType2=3)");
-    if ($MilOrgB || $MilOrgO) {
-      echo "<h2><a href=BranchEdit.php?Action=SPAWN_HS&Hid=" . $H['ThingId'] . "&Sid=$Sid&Wid=$Wid&Hyp=" . $H['ThingType'] .
-        ">Deploy Heavy Security</a></h2>";
+  if ($CSV) {
+    if ($CSVHead == 0) {
+      fputcsv($CSV,['Who','Name','Type','Level','Evasion','Cur Health','Orig Health','Firepower','To Hit','Variant','Mobility/Speed']);
+      $CSVHead = 1;
     }
-  } else if ($Cat == 'S') {
-    $Outpost = Outpost_In($Sid,0,0);
-    if ($Outpost) {
-      $MilOrg = Gen_Get_Cond('Branches',"HostType=3 AND HostId=" . $Outpost['id'] . " AND (OrgType=3 OR OrgType2=3)");
-      if ($MilOrg) {
-        echo "<h2><a href=BranchEdit.php?Action=SPAWN_FS&Oid=" . $Outpost['id'] . "&Sid=$Sid>Deploy Defensive Fighters</a></h2>";
-      }
 
+  } else {
+    echo "<h2>" . ($Cat =='G' ?'Ground':'Space') . " Force Report for " . $N['Ref'] . ($Cat =='G' ? " - " . ($PlanMoon['Name'] ?? 'Nameless') .
+         " ($HomeType)" :'') . "</h2>\n";
+    if ($Cat =='G' && $Wid) {
+      echo "<h2><a href=WorldEdit.php?ACTION=MilitiaDeploy&id=$Wid>Deploy Militia</a></h2>";
+      $MilOrgB = Gen_Get_Cond('Branches',"HostType=" . $H['ThingType'] . " AND HostId=" . $H['ThingId'] . " AND (OrgType=3 OR OrgType2=3)");
+      $MilOrgO = Gen_Get_Cond('Offices',"World=$Wid AND (OrgType=3 OR OrgType2=3)");
+      if ($MilOrgB || $MilOrgO) {
+        echo "<h2><a href=BranchEdit.php?Action=SPAWN_HS&Hid=" . $H['ThingId'] . "&Sid=$Sid&Wid=$Wid&Hyp=" . $H['ThingType'] .
+          ">Deploy Heavy Security</a></h2>";
+      }
+    } else if ($Cat == 'S') {
+      $Outpost = Outpost_In($Sid,0,0);
+      if ($Outpost) {
+        $MilOrg = Gen_Get_Cond('Branches',"HostType=3 AND HostId=" . $Outpost['id'] . " AND (OrgType=3 OR OrgType2=3)");
+        if ($MilOrg) {
+          echo "<h2><a href=BranchEdit.php?Action=SPAWN_FS&Oid=" . $Outpost['id'] . "&Sid=$Sid>Deploy Defensive Fighters</a></h2>";
+        }
+
+      }
     }
+
+    echo "<table border>";
+    echo "<tr><td>What<td>Type<td>Level<td>Evasion<td>Health<td>Attack<td>To Hit<td>" . (($Cat == 'S')?'Speed':'Mobility') . "<td>Actions<td>Return /<br>Exclude\n";
   }
 
-  echo "<table border>";
-  echo "<tr><td>What<td>Type<td>Level<td>Evasion<td>Health<td>Attack<td>To Hit<td>" . (($Cat == 'S')?'Speed':'Mobility') . "<td>Actions<td>Return /<br>Exclude\n";
   $Kaiju = $KaijuL = 0;
   $FactLvls = $Movement = 0;
 
@@ -148,7 +171,7 @@ function ForceReport($Sid,$Cat) {
       if (($T['CurHealth'] == 0) && ($T['Type'] == 20)) continue; // Skip Militia at zero
       if ($T['PrisonerOf'] != 0) continue; // Prisoners
       if ($LastF != $T['Whose']) {
-        if ($LastF >=0) {
+        if (($CSV==0) && ($LastF >=0)) {
           echo $htxt;
           if ($Bat) echo "Battle Tactics: Effectively " . ($Kaiju?$KaijuL:$Bat) . " ( $Battct ) <br>";
           echo  $ftxt. "<br>Total Firepower: $FirePower";
@@ -242,63 +265,76 @@ function ForceReport($Sid,$Cat) {
           $KaijuL = $Bat;
         }
       }
-      $txt .= fm_hidden("OrigData$Tid",implode(":",[$T['CurHealth'], $T['OrigHealth'],0,$T['CurShield'],$T['ShieldPoints']]));
-      $txt .= "<td>" . $TTypes[$T['Type']]['Name'] . "<td>" . $T['Level'] . "<td>" . $T['Evasion'];
-      $txt .= "<td><span id=StateOf$Tid>" . $T['CurHealth'] . " / " . $T['OrigHealth'];
-      if ($T['ShieldPoints']) $txt .= " (" . $T['CurShield'] . "/" . $T['ShieldPoints'] . ") ";
-      $txt .= "</span><td><span id=Attack$Tid>$BD</span><td>" . $T['ToHitBonus'] . "<td>";
-      if (($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE) || ($TTypes[$T['Type']]['Prop2'] & THING_HAS_SPEED)) {
-        $FactLvls += $T['Level'];
-        if ($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES) {
-          $txt .= "Mobility: " . sprintf("%0.3g ",$T['Mobility']);
-          $Movement += ceil($T['Mobility'])*$T['Level'];
-        } else {
-          $txt .= "Speed: " . sprintf("%0.3g ",$T['Speed']);
-          $Movement += ceil($T['Speed'])*$T['Level'];
-        }
-      }
-      $txt .=  fm_number1(" Do",$T,'Damage', ''," class=Num3 onchange=Do_Damage($Tid,$LastF,'$Cat')","Damage:$Tid") . " damage";
-      if ($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE ) $txt .= fm_checkbox(', Retreat?',$T,'RetreatMe','',"RetreatMe:$Tid");
-      if ($TTypes[$T['Type']]['Properties'] & THING_LEAVES_DEBRIS ) $txt .= fm_checkbox(', No Debris?',$T,'NoDebris','',"NoDebris:$Tid");
 
-      $txt .= "<td>" . fm_checkbox('',$T,'Exclude','',"Exclude:$LastF:$Tid class=Exclude$LastF");
-      $FirePower += $BD;
+      if ($CSV) {
+        fputcsv($CSV,[($Facts[$LastF]['Name']??'Unknown'), $T['Name'], $TTypes[$T['Type']]['Name'], $T['Level'], $T['Evasion'],
+          $T['CurHealth'], $T['OrigHealth'], $BD, $T['ToHitBonus'], ($Variants[$T['Variant']]['Name']??''),
+          (($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES)?$T['Mobility']:$T['Speed'])]
+          );
+
+      } else {
+        $txt .= fm_hidden("OrigData$Tid",implode(":",[$T['CurHealth'], $T['OrigHealth'],0,$T['CurShield'],$T['ShieldPoints']]));
+        $txt .= "<td>" . $TTypes[$T['Type']]['Name'] . "<td>" . $T['Level'] . "<td>" . $T['Evasion'];
+        $txt .= "<td><span id=StateOf$Tid>" . $T['CurHealth'] . " / " . $T['OrigHealth'];
+        if ($T['ShieldPoints']) $txt .= " (" . $T['CurShield'] . "/" . $T['ShieldPoints'] . ") ";
+        $txt .= "</span><td><span id=Attack$Tid>$BD</span><td>" . $T['ToHitBonus'] . "<td>";
+        if (($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE) || ($TTypes[$T['Type']]['Prop2'] & THING_HAS_SPEED)) {
+          $FactLvls += $T['Level'];
+          if ($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES) {
+            $txt .= "Mobility: " . sprintf("%0.3g ",$T['Mobility']);
+            $Movement += ceil($T['Mobility'])*$T['Level'];
+          } else {
+            $txt .= "Speed: " . sprintf("%0.3g ",$T['Speed']);
+            $Movement += ceil($T['Speed'])*$T['Level'];
+          }
+        }
+        $txt .=  fm_number1(" Do",$T,'Damage', ''," class=Num3 onchange=Do_Damage($Tid,$LastF,'$Cat')","Damage:$Tid") . " damage";
+        if ($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE ) $txt .= fm_checkbox(', Retreat?',$T,'RetreatMe','',"RetreatMe:$Tid");
+        if ($TTypes[$T['Type']]['Properties'] & THING_LEAVES_DEBRIS ) $txt .= fm_checkbox(', No Debris?',$T,'NoDebris','',"NoDebris:$Tid");
+
+        $txt .= "<td>" . fm_checkbox('',$T,'Exclude','',"Exclude:$LastF:$Tid class=Exclude$LastF");
+        $FirePower += $BD;
+      }
     } else {
     }
 
   }
-  if ($htxt) {
+  if (($CSV == 0)  && $htxt) {
     echo $htxt;
     if ($Bat) echo "Battle Tactics: Effectively " . ($Kaiju?$KaijuL:$Bat) . " ( $Battct ) <br>";
     echo  $ftxt. "<br>Total Firepower: <span id=FirePower:$LastF>$FirePower</span>" . $txt;
   }
 //  var_dump($txt,$htxt);
-  echo "</table>";
+  if (!$CSV) echo "</table>";
 }
 
 function SystemSee($Sid) {
-  global $DevTotal,$Battle,$GAMEID,$GAME,$Excludes;
+  global $DevTotal,$Battle,$GAMEID,$GAME,$Excludes,$CSV;
  // echo "<form>";
-  $txt = SeeInSystem($Sid,31,1,0,-1,1);
 
-  echo $txt;
+  if (!$CSV) {
+    $txt = SeeInSystem($Sid,31,1,0,-1,1);
 
-  echo "</form><p><hr><h1>To Run Combat do the following in order:</h1>";
-  echo "<ol><li>Make sure you have unloaded troops, and deployed any Militia and Mil Org Forces<p>";
-  echo "<li>Look through the force report and mark to return any Militia/Mil Org Forces, and tick the Exclude from Battle boxes" .
-        " - if you have done any of these click the Remove forces button<p>";
-  echo "<li>For Ground combat click the 'Devastation' button<p>";
-  echo "<li>Run the fight and apply damage and/or set retreat, when happy click the 'Do All Damage' Button<p>";
-  echo "<li>After the fight tick the appropriate Fight done box on the system lists</ol>";
+    echo $txt;
+
+    echo "</form><p><hr><h1>To Run Combat do the following in order:</h1>";
+    echo "<ol><li>Make sure you have unloaded troops, and deployed any Militia and Mil Org Forces<p>";
+    echo "<li>Look through the force report and mark to return any Militia/Mil Org Forces, and tick the Exclude from Battle boxes" .
+          " - if you have done any of these click the Remove forces button<p>";
+    echo "<li>For Ground combat click the 'Devastation' button<p>";
+    echo "<li>Then and only the Export the data to the combat program<p>";
+    echo "<li>Run the fight and apply damage and/or set retreat, when happy click the 'Do All Damage' Button<p>";
+    echo "<li>After the fight tick the appropriate Fight done box on the system lists</ol>";
 
 
-  echo "<form method=post action=Meetings.php?ACTION=Check&S=$Sid onkeydown=\"return event.key != 'Enter';\">";
+    echo "<form method=post action=Meetings.php?ACTION=Check&S=$Sid onkeydown=\"return event.key != 'Enter';\">";
 
-  $_REQUEST['IgnoreShield'] = 0;
-  echo "<h2>" . fm_checkbox('Bypass shields - (eg missiles)',$_REQUEST,'IgnoreShield') . "</h2><p>";
-  $mtch = [];
-  if (preg_match('/<div class=FullD hidden>/',$txt,$mtch)) {
-    echo "<button class='floatright FullD' onclick=\"($('.FullD').toggle())\">Show Remains of Things and Named Characters</button>";
+    $_REQUEST['IgnoreShield'] = 0;
+    echo "<h2>" . fm_checkbox('Bypass shields - (eg missiles)',$_REQUEST,'IgnoreShield') . "</h2><p>";
+    $mtch = [];
+    if (preg_match('/<div class=FullD hidden>/',$txt,$mtch)) {
+      echo "<button class='floatright FullD' onclick=\"($('.FullD').toggle())\">Show Remains of Things and Named Characters</button>";
+    }
   }
 
   Get_Battle($Sid);
@@ -310,6 +346,10 @@ function SystemSee($Sid) {
   ForceReport($Sid,'G');
   ForceReport($Sid,'S');
 
+  if ($CSV) {
+    fclose($CSV);
+    exit;
+  }
   echo fm_submit("ACTION",'Do ALL Damage',0);
   if ($DevTotal) {
     $Sys = Get_System($Sid);
@@ -347,6 +387,7 @@ function SystemSee($Sid) {
       echo "<br>Total Ground Force Levels: <b>$DevTotal</b> - Do " . fm_number1('',$Dev,'Devastate','', ' min=0 max=100') .
            fm_submit("ACTION", "Devastation") . " to <b>$Wtxt</b> " .
            " and set the conflict flag - this assumes all ground forces are fighting, adjust if they are not<br>";
+      echo "<p><input type=submit name='CSV' value='CSV' >";
     }
 
   }
@@ -609,13 +650,15 @@ function SystemSee($Sid) {
   $RR['Show'] = 5;
   echo fm_radio("Min relationship to Show",$RelNames,$RR,'Show',' onchange=MeetupFilter()',1,'','',$RelCols);
 
-  TableStart();
-  TableHead('System');
-  TableHead('Space');
-  TableHead('Done?');
-  TableHead('Ground');
-  TableHead('Done?');
-  TableTop();
+  if (!$CSV) {
+    TableStart();
+    TableHead('System');
+    TableHead('Space');
+    TableHead('Done?');
+    TableHead('Ground');
+    TableHead('Done?');
+    TableTop();
+  }
 //  echo "Checked Things<p>";
 
 //  var_dump($Sids);

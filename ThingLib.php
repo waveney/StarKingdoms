@@ -652,6 +652,7 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0,$InstaChk=1 ) {
               $Friend = $OT['Whose'];
               $NS = $FFS = Get_FactionSystemFS($Friend,$N['id']);
               $FriendLevel = max(0,($FFS['SpaceScan']??-1));
+              $T['NebSensors'] = 1;
             } else {
               $FFS = Get_FactionSystemFS($Friend,$N['id']);
               if ($FriendLevel < max(0,($FFS['SpaceScan']??-1))) {
