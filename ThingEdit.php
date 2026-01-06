@@ -151,7 +151,7 @@ global $FACTION;
 
 
     case 'CREATE' : // Named Chars
-      if (empty($T['Name'])) {
+      if (empty($_REQUEST['Name'])) {
         echo "<h2 class=Err>Please provide a name</h2>";
         include_once('CreateNamed.php');  // No return
       }
@@ -161,6 +161,7 @@ global $FACTION;
       $TTypes = Get_ThingTypes();
       echo "<form method=post action=ThingEdit.php>";
       echo fm_hidden('id',$_REQUEST['id']);
+      echo fm_hidden('Name',$_REQUEST['Name']);
 
 //      echo "<table border>";
       foreach ($Worlds as $W) {
@@ -923,6 +924,14 @@ global $FACTION;
 
         switch ($RV) {
           case 'Unload Now':
+
+            if (!$H) {
+              echo "This unload has a problem - the GMs have been flagged to resolve<p>";
+              $Who = empty($FACTION['Name'])? "A GM " : $FACTION['Name'];
+              GMLog4Later("$Who tried to unload <a href=ThingEdit.php?id=$Hid>" . $H['Name'] . " in " . $N['Ref'] .
+                " it has a problem - Get Richard to resolve");
+              dotail();
+            }
 
             $wsysloc = $_REQUEST["WithinSysLoc:$Hid"];
             $Syslocs = Within_Sys_Locs($N,0,0,0,1);

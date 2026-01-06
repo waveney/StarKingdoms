@@ -620,6 +620,7 @@ function ReportEnd($N) {
 }
 
 function System_Name(&$N,$Fid=0) {
+  if (!$N) return 'Unknown';
   $pname = NameFind($N);
   $Ref = $N['Ref'];
   if ($Fid) {

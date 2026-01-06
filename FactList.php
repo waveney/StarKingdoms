@@ -72,8 +72,8 @@
     $Logistics = Logistics($Fid,$Things);
     $LogAvail = LogisticalSupport($Fid);
 
-    echo "<td>" . $Logistics[0] . "/" . $LogAvail[0];
-    echo "<td>" . $Logistics[1] . "/" . $LogAvail[1];
+    echo "<td><span style=color:" .(($Logistics[0] > $LogAvail[0])?'red>':'black>') . $Logistics[0] . "</span>/" . $LogAvail[0];
+    echo "<td><span style=color:" .(($Logistics[1] > $LogAvail[1])?'red>':'black>') . $Logistics[1] . "</span>/" . $LogAvail[1];
 
  //   echo "<td><a href=Access.php?id=$Fid&Key=" . $F['AccessKey'] . " ><b>Use</b></a>";
   }

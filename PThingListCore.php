@@ -214,7 +214,7 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
       if ($T['Instruction']) $txt .=  $ThingInstrs[abs($T['Instruction'])];
       if (($T['Instruction'] == 0 || $T['Instruction'] == 5 ) && (($Props & THING_CAN_MOVE) && ( $T['BuildState'] == BS_COMPLETE))) {
         if ( ($T['LinkId'] >=0 ) || (($MoveProps[$T['LinkId']] & 1) && ($T['CurHealth'] > 0 || ($Props & THING_HAS_HEALTH) ==0))) {
-          if ($MovesValid && (($Faction['TurnState']??0) == 1) && (is_in_space($T) || $Blockades[$T['SystemId']] < max($T['Speed'],1))) {
+          if ($MovesValid && (($Faction['TurnState']??0) == 1) && (is_in_space($T) || $Blockades[$T['SystemId']] <= max($T['Speed'],1))) {
             $txt .=  ($Mode?'Move':" <a href=PMoveThing.php?id=" . $T['id'] . ">" . (($T['LinkId'] >=0 )?'Move':$MoveNames[$T['LinkId']]) . "</a>");
           } else {
           }

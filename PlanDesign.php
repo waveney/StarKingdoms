@@ -531,7 +531,7 @@
         if ($CanMake) {
           echo "<h2 class=Green>Design is valid</h2>";
 
-          if ($GM || (!empty($FACTION) && $PlayerState[$FACTION['State']] == 'Setup')) {
+          if ($GM || (!empty($FACTION) && $PlayerState[$FACTION['TurnState']] == 'Setup')) {
             // TODO make now
           }
         } else {

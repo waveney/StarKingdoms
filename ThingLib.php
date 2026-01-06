@@ -1249,7 +1249,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
 
       if ($T['Whose'] || $GM) {
         $txt .= ((($Fid < 0) || ($Fid == $T['Whose']) || $GM )?( "<a href=ThingEdit.php?id=" . $T['id'] . ">" .
-                (empty($T['Name'])?"Unnamed":$T['Name']) . "</a>") : $T['Name'] ) . " a";
+                (empty($T['Name'])?"Unnamed":$T['Name']) . "</a>") : $T['Name'] ) . ", a";
         $RawA = 1;
       }
       if ($TTprops & THING_HAS_LEVELS) {
@@ -1322,7 +1322,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
         if (!empty($T['Image'])) {
           $itxt .= " <img valign=top src=" . $T['Image'] . " height=100 class=SeeImage> ";
         } else {
-          $dflt = DefaultImage($Fid, $T['Type']);
+          $dflt = DefaultImage($T['Whose'], $T['Type']);
 // var_dump($dflt);
           if ($dflt) $itxt .= " <img valign=top src=$dflt height=100 class=SeeImage> ";
         }
@@ -1746,6 +1746,17 @@ function OperTeamLost(&$T) {
 
 }
 
+function Branch_Delete($Bid) {
+  global $GAMEID;
+  $B = Gen_Get('Branches',$Bid);
+
+  if ($B && ($B['OrgType']==3 || $B['OrgType2']==3)) {
+    $Things = Get_Things_Cond(0,"GameId=$GAMEID AND ProjectId=$Bid");
+    if ($Things) foreach($Things as $T) Thing_Delete($T['id']);
+  }
+  db_delete('Branches', $Bid);
+}
+
 function Thing_Delete($tid,$now=0) {
   global $Project_Status,$Project_Statuses,$GAME,$GAMEID;
   $TTs = Get_ThingTypes();
@@ -1779,7 +1790,7 @@ function Thing_Delete($tid,$now=0) {
       include_once("SystemLib.php");
       $Brans = Gen_Get_Cond('Branches',"HostType=3 AND HostId=$tid");
       if ($Brans) foreach ($Brans as $Bid=>$B) {
-        db_delete('Branches',$Bid);
+        Branch_Delete($Bid);
       }
 
       $Control = System_Owner($T['SystemId']);

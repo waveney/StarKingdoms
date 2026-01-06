@@ -63,10 +63,7 @@ if (isset($_REQUEST['Action'])) {
     case 'Delete':
       $Bid = $_REQUEST['id'] ?? $_REQUEST['AutoRefBranches'] ?? 0;
       if ($Bid) {
-        db_delete('Branches',$Bid);
-        echo "Branch Deleted";
-      } else {
-        echo 'No Branch Specified';
+        Branch_Delete($Bid);
       }
       dotail();
 
@@ -240,7 +237,6 @@ if (isset($_REQUEST['Action'])) {
             $T['Speed'] = $Speed;
             $T['WithinSysLoc'] = 1;
             $T['LinkId'] = 0;
-            $T['ProjectId'] = $Bid;
             $T['Evasion'] = 40;
             $T['ProjectId'] = $Bid;
             //var_dump($T);

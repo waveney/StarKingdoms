@@ -302,7 +302,10 @@ function ForceReport($Sid,$Cat) {
   if (($CSV == 0)  && $htxt) {
     echo $htxt;
     if ($Bat) echo "Battle Tactics: Effectively " . ($Kaiju?$KaijuL:$Bat) . " ( $Battct ) <br>";
-    echo  $ftxt. "<br>Total Firepower: <span id=FirePower:$LastF>$FirePower</span>" . $txt;
+    echo  $ftxt. "<br>Total Firepower: $FirePower";
+
+    echo "<br>Average " . (($Cat == 'S')?'Speed':'Mobility') . ": $Movement / $FactLvls = " . ceil($Movement / max($FactLvls,1));
+    echo $txt;
   }
 //  var_dump($txt,$htxt);
   if (!$CSV) echo "</table>";
