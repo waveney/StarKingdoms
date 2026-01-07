@@ -400,6 +400,7 @@ function WhatCanBeSeenBy($Fid,$Move=0) { // If Move = 1, it will report previous
   $Hosts = [];
 
   $Where = ['Where'=>0];
+  $Jtxt = '<h2>Jump to: ';
   $txt = "<div class=floatright>" . fm_radio('Show',$Terrains,$Where,'Where',' onchange=WhereFilter()') . "</div>";
 
 
@@ -482,7 +483,8 @@ function WhatCanBeSeenBy($Fid,$Move=0) { // If Move = 1, it will report previous
     if (!isset($Places[$Sid])) continue;
     $Eyes = $Places[$Sid];
     if (!$Move) $Eyes = ($Eyes&15);
-    $txt .= SeeInSystem($Sid,$Eyes,1,1,$Fid);
+    $Jtxt .= " <a href='#Locn:$Ref'>$Ref</a> ";
+    $txt .= "<div id='Locn:$Ref'></div>" . SeeInSystem($Sid,$Eyes,1,1,$Fid);
   }
 
   $LastWhose = 0;
@@ -507,7 +509,7 @@ function WhatCanBeSeenBy($Fid,$Move=0) { // If Move = 1, it will report previous
     }
   }
 
-  return $txt;
+  return $Jtxt . "</h2>" . $txt;
 }
 
 function PlanConst($Fid,$worldid) { // Effective Plan Construction

@@ -98,7 +98,7 @@
         $TTs = Get_ThingTypes();
         foreach($Ts as $T) {
           $N = Get_System($T['SystemId']);
-          if ($N['GameId'] != $GAMEID) continue;
+          if (($N['GameId']??0) != $GAMEID) continue;
 
           echo "<a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . " a " . $TTs[$T['Type']]['Name'] . "</a> Currently in " . $N['Ref'] . "<br>\n";
         }

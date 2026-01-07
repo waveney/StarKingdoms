@@ -284,8 +284,12 @@ function Show_Thing(&$T,$Force=0) {
                SeeThing($Fol,$LastWhose,7,$Fid,0,0,0) . "</span>";
           echo fm_submit("ACTION",'Cancel Follow',0);
         } else if ($Lid == LINK_INBRANCH ) {
-          echo "<tr><td>Within the Branch";
-          if ($GM) echo "<td><a href=BranchEdit.php?id=" . $T['ProjectId'] . ">Branch</a>";
+          if ($GM) {
+            echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId',1);
+            echo "<td>Within the <a href=BranchEdit.php?id=" . $T['ProjectId'] . ">Branch</a>";
+          } else {
+            echo "<tr><td>System:<td>" . $Systems[$T['SystemId']]. "<td>Within the Branch";
+          }
         } else if ($Lid >= LINK_LOAD_AND_UNLOAD ) { // On Board
           $Host = Get_Thing($T['SystemId']);
           if ($Host) {

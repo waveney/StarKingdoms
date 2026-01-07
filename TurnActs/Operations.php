@@ -583,7 +583,7 @@ function OperationsComplete() {
            System_Name($Sys,$Fid) );
         if ($World['FactionId'] != $Fid) {
           TurnLog($World['FactionId'],"A new Trading Station branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
-            System_Name($Sys,$World['FactionId']) . " by " . $Facts[$Fid]['Name']);
+            " - " . System_Name($Sys,$World['FactionId']) . " by " . $Facts[$Fid]['Name']);
         }
         GMLog("A new Trading Station branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] . ' ' .
           System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);
