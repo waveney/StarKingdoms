@@ -262,6 +262,29 @@
       echo "All Done";
       dotail();
 
+    case 'REDOSaveCur':
+      $Factions = Get_Factions();
+      foreach($Factions as $F) {
+        $Fid = $F['id'];
+        $CouldC = WhatCanBeSeenBy($Fid,1);
+        $CB = fopen("Turns/$GAMEID/" . $GAME['Turn'] . "/CouldC$Fid.html", "w");
+        fwrite($CB,$CouldC);
+        fclose($CB);
+      }
+      echo "Saved What can I see Updated for CURRENT turn";
+      dotail();
+
+    case 'REDOSavePrev':
+      $Factions = Get_Factions();
+      foreach($Factions as $F) {
+        $Fid = $F['id'];
+        $CouldC = WhatCanBeSeenBy($Fid,1);
+        $CB = fopen("Turns/$GAMEID/" . ($GAME['Turn']-1) . "/CouldC$Fid.html", "w");
+        fwrite($CB,$CouldC);
+        fclose($CB);
+      }
+      echo "Saved What can I see Updated for PREVIOUS turn";
+      dotail();
     }
   }
 
@@ -278,6 +301,8 @@
 
   echo "<li><a href=TurnSpecials.php?ACTION=ActuallyDelete>Delete all things Pending Deletion</a><p>";
   echo "<li><a href=TurnSpecials.php?ACTION=LinkMods>Recalc Link Mods</a><p>";
+  echo "<li><a href=TurnSpecials.php?ACTION=REDOSaveCur>Redo What Can I See Save for Current Turn</a><p>";
+  echo "<li><a href=TurnSpecials.php?ACTION=REDOSavePrev>Redo What Can I See Save for prev Turn</a><p>";
 
 
 

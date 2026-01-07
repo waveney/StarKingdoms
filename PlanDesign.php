@@ -406,7 +406,7 @@
             if ($FlexM) {
               $max = ($MTs[$Mti]['MaxPerThing']==0?$min+$FlexM:$MTs[$Mti]['MaxPerThing']);
               echo fm_number1('',$ZZnull,'Number','',"min=0 max=$max  onchange=CheckModSpace()","ModuleAddType-$Mti");
-            } else {
+            } else if ($MMs[$Mti]['Number']??0) {
               echo "<td>" . ($MMs[$Mti]['Number']??0);
             }
           }

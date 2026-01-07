@@ -161,7 +161,7 @@ function Op_Level($Orgid,$Sys,$Mod=0) {
 
   $Targets = [];
   $Worlds = Get_Worlds($Fid);
-  $Branches = Gen_Get_Cond('Branches', "Whose=$Fid AND Organisation=$Orgid");
+  $Branches = Gen_Get_Cond('Branches', "Whose=$Fid AND Organisation=$Orgid AND Suppressed=0");
   if ($Branches) foreach ($Branches as $B) {
     if ($B['Suppressed']) continue;
     switch ($B['HostType']) {

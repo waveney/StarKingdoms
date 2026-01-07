@@ -51,16 +51,6 @@ function StartProjects() {
           continue;
         }
 
-/*
-        if (($ProjTypes[$P['Type']]['Props'] & PROJ_EXIST) ==0) { // Has a thing
-          if ($T['BuildState'] > 0 ) {
-            $T = Thing_Duplicate($Tid);
-            $Tid = $T['id'];
-            $P['ThingId'] = $Tid;
-            Put_Project($P);
-          }
-        } */
-
         if (($T['SystemId'] != 0 && $T['SystemId'] != $Where[0])) {
           //var_dump($Where,$T);
           $P['Status'] = 5; // Not Started
@@ -171,37 +161,40 @@ function StartProjects() {
       $P['Status'] = 1; // Started
       TurnLog($P['FactionId'],'Starting ' . $P['Name'] . " Cost: " . Credit() . " $Cost");
       GMLog($Facts[$P['FactionId']]['Name'] . ' Starting ' . $P['Name'] . " Cost: " . Credit() . " $Cost");
-      if (($ProjTypes[$P['Type']]['Props'] & 2) && (($ProjTypes[$P['Type']]['Props'] & 20) ==0 )) { // Has ONE thing - 2nd test elimiates repair and construction
-        if ($Tid) {
-          if ($Designs) {
-            $Desid = $Tid;
-            $Des = Get_Thing($Desid);
-            $T = Thing_Duplicate($Tid);
-            $Tid = $T['id'];
-            if (!empty($P['ThingId2'])) {
-              Thing_Destroy($P['ThingId2']);
-            }
-
-            $P['ThingId2'] = $Tid;
-            Put_Project($P);
-            $ClassName = ClassName($Des);
-            $T['Class'] = $ClassName;
-          } else {
-            if (($T['BuildState'] != BS_PLANNING) && ($T['BuildState'] != BS_SERVICE)) {
+      if (($ProjTypes[$P['Type']]['Props'] & PROJ_EXIST)==0) {
+        if (($ProjTypes[$P['Type']]['Props'] & PROJ_THING) && (($ProjTypes[$P['Type']]['Props'] & 20) ==0 )) {
+          // Has ONE thing - 2nd test elimiates repair and construction
+          if ($Tid) {
+            if ($Designs) {
+              $Desid = $Tid;
+              $Des = Get_Thing($Desid);
               $T = Thing_Duplicate($Tid);
               $Tid = $T['id'];
-              $P['ThingId'] = $Tid;
+              if (!empty($P['ThingId2'])) {
+                Thing_Destroy($P['ThingId2']);
+              }
+
+              $P['ThingId2'] = $Tid;
               Put_Project($P);
+              $ClassName = ClassName($Des);
+              $T['Class'] = $ClassName;
+            } else {
+              if (($T['BuildState'] != BS_PLANNING) && ($T['BuildState'] != BS_SERVICE)) {
+                $T = Thing_Duplicate($Tid);
+                $Tid = $T['id'];
+                $P['ThingId'] = $Tid;
+                Put_Project($P);
+              }
             }
+            if ($P['OrgName']) $T['Name'] = $P['OrgName'];
+            $T['BuildState'] = BS_BUILDING; // Building
+            $T['SystemId'] = $T['WhereBuilt'] = $Where[0];
+            $T['WithinSysLoc'] = $Where[1];
+            $T['CurHealth'] = $T['OrigHealth'];
+          } else {
+            $T = ['Whose'=>$Fid, 'Type'=>$P['ThingType'], 'BuildState'=>1, 'SystemId' => $Where[0],  'WithinSysLoc' => $Where[1],
+              $T['WhereBuilt'] =>$Where[0]];
           }
-          if ($P['OrgName']) $T['Name'] = $P['OrgName'];
-          $T['BuildState'] = BS_BUILDING; // Building
-          $T['SystemId'] = $T['WhereBuilt'] = $Where[0];
-          $T['WithinSysLoc'] = $Where[1];
-          $T['CurHealth'] = $T['OrigHealth'];
-        } else {
-          $T = ['Whose'=>$Fid, 'Type'=>$P['ThingType'], 'BuildState'=>1, 'SystemId' => $Where[0],  'WithinSysLoc' => $Where[1],
-            $T['WhereBuilt'] =>$Where[0]];
         }
         $T['ProjectId'] = $P['id'];
         Calc_Scanners($T);

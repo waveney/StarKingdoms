@@ -1263,7 +1263,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0)
       }
       if ($T['Whose']) {
         if ($T['HideOwner'] && !$GM) {
-          $txt .= "Unidentified";
+          $txt .= " (Unidentified Owner ) ";
         } else {
           $Who = (isset($Factions[$T['Whose']])?
                ($Factions[$T['Whose']]['Adjective']?$Factions[$T['Whose']]['Adjective']:$Factions[$T['Whose']]['Name'])

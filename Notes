@@ -89,13 +89,13 @@ NEW GAME FEATURES & BUGS
 825 Create instance of from a design
 826 Design5443 diff numbers on GM page
 827 Do 1 round of militia/hs recovery where relevant
-828 Devastation / walls and income
 830 A new Trading Station branch for Bureau of External Investment has been set up on the World ZanakinCithor ( MLY ) by The Association
-831 Something funny happening with refit and Repair- its creating copies.  See Federation ships Invictus, Imperator as examples.
 832 why didn't judith scans update?
-833 [Mon Jan 05 21:57:50.443306 2026] [proxy_fcgi:error] [pid 914561:tid 140113879185152] [client 86.26.173.150:0] AH01071: Got error 'PHP message: PHP Warning:  Undefined array key "Prop2" in /var/www/vhosts/starkingdoms.uk/httpdocs/ThingEdit.php on line 930', referer: https://starkingdoms.uk/ThingEdit.php?id=5051
-[Mon Jan 05 21:58:01.567327 2026] [proxy_fcgi:error] [pid 914561:tid 140113946326784] [client 86.26.173.150:0] AH01071: Got error 'PHP message: PHP Warning:  Undefined array key "Prop2" in /var/www/vhosts/starkingdoms.uk/httpdocs/ThingEdit.php on line 930', referer: https://starkingdoms.uk/ThingEdit.php
-836
+836 Lewis - filter tech tree by field tat
+837 Re-do save end of turn
+838 Lewis Terraforming 6/1 @8:27
+842 Branch creation Kage 7/1 @ 8:13 
+843 Planetary Shields - see acg 7/1 @9:37
 
 
 

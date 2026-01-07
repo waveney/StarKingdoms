@@ -894,6 +894,14 @@ global $FACTION;
       if (preg_match('/ACT(\d*)/',$RK,$mtch)?true:false) {
         $Hid = $mtch[1];
         $H = Get_Thing($Hid); // What is being unloaded
+        if (!$H) {
+          echo "This unload has a problem - the GMs have been flagged to resolve<p>";
+          $Who = empty($FACTION['Name'])? "A GM " : $FACTION['Name'];
+          GMLog4Later("$Who tried to unload <a href=ThingEdit.php?id=$Hid>" . $H['Name'] . " in " . $N['Ref'] .
+            " it has a problem - Get Richard to resolve");
+          dotail();
+        }
+
         $Tid = $_REQUEST['id'];
         $T = Get_Thing($Tid); // What it is unloading from - gives sys
 
@@ -924,14 +932,6 @@ global $FACTION;
 
         switch ($RV) {
           case 'Unload Now':
-
-            if (!$H) {
-              echo "This unload has a problem - the GMs have been flagged to resolve<p>";
-              $Who = empty($FACTION['Name'])? "A GM " : $FACTION['Name'];
-              GMLog4Later("$Who tried to unload <a href=ThingEdit.php?id=$Hid>" . $H['Name'] . " in " . $N['Ref'] .
-                " it has a problem - Get Richard to resolve");
-              dotail();
-            }
 
             $wsysloc = $_REQUEST["WithinSysLoc:$Hid"];
             $Syslocs = Within_Sys_Locs($N,0,0,0,1);
