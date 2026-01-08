@@ -285,6 +285,44 @@
       }
       echo "Saved What can I see Updated for PREVIOUS turn";
       dotail();
+
+    case 'RecoverSys' : // Recover Militia /HS for N turn recovery ignoring conflict flag
+      $Systems = Get_SystemRefs();
+      if (empty($_REQUEST['Turns'])) $_REQUEST['Turns'] = 1;
+
+      echo "<form method=post>";
+
+      echo fm_number('Turns',$_REQUEST,'Turns');
+      echo fm_select($Systems,$_REQUEST,'Sid',);
+      echo fm_submit('ACTION','Recover Militia');
+      dotail();
+
+    case 'Recover Militia':
+      $Sid = $_REQUEST['Sid'];
+      $Turns = $_REQUEST['Turns']??1;
+      $Things = Get_Things_Cond(0,"BuildState=" . BS_COMPLETE . " AND (CurHealth<OrigHealth OR CurShield<ShieldPoints) AND SystemId=$Sid");
+      $TTypes = Get_ThingTypes();
+
+      foreach ($Things as $T) {
+        if (($TTypes[$T['Type']]['Prop2']??0) & THING_HAS_RECOVERY) {
+          if ($TTypes[$T['Type']]['Name'] == 'Militia') {
+            $Dists = Gen_Get_Cond('Districts',"HostType=" . $T['Dist1'] . " AND HostId=" . $T['Dist2']);
+            $Dcount = 0;
+            foreach($Dists as $D) $Dcount += $D['Number'];
+            $Rec = floor($Dcount/2)+1;
+          } else {
+            $Rec = intdiv($T['OrigHealth'],4);
+          }
+          $Rec*=$Turns;
+          // echo "Recovery of $Rec<br>";
+          $T['CurHealth'] = min($T['OrigHealth'], $T['CurHealth']+$Rec);
+          Put_Thing($T);
+          echo "<a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . ' a ' . $TTypes[$T['Type']]['Name'] . "</a> recovered $Rec health<p>";
+        }
+      }
+      echo "Done";
+
+      break;
     }
   }
 
@@ -304,6 +342,7 @@
   echo "<li><a href=TurnSpecials.php?ACTION=REDOSaveCur>Redo What Can I See Save for Current Turn</a><p>";
   echo "<li><a href=TurnSpecials.php?ACTION=REDOSavePrev>Redo What Can I See Save for prev Turn</a><p>";
 
+  echo "<li><a href=TurnSpecials.php?ACTION=RecoverSys>Recover Militia/Heavy Security for a turn</a><p>";
 
 
   echo "<h2><a href=TurnActions.php>Back to Turn Processing</a></h2>";

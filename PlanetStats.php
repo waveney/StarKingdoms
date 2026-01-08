@@ -32,6 +32,7 @@
         $pt = $M['Type'];
         if (!isset($PTD[$pt]['MCount'])) $PTD[$pt]['MCount']=0;
         $PTD[$pt]['MCount']++;
+        if (!isset($PTD[$pt]['Where'])) $PTD[$pt]['Where'] = '';
         $PTD[$pt]['Where'] .= ' <a href=SysEdit.php?R=' . $N['Ref'] . " style='color:red'>" . $N['Ref'] . "</a> ";
       }
       }

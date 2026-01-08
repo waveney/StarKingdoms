@@ -64,10 +64,10 @@ global $FACTION;
     $Fid = 0;
     if (!empty($FACTION)) $Fid = $FACTION['id'];
   } else {
+    A_Check('Player');
     $Fid = $FACTION['id'];
     if ($FACTION['TurnState'] > 2) Player_Page();
   }
-
 
   dostaffhead("Edit and Create Things",["js/dropzone.js","css/dropzone.css" ]);
 
@@ -258,6 +258,7 @@ global $FACTION;
       break;
 
     case 'GM Refit' :
+      if (!$GM) break;
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
 //      Calc_Scanners($T);
@@ -265,6 +266,7 @@ global $FACTION;
       break;
 
     case 'GM Recalc' :
+      if (!$GM) break;
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
 //      Calc_Scanners($T);
@@ -586,6 +588,7 @@ global $FACTION;
       break;
 
     case 'Retreat' :
+      if (!$GM) break;
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
       $T['Retreat'] = 2;
@@ -775,6 +778,7 @@ global $FACTION;
     case 'Cancel Servicing': //Refits etc
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
+      Check_MyThing($T,$Fid);
       if ($T['BuildState'] != BS_SERVICE) break;
       $Pid = $T['ProjectId'];
       $T['BuildState'] = BS_COMPLETE;
@@ -799,6 +803,7 @@ global $FACTION;
       break;
 
     case 'Delete NOW!':
+      if (!$GM) break;
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
       Thing_Delete($tid,1);
@@ -828,6 +833,7 @@ global $FACTION;
     case 'Make a Design of this':
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
+      Check_MyThing($T,$Fid);
       $Des = Thing_Duplicate($tid,1);
       $Des['BuildState'] = BS_PLANNING;
       if ($T['BluePrint']) {
@@ -847,6 +853,7 @@ global $FACTION;
     case 'This should be from a Design':
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
+      Check_MyThing($T,$Fid);
       $Mods = Get_Modules($tid);
       $CMds = count($Mods);
 
@@ -877,6 +884,7 @@ global $FACTION;
     case 'FromDesign2':
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
+      Check_MyThing($T,$Fid);
       $Did = $_REQUEST['Design'];
       $DT = Get_Thing($Did);
       $T['Image'] = $DT['Image'];

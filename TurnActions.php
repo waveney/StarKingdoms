@@ -881,7 +881,7 @@ function MilitiaArmyRecovery() {
       }
 
 // echo "Recovery of $Rec<br>";
-      $T['CurHealth'] = max($T['OrigHealth'], $T['CurHealth']+$Rec);
+      $T['CurHealth'] = min($T['OrigHealth'], $T['CurHealth']+$Rec);
       Put_Thing($T);
       if ($T['Whose']) TurnLog($T['Whose'],$T['Name'] . " recovered $Rec health",$T);
       GMLog("<a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . ' a ' . $TTypes[$T['Type']]['Name'] . "</a> recovered $Rec health");
