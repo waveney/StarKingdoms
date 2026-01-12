@@ -162,11 +162,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0,
                ($Factions[$T['Whose']]['Adjective']?$Factions[$T['Whose']]['Adjective']:$Factions[$T['Whose']]['Name'])
              :'Unknown');
           if ($RawA && is_vowel($Who)) $txt .= "n";
-          if ($Div) {
-            $txt .= " <span " . FactColours($T['Whose']) . ">$Who</span>";
-          } else {
-            $txt .= " $Who";
-          }
+          $txt .= " <span " . FactColours($T['Whose']) . ">$Who</span>";
           if ($T['HideOwner']) $txt .= " (Hidden)";
           $RawA = 0;
         }
