@@ -286,12 +286,13 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0,
         $OnBoard = Get_Things_Cond(0,"(LinkId=-1 OR LinkId=-3 OR LinkId=-4) AND SystemId=$Tid AND BuildState=" . BS_COMPLETE);
  //       var_dump($Tid,$Contents,$OnBoard);
         if ($OnBoard) {
-          $txt .= "<div class=$LocClass><br>On Board: <ul>";
+          if ($Div) $txt .= "<div class=$LocClass>" ;
+          $txt .= "<br>On Board: <ul>";
           foreach ($OnBoard as $H) {
             $Hid = $H['id'];
             if (!$Depth) $txt .= "<form method=post action=Meetings.php?ACTION=UNLOAD&id=$Hid>";
             $hprops = $ThingTypes[$H['Type']]['Properties'];
-            $txt .= "<li>" . SeeThing($H,$LastWhose,$Eyes,$Fid,$Images,$GM,$Div,1,$Depth+1);
+            $txt .= "<li>" . SeeThing($H,$LastWhose,$Eyes,$Fid,0,$GM,0,1,$Depth+1);
 
  /*             $txt .=  "<li><a href=ThingEdit.php?id=" . $H['id'] . ">" . $H['Name'] . "</a> a " . (($hprops & THING_HAS_LEVELS)? "Level " . $H['Level'] : "") .
                    " " . $H['Class'] . " " . $ThingTypes[$H['Type']]['Name'];
@@ -306,7 +307,8 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0,
             }
             if (!$Depth) echo "</form>";
           }
-          $txt .= "</ul></div>";
+          $txt .= "</ul>";
+          if ($Div) $txt .= "</div>";
         }
       }
 
