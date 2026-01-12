@@ -8,6 +8,7 @@
   include_once("HomesLib.php");
   include_once("TurnTools.php");
   include_once("OrgLib.php");
+  include_once("SeeThings.php");
   A_Check('GM');
 
   global $Relations,$GAME, $GAMEID;

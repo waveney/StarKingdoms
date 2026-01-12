@@ -567,8 +567,8 @@ function Show_Thing(&$T,$Force=0) {
   echo "\n<tr>";
   if  (Feature('Orders') && ($tprops & THING_HAS_LEVELS)) echo fm_text("Orders",$T,'Orders',2);
   if ($GM) {
-    echo "<td>Prisoner of: " . fm_select($FactNames,$T,'PrisonerOf');
-    echo "<td colspan=2>Hidden Control: " . fm_select($FactNames,$T,'HiddenControl');
+    echo "<td>Prisoner of: " . fm_select($FactNames,$T,'PrisonerOf',1);
+    echo "<td colspan=2>Hidden Control: " . fm_select($FactNames,$T,'HiddenControl',1);
     echo "<td>" . fm_checkbox('Hide Owner',$T,'HideOwner');
 
     if (Access('God')) echo "<tr><td>GOD!: " . fm_number0('SystemId',$T,'SystemId') . fm_number1('WithinSysLoc',$T,'WithinSysLoc') .

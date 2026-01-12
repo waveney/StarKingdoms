@@ -409,17 +409,18 @@ function WhatCanBeSeenBy($Fid,$Move=0) { // If Move = 1, it will report previous
     if ($T['BuildState'] < BS_SERVICE || $T['BuildState']> BS_COMPLETE) continue; // Ignore things not in use
     $Sid = $T['SystemId'];
     if ($T['LinkId'] == -1 || $T['LinkId'] == -3) {
-      $Hosts[$T['SystemId']][] = $T['id']; // On board something
+      $Host = Get_Thing($T['SystemId']);
+      if ($Host['Whose'] != $Fid)  $Hosts[$T['SystemId']][] = $T['id']; // On board something
       continue;
     } else if ($Sid == 0) continue; // Not Anywhere
 
  //echo "Adding " .$T['Name'] . " " .$T['id'] . " " . $T['SystemId'] . "<br>";
     $Eyes = EyesInSystem($Fid,$Sid);
     $Places[$Sid] = (empty($Places[$Sid])? $Eyes : ($Places[$Sid] | $Eyes));
-    $OthersOnBoard = Get_Things_Cond(0,"Whose!=$Fid AND LinkId<0 AND SystemId=" . $T['id']);
-    if ($OthersOnBoard) {
-      foreach($OthersOnBoard as $O) $Hosts[$T['id']][] = $O['id'];
-    }
+//    $OthersOnBoard = Get_Things_Cond(0,"Whose!=$Fid AND LinkId<0 AND SystemId=" . $T['id']);
+//    if ($OthersOnBoard) {
+//      foreach($OthersOnBoard as $O) $Hosts[$T['id']][] = $O['id'];
+//    }
   }
 
   // Check all branches
@@ -489,7 +490,7 @@ function WhatCanBeSeenBy($Fid,$Move=0) { // If Move = 1, it will report previous
   }
 
   $LastWhose = 0;
-/*
+
   if (!empty($Hosts)) {
     foreach($Hosts as $Hid=>$H) {
       if (empty($H)) continue;
@@ -509,7 +510,7 @@ function WhatCanBeSeenBy($Fid,$Move=0) { // If Move = 1, it will report previous
       $txt .= "</div>";
     }
   }
-*/
+
   return $Jtxt . "</h2>" . $txt;
 }
 

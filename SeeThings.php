@@ -141,7 +141,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0,
       }
 
       if ($T['Whose'] || $GM) {
-        $txt .= ((($Fid < 0) || ($Fid == $T['Whose']) || $GM )?( "<a href=ThingEdit.php?id=" . $T['id'] . ">" .
+        $txt .= ((($Fid < 0) || ($Fid == $T['Whose']) || $GM )?( "<a href=ThingEdit.php?id=$Tid>" .
                 (empty($T['Name'])?"Unnamed":$T['Name']) . "</a>") : $T['Name'] ) . ", a";
         $RawA = 1;
       }
@@ -156,7 +156,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0,
       }
       if ($T['Whose']) {
         if ($T['HideOwner'] && !$GM) {
-          $txt .= " (Unidentified Owner ) ";
+          $txt .= " (Unidentified Owner) ";
         } else {
           $Who = (isset($Factions[$T['Whose']])?
                ($Factions[$T['Whose']]['Adjective']?$Factions[$T['Whose']]['Adjective']:$Factions[$T['Whose']]['Name'])
@@ -250,7 +250,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0,
         }
       }
 //      if ( $GM && ($TTprops & THING_ISA_TEAM)) {
-        if ($T['Description']) {
+        if ($T['Description'] && (($T['Whose'] == $Fid) || ($TTprops & THING_ISA_TEAM))) {
           $txt .= "<br>" . ParseText($T['Description']);
           $Images = 1; // To add the br at end
         }
@@ -286,15 +286,14 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0,
         $OnBoard = Get_Things_Cond(0,"(LinkId=-1 OR LinkId=-3 OR LinkId=-4) AND SystemId=$Tid AND BuildState=" . BS_COMPLETE);
  //       var_dump($Tid,$Contents,$OnBoard);
         if ($OnBoard) {
-          if ($Div) $txt .= "<div class=$LocClass>" ;
           $txt .= "<br>On Board: <ul>";
+ //         if ($Div) $txt .= "<div class=$LocClass>" ;
           foreach ($OnBoard as $H) {
             $Hid = $H['id'];
             if (!$Depth) $txt .= "<form method=post action=Meetings.php?ACTION=UNLOAD&id=$Hid>";
             $hprops = $ThingTypes[$H['Type']]['Properties'];
             $txt .= "<li>" . SeeThing($H,$LastWhose,$Eyes,$Fid,0,$GM,0,1,$Depth+1);
-
- /*             $txt .=  "<li><a href=ThingEdit.php?id=" . $H['id'] . ">" . $H['Name'] . "</a> a " . (($hprops & THING_HAS_LEVELS)? "Level " . $H['Level'] : "") .
+  /*             $txt .=  "<li><a href=ThingEdit.php?id=" . $H['id'] . ">" . $H['Name'] . "</a> a " . (($hprops & THING_HAS_LEVELS)? "Level " . $H['Level'] : "") .
                    " " . $H['Class'] . " " . $ThingTypes[$H['Type']]['Name'];
 */
 
@@ -308,7 +307,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0,
             if (!$Depth) echo "</form>";
           }
           $txt .= "</ul>";
-          if ($Div) $txt .= "</div>";
+//          if ($Div) $txt .= "</div>";
         }
       }
 
@@ -324,7 +323,6 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0,
         }
       }
       $LastWhose = $T['Whose'];
-// if ($T['id'] == 238) echo "Txt is:$txt<p>";
    return $txt;
 }
 
