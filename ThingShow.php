@@ -29,7 +29,8 @@ function Show_Thing(&$T,$Force=0) {
   $TTypes = Get_ThingTypes();
   $ttn = Thing_Type_Names();
   $ntt = array_flip($ttn);
-  $FactNames = Get_Faction_Names();
+  $Facts = Get_Factions();
+  $FactNames = NamesList($Facts);
   [$Fact_Colours,$Fact_Text_Colours] = Get_Faction_Colours();
   $ThingProps = Thing_Type_Props();
   $tprops = ($ThingProps[$T['Type']]??0);
@@ -458,6 +459,8 @@ function Show_Thing(&$T,$Force=0) {
         }
         if (Feature('Follow') && $MovesValid && ($tprops & THING_CAN_MOVE )) {
           global $db;
+          include_once("SeeThings.php");
+
           $ThisSys = $T['SystemId'];
           $Eyes = EyesInSystem($Fid,$ThisSys,$Tid);
           if ($Eyes) {
@@ -597,7 +600,19 @@ function Show_Thing(&$T,$Force=0) {
     if ($Have) foreach ($Have as $H) {
       $Hid = $H['id'];
       $hprops = $ThingProps[$H['Type']];
-      echo "<a href=ThingEdit.php?id=$Hid>" . $H['Name'] . "</a> a " . (($hprops & THING_HAS_LEVELS)? "Level " . $H['Level'] : "") . " " . $ttn[$H['Type']];
+      if ($H['Whose'] == $Fid) {
+        echo "<a href=ThingEdit.php?id=$Hid>" . $H['Name'] . "</a> a " . (($hprops & THING_HAS_LEVELS)? "Level " . $H['Level'] : "") . " " . $H['Class'] .
+          " " . $ttn[$H['Type']];
+      } else {
+        if ($GM) {
+          echo "<a href=ThingEdit.php?id=$Hid>" . $H['Name'] . "</a>";
+        } else {
+          echo $H['Name'];
+        }
+        echo "<span " . FactColours($H['Whose']) . "> a " .
+          ($Facts[$T['Whose']]['Adjective']?$Facts[$T['Whose']]['Adjective']:$Facts[$T['Whose']]['Name']) .
+          (($hprops & THING_HAS_LEVELS)? "Level " . $H['Level'] : "") . " " . $H['Class'] . " " . $ttn[$H['Type']];
+      }
       if ($GM && $Conflict) echo " <b>Conflict</b> ";
       if ($GM || !$Conflict ) echo fm_submit("ACT$Hid",'Unload Now',0);
       echo " to: " . ($N['Ref']??'???') . " - " . fm_select($Syslocs,$H,'WithinSysLoc',0,'',"WithinSysLoc:$Hid");

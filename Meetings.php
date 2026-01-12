@@ -564,6 +564,9 @@ function SystemSee($Sid) {
         Put_ProjectHome($Home);
         $World = Gen_Get_Cond1('Worlds',"Home=" . $Home['id']);
         $World['Conflict'] = 1;
+        $World['ConflictTurn'] = 1;
+        $World['Blockade'] = max(1,$World['Blockade']);
+
         Put_World($World);
         echo "$Dev devastation applied to " . $P['Name'] . "<p>";
       } else { /// Moon
@@ -577,6 +580,8 @@ function SystemSee($Sid) {
         Put_ProjectHome($Home);
         $World = Gen_Get_Cond1('Worlds',"Home=" . $Home['id']);
         $World['Conflict'] = 1;
+        $World['ConflictTurn'] = 1;
+        $World['Blockade'] = max(1,$World['Blockade']);
         Put_World($World);
         echo "$Dev devastation applied to " . $P['Name'] . "<p>";
       }

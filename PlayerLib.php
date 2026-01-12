@@ -388,6 +388,7 @@ function Credit() {
 }
 
 function WhatCanBeSeenBy($Fid,$Move=0) { // If Move = 1, it will report previous moves of things if the eyes are static
+  include_once("SeeThings.php");
   $Terrains = ['All','Space','Ground'];
   $MyThings = Get_Things($Fid);
   $MyHomes = Get_ProjectHomes($Fid);
@@ -488,7 +489,7 @@ function WhatCanBeSeenBy($Fid,$Move=0) { // If Move = 1, it will report previous
   }
 
   $LastWhose = 0;
-
+/*
   if (!empty($Hosts)) {
     foreach($Hosts as $Hid=>$H) {
       if (empty($H)) continue;
@@ -508,7 +509,7 @@ function WhatCanBeSeenBy($Fid,$Move=0) { // If Move = 1, it will report previous
       $txt .= "</div>";
     }
   }
-
+*/
   return $Jtxt . "</h2>" . $txt;
 }
 

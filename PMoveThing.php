@@ -3,6 +3,7 @@
   include_once("GetPut.php");
   include_once("ThingLib.php");
   include_once("PlayerLib.php");
+  include_once("SeeThings.php");
 
   dostaffhead("Move Things",["js/dropzone.js","css/dropzone.css" ]);
 

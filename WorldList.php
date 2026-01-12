@@ -74,6 +74,7 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Blockade?</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Revolt?</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Devastation</a>\n";
+    if ($Conflict) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Conflict<br>This Turn?</a>\n";
   } else {
     echo "<th>Status";
   }
@@ -158,6 +159,7 @@
  //     echo "<td>" . fm_checkbox("Blockade?", $W, 'Blockade','',"Blockade:99:" . $W['id']);
       echo "<td>" . fm_checkbox("Revolt?", $W, 'Revolt','',"Revolt:99:" . $W['id']);
       echo fm_number1('',$H,'Devastation','','min=0 max=10','Devastation:100:'. $W['Home'] );
+      if ($Conflict) echo "<td>" . fm_checkbox('',$W,'ConflictTurn','',"ConflictTurn:99:" . $W['id']);
     } else {
       WorldFlags($W);
     }

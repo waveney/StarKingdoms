@@ -9,6 +9,7 @@
   include_once("BattleLib.php");
   include_once("TurnTools.php");
   include_once("OrgLib.php");
+  include_once("SeeThings.php");
 
   A_Check('GM');
 
@@ -175,6 +176,8 @@ function StartTurnProcess() {
       FollowUp(0,$R['Name']);
     }
   }
+
+  fm_select("UPDATE Worlds SET ConflictTurn=0 WHERE GameId=$GAMEID AND ConflictTurn!=0");
 
   GMLog("Started Turn Processing");
   return 1;
@@ -964,7 +967,7 @@ function MilitiaArmyRecovery() {
         } else {
           if ($T['LinkId'] >= LINK_LOAD_AND_UNLOAD) { // On board - these wont be in the ideal order to process but tough
             $H = Get_Thing($T['SystemId']);
-            $FindM = 1;
+            $FindM = 2;
           } else {
             $Sid = $T['SystemId'];
           }
@@ -973,14 +976,26 @@ function MilitiaArmyRecovery() {
         // Find damaged allies with army modules in same system
 
         if ($LastSys < 0 || $LastSys != $Sid || $FindM) {
-          if ($FindM) {
-            $Healable = Gen_Get_Cond('Things',"BuildState=3 AND SystemId=" . $T['id'] . " AND LinkId=-1 AND CurHealth<OrigHealth");
-          } else {
-            $Healable = Gen_Get_Cond('Things',"BuildState=3 AND SystemId=$Sid AND CurHealth<OrigHealth");
+          switch ($FindM) {
+            case 0: // On Ground
+              $Healable = Gen_Get_Cond('Things',"BuildState=3 AND SystemId=$Sid AND CurHealth<OrigHealth");
+              foreach ($Healable as $Hid=>$H) {
+                if (!is_on_ground($H)) $Healable[$Hid] = [];
+              }
+              break;
+
+            case 1: // Same Ship - Medical Bays
+              $Healable = Gen_Get_Cond('Things',"BuildState=3 AND SystemId=" . $T['id'] . " AND LinkId=-1 AND CurHealth<OrigHealth");
+              break;
+
+            case 2: // Same Ship medics aboard
+              $Healable = Gen_Get_Cond('Things',"BuildState=3 AND SystemId=" . $T['SystemId'] . " AND LinkId=-1 AND CurHealth<OrigHealth");
+              break;
+
           }
           $Heals = [];
           foreach ($Healable as $Hid=>$H) {
-            if (($Allies[$H['Whose']]??0) && ( $TTypes[$H['Type']]['Properties'] & THING_HAS_ARMYMODULES )) {
+            if (!empty($H) && ($Allies[$H['Whose']]??0) && ( $TTypes[$H['Type']]['Properties'] & THING_HAS_ARMYMODULES )) {
               $Heals[] = $Hid;
             }
           }
@@ -1215,8 +1230,42 @@ function TidyUps() {
 }
 
 function ClearConflictFlags() {
-  global $ForceNoFaction;
+  global $ForceNoFaction, $GAMEID;
   GMLog("<h2>Please clear worlds of conflict where applicable</h2>Devastation is derived from conflict normally, only tweak if something special needs it");
+  GMLog("It will auto clear conflict on all worlds that didn't have conflict this turn and remove level 1 blockades.<p>");
+
+  $Worlds = Get_Worlds();
+  foreach ($Worlds as $Wid => $W) {
+    if ((($W['ConflictTurn']??0) == 0) && $W['Conflict'] ) {
+      $W['Conflict'] = $W['ConflictTurn']  = 0;
+      if ($W['Blockade'] == 1) $W['Blockade'] = 0;
+      Put_World($W);
+      switch ($W['ThingType']) {
+      case 1: //Planet
+        $P = Get_Planet($W['ThingId']);
+        $Name = $P['Name'];
+        $Sys = Get_System($P['SystemId']);
+        break;
+
+      case 2: /// Moon
+        $M = Get_Moon($W['ThingId']);
+        $Name = $M['Name'];
+        $P = Get_Planet($M['PlanetId']);
+        $Sys = Get_System($P['SystemId']);
+        break;
+
+      case 3: // Thing
+        $T = Get_Thing($W['ThingId']);
+        if (!$T) {
+          echo "World " . $W['id'] . " has a Thing as Home, that thing no longer exists... <a href=WorldEdit.php?ACTION=DELETE&id=$Wid>Delete World</a>";
+          break;
+        }
+        $Sys = Get_System($T['SystemId']);
+        break;
+      }
+      GMLog("Cleared Conflict in $Name - " . $Sys['Ref']);
+    }
+  }
 
   $_REQUEST['CONFLICT'] = 2; // Makes WorldList think its part of turn processing - 2 for clearing flags
   $ForceNoFaction = 1;
