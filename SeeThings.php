@@ -144,7 +144,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0,
 
       if ($T['Whose'] || $GM) {
         $txt .= ((($Fid < 0) || ($Fid == $T['Whose']) || $GM )?( "<a href=ThingEdit.php?id=$Tid>" .
-                (empty($T['Name'])?"Unnamed":$T['Name']) . "</a>") : $T['Name'] ) . ", a";
+          (empty($T['Name'])?"Unnamed":$T['Name']) . "</a>") : (empty($T['Name'])?"Unnamed":$T['Name']) ) . ", a";
         $RawA = 1;
       }
       if ($TTprops & THING_HAS_LEVELS) {
