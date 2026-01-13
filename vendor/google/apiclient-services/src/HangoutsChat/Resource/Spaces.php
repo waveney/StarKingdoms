@@ -69,8 +69,7 @@ class Spaces extends \Google\Service\Resource
    * authorize): - [App
    * authentication](https://developers.google.com/workspace/chat/authenticate-
    * authorize-chat-app) with [administrator
-   * approval](https://support.google.com/a?p=chat-app-auth) in [Developer
-   * Preview](https://developers.google.com/workspace/preview) and one of the
+   * approval](https://support.google.com/a?p=chat-app-auth) and one of the
    * following authorization scopes: -
    * `https://www.googleapis.com/auth/chat.app.spaces.create` -
    * `https://www.googleapis.com/auth/chat.app.spaces` - [User
@@ -121,10 +120,9 @@ class Spaces extends \Google\Service\Resource
    * authorize): - [App
    * authentication](https://developers.google.com/workspace/chat/authenticate-
    * authorize-chat-app) with [administrator
-   * approval](https://support.google.com/a?p=chat-app-auth) in [Developer
-   * Preview](https://developers.google.com/workspace/preview) and the
-   * authorization scope: - `https://www.googleapis.com/auth/chat.app.delete`
-   * (only in spaces the app created) - [User
+   * approval](https://support.google.com/a?p=chat-app-auth) and the authorization
+   * scope: - `https://www.googleapis.com/auth/chat.app.delete` (only in spaces
+   * the app created) - [User
    * authentication](https://developers.google.com/workspace/chat/authenticate-
    * authorize-chat-user) with one of the following authorization scopes: -
    * `https://www.googleapis.com/auth/chat.delete` -
@@ -300,8 +298,7 @@ class Spaces extends \Google\Service\Resource
    * authorize): - [App
    * authentication](https://developers.google.com/workspace/chat/authenticate-
    * authorize-chat-app) with [administrator
-   * approval](https://support.google.com/a?p=chat-app-auth) in [Developer
-   * Preview](https://developers.google.com/workspace/preview) and one of the
+   * approval](https://support.google.com/a?p=chat-app-auth) and one of the
    * following authorization scopes: -
    * `https://www.googleapis.com/auth/chat.app.spaces` - [User
    * authentication](https://developers.google.com/workspace/chat/authenticate-
@@ -330,31 +327,34 @@ class Spaces extends \Google\Service\Resource
    *
    * @opt_param string updateMask Required. The updated field paths, comma
    * separated if there are multiple. You can update the following fields for a
-   * space: `space_details`: Updates the space's description. Supports up to 150
-   * characters. `display_name`: Only supports updating the display name for
-   * spaces where `spaceType` field is `SPACE`. If you receive the error message
-   * `ALREADY_EXISTS`, try a different value. An existing space within the Google
-   * Workspace organization might already use this display name. `space_type`:
-   * Only supports changing a `GROUP_CHAT` space type to `SPACE`. Include
-   * `display_name` together with `space_type` in the update mask and ensure that
-   * the specified space has a non-empty display name and the `SPACE` space type.
-   * Including the `space_type` mask and the `SPACE` type in the specified space
-   * when updating the display name is optional if the existing space already has
-   * the `SPACE` type. Trying to update the space type in other ways results in an
-   * invalid argument error. `space_type` is not supported with `useAdminAccess`.
-   * `space_history_state`: Updates [space history
-   * settings](https://support.google.com/chat/answer/7664687) by turning history
-   * on or off for the space. Only supported if history settings are enabled for
-   * the Google Workspace organization. To update the space history state, you
-   * must omit all other field masks in your request. `space_history_state` is not
-   * supported with `useAdminAccess`. `access_settings.audience`: Updates the
-   * [access setting](https://support.google.com/chat/answer/11971020) of who can
-   * discover the space, join the space, and preview the messages in named space
-   * where `spaceType` field is `SPACE`. If the existing space has a target
-   * audience, you can remove the audience and restrict space access by omitting a
-   * value for this field mask. To update access settings for a space, the
-   * authenticating user must be a space manager and omit all other field masks in
-   * your request. You can't update this field if the space is in [import
+   * space: `space_details`: Updates the space's description and guidelines. You
+   * must pass both description and guidelines in the update request as
+   * `SpaceDetails`. If you only want to update one of the fields, pass the
+   * existing value for the other field. `display_name`: Only supports updating
+   * the display name for spaces where `spaceType` field is `SPACE`. If you
+   * receive the error message `ALREADY_EXISTS`, try a different value. An
+   * existing space within the Google Workspace organization might already use
+   * this display name. `space_type`: Only supports changing a `GROUP_CHAT` space
+   * type to `SPACE`. Include `display_name` together with `space_type` in the
+   * update mask and ensure that the specified space has a non-empty display name
+   * and the `SPACE` space type. Including the `space_type` mask and the `SPACE`
+   * type in the specified space when updating the display name is optional if the
+   * existing space already has the `SPACE` type. Trying to update the space type
+   * in other ways results in an invalid argument error. `space_type` is not
+   * supported with `useAdminAccess`. `space_history_state`: Updates [space
+   * history settings](https://support.google.com/chat/answer/7664687) by turning
+   * history on or off for the space. Only supported if history settings are
+   * enabled for the Google Workspace organization. To update the space history
+   * state, you must omit all other field masks in your request.
+   * `space_history_state` is not supported with `useAdminAccess`.
+   * `access_settings.audience`: Updates the [access
+   * setting](https://support.google.com/chat/answer/11971020) of who can discover
+   * the space, join the space, and preview the messages in named space where
+   * `spaceType` field is `SPACE`. If the existing space has a target audience,
+   * you can remove the audience and restrict space access by omitting a value for
+   * this field mask. To update access settings for a space, the authenticating
+   * user must be a space manager and omit all other field masks in your request.
+   * You can't update this field if the space is in [import
    * mode](https://developers.google.com/workspace/chat/import-data-overview). To
    * learn more, see [Make a space discoverable to specific
    * users](https://developers.google.com/workspace/chat/space-target-audience).
@@ -362,8 +362,7 @@ class Spaces extends \Google\Service\Resource
    * `permission_settings`: Supports changing the [permission
    * settings](https://support.google.com/chat/answer/13340792) of a space. When
    * updating permission settings, you can only specify `permissionSettings` field
-   * masks; you cannot update other field masks at the same time.
-   * `permissionSettings` is not supported with `useAdminAccess`. The supported
+   * masks; you cannot update other field masks at the same time. The supported
    * field masks include: - `permission_settings.manageMembersAndGroups` -
    * `permission_settings.modifySpaceDetails` -
    * `permission_settings.toggleHistory` - `permission_settings.useAtMentionAll` -
@@ -388,14 +387,16 @@ class Spaces extends \Google\Service\Resource
   }
   /**
    * Returns a list of spaces in a Google Workspace organization based on an
-   * administrator's search. Requires [user authentication with administrator
+   * administrator's search. In the request, set `use_admin_access` to `true`. For
+   * an example, see [Search for and manage
+   * spaces](https://developers.google.com/workspace/chat/search-manage-admin).
+   * Requires [user authentication with administrator
    * privileges](https://developers.google.com/workspace/chat/authenticate-
    * authorize-chat-user#admin-privileges) and one of the following [authorization
    * scopes](https://developers.google.com/workspace/chat/authenticate-
    * authorize#chat-api-scopes): -
    * `https://www.googleapis.com/auth/chat.admin.spaces.readonly` -
-   * `https://www.googleapis.com/auth/chat.admin.spaces` In the request, set
-   * `use_admin_access` to `true`. (spaces.search)
+   * `https://www.googleapis.com/auth/chat.admin.spaces` (spaces.search)
    *
    * @param array $optParams Optional parameters.
    *

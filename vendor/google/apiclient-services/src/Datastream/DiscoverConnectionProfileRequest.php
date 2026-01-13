@@ -22,14 +22,22 @@ class DiscoverConnectionProfileRequest extends \Google\Model
   protected $connectionProfileType = ConnectionProfile::class;
   protected $connectionProfileDataType = '';
   /**
+   * Optional. A reference to an existing connection profile.
+   *
    * @var string
    */
   public $connectionProfileName;
   /**
+   * Optional. Whether to retrieve the full hierarchy of data objects (TRUE) or
+   * only the current level (FALSE).
+   *
    * @var bool
    */
   public $fullHierarchy;
   /**
+   * Optional. The number of hierarchy levels below the current level to be
+   * retrieved.
+   *
    * @var int
    */
   public $hierarchyDepth;
@@ -47,7 +55,9 @@ class DiscoverConnectionProfileRequest extends \Google\Model
   protected $sqlServerRdbmsDataType = '';
 
   /**
-   * @param ConnectionProfile
+   * Optional. An ad-hoc connection profile configuration.
+   *
+   * @param ConnectionProfile $connectionProfile
    */
   public function setConnectionProfile(ConnectionProfile $connectionProfile)
   {
@@ -61,7 +71,9 @@ class DiscoverConnectionProfileRequest extends \Google\Model
     return $this->connectionProfile;
   }
   /**
-   * @param string
+   * Optional. A reference to an existing connection profile.
+   *
+   * @param string $connectionProfileName
    */
   public function setConnectionProfileName($connectionProfileName)
   {
@@ -75,7 +87,10 @@ class DiscoverConnectionProfileRequest extends \Google\Model
     return $this->connectionProfileName;
   }
   /**
-   * @param bool
+   * Optional. Whether to retrieve the full hierarchy of data objects (TRUE) or
+   * only the current level (FALSE).
+   *
+   * @param bool $fullHierarchy
    */
   public function setFullHierarchy($fullHierarchy)
   {
@@ -89,7 +104,10 @@ class DiscoverConnectionProfileRequest extends \Google\Model
     return $this->fullHierarchy;
   }
   /**
-   * @param int
+   * Optional. The number of hierarchy levels below the current level to be
+   * retrieved.
+   *
+   * @param int $hierarchyDepth
    */
   public function setHierarchyDepth($hierarchyDepth)
   {
@@ -103,7 +121,9 @@ class DiscoverConnectionProfileRequest extends \Google\Model
     return $this->hierarchyDepth;
   }
   /**
-   * @param MongodbCluster
+   * Optional. MongoDB cluster to enrich with child data objects and metadata.
+   *
+   * @param MongodbCluster $mongodbCluster
    */
   public function setMongodbCluster(MongodbCluster $mongodbCluster)
   {
@@ -117,7 +137,9 @@ class DiscoverConnectionProfileRequest extends \Google\Model
     return $this->mongodbCluster;
   }
   /**
-   * @param MysqlRdbms
+   * Optional. MySQL RDBMS to enrich with child data objects and metadata.
+   *
+   * @param MysqlRdbms $mysqlRdbms
    */
   public function setMysqlRdbms(MysqlRdbms $mysqlRdbms)
   {
@@ -131,7 +153,9 @@ class DiscoverConnectionProfileRequest extends \Google\Model
     return $this->mysqlRdbms;
   }
   /**
-   * @param OracleRdbms
+   * Optional. Oracle RDBMS to enrich with child data objects and metadata.
+   *
+   * @param OracleRdbms $oracleRdbms
    */
   public function setOracleRdbms(OracleRdbms $oracleRdbms)
   {
@@ -145,7 +169,9 @@ class DiscoverConnectionProfileRequest extends \Google\Model
     return $this->oracleRdbms;
   }
   /**
-   * @param PostgresqlRdbms
+   * Optional. PostgreSQL RDBMS to enrich with child data objects and metadata.
+   *
+   * @param PostgresqlRdbms $postgresqlRdbms
    */
   public function setPostgresqlRdbms(PostgresqlRdbms $postgresqlRdbms)
   {
@@ -159,7 +185,10 @@ class DiscoverConnectionProfileRequest extends \Google\Model
     return $this->postgresqlRdbms;
   }
   /**
-   * @param SalesforceOrg
+   * Optional. Salesforce organization to enrich with child data objects and
+   * metadata.
+   *
+   * @param SalesforceOrg $salesforceOrg
    */
   public function setSalesforceOrg(SalesforceOrg $salesforceOrg)
   {
@@ -173,7 +202,9 @@ class DiscoverConnectionProfileRequest extends \Google\Model
     return $this->salesforceOrg;
   }
   /**
-   * @param SqlServerRdbms
+   * Optional. SQLServer RDBMS to enrich with child data objects and metadata.
+   *
+   * @param SqlServerRdbms $sqlServerRdbms
    */
   public function setSqlServerRdbms(SqlServerRdbms $sqlServerRdbms)
   {

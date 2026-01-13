@@ -20,10 +20,17 @@ namespace Google\Service\APIhub;
 class GoogleCloudApihubV1OperationDetails extends \Google\Model
 {
   /**
+   * Optional. For OpenAPI spec, this will be set if `operation.deprecated`is
+   * marked as `true` in the spec.
+   *
    * @var bool
    */
   public $deprecated;
   /**
+   * Optional. Description of the operation behavior. For OpenAPI spec, this
+   * will map to `operation.description` in the spec, in case description is
+   * empty, `operation.summary` will be used.
+   *
    * @var string
    */
   public $description;
@@ -31,9 +38,14 @@ class GoogleCloudApihubV1OperationDetails extends \Google\Model
   protected $documentationDataType = '';
   protected $httpOperationType = GoogleCloudApihubV1HttpOperation::class;
   protected $httpOperationDataType = '';
+  protected $mcpToolType = GoogleCloudApihubV1McpTool::class;
+  protected $mcpToolDataType = '';
 
   /**
-   * @param bool
+   * Optional. For OpenAPI spec, this will be set if `operation.deprecated`is
+   * marked as `true` in the spec.
+   *
+   * @param bool $deprecated
    */
   public function setDeprecated($deprecated)
   {
@@ -47,7 +59,11 @@ class GoogleCloudApihubV1OperationDetails extends \Google\Model
     return $this->deprecated;
   }
   /**
-   * @param string
+   * Optional. Description of the operation behavior. For OpenAPI spec, this
+   * will map to `operation.description` in the spec, in case description is
+   * empty, `operation.summary` will be used.
+   *
+   * @param string $description
    */
   public function setDescription($description)
   {
@@ -61,7 +77,10 @@ class GoogleCloudApihubV1OperationDetails extends \Google\Model
     return $this->description;
   }
   /**
-   * @param GoogleCloudApihubV1Documentation
+   * Optional. Additional external documentation for this operation. For OpenAPI
+   * spec, this will map to `operation.documentation` in the spec.
+   *
+   * @param GoogleCloudApihubV1Documentation $documentation
    */
   public function setDocumentation(GoogleCloudApihubV1Documentation $documentation)
   {
@@ -75,7 +94,9 @@ class GoogleCloudApihubV1OperationDetails extends \Google\Model
     return $this->documentation;
   }
   /**
-   * @param GoogleCloudApihubV1HttpOperation
+   * The HTTP Operation.
+   *
+   * @param GoogleCloudApihubV1HttpOperation $httpOperation
    */
   public function setHttpOperation(GoogleCloudApihubV1HttpOperation $httpOperation)
   {
@@ -87,6 +108,22 @@ class GoogleCloudApihubV1OperationDetails extends \Google\Model
   public function getHttpOperation()
   {
     return $this->httpOperation;
+  }
+  /**
+   * The MCP Tool Operation.
+   *
+   * @param GoogleCloudApihubV1McpTool $mcpTool
+   */
+  public function setMcpTool(GoogleCloudApihubV1McpTool $mcpTool)
+  {
+    $this->mcpTool = $mcpTool;
+  }
+  /**
+   * @return GoogleCloudApihubV1McpTool
+   */
+  public function getMcpTool()
+  {
+    return $this->mcpTool;
   }
 }
 

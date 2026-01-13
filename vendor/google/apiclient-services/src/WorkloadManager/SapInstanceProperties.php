@@ -20,13 +20,35 @@ namespace Google\Service\WorkloadManager;
 class SapInstanceProperties extends \Google\Collection
 {
   protected $collection_key = 'numbers';
+  protected $agentStatesType = AgentStates::class;
+  protected $agentStatesDataType = '';
   /**
+   * Optional. SAP Instance numbers. They are from '00' to '99'.
+   *
    * @var string[]
    */
   public $numbers;
 
   /**
-   * @param string[]
+   * Optional. Sap Instance Agent status.
+   *
+   * @param AgentStates $agentStates
+   */
+  public function setAgentStates(AgentStates $agentStates)
+  {
+    $this->agentStates = $agentStates;
+  }
+  /**
+   * @return AgentStates
+   */
+  public function getAgentStates()
+  {
+    return $this->agentStates;
+  }
+  /**
+   * Optional. SAP Instance numbers. They are from '00' to '99'.
+   *
+   * @param string[] $numbers
    */
   public function setNumbers($numbers)
   {

@@ -23,7 +23,8 @@ use Google\Client;
  * Service definition for CloudObservability (v1).
  *
  * <p>
-</p>
+ * Provides functionality for configuring the observability scope, which
+ * controls the log, metric, and trace data that you can view.</p>
  *
  * <p>
  * For more information about this service, see the API
@@ -41,6 +42,7 @@ class CloudObservability extends \Google\Service
   public $projects_locations;
   public $projects_locations_operations;
   public $projects_locations_scopes;
+  public $projects_locations_traceScopes;
   public $rootUrlTemplate;
 
   /**
@@ -164,6 +166,10 @@ class CloudObservability extends \Google\Service
                   'location' => 'query',
                   'type' => 'string',
                 ],
+                'returnPartialSuccess' => [
+                  'location' => 'query',
+                  'type' => 'boolean',
+                ],
               ],
             ],
           ]
@@ -183,6 +189,82 @@ class CloudObservability extends \Google\Service
                   'location' => 'path',
                   'type' => 'string',
                   'required' => true,
+                ],
+              ],
+            ],'patch' => [
+              'path' => 'v1/{+name}',
+              'httpMethod' => 'PATCH',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'updateMask' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+              ],
+            ],
+          ]
+        ]
+    );
+    $this->projects_locations_traceScopes = new CloudObservability\Resource\ProjectsLocationsTraceScopes(
+        $this,
+        $this->serviceName,
+        'traceScopes',
+        [
+          'methods' => [
+            'create' => [
+              'path' => 'v1/{+parent}/traceScopes',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'traceScopeId' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+              ],
+            ],'delete' => [
+              'path' => 'v1/{+name}',
+              'httpMethod' => 'DELETE',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'get' => [
+              'path' => 'v1/{+name}',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'list' => [
+              'path' => 'v1/{+parent}/traceScopes',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'pageSize' => [
+                  'location' => 'query',
+                  'type' => 'integer',
+                ],
+                'pageToken' => [
+                  'location' => 'query',
+                  'type' => 'string',
                 ],
               ],
             ],'patch' => [

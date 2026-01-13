@@ -40,8 +40,8 @@ class ProjectsLocations extends \Google\Service\Resource
    * static IPs should be returned. Must be in the format `projects/locations`.
    * @param array $optParams Optional parameters.
    *
-   * @opt_param int pageSize Maximum number of IPs to return.
-   * @opt_param string pageToken A page token, received from a previous
+   * @opt_param int pageSize Optional. Maximum number of IPs to return.
+   * @opt_param string pageToken Optional. A page token, received from a previous
    * `FetchStaticIps` call.
    * @return FetchStaticIpsResponse
    * @throws \Google\Service\Exception
@@ -74,9 +74,9 @@ class ProjectsLocations extends \Google\Service\Resource
    * applicable.
    * @param array $optParams Optional parameters.
    *
-   * @opt_param string extraLocationTypes Optional. A list of extra location types
-   * that should be used as conditions for controlling the visibility of the
-   * locations.
+   * @opt_param string extraLocationTypes Optional. Do not use this field. It is
+   * unsupported and is ignored unless explicitly documented otherwise. This is
+   * primarily for internal usage.
    * @opt_param string filter A filter to narrow down results to a preferred
    * subset. The filtering language accepts strings like `"displayName=tokyo"`,
    * and is documented in more detail in [AIP-160](https://google.aip.dev/160).

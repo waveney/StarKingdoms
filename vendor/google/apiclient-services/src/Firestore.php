@@ -86,6 +86,16 @@ class Firestore extends \Google\Service
                   'required' => true,
                 ],
               ],
+            ],'clone' => [
+              'path' => 'v1/{+parent}/databases:clone',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
             ],'create' => [
               'path' => 'v1/{+parent}/databases',
               'httpMethod' => 'POST',
@@ -456,6 +466,16 @@ class Firestore extends \Google\Service
                   'type' => 'string',
                 ],
               ],
+            ],'executePipeline' => [
+              'path' => 'v1/{+database}/documents:executePipeline',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'database' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
             ],'get' => [
               'path' => 'v1/{+name}',
               'httpMethod' => 'GET',
@@ -725,6 +745,10 @@ class Firestore extends \Google\Service
                 'pageToken' => [
                   'location' => 'query',
                   'type' => 'string',
+                ],
+                'returnPartialSuccess' => [
+                  'location' => 'query',
+                  'type' => 'boolean',
                 ],
               ],
             ],

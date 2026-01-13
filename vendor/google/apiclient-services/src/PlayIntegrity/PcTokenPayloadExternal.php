@@ -19,13 +19,35 @@ namespace Google\Service\PlayIntegrity;
 
 class PcTokenPayloadExternal extends \Google\Model
 {
+  protected $accountDetailsType = PcAccountDetails::class;
+  protected $accountDetailsDataType = '';
   protected $deviceIntegrityType = PcDeviceIntegrity::class;
   protected $deviceIntegrityDataType = '';
   protected $requestDetailsType = PcRequestDetails::class;
   protected $requestDetailsDataType = '';
+  protected $testingDetailsType = PcTestingDetails::class;
+  protected $testingDetailsDataType = '';
 
   /**
-   * @param PcDeviceIntegrity
+   * Details about the account information such as the licensing status.
+   *
+   * @param PcAccountDetails $accountDetails
+   */
+  public function setAccountDetails(PcAccountDetails $accountDetails)
+  {
+    $this->accountDetails = $accountDetails;
+  }
+  /**
+   * @return PcAccountDetails
+   */
+  public function getAccountDetails()
+  {
+    return $this->accountDetails;
+  }
+  /**
+   * Required. Details about the device integrity.
+   *
+   * @param PcDeviceIntegrity $deviceIntegrity
    */
   public function setDeviceIntegrity(PcDeviceIntegrity $deviceIntegrity)
   {
@@ -39,7 +61,9 @@ class PcTokenPayloadExternal extends \Google\Model
     return $this->deviceIntegrity;
   }
   /**
-   * @param PcRequestDetails
+   * Required. Details about the integrity request.
+   *
+   * @param PcRequestDetails $requestDetails
    */
   public function setRequestDetails(PcRequestDetails $requestDetails)
   {
@@ -51,6 +75,23 @@ class PcTokenPayloadExternal extends \Google\Model
   public function getRequestDetails()
   {
     return $this->requestDetails;
+  }
+  /**
+   * Indicates that this payload is generated for testing purposes and contains
+   * any additional data that is linked with testing status.
+   *
+   * @param PcTestingDetails $testingDetails
+   */
+  public function setTestingDetails(PcTestingDetails $testingDetails)
+  {
+    $this->testingDetails = $testingDetails;
+  }
+  /**
+   * @return PcTestingDetails
+   */
+  public function getTestingDetails()
+  {
+    return $this->testingDetails;
   }
 }
 

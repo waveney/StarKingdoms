@@ -19,7 +19,11 @@ namespace Google\Service\Compute;
 
 class AllocationResourceStatus extends \Google\Model
 {
+  protected $healthInfoType = AllocationResourceStatusHealthInfo::class;
+  protected $healthInfoDataType = '';
   /**
+   * The number of reservation blocks associated with this reservation.
+   *
    * @var int
    */
   public $reservationBlockCount;
@@ -29,7 +33,25 @@ class AllocationResourceStatus extends \Google\Model
   protected $specificSkuAllocationDataType = '';
 
   /**
-   * @param int
+   * [Output only] Health information for the reservation.
+   *
+   * @param AllocationResourceStatusHealthInfo $healthInfo
+   */
+  public function setHealthInfo(AllocationResourceStatusHealthInfo $healthInfo)
+  {
+    $this->healthInfo = $healthInfo;
+  }
+  /**
+   * @return AllocationResourceStatusHealthInfo
+   */
+  public function getHealthInfo()
+  {
+    return $this->healthInfo;
+  }
+  /**
+   * The number of reservation blocks associated with this reservation.
+   *
+   * @param int $reservationBlockCount
    */
   public function setReservationBlockCount($reservationBlockCount)
   {
@@ -43,7 +65,9 @@ class AllocationResourceStatus extends \Google\Model
     return $this->reservationBlockCount;
   }
   /**
-   * @param GroupMaintenanceInfo
+   * Maintenance information for this reservation
+   *
+   * @param GroupMaintenanceInfo $reservationMaintenance
    */
   public function setReservationMaintenance(GroupMaintenanceInfo $reservationMaintenance)
   {
@@ -57,7 +81,9 @@ class AllocationResourceStatus extends \Google\Model
     return $this->reservationMaintenance;
   }
   /**
-   * @param AllocationResourceStatusSpecificSKUAllocation
+   * Allocation Properties of this reservation.
+   *
+   * @param AllocationResourceStatusSpecificSKUAllocation $specificSkuAllocation
    */
   public function setSpecificSkuAllocation(AllocationResourceStatusSpecificSKUAllocation $specificSkuAllocation)
   {

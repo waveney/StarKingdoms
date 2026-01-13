@@ -27,7 +27,7 @@ use Google\Client;
  *
  * <p>
  * For more information about this service, see the API
- * <a href="https://developers.google.com/cloud-sql/" target="_blank">Documentation</a>
+ * <a href="https://cloud.google.com/sql/docs" target="_blank">Documentation</a>
  * </p>
  *
  * @author Google, Inc.
@@ -428,9 +428,39 @@ class SQLAdmin extends \Google\Service
         'instances',
         [
           'methods' => [
-            'ListServerCertificates' => [
+            'ListEntraIdCertificates' => [
+              'path' => 'v1/projects/{project}/instances/{instance}/listEntraIdCertificates',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'project' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'instance' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'ListServerCertificates' => [
               'path' => 'v1/projects/{project}/instances/{instance}/listServerCertificates',
               'httpMethod' => 'GET',
+              'parameters' => [
+                'project' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'instance' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'RotateEntraIdCertificate' => [
+              'path' => 'v1/projects/{project}/instances/{instance}/rotateEntraIdCertificate',
+              'httpMethod' => 'POST',
               'parameters' => [
                 'project' => [
                   'location' => 'path',
@@ -460,6 +490,21 @@ class SQLAdmin extends \Google\Service
               ],
             ],'acquireSsrsLease' => [
               'path' => 'v1/projects/{project}/instances/{instance}/acquireSsrsLease',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'project' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'instance' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'addEntraIdCertificate' => [
+              'path' => 'v1/projects/{project}/instances/{instance}/addEntraIdCertificate',
               'httpMethod' => 'POST',
               'parameters' => [
                 'project' => [
@@ -566,6 +611,21 @@ class SQLAdmin extends \Google\Service
               ],
             ],'demoteMaster' => [
               'path' => 'v1/projects/{project}/instances/{instance}/demoteMaster',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'project' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'instance' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'executeSql' => [
+              'path' => 'v1/projects/{project}/instances/{instance}/executeSql',
               'httpMethod' => 'POST',
               'parameters' => [
                 'project' => [
@@ -711,6 +771,21 @@ class SQLAdmin extends \Google\Service
                   'required' => true,
                 ],
               ],
+            ],'preCheckMajorVersionUpgrade' => [
+              'path' => 'v1/projects/{project}/instances/{instance}/preCheckMajorVersionUpgrade',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'project' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'instance' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
             ],'promoteReplica' => [
               'path' => 'v1/projects/{project}/instances/{instance}/promoteReplica',
               'httpMethod' => 'POST',
@@ -773,6 +848,10 @@ class SQLAdmin extends \Google\Service
                   'location' => 'path',
                   'type' => 'string',
                   'required' => true,
+                ],
+                'mode' => [
+                  'location' => 'query',
+                  'type' => 'string',
                 ],
               ],
             ],'restart' => [
@@ -999,6 +1078,10 @@ class SQLAdmin extends \Google\Service
                   'location' => 'path',
                   'type' => 'string',
                   'required' => true,
+                ],
+                'sourceInstanceDeletionTime' => [
+                  'location' => 'query',
+                  'type' => 'string',
                 ],
               ],
             ],'performDiskShrink' => [
@@ -1291,6 +1374,11 @@ class SQLAdmin extends \Google\Service
                   'location' => 'path',
                   'type' => 'string',
                   'required' => true,
+                ],
+                'databaseRoles' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                  'repeated' => true,
                 ],
                 'host' => [
                   'location' => 'query',
