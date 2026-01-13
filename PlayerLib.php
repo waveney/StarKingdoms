@@ -492,6 +492,7 @@ function WhatCanBeSeenBy($Fid,$Move=0) { // If Move = 1, it will report previous
   $LastWhose = 0;
 
   if (!empty($Hosts)) {
+    $Facts = Get_Factions();
     foreach($Hosts as $Hid=>$H) {
       if (empty($H)) continue;
       $HostT = isset($MyThings[$Hid]) ? $MyThings[$Hid] : Get_Thing($Hid);
@@ -502,7 +503,10 @@ function WhatCanBeSeenBy($Fid,$Move=0) { // If Move = 1, it will report previous
         if (($HostT['WithinSysLoc'] == 3) || $LocType==2 || $LocType==4 ) $LocClass = 'Ground';
       }
 
-      $txt .= "<hr><div  class=$LocClass><h2>On Board " . (empty ($HostT['Name'])? "Unknown Thing" : $HostT['Name'])  . " is:</h2>";
+      $txt .= "<hr><div  class=$LocClass><h2>On Board: " . (empty ($HostT['Name'])? "Unknown Thing" : $HostT['Name'])  .
+        " ( <span " . FactColours($HostT['Whose']) . ">" .
+        ($Facts[$HostT['Whose']]['Adjective']?$Facts[$HostT['Whose']]['Adjective']:$Facts[$HostT['Whose']]['Name']) .
+        "</span> ) is:</h2>";
       foreach($H as $Tid) {
         $T = Get_Thing($Tid);
         $txt .= SeeThing($T,$LastWhose,15,$T['Whose'],1);

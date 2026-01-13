@@ -80,6 +80,8 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0,
   $Locations = Within_Sys_Locs_Id($T['SystemId']);
   if (!$FB) $FB = array_flip(NamesList($ModuleTypes))['Fighter Bays'];
 
+  $clsx = "Long";
+
   $txt = '';
   $itxt = '';
   $Tid = $T['id'];
@@ -121,22 +123,22 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0,
       if ($Div) {
         if (($T['BuildState'] >= BS_EX) || (($T['Type'] == 23) && $GM)) { // Named Chars
           if ($GM) {
-            $txt .= "<div class='FullD SeeThingTxt $LocClass' hidden>";
+            $txt .= "<div class='FullD SeeThingTxt$clsx $LocClass' hidden>";
             $Imgxtra = 1;
           } elseif ($T['BuildState'] == BS_ABANDON) {
-            $txt .= "<div class='SeeThingTxt $LocClass' >The Abandoned: ";
+            $txt .= "<div class='SeeThingTxt$clsx $LocClass' >The Abandoned: ";
             $Imgxtra = 1;
           } elseif ($T['BuildState'] == BS_DELETE) {
-            $txt .= "<div class='FullD SeeThingTxt $LocClass' hidden>The pending deletion remains of: ";
+            $txt .= "<div class='FullD SeeThingTxt$clsx $LocClass' hidden>The pending deletion remains of: ";
             $Imgxtra = 1;
           } elseif ($T['BuildState'] >= BS_EX) {
-            $txt .= "<div class='FullD SeeThingTxt $LocClass' hidden>The remains of: ";
+            $txt .= "<div class='FullD SeeThingTxt$clsx $LocClass' hidden>The remains of: ";
             $Imgxtra = 1;
           } else {
-            $txt .= "<div class='SeeThingTxt $LocClass'>";
+            $txt .= "<div class='SeeThingTxt$clsx $LocClass'>";
           }
         } else {
-          $txt .= "<div class='SeeThingTxt $LocClass'>";
+          $txt .= "<div class='SeeThingTxt$clsx $LocClass'>";
         }
       }
 
@@ -313,9 +315,9 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0,
 
       if ($itxt) {
         if ($Imgxtra) {
-          $txt = "<div class='SeeThingwrap $LocClass'>$txt<div class='FullD SeeThingImg' hidden>$itxt</div></div>";
+          $txt = "<div class='SeeThingwrap$clsx $LocClass'>$txt<div class='FullD SeeThingImg' hidden>$itxt</div></div>";
         } else {
-          $txt = "<div class='SeeThingwrap $LocClass'>$txt<div class=SeeThingImg>$itxt</div></div>";
+          $txt = "<div class='SeeThingwrap$clsx $LocClass'>$txt<div class=SeeThingImg>$itxt</div></div>";
         }
       }
       $LastWhose = $T['Whose'];
