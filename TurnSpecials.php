@@ -323,6 +323,36 @@
       echo "Done";
 
       break;
+
+    case 'SetHSSys':
+      // Foreach mil branch
+
+      $Branches = Gen_Get_Cond('Branches',"GameId=$GAMEID AND (OrgType=3 OR OrgType2=3)");
+
+      foreach ($Branches as $B) {
+        switch($B['HostType']) {
+          case 1: // Planet
+            $P = Get_Planet($B['HostId']);
+            $Sid = $P['SystemId'];
+            break;
+
+          case 2: // Moon
+            $M = Get_Moon($B['HostId']);
+            $P = Get_Planet($M['PlantId']);
+            $Sid = $P['SystemId'];
+            break;
+
+          case 3:// Thing
+            $T = Get_Thing($B['HostId']);
+            break;
+        }
+      } // NOT FINISHED - just using SQL
+      // System for branch
+      // Set all HS
+
+      break;
+
+
     }
   }
 
@@ -343,6 +373,7 @@
   echo "<li><a href=TurnSpecials.php?ACTION=REDOSavePrev>Redo What Can I See Save for prev Turn</a><p>";
 
   echo "<li><a href=TurnSpecials.php?ACTION=RecoverSys>Recover Militia/Heavy Security for a turn</a><p>";
+  echo "<li><a href=TurnSpecials.php?ACTION=SetHSSys>Set Heavy Security SystemId</a><p>";
 
 
   echo "<h2><a href=TurnActions.php>Back to Turn Processing</a></h2>";

@@ -125,7 +125,8 @@ define('MOD_NEEDRES2',   0x200);
 define('MOD_NEEDRES3',   0x400);
 
 $MoveNames = [0=>'Move',-1=>'On Board',-2=>'Boarding',-3=>'Unloading',-4=>'Load & Unload',-5=>'Not Moving',-6=>'Direct',-7=>'Following',-8=>'In Branch'];
-$MoveProps = [0=>1,-1=>2,-2=>2,-3=>2,-4=>2,-5=>1,-6=>0,-7=>3,-8=>0]; // 1=PMove,2=Other Thing
+$MoveProps = [0=>5,LINK_ON_BOARD=>2,LINK_BOARDING=>6,LINK_UNLOAD=>2,LINK_LOAD_AND_UNLOAD=>6,LINK_NOT_MOVING=>5,LINK_DIRECTMOVE=>4,
+  LINK_FOLLOW=>7,LINK_INBRANCH=>0]; // 1=PMove,2=Other Thing,4=Vis
 
 function TTName($Name) {
   static $TTNames;
@@ -341,7 +342,7 @@ function Thing_Type_Props() {
 
 // 200+ = on planet, 400+ = on moon rest in space
 
-function Within_Sys_Locs(&$N,$PM=0,$Boarding=0,$Restrict=0,$Hab=0) {// $PM +ve = Planet Number, -ve = Moon Number, restrict 1=ON, 2space only
+function Within_Sys_Locs(&$N,$PM=0,$Boarding=0,$Restrict=0,$Hab=0,$Tid=0) {// $PM +ve = Planet Number, -ve = Moon Number, restrict 1=ON, 2space only
   include_once("SystemLib.php");
   $L[0] = "";
   if ($Restrict !=1) $L[1] = 'Deep space';
@@ -355,6 +356,9 @@ function Within_Sys_Locs(&$N,$PM=0,$Boarding=0,$Restrict=0,$Hab=0) {// $PM +ve =
   if ($Ps) {
     $pi = $mi = 1;
     foreach ($Ps as $P) {
+      if ($P['MoveGate'] && $Tid) {
+        if (!eval("return " . $P['MoveGate'] . ";" )) continue;
+      }
       if ($PM == $P['id']) return 200+$pi;
       $PName = PM_Type($PTD[$P['Type']],"Planet") . " - " . NameFind($P);
       if ($Restrict !=1) $L[100 +$pi] = "Orbiting $PName";
@@ -366,6 +370,9 @@ function Within_Sys_Locs(&$N,$PM=0,$Boarding=0,$Restrict=0,$Hab=0) {// $PM +ve =
         $Ms = Get_Moons($P['id']);
         if ($Ms) {
           foreach ($Ms as $M) {
+            if ($M['MoveGate'] && $Tid) {
+              if (!eval("return " . $M['MoveGate'] . ";" )) continue;
+            }
             if ($M['Attributes']&1) continue;
             if ($PM == -$M['id']) return 400+$mi;
             $MName = PM_Type($PTD[$M['Type']],"Moon") . " - " . NameFind($M);
@@ -409,6 +416,18 @@ function Within_Sys_Locs_Id($Nid,$PM=0,$Boarding=0,$Restrict=0,$Hab=0) {// $PM +
   $N = Get_System($Nid);
   return Within_Sys_Locs($N,$PM,$Boarding,$Restrict,$Hab);
 }
+
+function Has_Module($Tid,$Name) {
+  static $ModTypes,$ModNames;
+  if (!$ModTypes) {
+    $ModTypes = Get_ModuleTypes();
+    $ModNames = ListNames($ModTypes);
+  }
+  $Mod = Gen_Get_Cond1('Modules',"ThingId=$Tid AND Type=" . ($ModNames[$Name]??-1));
+  if ($Mod) return $Mod['Number'];
+  return 0;
+}
+
 
 function ModuleCats() {
   global $ARMY;

@@ -174,6 +174,7 @@
       break;
 
     case 'SPLAT':
+    case 'Splat':
       $Tid = $_REQUEST['T'];
       $T = Get_Thing($Tid);
       $T['CurHealth'] = 0;

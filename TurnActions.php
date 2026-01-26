@@ -177,7 +177,7 @@ function StartTurnProcess() {
     }
   }
 
-  fm_select("UPDATE Worlds SET ConflictTurn=0 WHERE GameId=$GAMEID AND ConflictTurn!=0");
+  Gen_Select("UPDATE Worlds SET ConflictTurn=0 WHERE GameId=$GAMEID AND ConflictTurn!=0");
 
   GMLog("Started Turn Processing");
   return 1;
@@ -857,6 +857,7 @@ function MilitiaArmyRecovery() {
     $Facts[$Fid]['Organic'] = Has_Trait($Fid,'Organic Units');
   }
 
+  $SaveRec = 1;
   foreach ($Things as $T) {
 //    var_dump($T);
     if (($TTypes[$T['Type']]['Prop2']??0) & THING_HAS_RECOVERY) {
@@ -869,7 +870,6 @@ function MilitiaArmyRecovery() {
 
       // Work out recovery
       if ($TTypes[$T['Type']]['Name'] == 'Militia') {
-        $SaveRec = 1;
         if ($LastHost != $T['Dist1'] || $LastId != $T['Dist2']) {
           $Dists = Gen_Get_Cond('Districts',"HostType=" . $T['Dist1'] . " AND HostId=" . $T['Dist2']);
           $Dcount = 0;

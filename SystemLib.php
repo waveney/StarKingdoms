@@ -496,7 +496,7 @@ function Show_Planet(&$P,$Mode=0,$Buts=0) {
 
       echo "<input type=submit name=ACTION value='Delete Planet' class=Button> " .
            "<input type=submit name=ACTION value='Delete Moons' class=Button>";
-      if ($Tidy) echo "<input type=submit name=ACTION value='Tidy Districts' class=Button>";
+      if ($Tidy) echo "<input type=submit name=ACTION value='Tidy 0 Districts' class=Button>";
 
       echo fm_submit('Action','New Branch',0,"formaction=BranchEdit.php?Planid=$Pid");
       echo "</form></center>";
@@ -589,7 +589,7 @@ function Show_Moon(&$M,$Mode=0) {
   if ($Tidy) {
     echo "<center>" .
       "<form method=post action=MoonEdit.php>" . fm_hidden('id', $Mid) .
-      "<input type=submit name=ACTION value='Tidy Districts' class=Button>";
+      "<input type=submit name=ACTION value='Tidy 0 Districts' class=Button>";
     echo "</form></center>";
   }
 }

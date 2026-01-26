@@ -47,6 +47,7 @@
       break;
 
     case 'Tidy Districts':
+    case 'Tidy 0 Districts':
       $Ds = Get_DistrictsM($Mid,1);
       foreach ($Ds as $D) {
         if ($D['Number'] == 0) {

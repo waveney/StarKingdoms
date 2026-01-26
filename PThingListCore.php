@@ -194,14 +194,21 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
         $txt .=  (empty($Systems[$T['SystemId']]) ?'': $Systems[$T['SystemId']]);
         $txt .=  "<td>" . (($T['BuildState'] == BS_PLANNING)?'-':(is_in_space($T)?'S':'G'));
       } else if ($Lid == LINK_INBRANCH ) {
-        $txt .=  'Not Deployed<td>O';
+        $txt .=  (empty($Systems[$T['SystemId']]) ?'': $Systems[$T['SystemId']]) . "<td>0";
       } else if (($MoveProps[$Lid] &2)) {
         $txt .=  'On Board<td>O';
         $Host = Get_Thing($T['SystemId']);
       } else {
-        $txt .=  $MoveNames[$Lid];
-        $IS = (is_in_space($T)?'S':'G');
-        $txt .= "<td>" . [0=>'?', -1=>'O', -2=>'G', -3=>'S', -4=>'G' ,-5=>$IS, -6=>$IS, -7=>$IS, -8=>'O'][$Lid];
+        if ($MoveProps[$Lid] & 4) {
+          $txt .=  (empty($Systems[$T['SystemId']]) ?'': $Systems[$T['SystemId']]);
+          $IS = (is_in_space($T)?'S':'G');
+          $txt .= "<td>" . [0=>'?', -1=>'O', -2=>'G', -3=>'S', -4=>'G' ,-5=>$IS, -6=>$IS, -7=>$IS, -8=>'O'][$Lid];
+
+        } else {
+          $txt .=  $MoveNames[$Lid];
+          $IS = (is_in_space($T)?'S':'G');
+          $txt .= "<td>" . [0=>'?', -1=>'O', -2=>'G', -3=>'S', -4=>'G' ,-5=>$IS, -6=>$IS, -7=>$IS, -8=>'O'][$Lid];
+        }
       }
 
       $txt .=  "<td>";
@@ -269,7 +276,7 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
         }
       } else {
         if ($GM && ($Props & THING_HAS_HEALTH) && ($Props & THING_CAN_BE_SPLATED) && ($T['CurHealth']>0)) {
-          $txt .=  "<a href=PThingList.php?ACTION=SPLAT&T=$Tid&F=$Fid>SPLAT</a>";
+          $txt .=  "<a href=PThingList.php?ACTION=SPLAT&T=$Tid&F=$Fid>Splat</a>";
         }
         $txt .=  "<td>";
         if ($Host) {
@@ -278,6 +285,8 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
           } else {
             $txt .= $Host['Name'];
           }
+        } else if ($Lid == LINK_INBRANCH) {
+          $txt .=  "Not Deployed";
         }
         $txt .=  "<td>";
       }

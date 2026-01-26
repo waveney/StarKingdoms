@@ -195,18 +195,18 @@ function StartProjects() {
             $T = ['Whose'=>$Fid, 'Type'=>$P['ThingType'], 'BuildState'=>1, 'SystemId' => $Where[0],  'WithinSysLoc' => $Where[1],
               $T['WhereBuilt'] =>$Where[0]];
           }
-        }
-        $T['ProjectId'] = $P['id'];
-        Calc_Scanners($T);
+          $T['ProjectId'] = $P['id'];
+          Calc_Scanners($T);
         //        Put_Thing($T);
 
         // Level of modules
-        RefitRepair($T,1); //Note this saves it and the CURRENT levels of techs
-        if ($TTypes[$T['Type']]['Properties'] & THING_HAS_MODULES ) {
-          $Mods = Get_Modules($Tid);
-          foreach($Mods as $M) {
-            if ($M['Number'] == 0) {
-              db_delete('Modules',$M['id']);
+          RefitRepair($T,1); //Note this saves it and the CURRENT levels of techs
+          if ($TTypes[$T['Type']]['Properties'] & THING_HAS_MODULES ) {
+            $Mods = Get_Modules($Tid);
+            foreach($Mods as $M) {
+              if ($M['Number'] == 0) {
+                db_delete('Modules',$M['id']);
+              }
             }
           }
         }
@@ -920,7 +920,7 @@ function ProjectsCompleted($Pass) {
               break;
           }
 
-          $H['Devastation'] = max(0,$H['Devastation']-2);
+          $H['Devastation'] = (Feature('RebuildRepair')? max(0,$H['Devastation']-Feature('RebuildRepair')) : 0);
           Put_ProjectHome($H);
           TurnLog($Fid,"The has been Rebuilding and Repair on " . $PH['Name']);
           break;

@@ -97,7 +97,7 @@ function ReturnMilOrgForces() {
     if (str_contains($T['Name'],' Office ')) {
       if (Gen_Get('Offices',$Bid)) {
         $T['LinkId'] = LINK_INBRANCH;
-        $T['SystemId'] = 0;
+//        $T['SystemId'] = 0;
         Put_Thing($T);
         GMLog( "Returned " . $T['Name']);
 
@@ -107,7 +107,7 @@ function ReturnMilOrgForces() {
     } else {
       if (Gen_Get('Branches',$Bid)) {
         $T['LinkId'] = LINK_INBRANCH;
-        $T['SystemId'] = 0;
+//        $T['SystemId'] = 0;
         Put_Thing($T);
         GMLog( "Returned " . $T['Name']);
 

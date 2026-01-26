@@ -488,7 +488,12 @@
       $Pro = [];
       $Pro['id'] = $P['id'];
       $Pro['Type'] = $P['Type'];
-      $Pro['Name'] = $P['Name']; // $ProjTypes[$P['Type']]['Name'];
+
+      $Nam = $P['Name'];
+      if ($n1 = preg_replace('/ on (.*)$/','', $Nam)) $Nam = $n1;
+      if ($n1 = preg_replace('/ a(n?) (.*)( \(Level .*\))/',' $3',$Nam)) $Nam = $n1;
+
+      $Pro['Name'] = $Nam; //$P['Name']; // $ProjTypes[$P['Type']]['Name'];
       $Pro['Level'] = $P['Level'];
       $Pro['Cost'] = $P['Costs'];
       $Pro['Acts'] = $P['ProgNeeded'];

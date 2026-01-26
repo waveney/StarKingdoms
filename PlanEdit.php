@@ -106,6 +106,7 @@
       break;
 
     case 'Tidy Districts':
+    case 'Tidy 0 Districts':
       $Ds = Get_DistrictsP($Pid,1);
       foreach ($Ds as $D) {
         if ($D['Number'] == 0) {

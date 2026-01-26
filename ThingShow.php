@@ -36,7 +36,7 @@ function Show_Thing(&$T,$Force=0) {
   $tprops = ($ThingProps[$T['Type']]??0);
   $tprops2 = ($TTypes[$T['Type']]['Prop2']??0);
   $N = Get_System($T['SystemId']);
-  $Syslocs = Within_Sys_Locs($N);
+  $Syslocs = Within_Sys_Locs($N,0,0,0,0,($GM?0:$Tid));
   $LinkTypes = Get_LinkLevels();
   if ($Fid) $Faction = Get_Faction($Fid);
   $MTs = Get_ModuleTypes();
@@ -56,7 +56,7 @@ function Show_Thing(&$T,$Force=0) {
     $NN = Get_System($T['NewSystemId']);
     $FS = Get_FactionSystemFS($Fid,$T['NewSystemId']);
     if ($FS['ScanLevel'] >= 0) {
-      $NewSyslocs = Within_Sys_Locs($NN);
+      $NewSyslocs = Within_Sys_Locs($NN,0,0,0,0,($GM?0:$Tid));
     } else {
       $NewSyslocs = [];
     }
@@ -131,7 +131,7 @@ function Show_Thing(&$T,$Force=0) {
 
   if ($GM) {
     echo "<tr class=NotSide><td class=NotSide>Id: $Tid<td class=NotSide>Game: $GAMEID - " . $GAME['Name'];
-    echo fm_number('Seen Mask',$T,'SeenTypeMask','class=NotSide','class=NotSide');
+    echo fm_number('Seen Mask',$T,'SeenTypeMask','class=NotSide','class=NotSide') . fm_number('Concealment',$T,'Concealment');
     if ($T['BluePrint']<0) echo fm_text1('Gated On',$T,'GatedOn',2,'class=NotSide');
 //    if (Feature('HiddenControl')) echo "<td colspan=2>Hidden Control: " . fm_select($FactNames,$T,'HiddenControl');
     echo "<tr><td>Type:<td>" . fm_select($ttn,$T,'Type',1);
@@ -364,7 +364,7 @@ function Show_Thing(&$T,$Force=0) {
 // var_dump($FS,$Fid,$Dest);
 
           if ($FS['ScanLevel'] >= 0 ) {
-            $finallocs = Within_Sys_Locs($DN);
+            $finallocs = Within_Sys_Locs($DN,0,0,0,0,($GM?0:$Tid));
             if (!isset($finallocs[$T['NewLocation']]) ) {
               $T['NewLocation'] = 0;
               Put_Thing($T);

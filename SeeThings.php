@@ -325,8 +325,9 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0,
 }
 
 function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0,$Mode=0) {
-  global $Advance;
+  global $Advance,$MoveProps;
   include_once("SystemLib.php");
+
   $txt ='';
 // var_dump($Sid,$Eyes);
 //  if (Access('GM')) $Eyes = 15;
@@ -335,6 +336,7 @@ function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0,$Mode=0) {
     if (!$Things) return '';
 
   $GM = (Access('GM') & $Mode);
+  $Sensors = Has_Tech($Fid,'Sensors');
 //    $ThingTypes = Get_ThingTypes();
 
 //    $Factions = Get_Factions();
@@ -355,7 +357,9 @@ function SeeInSystem($Sid,$Eyes,$heading=0,$Images=1,$Fid=0,$Mode=0) {
     }
     $LastWhose = 0;
     foreach ($Things as $T) {
-      $txt .= SeeThing($T,$LastWhose,$Eyes,$Fid,$Images,$GM,1,($GM || ($Fid == $T['Whose'])),0); //,$ThingTypes,$Factions);
+      if ($T['LinkId'] < 0 && (($MoveProps[$T['LinkId']] & 4) ==0)) continue;
+      if ($GM || ($T['Concealment']<= $Sensors))
+        $txt .= SeeThing($T,$LastWhose,$Eyes,$Fid,$Images,$GM,1,($GM || ($Fid == $T['Whose'])),0); //,$ThingTypes,$Factions);
     }
   return $txt;
 }

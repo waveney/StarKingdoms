@@ -777,7 +777,7 @@ function Income_Calc($Fid) {
     }
     $SMSys = Get_System($SM['SystemId']);
     $EconVal += $Body['Minerals'] * 3;
-    $EccTxt .= "Plus " . $Body['Minerals'] * 3 . " From a Strip Mine on " . $Body['Name'] . " in " . $SMSys['Ref'] . "<br\n";
+    $EccTxt .= "Plus " . $Body['Minerals'] * 3 . " From a Strip Mine on " . $Body['Name'] . " in " . $SMSys['Ref'] . "<br>\n";
   }
 
   $Things = Get_Things($Fid);

@@ -145,7 +145,11 @@ function Op_Level($Orgid,$Sys,$Mod=0) {
   if (!isset($FSs[$Sys])) return -1; // Unknown target system
 
   $ValidLinks=[];
-  foreach($LKnown as $LK) if ($LK['Used']??0) $ValidLinks[$LK['LinkId']] = 1;
+  if (Has_Tech($Fid, 'Know All Links')) {
+    foreach($Links as $Lid=>$LK) $ValidLinks[$Lid] = 1;
+  } else {
+    foreach($LKnown as $LK) if ($LK['Used']??0) $ValidLinks[$LK['LinkId']] = 1;
+  }
 
   foreach ($Links as $Lid=>$L) {
     $S1id = $RSyss[$L['System1Ref']];
