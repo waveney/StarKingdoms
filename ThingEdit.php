@@ -236,6 +236,25 @@ global $FACTION;
       Put_Thing($T);
       break;
 
+    case 'DesCreate':  //WIP
+      $tid = $_REQUEST['id'];
+      $T = Get_Thing($tid);
+      echo "<form method=post action=ThingEdit.php>";
+      echo "<table border>" . fm_hidden('id',$tid);
+      echo "<h2>Create an Instance of: " . $T['Name'] . " a " . $T['Class'] . "</h2>";
+      $NT = [];
+      echo "<tr>" . fm_text('Name',$NT,'Name',3);
+      echo "<tr>" ;
+
+
+    case 'DesCreate2':
+
+      $T = Thing_Duplicate($_REQUEST['id']);
+      $tid = $T['id'];
+
+
+
+
     case 'Delete':
     case 'Remove Thing (No debris)':
     case 'DELETE' :

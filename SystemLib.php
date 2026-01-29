@@ -410,6 +410,7 @@ function Show_Planet(&$P,$Mode=0,$Buts=0) {
   echo "<tr>" . fm_text('Short Name',$P,'ShortName') . fm_number('Attributes',$P,'Attributes') . fm_number1('Mined',$P,'Mined') .
        fm_number('Concealment', $P,'Concealment');
   echo "<tr>" . fm_number('Opperation Mod',$P,'TargetMod') . fm_text('Targetting Gate',$P,'TargetGate',4);
+  echo "<tr><td><td" . fm_text('Moving Gate',$P,'MoveGate');
   echo "<tr>" . fm_number('Max Districts', $P,'MaxDistricts') . fm_number('Max Offices', $P,'MaxOffices');
   echo "<tr>" . fm_textarea('Description',$P,'Description',4,3);
   echo "<tr><td>Type:<td>" . fm_Select($PTNs,$P,'Type',1) . fm_number('Minerals',$P,'Minerals',1,"class=NotCSide");
@@ -538,7 +539,7 @@ function Show_Moon(&$M,$Mode=0) {
   echo "<tr>" . fm_text('Short Name',$M,'ShortName') . fm_number('Attributes',$M,'Attributes') . fm_number1('Mined',$M,'Mined') .
        fm_number('Concealment', $M,'Concealment');
   echo "<tr>" . fm_number('Opperation Mod',$M,'TargetMod') . fm_text('Targetting Gate',$M,'TargetGate',4);
-
+  echo "<tr><td><td" . fm_text('Moving Gate',$M,'MoveGate');
   echo "<tr>" . fm_number('Max Districts', $P,'MaxDistricts') . fm_number('Max Offices', $P,'MaxOffices') .  fm_number('Colonise Mod',$P,'ColonyTweak');
   echo "<tr>" . fm_textarea('Description',$M,'Description',8,3);
   echo "<tr><td>Type:<td>" . fm_Select($PTNs,$M,'Type',1) . fm_number('Minerals',$M,'Minerals',1,"class=NotCSide");

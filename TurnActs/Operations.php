@@ -453,6 +453,9 @@ function OperationsComplete() {
             break;
 
         }
+        $World = Gen_Get_Cond1('Worlds',"ThingType=$ThingType AND ThingId=$Target");
+        $World['Name'] = $Body['Name'];
+
       } else if ($Target) {
         if ($Target > 0) {
           $Body = Get_Planet($Target);
@@ -469,6 +472,7 @@ function OperationsComplete() {
         $ThingType = 3;
         $ThingId = 0;
         $Body = [];
+        $World = [];
       }
     }
 
@@ -568,7 +572,7 @@ function OperationsComplete() {
         break;
 
       case 'Establish Black Market':
-        if (!$Target) $World = World_in($O['SystemId'],$Fid);
+        if (!$Target || !$World) $World = World_in($O['SystemId'],$Fid);
         New_Branch($World,$NamesBTs['Black Market Trading Station'],$O,$Org);
         TurnLog($Fid,"A new Black Market Trading Station branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
           " in " . System_Name($Sys,$Fid) );
@@ -577,7 +581,7 @@ function OperationsComplete() {
         break;
 
       case 'Establish Trade Hub':
-        if (!$Target) $World = World_in($O['SystemId'],$Fid);
+        if (!$Target || !$World) $World = World_in($O['SystemId'],$Fid);
         New_Branch($World,$NamesBTs['Trading Station'],$O,$Org);
         TurnLog($Fid,"A new Trading Station branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] . " " .
            System_Name($Sys,$Fid) );
@@ -590,7 +594,7 @@ function OperationsComplete() {
         break;
 
       case 'Establish Safe House':
-        if (!$Target) $World = World_in($O['SystemId'],$Fid);
+        if (!$Target || !$World) $World = World_in($O['SystemId'],$Fid);
         New_Branch($World,$NamesBTs['Safe House'],$O,$Org);
         TurnLog($Fid,"A new Safe House branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
           " in " . System_Name($Sys,$Fid) );
@@ -599,7 +603,7 @@ function OperationsComplete() {
         break;
 
       case 'Establish Hidden Lodge':
-        if (!$Target) $World = World_in($O['SystemId'],$Fid);
+        if (!$Target || !$World) $World = World_in($O['SystemId'],$Fid);
         New_Branch($World,$NamesBTs['Hidden Lodge'],$O,$Org);
         TurnLog($Fid,"A new Hidden Lodge branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
           " in " . System_Name($Sys,$Fid) );
@@ -608,7 +612,7 @@ function OperationsComplete() {
         break;
 
       case 'Establish Lodge':
-        if (!$Target) $World = World_in($O['SystemId'],$Fid);
+        if (!$Target || !$World) $World = World_in($O['SystemId'],$Fid);
         New_Branch($World,$NamesBTs['Lodge'],$O,$Org);
         TurnLog($Fid,"A new Lodge branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] . ' ' . System_Name($Sys,$Fid) );
         if ($World['FactionId'] != $Fid) {
@@ -620,7 +624,7 @@ function OperationsComplete() {
         break;
 
       case 'Establish Forward Operating Area':
-        if (!$Target) $World = World_in($O['SystemId'],$Fid);
+        if (!$Target || !$World) $World = World_in($O['SystemId'],$Fid);
         New_Branch($World,$NamesBTs['Forward Operating Area'],$O,$Org);
         TurnLog($Fid,"A new Forward Operating Area branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] . ' ' .
           System_Name($Sys,$Fid) );
@@ -634,7 +638,7 @@ function OperationsComplete() {
 
 
       case 'Establish Research Base': // Type complication
-        if (!$Target) $World = World_in($O['SystemId'],$Fid);
+        if (!$Target || !$World) $World = World_in($O['SystemId'],$Fid);
         New_Branch($World,$O['Para1'],$O,$Org); // Para aligns with Branch type
         TurnLog($Fid,"A new Research Base branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
           System_Name($Sys,$Fid) );

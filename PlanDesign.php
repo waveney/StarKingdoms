@@ -532,6 +532,8 @@
           echo "<h2 class=Green>Design is valid</h2>";
 
           if ($GM || (!empty($FACTION) && $PlayerState[$FACTION['TurnState']] == 'Setup')) {
+            echo "<h2><a href=ThingEdit.php?ACTION=DesCreate&id=$Tid>Create one directly</a></h2>";
+
             // TODO make now
           }
         } else {
