@@ -189,6 +189,7 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
       $Lid = $T['LinkId'];
 
       $txt .=  "<td>";
+
       $Host = 0;
       if ($Lid >= 0 || ($MoveProps[$Lid] &1)) {
         $txt .=  (empty($Systems[$T['SystemId']]) ?'': $Systems[$T['SystemId']]);
@@ -233,8 +234,20 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
             if ($L['Level'] <0 ) $txt .=  "- Note under repair...";
             if ($T['NewSystemId']>0 && $T['TargetKnown']) {
               $txt .=  "<td>" . $Systems[$T['NewSystemId']];
+
+              if ($T['NewLocation']) {
+                $NN = Get_System($T['NewSystemId']);
+                $NewSyslocs = Within_Sys_Locs($NN,0,0,0,0,($GM?0:$Tid));
+                $txt .= " / " . $NewSyslocs[$T['NewLocation']];
+              }
+
             } else if (Has_Tech($T['Whose'],'Know All Links') || Feature('AllwaysShowLinkEnds')) {
               $txt .=  "<td>" . $Systems[$T['NewSystemId']];
+              if ($T['NewLocation']) {
+                $NN = Get_System($T['NewSystemId']);
+                $NewSyslocs = Within_Sys_Locs($NN,0,0,0,0,($GM?0:$Tid));
+                $txt .= " / " . $NewSyslocs[$T['NewLocation']];
+              }
             } else {
               $txt .=  "<td> ? ";
             }
@@ -257,7 +270,13 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
                 $txt .= $Host['Name'];
               }
             }
+
             $txt .=  "<td>";
+            if ($T['NewLocation']) {
+              $NN = Get_System($T['SystemId']);
+              $NewSyslocs = Within_Sys_Locs($NN,0,0,0,0,($GM?0:$Tid));
+              $txt .= $NewSyslocs[$T['NewLocation']] ?? '?';
+            }
           }
         } else if ($T['LinkId'] == LINK_NOT_MOVING) {
           $txt .=  "<td>Not Moving<td>";
@@ -273,6 +292,7 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
             }
           }
           $txt .=  "<td>";
+
         }
       } else {
         if ($GM && ($Props & THING_HAS_HEALTH) && ($Props & THING_CAN_BE_SPLATED) && ($T['CurHealth']>0)) {
@@ -289,7 +309,7 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
           $txt .=  "Not Deployed";
         }
         $txt .=  "<td>";
-      }
+       }
     }
     $Up = 0;
     if ($Fid) {

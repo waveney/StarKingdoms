@@ -183,7 +183,7 @@ function LinkProps($L) {
 
   $ThisRef = $N['Ref'];
 
-  Node_Show($Fid,$Tid,0,$N,"/PThingList.php?ACTION=CANCELMOVE&T=$Tid");
+  Node_Show($Fid,$Tid,0,$N,"/PThingList.php?ACTION=NOMOVE&T=$Tid");
 
   // Each link
   $lfs = Feature('LinkFontSize',10);

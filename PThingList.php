@@ -37,6 +37,8 @@
 
   if ($GM && isset($_REQUEST['FORCE'])) $GM = 0;
 
+  $TTypes = Get_ThingTypes();
+
   dostaffhead("Things",["js/ProjectTools.js"]) ;
   /*,
              " onload=ListThingSetup($Fid," . ($GM?1:0) . "," .
@@ -95,32 +97,6 @@
       }
       $T['NewLocation'] = 1;
 
-      /*
-      $NearNeb = $N['Nebulae'];
-
-      $Known = 1;
-      // Handle link knowledge - KLUDGE
-      $FL = Get_FactionLinkFL($Fid,$Lid);
-      $FarNeb = $FSN['Nebulae'];
-      $FS = Get_FactionSystemFS($Fid,$FSN['id']);
-
-      if (isset($FL['Known']) && $FL['Known']) {
-      } else if ($NearNeb == 0) {
-          if (isset($FS['id'])) {
-            if ($FarNeb != 0 && $FS['ScanLevel'] < 0) {
-              $Known = 0;
-            }
-          } else {
-              $Known = 0;
-          }
-      } else if ($NS['NebScanned'] >= $NearNeb) { // In a Neb...
-          if (!isset($FS['id'])) {
-              $Known = 0;
-          }
-      } else {
-        $Known = 0;
-      }
-*/
       $T['TargetKnown'] = LinkVis($Fid,$Lid,$T['NewSystemId']);
       $T['LinkId'] = $Lid;
       $LinkTypes = Get_LinkLevels();
@@ -149,13 +125,49 @@
         $T['LinkCost'] = $Lc;
       }
       Put_Thing($T);
+      if (($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES) && ($TTypes[$T['Type']]['Properties'] & THING_CAN_BETRANSPORTED)) {
+        $N = Get_System($T['SystemId']);
+        $NewSyslocs = Within_Sys_Locs($N,0,0,0,0,($GM?0:$Tid));
+        echo "<form method=post action=PThingList.php?ACTION=FINALLOC&T=$Tid>";
+        echo "<h2>Please Select Final Destination within the system:</h2>";
+        foreach ($NewSyslocs as $Wsi=>$Loc) {
+          if (!$Loc) continue;
+          echo "<button method=submit name='FinalLoc' value=$Wsi >$Loc</button><br>";
+        }
+        dotail();
+      }
       break;
+
     case 'CANCELMOVE':
       $Tid = $_REQUEST['T'];
       $T = Get_Thing($Tid);
       $T['LinkId'] = 0;
       Put_Thing($T);
       break;
+
+    case 'NOMOVE':
+      $Tid = $_REQUEST['T'];
+      $T = Get_Thing($Tid);
+      if (($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES) && ($TTypes[$T['Type']]['Properties'] & THING_CAN_BETRANSPORTED)) {
+        $N = Get_System($T['SystemId']);
+        $NewSyslocs = Within_Sys_Locs($N,0,0,0,0,($GM?0:$Tid));
+        echo "<form method=post action=PThingList.php?ACTION=FINALLOC&T=$Tid>";
+        echo "<h2>Please Select Final Destination within the system:</h2>";
+        foreach ($NewSyslocs as $Wsi=>$Loc) {
+          if (!$Loc) continue;
+          echo "<button method=submit name='FinalLoc' value=$Wsi >$Loc</button><br>";
+        }
+        dotail();
+      }
+      break;
+
+    case  'FINALLOC':
+      $Tid = $_REQUEST['T'];
+      $T = Get_Thing($Tid);
+      $T['NewLocation'] = $_REQUEST['FinalLoc'];
+      Put_Thing($T);
+      break;
+
 
     case 'DONOTMOVE' :
       $Tid = $_REQUEST['T'];
