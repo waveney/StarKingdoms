@@ -125,7 +125,7 @@ function ForceReport($Sid,$Cat) {
 
   if ($CSV) {
     if ($CSVHead == 0) {
-      fputcsv($CSV,['Who','Name','Type','Level','Evasion','Cur Health','Orig Health','Firepower','To Hit','Variant','Mobility/Speed']);
+      fputcsv($CSV,['Who','Name','Type','Level','Evasion','Cur Health','Orig Health','Firepower','Variant','Empty','To Hit','Mobility/Speed']);
       $CSVHead = 1;
     }
 
@@ -269,7 +269,7 @@ function ForceReport($Sid,$Cat) {
 
       if ($CSV) {
         fputcsv($CSV,[($Facts[$LastF]['Name']??'Unknown'), $T['Name'], $TTypes[$T['Type']]['Name'], $T['Level'], $T['Evasion'],
-          $T['CurHealth'] + $T['CurShield'], $T['OrigHealth'], $BD, $T['ToHitBonus'], ($Variants[$T['Variant']]['Name']??''),
+          $T['CurHealth'] + $T['CurShield'], $T['OrigHealth'], $BD, ($Variants[$T['Variant']]['Name']??''),'',$T['ToHitBonus'],
           (($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES)?$T['Mobility']:$T['Speed'])]
           );
 
@@ -453,7 +453,7 @@ function SystemSee($Sid) {
 
             $tprops = $ThingProps[$T['Type']];
 
-            if ($$TTypes[$T['Type']]['Props2'] & THING_HAS_RECOVERY) {
+            if ($TTypes[$T['Type']]['Props2'] & THING_HAS_RECOVERY) {
               GMLog($T['Name'] . " took $RV damage\n",$T);
 
             } else {
