@@ -6,6 +6,8 @@ include_once("vendor/erusev/parsedown/Parsedown.php");
 include_once("PlayerLib.php");
 
 function EyesInSystem($Fid,$Sid,$Of=0) { // Eyes 1 = in space, 2= sens, 4= neb sens, 8=ground, 16=static this turn
+  global $MoveProps;
+
 //var_dump($Fid,$Sid);
   $Neb = $Eyes = 0;
   $ThingTypes = Get_ThingTypes();
@@ -20,19 +22,28 @@ function EyesInSystem($Fid,$Sid,$Of=0) { // Eyes 1 = in space, 2= sens, 4= neb s
 //var_dump($MyThings);
   foreach ($MyThings as $T) {
     if ($T['SeenTypeMask']) continue;
+    if (($T['LinkId'] < 0) && (($MoveProps[$T['LinkId']] &4)==0)) continue;
     if ($ThingTypes[$T['Type']] == 'Team') {
       $eye = ($T['WithinSysLoc']==1)?1:8;
     } else {
       $eye = $ThingTypes[$T['Type']]['Eyes'];
       if ($T['LinkId'] == 0) $eye +=16;
     }
+    $Lcat = intdiv($T['WithinSysLoc'],100);
+    if ($Lcat == 2) {
+      $eye += 0x100<<($T['WithinSysLoc']-200);
+    } elseif ($Lcat == 4) {
+      $eye += 0x10000000<<($T['WithinSysLoc']-400);
+    }
+
     if (($Neb > 0) && ($T['NebSensors'] < $Neb) && (($eye&4 ==0))) continue;
     if ($T['PrisonerOf']) continue;
     $Eyes |= $eye;
     if ($T['Sensors']) $Eyes |= 2;
     if ($T['NebSensors']) $Eyes |= 4;
+
   }
-// echo "System " . $N['Ref'] . " eyes: $Eyes<br>";
+// echo "System " . $N['Ref'] . " eyes: " . $T['WithinSysLoc'] . " - $Lcat - " . dechex($eye) . " - " . dechex($Eyes) . "<br>";
   if (($Eyes&1) == 0) { // Check for Branch on outpost
     include_once("OrgLib.php");
     $OP = Outpost_In($Sid,0,0);
@@ -81,6 +92,18 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0,
   if (!$FB) $FB = array_flip(NamesList($ModuleTypes))['Fighter Bays'];
 
   $clsx = "Long";
+
+  $Lcat = intdiv($T['WithinSysLoc'],100);
+
+  if ($Depth == 0 && $Lcat && ! $GM) {
+    $eye = 0;
+    if ($Lcat == 2) {
+      $eye = 0x100<<($T['WithinSysLoc']-200);
+    } elseif($Lcat == 4) {
+      $eye = 0x10000000<<($T['WithinSysLoc']-400);
+    }
+    if ($eye && (($Eyes & $eye) == 0)) return '';
+  }
 
   $txt = '';
   $itxt = '';

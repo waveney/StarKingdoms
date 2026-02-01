@@ -523,7 +523,7 @@ function Calc_Health(&$T,$KeepTechLvl=0,$Other=0) {
       $Mhlth = $M['Number'] * Mod_ValueSimple($l+$Plus,$T['Level'],$M['Type'],$Rescat);
       if ($mt['DefWep'] == 1 ) {
         $Health += $Mhlth;
-      } else {
+      } elseif ($mt['DefWep'] == 2 ) {
         $Shield += $Mhlth;
       }
     }
@@ -533,7 +533,7 @@ function Calc_Health(&$T,$KeepTechLvl=0,$Other=0) {
 /*    $Boost = 0;
     foreach ($Ms as $M) if ($Mts[$M['Type']]['Name'] == 'Antimatter Deflector Shields') $Boost = 1;
     if ($Boost) $Shield = ceil($Shield *5/3); */
-    $Health += $Shield;
+    if (Feature('ShieldsAddHealth')) $Health += $Shield;
   }
   return [$Health,$Shield];
 }

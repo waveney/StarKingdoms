@@ -835,29 +835,12 @@ global $FACTION;
     case 'Make a Design of this':
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
-      $Des = Thing_Duplicate($tid,1);
-      $Des['BuildState'] = BS_PLANNING;
-      if ($T['BluePrint']) {
-        $Blue = Get_Thing($T['BluePrint']);
-        $Des['Class'] = $Blue['Class'];
-      }
-
-      $Des['SystemId'] = 0;
-      Put_Thing($Des);
-      echo "<h1>This is the Design - You may wish to change the name.  Click <a href=ThingEdit.php?id=$tid>Here</a> to go back to the original thing</h1>";
-      $tid = $Des['id'];
-      $T = $Des;
-      break;
-
-    case 'Make a Design of this':
-      $tid = $_REQUEST['id'];
-      $T = Get_Thing($tid);
       Check_MyThing($T,$Fid);
       $Des = Thing_Duplicate($tid,1);
       $Des['BuildState'] = BS_PLANNING;
       if ($T['BluePrint']) {
         $Blue = Get_Thing($T['BluePrint']);
-        $Des['Class'] = $Blue['Class'];
+        $Des['Class'] = ($Blue['Class']??'');
       }
 
       $Des['SystemId'] = 0;

@@ -269,7 +269,7 @@ function ForceReport($Sid,$Cat) {
 
       if ($CSV) {
         fputcsv($CSV,[($Facts[$LastF]['Name']??'Unknown'), $T['Name'], $TTypes[$T['Type']]['Name'], $T['Level'], $T['Evasion'],
-          $T['CurHealth'], $T['OrigHealth'], $BD, $T['ToHitBonus'], ($Variants[$T['Variant']]['Name']??''),
+          $T['CurHealth'] + $T['CurShield'], $T['OrigHealth'], $BD, $T['ToHitBonus'], ($Variants[$T['Variant']]['Name']??''),
           (($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES)?$T['Mobility']:$T['Speed'])]
           );
 
@@ -391,10 +391,10 @@ function SystemSee($Sid) {
       echo "<br>Total Ground Force Levels: <b>$DevTotal</b> - Do " . fm_number1('',$Dev,'Devastate','', ' min=0 max=100') .
            fm_submit("ACTION", "Devastation") . " to <b>$Wtxt</b> " .
            " and set the conflict flag - this assumes all ground forces are fighting, adjust if they are not<br>";
-      echo "<p><input type=submit name='CSV' value='CSV' >";
     }
 
   }
+  echo "<p><input type=submit name='CSV' value='CSV' >";
   echo fm_submit('ACTION','Remove Forces');
 
   if ($Excludes) echo fm_submit('ACTION','Reset the excluded Forces');
