@@ -126,7 +126,7 @@
       }
       Put_Thing($T);
       if (($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES) && ($TTypes[$T['Type']]['Properties'] & THING_CAN_BETRANSPORTED)) {
-        $N = Get_System($T['SystemId']);
+        $N = Get_System(($T['NewSystemId']?? $T['SystemId']));
         $NewSyslocs = Within_Sys_Locs($N,0,0,0,0,($GM?0:$Tid));
         echo "<form method=post action=PThingList.php?ACTION=FINALLOC&T=$Tid>";
         echo "<h2>Please Select Final Destination within the system:</h2>";
@@ -135,8 +135,75 @@
           echo "<button method=submit name='FinalLoc' value=$Wsi >$Loc</button><br>";
         }
         dotail();
+      } else {
+        $CarryNow = Get_Things_Cond_Ordered(0,"GameId=$GAMEID AND LinkId=" . LINK_ON_BOARD . " AND SystemId=$Tid");
+//        $CarryTurn = Get_Things_Cond(0,"GameId=$GAMEID AND LinkId=" . LINK_UNLOAD . " AND SystemId=$Tid");
+        $CarryOnTurn = Get_Things_Cond_Ordered(0,"GameId=$GAMEID AND LinkId=" . LINK_BOARDING . " AND NewSystemId=$Tid");
+//        $CarriedTurn = Get_Things_Cond(0,"GameId=$GAMEID AND LinkId=" . LINK_LOAD_AND_UNLOAD . " AND NewSystemId=$Tid");
+
+        if ($CarryNow || $CarryOnTurn ) {
+          $Tot = count($CarryNow) + count($CarryOnTurn);
+
+          echo "<h2>The following will be on board, do you wish to unload at the destination?</h2><table border>";
+
+          if ($CarryNow) {
+            foreach ($CarryNow as $Ci=>$Ca) {
+              $Ca['Selected'] = 1;
+              echo "<tr><td><a href=ThingEdit.php?i=$Ci>" . $Ca['Name'] . "</a><td>" . fm_checkbox('Selected',$Ca,'Selected','',"Selected:$Ci");
+            }
+          }
+          if ($CarryOnTurn) {
+            foreach ($CarryOnTurn as $Ci=>$Ca) {
+              $Ca['Selected'] = 1;
+              echo "<tr><td><a href=ThingEdit.php?i=$Ci>" . $Ca['Name'] . "</a><td>" . fm_checkbox('Selected',$Ca,'Selected','',"Selected:$Ci");
+            }
+          }
+          echo "</table><br><h2>To:</h2>";
+          $N = Get_System($T['NewSystemId']);
+          $NewSyslocs = Within_Sys_Locs($N,0,0,0,0,($GM?0:$Tid));
+          echo "<form method=post action=PThingList.php?ACTION=UNLOADTO&T=$Tid>";
+          foreach ($NewSyslocs as $Wsi=>$Loc) {
+            if (!$Loc) continue;
+            echo "<button method=submit name='FinalLoc' value=$Wsi >$Loc</button><br>";
+          }
+
+          echo "</form>";
+          echo "<h2><a href=PThingList.php>Leave them aboard</a></h2>";
+          dotail();
+        }
       }
       break;
+
+    case 'UNLOADTO':
+      $Tid = $_REQUEST['T'];
+      $T = Get_Thing($Tid);
+      $Final = $_REQUEST['FinalLoc'];
+      $CarryNow = Get_Things_Cond_Ordered(0,"GameId=$GAMEID AND LinkId=" . LINK_ON_BOARD . " AND SystemId=$Tid");
+      $CarryOnTurn = Get_Things_Cond_Ordered(0,"GameId=$GAMEID AND LinkId=" . LINK_BOARDING . " AND NewSystemId=$Tid");
+
+      if ($CarryNow) {
+        foreach ($CarryNow as $Ci=>$Ca) {
+          if ($_REQUEST["Selected:$Ci"] == 'on') {
+            $Ca['LinkId'] = LINK_UNLOAD;
+            $Ca['NewSystemId'] = $T['NewSystemId'];
+            $Ca['NewLocation'] = $Final;
+            Put_Thing($Ca);
+          }
+        }
+      }
+
+      if ($CarryOnTurn) {
+        foreach ($CarryNow as $Ci=>$Ca) {
+          if ($_REQUEST["Selected:$Ci"] == 'on') {
+            $Ca['LinkId'] = LINK_LOAD_AND_UNLOAD;
+            $Ca['NewSystemId'] = $T['NewSystemId'];
+            $Ca['NewLocation'] = $Final;
+            Put_Thing($Ca);
+          }
+        }
+      }
+      echo "Unloads recorded<p>";
+      dotail();
 
     case 'CANCELMOVE':
       $Tid = $_REQUEST['T'];
@@ -228,6 +295,30 @@
           return "<span class=red>$Name</span>";
         }, $html);
       dotail();
+
+      case 'BOARD':
+        $Tid = $_REQUEST['T'];
+        $T = Get_Thing($Tid);
+
+        $Conflict = 0;
+        $Conf = Gen_Select("SELECT W.* FROM ProjectHomes PH, Worlds W WHERE PH.SystemId=" . $T['SystemId'] . " AND W.Home=PH.id AND W.Conflict=1");
+        if ($Conf) $Conflict = $Conf[0]['Conflict'];
+
+        if ($Conflict) {
+          $T['LinkId'] = LINK_BOARDING;
+          $T['NewSystemId'] = $_REQUEST['ToBoard'];
+          $X = Get_Thing($T['NewSystemId']);
+          echo "Loading on to " . $X['Name'] . " as part of turn processing<br>";
+          Put_Thing($T);
+
+        } else {
+          $T['LinkId'] = LINK_ON_BOARD;
+          $T['SystemId'] = $_REQUEST['ToBoard'];
+          $X = Get_Thing($T['SystemId']);
+          echo "Loaded on to " . $X['Name'] . "<br>";
+          Put_Thing($T);
+        }
+        break;
 
     }
   }

@@ -7,7 +7,7 @@
 
   dostaffhead("Move Things",["js/dropzone.js","css/dropzone.css" ]);
 
-  global $db, $GAME, $GAMEID,$Factions,$Dot;
+  global $db, $GAME, $GAMEID,$Factions,$Dot,$FACTION;
 
   function NodeLab($txt,$Prefix='') {
     $FSize = [14,14,14,14,14, 13,13,12,12, 11,10,9,9, 8,8,7,7, 6,6,6,6];
@@ -150,7 +150,9 @@ function LinkProps($L) {
   $ThisSys = $T['SystemId'];
   $N = Get_System($ThisSys);
 
-  $TType = Get_ThingType($T['Type']);
+  $TTypes = Get_ThingTypes();
+  $TType = $TTypes[$T['Type']];
+
   [$Links, $SelLinks, $SelCols ] = Moves_4_Thing($T,1,($TType['Properties'] & (THING_HAS_GADGETS )),$N,(($TType['Prop2'] & THING_HAS_AGE)?0:1));
 
 //  var_dump($Links,$SelLinks);
@@ -222,6 +224,65 @@ function LinkProps($L) {
   $Rand = rand(1,100000);
   echo "<img src=cache/$GAMEID/Movemap$Fid.png?$Rand maxwidth=100% usemap='#skmovemap'>";
   readfile("cache/$GAMEID/Movemap$Fid.map");
+
+  if ((($TType['Properties'] & THING_CAN_BETRANSPORTED)) && (($T['PrisonerOf'] == 0) || ($T['PrisonerOf'] == ($FACTION['id']??0)))) {
+
+    $MTs = Get_ModuleTypes();
+    $MNs = NamesList($MTs);
+    $NamesMod = array_flip($MNs);
+
+    $XPorts = Get_AllThingsAt($T['SystemId']);
+    $NeedCargo = ($TType['Properties'] & THING_NEEDS_CARGOSPACE);
+    $TList = [];
+    $FF = Get_FactionFactionsCarry($Fid);
+    foreach($XPorts as $X) {
+      if ($X['BuildState'] != BS_COMPLETE) continue;
+      if ($NeedCargo && ($X['CargoSpace']==0)) continue; // No Cargo
+      if (($TTypes[$X['Type']]['Properties'] & THING_CANT_HAVENAMED)) continue;
+      if (($X['Whose'] == $Fid) || (($T['PrisonerOf'] == ($FACTION['id']??0) ) && (($X['Whose'] == ($FACTION['id']??0))))) {
+        // Full through
+      } else {
+        $Carry = (empty($FF[$X['Whose']])? 0 : $FF[$X['Whose']]['Props']);
+        if (!$NeedCargo) $Carry >>= 4;
+        if (($Carry&15) < 2) continue; // Don't carry Another
+      }
+      if ($NeedCargo) {
+        $Mods = Get_Modules($X['id']);
+        $CargoSpace = ($Mods[$NamesMod['Cargo Space']]['Number']??0);
+        $CryoSpace = ($Mods[$NamesMod['Cryo Pods']]['Number']??0)*2;
+
+        $OnBoard = Get_Things_Cond(0,"((LinkId=-1 OR LinkId=-3) AND SystemId=" . $X['id'] . ")");
+        foreach($OnBoard as $OB) if ($TTypes[$OB['Type']]['Properties'] & THING_NEEDS_CARGOSPACE) {
+          $Need = max(1,$OB['Level']);
+          if ($CryoSpace && ($TTypes[$OB['Type']]['Properties'] & THING_HAS_ARMYMODULES)) {
+            $CryoSpace -= $Need;
+            if ($CryoSpace >= 0) {
+              $Need = 0;
+            } else {
+              $Need -= $CryoSpace;
+            }
+          }
+          if ($Need && $CargoSpace) {
+            $CargoSpace -= $Need;
+            if ($CargoSpace >= 0) {
+              $Need = 0;
+            } else {
+              $Need -= $CargoSpace;
+            }
+          }
+        }
+        $Space = $CargoSpace + (($TTypes[$X['Type']]['Properties'] & THING_HAS_ARMYMODULES)?$CryoSpace:0);
+        if ($Space < $T['Level']) continue;
+      }
+      $TList[$X['id']] = $X['Name'];
+    }
+    if ($TList) {
+      echo "<h2>Or Board:</h2>";
+      echo "<form method=post action=PThingList.php?ACTION=BOARD&T=$Tid>";
+      echo fm_radio('',$TList,$_REQUEST,'ToBoard',tabs:0, extra4:' onchange=this.form.submit()');
+      echo "</form><p>";
+    }
+  }
 
   if (GameFeature('Follow')) {
     $Eyes = EyesInSystem($Fid,$ThisSys,$Tid);
