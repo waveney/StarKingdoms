@@ -31,9 +31,9 @@ function EyesInSystem($Fid,$Sid,$Of=0) { // Eyes 1 = in space, 2= sens, 4= neb s
     }
     $Lcat = intdiv($T['WithinSysLoc'],100);
     if ($Lcat == 2) {
-      $eye += 0x100<<($T['WithinSysLoc']-200);
+      $eye += 0x100<<($T['WithinSysLoc']-201);
     } elseif ($Lcat == 4) {
-      $eye += 0x10000000<<($T['WithinSysLoc']-400);
+      $eye += 0x10000000<<($T['WithinSysLoc']-401);
     }
 
     if (($Neb > 0) && ($T['NebSensors'] < $Neb) && (($eye&4 ==0))) continue;
@@ -98,9 +98,9 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0,
   if ($Depth == 0 && $Lcat && ! $GM) {
     $eye = 0;
     if ($Lcat == 2) {
-      $eye = 0x100<<($T['WithinSysLoc']-200);
+      $eye = 0x100<<($T['WithinSysLoc']-201);
     } elseif($Lcat == 4) {
-      $eye = 0x10000000<<($T['WithinSysLoc']-400);
+      $eye = 0x10000000<<($T['WithinSysLoc']-401);
     }
     if ($eye && (($Eyes & $eye) == 0)) return '';
   }

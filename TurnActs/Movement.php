@@ -714,6 +714,13 @@ function UnloadTroops() {
     $HostId = $T['SystemId'];
     $H = Get_Thing($HostId);
 
+    if ($H['Retreat']) {
+      TurnLog($T['Whose'], $T['Name'] . " has NOT been unloaded from " . $H['Name'] . " as " . $H['Name'] . " is retreating", $T);
+      $T['LinkId'] = LINK_ON_BOARD;
+      Put_Thing($T);
+      continue;
+    }
+
     $N = Get_System($H['SystemId']);
     $Syslocs = Within_Sys_Locs($N,0,0,0,1);
 

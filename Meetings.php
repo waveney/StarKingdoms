@@ -453,7 +453,7 @@ function SystemSee($Sid) {
 
             $tprops = $ThingProps[$T['Type']];
 
-            if ($TTypes[$T['Type']]['Props2'] & THING_HAS_RECOVERY) {
+            if ($TTypes[$T['Type']]['Prop2'] & THING_HAS_RECOVERY) {
               GMLog($T['Name'] . " took $RV damage\n",$T);
 
             } else {
@@ -468,7 +468,7 @@ function SystemSee($Sid) {
           } else if ($T['CurHealth']) {
             TurnLog($T['Whose'],$T['Name'] . " took $RV damage\n",$T);
             Put_Thing($T);
-          } else if ($$TTypes[$T['Type']]['Props2'] & THING_HAS_RECOVERY) {
+          } else if ($TTypes[$T['Type']]['Prop2'] & THING_HAS_RECOVERY) {
               TurnLog($T['Whose'],$T['Name'] . " took $RV damage\n",$T);
               Put_Thing($T);
           } else {

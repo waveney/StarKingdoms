@@ -484,7 +484,7 @@ function WhatCanBeSeenBy($Fid,$Move=0) { // If Move = 1, it will report previous
   foreach ($SRefs as $Sid=>$Ref) {
     if (!isset($Places[$Sid])) continue;
     $Eyes = $Places[$Sid];
-    if (!$Move) $Eyes = ($Eyes&15);
+//    if (!$Move) $Eyes = ($Eyes&15); - don't work...
     $Jtxt .= " <a href='#Locn:$Ref'>$Ref</a> ";
     $txt .= "<div id='Locn:$Ref'></div>" . SeeInSystem($Sid,$Eyes,1,1,$Fid);
   }
