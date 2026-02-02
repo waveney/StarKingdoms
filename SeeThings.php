@@ -54,20 +54,25 @@ function EyesInSystem($Fid,$Sid,$Of=0) { // Eyes 1 = in space, 2= sens, 4= neb s
   }
   if (($Eyes&8) == 0) { // Check for branch on a world
     $Ps = Get_Planets($Sid);
+    $Pn = $Mn = 0;
     foreach ($Ps as $Pid=>$P) {
+      $Pn++;
       if ($P['Control']) {
         $Bs = Gen_Get_Cond1('Branches',"Whose=$Fid AND HostType=1 AND HostId=$Pid");
         if ($Bs) {
           $Eyes |=8;
-          break;
+          $Eyes |= 0x100<<($Pn-1);
+          continue;
         }
         $Ms = Get_Moons($Pid);
         foreach ($Ms as $Mid=>$M) {
+          $Mn++;
           if ($M['Control']) {
             $Bs = Gen_Get_Cond1('Branches',"Whose=$Fid AND HostType=2 AND HostId=$Mid");
             if ($Bs) {
               $Eyes |=8;
-              break 2;
+              $Eyes |= 0x10000000<<($Mn-1);
+              continue;
             }
           }
         }
