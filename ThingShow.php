@@ -182,10 +182,14 @@ function Show_Thing(&$T,$Force=0) {
       if ($GM) echo fm_number1('Build Project',$T,'ProjectId');
       if ($T['ProjectId']) {
         $Proj = Get_Project($T['ProjectId']);
-        echo "<tr><td>See <a href=ProjEdit.php?id=" . $T['ProjectId'] . ">Project</a>";
-        echo "<tr><td>Status: " . $Project_Status[$Proj['Status']];
-        if ($Proj['TurnStart']) echo " Start Turn: " . $Proj['TurnStart'];
-        if ($Proj['TurnEnd']) echo " End Turn: " . $Proj['TurnEnd'];
+        if ($Proj) {
+          echo "<tr><td>See <a href=ProjEdit.php?id=" . $T['ProjectId'] . ">Project</a>";
+          echo "<tr><td>Status: " . $Project_Status[$Proj['Status']];
+          if ($Proj['TurnStart']) echo " Start Turn: " . $Proj['TurnStart'];
+          if ($Proj['TurnEnd']) echo " End Turn: " . $Proj['TurnEnd'];
+        } else {
+          GMLog4Later("Confused Project record for thing $Tid - Call Richard");
+        }
       }
     } else if (Access('God')) echo " ProjId " . $T['ProjectId'];
     if (($T['BuildState'] == BS_SERVICE) || ($T['BuildState'] == BS_COMPLETE) && ($tprops & THING_HAS_BLUEPRINTS)) {

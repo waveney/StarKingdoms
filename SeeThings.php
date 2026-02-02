@@ -95,7 +95,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0,
 
   $Lcat = intdiv($T['WithinSysLoc'],100);
 
-  if ($Depth == 0 && $Lcat && ! $GM) {
+  if ($Depth == 0 && $Lcat ) {
     $eye = 0;
     if ($Lcat == 2) {
       $eye = 0x100<<($T['WithinSysLoc']-201);

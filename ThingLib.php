@@ -26,7 +26,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
 $IntructProps = [0,2,0,0,0,0,1, 1,1,
                  1,1,1,1, 1,1,//14
                  1,1,1,1, 1,0,0, //21
-                 1,1,0,0,1,0, 1,1, //29
+                 3,1,0,0,1,0, 1,1, //29
                  0,1,0,0,0,0, 1,1,0,1,1]; // 1 = DSC, 2= Pc
 $InstrNotBy =   [0,0,1,0,0,1,0,
                  0,0,

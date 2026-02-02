@@ -471,7 +471,8 @@ function DistanceBetween($Fid,$Sys1,$Sys2,$MaxDepth=9) {
 }
 
 function Report_Branch(&$B) {
-  $Org = Gen_Get('Organisations',$B['OrgType']);
+  $Org = Gen_Get('Organisations',$B['Organisation']);
+  if (!$Org) return;
   switch ($B['HostType']) {
     case 1 : // Planet
       $P = Get_Planet($B['HostId']);
