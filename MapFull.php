@@ -187,6 +187,7 @@
   eval("\$HexLegPos=" . Feature('LegPos','[[0,0]]') . ";" );
 //var_dump($HexLegPos);
   $RedoMap = 1;
+  $Borders = ((Feature('ShowBorder') || ($GM && $Fid == 0)));
 
   $Nodes = Get_Systems();
   $BackR = [];
@@ -270,11 +271,11 @@
         $Colour = "White";
       }
 
-      if ($GM && $Fid == 0 && $N['HistoricalControl']) $Factions[$N['HistoricalControl']]['Seen']=1;
+      if ($Borders && $N['HistoricalControl']) $Factions[$N['HistoricalControl']]['Seen']=1;
 
       if ($Hide) $NodeName = '';
       $BdrColour = "Black";
-      if ($Fid == 0 && $N['HistoricalControl']) {
+      if ($Borders && $N['HistoricalControl']) {
         $BdrColour = $Factions[$N['HistoricalControl']]['MapColour'];
         $Historical = 1;
       } else if ($AllLinks) {

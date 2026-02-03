@@ -572,7 +572,7 @@ function Get_Moons($Pid) {
   global $db,$GAMEID;
   $Ms = [];
   $res = $db->query("SELECT * FROM Moons WHERE PlanetId=$Pid ORDER BY OrbitalRadius");
-  if ($res) while ($ans = $res->fetch_assoc()) $Ms[] = $ans;
+  if ($res) while ($ans = $res->fetch_assoc()) $Ms[$ans['id']] = $ans;
   return $Ms;
 }
 

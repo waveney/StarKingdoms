@@ -183,7 +183,7 @@
 
       if ($CarryNow) {
         foreach ($CarryNow as $Ci=>$Ca) {
-          if ($_REQUEST["Selected:$Ci"] == 'on') {
+          if (($_REQUEST["Selected:$Ci"]??'') == 'on') {
             $Ca['LinkId'] = LINK_UNLOAD;
             $Ca['NewSystemId'] = $T['NewSystemId'];
             $Ca['NewLocation'] = $Final;

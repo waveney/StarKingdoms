@@ -62,7 +62,7 @@ function EyesInSystem($Fid,$Sid,$Of=0) { // Eyes 1 = in space, 2= sens, 4= neb s
         if ($Bs) {
           $Eyes |=8;
           $Eyes |= 0x100<<($Pn-1);
-          continue;
+//          continue;
         }
         $Ms = Get_Moons($Pid);
         foreach ($Ms as $Mid=>$M) {
@@ -72,7 +72,7 @@ function EyesInSystem($Fid,$Sid,$Of=0) { // Eyes 1 = in space, 2= sens, 4= neb s
             if ($Bs) {
               $Eyes |=8;
               $Eyes |= 0x10000000<<($Mn-1);
-              continue;
+//              continue;
             }
           }
         }
