@@ -464,6 +464,7 @@ function WhatCanBeSeenBy($Fid,$Move=0) { // If Move = 1, it will report previous
 //  echo "Note: Things on board other things (e.g. Named Characters) do not show up in this display - currently<p>";
 
   foreach ($MyHomes as $H) {
+
     switch ($H['ThingType']) {
     case 1:
       $P = Get_Planet($H['ThingId']);
@@ -478,7 +479,18 @@ function WhatCanBeSeenBy($Fid,$Move=0) { // If Move = 1, it will report previous
       continue 2;
     }
     if (!$Sid) continue;
-    $Places[$Sid] |= 15; // See all -> old code for on planet -> (empty($Places[$Sid])? 15 : ($Places[$Sid] | 8));
+    $Places[$Sid] |= (($H['EyesFrom']??0) | 15);
+  }
+
+  if (Has_Trait($Fid,'Goverwhat now?')) { // Lizard specials
+    $Offs = Gen_Get_Cond('Offices',"GameId=$GAMEID AND Whose=$Fid");
+
+    foreach ($Offs as $Of) {
+      $W = Get_World($Of['World']);
+      $H = Get_ProjectHome($W['Home']);
+      $Sid = $H['SystemId'];
+      $Places[$Sid] |= (($H['EyesFrom']??0) | 15);
+    }
   }
 
   foreach ($SRefs as $Sid=>$Ref) {
