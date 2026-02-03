@@ -33,6 +33,7 @@ define('ORG_HIDDEN',1);
 define('ORG_ALLOPS',2);
 define('ORG_NO_BRANCHES',4);
 define('ORG_SPECIAL_POWER',8);
+define('ORG_SET_SOCIALP',16);
 
 define('BRANCH_HIDDEN',1);
 define('BRANCH_NOSPACE',2);

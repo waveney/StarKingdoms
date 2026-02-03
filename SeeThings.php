@@ -180,7 +180,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0,
         $RawA = 0;
       }
       if ($T['Class']) {
-        if ($RawA && is_vowel($T['Class'])) $txt .= "n";
+ //       if ($RawA && is_vowel($T['Class'])) $txt .= "n";
         $txt .= " " . $T['Class'];
         $RawA = 0;
       }

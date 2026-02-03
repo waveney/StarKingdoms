@@ -436,14 +436,12 @@ function WhatCanBeSeenBy($Fid,$Move=0) { // If Move = 1, it will report previous
         case 1: // Planet
           $P = Get_Planet($B['HostId']);
           $Sid = $P['SystemId'];
-          $Places[$Sid] = (empty($Places[$Sid])? 8 : ($Places[$Sid] | 8));
           break;
 
         case 2: // Moon
           $M = Get_Moon($B['HostId']);
           $P = Get_Planet($M['PlanetId']);
           $Sid = $P['SystemId'];
-          $Places[$Sid] = (empty($Places[$Sid])? 8 : ($Places[$Sid] | 8));
           break;
 
         case 3: // Thing
@@ -454,10 +452,12 @@ function WhatCanBeSeenBy($Fid,$Move=0) { // If Move = 1, it will report previous
           }
 
           $Sid = $T['SystemId'];
-          $Places[$Sid] = (empty($Places[$Sid])? 1 : ($Places[$Sid] | 1));
           break;
       }
+      $Eyes = EyesInSystem($Fid,$Sid);
+      $Places[$Sid] = (empty($Places[$Sid])? $Eyes : ($Places[$Sid] | $Eyes));
     }
+
   }
 
   $txt .= "Everything of yours and what they can see.<p>";

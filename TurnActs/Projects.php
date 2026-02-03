@@ -626,6 +626,23 @@ function ProjectsCompleted($Pass) {
               'Whose'=>$P['FactionId'], 'Number'=>1];
             Put_Office($Off);
           }
+          $OrgTypes = Gen_Get_Table('OrgTypes');
+          if (($OrgTypes[$Org['OrgType']] & ORG_SET_SOCIALP) || ($Org['OrgType2'] > 0 && ($OrgTypes[$Org['OrgType2']] & ORG_SET_SOCIALP))) {
+            $SPs = Get_SocialPs($World);
+            $found = 0;
+            foreach($SPs as $SP) {
+              if ($SP['Principle'] == $P['OrgSP']) {
+                $SP['Value']++;
+                Put_SocialP($SP);
+                $found = 1;
+                break;
+              }
+            }
+            if (!$found) {
+              $SP = ['Principle'=>$P['OrgSP'], 'World'=>$World['id'], 'Value'=>1];
+              Put_SocialP($SP);
+            }
+          }
           TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");
           break;
 
@@ -635,13 +652,30 @@ function ProjectsCompleted($Pass) {
             break 2;
           }
           $Org = ['Whose' => $P['FactionId'], 'Name'=>$P['OrgName'], 'Description' => $P['OrgDesc'], 'OfficeCount'=>1, 'OrgType'=>max($P['ThingId'],1),
-          'OrgType2' =>$P['ThingId2'], 'GameId'=>$GAMEID, 'SocialPrinciple' => $P['OrgSP']];
+                  'OrgType2' =>$P['ThingId2'], 'GameId'=>$GAMEID, 'SocialPrinciple' => $P['OrgSP']];
           $OrgId = Gen_Put('Organisations',$Org);
 
           $World = Gen_Get_Cond1('Worlds',"Home=" . $P['Home']);
           $Off = ['Organisation' => $OrgId, 'OrgType'=>$P['ThingId'], 'OrgType2'=>$P['ThingId2'], 'World'=>$World['id'], 'Whose'=>$P['FactionId'],
             'Number'=>1];
           Put_Office($Off);
+          $OrgTypes = Gen_Get_Table('OrgTypes');
+          if (($OrgTypes[$Org['OrgType']] & ORG_SET_SOCIALP) || ($Org['OrgType2'] > 0 && ($OrgTypes[$Org['OrgType2']] & ORG_SET_SOCIALP))) {
+            $SPs = Get_SocialPs($World);
+            $found = 0;
+            foreach($SPs as $SP) {
+              if ($SP['Principle'] == $P['OrgSP']) {
+                $SP['Value']++;
+                Put_SocialP($SP);
+                $found = 1;
+                break;
+              }
+            }
+            if (!$found) {
+              $SP = ['Principle'=>$P['OrgSP'], 'World'=>$World['id'], 'Value'=>1];
+              Put_SocialP($SP);
+            }
+          }
           TurnLog($P['FactionId'],'Project ' . $P['Name'] . " is complete");
           break;
 

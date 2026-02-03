@@ -26,8 +26,8 @@ function Devastate(&$H,&$W,&$Dists,&$Offs,$Numb=1) {
   $Walls = Get_Things_Cond(0,"Type=$Something AND (Name='Shield Wall' OR Name='Sea Wall')");
   if ($Walls) {
     $Wall = array_shift($Walls);
-    Thing_Delete($Wall['id']);
     $Txt .= " the " . $Wall['Name'] . " has been destroyed by Devastation (instead of a Distict or Office)";
+    Thing_Delete($Wall['id']);
     return $Txt;
   }
 

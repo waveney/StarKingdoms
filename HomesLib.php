@@ -65,6 +65,17 @@ function Recalc_Project_Homes($Logf=0, $Silent=0) {
                     $H['ThingType'] = 1;
                     $H['ThingId'] = $P['id'];
                     $loc = Within_Sys_Locs($N,$P['id']);
+
+                    $Lcat = intdiv($loc,100);
+                    $eye = 0;
+                    if ($Lcat ) {
+                      if ($Lcat == 2) {
+                        $eye = 0x100<<($loc-201);
+                      } elseif($Lcat == 4) {
+                        $eye = 0x10000000<<($loc-401);
+                      }
+                    }
+                    $H['EyesFrom'] = $eye;
                     $H['SystemId'] = $P['SystemId'];
                     $H['WithinSysLoc'] = $loc;
                     $H['Whose'] = $Cont;
@@ -88,6 +99,16 @@ function Recalc_Project_Homes($Logf=0, $Silent=0) {
               $loc = Within_Sys_Locs($N,$P['id']);
               $H['SystemId'] = $P['SystemId'];
               $H['WithinSysLoc'] = $loc;
+              $Lcat = intdiv($loc,100);
+              $eye = 0;
+              if ($Lcat ) {
+                if ($Lcat == 2) {
+                  $eye = 0x100<<($loc-201);
+                } elseif($Lcat == 4) {
+                  $eye = 0x10000000<<($loc-401);
+                }
+              }
+              $H['EyesFrom'] = $eye;
               $H['id'] = Put_ProjectHome($H);
               $KnownHomes[$H['id']] = $H;
               $P['ProjHome'] = $H['id'];
