@@ -272,7 +272,7 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
             }
 
             $txt .=  "<td>";
-            if ($T['NewLocation']) {
+            if ($T['NewLocation'] && ($T['NewLocation'] != $T['WithinSysLoc'])) {
               $NN = Get_System($T['SystemId']);
               $NewSyslocs = Within_Sys_Locs($NN,0,0,0,0,($GM?0:$Tid));
               $txt .= $NewSyslocs[$T['NewLocation']] ?? '?';

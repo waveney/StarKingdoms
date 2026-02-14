@@ -1021,14 +1021,14 @@ function MilitiaArmyRecovery() {
             }
 
             Put_Thing($Tgt);
-            TurnLog($Fid,$T['Name'] . " restored $HVal health to " . $Tgt['Name'],$Tgt);
+            TurnLog($T['Whose'],$T['Name'] . " restored $HVal health to " . $Tgt['Name'],$Tgt);
             GMLog($T['Name'] . " restored $HVal health to " . $Tgt['Name']);
             if ($Tgt['Whose']!=$LastWho) TurnLog($Tgt['Whose'],$T['Name'] . " restored $HVal health to " . $Tgt['Name']);
 
           }
 
         } else {
-          TurnLog($Fid,"Nothing found for " . $T['Name'] . " to heal");
+          TurnLog($T['Whose'],"Nothing found for " . $T['Name'] . " to heal");
         }
 
       }
@@ -1056,7 +1056,7 @@ function MilitiaArmyRecovery() {
       $HealValue = min($T['OrigHealth']- $T['CurHealth'],ceil($T['OrigHealth']*$HealPCent*$T['ModNumber']/100));
       $T['CurHealth'] = $T['CurHealth'] +$HealValue;
       Put_Thing($T);
-      TurnLog($Fid,$T['Name'] . " restored $HealValue health to " . $T['Name'],$T);
+      TurnLog($T['Whose'],$T['Name'] . " restored $HealValue health to " . $T['Name'],$T);
       GMLog($T['Name'] . " restored $HealValue health to <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a>");
     }
   }

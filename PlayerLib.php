@@ -388,6 +388,7 @@ function Credit() {
 }
 
 function WhatCanBeSeenBy($Fid,$Move=0) { // If Move = 1, it will report previous moves of things if the eyes are static
+  global $GAMEID;
   include_once("SeeThings.php");
   $Terrains = ['All','Space','Ground'];
   $MyThings = Get_Things($Fid);

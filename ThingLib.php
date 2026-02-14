@@ -1391,7 +1391,9 @@ function Empty_Thing(&$T,$OnlyNamed=0) {
             }
           }
         }
-        if (!$OnlyNamed) db_delete('Things',$CTi);
+        if (!$OnlyNamed) {
+          Thing_Delete($CTi,0,"was on board " . $T['Name'] . " when it was destoyed.");
+        }
       } else {
         FollowUp($CT['Whose'], "<a href=ThingEdit.php?id=$CTi>" . $CT['Name'] . "</a> was on board " . $T['Name'] . " when it was destoyed.");
         if (!$OnlyNamed) {
@@ -1428,8 +1430,9 @@ function Branch_Delete($Bid) {
   db_delete('Branches', $Bid);
 }
 
-function Thing_Delete($tid,$now=0) {
+function Thing_Delete($tid,$now=0,$Reason='') {
   global $Project_Status,$Project_Statuses,$GAME,$GAMEID;
+  include_once('TurnTools.php');
   $TTs = Get_ThingTypes();
   $TTNames = NamesList($TTs);
   $NameTT = array_flip($TTNames);
@@ -1449,6 +1452,8 @@ function Thing_Delete($tid,$now=0) {
 
     Empty_Thing($T,1);
 
+    TurnLog($T['Whose'], $T['Name'] . " has been destroyed $Reason");
+
     return;
   }
 
@@ -1466,7 +1471,6 @@ function Thing_Delete($tid,$now=0) {
 
       $Control = System_Owner($T['SystemId']);
       if ($Control) {
-        include_once('TurnTools.php');
         TurnLog($T['Whose'], $Control);
         GMLog($Control);
       }

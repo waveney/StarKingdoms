@@ -1328,7 +1328,20 @@
 
       break;
 
+  case 'Spawning Pools':
+      echo "<h2>Train a $ARMY</h2>";
 
+      echo "This action is to build an already designed $ARMY.  If you want a new design please go to ";
+      if ($Designs) {
+        echo "<a href=PlanDesign.php?F=$Fid>Design Planning</a> first";
+      } else {
+        echo "<a href=ThingPlan.php>The Thing Planning Tool</a> first.<p>\n";
+      }
+
+      echo "<button class=projtype type=submit formaction='ProjNew.php?ACTION=NEWARMY&id=$Fid&p=" . $PTi["Train $ARMY"] .
+      "&t=$Turn&Hi=$Hi&Di=$Di$pl&DT=$DT'>Train a new $ARMY$Place</button><p>";
+
+      break;
 
     }
 

@@ -61,7 +61,7 @@ function Recalc_Project_Homes($Logf=0, $Silent=0) {
 
                 if ($H['id'] == $PHi) {
                   $H['Inuse'] = 1;
-                  if ($H['ThingType'] != 1 || $H['ThingId'] != $P['id'] || $H['Whose'] != $Cont) {
+                  if ($H['ThingType'] != 1 || $H['ThingId'] != $P['id'] || $H['Whose'] != $Cont || $H['EyesFrom']==0) {
                     $H['ThingType'] = 1;
                     $H['ThingId'] = $P['id'];
                     $loc = Within_Sys_Locs($N,$P['id']);

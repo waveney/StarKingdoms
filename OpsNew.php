@@ -733,8 +733,7 @@ var_dump($FS);
           echo "<h2>Select the Organisation to Recon:</h2>";
 
           foreach ($OrgList as $Oid=>$O) {
-            echo "<button class=projtype type=submit formaction='OpsNew.php?$Data&SP=$Oid'>" .
-            $Org['Name'] . "</button> \n";
+            echo "<button class=projtype type=submit formaction='OpsNew.php?$Data&SP=$Oid'>$O</button> \n";
           }
           break;
 
