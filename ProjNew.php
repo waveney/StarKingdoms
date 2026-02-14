@@ -656,6 +656,16 @@
           "&Name=" . base64_encode('Flux Crystal Synthesis' . " $Place"). "&L=$Lvl&C=" . $pc[1] . "&PN=" . $pc[0] ."'>" .
           'Flux Crystal Synthesis' . " $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button></form><p>";
       }
+
+      if (Has_Tech($Fid,'Cret-Chath Synthesis')) { /// Should drive from projects but this is a quick hack
+        echo "<h2>Cret-Chath Synthesis</h2>";
+        $Lvl = 1;
+        $pc = Proj_Costs($Lvl);
+        echo "<form method=post><button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" .
+        $PTi['Cret-Chath Synthesis'] . "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $TT['id'] .
+        "&Name=" . base64_encode('Cret-Chath Synthesis' . " $Place"). "&L=$Lvl&C=" . $pc[1] . "&PN=" . $pc[0] ."'>" .
+        'Cret-Chath Synthesis' . " $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button></form><p>";
+      }
       break;
 
 

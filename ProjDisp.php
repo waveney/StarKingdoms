@@ -238,6 +238,7 @@
         case 'Grow Modules' :
         case 'Produce Adianite' :
         case 'Flux Crystal Synthesis' :
+        case 'Cret-Chath Synthesis' :
         default:
 
           if (isset($_REQUEST['Sel'])) $Sel = $_REQUEST['Sel'];
