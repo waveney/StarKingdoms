@@ -1019,6 +1019,18 @@ function ProjectsCompleted($Pass) {
           } else {
             Error("<a href=ProjEdit.php?id=" . $P['id'] . ">Project</a> to gain Cret-Chath can't find any academic districts");
           }
+          break;
+
+        case 'Antimatter Synthesis':
+          $H = Get_ProjectHome($P['Home']);
+          $D = Gen_Get_Cond1('Districts',"Type=5 AND HostType=" . $H['ThingType'] . " AND HostId=" . $H['ThingId']);
+
+          if ($D) {
+            Gain_Currency($Fid,"Antimatter", $D['Number'], "Synthesis");
+            TurnLog($Fid,"Gained ".  $D['Number'] . " Antimatter from Synthesis");
+          } else {
+            Error("<a href=ProjEdit.php?id=" . $P['id'] . ">Project</a> to gain Antimatter can't find any academic districts");
+          }
 
           break;
 

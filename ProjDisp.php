@@ -239,6 +239,7 @@
         case 'Produce Adianite' :
         case 'Flux Crystal Synthesis' :
         case 'Cret-Chath Synthesis' :
+        case 'Antimatter Synthesis' :
         default:
 
           if (isset($_REQUEST['Sel'])) $Sel = $_REQUEST['Sel'];
