@@ -51,7 +51,10 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Evasion Type</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Evasion</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>To Hit Modifier Type</a>\n";
-    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>To Hit Modifier`  ` ` </a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>To Hit Modifier</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Shot Bonus Type</a>\n";
+    echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Shot Bonus</a>\n";
+
     echo "</thead><tbody>";
 
     foreach($Ts as $T) {
@@ -66,7 +69,9 @@
       echo fm_number1('',$T,'Evasion','','min=-100 max=1000',"Variants:Evasion:$i");
       echo "<td>" . fm_select($PTypes,$T,'TargetType',0,'',"Variants:TargetType:$i");
       echo fm_number1('',$T,'TargetEvasion','','min=-100 max=1000',"Variants:TargetEvasion:$i");
-      }
+      echo "<td>" . fm_select($PTypes,$T,'ShotType',0,'',"Variants:ShotType:$i");
+      echo fm_number1('',$T,'ShotBonus','','min=-100 max=1000',"Variants:ShotBonus:$i");
+    }
 
   $T = ['MaxLvl'=>10];
   echo "<tr><td>" . fm_text1("",$T,'Name',1,'','',"Variants:Name:0");
@@ -77,10 +82,13 @@
   echo fm_number1('',$T,'Firepower','','min=-100 max=1000',"Variants:Firepower:0");
   echo "<td>" . fm_select($PTypes,$T,'TargetType',0,'',"Variants:EvasionType:0");
   echo fm_number1('',$T,'Evasion','','min=-100 max=1000',"Variants:Evasion:0");
-      echo "<td>" . fm_select($PTypes,$T,'EvasionType',0,'',"Variants:EvasionType:0");
-      echo fm_number1('',$T,'TargetEvasion','','min=-100 max=1000',"Variants:EvasionEvasion:0");
-       if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=5 class=NotSide><textarea id=Debug></textarea>";
-      echo "</tbody></table></div>\n";
+  echo "<td>" . fm_select($PTypes,$T,'EvasionType',0,'',"Variants:EvasionType:0");
+  echo fm_number1('',$T,'TargetEvasion','','min=-100 max=1000',"Variants:EvasionEvasion:0");
+  echo "<td>" . fm_select($PTypes,$T,'ShotType',0,'',"Variants:ShotType:0");
+  echo fm_number1('',$T,'ShotBonus','','min=-100 max=1000',"Variants:ShotBonus:0");
+  if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=10 class=NotSide><textarea id=Debug></textarea>";
+
+  echo "</tbody></table></div>\n";
 
   echo "<h2><input type=submit name=Update value=Update></h2>";
   echo "</form></div>";

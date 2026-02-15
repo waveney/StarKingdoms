@@ -802,6 +802,12 @@ function TableTop() {
   echo "</thead><tbody>";
 }
 
+function TableDebug() {
+  global $TableColn;
+  if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=$TableColn class=NotSide><textarea id=Debug></textarea>";
+}
+
+
 function TableEnd() {
   echo "</table></div>";
 }

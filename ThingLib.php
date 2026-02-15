@@ -581,6 +581,7 @@ function Calc_Damage(&$T,&$Rescat) {
           break;
         case 2:
           $Dam = $vev;
+          break;
       }
     }
     $vev = $V['TargetEvasion'];
@@ -594,6 +595,7 @@ function Calc_Damage(&$T,&$Rescat) {
           break;
         case 2:
           $ToHit = $vev;
+          break;
       }
     }
   }
@@ -853,6 +855,7 @@ function Calc_Evasion(&$T) {
         break;
       case 2:
         $ev = $vev;
+        break;
     }
 
     $T['TargetEvasion'] = $V['TargetEvasion']??0; // Actual Number calculated when in battle

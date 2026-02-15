@@ -125,7 +125,7 @@ function ForceReport($Sid,$Cat) {
 
   if ($CSV) {
     if ($CSVHead == 0) {
-      fputcsv($CSV,['Who','Type','Name','Level','Evasion','Cur Health','Orig Health','Firepower','Variant','Empty','To Hit','Mobility/Speed']);
+      fputcsv($CSV,['Who','Type','Name','Level','Evasion','Cur Health','Orig Health','Firepower','Variant','Shots','To Hit','Mobility/Speed']);
       $CSVHead = 1;
     }
 
@@ -267,9 +267,27 @@ function ForceReport($Sid,$Cat) {
         }
       }
 
+      $Var = ($Variants[$T['Variant']]['Name']??'');
+      $Shots = max(1,$T['Level']);
+      if ($Var) {
+        $Val = $Variants[$T['Variant']]['ShotBonus'];
+        switch ($Variants[$T['Variant']]['ShotType']) {
+          case 0:
+            $Shots += $Val;
+            break;
+          case 1:
+            $Shots += ceil($Shots*$Val/100);
+            break;
+          case 2:
+            $Shots = $Val;
+            break;
+        }
+      }
+
       if ($CSV) {
+
         fputcsv($CSV,[($Facts[$LastF]['Name']??'Unknown'), $TTypes[$T['Type']]['Name'], $T['Name'], $T['Level'], $T['Evasion'],
-          $T['CurHealth'] + $T['CurShield'], $T['OrigHealth'], $BD, ($Variants[$T['Variant']]['Name']??''),'',$T['ToHitBonus'],
+          $T['CurHealth'] + $T['CurShield'], $T['OrigHealth'], $BD, $Var,$Shots,$T['ToHitBonus'],
           (($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES)?$T['Mobility']:$T['Speed'])]
           );
 
@@ -278,7 +296,7 @@ function ForceReport($Sid,$Cat) {
         $txt .= "<td>" . $TTypes[$T['Type']]['Name'] . "<td>" . $T['Level'] . "<td>" . $T['Evasion'];
         $txt .= "<td><span id=StateOf$Tid>" . $T['CurHealth'] . " / " . $T['OrigHealth'];
         if ($T['ShieldPoints']) $txt .= " (" . $T['CurShield'] . "/" . $T['ShieldPoints'] . ") ";
-        $txt .= "</span><td><span id=Attack$Tid>$BD</span><td>" . $T['ToHitBonus'] . "<td>";
+        $txt .= "</span><td>$Shots x <span id=Attack$Tid>$BD</span><td>" . $T['ToHitBonus'] . "<td>";
         if (($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE) || ($TTypes[$T['Type']]['Prop2'] & THING_HAS_SPEED)) {
           $FactLvls += $T['Level'];
           if ($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES) {
@@ -490,7 +508,11 @@ function SystemSee($Sid) {
 
           $T['Retreat'] = 2;
           TurnLog($T['Whose'],$T['Name'] . " Will retreat from combat",$T);
-          GMLog($T['Name'] . " will retreat from combat",$T);
+          if ($RV) {
+            GMLog($T['Name'] . " will retreat from combat after taking $RV damage",$T);
+          } else {
+            GMLog($T['Name'] . " will retreat from combat",$T);
+          }
           Put_Thing($T);
         }
 
