@@ -1343,8 +1343,10 @@ function InstructionsComplete() {
         break;
 
       case 'Salvage':  // Find all Ex things in space, go through each work out money, if have Wrecage analysis give that report as well
-        $Wrecks = Get_Things_Cond(0,"SystemId=" . $T['SystemId'] . " AND BuildState>" . BS_COMPLETE);
-        $SalvageLevel = Has_Tech($Who,'Salvage Rigs');
+        $Wrecks = Get_Things_Cond(0,"SystemId=" . $T['SystemId'] . " AND BuildState>" . BS_COMPLETE . " ORDER BY Level DESC");
+//        $SalvageLevel = Has_Tech($Who,'Salvage Rigs');
+        $SalvMods = Get_ModulesType($Tid, 'Salvage Rigs');
+        $SalvageLevel = $SalvMods['Level'];
         $HasWreck = Has_Tech($Who,'Wreckage Analysis');
         $TotMoney = $Xenology = $Engineering = 0;
         $ModTypes = Get_ModuleTypes();
@@ -1352,67 +1354,71 @@ function InstructionsComplete() {
 
         $N = Get_System($T['SystemId']);
 
-        foreach ($Wrecks as $W) {
-          if (($TTypes[$W['Type']]['Properties'] & (THING_HAS_DISTRICTS + THING_HAS_SHIPMODULES)) != 0) {
-            $Money = $Xeno = $Eng = 0;
-            $Wreck = [];
-            switch ($TTypes[$W['Type']]['Name']) {
+        for($Salvs=0; $Salvs<$SalvMods['Number'] && isset($Wrecks[$Salvs]);$Salvs++) {
+          $W = $Wrecks[$Salvs];
+  //        foreach ($Wrecks as $W) {
+            if (($TTypes[$W['Type']]['Properties'] & (THING_HAS_DISTRICTS + THING_HAS_SHIPMODULES)) != 0) {
+              $Money = $Xeno = $Eng = 0;
+              $Wreck = [];
+              switch ($TTypes[$W['Type']]['Name']) {
 
-              case 'Military Ship':
-              case 'Ship':
-              case 'Support Ship' :
-              case 'Civilian Ship' :
-              case 'Satellite Defences' :
-                $Money = min(10*$W['Level']*$SalvageLevel,Proj_Costs($W['Level'])[1]*0.9);
-                if ($HasWreck) {
-                  $Modules = Get_Modules($W['id']);
-                  foreach ($Modules as $Mod) {
-                    $L = Has_Tech($W['Whose'],$ModTypes[$Mod['Type']]['BasedOn']);
-                    if ($L) {
-                      $Wreck[]= $Mod['Number'] . " " . $ModTypes[$Mod['Type']]['Name'] . " L$L";
-                    } else {
-                      $Wreck[]= $Mod['Number'] . " Unknown modules.";
+                case 'Military Ship':
+                case 'Ship':
+                case 'Support Ship' :
+                case 'Civilian Ship' :
+                case 'Satellite Defences' :
+                  $Money = min(10*$W['Level']*$SalvageLevel,Proj_Costs($W['Level'])[1]*0.9);
+                  if ($HasWreck) {
+                    $Modules = Get_Modules($W['id']);
+                    foreach ($Modules as $Mod) {
+                      $L = Has_Tech($W['Whose'],$ModTypes[$Mod['Type']]['BasedOn']);
+                      if ($L) {
+                        $Wreck[]= $Mod['Number'] . " " . $ModTypes[$Mod['Type']]['Name'] . " L$L";
+                      } else {
+                        $Wreck[]= $Mod['Number'] . " Unknown modules.";
+                      }
                     }
                   }
-                }
 
-                Thing_Delete($W['id']);
-                break;
+                  Thing_Delete($W['id']);
+                  break;
 
-              case 'Space Station':
-                $Money = min(10*$W['MaxDistricts']*$SalvageLevel,Proj_Costs($W['MaxDistricts'])[1]*0.9);
-                if ($HasWreck) {
-                  $Districts = Get_DistrictsT($W['id']);
-                  foreach ($Districts as $D) {
-                    $Wreck[]= $D['Number'] . " " . $DistTypes[$D['Type']]['Name'];
+                case 'Space Station':
+                  $Money = min(10*$W['MaxDistricts']*$SalvageLevel,Proj_Costs($W['MaxDistricts'])[1]*0.9);
+                  if ($HasWreck) {
+                    $Districts = Get_DistrictsT($W['id']);
+                    foreach ($Districts as $D) {
+                      $Wreck[]= $D['Number'] . " " . $DistTypes[$D['Type']]['Name'];
+                    }
                   }
+                  Thing_Delete($W['id']);
+                  break;
+
+                default:
+                  break;
+              }
+              if ($Money) {
+                if (Has_Trait($Who,'How Does This Work?')) {
+                  $Eng += ceil($Money/20);
+                  $Engineering += $Eng;
                 }
-                Thing_Delete($W['id']);
-                break;
 
-              default:
-                break;
-            }
-            if ($Money) {
-              if (Has_Trait($Who,'How Does This Work?')) {
-                $Eng += ceil($Money/20);
-                $Engineering += $Eng;
+                if (Has_Trait($W['Whose'],'Organic Units')) {
+                  $Money = ceil($Money/4);
+                  $Xeno = $W['Level'];
+                  $Xenology += $Xeno;
+                }
+
+                $TotMoney += $Money;
+                TurnLog($Who,"The wreckage of the " . (empty($W['Name'])? ("Unknown Thing #" . $W['id']) : $W['Name']) .
+                  " has been salvaged.  in " . $N['Ref'] . " Gaining " . Credit() . $Money .
+                  ($Xeno?" and $Xeno Xenology points":'') . ($Eng?" and $Eng Engineering Points":''));
+                if ($Wreck) TurnLog($Who, "It had: " . implode(', ', $Wreck));
               }
-
-              if (Has_Trait($W['Whose'],'Organic Units')) {
-                $Money = ceil($Money/4);
-                $Xeno = $W['Level'];
-                $Xenology += $Xeno;
-              }
-
-              $TotMoney += $Money;
-              TurnLog($Who,"The wreckage of the " . (empty($W['Name'])? ("Unknown Thing #" . $W['id']) : $W['Name']) .
-                " has been salvaged.  in " . $N['Ref'] . " Gaining " . Credit() . $Money .
-                ($Xeno?" and $Xeno Xenology points":'') . ($Eng?" and $Eng Engineering Points":''));
-              if ($Wreck) TurnLog($Who, "It had: " . implode(', ', $Wreck));
             }
-          }
+//          }
         }
+
         if ($TotMoney) {
           Spend_Credit($Who,- $TotMoney, "Salvage from " . $N['Ref']);
           if ($Xenology) {
@@ -1428,15 +1434,17 @@ function InstructionsComplete() {
         break;
 
       case 'Scavenge':  // Find all Ex things on ground, go through each work out money, if have Wrecage analysis give that report as well
-        $Wrecks = Get_Things_Cond(0,"SystemId=" . $T['SystemId'] . " AND BuildState>" . BS_COMPLETE);
-        $SalvageLevel = Has_Tech($Who,'Scavengers');
+        $Wrecks = Get_Things_Cond(0,"SystemId=" . $T['SystemId'] . " AND BuildState>" . BS_COMPLETE . " ORDER BY Level DESC");
+        $SalvMods = Get_ModulesType($Tid, 'Scavengers');
+        $SalvageLevel = $SalvMods['Level'];
         $HasWreck = Has_Tech($Who,'Wreckage Analysis');
         $TotMoney = $Xenology = 0;
         $ModTypes = Get_ModuleTypes();
 
         $N = Get_System($T['SystemId']);
 
-        foreach ($Wrecks as $W) {
+        for($Salvs=0; $Salvs<$SalvMods['Number'] && isset($Wrecks[$Salvs]);$Salvs++) {
+          $W = $Wrecks[$Salvs];
           if (($TTypes[$W['Type']]['Properties'] & THING_HAS_ARMYMODULES) != 0) {
             $Money = $Xeno = 0;
             $Wreck = [];
