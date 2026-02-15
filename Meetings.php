@@ -455,7 +455,7 @@ function SystemSee($Sid) {
 
             if ($TTypes[$T['Type']]['Prop2'] & THING_HAS_RECOVERY) {
               GMLog($T['Name'] . " took $RV damage\n",$T);
-
+              Put_Thing($T);
             } else {
               GMLog($T['Name'] . " took $RV damage and has been destroyed\n",$T);
               if (isset($_REQUEST["NoDebris:$Tid"])) {
