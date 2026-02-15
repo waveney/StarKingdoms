@@ -209,8 +209,11 @@ if (isset($_REQUEST['Action'])) {
     case 'SPAWN_FS':
       $Sid = $_REQUEST['Sid'];
       $Oid = $_REQUEST['Oid'];
+      $N = Get_System($Sid);
+      $Neb = $N['Nebulae'];
       $TTypes = Get_ThingTypes();
       $NTypes = array_flip(NamesList($TTypes));
+      if ($Neb) $NebFVar = TypeFromName('Variants', 'Nebula');
 
       $Branches = Gen_Get_Cond('Branches',"HostType=3 AND HostId=$Oid AND (OrgType=3 OR OrgType2=3)");
       // var_dump($Branches);
@@ -218,6 +221,7 @@ if (isset($_REQUEST['Action'])) {
       if ($Branches) {
         foreach ($Branches as $Bid=>$B) {
           $Fid = $B['Whose'];
+          if ($Neb) $Neb = Has_Tech($Fid,'Nebula Sensors');
           $DefLevel = Has_Tech($Fid,'Starship Defences');
           $OffLevel = Has_Tech($Fid,'Starship Weapons');
           $EngLevel = Has_Tech($Fid,'Engines');
@@ -237,9 +241,10 @@ if (isset($_REQUEST['Action'])) {
             $T['Speed'] = $Speed;
             $T['WithinSysLoc'] = 1;
             $T['LinkId'] = 0;
-            $T['Evasion'] = 75;
+            $T['Evasion'] = ($Neb?65:75);
             $T['ProjectId'] = $Bid;
             $T['ToHitBonus'] = 20;
+            if ($Neb) $T['Variant'] = $NebFVar;
             //var_dump($T);
             Put_Thing($T);
             $Count++;
@@ -249,7 +254,8 @@ if (isset($_REQUEST['Action'])) {
               $Count++;
               $T = ['Whose'=>$Fid, 'Type'=>$NTypes['Fighter Defences'], 'BuildState'=>BS_COMPLETE, 'CurHealth'=>1, 'OrigHealth'=>1, 'ActDamage'=>$Off,
                 'SystemId'=>$Sid, 'WithinSysLoc'=>1, 'Class'=>'Defence Fighter Squadron', 'Name'=>($B['Name']?$B['Name']:"Squadron $Bid") . ":$Count" ,
-                'Evasion'=>75, 'ProjectId'=>$Bid, 'Speed'=>$Speed, 'LinkId'=>0, 'ToHitBonus'=> 20];
+                'Evasion'=>($Neb?65:75), 'ProjectId'=>$Bid, 'Speed'=>$Speed, 'LinkId'=>0, 'ToHitBonus'=> 20];
+              if ($Neb) $T['Variant'] = $NebFVar;
               //var_dump($T);
               Put_Thing($T);
             }

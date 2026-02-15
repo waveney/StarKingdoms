@@ -761,6 +761,11 @@ function ListNames(&$D,$fld='Name') {
   return $L;
 }
 
+function TypeFromName($Tab,$Nam,$Type='Type',$Name='Name') {
+  $Ent = Gen_Get_Cond1($Tab,"$Name=$Nam");
+  return $Ent[$Type]??0;
+}
+
 function Cancel_AutoUpdate() {
   global $ADDALL,$AutoADD,$AutoAfter,$AutoType;
   $AutoADD = 0;
