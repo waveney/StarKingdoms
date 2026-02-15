@@ -125,7 +125,7 @@ function ForceReport($Sid,$Cat) {
 
   if ($CSV) {
     if ($CSVHead == 0) {
-      fputcsv($CSV,['Who','Name','Type','Level','Evasion','Cur Health','Orig Health','Firepower','Variant','Empty','To Hit','Mobility/Speed']);
+      fputcsv($CSV,['Who','Type','Name','Level','Evasion','Cur Health','Orig Health','Firepower','Variant','Empty','To Hit','Mobility/Speed']);
       $CSVHead = 1;
     }
 
@@ -268,7 +268,7 @@ function ForceReport($Sid,$Cat) {
       }
 
       if ($CSV) {
-        fputcsv($CSV,[($Facts[$LastF]['Name']??'Unknown'), $T['Name'], $TTypes[$T['Type']]['Name'], $T['Level'], $T['Evasion'],
+        fputcsv($CSV,[($Facts[$LastF]['Name']??'Unknown'), $TTypes[$T['Type']]['Name'], $T['Name'], $T['Level'], $T['Evasion'],
           $T['CurHealth'] + $T['CurShield'], $T['OrigHealth'], $BD, ($Variants[$T['Variant']]['Name']??''),'',$T['ToHitBonus'],
           (($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES)?$T['Mobility']:$T['Speed'])]
           );
