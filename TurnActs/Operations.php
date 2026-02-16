@@ -454,7 +454,7 @@ function OperationsComplete() {
 
         }
         $World = Gen_Get_Cond1('Worlds',"ThingType=$ThingType AND ThingId=$Target");
-        $World['Name'] = $Body['Name'];
+        $World['Name'] = ($Body['Name']??'Unknown');
 
       } else if ($Target) {
         if ($Target > 0) {

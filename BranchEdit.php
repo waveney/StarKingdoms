@@ -221,7 +221,7 @@ if (isset($_REQUEST['Action'])) {
       if ($Branches) {
         foreach ($Branches as $Bid=>$B) {
           $Fid = $B['Whose'];
-          if ($Neb) $Neb = Has_Tech($Fid,'Nebula Sensors');
+          if ($Neb) $Neb = Has_Tech($Fid,'Nebula Fighters');
           $DefLevel = Has_Tech($Fid,'Starship Defences');
           $OffLevel = Has_Tech($Fid,'Starship Weapons');
           $EngLevel = Has_Tech($Fid,'Engines');

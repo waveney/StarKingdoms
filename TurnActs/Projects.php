@@ -659,7 +659,7 @@ function ProjectsCompleted($Pass) {
           $Off = ['Organisation' => $OrgId, 'OrgType'=>$P['ThingId'], 'OrgType2'=>$P['ThingId2'], 'World'=>$World['id'], 'Whose'=>$P['FactionId'],
             'Number'=>1];
           Put_Office($Off);
-          $OrgTypes = Gen_Get_Table('OrgTypes');
+          $OrgTypes = Get_OrgTypes();
           if (($OrgTypes[$Org['OrgType']] & ORG_SET_SOCIALP) || ($Org['OrgType2'] > 0 && ($OrgTypes[$Org['OrgType2']] & ORG_SET_SOCIALP))) {
             $SPs = Get_SocialPs($World);
             $found = 0;
