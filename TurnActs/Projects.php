@@ -778,6 +778,8 @@ function ProjectsCompleted($Pass) {
             } else if ($P['ThingId']) {
               $T = Get_Thing($P['ThingId']);
               $T['CurHealth'] = $T['OrigHealth'];
+              $T['BuildState'] = BS_COMPLETE;
+              if (Blockaded($T)) $T['WithinSysLoc'] = 2;
               Put_Thing($T);
               TurnLog($P['FactionId'], $T['Name'] . " has been " . firstword($PT['Name']) . "ed",$T);
             }
@@ -790,14 +792,11 @@ function ProjectsCompleted($Pass) {
             } else {
               $T = Get_Thing($Tid);
               $T['CurHealth'] = $T['OrigHealth'];
+              if (Blockaded($T)) $T['WithinSysLoc'] = 2;
               Put_Thing($T);
               TurnLog($Fid, $T['Name'] . " has been " . firstword($PT['Name']) . "ed",$T);
             }
           }
-          $T['BuildState'] = BS_COMPLETE;
-          if (Blockaded($T)) $T['WithinSysLoc'] = 2;
-          Put_Thing($T);
-
           break;
 
 
@@ -840,6 +839,7 @@ function ProjectsCompleted($Pass) {
               TurnLog($Fid, $DT['Name'] . " has been launched" . (Feature('Shakedowns')?" and will now start its shakedown cruise":''),$DT);
             }
           }
+          if (Blockaded($T)) $T['WithinSysLoc'] = 2;
 
           break;
 

@@ -296,7 +296,7 @@ function ForceReport($Sid,$Cat) {
         $txt .= "<td>" . $TTypes[$T['Type']]['Name'] . "<td>" . $T['Level'] . "<td>" . $T['Evasion'];
         $txt .= "<td><span id=StateOf$Tid>" . $T['CurHealth'] . " / " . $T['OrigHealth'];
         if ($T['ShieldPoints']) $txt .= " (" . $T['CurShield'] . "/" . $T['ShieldPoints'] . ") ";
-        $txt .= "</span><td>$Shots x <span id=Attack$Tid>$BD</span><td>" . $T['ToHitBonus'] . "<td>";
+        $txt .= "</span><td>" . ($BD?"$Shots x ":'') . "<span id=Attack$Tid>$BD</span><td>" . $T['ToHitBonus'] . "<td>";
         if (($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE) || ($TTypes[$T['Type']]['Prop2'] & THING_HAS_SPEED)) {
           $FactLvls += $T['Level'];
           if ($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES) {

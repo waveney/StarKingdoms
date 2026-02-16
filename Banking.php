@@ -82,15 +82,16 @@
       case 'Setup' :
         $BankRec = ['FactionId'=>$Fid, 'Recipient'=>$_REQUEST['Recipient'], 'Amount'=>$_REQUEST['Amount'],
                     'StartTurn'=> $_REQUEST['StartTurn'], 'EndTurn' => (empty( $_REQUEST['EndTurn'])? $_REQUEST['StartTurn'] : $_REQUEST['EndTurn']),
-                    'YourRef' => $_REQUEST['YourRef'],'What'=>(isset($_REQUEST['What'])?$_REQUEST['What']:0),'GameId'=>$GAMEID, 'Frequency'=>$_REQUEST['Freq'],
+                    'YourRef' => $_REQUEST['YourRef'],'What'=>(isset($_REQUEST['What'])?$_REQUEST['What']:0),'GameId'=>$GAMEID,
+                    'Frequency'=>$_REQUEST['Freq'],
                     ];
-
+        if ($BankRec['Frequency'] && $GM) $BankRec['EndTurn'] = 1000;
         if (empty($BankRec['YourRef'])) $BankRec['YourRef'] = "Unspecified";
         Put_Banking($BankRec);
-        $_REQUEST['Recipient'] = '';
-        $_REQUEST['Amount'] = '';
-        $_REQUEST['StartTurn'] = '';
-        $_REQUEST['EndTurn'] = '';
+        $_REQUEST['Recipient'] = 0;
+        $_REQUEST['Amount'] = 0;
+        $_REQUEST['StartTurn'] = 0;
+        $_REQUEST['EndTurn'] = 0;
         $_REQUEST['YourRef'] = '';
         break;
       case 'Transfer Now' :
