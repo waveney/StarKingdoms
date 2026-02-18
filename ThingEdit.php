@@ -821,6 +821,7 @@ global $FACTION;
       echo "<h2>Servicing Cancelled</h2>";
       break;
 
+    case 'DeleteNOW':
     case 'Delete NOW!':
       if (!$GM) break;
       $tid = $_REQUEST['id'];
@@ -828,7 +829,12 @@ global $FACTION;
       Thing_Delete($tid,1);
 
       echo "<h1>Deleted NOW - No recovery</h1>";
-      echo "<h2><a href=PThingList.php>Back to Thing list</a></h2>";
+      if (isset($_REQUEST['GMList'])) {
+        echo "<h2><a href=ThingList.php>Back to GM Thing list</a></h2>";
+
+      } else {
+        echo "<h2><a href=PThingList.php>Back to Thing list</a></h2>";
+      }
       dotail();
 
 

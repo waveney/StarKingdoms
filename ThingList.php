@@ -43,7 +43,7 @@
 
   $ShowCats = ['All','Ships',$ARMIES,'','Chars', 'Other'];
   $Show['ThingShow'] = 0;
-  $BuildCats = ['All','Plan','Building','Shakedown','Complete','Other'];
+  $BuildCats = ['All','Plan','Building','Shakedown','Complete','Other',(BS_DELETE+1) =>'Pending'];
   $Build['BuildShow'] = 0;
 
   echo "<div class=floatright ><b>" . fm_radio("Show",$ShowCats,$Show,'ThingShow',' onchange=ThingListFilter()') . "<br><br>";
@@ -109,7 +109,7 @@
     }
 
 
-    $BuildClass = ($T['BuildState']<BS_EX ? $T['BuildState'] : BS_EX);
+    $BuildClass = ($T['BuildState']<BS_EX ? $T['BuildState'] : (($T['BuildState'] == BS_DELETE)?BS_DELETE: BS_EX));
 
     echo "<tr class='ThingList Thing_$RowClass Thing_Build$BuildClass'><td><a href=ThingEdit.php?id=$tid>$tid</a>";
 
@@ -130,7 +130,11 @@
 
     echo "<td><a href=ThingEdit.php?id=$tid>$Name</a>";
     echo "<td>" . ($T['BluePrint']<0?'Blue Print':($who? $Factions[$T['Whose']]['Name'] : ""));
-    echo "<td>" . $ThingInstrs[$T['Instruction']];
+    if ($BuildClass == BS_DELETE) {
+      echo "<td><a href='ThingEdit.php?ACTION=DeleteNOW&id=$tid&GMList'>Delete NOW!</a>";
+    } else {
+      echo "<td>" . $ThingInstrs[$T['Instruction']];
+    }
     echo "<td>" . ($T['BuildState']? $BuildState[$T['BuildState']] : "<a href=$DesLink?F=" . $T['Whose'] . "&id=$tid>$DesName</a>" );
     echo "<td>" . sprintf('%0.3g',$T['Speed']);
 
