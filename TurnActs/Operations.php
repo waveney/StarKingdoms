@@ -525,12 +525,15 @@ function OperationsComplete() {
           TurnLog($Fid,"A new Hidden Lodge branch for " . $Org['Name'] . " has been set up on the Outpost in " . System_Name($Sys,$Fid) );
           GMLog("A new Hidden Lodge branch for " . $Org['Name'] . " has been set up on the Outpost in  " .
             System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);
+          FollowUp($Fid, "A hidden lodge has been set up " . $Org['Name'] . " has been set up on the Outpost in  " .
+            System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);
+
         } else {
           TurnLog($Fid,"A new Hidden Lodge branch for " . $Org['Name'] . " could not be set up on the Outpost in " . System_Name($Sys,$Fid) .
             " as there isn't one, and this operation can not create one");
 
-          GMLog("A newHidden Lodge branch for " . $Org['Name'] . " could not be set up on the Outpost in " . System_Name($Sys,$Fid) .
-            " as there isn't one, and this operation can not create one");
+          GMLog("A new Hidden Lodge branch for " . $Org['Name'] . " could not be set up on the Outpost in " . System_Name($Sys,$Fid) .
+            " as there isn't an Outpost there, and this operation can not create one");
 
         }
         break;
@@ -608,6 +611,8 @@ function OperationsComplete() {
         TurnLog($Fid,"A new Hidden Lodge branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] .
           " in " . System_Name($Sys,$Fid) );
         GMLog("A new Hidden Lodge branch for " . $Org['Name'] . " has been set up on the World " . $World['Name'] . ' ' .
+          System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);
+        FollowUp($Fid, "A hidden lodge has been set up " . $Org['Name'] . " has been set on the World " . $World['Name'] . ' ' .
           System_Name($Sys,$Fid) . " by " . $Facts[$Fid]['Name']);
         break;
 

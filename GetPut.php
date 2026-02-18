@@ -634,7 +634,7 @@ function Get_AllThingsAt($id) {
   global $db,$GAMEID;
   $Ts = [];
   $res = $db->query("SELECT * FROM Things WHERE GameId=$GAMEID AND SystemId=$id AND ( LinkId>=0 OR LinkId<" . LINK_LOAD_AND_UNLOAD .
-    ") ORDER By Whose,Type");
+    ") ORDER By Whose, WithinSysLoc, Type");
   if ($res) while ($ans = $res->fetch_assoc()) $Ts[] = $ans;
   return $Ts;
 }

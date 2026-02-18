@@ -839,7 +839,6 @@ function ProjectsCompleted($Pass) {
               TurnLog($Fid, $DT['Name'] . " has been launched" . (Feature('Shakedowns')?" and will now start its shakedown cruise":''),$DT);
             }
           }
-          if (Blockaded($T)) $T['WithinSysLoc'] = 2;
 
           break;
 

@@ -7,6 +7,7 @@ include_once("PlayerLib.php");
 
 function EyesInSystem($Fid,$Sid,$Of=0) { // Eyes 1 = in space, 2= sens, 4= neb sens, 8=ground, 16=static this turn
   global $MoveProps;
+  static $SysWho = [];
 
 //var_dump($Fid,$Sid);
   $Neb = $Eyes = 0;
@@ -52,7 +53,8 @@ function EyesInSystem($Fid,$Sid,$Of=0) { // Eyes 1 = in space, 2= sens, 4= neb s
       if ($Bs) $Eyes |= 0x11;  // Space+Static
     }
   }
-  if (($Eyes&8) == 0) { // Check for branch on a world
+  if (!isset($SysWho[$Fid][$Sid])) {
+    $SysWho[$Fid][$Sid] = 1;
     $Ps = Get_Planets($Sid);
     $Pn = $Mn = 0;
     foreach ($Ps as $Pid=>$P) {
@@ -62,7 +64,6 @@ function EyesInSystem($Fid,$Sid,$Of=0) { // Eyes 1 = in space, 2= sens, 4= neb s
         if ($Bs) {
           $Eyes |=8;
           $Eyes |= 0x100<<($Pn-1);
-//          continue;
         }
         $Ms = Get_Moons($Pid);
         foreach ($Ms as $Mid=>$M) {
@@ -72,7 +73,6 @@ function EyesInSystem($Fid,$Sid,$Of=0) { // Eyes 1 = in space, 2= sens, 4= neb s
             if ($Bs) {
               $Eyes |=8;
               $Eyes |= 0x10000000<<($Mn-1);
-//              continue;
             }
           }
         }
