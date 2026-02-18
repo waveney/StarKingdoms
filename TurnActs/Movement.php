@@ -232,7 +232,6 @@ function LoadTroops() {
         if ($Need) break;
       }
       if ($Need) {
-//        var_dump($Need, $CargoSpace);
         TurnLog($T['Whose'],"You tried to load " . $T['Name'] . " on to " . $H['Name'] . " there is not enough space",$T);
         if ($H['Whose'] != $T['Whose'])
           TurnLog($H['Whose'],  $Facts[$T['Whose']]['Name'] . " tried to load " . $T['Name'] . " on to " . $H['Name'] . " there is not enough space");

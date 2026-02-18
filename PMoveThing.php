@@ -272,7 +272,7 @@ function LinkProps($L) {
           }
         }
         $Space = $CargoSpace + (($TTypes[$X['Type']]['Properties'] & THING_HAS_ARMYMODULES)?$CryoSpace:0);
-        if ($Space < $T['Level']) continue;
+        if ($Space < max(1,$T['Level'])) continue;
       }
       $TList[$X['id']] = $X['Name'];
     }

@@ -537,7 +537,7 @@ function Show_Thing(&$T,$Force=0) {
               }
             }
             $Space = $CargoSpace + (($tprops & THING_HAS_ARMYMODULES)?$CryoSpace:0);
-            if ($Space < $T['Level']) continue;
+            if ($Space < max(1,$T['Level'])) continue;
           }
           $TList[$X['id']] = $X['Name'];
         }

@@ -494,7 +494,10 @@ function Max_Modules(&$T) {
 function Calc_Health(&$T,$KeepTechLvl=0,$Other=0) {
   static $TTypes;
   if (!$TTypes) $TTypes = Get_ThingTypes();
-  if (empty($T['Level'])) return 0;
+  if (empty($T['Level'])) {
+    if ($TTypes[$T['Type']]['Prop2'] & THING_HAS_HEALTH1) return [1,0];
+    return [0,0];
+  }
   $Plus = 0;
   if ($T['Type'] == 20) { // Militia
     return 40 + Has_Tech($T['Whose'],'Militia Training Techniques')*2;
@@ -503,7 +506,7 @@ function Calc_Health(&$T,$KeepTechLvl=0,$Other=0) {
   if ($Other == 0) $Other = $T['Whose']??0;
   if (Has_Trait($Other,'Thick Skinned')) $Plus =1;
   $Health = (Feature('BaseHealth')?5*($T['Level']+$Plus):0);
-  if ($TTypes[$T['Type']]['Props2'] & HAS_HEALTH1) $Health = min($Health,1);
+  if ($TTypes[$T['Type']]['Prop2'] & THING_HAS_HEALTH1) $Health = min($Health,1);
   $Shield = 0;
   $Ms = Get_Modules($T['id']);
   $Mts = Get_ModuleTypes();

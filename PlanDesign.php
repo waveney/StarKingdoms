@@ -161,7 +161,7 @@
   $ResC =0;
   if ($T['Type'] && $T['Whose'] && $T['Whose'] == $FACTION['id']) {
     RefitRepair($T,0);
-    Calc_Health($T);
+    [$T['OrigHealth'],$T['ShieldPoints']] = Calc_Health($T);
     Calc_Damage($T,$ResC);
     Calc_Scanners($T);
   }
