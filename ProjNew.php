@@ -63,7 +63,7 @@
         $Place = base64_decode($_REQUEST['pl']);
 
         $TTypes = Get_ThingTypes();
-        $Things = Get_Things_Cond($Fid, 'BuildState=0 AND DesignValid=1 ');
+        $Things = Get_Things_Cond($Fid, 'BuildState=0 AND DesignValid=1 ORDER BY Level, Name');
         if ($_REQUEST['ACTION'] == 'NEWSHIP') {
           foreach ($Things as $Tid=>$T) if (($T['Type'] == 0) || (($TTypes[$T['Type']]['Properties'] & THING_HAS_SHIPMODULES) == 0))
             unset($Things[$Tid]);

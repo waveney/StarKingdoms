@@ -490,7 +490,7 @@ function WhatCanBeSeenBy($Fid,$Move=0) { // If Move = 1, it will report previous
       $W = Get_World($Of['World']);
       $H = Get_ProjectHome($W['Home']);
       $Sid = $H['SystemId'];
-      if ($Places[$Sid]){
+      if (isset($Places[$Sid])){
         $Places[$Sid] |= (($H['EyesFrom']??0) | 15);
       } else {
         $Places[$Sid] = (($H['EyesFrom']??0) | 15);

@@ -1714,7 +1714,7 @@ function InstructionsProgress() {
 
       case 'Scavenge':
         $Mods = Get_ModulesType($Tid,'Scavengers');
-        $ProgGain = $Mods['Level']*$Mods['Number'];
+        $Prog = $Mods['Level']*$Mods['Number'];
         GMLog("$Prog progress on " . $ThingInstrs[abs($T['Instruction'])] . " for " . $Facts[$T['Whose']]['Name'] . ":" . $T['Name']);
         $T['Progress'] = min($T['ActionsNeeded'],$T['Progress']+$Prog);
         Put_Thing($T);

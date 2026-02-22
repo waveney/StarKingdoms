@@ -365,7 +365,7 @@
   $NoC = 0;
   $proj = [];
 
-  $Things = Get_Things_Cond($Fid," Instruction!=0 AND Progress=0 AND InstCost>0 AND BuildState=2");
+  $Things = Get_Things_Cond($Fid," Instruction!=0 AND Progress=0 AND InstCost>0 AND BuildState=" . BS_COMPLETE);
   $DeepSpace = 0;
   foreach($Things as $T) $DeepSpace += $T['InstCost'];
 
