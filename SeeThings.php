@@ -97,6 +97,7 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0,
   if (!$FB) $FB = array_flip(NamesList($ModuleTypes))['Fighter Bays'];
 
   $clsx = "Long";
+  $FlatPacked = 0;
 
   $Lcat = intdiv($T['WithinSysLoc'],100);
 
@@ -218,7 +219,11 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0,
 
       if (($ThingTypes[$T['Type']]['Name'] == 'Fighter') &&
         ($T['LinkId'] == LINK_ON_BOARD) &&
-        (!Get_ModulesType($T['SystemId'], $FB) )) $txt .= " (Flatpacked) ";
+        (!Get_ModulesType($T['SystemId'], $FB) )) {
+          $txt .= " (Flatpacked) ";
+          $FlatPacked = 1;
+
+      }
 
       if ($Div) {
 //        var_dump($Fid, $T['Whose']);
@@ -316,7 +321,8 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0,
  //         if ($Div) $txt .= "<div class=$LocClass>" ;
           foreach ($OnBoard as $H) {
             $Hid = $H['id'];
-            if (!$Depth) $txt .= "<form method=post action=Meetings.php?ACTION=UNLOAD&id=$Hid>";
+            if ($GM && !$Depth && ($FlatPacked==0) && ($ThingTypes[$H['Type']]['Properties'] && THING_NEEDS_CARGOSPACE))
+              $txt .= "<form method=post action=Meetings.php?ACTION=UNLOAD&id=$Hid>";
             $hprops = $ThingTypes[$H['Type']]['Properties'];
             $txt .= "<li>" . SeeThing($H,$LastWhose,$Eyes,$Fid,0,$GM,0,1,$Depth+1);
   /*             $txt .=  "<li><a href=ThingEdit.php?id=" . $H['id'] . ">" . $H['Name'] . "</a> a " . (($hprops & THING_HAS_LEVELS)? "Level " . $H['Level'] : "") .

@@ -57,7 +57,8 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$ThingInstrs,$ThingInclrs,$Cu
         if ($CTech['Level'] < $Br['Level']) {
           $CTech['Level'] = $Br['Level'];
           Put_Faction_Tech($CTech);
-          echo 'Using ' . $Br['Cost'] . ' ' . $TechFields[$Br['Field']][0] . " science points " . $Tech['Name'] . " has been raised to level " . $Br['Level'];
+          echo 'Using ' . $Br['Cost'] . ' ' . $TechFields[$Br['Field']][0] . " science points " . $Tech['Name'] .
+            " has been raised to level " . $Br['Level'];
           Gain_Science($Fid,$TechFields[$Br['Field']][0],-$Br['Cost'],"Raising " . $Tech['Name'] . " to level " . $Br['Level']);
 
         } else {
@@ -93,6 +94,7 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$ThingInstrs,$ThingInclrs,$Cu
 
   echo "<h1>Spend Science Points, <a href=ScienceLog.php>Resource Logs</a></h1>";
 
+//  echo "<div floatright>
   echo "<table border style='width:300'><tr><th>Tech Level<th>Points Required";
   for ($i = 1;$i<6; $i++) echo "<tr><td>$i<td>" . $SPCosts[$i];
   echo "</table>";

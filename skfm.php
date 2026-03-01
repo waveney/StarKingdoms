@@ -761,8 +761,8 @@ function ListNames(&$D,$fld='Name') {
   return $L;
 }
 
-function TypeFromName($Tab,$Nam,$Type='Type',$Name='Name') {
-  $Ent = Gen_Get_Cond1($Tab,"$Name=$Nam");
+function TypeFromName($Tab,$Nam,$Type='id',$Name='Name') {
+  $Ent = Gen_Get_Cond1($Tab,"$Name='$Nam'");
   return $Ent[$Type]??0;
 }
 

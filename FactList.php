@@ -33,6 +33,8 @@
     }
   }
 
+  $TotNav = $TotArm = 0;
+
   echo "<h1>Factions</h1>";
 
   $coln = 0;
@@ -72,12 +74,16 @@
     $Logistics = Logistics($Fid,$Things);
     $LogAvail = LogisticalSupport($Fid);
 
+    $TotNav += $Logistics[0];
+    $TotArm += $Logistics[1];
+
     echo "<td><span style=color:" .(($Logistics[0] > $LogAvail[0])?'red>':'black>') . $Logistics[0] . "</span>/" . $LogAvail[0];
     echo "<td><span style=color:" .(($Logistics[1] > $LogAvail[1])?'red>':'black>') . $Logistics[1] . "</span>/" . $LogAvail[1];
 
  //   echo "<td><a href=Access.php?id=$Fid&Key=" . $F['AccessKey'] . " ><b>Use</b></a>";
   }
 
+  echo "<tr><td><td><td>Totals<td><td><td><td><td><td><td><td>$TotNav<td>$TotArm\n";
   echo "</tbody></table></div>\n";
 
   echo "<form method=post action=FactList.php>";

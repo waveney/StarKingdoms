@@ -244,6 +244,7 @@ if (isset($_REQUEST['Action'])) {
             $T['Evasion'] = ($Neb?65:75);
             $T['ProjectId'] = $Bid;
             $T['ToHitBonus'] = 20;
+            $T['Level'] = 0;
             if ($Neb) $T['Variant'] = $NebFVar;
             //var_dump($T);
             Put_Thing($T);
@@ -254,7 +255,7 @@ if (isset($_REQUEST['Action'])) {
               $Count++;
               $T = ['Whose'=>$Fid, 'Type'=>$NTypes['Fighter Defences'], 'BuildState'=>BS_COMPLETE, 'CurHealth'=>1, 'OrigHealth'=>1, 'ActDamage'=>$Off,
                 'SystemId'=>$Sid, 'WithinSysLoc'=>1, 'Class'=>'Defence Fighter Squadron', 'Name'=>($B['Name']?$B['Name']:"Squadron $Bid") . ":$Count" ,
-                'Evasion'=>($Neb?65:75), 'ProjectId'=>$Bid, 'Speed'=>$Speed, 'LinkId'=>0, 'ToHitBonus'=> 20];
+                'Evasion'=>($Neb?65:75), 'ProjectId'=>$Bid, 'Speed'=>$Speed, 'LinkId'=>0, 'ToHitBonus'=> 20, 'Level'=>0];
               if ($Neb) $T['Variant'] = $NebFVar;
               //var_dump($T);
               Put_Thing($T);
