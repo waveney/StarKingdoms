@@ -4,12 +4,12 @@ include_once("sk.php");
 include_once("GetPut.php");
 include_once("PlayerLib.php");
 include_once("OrgLib.php");
-
+include_once("SeeThings.php");
 
 function Show_Thing(&$T,$Force=0) {
   include_once("ProjLib.php");
   global $BuildState,$GAME,$GAMEID,$FACTION;
-  global $Project_Status,$Advance;
+  global $Project_Status,$Advance,$LogistCost;
   global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingInstrs,$ThingInclrs, $InstrMsg, $ValidMines;
   global $Currencies,$InstrNotBy,$NOTBY,$MoveNames,$MoveProps;
 
@@ -1015,10 +1015,37 @@ function Show_Thing(&$T,$Force=0) {
     }
   }
 
+  $Has_Warehouse = ($tprops & THING_HAS_SHIPMODULES) && Has_Tech($Fid,'Warehouses');
+  if ($Has_Warehouse) { // Is there one here?  If not set Has to false
+    if ($T['LinkId'] >=0 || ($MoveProps[$T['LinkId']] & 1)) {
+      $Sys = Get_System($T['SystemId']);
+      $Worlds = $Sys['WorlList'];
+      if ($Worlds) {
+        $WareId = TypeFromName('DistrictTypes','Warehouse');
+        foreach ($Worlds as $W) {
+          if ($W>0) {
+            $Dists = Get_DistrictsP($W);
+          } else {
+            $Dists = Get_DistrictsM(-$W);
+          }
+          if ($Dists[$WareId]) {
+            $Has_Warehouse = $Dists[$WareId]['Number'];
+            break; // Found
+          }
+        }
+      } else {
+        $Has_Warehouse = 0;
+      }
+    } else {
+      $Has_Warehouse = 0;
+    }
+  }
+  $Moth = ($T['BuildState'] == BS_MOTHBALLED);
+
 // var_dump($HasDeep,$HasMinesweep,$HasSalvage);
   $Moving = ($T['LinkId'] > 0);
 
-  if (($T['BuildState'] == BS_SERVICE || $T['BuildState'] == BS_COMPLETE) && empty($T['PrisonerOf'])) foreach ($ThingInstrs as $i=>$Ins) {
+  if (($T['BuildState'] == BS_SERVICE || $T['BuildState'] == BS_COMPLETE || $Moth) && empty($T['PrisonerOf'])) foreach ($ThingInstrs as $i=>$Ins) {
 
  //   var_dump($Ins,($InstrNotBy[$i] & $NOTBY));
     if ($InstrNotBy[$i] >0 && ($InstrNotBy[$i] & $NOTBY) ==0) continue; // Not in this game - MAY BE DUFF..
@@ -1031,7 +1058,7 @@ function Show_Thing(&$T,$Force=0) {
 
     case 'Colonise': // Colonise
 //      if ((($Moving || $tprops & THING_HAS_CIVSHIPMODS) == 0 ) ) continue 2;
-      if (!$HasPlanet || ($T['LinkId'] <0)) continue 2;
+      if (!$HasPlanet || ($T['LinkId'] <0) || $Moth) continue 2;
       $FS = Get_FactionSystemFS($Fid,$T['SystemId']);
       if (($FS['PlanetScan']??0)<1 ) continue 2;
       $PlTs = Get_PlanetTypes();
@@ -1054,6 +1081,7 @@ function Show_Thing(&$T,$Force=0) {
       break;
 
     case 'Voluntary Warp Home': // Warp Home
+      if ($Moth) continue 2;
       if (!Feature('WarpOut') || (( $tprops & THING_HAS_SHIPMODULES) == 0 ) ||
          ($T['CurHealth'] == 0) || (($tprops & THING_CAN_MOVE) == 0) || ($T['BuildState'] != BS_COMPLETE) ) continue 2;
       $Gates = Gates_Avail($T['Whose']);
@@ -1064,7 +1092,6 @@ function Show_Thing(&$T,$Force=0) {
       break;
 
     case 'Decommision': // Dissasemble
-
       if ($Moving || (($tprops & THING_HAS_SHIPMODULES) == 0 ) || (($tprops2 & THING_NO_LOGISTICS) != 0)) continue 2;
       // If home - yours or friendly - does not need a shipyard - just affects payout
       // Is there a Home here with a shipyard
@@ -1113,6 +1140,7 @@ function Show_Thing(&$T,$Force=0) {
       continue 2;
 
     case 'Analyse Anomaly': // Analyse
+      if ($Moth) continue 2;
       if (($T['Sensors'] == 0) || empty($N) ) continue 2;
       $Anoms = Gen_Get_Cond('Anomalies',"SystemId=" . $T['SystemId']);
       if ($Anoms) {
@@ -1132,6 +1160,7 @@ function Show_Thing(&$T,$Force=0) {
       continue 2; // NOt yet
 
     case 'Establish Embassy': // Establish Embassy
+      if ($Moth) continue 2;
       if (!Get_ModulesType($Tid,'Diplomatic Facilities') || empty($N) ) continue 2;  // Check if have Embassy & at homeworld
       if (!isset($N['id'])) continue 2;
       if (Get_Things_Cond($Fid,"Type=" . TTName('Embassy') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE)) continue 2; // Already have one
@@ -1150,12 +1179,14 @@ function Show_Thing(&$T,$Force=0) {
       continue 2;
 
     case 'Make Outpost': // Make Outpost
+      if ($Moth) continue 2;
       if (!Has_Tech($Fid,'Make Outposts') || $Moving || empty($N) || !$HasDeep || ($N['Control'] > 0 && $N['Control'] != $Fid) || empty($N) ) continue 2;
 
       if (Get_Things_Cond($Fid,"Type=" . TTName('Outpost') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE)) continue 2; // Already have one
       break;
 
     case 'Make Asteroid Mine':
+      if ($Moth) continue 2;
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Asteroid Mining') || empty($N) ) continue 2;
       $Asts = [];
       $Ps = Get_Planets($N['id']);
@@ -1169,6 +1200,7 @@ function Show_Thing(&$T,$Force=0) {
       break;
 
     case 'Make Advanced Asteroid Mine':
+      if ($Moth) continue 2;
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Advanced Asteroid Mining') || empty($N) ) continue 2;
       $Asts = [];
       $Ps = Get_Planets($N['id']);
@@ -1180,12 +1212,14 @@ function Show_Thing(&$T,$Force=0) {
       break;
 
     case 'Make Minefield':
+      if ($Moth) continue 2;
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Mine Layers') || empty($N) ) continue 2;
       if (Get_Things_Cond(0,"Type=" . TTName('Minefield') . " AND SystemId=" . $N['id'] .
         " AND BuildState=3 AND WithinSysLoc=" . $T['WithinSysLoc'])) continue 2;
       break;
 
     case 'Make Orbital Repair Yard':
+      if ($Moth) continue 2;
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Orbital Repair Yards') || empty($N) ) continue 2;
       if (Get_Things_Cond(0,"Type=" . TTName('Orbital Repair Yards') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE)) continue 2; // Already have one
       // Is there a world there
@@ -1198,6 +1232,7 @@ function Show_Thing(&$T,$Force=0) {
       continue 2; // Not valid here
 
     case 'Build Space Station':
+      if ($Moth) continue 2;
       if ($Moving || !$HasDeep || empty($N) ) continue 2;
       if (!Has_Tech($Fid,'Space Stations')) continue 2;
       if (Get_Things_Cond(0,"Type=" . TTName('Space Station') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE)) continue 2; // Already have one
@@ -1210,25 +1245,30 @@ function Show_Thing(&$T,$Force=0) {
       continue 2; // Not valid here
 
     case 'Expand Space Station':
+      if ($Moth) continue 2;
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Space Stations') || empty($N) ) continue 2;//
       if (!(Get_Things_Cond($Fid,"Type=" . TTName('Space Station') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE))) continue 2; // Don't have one
       break;
 
     case 'Make Deep Space Sensor':
+      if ($Moth) continue 2;
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Remote Sensors') || empty($N) ) continue 2;
       //      if (Get_Things_Cond(0,"Type=" . TTName('Deep Space Sensor') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE)) continue 2; // Already have one
       break;
 
     case 'Build Stargate':
+      if ($Moth) continue 2;
       if ($Moving || ($HasDeep < 10) || !Has_Tech($Fid,'Stargate Construction')) continue 2;
       break;
 
     case 'Dismantle Stargate':
+      if ($Moth) continue 2;
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Stargate Construction')) continue 2;
       if (empty($Links)) continue 2;
       break;
 
     case 'Make Planet Mine':
+      if ($Moth) continue 2;
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Signal Jammer') || empty($N) ) continue 2;
       $PMines = Get_Things_Cond(0,"Type=" . TTName('Planet Mine') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE);
       $Ps = Get_Planets($N['id']);
@@ -1247,12 +1287,13 @@ function Show_Thing(&$T,$Force=0) {
       break;
 
     case 'Construct Command Relay Station':
+      if ($Moth) continue 2;
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Signal Jammer') || empty($N) ) continue 2;
       if (Get_Things_Cond(0,"Type=" . TTName('Command Relay Station') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE)) continue 2; // Already have one
       break;
 
     case 'Repair Command Node': // Not coded yet
-//      continue 2;
+      if ($Moth) continue 2;
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Signal Jammer') || empty($N) ) continue 2;
 
       $Betas = Get_Things_Cond($Fid,"Type=" . TTName('Beta Node') . " AND SystemId=" . $N['id'] . " AND BuildState=" . BS_COMPLETE);
@@ -1270,6 +1311,7 @@ function Show_Thing(&$T,$Force=0) {
       break;
 
     case 'Build Planetary Mine': // Zabanian special
+      if ($Moth) continue 2;
       if ((($Moving || $tprops & THING_HAS_CIVSHIPMODS) == 0 ) ) continue 2;
       if (!Get_ModulesType($Tid,'Advanced Salvage Rig ')) continue 2; // WRONG
       break;
@@ -1278,14 +1320,17 @@ function Show_Thing(&$T,$Force=0) {
       break;
 
     case 'Make Something': // Generic GM special for weird DSC projects
+      if ($Moth) continue 2;
       if ($Moving || (!$HasDeep && !$HasPlanet)) continue 2;
       break;
 
     case 'Make Warpgate': // Warp gate through DSC
+      if ($Moth) continue 2;
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Construct Warp Gate using DSC')) continue 2;
       break;
 
     case 'Retire' :
+      if ($Moth) continue 2;
       if ($tprops & THING_HAS_GADGETS) break;
       continue 2;
 
@@ -1294,43 +1339,52 @@ function Show_Thing(&$T,$Force=0) {
       break;
 
     case 'Build Advanced Minefield' :
+      if ($Moth) continue 2;
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Advanced Minefields') || empty($N) ) continue 2;
       if (Get_Things_Cond(0,"Type=" . TTName('Minefield') . " AND SystemId=" . $N['id'] .
         " AND BuildState=" . BS_COMPLETE . " AND WithinSysLoc=" . $T['WithinSysLoc'])) continue 2;
       break;
 
     case 'Clear Minefield':
+      if ($Moth) continue 2;
       if ($Moving || !$HasDeep || !$HasMinesweep || empty($N) ) continue 2;
       if (! Get_Things_Cond(0,"Type=" . TTName('Minefield') . " AND SystemId=" . $N['id'] .
         " AND BuildState=" . BS_COMPLETE . " AND WithinSysLoc=" . $T['WithinSysLoc'])) continue 2;
       break;
 
     case 'Make Advanced Deep Space Sensor':
+      if ($Moth) continue 2;
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Advanced Remote Sensors') || empty($N) ) continue 2;
       break;
 
     case 'Salvage':
+      if ($Moth) continue 2;
       if ($Moving || !$HasSalvage) continue 2;
       break;
 
     case 'Scavenge':
+      if ($Moth) continue 2;
       if ($Moving || !$HasScavenge) continue 2;
       break;
 
     case 'Terraform':
+      if ($Moth) continue 2;
       if ($Moving || !$HasTerraform) continue 2;
       break;
 
     case 'Stop Support':
+      if ($Moth) continue 2;
       if ($tprops & THING_NEEDS_SUPPORT) break;
       continue 2;
 
     case 'Link Repair':
+      if ($Moth) continue 2;
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Stargate Construction')) continue 2;
       break;
 
     case 'Collaborative Space Construction':
     case 'Collaborative DSC':
+      if ($Moth) continue 2;
       if ($Moving || !$HasDeep || empty($N) ) continue 2;
       // if has colab || other faction at same loc has colab
       $HasColab = [];
@@ -1353,6 +1407,7 @@ function Show_Thing(&$T,$Force=0) {
       break;
 
     case 'Collaborative Planetary Construction':
+      if ($Moth) continue 2;
       if ($Moving || !$HasPlanet|| empty($N) ) continue 2;
       // if has colab || other faction at same loc has colab
       $HasColab = [];
@@ -1377,20 +1432,24 @@ function Show_Thing(&$T,$Force=0) {
       break;
 
     case 'Space Survey':
+      if ($Moth) continue 2;
       if ($Moving || (($tprops & THING_HAS_SHIPMODULES) ==0) || ($T['Sensors']==0) ) continue 2;
       break;
 
     case 'Planetary Survey':
+      if ($Moth) continue 2;
       if ($Moving || (($tprops & THING_HAS_ARMYMODULES) ==0) || ($T['Sensors']==0) ) continue 2;
       break;
 
     case 'Build Wormhole Stabiliser':
+      if ($Moth) continue 2;
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Wormhole Stabilisers') ) continue 2;
       $Ref = $N['Ref'];
       $Ls = Get_Links($Ref);
       $Sites = [];
 
       foreach ($Ls as $Lid=>$L) {
+        if ($Moth) continue 2;
         if ($L['Instability']<2) continue; // Only works on 2+
         $OSysRef = ($L['System1Ref']==$Ref? $L['System2Ref']:$L['System1Ref']);
         $FLK = Gen_Get_Cond1('FactionLinkKnown',"FactionId=$Fid AND LinkId=". $L['id']);
@@ -1409,6 +1468,7 @@ function Show_Thing(&$T,$Force=0) {
       break;
 
     case 'Build Wormhole Destabiliser':
+      if ($Moth) continue 2;
       if ($Moving || !$HasDeep || !Has_Tech($Fid,'Wormhole Destabilisation') ) continue 2;
       $Ref = $N['Ref'];
       $Ls = Get_Links($Ref);
@@ -1432,6 +1492,7 @@ function Show_Thing(&$T,$Force=0) {
       break;
 
     case 'Build Strip Mine':
+      if ($Moth) continue 2;
       if ($Moving || !$HasPlanet || !Has_Tech($Fid,'Strip-Mining') ) continue 2;
       if (!is_on_ground($T)) continue 2;
       $Existing = Get_Things_Cond(0,"SystemId=" . $T['SystemId'] . " AND WithinSysLoc=" . $T['WithinSysLoc'] . " AND Type=" . TTName('Strip Mine'));
@@ -1468,6 +1529,25 @@ function Show_Thing(&$T,$Force=0) {
 //      var_dump($Body,$PlanTypes[$Body['Type']]);
       if ($PlanTypes[$Body['Type']]['Hospitable'] > 0 ) continue 2;
       if (!(($Body['Minerals']??0) >0)) continue 2;
+      break;
+
+    case 'Mothball':
+      if ($Moving || $Moth || !$Has_Warehouse) continue 2;
+      // Check amount mothballed
+
+      $NeedLog = $LogistCost($T['Level']);
+      $MBalled = Get_Things_Cond(0,"GameId=$GAMEID AND BuildState=" . BS_MOTHBALLED . " AND SystemId=" . $T['SystemId']);
+      $UsedLog = 0;
+
+      foreach($MBalled as $MB) {
+        $UsedLog += $LogistCost($MB['Level']);
+      }
+
+      if ($UsedLog+$NeedLog > 4*$LogistCost($Has_Warehouse)) continue 2;
+      break;
+
+    case 'Recommision':
+      if (!$Moth) continue 2;
       break;
 
     default:

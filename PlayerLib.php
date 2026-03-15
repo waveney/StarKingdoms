@@ -621,20 +621,21 @@ function Logistics($Fid,&$Things) {
   foreach ($Things as $T) {
     if (empty($T['Type'])) continue;
     $Props = $TTypes[$T['Type']]['Properties'];
-    if ($T['BuildState'] == BS_SERVICE || $T['BuildState'] == BS_COMPLETE) {
+    if ($T['BuildState'] == BS_SERVICE || $T['BuildState'] == BS_COMPLETE || $T['BuildState'] == BS_MOTHBALLED) {
       if ($TTypes[$T['Type']]['Prop2'] & THING_ALWAYS_OTHER) continue;
       if ($HasHomeLogistics && ($T['SystemId'] == $Facts[$T['Whose']]['HomeWorld'])) $T['Level'] /=2;
+      $Factor = ($T['BuildState'] == BS_MOTHBALLED?4:1);
       if ($HomeArmyLogistics && ($Props & THING_HAS_ARMYMODULES) && ($T['SystemId'] == $FactionHome)) {
         continue; // Nocost
       } else {
-        if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $LogistCost[$T['Level']];
-        if ($Props & THING_HAS_GADGETS) $Logistics[2] += $LogistCost[$T['Level']];
+        if ($Props & THING_HAS_ARMYMODULES) $Logistics[1] += $LogistCost[$T['Level']]/$Factor;
+        if ($Props & THING_HAS_GADGETS) $Logistics[2] += $LogistCost[$T['Level']]/$Factor;
         if ($Props & ( THING_HAS_MILSHIPMODS | THING_HAS_CIVSHIPMODS)) {
           if (( $TTypes[$T['Type']]['Prop2'] & THING_NO_LOGISTICS) && ($T['LinkId']<0) ) continue;
           if ($HasOwnGalaxy && str_contains($T['Class'],'Freighter')) {
-            $Logistics[0] += $LogistCost[$T['Level']-1];
+            $Logistics[0] += $LogistCost[$T['Level']-1]/$Factor;
           } else {
-            $Logistics[0] += $LogistCost[$T['Level']];
+            $Logistics[0] += $LogistCost[$T['Level']]/$Factor;
           }
         }
       }

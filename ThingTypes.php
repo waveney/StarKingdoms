@@ -36,7 +36,7 @@
        "2000000=Is Small, 4000000=Blueprints, 8000000=Needs Planet, 10000000=Age, 20000000=Team, 40000000=Variants<p>";
   echo "Props2 (Hex) 1=Show Contents, 2=Recovery,4=Other, 8=No Logistics, 10=Show Speed (No move), 20=Not in space, 40=At Link, 80=Is Big, " .
        "100=Immortal, 200=Has Designs, 400=min Health 1<p>\n";
-  echo "Eyes:  1 = in space, 2= sens, 4= neb sens, 8=ground 1, 16 ground 2 etc<br>\n"; // TODO no ground differntion yet
+  echo "Eyes:  1 = in space, 2= sens, 4= neb sens, 8=ground 1, 16 ground 2 etc,128 = Warehouse<br>\n"; // TODO no ground differntion yet
   echo "SeenBy: What Eyes can see this<br>\n";
 //  echo "Game 0 = All, N = Game N<br>";
   echo "<form method=post action=ThingTypes.php>";

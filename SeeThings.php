@@ -160,6 +160,13 @@ function SeeThing(&$T,&$LastWhose,$Eyes,$Fid,$Images=0,$GM=0,$Div=1,$Contents=0,
           } elseif ($T['BuildState'] == BS_DELETE) {
             $txt .= "<div class='FullD SeeThingTxt$clsx $LocClass' hidden>The pending deletion remains of: ";
             $Imgxtra = 1;
+          } elseif ($T['BuildState'] == BS_MOTHBALLED) {
+            if ($Eyes & 128) { // See in Warehouses
+              $txt .= "<div class='SeeThingTxt$clsx $LocClass' >The Mothballed: ";
+            } else {
+              $txt .= "<div class='Moth SeeThingTxt$clsx $LocClass' hidden>The Mothballed: "; // Note Moth class - not FullD
+            }
+            $Imgxtra = 1;
           } elseif ($T['BuildState'] >= BS_EX) {
             $txt .= "<div class='FullD SeeThingTxt$clsx $LocClass' hidden>The remains of: ";
             $Imgxtra = 1;

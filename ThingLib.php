@@ -10,7 +10,8 @@ global $ModFormulaes,$ModValues,$Fields,$Tech_Cats,$CivMil,$BuildState,$ThingIns
 $Fields = ['Engineering','Physics','Xenology','Special','Unknown'];
 $Tech_Cats = ['Core','Supp','Non Std','Levelled Non Std'];
 $CivMil = ['','Civilian','Military'];
-$BuildState = ['Planning','Building','Servicing','Complete','Ex','Abandonded','Missing In Action','Captured','Pending Deletion',-1=>'Undefined'];
+$BuildState = ['Planning','Building','Servicing','Complete','Ex','Abandonded','Missing In Action','Captured','Pending Deletion','Mothballed',
+               -1=>'Undefined'];
 $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse Anomaly','Establish Embassy','Make Outpost',
                 'Make Asteroid Mine','Make Minefield',//8
                 'Make Orbital Repair Yard','Build Space Station','Expand Space Station','Make Deep Space Sensor',
@@ -21,13 +22,14 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
                 'Make Advanced Deep Space Sensor','Salvage',//29
                 'Terraform','Link Repair','Collaborative DSC','Space Survey','Planetary Survey','Collaborative Planetary Construction',
                 'Collaborative Space Construction','Build Wormhole Stabiliser', 'Scavenge', 'Build Wormhole Destabiliser',
-                'Build Strip Mine',
+                'Build Strip Mine','Mothball','Recommisioned',
 ];
 $IntructProps = [0,2,0,0,0,0,1, 1,1,
                  1,1,1,1, 1,1,//14
                  1,1,1,1, 1,0,0, //21
                  3,1,0,0,1,0, 1,1, //29
-                 0,1,0,0,0,0, 1,1,0,1,1]; // 1 = DSC, 2= Pc
+                 0,1,0,0,0,0, 1,1,0,1,
+                 1,0,0,]; // 1 = DSC, 2= Pc
 $InstrNotBy =   [0,0,1,0,0,1,0,
                  0,0,
                  0,0,0,0,
@@ -37,7 +39,9 @@ $InstrNotBy =   [0,0,1,0,0,1,0,
                  2,1,0,1,1,1,
                  0,0,
                  0,1,1,2,2,2,
-                 2,2,2,2,2,2];
+                 2,2,2,2,2,2,
+                 2,2,
+];
 
 $Advance = ['','','Advanced ','Very Advanced ','Ultra Advanced ','Evolved '];
 $ValidMines = [0,1,0,1,0,1,0,0,0,0,0];
@@ -114,6 +118,7 @@ define('BS_ABANDON',5);
 define('BS_MISSING',6);
 define('BS_CAPTURED',7);
 define('BS_DELETE',8);
+define('BS_MOTHBALLED',9);
 
 define('MOD_LEVELED',    1);
 define('MOD_NONSTDDEF',  2);
@@ -530,7 +535,7 @@ function Calc_Health(&$T,$KeepTechLvl=0,$Other=0) {
       $Mhlth = $M['Number'] * Mod_ValueSimple($l+$Plus,$T['Level'],$M['Type'],$Rescat);
       if ($mt['DefWep'] == 1 ) {
         $Health += $Mhlth;
-      } elseif ($mt['DefWep'] == 2 ) {
+      } elseif ($mt['DefWep'] == 3 ) {
         $Shield += $Mhlth;
       }
     }
@@ -638,7 +643,7 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0,$InstaChk=1 ) {
   } else {
     $GM = Access('GM');
   }
-  if ($T['LinkId'] <0) return [[],[],[]];
+  if ($T['LinkId'] <0 && ($T['LinkId']!= LINK_NOT_MOVING)) return [[],[],[]];
 //var_dump($T);exit;
   $Fid = $T['Whose'];
   if (!$N) $N = Get_System($T['SystemId']);
@@ -1476,6 +1481,12 @@ function Thing_Delete($tid,$now=0,$Reason='') {
       include_once("SystemLib.php");
       $Brans = Gen_Get_Cond('Branches',"HostType=3 AND HostId=$tid");
       if ($Brans) foreach ($Brans as $Bid=>$B) {
+        if ($B['Whose'] != $T['Whose']) {
+          include_once('TurnTools.php');
+          $Org = Gen_Get('Organisations',$B['Organisation']);
+          $Sys = Get_System($T['SystemId']);
+          TurnLog($B['Whose'], "The branch of " . $Org['Name'] . " on the outpost in " . $Sys['Ref'] . " was lost when the outpost was destroyed");
+        }
         Branch_Delete($Bid);
       }
 

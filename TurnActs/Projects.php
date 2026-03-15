@@ -531,7 +531,7 @@ function ProjectsCompleted($Pass) {
   //  echo "Projects Complete is currently Manual<p>";
   // Pass 0 = Refits only, 1 = rest
 
-  global $GAME,$GAMEID,$Currencies,$Facts,$ARMY;
+  global $GAME,$GAMEID,$Currencies,$Facts,$ARMY,$BuildState;
   $Designs = Feature('Designs');
 
   $ProjTypes = Get_ProjectTypes();
@@ -626,8 +626,9 @@ function ProjectsCompleted($Pass) {
               'Whose'=>$P['FactionId'], 'Number'=>1];
             Put_Office($Off);
           }
-          $OrgTypes = Gen_Get_Table('OrgTypes');
-          if (($OrgTypes[$Org['OrgType']] & ORG_SET_SOCIALP) || ($Org['OrgType2'] > 0 && ($OrgTypes[$Org['OrgType2']] & ORG_SET_SOCIALP))) {
+          $OrgTypes = Gen_Get_All('OfficeTypes');
+          if (($OrgTypes[$Org['OrgType']]['Props'] & ORG_SET_SOCIALP) ||
+              ($Org['OrgType2'] > 0 && ($OrgTypes[$Org['OrgType2']]['Props'] & ORG_SET_SOCIALP))) {
             $SPs = Get_SocialPs($World);
             $found = 0;
             foreach($SPs as $SP) {
@@ -726,43 +727,53 @@ function ProjectsCompleted($Pass) {
           $Tid = $P['ThingId'];
           if ($Tid) {
             $T = Get_Thing($Tid);
-            if (($T['SystemId'] != 0 && $T['SystemId'] != $Where[0])) {
-              TurnLog($Fid,"Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system");
-              GMLog($Facts[$Fid]['Name'] . "Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system",1);
-            } else if ($P['ThingId']) {
-              $T = Get_Thing($P['ThingId']);
-              $CurDam = $T['OrigHealth'] - $T['CurHealth'];
-              RefitRepair($T,1,0,$P['FactionId']); //         var_dump($D);
 
-              if (($PT['Name'] == 'Re-equip Detachment') && $CurDam) {
-                $T['CurHealth'] - $T['OrigHealth'] - $CurDam;
+            if ($T['BuildState'] >= BS_EX) {
+              TurnLog($Fid,"Not performing " . $PT['Name'] . " to " . $T['Name'] . " as it is " . $BuildState[$T['BuildState']]);
+              GMLog($Facts[$Fid]['Name'] . "Not performing " . $PT['Name'] . " to " . $T['Name'] . " as it is " . $BuildState[$T['BuildState']],1);
+            } else {
+              if (($T['SystemId'] != 0 && $T['SystemId'] != $Where[0])) {
+                TurnLog($Fid,"Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system");
+                GMLog($Facts[$Fid]['Name'] . "Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system",1);
+              } else if ($P['ThingId']) {
+                $T = Get_Thing($P['ThingId']);
+                $CurDam = $T['OrigHealth'] - $T['CurHealth'];
+                RefitRepair($T,1,0,$P['FactionId']); //         var_dump($D);
+
+                if (($PT['Name'] == 'Re-equip Detachment') && $CurDam) {
+                  $T['CurHealth'] - $T['OrigHealth'] - $CurDam;
+                }
+                TurnLog($P['FactionId'], $T['Name'] . " has been " . $PT['Name'] . "ed",$T);
               }
-              TurnLog($P['FactionId'], $T['Name'] . " has been " . $PT['Name'] . "ed",$T);
+
+              if (Blockaded($T)) $T['WithinSysLoc'] = 2;
+              $T['BuildState'] = BS_COMPLETE;
+              Put_Thing($T);
             }
-
-            if (Blockaded($T)) $T['WithinSysLoc'] = 2;
-            $T['BuildState'] = BS_COMPLETE;
-            Put_Thing($T);
-
           }
           if ($P['ThingId2']) {
             $Tid = $P['ThingId2'];
-            if (($T['SystemId'] != 0 && $T['SystemId'] != $Where[0])) {
-              TurnLog($Fid,"Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system");
-              GMLog($Facts[$Fid]['Name'] . "Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system",1);
+            $T = Get_Thing($Tid);
+            if ($T['BuildState'] >= BS_EX) {
+              TurnLog($Fid,"Not performing " . $PT['Name'] . " to " . $T['Name'] . " as it is " . $BuildState[$T['BuildState']]);
+              GMLog($Facts[$Fid]['Name'] . "Not performing " . $PT['Name'] . " to " . $T['Name'] . " as it is " . $BuildState[$T['BuildState']],1);
             } else {
-              $T = Get_Thing($Tid);
-              $CurDam = $T['OrigHealth'] - $T['CurHealth'];
-              RefitRepair($T,1,0,$P['FactionId']);
-              if (($PT['Name'] == 'Re-equip Detachment') && $CurDam) {
-                $T['CurHealth'] - $T['OrigHealth'] - $CurDam;
+                if (($T['SystemId'] != 0 && $T['SystemId'] != $Where[0])) {
+                TurnLog($Fid,"Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system");
+                GMLog($Facts[$Fid]['Name'] . "Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system",1);
+              } else {
+                $CurDam = $T['OrigHealth'] - $T['CurHealth'];
+                RefitRepair($T,1,0,$P['FactionId']);
+                if (($PT['Name'] == 'Re-equip Detachment') && $CurDam) {
+                  $T['CurHealth'] - $T['OrigHealth'] - $CurDam;
+                }
+                TurnLog($Fid, $T['Name'] . " has been " . $PT['Name'] . "ed",$T);
               }
-              TurnLog($Fid, $T['Name'] . " has been " . $PT['Name'] . "ed",$T);
-            }
 
-            if (Blockaded($T)) $T['WithinSysLoc'] = 2;
-            $T['BuildState'] = BS_COMPLETE;
-            Put_Thing($T);
+              if (Blockaded($T)) $T['WithinSysLoc'] = 2;
+              $T['BuildState'] = BS_COMPLETE;
+              Put_Thing($T);
+            }
           }
           break;
 
@@ -772,29 +783,39 @@ function ProjectsCompleted($Pass) {
           $Tid = $P['ThingId'];
           if ($Tid) {
             $T = Get_Thing($Tid);
-            if (($T['SystemId'] != 0 && $T['SystemId'] != $Where[0])) {
-              TurnLog($Fid,"Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system");
-              GMLog($Facts[$Fid]['Name'] . "Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system",1);
-            } else if ($P['ThingId']) {
-              $T = Get_Thing($P['ThingId']);
-              $T['CurHealth'] = $T['OrigHealth'];
-              $T['BuildState'] = BS_COMPLETE;
-              if (Blockaded($T)) $T['WithinSysLoc'] = 2;
-              Put_Thing($T);
-              TurnLog($P['FactionId'], $T['Name'] . " has been " . firstword($PT['Name']) . "ed",$T);
+            if ($T['BuildState'] >= BS_EX) {
+              TurnLog($Fid,"Not performing " . $PT['Name'] . " to " . $T['Name'] . " as it is " . $BuildState[$T['BuildState']]);
+              GMLog($Facts[$Fid]['Name'] . "Not performing " . $PT['Name'] . " to " . $T['Name'] . " as it is " . $BuildState[$T['BuildState']],1);
+            } else {
+              if (($T['SystemId'] != 0 && $T['SystemId'] != $Where[0])) {
+                TurnLog($Fid,"Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system");
+                GMLog($Facts[$Fid]['Name'] . "Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system",1);
+              } else if ($P['ThingId']) {
+                $T = Get_Thing($P['ThingId']);
+                $T['CurHealth'] = $T['OrigHealth'];
+                $T['BuildState'] = BS_COMPLETE;
+                if (Blockaded($T)) $T['WithinSysLoc'] = 2;
+                Put_Thing($T);
+                TurnLog($P['FactionId'], $T['Name'] . " has been " . firstword($PT['Name']) . "ed",$T);
+              }
             }
           }
           if ($P['ThingId2']) {
             $Tid = $P['ThingId2'];
-            if (($T['SystemId'] != 0 && $T['SystemId'] != $Where[0])) {
-              TurnLog($Fid,"Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system");
-              GMLog($Facts[$Fid]['Name'] . "Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system",1);
+            if ($T['BuildState'] >= BS_EX) {
+              TurnLog($Fid,"Not performing " . $PT['Name'] . " to " . $T['Name'] . " as it is " . $BuildState[$T['BuildState']]);
+              GMLog($Facts[$Fid]['Name'] . "Not performing " . $PT['Name'] . " to " . $T['Name'] . " as it is " . $BuildState[$T['BuildState']],1);
             } else {
-              $T = Get_Thing($Tid);
-              $T['CurHealth'] = $T['OrigHealth'];
-              if (Blockaded($T)) $T['WithinSysLoc'] = 2;
-              Put_Thing($T);
-              TurnLog($Fid, $T['Name'] . " has been " . firstword($PT['Name']) . "ed",$T);
+              if (($T['SystemId'] != 0 && $T['SystemId'] != $Where[0])) {
+                TurnLog($Fid,"Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system");
+                GMLog($Facts[$Fid]['Name'] . "Not performing " . $PT['Name'] . " to " . $T['Name'] . " as not in same system",1);
+              } else {
+                $T = Get_Thing($Tid);
+                $T['CurHealth'] = $T['OrigHealth'];
+                if (Blockaded($T)) $T['WithinSysLoc'] = 2;
+                Put_Thing($T);
+                TurnLog($Fid, $T['Name'] . " has been " . firstword($PT['Name']) . "ed",$T);
+              }
             }
           }
           break;
@@ -827,11 +848,17 @@ function ProjectsCompleted($Pass) {
 
           if ($P['Level'] > 1 && $TTypes[$T['Type']]['Name'] == 'Fighter' && Has_Tech($Fid,'Advanced Fighter Construction') ) {
             $Number = ([1,1,3,6,10,15,21,28,36][$P['Level']]??1);
-            $OrigName = $T['Name'];
+            $OrigName = trim($T['Name']);
+            $StartOrd = 0;
+            $mtch= [];
+            if (preg_match('/(.*) *?(\d)*$/',$OrigName,$mtch)) {
+              $StartOrd = $mtch[2]-1;
+              $OrigName = $mtch[1];
+            }
 //            var_dump($Number);
             for ($Dup = 2;$Dup<=$Number;$Dup++) {
               $DT = Thing_Duplicate($T['id']);
-              $DT['Name'] = "$OrigName $Dup";
+              $DT['Name'] = "$OrigName " . ($StartOrd+$Dup);
               $DT['SystemId'] = $DT['WhereBuilt'] = $T['SystemId'];
               $DT['WithinSysLoc'] = $T['WithinSysLoc'];
               $DT['BuildState'] = BS_COMPLETE;

@@ -242,6 +242,7 @@ function ForceReport($Sid,$Cat) {
 //      if ($Tid==2517) var_dump("165");
 
       $txt .= "<tr><td><a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a>";
+      if ($T['BuildState'] == BS_SERVICE) $txt .= " <span class=Err>SERVICING</span>";
 
       $Mods = Get_Modules($T['id']);
       foreach($Mods as $M) {
@@ -306,6 +307,7 @@ function ForceReport($Sid,$Cat) {
             $txt .= "Speed: " . sprintf("%0.3g ",$T['Speed']);
             $Movement += ceil($T['Speed'])*$T['Level'];
           }
+ //         if ($T['BuildState'] == BS_SERVICE) $txt .= " <b>S</b>";
         }
         $txt .=  fm_number1(" Do",$T,'Damage', ''," class=Num3 onchange=Do_Damage($Tid,$LastF,'$Cat')","Damage:$Tid") . " damage";
         if ($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE ) $txt .= fm_checkbox(', Retreat?',$T,'RetreatMe','',"RetreatMe:$Tid");
@@ -344,6 +346,7 @@ function SystemSee($Sid) {
     echo "<li>Look through the force report and mark to return any Militia/Mil Org Forces, and tick the Exclude from Battle boxes" .
           " - if you have done any of these click the Remove forces button<p>";
     echo "<li>For Ground combat click the 'Devastation' button<p>";
+    echo "<Li>Note that Things in Servicing will have an S after the speed<p>";
     echo "<li>Then and only the Export the data to the combat program<p>";
     echo "<li>Run the fight and apply damage and/or set retreat, when happy click the 'Do All Damage' Button<p>";
     echo "<li>After the fight tick the appropriate Fight done box on the system lists</ol>";
@@ -432,7 +435,8 @@ function SystemSee($Sid) {
 //  echo "Checked Homes<p>";
 
   foreach ($Things as $T){
-    if ($T['BuildState'] != BS_COMPLETE || (($T['LinkId'] < 0) && ($T['LinkId'] != LINK_NOT_MOVING))) continue;
+    if ((($T['BuildState'] != BS_COMPLETE) && ($T['BuildState'] != BS_SERVICE)) ||
+      (($T['LinkId'] < 0) && ($T['LinkId'] != LINK_NOT_MOVING))) continue;
 // var_dump($T['id']);
     $Sid = $T['SystemId'];
     $Hostile = (($TTypes[$T['Type']]['Properties']??0) & THING_IS_HOSTILE) && ($T['PrisonerOf'] == 0);

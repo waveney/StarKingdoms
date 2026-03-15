@@ -782,7 +782,7 @@ function RetreatsSelection() {
           } else {
             $res = Moves_4_Thing($T,0, 1);
             [$Links, $SelLinks, $SelCols ] = $res;
-            $Totxt = fm_select($SelLinks,$T,'LinkId',0," style=color:" . $SelCols[$T['LinkId']] ,"RetreatLink$Tid",0,$SelCols) .
+            $Totxt = fm_select($SelLinks,$T,'LinkId',0," style=color:" . ($SelCols[$T['LinkId']??0]??'black') ,"RetreatLink$Tid",0,$SelCols) .
                ' <span class=red>SET THIS!</span>';
           }
 

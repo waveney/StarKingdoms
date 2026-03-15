@@ -907,7 +907,24 @@ function OperationsComplete() {
         }
         break;
 
+      case 'Warehouse Recon':
+        $Where = $O['SystemId'];
+        $N = Get_System($Where);
 
+        $MBalled = Get_Things_Cond(0,"GameId=$GAMEID AND BuildState=" . BS_MOTHBALLED . " AND SystemId=$Where");
+        if ($MBalled) {
+          include_once("SeeThings.php");
+          $LastWhose= 0;
+
+          TurnLog($Fid,"Your Warehouse Recon in " . $N['Ref'] . " found:");
+          foreach($MBalled as $MB) {
+            SeeThing($MB,$LastWhose,255,$Fid,1,0,1,1,0);
+          }
+        } else {
+          TurnLog($Fid, "Your Warehouse Recon in " . $N['Ref'] . " found it was empty!");
+          GMLog($Facts[$Fid]['Name'] . " did a Warehouse Recon in " . $N['Ref'] . " it was empty!");
+        }
+        break;
 
       case 'Outcompete':
       case 'Send Asteroid Mining Expedition':

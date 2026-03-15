@@ -70,7 +70,7 @@ foreach($Logs as $L) {
   echo "<tr class='ShowAll Show$LType'>";
   if ($Fid == 0) echo "<td>" . ($Facts[$L['FactionId']]['Name']??'Unknown');
   echo "<td>" . $L['Turn'];
-  echo "<td>" . $Tracks[$LType][1];
+  echo "<td>" . ($Tracks[$LType][1]??'Unknown');
   echo "<td>" . $L['Number'];
   echo "<td>" . ((($L['Turn']<$Runtot) || ($Tracks[$LType][3] &16))?'?':$L['EndVal']);
   echo "<td>" . $L['Note'];

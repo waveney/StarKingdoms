@@ -730,6 +730,8 @@ function Instructions() {
         $T['Instruction'] = -$T['Instruction'];
         break;
 
+      case 'Mothball': // Handed at completion
+      case 'Recommision':
 
 
       default: // everything else
@@ -1576,6 +1578,19 @@ function InstructionsComplete() {
         GMLog($Facts[$T['Whose']]['Name'] . " has built a strip mine on " . $Body['Name'] . " in " . $N['Ref']);
         break;
 
+      case 'Mothball':
+        $T['BuildState'] = BS_MOTHBALLED;
+        Put_Thing($T);
+        TurnLog($Who,$T['Name'] . " has been mothballed in " . $N['Ref'],$T);
+        GMLog($Facts[$Who]['Name'] . " has mothballed <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "  has been mothballed in " . $N['Ref']);
+        break;
+
+      case 'Recommision':
+        $T['BuildState'] = BS_COMPLETE;
+        Put_Thing($T);
+        TurnLog($Who,$T['Name'] . " has been recommisioned in " . $N['Ref'],$T);
+        GMLog($Facts[$Who]['Name'] . " has recommisioned <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "  has been mothballed in " . $N['Ref']);
+        break;
 
 
       case 'Decommision':
