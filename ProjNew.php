@@ -475,8 +475,8 @@
       // find devestation locally if > 0 then
       // show project
       $H = $Homes[$Hi];
-      if ($H['Devastation'] > 0) {
       echo "<h2>Rebuild and Repair</h2>";
+        if ($H['Devastation'] == 0) echo "Note Currently there is no devastation<br>";
         $pc = Proj_Costs(1);
         echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Rebuild and Repair'] .
                   "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $DTz['id'] .
