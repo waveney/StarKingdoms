@@ -594,6 +594,24 @@
        }
       echo "</table>";
 
+      $SpecTechs = Gen_Get_Cond("Technologies","Cat=3 AND (Properties&16)!=0");
+
+      $RHead = 0;
+      foreach ($SpecTechs as $T) {
+        if ($FactTechs[$T['id']]['Level']) {
+          if (!$RHead)
+            echo "<h2>Research Special Leveled Technology</h2><table class=ProjTab border><th>Project<th>Cost<th>Progress<br>Needed<th>Description";
+          $RHead = 1;
+          $Lvl = $FactTechs[$T['id']]['Level']+1;
+          $pc = Proj_Costs($Lvl);
+          Show_Research($T['Name'],"ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Supplemental Technology'] .
+            "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $T['id'] .
+            "&Name=" . base64_encode("Research " . $T['Name'] . $Place) . "&L=$Lvl&C=" . $pc[1] . "&PN=" . $pc[0],
+            $pc[1],$pc[0],$T['Description']);
+        }
+      }
+      if ($RHead) echo "</table>";
+
       if (Feature('TechSharing')) {
         echo "<h2>Share Technology</h2>";
 
