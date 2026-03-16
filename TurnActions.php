@@ -880,7 +880,7 @@ function MilitiaArmyRecovery() {
         }
         $Rec = $SaveRec;
       } else {
-        $Rec = intdiv($T['OrigHealth'],4);
+        $Rec = max(1,intdiv($T['OrigHealth'],4));
       }
 
 // echo "Recovery of $Rec<br>";

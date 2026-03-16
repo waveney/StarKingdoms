@@ -480,7 +480,11 @@ function WhatCanBeSeenBy($Fid,$Move=0) { // If Move = 1, it will report previous
       continue 2;
     }
     if (!$Sid) continue;
-    $Places[$Sid] |= (($H['EyesFrom']??0) | 15);
+    if (isset($Places[$Sid])) {
+      $Places[$Sid] |= (($H['EyesFrom']??0) | 15);
+    } else {
+      $Places[$Sid] = (($H['EyesFrom']??0) | 15);
+    }
   }
 
   if (Has_Trait($Fid,'Goverwhat now?')) { // Lizard specials

@@ -72,7 +72,7 @@
 
 //var_dump($T);
 
-  echo "Properties: 1=Ground Combat, 2=Space Combat, 4=Espionage, 8=Hide<p>\n";
+  echo "Properties: 1=Ground Combat, 2=Space Combat, 4=Espionage, 8=Hide, 16=Researchable Special tech<p>\n";
   echo "<form method=post id=mainform enctype='multipart/form-data' action=TechEdit.php>";
   echo "<div class=tablecont><table width=90% border class=SideTable>\n";
   if ($Tid) {

@@ -99,8 +99,11 @@ if ($GM) {
 if ($SocPWs ) {
   echo "<tr><td>System<td>World<td>Adherence<td>Actions";
 
+
   foreach ($SocPWs as $pwi=>$Spw) {
     $W = Get_World($Spw['World']);
+    if (!$W) continue;
+    $Where = 'Unknown';
     switch ($W['ThingType']) {
       case 1: // Planet
         $P = Get_Planet($W['ThingId']);

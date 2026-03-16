@@ -576,12 +576,16 @@
     echo "<h2>Research Supplemental Technology</h2><table class=ProjTab border><th>Project<th>Cost<th>Progress<br>Needed<th>Description";
       $Techs = Get_TechsByCore($Fid);
       foreach ($Techs as $T) {
-        if ($T['Cat'] == 0 || (isset($FactTechs[$T['id']]) && $FactTechs[$T['id']]['Level'])) continue;
-        if (!isset($FactTechs[$T['PreReqTech']]) ) continue;
-        if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
-        if ($T['PreReqTech2'] && ((! isset($FactTechs[$T['PreReqTech2']])) || $FactTechs[$T['PreReqTech2']]== 0)) continue;
-        if ($T['PreReqTech3'] && ((! isset($FactTechs[$T['PreReqTech3']])) || $FactTechs[$T['PreReqTech3']]== 0)) continue;
-        $Lvl = $T['PreReqLevel'];
+        if (($T['Cat'] == 3) && ($T['Properties'] & 16) && $FactTechs[$T['id']]['Level']) {
+          $Lvl = $FactTechs[$T['id']]['Level']+1;
+        } else {
+          if ($T['Cat'] == 0 || (isset($FactTechs[$T['id']]) && $FactTechs[$T['id']]['Level'])) continue;
+          if (!isset($FactTechs[$T['PreReqTech']]) ) continue;
+          if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
+          if ($T['PreReqTech2'] && ((! isset($FactTechs[$T['PreReqTech2']])) || $FactTechs[$T['PreReqTech2']]== 0)) continue;
+          if ($T['PreReqTech3'] && ((! isset($FactTechs[$T['PreReqTech3']])) || $FactTechs[$T['PreReqTech3']]== 0)) continue;
+          $Lvl = $T['PreReqLevel'];
+        }
         $pc = Proj_Costs($Lvl);
         Show_Research($T['Name'],"ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Supplemental Technology'] .
                 "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $T['id'] .

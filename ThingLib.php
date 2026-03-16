@@ -702,7 +702,7 @@ function Moves_4_Thing(&$T, $Force=0, $KnownOnly=0, &$N=0,$InstaChk=1 ) {
         if ($NewHist) {
           $mtch = [];
           foreach($NewHist as $H) {
-            if (preg_match('/along link (.*) to (.*)/',$H,$mtch)) {
+            if (preg_match('/along link (.*) to (.*)/',$H['Text'],$mtch)) {
               if ($mtch[2] == $N['Ref']) {
                 $LName = $mtch[1];
                 $L = Gen_Get_Cond1('Links', "GameId=$GAMEID AND Name=$LName");
