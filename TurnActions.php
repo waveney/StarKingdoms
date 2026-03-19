@@ -671,7 +671,7 @@ function AffectActivities() {
 
   GMLog( "<form method=Post action=TurnActions.php?ACTION=DoStage2>" . fm_hidden('Stage','Affect Activities'));
   GMLog( "<h2>Projects</h2>");
-  GMLog( "<table border><tr><td>Activity<td>Who<td>Where<td>Progress<td>Pause<td>Cancel<td>Reason");
+  GMLog( "<table border class=striped><tr><td>Activity<td>Who<td>Where<td>Progress<td>Pause<td>Cancel<td>Reason");
 
   $Projects = Get_Projects_Cond("Status=1 AND GameId=$GAMEID");
   foreach ($Projects as $P) {
@@ -686,7 +686,7 @@ function AffectActivities() {
   GMLog( "<h2>Operations</h2>");
 
   $Ops = Gen_Get_Cond('Operations',"Status=1 AND GameId=$GAMEID");
-  GMLog( "<table border><tr><td>Activity<td>Who<td>Where<td>Progress<td>Pause<td>Cancel<td>Reason");
+  GMLog( "<table border class=striped><tr><td>Activity<td>Who<td>Where<td>Progress<td>Pause<td>Cancel<td>Reason");
   foreach ($Ops as $OP) {
     $Oid = $OP['id'];
     GMLog( "<tr><td><a href=OperEdit.php?id=$Oid>" . $OP['Name'] . "</a><td>" . $Facts[$OP['Whose']]['Name'] .
@@ -702,7 +702,7 @@ function AffectActivities() {
 
   $Things = Get_Things_Cond(0,"Instruction!=0 AND ActionsNeeded!=0 AND GameId=$GAMEID AND (BuildState=" . BS_COMPLETE . " OR BuildState=" . BS_SERVICE . ")");
   if ($Things) {
-    GMLog( "<table border><tr><td>Activity<td>Who<td>Where<td>Progress<td>Pause<td>Cancel<td>Reason");
+    GMLog( "<table border class=striped><tr><td>Activity<td>Who<td>Where<td>Progress<td>Pause<td>Cancel<td>Reason");
     foreach ($Things as $T) {
       $Tid = $T['id'];
       GMLog( "<tr><td><a href=ThingEdit.php?id=$Tid>" . $T['Name'] . " a " . $T['Class'] . "</a> doing - " . $ThingInstrs[abs($T['Instruction'])] .

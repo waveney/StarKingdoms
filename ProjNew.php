@@ -482,7 +482,6 @@
                   "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $DTz['id'] .
                   "&Name=" . base64_encode("Rebuild and Repair") . "&L=1&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
                   "Rebuild and Repair $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>\n";
-      }
 
       if (Feature('WarpGates')) {
         echo "<h2>Construct Warp Gate</h2>";

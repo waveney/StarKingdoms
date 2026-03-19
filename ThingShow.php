@@ -1449,7 +1449,6 @@ function Show_Thing(&$T,$Force=0) {
       $Sites = [];
 
       foreach ($Ls as $Lid=>$L) {
-        if ($Moth) continue 2;
         if ($L['Instability']<2) continue; // Only works on 2+
         $OSysRef = ($L['System1Ref']==$Ref? $L['System2Ref']:$L['System1Ref']);
         $FLK = Gen_Get_Cond1('FactionLinkKnown',"FactionId=$Fid AND LinkId=". $L['id']);

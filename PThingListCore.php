@@ -44,6 +44,7 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
   $txt .=  "To see more information about each thing and to do movement and changes click on the name<p>\n";
   $txt .=  "Click on column heading to sort by column - toggles up/down<br>\n";
   $txt .=  "Ex things only show up under state <b>Other</b><br>\n";
+  $txt .= "Things with Shields will show Health as (+120) if it has 120 points of Shield<br>\n";
   if ($Fid) $txt .=  "If the Thing would benefit from refit/repair/re-equipping/reinforcing then the Refit has the number of modules (+1 " .
     "if it needs repair as well)</br>";
   if ($FACTION['HasPrisoners']??0) $txt .=  "The Prisoner Tab shows Prisoners YOU have<p>\n";
@@ -160,6 +161,13 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
     if (0) $txt .=  "<td>" . (($RowClass == 'Prisoner') ? "<span " . FactColours($T['Whose']) . ">[" .
                  ($Factions[$T['Whose']]['Name']??'Unknown') . "]</span>" : $T['Orders']);
     $txt .=  "<td><center>" . (($Props & THING_HAS_HEALTH)? $T['CurHealth'] . ' / ' . $T['OrigHealth'] : "-");
+    if ($T['ShieldPoints']) {
+      if ($T['CurShield'] < $T['ShieldPoints']) {
+        $txt .= " (+" . $T['CurShield'] . '/' . $T['ShieldPoints'] . ")";
+      } else {
+        $txt .= " (+" . $T['ShieldPoints'] . ")";
+      }
+    }
     if (!$GM) {
       if (($Props & THING_CAN_MOVE) || ($Prop2 & THING_HAS_SPEED)) {
         $txt .=  "<td>" . $T['Stability'] . ",";
@@ -203,12 +211,12 @@ function PTListCore($Fid,&$Faction,$GM=0,$Mode=0) {
         if ($MoveProps[$Lid] & 4) {
           $txt .=  (empty($Systems[$T['SystemId']]) ?'': $Systems[$T['SystemId']]);
           $IS = (is_in_space($T)?'S':'G');
-          $txt .= "<td>" . [0=>'?', -1=>'O', -2=>'G', -3=>'S', -4=>'G' ,-5=>$IS, -6=>$IS, -7=>$IS, -8=>'O'][$Lid];
+          $txt .= "<td>" . [0=>'?', -1=>'O', -2=>'G', -3=>'S', -4=>'G' ,-5=>$IS, -6=>$IS, -7=>'S', -8=>'O'][$Lid];
 
         } else {
           $txt .=  $MoveNames[$Lid];
           $IS = (is_in_space($T)?'S':'G');
-          $txt .= "<td>" . [0=>'?', -1=>'O', -2=>'G', -3=>'S', -4=>'G' ,-5=>$IS, -6=>$IS, -7=>$IS, -8=>'O'][$Lid];
+          $txt .= "<td>" . [0=>'?', -1=>'O', -2=>'G', -3=>'S', -4=>'G' ,-5=>$IS, -6=>$IS, -7=>'S', -8=>'O'][$Lid];
         }
       }
 
