@@ -83,10 +83,13 @@ class DropInfo extends \Google\Model
    */
   public const CAUSE_ROUTE_NEXT_HOP_FORWARDING_RULE_TYPE_INVALID = 'ROUTE_NEXT_HOP_FORWARDING_RULE_TYPE_INVALID';
   /**
-   * Packet is sent from the Internet or Google service to the private IPv6
-   * address.
+   * Packet is sent from the Internet to the private IPv6 address.
    */
   public const CAUSE_NO_ROUTE_FROM_INTERNET_TO_PRIVATE_IPV6_ADDRESS = 'NO_ROUTE_FROM_INTERNET_TO_PRIVATE_IPV6_ADDRESS';
+  /**
+   * Packet is sent from the Internet to the private IPv4 address.
+   */
+  public const CAUSE_NO_ROUTE_FROM_INTERNET_TO_PRIVATE_IPV4_ADDRESS = 'NO_ROUTE_FROM_INTERNET_TO_PRIVATE_IPV4_ADDRESS';
   /**
    * Packet is sent from the external IPv6 source address of an instance to the
    * private IPv6 address of an instance.
@@ -523,6 +526,11 @@ class DropInfo extends \Google\Model
    */
   public const CAUSE_HYBRID_SUBNET_NO_ROUTE = 'HYBRID_SUBNET_NO_ROUTE';
   /**
+   * Packet is dropped because there is no valid matching route from the network
+   * of the Google-managed service to the destination.
+   */
+  public const CAUSE_NO_VALID_ROUTE_FROM_GOOGLE_MANAGED_NETWORK_TO_DESTINATION = 'NO_VALID_ROUTE_FROM_GOOGLE_MANAGED_NETWORK_TO_DESTINATION';
+  /**
    * Cause that the packet is dropped.
    *
    * @var string
@@ -577,6 +585,7 @@ class DropInfo extends \Google\Model
    * ROUTE_NEXT_HOP_VPN_TUNNEL_NOT_ESTABLISHED,
    * ROUTE_NEXT_HOP_FORWARDING_RULE_TYPE_INVALID,
    * NO_ROUTE_FROM_INTERNET_TO_PRIVATE_IPV6_ADDRESS,
+   * NO_ROUTE_FROM_INTERNET_TO_PRIVATE_IPV4_ADDRESS,
    * NO_ROUTE_FROM_EXTERNAL_IPV6_SOURCE_TO_PRIVATE_IPV6_ADDRESS,
    * VPN_TUNNEL_LOCAL_SELECTOR_MISMATCH, VPN_TUNNEL_REMOTE_SELECTOR_MISMATCH,
    * PRIVATE_TRAFFIC_TO_INTERNET, PRIVATE_GOOGLE_ACCESS_DISALLOWED,
@@ -633,7 +642,8 @@ class DropInfo extends \Google\Model
    * CLOUD_NAT_PROTOCOL_UNSUPPORTED, L2_INTERCONNECT_UNSUPPORTED_PROTOCOL,
    * L2_INTERCONNECT_UNSUPPORTED_PORT, L2_INTERCONNECT_DESTINATION_IP_MISMATCH,
    * NCC_ROUTE_WITHIN_HYBRID_SUBNET_UNSUPPORTED, HYBRID_SUBNET_REGION_MISMATCH,
-   * HYBRID_SUBNET_NO_ROUTE
+   * HYBRID_SUBNET_NO_ROUTE,
+   * NO_VALID_ROUTE_FROM_GOOGLE_MANAGED_NETWORK_TO_DESTINATION
    *
    * @param self::CAUSE_* $cause
    */

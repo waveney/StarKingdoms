@@ -54,6 +54,7 @@ class CloudKMS extends \Google\Service
   public $projects_locations_keyRings_cryptoKeys_cryptoKeyVersions;
   public $projects_locations_keyRings_importJobs;
   public $projects_locations_operations;
+  public $projects_locations_retiredResources;
   public $projects_locations_singleTenantHsmInstances;
   public $projects_locations_singleTenantHsmInstances_proposals;
   public $rootUrlTemplate;
@@ -173,7 +174,17 @@ class CloudKMS extends \Google\Service
         'projects',
         [
           'methods' => [
-            'getKajPolicyConfig' => [
+            'getAutokeyConfig' => [
+              'path' => 'v1/{+name}',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'getKajPolicyConfig' => [
               'path' => 'v1/{+name}',
               'httpMethod' => 'GET',
               'parameters' => [
@@ -211,6 +222,20 @@ class CloudKMS extends \Google\Service
                   'location' => 'path',
                   'type' => 'string',
                   'required' => true,
+                ],
+              ],
+            ],'updateAutokeyConfig' => [
+              'path' => 'v1/{+name}',
+              'httpMethod' => 'PATCH',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'updateMask' => [
+                  'location' => 'query',
+                  'type' => 'string',
                 ],
               ],
             ],'updateKajPolicyConfig' => [
@@ -658,6 +683,16 @@ class CloudKMS extends \Google\Service
                   'required' => true,
                 ],
               ],
+            ],'delete' => [
+              'path' => 'v1/{+name}',
+              'httpMethod' => 'DELETE',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
             ],'encrypt' => [
               'path' => 'v1/{+name}:encrypt',
               'httpMethod' => 'POST',
@@ -809,6 +844,16 @@ class CloudKMS extends \Google\Service
             ],'decapsulate' => [
               'path' => 'v1/{+name}:decapsulate',
               'httpMethod' => 'POST',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'delete' => [
+              'path' => 'v1/{+name}',
+              'httpMethod' => 'DELETE',
               'parameters' => [
                 'name' => [
                   'location' => 'path',
@@ -1066,6 +1111,44 @@ class CloudKMS extends \Google\Service
                   'location' => 'path',
                   'type' => 'string',
                   'required' => true,
+                ],
+              ],
+            ],
+          ]
+        ]
+    );
+    $this->projects_locations_retiredResources = new CloudKMS\Resource\ProjectsLocationsRetiredResources(
+        $this,
+        $this->serviceName,
+        'retiredResources',
+        [
+          'methods' => [
+            'get' => [
+              'path' => 'v1/{+name}',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'name' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'list' => [
+              'path' => 'v1/{+parent}/retiredResources',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'pageSize' => [
+                  'location' => 'query',
+                  'type' => 'integer',
+                ],
+                'pageToken' => [
+                  'location' => 'query',
+                  'type' => 'string',
                 ],
               ],
             ],

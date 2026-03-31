@@ -122,12 +122,21 @@ it does all for both ground and space.  Would be nice if the All would only chec
 906 Judith Passive scans?? CHA
 907 Cancel Repair Projects
 909 Shield request in pthinglist
-911
+
+=== 911 start of turn 38
+911 Recalc all on things
+912 Improve Meetings - CSV space/ground separate
+914 Scavenge YZA , ASC need to check
+915 Undefined array key 2 in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActs/Projects.php on line 855', 
+    referer: https://starkingdoms.uk/TurnActions.php?ACTION=Process&S=46
+916 Check Affect Anomalies
+917 Override hidden on a branch
+918 Mothballed / Recommision not appearing as Instructions see 6691-4
+919 Overlapping Operations
+920 See a Warehouse
 
 
-th
 
-=== start of turn 38
 === start of turn 39
 === start of turn 40
 === start of turn 41

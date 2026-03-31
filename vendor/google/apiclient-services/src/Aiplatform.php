@@ -165,6 +165,7 @@ class Aiplatform extends \Google\Service
   public $projects_locations_pipelineJobs;
   public $projects_locations_pipelineJobs_operations;
   public $projects_locations_publishers_models;
+  public $projects_locations_publishers_models_invoke;
   public $projects_locations_ragCorpora;
   public $projects_locations_ragCorpora_operations;
   public $projects_locations_ragCorpora_ragFiles;
@@ -10504,6 +10505,31 @@ class Aiplatform extends \Google\Service
           ]
         ]
     );
+    $this->projects_locations_publishers_models_invoke = new Aiplatform\Resource\ProjectsLocationsPublishersModelsInvoke(
+        $this,
+        $this->serviceName,
+        'invoke',
+        [
+          'methods' => [
+            'invoke' => [
+              'path' => 'v1/{+endpoint}/invoke/{+invokeId}',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'endpoint' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'invokeId' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],
+          ]
+        ]
+    );
     $this->projects_locations_ragCorpora = new Aiplatform\Resource\ProjectsLocationsRagCorpora(
         $this,
         $this->serviceName,
@@ -10928,6 +10954,20 @@ class Aiplatform extends \Google\Service
                   'required' => true,
                 ],
               ],
+            ],'getIamPolicy' => [
+              'path' => 'v1/{+resource}:getIamPolicy',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'resource' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'options.requestedPolicyVersion' => [
+                  'location' => 'query',
+                  'type' => 'integer',
+                ],
+              ],
             ],'list' => [
               'path' => 'v1/{+parent}/reasoningEngines',
               'httpMethod' => 'GET',
@@ -10974,6 +11014,16 @@ class Aiplatform extends \Google\Service
                   'required' => true,
                 ],
               ],
+            ],'setIamPolicy' => [
+              'path' => 'v1/{+resource}:setIamPolicy',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'resource' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
             ],'streamQuery' => [
               'path' => 'v1/{+name}:streamQuery',
               'httpMethod' => 'POST',
@@ -10982,6 +11032,21 @@ class Aiplatform extends \Google\Service
                   'location' => 'path',
                   'type' => 'string',
                   'required' => true,
+                ],
+              ],
+            ],'testIamPermissions' => [
+              'path' => 'v1/{+resource}:testIamPermissions',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'resource' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'permissions' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                  'repeated' => true,
                 ],
               ],
             ],

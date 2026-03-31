@@ -8,24 +8,24 @@
     "packages": [
         {
             "name": "erusev/parsedown",
-            "version": "1.7.4",
+            "version": "1.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/erusev/parsedown.git",
-                "reference": "cb17b6477dfff935958ba01325f2e8a2bfa6dab3"
+                "reference": "96baaad00f71ba04d76e45b4620f54d3beabd6f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/erusev/parsedown/zipball/cb17b6477dfff935958ba01325f2e8a2bfa6dab3",
-                "reference": "cb17b6477dfff935958ba01325f2e8a2bfa6dab3",
+                "url": "https://api.github.com/repos/erusev/parsedown/zipball/96baaad00f71ba04d76e45b4620f54d3beabd6f7",
+                "reference": "96baaad00f71ba04d76e45b4620f54d3beabd6f7",
                 "shasum": ""
             },
             "require": {
                 "ext-mbstring": "*",
-                "php": ">=5.3.0"
+                "php": ">=7.1"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.8.35"
+                "phpunit/phpunit": "^7.5|^8.5|^9.6"
             },
             "type": "library",
             "autoload": {
@@ -52,22 +52,28 @@
             ],
             "support": {
                 "issues": "https://github.com/erusev/parsedown/issues",
-                "source": "https://github.com/erusev/parsedown/tree/1.7.x"
+                "source": "https://github.com/erusev/parsedown/tree/1.8.0"
             },
-            "time": "2019-12-30T22:54:17+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/erusev",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-02-16T11:41:01+00:00"
         },
         {
             "name": "firebase/php-jwt",
-            "version": "v7.0.2",
+            "version": "v7.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/firebase/php-jwt.git",
-                "reference": "5645b43af647b6947daac1d0f659dd1fbe8d3b65"
+                "reference": "28aa0694bcfdfa5e2959c394d5a1ee7a5083629e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/5645b43af647b6947daac1d0f659dd1fbe8d3b65",
-                "reference": "5645b43af647b6947daac1d0f659dd1fbe8d3b65",
+                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/28aa0694bcfdfa5e2959c394d5a1ee7a5083629e",
+                "reference": "28aa0694bcfdfa5e2959c394d5a1ee7a5083629e",
                 "shasum": ""
             },
             "require": {
@@ -115,9 +121,9 @@
             ],
             "support": {
                 "issues": "https://github.com/firebase/php-jwt/issues",
-                "source": "https://github.com/firebase/php-jwt/tree/v7.0.2"
+                "source": "https://github.com/firebase/php-jwt/tree/v7.0.3"
             },
-            "time": "2025-12-16T22:17:28+00:00"
+            "time": "2026-02-25T22:16:40+00:00"
         },
         {
             "name": "google/apiclient",
@@ -190,16 +196,16 @@
         },
         {
             "name": "google/apiclient-services",
-            "version": "v0.428.0",
+            "version": "v0.435.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-api-php-client-services.git",
-                "reference": "94a3c50a80a36cafb76e32fb76b8007e9f572deb"
+                "reference": "1edf0f5f2876945c372366107b4d7a387b17a6b9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/94a3c50a80a36cafb76e32fb76b8007e9f572deb",
-                "reference": "94a3c50a80a36cafb76e32fb76b8007e9f572deb",
+                "url": "https://api.github.com/repos/googleapis/google-api-php-client-services/zipball/1edf0f5f2876945c372366107b4d7a387b17a6b9",
+                "reference": "1edf0f5f2876945c372366107b4d7a387b17a6b9",
                 "shasum": ""
             },
             "require": {
@@ -228,22 +234,22 @@
             ],
             "support": {
                 "issues": "https://github.com/googleapis/google-api-php-client-services/issues",
-                "source": "https://github.com/googleapis/google-api-php-client-services/tree/v0.428.0"
+                "source": "https://github.com/googleapis/google-api-php-client-services/tree/v0.435.0"
             },
-            "time": "2026-01-12T00:58:26+00:00"
+            "time": "2026-03-01T01:14:26+00:00"
         },
         {
             "name": "google/auth",
-            "version": "v1.50.0",
+            "version": "v1.50.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/google-auth-library-php.git",
-                "reference": "e1c26a718198e16d8a3c69b1cae136b73f959b0f"
+                "reference": "870c17ee3a1d73338d39a9ffa77a700ba77f5a83"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/e1c26a718198e16d8a3c69b1cae136b73f959b0f",
-                "reference": "e1c26a718198e16d8a3c69b1cae136b73f959b0f",
+                "url": "https://api.github.com/repos/googleapis/google-auth-library-php/zipball/870c17ee3a1d73338d39a9ffa77a700ba77f5a83",
+                "reference": "870c17ee3a1d73338d39a9ffa77a700ba77f5a83",
                 "shasum": ""
             },
             "require": {
@@ -253,7 +259,7 @@
                 "php": "^8.1",
                 "psr/cache": "^2.0||^3.0",
                 "psr/http-message": "^1.1||^2.0",
-                "psr/log": "^3.0"
+                "psr/log": "^2.0||^3.0"
             },
             "require-dev": {
                 "guzzlehttp/promises": "^2.0",
@@ -290,9 +296,9 @@
             "support": {
                 "docs": "https://cloud.google.com/php/docs/reference/auth/latest",
                 "issues": "https://github.com/googleapis/google-auth-library-php/issues",
-                "source": "https://github.com/googleapis/google-auth-library-php/tree/v1.50.0"
+                "source": "https://github.com/googleapis/google-auth-library-php/tree/v1.50.1"
             },
-            "time": "2026-01-08T21:33:57+00:00"
+            "time": "2026-03-18T20:03:29+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -505,16 +511,16 @@
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "2.8.0",
+            "version": "2.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "21dc724a0583619cd1652f673303492272778051"
+                "reference": "7d0ed42f28e42d61352a7a79de682e5e67fec884"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/21dc724a0583619cd1652f673303492272778051",
-                "reference": "21dc724a0583619cd1652f673303492272778051",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/7d0ed42f28e42d61352a7a79de682e5e67fec884",
+                "reference": "7d0ed42f28e42d61352a7a79de682e5e67fec884",
                 "shasum": ""
             },
             "require": {
@@ -530,6 +536,7 @@
             "require-dev": {
                 "bamarni/composer-bin-plugin": "^1.8.2",
                 "http-interop/http-factory-tests": "0.9.0",
+                "jshttp/mime-db": "1.54.0.1",
                 "phpunit/phpunit": "^8.5.44 || ^9.6.25"
             },
             "suggest": {
@@ -601,7 +608,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/psr7/issues",
-                "source": "https://github.com/guzzle/psr7/tree/2.8.0"
+                "source": "https://github.com/guzzle/psr7/tree/2.9.0"
             },
             "funding": [
                 {
@@ -617,7 +624,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-08-23T21:21:41+00:00"
+            "time": "2026-03-10T16:41:02+00:00"
         },
         {
             "name": "html2text/html2text",
@@ -962,16 +969,16 @@
         },
         {
             "name": "phpseclib/phpseclib",
-            "version": "3.0.48",
+            "version": "3.0.50",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "64065a5679c50acb886e82c07aa139b0f757bb89"
+                "reference": "aa6ad8321ed103dc3624fb600a25b66ebf78ec7b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/64065a5679c50acb886e82c07aa139b0f757bb89",
-                "reference": "64065a5679c50acb886e82c07aa139b0f757bb89",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/aa6ad8321ed103dc3624fb600a25b66ebf78ec7b",
+                "reference": "aa6ad8321ed103dc3624fb600a25b66ebf78ec7b",
                 "shasum": ""
             },
             "require": {
@@ -1052,7 +1059,7 @@
             ],
             "support": {
                 "issues": "https://github.com/phpseclib/phpseclib/issues",
-                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.48"
+                "source": "https://github.com/phpseclib/phpseclib/tree/3.0.50"
             },
             "funding": [
                 {
@@ -1068,7 +1075,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-12-15T11:51:42+00:00"
+            "time": "2026-03-19T02:57:58+00:00"
         },
         {
             "name": "psr/cache",

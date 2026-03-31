@@ -704,7 +704,7 @@ function Income_Calc($Fid) {
       }
 
       if ($W['Blockade'] ) {
-        $ECon = ceil($ECon*(10-$W['Blockade'])/10);
+        $ECon = ceil($ECon*(10-min(9,$W['Blockade']))/10);
         $EccTxt .=  "It is blockaded income is reduced to $ECon\n";
       }
     }

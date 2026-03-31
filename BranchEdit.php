@@ -173,7 +173,7 @@ if (isset($_REQUEST['Action'])) {
               if ($T['CurHealth']) {
                 $T['WithinSysLoc'] = 3;
                 $T['LinkId'] = 0;
-                if (!preg_match('/\:.*\:/',$T['Name']))
+  //              if (!preg_match('/\:.*\:/',$T['Name']))
                   $T['Name'] = ($B['Name']?$B['Name']:"Heavy $Ox Security $Rid") . ":" . $Org['Name'] . ":" . ($Count+1);
                 echo $T['Name'] . " deployed.<br>";
                 $TotC++;
@@ -183,6 +183,7 @@ if (isset($_REQUEST['Action'])) {
               }
               $T['Evasion'] = 40;
               $T['ProjectId'] = $Rid;
+              $T['Whose'] = $Fid;
               Put_Thing($T);
               $Count++;
             }
@@ -201,6 +202,15 @@ if (isset($_REQUEST['Action'])) {
               $TotC++;
             }
           }
+          if ($B['Surpressed']) {
+            $Teams = Get_Things_Cond($B['Whose'],"Type=" . $NTypes['Heavy Security'] . " AND ProjectId=$Rid");
+            foreach ($Teams as $T) {
+              echo $T['Name'] . " not deployed as it is currently surpressed<br>";
+              $T['LinkId'] = LINK_INBRANCH;
+              Put_Thing($T);
+            }
+          }
+
         }
       }
       echo "$TotC Heavy Security Forces have been deployed.<p><h2><a href=Meetings.php?ACTION=Check&S=$Sid>Return to Meetups</a></h2>";
@@ -245,6 +255,8 @@ if (isset($_REQUEST['Action'])) {
             $T['ProjectId'] = $Bid;
             $T['ToHitBonus'] = 20;
             $T['Level'] = 0;
+            $T['Whose'] = $Fid;
+            $T['Name'] = ($B['Name']?$B['Name']:"Squadron $Bid") . ":$Count";
             if ($Neb) $T['Variant'] = $NebFVar;
             //var_dump($T);
             Put_Thing($T);
@@ -261,7 +273,16 @@ if (isset($_REQUEST['Action'])) {
               Put_Thing($T);
             }
           }
-          $TotC += $Count;
+          if ($B['Surpressed']) {
+            $Squads = Get_Things_Cond_Ordered($B['Whose'],"Type=" . $NTypes['Fighter Defences'] . " AND ProjectId=$Bid");
+            foreach ($Squads as $T) {
+              echo $T['Name'] . " not deployed as it the branch is currently surpressed<br>";
+              $T['LinkId'] = LINK_INBRANCH;
+              Put_Thing($T);
+            }
+          } else {
+            $TotC += $Count;
+          }
         }
       }
       echo "$TotC Fighter Defences Squadron have been deployed.<p><h2><a href=Meetings.php?ACTION=Check&S=$Sid>Return to Meetups</a></h2>";

@@ -1019,7 +1019,7 @@ function Show_Thing(&$T,$Force=0) {
   if ($Has_Warehouse) { // Is there one here?  If not set Has to false
     if ($T['LinkId'] >=0 || ($MoveProps[$T['LinkId']] & 1)) {
       $Sys = Get_System($T['SystemId']);
-      $Worlds = $Sys['WorlList'];
+      $Worlds = explode(',',$Sys['WorldList']);
       if ($Worlds) {
         $WareId = TypeFromName('DistrictTypes','Warehouse');
         foreach ($Worlds as $W) {
@@ -1534,15 +1534,15 @@ function Show_Thing(&$T,$Force=0) {
       if ($Moving || $Moth || !$Has_Warehouse) continue 2;
       // Check amount mothballed
 
-      $NeedLog = $LogistCost($T['Level']);
+      $NeedLog = $LogistCost[$T['Level']];
       $MBalled = Get_Things_Cond(0,"GameId=$GAMEID AND BuildState=" . BS_MOTHBALLED . " AND SystemId=" . $T['SystemId']);
       $UsedLog = 0;
 
       foreach($MBalled as $MB) {
-        $UsedLog += $LogistCost($MB['Level']);
+        $UsedLog += $LogistCost[$MB['Level']];
       }
 
-      if ($UsedLog+$NeedLog > 4*$LogistCost($Has_Warehouse)) continue 2;
+      if ($UsedLog+$NeedLog > 4*$LogistCost[$Has_Warehouse]) continue 2;
       break;
 
     case 'Recommision':

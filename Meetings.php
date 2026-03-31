@@ -25,9 +25,13 @@
 */
 
   if (isset($_REQUEST['CSV'])) {
+    $mtch = [];
+    preg_match('/CSV of (.*) forces/',$_REQUEST['CSV'],$mtch);
+    $BattleType = $mtch[1];
+
     $Sid = $_REQUEST['S'];
     $N = Get_System($Sid);
-    $filename = "SK:$GAMEID:" .$GAME['Turn'] . ':' . $N['Ref'] . ':' . rand(1,1000);
+    $filename = "SK:$GAMEID:" .$GAME['Turn'] . ':' . $N['Ref'] . ':' . $BattleType . ':' . rand(1,1000);
     header('Content-Type: text/csv; charset=utf-8');
     header("Content-Disposition: attachment; filename=$filename.csv");
 
@@ -38,6 +42,7 @@
   } else {
     dostaffhead("Meetups");
     $CSV = 0;
+    $BattleType = '';
   }
 
   $Sys = Get_Systems();
@@ -56,7 +61,7 @@
 
   function Set_Excludes() {
     Global $Excludes,$ExcludeList,$Battle;
-    $ExcludeList = explode(',',$Battle['Excludes']);
+    $ExcludeList = explode(',',($Battle['Excludes']??''));
     $Excludes = [];
     if ($ExcludeList) {
       foreach ($ExcludeList as $Ex) if ($Ex) $Excludes[$Ex] = 1 ;
@@ -130,8 +135,14 @@ function ForceReport($Sid,$Cat) {
     }
 
   } else {
-    echo "<h2>" . ($Cat =='G' ?'Ground':'Space') . " Force Report for " . $N['Ref'] . ($Cat =='G' ? " - " . ($PlanMoon['Name'] ?? 'Nameless') .
-         " ($HomeType)" :'') . "</h2>\n";
+    if ($Cat =='G') {
+      echo "<h1 id=Ground>Ground ";
+    } else {
+      echo "<h1 id=Space>Space ";
+    }
+    echo " Force Report for " . $N['Ref'] . ($Cat =='G' ? " - " . ($PlanMoon['Name'] ?? 'Nameless') .
+         " ($HomeType)" :'') . "</h1>\n";
+
     if ($Cat =='G' && $Wid) {
       echo "<h2><a href=WorldEdit.php?ACTION=MilitiaDeploy&id=$Wid>Deploy Militia</a></h2>";
       $MilOrgB = Gen_Get_Cond('Branches',"HostType=" . $H['ThingType'] . " AND HostId=" . $H['ThingId'] . " AND (OrgType=3 OR OrgType2=3)");
@@ -241,7 +252,7 @@ function ForceReport($Sid,$Cat) {
       }
 //      if ($Tid==2517) var_dump("165");
 
-      $txt .= "<tr><td><a href=ThingEdit.php?id=" . $T['id'] . ">" . $T['Name'] . "</a>";
+      $txt .= "<tr><td><a href=ThingEdit.php?id=" . $T['id'] . ">" . ($T['Name']??'Unknown') . "</a>";
       if ($T['BuildState'] == BS_SERVICE) $txt .= " <span class=Err>SERVICING</span>";
 
       $Mods = Get_Modules($T['id']);
@@ -287,7 +298,7 @@ function ForceReport($Sid,$Cat) {
 
       if ($CSV) {
 
-        fputcsv($CSV,[($Facts[$LastF]['Name']??'Unknown'), $TTypes[$T['Type']]['Name'], $T['Name'], $T['Level'], $T['Evasion'],
+        fputcsv($CSV,[($Facts[$LastF]['Name']??'Unknown'), $TTypes[$T['Type']]['Name'], ($T['Name']??'Unknown'), $T['Level'], $T['Evasion'],
           $T['CurHealth'] + $T['CurShield'], $T['OrigHealth'], $BD, $Var,$Shots,$T['ToHitBonus'],
           (($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES)?$T['Mobility']:$T['Speed'])]
           );
@@ -337,14 +348,13 @@ function SystemSee($Sid) {
  // echo "<form>";
 
   if (!$CSV) {
-    $txt = SeeInSystem($Sid,31,1,0,-1,1);
-
-    echo $txt;
-
+    $Sys = Get_System($Sid);
+    echo "<h2>Jump to <a href=#SystemSee>All Forces in " . $Sys['Name'] . " (" . $Sys['Ref'] . ")</a>, <a href=#Ground>Ground Combat</a>, " .
+      "<a href=#Space>Space Combat</a>, <a href=#Systems>System List</a></h2>";
     echo "</form><p><hr><h1>To Run Combat do the following in order:</h1>";
     echo "<ol><li>Make sure you have unloaded troops, and deployed any Militia and Mil Org Forces<p>";
     echo "<li>Look through the force report and mark to return any Militia/Mil Org Forces, and tick the Exclude from Battle boxes" .
-          " - if you have done any of these click the Remove forces button<p>";
+      " - if you have done any of these click the Remove forces button<p>";
     echo "<li>For Ground combat click the 'Devastation' button<p>";
     echo "<Li>Note that Things in Servicing will have an S after the speed<p>";
     echo "<li>Then and only the Export the data to the combat program<p>";
@@ -352,7 +362,14 @@ function SystemSee($Sid) {
     echo "<li>After the fight tick the appropriate Fight done box on the system lists</ol>";
 
 
-    echo "<form method=post action=Meetings.php?ACTION=Check&S=$Sid onkeydown=\"return event.key != 'Enter';\">";
+
+    echo "<div id=SystemSee>";
+    $txt = SeeInSystem($Sid,31,1,0,-1,1);
+
+    echo $txt . "</div>";
+
+    echo "</form><form method=post action=Meetings.php?ACTION=Check&S=$Sid onkeydown=\"return event.key != 'Enter';\">";
+
 
     $_REQUEST['IgnoreShield'] = 0;
     echo "<h2>" . fm_checkbox('Bypass shields - (eg missiles)',$_REQUEST,'IgnoreShield') . "</h2><p>";
@@ -369,56 +386,65 @@ function SystemSee($Sid) {
   //      Register_AutoUpdate('Meetings',$Sid);
 
   ForceReport($Sid,'G');
-  ForceReport($Sid,'S');
 
-  if ($CSV) {
-    fclose($CSV);
-    exit;
-  }
-  echo fm_submit("ACTION",'Do ALL Damage',0);
-  if ($DevTotal) {
-    $Sys = Get_System($Sid);
 
-    $Worlds = explode(',',$Sys['WorldList']);
+  if (!$CSV) {
+    echo fm_submit("ACTION",'Do ALL Ground Damage',0);
+    if ($DevTotal) {
+      $Sys = Get_System($Sid);
 
-    if ($Worlds) {
-      if (count($Worlds) == 1) {
-        $Wid = $Worlds[0];
-        if ($Wid >0) {
-          $WH = Get_Planet($Wid);
-        } else {
-          $WH = Get_Moon(-$Wid);
-        }
+      $Worlds = explode(',',$Sys['WorldList']);
 
-        $Wtxt = fm_hidden('Place',$Wid) . $WH['Name'];
-      } else {
-        $Places = $Data = [];
-        $Place = 0;
-        foreach ($Worlds as $Wid) {
+      if ($Worlds) {
+        if (count($Worlds) == 1) {
+          $Wid = $Worlds[0];
           if ($Wid >0) {
             $WH = Get_Planet($Wid);
           } else {
             $WH = Get_Moon(-$Wid);
           }
-          if ($Place ==0) $Place = $Wid;
-          $Data['Place'] = $Place;
-          $Places[$Wid] = $WH['Name'];
+
+          $Wtxt = fm_hidden('Place',$Wid) . $WH['Name'];
+        } else {
+          $Places = $Data = [];
+          $Place = 0;
+          foreach ($Worlds as $Wid) {
+            if ($Wid >0) {
+              $WH = Get_Planet($Wid);
+            } else {
+              $WH = Get_Moon(-$Wid);
+            }
+            if ($Place ==0) $Place = $Wid;
+            $Data['Place'] = $Place;
+            $Places[$Wid] = $WH['Name'];
+          }
+
+          $Wtxt = fm_radio('World',$Places,$Data,'Place');
         }
-
-        $Wtxt = fm_radio('World',$Places,$Data,'Place');
+        $Devo = intdiv($DevTotal + rand(0,9),10);
+        $Dev = ['Devastate'=>$Devo];
+        echo "<br>Total Ground Force Levels: <b>$DevTotal</b> - Do " . fm_number1('',$Dev,'Devastate','', ' min=0 max=100') .
+             fm_submit("ACTION", "Devastation") . " to <b>$Wtxt</b> " .
+             " and set the conflict flag - this assumes all ground forces are fighting, adjust if they are not<br>";
+        echo "<p><input type=submit name='CSV' value='CSV of Ground forces' >";
+        echo fm_submit('ACTION','Remove forces');
+        if ($Excludes) echo fm_submit('ACTION','Reset the excluded forces');
       }
-      $Devo = intdiv($DevTotal + rand(0,9),10);
-      $Dev = ['Devastate'=>$Devo];
-      echo "<br>Total Ground Force Levels: <b>$DevTotal</b> - Do " . fm_number1('',$Dev,'Devastate','', ' min=0 max=100') .
-           fm_submit("ACTION", "Devastation") . " to <b>$Wtxt</b> " .
-           " and set the conflict flag - this assumes all ground forces are fighting, adjust if they are not<br>";
     }
-
   }
-  echo "<p><input type=submit name='CSV' value='CSV' >";
-  echo fm_submit('ACTION','Remove Forces');
 
-  if ($Excludes) echo fm_submit('ACTION','Reset the excluded Forces');
+  ForceReport($Sid,'S');
+  if (!$CSV) {
+    echo fm_submit("ACTION",'Do ALL Space Damage',0);
+
+    echo "<p><input type=submit name='CSV' value='CSV of Space forces' >";
+    echo fm_submit('ACTION','Remove forces');
+    if ($Excludes) echo fm_submit('ACTION','Reset the excluded forces');
+  } else {
+    fclose($CSV);
+    exit;
+  }
+
   echo "</form>";
 
 
@@ -451,7 +477,9 @@ function SystemSee($Sid) {
 //  var_dump($Sys);
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
-    case 'Do ALL Damage':
+      case 'Do ALL Ground Damage':
+      case 'Do ALL Space Damage':
+      case 'Do ALL Damage':
 //    var_dump($_REQUEST);
       $IgnoreShield = ($_REQUEST['IgnoreShield'] ?? 0);
       foreach ($_REQUEST as $RN=>$RV) {
@@ -674,7 +702,7 @@ function SystemSee($Sid) {
 
     }
   }
-  echo "<h1>Checking</h1>";
+  echo "<h1 id=Systems>Checking</h1>";
 
   echo "<span class=NotHostile>Factions</span> thus marked have only Never Hostile Things.<br>" .
        "The most hostile rating between factions present is displayed.<p>";

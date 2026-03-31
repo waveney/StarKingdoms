@@ -352,6 +352,13 @@
 
       break;
 
+    case 'Recalc' :
+      $Things = Get_AllThings();
+      foreach ($Things as $Tid=>$T) {
+        RefitRepair($T,1,1);
+        echo "Updated: $Tid - " . $T['Name'] . "<br>";
+      }
+      break;
 
     }
   }
@@ -374,6 +381,7 @@
 
   echo "<li><a href=TurnSpecials.php?ACTION=RecoverSys>Recover Militia/Heavy Security for a turn</a><p>";
   echo "<li><a href=TurnSpecials.php?ACTION=SetHSSys>Set Heavy Security SystemId</a><p>";
+  echo "<li><a href=TurnSpecials.php?ACTION=Recalc>Recalc Things</a><p>";
 
 
   echo "<h2><a href=TurnActions.php>Back to Turn Processing</a></h2>";

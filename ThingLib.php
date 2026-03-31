@@ -511,7 +511,7 @@ function Calc_Health(&$T,$KeepTechLvl=0,$Other=0) {
   if ($Other == 0) $Other = $T['Whose']??0;
   if (Has_Trait($Other,'Thick Skinned')) $Plus =1;
   $Health = (Feature('BaseHealth')?5*($T['Level']+$Plus):0);
-  if ($TTypes[$T['Type']]['Prop2'] & THING_HAS_HEALTH1) $Health = min($Health,1);
+  if (($TTypes[$T['Type']]['Prop2']??0) & THING_HAS_HEALTH1) $Health = min($Health,1);
   $Shield = 0;
   $Ms = Get_Modules($T['id']);
   $Mts = Get_ModuleTypes();

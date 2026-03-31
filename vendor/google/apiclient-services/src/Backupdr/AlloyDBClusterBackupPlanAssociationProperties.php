@@ -19,6 +19,29 @@ namespace Google\Service\Backupdr;
 
 class AlloyDBClusterBackupPlanAssociationProperties extends \Google\Model
 {
+  /**
+   * Output only. The cluster UID of the AlloyDB cluster.
+   *
+   * @var string
+   */
+  public $clusterUid;
+
+  /**
+   * Output only. The cluster UID of the AlloyDB cluster.
+   *
+   * @param string $clusterUid
+   */
+  public function setClusterUid($clusterUid)
+  {
+    $this->clusterUid = $clusterUid;
+  }
+  /**
+   * @return string
+   */
+  public function getClusterUid()
+  {
+    return $this->clusterUid;
+  }
 }
 
 // Adding a class alias for backwards compatibility with the previous class name.

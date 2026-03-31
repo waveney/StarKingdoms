@@ -36,45 +36,30 @@ class StartOAuthResponse extends \Google\Collection
    */
   public const SYSTEM_PROVIDER_ID_GITLAB = 'GITLAB';
   /**
-   * Deprecated: This provider is no longer supported. Google provider.
-   * Recommended scopes: "https://www.googleapis.com/auth/drive.readonly",
+   * Google provider. Recommended scopes:
+   * "https://www.googleapis.com/auth/drive.readonly",
    * "https://www.googleapis.com/auth/documents.readonly"
-   *
-   * @deprecated
    */
   public const SYSTEM_PROVIDER_ID_GOOGLE = 'GOOGLE';
   /**
-   * Deprecated: This provider is no longer supported. Sentry provider. Scopes
-   * can be found at https://docs.sentry.io/api/permissions/
-   *
-   * @deprecated
+   * Sentry provider. Scopes can be found at
+   * https://docs.sentry.io/api/permissions/
    */
   public const SYSTEM_PROVIDER_ID_SENTRY = 'SENTRY';
   /**
-   * Deprecated: This provider is no longer supported. Rovo provider. Must
-   * select the "rovo" scope.
-   *
-   * @deprecated
+   * Rovo provider. Must select the "rovo" scope.
    */
   public const SYSTEM_PROVIDER_ID_ROVO = 'ROVO';
   /**
-   * Deprecated: This provider is no longer supported. New Relic provider. No
-   * scopes are allowed.
-   *
-   * @deprecated
+   * New Relic provider. No scopes are allowed.
    */
   public const SYSTEM_PROVIDER_ID_NEW_RELIC = 'NEW_RELIC';
   /**
-   * Deprecated: This provider is no longer supported. Datastax provider. No
-   * scopes are allowed.
-   *
-   * @deprecated
+   * Datastax provider. No scopes are allowed.
    */
   public const SYSTEM_PROVIDER_ID_DATASTAX = 'DATASTAX';
   /**
-   * Deprecated: This provider is no longer supported. Dynatrace provider.
-   *
-   * @deprecated
+   * Dynatrace provider.
    */
   public const SYSTEM_PROVIDER_ID_DYNATRACE = 'DYNATRACE';
   protected $collection_key = 'scopes';
@@ -91,14 +76,13 @@ class StartOAuthResponse extends \Google\Collection
    */
   public $clientId;
   /**
-   * https://datatracker.ietf.org/doc/html/rfc7636#section-4.1 Follow
-   * http://shortn/_WFYl6U0NyC to include it in the AutoCodeURL.
+   * Please refer to https://datatracker.ietf.org/doc/html/rfc7636#section-4.1
    *
    * @var string
    */
   public $codeChallenge;
   /**
-   * https://datatracker.ietf.org/doc/html/rfc7636#section-4.2
+   * Please refer to https://datatracker.ietf.org/doc/html/rfc7636#section-4.2
    *
    * @var string
    */
@@ -156,8 +140,7 @@ class StartOAuthResponse extends \Google\Collection
     return $this->clientId;
   }
   /**
-   * https://datatracker.ietf.org/doc/html/rfc7636#section-4.1 Follow
-   * http://shortn/_WFYl6U0NyC to include it in the AutoCodeURL.
+   * Please refer to https://datatracker.ietf.org/doc/html/rfc7636#section-4.1
    *
    * @param string $codeChallenge
    */
@@ -173,7 +156,7 @@ class StartOAuthResponse extends \Google\Collection
     return $this->codeChallenge;
   }
   /**
-   * https://datatracker.ietf.org/doc/html/rfc7636#section-4.2
+   * Please refer to https://datatracker.ietf.org/doc/html/rfc7636#section-4.2
    *
    * @param string $codeChallengeMethod
    */
