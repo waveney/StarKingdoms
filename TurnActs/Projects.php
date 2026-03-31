@@ -852,7 +852,7 @@ function ProjectsCompleted($Pass) {
             $StartOrd = 0;
             $mtch= [];
             if (preg_match('/(.*) *?(\d)*$/',$OrigName,$mtch)) {
-              $StartOrd = $mtch[2]-1;
+              $StartOrd = ($mtch[2]??1)-1;
               $OrigName = $mtch[1];
             }
 //            var_dump($Number);

@@ -1462,14 +1462,19 @@ function Thing_Delete($tid,$now=0,$Reason='') {
     }
     $Rec = ['GameId'=>$GAMEID,'Turn'=>$GAME['Turn'],'ThingId'=>$tid];
 //    Gen_Put("DelayedRemoval",$Rec);
-    $T['BuildState'] = BS_DELETE;
-    Put_Thing($T);
 
-    Empty_Thing($T,1);
+    if ($T['BuildState']) {
+      $T['BuildState'] = BS_DELETE;
+      Put_Thing($T);
 
-    TurnLog($T['Whose'], $T['Name'] . " has been destroyed $Reason");
+      Empty_Thing($T,1);
 
-    return;
+      TurnLog($T['Whose'], $T['Name'] . " has been destroyed $Reason");
+
+      return;
+    } else {
+      $now = 1;
+    }
   }
 
   switch ($TTNames[$T['Type']]??'Unknown') {
