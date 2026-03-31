@@ -1356,10 +1356,13 @@ function InstructionsComplete() {
 
         $N = Get_System($T['SystemId']);
 
-        for($Salvs=0; $Salvs<$SalvMods['Number'] && isset($Wrecks[$Salvs]);$Salvs++) {
-          $W = $Wrecks[$Salvs];
+        $Salvs = 0;
+
+        foreach($Wrecks as $W) {
+          if ($Salvs >= $SalvMods['Number']) break;
   //        foreach ($Wrecks as $W) {
             if (($TTypes[$W['Type']]['Properties'] & (THING_HAS_DISTRICTS + THING_HAS_SHIPMODULES)) != 0) {
+              $Salvs++;
               $Money = $Xeno = $Eng = 0;
               $Wreck = [];
               switch ($TTypes[$W['Type']]['Name']) {
@@ -1444,10 +1447,13 @@ function InstructionsComplete() {
         $ModTypes = Get_ModuleTypes();
 
         $N = Get_System($T['SystemId']);
+        $Salvs = 0;
 
-        for($Salvs=0; $Salvs<$SalvMods['Number'] && isset($Wrecks[$Salvs]);$Salvs++) {
-          $W = $Wrecks[$Salvs];
+        foreach($Wrecks as $W) {
+          if ($Salvs >= $SalvMods['Number']) break;
+
           if (($TTypes[$W['Type']]['Properties'] & THING_HAS_ARMYMODULES) != 0) {
+            $Salvs++;
             $Money = $Xeno = 0;
             $Wreck = [];
             switch ($TTypes[$W['Type']]['Name']) {
