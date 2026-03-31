@@ -1418,6 +1418,9 @@ function InstructionsComplete() {
                 TurnLog($Who,"The wreckage of the " . (empty($W['Name'])? ("Unknown Thing #" . $W['id']) : $W['Name']) .
                   " has been salvaged.  in " . $N['Ref'] . " Gaining " . Credit() . $Money .
                   ($Xeno?" and $Xeno Xenology points":'') . ($Eng?" and $Eng Engineering Points":''));
+                GMLog($Facts[$Who]['Name'] . " Salvaged the wreckage of the " . (empty($W['Name'])? ("Unknown Thing #" . $W['id']) : $W['Name']) .
+                  " has been salvaged.  in " . $N['Ref'] . " Gaining " . Credit() . $Money .
+                  ($Xeno?" and $Xeno Xenology points":'') . ($Eng?" and $Eng Engineering Points":''));
                 if ($Wreck) TurnLog($Who, "It had: " . implode(', ', $Wreck));
               }
             }
@@ -1494,6 +1497,8 @@ function InstructionsComplete() {
 
               $TotMoney += $Money;
               TurnLog($Who,"The wreckage of the " . (empty($W['Name'])? ("Unknown Thing #" . $W['id']) : $W['Name']) .
+                " has been Scavenged.  in " . $N['Ref'] . " Gaining " . Credit() . $Money . ($Xeno?" and $Xeno Xenology points":''));
+              GMLog($Facts[$Who]['Name'] . " Scavenged The wreckage of the " . (empty($W['Name'])? ("Unknown Thing #" . $W['id']) : $W['Name']) .
                 " has been Scavenged.  in " . $N['Ref'] . " Gaining " . Credit() . $Money . ($Xeno?" and $Xeno Xenology points":''));
               if ($Wreck) TurnLog($Who, "It had: " . implode(', ', $Wreck));
             }
