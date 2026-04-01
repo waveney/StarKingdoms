@@ -288,6 +288,48 @@ if (isset($_REQUEST['Action'])) {
       echo "$TotC Fighter Defences Squadron have been deployed.<p><h2><a href=Meetings.php?ACTION=Check&S=$Sid>Return to Meetups</a></h2>";
       dotail();
 
+      break;
+
+    case 'Swap to a: ':
+      $Bid = ($_REQUEST['id'] ?? $_REQUEST['AutoRefBranches']??0);
+      $B = Gen_Get('Branches',$Bid);
+      $B['Type'] = $BTypes[$B['Type']]['VisSwap'];
+//      echo "Swapped to a " . $BTypeNames[$B['Type']];
+      Gen_Put('Branches',$B);
+
+      $Fid = $B['Whose'];
+      $OrgId = $B['Organisation'];
+      $Org = Gen_Get('Organisations',$OrgId);
+      switch ($B['HostType']) {
+        case 1: // Planet
+          $P = Get_Planet($B['HostId']);
+          $Sys = Get_System($P['SystemId']);
+          $Where = $P['Name'] . " in " . System_Name($Sys,$Fid);
+          break;
+        case 2: // Moon
+          $M = Get_Moon($B['HostId']);
+          $P = Get_Planet($M['PlanetId']);
+          $Sys = Get_System($P['SystemId']);
+          $Where = $M['Name'] . " a moon of " . $P['Name'] . " in " . System_Name($Sys,$Fid);
+          break;
+        case 3:// Thing
+          $T = Get_Thing($B['HostId']);
+          if ($T) {
+            $Sys = Get_System($T['SystemId']);
+            $Where = $T['Name'] . " in " . System_Name($Sys,$Fid);
+          } else {
+            $Sys = [];
+            $Where = "?";
+          }
+          break;
+      }
+      include_once('TurnTools.php');
+      TurnLog($B['Whose'], "The branch of " . $Org['Name'] . " in $Where is now a " . $BTypeNames[$B['Type']]);
+
+      if ($Sys['Control'] != $B['Whose'])
+        TurnLog($Sys['Control'], "The branch of " . $Org['Name'] . " in $Where is now a " . $BTypeNames[$B['Type']]);
+
+      break;
   }
 } else {
   $Bid = ($_REQUEST['id'] ?? $_REQUEST['AutoRefBranches']??0);
@@ -333,12 +375,13 @@ switch ($B['HostType']) {
     break;
 }
 
-echo "<table border>";
+echo "<form method=post action=BranchEdit.php><table border>";
 Register_AutoUpdate('Branches', $Bid);
 echo "<tr><td>id: $Bid";
 if (Access('God')) echo fm_number('Host Type',$B,'HostType') . fm_number('Host Id',$B,'HostId');
 echo "<tr><td>Whose:<td>" . fm_select($FactNames,$B,'Whose');
 echo "<tr><td>Branch Type:<td>" . fm_select($BTypeNames,$B,'Type');
+
 echo "<tr>" . fm_text('Name (not yet used)',$B,'Name');
 echo "<tr><td>Organisation:<td>" . fm_select($OrgList,$B,'Organisation',1);
 if ($Org) {
@@ -360,7 +403,14 @@ echo "</table>";
 if ($GM) {
   echo "<input type=submit Name=Action Value=Refresh> ";
   echo "<input type=submit Name=Action Value=Delete> <input type=submit name=Action value='New Here'>";
+//  var_dump($BTypes[$B['Type']]);
+  if ($BTypes[$B['Type']]['VisSwap']??0) {
+    echo fm_submit('Action', 'Swap to a: ') . ($BTypes[$BTypes[$B['Type']]['VisSwap']]['Name']??'Error');
+
+  }
 
 }
+
+echo "</form>";
 
 dotail();

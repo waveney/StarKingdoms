@@ -26,6 +26,7 @@ $Ts = Get_BranchTypes($AllG);
 if (UpdateMany('BranchTypes','Put_BranchType',$Ts,1,'','','Name','RemoveMe','Props')) $Ts = Get_BranchTypes($AllG);
 
 echo "<h1>Branch Types</h1>";
+$Btypes = NamesList($Ts);
 
 echo "Props (Hex) 1 =Hidden, 2=No Space\n";
 
@@ -44,6 +45,7 @@ echo "<th colspan=2><a href=javascript:SortTable(" . $coln++ . ",'T')>Name</a>\n
 if ($AllG) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>NotBy</a>\n";
 echo "<th><a href=javascript:SortTable(" . $coln++ . ",'N')>Properties</a>\n";
 echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>OrgType</a>\n";
+echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Swap To</a>\n";
 echo "</thead><tbody>";
 
 foreach($Ts as $T) {
@@ -53,7 +55,8 @@ foreach($Ts as $T) {
   echo fm_notby($T,$i,$AllG);
   echo fm_hex1('',$T,'Props','','',"Props$i");
   echo "<td>" . fm_select($OrgTypeNames, $T,'OrgType',0,'',"OrgType$i");
- }
+  echo "<td>" . fm_select($Btypes,$T,'VisSwap',1,'',"VisSwap$i");
+}
 
 $T = [];
 echo "<tr><td>" . fm_text1("",$T,'Name',2,'','',"Name0");
@@ -61,6 +64,7 @@ echo fm_hidden('NotBy0',$SETNOT);
 if ($AllG) echo "<td>$SETNOT";
 echo fm_hex1('',$T,'Props','','',"Props0");
 echo "<td>" . fm_select($OrgTypeNames, $T,'OrgType',0,'', 'OrgType0');
+echo "<td>" . fm_select($Btypes,$T,'VisSwap',1,'',"VisSwap0");
 echo "</tbody></table></div>\n";
 
 echo "<h2><input type=submit name=Update value=Update></h2>";

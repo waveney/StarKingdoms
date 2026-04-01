@@ -22,7 +22,7 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
                 'Make Advanced Deep Space Sensor','Salvage',//29
                 'Terraform','Link Repair','Collaborative DSC','Space Survey','Planetary Survey','Collaborative Planetary Construction',
                 'Collaborative Space Construction','Build Wormhole Stabiliser', 'Scavenge', 'Build Wormhole Destabiliser',
-                'Build Strip Mine','Mothball','Recommisioned',
+                'Build Strip Mine','Mothball','Recommision',
 ];
 $IntructProps = [0,2,0,0,0,0,1, 1,1,
                  1,1,1,1, 1,1,//14
