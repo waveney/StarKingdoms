@@ -188,7 +188,7 @@ function Show_Thing(&$T,$Force=0) {
           if ($Proj['TurnStart']) echo " Start Turn: " . $Proj['TurnStart'];
           if ($Proj['TurnEnd']) echo " End Turn: " . $Proj['TurnEnd'];
         } else {
-          GMLog4Later("Confused Project record for thing $Tid - Call Richard");
+          GMLog4Later("Confused Project record for thing <a href=ThingEdit.php?id=$Tid>$Tid</a> - Call Richard");
         }
       }
     } else if (Access('God')) echo " ProjId " . $T['ProjectId'];

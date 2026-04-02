@@ -15,6 +15,8 @@ function StartOperations() {
   $BTs = Get_BranchTypes();
 
   foreach ($Operations as $Oid=>$O) {
+//    if ($Oid!=79) continue;
+
     $Fid = $O['Whose'];
     $Otp = $OpTypes[$O['Type']]['Props'];
     $Wh = $O['SystemId'];
@@ -259,8 +261,11 @@ function StartOperations() {
     }
 
     if ($Otp & OPER_SOCPTARGET) {
-      $SocP = Get_SocialP($O['Para1']);
-      $Level = $SocP['Value'];
+      $World = WorldFromTarget($TargType,$Target);
+      $Wid = $World['id']??0;
+      $CurVal = Gen_Get_Cond1('SocPsWorlds',"Principle=$SP AND World=$Wid");
+      $P2 = ($CurVal['id']??0);
+      $Level = ($CurVal['Value']??0);
     }
 
     if (($Otp & OPER_LEVELMOD) == 0) { // reclac level
@@ -295,6 +300,10 @@ function StartOperations() {
 
       }
     }
+
+ //   var_dump($BaseLevel);
+ //   exit;
+
     $O['Status'] = 1;// Started
     TurnLog($Fid,"Operation " . $O['Name'] . " has started for organisation " . $Orgs[$O['OrgId']]['Name']);
     GMLog("Operation " . $O['Name'] . " has started for organisation " . $Orgs[$O['OrgId']]['Name']);

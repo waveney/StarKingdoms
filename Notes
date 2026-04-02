@@ -2,7 +2,6 @@ TODO (Previous Game)
 1) Force Reports 
   * Multiple worlds in a system
 5) Prisoners
-6) Blockades & Launching ships
 12) Blockade busting
 14) Bombardment
 39) Nebulae and Anomalies
@@ -101,9 +100,7 @@ it does all for both ground and space.  Would be nice if the All would only chec
 864 ACM 20/1 @07:30
 === 865 start of turn 34
 866 Flak Evasion effect to all allied ships
-869 Feocity building - fed
 874 Burn the heretics - ACG 2/2/ @ 20:48
-875 Make it clear when units aboard are killed
 877 Shield wall
 882 Shields - see acg 3/2 @9
 883 Science points w/wo blueprints
@@ -112,29 +109,21 @@ it does all for both ground and space.  Would be nice if the All would only chec
 896 Judith survey BCZ
 891 Designs - dont mention level of techs of modules
 === start of turn 36
-895 Check Blockades work
 898 Auto Blockades?
 899 Warehouses, visiblity, entering, seeing
 
 === 902 start of turn 37
-902 Loss of outpost - destroy fighters even if immortal
 903 fighters see fight thread
 906 Judith Passive scans?? CHA
-907 Cancel Repair Projects
 909 Shield request in pthinglist
 
 === 911 start of turn 38
-911 Recalc all on things
-912 Improve Meetings - CSV space/ground separate
-914 Scavenge YZA , ASC need to check
-915 Undefined array key 2 in /var/www/vhosts/starkingdoms.uk/httpdocs/TurnActs/Projects.php on line 855', 
-    referer: https://starkingdoms.uk/TurnActions.php?ACTION=Process&S=46
 916 Check Affect Anomalies
-917 Override hidden on a branch
-918 Mothballed / Recommision not appearing as Instructions see 6691-4
 919 Overlapping Operations
-920 See a Warehouse
-
+920 See in a Warehouse
+923 ship of Judiths from ARV to STV
+925 Burn the Heretics in Bytharion ( BYT ) at III Principle: Slumber with the The Elysian Order is actually level 8 not 4 
+    and now needs 36 progress.
 
 
 === start of turn 39
