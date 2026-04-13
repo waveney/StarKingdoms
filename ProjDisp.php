@@ -122,7 +122,10 @@
           $ClassName = ClassName($T);
           $pc = Proj_Costs($Level);
           if ($ProjTypes[$Ptype]['Name'] == "Train $ARMY" && Has_Tech($Fid,'Efficient Robot Construction')) $pc[0] = max(1, $pc[0] - $T['Level']);
-          if ($ProjTypes[$Ptype]['Name'] == 'Construct Ship' && Has_Tech($Fid,'Space Elevator')) $pc[0] = max(1, $pc[0] - $T['Level']);
+          if ($ProjTypes[$Ptype]['Name'] == 'Construct Ship') {
+            if (Has_Tech($Fid,'Space Elevator')) $pc[0] = max(1, $pc[0] - $T['Level']);
+            if (Has_Tech($Fid,'Bio-Organic Armour')) $pc[1] = floor($pc[1]*2/3);
+          }
           $Costs = $pc[1];
           $ProgN = $pc[0];
           $TthingId = $T['id'];

@@ -102,6 +102,7 @@
             $Tid = $T['id'];
             $Level = $T['Level'] + (Has_PTraitH($Home,'Untrusted')?1:0);
             $pc = Proj_Costs($Level);
+            if ($_REQUEST['ACTION'] == 'NEWSHIP' && Has_Tech($Fid,'Bio-Organic Armour')) $pc[1] = floor($pc[1]*2/3);
             $Extra = '';
             if ($_REQUEST['ACTION'] == 'NEWARMY' && Has_Tech($Fid,'Efficient Robot Construction')) $pc[0] = max(1, $pc[0] - $T['Level']);
             if ($_REQUEST['ACTION'] == 'NEWSHIP' && Has_Tech($Fid,'Space Elevator')) $pc[0] = max(1, $pc[0] - $T['Level']);
@@ -597,7 +598,7 @@
 
       $RHead = 0;
       foreach ($SpecTechs as $T) {
-        if ($FactTechs[$T['id']]['Level']) {
+        if ($FactTechs[$T['id']]['Level']??0) {
           if (!$RHead)
             echo "<h2>Research Special Leveled Technology</h2><table class=ProjTab border><th>Project<th>Cost<th>Progress<br>Needed<th>Description";
           $RHead = 1;

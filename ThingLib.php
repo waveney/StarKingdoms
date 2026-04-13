@@ -1125,7 +1125,15 @@ function is_vowel(&$Text) {
 }
 
 function is_on_ground(&$T) {
-  if ($T['LinkId']<0 && ($T['LinkId'] != LINK_NOT_MOVING)) return 0;
+  static $TTypes;
+  if ($T['LinkId']<0) {
+    if ($T['LinkId'] == LINK_INBRANCH) {
+      if (empty($TTypes)) $TTypes = Get_ThingTypes();
+      if ($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES) return 1;
+      return 0;
+    }
+    if ($T['LinkId'] != LINK_NOT_MOVING) return 0;
+  }
   $LocType = intdiv($T['WithinSysLoc'],100);
   if (($T['WithinSysLoc'] == 3) || $LocType==2 || $LocType==4 ) return 1;
   return 0;

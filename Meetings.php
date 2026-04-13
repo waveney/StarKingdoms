@@ -29,8 +29,17 @@
     preg_match('/CSV of (.*) forces/',$_REQUEST['CSV'],$mtch);
     $BattleType = $mtch[1];
 
-    $Sid = $_REQUEST['S'];
-    $N = Get_System($Sid);
+    if (isset($_REQUEST['S'])) {
+      $Sid = $_REQUEST['S'];
+      $N = Get_System($Sid);
+    } else if (isset($_REQUEST['R'])) {
+      $Ref = $_REQUEST['R'];
+      $N = Get_SystemR($Ref);
+      $Sid = $N['id'];
+    } else {
+      echo "Should Never Get Here";
+      exit;
+    }
     $filename = "SK:$GAMEID:" .$GAME['Turn'] . ':' . $N['Ref'] . ':' . $BattleType . ':' . rand(1,1000);
     header('Content-Type: text/csv; charset=utf-8');
     header("Content-Disposition: attachment; filename=$filename.csv");
@@ -596,14 +605,32 @@ function SystemSee($Sid) {
 
 
     case 'FRGROUND':
-      $Sid = $_REQUEST['S'];
-      $N = Get_System($Sid);
+      if (isset($_REQUEST['S'])) {
+        $Sid = $_REQUEST['S'];
+        $N = Get_System($Sid);
+      } else if (isset($_REQUEST['R'])) {
+        $Ref = $_REQUEST['R'];
+        $N = Get_SystemR($Ref);
+        $Sid = $N['id'];
+      } else {
+        echo "Should Never Get Here";
+        exit;
+      }
       ForceReport($Sid,'G');
       break;
 
     case 'FRSPACE':
-      $Sid = $_REQUEST['S'];
-      $N = Get_System($Sid);
+      if (isset($_REQUEST['S'])) {
+        $Sid = $_REQUEST['S'];
+        $N = Get_System($Sid);
+      } else if (isset($_REQUEST['R'])) {
+        $Ref = $_REQUEST['R'];
+        $N = Get_SystemR($Ref);
+        $Sid = $N['id'];
+      } else {
+        echo "Should Never Get Here";
+        exit;
+      }
       ForceReport($Sid,'S');
       break;
 
@@ -645,8 +672,17 @@ function SystemSee($Sid) {
       }
 
     case 'Remove Forces':
-      $Sid = $_REQUEST['S'];
-      $N = Get_System($Sid);
+      if (isset($_REQUEST['S'])) {
+        $Sid = $_REQUEST['S'];
+        $N = Get_System($Sid);
+      } else if (isset($_REQUEST['R'])) {
+        $Ref = $_REQUEST['R'];
+        $N = Get_SystemR($Ref);
+        $Sid = $N['id'];
+      } else {
+        echo "Should Never Get Here";
+        exit;
+      }
       Get_Battle($Sid);
       Set_Excludes();
 
@@ -670,8 +706,17 @@ function SystemSee($Sid) {
       break;
 
     case 'Reset the excluded Forces':
-      $Sid = $_REQUEST['S'];
-      $N = Get_System($Sid);
+      if (isset($_REQUEST['S'])) {
+        $Sid = $_REQUEST['S'];
+        $N = Get_System($Sid);
+      } else if (isset($_REQUEST['R'])) {
+        $Ref = $_REQUEST['R'];
+        $N = Get_SystemR($Ref);
+        $Sid = $N['id'];
+      } else {
+        echo "Should Never Get Here";
+        exit;
+      }
       Get_Battle($Sid);
       Set_Excludes();
       $Excludes = [];

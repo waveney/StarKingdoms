@@ -197,7 +197,7 @@
       echo "<tr>" . fm_select($TechNames,$O,'Para1') . fm_number1('Level',$O,'Para2');
     } else if ($PProps & OPER_SOCP) {
       $SocPs = Get_SocialP($O['Para1']);
-      echo "<tr><td>Social Principe:<td>" . $SocPs['Principle'] . " - Edit via Richard if needed";
+      echo "<tr><td>Social Principe:<td>" . ($SocPs['Principle']??'Unknown') . " - Edit via Richard if needed";
       if (Access('God')) echo "<tr>" . fm_number('Para1',$O,'Para1');
     } else if ($PProps & OPER_SCIPOINTS) {
       array_unshift($Fields,'');

@@ -1028,7 +1028,7 @@ function Show_Thing(&$T,$Force=0) {
           } else {
             $Dists = Get_DistrictsM(-$W);
           }
-          if ($Dists[$WareId]) {
+          if ($Dists[$WareId]??0) {
             $Has_Warehouse = $Dists[$WareId]['Number'];
             break; // Found
           }

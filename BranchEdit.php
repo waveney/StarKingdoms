@@ -202,7 +202,7 @@ if (isset($_REQUEST['Action'])) {
               $TotC++;
             }
           }
-          if ($B['Surpressed']) {
+          if ($B['Suppressed']) {
             $Teams = Get_Things_Cond($B['Whose'],"Type=" . $NTypes['Heavy Security'] . " AND ProjectId=$Rid");
             foreach ($Teams as $T) {
               echo $T['Name'] . " not deployed as it is currently surpressed<br>";
@@ -273,7 +273,7 @@ if (isset($_REQUEST['Action'])) {
               Put_Thing($T);
             }
           }
-          if ($B['Surpressed']) {
+          if ($B['Suppressed']) {
             $Squads = Get_Things_Cond_Ordered($B['Whose'],"Type=" . $NTypes['Fighter Defences'] . " AND ProjectId=$Bid");
             foreach ($Squads as $T) {
               echo $T['Name'] . " not deployed as it the branch is currently surpressed<br>";
