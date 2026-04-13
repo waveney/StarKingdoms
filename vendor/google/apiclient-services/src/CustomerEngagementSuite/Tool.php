@@ -34,6 +34,8 @@ class Tool extends \Google\Model
    * tool is executing.
    */
   public const EXECUTION_TYPE_ASYNCHRONOUS = 'ASYNCHRONOUS';
+  protected $agentToolType = AgentTool::class;
+  protected $agentToolDataType = '';
   protected $clientFunctionType = ClientFunction::class;
   protected $clientFunctionDataType = '';
   protected $connectorToolType = ConnectorTool::class;
@@ -82,12 +84,12 @@ class Tool extends \Google\Model
   protected $mcpToolType = McpTool::class;
   protected $mcpToolDataType = '';
   /**
-   * Identifier. The unique identifier of the tool. Format: -
-   * `projects/{project}/locations/{location}/apps/{app}/tools/{tool}` for ##
-   * standalone tools. `projects/{project}/locations/{location}/apps/{app}/tools
-   * ets/{toolset}/tools/{tool}` for tools retrieved from a toolset. These tools
-   * are dynamic and output-only, they cannot be referenced directly where a
-   * tool is expected.
+   * Identifier. The resource name of the tool. Format: *
+   * `projects/{project}/locations/{location}/apps/{app}/tools/{tool}` for
+   * standalone tools. * `projects/{project}/locations/{location}/apps/{app}/too
+   * lsets/{toolset}/tools/{tool}` for tools retrieved from a toolset. These
+   * tools are dynamic and output-only; they cannot be referenced directly where
+   * a tool is expected.
    *
    * @var string
    */
@@ -109,6 +111,22 @@ class Tool extends \Google\Model
   protected $widgetToolType = WidgetTool::class;
   protected $widgetToolDataType = '';
 
+  /**
+   * Optional. The agent tool.
+   *
+   * @param AgentTool $agentTool
+   */
+  public function setAgentTool(AgentTool $agentTool)
+  {
+    $this->agentTool = $agentTool;
+  }
+  /**
+   * @return AgentTool
+   */
+  public function getAgentTool()
+  {
+    return $this->agentTool;
+  }
   /**
    * Optional. The client function.
    *
@@ -294,12 +312,12 @@ class Tool extends \Google\Model
     return $this->mcpTool;
   }
   /**
-   * Identifier. The unique identifier of the tool. Format: -
-   * `projects/{project}/locations/{location}/apps/{app}/tools/{tool}` for ##
-   * standalone tools. `projects/{project}/locations/{location}/apps/{app}/tools
-   * ets/{toolset}/tools/{tool}` for tools retrieved from a toolset. These tools
-   * are dynamic and output-only, they cannot be referenced directly where a
-   * tool is expected.
+   * Identifier. The resource name of the tool. Format: *
+   * `projects/{project}/locations/{location}/apps/{app}/tools/{tool}` for
+   * standalone tools. * `projects/{project}/locations/{location}/apps/{app}/too
+   * lsets/{toolset}/tools/{tool}` for tools retrieved from a toolset. These
+   * tools are dynamic and output-only; they cannot be referenced directly where
+   * a tool is expected.
    *
    * @param string $name
    */

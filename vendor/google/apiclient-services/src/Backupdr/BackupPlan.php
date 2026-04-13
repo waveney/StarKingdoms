@@ -62,6 +62,8 @@ class BackupPlan extends \Google\Collection
    * @var string
    */
   public $backupVaultServiceAccount;
+  protected $computeInstanceBackupPlanPropertiesType = ComputeInstanceBackupPlanProperties::class;
+  protected $computeInstanceBackupPlanPropertiesDataType = '';
   /**
    * Output only. When the `BackupPlan` was created.
    *
@@ -78,6 +80,8 @@ class BackupPlan extends \Google\Collection
    * @var string
    */
   public $description;
+  protected $diskBackupPlanPropertiesType = DiskBackupPlanProperties::class;
+  protected $diskBackupPlanPropertiesDataType = '';
   /**
    * Optional. `etag` is returned from the service in the response. As a user of
    * the service, you may provide an etag value in this field to prevent stale
@@ -213,6 +217,24 @@ class BackupPlan extends \Google\Collection
     return $this->backupVaultServiceAccount;
   }
   /**
+   * Optional. Defines optional properties specific to backups of disk-based
+   * resources, such as Compute Engine. This includes settings like whether to
+   * perform a guest flush.
+   *
+   * @param ComputeInstanceBackupPlanProperties $computeInstanceBackupPlanProperties
+   */
+  public function setComputeInstanceBackupPlanProperties(ComputeInstanceBackupPlanProperties $computeInstanceBackupPlanProperties)
+  {
+    $this->computeInstanceBackupPlanProperties = $computeInstanceBackupPlanProperties;
+  }
+  /**
+   * @return ComputeInstanceBackupPlanProperties
+   */
+  public function getComputeInstanceBackupPlanProperties()
+  {
+    return $this->computeInstanceBackupPlanProperties;
+  }
+  /**
    * Output only. When the `BackupPlan` was created.
    *
    * @param string $createTime
@@ -247,6 +269,24 @@ class BackupPlan extends \Google\Collection
   public function getDescription()
   {
     return $this->description;
+  }
+  /**
+   * Optional. Defines optional properties specific to backups of disk-based
+   * resources, such as Compute Engine Persistent Disks. This includes settings
+   * like whether to perform a guest flush.
+   *
+   * @param DiskBackupPlanProperties $diskBackupPlanProperties
+   */
+  public function setDiskBackupPlanProperties(DiskBackupPlanProperties $diskBackupPlanProperties)
+  {
+    $this->diskBackupPlanProperties = $diskBackupPlanProperties;
+  }
+  /**
+   * @return DiskBackupPlanProperties
+   */
+  public function getDiskBackupPlanProperties()
+  {
+    return $this->diskBackupPlanProperties;
   }
   /**
    * Optional. `etag` is returned from the service in the response. As a user of

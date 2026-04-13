@@ -18,6 +18,7 @@
 namespace Google\Service\DisplayVideo\Resource;
 
 use Google\Service\DisplayVideo\AdGroupAd;
+use Google\Service\DisplayVideo\DisplayvideoEmpty;
 use Google\Service\DisplayVideo\ListAdGroupAdsResponse;
 
 /**
@@ -30,6 +31,43 @@ use Google\Service\DisplayVideo\ListAdGroupAdsResponse;
  */
 class AdvertisersAdGroupAds extends \Google\Service\Resource
 {
+  /**
+   * Creates an ad group ad. This method is only supported for Demand Gen ads.
+   * Retrieval and management of Demand Gen resources is currently in beta. This
+   * method is only available to allowlisted users. (adGroupAds.create)
+   *
+   * @param string $advertiserId Output only. The unique ID of the advertiser the
+   * ad belongs to.
+   * @param AdGroupAd $postBody
+   * @param array $optParams Optional parameters.
+   * @return AdGroupAd
+   * @throws \Google\Service\Exception
+   */
+  public function create($advertiserId, AdGroupAd $postBody, $optParams = [])
+  {
+    $params = ['advertiserId' => $advertiserId, 'postBody' => $postBody];
+    $params = array_merge($params, $optParams);
+    return $this->call('create', [$params], AdGroupAd::class);
+  }
+  /**
+   * Deletes an ad group ad. This method is only supported for Demand Gen ads.
+   * Retrieval and management of Demand Gen resources is currently in beta. This
+   * method is only available to allowlisted users. (adGroupAds.delete)
+   *
+   * @param string $advertiserId Required. The ID of the advertiser the ad belongs
+   * to.
+   * @param string $adGroupAdId Required. The ID of the ad to delete. Only Demand
+   * Gen ads are supported.
+   * @param array $optParams Optional parameters.
+   * @return DisplayvideoEmpty
+   * @throws \Google\Service\Exception
+   */
+  public function delete($advertiserId, $adGroupAdId, $optParams = [])
+  {
+    $params = ['advertiserId' => $advertiserId, 'adGroupAdId' => $adGroupAdId];
+    $params = array_merge($params, $optParams);
+    return $this->call('delete', [$params], DisplayvideoEmpty::class);
+  }
   /**
    * Gets an ad group ad. (adGroupAds.get)
    *
@@ -85,6 +123,29 @@ class AdvertisersAdGroupAds extends \Google\Service\Resource
     $params = ['advertiserId' => $advertiserId];
     $params = array_merge($params, $optParams);
     return $this->call('list', [$params], ListAdGroupAdsResponse::class);
+  }
+  /**
+   * Updates an ad group ad. This method is only supported for Demand Gen ads.
+   * Retrieval and management of Demand Gen resources is currently in beta. This
+   * method is only available to allowlisted users. (adGroupAds.patch)
+   *
+   * @param string $advertiserId Output only. The unique ID of the advertiser the
+   * ad belongs to.
+   * @param string $adGroupAdId Output only. The unique ID of the ad. Assigned by
+   * the system.
+   * @param AdGroupAd $postBody
+   * @param array $optParams Optional parameters.
+   *
+   * @opt_param string updateMask Required. The mask to control which fields to
+   * update.
+   * @return AdGroupAd
+   * @throws \Google\Service\Exception
+   */
+  public function patch($advertiserId, $adGroupAdId, AdGroupAd $postBody, $optParams = [])
+  {
+    $params = ['advertiserId' => $advertiserId, 'adGroupAdId' => $adGroupAdId, 'postBody' => $postBody];
+    $params = array_merge($params, $optParams);
+    return $this->call('patch', [$params], AdGroupAd::class);
   }
 }
 

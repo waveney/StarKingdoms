@@ -17,6 +17,9 @@
 
 namespace Google\Service\Aiplatform\Resource;
 
+use Google\Service\Aiplatform\GoogleCloudAiplatformV1AskContextsRequest;
+use Google\Service\Aiplatform\GoogleCloudAiplatformV1AskContextsResponse;
+use Google\Service\Aiplatform\GoogleCloudAiplatformV1AsyncRetrieveContextsRequest;
 use Google\Service\Aiplatform\GoogleCloudAiplatformV1AugmentPromptRequest;
 use Google\Service\Aiplatform\GoogleCloudAiplatformV1AugmentPromptResponse;
 use Google\Service\Aiplatform\GoogleCloudAiplatformV1CorroborateContentRequest;
@@ -46,6 +49,41 @@ use Google\Service\Aiplatform\GoogleLongrunningOperation;
  */
 class ProjectsLocations extends \Google\Service\Resource
 {
+  /**
+   * Agentic Retrieval Ask API for RAG. (locations.askContexts)
+   *
+   * @param string $parent Required. The resource name of the Location from which
+   * to retrieve RagContexts. The users must have permission to make a call in the
+   * project. Format: `projects/{project}/locations/{location}`.
+   * @param GoogleCloudAiplatformV1AskContextsRequest $postBody
+   * @param array $optParams Optional parameters.
+   * @return GoogleCloudAiplatformV1AskContextsResponse
+   * @throws \Google\Service\Exception
+   */
+  public function askContexts($parent, GoogleCloudAiplatformV1AskContextsRequest $postBody, $optParams = [])
+  {
+    $params = ['parent' => $parent, 'postBody' => $postBody];
+    $params = array_merge($params, $optParams);
+    return $this->call('askContexts', [$params], GoogleCloudAiplatformV1AskContextsResponse::class);
+  }
+  /**
+   * Asynchronous API to retrieves relevant contexts for a query.
+   * (locations.asyncRetrieveContexts)
+   *
+   * @param string $parent Required. The resource name of the Location from which
+   * to retrieve RagContexts. The users must have permission to make a call in the
+   * project. Format: `projects/{project}/locations/{location}`.
+   * @param GoogleCloudAiplatformV1AsyncRetrieveContextsRequest $postBody
+   * @param array $optParams Optional parameters.
+   * @return GoogleLongrunningOperation
+   * @throws \Google\Service\Exception
+   */
+  public function asyncRetrieveContexts($parent, GoogleCloudAiplatformV1AsyncRetrieveContextsRequest $postBody, $optParams = [])
+  {
+    $params = ['parent' => $parent, 'postBody' => $postBody];
+    $params = array_merge($params, $optParams);
+    return $this->call('asyncRetrieveContexts', [$params], GoogleLongrunningOperation::class);
+  }
   /**
    * Given an input prompt, it returns augmented prompt from vertex rag store to
    * guide LLM towards generating grounded responses. (locations.augmentPrompt)
@@ -153,11 +191,13 @@ class ProjectsLocations extends \Google\Service\Resource
     return $this->call('generateInstanceRubrics', [$params], GoogleCloudAiplatformV1GenerateInstanceRubricsResponse::class);
   }
   /**
-   * Generates synthetic data based on the provided configuration.
+   * Generates synthetic (artificial) data based on a description
    * (locations.generateSyntheticData)
    *
-   * @param string $location Required. The resource name of the Location to run
-   * the job. Format: `projects/{project}/locations/{location}`
+   * @param string $location Required. The geographic location where the synthetic
+   * data generation request is processed. This should be in the format
+   * `projects/{project}/locations/{location}`. For example, `projects/my-
+   * project/locations/us-central1`.
    * @param GoogleCloudAiplatformV1GenerateSyntheticDataRequest $postBody
    * @param array $optParams Optional parameters.
    * @return GoogleCloudAiplatformV1GenerateSyntheticDataResponse
@@ -200,11 +240,16 @@ class ProjectsLocations extends \Google\Service\Resource
   }
   /**
    * Lists information about the supported locations for this service. This method
-   * can be called in two ways: * **List all public locations:** Use the path `GET
-   * /v1/locations`. * **List project-visible locations:** Use the path `GET
-   * /v1/projects/{project_id}/locations`. This may include public locations as
-   * well as private or other locations specifically visible to the project.
-   * (locations.listProjectsLocations)
+   * lists locations based on the resource scope provided in the
+   * [ListLocationsRequest.name] field: * **Global locations**: If `name` is
+   * empty, the method lists the public locations available to all projects. *
+   * **Project-specific locations**: If `name` follows the format
+   * `projects/{project}`, the method lists locations visible to that specific
+   * project. This includes public, private, or other project-specific locations
+   * enabled for the project. For gRPC and client library implementations, the
+   * resource name is passed as the `name` field. For direct service calls, the
+   * resource name is incorporated into the request path based on the specific
+   * service implementation and version. (locations.listProjectsLocations)
    *
    * @param string $name The resource that owns the locations collection, if
    * applicable.

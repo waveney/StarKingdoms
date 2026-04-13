@@ -87,6 +87,8 @@ class ClusterUpdate extends \Google\Collection
   protected $desiredAuthenticatorGroupsConfigDataType = '';
   protected $desiredAutoIpamConfigType = AutoIpamConfig::class;
   protected $desiredAutoIpamConfigDataType = '';
+  protected $desiredAutopilotClusterPolicyConfigType = ClusterPolicyConfig::class;
+  protected $desiredAutopilotClusterPolicyConfigDataType = '';
   protected $desiredAutopilotWorkloadPolicyConfigType = WorkloadPolicyConfig::class;
   protected $desiredAutopilotWorkloadPolicyConfigDataType = '';
   protected $desiredBinaryAuthorizationType = BinaryAuthorization::class;
@@ -97,6 +99,8 @@ class ClusterUpdate extends \Google\Collection
   protected $desiredCompliancePostureConfigDataType = '';
   protected $desiredContainerdConfigType = ContainerdConfig::class;
   protected $desiredContainerdConfigDataType = '';
+  protected $desiredControlPlaneEgressType = ControlPlaneEgress::class;
+  protected $desiredControlPlaneEgressDataType = '';
   protected $desiredControlPlaneEndpointsConfigType = ControlPlaneEndpointsConfig::class;
   protected $desiredControlPlaneEndpointsConfigDataType = '';
   protected $desiredCostManagementConfigType = CostManagementConfig::class;
@@ -210,6 +214,8 @@ class ClusterUpdate extends \Google\Collection
    * @var string
    */
   public $desiredLoggingService;
+  protected $desiredManagedMachineLearningDiagnosticsConfigType = ManagedMachineLearningDiagnosticsConfig::class;
+  protected $desiredManagedMachineLearningDiagnosticsConfigDataType = '';
   protected $desiredManagedOpentelemetryConfigType = ManagedOpenTelemetryConfig::class;
   protected $desiredManagedOpentelemetryConfigDataType = '';
   protected $desiredMasterAuthorizedNetworksConfigType = MasterAuthorizedNetworksConfig::class;
@@ -306,6 +312,8 @@ class ClusterUpdate extends \Google\Collection
   protected $desiredResourceUsageExportConfigDataType = '';
   protected $desiredSecretManagerConfigType = SecretManagerConfig::class;
   protected $desiredSecretManagerConfigDataType = '';
+  protected $desiredSecretSyncConfigType = SecretSyncConfig::class;
+  protected $desiredSecretSyncConfigDataType = '';
   protected $desiredSecurityPostureConfigType = SecurityPostureConfig::class;
   protected $desiredSecurityPostureConfigDataType = '';
   protected $desiredServiceExternalIpsConfigType = ServiceExternalIPsConfig::class;
@@ -442,6 +450,22 @@ class ClusterUpdate extends \Google\Collection
     return $this->desiredAutoIpamConfig;
   }
   /**
+   * The desired autopilot cluster policies that to be enforced in the cluster.
+   *
+   * @param ClusterPolicyConfig $desiredAutopilotClusterPolicyConfig
+   */
+  public function setDesiredAutopilotClusterPolicyConfig(ClusterPolicyConfig $desiredAutopilotClusterPolicyConfig)
+  {
+    $this->desiredAutopilotClusterPolicyConfig = $desiredAutopilotClusterPolicyConfig;
+  }
+  /**
+   * @return ClusterPolicyConfig
+   */
+  public function getDesiredAutopilotClusterPolicyConfig()
+  {
+    return $this->desiredAutopilotClusterPolicyConfig;
+  }
+  /**
    * WorkloadPolicyConfig is the configuration related to GCW workload policy
    *
    * @param WorkloadPolicyConfig $desiredAutopilotWorkloadPolicyConfig
@@ -525,6 +549,22 @@ class ClusterUpdate extends \Google\Collection
   public function getDesiredContainerdConfig()
   {
     return $this->desiredContainerdConfig;
+  }
+  /**
+   * The desired control plane egress control config for the cluster.
+   *
+   * @param ControlPlaneEgress $desiredControlPlaneEgress
+   */
+  public function setDesiredControlPlaneEgress(ControlPlaneEgress $desiredControlPlaneEgress)
+  {
+    $this->desiredControlPlaneEgress = $desiredControlPlaneEgress;
+  }
+  /**
+   * @return ControlPlaneEgress
+   */
+  public function getDesiredControlPlaneEgress()
+  {
+    return $this->desiredControlPlaneEgress;
   }
   /**
    * Control plane endpoints configuration.
@@ -955,6 +995,22 @@ class ClusterUpdate extends \Google\Collection
   public function getDesiredLoggingService()
   {
     return $this->desiredLoggingService;
+  }
+  /**
+   * The desired managed machine learning diagnostics configuration.
+   *
+   * @param ManagedMachineLearningDiagnosticsConfig $desiredManagedMachineLearningDiagnosticsConfig
+   */
+  public function setDesiredManagedMachineLearningDiagnosticsConfig(ManagedMachineLearningDiagnosticsConfig $desiredManagedMachineLearningDiagnosticsConfig)
+  {
+    $this->desiredManagedMachineLearningDiagnosticsConfig = $desiredManagedMachineLearningDiagnosticsConfig;
+  }
+  /**
+   * @return ManagedMachineLearningDiagnosticsConfig
+   */
+  public function getDesiredManagedMachineLearningDiagnosticsConfig()
+  {
+    return $this->desiredManagedMachineLearningDiagnosticsConfig;
   }
   /**
    * The desired managed open telemetry configuration.
@@ -1434,6 +1490,22 @@ class ClusterUpdate extends \Google\Collection
   public function getDesiredSecretManagerConfig()
   {
     return $this->desiredSecretManagerConfig;
+  }
+  /**
+   * Configuration for sync Secret Manager secrets as k8s secrets.
+   *
+   * @param SecretSyncConfig $desiredSecretSyncConfig
+   */
+  public function setDesiredSecretSyncConfig(SecretSyncConfig $desiredSecretSyncConfig)
+  {
+    $this->desiredSecretSyncConfig = $desiredSecretSyncConfig;
+  }
+  /**
+   * @return SecretSyncConfig
+   */
+  public function getDesiredSecretSyncConfig()
+  {
+    return $this->desiredSecretSyncConfig;
   }
   /**
    * Enable/Disable Security Posture API features for the cluster.

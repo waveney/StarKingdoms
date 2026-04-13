@@ -104,7 +104,9 @@ class GoogleCloudDiscoveryengineV1alphaEngine extends \Google\Collection
    * Used for AI Mode.
    */
   public const SOLUTION_TYPE_SOLUTION_TYPE_AI_MODE = 'SOLUTION_TYPE_AI_MODE';
-  protected $collection_key = 'dataStoreIds';
+  protected $collection_key = 'procurementContactEmails';
+  protected $agentGatewaySettingType = GoogleCloudDiscoveryengineV1alphaAgentGatewaySetting::class;
+  protected $agentGatewaySettingDataType = '';
   /**
    * Optional. Immutable. This the application type which this engine resource
    * represents. NOTE: this is a new concept independ of existing industry
@@ -176,7 +178,8 @@ class GoogleCloudDiscoveryengineV1alphaEngine extends \Google\Collection
    * sharing` * `personalization-memory` * `personalization-suggested-
    * highlights` * `disable-agent-sharing` * `disable-image-generation` *
    * `disable-video-generation` * `disable-onedrive-upload` * `disable-talk-to-
-   * content` * `disable-google-drive-upload` * `disable-welcome-emails`
+   * content` * `disable-google-drive-upload` * `disable-welcome-emails` *
+   * `disable-canvas` * `disable-canvas-workspace`
    *
    * @var string[]
    */
@@ -224,11 +227,11 @@ class GoogleCloudDiscoveryengineV1alphaEngine extends \Google\Collection
   protected $observabilityConfigType = GoogleCloudDiscoveryengineV1alphaObservabilityConfig::class;
   protected $observabilityConfigDataType = '';
   /**
-   * Optional. The email of the procurement contact.
+   * Optional. The emails of the procurement contacts.
    *
-   * @var string
+   * @var string[]
    */
-  public $procurementContactEmail;
+  public $procurementContactEmails;
   protected $recommendationMetadataType = GoogleCloudDiscoveryengineV1alphaEngineRecommendationMetadata::class;
   protected $recommendationMetadataDataType = '';
   protected $searchEngineConfigType = GoogleCloudDiscoveryengineV1alphaEngineSearchEngineConfig::class;
@@ -248,6 +251,22 @@ class GoogleCloudDiscoveryengineV1alphaEngine extends \Google\Collection
    */
   public $updateTime;
 
+  /**
+   * Optional. The agent gateway setting for the engine.
+   *
+   * @param GoogleCloudDiscoveryengineV1alphaAgentGatewaySetting $agentGatewaySetting
+   */
+  public function setAgentGatewaySetting(GoogleCloudDiscoveryengineV1alphaAgentGatewaySetting $agentGatewaySetting)
+  {
+    $this->agentGatewaySetting = $agentGatewaySetting;
+  }
+  /**
+   * @return GoogleCloudDiscoveryengineV1alphaAgentGatewaySetting
+   */
+  public function getAgentGatewaySetting()
+  {
+    return $this->agentGatewaySetting;
+  }
   /**
    * Optional. Immutable. This the application type which this engine resource
    * represents. NOTE: this is a new concept independ of existing industry
@@ -452,7 +471,8 @@ class GoogleCloudDiscoveryengineV1alphaEngine extends \Google\Collection
    * sharing` * `personalization-memory` * `personalization-suggested-
    * highlights` * `disable-agent-sharing` * `disable-image-generation` *
    * `disable-video-generation` * `disable-onedrive-upload` * `disable-talk-to-
-   * content` * `disable-google-drive-upload` * `disable-welcome-emails`
+   * content` * `disable-google-drive-upload` * `disable-welcome-emails` *
+   * `disable-canvas` * `disable-canvas-workspace`
    *
    * @param string[] $features
    */
@@ -602,20 +622,20 @@ class GoogleCloudDiscoveryengineV1alphaEngine extends \Google\Collection
     return $this->observabilityConfig;
   }
   /**
-   * Optional. The email of the procurement contact.
+   * Optional. The emails of the procurement contacts.
    *
-   * @param string $procurementContactEmail
+   * @param string[] $procurementContactEmails
    */
-  public function setProcurementContactEmail($procurementContactEmail)
+  public function setProcurementContactEmails($procurementContactEmails)
   {
-    $this->procurementContactEmail = $procurementContactEmail;
+    $this->procurementContactEmails = $procurementContactEmails;
   }
   /**
-   * @return string
+   * @return string[]
    */
-  public function getProcurementContactEmail()
+  public function getProcurementContactEmails()
   {
-    return $this->procurementContactEmail;
+    return $this->procurementContactEmails;
   }
   /**
    * Output only. Additional information of a recommendation engine. Only

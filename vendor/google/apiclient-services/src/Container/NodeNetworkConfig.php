@@ -20,6 +20,15 @@ namespace Google\Service\Container;
 class NodeNetworkConfig extends \Google\Collection
 {
   protected $collection_key = 'additionalPodNetworkConfigs';
+  /**
+   * Immutable. The accelerator network profile for the node pool. For now the
+   * only valid value is "auto". If specified, the network configuration of the
+   * nodes in this node pool will be managed by this profile for the supported
+   * machine types, zone, etc.
+   *
+   * @var string
+   */
+  public $acceleratorNetworkProfile;
   protected $additionalNodeNetworkConfigsType = AdditionalNodeNetworkConfig::class;
   protected $additionalNodeNetworkConfigsDataType = 'array';
   protected $additionalPodNetworkConfigsType = AdditionalPodNetworkConfig::class;
@@ -96,6 +105,25 @@ class NodeNetworkConfig extends \Google\Collection
    */
   public $subnetwork;
 
+  /**
+   * Immutable. The accelerator network profile for the node pool. For now the
+   * only valid value is "auto". If specified, the network configuration of the
+   * nodes in this node pool will be managed by this profile for the supported
+   * machine types, zone, etc.
+   *
+   * @param string $acceleratorNetworkProfile
+   */
+  public function setAcceleratorNetworkProfile($acceleratorNetworkProfile)
+  {
+    $this->acceleratorNetworkProfile = $acceleratorNetworkProfile;
+  }
+  /**
+   * @return string
+   */
+  public function getAcceleratorNetworkProfile()
+  {
+    return $this->acceleratorNetworkProfile;
+  }
   /**
    * We specify the additional node networks for this node pool using this list.
    * Each node network corresponds to an additional interface
@@ -204,11 +232,11 @@ class NodeNetworkConfig extends \Google\Collection
     return $this->networkTierConfig;
   }
   /**
-   * [PRIVATE FIELD] Pod CIDR size overprovisioning config for the nodepool. Pod
-   * CIDR size per node depends on max_pods_per_node. By default, the value of
-   * max_pods_per_node is rounded off to next power of 2 and we then double that
-   * to get the size of pod CIDR block per node. Example: max_pods_per_node of
-   * 30 would result in 64 IPs (/26). This config can disable the doubling of
+   * [PRIVATE FIELD] Pod CIDR size overprovisioning config for the node pool.
+   * Pod CIDR size per node depends on max_pods_per_node. By default, the value
+   * of max_pods_per_node is rounded off to next power of 2 and we then double
+   * that to get the size of pod CIDR block per node. Example: max_pods_per_node
+   * of 30 would result in 64 IPs (/26). This config can disable the doubling of
    * IPs (we still round off to next power of 2) Example: max_pods_per_node of
    * 30 will result in 32 IPs (/27) when overprovisioning is disabled.
    *

@@ -51,8 +51,9 @@ class AuthzExtension extends \Google\Collection
   public const WIRE_FORMAT_EXT_AUTHZ_GRPC = 'EXT_AUTHZ_GRPC';
   protected $collection_key = 'forwardHeaders';
   /**
-   * Required. The `:authority` header in the gRPC request sent from Envoy to
-   * the extension service.
+   * Optional. The `:authority` header in the gRPC request sent from Envoy to
+   * the extension service. It is required when the `service` field points to a
+   * backend service or a wasm plugin.
    *
    * @var string
    */
@@ -83,6 +84,19 @@ class AuthzExtension extends \Google\Collection
    * @var bool
    */
   public $failOpen;
+  /**
+   * Optional. List of the Envoy attributes to forward to the extension server.
+   * The attributes provided here are included as part of the
+   * `ProcessingRequest.attributes` field (of type `map`), where the keys are
+   * the attribute names. Refer to the
+   * [documentation](https://cloud.google.com/service-extensions/docs/cel-
+   * matcher-language-reference#attributes) for the names of attributes that can
+   * be forwarded. If omitted, no attributes are sent. Each element is a string
+   * indicating the attribute name.
+   *
+   * @var string[]
+   */
+  public $forwardAttributes;
   /**
    * Optional. List of the HTTP headers to forward to the extension (from the
    * client). If omitted, all headers are sent. Each element is a string
@@ -166,8 +180,9 @@ class AuthzExtension extends \Google\Collection
   public $wireFormat;
 
   /**
-   * Required. The `:authority` header in the gRPC request sent from Envoy to
-   * the extension service.
+   * Optional. The `:authority` header in the gRPC request sent from Envoy to
+   * the extension service. It is required when the `service` field points to a
+   * backend service or a wasm plugin.
    *
    * @param string $authority
    */
@@ -237,6 +252,29 @@ class AuthzExtension extends \Google\Collection
   public function getFailOpen()
   {
     return $this->failOpen;
+  }
+  /**
+   * Optional. List of the Envoy attributes to forward to the extension server.
+   * The attributes provided here are included as part of the
+   * `ProcessingRequest.attributes` field (of type `map`), where the keys are
+   * the attribute names. Refer to the
+   * [documentation](https://cloud.google.com/service-extensions/docs/cel-
+   * matcher-language-reference#attributes) for the names of attributes that can
+   * be forwarded. If omitted, no attributes are sent. Each element is a string
+   * indicating the attribute name.
+   *
+   * @param string[] $forwardAttributes
+   */
+  public function setForwardAttributes($forwardAttributes)
+  {
+    $this->forwardAttributes = $forwardAttributes;
+  }
+  /**
+   * @return string[]
+   */
+  public function getForwardAttributes()
+  {
+    return $this->forwardAttributes;
   }
   /**
    * Optional. List of the HTTP headers to forward to the extension (from the

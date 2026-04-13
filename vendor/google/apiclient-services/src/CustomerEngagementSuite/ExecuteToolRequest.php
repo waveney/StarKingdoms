@@ -27,6 +27,16 @@ class ExecuteToolRequest extends \Google\Model
    */
   public $args;
   /**
+   * Optional. The [ToolCallContext](https://docs.cloud.google.com/customer-
+   * engagement-ai/conversational-agents/ps/tool/python#environment for details)
+   * to be passed to the Python tool.
+   *
+   * @var array[]
+   */
+  public $context;
+  protected $mockConfigType = MockConfig::class;
+  protected $mockConfigDataType = '';
+  /**
    * Optional. The name of the tool to execute. Format:
    * projects/{project}/locations/{location}/apps/{app}/tools/{tool}
    *
@@ -58,6 +68,42 @@ class ExecuteToolRequest extends \Google\Model
   public function getArgs()
   {
     return $this->args;
+  }
+  /**
+   * Optional. The [ToolCallContext](https://docs.cloud.google.com/customer-
+   * engagement-ai/conversational-agents/ps/tool/python#environment for details)
+   * to be passed to the Python tool.
+   *
+   * @param array[] $context
+   */
+  public function setContext($context)
+  {
+    $this->context = $context;
+  }
+  /**
+   * @return array[]
+   */
+  public function getContext()
+  {
+    return $this->context;
+  }
+  /**
+   * Optional. Mock configuration for the tool execution. If this field is set,
+   * tools that call other tools will be mocked based on the provided patterns
+   * and responses.
+   *
+   * @param MockConfig $mockConfig
+   */
+  public function setMockConfig(MockConfig $mockConfig)
+  {
+    $this->mockConfig = $mockConfig;
+  }
+  /**
+   * @return MockConfig
+   */
+  public function getMockConfig()
+  {
+    return $this->mockConfig;
   }
   /**
    * Optional. The name of the tool to execute. Format:

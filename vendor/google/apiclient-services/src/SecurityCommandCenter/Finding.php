@@ -154,6 +154,8 @@ class Finding extends \Google\Collection
   protected $accessDataType = '';
   protected $affectedResourcesType = AffectedResources::class;
   protected $affectedResourcesDataType = '';
+  protected $agentDataAccessEventsType = AgentDataAccessEvent::class;
+  protected $agentDataAccessEventsDataType = 'array';
   protected $aiModelType = AiModel::class;
   protected $aiModelDataType = '';
   protected $applicationType = Application::class;
@@ -220,6 +222,8 @@ class Finding extends \Google\Collection
    * @var string
    */
   public $description;
+  protected $discoveredWorkloadType = DiscoveredWorkload::class;
+  protected $discoveredWorkloadDataType = '';
   protected $diskType = Disk::class;
   protected $diskDataType = '';
   /**
@@ -346,6 +350,8 @@ class Finding extends \Google\Collection
    * @var string
    */
   public $parentDisplayName;
+  protected $policyViolationSummaryType = PolicyViolationSummary::class;
+  protected $policyViolationSummaryDataType = '';
   protected $processesType = Process::class;
   protected $processesDataType = 'array';
   /**
@@ -426,6 +432,22 @@ class Finding extends \Google\Collection
   public function getAffectedResources()
   {
     return $this->affectedResources;
+  }
+  /**
+   * Agent data access events associated with the finding.
+   *
+   * @param AgentDataAccessEvent[] $agentDataAccessEvents
+   */
+  public function setAgentDataAccessEvents($agentDataAccessEvents)
+  {
+    $this->agentDataAccessEvents = $agentDataAccessEvents;
+  }
+  /**
+   * @return AgentDataAccessEvent[]
+   */
+  public function getAgentDataAccessEvents()
+  {
+    return $this->agentDataAccessEvents;
   }
   /**
    * The AI model associated with the finding.
@@ -796,6 +818,22 @@ class Finding extends \Google\Collection
   public function getDescription()
   {
     return $this->description;
+  }
+  /**
+   * DiscoveredWorkload associated with the finding.
+   *
+   * @param DiscoveredWorkload $discoveredWorkload
+   */
+  public function setDiscoveredWorkload(DiscoveredWorkload $discoveredWorkload)
+  {
+    $this->discoveredWorkload = $discoveredWorkload;
+  }
+  /**
+   * @return DiscoveredWorkload
+   */
+  public function getDiscoveredWorkload()
+  {
+    return $this->discoveredWorkload;
   }
   /**
    * Disk associated with the finding.
@@ -1312,6 +1350,22 @@ class Finding extends \Google\Collection
   public function getParentDisplayName()
   {
     return $this->parentDisplayName;
+  }
+  /**
+   * PolicyViolationSummary associated with the finding.
+   *
+   * @param PolicyViolationSummary $policyViolationSummary
+   */
+  public function setPolicyViolationSummary(PolicyViolationSummary $policyViolationSummary)
+  {
+    $this->policyViolationSummary = $policyViolationSummary;
+  }
+  /**
+   * @return PolicyViolationSummary
+   */
+  public function getPolicyViolationSummary()
+  {
+    return $this->policyViolationSummary;
   }
   /**
    * Represents operating system processes associated with the Finding.

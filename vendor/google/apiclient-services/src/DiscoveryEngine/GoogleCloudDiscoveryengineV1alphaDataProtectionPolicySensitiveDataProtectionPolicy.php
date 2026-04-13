@@ -20,14 +20,16 @@ namespace Google\Service\DiscoveryEngine;
 class GoogleCloudDiscoveryengineV1alphaDataProtectionPolicySensitiveDataProtectionPolicy extends \Google\Model
 {
   /**
-   * Optional. The Sensitive Data Protection content policy resource name.
+   * Optional. Specifies the resource name of the Sensitive Data Protection
+   * content policy.
    *
    * @var string
    */
   public $policy;
 
   /**
-   * Optional. The Sensitive Data Protection content policy resource name.
+   * Optional. Specifies the resource name of the Sensitive Data Protection
+   * content policy.
    *
    * @param string $policy
    */

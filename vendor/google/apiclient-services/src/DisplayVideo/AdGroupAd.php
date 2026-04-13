@@ -52,7 +52,7 @@ class AdGroupAd extends \Google\Collection
    */
   public $adGroupAdId;
   /**
-   * Required. The unique ID of the ad group that the ad belongs to.
+   * Required. Immutable. The unique ID of the ad group that the ad belongs to.
    *
    * @var string
    */
@@ -71,6 +71,16 @@ class AdGroupAd extends \Google\Collection
   protected $audioAdDataType = '';
   protected $bumperAdType = BumperAd::class;
   protected $bumperAdDataType = '';
+  protected $dcmTrackingInfoType = DcmTrackingInfo::class;
+  protected $dcmTrackingInfoDataType = '';
+  protected $demandGenCarouselAdType = DemandGenCarouselAd::class;
+  protected $demandGenCarouselAdDataType = '';
+  protected $demandGenImageAdType = DemandGenImageAd::class;
+  protected $demandGenImageAdDataType = '';
+  protected $demandGenProductAdType = DemandGenProductAd::class;
+  protected $demandGenProductAdDataType = '';
+  protected $demandGenVideoAdType = DemandGenVideoAd::class;
+  protected $demandGenVideoAdDataType = '';
   /**
    * Required. The display name of the ad. Must be UTF-8 encoded with a maximum
    * size of 255 bytes.
@@ -120,7 +130,7 @@ class AdGroupAd extends \Google\Collection
     return $this->adGroupAdId;
   }
   /**
-   * Required. The unique ID of the ad group that the ad belongs to.
+   * Required. Immutable. The unique ID of the ad group that the ad belongs to.
    *
    * @param string $adGroupId
    */
@@ -218,6 +228,101 @@ class AdGroupAd extends \Google\Collection
   public function getBumperAd()
   {
     return $this->bumperAd;
+  }
+  /**
+   * Optional. The DCM tracking ad info. Only valid for Demand Gen ads. To
+   * remove the DCM tracking ad info, please leave this field empty. Retrieval
+   * and management of Demand Gen resources is currently in beta. This field is
+   * only available to allowlisted users.
+   *
+   * @param DcmTrackingInfo $dcmTrackingInfo
+   */
+  public function setDcmTrackingInfo(DcmTrackingInfo $dcmTrackingInfo)
+  {
+    $this->dcmTrackingInfo = $dcmTrackingInfo;
+  }
+  /**
+   * @return DcmTrackingInfo
+   */
+  public function getDcmTrackingInfo()
+  {
+    return $this->dcmTrackingInfo;
+  }
+  /**
+   * Details of a [Demand Gen carousel ad](//support.google.com/displayvideo/ans
+   * wer/15598924?&sjid=11207068802760924844-NC#CarouselAd). Retrieval and
+   * management of Demand Gen resources is currently in beta. This field is only
+   * available to allowlisted users.
+   *
+   * @param DemandGenCarouselAd $demandGenCarouselAd
+   */
+  public function setDemandGenCarouselAd(DemandGenCarouselAd $demandGenCarouselAd)
+  {
+    $this->demandGenCarouselAd = $demandGenCarouselAd;
+  }
+  /**
+   * @return DemandGenCarouselAd
+   */
+  public function getDemandGenCarouselAd()
+  {
+    return $this->demandGenCarouselAd;
+  }
+  /**
+   * Details of a [Demand Gen image ad](//support.google.com/displayvideo/answer
+   * /15598924?&sjid=11207068802760924844-NC#ImageAd). Retrieval and management
+   * of Demand Gen resources is currently in beta. This field is only available
+   * to allowlisted users.
+   *
+   * @param DemandGenImageAd $demandGenImageAd
+   */
+  public function setDemandGenImageAd(DemandGenImageAd $demandGenImageAd)
+  {
+    $this->demandGenImageAd = $demandGenImageAd;
+  }
+  /**
+   * @return DemandGenImageAd
+   */
+  public function getDemandGenImageAd()
+  {
+    return $this->demandGenImageAd;
+  }
+  /**
+   * Details of a [Demand Gen product ad](//support.google.com/displayvideo/answ
+   * er/15598924?&sjid=11207068802760924844-NC#Product-onlyAd). Retrieval and
+   * management of Demand Gen resources is currently in beta. This field is only
+   * available to allowlisted users.
+   *
+   * @param DemandGenProductAd $demandGenProductAd
+   */
+  public function setDemandGenProductAd(DemandGenProductAd $demandGenProductAd)
+  {
+    $this->demandGenProductAd = $demandGenProductAd;
+  }
+  /**
+   * @return DemandGenProductAd
+   */
+  public function getDemandGenProductAd()
+  {
+    return $this->demandGenProductAd;
+  }
+  /**
+   * Details of a [Demand Gen video ad](//support.google.com/displayvideo/answer
+   * /15598924?&sjid=11207068802760924844-NC#VideoAd). Retrieval and management
+   * of Demand Gen resources is currently in beta. This field is only available
+   * to allowlisted users.
+   *
+   * @param DemandGenVideoAd $demandGenVideoAd
+   */
+  public function setDemandGenVideoAd(DemandGenVideoAd $demandGenVideoAd)
+  {
+    $this->demandGenVideoAd = $demandGenVideoAd;
+  }
+  /**
+   * @return DemandGenVideoAd
+   */
+  public function getDemandGenVideoAd()
+  {
+    return $this->demandGenVideoAd;
   }
   /**
    * Required. The display name of the ad. Must be UTF-8 encoded with a maximum

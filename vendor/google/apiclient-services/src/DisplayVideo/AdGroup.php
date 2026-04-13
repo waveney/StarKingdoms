@@ -58,6 +58,11 @@ class AdGroup extends \Google\Model
    */
   public const AD_GROUP_FORMAT_AD_GROUP_FORMAT_MASTHEAD = 'AD_GROUP_FORMAT_MASTHEAD';
   /**
+   * Demand Gen ads. Retrieval and management of Demand Gen resources is
+   * currently in beta. This enum value is only available to allowlisted users.
+   */
+  public const AD_GROUP_FORMAT_AD_GROUP_FORMAT_DEMAND_GEN = 'AD_GROUP_FORMAT_DEMAND_GEN';
+  /**
    * Default value when status is not specified or is unknown in this version.
    */
   public const ENTITY_STATUS_ENTITY_STATUS_UNSPECIFIED = 'ENTITY_STATUS_UNSPECIFIED';
@@ -83,7 +88,7 @@ class AdGroup extends \Google\Model
    */
   public const ENTITY_STATUS_ENTITY_STATUS_SCHEDULED_FOR_DELETION = 'ENTITY_STATUS_SCHEDULED_FOR_DELETION';
   /**
-   * Required. The format of the ads in the ad group.
+   * Required. Immutable. The format of the ads in the ad group.
    *
    * @var string
    */
@@ -94,6 +99,8 @@ class AdGroup extends \Google\Model
    * @var string
    */
   public $adGroupId;
+  protected $adGroupInventoryControlType = AdGroupInventoryControl::class;
+  protected $adGroupInventoryControlDataType = '';
   /**
    * Output only. The unique ID of the advertiser the ad group belongs to.
    *
@@ -119,7 +126,8 @@ class AdGroup extends \Google\Model
    */
   public $entityStatus;
   /**
-   * Required. The unique ID of the line item that the ad group belongs to.
+   * Required. Immutable. The unique ID of the line item that the ad group
+   * belongs to.
    *
    * @var string
    */
@@ -136,12 +144,13 @@ class AdGroup extends \Google\Model
   protected $targetingExpansionDataType = '';
 
   /**
-   * Required. The format of the ads in the ad group.
+   * Required. Immutable. The format of the ads in the ad group.
    *
    * Accepted values: AD_GROUP_FORMAT_UNSPECIFIED, AD_GROUP_FORMAT_IN_STREAM,
    * AD_GROUP_FORMAT_VIDEO_DISCOVERY, AD_GROUP_FORMAT_BUMPER,
    * AD_GROUP_FORMAT_NON_SKIPPABLE_IN_STREAM, AD_GROUP_FORMAT_AUDIO,
-   * AD_GROUP_FORMAT_RESPONSIVE, AD_GROUP_FORMAT_REACH, AD_GROUP_FORMAT_MASTHEAD
+   * AD_GROUP_FORMAT_RESPONSIVE, AD_GROUP_FORMAT_REACH,
+   * AD_GROUP_FORMAT_MASTHEAD, AD_GROUP_FORMAT_DEMAND_GEN
    *
    * @param self::AD_GROUP_FORMAT_* $adGroupFormat
    */
@@ -171,6 +180,23 @@ class AdGroup extends \Google\Model
   public function getAdGroupId()
   {
     return $this->adGroupId;
+  }
+  /**
+   * Optional. Required for Demand Gen ad groups. Specifies the inventory
+   * control of the ad group.
+   *
+   * @param AdGroupInventoryControl $adGroupInventoryControl
+   */
+  public function setAdGroupInventoryControl(AdGroupInventoryControl $adGroupInventoryControl)
+  {
+    $this->adGroupInventoryControl = $adGroupInventoryControl;
+  }
+  /**
+   * @return AdGroupInventoryControl
+   */
+  public function getAdGroupInventoryControl()
+  {
+    return $this->adGroupInventoryControl;
   }
   /**
    * Output only. The unique ID of the advertiser the ad group belongs to.
@@ -247,7 +273,8 @@ class AdGroup extends \Google\Model
     return $this->entityStatus;
   }
   /**
-   * Required. The unique ID of the line item that the ad group belongs to.
+   * Required. Immutable. The unique ID of the line item that the ad group
+   * belongs to.
    *
    * @param string $lineItemId
    */
