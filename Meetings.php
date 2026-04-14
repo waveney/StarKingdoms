@@ -855,7 +855,7 @@ function SystemSee($Sid) {
                   $FactFact[$F2][$F1] = $R2;
                 }
               }
-              $React = ($ALL?5:min($React,$FactFact[$F1][$F2],$FactFact[$F2][$F1]));
+              $React = min($React,$FactFact[$F1][$F2],$FactFact[$F2][$F1]);
             }
           }
 
