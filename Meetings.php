@@ -66,7 +66,7 @@
   $DevTotal = 0;
 
 
-  //  var_dump($_REQUEST);
+//  var_dump($_REQUEST);
 
   function Set_Excludes() {
     Global $Excludes,$ExcludeList,$Battle;
@@ -377,7 +377,7 @@ function SystemSee($Sid) {
 
     echo $txt . "</div>";
 
-    echo "</form><form method=post action=Meetings.php?ACTION=Check&S=$Sid onkeydown=\"return event.key != 'Enter';\">";
+    echo "</form><form method=post action=Meetings.php?ACT=Check&S=$Sid onkeydown=\"return event.key != 'Enter';\">";
 
 
     $_REQUEST['IgnoreShield'] = 0;
@@ -484,6 +484,8 @@ function SystemSee($Sid) {
 
 //  var_dump($Sids);
 //  var_dump($Sys);
+
+  if (!isset($_REQUEST['ACTION']) && isset($_REQUEST['ACT'])) $_REQUEST['ACTION'] = $_REQUEST['ACT'];
   if (isset($_REQUEST['ACTION'])) {
     switch ($_REQUEST['ACTION']) {
       case 'Do ALL Ground Damage':
@@ -672,6 +674,7 @@ function SystemSee($Sid) {
       }
 
     case 'Remove Forces':
+    case 'Remove forces':
       if (isset($_REQUEST['S'])) {
         $Sid = $_REQUEST['S'];
         $N = Get_System($Sid);
