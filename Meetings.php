@@ -749,7 +749,8 @@ function SystemSee($Sid) {
   }
   echo "<h1 id=Systems>Checking</h1>";
 
-  echo "<h2><a href=Meetings.php?ALL>All Systems</a></h2>";
+  $ALL = isset($_REQUEST['ALL']);
+  if (!$ALL) echo "<h2><a href=Meetings.php?ALL>All Systems</a></h2>";
   echo "<span class=NotHostile>Factions</span> thus marked have only Never Hostile Things.<br>" .
        "The most hostile rating between factions present is displayed.<p>";
 
@@ -760,7 +761,7 @@ function SystemSee($Sid) {
   }
 
   $RR['Show'] = 5;
-  echo fm_radio("Min relationship to Show",$RelNames,$RR,'Show',' onchange=MeetupFilter()',1,'','',$RelCols);
+  if (!$ALL) echo fm_radio("Min relationship to Show",$RelNames,$RR,'Show',' onchange=MeetupFilter()',1,'','',$RelCols);
 
   if (!$CSV) {
     TableStart();
@@ -798,7 +799,6 @@ function SystemSee($Sid) {
     if ((($Dat['Attributes']??0)& 1) == 0) $Sids[$Sid][1][$Fid] = 1; // Ground present (Militia)
   }
 
-  $ALL = isset($_REQUEST['ALL']);
 
   echo "<form method=post>";
   Register_AutoUpdate('Generic', 0);
@@ -882,7 +882,7 @@ function SystemSee($Sid) {
         $ltxt .= "<td>" . fm_checkbox('', $MeetupTurn, $height,'',"MeetupTurn:$height:$MTid");
       }
 
-      $hide = ($WorstRel<=$RR['Show']?'':' hidden');
+      $hide = ($ALL || $WorstRel<=$RR['Show']?'':' hidden');
       echo "\n<tr class=WorstRel$WorstRel $hide><td><a href=Meetings.php?ACTION=Check&S=$Sid$TurnP>" . $N['Ref'] . "</a>";
       echo $ltxt;
     }
