@@ -749,6 +749,7 @@ function SystemSee($Sid) {
   }
   echo "<h1 id=Systems>Checking</h1>";
 
+  echo "<h2><a href=Meetings.php?ALL>All Systems</a></h2>";
   echo "<span class=NotHostile>Factions</span> thus marked have only Never Hostile Things.<br>" .
        "The most hostile rating between factions present is displayed.<p>";
 
@@ -797,6 +798,8 @@ function SystemSee($Sid) {
     if ((($Dat['Attributes']??0)& 1) == 0) $Sids[$Sid][1][$Fid] = 1; // Ground present (Militia)
   }
 
+  $ALL = isset($_REQUEST['ALL']);
+
   echo "<form method=post>";
   Register_AutoUpdate('Generic', 0);
   foreach ($Sys as $N) {
@@ -818,15 +821,16 @@ function SystemSee($Sid) {
       }
 
 //      var_dump($HostC);
-      if ($HostC[0] <2 && $HostC[1]<2) continue; // Not 2 hostile possibles present
+      if (!$ALL && $HostC[0] <2 && $HostC[1]<2) continue; // Not 2 hostile possibles present
 
       $WorstRel=100;
       $ltxt = '';
+      $CountMin = ($ALL?1:2);
       for($gs=0;$gs<2;$gs++) {
         $height = ['Space','Ground'][$gs];
         $React = 9;
         $ltxt .= "<td>";
-        if (isset($Sids[$Sid][$gs]) && (count($Sids[$Sid][$gs]) > 1)) {
+        if (isset($Sids[$Sid][$gs]) && (count($Sids[$Sid][$gs]) >= $CountMin)) {
           foreach ($Sids[$Sid][$gs] as $F1=>$Hostile1) {
             if ($F1 == 0) continue;
             $R1 = $Facts[$F1]['DefaultRelations'];
@@ -851,7 +855,7 @@ function SystemSee($Sid) {
                   $FactFact[$F2][$F1] = $R2;
                 }
               }
-              $React = min($React,$FactFact[$F1][$F2],$FactFact[$F2][$F1]);
+              $React = ($ALL?5:min($React,$FactFact[$F1][$F2],$FactFact[$F2][$F1]));
             }
           }
 

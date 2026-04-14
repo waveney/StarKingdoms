@@ -471,11 +471,8 @@
       }
 
       if ($OpTypes[$op]['Props'] & OPER_SOCP) { // Burn Heretics
-        //        var_dump($ThingType,$ThingId);
         $World = Gen_Get_Cond1('Worlds',"ThingType=$TargType AND ThingId=$Target");
         $Wid = ($World['id']??0);
-        $SP = $Org['SocialPrinciple'];
-        $SocPs = Get_SocialPs($Wid);
 
         //        var_dump($World,$Wid,$Fid);
         if (($World['FactionId']??0) != $Fid) { // Not own World, find if branch
@@ -485,6 +482,28 @@
             break;
           }
         }
+        $SP = $Org['SocialPrinciple'];
+        if (!$SP) { // Spread the world from org with no core priniple
+          $PList = [];
+          $Worlds = Get_Worlds($Fid);
+          foreach($Worlds as $Wid=>$W) {
+            $SPs = Get_SocialPs($Wid);
+            foreach($SPs as $S) {
+              $Pr = $S['Principle'];
+              if (isset($PList[$Pr])) continue;
+              $Prince = Gen_Get('SocialPrinciples',$Pr);
+              if ($Prince['Principle']??0) $PList[$Pr] = $Prince['Principle'];
+            }
+          }
+          echo "<h2>Please Select the Social Principle you are spreading:</h2>";
+          foreach($PList as $Pr=>$Prince) {
+            echo "<button class=projtype type=submit formaction='OpsNew.php?$Data&SP=$Pr'>$Prince</button><br>\n";
+          }
+          break;
+        }
+
+        $SocPs = Get_SocialPs($Wid);
+
 
         if ($OpTypes[$op]['Props'] & OPER_SOCPTARGET) { // Target SocP for Burn Heretics
           echo "<h2>Please Select the Social Principle you are hitting:</h2>";

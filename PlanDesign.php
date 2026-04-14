@@ -545,7 +545,7 @@
       }
       echo "<input type=submit name=Validate value=Validate>\n";
 
-      $Projs = Gen_Get_Cond('Projects',"GameId=$GAMEID AND (ThingId=$Tid OR ThingId2=$Tid)");
+      $Projs = Gen_Get_Cond('Projects',"GameId=$GAMEID AND (ThingId=$Tid OR ThingId2=$Tid) AND Status<2");
       if ($Projs) {
         echo "Can't <b>Delete</b> as it is being used in " . plural($Projs,"no!","a Project", count($Projs) . " Projects") . "<br>";
       } else {
