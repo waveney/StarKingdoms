@@ -90,18 +90,11 @@ NEW GAME FEATURES & BUGS
 836 Lewis - filter tech tree by field tat
 838 Lewis Terraforming 6/1 @8:27
 843 Planetary Shields - see acg 7/1 @9:37
-847 [Sat Jan 17 16:45:03.679527 2026] [proxy_fcgi:error] [pid 2892737:tid 140113845647104] [client 88.97.221.18:0] AH01071: Got error 'PHP message: 
-PHP Warning:  Undefined array key 0 in /var/www/vhosts/starkingdoms.uk/httpdocs/OpsNew.php on line 604', 
-referer: https://starkingdoms.uk/OpsNew.php?t=34&O=17&Stage=1&op=5
 === 848 start of turn 33
-850 Not a bug but a UI point - on the meetup screen, when clicking "All" to check them, 
-it does all for both ground and space.  Would be nice if the All would only check the units in the relevant section
 855 Tool request - put in a system, and it tells you everyone who has vision of that system (ground and space separated) (Chris acg)
 864 ACM 20/1 @07:30
 === 865 start of turn 34
 866 Flak Evasion effect to all allied ships
-877 Shield wall
-882 Shields - see acg 3/2 @9
 883 Science points w/wo blueprints
 === 887 start of turn 35
 892 Regen GM map automatically
@@ -123,12 +116,10 @@ it does all for both ground and space.  Would be nice if the All would only chec
 
 === 928 start of turn 39
 932 DCY - GPN barrayar scans
-933 Unusual Hogarn Name - acg 13/4 10:28
 934 See acg 13/4 @ 10:34
 935 Retreating fighters...
-936 Remove forces button isn't working on UUW when trying to remove the troops on the water world
 938 Nebula Fighters coming in at 0 Hull
-939 
+939 Problem.  All Kaiju builds appear to have been put on hold when the Military Districts were used for the Kaiju Tenders acg 14/4@1903
 
 
 

@@ -221,7 +221,7 @@ function StartProjects() {
     }
     // Is there a project already running there?  If so put it on hold
     $home = $P['Home'];
-    $OPs = Get_Projects_Cond("GameId=$GAMEID AND Home=$home AND Status=1 ");
+    $OPs = Get_Projects_Cond("GameId=$GAMEID AND Home=$home AND Status=1 AND DType=" . $P['DType']);
     foreach ($OPs as $OP) {
       if ($OP['id'] == $P['id']) continue;
       if ($ProjTypes[$OP['Type']]['Category'] == $ProjTypes[$P['Type']]['Category']) { // Put old project on hold
