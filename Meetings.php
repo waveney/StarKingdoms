@@ -330,7 +330,11 @@ function ForceReport($Sid,$Cat) {
  //         if ($T['BuildState'] == BS_SERVICE) $txt .= " <b>S</b>";
         }
         $txt .=  fm_number1(" Do",$T,'Damage', ''," class=Num3 onchange=Do_Damage($Tid,$LastF,'$Cat')","Damage:$Tid") . " damage";
-        if ($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE ) $txt .= fm_checkbox(', Retreat?',$T,'RetreatMe','',"RetreatMe:$Tid");
+        if ($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE ) {
+          $txt .= fm_checkbox(', Retreat?',$T,'RetreatMe','',"RetreatMe:$Tid");
+        } elseif ($T['ProjHome']) {
+          $txt .= fm_checkbox(', Reboard?',$T,'Reboard','',"Reboard:$Tid");
+        }
         if ($TTypes[$T['Type']]['Properties'] & THING_LEAVES_DEBRIS ) $txt .= fm_checkbox(', No Debris?',$T,'NoDebris','',"NoDebris:$Tid");
 
         $txt .= "<td>" . fm_checkbox('',$T,'Exclude','',"Exclude:$LastF:$Tid class=Exclude$LastF");
@@ -491,7 +495,7 @@ function SystemSee($Sid) {
       case 'Do ALL Ground Damage':
       case 'Do ALL Space Damage':
       case 'Do ALL Damage':
-//    var_dump($_REQUEST);
+ //   var_dump($_REQUEST); exit;
       $IgnoreShield = ($_REQUEST['IgnoreShield'] ?? 0);
       foreach ($_REQUEST as $RN=>$RV) {
         if ($RV && preg_match('/Damage:(\d*)/',$RN,$Mtch)) {
@@ -499,6 +503,7 @@ function SystemSee($Sid) {
 //var_dump($Tid,$RN,$RV);
           $T = Get_Thing($Tid);
           $RDam = $Dam = $RV;
+          $shldD = 0;
           $T['Conflict'] = 1;
           if (($IgnoreShield == 0) && $T['CurShield']) {
             $shldD = min($T['CurShield'],$Dam);
@@ -526,12 +531,15 @@ function SystemSee($Sid) {
                 Put_Thing($T);
               }
             }
-          } else if ($T['CurHealth']) {
-            TurnLog($T['Whose'],$T['Name'] . " took $RV damage\n",$T);
-            Put_Thing($T);
-          } else if ($TTypes[$T['Type']]['Prop2'] & THING_HAS_RECOVERY) {
+          } else if ($T['CurHealth'] || ($TTypes[$T['Type']]['Prop2'] & THING_HAS_RECOVERY)) {
+            if ($shldD) {
+              TurnLog($T['Whose'],$T['Name'] . " took $RV damage, $shldD was on the shields\n",$T);
+              GMLog($T['Name'] . " took $RV damage\n");
+            } else {
               TurnLog($T['Whose'],$T['Name'] . " took $RV damage\n",$T);
-              Put_Thing($T);
+              GMLog($T['Name'] . " took $RV damage, $shldD was on the shields\n");
+            }
+            Put_Thing($T);
           } else {
             TurnLog($T['Whose'],$T['Name'] . " took $RV damage and has been destroyed\n",$T);
             GMLog($T['Name'] . " took $RV damage and has been destroyed\n",$T);
@@ -559,6 +567,31 @@ function SystemSee($Sid) {
           Put_Thing($T);
         }
 
+      }
+
+      foreach ($_REQUEST as $RN=>$RV) {
+        if ($RV && preg_match('/Reboard:(\d*)/',$RN,$Mtch)) {
+          $Tid = $Mtch[1];
+          $T = Get_Thing($Tid);
+
+          $Hid = $T['ProjHome'];
+          $H = Get_Thing($Hid);
+          if ($H) {
+            if ($H['CurHealth']) {
+              $T['LinkId'] = LINK_ON_BOARD;
+              $T['SystemId'] = $Hid;
+              TurnLog($T['Whose'],$T['Name'] . " reboarded " . $H['Name'],$T);
+              Put_Thing($T);
+            } else {
+              TurnLog($T['Whose'],$T['Name'] . " could not reboard " . $H['Name'] . " as it has been destroyed ",$T);
+              GMLog($T['Name'] . " could not reboard " . $H['Name'] . " as it has been destroyed ");
+            }
+          } else {
+            TurnLog($T['Whose'],$T['Name'] . " could not reboard as host record is lost ",$T);
+            GMLog($T['Name'] . " could not reboard as host record is lost ");
+
+          }
+        }
       }
 
 
@@ -598,6 +631,7 @@ function SystemSee($Sid) {
         $T['WithinSysLoc'] =1;
       }
       $T['LinkId'] = 0;
+      $T['ProjHome'] = $Hid; // Maybe duff...
       $Sid = $T['SystemId'] = $H['SystemId'];
       Put_Thing($T);
       echo $T['Name'] . " unloaded<p>";
