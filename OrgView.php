@@ -54,7 +54,7 @@ if ($Offices) {
 
 
     $control = 0;
-    switch ($W['ThingType']) {
+    switch ($W['ThingType']?? 0) {
       case 1: // Planet
         $P = Get_Planet($W['ThingId']);
         $Sys = Get_System($P['SystemId']);
@@ -74,6 +74,11 @@ if ($Offices) {
         $Where = $T['Name'] . " Currently in " . System_Name($Sys,$Fid);
         $control = $T['Whose'];
         break;
+      case 0://Error
+        GMLog4Later("Office $Offid has no valid world setup - tell Richard");
+        $Where = 'Unknown';
+        $control = 0;
+        break;
     }
     echo "<li>$Where";
     if ($Head == 0) {
@@ -83,7 +88,7 @@ if ($Offices) {
 
     echo "<button type=button class=Off$Offid onclick=ToggleClass('Off$Offid')>Show Details</button>";
     echo "<div class=Off$Offid hidden><button type=button onclick=ToggleClass('Off$Offid')>Hide Details</button>";
-    ShowWorld($W,($GM?2:0));
+    if ($W??0) ShowWorld($W,($GM?2:0));
     echo "</div>";
 
  /*
@@ -114,7 +119,7 @@ echo "<p><h2>Branches:</h2>";
 if ($Branches) {
   foreach ($Branches as $B) {
     $Bid = $B['id'];
-    switch ($B['HostType']) {
+    switch ($B['HostType']??0) {
       case 1: // Planet
         $P = Get_Planet($B['HostId']);
         $Sys = Get_System($P['SystemId']);
@@ -131,6 +136,10 @@ if ($Branches) {
         $Sys = Get_System($T['SystemId']);
         $Where = $T['Name'] . " in " . System_Name($Sys,$Fid);
         break;
+      case 0://Error
+        GMLog4Later("Branch $Bid has no valid host setup - tell Richard");
+        $Where = 'Unknown';
+        break;
     }
     echo "<li>". $BTypes[$B['Type']]['Name'] . " at $Where" ;
 
@@ -143,7 +152,7 @@ if ($Branches) {
 
       echo "<button type=button class=Branch$Bid onclick=ToggleClass('Branch$Bid')>Show Details</button>";
       echo "<div class=Branch$Bid hidden><button type=button onclick=ToggleClass('Branch$Bid')>Hide Details</button>";
-      ShowWorld($World,($GM?2:0));
+      if ($World) ShowWorld($World,($GM?2:0));
       echo "</div>";
       /*
       $SocPs = Get_SocialPs($World['id']);

@@ -49,6 +49,7 @@ function Show_Thing(&$T,$Force=0) {
   $Varies = Gen_Get_All_Game('Variants');
   $Designs = Feature('Designs');
   if ($Designs) $BuildState[BS_PLANNING] = 'Design';
+  $IsaDesign = ($T['BuildState'] == BS_PLANNING);
 
   if ($T['SystemId'] == $T['NewSystemId'] || $T['NewSystemId'] == 0) {
     $NewSyslocs = $Syslocs;
@@ -851,7 +852,7 @@ function Show_Thing(&$T,$Force=0) {
         echo "<td>" . (isset($MTNs[$D['Type']])? fm_Select($MTNs, $D , 'Type', 1,'',"ModuleType-$did") : "<span class=red>INV:" .
                       fm_Select($MNs, $D , 'Type', 1,'',"ModuleType-$did") . "</span>" );
 
-        echo (($MTs[$D['Type']]['Leveled']& MOD_LEVELED) ? fm_number1('Level', $D,'Level', '', ' class=Num3 ',"ModuleLevel-$did") .
+        echo ((($MTs[$D['Type']]['Leveled']& MOD_LEVELED) && (!$IsaDesign)) ? fm_number1('Level', $D,'Level', '', ' class=Num3 ',"ModuleLevel-$did") .
                         (($D['Level']<($Mt[$D['Type']]??0))? "<span class=green>(" . $Mt[$D['Type']] . ")</span>":'') :'<td>');
 
         $min = 0;
@@ -911,7 +912,8 @@ function Show_Thing(&$T,$Force=0) {
         echo "<td><b>" . abs($D['Number']). "</b> of ";
         if (isset($MTNs[$D['Type']])) {
           echo $MTNs[$D['Type']] . (($MTs[$D['Type']]['Leveled'] & MOD_LEVELED)? (" (Level " . $D['Level'] . ") ") :"") ;
-          if (($MTs[$D['Type']]['Leveled'] & MOD_LEVELED) && ($D['Level']<$Mt[$D['Type']])) echo " <span class=green>(" . $Mt[$D['Type']] . ")</span>";
+          if (($MTs[$D['Type']]['Leveled'] & MOD_LEVELED) && ($D['Level']<$Mt[$D['Type']]) && !$IsaDesign)
+            echo " <span class=green>(" . $Mt[$D['Type']] . ")</span>";
           switch ($MTs[$D['Type']]['Name']) {
             case 'Cargo Space':
               if (Feature('CargoLevels')) echo " - Capacity: " . $T['Level'];

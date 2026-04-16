@@ -25,7 +25,6 @@ NEW GAME FEATURES & BUGS
       Gather Life
   
 17 Where has X come from (from last line in things history) - add to see after movement (filter for unknown wormhole)
-129 Combat
 173 Edit World font size mobile - see a chat gm 21/11
 224 Meetups - armies on Different Planets see Todo 1
 288 What about an "Organisation specific map" that shows the locations of branches/offices in one colour, then the effective range from them 
@@ -33,82 +32,40 @@ NEW GAME FEATURES & BUGS
 297 The new Map trade history is useful, can I request some "turn gating options" 
     to limit what we can see, its not a problem just yet, but I can forsee mine getting very long very quick (Ross)
 318 Planet/moon Day length - part of own system development code - also better planet image gallery
-352 New ship (copy of) extra page for name before project save
 358 Luke's trade goods - achatgm 28/3/ @13:06
-444 fed heavy security not visible on ground
-451 Judith wormholes
-461 b-thor 17/6@14:36 /EMN??
-537 Vasou and ARV GXE links
 === 543 start of turn 22
 === 579 start of turn 23
-588 Vasou 25/8 abr - As per usual, space survey's havent updated the pages for the individual systems. 
-    Using the main map for wormholes, but would also like to know the details of the asteroids in one system?
-592 bar plan details anomaly twice QTE - also link missing from map QTE - ELV??
 === 608 start of turn 24
 622 GM option to select dist/off for devastation.
 === 644 start of turn 25
-657 Kage - Eclipse 09 - not full health.
-659 Ascendency WRS-LDX link -acg 23/9 @9:53
-667 Operation to ELV - barayar - inst 10 link???
-673 Re-equip and Reinforce Sergyar Batallion 1 - level 2
 === 675 start of turn 26
 === 695 start of turn 27
-708 bar link zfl-tay 
 713 Judith op distance
 717 transfer setups and outposts
 === 718 start of turn 28
-729 Links around LDX
-730 Ross 3/11 @22:10
-733 Kage 10:27 - We have sent you our most recent navigational data of Centro - it should provide you with the details of the ASS --> ARV wormhole.
-741 Improve Variant selection
 742 Ast Mine op - check for asteroids, automate
 === 748 start of turn 29
 === 770 start of turn 30
-777 p2p bar-asc 1/12 @ 21:46 (How to stop overlapping operations)
-789 Designs:
- 			a: Plan a Thing -> Design a Thing
- 			b: Designs have optional images
- 			c: Promote Thing to Design
- 			d: Create Named Chars TICK
- 			e: Designs for Outposts/Mines etc
- 			f: List of Designs
- 			g: Make a Thing ALWAYS copies a design
- 			h: Name prompt on Projects
-			i: BuildState = 0 == a Design TICK
- 			j: Behind a Feature
- k: SetupFaction needs big change
-      l: ThingPlan links to DesignPlan links
- 			m: Back promote existing things to a common design
-
 === 792 start of turn 31
-796 Command Posts (& space equiv)
-814 Lewis HOG surveys
 === 820 start of turn 32
 825 Create instance of from a design
 826 Design5443 diff numbers on GM page
-832 why didn't judith scans update?
 836 Lewis - filter tech tree by field tat
 838 Lewis Terraforming 6/1 @8:27
 843 Planetary Shields - see acg 7/1 @9:37
 === 848 start of turn 33
 855 Tool request - put in a system, and it tells you everyone who has vision of that system (ground and space separated) (Chris acg)
-864 ACM 20/1 @07:30
 === 865 start of turn 34
 866 Flak Evasion effect to all allied ships
 883 Science points w/wo blueprints
 === 887 start of turn 35
 892 Regen GM map automatically
 896 Judith survey BCZ
-891 Designs - dont mention level of techs of modules
 === start of turn 36
 898 Auto Blockades?
-899 Warehouses, visiblity, entering, seeing
-
 === 902 start of turn 37
 903 fighters see fight thread
 906 Judith Passive scans?? CHA
-909 Shield request in pthinglist
-
 === 911 start of turn 38
 916 Check Affect Anomalies
 919 Overlapping Operations
@@ -116,12 +73,9 @@ NEW GAME FEATURES & BUGS
 
 === 928 start of turn 39
 932 DCY - GPN barrayar scans
-934 See acg 13/4 @ 10:34
-935 Retreating fighters...
 938 Nebula Fighters coming in at 0 Hull
-939 Problem.  All Kaiju builds appear to have been put on hold when the Military Districts were used for the Kaiju Tenders acg 14/4@1903
-
-
+940 Agnostic Organisations (general)
+941
 
 === start of turn 40
 === start of turn 41
