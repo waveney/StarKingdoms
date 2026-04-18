@@ -18,6 +18,21 @@ define('PROJ_ORG',     0x1000);
 define('PROJ_TECH',    0x2000);
 define('PROJ_NEWNAME', 0x4000);
 
+define('DIST_PRIME',             1);
+define('DIST_DO_PROJ',           2);
+define('DIST_MINING_INC',        4);
+define('DIST_NOT_LEVELLED',      8);
+define('DIST_SPACE_STATINS',  0x10);
+define('DIST_INDUSTRIAL',     0x20);
+define('DIST_OFFICES',        0x40);
+define('DIST_NO_MILITIA',     0x80);
+define('DIST_NOT_INDUST',    0x100);
+define('DIST_LEVELXX',      0x1000);
+
+define('DIST_LEVELMASK',   0xFF000);
+
+
+
 function Proj_Costs($lvl) {
   if ($lvl<0) return [1E6,1E6]; // Should be never but...
   if ($lvl <=16) return [[1,50],[1,50],[4,200],[9,450],[16,800],[25,1250],[36,1800],[49,2450],[64,4300],[81,4050],[100,5000],[121,5550],

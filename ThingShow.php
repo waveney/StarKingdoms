@@ -179,7 +179,7 @@ function Show_Thing(&$T,$Force=0) {
   } else {
   */
     echo "<tr><td>Build State:<td>" . ($GM? fm_select($BuildState,$T,'BuildState') : $BuildState[$T['BuildState']]);
-    if (isset($T['BuildState']) && $T['BuildState'] <= BS_BUILDING) {
+    if (isset($T['BuildState']) && $T['BuildState'] == BS_BUILDING) {
       if ($GM) echo fm_number1('Build Project',$T,'ProjectId');
       if ($T['ProjectId']) {
         $Proj = Get_Project($T['ProjectId']);

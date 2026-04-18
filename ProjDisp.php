@@ -429,7 +429,6 @@
       }
       break;
     }
-// if($Hi==199) echo "Here";
     if ($PH['Type'] == 4) {
       $PlanCon-=2;
     } else if (($H['ThingType'] != 3) && ($PH['Type'] != $Faction['Biosphere']) &&
@@ -446,7 +445,7 @@
     foreach ($Dists as $D) {
 
 
-      if ($D['Type'] > 0 && (($DistTypes[$D['Type']]['Props'] &2) == 0)) continue;
+      if (($D['Type']??0) > 0 && (((($DistTypes[($D['Type']??00)]['Props']??0) &2)??0) == 0)) continue;
       if ($D['Type'] < 0 ) continue;
       $Di = $D['id'];
       $Hide = ($Hi == $OpenHi && $Di == $OpenDi? "" : "hidden");

@@ -1013,13 +1013,13 @@ function LogisticalSupport($Fid) {  // Note this sets the Economic rating of all
     $District_Type = [];
     foreach ($Dists as $D) {
       if ($D['Type'] == 0) continue;
-      if ($DistTypes[$D['Type']]['Props'] &1) {
+      if (($DistTypes[$D['Type']]['Props']??0) &1) {
         if (Has_Trait($Fid,'No customers') && $DistTypes[$D['Type']]['Name'] == 'Commerce') {
         } else {
           $Prime++;
         }
       }
-      switch ($DistTypes[$D['Type']]['Name']) {
+      switch (($DistTypes[$D['Type']]['Name'])??'Unknown') {
       case 'Commerce' :
         $Commerce+=$D['Number'];
         break;

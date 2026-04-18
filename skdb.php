@@ -436,7 +436,7 @@ function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$M
       }
     }
 
-    if (isset($_POST["$Pfx$Mstr$Sep" . "0"] ) && $_POST["$Pfx$Mstr$Sep" . "0"] != $MstrNot) {
+    if (isset($_POST["$Pfx$Mstr$Sep" . "0"] ) && ($_POST["$Pfx$Mstr$Sep" . "0"] != '') && ($_POST["$Pfx$Mstr$Sep" . "0"] != $MstrNot)) {
       $t = array();
       foreach ($Flds as $fld=>$ftyp) {
         if ($fld == $indxname) continue;
@@ -456,7 +456,7 @@ function UpdateMany($table,$Putfn,&$data,$Deletes=1,$Dateflds='',$Timeflds='',$M
       $t['GameId'] = $GAMEID;
 //      var_dump("$Pfx$fld$Sep" . "0", $HexFlds,$t);
       Insert_db($table,$t);
-    } else if (isset($_POST["$Pfx$Mstr$Sep" . "0"] ) && $_POST["$Pfx$Mstr$Sep" . "0"] != $MstrNot) {
+    } else if (isset($_POST["$Pfx$Mstr$Sep" . "0"] )  && ($_POST["$Pfx$Mstr$Sep" . "0"] != '')&& $_POST["$Pfx$Mstr$Sep" . "0"] != $MstrNot) {
       $t = array();
       foreach ($Flds as $fld=>$ftyp) {
         if ($fld == $indxname) continue;

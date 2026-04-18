@@ -39,7 +39,7 @@
   echo "Do NOT change the Op names - code depends on them<p>";
 
   echo "<form method=post>";
-  Register_AutoUpdate('OrgActions', 0); // Not compatible with Hex
+  Register_AutoUpdate('OrgActions', 0);
   if ($AllG) echo fm_hidden('AllGames',1);
   echo "<div class=tablecont><table id=indextable border>\n";
   echo "<thead><tr>";

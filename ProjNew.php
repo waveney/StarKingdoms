@@ -12,6 +12,8 @@
 
   global $FACTION,$ARMY,$ARMIES;
 
+  $Override = 0;
+
 //  var_dump($_REQUEST);
 
   if (Access('Player')) {
@@ -33,6 +35,7 @@
       $Fid = $_REQUEST['id'];
     }
     if (isset($Fid)) $Faction = Get_Faction($Fid);
+    $Override = $_REQUEST['OVERRIDE']??0;
   }
 
   dostaffhead("New Projects for faction");
@@ -342,7 +345,7 @@
         $DNames = [];
         foreach ($DTs as $DTz) {
 
-
+          if ($DTz['Props'] & DIST_NOT_INDUST) continue;
           $CProjs = Get_Projects_Cond("Home=$Hi AND TurnStart>0 AND TurnStart<$Turn AND Type=1 AND TurnEnd=0 AND ThingType=" . $DTz['id'] .
             " AND Status<2");
 //var_dump($DTz,$CProjs);
@@ -359,7 +362,7 @@
               }
             }
 
-            if ($Lvl >= $DTz['MaxNum'] && !isset($_REQUEST['OVERRIDE'])) continue;
+            if ($Lvl >= $DTz['MaxNum'] && !$Override) continue;
 
             if ($CProjs) {
               $Lvl += count($CProjs);
@@ -370,7 +373,15 @@
               if (!$GM) continue;
               $etxt = "Not allowed (GM only):";
             }
-            $Lvl++;
+
+            if ($DTz['Props'] & DIST_LEVELMASK) {
+              $TLvl = intdiv(($DTz['Props'] & DIST_LEVELMASK), DIST_LEVELXX);
+              $DLvl = (($DTz['MaxNum'] == 1)?'':" $Lvl");
+              $Lvl += $TLvl;
+            } else {
+              $Lvl++;
+              $DLvl = (($DTz['MaxNum'] == 1)?'':" $Lvl");
+            }
             $pc = Proj_Costs($Lvl);
             if (Has_Trait($Fid,"On the Shoulders of Giants")) {
               if ($DTz['Name'] == 'Mining') {
@@ -390,8 +401,8 @@
 
             echo "<tr><td><button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Construction'] .
                   "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=" . $DTz['id'] .
-                  "&Name=" . base64_encode("Build " . $DTz['Name'] . " District $Lvl$Place") . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
-                  "Build " . $DTz['Name'] . " District $Lvl </button><td>" . $pc[1] . " <td> " . $pc[0] . "<td>$etxt";
+                  "&Name=" . base64_encode("Build " . $DTz['Name'] . " District$DLvl$Place") . "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
+                  "Build " . $DTz['Name'] . " District$DLvl </button><td>" . $pc[1] . " <td> " . $pc[0] . "<td>$etxt";
 
           }
         }
@@ -489,6 +500,16 @@
                   "&Name=" . base64_encode("Rebuild and Repair") . "&L=1&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
                   "Rebuild and Repair $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>\n";
 
+/*
+        $Others = [];
+      foreach ($ProjTypes as $PTi=>$PT) {
+        if (($PT['Category'] & 16) && ($PT['Level']>0) && Has_Tech($Fid,$PT['BasedOn'])) {
+
+        }
+      }
+ */
+
+
       if (Feature('WarpGates')) {
         echo "<h2>Construct Warp Gate</h2>";
 
@@ -502,7 +523,7 @@
       $Techs = Get_TechsByCore($Fid);
 
       $OldPc = Has_Tech($Fid,'Planetary Construction');
-      if ($OldPc < $MaxTechLevel || isset($_REQUEST['OVERRIDE'])) {
+      if ($OldPc < $MaxTechLevel || $Override) {
         echo "<h2>Research Planetary Construction</h2><p>";
         echo "<table class=ProjTab border><tr><td>Project<td>Cost<td>Progress<br>Needed<td>Description";
         $Lvl = $OldPc+1;
@@ -569,7 +590,7 @@
         } else {
           $Lvl = 1;
         }
-        if ($Lvl > $MaxTechLevel && !isset($_REQUEST['OVERRIDE'])) continue;
+        if ($Lvl > $MaxTechLevel && !$Override) continue;
 
         $pc = Proj_Costs($Lvl);
 
@@ -727,7 +748,7 @@
       $Techs = Get_TechsByCore($Fid);
 
       $OldPc = Has_Tech($Fid,'Ship Construction');
-      if ($OldPc < $MaxTechLevel || isset($_REQUEST['OVERRIDE'])) {
+      if ($OldPc < $MaxTechLevel ||$Override) {
         echo "<h2>Research Ship Construction</h2><p>";
           echo "<table class=ProjTab border><tr><td>Project<td>Cost<td>Progress<br>Needed<td>Description";
           $Lvl = $OldPc+1;
@@ -924,7 +945,7 @@
       $Techs = Get_TechsByCore($Fid);
 
       $OldPc = Has_Tech($Fid,'Military Theory');
-      if ($OldPc < $MaxTechLevel || isset($_REQUEST['OVERRIDE'])) {
+      if ($OldPc < $MaxTechLevel || $Override) {
 
         echo "<h2>Research " . Feature('MilTech') . "</h2><p>";
         echo "<table class=ProjTab border><tr><td>Project<td>Cost<td>Progress<br>Needed<td>Description";
@@ -1196,7 +1217,7 @@
            "&t=$Turn&Hi=$Hi&Di=$Di$pl&DT=$DT'>Train an agent$Place</button><p>";
 
       $OldPc = Has_Tech($Fid,'Intelligence Operations');
-      if ($OldPc < $MaxTechLevel || isset($_REQUEST['OVERRIDE'])) {
+      if ($OldPc < $MaxTechLevel || $Override) {
 
         echo "<h2>Research Intelligence Operations</h2><p>";
           $Lvl = $OldPc+1;
