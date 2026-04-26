@@ -3,6 +3,7 @@
   global $FACTION,$GAMEID,$USER,$GAME;
   include_once("GetPut.php");
   include_once("PlayerLib.php");
+  include_once('ProjLib.php');
   include_once("ThingLib.php");
   global $PlayerState,$PlayerStates;
 
@@ -200,7 +201,6 @@ function ValidateTurn($For = 0) {
     $Ws = Get_Worlds($Fid);
     $TTypes = Get_ThingTypes();
     $PlanetTypes = Get_PlanetTypes();
-    $DTs = Get_DistrictTypes();
 
     foreach($Ws as $W) {
       $H = Get_ProjectHome($W['Home']);

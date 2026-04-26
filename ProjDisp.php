@@ -458,7 +458,7 @@
 
       if ($D['Type'] <= 0) {
         $HL .= "Construction&nbsp;-&nbsp;$PlanCon";
-      } else if ($DistTypes[$D['Type']]['Props'] & 8 ) {
+      } else if ($DistTypes[$D['Type']]['Props'] & DIST_NOT_LEVELLED ) {
         $HL .= $DistTypes[$D['Type']]['Name'];
       } else {
         $HL .= $DistTypes[$D['Type']]['Name'] . "&nbsp;" . $D['Number'];
@@ -658,26 +658,6 @@
 //var_dump($Proj);
 //var_dump($Dis);
 
-/*
-    echo "<th id=PHH$PHx><button class=ProjHome id=PHome$PHx>" . $PH['Name'] . "</button>";
-
-    $p=1;
-    echo "<th id=PJCol$p:$PHx>[S]<th id=PJCol$p>Construction<th id=PJCol$p:$PHx>Rush<th id=PJCol$p:$PHx>Prog<th id=PJCol$p:$PHx>State";
-
-    foreach ($Dists as &$D) {
-      $DistType = $DistTypes[$D['Type']];
-      if (!($DistType['Props'] & 2)) continue;
-      $p++;
-      $Dtname = $DistType['Name'];  // add cost
-      echo "<th class=PJCol$p:$PHx>[S]<th class=PJCol$p>$Dtname<th class=PJCol$p:$PHx>Rush<th class=PJCol$p:$PHx<th class=class=PJCol$p:$PHx>State";
-      }
-
-
-    }
-*/
-  // That is just the nested headers
-
-
   // Now Present the data
 
   echo "<form method=post action=ProjDisp.php>";
@@ -694,7 +674,6 @@
   echo "<H2>Category:</h2>";
   echo "<table border style='width:auto;height:50px;'><tr>";
 
-  $DTypes = Get_DistrictTypes();
   foreach ($DTypes as $DCat => $Dty) {
     if ($Dty['Props'] &2 ) echo "<th id=TCat$DCat><button type=button class=ProjCat id=PCat$DCat onclick=ToggleCat($DCat)>" . $Dty['Name'] . "</button>";
   }

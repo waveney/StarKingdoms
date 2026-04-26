@@ -3,6 +3,7 @@
 include_once("sk.php");
 include_once("GetPut.php");
 include_once("PlayerLib.php");
+include_once('ProjLib.php');
 include_once("OrgLib.php");
 include_once("SeeThings.php");
 
@@ -1018,7 +1019,7 @@ function Show_Thing(&$T,$Force=0) {
   }
 
   $Has_Warehouse = ($tprops & THING_HAS_SHIPMODULES) && Has_Tech($Fid,'Warehouses');
-  if ($Has_Warehouse) { // Is there one here?  If not set Has to false
+  if ($Has_Warehouse && $T['SystemId']) { // Is there one here?  If not set Has to false
     if ($T['LinkId'] >=0 || ($MoveProps[$T['LinkId']] & 1)) {
       $Sys = Get_System($T['SystemId']);
       $Worlds = explode(',',$Sys['WorldList']);
@@ -1790,7 +1791,7 @@ function Show_Thing(&$T,$Force=0) {
       $PrimeMods = [];
       $DTs = Get_DistrictTypes();
       $MaxDeep = Has_Tech($Fid,'Space Construction Gear')*2;
-      foreach ($DTs as $D) if (($D['Props'] & 16) && ((eval("return " . $D['Gate'] . ";" )))) $PrimeMods[$D['id']] = $D['Name'];
+      foreach ($DTs as $D) if (($D['Props'] & DIST_SPACE_STATINS) && ((eval("return " . $D['Gate'] . ";" )))) $PrimeMods[$D['id']] = $D['Name'];
       echo "<tr><td><td colspan=6>" .
         (($GM || $T['Progress'] == 0)? fm_number0('How many districts:',$T,'Dist1',''," max=$MaxDeep "): ("Districts: " . $T['Dist1']));
       echo " First District:" . fm_select($PrimeMods,$T,'Dist2',1);

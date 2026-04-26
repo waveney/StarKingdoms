@@ -109,7 +109,7 @@ define('BUILD_FLAG2',2);
 define('BUILD_FLAG3',4);
 
 define('BS_NOT',-1);
-define('BS_PLANNING',0);
+define('BS_PLANNING',0);// Design
 define('BS_BUILDING',1);
 define('BS_SERVICE',2);
 define('BS_COMPLETE',3);
@@ -971,6 +971,7 @@ function RefitRepair(&$T,$Save=1,$KeepTechLvl=0,$Other=0) {
 //  &#8373; = Credit symbol
 
 function LogisticalSupport($Fid) {  // Note this sets the Economic rating of all PHs
+  include_once('ProjLib.php');
   $PHomes = Get_ProjectHomes($Fid);
 
   $Logistics = [0,0,0];
@@ -1013,7 +1014,7 @@ function LogisticalSupport($Fid) {  // Note this sets the Economic rating of all
     $District_Type = [];
     foreach ($Dists as $D) {
       if ($D['Type'] == 0) continue;
-      if (($DistTypes[$D['Type']]['Props']??0) &1) {
+      if (($DistTypes[$D['Type']]['Props']??0) & DIST_PRIME) {
         if (Has_Trait($Fid,'No customers') && $DistTypes[$D['Type']]['Name'] == 'Commerce') {
         } else {
           $Prime++;
@@ -1158,7 +1159,8 @@ function Blockaded(&$T) {
 }
 
 function Update_Militia(&$W,&$Dists,$NewOwn=0,$Deploy=0) {
-//var_dump($W,$Dists,$NewOwn);
+  include_once('ProjLib.php');
+  //var_dump($W,$Dists,$NewOwn);
   switch ($W['ThingType']) {
     case 1: // Planet
       $P = Get_Planet($W['ThingId']);
@@ -1187,7 +1189,7 @@ function Update_Militia(&$W,&$Dists,$NewOwn=0,$Deploy=0) {
   $Dcount = 0;
   $DTs = Get_DistrictTypes();
   foreach($Dists as $D) {
-    if (($DTs[$D['Type']]['Props'] &128) == 0) $Dcount += ($D['Number'] * ($D['Type'] ==2?2:1));
+    if (($DTs[$D['Type']]['Props'] & DIST_NO_MILITIA) == 0) $Dcount += ($D['Number'] * ($D['Type'] ==2?2:1));
   }
 
   $MilitiaEvade = (Has_Tech($FactN,'Guerilla Warfare Techniques')?50:40);

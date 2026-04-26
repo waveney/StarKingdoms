@@ -527,9 +527,9 @@ function Recalc_Economic_Rating(&$H,&$W,$Fid,$Turn=0) {
 
     if ($D['Type'] == 1) $NumCom = $D['Number'];
     if (isset($DTs[$D['Type']])) {
-      if ($DTs[$D['Type']]['Props'] & 1) $NumPrime += $D['Number'];
-      if ($DTs[$D['Type']]['Props'] & 4) $Mines += $D['Number'];
-      if ($DTs[$D['Type']]['Props'] & 32) $NumInd += $D['Number'];
+      if ($DTs[$D['Type']]['Props'] & DIST_PRIME) $NumPrime += $D['Number'];
+      if ($DTs[$D['Type']]['Props'] & DIST_MINING_INC) $Mines += $D['Number'];
+      if ($DTs[$D['Type']]['Props'] & DIST_INDUSTRIAL) $NumInd += $D['Number'];
     } else {
       GMLog4Later("District " . $D['id'] . " is invalid - tell Richard");
     }

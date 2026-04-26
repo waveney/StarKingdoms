@@ -451,6 +451,7 @@
 
 
         foreach ($MyTechs as $Tid=>$T) {
+          if (!isset($Techs[$Tid])) continue;
           $Tec = $Techs[$Tid];
           if (($Techs[$T['Tech_Id']]['Cat']??0) == 0 || (isset($FactTechs[$Tid]) && ($FactTechs[$Tid]['Level'] > 0)) ) continue;
           if (!isset($FactTechs[$Tec['PreReqTech']]) ) continue;
