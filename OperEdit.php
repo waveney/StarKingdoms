@@ -233,6 +233,7 @@
       echo "<tr><td>Tech:<td>" . $Tech['Name'] . "<td>Level: " . $O['Para2'];
     } else if ($PProps & OPER_SOCP) {
       $SP = Get_SocialP($O['Para1']);
+      if (!$SP) GMLog4Later("The social Principle for the operation <a href=OperEdit.php?id=$Oid>$Oid</a> is invalid.");
       echo "<tr><td>Social Principe:<td>" . ($SP['Principle']??'Unknown');
     } else if ($PProps & OPER_SCIPOINTS) {
       echo "<tr><td>Science Points:<td>" . ($Fields[$O['Para1']-1]??'Unknown - Tell Richard');

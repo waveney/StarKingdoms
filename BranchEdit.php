@@ -171,7 +171,7 @@ if (isset($_REQUEST['Action'])) {
               $T['Damage'] = $Off;
               $T['SystemId'] = $T['WhereBuilt'] = $Sid;
               if ($T['CurHealth']) {
-                $T['WithinSysLoc'] = 3;
+                $T['WithinSysLoc'] = LOC_GROUND;
                 $T['LinkId'] = 0;
   //              if (!preg_match('/\:.*\:/',$T['Name']))
                   $T['Name'] = ($B['Name']?$B['Name']:"Heavy $Ox Security $Rid") . ":" . $Org['Name'] . ":" . ($Count+1);
@@ -193,7 +193,7 @@ if (isset($_REQUEST['Action'])) {
               $Count++;
               $T = ['Whose'=>$Fid, 'Type'=>$NTypes['Heavy Security'], 'BuildState'=>BS_COMPLETE, 'CurHealth'=>$Def, 'OrigHealth'=>$Def,
                 'ActDamage'=>$Off,
-                'SystemId'=>$Sid, 'WithinSysLoc'=>3, 'Class'=>'Heavy Security',
+                'SystemId'=>$Sid, 'WithinSysLoc'=>LOC_GROUND, 'Class'=>'Heavy Security',
                 'Name'=>($B['Name']?$B['Name']:"Heavy $Ox Security $Rid") . ":" . $Org['Name'] . ":$Count" ,
                 'Evasion'=>40, 'ProjectId'=>$Rid, 'LinkId'=>0];
               if ($Bid>0 && ($BTypes[$B['Type']]['Props'] &1)) $T['Name'] .= " (Hidden)";
@@ -249,7 +249,7 @@ if (isset($_REQUEST['Action'])) {
             $T['ActDamage'] = $Off;
             $T['SystemId'] = $Sid;
             $T['Speed'] = $Speed;
-            $T['WithinSysLoc'] = 1;
+            $T['WithinSysLoc'] = LOC_SPACE;
             $T['LinkId'] = 0;
             $T['Evasion'] = ($Neb?65:75);
             $T['ProjectId'] = $Bid;
@@ -266,7 +266,7 @@ if (isset($_REQUEST['Action'])) {
             while ($Count < $Num) {
               $Count++;
               $T = ['Whose'=>$Fid, 'Type'=>$NTypes['Fighter Defences'], 'BuildState'=>BS_COMPLETE, 'CurHealth'=>1, 'OrigHealth'=>1, 'ActDamage'=>$Off,
-                'SystemId'=>$Sid, 'WithinSysLoc'=>1, 'Class'=>'Defence Fighter Squadron', 'Name'=>($B['Name']?$B['Name']:"Squadron $Bid") . ":$Count" ,
+                'SystemId'=>$Sid, 'WithinSysLoc'=>LOC_SPACE, 'Class'=>'Defence Fighter Squadron', 'Name'=>($B['Name']?$B['Name']:"Squadron $Bid") . ":$Count" ,
                 'Evasion'=>($Neb?65:75), 'ProjectId'=>$Bid, 'Speed'=>$Speed, 'LinkId'=>0, 'ToHitBonus'=> 20, 'Level'=>0];
               if ($Neb) $T['Variant'] = $NebFVar;
               //var_dump($T);

@@ -1157,7 +1157,7 @@ function Show_Thing(&$T,$Force=0) {
           if ($FA['State'] == 0 || $FA['State'] == 3) continue;
           if ($FA['Progress'] >= $A['AnomalyLevel']) continue; // Done
           $LocGr = intdiv($A['WithinSysLoc'],100);
-          if (($A['WithinSysLoc'] == 3) || ($LocGr == 2) || ($LocGr ==4)) { // Ground
+          if (($A['WithinSysLoc'] == LOC_GROUND) || ($LocGr == 2) || ($LocGr ==4)) { // Ground
             if ($tprops & THING_HAS_ARMYMODULES) break 2; // Valid
           } else { // Space
             if ($tprops & THING_HAS_SHIPMODULES) break 2; // Valid

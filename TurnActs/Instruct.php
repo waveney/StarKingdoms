@@ -1547,7 +1547,7 @@ function InstructionsComplete() {
       case 'Build Wormhole Stabiliser' :
         $L = Get_Link($T['Dist1']);
         if ($L && isset($L['id'])) {
-          $NT = ['GameId'=>$GAME['id'], 'Type'=> TTName('Wormhole Stabiliser'), 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> 1,
+          $NT = ['GameId'=>$GAME['id'], 'Type'=> TTName('Wormhole Stabiliser'), 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> LOC_SPACE,
             'Whose'=>$T['Whose'], 'BuildState'=>BS_COMPLETE, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName'], 'Dist1' => $T['Dist1'], 'Stability'=>100];
           Put_Thing($NT);
           TurnLog($T['Whose'],"Link " . $L['Name'] . " has a wormhole stabiliser in " . $N['Ref']);
@@ -1562,7 +1562,7 @@ function InstructionsComplete() {
       case 'Build Wormhole Destabiliser' :
         $L = Get_Link($T['Dist1']);
         if ($L && isset($L['id'])) {
-          $NT = ['GameId'=>$GAME['id'], 'Type'=> TTName('Wormhole Destabiliser'), 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> 1,
+          $NT = ['GameId'=>$GAME['id'], 'Type'=> TTName('Wormhole Destabiliser'), 'Level'=> 1, 'SystemId'=>$T['SystemId'], 'WithinSysLoc'=> LOC_SPACE,
             'Whose'=>$T['Whose'], 'BuildState'=>BS_COMPLETE, 'TurnBuilt'=>$GAME['Turn'], 'Name'=>$T['MakeName'], 'Dist1' => $T['Dist1'],
             'Stability'=>100];
           Put_Thing($NT);

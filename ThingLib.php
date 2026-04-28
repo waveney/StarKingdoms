@@ -130,6 +130,9 @@ define('MOD_NEEDRES1',   0x100);
 define('MOD_NEEDRES2',   0x200);
 define('MOD_NEEDRES3',   0x400);
 
+define('LOC_SPACE',  1);
+define('LOC_GROUND', 3);
+
 $MoveNames = [0=>'Move',-1=>'On Board',-2=>'Boarding',-3=>'Unloading',-4=>'Load & Unload',-5=>'Not Moving',-6=>'Direct',-7=>'Following',-8=>'In Branch'];
 $MoveProps = [0=>5,LINK_ON_BOARD=>2,LINK_BOARDING=>6,LINK_UNLOAD=>2,LINK_LOAD_AND_UNLOAD=>6,LINK_NOT_MOVING=>5,LINK_DIRECTMOVE=>4,
   LINK_FOLLOW=>7,LINK_INBRANCH=>0]; // 1=PMove,2=Other Thing,4=Vis
@@ -296,7 +299,7 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0,$M
       if (!isset($FactTechs[$T['PreReqTech2']])) $cls='class=red';
       $Xtra = '';
       if ($T['PreReqLevel2']) {
-        if ($FactTechs[$T['PreReqTech2']]['Level'] < $T['PreReqLevel2']) $cls='class=red';
+        if (($FactTechs[$T['PreReqTech2']]['Level']??0) < $T['PreReqLevel2']) $cls='class=red';
         $Xtra = " at level " . $T['PreReqLevel2'];
       }
       echo "Also requires: <span $cls>" . $AllTechs[$T['PreReqTech2']]['Name'] . "$Xtra</span>";
@@ -305,7 +308,7 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0,$M
         if (!isset($FactTechs[$T['PreReqTech3']])) $cls='class=red';
         $Xtra = '';
         if ($T['PreReqLevel3']) {
-          if ($FactTechs[$T['PreReqTech3']]['Level'] < $T['PreReqLevel3']) $cls='class=red';
+          if (($FactTechs[$T['PreReqTech3']]['Level']??0) < $T['PreReqLevel3']) $cls='class=red';
           $Xtra = " at level " . $T['PreReqLevel3'];
         }
         echo " and <span $cls>" . $AllTechs[$T['PreReqTech3']]['Name'] . "$Xtra</span>";
@@ -1170,14 +1173,14 @@ function is_on_ground(&$T) {
     if ($T['LinkId'] != LINK_NOT_MOVING) return 0;
   }
   $LocType = intdiv($T['WithinSysLoc'],100);
-  if (($T['WithinSysLoc'] == 3) || $LocType==2 || $LocType==4 ) return 1;
+  if (($T['WithinSysLoc'] == LOC_GROUND) || $LocType==2 || $LocType==4 ) return 1;
   return 0;
 }
 
 function is_in_space(&$T) {
   if ($T['LinkId']<0 && ($T['LinkId'] != LINK_NOT_MOVING)) return 0;
   $LocType = intdiv($T['WithinSysLoc'],100);
-  if (($T['WithinSysLoc'] == 3) || $LocType==2 || $LocType==4 ) return 0;
+  if (($T['WithinSysLoc'] == LOC_GROUND) || $LocType==2 || $LocType==4 ) return 0;
   return 1;
 }
 

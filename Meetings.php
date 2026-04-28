@@ -626,9 +626,9 @@ function SystemSee($Sid) {
       $Hid = $T['SystemId'];
       $H = Get_Thing($Hid);
       if ($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES ) {
-        $T['WithinSysLoc'] =3;
+        $T['WithinSysLoc'] =LOC_GROUND;
       } else {
-        $T['WithinSysLoc'] =1;
+        $T['WithinSysLoc'] =LOC_SPACE;
       }
       $T['LinkId'] = 0;
       $T['ProjHome'] = $Hid; // Maybe duff...

@@ -697,7 +697,7 @@ function ProjectsCompleted($Pass) {
           if (empty($Tech)) {
             GMLog($Facts[$Fid]['Name'] . " has completed Researching an unknown tech: $Tid",1);
           }
-          if ($Tech['Cat'] == 0) { // Core
+          if (($Tech['Cat'] == 0) || ($Tech['Cat'] == 3)) { // Core or lvld non standard
             if ($CTech['Level'] < $P['Level']) {
               $CTech['Level'] = $P['Level'];
               Put_Faction_Tech($CTech);
@@ -746,7 +746,7 @@ function ProjectsCompleted($Pass) {
                 TurnLog($P['FactionId'], $T['Name'] . " has been " . $PT['Name'] . "ed",$T);
               }
 
-              if (Blockaded($T)) $T['WithinSysLoc'] = 2;
+              if (Blockaded($T)) $T['WithinSysLoc'] = LOC_GROUND;
               $T['BuildState'] = BS_COMPLETE;
               Put_Thing($T);
             }
@@ -770,7 +770,7 @@ function ProjectsCompleted($Pass) {
                 TurnLog($Fid, $T['Name'] . " has been " . $PT['Name'] . "ed",$T);
               }
 
-              if (Blockaded($T)) $T['WithinSysLoc'] = 2;
+              if (Blockaded($T)) $T['WithinSysLoc'] = LOC_GROUND;
               $T['BuildState'] = BS_COMPLETE;
               Put_Thing($T);
             }
@@ -794,7 +794,7 @@ function ProjectsCompleted($Pass) {
                 $T = Get_Thing($P['ThingId']);
                 $T['CurHealth'] = $T['OrigHealth'];
                 $T['BuildState'] = BS_COMPLETE;
-                if (Blockaded($T)) $T['WithinSysLoc'] = 2;
+                if (Blockaded($T)) $T['WithinSysLoc'] = LOC_GROUND;
                 Put_Thing($T);
                 TurnLog($P['FactionId'], $T['Name'] . " has been " . firstword($PT['Name']) . "ed",$T);
               }
@@ -812,7 +812,7 @@ function ProjectsCompleted($Pass) {
               } else {
                 $T = Get_Thing($Tid);
                 $T['CurHealth'] = $T['OrigHealth'];
-                if (Blockaded($T)) $T['WithinSysLoc'] = 2;
+                if (Blockaded($T)) $T['WithinSysLoc'] = LOC_GROUND;
                 Put_Thing($T);
                 TurnLog($Fid, $T['Name'] . " has been " . firstword($PT['Name']) . "ed",$T);
               }
@@ -836,9 +836,9 @@ function ProjectsCompleted($Pass) {
 
           $WSL = ConstructLoc($P['Home'],0);
           if (Blockaded($T)) {
-            $T['WithinSysLoc'] = 2;
+            $T['WithinSysLoc'] = LOC_GROUND;
           } else {
-            $T['WithinSysLoc'] = 1;
+            $T['WithinSysLoc'] = LOC_SPACE;
             Move_Thing_Within_Sys($T,$WSL,1);
           }
           Calc_Scanners($T);
@@ -881,7 +881,7 @@ function ProjectsCompleted($Pass) {
             $Where = Where_Is_Home($P['Home']);
             $T['SystemId'] = $Where[0];
           }
-          $T['WithinSysLoc'] = ConstructLoc($P['Home'],1);
+          $T['WithinSysLoc'] = ConstructLoc($P['Home'],LOC_SPACE);
           if ($T['WithinSysLoc'] == 0) {
             Error("ConstructLoc(" . $P['Home'] . ",1) returned 0 - tell Richard");
           }

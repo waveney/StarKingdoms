@@ -74,10 +74,15 @@ NEW GAME FEATURES & BUGS
 === 928 start of turn 39
 932 DCY - GPN barrayar scans
 938 Nebula Fighters coming in at 0 Hull
-940 Agnostic Organisations (general)
-941
+943 No move on blockaded things
+=== 945 start of turn 40
+948 Detachments in space
+950 Bombers launched in MYS last turn haven't carried through name and design correctly. The design name has become the unit name. acg 28/4 @8:24
+953
 
-=== start of turn 40
+
+
+
 === start of turn 41
 === start of turn 42
 === start of turn 43
