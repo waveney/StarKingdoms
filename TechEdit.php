@@ -73,6 +73,7 @@
 //var_dump($T);
 
   echo "Properties: 1=Ground Combat, 2=Space Combat, 4=Espionage, 8=Hide, 16=Researchable Special tech<p>\n";
+  echo "Other Pre Reqs Levels are only used if refering to a core tech or a Levelled Non Standard<p>\n";
   echo "<form method=post id=mainform enctype='multipart/form-data' action=TechEdit.php>";
   echo "<div class=tablecont><table width=90% border class=SideTable>\n";
   if ($Tid) {
@@ -92,7 +93,8 @@
   echo "<tr><td>Field:<td>" . fm_select($Fields,$T,'Field') .
        "<td>Pre Req Tech:" . fm_select($CTNs,$T,'PreReqTech') . fm_number1('Pre Req Level',$T,'PreReqLevel') .
        "<td>Core Techs only - must have one of these" . fm_number1('Slots',$T,'Slots');
-  echo "<tr><td>Other Pre Reqs<td>" . fm_select($TechNames,$T,'PreReqTech2',1) . "<td>" . fm_select($TechNames,$T,'PreReqTech3',1) ;
+  echo "<tr><td>Other Pre Reqs<td>" . fm_select($TechNames,$T,'PreReqTech2',1) . fm_number1('Level',$T,'PreReqLevel2');
+  echo "<td>" . fm_select($TechNames,$T,'PreReqTech3',1) . fm_number1('Level',$T,'PreReqLevel3');
   echo "<tr>" . fm_number("Min Thing Level",$T,'MinThingLevel') . "<td>Civ /Mil:<td>" . fm_select($CivMil,$T,'CivMil');
 //  echo "<td>" . fm_select($MFN,$T,'Formula',1) .
   echo fm_number('Properties',$T,'Properties');

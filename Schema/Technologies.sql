@@ -14,6 +14,8 @@ CREATE TABLE `Technologies` (
   `Notes` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `PreReqTech2` int NOT NULL,
   `PreReqTech3` int NOT NULL,
+  `PreReqLevel2` int NOT NULL,
+  `PreReqLevel3` int NOT NULL,
   `Properties` int NOT NULL,
   `NotBy` int NOT NULL,
   PRIMARY KEY (`id`)

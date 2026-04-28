@@ -294,11 +294,21 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0,$M
     if ($T['PreReqTech2']) {
       $cls = '';
       if (!isset($FactTechs[$T['PreReqTech2']])) $cls='class=red';
-      echo "Also requires: <span $cls>" . $AllTechs[$T['PreReqTech2']]['Name'] . "</span>";
+      $Xtra = '';
+      if ($T['PreReqLevel2']) {
+        if ($FactTechs[$T['PreReqTech2']]['Level'] < $T['PreReqLevel2']) $cls='class=red';
+        $Xtra = " at level " . $T['PreReqLevel2'];
+      }
+      echo "Also requires: <span $cls>" . $AllTechs[$T['PreReqTech2']]['Name'] . "$Xtra</span>";
       if ($T['PreReqTech3']) {
         $cls = '';
         if (!isset($FactTechs[$T['PreReqTech3']])) $cls='class=red';
-        echo " and <span $cls>" . $AllTechs[$T['PreReqTech3']]['Name'] . "</span>";
+        $Xtra = '';
+        if ($T['PreReqLevel3']) {
+          if ($FactTechs[$T['PreReqTech3']]['Level'] < $T['PreReqLevel3']) $cls='class=red';
+          $Xtra = " at level " . $T['PreReqLevel3'];
+        }
+        echo " and <span $cls>" . $AllTechs[$T['PreReqTech3']]['Name'] . "$Xtra</span>";
       }
       echo "<br>";
     }
@@ -306,6 +316,30 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0,$M
     break;
   case 3: // Specials
     echo " <span class=orange>Special Leveled Tech outside the normal tech trees.</span><br>";
+    if ($T['PreReqTech'])
+      echo " Requires " . $CTNs[$T['PreReqTech']] . " at level " . $T['PreReqLevel'] . ".  Field: <b>" . $Fields[$T['Field']] . "</b><br>";
+    if ($T['PreReqTech2']) {
+      $cls = '';
+      if (!isset($FactTechs[$T['PreReqTech2']])) $cls='class=red';
+      $Xtra = '';
+      if ($T['PreReqLevel2']) {
+        if ($FactTechs[$T['PreReqTech2']]['Level'] < $T['PreReqLevel2']) $cls='class=red';
+        $Xtra = " at level " . $T['PreReqLevel2'];
+      }
+      echo "Also requires: <span $cls>" . $AllTechs[$T['PreReqTech2']]['Name'] . "$Xtra</span>";
+      if ($T['PreReqTech3']) {
+        $cls = '';
+        if (!isset($FactTechs[$T['PreReqTech3']])) $cls='class=red';
+        $Xtra = '';
+        if ($T['PreReqLevel3']) {
+          if ($FactTechs[$T['PreReqTech3']]['Level'] < $T['PreReqLevel3']) $cls='class=red';
+          $Xtra = " at level " . $T['PreReqLevel3'];
+        }
+        echo " and <span $cls>" . $AllTechs[$T['PreReqTech3']]['Name'] . "$Xtra</span>";
+      }
+      echo "<br>";
+    }
+    if ($T['MinThingLevel']) echo " Size Limitation - Requires at least level " . $T['MinThingLevel'] . " ship<br>";
     break;
   }
 

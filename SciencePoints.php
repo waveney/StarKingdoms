@@ -170,7 +170,9 @@ global $GAME,$ModValues,$Fields,$Tech_Cats,$CivMil,$ThingInstrs,$ThingInclrs,$Cu
         if (!isset($FactTechs[$T['PreReqTech']]) ) continue;
         if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
         if ($T['PreReqTech2'] && !isset($FactTechs[$T['PreReqTech2']])) continue;
+        if ($T['PreReqTech2'] && $T['PreReqLevel2'] && $FactTechs[$T['PreReqTech2']]['Level'] < $T['PreReqLevel2']) continue;
         if ($T['PreReqTech3'] && !isset($FactTechs[$T['PreReqTech3']])) continue;
+        if ($T['PreReqTech3'] && $T['PreReqLevel3'] && $FactTechs[$T['PreReqTech3']]['Level'] < $T['PreReqLevel3']) continue;
         $Lvl = $T['PreReqLevel'];
         if ($Avail[$Fld]-$Used[$Fld] >= $SPCosts[$Lvl]) {
           if ($Head++ == 0) echo "<tr><td colspan=2><h2>Research Supplimental $FName Technology</h2>";

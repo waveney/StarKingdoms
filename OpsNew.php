@@ -457,8 +457,14 @@
           if (!isset($FactTechs[$Tec['PreReqTech']]) ) continue;
           if ($FactTechs[$Tec['PreReqTech']]['Level'] < $Tec['PreReqLevel'] ) continue;
 
-          if ($Tec['PreReqTech2'] && ((! isset($FactTechs[$Tec['PreReqTech2']])) || $FactTechs[$Tec['PreReqTech2']]['Level'] == 0)) continue;
-          if ($Tec['PreReqTech3'] && ((! isset($FactTechs[$Tec['PreReqTech3']])) || $FactTechs[$Tec['PreReqTech3']]['Level'] == 0)) continue;
+          if ($Tec['PreReqTech2'] && (
+            (! isset($FactTechs[$Tec['PreReqTech2']])) ||
+            ($FactTechs[$Tec['PreReqTech2']]['Level'] == 0) ||
+            ($FactTechs[$Tec['PreReqTech2']]['Level'] < ($Tec['PreReqLevel2']??0)))) continue;
+          if ($Tec['PreReqTech3'] && (
+            (! isset($FactTechs[$Tec['PreReqTech3']])) ||
+            ($FactTechs[$Tec['PreReqTech3']]['Level'] == 0) ||
+            ($FactTechs[$Tec['PreReqTech3']]['Level'] < ($Tec['PreReqLevel3']??0)))) continue;
 
           $Lvl = $Tec['PreReqLevel'];
           if ($Lvl < 1) continue;

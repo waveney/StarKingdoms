@@ -20,7 +20,7 @@
   }
 
   $DT=Get_DistrictTypes($AllG);
-  if (UpdateMany('DistrictTypes','Put_DistrictType',$DT,1,'','','Name','RemoveMe','Prop','',':'))  Get_DistrictTypes($AllG);
+  if (UpdateMany('DistrictTypes','Put_DistrictType',$DT,1,'','','Name','RemoveMe','Props','',':'))  Get_DistrictTypes($AllG);
 
   $Techs = Get_Techs(0,$AllG);
   $TechNames = Tech_Names($Techs);

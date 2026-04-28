@@ -11,7 +11,7 @@ function New_Thing(&$T) {
   global $FACTION;
 
   $ttn = Thing_Type_Names();
-  $ttypes = Get_ThingTypes();
+  $TTypes = Get_ThingTypes();
   $FactNames = Get_Faction_Names();
   [$Fact_Colours,$Fact_Text_Colours] = Get_Faction_Colours();
   $Systems = Get_SystemRefs();
@@ -27,7 +27,7 @@ function New_Thing(&$T) {
   if (!$IsBP) {
     echo "<h1>Create Thing:</h1>";
   } else {
-    foreach ($ttypes as $ti=>$tt) {
+    foreach ($TTypes as $ti=>$tt) {
       if (($tt['Properties'] & THING_HAS_BLUEPRINTS) == 0) unset($ttn[$ti]);
     }
     echo "<h1>Create Blue Print:</h1>";
@@ -37,7 +37,7 @@ function New_Thing(&$T) {
   echo "<tr>" . fm_text("Name",$T,'Name');
   echo "<tr " . ($IsBP?'':"class=Tlevel") . ">" . fm_number("Level",$T,'Level');
   if (!$IsBP) {
-    foreach ($ttypes as $i=>$tt) {
+    foreach ($TTypes as $i=>$tt) {
       if (($tt['Properties'] & THING_HAS_BLUEPRINTS) && !empty($BPs[$i])) {
         echo "<tr id=BPSet$i hidden><td>Blue print:<td>" . fm_select($BPs[$i],$T,'BluePrint',1,'',"BLIstZZ$i");
       }
@@ -56,7 +56,7 @@ function New_Thing(&$T) {
 
 
 global $FACTION;
-  $ttypes = Get_ThingTypes();
+  $TTypes = Get_ThingTypes();
 
   $Force = (isset($_REQUEST['FORCE'])?1:0);
   $GM = Access('GM');
@@ -72,7 +72,6 @@ global $FACTION;
   dostaffhead("Edit and Create Things",["js/dropzone.js","css/dropzone.css" ]);
 
   global $db, $GAME, $GAMEID,$BuildState,$Project_Statuses;
-  $ttypes = Get_ThingTypes();
 
 // START HERE
 //  var_dump($_REQUEST);
@@ -158,7 +157,6 @@ global $FACTION;
       echo "<h2>Choose a world to start on:</h2>\n";
       $Worlds = Get_Worlds($Fid);
       $PlanetTypes = Get_PlanetTypes();
-      $TTypes = Get_ThingTypes();
       echo "<form method=post action=ThingEdit.php>";
       echo fm_hidden('id',$_REQUEST['id']);
       echo fm_hidden('Name',$_REQUEST['Name']);
@@ -201,7 +199,6 @@ global $FACTION;
 
       echo "<h2>Or a Thing to start in:</h2>\n";
       $Things = Gen_Get_Cond('Things',"Whose=$Fid ORDER BY Name");
-      $TTypes = Get_ThingTypes();
       echo "<table border>";
       foreach($Things as $T) {
         if ( empty($T['Name']) || $T['BuildState'] < BS_BUILDING || $T['BuildState'] > BS_COMPLETE ||
@@ -382,6 +379,44 @@ global $FACTION;
         echo "<h2 class=Err>Board What?</h2>\n";
         break;
       }
+
+      if ($TTypes[$T['Type']]['Propertis'] & THING_NEEDS_CARGOSPACE) {
+        $MTs = Get_ModuleTypes();
+        $MNs = NamesList($MTs);
+        $NamesMod = array_flip($MNs);
+
+        $Mods = Get_Modules($Hid);
+        $CargoSpace = ($Mods[$NamesMod['Cargo Space']]['Number']??0);
+        $CryoSpace = ($Mods[$NamesMod['Cryo Pods']]['Number']??0)*2;
+
+        $OnBoard = Get_Things_Cond(0,"((LinkId=-1 OR LinkId=-3) AND SystemId=$Hid)");
+        foreach($OnBoard as $OB) if ($TTypes[$OB['Type']]['Properties'] & THING_NEEDS_CARGOSPACE) {
+          $Need = max(1,$OB['Level']);
+          if ($CryoSpace && ($TTypes[$OB['Type']]['Properties'] & THING_HAS_ARMYMODULES)) {
+            $CryoSpace -= $Need;
+            if ($CryoSpace >= 0) {
+              $Need = 0;
+            } else {
+              $Need -= $CryoSpace;
+            }
+          }
+          if ($Need && $CargoSpace) {
+            $CargoSpace -= $Need;
+            if ($CargoSpace >= 0) {
+              $Need = 0;
+            } else {
+              $Need -= $CargoSpace;
+            }
+          }
+        }
+
+        $Space = $CargoSpace + (($TTypes[$T['Type']]['Propertis'] & THING_HAS_ARMYMODULES)?$CryoSpace:0);
+        if ($Space < max(1,$T['Level'])) {
+          echo "<h2 class=Err>There is insufficient space for " . $T['Name'] . " on board " . $H['Name'] . "</h2>\n";
+          break;
+        }
+      }
+
       $T['LinkId'] = -1;
       $T['SystemId'] = $Hid;
 //var_dump($T); exit;
@@ -617,7 +652,6 @@ global $FACTION;
     case 'Scavenge' : // To Be Written
       include_once("TurnTools.php");
       include_once("ProjLib.php");
-      $TTypes = Get_ThingTypes();
       echo "Doing Scavenging<br>";
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
@@ -687,7 +721,6 @@ global $FACTION;
     case 'Salvage' : // As in turn action called by GM for wierd cases (eg you forgot)
       include_once("TurnTools.php");
       include_once("ProjLib.php");
-      $TTypes = Get_ThingTypes();
       echo "Doing Salvage<br>";
       $tid = $_REQUEST['id'];
       $T = Get_Thing($tid);
@@ -952,7 +985,7 @@ global $FACTION;
             $wsysloc = $_REQUEST["WithinSysLoc:$Hid"];
             $Syslocs = Within_Sys_Locs($N,0,0,0,1);
             $newloc = (isset($Syslocs[$wsysloc])? $Syslocs[$wsysloc] : 'Deep Space');
-            if ((($ttypes[$H['Type']]['Prop2'] & THING_DISLIKES_SPACE) == 0) ||
+            if ((($TTypes[$H['Type']]['Prop2'] & THING_DISLIKES_SPACE) == 0) ||
                 (preg_match('/Hospitable/',$newloc,$mtch)?true:false) || isset($_REQUEST['YES_SPACE'])) {
               $H['LinkId'] = 0;
               $H['SystemId'] = $Sys;

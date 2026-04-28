@@ -1022,19 +1022,23 @@ function Show_Thing(&$T,$Force=0) {
   if ($Has_Warehouse && $T['SystemId']) { // Is there one here?  If not set Has to false
     if ($T['LinkId'] >=0 || ($MoveProps[$T['LinkId']] & 1)) {
       $Sys = Get_System($T['SystemId']);
-      $Worlds = explode(',',$Sys['WorldList']);
-      if ($Worlds) {
-        $WareId = TypeFromName('DistrictTypes','Warehouse');
-        foreach ($Worlds as $W) {
-          if ($W>0) {
-            $Dists = Get_DistrictsP($W);
-          } else {
-            $Dists = Get_DistrictsM(-$W);
+      if ($Sys['WorldList']??0) {
+        $Worlds = explode(',',$Sys['WorldList']);
+        if ($Worlds) {
+          $WareId = TypeFromName('DistrictTypes','Warehouse');
+          foreach ($Worlds as $W) {
+            if ($W>0) {
+              $Dists = Get_DistrictsP($W);
+            } else {
+              $Dists = Get_DistrictsM(-$W);
+            }
+            if ($Dists[$WareId]??0) {
+              $Has_Warehouse = $Dists[$WareId]['Number'];
+              break; // Found
+            }
           }
-          if ($Dists[$WareId]??0) {
-            $Has_Warehouse = $Dists[$WareId]['Number'];
-            break; // Found
-          }
+        } else {
+          $Has_Warehouse = 0;
         }
       } else {
         $Has_Warehouse = 0;

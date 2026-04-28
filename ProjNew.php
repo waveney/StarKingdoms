@@ -541,8 +541,16 @@
           if (!isset($FactTechs[$T['PreReqTech']])) continue;
           if ($T['PreReqTech']!=3) continue;
           if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
-          if ($T['PreReqTech2'] && ((! isset($FactTechs[$T['PreReqTech2']])) || $FactTechs[$T['PreReqTech2']]== 0)) continue;
-          if ($T['PreReqTech3'] && ((! isset($FactTechs[$T['PreReqTech3']])) || $FactTechs[$T['PreReqTech3']]== 0)) continue;
+          if ($T['PreReqTech2'] && (
+            (! isset($FactTechs[$T['PreReqTech2']])) ||
+            ($FactTechs[$T['PreReqTech2']]['Level'] == 0) ||
+            ($FactTechs[$T['PreReqTech2']]['Level'] < ($T['PreReqLevel2']??0)))) continue;
+
+          if ($T['PreReqTech3'] && (
+            (! isset($FactTechs[$T['PreReqTech3']])) ||
+            ($FactTechs[$T['PreReqTech3']]['Level'] == 0) ||
+            ($FactTechs[$T['PreReqTech3']]['Level'] < ($T['PreReqLevel3']??0)))) continue;
+
 
           $Lvl = $T['PreReqLevel'];
           $pc = Proj_Costs($Lvl);
@@ -611,9 +619,18 @@
           if ($T['Cat'] == 0 || (isset($FactTechs[$T['id']]) && $FactTechs[$T['id']]['Level'])) continue;
           if (!isset($FactTechs[$T['PreReqTech']]) ) continue;
           if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
-          if ($T['PreReqTech2'] && ((! isset($FactTechs[$T['PreReqTech2']])) || $FactTechs[$T['PreReqTech2']]== 0)) continue;
-          if ($T['PreReqTech3'] && ((! isset($FactTechs[$T['PreReqTech3']])) || $FactTechs[$T['PreReqTech3']]== 0)) continue;
-          $Lvl = $T['PreReqLevel'];
+
+          if ($T['PreReqTech2'] && (
+            (! isset($FactTechs[$T['PreReqTech2']])) ||
+            ($FactTechs[$T['PreReqTech2']]['Level'] == 0) ||
+            ($FactTechs[$T['PreReqTech2']]['Level'] < ($T['PreReqLevel2']??0)))) continue;
+
+          if ($T['PreReqTech3'] && (
+            (! isset($FactTechs[$T['PreReqTech3']])) ||
+            ($FactTechs[$T['PreReqTech3']]['Level'] == 0) ||
+            ($FactTechs[$T['PreReqTech3']]['Level'] < ($T['PreReqLevel3']??0)))) continue;
+
+            $Lvl = $T['PreReqLevel'];
         }
         $pc = Proj_Costs($Lvl);
         Show_Research($T['Name'],"ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Research Supplemental Technology'] .
@@ -770,8 +787,17 @@
         if (!isset($FactTechs[$T['PreReqTech']])) continue;
         if ($T['PreReqTech']!=7) continue;
         if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
-        if ($T['PreReqTech2'] && ((! isset($FactTechs[$T['PreReqTech2']])) || $FactTechs[$T['PreReqTech2']]== 0)) continue;
-        if ($T['PreReqTech3'] && ((! isset($FactTechs[$T['PreReqTech3']])) || $FactTechs[$T['PreReqTech3']]== 0)) continue;
+
+        if ($T['PreReqTech2'] && (
+          (! isset($FactTechs[$T['PreReqTech2']])) ||
+          ($FactTechs[$T['PreReqTech2']]['Level'] == 0) ||
+          ($FactTechs[$T['PreReqTech2']]['Level'] < ($T['PreReqLevel2']??0)))) continue;
+
+          if ($T['PreReqTech3'] && (
+            (! isset($FactTechs[$T['PreReqTech3']])) ||
+            ($FactTechs[$T['PreReqTech3']]['Level'] == 0) ||
+            ($FactTechs[$T['PreReqTech3']]['Level'] < ($T['PreReqLevel3']??0)))) continue;
+
 
         if (!$Tstart++) {
           echo "<h2>Research Supplemental Ship Technology</h2>";
@@ -967,8 +993,17 @@
         if (!isset($FactTechs[$T['PreReqTech']])) continue;
         if ($T['PreReqTech']!=8) continue;
         if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
-        if ($T['PreReqTech2'] && ((! isset($FactTechs[$T['PreReqTech2']])) || $FactTechs[$T['PreReqTech2']]== 0)) continue;
-        if ($T['PreReqTech3'] && ((! isset($FactTechs[$T['PreReqTech3']])) || $FactTechs[$T['PreReqTech3']]== 0)) continue;
+
+        if ($T['PreReqTech2'] && (
+          (! isset($FactTechs[$T['PreReqTech2']])) ||
+          ($FactTechs[$T['PreReqTech2']]['Level'] == 0) ||
+          ($FactTechs[$T['PreReqTech2']]['Level'] < ($T['PreReqLevel2']??0)))) continue;
+
+          if ($T['PreReqTech3'] && (
+            (! isset($FactTechs[$T['PreReqTech3']])) ||
+            ($FactTechs[$T['PreReqTech3']]['Level'] == 0) ||
+            ($FactTechs[$T['PreReqTech3']]['Level'] < ($T['PreReqLevel3']??0)))) continue;
+
 
         $Lvl = $T['PreReqLevel'];
         $pc = Proj_Costs($Lvl);
@@ -1236,8 +1271,17 @@
           if (!isset($FactTechs[$T['PreReqTech']])) continue;
           if ($T['PreReqTech']!=4) continue;
           if ( ($FactTechs[$T['PreReqTech']]['Level']<$T['PreReqLevel'] ) ) continue;
-          if ($T['PreReqTech2'] && ((! isset($FactTechs[$T['PreReqTech2']])) || $FactTechs[$T['PreReqTech2']]== 0)) continue;
-          if ($T['PreReqTech3'] && ((! isset($FactTechs[$T['PreReqTech3']])) || $FactTechs[$T['PreReqTech3']]== 0)) continue;
+
+          if ($T['PreReqTech2'] && (
+            (! isset($FactTechs[$T['PreReqTech2']])) ||
+            ($FactTechs[$T['PreReqTech2']]['Level'] == 0) ||
+            ($FactTechs[$T['PreReqTech2']]['Level'] < ($T['PreReqLevel2']??0)))) continue;
+
+            if ($T['PreReqTech3'] && (
+              (! isset($FactTechs[$T['PreReqTech3']])) ||
+              ($FactTechs[$T['PreReqTech3']]['Level'] == 0) ||
+              ($FactTechs[$T['PreReqTech3']]['Level'] < ($T['PreReqLevel3']??0)))) continue;
+
 
           $Lvl = $T['PreReqLevel'];
           $pc = Proj_Costs($Lvl);

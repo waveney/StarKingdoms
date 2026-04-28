@@ -233,7 +233,7 @@
       echo "<tr><td>Tech:<td>" . $Tech['Name'] . "<td>Level: " . $O['Para2'];
     } else if ($PProps & OPER_SOCP) {
       $SP = Get_SocialP($O['Para1']);
-      echo "<tr><td>Social Principe:<td>" . $SP['Principle'];
+      echo "<tr><td>Social Principe:<td>" . ($SP['Principle']??'Unknown');
     } else if ($PProps & OPER_SCIPOINTS) {
       echo "<tr><td>Science Points:<td>" . ($Fields[$O['Para1']-1]??'Unknown - Tell Richard');
     } else if ($PProps & OPER_MONEY) {
