@@ -57,6 +57,8 @@ class Request extends \Google\Model
   protected $insertPageBreakDataType = '';
   protected $insertPersonType = InsertPersonRequest::class;
   protected $insertPersonDataType = '';
+  protected $insertRichLinkType = InsertRichLinkRequest::class;
+  protected $insertRichLinkDataType = '';
   protected $insertSectionBreakType = InsertSectionBreakRequest::class;
   protected $insertSectionBreakDataType = '';
   protected $insertTableType = InsertTableRequest::class;
@@ -83,6 +85,8 @@ class Request extends \Google\Model
   protected $updateDocumentStyleDataType = '';
   protected $updateDocumentTabPropertiesType = UpdateDocumentTabPropertiesRequest::class;
   protected $updateDocumentTabPropertiesDataType = '';
+  protected $updateNamedStyleType = UpdateNamedStyleRequest::class;
+  protected $updateNamedStyleDataType = '';
   protected $updateParagraphStyleType = UpdateParagraphStyleRequest::class;
   protected $updateParagraphStyleDataType = '';
   protected $updateSectionStyleType = UpdateSectionStyleRequest::class;
@@ -401,6 +405,22 @@ class Request extends \Google\Model
     return $this->insertPerson;
   }
   /**
+   * Insert a rich link.
+   *
+   * @param InsertRichLinkRequest $insertRichLink
+   */
+  public function setInsertRichLink(InsertRichLinkRequest $insertRichLink)
+  {
+    $this->insertRichLink = $insertRichLink;
+  }
+  /**
+   * @return InsertRichLinkRequest
+   */
+  public function getInsertRichLink()
+  {
+    return $this->insertRichLink;
+  }
+  /**
    * Inserts a section break at the specified location.
    *
    * @param InsertSectionBreakRequest $insertSectionBreak
@@ -607,6 +627,22 @@ class Request extends \Google\Model
   public function getUpdateDocumentTabProperties()
   {
     return $this->updateDocumentTabProperties;
+  }
+  /**
+   * Updates a named style.
+   *
+   * @param UpdateNamedStyleRequest $updateNamedStyle
+   */
+  public function setUpdateNamedStyle(UpdateNamedStyleRequest $updateNamedStyle)
+  {
+    $this->updateNamedStyle = $updateNamedStyle;
+  }
+  /**
+   * @return UpdateNamedStyleRequest
+   */
+  public function getUpdateNamedStyle()
+  {
+    return $this->updateNamedStyle;
   }
   /**
    * Updates the paragraph style at the specified range.

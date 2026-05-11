@@ -1121,6 +1121,7 @@ function TidyUps() {
     "WHERE (LinkId>=0 OR LinkId=-5 OR LinkId=-6 OR LinkId=-7) AND GameId=$GAMEID");
   $res = $db->query("UPDATE Things SET Conflict=0 WHERE Conflict>0 AND GameId=$GAMEID");
   $res = $db->query("UPDATE Operations SET TurnState=0 WHERE GameId=$GAMEID");
+  $res = $db->query("UPDATE Worlds SET WallsHelp=0 WHERE GameId=$GAMEID");
 
   $Things = Get_Things_Cond(0,"GameId=$GAMEID AND (BuildState<0 OR Type=0)");
   foreach ($Things as $T) Thing_Delete($T['id']);

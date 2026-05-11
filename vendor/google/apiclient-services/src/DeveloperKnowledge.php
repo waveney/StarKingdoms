@@ -20,7 +20,7 @@ namespace Google\Service;
 use Google\Client;
 
 /**
- * Service definition for DeveloperKnowledge (v1alpha).
+ * Service definition for DeveloperKnowledge (v1).
  *
  * <p>
  * The Developer Knowledge API provides access to Google's developer knowledge.</p>
@@ -55,7 +55,7 @@ class DeveloperKnowledge extends \Google\Service
     $this->rootUrlTemplate = $rootUrl ?: 'https://developerknowledge.UNIVERSE_DOMAIN/';
     $this->servicePath = '';
     $this->batchPath = 'batch';
-    $this->version = 'v1alpha';
+    $this->version = 'v1';
     $this->serviceName = 'developerknowledge';
 
     $this->documents = new DeveloperKnowledge\Resource\Documents(
@@ -65,7 +65,7 @@ class DeveloperKnowledge extends \Google\Service
         [
           'methods' => [
             'batchGet' => [
-              'path' => 'v1alpha/documents:batchGet',
+              'path' => 'v1/documents:batchGet',
               'httpMethod' => 'GET',
               'parameters' => [
                 'names' => [
@@ -73,9 +73,13 @@ class DeveloperKnowledge extends \Google\Service
                   'type' => 'string',
                   'repeated' => true,
                 ],
+                'view' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
               ],
             ],'get' => [
-              'path' => 'v1alpha/{+name}',
+              'path' => 'v1/{+name}',
               'httpMethod' => 'GET',
               'parameters' => [
                 'name' => [
@@ -83,11 +87,19 @@ class DeveloperKnowledge extends \Google\Service
                   'type' => 'string',
                   'required' => true,
                 ],
+                'view' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
               ],
             ],'searchDocumentChunks' => [
-              'path' => 'v1alpha/documents:searchDocumentChunks',
+              'path' => 'v1/documents:searchDocumentChunks',
               'httpMethod' => 'GET',
               'parameters' => [
+                'filter' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
                 'pageSize' => [
                   'location' => 'query',
                   'type' => 'integer',

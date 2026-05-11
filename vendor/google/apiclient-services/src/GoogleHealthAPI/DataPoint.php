@@ -27,6 +27,8 @@ class DataPoint extends \Google\Model
   protected $activityLevelDataType = '';
   protected $altitudeType = Altitude::class;
   protected $altitudeDataType = '';
+  protected $basalEnergyBurnedType = BasalEnergyBurned::class;
+  protected $basalEnergyBurnedDataType = '';
   protected $bodyFatType = BodyFat::class;
   protected $bodyFatDataType = '';
   protected $dailyHeartRateVariabilityType = DailyHeartRateVariability::class;
@@ -55,6 +57,8 @@ class DataPoint extends \Google\Model
   protected $heartRateDataType = '';
   protected $heartRateVariabilityType = HeartRateVariability::class;
   protected $heartRateVariabilityDataType = '';
+  protected $heightType = Height::class;
+  protected $heightDataType = '';
   protected $hydrationLogType = HydrationLog::class;
   protected $hydrationLogDataType = '';
   /**
@@ -86,6 +90,8 @@ class DataPoint extends \Google\Model
   protected $sleepDataType = '';
   protected $stepsType = Steps::class;
   protected $stepsDataType = '';
+  protected $swimLengthsDataType = SwimLengthsData::class;
+  protected $swimLengthsDataDataType = '';
   protected $timeInHeartRateZoneType = TimeInHeartRateZone::class;
   protected $timeInHeartRateZoneDataType = '';
   protected $vo2MaxType = VO2Max::class;
@@ -159,6 +165,23 @@ class DataPoint extends \Google\Model
   public function getAltitude()
   {
     return $this->altitude;
+  }
+  /**
+   * Optional. Data for points in the `basal-energy-burned` interval data type
+   * collection.
+   *
+   * @param BasalEnergyBurned $basalEnergyBurned
+   */
+  public function setBasalEnergyBurned(BasalEnergyBurned $basalEnergyBurned)
+  {
+    $this->basalEnergyBurned = $basalEnergyBurned;
+  }
+  /**
+   * @return BasalEnergyBurned
+   */
+  public function getBasalEnergyBurned()
+  {
+    return $this->basalEnergyBurned;
   }
   /**
    * Optional. Data for points in the `body-fat` sample data type collection.
@@ -393,6 +416,22 @@ class DataPoint extends \Google\Model
     return $this->heartRateVariability;
   }
   /**
+   * Optional. Data for points in the `height` sample data type collection.
+   *
+   * @param Height $height
+   */
+  public function setHeight(Height $height)
+  {
+    $this->height = $height;
+  }
+  /**
+   * @return Height
+   */
+  public function getHeight()
+  {
+    return $this->height;
+  }
+  /**
    * Optional. Data for points in the `hydration-log` session data type
    * collection.
    *
@@ -534,6 +573,23 @@ class DataPoint extends \Google\Model
   public function getSteps()
   {
     return $this->steps;
+  }
+  /**
+   * Optional. Data for points in the `swim-lengths-data` interval data type
+   * collection.
+   *
+   * @param SwimLengthsData $swimLengthsData
+   */
+  public function setSwimLengthsData(SwimLengthsData $swimLengthsData)
+  {
+    $this->swimLengthsData = $swimLengthsData;
+  }
+  /**
+   * @return SwimLengthsData
+   */
+  public function getSwimLengthsData()
+  {
+    return $this->swimLengthsData;
   }
   /**
    * Optional. Data for points in the `time-in-heart-rate-zone` interval data

@@ -60,6 +60,8 @@ class GoogleCloudAiplatformV1SandboxEnvironmentTemplate extends \Google\Model
    * @var string
    */
   public $displayName;
+  protected $egressControlConfigType = GoogleCloudAiplatformV1SandboxEnvironmentTemplateEgressControlConfig::class;
+  protected $egressControlConfigDataType = '';
   /**
    * Identifier. The resource name of the SandboxEnvironmentTemplate. Format: `p
    * rojects/{project}/locations/{location}/reasoningEngines/{reasoning_engine}/
@@ -81,8 +83,6 @@ class GoogleCloudAiplatformV1SandboxEnvironmentTemplate extends \Google\Model
    * @var string
    */
   public $updateTime;
-  protected $warmPoolConfigType = GoogleCloudAiplatformV1SandboxEnvironmentTemplateWarmPoolConfig::class;
-  protected $warmPoolConfigDataType = '';
 
   /**
    * Output only. The timestamp when this SandboxEnvironmentTemplate was
@@ -150,6 +150,22 @@ class GoogleCloudAiplatformV1SandboxEnvironmentTemplate extends \Google\Model
     return $this->displayName;
   }
   /**
+   * Optional. The configuration for egress control of this template.
+   *
+   * @param GoogleCloudAiplatformV1SandboxEnvironmentTemplateEgressControlConfig $egressControlConfig
+   */
+  public function setEgressControlConfig(GoogleCloudAiplatformV1SandboxEnvironmentTemplateEgressControlConfig $egressControlConfig)
+  {
+    $this->egressControlConfig = $egressControlConfig;
+  }
+  /**
+   * @return GoogleCloudAiplatformV1SandboxEnvironmentTemplateEgressControlConfig
+   */
+  public function getEgressControlConfig()
+  {
+    return $this->egressControlConfig;
+  }
+  /**
    * Identifier. The resource name of the SandboxEnvironmentTemplate. Format: `p
    * rojects/{project}/locations/{location}/reasoningEngines/{reasoning_engine}/
    * sandboxEnvironmentTemplates/{sandbox_environment_template}`
@@ -202,22 +218,6 @@ class GoogleCloudAiplatformV1SandboxEnvironmentTemplate extends \Google\Model
   public function getUpdateTime()
   {
     return $this->updateTime;
-  }
-  /**
-   * Optional. The configuration for the warm pool of this template.
-   *
-   * @param GoogleCloudAiplatformV1SandboxEnvironmentTemplateWarmPoolConfig $warmPoolConfig
-   */
-  public function setWarmPoolConfig(GoogleCloudAiplatformV1SandboxEnvironmentTemplateWarmPoolConfig $warmPoolConfig)
-  {
-    $this->warmPoolConfig = $warmPoolConfig;
-  }
-  /**
-   * @return GoogleCloudAiplatformV1SandboxEnvironmentTemplateWarmPoolConfig
-   */
-  public function getWarmPoolConfig()
-  {
-    return $this->warmPoolConfig;
   }
 }
 

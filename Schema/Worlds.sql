@@ -11,5 +11,7 @@ CREATE TABLE `Worlds` (
   `Revolt` int NOT NULL,
   `GameId` int NOT NULL,
   `ConflictTurn` int NOT NULL,
+  `Devastation` int NOT NULL,
+  `WallsHelp` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

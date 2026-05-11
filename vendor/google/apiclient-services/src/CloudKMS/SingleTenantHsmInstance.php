@@ -83,6 +83,14 @@ class SingleTenantHsmInstance extends \Google\Model
    */
   public $disableTime;
   /**
+   * Optional. Immutable. Indicates whether key portability is enabled for the
+   * SingleTenantHsmInstance. This can only be set at creation time. Key
+   * portability features are disabled by default and not yet available in GA.
+   *
+   * @var bool
+   */
+  public $keyPortabilityEnabled;
+  /**
    * Identifier. The resource name for this SingleTenantHsmInstance in the
    * format `projects/locations/singleTenantHsmInstances`.
    *
@@ -100,7 +108,7 @@ class SingleTenantHsmInstance extends \Google\Model
   /**
    * Output only. The system-defined duration that an instance can remain
    * unrefreshed until it is automatically disabled. This will have a value of
-   * 120 days.
+   * 730 days.
    *
    * @var string
    */
@@ -159,6 +167,24 @@ class SingleTenantHsmInstance extends \Google\Model
     return $this->disableTime;
   }
   /**
+   * Optional. Immutable. Indicates whether key portability is enabled for the
+   * SingleTenantHsmInstance. This can only be set at creation time. Key
+   * portability features are disabled by default and not yet available in GA.
+   *
+   * @param bool $keyPortabilityEnabled
+   */
+  public function setKeyPortabilityEnabled($keyPortabilityEnabled)
+  {
+    $this->keyPortabilityEnabled = $keyPortabilityEnabled;
+  }
+  /**
+   * @return bool
+   */
+  public function getKeyPortabilityEnabled()
+  {
+    return $this->keyPortabilityEnabled;
+  }
+  /**
    * Identifier. The resource name for this SingleTenantHsmInstance in the
    * format `projects/locations/singleTenantHsmInstances`.
    *
@@ -214,7 +240,7 @@ class SingleTenantHsmInstance extends \Google\Model
   /**
    * Output only. The system-defined duration that an instance can remain
    * unrefreshed until it is automatically disabled. This will have a value of
-   * 120 days.
+   * 730 days.
    *
    * @param string $unrefreshedDurationUntilDisable
    */

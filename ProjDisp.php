@@ -521,7 +521,7 @@
       }
 
       $Di = -10;
-      foreach ($Dis[$Hi] as $Dix) {
+      foreach (($Dis[$Hi]??[]) as $Dix) {
         if ($Dix['Type'] == $WantedDT) {
           $Di = $Dix['id'];
           break;

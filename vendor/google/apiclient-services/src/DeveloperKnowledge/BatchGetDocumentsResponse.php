@@ -24,7 +24,7 @@ class BatchGetDocumentsResponse extends \Google\Collection
   protected $documentsDataType = 'array';
 
   /**
-   * Documents requested.
+   * Contains the documents requested.
    *
    * @param Document[] $documents
    */

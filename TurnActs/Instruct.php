@@ -19,10 +19,20 @@ function Instructions() {
   $Stage2Link = "<form method=post action=TurnActions.php?ACTION=DoStage2&Stage=Instructions>";
 
   foreach ($Things as $T) {
-    if ( $T['BuildState'] != BS_COMPLETE) {
-      $T['Instruction'] = $T['Progress'] = 0;
-      Put_Thing($T);
-      continue;
+    if ( $T['BuildState'] != BS_COMPLETE ) {
+      if ($T['BuildState'] == BS_MOTHBALLED) {
+        if ($ThingInstrs[$T['Instruction']] == 'Recommision' || $ThingInstrs[$T['Instruction']] == 'Decommision') {
+          // Allowed = No action
+        } else {
+          $T['Instruction'] = $T['Progress'] = 0;
+          Put_Thing($T);
+          continue;
+        }
+      } else {
+        $T['Instruction'] = $T['Progress'] = 0;
+        Put_Thing($T);
+        continue;
+      }
     }
     $N = Get_System($T['SystemId']);
     $Tid = $T['id'];
@@ -730,8 +740,10 @@ function Instructions() {
         $T['Instruction'] = -$T['Instruction'];
         break;
 
-      case 'Mothball': // Handed at completion
+      case 'Mothball':
       case 'Recommision':
+ //       $T['Instruction'] = -$T['Instruction']; Not sure if needed
+        break;
 
 
       default: // everything else
@@ -1593,14 +1605,14 @@ function InstructionsComplete() {
         $T['BuildState'] = BS_MOTHBALLED;
         Put_Thing($T);
         TurnLog($Who,$T['Name'] . " has been mothballed in " . $N['Ref'],$T);
-        GMLog($Facts[$Who]['Name'] . " has mothballed <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "  has been mothballed in " . $N['Ref']);
+        GMLog($Facts[$Who]['Name'] . " has mothballed <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a> has been mothballed in " . $N['Ref']);
         break;
 
       case 'Recommision':
         $T['BuildState'] = BS_COMPLETE;
         Put_Thing($T);
         TurnLog($Who,$T['Name'] . " has been recommisioned in " . $N['Ref'],$T);
-        GMLog($Facts[$Who]['Name'] . " has recommisioned <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "  has been mothballed in " . $N['Ref']);
+        GMLog($Facts[$Who]['Name'] . " has recommisioned <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a> has been Recommisiond in " . $N['Ref']);
         break;
 
 
@@ -1743,6 +1755,14 @@ function InstructionsProgress() {
         $Prog = $Mods['Level']*$Mods['Number'];
         GMLog("$Prog progress on " . $ThingInstrs[abs($T['Instruction'])] . " for " . $Facts[$T['Whose']]['Name'] . ":" . $T['Name']);
         $T['Progress'] = min($T['ActionsNeeded'],$T['Progress']+$Prog);
+        Put_Thing($T);
+        break;
+
+      case 'Recommision':
+        $ProgGain = 1;
+        GMLog("$ProgGain progress on " . $ThingInstrs[abs($T['Instruction'])] . " for " . $Facts[$T['Whose']]['Name'] . ":" . $T['Name']);
+        TurnLog($Fid,"$ProgGain progress on " . $ThingInstrs[abs($T['Instruction'])] . " by " . $T['Name'],$T);
+        $T['Progress'] = min($T['ActionsNeeded'],$T['Progress']+$ProgGain);
         Put_Thing($T);
         break;
 

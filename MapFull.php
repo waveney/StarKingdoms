@@ -327,7 +327,6 @@
       $ShownNodes[$N['Ref']]= 1;
     }
 
-
     if ($Fid && !$AllLinks) {
       $ul = 1;
       foreach($Nodes as $N) {

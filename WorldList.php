@@ -52,7 +52,7 @@
   Register_AutoUpdate('Worlds',0);
   echo "Click on the name to see districts, change the relative importance<p>\n";
   if ($Conflict) {
-    if ($Conflict == 1 ) echo "<h2>ONLY SET Conflict/Blockade/Revolt Flags at this point</h2>";
+    if ($Conflict == 1 ) echo "<h2>ONLY SET Conflict/Blockade/Revolt Flags at this point</h2>If you are adding devastation and walls help tick box<p>";
     if ($Conflict == 2 ) echo "<h2>CLEAR Conflict/Blockade/Revolt Flags at this point</h2>";
   }
 
@@ -75,6 +75,7 @@
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Revolt?</a>\n";
     echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Devastation</a>\n";
     if ($Conflict) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Conflict<br>This Turn?</a>\n";
+    if ($Conflict ==1) echo "<th><a href=javascript:SortTable(" . $coln++ . ",'T')>Conflict<br>Walls Help?</a>\n";
   } else {
     echo "<th>Status";
   }
@@ -160,6 +161,7 @@
       echo "<td>" . fm_checkbox("Revolt?", $W, 'Revolt','',"Revolt:99:" . $W['id']);
       echo fm_number1('',$H,'Devastation','','min=0 max=10','Devastation:100:'. $W['Home'] );
       if ($Conflict) echo "<td>" . fm_checkbox('',$W,'ConflictTurn','',"ConflictTurn:99:" . $W['id']);
+      if ($Conflict == 1) echo "<td>" . fm_checkbox('',$W,'WallsHelp','',"WallsHelp:99:" . $W['id']);
     } else {
       WorldFlags($W);
     }

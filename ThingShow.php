@@ -1019,6 +1019,7 @@ function Show_Thing(&$T,$Force=0) {
   }
 
   $Has_Warehouse = ($tprops & THING_HAS_SHIPMODULES) && Has_Tech($Fid,'Warehouses');
+//var_dump($Has_Warehouse);
   if ($Has_Warehouse && $T['SystemId']) { // Is there one here?  If not set Has to false
     if ($T['LinkId'] >=0 || ($MoveProps[$T['LinkId']] & 1)) {
       $Sys = Get_System($T['SystemId']);
@@ -1538,6 +1539,7 @@ function Show_Thing(&$T,$Force=0) {
       break;
 
     case 'Mothball':
+//var_dump($Moving,$Moth,$Has_Warehouse);
       if ($Moving || $Moth || !$Has_Warehouse) continue 2;
       // Check amount mothballed
 
@@ -1548,7 +1550,7 @@ function Show_Thing(&$T,$Force=0) {
       foreach($MBalled as $MB) {
         $UsedLog += $LogistCost[$MB['Level']];
       }
-
+ //     var_dump($UsedLog,$NeedLog,$LogistCost[$Has_Warehouse]);
       if ($UsedLog+$NeedLog > 4*$LogistCost[$Has_Warehouse]) continue 2;
       break;
 
@@ -1571,7 +1573,8 @@ function Show_Thing(&$T,$Force=0) {
 // var_dump($PTNs);
 
     $ProgShow = $Cost = $Acts = 0;
-    echo "<tr>" . fm_radio('Special Instructions', $SpecOrders,$T,'Instruction','',1,' colspan=6 ','',$ThingInclrs);
+    $IT['Instruction'] = abs($T['Instruction']);
+    echo "<tr>" . fm_radio('Special Instructions', $SpecOrders,$IT,'Instruction','',1,' colspan=6 ','',$ThingInclrs);
 
     if ($Moving && $HasDeep) echo " Note <span class=Red>Moving</span>, so no DSC instructions are shown";
     switch ($ThingInstrs[abs($T['Instruction'])]) {
@@ -1674,6 +1677,12 @@ function Show_Thing(&$T,$Force=0) {
     case 'Decommision': // Dissasemble
     case 'Disband': // Disband
       $Acts = $Cost = 0;
+      break;
+
+    case 'Recommision':
+      $Acts = Feature('RecommisionTurns',2);
+      $Cost = -1;
+      $ProgShow = 1;
       break;
 
     case 'Establish Embassy': // Establish Embassy
@@ -2164,7 +2173,7 @@ function Show_Thing(&$T,$Force=0) {
       break;
 
     default:
-      break;
+//       break;
     }
 
 

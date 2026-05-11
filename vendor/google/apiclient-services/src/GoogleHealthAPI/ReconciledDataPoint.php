@@ -27,6 +27,8 @@ class ReconciledDataPoint extends \Google\Model
   protected $activityLevelDataType = '';
   protected $altitudeType = Altitude::class;
   protected $altitudeDataType = '';
+  protected $basalEnergyBurnedType = BasalEnergyBurned::class;
+  protected $basalEnergyBurnedDataType = '';
   protected $bodyFatType = BodyFat::class;
   protected $bodyFatDataType = '';
   protected $dailyHeartRateVariabilityType = DailyHeartRateVariability::class;
@@ -70,6 +72,8 @@ class ReconciledDataPoint extends \Google\Model
   protected $heartRateDataType = '';
   protected $heartRateVariabilityType = HeartRateVariability::class;
   protected $heartRateVariabilityDataType = '';
+  protected $heightType = Height::class;
+  protected $heightDataType = '';
   protected $hydrationLogType = HydrationLog::class;
   protected $hydrationLogDataType = '';
   protected $oxygenSaturationType = OxygenSaturation::class;
@@ -84,6 +88,8 @@ class ReconciledDataPoint extends \Google\Model
   protected $sleepDataType = '';
   protected $stepsType = Steps::class;
   protected $stepsDataType = '';
+  protected $swimLengthsDataType = SwimLengthsData::class;
+  protected $swimLengthsDataDataType = '';
   protected $timeInHeartRateZoneType = TimeInHeartRateZone::class;
   protected $timeInHeartRateZoneDataType = '';
   protected $vo2MaxType = VO2Max::class;
@@ -155,6 +161,22 @@ class ReconciledDataPoint extends \Google\Model
   public function getAltitude()
   {
     return $this->altitude;
+  }
+  /**
+   * Data for points in the `basal-energy-burned` interval data type collection.
+   *
+   * @param BasalEnergyBurned $basalEnergyBurned
+   */
+  public function setBasalEnergyBurned(BasalEnergyBurned $basalEnergyBurned)
+  {
+    $this->basalEnergyBurned = $basalEnergyBurned;
+  }
+  /**
+   * @return BasalEnergyBurned
+   */
+  public function getBasalEnergyBurned()
+  {
+    return $this->basalEnergyBurned;
   }
   /**
    * Data for points in the `body-fat` sample data type collection.
@@ -397,6 +419,22 @@ class ReconciledDataPoint extends \Google\Model
     return $this->heartRateVariability;
   }
   /**
+   * Data for points in the `height` sample data type collection.
+   *
+   * @param Height $height
+   */
+  public function setHeight(Height $height)
+  {
+    $this->height = $height;
+  }
+  /**
+   * @return Height
+   */
+  public function getHeight()
+  {
+    return $this->height;
+  }
+  /**
    * Data for points in the `hydration-log` session data type collection.
    *
    * @param HydrationLog $hydrationLog
@@ -508,6 +546,22 @@ class ReconciledDataPoint extends \Google\Model
   public function getSteps()
   {
     return $this->steps;
+  }
+  /**
+   * Data for points in the `swim-lengths-data` interval data type collection.
+   *
+   * @param SwimLengthsData $swimLengthsData
+   */
+  public function setSwimLengthsData(SwimLengthsData $swimLengthsData)
+  {
+    $this->swimLengthsData = $swimLengthsData;
+  }
+  /**
+   * @return SwimLengthsData
+   */
+  public function getSwimLengthsData()
+  {
+    return $this->swimLengthsData;
   }
   /**
    * Data for points in the `time-in-heart-rate-zone` interval data type

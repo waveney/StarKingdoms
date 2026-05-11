@@ -538,7 +538,7 @@ function ProjectsCompleted($Pass) {
   $Projects = Get_Projects_Cond("GameId=$GAMEID AND Status=1 AND Progress>=ProgNeeded");
   $OTypes = Get_OrgTypes();
   $TTypes = Get_ThingTypes();
-  foreach ($Projects as $P) {
+  foreach ($Projects as $Pid=>$P) {
     $PT = $ProjTypes[$P['Type']];
 
     if (($Pass==0) && (($PT['Props']&512) ==0) ||
@@ -827,6 +827,11 @@ function ProjectsCompleted($Pass) {
           } else {
             $T = Get_Thing($P['ThingId']);
           }
+
+          if(!$T) {
+            GMLog4Later("<a href=ProjEdit.php?id=$Pid>Project $Pid - " . $P['Name'] . " Can't find Thing - Call Richard...");
+            break;
+          }
           $T['BuildState'] = (Feature('Shakedowns')?BS_SERVICE:BS_COMPLETE); // Shakedown
           if (empty($T['SystemId'])) {
             $Where = Where_Is_Home($P['Home']);
@@ -875,6 +880,10 @@ function ProjectsCompleted($Pass) {
             $T = Get_Thing($P['ThingId2']);
           } else {
             $T = Get_Thing($P['ThingId']);
+          }
+          if(!$T) {
+            GMLog4Later("<a href=ProjEdit.php?id=$Pid>Project $Pid - " . $P['Name'] . " Can't find Thing - Call Richard...");
+            break;
           }
           $T['BuildState'] = BS_COMPLETE;
           if (empty($T['SystemId'])) {
