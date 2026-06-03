@@ -10,6 +10,7 @@
     "Active - In play<br>Historical - Game has ended, Readonly<p>\n";
 
   echo "<h2 class=Err>DO NOT EDIT ANYTHING HERE UNLESS YOU <u>KNOW</u> WHAT YOU ARE DOING - In doubt ask Richard...</h2>";
+
   include_once("DateTime.php");
 
   echo "<div class='content'><h2>General Game Settings</h2>\n";

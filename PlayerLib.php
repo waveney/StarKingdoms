@@ -83,6 +83,7 @@ function Player_Page() {
   echo "<h2>Player state: <span style='background:" . $PlayerStateColours[$FACTION['TurnState']] . "'>$TState</span>" .
       (($FACTION['TurnState']<3)?" Turn:" . $GAME['Turn']:'') . "</h2>";
   if (($GM && $TState != 'Setup') || isset($_REQUEST['SEEALL'])) $TState = 'Turn Planning';
+  if (Feature("SpecialMessage$Fid")) echo "<h2>" . Feature("SpecialMessage$Fid") . "</h2>";
 
   echo "<div class=Player>";
   if ((!$GM) && $TState == 'Turn Submitted') echo "<b>To change anything, cancel the turn submission first.</b><br>";

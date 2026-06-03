@@ -21,7 +21,9 @@ function Devastate(&$H,&$W,&$Dists,&$Offs,$Numb=1) {
     $P = Get_Thing($H['ThingId']);
     break;
   }
-  $Txt .= $P['Name'] . "<br>";
+
+  $Sys = Get_System($H[SystemId]);
+  $Txt .= $P['Name'] . " in " . $Sys['Ref'] . "<br>";
 
   if ($W['WallsHelp']) {
     $Walls = Get_Things_Cond(0,"Type=$Something AND (Name='Shield Wall' OR Name='Sea Wall')");
@@ -51,7 +53,7 @@ function Devastate(&$H,&$W,&$Dists,&$Offs,$Numb=1) {
             $Txt .= "The office of " . $Org['Name'] . " has been destroyed because of the devastation.<br>";
             if (--$Org['OfficeCount'] < 1) $Txt .= "The organisation is now inactive.<p>";
             Gen_Put('Organisations',$Org);
-            continue;
+            continue 2;
           }
         }
       }

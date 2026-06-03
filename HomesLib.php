@@ -696,7 +696,7 @@ function World_Name_Long($Wid,$Fid=0) {
       $Sys = $P['SystemId'];
       $FP = Get_FactionPlanetFS($Fid,$P['id']);
       $N = Get_System($Sys);
-      $Name = ($FM['Name']?$FM['Name']:$M['Name']) . " a moon of " . ($FP['Name']?$FP['Name']:$P['Name']) . " in " . System_Name($N,$Fid);
+      $Name = (($FM['Name']??'')?$FM['Name']:$M['Name']) . " a moon of " . (($FP['Name']??'')?$FP['Name']:$P['Name']) . " in " . System_Name($N,$Fid);
       return $Name;
 
     case 3: // Thing

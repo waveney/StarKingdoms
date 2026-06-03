@@ -661,7 +661,8 @@ function ProjectsCompleted($Pass) {
             'Number'=>1];
           Put_Office($Off);
           $OrgTypes = Get_OrgTypes();
-          if (($OrgTypes[$Org['OrgType']] & ORG_SET_SOCIALP) || ($Org['OrgType2'] > 0 && ($OrgTypes[$Org['OrgType2']] & ORG_SET_SOCIALP))) {
+          if (($OrgTypes[$Org['OrgType']]['Props'] & ORG_SET_SOCIALP) ||
+              ($Org['OrgType2'] > 0 && ($OrgTypes[$Org['OrgType2']]['Props'] & ORG_SET_SOCIALP))) {
             $SPs = Get_SocialPs($World);
             $found = 0;
             foreach($SPs as $SP) {

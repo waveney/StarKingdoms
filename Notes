@@ -76,17 +76,18 @@ NEW GAME FEATURES & BUGS
 938 Nebula Fighters coming in at 0 Hull
 943 No move on blockaded things
 === 945 start of turn 40
-948 Detachments in space
 950 Bombers launched in MYS last turn haven't carried through name and design correctly. The design name has become the unit name. acg 28/4 @8:24
 954 JU - QTE fights /outpost
 955 Tidy up find fighters/heavy security without live home
 956 What have flex slots been used for?
+=== 957 start of turn 41
+962 You are due a new survey report - passive
+963 Lewis 18/5 @ 11:49
+=== 964 start of turn 42
+967 Add resource - turn from wrong game - why?  addformfill line
 
 
 
-
-=== start of turn 41
-=== start of turn 42
 === start of turn 43
 === start of turn 44
 === start of turn 45

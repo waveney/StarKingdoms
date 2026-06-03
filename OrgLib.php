@@ -208,20 +208,24 @@ function Op_Level($Orgid,$Sys,$Mod=0) {
     foreach ($Offices as $O) {
       if (isset($Worlds[$O['World']])) continue;
       $W = Get_World($O['World']);
-      switch ($W['ThingType']) {
-        case 1: //Planets
-          $P = Get_Planet($W['ThingId']);
-          $Targets[$P['SystemId']] = 2;
-          break;
-        case 2: // Moon
-          $M = Get_Moon($W['ThingId']);
-          $P = Get_Planet($M['PlanetId']);
-          $Targets[$P['SystemId']] = 2;
-          break;
-        case 3: // Thing
-          $P = Get_Thing($W['ThingId']);
-          $Targets[$P['SystemId']] = 2;
-          break;
+      if ($W) {
+        switch ($W['ThingType']) {
+          case 1: //Planets
+            $P = Get_Planet($W['ThingId']);
+            $Targets[$P['SystemId']] = 2;
+            break;
+          case 2: // Moon
+            $M = Get_Moon($W['ThingId']);
+            $P = Get_Planet($M['PlanetId']);
+            $Targets[$P['SystemId']] = 2;
+            break;
+          case 3: // Thing
+            $P = Get_Thing($W['ThingId']);
+            $Targets[$P['SystemId']] = 2;
+            break;
+        }
+      } else {
+
       }
     }
   }

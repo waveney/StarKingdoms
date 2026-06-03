@@ -380,7 +380,7 @@ global $FACTION;
         break;
       }
 
-      if ($TTypes[$T['Type']]['Propertis'] & THING_NEEDS_CARGOSPACE) {
+      if ($TTypes[$T['Type']]['Properties'] & THING_NEEDS_CARGOSPACE) {
         $MTs = Get_ModuleTypes();
         $MNs = NamesList($MTs);
         $NamesMod = array_flip($MNs);
@@ -410,7 +410,7 @@ global $FACTION;
           }
         }
 
-        $Space = $CargoSpace + (($TTypes[$T['Type']]['Propertis'] & THING_HAS_ARMYMODULES)?$CryoSpace:0);
+        $Space = $CargoSpace + (($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES)?$CryoSpace:0);
         if ($Space < max(1,$T['Level'])) {
           echo "<h2 class=Err>There is insufficient space for " . $T['Name'] . " on board " . $H['Name'] . "</h2>\n";
           break;

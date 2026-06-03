@@ -51,9 +51,9 @@ foreach ($Tracks as $RTi=>$RT) {
 }
 
 $Show['Show'] = 0;
-echo "<div class=floatright ><b>" . fm_radio("Show",$Reses,$Show,'Show',' onchange=ListFilter("Show")') . "</div>";
+echo "<div class=floatright ><b>" . fm_radio("Show",$Reses,$Show,'Show',' onchange=ListFilter("Show")') . "</b></div>";
 
-//var_dump($Tracks);
+// var_dump($Tracks);
 TableStart('striped');
 if ($Fid == 0) TableHead('Who');
 TableHead('Turn','N');

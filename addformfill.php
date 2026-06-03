@@ -16,7 +16,7 @@
 
   global $GAME,$GAMEID;
 
-// var_dump($_POST);
+ var_dump($_POST);
 //   $.post("addformfill.php", {'F':id, 'V':mval, 'Y':yearval, 'R':Reason, 'T':newtot, 'K':ResType}, function( data ) {
 
   if ((preg_match('/(\w*):(\w*):(\d*)/',$field,$mtch)?true:false)) {
@@ -25,8 +25,23 @@
     $i = $mtch[3];
     if (($t == 'Ignore') || ($i==0)) exit;
 
-    $Fact = Get_Faction($i);
-    if ($GAME['id'] != $Fact['GameId']) Get_Game( $Fact['GameId']);
+    switch ($t) {
+      case 'Factions':
+        $Fact = Get_Faction($i);
+        break;
+
+      case 'Resources':
+        $Res = Gen_Get($t,$i);
+        $Fact = Get_Faction($Res['Whose']);
+        $ResTyp = $Res['Type']+20;
+        break;
+
+      case 'Default':
+        GMLog4Later("addformfill called with table $t - how do you get faction id? - let richard know");
+        exit;
+    }
+//var_dump($ResTyp);
+    if ($GAMEID != $Fact['GameId']) Get_Game( $Fact['GameId']);
     if (($t == 'Factions') && ($f == 'Credits')) {
       Spend_Credit($i,-$Value,$Reason);
     } else {
@@ -34,8 +49,7 @@
       $N[$f] = $NewTot;
       echo Gen_Put($t,$N);
       $Fid = (($t == 'Factions')?$i:$N['Whose']);
-      $Spog = ['GameId'=>$GAME['id'],'Turn'=>$GAME['Turn'],'FactionId'=>$Fid, 'Type'=>$ResTyp, 'Number'=>$Value, 'Note'=>$Reason, 'EndVal'=>$NewTot];
-// var_dump($Spog);
+      $Spog = ['GameId'=>$GAMEID,'Turn'=>$GAME['Turn'],'FactionId'=>$Fid, 'Type'=>$ResTyp, 'Number'=>$Value, 'Note'=>$Reason, 'EndVal'=>$NewTot];
       Gen_Put('SciencePointLog',$Spog);
     }
 
