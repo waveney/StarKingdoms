@@ -1611,7 +1611,8 @@ function BluePrintList($Lvl=10000,$Props='',$WithISA=1) {
   global $GAMEID,$db,$FACTION;
   $BPlst = [];
   if ($Props) {
-    $res = $db->query("SELECT T.* FROM Things T, ThingTypes Y WHERE T.GameId=$GAMEID AND Level<$Lvl AND T.Type=Y.id AND (Y.Props&$Props)!=0");
+    $res = $db->query("SELECT T.* FROM Things T, ThingTypes Y WHERE T.GameId=$GAMEID AND Level<$Lvl AND T.Type=Y.id AND (Y.Props&$Props)!=0 " .
+      "ORDER BY T.Level DESC,T.Name");
     if ($res) {
       while ($BP = $res->fetch_assoc()) {
         if (($BP['GatedOn']??0) && !eval("return " . $BP['GatedOn'] . ";" )) continue;
@@ -1621,7 +1622,7 @@ function BluePrintList($Lvl=10000,$Props='',$WithISA=1) {
       };
     }
   } else {
-    $BPs = Gen_Get_Cond('Things',"GameId=$GAMEID AND Level<=$Lvl AND BluePrint<0");
+    $BPs = Gen_Get_Cond('Things',"GameId=$GAMEID AND Level<=$Lvl AND BluePrint<0 ORDER BY Level DESC,Name");
     $Fid = ($FACTION['id']??0);
     foreach($BPs as $i=>$BP) {
       if (($BP['GatedOn']??0) && !eval("return " . $BP['GatedOn'] . ";" )) continue;

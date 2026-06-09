@@ -21,19 +21,18 @@ if (isset($_REQUEST['ACTION'])) {
         echo "<h2>You dont have any Flux Crystals left</h2>";
         break;
       }
-      $FACTION['Currency1']--;
-      Put_Faction($FACTION);
+
       $Lid = $_REQUEST['L']??0;
-
       $L = Get_Link($Lid);
-      if (($L['FluxCrystals']++) == 0) {
-        $L['ThisTurnMod']--;
+      if (Gain_Currency($Fid,'Flux Crystals',-1,"Used a Flux Crystal on link " . $L['Name'])) {
+        if (($L['FluxCrystals']++) == 0) {
+          $L['ThisTurnMod']--;
+        }
+        Put_Link($L);
+        $EInst = $L['Instability'];
+        if ($L['ThisTurnMod']) $EInst = max(1,$EInst+$L['ThisTurnMod']);
+        echo "<h2>Link " . $L['Name'] . " has its current instablity set to $EInst</h2>";
       }
-      Put_Link($L);
-      $EInst = $L['Instability'];
-      if ($L['ThisTurnMod']) $EInst = max(1,$EInst+$L['ThisTurnMod']);
-      echo "<h2>Link " . $L['Name'] . " has its current instablity set to $EInst</h2>";
-
 //      $FCU = ['GameId'=>$GAMEID,'Turn'=>$GAME['Turn'],'LinkId'=>$Lid,'FactionId'=>$Fid];
 //      Gen_Put('FluxCrystalUse',$FCU);
       break;

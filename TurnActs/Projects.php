@@ -116,44 +116,27 @@ function StartProjects() {
     }
 
     if ($T && ($T['BuildFlags'] & BUILD_FLAG1 )) {
-      if ($Facts[$Fid]['Currency3'] < $T['Level']) {
-
-//        $P['Status'] = 5; // Not Started
+      $Why = 'Spent ' . $T['Level'] . ' ' . GameFeature('Currency3','Unknown') . ' starting ' . $T['Name'];
+      if (!Gain_Currency($Fid, GameFeature("Currency3",'Unknown'), - $T['Level'], $Why)) {
         TurnLog($P['FactionId'],'Not enough ' . GameFeature('Currency3','Unknown') . ': ' . $P['Name'] . " building of " . $T['Name'] . " proceding without it.");
         GMLog($Facts[$P['FactionId']]['Name'] . ' Not enough ' . GameFeature('Currency3','Unknown') . ': ' . $P['Name'] . " building of " . $T['Name'] .
-           " proceding without it.",1);
+          " proceding without it.",1);
         $T['BuildFlags'] = ($T['BuildFlags'] & (~BUILD_FLAG1));
         Put_Thing($T);
-      } else {
-        $Facts[$Fid]['Currency3'] -= $T['Level'];
-        $Why = 'Spent ' . $T['Level'] . ' ' . GameFeature('Currency3','Unknown') . ' starting ' . $T['Name'];
-        $RLog = ['GameId'=>$GAME['id'],'Turn'=>$GAME['Turn'],'FactionId'=>$P['FactionId'], 'Type'=>13, 'Number'=> -$T['Level'],
-          'Note'=>$Why, 'EndVal'=>$Facts[$Fid]['Currency3']];
-        Gen_Put('SciencePointLog',$RLog);
-
-        Put_Faction($Facts[$Fid]);
-        TurnLog($P['FactionId'],$Why);
       }
     }
 
     for ($i=1;$i<4;$i++) if ($P["CostCur$i"]) {
-      if ($Facts[$Fid]["Currency$i"] < $P["CostCur$i"]) {
+      $Why = 'Spent ' . $T['Level'] . ' ' . GameFeature("Currency$i",'Unknown') . ' starting ' . $T['Name'];
+      if (!Gain_Currency($Fid, GameFeature("Currency$i",'Unknown'), - $P["CostCur$i"], $Why)) {
         $P['Status'] = 5; // Not Started
         $P['TurnEnd'] = $GAME['Turn'];
         TurnLog($P['FactionId'],'Not enough ' . GameFeature("Currency$i",'Unknown') . ': ' . $P['Name'] . " building of " . $T['Name'] . " Not started.");
         GMLog($Facts[$P['FactionId']]['Name'] . ' Not enough ' . GameFeature("Currency$i",'Unknown') . ': ' . $P['Name']  . " building of " . $T['Name'] .
-           " Not started.",1);
+          " Not started.",1);
         $T['BuildFlags'] = ($T['BuildFlags'] & (~BUILD_FLAG1));
         Put_Thing($T);
-      } else {
-        $Facts[$Fid]["Currency$i"] -= $P["CostCur$i"];
-        $Why = 'Spent ' . $T['Level'] . ' ' . GameFeature("Currency$i",'Unknown') . ' starting ' . $T['Name'];
-        $RLog = ['GameId'=>$GAME['id'],'Turn'=>$GAME['Turn'],'FactionId'=>$P['FactionId'], 'Type'=>10+$i, 'Number'=> -$P["CostCur$i"],
-          'Note'=>$Why, 'EndVal'=>$Facts[$Fid]["Currency$i"]];
-        Gen_Put('SciencePointLog',$RLog);
-
-        Put_Faction($Facts[$Fid]);
-        TurnLog($P['FactionId'],$Why);
+        continue 2;
       }
     }
 
