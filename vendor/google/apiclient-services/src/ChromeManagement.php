@@ -48,6 +48,12 @@ class ChromeManagement extends \Google\Service
   /** See reports about devices and Chrome browsers managed within your organization. */
   const CHROME_MANAGEMENT_REPORTS_READONLY =
       "https://www.googleapis.com/auth/chrome.management.reports.readonly";
+  /** Turn Chrome Security Insights on and off and view the data it generates. */
+  const CHROME_MANAGEMENT_SECURITYINSIGHTS =
+      "https://www.googleapis.com/auth/chrome.management.securityinsights";
+  /** See Chrome Security Insights reports. */
+  const CHROME_MANAGEMENT_SECURITYINSIGHTS_READONLY =
+      "https://www.googleapis.com/auth/chrome.management.securityinsights.readonly";
   /** See basic device and telemetry information collected from ChromeOS devices or users managed within your organization. */
   const CHROME_MANAGEMENT_TELEMETRY_READONLY =
       "https://www.googleapis.com/auth/chrome.management.telemetry.readonly";
@@ -59,6 +65,7 @@ class ChromeManagement extends \Google\Service
   public $customers_certificateProvisioningProcesses;
   public $customers_certificateProvisioningProcesses_operations;
   public $customers_connectorConfigs;
+  public $customers_enterprise_securityInsights;
   public $customers_profiles;
   public $customers_profiles_commands;
   public $customers_reports;
@@ -391,6 +398,142 @@ class ChromeManagement extends \Google\Service
           ]
         ]
     );
+    $this->customers_enterprise_securityInsights = new ChromeManagement\Resource\CustomersEnterpriseSecurityInsights(
+        $this,
+        $this->serviceName,
+        'securityInsights',
+        [
+          'methods' => [
+            'checkEnablementStatus' => [
+              'path' => 'v1/{+customer}/enterprise/securityInsights:checkEnablementStatus',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'customer' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'disable' => [
+              'path' => 'v1/{+customer}/enterprise/securityInsights:disable',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'customer' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'enable' => [
+              'path' => 'v1/{+customer}/enterprise/securityInsights:enable',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'customer' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+              ],
+            ],'queryContentTransfers' => [
+              'path' => 'v1/{+customer}/enterprise/securityInsights:queryContentTransfers',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'customer' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'filter' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+              ],
+            ],'queryContentTransfersBreakdowns' => [
+              'path' => 'v1/{+customer}/enterprise/securityInsights:queryContentTransfersBreakdowns',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'customer' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'breakdown' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'filter' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'fixedTimeRange' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'metric' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'pageSize' => [
+                  'location' => 'query',
+                  'type' => 'integer',
+                ],
+                'pageToken' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+              ],
+            ],'queryUrlVisits' => [
+              'path' => 'v1/{+customer}/enterprise/securityInsights:queryUrlVisits',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'customer' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'filter' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+              ],
+            ],'queryUrlVisitsBreakdowns' => [
+              'path' => 'v1/{+customer}/enterprise/securityInsights:queryUrlVisitsBreakdowns',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'customer' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'breakdown' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'filter' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'fixedTimeRange' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'metric' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'pageSize' => [
+                  'location' => 'query',
+                  'type' => 'integer',
+                ],
+                'pageToken' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+              ],
+            ],
+          ]
+        ]
+    );
     $this->customers_profiles = new ChromeManagement\Resource\CustomersProfiles(
         $this,
         $this->serviceName,
@@ -617,6 +760,32 @@ class ChromeManagement extends \Google\Service
                   'type' => 'string',
                 ],
               ],
+            ],'countChromeProfileVersions' => [
+              'path' => 'v1/{+customer}/reports:countChromeProfileVersions',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'customer' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'filter' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'orgUnitId' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'pageSize' => [
+                  'location' => 'query',
+                  'type' => 'integer',
+                ],
+                'pageToken' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+              ],
             ],'countChromeVersions' => [
               'path' => 'v1/{+customer}/reports:countChromeVersions',
               'httpMethod' => 'GET',
@@ -809,6 +978,44 @@ class ChromeManagement extends \Google\Service
               ],
             ],'findInstalledAppDevices' => [
               'path' => 'v1/{+customer}/reports:findInstalledAppDevices',
+              'httpMethod' => 'GET',
+              'parameters' => [
+                'customer' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
+                ],
+                'appId' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'appType' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'filter' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'orderBy' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'orgUnitId' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+                'pageSize' => [
+                  'location' => 'query',
+                  'type' => 'integer',
+                ],
+                'pageToken' => [
+                  'location' => 'query',
+                  'type' => 'string',
+                ],
+              ],
+            ],'findInstalledAppProfiles' => [
+              'path' => 'v1/{+customer}/reports:findInstalledAppProfiles',
               'httpMethod' => 'GET',
               'parameters' => [
                 'customer' => [

@@ -33,6 +33,13 @@ class GoogleCloudContactcenterinsightsV1DiagnoseConversationsMetadata extends \G
   public const METRIC_TYPE_CONTAINMENT = 'CONTAINMENT';
   protected $collection_key = 'partialTrajectorySteps';
   /**
+   * Output only. The list of conversation IDs that were selected for this
+   * diagnosis.
+   *
+   * @var string[]
+   */
+  public $conversationIds;
+  /**
    * Output only. The time the operation was created.
    *
    * @var string
@@ -62,8 +69,8 @@ class GoogleCloudContactcenterinsightsV1DiagnoseConversationsMetadata extends \G
    */
   public $metricType;
   /**
-   * Output only. Deprecated: Use partial_trajectory_steps instead. The
-   * intermediate trajectory updates (partial trajectory).
+   * Output only. Deprecated: Use partial_trajectory_steps instead. Output only.
+   * The intermediate trajectory updates (partial trajectory).
    *
    * @deprecated
    * @var string[]
@@ -74,6 +81,23 @@ class GoogleCloudContactcenterinsightsV1DiagnoseConversationsMetadata extends \G
   protected $requestType = GoogleCloudContactcenterinsightsV1DiagnoseConversationsRequest::class;
   protected $requestDataType = '';
 
+  /**
+   * Output only. The list of conversation IDs that were selected for this
+   * diagnosis.
+   *
+   * @param string[] $conversationIds
+   */
+  public function setConversationIds($conversationIds)
+  {
+    $this->conversationIds = $conversationIds;
+  }
+  /**
+   * @return string[]
+   */
+  public function getConversationIds()
+  {
+    return $this->conversationIds;
+  }
   /**
    * Output only. The time the operation was created.
    *
@@ -176,8 +200,8 @@ class GoogleCloudContactcenterinsightsV1DiagnoseConversationsMetadata extends \G
     return $this->metricType;
   }
   /**
-   * Output only. Deprecated: Use partial_trajectory_steps instead. The
-   * intermediate trajectory updates (partial trajectory).
+   * Output only. Deprecated: Use partial_trajectory_steps instead. Output only.
+   * The intermediate trajectory updates (partial trajectory).
    *
    * @deprecated
    * @param string[] $partialTrajectories

@@ -95,11 +95,16 @@ class UsersDataTypesDataPoints extends \Google\Service\Resource
     return $this->call('dailyRollUp', [$params], DailyRollUpDataPointsResponse::class);
   }
   /**
-   * Exports exercise data in TCX format. Note: While the Authorization section
-   * below states that any one of the listed scopes is accepted, this specific
-   * method requires the user to provide both one of the `activity_and_fitness`
-   * scopes (`normal` or `readonly`) AND one of the `location` scopes (`normal` or
-   * `readonly`) in their access token to succeed. (dataPoints.exportExerciseTcx)
+   * Exports exercise data in TCX format. **IMPORTANT:** HTTP clients must append
+   * `?alt=media` to the request URL to download the raw TCX file. Example: `https
+   * ://health.googleapis.com/v4/users/me/dataTypes/exercise/dataPoints/EXERCISE_I
+   * D:exportExerciseTcx?alt=media` Without `alt=media`, the server returns a JSON
+   * response (`ExportExerciseTcxResponse`) which is intended primarily for gRPC
+   * clients. **Note:** While the Authorization section below states that any one
+   * of the listed scopes is accepted, this specific method requires the user to
+   * provide both one of the `activity_and_fitness` scopes (`normal` or
+   * `readonly`) AND one of the `location` scopes (`normal` or `readonly`) in
+   * their access token to succeed. (dataPoints.exportExerciseTcx)
    *
    * @param string $name Required. The resource name of the exercise data point to
    * export. Format: `users/{user}/dataTypes/exercise/dataPoints/{data_point}`
@@ -178,26 +183,30 @@ class UsersDataTypesDataPoints extends \Google\Service\Resource
    * date: - Pattern: `{daily_summary_data_type}.date` - Supported comparison
    * operators: `>=`, `<` - Date literal expected in ISO 8601 `YYYY-MM-DD` format
    * - Supported logical operators: `AND` - Example: -
-   * `daily_resting_heart_rate.date >= "2024-08-14"` -
    * `daily_heart_rate_variability.date < "2024-08-15"` - Session civil start time
-   * (**Excluding Sleep**): - Pattern:
+   * (**Excluding Sleep and ECG**): - Pattern:
    * `{session_data_type}.interval.civil_start_time` - Supported comparison
    * operators: `>=`, `<` - Date with optional time literal expected in ISO 8601
    * `YYYY-MM-DD[THH:mm:ss]` format - Supported logical operators: `AND` -
    * Example: - `exercise.interval.civil_start_time >= "2023-11-24" AND
    * exercise.interval.civil_start_time < "2023-11-25"` -
-   * `exercise.interval.civil_start_time >= "2024-08-14T12:34:56"` - Session end
-   * time (**Sleep specific**): - Pattern: `sleep.interval.end_time` - Supported
-   * comparison operators: `>=`, `<` - Timestamp literal expected in RFC-3339
-   * format - Supported logical operators: `AND`, `OR` - Example: -
-   * `sleep.interval.end_time >= "2023-11-24T00:00:00Z" AND
-   * sleep.interval.end_time < "2023-11-25T00:00:00Z"` - Session civil end time
-   * (**Sleep specific**): - Pattern: `sleep.interval.civil_end_time` - Supported
-   * comparison operators: `>=`, `<` - Date with optional time literal expected in
-   * ISO 8601 `YYYY-MM-DD[THH:mm:ss]` format - Supported logical operators: `AND`,
-   * `OR` - Example: - `sleep.interval.civil_end_time >= "2023-11-24" AND
-   * sleep.interval.civil_end_time < "2023-11-25"` Data points in the response
-   * will be ordered by the interval start time in descending order.
+   * `exercise.interval.civil_start_time >= "2024-08-14T12:34:56"` - Session start
+   * time (**ECG specific**): - Pattern: `electrocardiogram.interval.start_time` -
+   * Supported comparison operators: `>=` - Timestamp literal expected in RFC-3339
+   * format - Example: - `electrocardiogram.interval.start_time >=
+   * "2024-08-14T12:34:56Z"` - Note: Only filtering by start time is supported for
+   * ECG. Filtering by end time (e.g., `electrocardiogram.interval.end_time`) is
+   * not supported. - Session end time (**Sleep specific**): - Pattern:
+   * `sleep.interval.end_time` - Supported comparison operators: `>=`, `<` -
+   * Timestamp literal expected in RFC-3339 format - Supported logical operators:
+   * `AND`, `OR` - Example: - `sleep.interval.end_time >= "2023-11-24T00:00:00Z"
+   * AND sleep.interval.end_time < "2023-11-25T00:00:00Z"` - Session civil end
+   * time (**Sleep specific**): - Pattern: `sleep.interval.civil_end_time` -
+   * Supported comparison operators: `>=`, `<` - Date with optional time literal
+   * expected in ISO 8601 `YYYY-MM-DD[THH:mm:ss]` format - Supported logical
+   * operators: `AND`, `OR` - Example: - `sleep.interval.civil_end_time >=
+   * "2023-11-24" AND sleep.interval.civil_end_time < "2023-11-25"` Data points in
+   * the response will be ordered by the interval start time in descending order.
    * @opt_param int pageSize Optional. The maximum number of data points to
    * return. If unspecified, at most 1440 data points will be returned. The
    * maximum page size is 10000; values above that will be truncated accordingly.
@@ -226,9 +235,9 @@ class UsersDataTypesDataPoints extends \Google\Service\Resource
    * 567890abcdef` The `{user}` ID is a system-generated identifier, as described
    * in Identity.health_user_id. The `{data_type}` ID corresponds to the kebab-
    * case version of the field names in the DataPoint data union field, e.g.
-   * `total-calories` for the `total_calories` field. The `{data_point}` ID can be
-   * client-provided or system-generated. If client-provided, it must be a string
-   * of 4-63 characters, containing only lowercase letters, numbers, and hyphens.
+   * `heart-rate` for the `heart_rate` field. The `{data_point}` ID can be client-
+   * provided or system-generated. If client-provided, it must be a string of 4-63
+   * characters, containing only lowercase letters, numbers, and hyphens.
    * @param DataPoint $postBody
    * @param array $optParams Optional parameters.
    * @return Operation

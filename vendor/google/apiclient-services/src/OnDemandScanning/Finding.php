@@ -20,47 +20,55 @@ namespace Google\Service\OnDemandScanning;
 class Finding extends \Google\Model
 {
   /**
+   * Unspecified scanner.
+   */
+  public const SCANNER_SCANNER_UNSPECIFIED = 'SCANNER_UNSPECIFIED';
+  /**
+   * Static scanner.
+   */
+  public const SCANNER_STATIC = 'STATIC';
+  /**
+   * LLM scanner.
+   */
+  public const SCANNER_LLM = 'LLM';
+  /**
+   * Unspecified severity.
+   */
+  public const SEVERITY_SEVERITY_UNSPECIFIED = 'SEVERITY_UNSPECIFIED';
+  /**
+   * Critical severity.
+   */
+  public const SEVERITY_CRITICAL = 'CRITICAL';
+  /**
+   * High severity.
+   */
+  public const SEVERITY_HIGH = 'HIGH';
+  /**
    * Category of the finding.
    *
    * @var string
    */
   public $category;
   /**
-   * Detailed description of the finding.
+   * Description of the finding category.
    *
    * @var string
    */
-  public $description;
+  public $details;
+  protected $locationType = FindingLocation::class;
+  protected $locationDataType = '';
   /**
-   * Path to the file where the finding was detected.
+   * Scanner determines which engine (e.g. static, llm) emitted the finding.
    *
    * @var string
    */
-  public $filePath;
-  /**
-   * Unique identifier of the rule that produced this finding.
-   *
-   * @var string
-   */
-  public $ruleId;
+  public $scanner;
   /**
    * Severity of the finding.
    *
    * @var string
    */
   public $severity;
-  /**
-   * Code snippet relevant to the finding.
-   *
-   * @var string
-   */
-  public $snippet;
-  /**
-   * Title of the finding.
-   *
-   * @var string
-   */
-  public $title;
 
   /**
    * Category of the finding.
@@ -79,100 +87,72 @@ class Finding extends \Google\Model
     return $this->category;
   }
   /**
-   * Detailed description of the finding.
+   * Description of the finding category.
    *
-   * @param string $description
+   * @param string $details
    */
-  public function setDescription($description)
+  public function setDetails($details)
   {
-    $this->description = $description;
+    $this->details = $details;
   }
   /**
    * @return string
    */
-  public function getDescription()
+  public function getDetails()
   {
-    return $this->description;
+    return $this->details;
   }
   /**
-   * Path to the file where the finding was detected.
+   * Location (path and line) where the finding was detected.
    *
-   * @param string $filePath
+   * @param FindingLocation $location
    */
-  public function setFilePath($filePath)
+  public function setLocation(FindingLocation $location)
   {
-    $this->filePath = $filePath;
+    $this->location = $location;
   }
   /**
-   * @return string
+   * @return FindingLocation
    */
-  public function getFilePath()
+  public function getLocation()
   {
-    return $this->filePath;
+    return $this->location;
   }
   /**
-   * Unique identifier of the rule that produced this finding.
+   * Scanner determines which engine (e.g. static, llm) emitted the finding.
    *
-   * @param string $ruleId
+   * Accepted values: SCANNER_UNSPECIFIED, STATIC, LLM
+   *
+   * @param self::SCANNER_* $scanner
    */
-  public function setRuleId($ruleId)
+  public function setScanner($scanner)
   {
-    $this->ruleId = $ruleId;
+    $this->scanner = $scanner;
   }
   /**
-   * @return string
+   * @return self::SCANNER_*
    */
-  public function getRuleId()
+  public function getScanner()
   {
-    return $this->ruleId;
+    return $this->scanner;
   }
   /**
    * Severity of the finding.
    *
-   * @param string $severity
+   * Accepted values: SEVERITY_UNSPECIFIED, CRITICAL, HIGH
+   *
+   * @param self::SEVERITY_* $severity
    */
   public function setSeverity($severity)
   {
     $this->severity = $severity;
   }
   /**
-   * @return string
+   * @return self::SEVERITY_*
    */
   public function getSeverity()
   {
     return $this->severity;
-  }
-  /**
-   * Code snippet relevant to the finding.
-   *
-   * @param string $snippet
-   */
-  public function setSnippet($snippet)
-  {
-    $this->snippet = $snippet;
-  }
-  /**
-   * @return string
-   */
-  public function getSnippet()
-  {
-    return $this->snippet;
-  }
-  /**
-   * Title of the finding.
-   *
-   * @param string $title
-   */
-  public function setTitle($title)
-  {
-    $this->title = $title;
-  }
-  /**
-   * @return string
-   */
-  public function getTitle()
-  {
-    return $this->title;
   }
 }
 

@@ -19,6 +19,8 @@ namespace Google\Service\GoogleHealthAPI;
 
 class ReconciledDataPoint extends \Google\Model
 {
+  protected $activeEnergyBurnedType = ActiveEnergyBurned::class;
+  protected $activeEnergyBurnedDataType = '';
   protected $activeMinutesType = ActiveMinutes::class;
   protected $activeMinutesDataType = '';
   protected $activeZoneMinutesType = ActiveZoneMinutes::class;
@@ -29,8 +31,12 @@ class ReconciledDataPoint extends \Google\Model
   protected $altitudeDataType = '';
   protected $basalEnergyBurnedType = BasalEnergyBurned::class;
   protected $basalEnergyBurnedDataType = '';
+  protected $bloodGlucoseType = BloodGlucose::class;
+  protected $bloodGlucoseDataType = '';
   protected $bodyFatType = BodyFat::class;
   protected $bodyFatDataType = '';
+  protected $coreBodyTemperatureType = CoreBodyTemperature::class;
+  protected $coreBodyTemperatureDataType = '';
   protected $dailyHeartRateVariabilityType = DailyHeartRateVariability::class;
   protected $dailyHeartRateVariabilityDataType = '';
   protected $dailyHeartRateZonesType = DailyHeartRateZones::class;
@@ -53,11 +59,10 @@ class ReconciledDataPoint extends \Google\Model
    * s/abcd1234/dataTypes/sleep/dataPoints/a1b2c3d4-e5f6-7890-1234-567890abcdef`
    * The `{user}` ID is a system-generated identifier, as described in
    * Identity.health_user_id. The `{data_type}` ID corresponds to the kebab-case
-   * version of the field names in the DataPoint data union field, e.g. `total-
-   * calories` for the `total_calories` field. The `{data_point}` ID can be
-   * client-provided or system-generated. If client-provided, it must be a
-   * string of 4-63 characters, containing only lowercase letters, numbers, and
-   * hyphens.
+   * version of the field names in the DataPoint data union field, e.g. `heart-
+   * rate` for the `heart_rate` field. The `{data_point}` ID can be client-
+   * provided or system-generated. If client-provided, it must be a string of
+   * 4-63 characters, containing only lowercase letters, numbers, and hyphens.
    *
    * @var string
    */
@@ -76,6 +81,8 @@ class ReconciledDataPoint extends \Google\Model
   protected $heightDataType = '';
   protected $hydrationLogType = HydrationLog::class;
   protected $hydrationLogDataType = '';
+  protected $nutritionLogType = NutritionLog::class;
+  protected $nutritionLogDataType = '';
   protected $oxygenSaturationType = OxygenSaturation::class;
   protected $oxygenSaturationDataType = '';
   protected $respiratoryRateSleepSummaryType = RespiratoryRateSleepSummary::class;
@@ -97,6 +104,23 @@ class ReconciledDataPoint extends \Google\Model
   protected $weightType = Weight::class;
   protected $weightDataType = '';
 
+  /**
+   * Data for points in the `active-energy-burned` interval data type
+   * collection.
+   *
+   * @param ActiveEnergyBurned $activeEnergyBurned
+   */
+  public function setActiveEnergyBurned(ActiveEnergyBurned $activeEnergyBurned)
+  {
+    $this->activeEnergyBurned = $activeEnergyBurned;
+  }
+  /**
+   * @return ActiveEnergyBurned
+   */
+  public function getActiveEnergyBurned()
+  {
+    return $this->activeEnergyBurned;
+  }
   /**
    * Data for points in the `active-minutes` interval data type collection.
    *
@@ -179,6 +203,22 @@ class ReconciledDataPoint extends \Google\Model
     return $this->basalEnergyBurned;
   }
   /**
+   * Data for points in the `blood-glucose` sample data type collection.
+   *
+   * @param BloodGlucose $bloodGlucose
+   */
+  public function setBloodGlucose(BloodGlucose $bloodGlucose)
+  {
+    $this->bloodGlucose = $bloodGlucose;
+  }
+  /**
+   * @return BloodGlucose
+   */
+  public function getBloodGlucose()
+  {
+    return $this->bloodGlucose;
+  }
+  /**
    * Data for points in the `body-fat` sample data type collection.
    *
    * @param BodyFat $bodyFat
@@ -193,6 +233,22 @@ class ReconciledDataPoint extends \Google\Model
   public function getBodyFat()
   {
     return $this->bodyFat;
+  }
+  /**
+   * Data for points in the `core-body-temperature` sample data type collection.
+   *
+   * @param CoreBodyTemperature $coreBodyTemperature
+   */
+  public function setCoreBodyTemperature(CoreBodyTemperature $coreBodyTemperature)
+  {
+    $this->coreBodyTemperature = $coreBodyTemperature;
+  }
+  /**
+   * @return CoreBodyTemperature
+   */
+  public function getCoreBodyTemperature()
+  {
+    return $this->coreBodyTemperature;
   }
   /**
    * Data for points in the `daily-heart-rate-variability` daily data type
@@ -318,11 +374,10 @@ class ReconciledDataPoint extends \Google\Model
    * s/abcd1234/dataTypes/sleep/dataPoints/a1b2c3d4-e5f6-7890-1234-567890abcdef`
    * The `{user}` ID is a system-generated identifier, as described in
    * Identity.health_user_id. The `{data_type}` ID corresponds to the kebab-case
-   * version of the field names in the DataPoint data union field, e.g. `total-
-   * calories` for the `total_calories` field. The `{data_point}` ID can be
-   * client-provided or system-generated. If client-provided, it must be a
-   * string of 4-63 characters, containing only lowercase letters, numbers, and
-   * hyphens.
+   * version of the field names in the DataPoint data union field, e.g. `heart-
+   * rate` for the `heart_rate` field. The `{data_point}` ID can be client-
+   * provided or system-generated. If client-provided, it must be a string of
+   * 4-63 characters, containing only lowercase letters, numbers, and hyphens.
    *
    * @param string $dataPointName
    */
@@ -449,6 +504,22 @@ class ReconciledDataPoint extends \Google\Model
   public function getHydrationLog()
   {
     return $this->hydrationLog;
+  }
+  /**
+   * Data for points in the `nutrition-log` session data type collection.
+   *
+   * @param NutritionLog $nutritionLog
+   */
+  public function setNutritionLog(NutritionLog $nutritionLog)
+  {
+    $this->nutritionLog = $nutritionLog;
+  }
+  /**
+   * @return NutritionLog
+   */
+  public function getNutritionLog()
+  {
+    return $this->nutritionLog;
   }
   /**
    * Data for points in the `oxygen-saturation` sample data type collection.

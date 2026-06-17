@@ -37,6 +37,12 @@ class Datalineage extends \Google\Service
   /** See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account.. */
   const CLOUD_PLATFORM =
       "https://www.googleapis.com/auth/cloud-platform";
+  /** See, edit, configure, and delete your Google Cloud Data Lineage data and see the email address for your Google Account. */
+  const DATALINEAGE_READ_WRITE =
+      "https://www.googleapis.com/auth/datalineage.read-write";
+  /** See your Google Cloud Data Lineage data and the email address of your Google Account. */
+  const DATALINEAGE_READONLY =
+      "https://www.googleapis.com/auth/datalineage.readonly";
 
   public $folders_locations_config;
   public $organizations_locations_config;
@@ -153,6 +159,16 @@ class Datalineage extends \Google\Service
                 'requestId' => [
                   'location' => 'query',
                   'type' => 'string',
+                ],
+              ],
+            ],'searchLineageStreaming' => [
+              'path' => 'v1/{+parent}:searchLineageStreaming',
+              'httpMethod' => 'POST',
+              'parameters' => [
+                'parent' => [
+                  'location' => 'path',
+                  'type' => 'string',
+                  'required' => true,
                 ],
               ],
             ],'searchLinks' => [

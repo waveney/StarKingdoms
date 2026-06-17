@@ -19,9 +19,27 @@ namespace Google\Service\OnDemandScanning;
 
 class AISkillAnalysisOccurrence extends \Google\Collection
 {
+  /**
+   * Unspecified severity.
+   */
+  public const MAX_SEVERITY_SEVERITY_UNSPECIFIED = 'SEVERITY_UNSPECIFIED';
+  /**
+   * Critical severity.
+   */
+  public const MAX_SEVERITY_CRITICAL = 'CRITICAL';
+  /**
+   * High severity.
+   */
+  public const MAX_SEVERITY_HIGH = 'HIGH';
   protected $collection_key = 'findings';
   protected $findingsType = Finding::class;
   protected $findingsDataType = 'array';
+  /**
+   * Maximum severity found among findings.
+   *
+   * @var string
+   */
+  public $maxSeverity;
   /**
    * Name of the skill that produced this analysis.
    *
@@ -44,6 +62,24 @@ class AISkillAnalysisOccurrence extends \Google\Collection
   public function getFindings()
   {
     return $this->findings;
+  }
+  /**
+   * Maximum severity found among findings.
+   *
+   * Accepted values: SEVERITY_UNSPECIFIED, CRITICAL, HIGH
+   *
+   * @param self::MAX_SEVERITY_* $maxSeverity
+   */
+  public function setMaxSeverity($maxSeverity)
+  {
+    $this->maxSeverity = $maxSeverity;
+  }
+  /**
+   * @return self::MAX_SEVERITY_*
+   */
+  public function getMaxSeverity()
+  {
+    return $this->maxSeverity;
   }
   /**
    * Name of the skill that produced this analysis.
