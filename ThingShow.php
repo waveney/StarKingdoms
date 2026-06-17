@@ -1559,7 +1559,7 @@ function Show_Thing(&$T,$Force=0) {
       break;
 
     case 'Collaborative Anomaly Study':
-      if ($Moving || $Moth || !Has_Tech($Fid,'Collaborative Anomaly Study')) continue 2;
+      if ($Moving || $Moth || ($T['Sensors'] == 0) || empty($N) || !Has_Tech($Fid,'Collaborative Anomaly Study')) continue 2;
       break;
 /*
       WRONG
