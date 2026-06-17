@@ -219,6 +219,7 @@
 
     if ($Blue) {
       echo "<h2>" . ($NeedOr?'OR ':'') . "Start with a Blue Print:</h2>";
+      echo "Note these show some blueprints beyond the range you can currently make...";
       $NeedOr = 1;
       $LimA = Has_Tech($Fid,'Military Theory');
       $LimS = Has_Tech($Fid,'Ship Construction');

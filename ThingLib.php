@@ -22,14 +22,14 @@ $ThingInstrs = ['None','Colonise','Voluntary Warp Home','Decommision','Analyse A
                 'Make Advanced Deep Space Sensor','Salvage',//29
                 'Terraform','Link Repair','Collaborative DSC','Space Survey','Planetary Survey','Collaborative Planetary Construction',
                 'Collaborative Space Construction','Build Wormhole Stabiliser', 'Scavenge', 'Build Wormhole Destabiliser',
-                'Build Strip Mine','Mothball','Recommision',
+                'Build Strip Mine','Mothball','Recommision','Collaborative Anomaly Study',
 ];
 $IntructProps = [0,2,0,0,0,0,1, 1,1,
                  1,1,1,1, 1,1,//14
                  1,1,1,1, 1,0,0, //21
                  3,1,0,0,1,0, 1,1, //29
                  0,1,0,0,0,0, 1,1,0,1,
-                 1,0,0,]; // 1 = DSC, 2= Pc
+                 1,0,0,0]; // 1 = DSC, 2= Pc
 $InstrNotBy =   [0,0,1,0,0,1,0,
                  0,0,
                  0,0,0,0,
@@ -40,7 +40,7 @@ $InstrNotBy =   [0,0,1,0,0,1,0,
                  0,0,
                  0,1,1,2,2,2,
                  2,2,2,2,2,2,
-                 2,2,
+                 2,2,2
 ];
 
 $Advance = ['','','Advanced ','Very Advanced ','Ultra Advanced ','Evolved '];
@@ -198,7 +198,6 @@ function Mod_ValueSimple($techlvl,$thinglvl,$modtypeid,&$Rescat) {
   if ($mf['Name'] == 'None') return 0;
   // (TechLevel*P1+P2)*max(1,ThingLevel*P3)+P4
   // P[1,2,3,4] = Num[2,4,1,3]
-
   if (Access('GM') && !isset($mf['Num2x'])) echo "Report Module formula error $modtypeid<p>";
 
   $v = ($techlvl*$mf['Num2x'] + $mf['Num4x'])*max(1,$thinglvl*$mf['Num1x'])+$mf['Num3x'];
@@ -1178,7 +1177,16 @@ function is_on_ground(&$T) {
 }
 
 function is_in_space(&$T) {
-  if ($T['LinkId']<0 && ($T['LinkId'] != LINK_NOT_MOVING)) return 0;
+  if ($T['LinkId']<0) {
+    switch ($T['LinkId']) {
+      case LINK_NOT_MOVING:
+        return 1;
+      case LINK_FOLLOW:
+        return 1;
+      default:
+        break;
+    }
+  }
   $LocType = intdiv($T['WithinSysLoc'],100);
   if (($T['WithinSysLoc'] == LOC_GROUND) || $LocType==2 || $LocType==4 ) return 0;
   return 1;

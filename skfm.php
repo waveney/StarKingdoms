@@ -780,8 +780,14 @@ function ParseText($txt) {
 
 // Call TableStart to start the table, TableHead for each col, then TableTop, then do table content and finish with TableEnd
 
+function GMLogTables() {
+  global $GMLogTable;
+  $GMLogTable =1;
+}
+
 function TableStart($Class='',$Name='IndexTable') {
   global $TableColn,$TableName;
+  global $GMLogTable;
   static $TableNames;
 
   $TableColn = 0;
@@ -794,27 +800,56 @@ function TableStart($Class='',$Name='IndexTable') {
     $TableNames[$TableName] = 1;
   }
 
-  echo "<div class=tablecont><table " . ($Class?" class=$Class":'') . " id=$TableName border>\n";
-  echo "<thead><tr>";
+  if ($GMLogTable) {
+    GMLog( "<div class=tablecont><table " . ($Class?" class=$Class":'') . " id=$TableName border>\n");
+    GMLog( "<thead><tr>");
+
+  } else {
+    echo "<div class=tablecont><table " . ($Class?" class=$Class":'') . " id=$TableName border>\n";
+    echo "<thead><tr>";
+  }
 }
 
 function TableHead($Txt,$Type='T',$Fmt='') {
   global $TableColn,$TableName;
-  echo "<th><a href=javascript:SortTable(" . $TableColn++ . ",'$Type','$Fmt','$TableName')>$Txt</a>\n";
+  global $GMLogTable;
+  if ($GMLogTable) {
+    GMLog( "<th><a href=javascript:SortTable(" . $TableColn++ . ",'$Type','$Fmt','$TableName')>$Txt</a>\n");
+  } else {
+    echo "<th><a href=javascript:SortTable(" . $TableColn++ . ",'$Type','$Fmt','$TableName')>$Txt</a>\n";
+  }
 }
 
 function TableTop() {
-  echo "</thead><tbody>";
+  global $GMLogTable;
+  if ($GMLogTable) {
+    GMLog( "</thead><tbody>");
+  } else {
+    echo "</thead><tbody>";
+  }
 }
 
 function TableDebug() {
+  global $GMLogTable;
   global $TableColn;
-  if (Access('God')) echo "<tr><td class=NotSide>Debug<td colspan=$TableColn class=NotSide><textarea id=Debug></textarea>";
+  if (Access('God')) {
+    if ($GMLogTable) {
+      GMLog("<tr><td class=NotSide>Debug<td colspan=$TableColn class=NotSide><textarea id=Debug></textarea>");
+    } else {
+      echo "<tr><td class=NotSide>Debug<td colspan=$TableColn class=NotSide><textarea id=Debug></textarea>";
+    }
+  }
 }
 
 
 function TableEnd() {
-  echo "</table></div>";
+  global $GMLogTable;
+
+  if ($GMLogTable) {
+    GMLog( "</table></div>");
+  } else {
+    echo "</table></div>";
+  }
 }
 
 function AorAn($txt) {

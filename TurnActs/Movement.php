@@ -17,12 +17,17 @@ function DirectMoves() {
 }
 
 function Follow() {
+  global $db,$GAMEID;
   // find everything with a follow order
   // Do follows if possible, if not set again needed
   // If again needed and depth < Limit repeat
+
+  $res = $db->query("UPDATE Things SET CurStability=Stability WHERE Stability!=CurStability AND GameId=$GAMEID");
+
   $Factions = Get_Factions();
   $Depth = $Again = $NeedStage2 = 0;
   $Stage2Link = "<form method=post action=TurnActions.php?ACTION=DoStage2&Stage=Follow>";
+  $FluxM = TypeFromName('ModuleTypes','Flux Stability Field');
   do {
     $Again = 0;
     $Things = Get_Things_Cond(0," LinkId=" . LINK_FOLLOW);
@@ -43,7 +48,11 @@ function Follow() {
           }
           $EInst = $L['Instability'];
           if ($L['ThisTurnMod']) $EInst = max(1,$EInst+$L['ThisTurnMod']);
-          if ($T['Stability'] < $EInst) {
+          $EStab = $T['Stability'];
+          if (($Ffm = Get_ModulesType($Folid,$FluxM))) {
+            $EStab = $Fol['Stability'];
+          }
+          if ($EStab < $EInst) {
             TurnLog($T['Whose'],  $T['Name'] . " Can not follow " . $Fol['Name'] . " as the link's Instability is too high " .
               ($L['ThisTurnMod']? " it is currently $EInst" : (" it is " . $L['Instability']) ));
             GMLog($Factions[$T['Whose']]['Name'] . " - " . $T['Name'] . " Can not follow " . $Fol['Name'] . " as the link's Instability is too high " .
@@ -61,6 +70,7 @@ function Follow() {
             $T['LinkCost'] = $Fol['LinkCost'];
             $T['LinkPay'] = 1;
             $T['NewSystemId'] = $Fol['NewSystemId'];
+            $T['CurStabilty'] = max($T['Stabilty'],$Fol['Stability']);
             Put_Thing($T);
             GMLog($T['Name'] . " ( " . $Factions[$T['Whose']]['Name'] . " ) is following " . $Fol['Name'] . " ( " . $Factions[$Fol['Whose']]['Name'] . " )" );
           } else {
@@ -77,6 +87,7 @@ function Follow() {
           $T['LinkCost'] = $Fol['LinkCost'];
           $T['LinkPay'] = 1;
           $T['NewSystemId'] = $Fol['NewSystemId'];
+          $T['CurStabilty'] = max($T['Stabilty'],$Fol['Stability']);
           Put_Thing($T);
           GMLog($T['Name'] . " ( " . $Factions[$T['Whose']]['Name'] . " ) is following " . $Fol['Name'] . " ( " . $Factions[$Fol['Whose']]['Name'] . " )" );
         } else {
@@ -316,7 +327,7 @@ function ShipMoveCheck($Mode=0) {  // Show all movements to allow for blocking
         $EInst = $L['Instability'];
         if ($L['ThisTurnMod']) $EInst = max(1,$EInst+$L['ThisTurnMod']);
 
-        if (($LinkMethod == 'Wormholes') && $T['Stability'] < $EInst) {
+        if (($LinkMethod == 'Wormholes') && $T['CurStability'] < $EInst) {
           if (!$class) $class=' class=BoldBlue';
           $_REQUEST["Prevent$Tid"] = 1;
           $_REQUEST["Reason$Tid"] = "You need $EInst stability for this link";
@@ -492,7 +503,7 @@ function ShipMovements($Mode=0) {
           $EInst = $L['Instability'];
           if ($L['ThisTurnMod']) $EInst = max(1,$EInst+$L['ThisTurnMod']);
 
-          if (($LinkMethod == 'Wormholes') && $T['Stability'] < $EInst) {
+          if (($LinkMethod == 'Wormholes') && $T['CurStability'] < $EInst) {
             TurnLog($Fid,$T['Name'] . " Did not have enough Stability to go through Link " . ($L['Name']?$L['Name']:"#$Lid") .
               " it currently has instability $EInst.\nA few small fragments where spayed into $Ref the rest is deposited across the multiverse.", $T);
             GMLog($Facts[$Fid]['Name'] . " - <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a> did not have enough Stability to go through Link " .

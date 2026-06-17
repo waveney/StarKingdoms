@@ -23,11 +23,6 @@ function OrbitalBombardment() {
   return 1;
 }
 
-function PlanetaryDefence() {
-  GMLog("Planetary Defence is currently Manual<p>");
-  return 1;
-}
-
 function GroundCombat() {
   GMLog("Ground Combat is currently Manual<p>");
   return 1;
@@ -137,3 +132,41 @@ function ReturnMilOrgForces() {
 
 }
 
+function PlanetaryDefence() {
+  $PDef = TypeFromName('ThingTypes', 'Planetary Defence Force');
+  $Things = Get_Things_Cond(0,"Type=$PDef AND BuildState=" . BS_COMPLETE . " ORDER BY SystemId,Whose");
+
+  if ($Things) {
+    $Refs = Get_SystemRefs();
+    $Factions = Get_Factions();
+    $PDFmod = TypeFromName('ModuleTypes', 'Portable Ground To Space Weapons');
+
+    GMLog("The following Planetary Defences exist.  Handle them manually before doing the next stage");
+
+    GMLogTables();
+    TableStart();
+    TableHead('System','T');
+    TableHead('Whose','T');
+    TableHead('Name','T');
+    TableHead('Modules','N');
+    TableHead('Attack Value per module','N');
+    TableTop();
+
+    foreach ($Things as $T) {
+      $Tid = $T['id'];
+      $Pogs = Get_ModulesType($Tid, $PDFmod);
+      $Rescat = 0;
+
+      GMLog("<tr><td>" . $Refs[$T['SystemId']]);
+      GMLog("<td>" . $Factions[$T['Whose']]['Name']);
+      GMLog("<td><a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a>");
+      GMLog("<td>" . $Pogs['Number']);
+      GMLog("<td>" .  Mod_ValueSimple($Pogs['Level'],$T['Level'],$PDFmod,$Rescat));
+    }
+    TableEnd();
+
+  } else {
+    GMLog("No Planetary Defences<p>");
+  }
+  return 1;
+}

@@ -47,7 +47,7 @@
     [27,'Combat',    'Meetups','Coded,M'],
     [28,'Combat',    'Space Combat','Help'],
     [29,'Movement',  'Unload Troops','Coded'],
-    [30,'Combat',    'Planetary Defence','No'],
+    [30,'Combat',    'Planetary Defence','Help'],
     [31,'Combat',    'Orbital Bombardment','No'],
     [32,'Combat',    'Ground Combat','Help'],
     [33,'Combat',    'Devastation Selection','Coded,M'],

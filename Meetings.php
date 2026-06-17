@@ -115,7 +115,8 @@ function ForceReport($Sid,$Cat) {
   $VarIndex = NamesList($Variants);
 
   $Sys = Get_System($Sid);
-  $NebFactor = Feature('NebulaeFactor',40);
+  $NebEvFactor = Feature('NebulaeEvadeFactor',40);
+  $NebAtFactor = Feature('NebulaeAttackFactor',40);
 
   Set_Excludes();
 
@@ -195,6 +196,7 @@ function ForceReport($Sid,$Cat) {
       if ($T['PrisonerOf'] != 0) continue; // Prisoners
 
       $NebEffect = ($Cat == 'S') && ($Sys['Nebulae'] > $T['NebSensors']);
+      if ($NebEffect && str_contains($Variants[$T['Variant']]['Name'],'Nebula')) $NebEffect = false;
 
       if ($LastF != $T['Whose']) {
         if (($CSV==0) && ($LastF >=0)) {
@@ -313,17 +315,17 @@ function ForceReport($Sid,$Cat) {
       if ($CSV) {
 
         fputcsv($CSV,[($Facts[$LastF]['Name']??'Unknown'), $TTypes[$T['Type']]['Name'], ($T['Name']??'Unknown'), $T['Level'],
-          max(0,($T['Evasion']-($NebEffect?$NebFactor:0))),
-          $T['CurHealth'] + $T['CurShield'], $T['OrigHealth'], $BD, $Var,$Shots,($T['ToHitBonus']-($NebEffect?$NebFactor:0)),
+          max(0,($T['Evasion']-($NebEffect?$NebEvFactor:0))),
+          $T['CurHealth'] + $T['CurShield'], $T['OrigHealth'], $BD, $Var,$Shots,($T['ToHitBonus']-($NebEffect?$NebAtFactor:0)),
           (($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES)?$T['Mobility']:$T['Speed'])]
           );
 
       } else {
         $txt .= fm_hidden("OrigData$Tid",implode(":",[$T['CurHealth'], $T['OrigHealth'],0,$T['CurShield'],$T['ShieldPoints']]));
-        $txt .= "<td>" . $TTypes[$T['Type']]['Name'] . "<td>" . $T['Level'] . "<td>" . max(0,($T['Evasion']-($NebEffect?$NebFactor:0)));
+        $txt .= "<td>" . $TTypes[$T['Type']]['Name'] . "<td>" . $T['Level'] . "<td>" . max(0,($T['Evasion']-($NebEffect?$NebEvFactor:0)));
         $txt .= "<td><span id=StateOf$Tid>" . $T['CurHealth'] . " / " . $T['OrigHealth'];
         if ($T['ShieldPoints']) $txt .= " (" . $T['CurShield'] . "/" . $T['ShieldPoints'] . ") ";
-        $txt .= "</span><td>" . ($BD?"$Shots x ":'') . "<span id=Attack$Tid>$BD</span><td>" . ($T['ToHitBonus']-($NebEffect?$NebFactor:0)) . "<td>";
+        $txt .= "</span><td>" . ($BD?"$Shots x ":'') . "<span id=Attack$Tid>$BD</span><td>" . ($T['ToHitBonus']-($NebEffect?$NebAtFactor:0)) . "<td>";
         if (($TTypes[$T['Type']]['Properties'] & THING_CAN_MOVE) || ($TTypes[$T['Type']]['Prop2'] & THING_HAS_SPEED)) {
           $FactLvls += $T['Level'];
           if ($TTypes[$T['Type']]['Properties'] & THING_HAS_ARMYMODULES) {

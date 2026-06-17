@@ -1558,6 +1558,30 @@ function Show_Thing(&$T,$Force=0) {
       if (!$Moth) continue 2;
       break;
 
+    case 'Collaborative Anomaly Study':
+      if ($Moving || $Moth || !Has_Tech($Fid,'Collaborative Anomaly Study')) continue 2;
+      break;
+/*
+      WRONG
+
+      if (($T['Sensors'] == 0) || empty($N) ) continue 2;
+      $Anoms = Gen_Get_Cond('Anomalies',"SystemId=" . $T['SystemId']);
+      if ($Anoms) {
+        foreach ($Anoms as $Aid=>$A) {
+          $FA = Gen_Get_Cond1('FactionAnomaly',"AnomalyId=$Aid AND FactionId=$Fid");
+          if (empty($FA['id']) ) continue;
+          if ($FA['State'] == 0 || $FA['State'] == 3) continue;
+          if ($FA['Progress'] >= $A['AnomalyLevel']) continue; // Done
+          $LocGr = intdiv($A['WithinSysLoc'],100);
+          if (($A['WithinSysLoc'] == LOC_GROUND) || ($LocGr == 2) || ($LocGr ==4)) { // Ground
+            if ($tprops & THING_HAS_ARMYMODULES) break 2; // Valid
+          } else { // Space
+            if ($tprops & THING_HAS_SHIPMODULES) break 2; // Valid
+          }
+        }
+      }
+*/
+
     default:
       continue 2;
 
@@ -2171,6 +2195,12 @@ function Show_Thing(&$T,$Force=0) {
       echo "<br>" . fm_text0("Name of Strip Mine",$T,'MakeName');
       echo "<br>Strip Mine on " . $Body['Name'] . " where there are " . $Body['Minerals'] . " Minerals";
       break;
+
+    case 'Collaborative Anomaly Study':
+      echo "This is currenty manual by GMs - tell them what you are doing:";
+      echo "<br>" . fm_text0("Anomaly Study",$T,'MakeName');
+      break;
+
 
     default:
 //       break;

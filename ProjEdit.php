@@ -68,6 +68,16 @@
     }
   }
 
+  $FactionNames = Get_Faction_Names();
+  $ProjTypes = Get_ProjectTypes();
+  $DistTypeN = Get_DistrictTypeNames();
+  $DistTypes = Get_DistrictTypes();
+  $TTypes = Get_ThingTypes();
+  $Techs = Get_Techs();
+  $TechNames = Tech_Names($Techs);
+  $ProjTypeNames = NamesList($ProjTypes);
+  $NamesProjTypes = array_flip($ProjTypeNames);
+  $Facts = Get_Factions();
 
 
 //var_dump($_REQUEST);
@@ -130,6 +140,8 @@
           }
         }
 
+        if ($ProjTypeNames[$P['Type']] == 'Construct Ship' && Has_Tech($Fid,'Bio-Organic Armour')) $pc[1] = floor($pc[1]*2/3);
+
         if (Has_Trait($P['FactionId'],"Military Society") && ($DTs[$P['ThingType']]['Name'] == 'Military')) $pc = Proj_Costs($OldLvl);
 
         $Costs = $pc[1];
@@ -175,16 +187,6 @@
 
 // var_dump($P);
 
-  $FactionNames = Get_Faction_Names();
-  $ProjTypes = Get_ProjectTypes();
-  $DistTypeN = Get_DistrictTypeNames();
-  $DistTypes = Get_DistrictTypes();
-  $TTypes = Get_ThingTypes();
-  $Techs = Get_Techs();
-  $TechNames = Tech_Names($Techs);
-  $ProjTypeNames = NamesList($ProjTypes);
-  $NamesProjTypes = array_flip($ProjTypeNames);
-  $Facts = Get_Factions();
 //  var_dump($P,$ProjTypes);
   $H = Get_ProjectHome($P['Home']);
 

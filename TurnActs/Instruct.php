@@ -740,6 +740,7 @@ function Instructions() {
         $T['Instruction'] = -$T['Instruction'];
         break;
 
+      case 'Collaborative Anomaly Study':
       case 'Mothball':
       case 'Recommision':
  //       $T['Instruction'] = -$T['Instruction']; Not sure if needed
@@ -1615,6 +1616,10 @@ function InstructionsComplete() {
         GMLog($Facts[$Who]['Name'] . " has recommisioned <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a> has been Recommisiond in " . $N['Ref']);
         break;
 
+      case 'Collaborative Anomaly Study':
+        GMLog($Facts[$Who]['Name'] . " - Collaborative Anomaly Study " . $T['Progress'] . " progress - " . $T['MakeName']);
+        FollowUp($Who,"Collaborative Anomaly Study " . $T['Progress'] . " progress - " . $T['MakeName']);
+        break;
 
       case 'Decommision':
       case 'Disband':
@@ -1741,6 +1746,11 @@ function InstructionsProgress() {
           }
           TurnLog($Fid,$T['Name'] . " is supposed to be analysing an anomaly - but there isn't one",$T);
         }
+        break;
+
+      case 'Collaborative Anomaly Study':
+        $T['Progress'] = $T['Sensors']*$T['SensorLevel'];
+        Put_Thing($T);
         break;
 
       case 'Salvage':
