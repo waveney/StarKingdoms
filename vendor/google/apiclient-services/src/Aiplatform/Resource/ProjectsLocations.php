@@ -30,11 +30,15 @@ use Google\Service\Aiplatform\GoogleCloudAiplatformV1EvaluateInstancesRequest;
 use Google\Service\Aiplatform\GoogleCloudAiplatformV1EvaluateInstancesResponse;
 use Google\Service\Aiplatform\GoogleCloudAiplatformV1GenerateInstanceRubricsRequest;
 use Google\Service\Aiplatform\GoogleCloudAiplatformV1GenerateInstanceRubricsResponse;
+use Google\Service\Aiplatform\GoogleCloudAiplatformV1GenerateLossClustersRequest;
 use Google\Service\Aiplatform\GoogleCloudAiplatformV1GenerateSyntheticDataRequest;
 use Google\Service\Aiplatform\GoogleCloudAiplatformV1GenerateSyntheticDataResponse;
+use Google\Service\Aiplatform\GoogleCloudAiplatformV1GenerateUserScenariosRequest;
+use Google\Service\Aiplatform\GoogleCloudAiplatformV1GenerateUserScenariosResponse;
 use Google\Service\Aiplatform\GoogleCloudAiplatformV1RagEngineConfig;
 use Google\Service\Aiplatform\GoogleCloudAiplatformV1RetrieveContextsRequest;
 use Google\Service\Aiplatform\GoogleCloudAiplatformV1RetrieveContextsResponse;
+use Google\Service\Aiplatform\GoogleCloudAiplatformV1SemanticGovernancePolicyEngine;
 use Google\Service\Aiplatform\GoogleCloudLocationListLocationsResponse;
 use Google\Service\Aiplatform\GoogleCloudLocationLocation;
 use Google\Service\Aiplatform\GoogleLongrunningOperation;
@@ -191,6 +195,24 @@ class ProjectsLocations extends \Google\Service\Resource
     return $this->call('generateInstanceRubrics', [$params], GoogleCloudAiplatformV1GenerateInstanceRubricsResponse::class);
   }
   /**
+   * Generates loss clusters from evaluation results. This is a statelss API
+   * method that would not modify the EvaluationSet resource.
+   * (locations.generateLossClusters)
+   *
+   * @param string $location Required. The resource name of the Location. Format:
+   * `projects/{project}/locations/{location}`
+   * @param GoogleCloudAiplatformV1GenerateLossClustersRequest $postBody
+   * @param array $optParams Optional parameters.
+   * @return GoogleLongrunningOperation
+   * @throws \Google\Service\Exception
+   */
+  public function generateLossClusters($location, GoogleCloudAiplatformV1GenerateLossClustersRequest $postBody, $optParams = [])
+  {
+    $params = ['location' => $location, 'postBody' => $postBody];
+    $params = array_merge($params, $optParams);
+    return $this->call('generateLossClusters', [$params], GoogleLongrunningOperation::class);
+  }
+  /**
    * Generates synthetic (artificial) data based on a description
    * (locations.generateSyntheticData)
    *
@@ -208,6 +230,23 @@ class ProjectsLocations extends \Google\Service\Resource
     $params = ['location' => $location, 'postBody' => $postBody];
     $params = array_merge($params, $optParams);
     return $this->call('generateSyntheticData', [$params], GoogleCloudAiplatformV1GenerateSyntheticDataResponse::class);
+  }
+  /**
+   * Generates user scenarios for agent evaluation.
+   * (locations.generateUserScenarios)
+   *
+   * @param string $location Required. The resource name of the Location to run
+   * the job. Format: `projects/{project}/locations/{location}`
+   * @param GoogleCloudAiplatformV1GenerateUserScenariosRequest $postBody
+   * @param array $optParams Optional parameters.
+   * @return GoogleCloudAiplatformV1GenerateUserScenariosResponse
+   * @throws \Google\Service\Exception
+   */
+  public function generateUserScenarios($location, GoogleCloudAiplatformV1GenerateUserScenariosRequest $postBody, $optParams = [])
+  {
+    $params = ['location' => $location, 'postBody' => $postBody];
+    $params = array_merge($params, $optParams);
+    return $this->call('generateUserScenarios', [$params], GoogleCloudAiplatformV1GenerateUserScenariosResponse::class);
   }
   /**
    * Gets information about a location. (locations.get)
@@ -237,6 +276,26 @@ class ProjectsLocations extends \Google\Service\Resource
     $params = ['name' => $name];
     $params = array_merge($params, $optParams);
     return $this->call('getRagEngineConfig', [$params], GoogleCloudAiplatformV1RagEngineConfig::class);
+  }
+  /**
+   * Gets a SemanticGovernancePolicyEngine. A SemanticGovernancePolicyEngine is a
+   * singleton resource that is created when its parent is created, and deleted
+   * when its parent is deleted. This method retrieves the current state of the
+   * Semantic Governance Policy Engine.
+   * (locations.getSemanticGovernancePolicyEngine)
+   *
+   * @param string $name Required. The resource name of the
+   * SemanticGovernancePolicyEngine to retrieve. Format:
+   * projects/{project}/locations/{location}/semanticGovernancePolicyEngine
+   * @param array $optParams Optional parameters.
+   * @return GoogleCloudAiplatformV1SemanticGovernancePolicyEngine
+   * @throws \Google\Service\Exception
+   */
+  public function getSemanticGovernancePolicyEngine($name, $optParams = [])
+  {
+    $params = ['name' => $name];
+    $params = array_merge($params, $optParams);
+    return $this->call('getSemanticGovernancePolicyEngine', [$params], GoogleCloudAiplatformV1SemanticGovernancePolicyEngine::class);
   }
   /**
    * Lists information about the supported locations for this service. This method
@@ -305,6 +364,31 @@ class ProjectsLocations extends \Google\Service\Resource
     $params = ['name' => $name, 'postBody' => $postBody];
     $params = array_merge($params, $optParams);
     return $this->call('updateRagEngineConfig', [$params], GoogleLongrunningOperation::class);
+  }
+  /**
+   * Updates a SemanticGovernancePolicyEngine. This method performs an upsert
+   * operation. If the SemanticGovernancePolicyEngine resource does not exist, it
+   * will be created. Otherwise, it will be updated.
+   * (locations.updateSemanticGovernancePolicyEngine)
+   *
+   * @param string $name Identifier. The resource name of the
+   * SemanticGovernancePolicyEngine. Format:
+   * projects/{project}/locations/{location}/semanticGovernancePolicyEngine
+   * @param GoogleCloudAiplatformV1SemanticGovernancePolicyEngine $postBody
+   * @param array $optParams Optional parameters.
+   *
+   * @opt_param string updateMask Optional. Specifies the fields to be overwritten
+   * in the SemanticGovernancePolicyEngine resource by the update. The fields
+   * specified in the update_mask are relative to the resource itself. If no
+   * update_mask is provided, all fields are overwritten.
+   * @return GoogleLongrunningOperation
+   * @throws \Google\Service\Exception
+   */
+  public function updateSemanticGovernancePolicyEngine($name, GoogleCloudAiplatformV1SemanticGovernancePolicyEngine $postBody, $optParams = [])
+  {
+    $params = ['name' => $name, 'postBody' => $postBody];
+    $params = array_merge($params, $optParams);
+    return $this->call('updateSemanticGovernancePolicyEngine', [$params], GoogleLongrunningOperation::class);
   }
 }
 

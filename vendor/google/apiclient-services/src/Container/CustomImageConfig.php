@@ -26,12 +26,6 @@ class CustomImageConfig extends \Google\Model
    */
   public $image;
   /**
-   * The name of the image family to use for this node.
-   *
-   * @var string
-   */
-  public $imageFamily;
-  /**
    * The project containing the image to use for this node.
    *
    * @var string
@@ -53,22 +47,6 @@ class CustomImageConfig extends \Google\Model
   public function getImage()
   {
     return $this->image;
-  }
-  /**
-   * The name of the image family to use for this node.
-   *
-   * @param string $imageFamily
-   */
-  public function setImageFamily($imageFamily)
-  {
-    $this->imageFamily = $imageFamily;
-  }
-  /**
-   * @return string
-   */
-  public function getImageFamily()
-  {
-    return $this->imageFamily;
   }
   /**
    * The project containing the image to use for this node.
