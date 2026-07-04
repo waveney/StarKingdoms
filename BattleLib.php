@@ -22,7 +22,7 @@ function Devastate(&$H,&$W,&$Dists,&$Offs,$Numb=1) {
     break;
   }
 
-  $Sys = Get_System($H[SystemId]);
+  $Sys = Get_System($H['SystemId']);
   $Txt .= $P['Name'] . " in " . $Sys['Ref'] . "<br>";
 
   if ($W['WallsHelp']) {

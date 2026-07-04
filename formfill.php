@@ -166,6 +166,21 @@
       }
       exit;
 
+
+    case (preg_match('/Unfollow(\w*)-(\d*)/',$field,$mtch)?true:false):
+      $N = Get_Thing($mtch[2]);
+      $N['LinkId'] = 0;
+      echo 'FORCELOADCHANGE54321:NOW' . Put_Thing($N);
+      exit;
+
+    case (preg_match('/FollowBy(\w*)-(\d*)/',$field,$mtch)?true:false):
+      include_once('ThingLib.php');
+      $N = Get_Thing($mtch[2]);
+      $N['LinkId'] = LINK_FOLLOW;
+      $N['NewSystemId'] = $id;
+      echo 'FORCELOADCHANGE54321:NOW' . Put_Thing($N);
+      exit;
+
     case 'FollowId':
       $N = Get_Thing($id);
       $N['NewSystemId'] = $Value;

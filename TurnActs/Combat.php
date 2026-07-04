@@ -134,7 +134,7 @@ function ReturnMilOrgForces() {
 
 function PlanetaryDefence() {
   $PDef = TypeFromName('ThingTypes', 'Planetary Defence Force');
-  $Things = Get_Things_Cond(0,"Type=$PDef AND BuildState=" . BS_COMPLETE . " ORDER BY SystemId,Whose");
+  $Things = Get_Things_Cond(0,"Type=$PDef AND BuildState=" . BS_COMPLETE . " AND BluePrint>=0 ORDER BY SystemId,Whose");
 
   if ($Things) {
     $Refs = Get_SystemRefs();

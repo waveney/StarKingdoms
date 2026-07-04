@@ -287,8 +287,12 @@ function Show_Thing(&$T,$Force=0) {
           $Fol = Get_Thing($T['NewSystemId']);
           $LastWhose = 0;
 //          $tting = SeeThing($Fol,$LastWhose,7,$Fid,0,0,0);
-          echo "<tr><td colspan=3>Following: " . "<span " . FactColours($Fol['Whose']) . ">" .
-               SeeThing($Fol,$LastWhose,7,$Fid,0,0,0) . "</span>";
+          if ($Fol) {
+            echo "<tr><td colspan=3>Following: " . "<span " . FactColours($Fol['Whose']) . ">" .
+                 SeeThing($Fol,$LastWhose,7,$Fid,0,0,0) . "</span>";
+          } else {
+            echo "<tr><td colspan=3>Confused Follow - tell Richard";
+          }
           echo fm_submit("ACTION",'Cancel Follow',0);
         } else if ($Lid == LINK_INBRANCH ) {
           if ($GM) {
@@ -521,7 +525,7 @@ function Show_Thing(&$T,$Force=0) {
             $OnBoard = Get_Things_Cond(0,"((LinkId=-1 OR LinkId=-3) AND SystemId=" . $X['id'] . ")");
             foreach($OnBoard as $OB) if ($ThingProps[$OB['Type']] & THING_NEEDS_CARGOSPACE) {
               $Need = max(1,$OB['Level']);
-              if ($CryoSpace && ($ThingProps[$OB['Type']] & THING_HAS_ARMYMODULES)) {
+              if ($CryoSpace>0 && ($ThingProps[$OB['Type']] & THING_HAS_ARMYMODULES)) {
                 $CryoSpace -= $Need;
                 if ($CryoSpace >= 0) {
                   $Need = 0;
@@ -850,6 +854,9 @@ function Show_Thing(&$T,$Force=0) {
         $did = $D['id'];
         if (($dc++)%2 == 0)  echo "<tr>";
         //echo "<td>"; var_dump($D['Type'],$MTs[$D['Type']],$Mt,$BMods[$D['Type']]);
+
+        if (isset($MTNs[$D['Type']]) && $MTNs[$D['Type']] == 'Flux Stability Field') $Has_FluxStabilityField = 1;
+
         echo "<td>" . (isset($MTNs[$D['Type']])? fm_Select($MTNs, $D , 'Type', 1,'',"ModuleType-$did") : "<span class=red>INV:" .
                       fm_Select($MNs, $D , 'Type', 1,'',"ModuleType-$did") . "</span>" );
 
@@ -2258,6 +2265,50 @@ function Show_Thing(&$T,$Force=0) {
     "ORDER BY s.Ref");
   $KnownSys = [];
   foreach ($KnownSysL as $S) $KnownSys[$S['id']] = $S['Ref'];
+
+  if ($Has_FluxStabilityField ?? 0) {
+    echo "<tr><td valign=top>Using Flux Stabilty Field:<td colspan=6>";
+    $XF = Get_Things_Cond_Ordered(0,"GameId=$GAMEID AND LinkId=" . LINK_FOLLOW . " AND NewSystemId=$Tid");
+    if ($XF) {
+      foreach ($XF as $Xid=>$X) {
+        if ($GM || $X['Whose']==$Fid) {
+          echo "<a href=ThingEdit.php?id=$Xid>" . $X['Name'] . "</a> ";
+          echo "<button type=button id=Unfollow-$Xid onclick=AutoInput('Unfollow-$Xid','Thing')>Cancel</button>";
+        } else {
+          echo $X['Name'];
+        }
+        if ($T['Whose'] != $X['Whose']) {
+          echo "<span " . FactColours($X['Whose']) . "> a " . ($X['Whose']?
+            ($Facts[$X['Whose']]['Adjective']?$Facts[$X['Whose']]['Adjective']:$Facts[$X['Whose']]['Name']) :'Unknown') . '</span>' .
+            ((($TTypes[$X['Type']]['Properties']??0) & THING_HAS_LEVELS)? "Level " . $X['Level'] : "") . " " . $X['Class'] . " " . ($ttn[$X['Type']]??'Unknown');
+
+        }
+        echo "<br>";
+      }
+
+    } else {
+      echo "No current users<br>";
+    }
+
+    $XF = Get_Things_Cond_Ordered(0,"SystemId=" . $T['SystemId'] . " AND Level<" . $T['Level'] . " AND LinkId=0 AND BuildState=" . BS_COMPLETE);
+    if ($XF) {
+      echo "<p>Potential Users:<br>";
+      foreach ($XF as $Xid=>$X) {
+        if ($GM || $X['Whose']==$Fid) {
+          echo "<a href=ThingEdit.php?id=$Xid>" . ($X['Name']??'Unknown') . "</a> ";
+          if ($T['Whose'] != $X['Whose']) {
+//            var_dump($X);
+            echo "<span " . FactColours($X['Whose']) . "> a " . ($X['Whose']?
+              ($Facts[$X['Whose']]['Adjective']?$Facts[$X['Whose']]['Adjective']:$Facts[$X['Whose']]['Name']) :'Unknown') . '</span>' .
+              ((($TTypes[$X['Type']]['Properties']??0) & THING_HAS_LEVELS)? "Level " . $X['Level'] : "") . " " . $X['Class'] . " " . ($ttn[$X['Type']]??'Unknown');
+
+          }
+          echo "<button type=button id=FollowBy-$Xid onclick=AutoInput('FollowBy-$Xid','Thing')>Will Follow</button><br>";
+        }
+      }
+    }
+
+  }
 
   if (Access('God')) {
     echo "<tr><td>Built:<td>System: " . fm_select($KnownSys,$T,'WhereBuilt',1) . fm_number1('Turn',$T,'WhenBuilt');

@@ -295,7 +295,8 @@ function StartOperations() {
       if ($BaseLevel != $O['Level']) {
         $O['ProgNeeded'] = $ProgNeed = Oper_Costs($BaseLevel)[0];
 
-        TurnLog($Fid,'WARNING operation ' . $O['Name'] . " with the " . $Orgs[$O['OrgId']]['Name'] . " is actually level $BaseLevel not " .
+        TurnLog($Fid,'<span class=red>WARNING</span> operation ' . $O['Name'] . " with the " . $Orgs[$O['OrgId']]['Name'] .
+          " is actually level $BaseLevel not " .
           $O['Level'] . " and now needs " . $O['ProgNeeded'] . " progress.");
 
       }
@@ -764,7 +765,8 @@ function OperationsComplete() {
           }
           Gen_Put('SocPsWorlds',$SPW);
           TurnLog($Fid,"Spread the Word of '" . $SocP['Principle']  . "' to " . World_Name_Long($Wid,$Fid) . " succeeded it is now " . $SPW['Value']);
-
+          GMLog("Spread the Word of '" . $SocP['Principle']  . "' to " . World_Name_Long($Wid,$Fid) . " succeeded it is now " . $SPW['Value']);
+          FollowUp($Fid,"Spread the Word of '" . $SocP['Principle']  . "' to " . World_Name_Long($Wid,$Fid) . " succeeded it is now " . $SPW['Value']);
           if ($World['FactionId'] != $Fid) {
             Report_SP_Change($Fid,$World);
           }
@@ -790,9 +792,14 @@ function OperationsComplete() {
               Gen_Put('SocPsWorlds',$SPW);
               TurnLog($Fid,"Burn the Heretics of '" . $SocP['Principle']  . "' on " . World_Name_Long($Wid,$Fid) . " succeeded it is now " .
                 $SPW['Value']);
+              GMLog("Burn the Heretics of '" . $SocP['Principle']  . "' on " . World_Name_Long($Wid,$Fid) . " succeeded it is now " . $SPW['Value']);
+              FollowUp($Fid,"Burn the Heretics of '" . $SocP['Principle']  . "' on " . World_Name_Long($Wid,$Fid) . " succeeded it is now " .
+                $SPW['Value']);
             } else {
               db_delete('SocPsWorlds',$SPW['id']);
               TurnLog($Fid,"Burn the Heretics '" . $SocP['Principle']  . "' on " . World_Name_Long($Wid,$Fid) . " has been elminated");
+              GMLog("Burn the Heretics of '" . $SocP['Principle']  . "' on " . World_Name_Long($Wid,$Fid) . " succeeded it is now eliminated");
+              FollowUp($Fid,"Burn the Heretics of '" . $SocP['Principle']  . "' on " . World_Name_Long($Wid,$Fid) . " succeeded it is now eliminated");
             }
             if ($World['FactionId'] != $Fid) {
               Report_SP_Change($Fid,$World);

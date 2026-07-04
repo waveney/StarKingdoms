@@ -738,6 +738,8 @@ function ShowWorld(&$W,$Mode=0,$NeedDelta=0) { // Mode 0 = View, 1=Owner, 2 = GM
   global $GAMEID;
   $Wid = $W['id'];
 
+  $GM = ($Mode == 2);
+
   $TTypes = Get_ThingTypes();
   $PlanetTypes = Get_PlanetTypes();
   $Fid = $W['FactionId'];
@@ -906,9 +908,10 @@ function ShowWorld(&$W,$Mode=0,$NeedDelta=0) { // Mode 0 = View, 1=Owner, 2 = GM
       $Show = 0;
       foreach ($Clean as $i=>$Of) {
         if ($Show++) echo "<tr>";
-        echo "<td colspan=4>" . ($Orgs[$Of['Organisation']]['Name']??'Unknown') .
+        echo "<td colspan=3>" . ($Orgs[$Of['Organisation']]['Name']??'Unknown') .
         " ( " . ($OrgTypes[$Orgs[$Of['Organisation']]['OrgType']]['Name']??'Unknown') .
         ($Orgs[$Of['Organisation']]['OrgType2']? '/' . ($OrgTypes[$Orgs[$Of['Organisation']]['OrgType']]['Name']??'Unknown'):'') . " )";
+        if ($GM) echo "<td><a href=OfficeEdit.php?id=$i>Edit</a>";
       }
     }
   }
@@ -959,6 +962,7 @@ function ShowWorld(&$W,$Mode=0,$NeedDelta=0) { // Mode 0 = View, 1=Owner, 2 = GM
           "<span " . FactColours($B['Whose']) . ">" . $Facts[$B['Whose']]['Name'] . "</span>";
           if (($BTypes[$B['Type']]['Props']&1) != 0) echo " [Hidden]";
           if ($B['Suppressed']) echo " - Suppresed " . $B['Suppressed'] . Plural($B['Suppressed'],'','turn',' turns');
+          if ($GM) echo " <a href=BranchEdit.php?id=$bi>Edit</a>";
           echo "<br>";
         }
       }

@@ -392,7 +392,7 @@ global $FACTION;
         $OnBoard = Get_Things_Cond(0,"((LinkId=-1 OR LinkId=-3) AND SystemId=$Hid)");
         foreach($OnBoard as $OB) if ($TTypes[$OB['Type']]['Properties'] & THING_NEEDS_CARGOSPACE) {
           $Need = max(1,$OB['Level']);
-          if ($CryoSpace && ($TTypes[$OB['Type']]['Properties'] & THING_HAS_ARMYMODULES)) {
+          if ($CryoSpace>0 && ($TTypes[$OB['Type']]['Properties'] & THING_HAS_ARMYMODULES)) {
             $CryoSpace -= $Need;
             if ($CryoSpace >= 0) {
               $Need = 0;

@@ -70,7 +70,7 @@ function Follow() {
             $T['LinkCost'] = $Fol['LinkCost'];
             $T['LinkPay'] = 1;
             $T['NewSystemId'] = $Fol['NewSystemId'];
-            $T['CurStabilty'] = max($T['Stabilty'],$Fol['Stability']);
+            $T['CurStabilty'] = max($T['Stability'],$Fol['Stability']);
             Put_Thing($T);
             GMLog($T['Name'] . " ( " . $Factions[$T['Whose']]['Name'] . " ) is following " . $Fol['Name'] . " ( " . $Factions[$Fol['Whose']]['Name'] . " )" );
           } else {

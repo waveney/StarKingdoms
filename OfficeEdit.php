@@ -57,10 +57,30 @@ if (isset($_REQUEST['Action'])) {
         echo "Office not found";
       }
       dotail();
+      break;
 
     case 'Refresh':
       $Oid = ($_REQUEST['id'] ?? $_REQUEST['AutoRefOffices']?? 0);
       break;
+
+    case 'Dormant':
+      $Oid = $_REQUEST['id']??$_REQUEST['AutoRefOffices']??0;
+      $Off = Gen_Get('Offices',$Oid);
+      $World = Get_World($Off['World']);
+      $DormOff = TypeFromName('DistrictTypes','Dormant Office');
+      $Dorm = Gen_Get_Cond1('Districts',"GameId=$GAMEID AND HostType=" . $World['ThingType'] . " AND HostId=" . $World['ThingId'] . " AND Type=$DormOff ");
+      if ($Dorm) {
+        $Dorm['Number']++;
+        Put_District($Dorm);
+      } else {
+        $Dorm = ['HostType'=>$World['ThingType'], 'HostId'=>$World['ThingId'], 'Type'=>$DormOff, 'Number'=>1, 'GameId'=>$GAMEID];
+        Put_District($Dorm);
+      }
+
+      db_delete('Offices',$Oid);
+      dotail();
+      break;
+
   }
 } else {
   $Oid = ($_REQUEST['id'] ?? $_REQUEST['AutoRefOffices']?? 0);
@@ -114,6 +134,7 @@ echo "</table>";
 
   echo "<input type=submit Name=Action Value=Refresh> ";
   echo "<input type=submit Name=Action Value=Delete> <input type=submit name=Action value='New Here'>";
+  echo "<input type=submit Name=Action value=Dormant>" ;
 
 
 dotail();
