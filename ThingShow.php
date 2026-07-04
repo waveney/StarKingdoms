@@ -2294,6 +2294,7 @@ function Show_Thing(&$T,$Force=0) {
     if ($XF) {
       echo "<p>Potential Users:<br>";
       foreach ($XF as $Xid=>$X) {
+        if ((($TTypes[$X['Type']]['Prop2']??0) & THING_CAN_FOLLOW) == 0) continue;
         if ($GM || $X['Whose']==$Fid) {
           echo "<a href=ThingEdit.php?id=$Xid>" . ($X['Name']??'Unknown') . "</a> ";
           if ($T['Whose'] != $X['Whose']) {

@@ -94,6 +94,7 @@ define('THING_IS_BIG',         0x80); // Add Level to max modules
 define('THING_IS_IMMORTAL',   0x100); // Militia etc
 define('THING_HASNT_DESIGNS', 0x200);
 define('THING_HAS_HEALTH1',   0x400); // Fighters etc
+define('THING_CAN_FOLLOW',    0x800);
 
 define('LINK_ON_BOARD',-1);
 define('LINK_BOARDING',-2);
