@@ -118,12 +118,12 @@
           if (!$Designs && $T['BuildState'] > 0) {
             $T = Thing_Duplicate($T['id']);
           }
-          $Level = $T['Level'];
           $ClassName = ClassName($T);
+          $Level = $T['Level'] + (Has_PTraitH($Hi,'Untrusted')?1:0);
           $pc = Proj_Costs($Level);
           if ($ProjTypes[$Ptype]['Name'] == "Train $ARMY" && Has_Tech($Fid,'Efficient Robot Construction')) $pc[0] = max(1, $pc[0] - $T['Level']);
           if ($ProjTypes[$Ptype]['Name'] == 'Construct Ship') {
-            if (Has_Tech($Fid,'Space Elevator')) $pc[0] = max(1, $pc[0] - $T['Level']);
+            if (Has_Tech($Fid,'Space Elevator')) $pc[0] = max(1, $pc[0] - $Level);
             if (Has_Tech($Fid,'Bio-Organic Armour')) $pc[1] = floor($pc[1]*2/3);
           }
           $Costs = $pc[1];
