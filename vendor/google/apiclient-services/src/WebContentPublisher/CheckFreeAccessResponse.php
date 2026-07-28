@@ -20,14 +20,14 @@ namespace Google\Service\WebContentPublisher;
 class CheckFreeAccessResponse extends \Google\Model
 {
   /**
-   * True if free access should be allowed, false otherwise.
+   * Output only. True if free access should be allowed, false otherwise.
    *
    * @var bool
    */
   public $isAllowed;
 
   /**
-   * True if free access should be allowed, false otherwise.
+   * Output only. True if free access should be allowed, false otherwise.
    *
    * @param bool $isAllowed
    */

@@ -32,11 +32,19 @@ class CloudAiLargeModelsVisionGenerateVideoExperiments extends \Google\Collectio
    */
   public $anchorLastFrame;
   /**
+   * CFG scale for video-transform, perf-generation, a2v, video-textures models.
+   *
+   * @var float
+   */
+  public $cfgScale;
+  /**
    * Optional. Video codec to use for output.
    *
    * @var string
    */
   public $codec;
+  protected $colorAlignmentType = CloudAiLargeModelsVisionGenerateVideoExperimentsColorAlignmentConfig::class;
+  protected $colorAlignmentDataType = '';
   protected $conditioningFramesType = CloudAiLargeModelsVisionGenerateVideoExperimentsConditioningFrame::class;
   protected $conditioningFramesDataType = 'array';
   /**
@@ -85,6 +93,8 @@ class CloudAiLargeModelsVisionGenerateVideoExperiments extends \Google\Collectio
   protected $schedulingConfigDataType = '';
   protected $seamlessType = CloudAiLargeModelsVisionSeamless::class;
   protected $seamlessDataType = '';
+  protected $spatialAlignmentType = CloudAiLargeModelsVisionGenerateVideoExperimentsSpatialAlignmentConfig::class;
+  protected $spatialAlignmentDataType = '';
   /**
    * If true (default), truncate input videos that exceed the model's maximum
    * frame count by applying a frame_selection_config to __video_file__ inputs.
@@ -125,6 +135,22 @@ class CloudAiLargeModelsVisionGenerateVideoExperiments extends \Google\Collectio
     return $this->anchorLastFrame;
   }
   /**
+   * CFG scale for video-transform, perf-generation, a2v, video-textures models.
+   *
+   * @param float $cfgScale
+   */
+  public function setCfgScale($cfgScale)
+  {
+    $this->cfgScale = $cfgScale;
+  }
+  /**
+   * @return float
+   */
+  public function getCfgScale()
+  {
+    return $this->cfgScale;
+  }
+  /**
    * Optional. Video codec to use for output.
    *
    * Accepted values: VIDEO_CODEC_UNSPECIFIED, VIDEO_CODEC_H264,
@@ -142,6 +168,22 @@ class CloudAiLargeModelsVisionGenerateVideoExperiments extends \Google\Collectio
   public function getCodec()
   {
     return $this->codec;
+  }
+  /**
+   * Optional. Color alignment configuration.
+   *
+   * @param CloudAiLargeModelsVisionGenerateVideoExperimentsColorAlignmentConfig $colorAlignment
+   */
+  public function setColorAlignment(CloudAiLargeModelsVisionGenerateVideoExperimentsColorAlignmentConfig $colorAlignment)
+  {
+    $this->colorAlignment = $colorAlignment;
+  }
+  /**
+   * @return CloudAiLargeModelsVisionGenerateVideoExperimentsColorAlignmentConfig
+   */
+  public function getColorAlignment()
+  {
+    return $this->colorAlignment;
   }
   /**
    * Conditioning frames for veo experimental models ONLY, not to be confused
@@ -313,6 +355,22 @@ class CloudAiLargeModelsVisionGenerateVideoExperiments extends \Google\Collectio
   public function getSeamless()
   {
     return $this->seamless;
+  }
+  /**
+   * Optional. Spatial alignment configuration.
+   *
+   * @param CloudAiLargeModelsVisionGenerateVideoExperimentsSpatialAlignmentConfig $spatialAlignment
+   */
+  public function setSpatialAlignment(CloudAiLargeModelsVisionGenerateVideoExperimentsSpatialAlignmentConfig $spatialAlignment)
+  {
+    $this->spatialAlignment = $spatialAlignment;
+  }
+  /**
+   * @return CloudAiLargeModelsVisionGenerateVideoExperimentsSpatialAlignmentConfig
+   */
+  public function getSpatialAlignment()
+  {
+    return $this->spatialAlignment;
   }
   /**
    * If true (default), truncate input videos that exceed the model's maximum

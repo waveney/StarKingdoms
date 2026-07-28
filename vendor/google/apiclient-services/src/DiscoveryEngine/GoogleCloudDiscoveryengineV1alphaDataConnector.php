@@ -404,6 +404,16 @@ class GoogleCloudDiscoveryengineV1alphaDataConnector extends \Google\Collection
   protected $nextSyncTimeType = GoogleTypeDateTime::class;
   protected $nextSyncTimeDataType = '';
   /**
+   * Output only. The static IP addresses used by this connector for OAuth APIs
+   * (e.g. end user authentication). These are surfaced separately from
+   * `static_ip_addresses` so that customers can apply granular firewall
+   * settings for OAuth endpoints. Only populated for connectors that have
+   * static IP enabled and are used for actions and/or federated search.
+   *
+   * @var string[]
+   */
+  public $oauthStaticIpAddresses;
+  /**
    * Required data connector parameters in structured json format.
    *
    * @var array[]
@@ -469,6 +479,18 @@ class GoogleCloudDiscoveryengineV1alphaDataConnector extends \Google\Collection
    * @var string
    */
   public $syncMode;
+  /**
+   * Optional. Immutable. User-facing, version-independent label for this
+   * connector. May be shared by multiple connectors under the same (project,
+   * location, collection, data_source); tag-based lookup returns the one with
+   * the greatest create_time. Optional at Create time. Agent Designer resolves
+   * connectors via (data_source, tag) when set, falling back to the legacy
+   * resource-name lookup when unset, so connectors created before the tag-write
+   * launch continue to work without a backfill.
+   *
+   * @var string
+   */
+  public $tag;
   /**
    * Output only. Timestamp the DataConnector was last updated.
    *
@@ -1080,6 +1102,26 @@ class GoogleCloudDiscoveryengineV1alphaDataConnector extends \Google\Collection
     return $this->nextSyncTime;
   }
   /**
+   * Output only. The static IP addresses used by this connector for OAuth APIs
+   * (e.g. end user authentication). These are surfaced separately from
+   * `static_ip_addresses` so that customers can apply granular firewall
+   * settings for OAuth endpoints. Only populated for connectors that have
+   * static IP enabled and are used for actions and/or federated search.
+   *
+   * @param string[] $oauthStaticIpAddresses
+   */
+  public function setOauthStaticIpAddresses($oauthStaticIpAddresses)
+  {
+    $this->oauthStaticIpAddresses = $oauthStaticIpAddresses;
+  }
+  /**
+   * @return string[]
+   */
+  public function getOauthStaticIpAddresses()
+  {
+    return $this->oauthStaticIpAddresses;
+  }
+  /**
    * Required data connector parameters in structured json format.
    *
    * @param array[] $params
@@ -1256,6 +1298,28 @@ class GoogleCloudDiscoveryengineV1alphaDataConnector extends \Google\Collection
   public function getSyncMode()
   {
     return $this->syncMode;
+  }
+  /**
+   * Optional. Immutable. User-facing, version-independent label for this
+   * connector. May be shared by multiple connectors under the same (project,
+   * location, collection, data_source); tag-based lookup returns the one with
+   * the greatest create_time. Optional at Create time. Agent Designer resolves
+   * connectors via (data_source, tag) when set, falling back to the legacy
+   * resource-name lookup when unset, so connectors created before the tag-write
+   * launch continue to work without a backfill.
+   *
+   * @param string $tag
+   */
+  public function setTag($tag)
+  {
+    $this->tag = $tag;
+  }
+  /**
+   * @return string
+   */
+  public function getTag()
+  {
+    return $this->tag;
   }
   /**
    * Output only. Timestamp the DataConnector was last updated.

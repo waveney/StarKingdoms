@@ -534,6 +534,10 @@ class Firestore extends \Google\Service
                   'location' => 'query',
                   'type' => 'string',
                 ],
+                'recursive' => [
+                  'location' => 'query',
+                  'type' => 'boolean',
+                ],
                 'showMissing' => [
                   'location' => 'query',
                   'type' => 'boolean',
@@ -587,6 +591,10 @@ class Firestore extends \Google\Service
                 'readTime' => [
                   'location' => 'query',
                   'type' => 'string',
+                ],
+                'recursive' => [
+                  'location' => 'query',
+                  'type' => 'boolean',
                 ],
                 'showMissing' => [
                   'location' => 'query',

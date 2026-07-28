@@ -99,10 +99,13 @@ class Documents extends \Google\Service\Resource
    * `=` (equals) and `!=` (not equals) operators for **exact match** on the whole
    * string. Partial match, prefix match, and regexp match are not supported.
    * TIMESTAMP fields support `=`, `<`, `<=`, `>`, and `>=` operators. Timestamps
-   * must be in RFC-3339 format, e.g., `"2025-01-01T00:00:00Z"`. You can combine
-   * expressions using `AND`, `OR`, and `NOT` (or `-`) logical operators. `OR` has
-   * higher precedence than `AND`. Use parentheses for explicit precedence
-   * grouping. Examples: * `data_source = "docs.cloud.google.com" OR data_source =
+   * must be in RFC-3339 format, e.g., `"2025-01-01T00:00:00Z"`. Note: Field names
+   * must be in `snake_case` (e.g., `data_source`). Values on the right-hand side
+   * of filtering expressions must be string literals enclosed in double quotes
+   * (e.g., `"docs.cloud.google.com"`). You can combine expressions using `AND`,
+   * `OR`, and `NOT` (or `-`) logical operators. `OR` has higher precedence than
+   * `AND`. Use parentheses for explicit precedence grouping. Examples: *
+   * `data_source = "docs.cloud.google.com" OR data_source =
    * "firebase.google.com"` * `data_source != "firebase.google.com"` *
    * `update_time < "2024-01-01T00:00:00Z"` * `update_time >=
    * "2025-01-22T00:00:00Z" AND (data_source = "developer.chrome.com" OR
@@ -111,8 +114,8 @@ class Documents extends \Google\Service\Resource
    * than 500 characters will result in an `INVALID_ARGUMENT` error.
    * @opt_param int pageSize Optional. Specifies the maximum number of results to
    * return. The service may return fewer than this value. If unspecified, at most
-   * 5 results will be returned. The maximum value is 20; values above 20 will
-   * result in an INVALID_ARGUMENT error.
+   * 5 results will be returned. The maximum value is 100; values above 100 will
+   * be coerced to 100.
    * @opt_param string pageToken Optional. Contains a page token, received from a
    * previous `SearchDocumentChunks` call. Provide this to retrieve the subsequent
    * page.

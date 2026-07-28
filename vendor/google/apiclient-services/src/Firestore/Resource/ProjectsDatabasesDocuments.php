@@ -242,6 +242,12 @@ class ProjectsDatabasesDocuments extends \Google\Service\Resource
    * be a microsecond precision timestamp within the past one hour, or if Point-
    * in-Time Recovery is enabled, can additionally be a whole minute timestamp
    * within the past 7 days.
+   * @opt_param bool recursive Optional. If the list should recursively include
+   * all documents nested under the parent at any level. If the request specifies
+   * a `collection_id`, then the list will include all nested documents in the
+   * collection under the parent. This is optional, and when not provided,
+   * Firestore will only list documents nested immediately under the parent.
+   * Requests with `recursive` may not specify `show_missing`.
    * @opt_param bool showMissing If the list should show missing documents. A
    * document is missing if it does not exist, but there are sub-documents nested
    * underneath it. When true, such missing documents will be returned with a key
@@ -309,6 +315,12 @@ class ProjectsDatabasesDocuments extends \Google\Service\Resource
    * be a microsecond precision timestamp within the past one hour, or if Point-
    * in-Time Recovery is enabled, can additionally be a whole minute timestamp
    * within the past 7 days.
+   * @opt_param bool recursive Optional. If the list should recursively include
+   * all documents nested under the parent at any level. If the request specifies
+   * a `collection_id`, then the list will include all nested documents in the
+   * collection under the parent. This is optional, and when not provided,
+   * Firestore will only list documents nested immediately under the parent.
+   * Requests with `recursive` may not specify `show_missing`.
    * @opt_param bool showMissing If the list should show missing documents. A
    * document is missing if it does not exist, but there are sub-documents nested
    * underneath it. When true, such missing documents will be returned with a key
