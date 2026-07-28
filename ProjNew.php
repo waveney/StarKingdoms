@@ -128,7 +128,8 @@
                 $T['Name'] . (empty($T['Class'])?'': ", a " . $T['Class']) . "</buton><td>" . $T['Level'] . "<td>" . $pc[1] .  "<td>$Extra<td>" . $pc[0] .
                 "<td>$Moddesc";
             }
-            }
+          }
+
           echo "</table><p>";
 
         } else {
@@ -268,7 +269,7 @@
 
 //    if ($NoC != 1) $Dists[] = ['HostType'=>-1, 'HostId' => $PH['id'], 'Type'=> -1, 'Number'=>0, 'id'=>-$PH['id']];
     foreach ($Dists as $D) {
-      if ($D['Type'] > 0 && (($DistTypes[$D['Type']]['Props'] &2) == 0)) continue;
+      if ($D['Type'] > 0 && (($DistTypes[$D['Type']]['Props'] &DIST_DO_PROJ) == 0)) continue;
       if (($D['Type'] < 0) && ($PH['Type'] != $Faction['Biosphere']) &&
          ($PH['Type'] != $Faction['Biosphere2']) && ($PH['Type'] != $Faction['Biosphere3']) && (Has_Tech($Fid,3)<2)) continue;
       $Dix = $D['id'];
@@ -584,6 +585,13 @@
                 "Produce 4 units of Adianite $Lvl; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
 
       }
+      echo "<h2>Raze Planet</h2>";
+      $Lvl = 1;
+      $pc = Proj_Costs($Lvl);
+      echo "<button class=projtype type=submit formaction='ProjDisp.php?ACTION=NEW&id=$Fid&p=" . $PTi['Raze Planet'] .
+      "&t=$Turn&Hi=$Hi&Di=$Di&DT=$DT&Sel=3" .
+      "&Name=" . base64_encode("Raze Planet $Place"). "&L=$Lvl&C=" .$pc[1] . "&PN=" . $pc[0] ."'>" .
+      "Raze Planet; $Place; Cost " . $pc[1] . " Needs " . $pc[0] . " progress.</button><p>";
 
     break;
 

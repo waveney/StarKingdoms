@@ -48,7 +48,7 @@ function ValidateTurn($For = 0) {
   $TTypes = Get_ThingTypes();
   $TNames = array_flip(NamesList($TTypes));
   foreach ($Projects as $P) {
-    if (($ProjTypes[$P['Type']]['Props'] & 6) == 2) { // Has one thing but not 2
+    if (($ProjTypes[$P['Type']]['Props'] & (PROJ_THING + PROJ_2THINGS)) == PROJ_THING) { // Has one thing but not 2
       $Pid = $P['id'];
       if (empty($P['Name'])) $P['Name'] = 'Nameless';
       $Tid = $P['ThingId'];
@@ -67,7 +67,7 @@ function ValidateTurn($For = 0) {
         echo "<h2 class=Err>Warning - your project: <a href=ProjEdit.php?id=$Pid>" . $P['Name'] . "</a> is level " . $P['Level'] .
              " trying to make an unknown thing</h2>\n";
         $Valid = 0;
-      } else if (($ProjTypes[$P['Type']]['Props'] & 0x40) == 0) { //Surpress level check
+      } else if (($ProjTypes[$P['Type']]['Props'] & PROJ_NOLVLCHCK) == 0) { //Surpress level check
         if ($P['Level'] != $T['Level']) {
           if ($P['Level'] < $T['Level']) {
             dostaffhead("Player Actions");

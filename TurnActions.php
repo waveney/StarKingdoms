@@ -51,7 +51,7 @@
     [31,'Combat',    'Orbital Bombardment','No'],
     [32,'Combat',    'Ground Combat','Help'],
     [33,'Combat',    'Devastation Selection','Coded,M'],
-    [34,'Combat',    'Devastation','Coded'],
+    [34,'',         'Spare',''],
     [35,'',         'Ownership Change','Coded'],
     [36,'Movement',  'Retreats Selection','Coded'],
     [37,'Movement',  'Retreats','Coded'],
@@ -62,7 +62,7 @@
     [42,'Instruct',  'Instructions Progress','Coded'],
     [43,'Instruct',  'Collaborative Progress','Coded'],
     [44,'',         'Handle Co Op Projects','Coded,M'],
-    [45,'',         'Spare',''], //Finish Shakedowns
+    [45,'Combat',    'Devastation','Coded'],
     [46,'Projects',  'Refit Projects Complete','Coded'],
     [47,'Projects',  'Projects Complete','Coded'],
     [48,'Operations','Operations Complete','Coded'],
@@ -71,8 +71,6 @@
     [51,'Survey',    'Give Survey Reports','Coded'],
     [52,'Survey',    'Check Spot Anomalies','Coded'],//
     [53,'Survey',    'Spot Anomalies','Coded'],
- //   [51,'Survey',    'Check Survey And Anomalies','Coded,M'],
- //   [52,'Survey',    'Give Survey And Anomalies','Coded'],
     [54,'',         'Militia Army Recovery','Coded'],
     [55,'',         'Generate Turns','No'],
     [56,'',         'Clear Conflict Flags','Coded'],
@@ -1122,6 +1120,12 @@ function TidyUps() {
   $res = $db->query("UPDATE Things SET Conflict=0 WHERE Conflict>0 AND GameId=$GAMEID");
   $res = $db->query("UPDATE Operations SET TurnState=0 WHERE GameId=$GAMEID");
   $res = $db->query("UPDATE Worlds SET WallsHelp=0 WHERE GameId=$GAMEID");
+
+  $Homes = Gen_Get_Cond('ProjectHomes', "GameId=$GAMEID AND (Props&" . HOME_RAZE . "!=0)");
+  if ($Homes) foreach($Homes as $H) {
+    $H['Props'] -= HOME_RAZE;
+    Put_ProjectHome($H);
+  }
 
   $Things = Get_Things_Cond(0,"GameId=$GAMEID AND (BuildState<0 OR Type=0)");
   foreach ($Things as $T) Thing_Delete($T['id']);

@@ -60,7 +60,7 @@ function StartProjects() {
           Put_Project($P);
           continue;
         }
-        if ($ProjTypes[$P['Type']]['Props'] & 16) { // Tight Location check
+        if ($ProjTypes[$P['Type']]['Props'] & PROJ_TIGHTLOC) { // Tight Location check
           if (($T['WithinSysLoc'] == $Where[1] || $T['WithinSysLoc'] == $Where[1]-100)) {
             // OK
           } else {
@@ -72,7 +72,7 @@ function StartProjects() {
             continue;
           }
         }
-        if (($ProjTypes[$P['Type']]['Props'] & 64) == 0) { // No Level Check
+        if (($ProjTypes[$P['Type']]['Props'] & PROJ_NOLVLCHCK) == 0) { // No Level Check
           if ($T['Level'] != $P['Level']) {
             if ($T['Level'] > $P['Level']) {
               $P['Status'] = 5; // Not Started
@@ -145,7 +145,7 @@ function StartProjects() {
       TurnLog($P['FactionId'],'Starting ' . $P['Name'] . " Cost: " . Credit() . " $Cost");
       GMLog($Facts[$P['FactionId']]['Name'] . ' Starting ' . $P['Name'] . " Cost: " . Credit() . " $Cost");
       if (($ProjTypes[$P['Type']]['Props'] & PROJ_EXIST)==0) {
-        if (($ProjTypes[$P['Type']]['Props'] & PROJ_THING) && (($ProjTypes[$P['Type']]['Props'] & 20) ==0 )) {
+        if (($ProjTypes[$P['Type']]['Props'] & PROJ_THING) && (($ProjTypes[$P['Type']]['Props'] & PROJ_INSTUCT) ==0 )) {
           // Has ONE thing - 2nd test elimiates repair and construction
           if ($Tid) {
             if ($Designs) {
@@ -193,6 +193,18 @@ function StartProjects() {
             }
           }
         }
+      }
+
+      switch ($PT['Name']) { // Handle special cases
+        case 'Raze Planet':
+          $Home = Get_ProjectHome($P['Home']);
+          $Home['Props'] = ($Home['Props'] & ~ HOME_RAZE) + HOME_RAZE;
+          Put_ProjectHome($Home);
+          break;
+
+        default:
+          break;
+
       }
     } else {
       $P['Status'] = 5; // Not Started
@@ -489,6 +501,18 @@ function ProjectProgressActions($Pay4=0) {
       GMLog("Updating project " . $P['id'] . " " . $P['Name'] . " with ". ($Acts+$Rush+$Bonus+$FreeRush) . " progress");
       $P['LastUpdate'] = $GAME['Turn'];
       Put_Project($P); // Note completeion is handled later in the turn sequence
+
+      if ($ProjTypes[$P['Type']]['Props'] & PROJ_SPEC_PROGRESS) {
+        switch ($ProjTypes[$P['Type']]['Name']) {
+          case 'Raze Planet': // Apply devastation now, not on completeion
+            $Home = Get_ProjectHome($P['Home']);
+            $Home['Devastation'] += 7;
+            Put_ProjectHome($Home);
+            break;
+
+          default:
+        }
+      }
     }
   }
 
@@ -524,8 +548,8 @@ function ProjectsCompleted($Pass) {
   foreach ($Projects as $Pid=>$P) {
     $PT = $ProjTypes[$P['Type']];
 
-    if (($Pass==0) && (($PT['Props']&512) ==0) ||
-      ($Pass==1) && (($PT['Props']&512) !=0)) continue;
+    if (($Pass==0) && (($PT['Props']&PROJ_REFIT) ==0) ||
+      ($Pass==1) && (($PT['Props']&PROJ_REFIT) !=0)) continue;
 
       GMLog("Completing project " . $P['id'] . " " . $P['Name'] . "<br>");
       $P['Status'] = 2;
@@ -1053,6 +1077,8 @@ function ProjectsCompleted($Pass) {
 
           break;
 
+        case 'Raze Planet': // No action need
+          break;
 
           // These all now handled as instructions - not projects at the moment
         case 'Decommision':

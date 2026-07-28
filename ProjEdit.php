@@ -48,7 +48,7 @@
   function TidyProject($Prid) {
     $P = Get_Project($Prid);
     $PTypes = Get_ProjectTypes();
-    if ($PTypes[$P['Type']]['Props'] & 0x400) {
+    if ($PTypes[$P['Type']]['Props'] & PROJ_SERVICE) {
       if ($P['ThingId']) {
         $T = Get_Thing($P['ThingId']);
         if ($T['BuildState'] == BS_SERVICE) {
@@ -311,8 +311,8 @@
       }
 
 //      var_dump($PProps);
-      if ($PProps & 0x2000) echo "<td>Tech:<td>" . fm_select($TechNames, $P, 'ThingType'). "<td>" . $Fields[($Techs[$P['ThingType']]['Cat']??4)];
-      if ($PProps & 0x1000) {
+      if ($PProps & PROJ_TECH) echo "<td>Tech:<td>" . fm_select($TechNames, $P, 'ThingType'). "<td>" . $Fields[($Techs[$P['ThingType']]['Cat']??4)];
+      if ($PProps & PROJ_ORG) {
         $OTypes = Get_OrgTypes();
         $Orgs = Gen_Get_All_GameId('Organisations');
         $OrgList = [];
@@ -322,10 +322,10 @@
         }
         echo "<td>Org:<td>" . fm_select($OrgList,$P,'ThingType');
       }
-      if ($PProps & 8) {
+      if ($PProps & PROJ_OTHERFACT) {
         echo "<td>" . fm_select($FactionNames,$P,'ThingId');
       }
-      if ($PProps & 0x800) {
+      if ($PProps & PROJ_NEWORG) {
         $OrgTypes = Get_OrgTypes();
 
         $ValidOrgs = [];

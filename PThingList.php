@@ -158,7 +158,10 @@
               echo "<tr><td><a href=ThingEdit.php?i=$Ci>" . $Ca['Name'] . "</a><td>" . fm_checkbox('Selected',$Ca,'Selected','',"Selected:$Ci");
             }
           }
-          echo "</table><br><h2>To:</h2>";
+          echo "</table><br>";
+          echo "<h2><a href=PThingList.php>Leave them aboard</a></h2>";
+
+          echo "<h2>OR Unload To:</h2>";
           $N = Get_System($T['NewSystemId']);
           $NewSyslocs = Within_Sys_Locs($N,0,0,0,0,($GM?0:$Tid));
           echo "<form method=post action=PThingList.php?ACTION=UNLOADTO&T=$Tid>";
@@ -168,7 +171,6 @@
           }
 
           echo "</form>";
-          echo "<h2><a href=PThingList.php>Leave them aboard</a></h2>";
           dotail();
         }
       }

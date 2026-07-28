@@ -7,6 +7,7 @@ function Devastate(&$H,&$W,&$Dists,&$Offs,$Numb=1) {
   $TTypes = Get_ThingTypes();
   $TNames = ListNames($TTypes);
   $Something = $TNames['Something'];
+  $IndDist = TypeFromName('DistrictTypes', 'Industrial');
 
   $DTypes = Get_DistrictTypes();
   $Txt = 'Due to the conflict on ';
@@ -37,8 +38,16 @@ function Devastate(&$H,&$W,&$Dists,&$Offs,$Numb=1) {
 
   for($Hn = 1; $Hn <= $Numb; $Hn++) {
     $Dcount = $OCount = count($Offs);
-    foreach ($Dists as $D) $Dcount += $D['Number'];
+    $EInd = $Dists[$IndDist]['Number'];
+    foreach ($Dists as $D) {
+      if ($D['Type'] == $IndDist) {
+        $Dcount += $D['Number'] -1;
+      } else {
+        $Dcount += $D['Number'];
+      }
+    }
 
+    if ($Dcount == 0 && $EInd) $Dcount = 1;
     if ($Dcount) {
 //var_dump($Dcount);
       $Hit = rand(1,$Dcount);
@@ -59,7 +68,15 @@ function Devastate(&$H,&$W,&$Dists,&$Offs,$Numb=1) {
       }
       $DFind = $OCount;
       foreach ($Dists as $D) {
-        $DFind += $D['Number'];
+        if ($D['Type' == $IndDist]) {
+          if ($Dcount == 1) {
+            break;
+          } else {
+            $DFind += $D['Number']-1;
+          }
+        } else {
+          $DFind += $D['Number'];
+        }
         if ($DFind >= $Hit) break;
       }
 //var_dump($D);

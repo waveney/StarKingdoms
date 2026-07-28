@@ -196,7 +196,7 @@ function ForceReport($Sid,$Cat) {
       if ($T['PrisonerOf'] != 0) continue; // Prisoners
 
       $NebEffect = ($Cat == 'S') && ($Sys['Nebulae'] > $T['NebSensors']);
-      if ($NebEffect && str_contains($Variants[$T['Variant']]['Name'],'Nebula')) $NebEffect = false;
+      if ($T['Variant'] && $NebEffect && $Variants[$T['Variant']] && str_contains($Variants[$T['Variant']]['Name'],'Nebula')) $NebEffect = false;
 
       if ($LastF != $T['Whose']) {
         if (($CSV==0) && ($LastF >=0)) {

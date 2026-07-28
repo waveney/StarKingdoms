@@ -78,6 +78,9 @@ if (isset($_REQUEST['Action'])) {
       }
 
       db_delete('Offices',$Oid);
+
+      echo "<h2>Office now dormant</h2>";
+      echo "<h2><a href=WorlEdit.php?id=" . $Off['World'] . "</a></h2>";
       dotail();
       break;
 

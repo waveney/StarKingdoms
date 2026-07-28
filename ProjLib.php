@@ -17,6 +17,7 @@ define('PROJ_NEWORG',   0x800);
 define('PROJ_ORG',     0x1000);
 define('PROJ_TECH',    0x2000);
 define('PROJ_NEWNAME', 0x4000);
+define('PROJ_SPEC_PROGRESS', 0x8000);
 
 define('DIST_PRIME',             1);
 define('DIST_DO_PROJ',           2);

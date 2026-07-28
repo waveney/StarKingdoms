@@ -276,7 +276,7 @@ function Show_Tech(&$T,&$CTNs,&$Fact=0,&$FactTechs=0,$Descs=1,$Setup=0,$lvl=0,$M
       }
     } else {
       if ($T['Cat'] == 2) {
-        $ft['l'] = (isset($FactTechs[$Tid]['Level'])?max(1,($FactTechs[$Tid]['Level'])):-1);
+        $ft['l'] = (isset($FactTechs[$Tid]['Level'])?($FactTechs[$Tid]['Level']?max(1,($FactTechs[$Tid]['Level'])):0):-1);
         $Sets = [1=>'Have',0=>'Know About',-1=>'No Knowledge'];
         echo fm_radio('',$Sets,$ft,'l','',0,'',"Set:$Tid");
       } else {
@@ -1239,7 +1239,7 @@ function Update_Militia(&$W,&$Dists,$NewOwn=0,$Deploy=0) {
   }
 
   $MilitiaEvade = (Has_Tech($FactN,'Guerilla Warfare Techniques')?50:40);
-  var_dump($FactN,$MilitiaEvade);
+//  var_dump($FactN,$MilitiaEvade);
 
 //echo count($Mils);
   $CMils = count($Mils);

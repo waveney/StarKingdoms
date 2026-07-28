@@ -1012,7 +1012,9 @@ global $FACTION;
             $Syslocs = Within_Sys_Locs($N,0,0,0,1);
             if ($wsysloc) {
               $newloc = (isset($Syslocs[$wsysloc])? $Syslocs[$wsysloc] : 'Deep Space');
-              if ((preg_match('/Hospitable/',$newloc,$mtch)?true:false) || isset($_REQUEST['YES_SPACE'])) {
+              if ((($TTypes[$H['Type']]['Prop2'] & THING_DISLIKES_SPACE) == 0) ||
+                  (preg_match('/Hospitable/',$newloc,$mtch)?true:false) ||
+                  isset($_REQUEST['YES_SPACE'])) {
                 $Lid = $H['LinkId'];
                 if ($Lid == -1 || $Lid == -3) {
                   $H['LinkId'] = -3;

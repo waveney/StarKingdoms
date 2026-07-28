@@ -289,7 +289,7 @@ function LinkProps($L) {
     $Facts = Get_Factions();
     if ($Eyes) {
       $OtherShips = $db->query("SELECT t.* FROM Things t, ThingTypes tt WHERE t.type=tt.id AND t.BuildState=" . BS_COMPLETE . " AND " .
-          "(tt.Properties&0x100)!=0 AND t.SystemId=$ThisSys AND t.LinkId>=0 AND t.GameId=$GAMEID");
+          "(tt.Properties&0x100)!=0 AND t.SystemId=$ThisSys AND (t.LinkId>=0 OR t.LinkId=" . LINK_NOT_MOVING . ") AND t.GameId=$GAMEID");
       if ($OtherShips) {
         $FluxM = TypeFromName('ModuleTypes','Flux Stability Field');
         $List = [];

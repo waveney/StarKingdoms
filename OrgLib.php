@@ -2,7 +2,10 @@
 include_once("sk.php");
 include_once("GetPut.php");
 
+define('OPER_LEVEL_PLUS',        0x2);
+define('OPER_LEVEL_MULT',        0xc);
 define('OPER_LEVEL',             0xf);
+
 define('OPER_TECH',             0x10);
 define('OPER_SOCP',             0x20);
 define('OPER_OUTPOST',          0x40);

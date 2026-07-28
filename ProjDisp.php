@@ -243,6 +243,7 @@
         case 'Flux Crystal Synthesis' :
         case 'Cret-Chath Synthesis' :
         case 'Antimatter Synthesis' :
+        case 'Raze Planet':
         default:
 
           if (isset($_REQUEST['Sel'])) $Sel = $_REQUEST['Sel'];
@@ -281,12 +282,12 @@
             if ($TthingId??0) {
               $T1 = Get_Thing(($TthingId));
               $T1['ProjectId'] = $Pid;
-              if ($ProjTypes[$Ptype]['Props'] & 0x400) $T1['BuildState'] = BS_SERVICE;
+              if ($ProjTypes[$Ptype]['Props'] & PROJ_SERVICE) $T1['BuildState'] = BS_SERVICE;
               Put_Thing($T1);
               if ($TthingId2??0) {
                 $T1 = Get_Thing(($TthingId2));
                 $T1['ProjectId'] = $Pid;
-                if ($ProjTypes[$Ptype]['Props'] & 0x400) $T1['BuildState'] = BS_SERVICE;
+                if ($ProjTypes[$Ptype]['Props'] & PROJ_SERVICE) $T1['BuildState'] = BS_SERVICE;
                 Put_Thing($T1);
               }
             }
@@ -416,7 +417,7 @@
             $N = Get_System($PH['SystemId']);
             $HLAdd = $ButAdd = " (" . $N['Ref'] . ")";
           }
-          if (($DT['Props'] & 3) == 2) $ShowOtherCat = 1;
+          if (($DT['Props'] & 3) == 2) $ShowOtherCat = 1; // Wierd code - not sure what its doing
         }
         $Dists = [$ORY=>['HostType'=>3,'HostId'=>$PH['id'],'Type'=>$ORY,'Number'=>1, 'id'=>-1]];
         $NoC = 1;
@@ -445,7 +446,7 @@
     foreach ($Dists as $D) {
 
 
-      if (($D['Type']??0) > 0 && (((($DistTypes[($D['Type']??00)]['Props']??0) &2)??0) == 0)) continue;
+      if (($D['Type']??0) > 0 && (((($DistTypes[($D['Type']??00)]['Props']??0) &DIST_DO_PROJ)??0) == 0)) continue;
       if ($D['Type'] < 0 ) continue;
       $Di = $D['id'];
       $Hide = ($Hi == $OpenHi && $Di == $OpenDi? "" : "hidden");

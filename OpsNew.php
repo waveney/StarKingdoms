@@ -441,7 +441,7 @@
 
         foreach ($CTs as $TT) {
           $Tid = $TT['id'];
-          if ($MyTechs[$Tid]['Level'] > $FactTechs[$Tid]['Level']) {
+          if (($MyTechs[$Tid]['Level']>0) && ($MyTechs[$Tid]['Level'] > $FactTechs[$Tid]['Level'])) {
             $Lvl = $FactTechs[$Tid]['Level']+1;
             echo "<button class=projtype type=submit formaction='OpsNew.php?$Data&Te=$Tid&P2=$Lvl'>" .
             $TT['Name'] . " at level $Lvl</button> \n";
@@ -451,7 +451,7 @@
 
 
         foreach ($MyTechs as $Tid=>$T) {
-          if (!isset($Techs[$Tid])) continue;
+          if (!isset($Techs[$Tid]) || $T['Level']==0) continue;
           $Tec = $Techs[$Tid];
           if (($Techs[$T['Tech_Id']]['Cat']??0) == 0 || (isset($FactTechs[$Tid]) && ($FactTechs[$Tid]['Level'] > 0)) ) continue;
           if (!isset($FactTechs[$Tec['PreReqTech']]) ) continue;
@@ -502,7 +502,7 @@
               if ($Prince['Principle']??0) $PList[$Pr] = $Prince['Principle'];
             }
           }
-          echo "<h2>Please Select the Social Principle you are spreading:</h2>";
+          echo "<h2>Please Select the Social Principle you are hitting:</h2>";
           foreach($PList as $Pr=>$Prince) {
             echo "<button class=projtype type=submit formaction='OpsNew.php?$Data&SP=$Pr'>$Prince</button><br>\n";
           }

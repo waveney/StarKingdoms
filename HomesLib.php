@@ -3,6 +3,9 @@
 $HomeTypes = ['','Planet','Moon','Thing'];
 global $HomeTypes;
 
+define('HOME_NOPROJECTS',1);
+define('HOME_RAZE',2);
+
 include_once("ProjLib.php");
 
 function Recalc_Project_Homes($Logf=0, $Silent=0) {
@@ -315,7 +318,7 @@ function Recalc_Project_Homes($Logf=0, $Silent=0) {
 function Show_Home($Hid) {
   global $HomeTypes;
   $H = Get_ProjectHome($Hid);
-  echo "Properties: 1=No Projects<p>";
+  echo "Properties: 1=No Projects, 2=Raze in effect<p>";
   echo "<form method=post action=ProjHomes.php>";
   Register_Autoupdate("ProjectHomes",$Hid);
   fm_hidden('id',$Hid);
@@ -950,17 +953,17 @@ function ShowWorld(&$W,$Mode=0,$NeedDelta=0) { // Mode 0 = View, 1=Owner, 2 = GM
     if ($Mode ==2) {
       $Show = 1;
     } else {
-      foreach ($Branches as $bi=>$B) if (($B['Whose']== $Fid) || (($BTypes[$B['Type']]['Props']&1)==0)) { $Show = 1; break;}
+      foreach ($Branches as $bi=>$B) if (($B['Whose']== $Fid) || (($BTypes[$B['Type']]['Props']& BRANCH_HIDDEN)==0)) { $Show = 1; break;}
     }
     if ($Show) {
       echo "<tr><td>Branches:<td colspan=5>";
       foreach ($Branches as $bi=>$B) {
         //       var_dump($B);
-        if ($Mode ==2 || ($B['Whose']== $Fid) || (($BTypes[$B['Type']]['Props']&1)==0)) {
+        if ($Mode ==2 || ($B['Whose']== $Fid) || (($BTypes[$B['Type']]['Props']&BRANCH_HIDDEN)==0)) {
           echo "A <b>" . $BTypes[$B['Type']]['Name'] . "</b> of the <b>" . $Orgs[$B['Organisation']]['Name'] .
           "</b> ( " . $OrgTypes[$Orgs[$B['Organisation']]['OrgType']]['Name'] . " ) - " .
           "<span " . FactColours($B['Whose']) . ">" . $Facts[$B['Whose']]['Name'] . "</span>";
-          if (($BTypes[$B['Type']]['Props']&1) != 0) echo " [Hidden]";
+          if (($BTypes[$B['Type']]['Props']&BRANCH_HIDDEN) != 0) echo " [Hidden]";
           if ($B['Suppressed']) echo " - Suppresed " . $B['Suppressed'] . Plural($B['Suppressed'],'','turn',' turns');
           if ($GM) echo " <a href=BranchEdit.php?id=$bi>Edit</a>";
           echo "<br>";

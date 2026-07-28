@@ -82,7 +82,7 @@ function Follow() {
               " as the link they used was unknown to them - Allow? " . fm_YesNo("Follow" . $T['id'],1, "Reason to reject") . "\n<br>");
             continue;
           }
-        } else if ($Lid == 0) {
+        } else if ($Lid == 0 || $Lid == LINK_NOT_MOVING) {
           $T['LinkId'] = $Fol['LinkId'];
           $T['LinkCost'] = $Fol['LinkCost'];
           $T['LinkPay'] = 1;
@@ -765,7 +765,7 @@ function RetreatsSelection() {
   if ($Things) {
     GMLog("<h2>These could retreat - Do check, tick the stop box and say why if needed</h2>");
     GMLog("<form method=Post action=TurnActions.php?ACTION=DoStage2>" . fm_hidden('Stage','Retreats Selection'));
-    GMLog("<table border><tr><th>Whose<th>What<th>Reason<th>From<th>To<th>Stop<th>Why");
+    GMLog("<table border><tr><th>Whose<th>What<th>Type<th>Reason<th>From<th>To<th>Stop<th>Why");
     foreach ($Things as $Tid=>$T) {
       $Loc = $T['SystemId'];
       $Fid = $T['Whose'];
@@ -793,12 +793,16 @@ function RetreatsSelection() {
           } else {
             $res = Moves_4_Thing($T,0, 1);
             [$Links, $SelLinks, $SelCols ] = $res;
+            if (is_on_ground($T)) {
+              $SelLinks[-1] = 'To Space';
+            }
             $Totxt = fm_select($SelLinks,$T,'LinkId',0," style=color:" . ($SelCols[$T['LinkId']??0]??'black') ,"RetreatLink$Tid",0,$SelCols) .
                ' <span class=red>SET THIS!</span>';
           }
 
 
           GMLog("<tr><td>" . $Facts[$Fid]['Name'] . "<td><a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a><td>" .
+            $TTypes[$T['Type']]['Name'] . "<td>" .
             ['','From Nebula','From Combat'][$T['Retreat']] . "<td>" . $SRefs[$Loc] . "<td>$Totxt<td>" .
             fm_checkbox('',$_REQUEST,"RetreatBox$Tid") . fm_text1('', $_REQUEST,"RetreatTxt$Tid"));
           break;
@@ -833,9 +837,13 @@ function Retreats() {
           TurnLog($Fid,$T['Name'] . " could have retreated, but didn't because " . ($_REQUEST["RetreatTxt$Tid"]??'Unknown reason'));
           $T['Retreat'] = 0;
         } else {
-          $Call = 1;
-          if ($_REQUEST["RetreatLink$Tid"] != $T['LinkId']) {
-            $T['LinkId'] = $_REQUEST["RetreatLink$Tid"];
+          if ($_REQUEST["RetreatLink$Tid"] < 0) {
+            $T['WithinSysLoc'] = LOC_SPACE;
+          } else {
+            $Call = 1;
+            if ($_REQUEST["RetreatLink$Tid"] != $T['LinkId']) {
+              $T['LinkId'] = $_REQUEST["RetreatLink$Tid"];
+            }
           }
         }
         Put_Thing($T);

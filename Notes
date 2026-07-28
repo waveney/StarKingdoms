@@ -70,7 +70,6 @@ NEW GAME FEATURES & BUGS
 916 Check Affect Anomalies
 919 Overlapping Operations
 920 See in a Warehouse
-
 === 928 start of turn 39
 932 DCY - GPN barrayar scans
 938 Nebula Fighters coming in at 0 Hull
@@ -102,12 +101,27 @@ NEW GAME FEATURES & BUGS
     and now needs 36 progress.  Operation Burn the Heretics in UUW at Maladeigh Principle: Slumber has started for organisation The Magistry
 992 Undead fighers - Vashou 29/6 @21:10
 996 Colab TAY anomaly 
-998 Untrusted broken
-999 Leave abord - change order - make default
+1001 Blueprint variants
+1002 Xfr Tech bar -> ASC Underlin Tunneling
+=== 1005 start of turn 45
+PHP message: PHP Fatal error:  Uncaught mysqli_sql_exception: You have an error in your SQL syntax; check the manual that 
+corresponds to your MariaDB server version for the right syntax to use near '' at 
+line 1 in /var/www/vhosts/starkingdoms.uk/httpdocs/skdb.php:21\nStack trace:\n
+#0 /var/www/vhosts/starkingdoms.uk/httpdocs/skdb.php(21): mysqli->query()\n
+#1 /var/www/vhosts/starkingdoms.uk/httpdocs/BranchEdit.php(340): Gen_Get()\n
+#2 {main}\n  thrown in /var/www/vhosts/starkingdoms.uk/httpdocs/skdb.php on line 21', 
+referer: https://starkingdoms.uk/WorldEdit.php?id=147
+1010 Projects on lost worlds
+=== 1011 start of turn 46
+1011 Stomp
+1012 Follow not moving effect in follow/Movement
+1014 Retreating Fighters
+1015 See acg 27/7 @ 18:26
+1016 UUW militia - why only 2 out of N
+1018
 
 
-=== start of turn 45
-=== start of turn 46
+
 === start of turn 47
 === start of turn 48
 === start of turn 49

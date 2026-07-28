@@ -203,9 +203,9 @@ if ($DTs) foreach($DTs as $D) {
   echo "<tr><td>" . $D['Name'] . "<td>" . (($D['TeamProps']&1)?'Yes':'No');
 
   $Ltxt = "Level";
-  if ($D['Props']&3) $Ltxt .= "+" . ($D['Props']&3);
-  if (($D['Props']& 0Xc)) {
-    $Ltxt .= "+" . ((($D['Props']&15)>>2)>1?(($D['Props']&15)>>2):'') . "X";
+  if ($D['Props']&OPER_LEVEL_PLUS) $Ltxt .= "+" . ($D['Props']&OPER_LEVEL_PLUS);
+  if (($D['Props']& OPER_LEVEL_MULT)) {
+    $Ltxt .= "+" . ((($D['Props']&OPER_LEVEL)>>2)>1?(($D['Props']&OPER_LEVEL)>>2):'') . "X";
   }
   echo "<td>$Ltxt<td>" . $D['Description'];
 }
