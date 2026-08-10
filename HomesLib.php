@@ -522,6 +522,11 @@ function Recalc_Economic_Rating(&$H,&$W,$Fid,$Turn=0) {
   $NumPrime = $Mines = 0;
   $NumCom = 0; $NumInd = 0;
   if (!$Dists) return 0;
+
+  if ($H['Props'] & HOME_RAZE) {
+    return [0,'Planet is being Razed - no income'];
+  }
+
   foreach ($Dists as $D) {
     if ($D['Type'] == 0) {
       echo "District " . $D['id'] . " is illegal...<br>";
@@ -565,8 +570,8 @@ function Recalc_Economic_Rating(&$H,&$W,$Fid,$Turn=0) {
  //   var_dump($NumPrime,$NumInd,$MinFact, $W);
     return [$ERate,$EText];
   } else {
-    return (Has_Trait($Fid,'No customers')?($NumPrime - $NumCom):$NumPrime)*$NumCom*2
-         + min($W['Minerals'] * $MinFact,$NumPrime) + min($W['Minerals'] * $MinFact,$Mines*2* $MinFact);
+    return [(Has_Trait($Fid,'No customers')?($NumPrime - $NumCom):$NumPrime)*$NumCom*2
+         + min($W['Minerals'] * $MinFact,$NumPrime) + min($W['Minerals'] * $MinFact,$Mines*2* $MinFact),''];
   }
 }
 

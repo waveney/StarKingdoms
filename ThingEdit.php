@@ -934,6 +934,15 @@ global $FACTION;
       Put_Thing($T);
       break;
 
+    case 'Retreat':
+      $tid = $_REQUEST['id'];
+      $T = Get_Thing($tid);
+      $T['Retreat'] = 2; // Combat - overide type later if needed
+      var_dump($T);
+      Put_Thing($T);
+      break;
+
+
     case 'None' :
     default:
       break;

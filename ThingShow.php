@@ -247,7 +247,7 @@ function Show_Thing(&$T,$Force=0) {
           if ($GM) {
             echo "<tr><td>System:<td>" . fm_select($Systems,$T,'SystemId',1);
             echo "<td>";
-            if ($T['BuildState']> BS_SERVICE ) {
+            if ($T['BuildState'] > BS_SERVICE ) {
               if ($T['Retreat']) {
                 $Retreats = ['','From Nebula','From Combat'];
                 echo "Retreat:" . fm_select($Retreats,$T,'Retreat');
@@ -2339,8 +2339,9 @@ function Show_Thing(&$T,$Force=0) {
     } else {
       echo fm_number0(" Do",$T,'Damage', '',' class=Num3 ') . fm_submit("ACTION","Damage",0);
     }
+    if (!$T['Retreat']) echo fm_submit("ACTION",'Retreat',0);
+
     if (($T['PrisonerOf'] ?? 0)) echo fm_submit("ACTION","Disarm",0);
-    if (($tprops & THING_CAN_MOVE) && (($Faction['TurnState']??0) == 3)) echo fm_submit("ACTION",'Retreat');
   }
   if (!$GM && ($tprops & THING_CAN_BE_CREATED)) echo fm_submit("ACTION","Delete",0);
   if ($GM) {

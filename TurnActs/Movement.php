@@ -46,6 +46,7 @@ function Follow() {
             var_dump($T,$Fol); // Diagnostic path
             exit;
           }
+
           $EInst = $L['Instability'];
           if ($L['ThisTurnMod']) $EInst = max(1,$EInst+$L['ThisTurnMod']);
           $EStab = $T['Stability'];
@@ -500,16 +501,18 @@ function ShipMovements($Mode=0) {
             $L['NextTurnMod'] += count($Have);
           }
 
-          $EInst = $L['Instability'];
-          if ($L['ThisTurnMod']) $EInst = max(1,$EInst+$L['ThisTurnMod']);
+          if ($Mode != 2) {
+            $EInst = $L['Instability'];
+            if ($L['ThisTurnMod']) $EInst = max(1,$EInst+$L['ThisTurnMod']);
 
-          if (($LinkMethod == 'Wormholes') && $T['CurStability'] < $EInst) {
-            TurnLog($Fid,$T['Name'] . " Did not have enough Stability to go through Link " . ($L['Name']?$L['Name']:"#$Lid") .
-              " it currently has instability $EInst.\nA few small fragments where spayed into $Ref the rest is deposited across the multiverse.", $T);
-            GMLog($Facts[$Fid]['Name'] . " - <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a> did not have enough Stability to go through Link " .
-              ($L['Name']?$L['Name']:"#$Lid") . " it currently has instability $EInst It should be destroyed (no debris)");
-            Report_Others(0, $Sid, 31, "A spray of debris that may once have been part of a ship is seen leaving the wormhole " .
-              ($L['Name']?$L['Name']:"#$Lid"));
+            if (($LinkMethod == 'Wormholes') && $T['CurStability'] < $EInst) {
+              TurnLog($Fid,$T['Name'] . " Did not have enough Stability to go through Link " . ($L['Name']?$L['Name']:"#$Lid") .
+                " it currently has instability $EInst.\nA few small fragments where spayed into $Ref the rest is deposited across the multiverse.", $T);
+              GMLog($Facts[$Fid]['Name'] . " - <a href=ThingEdit.php?id=$Tid>" . $T['Name'] . "</a> did not have enough Stability to go through Link " .
+                ($L['Name']?$L['Name']:"#$Lid") . " it currently has instability $EInst It should be destroyed (no debris)");
+              Report_Others(0, $Sid, 31, "A spray of debris that may once have been part of a ship is seen leaving the wormhole " .
+                ($L['Name']?$L['Name']:"#$Lid"));
+            }
           }
 
           Put_Link($L);
