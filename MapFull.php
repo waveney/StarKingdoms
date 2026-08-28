@@ -44,7 +44,7 @@
     }
   } else {
     global $PlayerState,$PlayerStates;
-    if ($PlayerState[$Fact['TurnState']] != 'Turn Being Processed' ) Player_Page();
+    if ($PlayerState[$Fact['TurnState']] == 'Turn Being Processed' ) Player_Page();
   }
 
   if (!empty($FACTION)) $XScale *= $FACTION['ScaleFactor'];

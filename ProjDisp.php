@@ -55,7 +55,7 @@
     dotail();
   }
 
-  if (!$GM && $PlayerState[$Faction['TurnState']] != 'Turn Being Processed' ) Player_Page();
+  if (!$GM && $PlayerState[$Faction['TurnState']] == 'Turn Being Processed' ) Player_Page();
   dostaffhead("Display Projects for faction",["js/ProjectTools.js"]);
 
   $OpenHi = $OpenDi = -99;

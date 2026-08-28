@@ -65,7 +65,7 @@
   }
   $Orgs = Gen_Get_Cond('Organisations',"Whose=$Fid");
 
-  if (!$GM && $PlayerState[$Faction['TurnState']] != 'Turn Being Processed' ) Player_Page();
+  if (!$GM && $PlayerState[$Faction['TurnState']] == 'Turn Being Processed' ) Player_Page();
   dostaffhead("Display Operations for faction",["js/ProjectTools.js"]);
   $OpenOrg = -99;
 
