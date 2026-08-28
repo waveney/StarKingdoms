@@ -128,14 +128,14 @@ function Player_Page() {
       echo "<li><a href=ProjDisp.php>Projects</a>\n";
       if (Feature('Orgs')) echo "<li><a href=OpsDisp.php>Operations</a>\n";
       echo "<li><a href=PThingList.php>List of Things</a> - List of Things (Ships, $ARMIES, Designs, Named Characters, Space stations etc)";
-      if ($PlayerState[$FACTION['TurnState']] != 'Frozen') {
+//     if ($PlayerState[$FACTION['TurnState']] != 'Frozen') {
         if ($Designs) {
           echo "<li><a href=PlanDesign.php>Plan a Design</a> - Designing Classes of Things (Ships, $ARMIES, Space stations etc)";
           echo "<li><a href=CreateNamed.php>Create a Named Character</a>";
         } else {
           echo "<li><a href=ThingPlan.php>Plan a Thing</a> - Planning Things (Ships, $ARMIES, Named Characters, Space stations etc)";
         }
-      }
+//      }
       if ($FACTION['PhysicsSP'] >=5 || $FACTION['EngineeringSP'] >=5 || $FACTION['XenologySP'] >=5 ) {
         echo "<li><a href=SciencePoints.php>Spend Science Points</a> - Also <a href=ScienceLog.php>Resource Logs</a>";
 //        echo "<li><a href=ScienceLog.php>Science Point Logs</a>";

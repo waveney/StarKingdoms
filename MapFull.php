@@ -43,7 +43,8 @@
       foreach ($sets as $s) $OnlyShowInsta[$s] = 1;
     }
   } else {
-    if ($Fact['TurnState'] > 2) Player_Page();
+    global $PlayerState,$PlayerStates;
+    if ($PlayerState[$Fact['TurnState']] != 'Turn Being Processed' ) Player_Page();
   }
 
   if (!empty($FACTION)) $XScale *= $FACTION['ScaleFactor'];

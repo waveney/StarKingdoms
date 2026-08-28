@@ -33,13 +33,15 @@
         $Gid = Put_Game($ng);
         if (1 || !Access('God')) {
           $gu = ['GameId'=>$Gid,'PlayerId'=>$USERID,'Type'=>1];
-          Gen_Put('GameUsers',$gu);
+          Gen_Put('GamePlayers',$gu);
         }
         setcookie('SKG',$Gid);
         $GAME = Get_Game($Gid);
         mkdir("cache/$Gid",0777,1);
         mkdir("Turns/$Gid",0777,1);
         mkdir("images/$Gid",0777,1);
+        $GAME['Features'] = $Feats;
+        Put_Game($GAME);
 
         $ErrorMessage = "Game $Gid : " . $ng['Name'] . " has been setup";
         include ("Staff.php"); // No return

@@ -743,6 +743,7 @@ function Set_System_List() {// sets list of Planets/Moons for each system that a
 
 function ShowWorld(&$W,$Mode=0,$NeedDelta=0) { // Mode 0 = View, 1=Owner, 2 = GM
   include_once("SystemLib.php");
+  include_once("OrgLib.php");
   global $GAMEID;
   $Wid = $W['id'];
 

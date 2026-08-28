@@ -10,7 +10,7 @@
   include_once("ProjLib.php");
 
   global $FACTION,$ADDALL,$GAME,$ARMY, $ARMIES, $GAMEID, $Project_Status;
-
+  global $PlayerState,$PlayerStates;
 //  var_dump($_REQUEST);
 
   $HomeColours = ['#ff99ff', '#ccffff', '#ccffcc', '#ffffcc', '#ffcccc', '#e6ccff', '#cce6ff', '#ffd9b3', '#ecc6c6', '#ecc6d6', '#d6b3ff', '#d1e0e0', '#d6ff99',
@@ -55,7 +55,7 @@
     dotail();
   }
 
-  if (!$GM && $Faction['TurnState'] > 2) Player_Page();
+  if (!$GM && $PlayerState[$Faction['TurnState']] != 'Turn Being Processed' ) Player_Page();
   dostaffhead("Display Projects for faction",["js/ProjectTools.js"]);
 
   $OpenHi = $OpenDi = -99;

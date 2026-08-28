@@ -77,5 +77,6 @@ CREATE TABLE `Things` (
   `WhenBuilt` int NOT NULL,
   `Concealment` int NOT NULL,
   `CurStability` int NOT NULL,
+  `Fleet` int NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

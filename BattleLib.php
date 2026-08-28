@@ -68,7 +68,7 @@ function Devastate(&$H,&$W,&$Dists,&$Offs,$Numb=1) {
       }
       $DFind = $OCount;
       foreach ($Dists as $D) {
-        if ($D['Type' == $IndDist]) {
+        if ($D['Type'] == $IndDist) {
           if ($Dcount == 1) {
             break;
           } else {
